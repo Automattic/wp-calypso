@@ -19,6 +19,12 @@ export const TitanControlPanelContext = {
 export type TitanControlPanelContext =
 	( typeof TitanControlPanelContext )[ keyof typeof TitanControlPanelContext ];
 
+export interface TitanDkimRecord {
+	name: string;
+	type: 'TXT';
+	data: string;
+}
+
 export interface Mailbox {
 	account_type: EmailProvider;
 	domain: string;

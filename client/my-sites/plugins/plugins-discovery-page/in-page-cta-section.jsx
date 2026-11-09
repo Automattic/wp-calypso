@@ -3,13 +3,9 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import videoImage from 'calypso/assets/images/marketplace/plugins-video.jpg';
+import videoImage from 'calypso/assets/images/marketplace/plugins-video.webp';
 import WPLogo from 'calypso/assets/images/marketplace/wp-logo.svg';
-import Section, {
-	SectionContainer,
-	SectionHeaderContainer,
-	SectionHeader,
-} from 'calypso/components/section';
+import Section from 'calypso/components/section';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -25,21 +21,21 @@ const InPagetCTAContainer = styled.div`
 	border-radius: 4px;
 	row-gap: 32px;
 
-	${ SectionContainer } {
+	.section-container {
 		position: relative;
 		padding: 0;
 	}
-	${ SectionContainer }::before {
+	.section-container::before {
 		display: none;
 	}
 
-	${ SectionHeaderContainer } {
+	.section-header-container {
 		padding: 0;
 		max-width: 439px;
 		margin-bottom: 24px;
 	}
 
-	${ SectionHeader } {
+	.section-header-container__header {
 		font-size: 1.625rem;
 		line-height: 1.1;
 	}
@@ -57,7 +53,7 @@ const InPagetCTAContainer = styled.div`
 		flex-direction: row;
 		column-gap: 70px;
 
-		${ SectionHeader } {
+		.section-header-container__header {
 			line-height: 1.3;
 		}
 	}

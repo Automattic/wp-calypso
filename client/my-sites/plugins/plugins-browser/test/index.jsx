@@ -75,10 +75,14 @@ import {
 } from '@automattic/calypso-products';
 import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
+import { applyMiddleware, createStore as createReduxStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import documentHead from 'calypso/state/document-head/reducer';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import plugins from 'calypso/state/plugins/reducer';
 import productsList from 'calypso/state/products-list/reducer';
+import initialReducer from 'calypso/state/reducer';
 import siteConnection from 'calypso/state/site-connection/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -260,5 +264,52 @@ describe( 'PluginsBrowser basic tests', () => {
 		};
 		render( <PluginsBrowser />, { initialState } );
 		expect( screen.getByText( 'Learn how to fix' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'DocumentHead meta', () => {
+	const createStore = () => {
+		const reducers = {
+			ui,
+			plugins,
+			documentHead,
+			productsList,
+			siteConnection,
+			jetpackConnectionHealth,
+		};
+		const reducer = Object.entries( reducers ).reduce(
+			( acc, [ key, value ] ) => acc.addReducer( [ key ], value ),
+			initialReducer
+		);
+		return createReduxStore( reducer, initialReduxState, applyMiddleware( thunkMiddleware ) );
+	};
+
+	test( 'sets a meta description on the root plugins page', () => {
+		const store = createStore();
+		render( <PluginsBrowser />, { store } );
+		expect( getDocumentHeadMeta( store.getState() ) ).toEqual( [
+			{
+				name: 'description',
+				content:
+					'Browse 50,000+ free and premium WordPress plugins — SEO, ecommerce, booking, security, and more. Available on Personal plans and up.',
+			},
+			{ property: 'og:site_name', content: 'WordPress.com' },
+		] );
+	} );
+
+	test( 'does not set a meta description on category pages', () => {
+		const store = createStore();
+		render( <PluginsBrowser category="seo" />, { store } );
+		expect( getDocumentHeadMeta( store.getState() ) ).not.toContainEqual(
+			expect.objectContaining( { name: 'description' } )
+		);
+	} );
+
+	test( 'does not set a meta description on search results', () => {
+		const store = createStore();
+		render( <PluginsBrowser search="forms" />, { store } );
+		expect( getDocumentHeadMeta( store.getState() ) ).not.toContainEqual(
+			expect.objectContaining( { name: 'description' } )
+		);
 	} );
 } );

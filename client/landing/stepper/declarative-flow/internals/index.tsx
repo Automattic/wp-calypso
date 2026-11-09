@@ -25,6 +25,7 @@ import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
 import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
+import { useStepContainerV2Logo } from './hooks/use-step-container-v2-logo';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { componentTypeOf, recordStepComponentType } from './step-mount-registry';
 import { PRIVATE_STEPS } from './steps';
@@ -122,20 +123,22 @@ export const FlowRenderer: React.FC< {
 		state: AssertConditionState.SUCCESS,
 	};
 
+	const logo = useStepContainerV2Logo( flow.name, currentStepRoute );
+
 	const stepContainerV2Context = useMemo( () => {
 		return {
 			flowName: flow.name,
 			stepName: currentStepRoute,
 			recordTracksEvent,
-			logo: null,
+			logo,
 		};
-	}, [ flow.name, currentStepRoute ] );
+	}, [ flow.name, currentStepRoute, logo ] );
 
 	const renderStep = ( step: StepperStep ) => {
 		if ( assertCondition ) {
 			switch ( assertCondition.state ) {
 				case AssertConditionState.CHECKING:
-					return shouldUseStepContainerV2( flow.name ) ? (
+					return shouldUseStepContainerV2( flow.variantSlug ?? flow.name ) ? (
 						<Step.Loading />
 					) : (
 						<Loading className="wpcom-loading__boot" />
@@ -229,7 +232,7 @@ export const FlowRenderer: React.FC< {
 
 	useSignUpStartTracking( { flow } );
 
-	const fallback = shouldUseStepContainerV2( flow.name ) ? (
+	const fallback = shouldUseStepContainerV2( flow.variantSlug ?? flow.name ) ? (
 		<Step.Loading />
 	) : (
 		<Loading className="wpcom-loading__boot" />

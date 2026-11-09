@@ -173,6 +173,9 @@ import {
 	PLAN_JETPACK_GROWTH_MONTHLY,
 	PLAN_JETPACK_GROWTH_YEARLY,
 	PLAN_JETPACK_GROWTH_BI_YEARLY,
+	PLAN_JETPACK_PRO_MONTHLY,
+	PLAN_JETPACK_PRO_YEARLY,
+	PLAN_JETPACK_PRO_BI_YEARLY,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -227,6 +230,7 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_JETPACK_GROWTH,
+	TYPE_JETPACK_PRO,
 	TYPE_JETPACK_STARTER,
 	TYPE_FLEXIBLE,
 	TYPE_100_YEAR,
@@ -463,7 +467,12 @@ import {
 	FEATURE_UNLIMITED_ENTITIES,
 	JETPACK_TAG_FOR_BLOGGERS,
 	FEATURE_CONNECT_ANALYTICS,
+	FEATURE_JETPACK_SOCIAL_V1_BI_YEARLY,
+	FEATURE_JETPACK_SOCIAL_V1_YEARLY,
 	FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
+	FEATURE_JETPACK_AI_BI_YEARLY,
+	FEATURE_JETPACK_AI_YEARLY,
+	FEATURE_JETPACK_AI_MONTHLY,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
@@ -590,6 +599,27 @@ const getMonthlyTimeframe = (): BillingTerm => ( {
 			comment: 'Excl. Taxes is short for excluding taxes',
 		} ),
 } );
+
+const isDevToolsOnAllPaidPlans = () => isEnabled( 'hosting/dev-tools-all-paid-plans' );
+
+// SFTP/SSH, WP-CLI, Git commands and GitHub Deployments move from Business to every paid plan
+// when the flag is on. The comparison grid is cumulative, so Personal lists them for every plan
+// above it.
+const getPaidPlanDevToolsFeatures = () =>
+	isDevToolsOnAllPaidPlans() ? [ FEATURE_DEV_TOOLS_GIT, FEATURE_DEV_TOOLS_SSH ] : [];
+
+const getBusinessOnlyDevToolsFeatures = () =>
+	isDevToolsOnAllPaidPlans() ? [] : [ FEATURE_DEV_TOOLS_GIT, FEATURE_DEV_TOOLS_SSH ];
+
+const getPaidPlanDevToolsIncludedFeatures = () =>
+	isDevToolsOnAllPaidPlans()
+		? [ FEATURE_SFTP, FEATURE_SSH, WPCOM_FEATURES_GITHUB_DEPLOYMENTS ]
+		: [];
+
+// Dev tools no longer set Business apart, so the promo grid leads with the staging site instead.
+const getDevToolsPromoFeature = () =>
+	isDevToolsOnAllPaidPlans() ? FEATURE_SITE_STAGING_SITES : FEATURE_DEV_TOOLS;
+
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
 		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce stores' ) },
@@ -605,6 +635,7 @@ const getDotcomPlanDetails = () => ( {
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	],
 } );
 
@@ -939,6 +970,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ISOLATED_INFRA,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PLUGINS_THEMES,
+		...getPaidPlanDevToolsFeatures(),
 	],
 	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => [
@@ -956,10 +988,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_BUILT_IN_SITE_ASSISTANT,
 		FEATURE_WORDPRESS_STUDIO_SYNC,
 		FEATURE_PLUGINS_THEMES,
+		...getPaidPlanDevToolsFeatures(),
 	],
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [
-			FEATURE_ONE_CLICK_RESTORE_V2,
+			FEATURE_BACKUP_DAILY_V2,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
 		];
@@ -967,7 +1000,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Experimental: Comparison grid Jetpack features for experiment variants.
 	// Advanced Jetpack Forms is excluded for Personal plan in experiment variants.
 	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
-		return [ FEATURE_ONE_CLICK_RESTORE_V2, FEATURE_PLUGIN_AUTOUPDATE_JP ];
+		return [ FEATURE_BACKUP_DAILY_V2, FEATURE_PLUGIN_AUTOUPDATE_JP ];
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
 	getPlanComparisonFeatureLabels: ( { isExperimentVariant } = {} ) => {
@@ -1038,6 +1071,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
 		WPCOM_FEATURES_LOGS,
+		...getPaidPlanDevToolsIncludedFeatures(),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1148,7 +1182,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_VIDEO,
 		FEATURE_STATS_ADVANCED_20250206,
 		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 		FEATURE_WOOCOMMERCE_HOSTING,
 	],
 	getVar42NoAiSignupWpcomFeatures: () => [
@@ -1167,7 +1201,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
 		FEATURE_REALTIME_BACKUPS_JP,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 		FEATURE_WOOCOMMERCE_HOSTING,
 		FEATURE_SELL_60_COUNTRIES,
 	],
@@ -1348,8 +1382,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_SECURITY_SCANS,
 		FEATURE_99_999_UPTIME,
 		FEATURE_SITE_STAGING_SITES,
-		FEATURE_DEV_TOOLS_GIT,
-		FEATURE_DEV_TOOLS_SSH,
+		...getBusinessOnlyDevToolsFeatures(),
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		// Additional Commerce features
 		FEATURE_ACCEPT_PAYMENTS,
@@ -1858,6 +1891,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
 		WPCOM_FEATURES_LOGS,
+		...getPaidPlanDevToolsIncludedFeatures(),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1987,7 +2021,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_VIDEO,
 		FEATURE_STATS_ADVANCED_20250206,
 		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 	],
 	getVar42NoAiSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
@@ -2005,7 +2039,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
 		FEATURE_REALTIME_BACKUPS_JP,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 	],
 
 	get2023PlanComparisonFeatureOverride: () => {
@@ -2024,8 +2058,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REAL_TIME_SECURITY_SCANS,
 			FEATURE_SPAM_JP,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS_GIT,
-			FEATURE_DEV_TOOLS_SSH,
+			...getBusinessOnlyDevToolsFeatures(),
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 			FEATURE_WP_UPDATES,
@@ -2055,8 +2088,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REAL_TIME_SECURITY_SCANS,
 			FEATURE_SPAM_JP,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS_GIT,
-			FEATURE_DEV_TOOLS_SSH,
+			...getBusinessOnlyDevToolsFeatures(),
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 			FEATURE_WP_UPDATES,
@@ -2086,7 +2118,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CDN,
 		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_PRIORITY_24_7_SUPPORT,
-		FEATURE_DEV_TOOLS,
+		...( isDevToolsOnAllPaidPlans() ? [] : [ FEATURE_DEV_TOOLS ] ),
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 		FEATURE_SECURITY_DDOS,
@@ -2098,6 +2130,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [
 			FEATURE_REALTIME_BACKUPS_JP,
+			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_UPTIME_MONITOR_JP,
 			FEATURE_SEO_JP,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
@@ -2107,6 +2140,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverrideForExperiment: () => {
 		return [
 			FEATURE_REALTIME_BACKUPS_JP,
+			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_UPTIME_MONITOR_JP,
 			FEATURE_SEO_JP,
 			FEATURE_ADVANCED_FORM_FEATURES_JP,
@@ -2180,7 +2214,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_SECURITY_MALWARE,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS,
+			! isDevToolsOnAllPaidPlans() && FEATURE_DEV_TOOLS,
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_WP_UPDATES,
 			FEATURE_MULTI_SITE,
@@ -2238,7 +2272,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getCancellationFeatures: () => [
 		FEATURE_PLUGINS_THEMES,
 		FEATURE_ADVANCED_SEO_TOOLS,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 		FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 		FEATURE_SITE_BACKUPS_AND_RESTORE,
 		FEATURE_AD_FREE_EXPERIENCE,
@@ -2255,8 +2289,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_SECURITY_SCANS,
 		FEATURE_99_999_UPTIME,
 		FEATURE_SITE_STAGING_SITES,
-		FEATURE_DEV_TOOLS_GIT,
-		FEATURE_DEV_TOOLS_SSH,
+		...getBusinessOnlyDevToolsFeatures(),
 		FEATURE_PRIORITY_24_7_SUPPORT,
 	],
 } );
@@ -2951,9 +2984,12 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_JETPACK_BOOST_BI_YEARLY,
 			FEATURE_JETPACK_BOOST,
 			FEATURE_JETPACK_BOOST_MONTHLY,
-			FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
-			FEATURE_JETPACK_SOCIAL_ADVANCED,
-			FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+			FEATURE_JETPACK_SOCIAL_V1_BI_YEARLY,
+			FEATURE_JETPACK_SOCIAL_V1_YEARLY,
+			FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
+			FEATURE_JETPACK_AI_BI_YEARLY,
+			FEATURE_JETPACK_AI_YEARLY,
+			FEATURE_JETPACK_AI_MONTHLY,
 			FEATURE_JETPACK_VIDEOPRESS_BI_YEARLY,
 			FEATURE_JETPACK_VIDEOPRESS,
 			FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
@@ -2978,6 +3014,9 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_SOCIAL_BASIC_BI_YEARLY,
 		FEATURE_JETPACK_SOCIAL_BASIC,
 		FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
+		FEATURE_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+		FEATURE_JETPACK_SOCIAL_ADVANCED,
+		FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	],
 	getBenefits: () => [
 		translate( 'Protect your revenue stream and content' ),
@@ -2989,6 +3028,52 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		translate( 'Grow your business with video, social, and CRM tools' ),
 		translate( 'Best-in-class support from WordPress experts' ),
 	],
+} );
+
+const getPlanJetpackProDetails = (): IncompleteJetpackPlan => ( {
+	...getPlanJetpackCompleteDetails(),
+	type: TYPE_JETPACK_PRO,
+	getTitle: () =>
+		translate( 'Pro', {
+			context: 'Jetpack plan name',
+		} ),
+	getDescription: () =>
+		translate(
+			'Get every Jetpack Security, Performance, Growth, and Design tool, with limits sized for most sites.'
+		),
+	getFeaturedDescription: () =>
+		translate(
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business, with limits sized for most sites.'
+		),
+	getLightboxDescription: () =>
+		translate(
+			'Full Jetpack suite with real-time security, instant site search, ad-free video, all CRM extensions, and 50GB of backup storage.'
+		),
+	getTagline: () => translate( 'For growing WordPress sites' ),
+	getPlanCardFeatures: () => [
+		FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+		FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+		FEATURE_PRODUCT_SEARCH_V2,
+		FEATURE_CRM_V2,
+		FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+	],
+	getIncludedFeatures: () =>
+		compact( [
+			FEATURE_JETPACK_BACKUP_T1_BI_YEARLY,
+			FEATURE_JETPACK_BACKUP_T1_YEARLY,
+			FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			...( getPlanJetpackCompleteDetails().getIncludedFeatures?.() ?? [] ).filter(
+				( feature ) =>
+					feature !== FEATURE_JETPACK_BACKUP_T2_YEARLY &&
+					feature !== FEATURE_JETPACK_BACKUP_T2_MONTHLY &&
+					feature !== FEATURE_BACKUP_ARCHIVE_UNLIMITED
+			),
+		] ),
+	getInferiorFeatures: () =>
+		( getPlanJetpackCompleteDetails().getInferiorFeatures?.() ?? [] ).filter(
+			( feature ) => feature !== FEATURE_BACKUP_ARCHIVE_30
+		),
 } );
 
 const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
@@ -3852,6 +3937,109 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductsIncluded: () => [
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 			PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY,
+		],
+	},
+
+	[ PLAN_JETPACK_PRO_MONTHLY ]: {
+		...getPlanJetpackProDetails(),
+		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_PRO_MONTHLY,
+		getProductId: () => 2024,
+		getAnnualSlug: () => PLAN_JETPACK_PRO_YEARLY,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+			PRODUCT_JETPACK_SCAN_MONTHLY,
+			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+			PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+			PRODUCT_JETPACK_BOOST_MONTHLY,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+			PRODUCT_JETPACK_SEARCH_MONTHLY,
+			PRODUCT_JETPACK_STATS_MONTHLY,
+			PRODUCT_JETPACK_AI_MONTHLY,
+			PRODUCT_JETPACK_CRM_MONTHLY,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '50GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 10k records and 10k requests/mo.' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
+		],
+	},
+
+	[ PLAN_JETPACK_PRO_YEARLY ]: {
+		...getPlanJetpackProDetails(),
+		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_PRO_YEARLY,
+		getProductId: () => 2025,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
+			PRODUCT_JETPACK_VIDEOPRESS,
+			PRODUCT_JETPACK_BOOST,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED,
+			PRODUCT_JETPACK_SEARCH,
+			PRODUCT_JETPACK_STATS_YEARLY,
+			PRODUCT_JETPACK_AI_YEARLY,
+			PRODUCT_JETPACK_CRM,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '50GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 10k records and 10k requests/mo.' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
+		],
+	},
+
+	[ PLAN_JETPACK_PRO_BI_YEARLY ]: {
+		...getPlanJetpackProDetails(),
+		...getBiAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_PRO_BI_YEARLY,
+		getProductId: () => 2026,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+			PRODUCT_JETPACK_SCAN_BI_YEARLY,
+			PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
+			PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY,
+			PRODUCT_JETPACK_BOOST_BI_YEARLY,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY,
+			PRODUCT_JETPACK_SEARCH_BI_YEARLY,
+			PRODUCT_JETPACK_STATS_BI_YEARLY,
+			PRODUCT_JETPACK_AI_BI_YEARLY,
+			PRODUCT_JETPACK_CRM,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '50GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 10k records and 10k requests/mo.' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
 

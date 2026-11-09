@@ -13,10 +13,13 @@ import {
 import { getSuggestionClickPayload } from '../../utils/get-suggestion-click-payload';
 import { isEditorPage } from '../../utils/is-editor-page';
 import './grouped-empty-view.scss';
+import type { ReactNode } from 'react';
 
 interface Props {
 	heading: string;
 	help?: string;
+	/** Takes the place of the suggestion chips, under the heading. */
+	content?: ReactNode;
 	suggestions: Suggestion[];
 	groupWritingSuggestions: boolean;
 	onSuggestionClick?: (
@@ -28,6 +31,7 @@ interface Props {
 export default function GroupedEmptyView( {
 	heading,
 	help,
+	content,
 	suggestions,
 	groupWritingSuggestions,
 	onSuggestionClick,
@@ -58,6 +62,14 @@ export default function GroupedEmptyView( {
 			suggestions
 		);
 	};
+
+	if ( content ) {
+		return (
+			<EmptyView heading={ heading } help={ help }>
+				{ content }
+			</EmptyView>
+		);
+	}
 
 	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
 		return (

@@ -650,7 +650,7 @@ export class DomainSearchComponent {
 		} );
 
 		try {
-			await button.waitFor();
+			await button.waitFor( { timeout: 30 * 1000 } );
 		} catch ( error ) {
 			// The button carries the free subdomain a second `/domains/suggestions`
 			// call answered with. `search` records a ban it meets mid-search but

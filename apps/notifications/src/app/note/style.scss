@@ -4,7 +4,8 @@
 @import '@wordpress/base-styles/mixins';
 @import './reset.scss';
 
-.wpnc__note .wpnc__body .wpnc__body-content {
+.wpnc__note .wpnc__body .wpnc__body-content,
+.wpnc-simplified__parent-text {
 	padding: 0;
 	margin: 0;
 	line-height: 20px;
@@ -36,7 +37,7 @@
 	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
 		margin: $grid-unit-10 0 $grid-unit-05;
 		font-size: $font-size-large;
-		font-weight: $font-weight-medium;
+		font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 		line-height: 24px;
 		text-wrap: balance;
 
@@ -48,6 +49,10 @@
 	:is(h3, h4, h5, h6, .wpnc__h3) {
 		font-size: $font-size-large;
 		line-height: 20px;
+	}
+
+	[style*="font-size"]:not(h1, h2, h3, h4, h5, h6, [style*="-font-size"]) {
+		font-size: inherit !important;
 	}
 
 	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
@@ -149,6 +154,11 @@
 			color: var(--wp-components-color-accent-inverted, #fff);
 			background: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
 		}
+
+		&:focus-visible {
+			outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color);
+			outline-offset: 2px;
+		}
 	}
 
 	.wpnc__hr-separator {
@@ -157,14 +167,14 @@
 	}
 
 	// Links
-	a,
-	a:visited {
+	a:not(.wpnc__button),
+	a:not(.wpnc__button):visited {
 		color: var(--wp-admin-theme-color);
 	}
 
-	a:hover,
-	a:focus,
-	a:active {
+	a:not(.wpnc__button):hover,
+	a:not(.wpnc__button):focus,
+	a:not(.wpnc__button):active {
 		color: var(--wp-admin-theme-color);
 	}
 
@@ -380,8 +390,9 @@
 	}
 }
 
-// Outweigh WP Button's `.components-button.has-text` rule.
-.wpnc__action-link.components-button.has-text {
+// Outweigh WP Button's `.components-button.has-text` rule. Minimal (tertiary)
+// actions keep the compact Button's height and single line.
+.wpnc__action-link.components-button.has-text:not(.is-tertiary) {
 	// Keep every action on a single row. Buttons sit at their natural width when
 	// they fit, but may shrink and let their label wrap onto a new line when the
 	// row runs out of width — instead of wrapping a whole button below.
@@ -398,7 +409,7 @@
 	gap: 2px;
 	padding-inline-start: 0;
 	font-size: $font-size-medium;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	color: var(--wpnc-action__color, #{$gray-700});
 
 	&:hover:not(:disabled) {

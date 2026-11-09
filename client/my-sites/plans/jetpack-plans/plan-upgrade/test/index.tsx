@@ -4,7 +4,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 100 ),
 } ) );
 
-import { TERM_MONTHLY } from '@automattic/calypso-products';
+import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import * as currentUserSelectors from 'calypso/state/currency-code/selectors';
 import productsList from 'calypso/state/products-list/reducer';
@@ -80,5 +80,88 @@ describe( '<PlanUpgradeSection />', () => {
 		expect( personalHeader.outerHTML ).toContain( 'Premium' );
 		expect( antiSpamHeader.outerHTML ).toContain( 'Anti-spam' );
 		expect( backupDailyHeader.outerHTML ).toContain( 'Backup <span>Daily</span>' );
+	} );
+	it( 'drops a recommended bundle that is off sale once Pro is on sale', () => {
+		renderWithProvider(
+			<PlanUpgradeSection
+				planRecommendation={ [
+					'jetpack_premium',
+					[ 'jetpack_security_t1_yearly', 'jetpack_videopress' ],
+				] }
+				duration={ TERM_ANNUALLY }
+				filterBar={ null }
+				onSelectProduct={ () => null }
+			/>,
+			{
+				initialState: {
+					...initialState,
+					productsList: {
+						isFetching: false,
+						sessionListStatus: 'full',
+						items: {
+							jetpack_pro_yearly: { available: true },
+							jetpack_security_t1_yearly: { available: false },
+						},
+					},
+				},
+				reducers: { purchases, productsList },
+			}
+		);
+
+		const productHeaders = screen.getAllByRole( 'heading', { level: 3 } );
+
+		expect( productHeaders ).toHaveLength( 2 );
+		expect( productHeaders[ 1 ].outerHTML ).toContain( 'VideoPress' );
+	} );
+
+	it( 'renders nothing when every recommended bundle is off sale once Pro is on sale', () => {
+		const { container } = renderWithProvider(
+			<PlanUpgradeSection
+				planRecommendation={ [ 'jetpack_business', [ 'jetpack_complete' ] ] }
+				duration={ TERM_ANNUALLY }
+				filterBar={ null }
+				onSelectProduct={ () => null }
+			/>,
+			{
+				initialState: {
+					...initialState,
+					productsList: {
+						isFetching: false,
+						sessionListStatus: 'full',
+						items: { jetpack_pro_yearly: { available: true } },
+					},
+				},
+				reducers: { purchases, productsList },
+			}
+		);
+
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it.each( [
+		[ 'shows', { available: true, introductory_offer: { cost_per_interval: 299.4 } }, true ],
+		[ 'hides', { available: true }, false ],
+	] )( '%s the intro discount line by the catalog offer', ( _label, complete, isShown ) => {
+		renderWithProvider(
+			<PlanUpgradeSection
+				planRecommendation={ [ 'jetpack_business', [ 'jetpack_complete' ] ] }
+				duration={ TERM_ANNUALLY }
+				filterBar={ null }
+				onSelectProduct={ () => null }
+			/>,
+			{
+				initialState: {
+					...initialState,
+					productsList: {
+						isFetching: false,
+						sessionListStatus: 'full',
+						items: { jetpack_complete: complete },
+					},
+				},
+				reducers: { purchases, productsList },
+			}
+		);
+
+		expect( !! screen.queryByText( /off/, { selector: 'p' } ) ).toBe( isShown );
 	} );
 } );

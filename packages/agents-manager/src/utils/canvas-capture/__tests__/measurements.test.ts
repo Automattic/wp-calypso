@@ -28,6 +28,8 @@ interface CanvasBlock {
 	/** A lone image, as the block's only content. */
 	image?: Rect;
 	text?: string;
+	/** Inline styles, for a block that paints its own box. */
+	style?: Partial< CSSStyleDeclaration >;
 	/** Builds the block's own markup instead, for the editor's real nesting. */
 	build?: ( element: HTMLElement, canvasDocument: Document ) => void;
 	children?: CanvasBlock[];
@@ -53,6 +55,7 @@ function mountCanvas( roots: CanvasBlock[] ) {
 	const mount = ( block: CanvasBlock, container: HTMLElement, parent?: string ) => {
 		const element = withRect( canvasDocument.createElement( 'div' ), block.rect );
 		element.setAttribute( 'data-block', block.clientId );
+		Object.assign( element.style, block.style );
 
 		if ( block.image ) {
 			element.append( withRect( canvasDocument.createElement( 'img' ), block.image ) );
@@ -291,6 +294,121 @@ it( 'says nothing of children stacked one above the other', () => {
 	] );
 
 	expect( describeMeasuredLayout( [ 'stack' ] ) ).toEqual( [] );
+} );
+
+describe( 'with cards of different content', () => {
+	// Three pricing cards, level and equal in height, with six list items in
+	// one and four and five in the others.
+	const cards = ( style?: Partial< CSSStyleDeclaration > ): CanvasBlock => ( {
+		clientId: 'cols',
+		name: 'core/columns',
+		rect: { top: 0, left: 0, width: 960, height: 500 },
+		children: [
+			[ 'basic', 314 ],
+			[ 'plus', 341 ],
+			[ 'full', 368 ],
+		].map( ( [ clientId, contentHeight ], index ) => ( {
+			clientId: clientId as string,
+			name: 'core/column',
+			rect: { top: 51, left: index * 320, width: 300, height: 399 },
+			style,
+			children: [
+				{
+					clientId: `${ clientId }-list`,
+					name: 'core/list',
+					rect: { top: 75, left: index * 320 + 24, width: 252, height: contentHeight as number },
+					text: 'Feature',
+				},
+			],
+		} ) ),
+	} );
+
+	it.each( [
+		[ 'background', { backgroundColor: 'rgb(255, 255, 255)' } ],
+		[ 'background image', { backgroundImage: 'url(card.png)' } ],
+		[ 'border', { border: '1px solid rgb(0, 0, 0)' } ],
+		[ 'shadow', { boxShadow: '0 1px 2px rgb(0, 0, 0)' } ],
+	] )( 'measures cards that paint a %s by their own boxes', ( _, style ) => {
+		mountCanvas( [ cards( style ) ] );
+
+		const row = describeMeasuredLayout( [ 'cols' ] ).find( ( note ) =>
+			note.startsWith( 'Row in columns (cols)' )
+		);
+
+		expect( row ).toContain( 'column (basic) 51–450, column (plus) 51–450, column (full) 51–450' );
+		expect( row ).toContain( 'are level' );
+	} );
+
+	it( 'measures unpainted columns by what their children show', () => {
+		mountCanvas( [ cards( { backgroundColor: 'rgba(0, 0, 0, 0)' } ) ] );
+
+		const row = describeMeasuredLayout( [ 'cols' ] ).find( ( note ) =>
+			note.startsWith( 'Row in columns (cols)' )
+		);
+
+		expect( row ).toContain( 'column (basic) 75–389, column (plus) 75–416, column (full) 75–443' );
+		expect( row ).toContain( 'not level' );
+	} );
+} );
+
+describe( 'with buttons of different heights', () => {
+	// Buttons in a row, each at its own top and height, laid out at
+	// fractional pixels as the editor does.
+	const buttons = ( boxes: [ top: number, height: number ][] ): CanvasBlock => ( {
+		clientId: 'btns',
+		name: 'core/buttons',
+		rect: { top: 0, left: 0, width: 600, height: 60 },
+		children: boxes.map( ( [ top, height ], index ) => ( {
+			clientId: `b${ index }`,
+			name: 'core/button',
+			rect: { top, left: index * 200, width: 180, height },
+			style: { backgroundColor: 'rgb(151, 71, 47)' },
+		} ) ),
+	} );
+
+	const rowOf = () =>
+		describeMeasuredLayout( [ 'btns' ] ).find( ( note ) =>
+			note.startsWith( 'Row in buttons (btns)' )
+		);
+
+	it( 'reports a filled button beside a shorter link-style one as level', () => {
+		// Centres at 23 and 25.4.
+		mountCanvas( [
+			buttons( [
+				[ -1.4, 48.8 ],
+				[ 10.4, 30 ],
+			] ),
+		] );
+
+		expect( rowOf() ).toContain( 'button (b0) -1.4–47.4, button (b1) 10.4–40.4' );
+		expect( rowOf() ).toContain( 'Their visible centre lines are level (within 3px).' );
+	} );
+
+	it( 'gives every offset as a number when the row is not level', () => {
+		// Each within the tolerance of the first, but 4px apart from each other.
+		mountCanvas( [
+			buttons( [
+				[ 10, 40 ],
+				[ 8, 40 ],
+				[ 12, 40 ],
+			] ),
+		] );
+
+		expect( rowOf() ).toContain(
+			"not level. Against button (b0)'s: button (b1)'s is 2px above it; button (b2)'s is 2px below it."
+		);
+	} );
+
+	// Rounding the offsets first let up to 3.4px pass, more readily upward
+	// than downward, and depending on which button came first.
+	it.each( [
+		[ 'below', [ 10, 13.2 ] ],
+		[ 'above', [ 13.2, 10 ] ],
+	] )( 'reports a 3.2px offset as not level, whichever way it goes (%s)', ( direction, tops ) => {
+		mountCanvas( [ buttons( tops.map( ( top ) => [ top, 40 ] ) ) ] );
+
+		expect( rowOf() ).toContain( `button (b1)'s is 3.2px ${ direction } it.` );
+	} );
 } );
 
 it( 'gives nothing when the canvas is not mounted', () => {

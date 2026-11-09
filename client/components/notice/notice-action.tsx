@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 
 import './style.scss';
@@ -15,14 +14,6 @@ interface NoticeActionProps {
 
 export default class NoticeAction extends Component< NoticeActionProps > {
 	static displayName = 'NoticeAction';
-
-	static propTypes = {
-		'aria-label': PropTypes.string,
-		href: PropTypes.string,
-		onClick: PropTypes.func,
-		external: PropTypes.bool,
-		icon: PropTypes.string,
-	};
 
 	static defaultProps = {
 		external: false,

@@ -11,6 +11,11 @@ export type StepperMiscellaneousFields = Partial< {
 		entryPoint: string;
 	};
 	site: CreatedSite;
+	/**
+	 * Whether identify has already handled the address a landing page handed over (`start=true`), so returning
+	 * to it shows the form instead of checking again.
+	 */
+	migrationArrivalChecked: boolean;
 	migrationHandoff: {
 		siteId: number;
 		siteSlug: string;

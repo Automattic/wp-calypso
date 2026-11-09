@@ -1,13 +1,11 @@
 import config from '@automattic/calypso-config';
 import { AI_SITE_BUILDER_SPEC_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { init as initPostHog } from '@automattic/posthog';
-import { useEffect } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2 } from '../../internals/types';
 
 function initialize() {
@@ -55,23 +53,6 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
-	useSideEffect() {
-		const queryParams = useQuery();
-		const source = queryParams.get( 'source' );
-		const currentUser = useSelector( getCurrentUser );
-
-		useEffect( () => {
-			if ( source?.startsWith( 'ciab-' ) && config.isEnabled( 'posthog-tracking' ) ) {
-				initPostHog(
-					config( 'ciab_posthog_api_key' ),
-					currentUser ? { ID: currentUser.ID } : undefined,
-					{
-						session_recording: { maskAllInputs: false, maskTextSelector: '' },
-					}
-				);
-			}
-		}, [ source, currentUser ] );
-	},
 	useStepNavigation: ( currentStepSlug, navigate ) => {
 		return {
 			submit: ( submittedStep ) => {
@@ -95,7 +76,17 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 
 						// The pending action reports a failed or timed-out build by throwing, and
 						// the processing step has already stashed its message for the error step.
-						return navigate( 'error', undefined, true );
+						// The other outcomes store nothing. The reason tags every outcome, failure included.
+						return navigate(
+							'error',
+							{
+								errorReason: getProcessingErrorReason(
+									result.processingResult,
+									'processing_no_redirect'
+								),
+							},
+							true
+						);
 					}
 				}
 			},

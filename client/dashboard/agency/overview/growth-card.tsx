@@ -8,10 +8,10 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import { IconListItem } from '../../components/icon-list/icon-list-item';
 import { SectionHeader } from '../../components/section-header';
+import NewTabLabel from '../components/new-tab-label';
 import { TARGET_INFLUENCED_REVENUE } from '../tiers/constants';
 import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
 import { PARTNER_PROGRAM_GUIDE_URL, PROGRAM_INCENTIVES_URL } from './constants';
-import NewTabLabel from './new-tab-label';
 import OverviewLinkButton from './overview-link-button';
 import type { AgencyOverviewLinks } from './overview-content';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
@@ -146,11 +146,27 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 
 function getProContent( links: GrowthCardLinks ): GrowthContent {
 	return {
+		title: __( 'Grow toward VIP Pro Agency Partner' ),
+		description: sprintf(
+			/* translators: %s is the influenced revenue target, e.g. $100,000 */
+			__(
+				'Reach %s IAR to qualify for VIP Pro Agency Partner, an invitation-only tier with higher VIP referral commissions and annual credits. All three paths below count toward your IAR.'
+			),
+			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'vip-pro-agency-partner' ], 'USD', {
+				stripZeros: true,
+			} )
+		),
+		items: getGrowTowardItems( links ),
+	};
+}
+
+function getVipProContent( links: GrowthCardLinks ): GrowthContent {
+	return {
 		title: __( 'Grow toward Premier Partner' ),
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $250,000 */
 			__(
-				'Reach %s IAR to become a Premier Partner and unlock Marketing Development Funds and a Parse.ly trial. All three paths below count toward your IAR.'
+				'Reach %s IAR to qualify for Premier Partner, an invitation-only tier with Marketing Development Funds and a Parse.ly trial. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD', {
 				stripZeros: true,
@@ -224,6 +240,9 @@ function getContent(
 	}
 	if ( tierLevel >= 4 ) {
 		return getPremierContent( links, hasPartnerDirectoryListing );
+	}
+	if ( tierLevel >= 3 ) {
+		return getVipProContent( links );
 	}
 	if ( tierLevel >= 2 ) {
 		return getProContent( links );
@@ -317,7 +336,11 @@ export default function GrowthCard( {
 									<ButtonStack
 										justify={ isSmallViewport ? 'flex-start' : 'flex-end' }
 										expanded={ isSmallViewport }
-										style={ { flexShrink: 0 } }
+										style={ {
+											flexShrink: 0,
+											// Keeps long descriptions off the button in the inline layout.
+											paddingInlineStart: isSmallViewport ? undefined : '16px',
+										} }
 										as="span"
 									>
 										{ item.isExternal ? (

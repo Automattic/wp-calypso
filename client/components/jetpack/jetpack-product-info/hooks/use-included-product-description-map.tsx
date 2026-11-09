@@ -1,6 +1,7 @@
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
@@ -15,6 +16,7 @@ import {
 	JETPACK_AI_PRODUCTS,
 	isJetpackCompleteSlug,
 	isJetpackGrowthSlug,
+	JETPACK_PRO_PLANS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -143,9 +145,42 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			} ),
 		};
 
+		const INCLUDED_PRODUCT_DESCRIPTION_PRO_MAP: Record< string, ProductDescription > = {
+			...INCLUDED_PRODUCT_DESCRIPTION_T2_MAP,
+
+			...setProductDescription(
+				[
+					PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+					PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+					PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY,
+				],
+				{
+					value: backupDescription,
+					calloutText: translate( '50GB cloud storage' ),
+				}
+			),
+
+			...setProductDescription( JETPACK_STATS_PRODUCTS, {
+				value: statsDescription,
+				calloutText: translate( '50k views/mo' ),
+			} ),
+
+			...setProductDescription( JETPACK_ANTI_SPAM_PRODUCTS, {
+				value: antiSpamDescription,
+				calloutText: translate( '10k API calls/mo' ),
+			} ),
+
+			...setProductDescription( JETPACK_SEARCH_PRODUCTS, {
+				value: searchDescription,
+				calloutText: translate( '10k records & requests/mo' ),
+			} ),
+		};
+
 		const productMap = ( () => {
 			if ( isJetpackCompleteSlug( productSlug ) ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;
+			} else if ( ( JETPACK_PRO_PLANS as ReadonlyArray< string > ).includes( productSlug ) ) {
+				return INCLUDED_PRODUCT_DESCRIPTION_PRO_MAP;
 			} else if ( isJetpackGrowthSlug( productSlug ) ) {
 				return INCLUDED_PRODUCT_DESCRIPTION_GROWTH_MAP;
 			}

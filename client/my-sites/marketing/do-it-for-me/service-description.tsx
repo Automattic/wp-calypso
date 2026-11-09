@@ -11,9 +11,9 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-weight: 500;
 `;
-const Description = styled.div`
+const Description = styled.div< { isLast?: boolean } >`
 	color: var( --studio-gray-60 );
-	padding-bottom: 32px;
+	padding-bottom: ${ ( props ) => ( props.isLast ? 0 : 32 ) }px;
 	font-size: 0.875rem;
 `;
 
@@ -31,14 +31,6 @@ const ProgressLine = styled.div`
 const VerticalStepProgress = styled.div`
 	display: flex;
 	flex-direction: column;
-	${ StepContainer }:last-child {
-		${ ProgressLine } {
-			display: none;
-		}
-		${ Description } {
-			padding-bottom: 0;
-		}
-	}
 `;
 
 const IndexContainer = styled.div`
@@ -72,20 +64,22 @@ const Step = ( {
 	index,
 	title,
 	description,
+	isLast = false,
 }: {
 	index: TranslateResult;
 	title: TranslateResult;
 	description: TranslateResult;
+	isLast?: boolean;
 } ) => {
 	return (
 		<StepContainer>
 			<IndexContainer>
 				<Index>{ index }</Index>
-				<ProgressLine />
+				{ ! isLast && <ProgressLine /> }
 			</IndexContainer>
 			<ContentWrapper>
 				<Title>{ title }</Title>
-				<Description>{ description }</Description>
+				<Description isLast={ isLast }>{ description }</Description>
 			</ContentWrapper>
 		</StepContainer>
 	);
@@ -121,6 +115,7 @@ export const DIFMServiceDescription = ( { isStoreFlow }: { isStoreFlow: boolean 
 				/>
 
 				<Step
+					isLast
 					index={ translate( '4' ) }
 					title={ translate( 'Submit content for your new website' ) }
 					description={

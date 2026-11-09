@@ -6,12 +6,28 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
 
-// agenttic-ui ships ESM only, which jest can't resolve here; the dot is a stub.
+// agenttic-ui ships ESM only, which jest can't load here; its own tests cover the ring.
 jest.mock(
 	'@automattic/agenttic-ui',
 	() => ( {
-		StatusIndicator: ( { tone, size }: { tone: string; size?: number } ) => (
-			<svg data-testid="dot" data-tone={ tone } data-size={ size } />
+		ProgressRing: ( {
+			percent,
+			tone,
+			size,
+			className,
+		}: {
+			percent: number;
+			tone?: string;
+			size?: number;
+			className?: string;
+		} ) => (
+			<svg
+				data-testid="credits-ring"
+				data-percent={ percent }
+				data-tone={ tone }
+				data-size={ size }
+				className={ className }
+			/>
 		),
 	} ),
 	{ virtual: true }
@@ -25,6 +41,12 @@ import { buildMockCreditsStatus } from '../../utils/credits';
 import { buildLiveCreditsStatus, parseCreditSnapshot } from '../../utils/live-credits';
 import type { CreditsStatus } from '../../utils/credits';
 import type { CreditSnapshot } from '../../utils/live-credits';
+
+const freeFine: CreditsStatus = {
+	plan: 'free',
+	percent: 80,
+	pools: [ { id: 'free', label: 'Free credits', percent: 80 } ],
+};
 
 const paid: CreditsStatus = {
 	plan: 'paid',
@@ -132,51 +154,160 @@ describe( 'CreditsMeter', () => {
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
-	it.each( [ 'click', 'Enter', 'Space' ] )(
-		'focuses the popover on %s, keeps Upgrade keyboard accessible, and restores focus on Escape',
-		async ( input ) => {
-			const user = userEvent.setup();
-			function Meter() {
-				const [ isOpen, setIsOpen ] = useState( false );
-				return (
-					<CreditsMeter
-						status={ paid }
-						isOpen={ isOpen }
-						onToggle={ setIsOpen }
-						action={ upgrade }
-					/>
-				);
-			}
-			render( <Meter /> );
-			const toggle = screen.getByRole( 'button', {
-				name: `${ localNumber( 11.6 ) }k credits left`,
-			} );
-			if ( input === 'click' ) {
-				await user.click( toggle );
-			} else {
-				await user.tab();
-				await user.keyboard( input === 'Enter' ? '{Enter}' : ' ' );
-			}
-			const dialog = screen.getByRole( 'dialog', { name: 'Site credits' } );
-			await waitFor( () => expect( dialog ).toHaveFocus() );
-			const action = screen.getByRole( 'link', { name: 'Upgrade' } );
-			expect( action ).not.toHaveFocus();
-			await user.tab();
-			expect( action ).toHaveFocus();
-			await user.keyboard( '{Escape}' );
-			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-			await waitFor( () => expect( toggle ).toHaveFocus() );
-		}
-	);
+	describe( 'keyboard focus', () => {
+		let getClientRectsSpy: jest.SpyInstance;
 
-	it( 'labels the dot with the balance sentence and toggles the popover', () => {
+		beforeEach( () => {
+			// jsdom has no layout, so the popover's constrained tabbing finds nothing tabbable and blocks Tab.
+			getClientRectsSpy = jest
+				.spyOn( HTMLElement.prototype, 'getClientRects' )
+				.mockReturnValue( [ {} ] as unknown as DOMRectList );
+		} );
+
+		afterEach( () => {
+			getClientRectsSpy.mockRestore();
+		} );
+
+		it.each( [ 'click', 'Enter', 'Space' ] )(
+			'focuses the popover on %s, keeps Upgrade keyboard accessible, and restores focus on Escape',
+			async ( input ) => {
+				const user = userEvent.setup();
+				function Meter() {
+					const [ isOpen, setIsOpen ] = useState( false );
+					return (
+						<CreditsMeter
+							status={ paid }
+							isOpen={ isOpen }
+							onToggle={ setIsOpen }
+							action={ upgrade }
+						/>
+					);
+				}
+				render( <Meter /> );
+				const toggle = screen.getByRole( 'button', {
+					name: `${ localNumber( 11.6 ) }k credits left`,
+				} );
+				if ( input === 'click' ) {
+					await user.click( toggle );
+				} else {
+					await user.tab();
+					await user.keyboard( input === 'Enter' ? '{Enter}' : ' ' );
+				}
+				const dialog = screen.getByRole( 'dialog', { name: 'Site credits' } );
+				await waitFor( () => expect( dialog ).toHaveFocus() );
+				const action = screen.getByRole( 'link', { name: 'Upgrade' } );
+				expect( action ).not.toHaveFocus();
+				await user.tab();
+				expect( action ).toHaveFocus();
+				await user.keyboard( '{Escape}' );
+				expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+				await waitFor( () => expect( toggle ).toHaveFocus() );
+			}
+		);
+	} );
+
+	it( 'labels the toggle with the balance sentence and toggles the popover', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
-		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'muted' );
-		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-size', '12' );
+		expect( toggle ).not.toHaveAccessibleDescription();
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'draws the ring from the plan share, not the balance left', () => {
+		render(
+			<CreditsMeter
+				status={ { ...livePaid( 0 ), remaining: 67000 } }
+				isOpen={ false }
+				onToggle={ () => {} }
+			/>
+		);
+		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 67 ) }k credits left` } );
+		expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-percent', '0' );
+	} );
+
+	it( 'draws the ring in the primary blue', () => {
+		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } /> );
+		expect( screen.getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-tone', 'primary' );
+	} );
+
+	it( 'draws the ring at 16 px', () => {
+		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } /> );
+		expect( screen.getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-size', '16' );
+	} );
+
+	it( 'draws the ring from the free pool on a free plan', () => {
+		render( <CreditsMeter status={ freeFine } isOpen={ false } onToggle={ () => {} } /> );
+		const toggle = screen.getByRole( 'button', { name: '80% of free credits left' } );
+		expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute(
+			'data-percent',
+			'80'
+		);
+	} );
+
+	it.each( [
+		[ 'low', livePaid( 8000 ), '10', `Low on credits: ${ localNumber( 8 ) }k credits left` ],
+		[ 'out', livePaid( 0 ), '0', `Out of credits: ${ localNumber( 0 ) } credits left` ],
+	] )(
+		'keeps the one ring when credits are %s, with the state in the tooltip',
+		async ( _state, status, percent, name ) => {
+			render( <CreditsMeter status={ status } isOpen={ false } onToggle={ () => {} } /> );
+			const toggle = screen.getByRole( 'button', { name } );
+			expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+			expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute(
+				'data-percent',
+				percent
+			);
+			await userEvent.hover( toggle );
+			expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( name );
+			expect( toggle ).not.toHaveAccessibleDescription();
+		}
+	);
+
+	it( 'marks the ring as empty at exactly 0, not with a credit left', () => {
+		const ring = () => within( screen.getByRole( 'button' ) ).getByTestId( 'credits-ring' );
+		const { rerender } = render(
+			<CreditsMeter status={ livePaid( 0 ) } isOpen={ false } onToggle={ () => {} } />
+		);
+		expect( ring() ).toHaveClass( 'agents-manager-credits-meter__ring--empty' );
+
+		rerender( <CreditsMeter status={ livePaid( 1 ) } isOpen={ false } onToggle={ () => {} } /> );
+		expect( ring() ).toHaveClass( 'agents-manager-credits-meter__ring' );
+		expect( ring() ).not.toHaveClass( 'agents-manager-credits-meter__ring--empty' );
+	} );
+
+	it( 'leads the popover with the combined balance, above the pools', () => {
+		render( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } /> );
+		const total = screen.getByText( `${ localNumber( 11.6 ) }k credits left` );
+		const planRow = screen.getByRole( 'group', { name: /^Monthly plan/ } );
+		expect( total.compareDocumentPosition( planRow ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+	} );
+
+	it( 'leads the popover with the share left on a free plan', () => {
+		render( <CreditsMeter status={ freeFine } isOpen onToggle={ () => {} } /> );
+		expect( screen.getByText( '80% of free credits left' ) ).toBeInTheDocument();
+	} );
+
+	it( 'keeps the total at zero, ahead of the used-all message', () => {
+		render( <CreditsMeter status={ livePaid( 0 ) } isOpen onToggle={ () => {} } /> );
+		const total = screen.getByText( `${ localNumber( 0 ) } credits left` );
+		const message = screen.getByText( 'You’ve used all your site credits.' );
+		expect( total.compareDocumentPosition( message ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+	} );
+
+	it( 'asks the chat for the balance from the popover header', () => {
+		const onShowCredits = jest.fn();
+		const { rerender } = render(
+			<CreditsMeter status={ paid } isOpen onToggle={ () => {} } onShowCredits={ onShowCredits } />
+		);
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show my credits in the chat' } ) );
+		expect( onShowCredits ).toHaveBeenCalledTimes( 1 );
+
+		rerender( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } /> );
+		expect(
+			screen.queryByRole( 'button', { name: 'Show my credits in the chat' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'lists each pool with its figures and a secondary CTA on paid plans', () => {
@@ -214,7 +345,7 @@ describe( 'CreditsMeter', () => {
 		};
 		render( <CreditsMeter status={ status } isOpen onToggle={ () => {} } /> );
 		expect(
-			screen.getByRole( 'button', { name: `${ localNumber( 1 ) } credit left` } )
+			screen.getByRole( 'button', { name: `Low on credits: ${ localNumber( 1 ) } credit left` } )
 		).toBeInTheDocument();
 		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
 		expect(
@@ -233,10 +364,11 @@ describe( 'CreditsMeter', () => {
 			<CreditsMeter status={ livePaid( 0 ) } isOpen onToggle={ () => {} } action={ upgrade } />
 		);
 		expect(
-			screen.getByRole( 'button', { name: `${ localNumber( 0 ) } credits left` } )
+			screen.getByRole( 'button', { name: `Out of credits: ${ localNumber( 0 ) } credits left` } )
 		).toBeInTheDocument();
-		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'error' );
-		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+		// Screen readers don't see the bar, so only the row's name says "left".
+		const row = screen.getByRole( 'group', { name: 'Monthly plan, 0% left, Resets Oct 8 (UTC)' } );
+		expect( within( row ).getByText( '0%' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
 		);
@@ -296,7 +428,6 @@ describe( 'CreditsMeter', () => {
 		expect(
 			screen.getByRole( 'button', { name: `${ localNumber( 67 ) }k credits left` } )
 		).toBeInTheDocument();
-		expect( screen.getByTestId( 'dot' ) ).toHaveAttribute( 'data-tone', 'muted' );
 		expect( screen.getByText( '0%' ) ).not.toHaveClass( 'is-exhausted' );
 		expect(
 			screen.getByText( `${ localNumber( 0 ) } of ${ localNumber( 80 ) }k credits left` )
@@ -373,7 +504,7 @@ describe( 'CreditsMeter', () => {
 			);
 			const amount = `${ localNumber( 0 ) } credits left`;
 			balanceOnly( `Top-ups, ${ amount }`, amount );
-			expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+			expect( screen.getByText( '0%' ) ).toHaveClass( 'is-exhausted' );
 			expect( screen.getByText( /used all your site credits/ ) ).toBeInTheDocument();
 		} );
 
@@ -430,7 +561,7 @@ describe( 'CreditsMeter', () => {
 		};
 		render( <CreditsMeter status={ freeFraction } isOpen onToggle={ () => {} } /> );
 		expect(
-			screen.getByRole( 'button', { name: '<1% of free credits left' } )
+			screen.getByRole( 'button', { name: 'Low on credits: <1% of free credits left' } )
 		).toBeInTheDocument();
 		expect( screen.getByText( '<1%' ) ).toBeInTheDocument();
 		expect( screen.queryByText( /used all your free credits/ ) ).not.toBeInTheDocument();
@@ -446,7 +577,7 @@ describe( 'CreditsMeter', () => {
 				manageUrl="/credits"
 			/>
 		);
-		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+		expect( screen.getByText( '0%' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your free credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
 		);

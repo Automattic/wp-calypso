@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { launchSite } from '@automattic/api-core';
+import { fetchShoppingCart, launchSite } from '@automattic/api-core';
 import { addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
+import { buildDashboardLink } from 'calypso/dashboard/app/routing';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	clearSignupCompleteFlowName,
@@ -33,6 +34,7 @@ let mockOnboard: {
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
 let mockDomains: unknown[] | Error = [];
+let mockCart: unknown = { products: [] };
 let mockUserId: number | null = 1;
 
 // Both packages import themselves while loading, so the real exports are read lazily rather than spread.
@@ -55,6 +57,7 @@ const mockResetOnboardStore = jest.fn();
 jest.mock( '@automattic/api-core', () =>
 	lazilyOverride( '@automattic/api-core', {
 		launchSite: jest.fn( () => Promise.resolve() ),
+		fetchShoppingCart: jest.fn( () => Promise.resolve( mockCart ) ),
 	} )
 );
 
@@ -154,6 +157,9 @@ const ALL_STEPS = [
 
 const domainItem = { product_slug: 'domain_reg', meta: 'example.com' };
 const transferItem = { product_slug: 'domain_transfer', meta: 'example.org' };
+const mappingItem = { product_slug: 'domain_map', meta: 'example.net' };
+const setupUrl = buildDashboardLink( 'dotcom', '/domains/example.net/domain-connection-setup' );
+const cartWithMapping = { products: [ { product_slug: 'domain_map', meta: 'example.net' } ] };
 const planItem = { product_slug: 'personal-bundle' };
 const storageItem = {
 	product_slug: 'wordpress_com_1gb_space_addon_yearly',
@@ -202,6 +208,8 @@ const initializeWith = ( site: unknown, domains: unknown[] | Error ) => {
 
 const assigned = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
 const replaced = () => ( window.location.replace as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
+const checkoutParam = ( name: string ) =>
+	new URL( replaced(), 'http://localhost/' ).searchParams.get( name );
 const originalLocation = window.location;
 
 describe( 'launch-site flow', () => {
@@ -224,6 +232,7 @@ describe( 'launch-site flow', () => {
 			value: {
 				...window.location,
 				href: 'http://localhost/setup/launch-site/domains?siteSlug=example.wordpress.com',
+				search: '?siteSlug=example.wordpress.com',
 				assign: jest.fn(),
 				replace: jest.fn(),
 			},
@@ -231,6 +240,7 @@ describe( 'launch-site flow', () => {
 		} );
 		mockSite = null;
 		mockDomains = [];
+		mockCart = { products: [] };
 		setFlowSteps( ALL_STEPS );
 	} );
 
@@ -597,6 +607,150 @@ describe( 'launch-site flow', () => {
 			finishAdding();
 			await result;
 			expect( window.location.replace ).toHaveBeenCalled();
+		} );
+
+		describe( 'connecting a domain', () => {
+			const launchDestination = '/home/example.wordpress.com?celebrateLaunch=true';
+
+			beforeEach( () => {
+				mockSite = paidSite;
+				mockCart = cartWithMapping;
+				mockOnboard.domainCartItems = [ mappingItem ];
+			} );
+
+			it( 'lands on the connection setup after checkout', async () => {
+				mockQuery.redirect_to = '/plugins/example.wordpress.com';
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( fetchShoppingCart ).toHaveBeenCalledWith( paidSite.ID );
+				expect( new URL( replaced(), 'http://localhost/' ).pathname ).toBe(
+					'/checkout/example.wordpress.com'
+				);
+				expect( checkoutParam( 'redirect_to' ) ).toBe( setupUrl );
+				expect( checkoutParam( 'checkoutBackUrl' ) ).toContain( '/plugins/example.wordpress.com' );
+			} );
+
+			it( 'leaves no cookie behind for a later checkout to land on', async () => {
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( persistSignupDestination ).not.toHaveBeenCalled();
+				expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			} );
+
+			it( 'lands on the dotcom Dashboard connection setup for a launch from A4A', async () => {
+				mockQuery.dashboard = 'a4a';
+				window.location.search = '?dashboard=a4a';
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( checkoutParam( 'redirect_to' ) ).toBe( setupUrl );
+			} );
+
+			it( 'finds the connection in the cart whatever the case it was typed in', async () => {
+				mockOnboard.domainCartItems = [ { ...mappingItem, meta: 'Example.NET' } ];
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( checkoutParam( 'redirect_to' ) ).toBe( setupUrl );
+			} );
+
+			it( 'still lands on the connection setup when a plan is bought with it', async () => {
+				mockOnboard.planCartItem = planItem;
+				mockCart = { products: [ ...cartWithMapping.products, planItem ] };
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'launch-site', [
+					mappingItem,
+					planItem,
+				] );
+				expect( checkoutParam( 'redirect_to' ) ).toBe( setupUrl );
+			} );
+
+			it( 'keeps the launch destination when another domain is bought alongside', async () => {
+				mockOnboard.domainCartItems = [ mappingItem, domainItem ];
+				mockCart = { products: [ ...cartWithMapping.products, domainItem ] };
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( fetchShoppingCart ).not.toHaveBeenCalled();
+				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
+				expect( checkoutParam( 'checkoutBackUrl' ) ).toContain( launchDestination );
+			} );
+
+			it( 'keeps the launch destination when the connection did not make it into the cart', async () => {
+				mockCart = { products: [] };
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( launchDestination );
+				expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
+			} );
+
+			it( 'keeps the launch destination when adding to the cart fails', async () => {
+				mockCart = { products: [] };
+				( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
+			} );
+
+			it( 'keeps the launch destination, without asking again, when the cart answers with an error', async () => {
+				( fetchShoppingCart as jest.Mock ).mockRejectedValueOnce( new Error( 'offline' ) );
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( fetchShoppingCart ).toHaveBeenCalledTimes( 1 );
+				expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
+			} );
+
+			describe( 'when the cart does not answer', () => {
+				const unanswered = () => new Promise( () => {} );
+
+				beforeEach( () => {
+					jest.useFakeTimers();
+				} );
+
+				afterEach( () => {
+					jest.useRealTimers();
+				} );
+
+				it( 'asks again and lands on the connection setup once it answers', async () => {
+					( fetchShoppingCart as jest.Mock ).mockReturnValueOnce( unanswered() );
+
+					const { result } = submit( STEPS.PROCESSING.slug, launched );
+					await jest.advanceTimersByTimeAsync( 1000 );
+					await result;
+
+					expect( fetchShoppingCart ).toHaveBeenCalledTimes( 2 );
+					expect( checkoutParam( 'redirect_to' ) ).toBe( setupUrl );
+				} );
+
+				it( 'keeps the launch destination after three silent attempts', async () => {
+					( fetchShoppingCart as jest.Mock )
+						.mockReturnValueOnce( unanswered() )
+						.mockReturnValueOnce( unanswered() )
+						.mockReturnValueOnce( unanswered() );
+
+					const { result } = submit( STEPS.PROCESSING.slug, launched );
+					await jest.advanceTimersByTimeAsync( 3000 );
+					await result;
+
+					expect( fetchShoppingCart ).toHaveBeenCalledTimes( 3 );
+					expect( checkoutParam( 'redirect_to' ) ).toBe( launchDestination );
+				} );
+			} );
+
+			it( 'does not read the cart when only registering a domain', async () => {
+				mockOnboard.domainCartItems = [ domainItem ];
+
+				await submit( STEPS.PROCESSING.slug, launched ).result;
+
+				expect( fetchShoppingCart ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 

@@ -1,3 +1,4 @@
+import { readerPostQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { READER_CONVERSATION_UPDATE_FOLLOW_STATUS } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
@@ -54,6 +55,29 @@ describe( 'reader post cache middleware', () => {
 		} );
 
 		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
+			is_following_conversation: false,
+		} );
+	} );
+
+	// A remounted post view syncs the fetched post again, which would bring back a stale follow.
+	it( 'patches conversation follow state in the fetched post', () => {
+		const { queryKey } = readerPostQuery( { blogId: 100, postId: 1 }, 600 );
+		queryClient.setQueryData( queryKey, {
+			ID: 1,
+			site_ID: 100,
+			is_following_conversation: true,
+		} as never );
+
+		dispatch( {
+			type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+			payload: {
+				siteId: 100,
+				postId: 1,
+				followStatus: CONVERSATION_FOLLOW_STATUS.not_following,
+			},
+		} );
+
+		expect( queryClient.getQueryData( queryKey ) ).toMatchObject( {
 			is_following_conversation: false,
 		} );
 	} );

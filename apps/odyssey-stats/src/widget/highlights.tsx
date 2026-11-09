@@ -9,6 +9,7 @@ import { ResolvedDateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
+import Skeleton from './skeleton';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { MouseEvent } from 'react';
@@ -104,8 +105,8 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 					<div className="stats-widget-highlights-card__list stats-widget-highlights-card__skeleton">
 						<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
 						<div className="stats-widget-highlights-card__item" aria-hidden="true">
-							<span className="stats-widget-highlights-card__skeleton-bar is-title" />
-							<span className="stats-widget-highlights-card__skeleton-bar is-value" />
+							<Skeleton className="stats-widget-highlights-card__skeleton-bar is-title" />
+							<Skeleton className="stats-widget-highlights-card__skeleton-bar is-value" />
 						</div>
 					</div>
 				) }
@@ -153,10 +154,11 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 		'/reports/referrers',
 		linkRange
 	);
+	// The home page row has no post page on the dashboard; it opens the posts report, where it is a row.
 	const postHref = ( item: HighLightItem ) =>
 		statsLink(
 			`${ statsBaseUrl }/stats/post/${ item.id }/${ siteId }`,
-			item.id > 0 ? `/post/${ item.id }` : null,
+			item.id > 0 ? `/post/${ item.id }` : '/reports/posts',
 			linkRange
 		);
 	const referrerHref = ( item: HighLightItem ) => item.url || item.href;
@@ -165,13 +167,13 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, range );
+	} = useTopPostsQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, range );
+	} = useReferrersQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
 
 	// Held here rather than left to TabPanel, which remounts when the section comes back after
 	// an empty range and reports its initial tab as it does; only a change is a user's click.

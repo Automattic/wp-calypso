@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-// @ts-expect-error The commands package is not yet typed.
 import { CommandMenu, useCommandLoader } from '@wordpress/commands';
 import { navigationCommands } from 'calypso/dashboard/app/command-palette/commands';
 
@@ -45,5 +44,5 @@ export default function CommandPalette() {
 		context: 'root',
 	} );
 
-	return <CommandMenu search="" />;
+	return <CommandMenu />;
 }

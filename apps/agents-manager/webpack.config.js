@@ -115,32 +115,11 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
-					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
-					// plugin registers a wp-ui script handle yet, and WP_Scripts
-					// silently skips scripts with unregistered dependencies, so
-					// externalizing it prevents the bundle from loading on
-					// self-hosted sites.
-					if ( request === '@wordpress/ui' ) {
-						return null;
-					}
 					// No branch for @wordpress/router or @wordpress/private-apis —
 					// core registers both handles and they must stay external. Each
 					// keeps module-scope state the editor already owns (the router's
 					// history, `unlock()`'s WeakMap); a bundled second copy forks it
 					// and silently breaks `editor-navigate`.
-
-					// The plugin maps `react`/`react-dom` but not this deep import,
-					// so it would get bundled — a second react-dom copy (v19) that
-					// crashes against the page's external React. WordPress's
-					// `ReactDOM` global has included `createRoot` since WP 6.2.
-					if ( request === 'react-dom/client' ) {
-						return 'ReactDOM';
-					}
-				},
-				requestToHandle( request ) {
-					if ( request === 'react-dom/client' ) {
-						return 'react-dom';
-					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),

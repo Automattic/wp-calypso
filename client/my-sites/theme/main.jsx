@@ -1313,7 +1313,12 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+				<AsyncLoad
+					require={ loadGlobalNotices }
+					placeholder={ null }
+					loadFailureFallback={ null }
+					id="notices"
+				/>
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />

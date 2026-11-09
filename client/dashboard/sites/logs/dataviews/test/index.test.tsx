@@ -211,6 +211,7 @@ describe( 'SiteLogsDataViews', () => {
 		expect( autoRefresh ).not.toHaveBeenCalled();
 	} );
 
+	// Renders the full DataViews and opens its filter menu; a loaded CI agent can push it past Jest's 5s default.
 	test( 'picking a filter from the menu makes no new logs request', async () => {
 		mockPreferences();
 		const requestedQueries = mockServerLogs();
@@ -238,7 +239,7 @@ describe( 'SiteLogsDataViews', () => {
 
 		await screen.findByRole( 'option', { name: '404' } );
 		expect( requestedQueries ).toHaveLength( requestsBefore );
-	} );
+	}, 10_000 );
 
 	// When the parent supplies 'autoRefreshDisabledReason', the toggle control must be disabled to prevent interaction.
 	test( 'auto-refresh toggle is disabled when reason provided', async () => {
@@ -262,6 +263,7 @@ describe( 'SiteLogsDataViews', () => {
 		expect( toggle ).toBeDisabled();
 	} );
 
+	// Drives many popover interactions; a loaded CI agent can push it past Jest's 5s default.
 	test( 'filters by request URL, and Reset view clears it', async () => {
 		mockPreferences();
 		const requestedQueries = mockServerLogs();
@@ -305,5 +307,5 @@ describe( 'SiteLogsDataViews', () => {
 
 		await user.click( screen.getByLabelText( 'Add filter' ) );
 		expect( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) ).toBeVisible();
-	} );
+	}, 10_000 );
 } );

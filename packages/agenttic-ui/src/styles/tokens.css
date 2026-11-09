@@ -22,6 +22,7 @@
 	--color-error-background: #fcf1f1;
 	--color-error: #e7000b;
 	--color-error-accent: var( --color-error );
+	--color-error-strong: var( --color-error-accent );
 	--color-link: var( --color-primary );
 
 	/* === TYPOGRAPHY === */
@@ -100,6 +101,7 @@
 	--color-error-background: #2e1f1f;
 	--color-error: #ffdddf;
 	--color-error-accent: #e7000b;
+	--color-error-strong: #f87171;
 	--color-link: var( --color-white );
 }
 

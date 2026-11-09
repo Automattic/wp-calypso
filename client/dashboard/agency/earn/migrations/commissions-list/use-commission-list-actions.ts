@@ -14,6 +14,7 @@ export default function useCommissionListActions( {
 			{
 				id: 'request-verification',
 				label: __( 'Request verification' ),
+				isPrimary: true,
 				isEligible( item: TaggedSite ) {
 					return item.incentive_status === 'pending';
 				},
@@ -24,6 +25,7 @@ export default function useCommissionListActions( {
 			{
 				id: 'request-another-verification',
 				label: __( 'Request another verification' ),
+				isPrimary: true,
 				isEligible( item: TaggedSite ) {
 					return item.incentive_status === 'rejected' || item.incentive_status === 'ineligible';
 				},

@@ -2,7 +2,7 @@ import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-que
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
+import { closeSmall } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
@@ -118,7 +118,7 @@ export default function DIFMOfferCard( { site }: { site: Site } ) {
 			/>
 			<Button
 				className="dashboard-difm-offer-card__dismiss"
-				icon={ close }
+				icon={ closeSmall }
 				label={ __( 'Dismiss' ) }
 				size="small"
 				onClick={ handleDismiss }

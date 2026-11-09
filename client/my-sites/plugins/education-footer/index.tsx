@@ -11,7 +11,7 @@ import howToInstallPluginsImage from 'calypso/assets/images/plugins/how-to-insta
 import whatArePluginsImage from 'calypso/assets/images/plugins/what-are-plugins.webp';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
-import Section, { SectionContainer } from 'calypso/components/section';
+import Section from 'calypso/components/section';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
@@ -122,7 +122,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 		.marketplace-cta {
 			font-weight: 500;
 		}
-		${ SectionContainer }::before {
+		.section-container::before {
 			display: none;
 		}
 	}
@@ -139,11 +139,11 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
-		`${ SectionContainer } {
+		`.section-container {
 		padding-bottom: 32px;
 	}` }
 
-	${ SectionContainer }::before {
+	.section-container::before {
 		background-color: #f6f7f7;
 	}
 `;

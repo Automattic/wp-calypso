@@ -1,11 +1,18 @@
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	getBuildWowGraph,
+	getDesignCandidate,
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	isBuildWowSiteEditorReady,
 	requestBuildWowSite,
 } from '../build-wow';
+
+jest.mock( '@automattic/calypso-config', () => ( {
+	__esModule: true,
+	default: { isEnabled: jest.fn( () => false ) },
+} ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
@@ -116,6 +123,31 @@ describe( 'build-wow utilities', () => {
 		expect( getBuildWowGraph( new URLSearchParams( '' ) ) ).toBeUndefined();
 	} );
 
+	it( 'reads a design candidate from 1 to 4 and ignores anything else', () => {
+		expect( getDesignCandidate( '1' ) ).toBe( '1' );
+		expect( getDesignCandidate( '4' ) ).toBe( '4' );
+		expect( getDesignCandidate( '5' ) ).toBeUndefined();
+		expect( getDesignCandidate( 'candidate-1' ) ).toBeUndefined();
+		expect( getDesignCandidate( 2 ) ).toBeUndefined();
+		expect( getDesignCandidate( null ) ).toBeUndefined();
+	} );
+
+	it( 'sends the design candidate only on the call that queues a build', async () => {
+		const post = wpcom.req.post as jest.Mock;
+		post.mockReset();
+		post.mockResolvedValue( {} );
+
+		await requestBuildWowSite( '123', 'spec-1', 'dsl', undefined, '3' );
+		expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {
+			spec_id: 'spec-1',
+			graph: 'dsl',
+			design_candidate: 3,
+		} );
+
+		await requestBuildWowSite( '123', undefined, undefined, undefined, '3' );
+		expect( post.mock.calls[ 1 ][ 1 ] ).toEqual( {} );
+	} );
+
 	it( 'sends the graph only on the call that queues a build', async () => {
 		const post = wpcom.req.post as jest.Mock;
 		post.mockReset();
@@ -131,5 +163,44 @@ describe( 'build-wow utilities', () => {
 
 		await requestBuildWowSite( '123', 'spec-1' );
 		expect( post.mock.calls[ 2 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
+	} );
+
+	describe( 'live feed opt-in', () => {
+		const post = wpcom.req.post as jest.Mock;
+
+		beforeEach( () => {
+			post.mockReset();
+			post.mockResolvedValue( {} );
+			jest.mocked( config.isEnabled ).mockReturnValue( true );
+		} );
+
+		afterEach( () => {
+			jest.mocked( config.isEnabled ).mockReturnValue( false );
+		} );
+
+		it( 'asks for the feed where streaming is on, whoever builds', async () => {
+			await requestBuildWowSite( '123', 'spec-1', 'dsl' );
+
+			expect( config.isEnabled ).toHaveBeenCalledWith( 'site-spec/build-wow-streaming' );
+			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {
+				spec_id: 'spec-1',
+				graph: 'dsl',
+				stream_events: true,
+			} );
+		} );
+
+		it( 'does not ask for the feed on a call that queues no build', async () => {
+			await requestBuildWowSite( '123' );
+
+			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {} );
+		} );
+
+		it( 'does not ask for the feed where streaming is off', async () => {
+			jest.mocked( config.isEnabled ).mockReturnValue( false );
+
+			await requestBuildWowSite( '123', 'spec-1' );
+
+			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
+		} );
 	} );
 } );

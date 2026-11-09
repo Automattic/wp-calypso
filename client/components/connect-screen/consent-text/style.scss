@@ -7,7 +7,7 @@
 	width: 100%;
 
 	a {
-		color: var( --studio-gray-70 );
+		color: inherit;
 		text-decoration-line: underline;
 		text-decoration-style: solid;
 		text-decoration-skip-ink: none;
@@ -17,7 +17,7 @@
 
 		&:hover,
 		&:focus {
-			color: var( --studio-gray-70 );
+			color: inherit;
 		}
 	}
 }

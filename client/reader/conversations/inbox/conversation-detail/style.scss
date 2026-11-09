@@ -1,0 +1,133 @@
+.conversations-inbox__detail-pane {
+	flex: 1;
+	min-width: 0;
+}
+
+.conversations-inbox__detail-header {
+	padding: 16px 24px;
+	border-block-end: 1px solid var( --color-border-subtle );
+
+	.components-button {
+		color: var( --color-text );
+	}
+}
+
+.conversations-inbox__detail-body {
+	flex: 1;
+	overflow-y: auto;
+	padding: 32px 24px;
+}
+
+.conversations-inbox__detail-content {
+	max-width: 860px;
+	margin-inline: auto;
+}
+
+.conversations-inbox__post-card {
+	box-sizing: border-box;
+	padding: 24px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	color: var( --color-text );
+
+	&:hover {
+		border-color: var( --color-border );
+	}
+}
+
+.conversations-inbox__post-link {
+	color: var( --color-text );
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: var( --color-text );
+	}
+}
+
+.conversations-inbox__post-menu {
+	margin-inline-start: auto;
+
+	.components-button {
+		color: var( --color-text );
+	}
+}
+
+.conversations-inbox__post-meta {
+	white-space: nowrap;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+
+	strong {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: var( --color-text );
+		font-weight: 500;
+	}
+}
+
+.conversations-inbox__detail-content .comments__comment-list {
+	margin-block-start: 0;
+
+	.comments__comment-count {
+		color: var( --color-text );
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.comments__comment-count-phrase {
+		text-transform: none;
+	}
+
+	.comments__comment-username,
+	.comments__comment-respondee-link {
+		color: var( --color-text );
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+}
+
+@mixin conversations-inbox-welcome-dark {
+	.conversations-inbox__welcome {
+		--wp-components-notice-background-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 16%,
+			var( --color-surface )
+		);
+		--wp-components-notice-border-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 48%,
+			var( --color-surface )
+		);
+		--wp-components-notice-text-color: var( --color-text );
+	}
+}
+
+:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
+	@include conversations-inbox-welcome-dark;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
+		@include conversations-inbox-welcome-dark;
+	}
+}
+
+.conversations-inbox__post-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.conversations-inbox__post-image {
+	flex-shrink: 0;
+	width: 120px;
+	height: 120px;
+	border-radius: 4px;
+	object-fit: cover;
+}

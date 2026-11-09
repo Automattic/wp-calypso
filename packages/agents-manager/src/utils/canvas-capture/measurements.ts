@@ -16,6 +16,10 @@ import { getCanvasDocument } from '../editor-canvas';
 
 // Below this, a difference is rounding and subpixel layout, not misalignment.
 const TOLERANCE = 2;
+// Rows are compared by visible boxes, and a link-style button's is its text,
+// whose centre shifts a pixel or two with the font's metrics against a filled
+// button's padded box. Wider, so that is not reported as misalignment.
+const ROW_TOLERANCE = 3;
 const MAX_ROWS = 4;
 const MAX_ROW_ITEMS = 8;
 const MAX_IMAGE_NOTES = 6;
@@ -49,6 +53,8 @@ interface Measured {
 	isImageBlock: boolean;
 	/** The image's box, for an image block whose image could be measured. */
 	image?: Box;
+	/** Whether the block paints its own box: a background, border or shadow. */
+	paints: boolean;
 }
 
 /** A visible box; `hidden` for a block with no layout, `unknown` for one that cannot be read. */
@@ -63,6 +69,9 @@ interface Row {
 }
 
 const px = ( value: number ): number => Math.round( value );
+
+// To a tenth, for a note whose numbers have to agree with each other.
+const tenths = ( value: number ): number => Math.round( value * 10 ) / 10;
 
 const centreOf = ( box: Box ): number => ( box.top + box.bottom ) / 2;
 
@@ -95,6 +104,30 @@ function toBox( rect: DOMRect, scale: number, scrollX: number, scrollY: number )
 }
 
 const hasSize = ( rect: DOMRect ): boolean => rect.width > 0 && rect.height > 0;
+
+const isSet = ( value: string ): boolean => !! value && value !== 'none';
+
+// Computed colours serialise with an alpha only below 1: `rgba(r, g, b, a)`,
+// or `color(space c1 c2 c3 / a)`.
+const isTransparent = ( colour: string ): boolean =>
+	! colour ||
+	colour === 'transparent' ||
+	/^rgba\((?:[^,]*,){3}\s*0(?:\.0*)?\s*\)$/.test( colour ) ||
+	/\/\s*0(?:\.0*)?\s*\)$/.test( colour );
+
+function paintsBox( style: CSSStyleDeclaration ): boolean {
+	return (
+		! isTransparent( style.backgroundColor ) ||
+		isSet( style.backgroundImage ) ||
+		isSet( style.boxShadow ) ||
+		[
+			style.borderTopWidth,
+			style.borderRightWidth,
+			style.borderBottomWidth,
+			style.borderLeftWidth,
+		].some( ( width ) => parseFloat( width ) > 0 )
+	);
+}
 
 function measure(
 	canvasDocument: Document,
@@ -130,6 +163,7 @@ function measure(
 		block: toCanvasBox( rect ),
 		isImageBlock,
 		...( imageRect && { image: toCanvasBox( imageRect ) } ),
+		paints: !! view && paintsBox( view.getComputedStyle( element ) ),
 	};
 }
 
@@ -153,8 +187,9 @@ function createMeasurer() {
 		return measured.get( clientId ) ?? null;
 	};
 
-	// An image block shows its image; a container, what its children show; any
-	// other block, its own box. A container is as unknown as any child of it.
+	// An image block shows its image; a container, what its children show, or
+	// its own box as well when it paints one, as a card does; any other block,
+	// its own box. A container is as unknown as any child of it.
 	const visibleOf = ( clientId: string ): Visible => {
 		const known = visible.get( clientId );
 
@@ -179,7 +214,11 @@ function createMeasurer() {
 			} else {
 				const childBoxes = children.filter( isBox );
 
-				box = childBoxes.length ? union( childBoxes ) : item.block;
+				if ( item.paints ) {
+					box = union( [ item.block, ...childBoxes ] );
+				} else {
+					box = childBoxes.length ? union( childBoxes ) : item.block;
+				}
 			}
 		}
 
@@ -251,17 +290,22 @@ function describeRow( { parent, items, boxes }: Row ): string {
 	const edges = items
 		.map(
 			( item, index ) =>
-				`${ item.label } ${ px( boxes[ index ].top - parent.block.top ) }–${ px(
+				`${ item.label } ${ tenths( boxes[ index ].top - parent.block.top ) }–${ tenths(
 					boxes[ index ].bottom - parent.block.top
 				) }`
 		)
 		.join( ', ' );
+	// Judged from the unrounded centres, so the verdict cannot turn on
+	// rounding, on direction, or on which item comes first. An uneven row
+	// gives every offset as a number, edges and offsets to the same tenth:
+	// an offset within the tolerance once read "level with it" beside a
+	// verdict that the row was not, and the check believed the verdict.
 	const spread = Math.max( ...centres ) - Math.min( ...centres );
 
 	const describeOffset = ( item: Measured, index: number ): string => {
-		const offset = px( centres[ index ] - centres[ 0 ] );
+		const offset = tenths( centres[ index ] - centres[ 0 ] );
 
-		if ( Math.abs( offset ) <= TOLERANCE ) {
+		if ( offset === 0 ) {
 			return `${ item.label }'s is level with it`;
 		}
 
@@ -269,8 +313,8 @@ function describeRow( { parent, items, boxes }: Row ): string {
 	};
 
 	const comparison =
-		spread <= TOLERANCE
-			? `Their visible centre lines are level (within ${ TOLERANCE }px).`
+		spread <= ROW_TOLERANCE
+			? `Their visible centre lines are level (within ${ ROW_TOLERANCE }px).`
 			: `Their visible centre lines are not level. Against ${ reference.label }'s: ${ items
 					.map( describeOffset )
 					.slice( 1 )

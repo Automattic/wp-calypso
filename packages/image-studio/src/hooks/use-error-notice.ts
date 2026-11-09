@@ -17,6 +17,7 @@ const JETPACK_AI_QUOTA_NOTICE: UpgradeNoticeCredits = {
 	state: 'zero',
 	planTier: 'none',
 	creditsLeft: 'none',
+	topUpCreditsLeft: 'none',
 	ctaType: 'upgrade',
 	ref: 'none',
 };

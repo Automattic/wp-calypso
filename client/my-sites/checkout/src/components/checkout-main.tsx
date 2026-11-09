@@ -28,7 +28,6 @@ import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
 import { existingCardPrefix } from '../hooks/use-create-payment-methods/use-create-existing-cards';
@@ -57,6 +56,7 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
+import stripeWalletProcessor from '../lib/stripe-wallet-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
 import { useValueStore } from '../lib/value-store';
@@ -75,6 +75,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
@@ -103,6 +104,8 @@ export interface CheckoutMainProps {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	/** Reports whether the form is SUBMITTING, including payment preparation and transaction processing. */
+	onFormSubmittingChange?: ( isFormSubmitting: boolean ) => void;
 	connectAfterCheckout?: boolean;
 	/**
 	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
@@ -139,6 +142,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	onFormSubmittingChange,
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
@@ -222,11 +226,10 @@ export default function CheckoutMain( {
 	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
-		( error: string ) => {
+		( error: TranslateResult ) => {
 			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
 			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ), {
+				errorNotice( error || translate( 'An error occurred during your purchase.' ), {
 					duration: 5000,
 				} )
 			);
@@ -589,6 +592,8 @@ export default function CheckoutMain( {
 				),
 			'stripe-blik': ( transactionData: unknown ) =>
 				blikProcessor( transactionData, dataForProcessor, translate ),
+			'stripe-wallet': ( transactionData: unknown ) =>
+				stripeWalletProcessor( transactionData, dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -652,7 +657,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const [ isCheckoutUiRedesignLoading ] = useCheckoutUiRedesignExperiment();
 	const { isLoading: isMobileCheckoutStickySummaryLoading } =
 		useMobileCheckoutStickySummaryExperiment();
 
@@ -682,7 +686,7 @@ export default function CheckoutMain( {
 		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
 		{
 			name: translate( 'Loading checkout' ),
-			isLoading: isCheckoutUiRedesignLoading || isMobileCheckoutStickySummaryLoading,
+			isLoading: isMobileCheckoutStickySummaryLoading,
 		},
 	];
 
@@ -889,6 +893,7 @@ export default function CheckoutMain( {
 							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 						}
 						onStepChanged={ handleStepChanged }
+						onFormSubmittingChange={ onFormSubmittingChange }
 						customizedPreviousPath={ customizedPreviousPath }
 						isRemovingProductFromCart={ isRemovingProductFromCart }
 						areThereErrors={ areThereErrors }

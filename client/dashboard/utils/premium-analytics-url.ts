@@ -1,9 +1,16 @@
 /**
- * The wp-admin page the Premium Analytics ("Stats v2") dashboard is served from.
+ * The wp-admin page the Premium Analytics ("Stats v2") dashboard is served from. Jetpack also
+ * publishes it as `JetpackScriptData.analytics.page_slug`, for callers running inside wp-admin.
  */
 const PREMIUM_ANALYTICS_PAGE = 'jetpack-premium-analytics-wp-admin';
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * The dashboard opened on its Traffic section. The bare dashboard route opens whichever section
+ * sorts first, which on a store is WooCommerce.
+ */
+export const PREMIUM_ANALYTICS_TRAFFIC_ROUTE = '/?section=traffic';
 
 /**
  * A range of whole days for a dashboard route to open on.
@@ -108,19 +115,28 @@ function boundaryOf(
  * Kept free of imports so the Odyssey bundle can use it without pulling in the dashboard's data layer.
  * @param route The dashboard route, e.g. `/`, `/post/123` or `/reports/posts`.
  * @param range The days to open on. Left off when unusable, so the route opens on its default range.
+ * @param page  The wp-admin page slug the dashboard is served from.
  */
-export function getPremiumAnalyticsPath( route = '/', range?: PremiumAnalyticsRange ): string {
-	let path = route;
+export function getPremiumAnalyticsPath(
+	route = '/',
+	range?: PremiumAnalyticsRange,
+	page = PREMIUM_ANALYTICS_PAGE
+): string {
+	const [ pathname, query = '' ] = route.split( '?' );
+	const search = new URLSearchParams( query );
 
 	if ( range && DAY.test( range.from ) && DAY.test( range.to ) ) {
 		const from = boundaryOf( range.from, 'start', range );
 		const to = boundaryOf( range.to, 'end', range );
 
 		if ( from !== null && to !== null ) {
-			const search = new URLSearchParams( { from, to } );
-			path = `${ route }?${ search }`;
+			search.set( 'from', from );
+			search.set( 'to', to );
 		}
 	}
 
-	return `admin.php?${ new URLSearchParams( { page: PREMIUM_ANALYTICS_PAGE, p: path } ) }`;
+	const params = search.toString();
+	const path = params ? `${ pathname }?${ params }` : pathname;
+
+	return `admin.php?${ new URLSearchParams( { page, p: path } ) }`;
 }

@@ -30,8 +30,6 @@ test.describe(
 					await testAccount.authenticate( page );
 
 					await restAPIClient.setMySettings( { language: 'en' } );
-					await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
-					await page.waitForURL( /home/ );
 				} );
 
 				const cartCheckoutPage = new CartCheckoutPage( page );

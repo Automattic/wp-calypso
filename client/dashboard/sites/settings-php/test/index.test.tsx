@@ -76,6 +76,33 @@ describe( '<PHPVersionSettings>', () => {
 		} );
 	} );
 
+	test( 'preselects and saves the recommended version when no version has been set', async () => {
+		const user = userEvent.setup();
+
+		mockSite( site );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ site.ID }/hosting/php-version` )
+			.query( true )
+			.reply( 200, 'null', { 'Content-Type': 'application/json' } );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		expect( versionSelect ).toHaveDisplayValue( '8.4 (Recommended)' );
+
+		const scope = mockPHPVersionSaved( '8.4' );
+		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+		expect( saveButton ).toBeEnabled();
+		await user.click( saveButton );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+	} );
+
 	test( 'does not offer PHP 8.2 to sites that are not using it', async () => {
 		mockSite( site );
 		mockPHPVersion( '8.3' );

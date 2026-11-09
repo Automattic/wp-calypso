@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useCallback } from 'react';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -27,6 +28,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PURCHASE_FLOW_UPSELLS_MATRIX } from '../constants';
 import getViewTrackerPath from '../get-view-tracker-path';
 import slugToSelectorProduct from '../slug-to-selector-product';
+import { useOnSaleStatus } from '../use-is-on-sale';
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 import './style.scss';
@@ -70,6 +72,9 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		() => ( upsellSlug ? buildCheckoutURL( siteSlug, upsellSlug, urlQueryArgs ) : '' ),
 		[ siteSlug, upsellSlug, urlQueryArgs ]
 	);
+	const upsellSaleStatus = useOnSaleStatus( upsellSlug );
+	const isUpsellOffSale = upsellSaleStatus === 'off-sale';
+	const isUpsellAvailabilityUnknown = upsellSaleStatus === 'unknown';
 	const isUpsellOwned = useMemo(
 		() =>
 			isFetchingPurchases ? false : !! purchases?.find( ( p ) => p.product_slug === upsellSlug ),
@@ -146,12 +151,13 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 			page.redirect( `${ rootUrl }/${ siteSlug }` );
 		}
 
-		if ( ( ! upsellSlug || isUpsellOwned ) && productCheckoutURL ) {
+		if ( ( ! upsellSlug || isUpsellOwned || isUpsellOffSale ) && productCheckoutURL ) {
 			page.redirect( productCheckoutURL );
 		}
 	}, [
 		upsellSlug,
 		isUpsellOwned,
+		isUpsellOffSale,
 		productCheckoutURL,
 		isLoadingUpsellPageExperiment,
 		experimentAssignment,
@@ -159,12 +165,25 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		siteSlug,
 	] );
 
-	if ( isLoadingUpsellPageExperiment || ! upsellSlug || isFetchingPurchases || isUpsellOwned ) {
-		return null;
+	if (
+		isLoadingUpsellPageExperiment ||
+		! upsellSlug ||
+		isFetchingPurchases ||
+		isUpsellOwned ||
+		isUpsellOffSale ||
+		isUpsellAvailabilityUnknown
+	) {
+		// Same position as below, so the query is not remounted once the page renders.
+		return (
+			<>
+				<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
+			</>
+		);
 	}
 
 	return (
 		<>
+			<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<QueryIntroOffers siteId={ siteId ?? 'none' } />
 

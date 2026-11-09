@@ -13,7 +13,7 @@ import { wpcomLink } from '../../../../../utils/link';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
-type Props = {
+type AtomicRevertStepProps = {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	purchase: Purchase | undefined;
 	siteSlug: string;
@@ -28,7 +28,7 @@ type Props = {
 	setEnableLosslessRevert?: ( isChecked: boolean ) => void;
 };
 
-export function AtomicRevertStep( props: Props ) {
+export function AtomicRevertStep( props: AtomicRevertStepProps ) {
 	const {
 		atomicTransfer,
 		purchase,

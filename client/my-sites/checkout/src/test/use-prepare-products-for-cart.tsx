@@ -216,3 +216,54 @@ describe( 'usePrepareProductsForCart purchase attribution', () => {
 		expect( result.current.productsForCart[ 0 ].extra.ai_session_id ).toBeUndefined();
 	} );
 } );
+
+describe( 'usePrepareProductsForCart for invalid product aliases', () => {
+	it.each( [
+		':product',
+		':',
+		'personal-bundle,:product',
+		'personal-bundle,',
+		',personal-bundle',
+	] )(
+		'reports a preparation error for %s without creating any cart products',
+		( productAliasFromUrl ) => {
+			const { result } = renderPrepareProducts( {
+				productAliasFromUrl,
+				sitelessCheckoutType: 'jetpack',
+			} );
+
+			expect( result.current.isLoading ).toBe( false );
+			expect( result.current.error ).toBe(
+				`I tried and failed to create products matching the identifier '${ productAliasFromUrl }'`
+			);
+			expect( result.current.productsForCart ).toEqual( [] );
+		}
+	);
+
+	it( 'leaves unknown nonempty product slugs for the cart API to validate', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'foobar',
+			sitelessCheckoutType: 'jetpack',
+		} );
+
+		expect( result.current.error ).toBeNull();
+		expect( result.current.productsForCart[ 0 ].product_slug ).toBe( 'foobar' );
+	} );
+
+	it( 'preserves aliases, metadata, quantities, and multiple products', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'domain-mapping:example.com,theme:ovation:-q-2',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.error ).toBeNull();
+		expect( result.current.productsForCart ).toEqual( [
+			expect.objectContaining( {
+				product_slug: 'domain_map',
+				meta: 'example.com',
+				quantity: null,
+			} ),
+			expect.objectContaining( { product_slug: 'premium_theme', meta: 'ovation', quantity: 2 } ),
+		] );
+	} );
+} );

@@ -5,7 +5,6 @@
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/assets/stylesheets/shared/mixins/dropdown-menu";
-@import "calypso/assets/stylesheets/shared/mixins/stats-fade-text";
 @import "calypso/assets/stylesheets/shared/extends";
 @import '@automattic/components/src/horizontal-bar-list/stats-variables';
 
@@ -41,7 +40,7 @@
 		}
 	}
 
-	border-top: 1px solid color-mix( in srgb, var( --color-surface ) 0%, transparent );
+	border-top: none;
 
 	// Increase touch targets on mobile
 	@include breakpoint-deprecated( '<480px' ) {
@@ -49,7 +48,7 @@
 		border-top: 1px solid var( --color-neutral-0 );
 
 		&:first-child {
-			border-top-color: color-mix( in srgb, var( --color-surface ) 0%, transparent );
+			border-top-color: currentcolor;
 		}
 
 		// Darken color for sublists
@@ -63,12 +62,6 @@
 		.stats-list__module-content-list-item-value {
 			opacity: 0.15;
 			transition: opacity 0.3s ease 0.15s;
-		}
-
-		.module-content-list-item-right {
-			&::before {
-				display: none;
-			}
 		}
 
 		.module-content-list-item-actions {
@@ -132,14 +125,6 @@
 			opacity: 1;
 		}
 
-		.module-content-list-item-right::before {
-			background-image: linear-gradient(
-				to right,
-				color-mix( in srgb, var( --color-neutral-0 ) 0%, transparent ) 0%,
-				var( --color-neutral-0 ) 90%
-			);
-		}
-
 		// Display hidden actions
 		.module-content-list-item-action-hidden {
 			display: inline-block;
@@ -153,8 +138,7 @@
 	.module-content-list.module-content-list-legend {
 		.stats-list__module-content-list-item-wrapper:hover {
 			&,
-			.module-content-list-item-right,
-			.module-content-list-item-right::before {
+			.module-content-list-item-right {
 				background: none;
 			}
 		}
@@ -168,14 +152,6 @@
 	&,
 	.module-content-list-item-right {
 		background-color: var( --color-neutral-0 );
-	}
-
-	.module-content-list-item-right::before {
-		background-image: linear-gradient(
-			to right,
-			color-mix( in srgb, var( --color-neutral-0 ) 0%, transparent ) 0%,
-			var( --color-neutral-0 ) 90%
-		);
 	}
 
 	// Display hidden actions
@@ -339,13 +315,6 @@
 		height: 48px;
 	}
 
-	// Fade out value if long
-	&::before {
-		@include stats-fade-text(
-			color-mix( in srgb, var( --color-surface ) 0%, transparent ),
-			var( --color-surface )
-		);
-	}
 }
 
 // Module Content List Item Value
@@ -814,14 +783,6 @@ ul.module-content-list-legend {
 		color: var( --color-neutral-light );
 	}
 
-	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient(
-			to right,
-			color-mix( in srgb, var( --color-neutral-0 ) 0%, transparent ) 0%,
-			var( --color-neutral-0 ) 90%
-		);
-	}
-
 	// Rotate toggle icon
 	> .stats-list__module-content-list-item-wrapper
 		.stats-list__module-content-list-item-label
@@ -832,9 +793,8 @@ ul.module-content-list-legend {
 		transform: rotate( 180deg );
 	}
 
-	// Hide the top border of an active sub-list
 	> .module-content-list-item {
-		border-top-color: color-mix( in srgb, var( --color-surface ) 0%, transparent );
+		border-top-color: currentcolor;
 	}
 
 	// Hover changes
@@ -846,13 +806,6 @@ ul.module-content-list-legend {
 				background-color: var( --color-surface );
 			}
 
-			span.module-content-list-item-right::before {
-				background-image: linear-gradient(
-					to right,
-					color-mix( in srgb, var( --color-surface ) 0%, transparent ) 0%,
-					var( --color-surface ) 90%
-				);
-			}
 		}
 	}
 }
@@ -877,14 +830,6 @@ ul.module-content-list-legend {
 		background: var( --color-neutral-0 ); // Default non-active color
 	}
 
-	.module-content-list-item-right::before {
-		background-image: linear-gradient(
-			to right,
-			color-mix( in srgb, var( --color-neutral ) 0%, transparent ) 0%,
-			var( --color-neutral-0 ) 90%
-		);
-	}
-
 	// Hover changes
 	@include breakpoint-deprecated( '>480px' ) {
 		&-link .stats-list__module-content-list-item-wrapper:hover,
@@ -895,13 +840,6 @@ ul.module-content-list-legend {
 				background-color: var( --color-surface );
 			}
 
-			span.module-content-list-item-right::before {
-				background-image: linear-gradient(
-					to right,
-					color-mix( in srgb, var( --color-surface ) 0%, transparent ) 0%,
-					var( --color-surface ) 90%
-				);
-			}
 		}
 	}
 }

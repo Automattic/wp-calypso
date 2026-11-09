@@ -1,4 +1,6 @@
 import { fetchSiteEndpoint, reportSafely, startPolling } from './poller';
+import { parseStreamInfo } from './stream/types';
+import type { BuildWowStreamInfo } from './stream/types';
 
 // The build-wow status endpoint is the single source of truth for the waiting
 // screen: GET /wpcom/v2/sites/{id}/big-sky/build-wow/status. Alongside the
@@ -38,6 +40,8 @@ export type BuildWowStatusResponse = {
 	// easy-mode URL.
 	site_editor_url?: string;
 	ui?: BuildWowUi;
+	// Present only for a run that opted into the live feed and is eligible.
+	stream?: unknown;
 };
 
 type FetchStatus = (
@@ -57,6 +61,7 @@ export function pollForBuildWowStatus( {
 	onReady,
 	onFailed,
 	onUpdate,
+	onStream,
 	onRequestError,
 	pollIntervalMs,
 	requestTimeoutMs,
@@ -66,6 +71,7 @@ export function pollForBuildWowStatus( {
 	onReady: ( response: BuildWowStatusResponse ) => void;
 	onFailed: ( status: string, ui?: BuildWowUi ) => void;
 	onUpdate?: ( ui: BuildWowUi ) => void;
+	onStream?: ( stream: BuildWowStreamInfo | null ) => void;
 	onRequestError?: ( reason: string ) => void;
 	pollIntervalMs?: number;
 	requestTimeoutMs?: number;
@@ -81,6 +87,7 @@ export function pollForBuildWowStatus( {
 			if ( ui ) {
 				reportSafely( () => onUpdate?.( ui ) );
 			}
+			reportSafely( () => onStream?.( parseStreamInfo( response.stream ) ) );
 
 			// Terminal handling prefers the server's ui verdict; the raw
 			// build_status fallback keeps this working against a backend that

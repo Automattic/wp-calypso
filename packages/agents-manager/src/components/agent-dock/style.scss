@@ -1,7 +1,5 @@
-@import '../../styles/variables.scss';
-
 // How each surface makes room for the docked chat, plus page-specific fixes.
-@import './page-layout.scss';
+@use './page-layout';
 
 // The chat panel itself: docked strip, agenttic UI, split-screen.
-@import './chat-ui.scss';
+@use './chat-ui';

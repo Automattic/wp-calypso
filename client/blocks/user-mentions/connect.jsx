@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryUsersSuggestions from 'calypso/components/data/query-users-suggestions';
 import { getUserSuggestions } from 'calypso/state/user-suggestions/selectors';
@@ -12,23 +12,34 @@ import { getUserSuggestions } from 'calypso/state/user-suggestions/selectors';
  * @returns {Object} the enhanced component
  */
 const connectUserMentions = ( WrappedComponent ) => {
-	function ConnectUserMentionsFetcher( { siteId, forwardedRef, ...rest } ) {
+	function ConnectUserMentionsFetcher( { siteId, forwardedRef, onFocus, ...rest } ) {
 		const suggestions = useSelector( ( state ) => getUserSuggestions( state, siteId ) );
+		// Mentions start with typing, so the suggestions wait for the first focus.
+		const [ hasFocused, setHasFocused ] = useState( false );
 		return (
 			<>
-				<QueryUsersSuggestions siteId={ siteId } />
-				<WrappedComponent suggestions={ suggestions } ref={ forwardedRef } { ...rest } />
+				{ hasFocused && <QueryUsersSuggestions siteId={ siteId } /> }
+				<WrappedComponent
+					suggestions={ suggestions }
+					ref={ forwardedRef }
+					onFocus={ ( event ) => {
+						setHasFocused( true );
+						onFocus?.( event );
+					} }
+					{ ...rest }
+				/>
 			</>
 		);
 	}
 
 	ConnectUserMentionsFetcher.propTypes = {
 		siteId: PropTypes.number,
+		onFocus: PropTypes.func,
 	};
 
-	return forwardRef( ( props, ref ) => (
-		<ConnectUserMentionsFetcher { ...props } forwardedRef={ ref } />
-	) );
+	return forwardRef( function ConnectUserMentions( props, ref ) {
+		return <ConnectUserMentionsFetcher { ...props } forwardedRef={ ref } />;
+	} );
 };
 
 export default connectUserMentions;

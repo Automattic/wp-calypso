@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import { init } from '..';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from '../record-widget-event';
 
-jest.mock( '@automattic/calypso-polyfills', () => ( {} ) );
 jest.mock( '../../lib/config-api', () => ( {
 	__esModule: true,
 	default: ( key ) => ( { blog_id: 123, gmt_offset: 0, i18n_locale_slug: 'en' } )[ key ],
@@ -19,7 +18,8 @@ jest.mock( '../../lib/load-wp-components-style', () => ( {
 jest.mock( '../../lib/selectors/get-site-stats-base-url', () => () => 'https://example.com/stats' );
 jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => () => null );
-jest.mock( '../use-stats-link', () => () => ( url ) => url );
+const mockStatsLink = jest.fn( ( url ) => url );
+jest.mock( '../use-stats-link', () => () => mockStatsLink );
 jest.mock( '../mini-chart', () => ( { range } ) => <p>{ `Chart of ${ range.id }` }</p> );
 jest.mock( '../highlights', () => () => null );
 jest.mock( '../modules', () => () => null );
@@ -112,6 +112,10 @@ describe( 'Stats widget', () => {
 		expect( screen.getByRole( 'link', { name: 'Explore more' } ) ).toHaveAttribute(
 			'href',
 			'https://example.com/stats/stats/day/123'
+		);
+		expect( mockStatsLink ).toHaveBeenCalledWith(
+			'https://example.com/stats/stats/day/123',
+			'/?section=traffic'
 		);
 		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'explore_more_clicked', {
 			destination: 'stats',

@@ -28,11 +28,11 @@ describe( '<PaymentRiskNotice>', () => {
 		);
 
 		expect( screen.getByText( 'Action required: Payment failed' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Update your payment method' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /^Update your payment method/ } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/me/billing/purchases'
 		);
-		expect( screen.getByRole( 'link', { name: 'View billing FAQ' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /^View billing FAQ/ } ) ).toHaveAttribute(
 			'href',
 			'https://agencieshelp.automattic.com/faq/'
 		);
@@ -46,7 +46,7 @@ describe( '<PaymentRiskNotice>', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'link', { name: 'Fix payment method' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /^Fix payment method/ } ) ).toHaveAttribute(
 			'href',
 			expect.stringMatching( /\/me\/purchases\/payment-methods$/ )
 		);
@@ -64,6 +64,6 @@ describe( '<PaymentRiskNotice>', () => {
 			/>
 		);
 
-		expect( screen.queryByRole( 'link', { name: 'Fix payment method' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /^Fix payment method/ } ) ).not.toBeInTheDocument();
 	} );
 } );

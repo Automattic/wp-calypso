@@ -83,11 +83,13 @@ describe( 'Highlights with Premium Analytics', () => {
 		} );
 	} );
 
-	it( 'keeps the Stats link for a row without a post ID, which has no dashboard page', () => {
+	it( 'opens the home page row, which has no post page, on the posts report', () => {
 		renderHighlights();
 
-		expect( parse( screen.getByText( 'Home page / Archives' ) ).href ).toBe(
-			'https://example.com/stats/stats/post/0/1'
-		);
+		expect( parse( screen.getByText( 'Home page / Archives' ) ) ).toMatchObject( {
+			path: '/reports/posts',
+			from: '2025-11-01T00:00:00.000+00:00',
+			to: '2026-10-06T23:59:59.999+00:00',
+		} );
 	} );
 } );

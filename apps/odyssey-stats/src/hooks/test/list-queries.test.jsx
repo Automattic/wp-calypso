@@ -12,6 +12,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 } ) );
 
 const SITE_ID = 123;
+const MAX = 5;
 
 const wrapper = ( { children } ) => {
 	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -22,7 +23,7 @@ const wrapper = ( { children } ) => {
  * @param {Function} hook The query hook to render.
  */
 async function requestFrom( hook ) {
-	renderHook( () => hook( SITE_ID, { startDate: '2025-11-01', endDate: '2026-10-05' } ), {
+	renderHook( () => hook( SITE_ID, { startDate: '2025-11-01', endDate: '2026-10-05' }, MAX ), {
 		wrapper,
 	} );
 	await waitFor( () => expect( wpcom.req.get ).toHaveBeenCalled() );
@@ -37,7 +38,7 @@ describe( 'the widget list queries', () => {
 	it.each( [
 		[ 'top posts', useTopPostsQuery, '/sites/123/stats/top-posts' ],
 		[ 'referrers', useReferrersQuery, '/sites/123/stats/referrers' ],
-	] )( 'asks %s for whole days between the range ends', async ( _, hook, path ) => {
+	] )( 'asks %s for whole days, capped at the rows it shows', async ( _, hook, path ) => {
 		const [ requestedPath, params ] = await requestFrom( hook );
 
 		expect( requestedPath ).toBe( path );
@@ -47,6 +48,7 @@ describe( 'the widget list queries', () => {
 				start_date: '2025-11-01',
 				date: '2026-10-05',
 				summarize: 1,
+				max: MAX,
 			} )
 		);
 		expect( params ).not.toHaveProperty( 'num' );
@@ -60,7 +62,7 @@ describe( 'the referrers list', () => {
 	async function rowsFor( groups ) {
 		wpcom.req.get.mockResolvedValueOnce( { summary: { groups } } );
 		const { result } = renderHook(
-			() => useReferrersQuery( SITE_ID, { startDate: '2026-09-06', endDate: '2026-10-05' } ),
+			() => useReferrersQuery( SITE_ID, { startDate: '2026-09-06', endDate: '2026-10-05' }, MAX ),
 			{
 				wrapper,
 			}

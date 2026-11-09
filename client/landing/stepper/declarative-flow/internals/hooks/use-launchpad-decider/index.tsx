@@ -56,7 +56,12 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 				return;
 			}
 
-			navigate( `launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }` );
+			navigate(
+				addQueryArgs( 'launchpad', {
+					siteSlug: siteSlug || undefined,
+					siteId: siteId || undefined,
+				} )
+			);
 		},
 		initializeLaunchpadState: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {

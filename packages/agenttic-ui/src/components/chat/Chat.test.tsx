@@ -648,3 +648,51 @@ describe( 'legacy Chat composer props', () => {
 		}
 	);
 } );
+
+describe( 'Chat error notice', () => {
+	let container: HTMLDivElement;
+	let root: Root;
+
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+		root = createRoot( container );
+	} );
+
+	afterEach( async () => {
+		await act( async () => root.unmount() );
+		container.remove();
+	} );
+
+	it.each( [ 'embedded', 'floating' ] as const )(
+		'renders `errorNotice` in the %s message list',
+		async ( variant ) => {
+			await act( async () =>
+				root.render(
+					<AgentUIProvider value={ contextValue }>
+						<Chat
+							messages={ [
+								{
+									id: 'user-1',
+									role: 'user',
+									content: [ { type: 'text', text: 'Make it orange' } ],
+									timestamp: 1,
+									archived: false,
+									showIcon: false,
+								},
+							] }
+							isProcessing={ false }
+							onSubmit={ () => {} }
+							variant={ variant }
+							floatingChatState="expanded"
+							errorNotice={ { message: 'You’re out of site credits.' } }
+						/>
+					</AgentUIProvider>
+				)
+			);
+			expect(
+				container.querySelector( '[data-slot="messages"] [data-slot="notice"]' )?.textContent
+			).toBe( 'You’re out of site credits.' );
+		}
+	);
+} );

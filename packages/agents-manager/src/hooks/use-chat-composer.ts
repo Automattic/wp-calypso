@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { markActionOrigin, takeActionOrigin } from '../utils/action-origin';
 import { startNewUserRequest } from '../utils/canvas-binding';
 import { consumeNextMessageExternalContextEntries } from '../utils/external-context';
+import { consumePromptSource, markNextPromptSource } from '../utils/prompt-source';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import { startTurn } from '../utils/turn-id';
 import { useImageUpload } from './use-image-upload';
@@ -19,6 +20,8 @@ interface UseChatComposerOptions {
 	beforeSubmit: UseCreditsResult[ 'beforeSubmit' ];
 	/** Answers a parked `wp-admin-navigate` call before the next message goes out. */
 	flushPendingNavigation: () => Promise< void >;
+	/** Answers a typed slash command in the browser; true means it did, so nothing is sent. */
+	handleCommand?: ( message: string ) => boolean;
 	/**
 	 * The suggestion prompts on screen, so a send can be told apart from a typed
 	 * one: Agenttic submits a clicked suggestion before the click handler runs.
@@ -39,6 +42,7 @@ export function useChatComposer( {
 	abortCurrentRequest,
 	beforeSubmit,
 	flushPendingNavigation,
+	handleCommand,
 	suggestionPromptsRef,
 }: UseChatComposerOptions ) {
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -175,18 +179,31 @@ export function useChatComposer( {
 			startNewUserRequest();
 
 			wasLastSendDispatchedRef.current = true;
+			// A checklist click declared where this exact prompt came from; the
+			// message keeps it and the server gets it with the client context.
+			const promptSource = consumePromptSource( message );
+			const submitOptions: SubmitOptions = {
+				...( imageUrls && { imageUrls } ),
+				...( promptSource && { promptSource } ),
+			};
 			try {
 				// First, so this message follows the parked call's tool result. Never throws.
 				await flushPendingNavigation();
 
 				// Images dispatch via Agenttic's `imageUrls` option — the resulting
 				// `FilePart`s persist in conversation history with their metadata.
-				await ( imageUrls ? onSubmit( message, { imageUrls } ) : onSubmit( message ) );
+				await ( Object.keys( submitOptions ).length > 0
+					? onSubmit( message, submitOptions )
+					: onSubmit( message ) );
 			} catch {
 				// A rejected dispatch already surfaces via Agenttic's error state;
-				// put the message back (unless a newer draft replaced it) for a retry.
+				// put the message back (unless a newer draft replaced it) for a retry,
+				// labeled like the original.
 				wasLastSendDispatchedRef.current = false;
 				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				if ( promptSource ) {
+					markNextPromptSource( promptSource, message );
+				}
 				return;
 			}
 
@@ -207,8 +224,15 @@ export function useChatComposer( {
 	// Agenttic types the second `onSubmit` argument as the composer's files; images
 	// come from `pendingImages`, so `sendMessage`'s options stay out of reach.
 	const submitComposerMessage = useCallback(
-		( message: string ) => sendMessage( message ),
-		[ sendMessage ]
+		( message: string ) => {
+			// Agenttic has already cleared the input, and nothing else of a send applies.
+			if ( handleCommand?.( message ) ) {
+				setUploadError( null );
+				return;
+			}
+			return sendMessage( message );
+		},
+		[ handleCommand, sendMessage ]
 	);
 
 	const stopResponse = useCallback( () => {
@@ -273,14 +297,17 @@ export function useChatComposer( {
 
 	// Sends a hidden context message, such as an interactive UI action, behind
 	// the same upload lock and credits gate as a typed message, so it is safe
-	// for any caller.
+	// for any caller. `onDispatch` runs once the message passes them, in the
+	// turn it starts, so the caller can record the send before the reply, which
+	// can navigate away.
 	const submitContextMessage = useCallback(
-		async ( message: string, options: SubmitOptions ) => {
+		async ( message: string, options: SubmitOptions, onDispatch?: () => void ) => {
 			if ( isUploadingRef.current || isUploadingImages || ! beforeSubmit() ) {
 				return;
 			}
 
 			startTurn();
+			onDispatch?.();
 			startNewUserRequest();
 			await flushPendingNavigation();
 			await onSubmit( message, options );

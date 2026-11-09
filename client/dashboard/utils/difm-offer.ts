@@ -19,9 +19,10 @@ export const DIFM_OFFER_EXPERIMENT = 'calypso_difm_free_with_upgrade_wpadmin_202
 export const DIFM_OFFER_FORCE_TREATMENT_FLAG = 'difm-offer/force-treatment';
 
 /**
- * The upper bound on site age is an open question for product and data.
+ * The oldest site, in days, that still gets the offer. The Site Setup banner in
+ * jetpack-mu-wpcom uses the same limit.
  */
-export const DIFM_OFFER_MAX_SITE_AGE_DAYS = 7;
+export const DIFM_OFFER_MAX_SITE_AGE_DAYS = 14;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 

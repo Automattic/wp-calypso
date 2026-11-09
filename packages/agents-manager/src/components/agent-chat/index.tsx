@@ -14,6 +14,7 @@ import {
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import {
 	useAgentticSuggestionClick,
 	type SuggestionClickHandler,
@@ -28,6 +29,7 @@ import lazyComponent from '../../utils/lazy-component';
 import { isSiteEditorContext } from '../../utils/site-editor-context';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
+import { ChatImage } from '../chat-image';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
@@ -36,7 +38,7 @@ import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { UIMessage as Message } from '@automattic/agenttic-client';
-import type { ComponentProps, RefObject } from 'react';
+import type { ComponentProps, ReactNode, RefObject } from 'react';
 
 interface Props {
 	/** Chat messages to display. */
@@ -45,6 +47,8 @@ interface Props {
 	suggestions: Suggestion[];
 	/** Error message to display, if any. */
 	error?: string | null;
+	/** Error to display as a notice in the message list, with or instead of `error`. */
+	errorNotice?: NoticeConfig;
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Suggestions displayed when the chat is empty. */
@@ -61,6 +65,10 @@ interface Props {
 	thinkingMessage?: string | null;
 	/** Indicates if a conversation is being loaded. */
 	isLoadingConversation: boolean;
+	/** Rendered between the header and the message list, outside the list's scroll. */
+	pinnedContent?: ReactNode;
+	/** Rendered in the empty view in place of the suggestion chips. */
+	emptyViewContent?: ReactNode;
 	/** Indicates if the chat is docked in the sidebar. */
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
@@ -134,15 +142,6 @@ const EditorHistoryBridge = lazyComponent(
 	() => import( /* webpackChunkName: "am-editor-history-bridge" */ '../editor-history-bridge' )
 );
 
-const DEFAULT_ACCEPTED_IMAGE_TYPES = [
-	'image/jpeg',
-	'image/png',
-	'image/heic',
-	'image/heif',
-	'image/heic-sequence',
-	'image/heif-sequence',
-];
-
 /**
  * Returns the empty-view greeting: the host's `agentsManagerData.emptyViewHeading`,
  * else the Reader chat or orchestrator default.
@@ -173,6 +172,7 @@ export default function AgentChat( {
 	messages,
 	suggestions,
 	error = null,
+	errorNotice,
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
 	groupWritingSuggestions = false,
@@ -181,6 +181,8 @@ export default function AgentChat( {
 	isReplying,
 	thinkingMessage,
 	isLoadingConversation,
+	pinnedContent,
+	emptyViewContent,
 	isDocked,
 	isOpen,
 	onSubmit,
@@ -201,7 +203,7 @@ export default function AgentChat( {
 	isChatInputDisabled,
 	isCompactMode = false,
 	imageUpload,
-	acceptedImageFileTypes = DEFAULT_ACCEPTED_IMAGE_TYPES,
+	acceptedImageFileTypes = DEFAULT_ACCEPTED_UPLOAD_TYPES,
 	showFeedbackInput = false,
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
@@ -215,7 +217,7 @@ export default function AgentChat( {
 	const floatingPanelProps = useFloatingPanelProps();
 
 	const mergedComponents = useMemo(
-		() => ( { a: CustomALink, ...markdownComponents } ),
+		() => ( { a: CustomALink, img: ChatImage, ...markdownComponents } ),
 		[ markdownComponents ]
 	);
 
@@ -315,6 +317,7 @@ export default function AgentChat( {
 			isReplying={ isReplying }
 			thinkingMessage={ thinkingMessage ?? undefined }
 			error={ error }
+			errorNotice={ errorNotice }
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
@@ -344,7 +347,10 @@ export default function AgentChat( {
 				) : (
 					<GroupedEmptyView
 						heading={ getEmptyViewHeading() }
-						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
+						help={
+							emptyViewSuggestions.length > 0 || emptyViewContent ? getEmptyViewHelp() : undefined
+						}
+						content={ emptyViewContent }
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
@@ -355,6 +361,7 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ isSiteEditorContext() && <EditorHistoryBridge /> }
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				{ pinnedContent }
 				{ isLoadingConversation && messages.length === 0 ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (

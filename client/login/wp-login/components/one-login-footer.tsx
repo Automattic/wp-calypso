@@ -1,19 +1,40 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import useSignupLink from '../hooks/use-signup-link';
 import './one-login-footer.scss';
 
 interface OneLoginFooterProps {
 	/**
-	 * When `isLoginView` is true, this is the "lost password" link.
+	 * When `isLoginView` is true, the "lost password" link. See `lostPasswordLinkMobileOnly`
+	 * for when it is hidden on desktop.
 	 */
 	lostPasswordLink?: JSX.Element;
+	/**
+	 * Hides `lostPasswordLink` at 960px and up. Pass it when the form carries its own copy
+	 * there; Woo and Gravatar-powered logins do not, and keep the footer's at every width.
+	 */
+	lostPasswordLinkMobileOnly?: boolean;
 	/**
 	 * When `isLoginView` is false, this is the "back to login" link.
 	 */
 	loginLink?: JSX.Element;
+	/**
+	 * Shows "Don't have an account? Sign up" below the buttons at 960px and up.
+	 */
+	showSignupPrompt?: boolean;
+	/**
+	 * Words that prompt "New here? Create an account" instead.
+	 */
+	isNewHereSignupPrompt?: boolean;
+	/**
+	 * Passed through to the signup link so an explicit `?signup_url` is honoured.
+	 */
+	signupUrl?: string;
 	/**
 	 * The content of the footer. If provided, it will be rendered instead of the default links.
 	 */
@@ -32,9 +53,35 @@ const recordBackToWpcomLinkClick = () => {
 	recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 };
 
+/**
+ * The route to signup, placed and worded like signup's route to login.
+ */
+const SignUpPrompt = ( { signupUrl, isNewHere }: { signupUrl?: string; isNewHere?: boolean } ) => {
+	const translate = useTranslate();
+	const { href, onClick } = useSignupLink( { signupUrl, origin: 'login-footer' } );
+	const components = {
+		// eslint-disable-next-line jsx-a11y/anchor-has-content
+		signupLink: <a href={ href } onClick={ onClick } rel="external" />,
+	};
+
+	return (
+		<p className="one-login__footer-signup">
+			{ isNewHere
+				? translate( 'New here? {{signupLink}}Create an account{{/signupLink}}', { components } )
+				: translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+						components,
+					} ) }
+		</p>
+	);
+};
+
 const OneLoginFooter = ( {
 	lostPasswordLink,
+	lostPasswordLinkMobileOnly,
 	loginLink,
+	showSignupPrompt,
+	isNewHereSignupPrompt,
+	signupUrl,
 	isLoginView,
 	supportLink,
 	children,
@@ -42,9 +89,20 @@ const OneLoginFooter = ( {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 
 	if ( isLoginView ) {
+		// Both are rendered and one is hidden in CSS: the page is server-rendered, so a viewport
+		// hook would jump on hydration.
 		return (
 			<div className="one-login__footer">
-				<div className="one-login__footer-links-wrapper">{ lostPasswordLink }</div>
+				<div
+					className={ clsx( 'one-login__footer-links-wrapper', {
+						'one-login__footer-mobile': lostPasswordLinkMobileOnly,
+					} ) }
+				>
+					{ lostPasswordLink }
+				</div>
+				{ showSignupPrompt && (
+					<SignUpPrompt signupUrl={ signupUrl } isNewHere={ isNewHereSignupPrompt } />
+				) }
 				<div className="one-login__footer-links-wrapper">
 					{ oauth2Client && (
 						<LoggedOutFormBackLink

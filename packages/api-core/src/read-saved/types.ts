@@ -1,15 +1,22 @@
 export type ReadSavedSource = 'reader-web';
 
 /**
- * Identifies a saved post: a WordPress.com post by `blog_id` + `post_id`, or an
- * RSS post by its feed item ID. The API stores a feed item that belongs to a
- * WordPress.com post under its `blog_id` + `post_id`, so one post never has two keys.
+ * Identifies a saved post: a WordPress.com post by `blog_id` + `post_id`, an
+ * RSS post by its feed item ID, or a page that isn't a Reader post by its URL.
+ * The API stores a feed item that belongs to a WordPress.com post under its
+ * `blog_id` + `post_id`. A Jetpack post can be saved under either, depending on
+ * whether the Reader API returned it as external.
  */
-export type ReadSavedKey = { blog_id: number; post_id: number } | { feed_item_id: number };
+export type ReadSavedKey =
+	{ blog_id: number; post_id: number } | { feed_item_id: number } | { url: string };
 
 export type ReadSavedKeyEntry = ReadSavedKey & {
 	/** ISO 8601 GMT date the post was saved. */
 	date_saved: string;
+	/** The save's ID. Missing from entries added optimistically. */
+	id?: number;
+	/** The saved page's URL, when the save has one. Any kind of save can carry it. */
+	url?: string;
 };
 
 /**

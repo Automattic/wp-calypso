@@ -98,16 +98,44 @@ $difm-offer-reviews-fade: 0.4s;
 	text-transform: uppercase;
 }
 
-// The control sits below the cards at a fixed place, so the cards and the control do not
-// move when the review or the label changes.
-.difm-offer-reviews__controls {
+// The dots sit below the cards at a fixed place, so the cards and the dots do not move when
+// the review changes.
+.difm-offer-reviews__dots {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: center;
 	margin-top: $grid-unit-10;
 }
 
-.difm-offer-reviews__toggle.components-button {
-	border-radius: $radius-full;
-	background: $white;
-	color: $gray-900;
+// The button is 24px square, the smallest target size WCAG allows. The dot is drawn inside it.
+.difm-offer-reviews__dot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: $grid-unit-30;
+	height: $grid-unit-30;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+
+	&::before {
+		content: "";
+		width: $grid-unit-10;
+		height: $grid-unit-10;
+		border-radius: $radius-full;
+		background: $white;
+		box-shadow: inset 0 0 0 1px $gray-600;
+	}
+
+	&.is-active::before {
+		background: $gray-900;
+		box-shadow: none;
+	}
+
+	&:focus-visible {
+		outline: $border-width-focus-fallback solid var(--wp-components-color-accent, var(--wp-admin-theme-color));
+		outline-offset: -2px;
+		border-radius: $radius-full;
+	}
 }

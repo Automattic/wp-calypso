@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from '@wordpress/element';
 import { trendingUp } from '@wordpress/icons';
@@ -6,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from 'calypso/dashboard/utils/premium-analytics-url';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import config from '../lib/config-api';
 import {
@@ -141,7 +141,7 @@ export function init() {
 									// Without a Jetpack menu to point at, the link falls back to Stats, which
 									// opens Premium Analytics instead where the site has it switched on.
 									'stats' === exploreMore.destination
-										? statsLink( exploreMore.url, '/' )
+										? statsLink( exploreMore.url, PREMIUM_ANALYTICS_TRAFFIC_ROUTE )
 										: exploreMore.url
 								}
 								onClick={ recordWidgetEventThenFollow( 'explore_more_clicked', {

@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { initialStreamState } from '../stream/reducer';
 import { SiteGenerationView, TINT_HOLD_MS } from '../view';
+import type { BuildWowStreamView } from '../stream/use-build-wow-stream';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -24,6 +26,23 @@ const idleState = {
 	isRetryingBuild: false,
 };
 
+const progressStream: BuildWowStreamView = {
+	info: {
+		protocol: 1,
+		blogId: 123,
+		runId: 'run-1',
+		graph: 'dsl',
+		capabilities: [ 'progress' ],
+		eventsUrl: 'https://example.com/events',
+		snapshotUrl: 'https://example.com/snapshot',
+	},
+	state: {
+		...initialStreamState( 'run-1' ),
+		phases: { prepare: 1 },
+		currentStep: 'Validate the exported DSL theme',
+	},
+};
+
 function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
 	const event = new Event( 'transitionend', { bubbles: true } );
 	Object.defineProperty( event, 'propertyName', { value: propertyName } );
@@ -31,6 +50,284 @@ function fireTransitionEnd( element: HTMLElement, propertyName: string ) {
 }
 
 describe( 'SiteGenerationView progress and fallback states', () => {
+	it( 'uses live graph progress for an opted-in build and keeps the synthetic preview out', () => {
+		const { container } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ progressStream }
+			/>
+		);
+
+		expect( screen.getByRole( 'region', { name: 'Live site build' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
+		// The host checklist owns progress; raw Engine step messages stay out of the canvas.
+		expect( screen.queryByText( 'Validate the exported DSL theme' ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeNull();
+		expect( screen.queryByText( 'Colors' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the existing synthetic preview when there is no active stream', () => {
+		const { container } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+			/>
+		);
+
+		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'region', { name: 'Live site build' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'uses the live canvas empty state immediately when streaming is opted in', () => {
+		const { container } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				streamRequested
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect(
+			liveCanvas.getByRole( 'heading', { name: 'Your site is taking shape' } )
+		).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Typography' } ) ).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Palette' } ) ).toBeVisible();
+		expect( liveCanvas.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.site-generation__page-preview' ) ).toBeNull();
+	} );
+
+	it( 'shows the planned pages and image slots in the brief, but not section names', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			info: {
+				...progressStream.info,
+				capabilities: [ 'progress', 'planning', 'design', 'sections', 'images' ],
+			},
+			state: {
+				...progressStream.state,
+				plan: {
+					status: 'completed',
+					title: 'A garden for everyone',
+					direction: 'Quiet and welcoming',
+					palette: [],
+					typography: [],
+					images: [ { query: 'A sunlit garden path', aspectRatio: null } ],
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome' ] } ],
+				},
+				images: {
+					'hero-image.png': {
+						status: 'ready',
+						url: '/wp-content/themes/demo/assets/hero-image.png',
+						query: 'A sunlit garden path',
+						aspectRatio: '16:9',
+					},
+				},
+				sections: { home: { 0: { kind: 'content', name: 'Welcome', partial: true } } },
+			},
+		};
+
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				siteSlug="example.wpcomstaging.com"
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ stream }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Pages' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( '1 section' ) ).toBeVisible();
+		expect( liveCanvas.getByRole( 'heading', { name: 'Images' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( '1 of 1 ready' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
+		expect( liveCanvas.queryByRole( 'img' ) ).not.toBeInTheDocument();
+		expect( liveCanvas.queryByRole( 'tab' ) ).not.toBeInTheDocument();
+		// [] means the plan decided on none, so nothing waits for these fields.
+		expect( liveCanvas.queryByRole( 'heading', { name: 'Typography' } ) ).not.toBeInTheDocument();
+		expect( liveCanvas.queryByRole( 'heading', { name: 'Palette' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'reveals design details only when the graph advertises those capabilities', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			info: {
+				...progressStream.info,
+				capabilities: [ 'progress', 'planning', 'design', 'sections', 'images' ],
+			},
+			state: {
+				...progressStream.state,
+				directions: [ 'Garden journal' ],
+				plan: {
+					status: 'developing',
+					title: 'A garden for everyone',
+					direction: 'Quiet and welcoming',
+					palette: [ { name: 'Accent', color: '#176B45' } ],
+					typography: [
+						{ name: 'Source Serif 4', family: '"Source Serif 4", serif', role: 'heading' },
+						{ name: 'DM Sans', family: "'DM Sans', sans-serif", role: 'body' },
+					],
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome', 'Visit' ] } ],
+					images: null,
+				},
+			},
+		};
+
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ stream }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Quiet and welcoming' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Accent, #176B45' ) ).toBeVisible();
+		const fontStylesheets = document.head.querySelectorAll(
+			'link[href^="https://fonts-api.wp.com/css2?"]'
+		);
+		expect( fontStylesheets ).toHaveLength( 2 );
+		expect( fontStylesheets[ 0 ] ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'Source+Serif+4' )
+		);
+		expect( fontStylesheets[ 1 ] ).toHaveAttribute( 'href', expect.stringContaining( 'DM+Sans' ) );
+		expect( liveCanvas.getByText( 'Source Serif 4' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'DM Sans' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Welcome' ) ).not.toBeInTheDocument();
+
+		const sidebar = screen.getByRole( 'complementary', { name: 'Site generation progress' } );
+		expect( within( sidebar ).queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
+		expect( within( sidebar ).queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
+		expect( within( sidebar ).queryByText( 'Accent, #176B45' ) ).not.toBeInTheDocument();
+		expect(
+			within( sidebar ).getByText(
+				'Hello! I’m the WordPress Agent, and I’m building your site right now.'
+			)
+		).toBeVisible();
+	} );
+
+	it( 'hides undecided design fields when the graph does not advertise design', () => {
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ {
+					...progressStream,
+					info: { ...progressStream.info, capabilities: [ 'progress', 'planning' ] },
+					state: {
+						...progressStream.state,
+						directions: [ 'Garden journal' ],
+						plan: {
+							status: 'developing',
+							title: 'A garden for everyone',
+							direction: null,
+							palette: null,
+							typography: null,
+							pages: null,
+							images: null,
+						},
+					},
+				} }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByText( 'Garden journal' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Source Serif 4' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows structured Engine data when an older host advertises progress only', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			state: {
+				...progressStream.state,
+				currentStep: null,
+				plan: {
+					status: 'completed',
+					title: 'Goat Moat',
+					direction: 'Playful editorial layouts',
+					palette: [ { name: 'Berry', color: '#B91D60' } ],
+					typography: [ { name: 'Fredoka', family: 'Fredoka', role: 'heading' } ],
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome', 'Animal preview' ] } ],
+					images: null,
+				},
+			},
+		};
+
+		render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ {
+					...idleState,
+					status: 'working',
+					steps: [ { id: 'polish', label: 'Polishing your site', status: 'active' } ],
+				} }
+				stream={ stream }
+			/>
+		);
+
+		const liveCanvas = within( screen.getByRole( 'region', { name: 'Live site build' } ) );
+		expect( liveCanvas.getByRole( 'heading', { name: 'Goat Moat' } ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Playful editorial layouts' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Berry, #B91D60' ) ).toBeVisible();
+		expect( liveCanvas.getByText( 'Fredoka' ) ).toBeVisible();
+		expect( liveCanvas.queryByText( 'Polishing your site' ) ).not.toBeInTheDocument();
+		const sidebar = screen.getByRole( 'complementary', { name: 'Site generation progress' } );
+		expect( within( sidebar ).getAllByText( 'Polishing your site' ).length ).toBeGreaterThan( 0 );
+	} );
+
+	it( 'clears the brief when a retry drops the previous plan', () => {
+		const stream: BuildWowStreamView = {
+			...progressStream,
+			info: {
+				...progressStream.info,
+				capabilities: [ 'progress', 'planning', 'design', 'sections' ],
+			},
+			state: {
+				...progressStream.state,
+				plan: {
+					status: 'developing',
+					title: 'A garden for everyone',
+					direction: 'Quiet and welcoming',
+					palette: [ { name: 'Leaf', color: '#176B45' } ],
+					typography: null,
+					pages: [ { slug: 'home', title: 'Home', sections: [ 'Welcome' ] } ],
+					images: null,
+				},
+			},
+		};
+		const { rerender } = render(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ stream }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'A garden for everyone' } ) ).toBeVisible();
+		expect( screen.getByText( 'Leaf, #176B45' ) ).toBeVisible();
+
+		rerender(
+			<SiteGenerationView
+				onReload={ jest.fn() }
+				state={ { ...idleState, status: 'working', steps: [] } }
+				stream={ progressStream }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { name: 'Your site is taking shape' } ) ).toBeVisible();
+		expect( screen.queryByText( 'A garden for everyone' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Quiet and welcoming' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Leaf, #176B45' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
 		jest.useFakeTimers();
 		jest.setSystemTime( new Date( '2026-08-07T12:00:00Z' ) );
@@ -194,13 +491,13 @@ describe( 'SiteGenerationView wait estimate', () => {
 	} );
 
 	it.each( [ 'blocks-first' as const, undefined ] )(
-		'promises up to 10 minutes when the graph is %s',
+		'promises a few minutes when the graph is %s',
 		( graph ) => {
 			render(
 				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
 			);
 
-			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
+			expect( screen.getByText( /This usually takes a few minutes\./ ) ).toBeVisible();
 		}
 	);
 } );

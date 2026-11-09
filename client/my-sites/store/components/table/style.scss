@@ -79,7 +79,6 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient(to right, color-mix(in srgb, var(--color-surface) 0%, transparent) 0%, var(--color-surface) 90%);
 				position: absolute;
 				z-index: 1;
 				right: 0;
@@ -95,23 +94,6 @@
 		.table__wrapper-shadow {
 			position: relative;
 			overflow: hidden;
-
-			&::after {
-				content: "";
-				display: block;
-				width: 24px;
-				height: 100%;
-				position: absolute;
-				right: -12px;
-				top: 0;
-				background: radial-gradient(ellipse at center, color-mix(in srgb, var(--color-neutral-70) 12.5%, transparent) 0%, color-mix(in srgb, var(--color-surface) 0%, transparent) 75%, color-mix(in srgb, var(--color-surface) 0%, transparent) 90%);
-			}
-
-			@include breakpoint-deprecated( ">660px" ) {
-				&::after {
-					display: none;
-				}
-			}
 		}
 
 		.table__wrapper {

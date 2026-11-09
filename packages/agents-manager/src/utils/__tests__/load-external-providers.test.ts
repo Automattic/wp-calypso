@@ -17,6 +17,7 @@ import { showTemplateAbility } from '../../abilities/show-template';
 import { streamPageDesignAbility } from '../../abilities/stream-page-design';
 import { setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
 import { getEditorPostContext } from '../editor-post-context';
@@ -36,6 +37,8 @@ import type {
 } from '../load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { Ability } from '@wordpress/abilities';
+
+const acceptedUploadTypes = DEFAULT_ACCEPTED_UPLOAD_TYPES;
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -192,6 +195,27 @@ describe( 'mergeCapabilitiesInto', () => {
 		mergeCapabilitiesInto( merged, lazyCapabilities );
 		expect( merged.supportsSplitScreen ).toBe( true );
 		expect( merged.supportsRegenerateAction ).toBe( true );
+	} );
+} );
+
+describe( 'acceptedUploadTypes', () => {
+	afterEach( () => {
+		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
+		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+		setLoadedProviderIds( undefined );
+	} );
+
+	it( 'tells the agent which files the user can attach', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { contextProvider: { getClientContext: () => ( { url: 'https://x' } ) } } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			url: 'https://x',
+			acceptedUploadTypes: DEFAULT_ACCEPTED_UPLOAD_TYPES,
+		} );
 	} );
 } );
 
@@ -499,6 +523,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			acceptedUploadTypes,
 			url: 'https://example.com/wp-admin/site-editor.php',
 			pathname: '/wp-admin/site-editor.php',
 			search: '',
@@ -556,6 +581,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			acceptedUploadTypes,
 			url: 'https://example.com/wp-admin/site-editor.php',
 			pathname: '/wp-admin/site-editor.php',
 			search: '',
@@ -594,6 +620,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			acceptedUploadTypes,
 			url: window.location.href,
 			pathname: window.location.pathname,
 			search: window.location.search,
@@ -658,6 +685,22 @@ describe( 'loadExternalProviders', () => {
 			gfm: { enabled: true },
 			charts: { enabled: true },
 		} );
+	} );
+
+	it( 'collects each provider’s interactive UI catalog in order', async () => {
+		const jetpackAiCatalog = { catalog: { catalogId: 'urn:jetpack-ai:v1' } };
+		const wooAiCatalog = { catalog: { catalogId: 'urn:woo-ai:v1' } };
+		setAgentsManagerData( {
+			agentProviders: [
+				{ interactiveUi: jetpackAiCatalog },
+				{ markdownComponents: {} },
+				{ interactiveUi: wooAiCatalog },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.interactiveUiCatalogs ).toEqual( [ jetpackAiCatalog, wooAiCatalog ] );
 	} );
 
 	it( 'chains markdown code renderers so later providers can handle structured blocks', async () => {
@@ -810,6 +853,7 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				acceptedUploadTypes,
 				...providerContext,
 				currentPageContentMarkup: '<!-- wp:paragraph /-->',
 			} );
@@ -834,7 +878,10 @@ describe( 'loadExternalProviders', () => {
 
 			const providers = await loadExternalProviders();
 
-			expect( providers.contextProvider?.getClientContext() ).toEqual( expected );
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...expected,
+				acceptedUploadTypes,
+			} );
 		} );
 
 		it( 'adds nothing where the view has no page body', async () => {
@@ -844,7 +891,10 @@ describe( 'loadExternalProviders', () => {
 
 			const providers = await loadExternalProviders();
 
-			expect( providers.contextProvider?.getClientContext() ).toEqual( providerContext );
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...providerContext,
+				acceptedUploadTypes,
+			} );
 		} );
 
 		// The ids the agent sends back have to be the ones AM's abilities resolve.
@@ -869,6 +919,7 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				acceptedUploadTypes,
 				...context,
 				...expected,
 			} );
@@ -909,6 +960,7 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				acceptedUploadTypes,
 				...pageContext(),
 				titleSuggestionCount: 3,
 			} );
@@ -919,7 +971,10 @@ describe( 'loadExternalProviders', () => {
 
 			const providers = await loadExternalProviders();
 
-			expect( providers.contextProvider?.getClientContext() ).toEqual( pageContext() );
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...pageContext(),
+				acceptedUploadTypes,
+			} );
 		} );
 
 		// The post editor fetches them only when asked, and the first message needs them.
@@ -942,7 +997,10 @@ describe( 'loadExternalProviders', () => {
 
 			const providers = await loadExternalProviders();
 
-			expect( providers.contextProvider?.getClientContext() ).toEqual( context );
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...context,
+				acceptedUploadTypes,
+			} );
 			expect( waitForEditedGlobalStyles ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -1331,6 +1389,6 @@ describe( 'canvas guard wiring', () => {
 		expect( mockedBinding.bindToOpenCanvas ).toHaveBeenCalled();
 		// The binding adds nothing to the wire: it reads the canvas from the editor
 		// store, so what the server receives is exactly what the provider built.
-		expect( context ).toEqual( providerContext );
+		expect( context ).toEqual( { ...providerContext, acceptedUploadTypes } );
 	} );
 } );

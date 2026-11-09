@@ -307,6 +307,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'agencies.automattic.com',
 		'agencies-beta.automattic.com',
 		'agencies.localhost',
+		'my.pressable.com',
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
@@ -451,7 +452,10 @@ export function getRedirectFromPendingPage( {
 				effectiveReceiptId: receiptId,
 				redirectTo,
 				siteSlug,
-				fromSiteSlug,
+				// `from_site_slug` comes from the URL, so only allow redirects to its
+				// host once the receipt has loaded, proving this is the user's own
+				// purchase. Otherwise anyone could craft an open redirect.
+				fromSiteSlug: receipt ? fromSiteSlug : undefined,
 				purchaseId,
 			} )
 		);

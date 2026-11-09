@@ -184,6 +184,7 @@ const {
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
 - `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
+- `resumeOnRemount?: boolean` - Resume the chat, a reply still streaming included, when it mounts again for the same agent. A mount resumes that agent whatever `sessionId` it is given; change `sessionId` while mounted, or remove the agent, to switch conversation. Without it, each mount starts empty
 
 ### useClientContext Hook
 
@@ -531,10 +532,13 @@ interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'component' | 'context' | 'data';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
+		componentProps?: any;
+		// Data the host reads, such as `sources`, or an interactive UI surface under `a2ui`:
+		// A2UI's A2A data part, for the host to render.
+		data?: Record< string, unknown >;
 	} >;
 	timestamp: number;
 	actions?: UIMessageAction[];
@@ -552,7 +556,11 @@ interface Tool {
 }
 
 type AuthProvider = () => Promise< Record< string, string > >;
-type ContextProvider = { getClientContext: () => any };
+type ContextProvider = {
+	getClientContext: () => any;
+	// Metadata the agent reads on every message, such as A2UI's `a2uiRendererCapabilities`.
+	getMessageMetadata?: () => Record< string, unknown >;
+};
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
 	getDispatchableTools?: () => Promise< Tool[] >;
@@ -599,7 +607,7 @@ repository, so restructuring needs a coordinated release.
 ```bash
 # From the wp-calypso root
 yarn workspace @automattic/agenttic-client run build
-yarn workspace @automattic/agenttic-client run test        # vitest — not part of CI yet
+yarn workspace @automattic/agenttic-client run test
 yarn workspace @automattic/agenttic-client run type-check
 ```
 

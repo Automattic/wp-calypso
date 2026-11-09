@@ -14,6 +14,7 @@ import {
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
+	productsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
@@ -116,7 +117,7 @@ import {
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
-import { BillingPurchaseInfoPopover } from '../dataviews';
+import { MovePurchaseActionItem } from '../move-purchase/move-purchase-action-item';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -146,9 +147,25 @@ function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
 
+/**
+ * Whether a product is on sale, `undefined` until known. Fetched only for Jetpack purchases.
+ */
+function useIsOnSale( purchase: Purchase ): ( ( productSlug: string ) => boolean ) | undefined {
+	const { data, isError, isFetching } = useQuery( {
+		...productsQuery(),
+		enabled: purchase.is_jetpack_plan_or_product,
+	} );
+	// Stale data, kept while refreshing or after a failed refresh, may predate the launch.
+	if ( ! data || isError || isFetching ) {
+		return undefined;
+	}
+	return ( productSlug ) => data[ productSlug ]?.available === true;
+}
+
 /** Where to send anything that isn't a WordPress.com plan to upgrade. */
 function getNonPlanUpgradeAction(
-	purchase: Purchase
+	purchase: Purchase,
+	isOnSale?: ( productSlug: string ) => boolean
 ): { href: string; title: string } | undefined {
 	if ( ! purchase.is_upgradable ) {
 		return undefined;
@@ -163,7 +180,11 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
+	const href = getSitePurchaseUpgradeUrl(
+		purchase,
+		getUpgradedPurchaseRedirectUrl( purchase ),
+		isOnSale
+	);
 	return href
 		? {
 				href,
@@ -217,7 +238,10 @@ function getUpgradeControlLabel(
  * Label and destination for the header CTA and quick-actions menu, which promote
  * upgrades only — offering downgrades is the body action's job.
  */
-function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: string } | undefined {
+function getHeaderUpgradeAction(
+	purchase: Purchase,
+	isOnSale?: ( productSlug: string ) => boolean
+): { href: string; title: string } | undefined {
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
@@ -228,7 +252,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 		return { href: planAction.href, title: planAction.title };
 	}
 
-	return getNonPlanUpgradeAction( purchase );
+	return getNonPlanUpgradeAction( purchase, isOnSale );
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -292,6 +316,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	const isOnSale = useIsOnSale( purchase );
 
 	// The purchase list gates its renewal link on ownership too.
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
@@ -299,7 +324,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	}
 
 	const actions: PurchaseHeaderAction[] = [];
-	const upgradeAction = getHeaderUpgradeAction( purchase );
+	const upgradeAction = getHeaderUpgradeAction( purchase, isOnSale );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
 
 	if ( upgradeAction ) {
@@ -618,6 +643,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	const isOnSale = useIsOnSale( purchase );
 
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return null;
@@ -664,7 +690,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		);
 	}
 
-	const upgradeAction = getNonPlanUpgradeAction( purchase );
+	const upgradeAction = getNonPlanUpgradeAction( purchase, isOnSale );
 	if ( ! upgradeAction ) {
 		return null;
 	}
@@ -839,6 +865,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 					<AddMailboxesActionItem purchase={ purchase } />
 				) }
 				<RenewActionButton purchase={ purchase } />
+				<MovePurchaseActionItem purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
 		</VStack>
@@ -925,18 +952,40 @@ function getFields( {
 				const locale = useLocale();
 				const navigate = useNavigate();
 				const { getValue } = field;
-				const helpText = ( () => {
+				const help = ( () => {
 					if (
 						purchase.is_auto_renew_enabled &&
-						Boolean( purchase.renew_date ) &&
+						purchase.renew_date &&
 						isRenewingBeforeExpiration( purchase )
 					) {
-						// translators: %(date)s is a formatted date string
-						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
-								dateStyle: 'long',
-							} ),
+						const renewDate = formatDate( new Date( purchase.renew_date ), locale, {
+							dateStyle: 'long',
 						} );
+						const isRenewingEarly =
+							Boolean( purchase.expiry_date ) &&
+							! purchase.is_hundred_year_domain &&
+							purchase.renew_date !== purchase.expiry_date;
+						if ( ! isRenewingEarly ) {
+							// translators: %(date)s is a formatted date string
+							return sprintf( __( 'You will be billed on %(date)s' ), { date: renewDate } );
+						}
+						return createInterpolateElement(
+							/* translators: <renewDate/> and <expiryDate/> are formatted dates, e.g. "January 5, 2026". inlineSupportLink is a web link. */
+							__(
+								'You will be billed on <renewDate/>. Your subscription is paid through <expiryDate/>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+							),
+							{
+								renewDate: <span>{ renewDate }</span>,
+								expiryDate: (
+									<span>
+										{ formatDate( new Date( purchase.expiry_date ), locale, {
+											dateStyle: 'long',
+										} ) }
+									</span>
+								),
+								inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+							}
+						);
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
 						const date = formatDate( new Date( purchase.expiry_date ), locale, {
@@ -957,48 +1006,10 @@ function getFields( {
 					}
 					return undefined;
 				} )();
-				const help = ( () => {
-					if ( ! helpText ) {
-						return helpText;
-					}
-					if (
-						purchase.expiry_date &&
-						purchase.renew_date &&
-						! purchase.is_hundred_year_domain &&
-						purchase.is_auto_renew_enabled &&
-						purchase.renew_date !== purchase.expiry_date &&
-						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
-					) {
-						return (
-							<HStack spacing={ 1 } expanded={ false }>
-								<span>{ helpText }</span>
-								<BillingPurchaseInfoPopover>
-									{ createInterpolateElement(
-										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
-										__(
-											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
-										),
-										{
-											expireDate: (
-												<span>
-													{ formatDate( new Date( purchase.expiry_date ), locale, {
-														dateStyle: 'long',
-													} ) }
-												</span>
-											),
-											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
-										}
-									) }
-								</BillingPurchaseInfoPopover>
-							</HStack>
-						);
-					}
-					return helpText;
-				} )();
 				if (
 					! purchase.is_rechargeable &&
 					! purchase.is_iap_purchase &&
-					( purchase.is_auto_renew_enabled || isAutoRenewToggleDisabled( purchase, user ) )
+					isAutoRenewToggleDisabled( purchase, user )
 				) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;
@@ -1006,7 +1017,7 @@ function getFields( {
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
-								title={ __( 'Enable auto-renew' ) }
+								title={ field.label }
 								description={ __( 'Auto-renew needs a payment method.' ) }
 								actions={
 									<Button
@@ -1026,22 +1037,45 @@ function getFields( {
 						</div>
 					);
 				}
+				const showNoPaymentMethodNotice =
+					purchase.is_auto_renew_enabled &&
+					! purchase.is_rechargeable &&
+					! purchase.is_iap_purchase;
 				return (
-					<ToggleControl
-						__nextHasNoMarginBottom
-						className="purchase-settings__toggle-control"
-						label={
-							! purchase.is_auto_renew_enabled &&
-							isExpiredAndInGracePeriod( purchase ) &&
-							purchase.is_jetpack_plan_or_product
-								? __( 'Re-activate subscription' )
-								: field.label
-						}
-						checked={ getValue( { item: purchase } ) }
-						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
-						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
-						help={ help }
-					/>
+					<VStack spacing={ 3 }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={
+								! purchase.is_auto_renew_enabled &&
+								isExpiredAndInGracePeriod( purchase ) &&
+								purchase.is_jetpack_plan_or_product
+									? __( 'Re-activate subscription' )
+									: field.label
+							}
+							checked={ getValue( { item: purchase } ) }
+							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
+							onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
+							help={ help }
+						/>
+						{ showNoPaymentMethodNotice && (
+							<HStack justify="space-between" alignment="center" spacing={ 3 }>
+								<span>{ __( 'Will not auto-renew because there is no payment method' ) }</span>
+								<Button
+									variant="secondary"
+									size="compact"
+									__next40pxDefaultSize
+									onClick={ () =>
+										navigate( {
+											to: changePaymentMethodRoute.fullPath,
+											params: { purchaseId: purchase.ID },
+										} )
+									}
+								>
+									{ __( 'Add payment method' ) }
+								</Button>
+							</HStack>
+						) }
+					</VStack>
 				);
 			},
 		},
