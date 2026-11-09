@@ -36,15 +36,19 @@
 
 If local verification stalls and a PR preview is available, try Calypso Live before asking someone to run the check manually.
 
-1. Use the preview link from the PR bot for each affected client. Set the path you want to check and keep the image and environment query parameters. Pass the full URL to `browse.cjs` with the usual test account.
-2. Check the final host and path, and read `window.COMMIT_SHA` with `--eval 'return page.evaluate( () => window.COMMIT_SHA )'`. Confirm the page is in the intended client and is running the commit you want to verify. A signed-in account can redirect from Classic to Dashboard.
+1. Use the preview link from the PR bot for each affected client. Set the path you want to check and keep the image and environment query parameters. Pass the full URL to `browse.cjs` in single quotes with the usual test account. The script retries startup responses for up to 90 seconds and fails if it cannot load a build. Use a fresh bot link if a container URL has expired.
+2. Check the final host and path to confirm the intended client. A signed-in account can redirect from Classic to Dashboard. The report's `preview commit` identifies the PR head. The preview may also include trunk as of build time.
 3. Run the same interactions and capture the same states you would check locally. When using response fixtures with a shared test account, keep the live account read-only. Report which UI checks used fixtures and which real backend behavior remains unverified.
+
+```bash
+node .agents/skills/verify/scripts/browse.cjs 'PASTE_THE_FULL_PR_PREVIEW_URL_HERE' --no-snapshot
+```
 
 ## Running unattended
 
 If you're a subagent that can't ask the user, report back to the agent that started you instead of acting on your own. When no one can answer at all (a pipeline or cloud run), don't stop to ask:
 
-- If the dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build.
+- If the dev server isn't running, use Calypso Live when a preview is available. If you need a local build, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build.
 - If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
