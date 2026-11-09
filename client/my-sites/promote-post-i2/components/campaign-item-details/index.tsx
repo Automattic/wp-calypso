@@ -1190,14 +1190,12 @@ export default function CampaignItemDetails( props: Props ) {
 													<div>
 														<div className="campaign-item-page__graph">
 															<DropdownMenu
-																class="campaign-item-page__graph-selector"
 																controls={ chartControls }
 																icon={ chevronDown }
 																text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
 																label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
 															/>
 															<DropdownMenu
-																class="campaign-item-page__graph-selector"
 																controls={ [
 																	{
 																		onClick: () => setChartSource( ChartSourceOptions.Clicks ),

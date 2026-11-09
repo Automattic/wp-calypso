@@ -160,46 +160,6 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 	}
 }
 
-// Setup page — zero out card-heading margins so CardBody padding is the only spacing
-.mcp-setup .card-heading {
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-// Setup page — flat cards, ordered lists, code blocks
-.mcp-setup {
-	.components-card,
-	.components-surface.components-card {
-		border-radius: 0;
-		margin-top: 24px;
-
-		&:first-of-type {
-			margin-top: 0;
-		}
-	}
-
-	.mcp-setup__steps {
-		padding-inline-start: 20px;
-		margin: 0;
-	}
-
-	.mcp-setup__code {
-		background-color: #f0f0f1;
-		padding: 2px 6px;
-		border-radius: 3px;
-		font-family: monospace;
-		font-size: 13px;
-	}
-
-	.mcp-setup__action-button {
-		align-self: flex-start;
-	}
-
-	.components-textarea-control__input[readonly] {
-		min-height: 160px;
-	}
-}
-
 // Site exceptions — flat `@wordpress/components` Cards only (same as hub / tools subpages)
 .mcp-sites {
 	min-width: 0;

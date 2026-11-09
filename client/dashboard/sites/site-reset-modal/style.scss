@@ -1,3 +1,7 @@
 .reset-site-modal-progress-bar {
-    width: 100% !important;
+    width: 100%;
+    // Progress paints its indicator and track with these tokens; mix them from the
+    // foreground color, as ProgressBar did before.
+    --wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground, #1e1e1e) 90%, transparent);
+    --wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground, #1e1e1e) 10%, transparent);
 }

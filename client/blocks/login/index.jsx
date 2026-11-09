@@ -35,8 +35,8 @@ import {
 	getRequestNotice,
 	getRequestError,
 	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	isTwoFactorEnabled,
-	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
@@ -59,6 +59,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import SignupExistingAccountNotice from './signup-existing-account-notice';
+import { getDefaultTwoFactorAuthType } from './two-factor-authentication/get-default-two-factor-auth-type';
 import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
@@ -87,6 +88,7 @@ class Login extends Component {
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		lostPasswordLink: PropTypes.node,
+		isSocialAboveForm: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		rebootAfterLogin: PropTypes.func.isRequired,
@@ -98,7 +100,7 @@ class Login extends Component {
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		isSecurityKeySupported: PropTypes.bool,
+		twoFactorSupportedAuthTypes: PropTypes.arrayOf( PropTypes.string ),
 		userEmail: PropTypes.string,
 		onSocialConnectStart: PropTypes.func,
 		onTwoFactorRequested: PropTypes.func,
@@ -248,7 +250,6 @@ class Login extends Component {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
 					// Pass oauth2 and redirectTo query params so that we can get the correct signup url for the user
@@ -260,7 +261,6 @@ class Login extends Component {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
 					from: this.props.currentQuery?.from,
@@ -279,17 +279,13 @@ class Login extends Component {
 
 	handleValidLogin = () => {
 		if ( this.props.twoFactorEnabled ) {
-			let defaultAuthType;
-			if (
-				this.state.isBrowserSupported &&
-				this.props.isSecurityKeySupported &&
-				this.props.twoFactorNotificationSent !== 'push'
-			) {
-				defaultAuthType = 'webauthn';
-			} else {
-				defaultAuthType = this.props.twoFactorNotificationSent.replace( 'none', 'authenticator' );
-			}
-			this.handleTwoFactorRequested( defaultAuthType );
+			this.handleTwoFactorRequested(
+				getDefaultTwoFactorAuthType( {
+					supportedAuthTypes: this.props.twoFactorSupportedAuthTypes,
+					notificationSent: this.props.twoFactorNotificationSent,
+					isWebAuthnSupportedByBrowser: this.state.isBrowserSupported,
+				} )
+			);
 		} else if ( this.props.isLinking ) {
 			this.handleSocialConnectStart();
 		} else {
@@ -398,6 +394,7 @@ class Login extends Component {
 			handleUsernameChange,
 			signupUrl,
 			lostPasswordLink,
+			isSocialAboveForm,
 			isWCCOM,
 			isBlazePro,
 			translate,
@@ -521,6 +518,7 @@ class Login extends Component {
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
 				lostPasswordLink={ lostPasswordLink }
+				isSocialAboveForm={ isSocialAboveForm }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isFromPassport={ this.props.isFromPassport }
@@ -615,10 +613,10 @@ export default connect(
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		twoFactorSupportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
-		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isFromAkismet: isAkismetRedirect(

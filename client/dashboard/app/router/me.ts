@@ -1250,6 +1250,26 @@ export const mcpLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+export const mcpLegacySubpageRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'mcp/$',
+	beforeLoad: ( { params } ) => {
+		switch ( params._splat ) {
+			case 'read':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/read' } );
+			case 'write':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/write' } );
+			case 'mcp-sites':
+			case 'add-site':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/mcp-sites' } );
+			case 'setup':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/setup' } );
+			default:
+				throw dashboardRedirect( { to: '/me/preferences/mcp' } );
+		}
+	},
+} );
+
 export const privacyLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
@@ -1462,6 +1482,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
 		mcpLegacyRedirectRoute,
+		mcpLegacySubpageRedirectRoute,
 		privacyLegacyRedirectRoute,
 		blockedSitesLegacyRedirectRoute,
 		profileLegacyRedirectRoute,

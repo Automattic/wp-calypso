@@ -133,8 +133,11 @@
 			margin-right: auto;
 			margin-bottom: 10px;
 			width: 160px;
-			height: 5px;
-			border-radius: 3px;
+
+			> * {
+				height: 5px;
+				border-radius: 3px;
+			}
 		}
 
 		p {

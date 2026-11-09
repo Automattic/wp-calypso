@@ -1,4 +1,5 @@
 import {
+	hasLoadedMorePages,
 	markReadConversationNotesMutation,
 	readConversationsCommentsQuery,
 	readConversationsQuery,
@@ -21,6 +22,7 @@ import type {
 	ReadConversation,
 	ReadConversationOwnComment,
 	ReadConversationPerson,
+	ReadConversationsScope,
 	ReadConversationsSort,
 } from '@automattic/api-core';
 
@@ -51,6 +53,7 @@ export const adaptReadConversation = ( conversation: ReadConversation ): Convers
 	commenterCount: conversation.commenter_count,
 	unreadCount: conversation.unread_count ?? 0,
 	unreadNoteIds: conversation.unread_note_ids,
+	unreadCommentIds: conversation.unread_comment_ids,
 	isFollowing: conversation.is_following,
 } );
 
@@ -86,18 +89,21 @@ function adaptPage< Row extends object, Item extends Conversation | OwnComment >
 export function useConversations( {
 	sort,
 	search,
+	scope,
 	refetchInterval,
+	enabled = true,
 }: {
 	sort: ReadConversationsSort;
 	search?: string;
+	scope?: ReadConversationsScope;
 	refetchInterval?: number;
+	enabled?: boolean;
 } ) {
 	const query = useInfiniteQuery( {
-		...readConversationsQuery( { sort, search } ),
+		...readConversationsQuery( { sort, search, scope } ),
 		placeholderData: keepPreviousData,
-		// Refetching an infinite query refetches every page, so live updates stop once more are loaded.
-		refetchInterval: ( { state } ) =>
-			( state.data?.pages.length ?? 0 ) > 1 ? false : ( refetchInterval ?? false ),
+		enabled,
+		refetchInterval: ( query ) => ! hasLoadedMorePages( query ) && ( refetchInterval ?? false ),
 	} );
 	const { data } = query;
 	const conversations = useMemo(
