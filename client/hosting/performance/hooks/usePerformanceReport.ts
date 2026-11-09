@@ -54,7 +54,7 @@ export const usePerformanceReport = (
 		status: insightsStatus,
 		isError: isInsightsError,
 		isLoading: isLoadingInsights,
-	} = useUrlPerformanceInsightsQuery( url, targetHash );
+	} = useUrlPerformanceInsightsQuery( targetUrl, targetHash );
 
 	const performanceInsights = data?.pagespeed;
 

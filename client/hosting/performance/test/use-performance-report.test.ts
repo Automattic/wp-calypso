@@ -95,6 +95,55 @@ describe( 'usePerformanceReport', () => {
 		expect( mockSetIsSaving ).toHaveBeenCalledWith( true );
 	} );
 
+	it( 'should request insights with the final URL that the new token was issued for', () => {
+		( useUrlBasicMetricsQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				final_url: 'https://www.example.com/',
+				token: 'new-token',
+			},
+			isError: false,
+			isFetched: true,
+			isLoading: false,
+			refetch: jest.fn(),
+		} );
+
+		renderHook( () =>
+			usePerformanceReport(
+				mockSetIsSaving,
+				mockRefetchPages,
+				mockSavePerformanceReportUrl,
+				'123',
+				{ url: 'https://example.com/', hash: 'old-hash' },
+				'mobile',
+				() => {}
+			)
+		);
+
+		expect( useUrlPerformanceInsightsQuery ).toHaveBeenLastCalledWith(
+			'https://www.example.com/',
+			'new-token'
+		);
+	} );
+
+	it( 'should request insights with the saved URL and hash when there is no new token', () => {
+		renderHook( () =>
+			usePerformanceReport(
+				mockSetIsSaving,
+				mockRefetchPages,
+				mockSavePerformanceReportUrl,
+				'123',
+				{ url: 'https://www.example.com/', hash: 'saved-hash' },
+				'mobile',
+				() => {}
+			)
+		);
+
+		expect( useUrlPerformanceInsightsQuery ).toHaveBeenLastCalledWith(
+			'https://www.example.com/',
+			'saved-hash'
+		);
+	} );
+
 	it( 'should not save performance report when testAgain() returns an invalid URL', async () => {
 		// Setup mock for basic metrics query with invalid URL
 		const mockRefetch = jest.fn().mockResolvedValue( {
