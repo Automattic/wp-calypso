@@ -226,17 +226,6 @@ export class Login extends Component {
 	}
 
 	/**
-	 * Logged-out login views put the route to signup below the buttons and the lost-password link
-	 * on the form. CSS keeps the top-bar and footer links instead below 960px. Gravatar-powered
-	 * logins have their own layout.
-	 */
-	hasSignupLinkBelowButtons() {
-		return (
-			this.props.isLoginView && ! this.props.isUserLoggedIn && ! this.props.isGravPoweredClient
-		);
-	}
-
-	/**
 	 * The same link on the form: on the email field's label row for the stacked login, at every
 	 * width, otherwise on the password field's for desktop, with the footer's hidden there.
 	 */
@@ -303,7 +292,7 @@ export class Login extends Component {
 		);
 	}
 
-	renderContent( isSocialFirst ) {
+	renderContent( isSocialFirst, hasSignupLinkBelowButtons ) {
 		const {
 			clientId,
 			domain,
@@ -333,8 +322,6 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/backup' );
 
 		const isStackedLogin = this.isStackedLogin();
-
-		const hasSignupLinkBelowButtons = this.hasSignupLinkBelowButtons();
 
 		// Gravatar-powered clients and Woo render their own lost-password link.
 		const lostPasswordFormLink =
@@ -421,6 +408,12 @@ export class Login extends Component {
 
 		const isStackedLogin = this.isStackedLogin();
 
+		// Logged-out login views put the route to signup below the buttons and the lost-password
+		// link on the form. CSS keeps the top-bar and footer links instead below 960px.
+		// Gravatar-powered logins have their own layout.
+		const hasSignupLinkBelowButtons =
+			this.props.isLoginView && ! this.props.isUserLoggedIn && ! isGravPoweredClient;
+
 		// Each returns null when it has nothing to say.
 		const notices = (
 			<>
@@ -457,7 +450,9 @@ export class Login extends Component {
 					] }
 				/>
 
-				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+				<div className="wp-login__container">
+					{ this.renderContent( isSocialFirst, hasSignupLinkBelowButtons ) }
+				</div>
 
 				{ ! isGravPoweredClient && this.renderI18nSuggestions() }
 			</Main>
@@ -481,7 +476,7 @@ export class Login extends Component {
 						columnWidth={ isLoginFormView && ! isStackedLogin ? 6 : undefined }
 						isCentered={ ( isLoginFormView && ! isStackedLogin ) || undefined }
 						// The footer carries the route to signup on desktop instead.
-						signupLinkMobileOnly={ this.hasSignupLinkBelowButtons() }
+						signupLinkMobileOnly={ hasSignupLinkBelowButtons }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						notice={ notices }
 						linkLogoToHome
