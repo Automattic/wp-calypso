@@ -347,7 +347,7 @@ export function ConversationDetail( {
 										</Heading>
 										<Text
 											size={ 14 }
-											lineHeight="24px"
+											lineHeight="20px"
 											truncate
 											numberOfLines={ 2 }
 											color="color-mix(in srgb, var(--color-text-subtle) 80%, var(--color-text))"
