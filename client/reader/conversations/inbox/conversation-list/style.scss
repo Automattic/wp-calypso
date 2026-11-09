@@ -41,7 +41,7 @@
 
 .conversations-inbox__tabs {
 	padding: 0 16px;
-	border-block-end: 1px solid var( --color-border-subtle );
+	border-block-end: 1px solid color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
 }
 
 // Lets the active tab's underline sit on the divider.
@@ -64,6 +64,11 @@
 	.components-search-control {
 		flex: 1;
 		min-width: 0;
+	}
+
+	// Keeps the dropdown wrappers as tall as their buttons, without line-height below.
+	.components-dropdown {
+		display: flex;
 	}
 
 	.components-button {
@@ -90,7 +95,7 @@
 	flex-direction: column;
 	flex: 1;
 	overflow-y: auto;
-	border-block-start: 1px solid var( --color-border-subtle );
+	border-block-start: 1px solid color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
 
 	ul {
 		list-style: none;
@@ -99,7 +104,7 @@
 }
 
 .conversations-inbox__day {
-	padding: 12px 16px;
+	padding: 6px 16px;
 	border-block-start: 1px solid color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
 }
 

@@ -155,7 +155,7 @@ export function ConversationListItem( {
 					>
 						{ title }
 					</Text>
-					<Text size={ 14 } color="var(--color-text-subtle)">
+					<Text size={ 12 } lineHeight="16px" color="var(--color-text-subtle)">
 						<span aria-hidden="true">{ formatCompactTime( timestamp, locale ) }</span>
 						<VisuallyHidden>{ formatCompactTime( timestamp, locale, 'long' ) }</VisuallyHidden>
 					</Text>

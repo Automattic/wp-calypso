@@ -207,7 +207,8 @@ export function ConversationList( {
 							{ label && (
 								<Heading
 									level={ 2 }
-									size={ 14 }
+									size={ 13 }
+									lineHeight="20px"
 									weight={ 500 }
 									color="inherit"
 									className="conversations-inbox__day"

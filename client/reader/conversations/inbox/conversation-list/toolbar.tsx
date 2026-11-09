@@ -46,6 +46,7 @@ export function ConversationListToolbar( {
 		<HStack spacing={ 2 } expanded={ false } className="conversations-inbox__toolbar">
 			<SearchControl
 				__next40pxDefaultSize
+				size="compact"
 				__nextHasNoMarginBottom
 				value={ search }
 				onChange={ onSearchChange }
@@ -54,7 +55,7 @@ export function ConversationListToolbar( {
 			<DropdownMenu
 				icon={ funnel }
 				label={ translate( 'Sort conversations' ) }
-				toggleProps={ { __next40pxDefaultSize: true } }
+				toggleProps={ { __next40pxDefaultSize: true, size: 'compact' } }
 				popoverProps={ { placement: 'bottom-end' } }
 			>
 				{ ( { onClose } ) => (
@@ -76,6 +77,7 @@ export function ConversationListToolbar( {
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
 						__next40pxDefaultSize
+						size="compact"
 						icon={ <Icon icon={ cog } /> }
 						label={ translate( 'Settings' ) }
 						showTooltip
