@@ -408,9 +408,8 @@ export class Login extends Component {
 
 		const isStackedLogin = this.isStackedLogin();
 
-		// Logged-out login views put the route to signup below the buttons and the lost-password
-		// link on the form. CSS keeps the top-bar and footer links instead below 960px.
-		// Gravatar-powered logins have their own layout.
+		// In desktop layouts, the signup link goes below the buttons and "Lost your password?" goes on
+		// the form. Mobile layouts keep both in the top bar and footer. Gravatar-powered logins have their own layout.
 		const hasSignupLinkBelowButtons =
 			this.props.isLoginView && ! this.props.isUserLoggedIn && ! isGravPoweredClient;
 

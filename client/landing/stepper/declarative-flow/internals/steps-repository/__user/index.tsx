@@ -88,8 +88,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isBrandedLayout;
 	const isEmailAtBottom = isThemeGridLayout || isBrandedLayout;
 	const isLargeViewport = useViewportMatch( 'large' );
-	// Email-first layouts have their own in-form link and no email button. In onboarding, that
-	// leaves partner-branded signups.
+	// Email-first layouts have their own in-form link and no email button.
 	const isLoginLinkBelowButtons =
 		isLargeViewport && flow === ONBOARDING_FLOW && ! isEmailFirstVariant;
 
