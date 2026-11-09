@@ -17,6 +17,13 @@
 	}
 }
 
+// The back button's label matches the title it stands in for.
+.conversations-inbox__back.components-button {
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
 // The chevron glyphs sit 1.2px off center in their 24px icons, up for the up
 // chevron and down for the down one, so nudge them onto the button's center.
 .conversations-inbox__previous svg {
@@ -120,6 +127,14 @@
 
 	img {
 		border-radius: 4px;
+	}
+
+	.conversations-inbox__post-dot {
+		flex-shrink: 0;
+		width: 2px;
+		height: 2px;
+		border-radius: 50%;
+		background: currentcolor;
 	}
 
 	// Sits above the card's stretched post link.

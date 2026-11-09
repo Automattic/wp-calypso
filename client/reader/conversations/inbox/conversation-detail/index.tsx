@@ -185,6 +185,7 @@ export function ConversationDetail( {
 							ref={ backRef }
 							__next40pxDefaultSize
 							size="compact"
+							className="conversations-inbox__back"
 							icon={ isRtl ? chevronRight : chevronLeft }
 							onClick={ onBack }
 						>
@@ -269,22 +270,26 @@ export function ConversationDetail( {
 										/>
 									) }
 									<strong>{ String( post.site_name ?? '' ) }</strong>
-									{ author?.name && (
-										<ReaderAuthorLink
-											author={ author }
-											className="conversations-inbox__post-author"
-										>
-											{ author.name }
-										</ReaderAuthorLink>
-									) }
-									{ date && (
-										<span>
-											·{ ' ' }
-											{ date.isSame( moment(), 'day' )
-												? translate( 'Today' )
-												: date.format( 'll' ) }
-										</span>
-									) }
+									<HStack spacing={ 1 } expanded={ false }>
+										{ author?.name && (
+											<ReaderAuthorLink
+												author={ author }
+												className="conversations-inbox__post-author"
+											>
+												{ author.name }
+											</ReaderAuthorLink>
+										) }
+										{ author?.name && date && (
+											<span className="conversations-inbox__post-dot" aria-hidden="true" />
+										) }
+										{ date && (
+											<span>
+												{ date.isSame( moment(), 'day' )
+													? translate( 'Today' )
+													: date.format( 'll' ) }
+											</span>
+										) }
+									</HStack>
 									<HStack
 										spacing={ 4 }
 										expanded={ false }
@@ -324,7 +329,7 @@ export function ConversationDetail( {
 								<HStack spacing={ 6 } alignment="top">
 									<VStack
 										as="a"
-										spacing={ 2 }
+										spacing={ 1 }
 										className="conversations-inbox__post-link"
 										href={ postUrl }
 									>
@@ -345,7 +350,7 @@ export function ConversationDetail( {
 											lineHeight="20px"
 											truncate
 											numberOfLines={ 2 }
-											color="var(--color-text-subtle)"
+											color="color-mix(in srgb, var(--color-text-subtle) 80%, var(--color-text))"
 										>
 											{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
 										</Text>
