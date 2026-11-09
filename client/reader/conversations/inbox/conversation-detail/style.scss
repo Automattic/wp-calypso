@@ -41,11 +41,9 @@
 	align-items: center;
 	justify-content: center;
 
-	// Calypso draws spinners in the brand color; this one stays a light gray. Its
-	// default top margin would also push it below center.
+	// The spinner's default top margin would push it below center.
 	.components-spinner {
 		margin: 0;
-		color: var( --color-neutral-20 );
 	}
 }
 
