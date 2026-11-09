@@ -260,6 +260,13 @@ const BundleTermPrice = styled.span`
 	gap: 8px;
 `;
 
+const BundleRenewalNote = styled.div< { theme?: Theme } >`
+	width: 100%;
+	margin: 8px 0;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+`;
+
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
 	font-size: 0.75rem;
@@ -586,6 +593,14 @@ export function BundleLineItem( {
 					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
 				</BundleTermPrice>
 			</BundleTermRow>
+
+			{ /* Bundle members renew at full price, so the renewal amount is the
+			     pre-discount group total. */ }
+			<BundleRenewalNote>
+				{ translate( 'Auto-renews at %(price)s/year.', {
+					args: { price: bundleOriginalDisplay },
+				} ) }
+			</BundleRenewalNote>
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
