@@ -82,7 +82,7 @@ export function WarningContentInfo( {
 								<span>
 									{ createInterpolateElement(
 										__(
-											'<strong>Your site’s address will change</strong> to the one below. Links to your old address will redirect automatically.'
+											'<strong>Your site’s address will change</strong> to the one below, and links to your old address will redirect automatically. Once the move is complete, add a custom domain to keep your site in search results, since the new address isn’t indexed by search engines.'
 										),
 										{ strong: <strong /> }
 									) }
