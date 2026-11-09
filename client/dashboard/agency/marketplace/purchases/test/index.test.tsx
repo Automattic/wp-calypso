@@ -3,6 +3,8 @@
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch, select } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import { vi } from 'vitest';
 import { CheckoutSuccessFlashMessage } from '../../../../app/checkout-success-flash-message';
@@ -149,7 +151,8 @@ describe( '<MarketplacePurchases>', () => {
 			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
 		);
 
-		// The app shell renders the checkout success message, which removes `flash`.
+		// The app shell renders the checkout success message, which removes `flash` and
+		// `purchased_plan`.
 		const { recordTracksEvent } = render(
 			<>
 				<CheckoutSuccessFlashMessage />
@@ -164,6 +167,32 @@ describe( '<MarketplacePurchases>', () => {
 			{ receipt_id: '123' }
 		);
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
+		expect(
+			select( noticesStore )
+				.getNotices()
+				.map( ( { content } ) => content )
+		).toEqual( [ 'Your purchase was completed.' ] );
+		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
+	} );
+
+	test( 'leaves `flash` and `purchased_plan` to the checkout success message', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+		);
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () =>
+			expect( window.location.search ).toBe(
+				'?flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+			)
+		);
 	} );
 
 	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {

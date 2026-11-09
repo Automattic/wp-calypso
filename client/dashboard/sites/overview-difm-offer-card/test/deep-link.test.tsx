@@ -71,7 +71,7 @@ describe( 'DifmOfferDeepLink', () => {
 		window.history.replaceState( null, '', '/?difmOffer=open&source=site-setup' );
 
 		render( <DifmOfferDeepLink site={ mockSite } /> );
-		// A removal would run a task later.
+		// Long enough for a removal to have run.
 		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 20 ) ) );
 
 		expect( window.location.search ).toBe( '?difmOffer=open&source=site-setup' );

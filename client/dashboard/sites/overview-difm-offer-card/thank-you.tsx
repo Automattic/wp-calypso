@@ -1,5 +1,4 @@
-import { useRouter, useSearch } from '@tanstack/react-router';
-import { removeSearchParams } from '../../app/hooks/use-consume-search-params';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import {
 	DIFM_OFFER_PURCHASED_SEARCH,
 	DifmOfferThankYouModal,
@@ -15,14 +14,20 @@ export interface DifmOfferSearch {
  * Checkout returns here with a search param after a purchase through the DIFM offer.
  */
 export default function DifmOfferThankYou() {
-	const router = useRouter();
+	const navigate = useNavigate();
 	const { difmOffer }: DifmOfferSearch = useSearch( { strict: false } );
 
 	if ( difmOffer !== DIFM_OFFER_PURCHASED_SEARCH.difmOffer ) {
 		return null;
 	}
 
-	const handleClose = () => removeSearchParams( router, [ 'difmOffer' ] );
+	const handleClose = () =>
+		navigate( {
+			to: '.',
+			search: ( prev: Record< string, unknown > ) => ( { ...prev, difmOffer: undefined } ),
+			replace: true,
+			resetScroll: false,
+		} );
 
 	return <DifmOfferThankYouModal onClose={ handleClose } />;
 }
