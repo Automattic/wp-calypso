@@ -256,6 +256,17 @@ describe( 'requestOAuthTokenIfMissing', () => {
 		expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:no-token' );
 	} );
 
+	test( 'does not redirect again when the last trip through OAuth came back without a token', () => {
+		config.enable( 'oauth' );
+		window.sessionStorage.setItem(
+			'wpcom_auth_bounce_count',
+			JSON.stringify( { count: 1, at: Date.now() } )
+		);
+
+		expect( requestOAuthTokenIfMissing() ).toBe( false );
+		expect( replace ).not.toHaveBeenCalled();
+	} );
+
 	test( 'does nothing when a token is saved', () => {
 		config.enable( 'oauth' );
 		store.set( 'wpcom_token', 'token' );
