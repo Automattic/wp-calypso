@@ -65,7 +65,7 @@
 		"@wordpress/ui": "^0.26.0",
 		"clsx": "^2.1.1",
 		"moment": "^2.31.0",
-		"qs": "^6.15.2"
+		"qs": "^6.17.1"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^6.21.0 || ^7.0.0",

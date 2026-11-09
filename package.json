@@ -180,7 +180,7 @@
 		"@types/debug": "^4.1.13",
 		"@types/jest": "^30.0.0",
 		"@types/node": "^24.12.2",
-		"@types/qs": "^6.9.7",
+		"@types/qs": "^6.15.1",
 		"@types/react": "19.2.16",
 		"@types/react-modal": "^3.16.3",
 		"@types/react-transition-group": "^4.4.12",
