@@ -1,10 +1,12 @@
 /**
  * @vitest-environment jsdom
  */
+import { randomUUID } from 'crypto';
 import config from '@automattic/calypso-config';
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import store from 'store';
 import { vi } from 'vitest';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
@@ -13,6 +15,7 @@ import {
 	AuthProvider,
 	authQueryFn,
 	logout,
+	requestOAuthTokenIfMissing,
 	sessionStateQuery,
 	updateCurrentUser,
 	useAuth,
@@ -205,6 +208,65 @@ describe( '<AuthProvider> stats', () => {
 		await waitFor( () =>
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:expired' )
 		);
+	} );
+} );
+
+describe( 'requestOAuthTokenIfMissing', () => {
+	const replace = vi.fn();
+
+	beforeEach( () => {
+		// jsdom has no `crypto.randomUUID`.
+		Object.defineProperty( window.crypto, 'randomUUID', {
+			configurable: true,
+			value: randomUUID,
+		} );
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: {
+				origin: 'https://example.com',
+				pathname: '/overview',
+				search: '?tab=sites',
+				replace,
+			},
+		} );
+	} );
+
+	afterEach( () => {
+		config.disable( 'oauth' );
+		store.remove( 'wpcom_token' );
+		window.sessionStorage.clear();
+		replace.mockClear();
+	} );
+
+	test( 'sends an OAuth dashboard without a token to get one', () => {
+		config.enable( 'oauth' );
+
+		expect( requestOAuthTokenIfMissing() ).toBe( true );
+
+		const authorizeUrl = new URL( replace.mock.calls[ 0 ][ 0 ] );
+		expect( authorizeUrl.origin + authorizeUrl.pathname ).toBe(
+			'https://public-api.wordpress.com/oauth2/authorize'
+		);
+		expect( authorizeUrl.searchParams.get( 'redirect_uri' ) ).toBe(
+			'https://example.com/oauth/token?next=%2Foverview%3Ftab%3Dsites'
+		);
+		expect( authorizeUrl.searchParams.get( 'state' ) ).toBe(
+			window.sessionStorage.getItem( 'wpcom_oauth_state' )
+		);
+		expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:no-token' );
+	} );
+
+	test( 'does nothing when a token is saved', () => {
+		config.enable( 'oauth' );
+		store.set( 'wpcom_token', 'token' );
+
+		expect( requestOAuthTokenIfMissing() ).toBe( false );
+		expect( replace ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does nothing on a dashboard that does not use OAuth', () => {
+		expect( requestOAuthTokenIfMissing() ).toBe( false );
+		expect( replace ).not.toHaveBeenCalled();
 	} );
 } );
 

@@ -14,6 +14,7 @@ import {
 	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
+import store from 'store';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
@@ -154,6 +155,39 @@ function getOAuthAuthorizeUrl( {
 	return authUri.toString();
 }
 
+function redirectToOAuth() {
+	const state = crypto.randomUUID();
+	sessionStorage.setItem( 'wpcom_oauth_state', state );
+
+	window.location.replace(
+		getOAuthAuthorizeUrl( {
+			state,
+			next: window.location.pathname + window.location.search,
+		} )
+	);
+}
+
+/**
+ * Sends an OAuth dashboard that has no token to get one. Returns true when it redirects.
+ *
+ * A support session can load the user without a token, so a failed user request can't be the
+ * only thing that starts the OAuth flow: endpoints that only accept OAuth requests would then
+ * refuse a session that otherwise looks signed in.
+ *
+ * Must run before the support session replaces localStorage, which would hide a saved token.
+ */
+export function requestOAuthTokenIfMissing(): boolean {
+	if ( ! config.isEnabled( 'oauth' ) || store.get( 'wpcom_token' ) ) {
+		return false;
+	}
+
+	bumpStat( 'dashboard-auth', 'bounce:no-token' );
+	trackAuthBounceLoop();
+	redirectToOAuth();
+
+	return true;
+}
+
 interface AuthContextType {
 	user: User;
 	logout: () => Promise< void >;
@@ -250,15 +284,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		trackAuthBounceLoop();
 
 		if ( config.isEnabled( 'oauth' ) ) {
-			const state = crypto.randomUUID();
-			sessionStorage.setItem( 'wpcom_oauth_state', state );
-
-			window.location.replace(
-				getOAuthAuthorizeUrl( {
-					state,
-					next: window.location.pathname + window.location.search,
-				} )
-			);
+			redirectToOAuth();
 			return;
 		}
 
