@@ -68,7 +68,7 @@ yarn test                                       # Run unit tests for client, pac
 yarn test-build-tools                           # Run unit tests for build-tools
 yarn test-client                                # Run unit tests for client
 yarn test-apps                                  # Run apps unit tests
-yarn test-packages                              # Run Jest unit tests for packages
+yarn test-packages                              # Run packages unit tests
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
