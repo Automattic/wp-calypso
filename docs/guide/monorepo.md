@@ -139,6 +139,10 @@ To run one package's tests:
 
 `yarn run test-packages [ test file pattern ]`
 
+Packages with a `vitest.config.*` run on Vitest and aren't covered by `test-packages`. Run their tests with:
+
+`yarn workspace <package-name> test`
+
 ## Building packages & apps
 
 Packages will have their `prepare` scripts run automatically on `yarn`.

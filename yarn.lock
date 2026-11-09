@@ -34604,6 +34604,7 @@ __metadata:
     swiper: "npm:^12.1.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:6.0.3"
+    vitest: "npm:^4.1.12"
     webpack: "npm:^5.111.1"
     webpack-bundle-analyzer: "npm:^5.4.0"
     webpack-cli: "npm:^7.2.3"
