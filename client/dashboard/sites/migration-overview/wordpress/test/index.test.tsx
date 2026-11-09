@@ -141,7 +141,9 @@ describe( 'WordPressMigration', () => {
 		const run = mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+		);
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect(
@@ -364,7 +366,9 @@ describe( 'WordPressMigration', () => {
 		mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+		);
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 
@@ -464,7 +468,9 @@ describe( 'WordPressMigration', () => {
 		const run = mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The key is added, start the migration' } )
+		);
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect( run.isDone() ).toBe( true );
@@ -478,9 +484,13 @@ describe( 'WordPressMigration', () => {
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Start the migration' } ) ).toBeEnabled()
+			expect(
+				screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+			).toBeEnabled()
 		);
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+		);
 		await userEvent.click( screen.getByRole( 'button', { name: 'Go back' } ) );
 
 		// Nothing was started: going back leaves the connect step as it was.

@@ -267,15 +267,16 @@ function getConnectStep( {
 			{ label }
 		</Button>
 	);
-	const startButton = ( onClick: () => void, variant: 'primary' | 'secondary' ) => (
+	// Beside the step's own action, starting comes second, and says what has to be done first.
+	const startButton = ( onClick: () => void, label?: string ) => (
 		<Button
 			__next40pxDefaultSize
-			variant={ variant }
+			variant={ label ? 'secondary' : 'primary' }
 			isBusy={ isStarting }
 			disabled={ ! connectionOption || isStarting }
 			onClick={ onClick }
 		>
-			{ __( 'Start the migration' ) }
+			{ label ?? __( 'Start the migration' ) }
 		</Button>
 	);
 
@@ -289,7 +290,7 @@ function getConnectStep( {
 			actions: (
 				<>
 					{ linkButton( connectionOption?.manual_url, __( 'Open the migration key page ↗' ) ) }
-					{ startButton( onRun, 'secondary' ) }
+					{ startButton( onRun, __( 'The key is added, start the migration' ) ) }
 				</>
 			),
 			isKeyInline: true,
@@ -329,7 +330,7 @@ function getConnectStep( {
 		actions: (
 			<>
 				{ linkButton( connectionOption?.install_url, __( 'Install the plugin ↗' ) ) }
-				{ startButton( onStart, 'secondary' ) }
+				{ startButton( onStart, __( 'The plugin is connected, start the migration' ) ) }
 			</>
 		),
 		isKeyInline: false,
@@ -372,7 +373,7 @@ function getConnectStep( {
 				__( 'Ready to migrate %s' ),
 				sourceHost
 			),
-			actions: startButton( onStart, 'primary' ),
+			actions: startButton( onStart ),
 			connected: failure ? 'hint' : 'notice',
 		};
 	}
