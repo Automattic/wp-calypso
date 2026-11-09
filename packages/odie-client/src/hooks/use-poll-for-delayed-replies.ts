@@ -17,8 +17,8 @@ const POLL_INTERVAL_MS = 5000;
  * Polling stops this long after the last change to the chat, and starts again with the next one.
  * The server job checks the Slack thread from 3 minutes after the question, then every minute, and
  * ends at 15 minutes. It writes a bot message only when there is something to say: the reply,
- * "still waiting" at about 6 minutes, or "no answer" at the end. An answer that comes later is not
- * relayed. So nothing can arrive later than this after the newest message.
+ * "still waiting" at 3 minutes and every 3 minutes after, or "no answer" at the end. An answer that
+ * comes later is not relayed. So nothing can arrive later than this after the newest message.
  */
 const QUIET_PERIOD_MS = 20 * 60 * 1000;
 
