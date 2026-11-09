@@ -6,7 +6,7 @@ import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
-import { AUTH_QUERY_KEY, loadInitialUser } from './auth';
+import { AUTH_QUERY_KEY, loadInitialUser, requestOAuthTokenIfMissing } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
@@ -24,6 +24,10 @@ import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
+		return;
+	}
+
+	if ( requestOAuthTokenIfMissing() ) {
 		return;
 	}
 
