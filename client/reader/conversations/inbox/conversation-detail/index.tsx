@@ -270,7 +270,7 @@ export function ConversationDetail( {
 										/>
 									) }
 									<strong>{ String( post.site_name ?? '' ) }</strong>
-									<HStack spacing={ 1 } expanded={ false }>
+									<HStack spacing={ 1.5 } expanded={ false }>
 										{ author?.name && (
 											<ReaderAuthorLink
 												author={ author }

@@ -7,6 +7,16 @@ body.is-reader-page .main.conversations-inbox-main {
 	padding-bottom: 0;
 }
 
+// The Reader reserves a scrollbar slot on its content card, but the inbox
+// scrolls inside its panes, so the slot would only leave a gap.
+.is-section-reader
+	.layout.is-global-sidebar-visible.is-group-reader
+	.layout__content
+	.layout__primary
+	> div:has( > .main.conversations-inbox-main ) {
+	scrollbar-gutter: auto;
+}
+
 .conversations-inbox {
 	// Fills the Reader's content card, which sizes itself to the viewport.
 	height: 100%;

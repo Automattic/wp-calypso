@@ -135,6 +135,8 @@
 		height: 2px;
 		border-radius: 50%;
 		background: currentcolor;
+		// Centers it on the lowercase letters rather than the line box.
+		transform: translateY( 1px );
 	}
 
 	// Sits above the card's stretched post link.
