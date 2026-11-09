@@ -40,7 +40,7 @@
 	],
 	"types": "dist",
 	"dependencies": {
-		"@base-ui/react": "^1.5.0",
+		"@base-ui/react": "^1.9.0",
 		"@wordpress/base-styles": "9.1.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
