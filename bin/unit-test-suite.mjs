@@ -98,15 +98,21 @@ const testBuildTools = withUnitTestInfo(
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
 // Workspaces on Vitest run outside the shared Jest projects, through their own `test` script.
+// TeamCity reads their results from a JUnit report, imported after each task.
 const testVitestWorkspaces = (
 	await globPromise( '{packages,apps}/*/vitest.config.{js,mjs,cjs,ts,mts}' )
-).map( ( config ) => ( {
-	name: 'yarn',
-	args: `workspace ${
-		JSON.parse( readFileSync( `${ dirname( config ) }/package.json`, 'utf8' ) ).name
-	} test`,
-	testId: `test_${ basename( dirname( config ) ).replaceAll( '-', '_' ) }`,
-} ) );
+).map( ( config ) => {
+	const testId = `test_${ basename( dirname( config ) ).replaceAll( '-', '_' ) }`;
+	const report = `test-results-${ testId }.xml`;
+	return {
+		name: 'yarn',
+		args: `workspace ${
+			JSON.parse( readFileSync( `${ dirname( config ) }/package.json`, 'utf8' ) ).name
+		} test --reporter=default --reporter=junit --outputFile.junit=${ process.cwd() }/${ report }`,
+		testId,
+		report,
+	};
+} );
 
 const testWorkspaces = {
 	name: 'yarn',
@@ -142,7 +148,11 @@ try {
 		await runTask( testServer );
 		await runTask( testBuildTools );
 		for ( const task of testVitestWorkspaces ) {
-			await runTask( task );
+			try {
+				await runTask( task );
+			} finally {
+				console.log( `##teamcity[importData type='junit' path='${ task.report }']` );
+			}
 		}
 		await runTask( testWorkspaces );
 		await runTask( testApps );
