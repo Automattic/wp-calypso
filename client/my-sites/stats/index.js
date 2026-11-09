@@ -20,12 +20,21 @@ import {
 	redirectToDaySummary,
 	realtime,
 } from './controller';
+import redirectToWpAdminStats from './redirect-to-wp-admin-stats';
 
 import './style.scss';
 
 // all Stats pages (except redirects) have the same handler structure
 const statsPage = ( url, controller ) => {
-	page( url, siteSelection, navigation, controller, makeLayout, clientRender );
+	page(
+		url,
+		siteSelection,
+		redirectToWpAdminStats,
+		navigation,
+		controller,
+		makeLayout,
+		clientRender
+	);
 };
 
 export default function () {
