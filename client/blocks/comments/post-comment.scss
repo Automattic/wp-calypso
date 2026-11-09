@@ -165,11 +165,14 @@ a.comments__comment-username {
 .comments__comment-respondee .comments__comment-respondee-link {
 	color: var(--color-text-subtle);
 	font-weight: 400;
-	margin-left: -2px;
 
 	&:hover {
 		color: var(--color-link-light);
 	}
+}
+
+.comments__comment-respondee .gridicon + .comments__comment-respondee-link {
+	margin-left: -2px;
 }
 
 .comments__comment-timestamp a {

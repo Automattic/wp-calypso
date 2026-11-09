@@ -36,6 +36,8 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 		<Dropdown
 			open={ isOpen }
 			onToggle={ onToggle }
+			// The list has nothing to focus, and Escape and outside clicks only close a popover holding the focus.
+			focusOnMount
 			popoverProps={ { placement: 'bottom-end' } }
 			contentClassName={ SHORTCUTS_POPOVER_CLASS }
 			className="conversations-inbox__shortcuts-dropdown"

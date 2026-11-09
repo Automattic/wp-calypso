@@ -25,6 +25,8 @@ const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 	},
 	reblog: { Layout: ReactionsNote },
 	follow: { Layout: FollowNote },
+	activitypub_followed_note: { Layout: FollowNote },
+	activitypub_interaction_note: { Layout: FollowNote },
 	new_post: { Layout: NewPostNote },
 };
 

@@ -18,7 +18,7 @@ describe( '<InfluencedRevenue>', () => {
 			screen.getByRole( 'progressbar', {
 				name: '$0 of $1,200 influenced revenue for Agency Partner.',
 			} )
-		).toHaveAttribute( 'value', '0' );
+		).toHaveAttribute( 'aria-valuenow', '0' );
 	} );
 
 	test( 'measures Pro toward VIP Pro', () => {
@@ -31,7 +31,7 @@ describe( '<InfluencedRevenue>', () => {
 
 		expect( screen.getByText( '$82,590.50 more to reach VIP Pro Agency Partner' ) ).toBeVisible();
 		expect( screen.getByText( '$17,409.50 of $100,000' ) ).toBeVisible();
-		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '17' );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '17' );
 	} );
 
 	test( 'measures VIP Pro toward Premier', () => {
@@ -43,7 +43,7 @@ describe( '<InfluencedRevenue>', () => {
 		);
 
 		expect( screen.getByText( '$125,000 more to reach Premier Partner' ) ).toBeVisible();
-		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '50' );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '50' );
 	} );
 
 	test( 'says when the next tier target is reached before the tier changes', () => {
@@ -52,7 +52,7 @@ describe( '<InfluencedRevenue>', () => {
 		);
 
 		expect( screen.getByText( 'You’ve reached the target for Pro Agency Partner' ) ).toBeVisible();
-		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '100' );
 	} );
 
 	test( 'says when the top tier is reached', () => {
@@ -61,6 +61,6 @@ describe( '<InfluencedRevenue>', () => {
 		);
 
 		expect( screen.getByText( 'Premier Partner is the top tier' ) ).toBeVisible();
-		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '100' );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '100' );
 	} );
 } );

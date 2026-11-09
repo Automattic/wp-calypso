@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import DownloadBadges, { getBadgeDownloads } from '../download-badges';
@@ -74,7 +74,7 @@ describe( '<DownloadBadges>', () => {
 		);
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
-		await waitForElementToBeRemoved( dialog );
+		await waitFor( () => expect( dialog ).not.toBeInTheDocument() );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_agency_tier_badges_download_modal_close'
 		);
