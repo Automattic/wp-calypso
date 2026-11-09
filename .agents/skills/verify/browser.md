@@ -5,13 +5,20 @@
 ## Accounts
 
 - **E2E test accounts (default).** Shared accounts from the E2E secrets, e.g. `defaultUser`, `simpleSiteFreePlanUser`, `atomicUser`. Pick one with `--as <name>`.
-- **The user's own account** (`--as me`, or their Chrome). Only when the user asks for it, or to change site setup (below). Never take PR screenshots with it.
+- **The user's own account** (`--as me`, or their Chrome). Only when the user asks for it, or for a check that changes anything (below). Never take PR screenshots with it.
 
-**Stay read-only** in any browser: don't save settings, create or delete anything, or start a purchase unless the user explicitly asks. The test accounts are shared with CI and other developers.
+> [!CAUTION]
+> **CRITICAL: the E2E test accounts are shared with CI and other developers. Use them for read-only checks only, with no exceptions, even when the user asks.** Don't save, publish, install, delete or buy anything, submit a form, or send a `POST`, `PUT` or `DELETE` request, in any browser or `--eval`.
+>
+> When a check needs a change, ask the user to sign in with their own account instead (options 2 and 3 in [Setup](#setup)) and to pick one of their sites whose URL contains `test`. To see a state a change would show, stop at the confirmation step or stub the response with `context.route()`.
 
-**Never change site setup on an E2E test account**, even when asked: PHP or WordPress version, plugins, themes, plan, visibility, domains, hosting settings. E2E tests depend on it. Ask the user to sign in with their own account instead (options 2 and 3 in [Setup](#setup)), and ask which of their sites to use: only one whose URL contains `test`.
+**Check each site type the change affects**, e.g. when the code branches on `isAtomic`, `isJetpack`, hosting features or plans: `--as defaultUser,atomicUser,jetpackRemoteSiteUser`.
 
-**Never save anything with variation accounts**, even when asked: those with an `atomicVariation` or `gutenberg: 'edge'` in `packages/calypso-e2e/src/lib/utils/criteria-for-test-accounts.ts`, e.g. `jetpackAtomicPhpOldUser`.
+| Site type           | Account                 |
+| ------------------- | ----------------------- |
+| Simple              | `defaultUser`           |
+| Atomic              | `atomicUser`            |
+| Self-hosted Jetpack | `jetpackRemoteSiteUser` |
 
 ## Setup
 
@@ -33,7 +40,7 @@ If you're a subagent that can't ask the user, report back to the agent that star
 - If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
-- Skip any site setup change and report it as not done.
+- Skip any check that would change something and report it as not done.
 
 ## Browsing
 
@@ -41,32 +48,34 @@ If you're a subagent that can't ask the user, report back to the agent that star
 node .agents/skills/verify/scripts/browse.cjs <url> [options]
 ```
 
-`<url>` is a Dashboard path (`/sites`) or an absolute URL such as `http://calypso.localhost:3000/home` or `/read` for classic Calypso and the Reader. The script reads `PORT` from `.env` itself; don't open `.env`. Don't pipe its output (e.g. through `tail`): you'd lose its exit code.
+`<url>` is a Dashboard path (`/sites`) or an absolute URL such as `http://calypso.localhost:3000/home` or `/read` for classic Calypso and the Reader. `{site}` in it becomes the test account's site, e.g. `/sites/{site}`: open it directly, since the first site in the Sites list may be another one. The script reads `PORT` from `.env` itself; don't open `.env`. Don't pipe its output (e.g. through `tail`): you'd lose its exit code.
 
-| Option                                 | Purpose                                                                                                  |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `--as <account>`                       | E2E account name, or `me`. Default `defaultUser`.                                                        |
-| `--wait-for <selector>`                | Wait for a Playwright selector, e.g. `'text=Latest activity'`.                                           |
-| `--eval <code>` / `--eval-file <path>` | Async Playwright code with `page`, `context` and `screenshot()` in scope; its `return` value is printed. |
-| `--screenshot <path>`                  | Save a screenshot outside the repo; add `--full-page` for the whole page.                                |
-| `--clip <selector>`                    | Crop the screenshot to the first element matching the selector.                                          |
-| `--no-snapshot`                        | Skip the ARIA snapshot of `<main>`, printed by default.                                                  |
-| `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                          |
-| `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                             |
-| `--log-requests <regex>`               | List matching responses with their status and envelope code.                                             |
+| Option                                 | Purpose                                                                                                              |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `--as <accounts>`                      | E2E account names separated by commas, or `me`. Default `defaultUser`.                                               |
+| `--wait-for <selector>`                | Wait for a Playwright selector, e.g. `'text=Latest activity'`.                                                       |
+| `--eval <code>` / `--eval-file <path>` | Async Playwright code with `page`, `context`, `screenshot()` and `loaded()` in scope; its `return` value is printed. |
+| `--screenshot <path>`                  | Save a screenshot outside the repo; add `--full-page` for the whole page.                                            |
+| `--clip <selector>`                    | Crop the screenshot to the first element matching the selector.                                                      |
+| `--no-snapshot`                        | Skip the ARIA snapshot of `<main>`, printed by default.                                                              |
+| `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                                      |
+| `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                                         |
+| `--log-requests <regex>`               | List matching responses with their status and envelope code.                                                         |
+
+With several accounts, the script reports on each in turn and adds `-<account>` to screenshot names.
 
 The report lists **problems**: console and page errors, failed requests, and API errors inside `http_envelope` responses. Compare with `trunk` before blaming your change.
 
 The script waits up to 60s for spinners and placeholders in `<main>` to go away. If the report says **STILL LOADING**, the snapshot and screenshot are incomplete; use `--wait-for` or a higher `--settle`.
 
-Each run starts a fresh browser, so chain interactions in one `--eval`:
+Each run starts a fresh browser, so chain interactions in one `--eval`. After a click that navigates, `await loaded()` before reading the page, or you may read loading placeholders:
 
 ```bash
-node .agents/skills/verify/scripts/browse.cjs /sites --screenshot /tmp/overview.png --eval '
-  await page.getByRole( "row" ).nth( 1 ).getByRole( "link" ).first().click();
-  await page.waitForURL( /\/sites\/[^/]+$/ );
-  await page.getByRole( "heading", { level: 2 } ).first().waitFor();
-  return page.getByRole( "heading", { level: 2 } ).allInnerTexts();
+node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/settings.png --eval '
+  await page.getByRole( "link", { name: "Settings" } ).first().click();
+  await page.waitForURL( /\/settings$/ );
+  await loaded();
+  return page.getByRole( "heading", { level: 1 } ).first().innerText();
 '
 ```
 
