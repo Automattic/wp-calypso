@@ -259,7 +259,8 @@ async function createSiteOrAdoptPending( {
 			undefined, // specId.
 			undefined, // ref.
 			undefined, // provisionTarget.
-			undefined, // aiLaunchpadEnabled.
+			// A blueprint run imports an existing site, so it keeps the regular landing.
+			funnelSlug !== 'blueprint', // aiLaunchpadEnabled.
 			funnelSlug,
 			funnelArgs,
 			fromWfm

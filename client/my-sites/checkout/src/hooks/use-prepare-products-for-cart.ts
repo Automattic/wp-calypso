@@ -732,6 +732,20 @@ function getTitanNewQuantity( quantity: number | null ): number {
 	return 1;
 }
 
+/**
+ * Whether the signup flow asked for the AI Launchpad on the site a Unified checkout creates. A logged-out buyer's
+ * site is created with the account from the flow's `siteParams`; a logged-in buyer's is created by the purchase,
+ * which only sees the cart.
+ */
+function newSiteRequestsAiLaunchpad(): boolean {
+	try {
+		const siteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+		return Boolean( siteParams?.options?.wpcom_ai_launchpad_enabled );
+	} catch {
+		return false;
+	}
+}
+
 function createItemToAddToCart( {
 	productSlug,
 	productAlias,
@@ -776,6 +790,8 @@ function createItemToAddToCart( {
 			sitelessCheckoutType,
 			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
+			...( sitelessCheckoutType === 'unified' &&
+				newSiteRequestsAiLaunchpad() && { wpcom_ai_launchpad_enabled: true } ),
 			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',

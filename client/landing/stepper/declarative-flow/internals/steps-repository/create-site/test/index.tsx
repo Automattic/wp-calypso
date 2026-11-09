@@ -30,8 +30,13 @@ jest.mock( '@automattic/data-stores', () => ( {
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_FLOW: 'ai-site-builder',
 	SITE_MIGRATION_FLOW: 'site-migration',
+	DIRECT_TO_CART_FLOW: 'direct-to-cart',
 	EDUCATION_FLOW: 'education',
 	ENTREPRENEUR_FLOW: 'entrepreneur',
+	NEWSLETTER_FLOW: 'newsletter',
+	ONBOARDING_FLOW: 'onboarding',
+	WRITE_NEW_SITE_FLOW: 'write-new-site',
+	WRITE_ON_FLOW: 'write-on',
 	StepContainer: () => null,
 	Step: { Loading: () => null },
 	addProductsToCart: jest.fn(),
@@ -315,8 +320,14 @@ describe( 'create-site', () => {
 			expect( getAiLaunchpadEnabledArg() ).toBe( true );
 		} );
 
-		it( 'does not enable it for other flows', async () => {
+		it( 'enables it for the other signup flows that create a fresh site', async () => {
 			await runStep( { flow: 'newsletter' } );
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( getAiLaunchpadEnabledArg() ).toBe( true );
+		} );
+
+		it( 'does not enable it for flows outside the rollout', async () => {
+			await runStep( { flow: 'hundred-year-plan' } );
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );

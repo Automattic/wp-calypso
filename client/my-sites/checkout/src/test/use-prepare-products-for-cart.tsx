@@ -217,6 +217,36 @@ describe( 'usePrepareProductsForCart purchase attribution', () => {
 	} );
 } );
 
+// A logged-in Unified purchase creates its site from the cart alone, so the flow's request has to ride on it.
+describe( 'usePrepareProductsForCart AI Launchpad request', () => {
+	beforeEach( () => {
+		window.localStorage.setItem(
+			'siteParams',
+			JSON.stringify( { options: { wpcom_ai_launchpad_enabled: true } } )
+		);
+	} );
+
+	afterEach( () => window.localStorage.removeItem( 'siteParams' ) );
+
+	it( 'carries the signup flow’s AI Launchpad request on a Unified cart item', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'unified',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.wpcom_ai_launchpad_enabled ).toBe( true );
+	} );
+
+	it( 'leaves it off other siteless checkouts', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.wpcom_ai_launchpad_enabled ).toBeUndefined();
+	} );
+} );
+
 describe( 'usePrepareProductsForCart for invalid product aliases', () => {
 	it.each( [
 		':product',

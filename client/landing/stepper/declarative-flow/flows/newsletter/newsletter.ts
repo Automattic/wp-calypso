@@ -6,7 +6,6 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -16,7 +15,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
@@ -60,7 +58,6 @@ const newsletter: Flow = {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const { exitFlow } = useExitFlow();
 
 		const {
 			setSiteUrl,
@@ -70,11 +67,6 @@ const newsletter: Flow = {
 			setSignupDomainOrigin,
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
-
-		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
-			exitFlow,
-			navigate,
-		} );
 
 		const completeSubscribersTask = async () => {
 			if ( siteSlug ) {
@@ -87,7 +79,8 @@ const newsletter: Flow = {
 		triggerGuidesForStep( flowName, _currentStep );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+			// My Home forwards the site to its AI Launchpad (Site Setup) in wp-admin.
+			const siteHomeUrl = `/home/${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
 				case 'newsletterSetup':
@@ -161,29 +154,18 @@ const newsletter: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
-						persistSignupDestination( launchpadUrl );
+						persistSignupDestination( siteHomeUrl );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								providedDependencies?.siteSlug as string
-							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
+							) }?redirect_to=${ encodeURIComponent( siteHomeUrl ) }&signup=1`
 						);
 					}
 
-					initializeLaunchpadState( {
-						siteId: providedDependencies?.siteId as number,
-						siteSlug: providedDependencies?.siteSlug as string,
-					} );
-
-					return window.location.assign(
-						getPostFlowUrl( {
-							flow: flowName,
-							siteId: providedDependencies?.siteId as number,
-							siteSlug: providedDependencies?.siteSlug as string,
-						} )
-					);
+					return window.location.assign( siteHomeUrl );
 
 				case 'subscribers':
 					await completeSubscribersTask();

@@ -72,6 +72,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 						options: {
 							site_creation_flow: flowName, // Track which flow created the site
 							wpcom_public_coming_soon: 1, // Launch as coming soon
+							wpcom_ai_launchpad_enabled: true,
 						},
 						find_available_url: true, // Auto-find available URL since no domain was selected
 						validate: false,

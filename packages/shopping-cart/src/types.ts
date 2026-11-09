@@ -1041,6 +1041,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isUnifiedSitelessCheckout?: boolean;
 
 	/**
+	 * Asks for the AI Launchpad (Site Setup) on the site a Unified siteless purchase creates.
+	 */
+	wpcom_ai_launchpad_enabled?: boolean;
+
+	/**
 	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
 	 */
 	isWpcomSitelessCheckout?: boolean;
