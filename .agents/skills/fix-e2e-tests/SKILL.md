@@ -285,7 +285,7 @@ Substitute the literal values from Step 3 directly into each command. Pick a uni
 
    **Why the husky symlink replaces the whole `.husky/_` path** (and not, say, just `.husky/_/husky.sh` inside an `mkdir`'d directory):
 
-   - `.husky/_/` is **not** in the tracked tree at all — only `.husky/pre-commit` and `.husky/pre-push` are (`git ls-files .husky/` returns just those two). So in a fresh worktree there's no `.husky/_/` directory to symlink *into*; we'd have to `mkdir -p` first.
+   - `.husky/_/` is **not** in the tracked tree at all — only `.husky/pre-commit` and `.husky/pre-push` are (`git ls-files .husky/` returns just those two). So in a fresh worktree there's no `.husky/_/` directory to symlink _into_; we'd have to `mkdir -p` first.
    - `mkdir -p` (or any write) under `.husky/` triggers Claude Code's hardcoded "sensitive path" heuristic and prompts on every run, regardless of allowlist.
    - Symlinking the whole `.husky/_` path sidesteps that — no `mkdir`, just a single `ln -s`.
 
@@ -416,16 +416,15 @@ EOF
 
 PR body structure (per `.github/PULL_REQUEST_TEMPLATE.md` and AGENTS.md):
 
-The fix PR targets the parent PR's branch, not trunk — it's a piece of the parent PR's work, not an independent change to the default branch. Two template sections are therefore omitted:
+The fix PR targets the parent PR's branch, not trunk — it's a piece of the parent PR's work, not an independent change to the default branch. The issue line is therefore omitted:
 
-- **Omit `Part of #`** entirely. The parent PR carries that reference; this one is scoped to that PR's work.
-- **Omit the `Pre-merge Checklist`** entirely. The checklist is a gate for merges into trunk; this PR merges into the parent PR's branch, so it doesn't apply. The parent PR keeps its own checklist.
+- **Omit the `Fixes` / `Part of` line** entirely. The parent PR carries that reference; this one is scoped to that PR's work.
 
-Start the body at **Proposed Changes** and include only these sections:
+Start the body at **What** and include only these sections:
 
-- **Proposed Changes** — 2–3 bullets describing what changed in the test.
-- **Why are these changes being made?** — the Healer's root-cause paragraph, with a link to the TeamCity build URL as evidence of the failure.
-- **Testing Instructions** — `Run \`yarn playwright test <spec> --reporter=list --repeat-each=10\` locally; all runs should pass.` Don't claim you verified unless you actually did.
+- **What** — 2–3 bullets describing what changed in the test.
+- **Why** — the Healer's root-cause paragraph, with a link to the TeamCity build URL as evidence of the failure.
+- **How to Test** — `Run \`yarn playwright test <spec> --reporter=list --repeat-each=10\` locally; all runs should pass.` Don't claim you verified unless you actually did.
 
 Do not mention individuals by name. Do not link to wordpress.com URLs (AGENTS.md).
 

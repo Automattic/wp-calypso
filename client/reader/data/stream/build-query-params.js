@@ -17,6 +17,27 @@ import {
 // across requests. `custom_recs_sites_with_images` does not use it.
 const recommendationsSeed = random( 0, 1000 );
 
+/**
+ * The `saved` stream oldest save first. `saved` itself is newest first.
+ */
+export const SAVED_OLDEST_STREAM_KEY = 'saved:oldest';
+
+/**
+ * The `saved` stream newest post first, by the date each post was published.
+ */
+export const SAVED_PUBLISHED_STREAM_KEY = 'saved:published';
+
+/**
+ * The `saved` stream oldest post first, by the date each post was published.
+ */
+export const SAVED_OLDEST_PUBLISHED_STREAM_KEY = 'saved:oldest-published';
+
+const SAVED_SORT_PARAMS = {
+	[ SAVED_OLDEST_STREAM_KEY ]: { order: 'ASC' },
+	[ SAVED_PUBLISHED_STREAM_KEY ]: { orderBy: 'date_published' },
+	[ SAVED_OLDEST_PUBLISHED_STREAM_KEY ]: { orderBy: 'date_published', order: 'ASC' },
+};
+
 function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
@@ -258,6 +279,8 @@ export function buildStreamQueryParams( {
 			return buildShelfQueryParams( extras, perPage );
 		case 'shelf_discover':
 			return buildShelfDiscoverQueryParams( extras );
+		case 'saved':
+			return getQueryString( { ...extras, ...SAVED_SORT_PARAMS[ streamKey ] } );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':

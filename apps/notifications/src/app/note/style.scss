@@ -51,6 +51,10 @@
 		line-height: 20px;
 	}
 
+	[style*="font-size"]:not(h1, h2, h3, h4, h5, h6, [style*="-font-size"]) {
+		font-size: inherit !important;
+	}
+
 	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
 	:is(strong, b) {
 		font-weight: 600;

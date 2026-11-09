@@ -32,6 +32,15 @@ jest.mock( '@automattic/help-center', () => ( {
 } ) );
 
 describe( '<A4AHelpCenter />', () => {
+	// The panel waits on two lazy imports. Loading them cold can take longer than a test's
+	// 5s limit on CI, so load them once up front.
+	beforeAll( async () => {
+		await Promise.all( [
+			import( '@automattic/data-stores' ),
+			import( '../../app/help-center/help-center-app' ),
+		] );
+	}, 30000 );
+
 	afterEach( () => {
 		window.history.replaceState( {}, '', '/' );
 	} );

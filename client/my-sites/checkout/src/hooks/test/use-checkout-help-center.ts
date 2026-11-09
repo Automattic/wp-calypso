@@ -210,10 +210,6 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			'in the Akismet checkout',
 			() => siteless( '/checkout/akismet/ak_plus_yearly_1', 'ak_plus_yearly_1' ),
 		],
-		[
-			'in the agency checkout, even for a WordPress.com plan',
-			() => window.history.replaceState( null, '', '/checkout/agency/purchase' ),
-		],
 		[ 'for a Jetpack site', () => ( mockIsJetpackSite = true ) ],
 		[
 			'when renewing a Jetpack product',
@@ -254,6 +250,16 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		expect( mockLoadCheckoutSupportAssignment ).not.toHaveBeenCalled();
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: undefined } );
 		expect( route() ).toBe( '/odie' );
+	} );
+
+	it( 'sends agencies to their contact form, outside the experiment, even for a WordPress.com plan', async () => {
+		window.history.replaceState( null, '', '/checkout/agency/purchase' );
+
+		await openHelpCenter();
+
+		expect( mockLoadCheckoutSupportAssignment ).not.toHaveBeenCalled();
+		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: undefined } );
+		expect( route() ).toBe( '/contact-form' );
 	} );
 
 	it.each( [

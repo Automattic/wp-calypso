@@ -318,6 +318,7 @@ export function ConversationDetail( {
 								deferNewComments
 								highlightedCommentIds={ highlightedCommentIds }
 								collapsibleThreads
+								spellOutLabels
 							/>
 						</>
 					) }

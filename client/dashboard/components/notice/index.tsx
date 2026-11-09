@@ -44,13 +44,11 @@ function UnforwardedNotice(
 			className="dashboard-notice"
 			intent={ variant }
 			icon={ icon === undefined && variant === 'warning' ? caution : icon }
-			// Dashboard notices are static page content; dynamic messages use snackbars.
-			spokenMessage={ null }
 		>
 			{ title && <UINotice.Title>{ title }</UINotice.Title> }
 			{ children && <UINotice.Description render={ <div /> }>{ children }</UINotice.Description> }
 			{ actions && <UINotice.Actions>{ actions }</UINotice.Actions> }
-			{ !! onClose && <UINotice.CloseIcon onClick={ onClose } /> }
+			{ !! onClose && <UINotice.CloseIconButton onClick={ onClose } /> }
 		</UINotice.Root>
 	);
 }
