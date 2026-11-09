@@ -20,6 +20,10 @@ import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import {
+	ProcessingResult,
+	getProcessingErrorReason,
+} from '../../internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from '../../internals/types';
 import type { Flow } from '../../internals/types';
 
@@ -38,6 +42,7 @@ const newsletter: Flow = {
 			STEPS.SUBSCRIBERS,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.LAUNCHPAD,
+			STEPS.ERROR,
 		] );
 	},
 	useTracksEventProps() {
@@ -79,9 +84,6 @@ const newsletter: Flow = {
 		triggerGuidesForStep( flowName, _currentStep );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			// My Home forwards the site to its AI Launchpad (Site Setup) in wp-admin.
-			const siteHomeUrl = `/home/${ providedDependencies.siteSlug }`;
-
 			switch ( _currentStep ) {
 				case 'newsletterSetup':
 					return navigate( 'newsletterGoals' );
@@ -143,7 +145,20 @@ const newsletter: Flow = {
 				case 'create-site':
 					return navigate( 'processing' );
 
-				case 'processing':
+				case 'processing': {
+					const processingResult = providedDependencies.processingResult as
+						ProcessingResult | undefined;
+					const newSite = providedDependencies.siteSlug ?? providedDependencies.siteId;
+
+					if ( processingResult !== ProcessingResult.SUCCESS || ! newSite ) {
+						return navigate( 'error', {
+							errorReason: getProcessingErrorReason( processingResult ),
+						} );
+					}
+
+					// My Home forwards the site to its AI Launchpad (Site Setup) in wp-admin.
+					const siteHomeUrl = `/home/${ newSite }`;
+
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
 							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
@@ -166,6 +181,7 @@ const newsletter: Flow = {
 					}
 
 					return window.location.assign( siteHomeUrl );
+				}
 
 				case 'subscribers':
 					await completeSubscribersTask();

@@ -17,6 +17,15 @@ describe( 'get-new-site-params', () => {
 		expect( options ).not.toHaveProperty( 'site_segment' );
 	} );
 
+	test( 'should ask for the AI Launchpad on the new site', () => {
+		const { options } = getNewSiteParams( {
+			dependencies: {},
+			flowToCheck: 'free',
+		} );
+
+		expect( options ).toHaveProperty( 'wpcom_ai_launchpad_enabled', true );
+	} );
+
 	describe( 'For preselected url', () => {
 		test( 'and a free domain it should generate the correct payload', () => {
 			const result = getNewSiteParams( {
