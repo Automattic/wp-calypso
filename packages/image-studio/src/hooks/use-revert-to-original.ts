@@ -3,6 +3,8 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
+import { getAttachmentMetadata } from '../utils/get-image-data';
+import type { MediaAttachment } from '../types';
 
 /**
  * Hook parameters for useRevertToOriginal
@@ -29,6 +31,7 @@ export interface UseRevertToOriginalReturn {
  * - Cleans up draft images, keeping only the original
  * - Restores canvas to original state
  * - Resets canvas history (draft IDs, saved attachment IDs, metadata flags)
+ * - Restores the original attachment's metadata
  * - Shows success/error notifications
  * @param props                    - Hook props
  * @param props.deleteDraftsExcept - Function to delete draft images except specified IDs
@@ -42,7 +45,7 @@ export function useRevertToOriginal( {
 	// Ref to keep originalAttachmentId fresh for callbacks (avoids stale closure issues)
 	const originalAttachmentIdRef = useRef< number | null >( null );
 
-	const { updateImageStudioCanvas, resetCanvasHistory, addNotice } = useDispatch(
+	const { updateImageStudioCanvas, resetCanvasHistory, setCanvasMetadata, addNotice } = useDispatch(
 		imageStudioStore
 	) as ImageStudioActions;
 
@@ -105,10 +108,8 @@ export function useRevertToOriginal( {
 				'postType',
 				'attachment',
 				targetAttachmentId
-			) ) as { source_url?: string } | undefined;
-			const originalImageUrl: string | undefined = attachment?.source_url;
-
-			if ( ! originalImageUrl ) {
+			) ) as MediaAttachment | undefined;
+			if ( ! attachment?.source_url ) {
 				addNoticeRef.current(
 					__( 'Cannot revert - failed to load original image', __i18n_text_domain__ ),
 					'error'
@@ -121,11 +122,14 @@ export function useRevertToOriginal( {
 			await deleteDraftsExcept( [ targetAttachmentId ] );
 
 			// Restore original image on canvas
-			await updateImageStudioCanvas( originalImageUrl, targetAttachmentId, false );
+			await updateImageStudioCanvas( attachment.source_url, targetAttachmentId, false );
 
 			// Reset canvas history to match initial state
 			// This ensures the app behaves as if freshly opened
 			await resetCanvasHistory();
+
+			// Metadata only loads when the modal opens, so reload it after the reset clears it.
+			await setCanvasMetadata( getAttachmentMetadata( attachment ) );
 
 			addNoticeRef.current( __( 'Reverted to original', __i18n_text_domain__ ), 'success' );
 		} catch ( error ) {
@@ -141,7 +145,7 @@ export function useRevertToOriginal( {
 		} finally {
 			isRevertingRef.current = false;
 		}
-	}, [ deleteDraftsExcept, updateImageStudioCanvas, resetCanvasHistory ] );
+	}, [ deleteDraftsExcept, updateImageStudioCanvas, resetCanvasHistory, setCanvasMetadata ] );
 
 	return {
 		handleRevertToOriginal,

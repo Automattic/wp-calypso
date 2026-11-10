@@ -22,6 +22,7 @@ let mockSelectorState: {
 // Mock dispatch functions
 const mockUpdateImageStudioCanvas = jest.fn();
 const mockResetCanvasHistory = jest.fn();
+const mockSetCanvasMetadata = jest.fn();
 const mockAddNotice = jest.fn();
 const mockDeleteDraftsExcept = jest.fn();
 const mockResolveSelect = jest.fn();
@@ -38,6 +39,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn( () => ( {
 		updateImageStudioCanvas: mockUpdateImageStudioCanvas,
 		resetCanvasHistory: mockResetCanvasHistory,
+		setCanvasMetadata: mockSetCanvasMetadata,
 		addNotice: mockAddNotice,
 	} ) ),
 	resolveSelect: jest.fn( () => ( {
@@ -200,6 +202,59 @@ describe( 'useRevertToOriginal', () => {
 			} );
 		} );
 
+		it( 'restores the original metadata after resetting canvas history', async () => {
+			mockResolveSelect.mockResolvedValue( {
+				source_url: 'https://example.com/original.jpg',
+				title: { raw: 'Original title', rendered: 'Original title' },
+				caption: { raw: 'Original caption', rendered: '<p>Original caption</p>' },
+				description: { raw: 'Original description', rendered: '<p>Original description</p>' },
+				alt_text: 'Original alt text',
+			} );
+
+			const { result } = renderHook( () =>
+				useRevertToOriginal( {
+					deleteDraftsExcept: mockDeleteDraftsExcept,
+				} )
+			);
+
+			await act( async () => {
+				await result.current.handleRevertToOriginal();
+			} );
+
+			expect( mockSetCanvasMetadata ).toHaveBeenCalledWith( {
+				title: 'Original title',
+				caption: 'Original caption',
+				description: 'Original description',
+				alt_text: 'Original alt text',
+			} );
+			expect( mockSetCanvasMetadata.mock.invocationCallOrder[ 0 ] ).toBeGreaterThan(
+				mockResetCanvasHistory.mock.invocationCallOrder[ 0 ]
+			);
+		} );
+
+		it( 'restores empty strings when the original has no metadata', async () => {
+			mockResolveSelect.mockResolvedValue( {
+				source_url: 'https://example.com/original.jpg',
+			} );
+
+			const { result } = renderHook( () =>
+				useRevertToOriginal( {
+					deleteDraftsExcept: mockDeleteDraftsExcept,
+				} )
+			);
+
+			await act( async () => {
+				await result.current.handleRevertToOriginal();
+			} );
+
+			expect( mockSetCanvasMetadata ).toHaveBeenCalledWith( {
+				title: '',
+				caption: '',
+				description: '',
+				alt_text: '',
+			} );
+		} );
+
 		it( 'shows error notice when originalAttachmentId is missing', async () => {
 			mockSelectorState = {
 				originalAttachmentId: null,
@@ -251,6 +306,7 @@ describe( 'useRevertToOriginal', () => {
 				'error'
 			);
 			expect( mockUpdateImageStudioCanvas ).not.toHaveBeenCalled();
+			expect( mockSetCanvasMetadata ).not.toHaveBeenCalled();
 
 			consoleWarnSpy.mockRestore();
 		} );
