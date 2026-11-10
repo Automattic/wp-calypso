@@ -131,6 +131,6 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 
 		expect( await getOptionalRows() ).toEqual( [ SECURITY ] );
-		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 3 );
+		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 2 );
 	} );
 } );

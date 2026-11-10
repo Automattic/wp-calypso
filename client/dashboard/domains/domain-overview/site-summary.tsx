@@ -5,6 +5,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import SiteIcon from '../../components/site-icon';
+import SummaryButton from '../../components/summary-button';
 import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
 
@@ -22,26 +23,33 @@ export default function DomainSiteSettingsSummary( {
 		! domain.is_gravatar_restricted_domain &&
 		domain.can_transfer_to_other_site;
 
+	if ( shouldShowAttachSite ) {
+		return (
+			<RouterLinkSummaryButton
+				to={ `/domains/${ domain.domain }/transfer/other-site` }
+				title={ __( 'Site' ) }
+				badges={ [ { text: __( 'No site attached' ) } ] }
+				density="medium"
+				onClick={ onClick }
+			/>
+		);
+	}
+
+	// Not a link: the site already leads to this page, so linking back would be circular.
 	return (
-		<RouterLinkSummaryButton
-			to={
-				shouldShowAttachSite
-					? `/domains/${ domain.domain }/transfer/other-site`
-					: `/sites/${ site?.slug ?? domain.site_slug }`
-			}
+		<SummaryButton
 			title={ __( 'Site' ) }
-			badges={ shouldShowAttachSite ? [ { text: __( 'No site attached' ) } ] : [] }
 			suffix={
-				site && ! shouldShowAttachSite ? (
+				site ? (
 					<HStack as="span" spacing={ 2 } expanded={ false }>
 						<SiteIcon site={ site } size={ 24 } />
 						<Text variant="muted">{ getSiteDisplayName( site ) }</Text>
 					</HStack>
 				) : undefined
 			}
-			showArrow={ shouldShowAttachSite }
+			showArrow={ false }
+			disabled
 			density="medium"
-			onClick={ onClick }
 		/>
 	);
 }
