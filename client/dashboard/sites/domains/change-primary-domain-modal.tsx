@@ -16,6 +16,7 @@ import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Text } from '../../components/text';
+import { isSubdomain } from '../../utils/domain';
 import PrimaryAddressIllustration from './primary-address-illustration';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './change-primary-domain-modal.scss';
@@ -41,7 +42,12 @@ export default function ChangePrimaryDomainModal( {
 		...eligibleDomains,
 	].flatMap( ( domain ) => {
 		const plainAddress = { address: domain.domain, domain, www: false };
-		return site.is_wpcom_atomic && domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		const offersWww =
+			site.is_wpcom_atomic &&
+			domain === currentPrimaryDomain &&
+			domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS &&
+			( !! domain.primary_is_www || ! isSubdomain( domain.domain ) );
+		return offersWww
 			? [ plainAddress, { address: `www.${ domain.domain }`, domain, www: true } ]
 			: [ plainAddress ];
 	} );
@@ -51,10 +57,8 @@ export default function ChangePrimaryDomainModal( {
 		)?.address ?? primaryAddress;
 	const [ selectedDomain, setSelectedDomain ] = useState( currentAddress );
 	const selected = addresses.find( ( { address } ) => address === selectedDomain );
-	const changesWww = !! selected && !! selected.domain.primary_is_www !== selected.www;
-	const errorSnackbar = { error: { source: 'server' as const } };
-	const successSnackbar = {
-		...errorSnackbar,
+	const snackbar = {
+		error: { source: 'server' as const },
 		success: sprintf(
 			/* translators: %s is domain */
 			__( 'Primary site address changed: all domains will redirect to %s.' ),
@@ -62,15 +66,9 @@ export default function ChangePrimaryDomainModal( {
 		),
 	};
 	const setPrimaryDomainMutation = useMutation(
-		withSnackbar(
-			siteSetPrimaryDomainMutation(),
-			// The www request that follows shows the success message.
-			changesWww ? errorSnackbar : successSnackbar
-		)
+		withSnackbar( siteSetPrimaryDomainMutation(), snackbar )
 	);
-	const setWwwMutation = useMutation(
-		withSnackbar( setWwwPrimaryDomainMutation(), successSnackbar )
-	);
+	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
 	const isPending = setPrimaryDomainMutation.isPending || setWwwMutation.isPending;
 
 	const options = addresses.map( ( { address } ) => ( { label: address, value: address } ) );
@@ -91,21 +89,16 @@ export default function ChangePrimaryDomainModal( {
 		} );
 
 		const domain = selected.domain.domain;
-		const setWww = () =>
+
+		if ( domain === primaryAddress ) {
 			setWwwMutation.mutate(
 				{ siteId: site.ID, domain, enabled: selected.www },
 				{ onSuccess: onClose }
 			);
-
-		if ( domain === primaryAddress ) {
-			setWww();
 			return;
 		}
 
-		setPrimaryDomainMutation.mutate(
-			{ siteId: site.ID, domain },
-			{ onSuccess: changesWww ? setWww : onClose }
-		);
+		setPrimaryDomainMutation.mutate( { siteId: site.ID, domain }, { onSuccess: onClose } );
 	};
 
 	return (
