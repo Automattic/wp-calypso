@@ -7,6 +7,14 @@ import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import DomainOverviewSslStatus from '../ssl-status';
 
+const mockHasEnTranslation = jest.fn( () => true );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => mockHasEnTranslation,
+} ) );
+
+afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
+
 const registered = { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' };
 
 function renderStatus( props: object ) {
@@ -34,9 +42,9 @@ describe( 'DomainOverviewSslStatus', () => {
 	} );
 
 	test.each( [
-		[ 'pending', 'SSL Pending' ],
-		[ 'newly_registered', 'SSL Pending' ],
-		[ 'inactive', 'SSL Disabled' ],
+		[ 'pending', 'SSL pending' ],
+		[ 'newly_registered', 'SSL pending' ],
+		[ 'inactive', 'SSL disabled' ],
 	] )( 'links %s certificates to the security page', async ( ssl_status, badge ) => {
 		const { recordTracksEvent } = renderStatus( { ssl_status } );
 
@@ -51,10 +59,23 @@ describe( 'DomainOverviewSslStatus', () => {
 		);
 	} );
 
+	test.each( [
+		[ 'pending', 'SSL Pending' ],
+		[ 'inactive', 'SSL Disabled' ],
+	] )(
+		'falls back to the old %s copy until the new one is translated',
+		async ( ssl_status, badge ) => {
+			mockHasEnTranslation.mockReturnValue( false );
+			renderStatus( { ssl_status } );
+
+			expect( await screen.findByText( badge ) ).toBeVisible();
+		}
+	);
+
 	test( 'keeps the badge but not the link during TLD maintenance', async () => {
 		renderStatus( { ssl_status: 'inactive', tld_maintenance_end_time: 1 } );
 
-		expect( await screen.findByText( 'SSL Disabled' ) ).toBeVisible();
+		expect( await screen.findByText( 'SSL disabled' ) ).toBeVisible();
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 

@@ -1,4 +1,5 @@
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
@@ -7,6 +8,7 @@ import { useTrackOverviewItem } from './use-track-overview-item';
 
 export default function DomainOverviewSslStatus( { domain }: { domain: Domain } ) {
 	const trackItem = useTrackOverviewItem( domain );
+	const hasEnTranslation = useHasEnTranslation();
 
 	if (
 		! domain.ssl_status ||
@@ -33,11 +35,17 @@ export default function DomainOverviewSslStatus( { domain }: { domain: Domain } 
 	}
 
 	const isPending = domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending';
+	const pendingLabel = hasEnTranslation( 'SSL pending' )
+		? __( 'SSL pending' )
+		: __( 'SSL Pending' );
+	const disabledLabel = hasEnTranslation( 'SSL disabled' )
+		? __( 'SSL disabled' )
+		: __( 'SSL Disabled' );
 
 	return (
 		<>
 			<Badge intent={ isPending ? 'low' : 'high' }>
-				{ isPending ? __( 'SSL Pending' ) : __( 'SSL Disabled' ) }
+				{ isPending ? pendingLabel : disabledLabel }
 			</Badge>
 			{ ! isTldInMaintenance( domain ) && (
 				<Link

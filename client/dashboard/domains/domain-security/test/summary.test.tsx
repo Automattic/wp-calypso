@@ -42,7 +42,7 @@ describe( '<DomainSecuritySettingsSummary>', () => {
 			<DomainSecuritySettingsSummary domain={ getMockedDomainData( { ssl_status: 'pending' } ) } />
 		);
 
-		expect( await screen.findByText( 'SSL Pending' ) ).toBeVisible();
+		expect( await screen.findByText( 'SSL pending' ) ).toBeVisible();
 	} );
 
 	test( 'shows a disabled badge when the certificate is inactive', async () => {
@@ -50,6 +50,6 @@ describe( '<DomainSecuritySettingsSummary>', () => {
 			<DomainSecuritySettingsSummary domain={ getMockedDomainData( { ssl_status: 'inactive' } ) } />
 		);
 
-		expect( await screen.findByText( 'SSL Disabled' ) ).toBeVisible();
+		expect( await screen.findByText( 'SSL disabled' ) ).toBeVisible();
 	} );
 } );

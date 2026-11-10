@@ -1,4 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Domain } from '@automattic/api-core';
@@ -13,12 +14,19 @@ export default function NameServersSettingsSummary( {
 	isDisabled?: boolean;
 	onClick?: () => void;
 } ) {
+	const hasEnTranslation = useHasEnTranslation();
 	const badges: SummaryButtonBadgeProps[] = [];
 	// An active certificate is shown in the domain overview header instead.
 	if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
-		badges.push( { text: __( 'SSL Pending' ), intent: 'low' as const } );
+		badges.push( {
+			text: hasEnTranslation( 'SSL pending' ) ? __( 'SSL pending' ) : __( 'SSL Pending' ),
+			intent: 'low' as const,
+		} );
 	} else if ( domain.ssl_status !== 'active' ) {
-		badges.push( { text: __( 'SSL Disabled' ), intent: 'high' as const } );
+		badges.push( {
+			text: hasEnTranslation( 'SSL disabled' ) ? __( 'SSL disabled' ) : __( 'SSL Disabled' ),
+			intent: 'high' as const,
+		} );
 	}
 
 	const isRegistration = DomainSubtype.DOMAIN_REGISTRATION === domain.subtype.id;
