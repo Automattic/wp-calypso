@@ -5,8 +5,10 @@ import {
 	domainDiagnosticsQuery,
 	domainMappingStatusQuery,
 } from '@automattic/api-queries';
+import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
@@ -22,17 +24,20 @@ import { getDomainTypeLabel, isTldInMaintenance } from '../../utils/domain';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
-import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
 import PendingRegistrationNotice from './pending-registration-notice';
 import PointToWpcomNotice from './point-to-wpcom-notice';
+import DomainOverviewRegistration from './registration';
+import { useRenewalNote } from './renewal-summary';
 import DomainOverviewSettings from './settings';
+import DomainOverviewSslStatus from './ssl-status';
 import TransferredDomainDetails from './transferred-domain-details';
 
 export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const renewalNote = useRenewalNote( domain );
 
 	const { data: purchase } = useQuery( {
 		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
@@ -65,43 +70,52 @@ export default function DomainOverview() {
 		dateStyle: 'long',
 	} );
 
+	const getRegistrationNote = () => {
+		switch ( domain.subtype.id ) {
+			case DomainSubtype.DOMAIN_CONNECTION:
+				// translators: %(date)s: the date the domain was connected.
+				return sprintf( __( 'Connected on %(date)s' ), { date: formattedRegistrationDate } );
+			case DomainSubtype.DOMAIN_REGISTRATION:
+				// translators: %(date)s: the date the domain was registered.
+				return sprintf( __( 'Registered on %(date)s' ), { date: formattedRegistrationDate } );
+			default:
+				return null;
+		}
+	};
+
 	return (
 		<>
 			<PageLayout
 				size="small"
 				header={
 					<PageHeader
+						prefix={
+							<Breadcrumbs
+								items={ [
+									{ label: __( 'Domains' ), href: '/domains' },
+									{ label: domain.domain, href: '' },
+								] }
+								renderItemLink={ ( { href, label, ...rest } ) => (
+									<Link to={ href } { ...rest }>
+										{ label }
+									</Link>
+								) }
+							/>
+						}
 						title={ wrappableDomainName }
 						description={
-							<HStack spacing={ 2 } alignment="center" justify="flex-start">
+							<HStack spacing={ 2 } alignment="center" justify="flex-start" wrap>
 								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
 									<Badge>{ getDomainTypeLabel( domain ) }</Badge>
 								) }
-								{ domain.ssl_status === 'active' && (
-									<Badge intent="stable">{ __( 'SSL active' ) }</Badge>
-								) }
+								<DomainOverviewSslStatus domain={ domain } />
 								<span>
-									{ ( () => {
-										switch ( domain.subtype.id ) {
-											case DomainSubtype.DOMAIN_CONNECTION:
-												// translators: %(date)s: the date the domain was connected.
-												return sprintf( __( 'Connected on %(date)s' ), {
-													date: formattedRegistrationDate,
-												} );
-											case DomainSubtype.DOMAIN_REGISTRATION:
-												// translators: %(date)s: the date the domain was registered.
-												return sprintf( __( 'Registered on %(date)s' ), {
-													date: formattedRegistrationDate,
-												} );
-											default:
-												return null;
-										}
-									} )() }
+									{ [ getRegistrationNote(), renewalNote ].filter( Boolean ).join( ' · ' ) }
 								</span>
 							</HStack>
 						}
 						actions={
-							purchase?.can_explicit_renew &&
+							( purchase?.can_explicit_renew || purchase?.is_renewable ) &&
 							domain.current_user_is_owner && (
 								<Button
 									variant="primary"
@@ -136,7 +150,10 @@ export default function DomainOverview() {
 				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
-						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />
+						<DomainOverviewRegistration
+							domain={ domain }
+							isDisabled={ isTldInMaintenance( domain ) }
+						/>
 						<DomainOverviewSettings
 							isDisabled={ isTldInMaintenance( domain ) }
 							domain={ domain }

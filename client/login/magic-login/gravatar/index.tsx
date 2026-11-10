@@ -629,6 +629,9 @@ export const GravPoweredEmailCodeVerification = ( {
 		}
 		try {
 			const blackboxSessionId = await getSessionId();
+			if ( blackboxSessionId === null ) {
+				return;
+			}
 			handleGravPoweredCodeSubmit( event, blackboxSessionId );
 		} finally {
 			if ( shouldCollect ) {
