@@ -101,10 +101,10 @@ $conversations-inbox-post-card-shadow:
 	transition-duration: var( --wpds-motion-duration-sm );
 	transition-timing-function: var( --wpds-motion-easing-balanced );
 
-	// The notifications panel's post card hover, a shade lighter.
+	// The notifications panel's post card hover, with a slightly less blue border.
 	&:hover {
 		border-color: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, var( --color-border-subtle ) );
-		background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 1%, transparent );
+		background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 2%, transparent );
 		box-shadow: none;
 	}
 }
