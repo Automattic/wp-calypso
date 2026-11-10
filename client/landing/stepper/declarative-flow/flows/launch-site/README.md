@@ -30,6 +30,7 @@ A preview site its owner hasn't bought (an Atomic site on Free that `/wpcom/v2/w
 
 - `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) lands the user on that wp-admin screen after launch, ahead of `back_to`.
 - `coupon` – Applied at checkout.
+- `source` – Passed on to checkout, which records it on the purchase.
 - `dashboard` – Passed on to checkout when it is `a4a` or `dotcom`.
 - `new` – Pre-fills the domain search.
 

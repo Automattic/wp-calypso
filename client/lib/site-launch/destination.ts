@@ -13,6 +13,8 @@ export interface LaunchParams {
 	ref?: string | null;
 	coupon?: string | null;
 	dashboard?: string | null;
+	// Purchase attribution checkout reads from its own URL, such as what built a preview site.
+	source?: string | null;
 }
 
 const DASHBOARDS: DashboardType[] = [ 'a4a', 'dotcom' ];
@@ -145,6 +147,7 @@ export function getLaunchCheckoutUrl(
 			signup: 1,
 			ref: params.ref ?? undefined,
 			...( params.coupon && { coupon: params.coupon } ),
+			...( params.source && { source: params.source } ),
 			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, backUrl ),
 			redirect_to: destination,
 			...( dashboard && { dashboard } ),

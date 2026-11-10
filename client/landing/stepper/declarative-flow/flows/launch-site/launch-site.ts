@@ -178,6 +178,7 @@ function useLaunchParams(): LaunchParams {
 		ref: query.get( 'ref' ),
 		coupon: query.get( 'coupon' ),
 		dashboard: query.get( 'dashboard' ),
+		source: query.get( 'source' ),
 	};
 }
 

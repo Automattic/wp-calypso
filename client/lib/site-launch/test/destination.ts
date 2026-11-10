@@ -194,14 +194,21 @@ describe( 'getLaunchCheckoutUrl', () => {
 		);
 	} );
 
-	it( 'passes through ref, coupon and dashboard', () => {
+	it( 'passes through ref, coupon, dashboard and source', () => {
 		const url = parse(
-			getLaunchCheckoutUrl( { siteSlug, ref: 'my-home', coupon: 'SAVE', dashboard: 'a4a' } )
+			getLaunchCheckoutUrl( {
+				siteSlug,
+				ref: 'my-home',
+				coupon: 'SAVE',
+				dashboard: 'a4a',
+				source: 'studio-preview-site',
+			} )
 		);
 
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'my-home' );
 		expect( url.searchParams.get( 'coupon' ) ).toBe( 'SAVE' );
 		expect( url.searchParams.get( 'dashboard' ) ).toBe( 'a4a' );
+		expect( url.searchParams.get( 'source' ) ).toBe( 'studio-preview-site' );
 	} );
 
 	it( 'drops a dashboard it does not know', () => {
