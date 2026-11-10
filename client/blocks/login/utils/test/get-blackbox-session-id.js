@@ -23,44 +23,44 @@ describe( 'getBlackboxSessionId', () => {
 	test( 'awaits loadBlackboxSdk before calling collect', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.resolve( { sessionId: 'sid' } ) ) };
 
-		await getBlackboxSessionId( 'login-key' );
+		await getBlackboxSessionId( 'login-key', 'login' );
 
-		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'login-key' );
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'login-key', 'login' );
 		expect( window.Blackbox.collect ).toHaveBeenCalled();
 	} );
 
 	test( 'loads the SDK with the api key it was given', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.resolve( 'abc123' ) ) };
 
-		await getBlackboxSessionId( 'signup-key' );
+		await getBlackboxSessionId( 'signup-key', 'signup' );
 
-		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'signup-key' );
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'signup-key', 'signup' );
 	} );
 
 	test( 'returns session id when collect resolves a string', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.resolve( 'abc123' ) ) };
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBe( 'abc123' );
+		await expect( getBlackboxSessionId( 'login-key', 'login' ) ).resolves.toBe( 'abc123' );
 	} );
 
 	test( 'returns session id when collect resolves { sessionId }', async () => {
 		window.Blackbox = {
 			collect: jest.fn( () => Promise.resolve( { sessionId: 'def456' } ) ),
 		};
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBe( 'def456' );
+		await expect( getBlackboxSessionId( 'login-key', 'login' ) ).resolves.toBe( 'def456' );
 	} );
 
 	test( 'returns undefined when Blackbox is not loaded', async () => {
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
+		await expect( getBlackboxSessionId( 'login-key', 'login' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'returns undefined when collect is not a function', async () => {
 		window.Blackbox = {};
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
+		await expect( getBlackboxSessionId( 'login-key', 'login' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'returns undefined when collect throws', async () => {
 		window.Blackbox = { collect: jest.fn( () => Promise.reject( new Error( 'boom' ) ) ) };
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
+		await expect( getBlackboxSessionId( 'login-key', 'login' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'withholds the session until a challenge raised by its own collect settles', async () => {
@@ -72,7 +72,7 @@ describe( 'getBlackboxSessionId', () => {
 		};
 
 		let sessionId;
-		const pending = getBlackboxSessionId( 'login-key' ).then( ( id ) => {
+		const pending = getBlackboxSessionId( 'login-key', 'login' ).then( ( id ) => {
 			sessionId = id;
 		} );
 

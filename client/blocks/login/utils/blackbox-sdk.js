@@ -32,9 +32,10 @@ export function getBlackboxApiKey() {
  * Callers are responsible for calling window.Blackbox.configure() after this resolves.
  * The script loads once, and this key is what auto-init collects with.
  * @param {string} apiKey Public key stamped on the script tag.
+ * @param {'login'|'signup'} flow Collect flow for `data-flow` on the script tag.
  * @returns {Promise<void>}
  */
-export function loadBlackboxSdk( apiKey ) {
+export function loadBlackboxSdk( apiKey, flow ) {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}
@@ -63,7 +64,10 @@ export function loadBlackboxSdk( apiKey ) {
 				}
 				resolve();
 			},
-			{ 'data-apikey': apiKey }
+			{
+				'data-apikey': apiKey,
+				'data-flow': flow,
+			}
 		);
 	} );
 

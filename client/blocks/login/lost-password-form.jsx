@@ -24,7 +24,10 @@ const LostPasswordForm = ( {
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
-	const blackbox = useBlackboxProtection( { feature: 'blackbox-lost-password' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-lost-password',
+		flow: 'login',
+	} );
 
 	const inputRef = useRef( null );
 	useEffect( () => {

@@ -19,9 +19,10 @@ let hasConfiguredOnce = false;
  * @param {import('react').RefObject<HTMLDivElement>} options.containerRef Ref to the challenge container element.
  * @param {boolean} options.enabled Whether Blackbox is active for this surface.
  * @param {string}  [options.apiKey] Public key for this surface.
+ * @param {'login'|'signup'} options.flow Collect flow for `X-Blackbox-Flow`.
  * @returns {{ isChallengeActive: boolean, isLoading: boolean, hasChallengeContent: boolean }}
  */
-export function useBlackbox( { containerRef, enabled, apiKey } ) {
+export function useBlackbox( { containerRef, enabled, apiKey, flow } ) {
 	const isEnabled = enabled;
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( isEnabled );
@@ -87,7 +88,7 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 			}
 		};
 
-		loadBlackboxSdk( apiKey ).then( () => {
+		loadBlackboxSdk( apiKey, flow ).then( () => {
 			if ( cancelled ) {
 				return;
 			}
@@ -100,6 +101,7 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 			try {
 				window.Blackbox.configure( {
 					apiKey,
+					flow,
 					challengeContainer: containerRef.current,
 					// Fill the login form column so the challenge lines up with the
 					// input above and the full-width Continue button below.
@@ -160,7 +162,7 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 			clearPendingTimeouts();
 			setChallengeRunning( false );
 		};
-	}, [ apiKey, containerRef, isEnabled ] );
+	}, [ apiKey, containerRef, flow, isEnabled ] );
 
 	return { isChallengeActive, isLoading, hasChallengeContent };
 }

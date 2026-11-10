@@ -53,7 +53,7 @@ describe( 'createAccount', () => {
 
 		await createAccount( createAccountArgs );
 
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key' );
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key', 'signup' );
 		expect( getRequestBody()?.blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		expect( getRequestBody()?.blackbox_key_version ).toBe( 2 );
 	} );

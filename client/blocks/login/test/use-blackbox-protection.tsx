@@ -61,6 +61,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 			( props: { resetOnError: { code: number } | null; suspended?: boolean } ) =>
 				useBlackboxProtection( {
 					feature: 'blackbox-signup',
+					flow: 'signup',
 					suspended: props.suspended,
 					resetOnError: props.resetOnError,
 				} ),
@@ -111,6 +112,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 	function ContinueButton( { resetOnError }: { resetOnError: { code: number } | null } ) {
 		const { challenge, isSubmitBlocked } = useBlackboxProtection( {
 			feature: 'blackbox-signup',
+			flow: 'signup',
 			resetOnError,
 		} );
 
@@ -173,10 +175,12 @@ describe( 'useBlackboxProtection key', () => {
 	} );
 
 	it( 'collects with the login key', async () => {
-		const { result } = renderHook( () => useBlackboxProtection( { feature: 'blackbox-signup' } ) );
+		const { result } = renderHook( () =>
+			useBlackboxProtection( { feature: 'blackbox-signup', flow: 'signup' } )
+		);
 
 		await result.current.getSessionId();
 
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'login-key' );
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'login-key', 'signup' );
 	} );
 } );

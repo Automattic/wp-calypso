@@ -88,7 +88,7 @@ export async function createAccount( {
 	const blackboxApiKey = getBlackboxApiKey();
 	const blackboxSessionId =
 		blackboxApiKey && isBlackboxUserlessCheckoutEnabled()
-			? await getBlackboxSessionId( blackboxApiKey )
+			? await getBlackboxSessionId( blackboxApiKey, 'signup' )
 			: undefined;
 
 	try {

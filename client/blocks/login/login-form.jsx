@@ -1131,4 +1131,11 @@ export default connect(
 		createSocialUserFailed,
 		loginSocialUser,
 	}
-)( localize( withBlackboxProtection( LoginForm, { feature: 'blackbox-login' } ) ) );
+)(
+	localize(
+		withBlackboxProtection( LoginForm, {
+			feature: 'blackbox-login',
+			flow: 'login',
+		} )
+	)
+);

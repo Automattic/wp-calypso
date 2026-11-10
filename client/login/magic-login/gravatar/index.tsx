@@ -611,6 +611,7 @@ export const GravPoweredEmailCodeVerification = ( {
 	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature: 'blackbox-signup',
+		flow: 'signup',
 		suspended: ! isNewAccount,
 		resetOnError: codeValidationError,
 	} );

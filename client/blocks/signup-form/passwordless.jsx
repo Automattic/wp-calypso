@@ -465,4 +465,11 @@ export default connect( null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
-} )( localize( withBlackboxProtection( PasswordlessSignupForm, { feature: 'blackbox-signup' } ) ) );
+} )(
+	localize(
+		withBlackboxProtection( PasswordlessSignupForm, {
+			feature: 'blackbox-signup',
+			flow: 'signup',
+		} )
+	)
+);
