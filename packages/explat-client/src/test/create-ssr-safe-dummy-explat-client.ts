@@ -1,11 +1,11 @@
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { createSsrSafeDummyExPlatClient } from '../create-explat-client';
 import * as Timing from '../internal/timing';
 import type { Config } from '../types';
 
 const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
-type MockedFunction = ReturnType< typeof jest.fn >;
+type MockedFunction = Mock;
 const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
 	logError: vi.fn(),
 	fetchExperimentAssignment: vi.fn(),

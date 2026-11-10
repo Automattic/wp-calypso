@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { createExPlatClient } from '../create-explat-client';
 import localStorage from '../internal/local-storage';
 import {
@@ -12,7 +12,7 @@ import {
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
 
-type MockedFunction = ReturnType< typeof jest.fn >;
+type MockedFunction = Mock;
 
 const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
