@@ -22,6 +22,7 @@
 
 		.summary-button-navigation-icon,
 		.summary-button-decoration svg {
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 			fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		}
 
@@ -54,6 +55,7 @@
 
 	.summary-button-navigation-icon,
 	.summary-button-decoration svg {
+		color: $gray-700;
 		fill: $gray-700;
 		flex-shrink: 0;
 	}

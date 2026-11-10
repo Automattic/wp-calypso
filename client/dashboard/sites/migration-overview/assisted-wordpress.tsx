@@ -154,7 +154,13 @@ function StoppedBy( {
 
 	return (
 		<VStack spacing={ 1 } className="wordpress-migration__details">
-			<Text weight={ 500 }>{ __( 'What stopped the migration' ) }</Text>
+			<Text weight={ 500 }>
+				{ sprintf(
+					/* translators: %s: what stopped the migration, e.g. "The migration plugin isn’t active on your site". */
+					__( 'What stopped the migration: %s' ),
+					finding.label
+				) }
+			</Text>
 			<Text>{ finding.message }</Text>
 			{ step && (
 				<Text variant="muted">

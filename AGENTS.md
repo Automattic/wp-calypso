@@ -64,11 +64,12 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 
 ```bash
 # JavaScript tests
-yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps and Vitest packages)
+yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps)
 yarn test-build-tools                           # Run unit tests for build-tools
 yarn test-client                                # Run unit tests for client
 yarn test-apps                                  # Run apps unit tests
-yarn test-packages                              # Run Jest unit tests for packages
+yarn test-packages                              # Run packages unit tests (arguments go to Jest only)
+yarn test-packages:vitest [path]                # Run unit tests for packages on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
@@ -102,5 +103,7 @@ Test with an account made for testing. Use your own WordPress.com account only w
 - Fix type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description.
 
 ## Creating Pull Requests
+
+When taking over an existing PR, check whether its current changes introduce any new companion PR dependencies. Flag any potential dependencies you haven't verified yet.
 
 To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). Before marking a PR ready for review, and after each later push, run the How to Test steps the change affects, on a local dev server or on the Calypso Live build of the pushed commit, then fix whatever in the description no longer matches the code. Skipping a step is the exception, only for a step you can't run, for example because it needs access you don't have or changes something you can't undo. Keep a skipped step in the list, marked `Not run:` with the reason.

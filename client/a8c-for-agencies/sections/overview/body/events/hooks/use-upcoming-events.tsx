@@ -5,8 +5,8 @@ import { useMemo } from 'react';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	PRESSABLE_Q3_2026_OFFER_END_DATE,
-	PRESSABLE_Q3_2026_OFFER_START_DATE,
+	PRESSABLE_OFFER_END_DATE,
+	PRESSABLE_OFFER_START_DATE,
 } from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/constants';
 import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -152,10 +152,10 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 			...( isEligibleForIntroductoryOffer
 				? [
 						{
-							id: 'a4a-pressable-promo-offer-2026-q3',
+							id: 'a4a-pressable-promo-offer-2026-holiday',
 							date: {
-								from: moment( PRESSABLE_Q3_2026_OFFER_START_DATE ),
-								to: moment( PRESSABLE_Q3_2026_OFFER_END_DATE ),
+								from: moment( PRESSABLE_OFFER_START_DATE ),
+								to: moment( PRESSABLE_OFFER_END_DATE ),
 							},
 							title: translate(
 								'Limited time offer: Get up to 6 months of free Pressable hosting on new plans!'
@@ -172,7 +172,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 									label: translate( 'View promo details' ),
 									url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 									trackEventName:
-										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
+										'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_view_promo_details_click',
 								},
 								{
 									variant: 'secondary',
@@ -180,7 +180,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 									url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 									isExternal: true,
 									trackEventName:
-										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
+										'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 								},
 							],
 							logoUrl: PressableLogo,
@@ -193,8 +193,8 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 						{
 							id: 'a4a-pressable-expansion-offer-2026-q3',
 							date: {
-								from: moment( PRESSABLE_Q3_2026_OFFER_START_DATE ),
-								to: moment( PRESSABLE_Q3_2026_OFFER_END_DATE ),
+								from: moment( PRESSABLE_OFFER_START_DATE ),
+								to: moment( PRESSABLE_OFFER_END_DATE ),
 							},
 							title: translate(
 								'Limited time offer: Upgrade your Pressable plan and get up to 6 months of the upgrade free'
