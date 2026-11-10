@@ -34,7 +34,7 @@ export default function AgencyTeam() {
 	const agencyId = activeAgency?.id ?? 0;
 
 	const searchParams = agencyTeamRoute.useSearch();
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'agency-team',
 		defaultView: DEFAULT_VIEW,
 		queryParams: searchParams,
@@ -118,6 +118,7 @@ export default function AgencyTeam() {
 				actions={ actions }
 				view={ view }
 				onChangeView={ updateView }
+				onPageCorrection={ correctPage }
 				onReset={ resetView }
 				isLoading={ isLoadingMembers || isLoadingInvites }
 			/>

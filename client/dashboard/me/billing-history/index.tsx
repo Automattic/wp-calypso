@@ -42,7 +42,7 @@ export default function BillingHistory() {
 	const locale = useIntlLocale();
 	const searchParams = billingHistoryRoute.useSearch();
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'me-billing-history',
 		defaultView,
 		queryParams: searchParams,
@@ -130,6 +130,7 @@ export default function BillingHistory() {
 						fields={ fields }
 						view={ view }
 						onChangeView={ updateView }
+						onPageCorrection={ correctPage }
 						onReset={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }

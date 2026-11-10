@@ -72,7 +72,7 @@ function DeploymentsList() {
 	const queryClient = useQueryClient();
 	const [ isModalTriggerDeploymentOpen, setIsModalTriggerDeploymentOpen ] = useState( false );
 	const closeModalTriggerDeployment = () => setIsModalTriggerDeploymentOpen( false );
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'site-deployments',
 		defaultView: DEFAULT_VIEW,
 		queryParams: currentSearchParams,
@@ -239,6 +239,7 @@ function DeploymentsList() {
 					fields={ fields }
 					view={ view }
 					onChangeView={ updateView }
+					onPageCorrection={ correctPage }
 					onReset={ resetView }
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }

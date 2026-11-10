@@ -52,7 +52,7 @@ export function ScanHistoryDataViews( {
 	const threats = scanHistory?.threats || [];
 
 	const searchParams = siteScanHistoryRoute.useSearch();
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'site-scan-history',
 		defaultView,
 		queryParams: searchParams,
@@ -96,6 +96,7 @@ export function ScanHistoryDataViews( {
 				getItemId={ ( item ) => item.id.toString() }
 				isLoading={ isLoading }
 				onChangeView={ updateView }
+				onPageCorrection={ correctPage }
 				onReset={ resetView }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search' ) }

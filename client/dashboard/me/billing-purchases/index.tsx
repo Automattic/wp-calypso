@@ -94,7 +94,7 @@ export default function PurchasesList() {
 	}, [ purchases, removedNoticeData ] );
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'me-billing-purchases',
 		defaultView,
 		queryParams: currentSearchParams,
@@ -238,6 +238,7 @@ export default function PurchasesList() {
 						fields={ purchasesDataFields }
 						view={ view }
 						onChangeView={ updateView }
+						onPageCorrection={ correctPage }
 						onReset={ resetView }
 						defaultLayouts={ { table: {} } }
 						actions={ actions }

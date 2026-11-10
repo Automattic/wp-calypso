@@ -47,7 +47,7 @@ export function BackupsList( {
 	activityLog: ActivityLogEntry[];
 	isLoadingActivityLog: boolean;
 } ) {
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'site-backups',
 		defaultView,
 		queryParams: searchParams,
@@ -84,6 +84,7 @@ export function BackupsList( {
 				fields={ fields }
 				view={ view }
 				onChangeView={ updateView }
+				onPageCorrection={ correctPage }
 				onReset={ resetView }
 				isLoading={ isLoadingActivityLog }
 				defaultLayouts={ { list: {} } }

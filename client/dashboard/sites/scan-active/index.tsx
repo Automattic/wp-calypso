@@ -52,7 +52,7 @@ export function ActiveThreatsDataViews( {
 	const threats = scan?.threats?.filter( ( threat ) => threat.status === 'current' ) || [];
 
 	const searchParams = siteScanActiveThreatsRoute.useSearch();
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'site-scan-active',
 		defaultView,
 		queryParams: searchParams,
@@ -103,6 +103,7 @@ export function ActiveThreatsDataViews( {
 				isLoading={ isLoading }
 				onChangeSelection={ setSelection }
 				onChangeView={ updateView }
+				onPageCorrection={ correctPage }
 				onReset={ resetView }
 				paginationInfo={ paginationInfo }
 				searchLabel={ __( 'Search' ) }

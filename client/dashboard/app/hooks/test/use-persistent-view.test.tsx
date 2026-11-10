@@ -603,4 +603,63 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 	} );
+
+	describe( 'correctPage', () => {
+		it( 'should replace the page in the URL query params without adding a history entry', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', page: 99, search: 'test' };
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.correctPage ).toBeTruthy();
+			} );
+
+			const historyLength = getRouter()?.history.length;
+
+			act( () => {
+				result.current.correctPage( 42 );
+			} );
+
+			await waitFor( () => {
+				expect( getRouter()?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+					page: 42,
+					search: 'test',
+				} );
+			} );
+			expect( getRouter()?.history.length ).toBe( historyLength );
+		} );
+
+		it( 'should remove the page from the URL query params when correcting to the first page', async () => {
+			mockGetCalypsoPreferences( {} );
+
+			const { Wrapper, getRouter } = createTestWrapper();
+
+			const queryParams = { 'current-param': 'current-value', page: 2 };
+			const { result } = renderHook(
+				() => usePersistentView( { slug, defaultView, queryParams } ),
+				{ wrapper: Wrapper }
+			);
+
+			await waitFor( () => {
+				expect( result.current.correctPage ).toBeTruthy();
+			} );
+
+			act( () => {
+				result.current.correctPage( 1 );
+			} );
+
+			await waitFor( () => {
+				expect( getRouter()?.state.location.search ).toEqual( {
+					'current-param': 'current-value',
+				} );
+			} );
+		} );
+	} );
 } );

@@ -49,7 +49,7 @@ function SiteActivityLogsDataViews( {
 		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
 	);
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'site-logs-activity',
 		defaultView: DEFAULT_VIEW,
 		queryParams: searchParams,
@@ -214,6 +214,7 @@ function SiteActivityLogsDataViews( {
 				search={ false }
 				defaultLayouts={ { table: {} } }
 				onChangeView={ onChangeView }
+				onPageCorrection={ correctPage }
 				onReset={ resetView }
 				empty={ emptyState }
 				children={ hasActivityLogsAccess ? undefined : <DataViews.Layout /> } // showing only the layout when on the free plan.

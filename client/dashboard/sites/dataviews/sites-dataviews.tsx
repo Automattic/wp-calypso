@@ -18,6 +18,7 @@ export function SitesDataViews( {
 	empty,
 	paginationInfo,
 	onChangeView,
+	onPageCorrection,
 	onReset,
 }: {
 	view: View;
@@ -28,6 +29,7 @@ export function SitesDataViews( {
 	empty: ReactNode;
 	paginationInfo: ComponentProps< typeof DataViews< Site > >[ 'paginationInfo' ];
 	onChangeView: ( view: View ) => void;
+	onPageCorrection?: ( page: number ) => void;
 	onReset?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -44,6 +46,7 @@ export function SitesDataViews( {
 					view={ view }
 					isLoading={ isLoading }
 					onChangeView={ onChangeView }
+					onPageCorrection={ onPageCorrection }
 					onReset={ onReset }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }

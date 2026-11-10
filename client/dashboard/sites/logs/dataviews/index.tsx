@@ -68,6 +68,7 @@ function SiteLogsDataViews( {
 	const {
 		view: persistedView,
 		updateView,
+		correctPage,
 		resetView,
 	} = usePersistentView( {
 		slug: `site-logs-${ logType }`,
@@ -369,6 +370,7 @@ function SiteLogsDataViews( {
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
+					onPageCorrection={ correctPage }
 					onReset={ resetView }
 					header={ LogsHeader }
 					empty={ emptyState }
@@ -386,6 +388,7 @@ function SiteLogsDataViews( {
 					search={ false }
 					defaultLayouts={ { table: {} } }
 					onChangeView={ onChangeView }
+					onPageCorrection={ correctPage }
 					onReset={ resetView }
 					header={ LogsHeader }
 					empty={ emptyState }

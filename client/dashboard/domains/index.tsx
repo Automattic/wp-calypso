@@ -52,6 +52,7 @@ function Domains() {
 	const {
 		view: persistentView,
 		updateView,
+		correctPage,
 		resetView,
 	} = usePersistentView( {
 		slug: 'domains',
@@ -107,6 +108,7 @@ function Domains() {
 								recordDomainViewChanges( view, nextView, recordTracksEvent );
 								updateView( nextView );
 							} }
+							onPageCorrection={ correctPage }
 							onReset={ resetView }
 							view={ view }
 							// The cards render their own actions, and DataViews would add a bulk selection footer.

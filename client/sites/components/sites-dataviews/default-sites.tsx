@@ -57,7 +57,7 @@ export default function DefaultSitesDataViews( {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView, resetView } = useBasePersistentView( {
+	const { view, updateView, correctPage, resetView } = useBasePersistentView( {
 		slug: 'sites',
 		defaultView,
 		queryParams,
@@ -120,6 +120,7 @@ export default function DefaultSitesDataViews( {
 			view={ { ...view, ...listView } as View }
 			isLoading={ isLoadingSites }
 			onChangeView={ handleViewChange }
+			onPageCorrection={ correctPage }
 			paginationInfo={ paginationInfo }
 			config={ DEFAULT_CONFIG }
 			defaultLayouts={ { list: {} } }

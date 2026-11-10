@@ -4,9 +4,27 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { sanitizeView } from './sanitize-view';
 import type { ComponentProps } from 'react';
 
-export type DataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
+export type DataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > > & {
+	/**
+	 * Called with the last page when the view's page is past it, in place of
+	 * the `onChangeView` call DataViews would make. Pass `correctPage` from
+	 * `usePersistentView`, so that the URL is corrected without a history entry.
+	 */
+	onPageCorrection?: ( page: number ) => void;
+};
 
-export function DataViews< Item >( { view, isLoading, ...props }: DataViewsProps< Item > ) {
+function getLastPage( totalPages: number | null | undefined ) {
+	return typeof totalPages === 'number' && Number.isFinite( totalPages )
+		? Math.max( totalPages, 1 )
+		: undefined;
+}
+
+export function DataViews< Item >( {
+	view,
+	isLoading,
+	onPageCorrection,
+	...props
+}: DataViewsProps< Item > ) {
 	const previousPage = useRef( view.page );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 
@@ -33,7 +51,20 @@ export function DataViews< Item >( { view, isLoading, ...props }: DataViewsProps
 		}
 	}, [ view.page, isLoading ] );
 
-	const sanitizedView = sanitizeView( view, props.fields );
+	const lastPage = getLastPage( props.paginationInfo?.totalPages );
+	const isPastLastPage = ! isLoading && lastPage !== undefined && ( view.page ?? 1 ) > lastPage;
+	const correctedPage = onPageCorrection && isPastLastPage ? lastPage : undefined;
+
+	useEffect( () => {
+		if ( correctedPage !== undefined ) {
+			onPageCorrection?.( correctedPage );
+		}
+	}, [ correctedPage, onPageCorrection ] );
+
+	const sanitizedView = sanitizeView(
+		correctedPage !== undefined ? { ...view, page: correctedPage } : view,
+		props.fields
+	);
 
 	return (
 		<WPDataViews< Item > view={ sanitizedView } isLoading={ isLoading } { ...( props as any ) } />

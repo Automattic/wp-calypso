@@ -18,6 +18,7 @@ interface TeamMembersContentProps {
 	actions: Action< TeamMember >[];
 	view: View;
 	onChangeView: ( view: View ) => void;
+	onPageCorrection?: ( page: number ) => void;
 	onReset?: () => void;
 	isLoading?: boolean;
 }
@@ -27,6 +28,7 @@ export default function TeamMembersContent( {
 	actions,
 	view,
 	onChangeView,
+	onPageCorrection,
 	onReset,
 	isLoading,
 }: TeamMembersContentProps ) {
@@ -43,6 +45,7 @@ export default function TeamMembersContent( {
 				view={ view }
 				actions={ actions }
 				onChangeView={ onChangeView }
+				onPageCorrection={ onPageCorrection }
 				onReset={ onReset }
 				isLoading={ isLoading }
 				paginationInfo={ paginationInfo }

@@ -197,7 +197,7 @@ export default function Sites() {
 		isRestoringAccount,
 	} );
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'sites',
 		defaultView,
 		queryParams: currentSearchParams,
@@ -312,6 +312,7 @@ export default function Sites() {
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
+						onPageCorrection={ correctPage }
 						onReset={ resetView }
 					/>
 				) : (

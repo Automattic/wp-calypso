@@ -48,7 +48,7 @@ export default function MarketplacePurchases() {
 	const currentSearchParams = marketplacePurchasesRoute.useSearch();
 	useCheckoutReturn();
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'marketplace-purchases',
 		defaultView: DEFAULT_VIEW,
 		queryParams: currentSearchParams,
@@ -149,6 +149,7 @@ export default function MarketplacePurchases() {
 					view={ tableView }
 					isLoading={ isLoading }
 					onChangeView={ onChangeView }
+					onPageCorrection={ correctPage }
 					onReset={ resetView }
 					getItemId={ getLicenseId }
 					paginationInfo={ paginationInfo }

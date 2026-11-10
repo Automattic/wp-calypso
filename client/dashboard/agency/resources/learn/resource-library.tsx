@@ -30,6 +30,7 @@ interface ResourceLibraryProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
+	onPageCorrection?: ( page: number ) => void;
 	onPreviewResource: ( resource: AgencyEnablementResource, source: ResourceSource ) => void;
 	onOpenResource: ( resource: AgencyEnablementResource ) => void;
 	onLoadMore: () => void;
@@ -43,6 +44,7 @@ export default function ResourceLibrary( {
 	resources,
 	view,
 	onChangeView,
+	onPageCorrection,
 	onPreviewResource,
 	onOpenResource,
 	onLoadMore,
@@ -105,6 +107,7 @@ export default function ResourceLibrary( {
 						fields={ fields }
 						view={ view }
 						onChangeView={ onChangeView }
+						onPageCorrection={ onPageCorrection }
 						paginationInfo={ paginationInfo }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						getItemId={ ( item ) => String( item.id ) }

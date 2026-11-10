@@ -36,7 +36,7 @@ function RepositoriesList() {
 	);
 
 	const searchParams = useSearch( { strict: false } );
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'site-settings-repositories',
 		defaultView: DEFAULT_VIEW,
 		queryParams: searchParams,
@@ -126,6 +126,7 @@ function RepositoriesList() {
 				fields={ fields }
 				view={ view }
 				onChangeView={ updateView }
+				onPageCorrection={ correctPage }
 				onReset={ resetView }
 				actions={ actions }
 				isLoading={ isLoadingDeployments || isLoadingInstallations }

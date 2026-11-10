@@ -16,6 +16,25 @@ The `index.tsx` file exports the following components:
 - Use `DataViewsCard` when you want to wrap your DataViews content in a card container
 - Use `DataViewsEmptyState` when displaying an empty state within a DataViews layout
 
+## Pages past the last one
+
+A list that syncs its page to the URL with `usePersistentView` should pass the hook's `correctPage` as `onPageCorrection`. A `?page` past the last page is then corrected by replacing the history entry. Without it, DataViews corrects the page through `onChangeView`, which adds a history entry and makes Back return to the page that doesn't exist.
+
+```tsx
+const { view, updateView, correctPage, resetView } = usePersistentView( {
+	slug,
+	defaultView,
+	queryParams,
+} );
+
+<DataViews
+	view={ view }
+	onChangeView={ updateView }
+	onPageCorrection={ correctPage }
+	onReset={ resetView }
+/>;
+```
+
 ## Important: Upstream Contributions
 
 These files are necessary extensions to WordPress's DataViews component. **Before making any changes to these components, please consider whether the changes can be contributed upstream to the WordPress core package** (`@wordpress/dataviews`) instead of being maintained as local modifications. This helps reduce maintenance burden and benefits the broader WordPress community.

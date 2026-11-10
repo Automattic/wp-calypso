@@ -101,6 +101,7 @@ export function useBasePersistentView( {
 } ): {
 	view: View;
 	updateView: ( newView: View ) => void;
+	correctPage: ( page: number ) => void;
 	resetView?: () => void;
 } {
 	const preferenceName = `hosting-dashboard-dataviews-view-${ slug }` as const;
@@ -257,6 +258,24 @@ export function useBasePersistentView( {
 		]
 	);
 
+	// Replaces the history entry, so that Back doesn't return to a page that doesn't exist.
+	const correctPage = useCallback(
+		( newPage: number ) => {
+			if ( ! queryParams ) {
+				return;
+			}
+			navigate( {
+				search: mergeQueryParamsWithTransientProperties( queryParams, {
+					page: newPage,
+					search: queryParams.search ?? '',
+				} ),
+				replace: true,
+				resetScroll: false,
+			} );
+		},
+		[ navigate, queryParams ]
+	);
+
 	const isViewModified = !! persistedView;
 
 	const resetView = useCallback( () => {
@@ -267,7 +286,7 @@ export function useBasePersistentView( {
 		} );
 	}, [ persistView, navigate, queryParams ] );
 
-	return { view, updateView, resetView: isViewModified ? resetView : undefined };
+	return { view, updateView, correctPage, resetView: isViewModified ? resetView : undefined };
 }
 
 // DataViews holds a list for these and a bare value for the rest.

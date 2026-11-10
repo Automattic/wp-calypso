@@ -21,6 +21,7 @@ interface ResourceCenterProps {
 	resources: AgencyEnablementResource[];
 	view: View;
 	onChangeView: ( view: View ) => void;
+	onPageCorrection?: ( page: number ) => void;
 	recordTracksEvent: RecordTracksEvent;
 	/** The agency opened resources are recorded against, once it has loaded. */
 	agencyId: number | undefined;
@@ -36,6 +37,7 @@ export default function ResourceCenter( {
 	resources: unsortedResources,
 	view,
 	onChangeView,
+	onPageCorrection,
 	recordTracksEvent,
 	agencyId,
 	readIds,
@@ -112,6 +114,7 @@ export default function ResourceCenter( {
 			resources={ resources }
 			view={ view }
 			onChangeView={ changeView }
+			onPageCorrection={ onPageCorrection }
 			onPreviewResource={ previewResource }
 			onOpenResource={ openResource }
 			onLoadMore={ () => recordTracksEvent( 'calypso_a4a_resource_center_load_more' ) }

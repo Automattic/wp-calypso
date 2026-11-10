@@ -125,7 +125,7 @@ export default function AgencySites() {
 	const canIssueLicenses = isRouteAllowedByCapabilities( marketplaceRoute, capabilities );
 	const actions = useAgencyActions( { canIssueLicenses, canRemoveSites } );
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'agency-sites',
 		defaultView: DEFAULT_VIEW,
 		queryParams: currentSearchParams,
@@ -210,6 +210,7 @@ export default function AgencySites() {
 					view={ view }
 					isLoading={ isLoading }
 					onChangeView={ handleViewChange }
+					onPageCorrection={ correctPage }
 					onReset={ resetView }
 					defaultLayouts={ AGENCY_LAYOUTS }
 					paginationInfo={ paginationInfo }

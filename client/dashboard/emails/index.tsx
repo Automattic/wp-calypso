@@ -81,7 +81,7 @@ function Emails() {
 
 	const searchParams = emailsRoute.useSearch();
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const { view, updateView, correctPage, resetView } = usePersistentView( {
 		slug: 'emails',
 		defaultView: DEFAULT_VIEW,
 		queryParams: searchParams,
@@ -136,6 +136,7 @@ function Emails() {
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
+					onPageCorrection={ correctPage }
 					onReset={ resetView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>

@@ -24,7 +24,7 @@ export default function Learn() {
 	const searchParams = learnRoute.useSearch();
 	const navigate = learnRoute.useNavigate();
 	const router = useRouter();
-	const { view, updateView } = usePersistentView( {
+	const { view, updateView, correctPage } = usePersistentView( {
 		slug: 'agency-library',
 		defaultView: DEFAULT_VIEW,
 		queryParams: searchParams,
@@ -72,6 +72,7 @@ export default function Learn() {
 				resources={ data.results }
 				view={ view }
 				onChangeView={ updateView }
+				onPageCorrection={ correctPage }
 				recordTracksEvent={ recordTracksEvent }
 				agencyId={ agency?.id }
 				readIds={ readIds }
