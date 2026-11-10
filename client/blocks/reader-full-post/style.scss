@@ -258,7 +258,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		// Hover state
 		&:hover .reader-following-feed,
 		&:hover .reader-follow-feed,
-		&.is-following:hover .reader-following-feed {
+		&.is-following:hover .reader-following-feed,
+		&.is-disabled:hover .reader-following-feed,
+		&.is-disabled:hover .reader-follow-feed {
 			color: var( --color-link ) !important;
 			fill: var( --color-link );
 			opacity: 1;

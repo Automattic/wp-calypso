@@ -114,7 +114,7 @@ button.follow-button {
 		font-weight: 500;
 		padding: 12px 24px 12px 20px;
 
-		svg.reader-follow-feed {
+		&:not(.is-disabled) svg.reader-follow-feed {
 			color: var(--color-text-inverted);
 			fill: var(--color-text-inverted);
 		}
