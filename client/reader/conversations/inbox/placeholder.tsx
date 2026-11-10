@@ -13,6 +13,7 @@ import { ConversationsInboxLayout, useInboxDensity, useIsNarrowInbox } from './l
 import './placeholder.scss';
 import './conversation-list/style.scss';
 
+/** Shows the inbox's layout while its code loads. */
 export function ConversationsInboxPlaceholder( { hasConversation }: { hasConversation: boolean } ) {
 	const translate = useTranslate();
 	const isNarrow = useIsNarrowInbox();
