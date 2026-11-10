@@ -105,7 +105,7 @@ describe( 'ConversationList', () => {
 		expect( screen.getByRole( 'tab', { name: /Unread/ } ) ).toHaveTextContent( '2' );
 	} );
 
-	it( 'lists one row per comment on the Your comments tab', async () => {
+	it( 'lists your comments on the Your comments tab', async () => {
 		const user = userEvent.setup();
 		const { onSelect } = renderList();
 

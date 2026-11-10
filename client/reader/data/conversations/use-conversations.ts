@@ -119,6 +119,24 @@ export function useConversations( {
 	} );
 }
 
+/**
+ * Lists each post once, at its first row's place, with the user's latest comment on it. The
+ * endpoint returns a row per comment. Keyed by post, so the row keeps its key when a newer
+ * comment replaces it.
+ */
+function groupByPost( comments: OwnComment[] ): OwnComment[] {
+	const byPost = new Map< string, OwnComment >();
+	for ( const comment of comments ) {
+		const key = getConversationKey( comment.siteId, comment.postId );
+		const kept = byPost.get( key );
+		// Comment IDs grow with each comment on a site, so the highest is the latest.
+		if ( ! kept || comment.commentId > kept.commentId ) {
+			byPost.set( key, { ...comment, key } );
+		}
+	}
+	return [ ...byPost.values() ];
+}
+
 export function useOwnComments( {
 	sort,
 	search,
@@ -136,9 +154,11 @@ export function useOwnComments( {
 	const { data } = query;
 	const comments = useMemo(
 		() =>
-			data?.pages.flatMap( ( page ) =>
-				adaptPage( page.comments, adaptReadConversationOwnComment )
-			) ?? [],
+			groupByPost(
+				data?.pages.flatMap( ( page ) =>
+					adaptPage( page.comments, adaptReadConversationOwnComment )
+				) ?? []
+			),
 		[ data ]
 	);
 

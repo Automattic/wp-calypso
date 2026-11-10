@@ -353,25 +353,25 @@ describe( 'ConversationsInbox', () => {
 
 		await findRow( '10-p-300' );
 		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
-		await user.click( await findRow( '10-p-400-c-41' ) );
+		await user.click( await findRow( '10-p-400' ) );
 
 		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 3 ] ] ) );
 	} );
 
-	it( 'lists your comments and opens one at that comment', async () => {
+	it( 'lists each post once on Your comments and opens it at your latest comment', async () => {
 		const user = userEvent.setup();
 		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
 
 		await findRow( '10-p-100' );
 		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
-		await user.click( await findRow( '10-p-300-c-32' ) );
+		await user.click( await findRow( '10-p-300' ) );
 
-		expect( screen.getByRole( 'button', { name: '10-p-300-c-31' } ) ).toBeVisible();
+		expect( screen.getAllByRole( 'button', { name: /^10-p-300/ } ) ).toHaveLength( 1 );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
 
 		rerender( <ConversationsInbox siteId="10" postId="300" /> );
 
-		expect( screen.getByText( 'Selected: 10-p-300-c-32' ) ).toBeVisible();
+		expect( screen.getByText( 'Selected: 10-p-300' ) ).toBeVisible();
 		expect( screen.getByText( 'Start: 32' ) ).toBeVisible();
 	} );
 
