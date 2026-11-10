@@ -36,6 +36,7 @@
 		"postcss": "^8.5.32",
 		"postcss-custom-properties": "^12.1.11",
 		"sass": "1.77.8",
-		"vitest": "^4.1.12"
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

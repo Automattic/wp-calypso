@@ -47,6 +47,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^6.0.3",
-		"vitest": "^4.1.12"
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }
