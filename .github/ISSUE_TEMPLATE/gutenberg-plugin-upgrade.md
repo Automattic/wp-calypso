@@ -36,7 +36,6 @@ As you complete the tasks in this list, please update the relevant lines with di
 **Wrap-up**
 
 - [ ] Clean up unused releases
-- [ ] Add log entry to the Gutenberg Upgrade Log (pcoGjb-g-p2)
 
 ### Blockers 🤷‍♀️
 
