@@ -348,6 +348,58 @@ describe( 'PostComments', () => {
 		expect( startingCommentRequest.isDone() ).toBe( false );
 	} );
 
+	const comment = ( ID, date ) => ( {
+		ID,
+		content: `Comment ${ ID }`,
+		date,
+		parent: false,
+		author: { ID: 10, name: 'Author' },
+		status: 'approved',
+	} );
+
+	const replyWithNewestPage = () =>
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'DESC' )
+			.reply( 200, {
+				comments: [
+					comment( 2, '2026-05-02T00:00:00.000Z' ),
+					comment( 1, '2026-05-01T00:00:00.000Z' ),
+				],
+				found: 3,
+			} );
+
+	const replyWithLaterPage = () =>
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' )
+			.reply( 200, { comments: [ comment( 3, '2026-05-03T00:00:00.000Z' ) ], found: 3 } );
+
+	it( 'does not request later comments when a thread opens at its newest comment', async () => {
+		replyWithNewestPage();
+		const laterRequest = replyWithLaterPage();
+
+		renderComments( { startingCommentId: 2 } );
+
+		await waitFor( () => expect( screen.getAllByTestId( 'post-comment' ) ).toHaveLength( 2 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( laterRequest.isDone() ).toBe( false );
+	} );
+
+	it( 'requests later comments when the latest one the caller knows of is missing', async () => {
+		replyWithNewestPage();
+		const laterRequest = replyWithLaterPage();
+
+		renderComments( { startingCommentId: 2, latestCommentId: 3 } );
+
+		await waitFor( () => expect( laterRequest.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect(
+				screen.getAllByTestId( 'post-comment' ).map( ( item ) => item.textContent )
+			).toContain( '3' )
+		);
+	} );
+
 	it( 'resets inline expansion when the post changes', async () => {
 		const nextPost = {
 			...post,
