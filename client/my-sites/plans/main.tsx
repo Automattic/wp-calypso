@@ -546,7 +546,9 @@ export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'se
 				isPreviewSite={ isPreviewSite }
 				redirectTo={
 					props.redirectTo ??
-					( isPreviewSite && site?.slug ? getLaunchDestination( { siteSlug: site.slug } ) : undefined )
+					( isPreviewSite && site?.slug
+						? getLaunchDestination( { siteSlug: site.slug } )
+						: undefined )
 				}
 				selectedSiteId={ selectedSiteId }
 				intervalType={ isSupportedIntervalType( intervalType ) ? intervalType : undefined }
