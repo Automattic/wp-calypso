@@ -38,15 +38,11 @@ const SERVER_CONFIG_SETTINGS = new Set( [ 'sftp-ssh', 'php', 'database', 'cachin
  * path segment, so overlapping routes (e.g. `logs/activity` sitting under the
  * logs route) resolve to the most specific area.
  *
- * `pathname` is the router's `location.pathname`, which includes the entry
- * point's `basePath` — strip it so matching is relative to the app root.
+ * `pathname` is the router's `location.pathname`, which is relative to the
+ * entry point's `basePath`.
  */
-export function resolveVisitAreaSlug( pathname: string, basePath = '' ): string | null {
+export function resolveVisitAreaSlug( pathname: string ): string | null {
 	const parts = pathname.split( '/' ).filter( Boolean );
-	const baseParts = basePath.split( '/' ).filter( Boolean );
-	if ( baseParts.every( ( segment, i ) => parts[ i ] === segment ) ) {
-		parts.splice( 0, baseParts.length );
-	}
 
 	if ( parts[ 0 ] === 'sites' ) {
 		if ( parts.length === 1 ) {

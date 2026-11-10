@@ -73,8 +73,15 @@ export function getNormalizedPath( matches: RouterState[ 'matches' ], basePath =
 	const leafMatch = matches.at( -1 );
 	const routeId = leafMatch?.routeId ?? '';
 
-	const normalizedBasePath = basePath.endsWith( '/' ) ? basePath.slice( 0, -1 ) : basePath;
-	return normalizedBasePath + routeId.replace( /\/$/, '' );
+	return trimTrailingSlash( basePath ) + routeId.replace( /\/$/, '' );
+}
+
+export function getPublicPathname( pathname: string, basePath = '' ) {
+	return trimTrailingSlash( basePath ) + pathname;
+}
+
+function trimTrailingSlash( path: string ) {
+	return path.endsWith( '/' ) ? path.slice( 0, -1 ) : path;
 }
 
 /**

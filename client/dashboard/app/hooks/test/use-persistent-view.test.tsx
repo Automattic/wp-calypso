@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tanstack/react-router';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { Suspense } from 'react';
+import { createContext, Suspense, useContext } from 'react';
 import { usePersistentView } from '../use-persistent-view';
 import type { QueryParamFilterField } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
@@ -18,28 +18,31 @@ const defaultView: View = {
 };
 const slug = 'sites';
 
+const ChildrenContext = createContext< React.ReactNode >( null );
+
+function IndexRoute() {
+	return <Suspense fallback={ null }>{ useContext( ChildrenContext ) }</Suspense>;
+}
+
 function createTestWrapper() {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	let router: ReturnType< typeof createRouter > | undefined;
+	const rootRoute = createRootRoute();
+	const indexRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/',
+		component: IndexRoute,
+	} );
+	const router = createRouter( {
+		routeTree: rootRoute.addChildren( [ indexRoute ] ),
+	} );
 
-	const Wrapper = ( { children }: { children: React.ReactNode } ) => {
-		const rootRoute = createRootRoute();
-		const indexRoute = createRoute( {
-			getParentRoute: () => rootRoute,
-			path: '/',
-			component: () => <Suspense fallback={ null }>{ children }</Suspense>,
-		} );
-
-		router = createRouter( {
-			routeTree: rootRoute.addChildren( [ indexRoute ] ),
-		} );
-
-		return (
-			<QueryClientProvider client={ queryClient }>
+	const Wrapper = ( { children }: { children: React.ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>
+			<ChildrenContext.Provider value={ children }>
 				<RouterProvider router={ router } />
-			</QueryClientProvider>
-		);
-	};
+			</ChildrenContext.Provider>
+		</QueryClientProvider>
+	);
 
 	return { Wrapper, getRouter: () => router };
 }

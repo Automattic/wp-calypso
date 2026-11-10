@@ -57,6 +57,15 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 			},
 		} );
 	const router = createTestRouter( ui );
+	// The router resolves its first match asynchronously; seed it as already loaded so `ui` is in
+	// the DOM when `render()` returns and no later load remounts it. Drop this once tests wait for
+	// the first render.
+	router.stores.setMatches(
+		router
+			.matchRoutes( router.latestLocation )
+			.map( ( match ) => ( { ...match, status: 'success' as const } ) )
+	);
+	router.stores.resolvedLocation.set( router.latestLocation );
 
 	const recordTracksEvent = jest.fn();
 	const recordPageView = jest.fn();

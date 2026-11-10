@@ -12,7 +12,7 @@ import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { useMemo, useEffect } from 'react';
 import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
-import { getNormalizedPath, getSuperProps } from './analytics/super-props';
+import { getNormalizedPath, getPublicPathname, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { dashboardChartTheme } from './chart-theme';
 import { AppProvider, useAppContext } from './context';
@@ -72,7 +72,7 @@ function AnalyticsProviderWithClient( {
 			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
 				source: 'msd',
 				app,
-				path: router.state.location.pathname,
+				path: getPublicPathname( router.state.location.pathname, router.basepath ),
 				route: getNormalizedPath( router.state.matches, router.basepath ),
 			} );
 		};

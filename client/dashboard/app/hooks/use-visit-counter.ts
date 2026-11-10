@@ -5,7 +5,6 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { useAppContext } from '../context';
 import { resolveVisitAreaSlug } from '../survicate/visit-areas';
 
 const DAY_IN_MS = 86400000;
@@ -87,9 +86,8 @@ export function usePersistentVisitCounter( area: string | null ): void {
  */
 export function useTrackVisitedAreas(): void {
 	const enabled = config( 'survicate_enabled' );
-	const { basePath } = useAppContext();
 	const area = useRouterState( {
-		select: ( state ) => resolveVisitAreaSlug( state.location.pathname, basePath ),
+		select: ( state ) => resolveVisitAreaSlug( state.location.pathname ),
 	} );
 	usePersistentVisitCounter( enabled ? area : null );
 }
