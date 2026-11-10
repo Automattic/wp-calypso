@@ -139,6 +139,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const visible: InboxItem[] = tab === 'yours' ? ownCommentsQuery.comments : conversations;
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
 	const [ opened, setOpened ] = useState< Opened >();
+	// Rows take the focus once the reader opens one, not for the inbox's own pick on load.
+	const [ hasOpened, setHasOpened ] = useState( false );
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
 	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedKey );
 	const found = findConversation( selectedKey );
@@ -207,6 +209,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	}, [ selectedKey, opened, found, conversationsShownQuery.isLoading, open ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
+		setHasOpened( true );
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = findConversation( key );
 		const unread: Unread | undefined = conversation ?? getUnreadFromNotes( notes, item );
@@ -362,6 +365,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onShortcutsToggle={ setIsShortcutsOpen }
 					selectedKey={ selectedKey }
 					openOnFocus={ ! isNarrow }
+					followFocus={ hasOpened }
 					onSelect={ openConversation }
 				/>
 				{ hasConversation && (

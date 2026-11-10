@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
@@ -44,6 +44,8 @@ interface Props {
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
 	openOnFocus: boolean;
+	/** Whether a newly selected row takes the focus. */
+	followFocus: boolean;
 	onSelect: ( item: InboxItem, source: OpenSource ) => void;
 }
 
@@ -71,6 +73,7 @@ export function ConversationList( {
 	onShortcutsToggle,
 	selectedKey,
 	openOnFocus,
+	followFocus,
 	onSelect,
 }: Props ) {
 	const translate = useTranslate();
@@ -97,6 +100,21 @@ export function ConversationList( {
 			listRef.current?.focus( { preventScroll: true } );
 		}
 	}, [ isLoadingMore, hasMore, isLoadMoreError ] );
+
+	// Switching tabs remounts the list, which drops the focus of anything inside it. The
+	// render still sees the old DOM, so it can tell whether the focus was in there.
+	const [ shownTab, setShownTab ] = useState( tab );
+	const [ refocusList, setRefocusList ] = useState( false );
+	if ( tab !== shownTab ) {
+		setShownTab( tab );
+		setRefocusList( !! document.activeElement?.closest( '.conversations-inbox__tab-panel' ) );
+	}
+	useEffect( () => {
+		if ( refocusList ) {
+			setRefocusList( false );
+			listRef.current?.focus( { preventScroll: true } );
+		}
+	}, [ refocusList ] );
 
 	const emptyStates = {
 		all: {
@@ -145,116 +163,119 @@ export function ConversationList( {
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
 			<HStack expanded={ false } className="conversations-inbox__pane-title">
-				<Heading level={ 1 } size={ 20 } weight={ 500 } color="inherit">
+				<Heading level={ 1 } size={ 15 } lineHeight="20px" weight={ 600 } color="inherit">
 					{ translate( 'Conversations' ) }
 				</Heading>
 				<KeyboardShortcuts isOpen={ isShortcutsOpen } onToggle={ onShortcutsToggle } />
 			</HStack>
-			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ onTabChange } />
-			<ConversationListToolbar
-				search={ search }
-				onSearchChange={ onSearchChange }
-				sort={ sort }
-				onSortChange={ onSortChange }
-				density={ density }
-				onDensityChange={ onDensityChange }
-			/>
-			{ markAllCount > 0 && tab !== 'yours' && (
-				<Button
-					__next40pxDefaultSize
-					variant="link"
-					className="conversations-inbox__mark-read"
-					onClick={ onMarkAllRead }
-				>
-					<span>
-						{ translate(
-							'Mark {{count}}%(count)s{{/count}} as read',
-							'Mark {{count}}%(count)s{{/count}} as read',
-							{
-								count: markAllCount,
-								args: { count: formatNumber( markAllCount ) },
-								components: { count: <strong /> },
-							}
-						) }
-					</span>
-				</Button>
-			) }
-			<div
-				ref={ listRef }
-				tabIndex={ -1 }
-				className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }
-			>
-				{ isLoading && <Spinner /> }
-				{ ! isLoading && isError && (
-					<ListMessage
-						title={ translate( 'Couldn’t load conversations' ) }
-						description={ translate( 'Something went wrong while loading your conversations.' ) }
+			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ onTabChange }>
+				<ConversationListToolbar
+					search={ search }
+					onSearchChange={ onSearchChange }
+					sort={ sort }
+					onSortChange={ onSortChange }
+					density={ density }
+					onDensityChange={ onDensityChange }
+				/>
+				{ markAllCount > 0 && tab !== 'yours' && (
+					<Button
+						__next40pxDefaultSize
+						variant="link"
+						className="conversations-inbox__mark-read"
+						onClick={ onMarkAllRead }
 					>
-						<Button __next40pxDefaultSize variant="secondary" onClick={ onRetry }>
-							{ translate( 'Retry' ) }
-						</Button>
-					</ListMessage>
+						<span>
+							{ translate(
+								'Mark {{count}}%(count)s{{/count}} as read',
+								'Mark {{count}}%(count)s{{/count}} as read',
+								{
+									count: markAllCount,
+									args: { count: formatNumber( markAllCount ) },
+									components: { count: <strong /> },
+								}
+							) }
+						</span>
+					</Button>
 				) }
-				{ ! isLoading && ! isError && items.length === 0 && ! hasMore && (
-					<ListMessage
-						{ ...( search.trim()
-							? { description: translate( 'No conversations match your search.' ) }
-							: emptyStates[ tab ] ) }
-					/>
-				) }
-				{ sections.map( ( { label, items } ) => (
-					<section key={ label }>
-						{ label && (
-							<Heading
-								level={ 2 }
-								size={ 14 }
-								weight={ 500 }
-								color="inherit"
-								className="conversations-inbox__day"
-							>
-								{ label }
-							</Heading>
-						) }
-						<ul>
-							{ items.map( ( item ) => (
-								<ConversationListItem
-									key={ item.key }
-									item={ item }
-									isSelected={ item.key === selectedKey }
-									openOnFocus={ openOnFocus }
-									density={ density }
-									onSelect={ onSelect }
-								/>
-							) ) }
-						</ul>
-					</section>
-				) ) }
-				{ ! isLoading && hasMore && (
-					<div ref={ endRef } className="conversations-inbox__list-end">
-						{ isLoadMoreError ? (
-							<>
-								<ListMessage description={ translate( 'Couldn’t load more.' ) } />
-								{ /* Stays mounted while loading so the focus isn't lost. */ }
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									isBusy={ isLoadingMore }
-									disabled={ isLoadingMore }
-									accessibleWhenDisabled
-									onClick={ () => {
-										refocusRef.current = true;
-										onLoadMore?.();
-									} }
+				<div
+					ref={ listRef }
+					tabIndex={ -1 }
+					className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }
+				>
+					{ isLoading && <Spinner className="conversations-inbox__list-spinner" /> }
+					{ ! isLoading && isError && (
+						<ListMessage
+							title={ translate( 'Couldn’t load conversations' ) }
+							description={ translate( 'Something went wrong while loading your conversations.' ) }
+						>
+							<Button __next40pxDefaultSize variant="secondary" onClick={ onRetry }>
+								{ translate( 'Retry' ) }
+							</Button>
+						</ListMessage>
+					) }
+					{ ! isLoading && ! isError && items.length === 0 && ! hasMore && (
+						<ListMessage
+							{ ...( search.trim()
+								? { description: translate( 'No conversations match your search.' ) }
+								: emptyStates[ tab ] ) }
+						/>
+					) }
+					{ sections.map( ( { label, items } ) => (
+						<section key={ label }>
+							{ label && (
+								<Heading
+									level={ 2 }
+									size={ 13 }
+									lineHeight="20px"
+									weight={ 500 }
+									color="inherit"
+									className="conversations-inbox__day"
 								>
-									{ translate( 'Retry' ) }
-								</Button>
-							</>
-						) : (
-							isLoadingMore && <Spinner />
-						) }
-					</div>
-				) }
-			</div>
+									{ label }
+								</Heading>
+							) }
+							<ul>
+								{ items.map( ( item ) => (
+									<ConversationListItem
+										key={ item.key }
+										item={ item }
+										isSelected={ item.key === selectedKey }
+										openOnFocus={ openOnFocus }
+										followFocus={ followFocus }
+										density={ density }
+										onSelect={ onSelect }
+									/>
+								) ) }
+							</ul>
+						</section>
+					) ) }
+					{ ! isLoading && hasMore && (
+						<div ref={ endRef } className="conversations-inbox__list-end">
+							{ isLoadMoreError ? (
+								<>
+									<ListMessage description={ translate( 'Couldn’t load more.' ) } />
+									{ /* Stays mounted while loading so the focus isn't lost. */ }
+									<Button
+										__next40pxDefaultSize
+										variant="secondary"
+										isBusy={ isLoadingMore }
+										disabled={ isLoadingMore }
+										accessibleWhenDisabled
+										onClick={ () => {
+											refocusRef.current = true;
+											onLoadMore?.();
+										} }
+									>
+										{ translate( 'Retry' ) }
+									</Button>
+								</>
+							) : (
+								isLoadingMore && <Spinner />
+							) }
+						</div>
+					) }
+				</div>
+			</ConversationListTabs>
 		</VStack>
 	);
 }
