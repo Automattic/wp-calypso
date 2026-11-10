@@ -267,6 +267,15 @@
 	.comments__comment-content {
 		font-size: 15px;
 		line-height: 24px;
+
+		// Half a line between paragraphs, lists and quotes, in place of a full blank line.
+		> * {
+			margin-block: 0 12px;
+		}
+
+		> :last-child {
+			margin-block-end: 0;
+		}
 	}
 
 	.comments__comment-actions {
@@ -346,7 +355,6 @@
 	}
 
 	.comments__comment-content blockquote {
-		margin: 0 0 24px;
 		padding: 0 0 0 16px;
 		border-inline-start: 2px solid var( --color-border-subtle );
 
