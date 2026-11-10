@@ -47,7 +47,7 @@
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": true,
-		"hosting/dev-tools-all-paid-plans": false,
+		"hosting/dev-tools-all-paid-plans": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/email-tracking-consent": true,
