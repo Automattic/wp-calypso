@@ -18,6 +18,7 @@ import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
+import { useTrackOverviewItem } from './use-track-overview-item';
 
 export default function DomainOverviewSettings( {
 	domain,
@@ -30,6 +31,7 @@ export default function DomainOverviewSettings( {
 	domainMappingStatus?: DomainMappingStatus;
 	isDisabled?: boolean;
 } ) {
+	const trackItem = useTrackOverviewItem( domain );
 	const buttonListItems = [];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
@@ -38,6 +40,7 @@ export default function DomainOverviewSettings( {
 				key="connection-setup"
 				domain={ domain }
 				domainMappingStatus={ domainMappingStatus }
+				onClick={ () => trackItem( 'connection-setup' ) }
 			/>
 		);
 	}
@@ -47,7 +50,12 @@ export default function DomainOverviewSettings( {
 		! domain.is_gravatar_restricted_domain // TODO: should we show some notice for gravatar domains instead of just hiding the button?
 	) {
 		buttonListItems.push(
-			<NameServersSettingsSummary key="name-servers" domain={ domain } isDisabled={ isDisabled } />
+			<NameServersSettingsSummary
+				key="name-servers"
+				domain={ domain }
+				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'name-servers' ) }
+			/>
 		);
 	}
 
@@ -58,7 +66,9 @@ export default function DomainOverviewSettings( {
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
 		domain.can_manage_dns_records
 	) {
-		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
+		buttonListItems.push(
+			<DnsSettingsSummary key="dns" domain={ domain } onClick={ () => trackItem( 'dns' ) } />
+		);
 	}
 
 	if (
@@ -71,6 +81,7 @@ export default function DomainOverviewSettings( {
 				key="diagnostics"
 				domain={ domain }
 				domainDiagnostics={ domainDiagnostics }
+				onClick={ () => trackItem( 'diagnostics' ) }
 			/>
 		);
 	}
@@ -82,7 +93,13 @@ export default function DomainOverviewSettings( {
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
 		domain.can_manage_dns_records
 	) {
-		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
+		buttonListItems.push(
+			<DomainForwardingSettingsSummary
+				key="forwarding"
+				domain={ domain }
+				onClick={ () => trackItem( 'forwarding' ) }
+			/>
+		);
 	}
 
 	/**
@@ -102,6 +119,7 @@ export default function DomainOverviewSettings( {
 				key="contact-details"
 				domain={ domain }
 				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'contact-details' ) }
 			/>
 		);
 	}
@@ -117,7 +135,12 @@ export default function DomainOverviewSettings( {
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
 	) {
 		buttonListItems.push(
-			<DomainSecuritySettingsSummary key="security" domain={ domain } isDisabled={ isDisabled } />
+			<DomainSecuritySettingsSummary
+				key="security"
+				domain={ domain }
+				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'security' ) }
+			/>
 		);
 	}
 
@@ -134,6 +157,7 @@ export default function DomainOverviewSettings( {
 				key="glue-records"
 				domainName={ domain.domain }
 				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'glue-records' ) }
 			/>
 		);
 	}

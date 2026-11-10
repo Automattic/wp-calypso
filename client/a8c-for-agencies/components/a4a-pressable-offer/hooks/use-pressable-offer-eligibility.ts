@@ -14,6 +14,7 @@ export default function usePressableOfferEligibility() {
 
 	return {
 		isEligibleForIntroductoryOffer: isBillingDragonAgency && pressableOwnership !== 'agency',
-		mayBeEligibleForExpansionOffer: isBillingDragonAgency && pressableOwnership === 'agency',
+		// No expansion offer runs alongside the holiday introductory offer.
+		mayBeEligibleForExpansionOffer: false,
 	};
 }

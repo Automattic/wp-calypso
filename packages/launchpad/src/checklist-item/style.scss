@@ -191,6 +191,7 @@
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
+		color: var(--color-success);
 		fill: var(--color-success);
 	}
 	.checklist-item__counter {
@@ -213,6 +214,7 @@
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
+		color: var(--color-accent);
 		fill: var(--color-accent);
 	}
 

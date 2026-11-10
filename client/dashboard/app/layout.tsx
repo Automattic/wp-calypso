@@ -10,7 +10,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { useMemo, useEffect } from 'react';
-import { withColorScheme } from 'calypso/lib/color-scheme';
+import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';

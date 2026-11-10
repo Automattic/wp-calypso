@@ -112,6 +112,18 @@ async function logInTestAccount( account ) {
 }
 
 /**
+ * Returns the slug of a test account's site, e.g. `example.wordpress.com`.
+ */
+function testAccountSite( account ) {
+	try {
+		const { DataHelper } = e2eRequire( '@automattic/calypso-e2e' );
+		return DataHelper.getAccountSiteURL( account, { protocol: false } );
+	} catch ( error ) {
+		throw new Error( `Couldn't find the site of "${ account }" for {site}: ${ error.message }` );
+	}
+}
+
+/**
  * Opens a visible browser window and waits for the user to log in to WordPress.com.
  */
 async function logInOwnAccount( { timeoutMs = 10 * 60 * 1000 } = {} ) {
@@ -147,6 +159,7 @@ async function logInOwnAccount( { timeoutMs = 10 * 60 * 1000 } = {} ) {
 
 module.exports = {
 	AUTH_COMMAND,
+	REPO_ROOT,
 	OWN_ACCOUNT,
 	PORT,
 	UserActionRequired,
@@ -155,4 +168,5 @@ module.exports = {
 	logInOwnAccount,
 	logInTestAccount,
 	statePath,
+	testAccountSite,
 };

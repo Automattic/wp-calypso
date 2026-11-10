@@ -102,7 +102,7 @@ export default function AgencyOverviewContent( {
 	const canAccessEarnings = ! capabilities || capabilities.includes( REFERRALS_CAPABILITY );
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
-	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
+	const lockedNote = isPending ? __( 'Unlocks when your account is approved' ) : undefined;
 	const certification = useCertification();
 
 	return (

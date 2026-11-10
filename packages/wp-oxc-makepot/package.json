@@ -36,7 +36,7 @@
 	},
 	"scripts": {
 		"start": "./cli.js",
-		"test": "rm -rf test/output && vitest run"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"commander": "^5.1.0",
