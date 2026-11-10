@@ -250,6 +250,7 @@ describe( 'Account email recovery reminder', () => {
 			'target',
 			'_blank'
 		);
+		expect( screen.getByText( /you could be locked out of your account/i ) ).toBeVisible();
 		mockAccountRecovery( { email: 'backup@gmail.com', email_validated: true } );
 		fireEvent.focus( window );
 		await waitFor( () => expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull() );

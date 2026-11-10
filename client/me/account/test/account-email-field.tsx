@@ -74,7 +74,7 @@ const renderFieldWithEmail = ( email: string, recoveryState: RecoveryState = {} 
 		}
 	);
 
-const WARNING_MATCHER = /may be harder to get back into your account/i;
+const WARNING_MATCHER = /you could be locked out of your account/i;
 const DRAFT_FALLBACK = /if you don’t have a verified recovery/i;
 const REMINDER = /remind me in six months/i;
 

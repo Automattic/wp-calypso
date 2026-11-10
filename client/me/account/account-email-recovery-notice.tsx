@@ -97,7 +97,7 @@ export default function AccountEmailRecoveryNotice( {
 		);
 	} else if ( recoveryIsReady ) {
 		message = translate(
-			'If you lose access to this email address, it may be harder to get back into your account. Add or verify a recovery email or phone number.',
+			'If this email address stops working, you could be locked out of your account. Add or verify a recovery email or phone number.',
 			{ textOnly: true }
 		);
 	}

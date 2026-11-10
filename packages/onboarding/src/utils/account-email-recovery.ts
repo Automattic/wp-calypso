@@ -22,6 +22,7 @@ const WEBMAIL_DOMAINS = new Set( [
 	'gmx.ch',
 	'gmx.com',
 	'gmx.de',
+	'gmx.fr',
 	'gmx.net',
 	'googlemail.com',
 	'hanmail.net',
@@ -40,6 +41,7 @@ const WEBMAIL_DOMAINS = new Set( [
 	'laposte.net',
 	'libero.it',
 	'list.ru',
+	'live.ca',
 	'live.co.uk',
 	'live.com',
 	'live.de',
@@ -83,6 +85,7 @@ const WEBMAIL_DOMAINS = new Set( [
 	'wp.pl',
 	'yahoo.ca',
 	'yahoo.co.in',
+	'yahoo.co.jp',
 	'yahoo.co.uk',
 	'yahoo.com',
 	'yahoo.com.au',
@@ -95,6 +98,7 @@ const WEBMAIL_DOMAINS = new Set( [
 	'yandex.com',
 	'yandex.ru',
 	'ymail.com',
+	'ymail.ne.jp',
 	'zoho.com',
 ] );
 
