@@ -1,4 +1,8 @@
-import { eventToLogstashPayload, makeLogstashMirrorTransport } from '../logstash-transport';
+import {
+	eventToLogstashPayload,
+	makeLogstashMirrorTransport,
+	redactUrl,
+} from '../logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
 type MakeFetchTransport = typeof SentryApi.makeFetchTransport;
@@ -10,13 +14,19 @@ const exceptionEvent: SentryApi.Event = {
 	environment: 'production',
 	release: 'calypso_deadbeef',
 	user: { id: '42' },
-	tags: { calypso_section: 'dashboard', blog_id: 1234 },
+	tags: { calypso_section: 'dashboard', blog_id: 1234, 'DOMException.code': 8 },
+	contexts: { trace: { trace_id: 'trace123', span_id: 'span456' } },
+	sdk: { name: 'sentry.javascript.react', version: '7.120.4' },
 	fingerprint: [ 'SiteOverview', 'Card' ],
 	request: {
 		url: 'https://wordpress.com/sites',
 		headers: { 'User-Agent': 'test' },
 	},
-	breadcrumbs: Array.from( { length: 30 }, ( _, i ) => ( { message: `crumb ${ i }` } ) ),
+	breadcrumbs: Array.from( { length: 30 }, ( _, i ) =>
+		i % 10 === 5
+			? { message: `crumb ${ i }`, category: 'navigation', data: { to: `/route-${ i }` } }
+			: { message: `crumb ${ i }` }
+	),
 	exception: {
 		values: [
 			{ type: 'Error', value: 'the cause' },
@@ -65,8 +75,39 @@ describe( 'eventToLogstashPayload', () => {
 				fingerprint: 'SiteOverview,Card',
 				calypso_section: 'dashboard',
 				blog_id: '1234',
+				route: '/route-25',
+				trace_id: 'trace123',
+				sdk_version: '7.120.4',
+				stack_hash: expect.stringMatching( /^[0-9a-f]{8}$/ ),
+				top_frame: 'inner (app.js:2:20)',
+				tag_dom_exception_code: '8',
 			},
 		} );
+		expect( payload.properties ).not.toHaveProperty( 'tag_calypso_section' );
+		expect( payload.properties ).not.toHaveProperty( 'tag_blog_id' );
+	} );
+
+	it( 'gives the same stack_hash only to identical stacks', () => {
+		const withFrames = ( type: string, colno: number ): SentryApi.Event => ( {
+			exception: {
+				values: [
+					{
+						type,
+						value: 'differs between events',
+						stacktrace: { frames: [ { function: 'f', filename: 'app.js', lineno: 1, colno } ] },
+					},
+				],
+			},
+		} );
+		const hashOf = ( event: SentryApi.Event ) =>
+			eventToLogstashPayload( event ).properties.stack_hash;
+
+		expect( hashOf( withFrames( 'TypeError', 1 ) ) ).toBe( hashOf( withFrames( 'TypeError', 1 ) ) );
+		expect( hashOf( withFrames( 'TypeError', 1 ) ) ).not.toBe(
+			hashOf( withFrames( 'TypeError', 2 ) )
+		);
+		expect( hashOf( withFrames( 'TypeError', 1 ) ) ).not.toBe( hashOf( withFrames( 'Error', 1 ) ) );
+		expect( hashOf( { message: 'no stack' } ) ).toBeUndefined();
 	} );
 
 	it( 'drops request headers and keeps only the last 20 breadcrumbs in extra', () => {
@@ -94,6 +135,59 @@ describe( 'eventToLogstashPayload', () => {
 			trace: undefined,
 		} );
 		expect( payload ).not.toHaveProperty( 'user_id' );
+	} );
+} );
+
+describe( 'redactUrl', () => {
+	it.each( [
+		[
+			'https://wordpress.com/setup/processing?oneTapAuth=true&code=eyJhbGci.abc&service=google',
+			'https://wordpress.com/setup/processing?oneTapAuth=true&code=redacted&service=google',
+		],
+		[
+			'/log-in/link/use?token=abc123&redirect_to=%2Fsites',
+			'/log-in/link/use?token=redacted&redirect_to=%2Fsites',
+		],
+		[
+			'https://wordpress.com/connect#access_token=abc&expires_in=3600&refresh_token=def',
+			'https://wordpress.com/connect#access_token=redacted&expires_in=3600&refresh_token=redacted',
+		],
+		[
+			'https://wordpress.com/x?client_secret=s&api_key=k&_wpnonce=n',
+			'https://wordpress.com/x?client_secret=redacted&api_key=redacted&_wpnonce=redacted',
+		],
+		[
+			'https://wordpress.com/themes?keyword=dark&postcode=1',
+			'https://wordpress.com/themes?keyword=dark&postcode=1',
+		],
+		[ 'https://wordpress.com/sites', 'https://wordpress.com/sites' ],
+	] )( 'redacts secret params in %s', ( url, expected ) => {
+		expect( redactUrl( url ) ).toBe( expected );
+	} );
+
+	it( 'redacts secrets everywhere the event carries a URL', () => {
+		const payload = eventToLogstashPayload( {
+			message: 'oops',
+			request: {
+				url: 'https://wordpress.com/setup?code=secret1',
+				query_string: { code: 'secret2', step: 'domains' },
+			},
+			breadcrumbs: [
+				{ category: 'fetch', data: { url: '/rest/v1.1/me?access_token=secret3' } },
+				{
+					category: 'navigation',
+					data: { from: '/start?token=secret4', to: '/setup?code=secret5' },
+				},
+			],
+		} );
+
+		expect( payload.properties.url ).toBe( 'https://wordpress.com/setup?code=redacted' );
+		expect( payload.properties.route ).toBe( '/setup?code=redacted' );
+		expect( payload.extra ).not.toMatch( /secret\d/ );
+		expect( JSON.parse( payload.extra ?? '' ).request.query_string ).toEqual( {
+			code: 'redacted',
+			step: 'domains',
+		} );
 	} );
 } );
 
