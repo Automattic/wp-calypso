@@ -3327,7 +3327,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 		getTitle: ( params ) =>
 			params?.isExperimentVariant
-				? i18n.translate( 'Free business email account for one\u00A0year' )
+				? i18n.translate( 'Free business email account for one year' )
 				: i18n.translate( 'Professional email Inbox free for 1 year' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
