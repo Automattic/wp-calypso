@@ -8,7 +8,11 @@ const e2eRequire = createRequire( path.join( REPO_ROOT, 'test/e2e/package.json' 
 
 e2eRequire( 'dotenv' ).config( { path: path.join( REPO_ROOT, '.env' ), quiet: true } );
 
-const PORT = process.env.PORT || 3000;
+const { getDefaultPort } = require(
+	path.join( REPO_ROOT, 'client/server/config/default-port.js' )
+);
+
+const PORT = process.env.PORT || getDefaultPort( REPO_ROOT );
 const OWN_ACCOUNT = 'me';
 const AUTH_COMMAND = `node .agents/skills/verify/scripts/auth.cjs ${ OWN_ACCOUNT }`;
 const SETUP_COMMAND = '.agents/skills/verify/scripts/setup-test-accounts.sh';

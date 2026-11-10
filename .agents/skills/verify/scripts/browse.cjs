@@ -4,7 +4,8 @@
  *
  *   node browse.cjs <url> [options]
  *
- * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT).
+ * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT). An absolute
+ * local URL without a port gets $PORT too. $PORT defaults to the checkout's dev server port.
  * The options are documented in ../browser.md.
  */
 const fs = require( 'node:fs' );
@@ -72,6 +73,27 @@ function isLocalTarget( url ) {
 		hostname === '127.0.0.1' ||
 		hostname === '[::1]'
 	);
+}
+
+/**
+ * Points an absolute local URL at this checkout's dev server: `http://calypso.localhost/read`
+ * gets its port, and another port is refused, since another checkout's server may be there.
+ */
+function withDevServerPort( target ) {
+	if ( ! URL.canParse( target ) || ! isLocalTarget( target ) ) {
+		return target;
+	}
+	const { port } = new URL( target );
+	if ( ! port ) {
+		return target.replace( /^(\w+:\/\/[^/?#]+)/, `$1:${ PORT }` );
+	}
+	if ( port !== String( PORT ) ) {
+		throw new UserActionRequired(
+			`${ target } is on port ${ port }, but this checkout's dev server uses port ${ PORT }. ` +
+				`Leave the port out of the URL, or put PORT=${ port } in front of the command if that server runs this checkout.`
+		);
+	}
+	return target;
 }
 
 function isCalypsoLiveTarget( url ) {
@@ -512,10 +534,10 @@ async function check( browser, account, target ) {
 }
 
 async function main() {
-	const [ target ] = positionals;
-	if ( ! target ) {
+	if ( ! positionals[ 0 ] ) {
 		throw new UserActionRequired( 'Usage: node browse.cjs <url> [options]' );
 	}
+	const target = withDevServerPort( positionals[ 0 ] );
 	if ( options.screenshot ) {
 		screenshotTarget( options.screenshot );
 	}
