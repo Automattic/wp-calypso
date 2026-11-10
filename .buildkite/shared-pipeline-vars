@@ -6,7 +6,7 @@ set -eux -o pipefail
 # to set up some variables that will be interpolated in the `.yml` pipeline before uploading it.
 
 # Selects the VM image for the `mac` queue.
-export IMAGE_ID="xcode-27.1"
+export IMAGE_ID="xcode-26.6-v2"
 
 # https://github.com/Automattic/a8c-ci-toolkit-buildkite-plugin/releases/tag/6.1.0 (2026-04-27)
 export CI_TOOLKIT_PLUGIN="automattic/a8c-ci-toolkit#6.1.0"
