@@ -31,14 +31,18 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
 
+	// The failure is shown here rather than as a notice on another page: the pages this used to
+	// send users to can leave Calypso for wp-admin, and a notice doesn't survive that.
+	const [ errorMessage, setErrorMessage ] = React.useState< string | null >( null );
+
 	// A completed transfer is not the end of the wait: the parent keeps this screen up until it has
 	// also verified that WooCommerce finished installing. Being mounted is the condition, so the wait
 	// runs for as long as this component does and `transfer_status` says how it ended. The site is
 	// still the exception — the parent renders this screen before site data has necessarily arrived,
-	// and passes 0 until it has.
+	// and passes 0 until it has — and so is a failure, which ends the wait while its message is up.
 	useWaitHeartbeat( {
 		surface: 'checkout_thank_you_transfer',
-		enabled: !! siteId,
+		enabled: !! siteId && ! errorMessage,
 		properties: {
 			site_id: siteId,
 			order_id: orderId,
@@ -82,10 +86,6 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 			dispatch( showMasterbar() );
 		};
 	}, [ dispatch ] );
-
-	// The failure is shown here rather than as a notice on another page: the pages this used to
-	// send users to can leave Calypso for wp-admin, and a notice doesn't survive that.
-	const [ errorMessage, setErrorMessage ] = React.useState< string | null >( null );
 
 	const latestTransfer = React.useRef( transfer );
 	latestTransfer.current = transfer;

@@ -3,6 +3,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import TransferPending from '..';
@@ -76,6 +77,26 @@ describe( 'TransferPending', () => {
 			);
 		}
 	);
+
+	test( 'ends the wait once the failure is shown', () => {
+		mockTransfer = { status: transferStates.ACTIVE };
+
+		const { rerender } = render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( useWaitHeartbeat ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { enabled: true } )
+		);
+
+		mockTransfer = { status: transferStates.ERROR };
+		rerender( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( useWaitHeartbeat ).toHaveBeenLastCalledWith(
+			expect.objectContaining( {
+				enabled: false,
+				properties: expect.objectContaining( { transfer_status: transferStates.ERROR } ),
+			} )
+		);
+	} );
 
 	test( 'links to Home when the site has no known wp-admin address', () => {
 		mockTransfer = { status: transferStates.ERROR };

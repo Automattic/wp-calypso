@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -15,7 +16,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  *
  * Kept out of `controller.jsx`, which wp-admin Stats shares.
  */
-export default function redirectToWpAdminStats( context, next ) {
+export default async function redirectToWpAdminStats( context, next ) {
 	const state = context.store.getState();
 
 	if ( isSupportSession( state ) ) {
@@ -32,14 +33,24 @@ export default function redirectToWpAdminStats( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const statsAdminUrl = getSiteAdminUrl( state, siteId, 'admin.php?page=stats' );
 
-	// A Jetpack site with the Stats module off has no wp-admin Stats page; this section offers
-	// to switch the module on instead.
-	if (
-		! statsAdminUrl ||
-		( isJetpackSite( state, siteId ) && isJetpackModuleActive( state, siteId, 'stats' ) === false )
-	) {
+	if ( ! statsAdminUrl ) {
 		next();
 		return;
+	}
+
+	// A Jetpack site with the Stats module off has no wp-admin Stats page; this section offers
+	// to switch the module on instead. The module list usually isn't loaded yet on arrival, since
+	// this section only asks for it once it renders, so ask here and redirect only when the module
+	// is known to be on.
+	if ( isJetpackSite( state, siteId ) ) {
+		if ( isJetpackModuleActive( state, siteId, 'stats' ) === null ) {
+			await context.store.dispatch( fetchModuleList( siteId ) );
+		}
+
+		if ( isJetpackModuleActive( context.store.getState(), siteId, 'stats' ) !== true ) {
+			next();
+			return;
+		}
 	}
 
 	// Every site-scoped route ends in the site, which wp-admin Stats expects as a blog ID.
