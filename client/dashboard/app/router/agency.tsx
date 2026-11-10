@@ -238,12 +238,12 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/amplify` – prospect-site analyses and reports.
+// `/prospect-reports` – prospect-site analyses and reports.
 export const agencyAmplifyRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
 	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'amplify',
+	path: 'prospect-reports',
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
@@ -264,11 +264,20 @@ const agencyAmplifyOverviewRoute = createRoute( {
 	)
 );
 
-const agencyAmplifyReportsRoute = createRoute( {
-	getParentRoute: () => agencyAmplifyRoute,
-	path: 'reports',
+// The page used to live at `/amplify`, and its reports at `/amplify/reports`.
+const agencyAmplifyLegacyRedirectRoute = createRoute( {
+	getParentRoute: () => agencyRoute,
+	path: 'amplify',
 	beforeLoad: () => {
-		throw dashboardRedirect( { to: '/amplify' } );
+		throw dashboardRedirect( { to: '/prospect-reports' } );
+	},
+} );
+
+const agencyAmplifyLegacySubpageRedirectRoute = createRoute( {
+	getParentRoute: () => agencyRoute,
+	path: 'amplify/$',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/prospect-reports' } );
 	},
 } );
 
@@ -2385,7 +2394,9 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
-		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute, agencyAmplifyReportsRoute ] ),
+		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute ] ),
+		agencyAmplifyLegacyRedirectRoute,
+		agencyAmplifyLegacySubpageRedirectRoute,
 		agencyPartnerDirectoryRoute.addChildren( [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,

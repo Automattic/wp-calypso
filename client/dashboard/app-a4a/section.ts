@@ -7,6 +7,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/',
 	'/oauth/token',
 	'/overview',
+	'/prospect-reports',
 	'/amplify',
 	'/sites',
 	'/dev-tools',
