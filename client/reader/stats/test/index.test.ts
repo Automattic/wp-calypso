@@ -520,6 +520,33 @@ describe( 'reader stats', () => {
 				} )
 			);
 		} );
+
+		describe.each( [
+			{ pathname: '/reader/shelves/test-shelf', uiAlgo: 'shelf' },
+			{ pathname: '/reader/shelves/test-shelf/discover', uiAlgo: 'shelf_discover' },
+		] )( '$uiAlgo attribution', ( { pathname, uiAlgo } ) => {
+			it( 'should attribute an in-stream follow to the current shelf tab', () => {
+				window.location.pathname = pathname;
+
+				recordFollow( 'https://example.com', undefined, {}, '/reader' );
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_reader_site_followed',
+					expect.objectContaining( { ui_algo: uiAlgo } )
+				);
+			} );
+
+			it( 'should attribute a full-post follow to the referring shelf tab', () => {
+				window.location.pathname = '/reader/blogs/123/posts/456';
+
+				recordFollow( 'https://example.com', undefined, {}, pathname );
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_reader_site_followed',
+					expect.objectContaining( { ui_algo: uiAlgo } )
+				);
+			} );
+		} );
 	} );
 
 	describe( 'recordUnfollow', () => {
