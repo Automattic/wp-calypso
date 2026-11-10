@@ -51,11 +51,11 @@ Three HOCs that inject Image Studio into the block editor via `addFilter`. These
 
 ## Client Context (`src/utils/client-context.ts`)
 
-Builds the context object the AI agent receives. **0% test coverage.** This determines what the agent knows about the current state.
+Builds the context object the AI agent receives. This determines what the agent knows about the current state.
 
 - Reads from Image Studio store (current image, mode, metadata) and block editor store (page content, selected blocks).
-- `getPageContent()` walks the block tree to extract text content for contextual suggestions.
-- Changes here directly affect AI generation quality — test on sandbox with both Media Library and Block Editor entry points.
+- `getCurrentPageContent()` walks the block tree to extract text content for contextual suggestions.
+- Changes here directly affect AI generation quality — test on sandbox with the Media Library, Block Editor and featured-image entry points.
 
 ## Type Guards (`src/types/guards.ts`)
 
@@ -107,7 +107,6 @@ Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.
 
 - `utils/tracking.ts` — 31% statements
 - `abilities/update-canvas-image.ts` — 0%
-- `utils/client-context.ts` — 0%
 - `types/guards.ts` — 0%
 
 ## PR Guidelines

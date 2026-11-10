@@ -1616,6 +1616,7 @@ __metadata:
     "@wordpress/abilities": "npm:^0.25.0"
     "@wordpress/api-fetch": "npm:^8.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/core-data": "npm:^9.1.0"
