@@ -321,7 +321,9 @@ async function goToOwnPreviewSiteLaunch( reduxStore: Store ): Promise< boolean >
 		return false;
 	}
 
-	window.location.assign( addQueryArgs( '/setup/launch-site', { siteSlug: previewSite, ...args } ) );
+	window.location.assign(
+		addQueryArgs( '/setup/launch-site', { siteSlug: previewSite, ...args } )
+	);
 	return true;
 }
 
