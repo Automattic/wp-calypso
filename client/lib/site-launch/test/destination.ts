@@ -194,14 +194,14 @@ describe( 'getLaunchCheckoutUrl', () => {
 		);
 	} );
 
-	it( 'passes through ref, coupon, dashboard and source', () => {
+	it( 'passes through ref, coupon, dashboard and the checkout source', () => {
 		const url = parse(
 			getLaunchCheckoutUrl( {
 				siteSlug,
 				ref: 'my-home',
 				coupon: 'SAVE',
 				dashboard: 'a4a',
-				source: 'studio-preview-site',
+				checkoutSource: 'studio-preview-site',
 			} )
 		);
 
