@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, keyboardReturn } from '@wordpress/icons';
+import { Icon, close, keyboardReturn } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import ShareButton from 'calypso/blocks/reader-share';
@@ -28,6 +28,8 @@ const CommentActions = ( {
 	const commentId = comment.ID;
 	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
+	// Spelled out, Cancel reply takes Reply's place while the editor is open, in place of sitting beside it.
+	const swapReplyForCancel = spellOutLabels && showCancelReplyButton;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = isRebloggable( post, hasSites );
 
@@ -48,7 +50,15 @@ const CommentActions = ( {
 					{ translate( 'Read More' ) }
 				</Button>
 			) }
-			{ showReplyButton && (
+			{ showReplyButton && swapReplyForCancel && (
+				<Button className="comments__comment-actions-reply" onClick={ onReplyCancel }>
+					<Icon icon={ close } size={ 18 } className="comments__comment-actions-cancel-icon" />
+					<span className="comments__comment-actions-reply-label">
+						{ translate( 'Cancel reply' ) }
+					</span>
+				</Button>
+			) }
+			{ showReplyButton && ! swapReplyForCancel && (
 				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
 					{ spellOutLabels ? (
 						<Icon
@@ -73,7 +83,7 @@ const CommentActions = ( {
 					showReblogLabel
 				/>
 			) }
-			{ showCancelReplyButton && (
+			{ showCancelReplyButton && ! swapReplyForCancel && (
 				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
 				</Button>

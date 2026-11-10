@@ -284,7 +284,7 @@
 
 	.comments__comment-actions {
 		gap: 16px;
-		margin-block-start: 12px;
+		margin-block-start: 24px;
 
 		.components-button {
 			font-size: 13px;
@@ -299,12 +299,21 @@
 		// The design's reply arrow is the return icon, mirrored.
 		// Its 24-unit outline renders 1.25px wide at 20px; a 0.3-unit stroke brings it
 		// to the 1.5px of the star beside it.
-		.comments__comment-actions-reply-icon {
+		.comments__comment-actions-reply-icon,
+		.comments__comment-actions-cancel-icon {
 			fill: currentcolor;
 			stroke: currentcolor;
 			stroke-width: 0.3;
 			stroke-linejoin: round;
+		}
+
+		.comments__comment-actions-reply-icon {
 			transform: scaleX( -1 );
+		}
+
+		// The close glyph fills more of its box than the arrow and star do.
+		.comments__comment-actions-cancel-icon {
+			transform: scale( 0.9 );
 		}
 
 		// Once liked, the star takes the brand color and the label the text color.
@@ -373,7 +382,7 @@
 
 	// A reply's editor opens with room under the comment's actions.
 	.comments__comment .comments__form {
-		margin-block-start: 16px;
+		margin-block-start: 24px;
 	}
 
 	.comments__collapsed-replies.components-button.is-link {
