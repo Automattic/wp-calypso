@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
- * Opens a page of the local dev server as a logged-in user and reports what it shows.
+ * Opens a local or hosted Calypso page as a logged-in user and reports what it shows.
  *
  *   node browse.cjs <url> [options]
  *
- * <url> is absolute, or a path on the dashboard (http://my.localhost:$PORT).
- * The options are documented in ../SKILL.md.
+ * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT).
+ * The options are documented in ../browser.md.
  */
 const fs = require( 'node:fs' );
 const path = require( 'node:path' );
+const { setTimeout: delay } = require( 'node:timers/promises' );
 const { parseArgs } = require( 'node:util' );
 const {
 	AUTH_COMMAND,
@@ -61,6 +62,22 @@ const LOADING_TIMEOUT = 60000;
 const LOADING_QUIET_PERIOD = 2000;
 
 const BUILD_TIMEOUT = 90000;
+const LOCAL_DASHBOARD_ORIGIN = `http://my.localhost:${ PORT }`;
+
+function isLocalTarget( url ) {
+	const { hostname } = new URL( url, LOCAL_DASHBOARD_ORIGIN );
+	return (
+		hostname === 'localhost' ||
+		hostname.endsWith( '.localhost' ) ||
+		hostname === '127.0.0.1' ||
+		hostname === '[::1]'
+	);
+}
+
+function isCalypsoLiveTarget( url ) {
+	const { hostname } = new URL( url );
+	return hostname === 'calypso.live' || hostname.endsWith( '.calypso.live' );
+}
 
 /**
  * Until the first webpack build finishes, the dev server answers `/` with a "please wait"
@@ -92,7 +109,7 @@ async function waitForDevServer() {
 			console.log( 'dev server: compiling its first build, waiting…' );
 			announced = true;
 		}
-		await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
+		await delay( 5000 );
 	}
 }
 
@@ -128,7 +145,7 @@ function watch( page ) {
 	page.on( 'response', async ( response ) => {
 		const url = response.url();
 		const logged = logPattern?.test( url );
-		if ( ! logged && ! /localhost|wordpress\.com/.test( url ) ) {
+		if ( ! logged && ! /localhost|wordpress\.com|calypso\.live/.test( url ) ) {
 			return;
 		}
 		let status = String( response.status() );
@@ -183,6 +200,37 @@ async function waitUntilLoaded( page ) {
 	);
 }
 
+async function navigate( page, url, problems, requests ) {
+	// Hosted pages can render while third-party resources are still loading.
+	const waitUntil = isLocalTarget( url ) ? 'load' : 'domcontentloaded';
+	if ( ! isCalypsoLiveTarget( url ) ) {
+		await page.goto( url, { waitUntil, timeout: 60000 } );
+		return;
+	}
+
+	const deadline = Date.now() + BUILD_TIMEOUT;
+	let status;
+	do {
+		problems.length = 0;
+		requests.length = 0;
+		// Retry the original link so the launcher can resolve the current container.
+		const response = await page.goto( url, {
+			waitUntil,
+			timeout: Math.max( 1, deadline - Date.now() ),
+		} );
+		status = response?.status();
+		if ( status >= 200 && status < 300 && status !== 202 ) {
+			return;
+		}
+		if ( status !== 202 && ! ( status >= 500 && status <= 599 ) ) {
+			break;
+		}
+		await delay( Math.min( 3000, Math.max( 0, deadline - Date.now() ) ) );
+	} while ( Date.now() < deadline );
+
+	throw new Error( `Calypso Live did not load: ${ status ? `HTTP ${ status }` : 'no response' }.` );
+}
+
 async function open( browser, account, url ) {
 	const [ width, height ] = options.viewport.split( 'x' ).map( Number );
 	const context = await browser.newContext( {
@@ -192,7 +240,7 @@ async function open( browser, account, url ) {
 	} );
 	const page = await context.newPage();
 	const { problems, requests } = watch( page );
-	await page.goto( url, { waitUntil: 'load', timeout: 60000 } );
+	await navigate( page, url, problems, requests );
 	// The dashboard checks the session client-side, so a rejected one redirects after load.
 	await Promise.race( [
 		page.waitForURL( ( current ) => isLoginUrl( current.toString() ), { timeout: 30000 } ),
@@ -364,7 +412,7 @@ async function check( browser, account, target ) {
 	const resolved = target.includes( '{site}' )
 		? target.replaceAll( '{site}', testAccountSite( account ) )
 		: target;
-	const url = new URL( resolved, `http://my.localhost:${ PORT }` ).toString();
+	const url = new URL( resolved, LOCAL_DASHBOARD_ORIGIN ).toString();
 	await ensureState( account );
 
 	let { context, page, problems, requests } = await open( browser, account, url );
@@ -385,6 +433,14 @@ async function check( browser, account, target ) {
 	}
 
 	try {
+		if ( isCalypsoLiveTarget( url ) && ! isLoginUrl( page.url() ) ) {
+			const commit = await page.evaluate( () => window.COMMIT_SHA );
+			if ( ! isCalypsoLiveTarget( page.url() ) || ! commit ) {
+				throw new Error( `Calypso Live did not load a build at ${ page.url() }.` );
+			}
+			console.log( 'preview commit:', commit );
+		}
+
 		const waitFor = options[ 'wait-for' ];
 		if ( waitFor ) {
 			await page.locator( waitFor ).first().waitFor( { timeout: 60000 } );
@@ -464,8 +520,10 @@ async function main() {
 		screenshotTarget( options.screenshot );
 	}
 
-	await waitForDevServer();
-	console.log( `dev server: up on port ${ PORT }` );
+	if ( isLocalTarget( target ) ) {
+		await waitForDevServer();
+		console.log( `dev server: up on port ${ PORT }` );
+	}
 
 	const browser = await launchBrowser();
 	try {

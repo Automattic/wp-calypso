@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Verify a change works before calling it done or opening a PR — type-check, lint, unit tests and, for anything users can see, a logged-in check in the local dev server with screenshots and console and API errors. Use when asked to verify, check, test, screenshot or explore a change or a page.
+description: Verify a change before calling it done or marking a PR ready. Run type checks, lint and unit tests. For visible changes, check Calypso Live or the local dev server while signed in, with screenshots and a check for console and API errors. Use when asked to verify, check, test, screenshot or explore a change or a page.
 ---
 
 # Verify
