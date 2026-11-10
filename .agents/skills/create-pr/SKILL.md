@@ -40,11 +40,11 @@ The description then reuses the commit body's two paragraphs in reverse order, e
 
 Then add a `## Details` heading listing what What and Why leave out: which components, hooks, selectors, endpoints or feature flags change and how, trade-offs and alternatives rejected, and work left for a follow-up. Put the list in a collapsed `<details>` block whose `<summary>` is `Click to view details`, with a blank line after `<summary>` and before `</details>` so that GitHub renders the Markdown inside. Prefer a list when there are several parts, so a reviewer can scan it. Leave out Details only when What already names everything the diff does.
 
-State the rollout order under Details when changes must ship in a particular sequence.
+State the rollout order under Details, but before the collapsible `<details>` block, when changes must ship in a particular sequence.
 
 Last, add a `## How to Test` heading with numbered steps a reviewer can follow on Calypso Live or a local dev server: the URL path to open, what to do, and what to expect. Keep each step to one action and its result, starting with any setup it needs (site, account, flag); for a fix, also say what happens without it. If the change runs in more than one app (for example Dashboard and A4A, or Calypso and Jetpack Cloud), include steps for each. Don't list tests or CI runs; the checks already show them.
 
-List any companion patches above step 1 and say which steps or environments need each patch. Link public PRs and reference private PRs by repository and number, for example `wpcom PR 12345`.
+List any companion patches above step 1 and say which steps or environments need each patch. Link public PRs, and reference private PRs by the private links, such as 12345-ghe-Automattic/wpcom.
 
 After the steps, add one short line naming the commit they ran on and where, e.g. "Ran on Calypso Live at 4c0c0bb." Mark a step you couldn't run `**Not run:**` with the reason, e.g. it needs access you don't have or changes something you can't undo, and keep it in the list so the reviewer can run it.
 
