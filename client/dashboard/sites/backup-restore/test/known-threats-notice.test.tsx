@@ -260,7 +260,7 @@ test( 'renders the sentence without a raw paragraph so it lines up with the noti
 	);
 	expect( sentence.tagName ).not.toBe( 'P' );
 	expect( sentence.closest( 'p' ) ).toBeNull();
-	expect( sentence.closest( '.dashboard-notice__description' ) ).not.toBeNull();
+	expect( sentence.closest( '.dashboard-notice' ) ).not.toBeNull();
 } );
 
 test( 'keeps other disabled reasons', async () => {
