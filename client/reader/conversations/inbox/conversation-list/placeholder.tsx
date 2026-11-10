@@ -9,7 +9,6 @@ import Skeleton from 'calypso/reader/components/skeleton';
 import type { Density } from './toolbar';
 
 const ROWS = 8;
-// Varied widths read as text rather than a grid of bars.
 const TITLE_WIDTHS = [ '72%', '58%', '80%', '64%' ];
 
 export function ConversationListPlaceholder( { density }: { density: Density } ) {

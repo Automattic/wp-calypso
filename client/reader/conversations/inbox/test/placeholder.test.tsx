@@ -32,7 +32,6 @@ describe( 'ConversationsInboxPlaceholder', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Conversations' } ) ).toBeVisible();
 		expect( detail ).toBeInTheDocument();
-		// The conversation only holds its place, so the list's message is the one read out.
 		expect( speak ).toHaveBeenCalledTimes( 1 );
 		expect( speak ).toHaveBeenCalledWith( 'Loading conversations…' );
 	} );

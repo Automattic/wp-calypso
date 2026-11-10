@@ -20,7 +20,6 @@ export const useIsNarrowInbox = () => useBreakpoint( SINGLE_PANE_BREAKPOINT );
 export const useInboxDensity = (): Density =>
 	useSelector( ( state ) => getPreference( state, DENSITY_PREFERENCE ) ?? 'comfortable' );
 
-/** The inbox's two panes. On narrow screens only one shows: the list, or the open conversation. */
 export function ConversationsInboxLayout( {
 	isNarrow,
 	hasConversation,

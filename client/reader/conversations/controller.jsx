@@ -17,8 +17,8 @@ const loadInbox = () =>
 	).then( ( { ConversationsInbox } ) => ( { default: ConversationsInbox } ) );
 
 export function conversationsInbox( context, next ) {
-	// Starts the list while the inbox's code loads; the inbox's first query has the same key.
-	// Opening a conversation runs this again, so only fetch when nothing is cached.
+	// Same key as the inbox's first query. Opening a conversation runs this again, so only fetch
+	// when nothing is cached.
 	context.queryClient.prefetchInfiniteQuery( { ...readConversationsQuery(), staleTime: Infinity } );
 	const siteId = Number( context.params.siteId );
 	const postId = Number( context.params.postId );

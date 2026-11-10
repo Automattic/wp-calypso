@@ -12,7 +12,6 @@ import './style.scss';
 
 const COMMENTS = 3;
 
-/** Stands in for the post card and its first comments while the post loads. */
 export function ConversationContentPlaceholder( { announce = true }: { announce?: boolean } ) {
 	const translate = useTranslate();
 
@@ -56,7 +55,6 @@ export function ConversationContentPlaceholder( { announce = true }: { announce?
 	);
 }
 
-/** Holds the detail pane's place while the list loads, before there's a conversation to open. */
 export function ConversationDetailPlaceholder() {
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__detail-pane">
