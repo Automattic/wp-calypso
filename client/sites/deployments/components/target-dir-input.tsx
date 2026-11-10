@@ -33,17 +33,17 @@ export const TargetDirInput = ( { onChange, value }: TargetDirInputProps ) => {
 					{ __( '[site root]' ) }
 				</span>
 				<FormTextInput
-				id="targetDir"
-				placeholder="/"
-				value={ value }
-				css={ { borderRadius: '0 2px 2px 0', flex: 1 } }
-				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-					let targetDir = event.currentTarget.value.trim();
-					targetDir = targetDir.startsWith( '/' ) ? targetDir : `/${ targetDir }`;
+					id="targetDir"
+					placeholder="/"
+					value={ value }
+					css={ { borderRadius: '0 2px 2px 0', flex: 1 } }
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+						let targetDir = event.currentTarget.value.trim();
+						targetDir = targetDir.startsWith( '/' ) ? targetDir : `/${ targetDir }`;
 
-					onChange( targetDir );
-				} }
-			/>
+						onChange( targetDir );
+					} }
+				/>
 			</div>
 			<FormSettingExplanation css={ { marginBottom: '0 !important' } }>
 				{ __( 'This path is relative to the site root' ) }
