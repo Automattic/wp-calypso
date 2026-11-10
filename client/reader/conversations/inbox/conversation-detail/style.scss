@@ -412,6 +412,8 @@
 		margin-block: 24px;
 		padding: 0 0 0 16px;
 		border-inline-start: 2px solid var( --color-border-subtle );
+		border-radius: 0;
+		color: color-mix( in srgb, var( --color-text-subtle ) 80%, var( --color-text ) );
 
 		> * {
 			margin-block: 0 16px;
