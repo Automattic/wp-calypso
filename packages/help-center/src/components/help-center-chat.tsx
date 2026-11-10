@@ -97,6 +97,7 @@ export function HelpCenterChat( {
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
 			launcherContext={ launcherContext }
+			productName={ featureConfig.productName }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

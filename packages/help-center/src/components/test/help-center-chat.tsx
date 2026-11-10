@@ -30,7 +30,7 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useFeatureConfig: () => ( { chat: {} } ),
+	useFeatureConfig: () => ( { chat: {}, productName: 'Woo' } ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
@@ -122,5 +122,13 @@ describe( 'HelpCenterChat Zendesk loading', () => {
 			hasOpenZendeskChat: true,
 			isLoadingCanConnectToZendesk: false,
 		} );
+	} );
+} );
+
+describe( 'HelpCenterChat product name', () => {
+	it( 'passes the product name on to the Odie client', () => {
+		renderChat();
+
+		expect( lastProviderProps().productName ).toBe( 'Woo' );
 	} );
 } );

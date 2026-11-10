@@ -2,6 +2,7 @@ import type { HelpCenterFeatureConfig, HelpCenterProduct } from './types';
 
 /** WordPress.com default: all features enabled. */
 const wpcomPreset: HelpCenterFeatureConfig = {
+	productName: 'WordPress.com',
 	header: {
 		ellipsisMenu: true,
 	},
@@ -33,6 +34,7 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 
 /** A4A: chat disabled, no more resources, A4A contact form. */
 const a4aPreset: HelpCenterFeatureConfig = {
+	productName: 'Automattic for Agencies',
 	header: {
 		ellipsisMenu: false,
 	},
@@ -64,6 +66,7 @@ const a4aPreset: HelpCenterFeatureConfig = {
 
 /** WooCommerce.com: chat enabled with filtered history, Woo docs instead of dotcom-specific links. */
 const wooPreset: HelpCenterFeatureConfig = {
+	productName: 'Woo',
 	header: {
 		ellipsisMenu: true,
 	},

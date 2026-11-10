@@ -5,6 +5,8 @@ import type { SmoochIntegrationKey } from '@automattic/zendesk-client';
  * Each key maps to a UI area; each value controls visibility or behavior.
  */
 export type HelpCenterFeatureConfig = {
+	/** Product the chat's AI disclosure line names. Not translated. */
+	productName: string;
 	header: {
 		/** Show the ellipsis menu (New chat, Support history, Sound notifications). */
 		ellipsisMenu: boolean;
