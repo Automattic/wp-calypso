@@ -609,7 +609,7 @@ export const ConnectRepositoryForm = ( {
 					id: 'targetDir',
 					label: __( 'Destination directory' ),
 					type: 'text' as const,
-					description: __( 'This path is relative to the server root.' ),
+					description: __( 'This path is relative to the site root.' ),
 				},
 				{
 					id: 'isAutomated',
