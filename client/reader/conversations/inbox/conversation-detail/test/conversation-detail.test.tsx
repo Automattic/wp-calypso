@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
+
 jest.mock( 'calypso/state/notices/actions', () => {
 	const actual = jest.requireActual( 'calypso/state/notices/actions' );
 	return {
@@ -25,6 +27,7 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { adaptReadConversation } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
@@ -68,20 +71,22 @@ beforeEach( () => {
 } );
 
 describe( 'ConversationDetail', () => {
-	it( 'shows a spinner while the post is loading', () => {
+	it( 'shows a placeholder while the post is loading', () => {
 		mockedUsePost.mockReturnValue( { data: undefined, isLoading: true } as never );
 
-		const { container } = renderDetail();
+		renderDetail();
 
-		expect( container.querySelector( '.components-spinner' ) ).toBeVisible();
+		expect( speak ).toHaveBeenCalledWith( 'Loading conversation…' );
 	} );
 
 	it( 'shows the post card once the post has loaded', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		const { container } = renderDetail();
+		jest.mocked( speak ).mockClear();
 
-		expect( container.querySelector( '.components-spinner' ) ).not.toBeInTheDocument();
+		renderDetail();
+
+		expect( speak ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'heading', { name: 'A post title' } ) ).toBeVisible();
 		expect( screen.getByText( 'Ana’s blog' ) ).toBeVisible();
 		expect( screen.getByText( 'Ana' ) ).toBeVisible();
@@ -89,6 +94,31 @@ describe( 'ConversationDetail', () => {
 		expect( screen.getByRole( 'link', { name: /A post title/ } ) ).toHaveAttribute(
 			'href',
 			'/reader/blogs/10/posts/100'
+		);
+	} );
+
+	it( 'links the post author to their Reader profile', () => {
+		mockedUsePost.mockReturnValue( {
+			data: { ...post, author: { name: 'Ana', wpcom_login: 'ana' } },
+			isLoading: false,
+		} as never );
+
+		renderDetail();
+
+		expect( screen.getByRole( 'link', { name: 'Ana' } ) ).toHaveAttribute(
+			'href',
+			'/reader/users/ana'
+		);
+	} );
+
+	it( 'keeps the title for screen readers only next to the back button', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		renderDetail( { onBack: jest.fn() } );
+
+		expect( screen.getByRole( 'button', { name: 'Conversations' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveClass(
+			'components-visually-hidden'
 		);
 	} );
 

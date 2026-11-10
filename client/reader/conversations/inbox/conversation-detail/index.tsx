@@ -4,14 +4,18 @@ import {
 	Button,
 	DropdownMenu,
 	ExternalLink,
+	Icon,
+	MenuGroup,
+	MenuItem,
 	Notice,
-	Spinner,
+	VisuallyHidden,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import {
+	arrowUpRight,
 	chevronDown,
 	chevronLeft,
 	chevronRight,
@@ -22,6 +26,7 @@ import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import ReaderAuthorLink, { type ReaderLinkAuthor } from 'calypso/blocks/reader-author-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getConversationKey,
@@ -29,6 +34,7 @@ import {
 	type Conversation,
 } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -38,6 +44,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
+import { ConversationContentPlaceholder } from './placeholder';
 import type { ReadConversationReason } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
@@ -113,7 +120,9 @@ export function ConversationDetail( {
 	const commentCount = Number(
 		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
 	);
-	const author = post?.author as { ID?: number; name?: string } | undefined;
+	const author = post?.author as ReaderLinkAuthor | undefined;
+	// ReaderAuthorLink renders nothing for blocked names, so the dot must skip them too.
+	const showAuthor = !! author?.name && ! isAuthorNameBlocked( author.name );
 	const image = ( post?.canonical_image as { uri?: string } | undefined )?.uri;
 	const date = post?.date ? moment( String( post.date ) ) : null;
 	const postUrl = post ? getPostUrl( post ) : '';
@@ -178,19 +187,28 @@ export function ConversationDetail( {
 						<Button
 							ref={ backRef }
 							__next40pxDefaultSize
+							size="compact"
+							className="conversations-inbox__back"
 							icon={ isRtl ? chevronRight : chevronLeft }
 							onClick={ onBack }
 						>
 							{ translate( 'Conversations' ) }
 						</Button>
 					) }
-					<Heading level={ 2 } size={ 20 } weight={ 500 } color="inherit">
-						{ title }
-					</Heading>
+					{ /* Next to the back button the title reads as a second label, so only screen readers get it. */ }
+					{ onBack ? (
+						<VisuallyHidden as="h2">{ title }</VisuallyHidden>
+					) : (
+						<Heading level={ 2 } size={ 15 } lineHeight="20px" weight={ 600 } color="inherit">
+							{ title }
+						</Heading>
+					) }
 				</HStack>
-				<HStack spacing={ 0 } expanded={ false }>
+				<HStack spacing={ 1 } expanded={ false }>
 					<Button
 						__next40pxDefaultSize
+						size="compact"
+						className="conversations-inbox__previous"
 						icon={ chevronUp }
 						label={ translate( 'Previous conversation' ) }
 						disabled={ ! onPrevious }
@@ -198,6 +216,8 @@ export function ConversationDetail( {
 					/>
 					<Button
 						__next40pxDefaultSize
+						size="compact"
+						className="conversations-inbox__next"
 						icon={ chevronDown }
 						label={ translate( 'Next conversation' ) }
 						disabled={ ! onNext }
@@ -206,7 +226,12 @@ export function ConversationDetail( {
 				</HStack>
 			</HStack>
 			<div className="conversations-inbox__detail-body">
-				<VStack spacing={ 10 } className="conversations-inbox__detail-content">
+				{ /* Keyed so the card and comments mount, and fade in, for each conversation. */ }
+				<VStack
+					key={ getConversationKey( siteId, postId ) }
+					spacing={ 8 }
+					className="conversations-inbox__detail-content"
+				>
 					{ showWelcome && (
 						<Notice
 							status="info"
@@ -225,7 +250,7 @@ export function ConversationDetail( {
 							</VStack>
 						</Notice>
 					) }
-					{ isLoading && ! post && <Spinner /> }
+					{ isLoading && ! post && <ConversationContentPlaceholder /> }
 					{ !! post?.is_error && (
 						<Text as="p" color="var(--color-text-subtle)">
 							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
@@ -238,69 +263,120 @@ export function ConversationDetail( {
 					) }
 					{ post && ! post.is_error && (
 						<>
-							<HStack spacing={ 6 } alignment="top" className="conversations-inbox__post-card">
-								<VStack spacing={ 3 } className="conversations-inbox__post-text">
-									<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
+							<VStack spacing={ 3 } className="conversations-inbox__post-card">
+								<HStack
+									spacing={ 3 }
+									justify="flex-start"
+									wrap
+									className="conversations-inbox__post-meta"
+								>
+									<HStack expanded={ false }>
 										{ !! post.site_icon && (
 											<img
 												src={ ( post.site_icon as { img?: string } )?.img }
 												alt=""
-												width={ 24 }
-												height={ 24 }
+												width={ 28 }
+												height={ 28 }
 											/>
 										) }
 										<strong>{ String( post.site_name ?? '' ) }</strong>
-										{ author?.name && <span>{ author.name }</span> }
+									</HStack>
+									<HStack spacing={ 1.5 } expanded={ false }>
+										{ showAuthor && author && (
+											<ReaderAuthorLink
+												author={ author }
+												className="conversations-inbox__post-author"
+											>
+												{ author.name }
+											</ReaderAuthorLink>
+										) }
+										{ showAuthor && date && (
+											<span className="conversations-inbox__post-dot" aria-hidden="true" />
+										) }
 										{ date && (
 											<span>
-												·{ ' ' }
 												{ date.isSame( moment(), 'day' )
 													? translate( 'Today' )
 													: date.format( 'll' ) }
 											</span>
 										) }
+									</HStack>
+									<HStack
+										spacing={ 4 }
+										expanded={ false }
+										className="conversations-inbox__post-actions"
+									>
+										<Icon
+											className="conversations-inbox__post-arrow"
+											icon={ arrowUpRight }
+											size={ 20 }
+										/>
 										<DropdownMenu
 											icon={ moreHorizontal }
 											label={ translate( 'Post actions' ) }
 											className="conversations-inbox__post-menu"
-											toggleProps={ { __next40pxDefaultSize: true } }
+											toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
 											disableOpenOnArrowDown
 											popoverProps={ { placement: 'bottom-end' } }
-											controls={ controls }
-										/>
+										>
+											{ ( { onClose } ) => (
+												<MenuGroup>
+													{ controls.map( ( { title: label, onClick } ) => (
+														<MenuItem
+															key={ label }
+															onClick={ () => {
+																onClick();
+																onClose();
+															} }
+														>
+															{ label }
+														</MenuItem>
+													) ) }
+												</MenuGroup>
+											) }
+										</DropdownMenu>
 									</HStack>
+								</HStack>
+								<HStack spacing={ 6 } alignment="top">
 									<VStack
 										as="a"
-										spacing={ 3 }
+										spacing={ 2 }
 										className="conversations-inbox__post-link"
 										href={ postUrl }
 									>
 										<Heading
 											level={ 3 }
-											size={ 20 }
-											weight={ 500 }
+											size={ 18 }
+											lineHeight="24px"
+											weight={ 600 }
 											color="inherit"
 											isBlock={ false }
 											truncate
-											numberOfLines={ 2 }
+											numberOfLines={ 1 }
 										>
 											{ String( post.title ?? conversation?.title ?? '' ) }
 										</Heading>
-										<Text truncate numberOfLines={ 2 } color="var(--color-text-subtle)">
+										<Text
+											size={ 14 }
+											lineHeight="20px"
+											truncate
+											numberOfLines={ 2 }
+											color="color-mix(in srgb, var(--color-text-subtle) 80%, var(--color-text))"
+										>
 											{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
 										</Text>
 									</VStack>
-								</VStack>
-								{ image && (
-									<img
-										className="conversations-inbox__post-image"
-										src={ image }
-										alt=""
-										width={ 120 }
-										height={ 120 }
-									/>
-								) }
-							</HStack>
+									{ image && (
+										<img
+											className="conversations-inbox__post-image"
+											src={ image }
+											alt=""
+											width={ 108 }
+											height={ 72 }
+										/>
+									) }
+								</HStack>
+							</VStack>
 
 							<Comments
 								key={ startingComment.key }

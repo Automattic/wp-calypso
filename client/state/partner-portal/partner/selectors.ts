@@ -75,6 +75,11 @@ export function hasValidPaymentMethod( state: PartnerPortalStore ): boolean {
 	return partner?.has_valid_payment_method || false;
 }
 
+export function isJetpackManageStoreClosed( state: PartnerPortalStore ): boolean {
+	const partner = getCurrentPartner( state );
+	return partner?.jetpack_manage_store_closed ?? false;
+}
+
 export function doesPartnerRequireAPaymentMethod( state: PartnerPortalStore ): boolean {
 	const isAgency = isAgencyUser( state );
 	const hasPaymentMethod = hasValidPaymentMethod( state );

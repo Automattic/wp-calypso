@@ -57,10 +57,11 @@ export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
 }
 
 export async function hasExtendedPurchase( purchaseId: number ): Promise< boolean > {
-	return await wpcom.req.get( {
+	const response = await wpcom.req.get( {
 		path: `/upgrades/${ purchaseId }/has-extended`,
 		apiNamespace: 'wpcom/v2',
 	} );
+	return response.has_extended;
 }
 
 /**

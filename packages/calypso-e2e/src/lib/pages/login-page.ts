@@ -216,8 +216,8 @@ export class LoginPage {
 	}
 
 	/**
-	 * Clicks the link through to signup: "Sign up" in the main login view's footer, or
-	 * "Create an account" in the mid-flow views' top bar. The Woo 2FA view has both.
+	 * Clicks the visible link through to signup, "Create an account" or "Sign up". Login views
+	 * show it below the buttons at 960px and up, and in the top bar below that.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
 		const locator = this.page

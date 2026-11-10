@@ -25,7 +25,7 @@ export interface Conversation {
 	isFollowing: boolean;
 }
 
-/** A comment the current user left, one per comment. */
+/** A comment the current user left. Your comments lists the latest one on each post. */
 export interface OwnComment {
 	key: string;
 	siteId: number;

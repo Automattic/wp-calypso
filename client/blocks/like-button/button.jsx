@@ -22,7 +22,7 @@ class LikeButton extends PureComponent {
 		icon: PropTypes.object,
 		defaultLabel: PropTypes.string,
 		/** Replaces the count, or the default label when there is no count. */
-		label: PropTypes.string,
+		label: PropTypes.node,
 		showTooltip: PropTypes.bool,
 	};
 
