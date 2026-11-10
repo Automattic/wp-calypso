@@ -265,16 +265,23 @@ export function ConversationDetail( {
 					{ post && ! post.is_error && (
 						<>
 							<VStack spacing={ 3 } className="conversations-inbox__post-card">
-								<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
-									{ !! post.site_icon && (
-										<img
-											src={ ( post.site_icon as { img?: string } )?.img }
-											alt=""
-											width={ 28 }
-											height={ 28 }
-										/>
-									) }
-									<strong>{ String( post.site_name ?? '' ) }</strong>
+								<HStack
+									spacing={ 3 }
+									justify="flex-start"
+									wrap
+									className="conversations-inbox__post-meta"
+								>
+									<HStack expanded={ false }>
+										{ !! post.site_icon && (
+											<img
+												src={ ( post.site_icon as { img?: string } )?.img }
+												alt=""
+												width={ 28 }
+												height={ 28 }
+											/>
+										) }
+										<strong>{ String( post.site_name ?? '' ) }</strong>
+									</HStack>
 									<HStack spacing={ 1.5 } expanded={ false }>
 										{ author?.name && (
 											<ReaderAuthorLink
