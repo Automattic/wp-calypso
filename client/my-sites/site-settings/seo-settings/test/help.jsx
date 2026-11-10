@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -9,30 +8,31 @@ import SeoSettingsHelpCard from '../help';
 
 const siteId = 123456789;
 const initialState = {
+	sites: { items: { [ siteId ]: { ID: siteId, jetpack: false } } },
 	ui: {
 		selectedSiteId: siteId,
 	},
 };
 
-const advancedSeoState = {
-	sites: { features: { [ siteId ]: { data: { active: [ FEATURE_ADVANCED_SEO ] } } } },
-};
-
 const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { ui } } );
 
 describe( 'SeoSettingsHelpCard basic tests', () => {
-	test( 'should render SEO help card when has advanced seo', () => {
+	test( 'offers SEO help on a free Simple site', () => {
 		render( <SeoSettingsHelpCard />, {
 			initialState: {
 				...initialState,
-				...advancedSeoState,
 			},
 		} );
 		expect( screen.queryByText( /more advanced control/i ) ).toBeVisible();
 	} );
 
-	test( 'should not render SEO help card when does not have advanced seo', () => {
-		render( <SeoSettingsHelpCard />, { initialState } );
+	test( 'withholds SEO controls on a VIP site', () => {
+		render( <SeoSettingsHelpCard />, {
+			initialState: {
+				...initialState,
+				sites: { items: { [ siteId ]: { ID: siteId, jetpack: false, is_vip: true } } },
+			},
+		} );
 		expect( screen.queryByText( /more advanced control/i ) ).not.toBeInTheDocument();
 	} );
 } );

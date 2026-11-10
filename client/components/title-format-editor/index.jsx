@@ -1,11 +1,10 @@
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import isManualSeoAvailable from 'calypso/state/selectors/is-manual-seo-available';
 import {
 	buildSeoTitle,
 	isJetpackMinimumVersion,
@@ -305,11 +304,8 @@ const mapStateToProps = ( state, ownProps ) => {
 	let shouldShowSeoArchiveTitleButton = false;
 	if ( isJetpackMinimumVersion( state, siteId, '10.2-alpha' ) ) {
 		shouldShowSeoArchiveTitleButton = true;
-	} else if (
-		! isJetpackSite( state, siteId ) &&
-		siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO )
-	) {
-		// For non-AT Business plan sites which get SEO features.
+	} else if ( ! isJetpackSite( state, siteId ) && isManualSeoAvailable( state, siteId ) ) {
+		// Simple sites support archive title tokens without a Jetpack version check.
 		shouldShowSeoArchiveTitleButton = true;
 	}
 

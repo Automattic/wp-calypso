@@ -1,11 +1,9 @@
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import isManualSeoAvailable from 'calypso/state/selectors/is-manual-seo-available';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -57,10 +55,7 @@ export const SeoSettingsHelpCard = ( {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const hasAdvancedSEOFeature =
-		siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
-		( ! siteIsJetpack ||
-			( getJetpackModules( state, siteId )?.[ 'seo-tools' ]?.available ?? false ) );
+	const hasAdvancedSEOFeature = isManualSeoAvailable( state, siteId );
 
 	return {
 		siteId,

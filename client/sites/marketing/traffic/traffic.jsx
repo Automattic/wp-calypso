@@ -1,4 +1,3 @@
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { pick } from '@automattic/js-utils';
 import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
@@ -28,9 +27,9 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackSeoPageAvailable from 'calypso/state/selectors/is-jetpack-seo-page-available';
+import isManualSeoAvailable from 'calypso/state/selectors/is-manual-seo-available';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -190,7 +189,7 @@ const connectComponent = connect( ( state ) => {
 		shouldShowAdvertisingOption: showAdvertisingOption,
 		showSeoSettings: ! isJetpackSeoPageAvailable( state, siteId ),
 		showSeoVisibilityNotice:
-			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
+			isManualSeoAvailable( state, siteId ) &&
 			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),
 	};
 } );

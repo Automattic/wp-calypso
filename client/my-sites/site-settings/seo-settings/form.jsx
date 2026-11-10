@@ -1,11 +1,3 @@
-import {
-	FEATURE_ADVANCED_SEO,
-	FEATURE_SEO_PREVIEW_TOOLS,
-	PLAN_PREMIUM,
-	TYPE_PREMIUM,
-	findFirstSimilarPlanKey,
-	getPlan,
-} from '@automattic/calypso-products';
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { mapValues, pickBy } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
@@ -13,7 +5,6 @@ import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -33,8 +24,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import isManualSeoAvailable from 'calypso/state/selectors/is-manual-seo-available';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -213,7 +203,6 @@ export class SiteSettingsFormSEO extends Component {
 			siteId,
 			siteIsJetpack,
 			showAdvancedSeo,
-			isAtomic,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -235,26 +224,6 @@ export class SiteSettingsFormSEO extends Component {
 		const isSaveDisabled =
 			isDisabled || isSavingSettings || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const upsellProps =
-			siteIsJetpack && ! isAtomic
-				? {
-						title: translate( 'Boost your search engine ranking' ),
-						feature: FEATURE_SEO_PREVIEW_TOOLS,
-						href: `/plans/${ slug }`,
-					}
-				: {
-						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
-							{ args: { planName: getPlan( PLAN_PREMIUM ).getTitle() } }
-						),
-						feature: FEATURE_ADVANCED_SEO,
-						plan:
-							selectedSite.plan &&
-							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: TYPE_PREMIUM,
-							} ),
-					};
-
 		return (
 			<div ref={ this._mounted } style={ { width: '100%' } }>
 				<QuerySiteSettings siteId={ siteId } />
@@ -273,19 +242,6 @@ export class SiteSettingsFormSEO extends Component {
 							{ translate( 'View Plugin' ) }
 						</NoticeAction>
 					</Notice>
-				) }
-				{ ! showAdvancedSeo && selectedSite.plan && (
-					<UpsellNudge
-						className="seo-settings__seo-upsell"
-						feature={ FEATURE_ADVANCED_SEO }
-						forceDisplay={ siteIsJetpack }
-						{ ...upsellProps }
-						description={ translate(
-							'Get tools to optimize your site for improved search engine results.'
-						) }
-						event="calypso_seo_settings_upgrade_nudge"
-						showIcon
-					/>
 				) }
 				<form
 					onChange={ this.props.markChanged }
@@ -421,8 +377,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
-		isAtomic: isAtomicSite( state, siteId ),
+		showAdvancedSeo: isManualSeoAvailable( state, siteId ),
 		showWebsiteMeta: !! ( selectedSite?.options?.advanced_seo_front_page_description ?? '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
