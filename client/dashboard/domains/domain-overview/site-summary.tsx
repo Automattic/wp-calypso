@@ -5,10 +5,9 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import SiteIcon from '../../components/site-icon';
-import SummaryButton from '../../components/summary-button';
+import SummaryItem from '../../components/summary-item';
 import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
-import './site-summary.scss';
 
 export default function DomainSiteSettingsSummary( {
 	domain,
@@ -38,19 +37,16 @@ export default function DomainSiteSettingsSummary( {
 
 	// Not a link: the site already leads to this page, so linking back would be circular.
 	return (
-		<SummaryButton
-			className="dashboard-summary-button domain-overview-site-summary"
+		<SummaryItem
 			title={ __( 'Site' ) }
 			suffix={
 				site ? (
 					<HStack as="span" spacing={ 2 } expanded={ false }>
 						<SiteIcon site={ site } size={ 16 } />
-						<Text>{ getSiteDisplayName( site ) }</Text>
+						<Text weight={ 400 }>{ getSiteDisplayName( site ) }</Text>
 					</HStack>
 				) : undefined
 			}
-			showArrow={ false }
-			disabled
 			density="medium"
 		/>
 	);
