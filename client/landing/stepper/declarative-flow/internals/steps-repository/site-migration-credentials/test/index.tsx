@@ -396,6 +396,19 @@ describe( 'SiteMigrationCredentials', () => {
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 
+		it( 'moves the customer on when the setup call fails for a reason unrelated to the ticket', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', { code: 'rest_forbidden' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { action: 'submit' } ) )
+			);
+		} );
+
 		it( 'keeps the customer on the step when the ticket for a WordPress.com site fails', async () => {
 			const submit = jest.fn();
 			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
@@ -409,6 +422,21 @@ describe( 'SiteMigrationCredentials', () => {
 				await findByText(
 					'We couldn’t send your migration request just now. Please try again in a few minutes.'
 				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the customer on the step when the ticket for a site not on WordPress fails', async () => {
+			const submit = jest.fn();
+			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
+			rejectPath( '/help/migration-ticket/new', { code: 'too_many_requests' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText( /You’ve already sent us several migration requests today/ )
 			).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
