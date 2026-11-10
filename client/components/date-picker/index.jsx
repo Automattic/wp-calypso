@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import DayPicker from 'react-day-picker';
+import DayPicker from 'react-day-picker-7';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DayItem from './day';
 import DatePickerNavBar from './nav-bar';
