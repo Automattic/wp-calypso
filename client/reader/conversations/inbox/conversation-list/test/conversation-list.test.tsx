@@ -116,6 +116,7 @@ describe( 'ConversationList', () => {
 		expect( rows[ 0 ] ).not.toHaveTextContent( 'You commented' );
 		expect( rows[ 0 ] ).toHaveTextContent( 'My comment' );
 		expect( rows[ 0 ] ).toHaveTextContent( '3 new' );
+		expect( rows[ 0 ] ).not.toHaveClass( 'is-unread' );
 		expect( rows[ 1 ] ).not.toHaveTextContent( 'new' );
 
 		await user.click( rows[ 1 ] );

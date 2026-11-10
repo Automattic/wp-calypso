@@ -119,7 +119,8 @@ export function ConversationListItem( {
 				type="button"
 				className={ clsx( 'conversations-inbox__item', {
 					'is-selected': isSelected,
-					'is-unread': unreadCount > 0,
+					// Your comments count newer replies, which opening doesn't clear, so they aren't unread.
+					'is-unread': ! isOwnComment && unreadCount > 0,
 				} ) }
 				aria-current={ isSelected || undefined }
 				onClick={ () => {
