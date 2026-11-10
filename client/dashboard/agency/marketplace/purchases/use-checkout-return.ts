@@ -4,9 +4,6 @@ import { CHECKOUT_CART_PARAM, RECEIPT_ID_PARAM } from '../products/lib/checkout-
 import { clearStoredCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
 
-// `flash` and `purchased_plan` are left to the app shell's checkout success message.
-const CHECKOUT_RETURN_PARAMS = [ RECEIPT_ID_PARAM, CHECKOUT_CART_PARAM ] as const;
-
 /**
  * Finishes a purchase returning from the WordPress.com checkout. Its pending
  * page fills in `receipt_id` only after a successful payment, so the parameter
@@ -18,7 +15,8 @@ export function useCheckoutReturn() {
 	const { recordTracksEvent } = useAnalytics();
 	const { updateMarketplaceType } = useMarketplaceType();
 
-	useConsumeSearchParams( CHECKOUT_RETURN_PARAMS, {
+	// `flash` and `purchased_plan` are left to the app shell's checkout success message.
+	useConsumeSearchParams( [ RECEIPT_ID_PARAM, CHECKOUT_CART_PARAM ], {
 		when: ( params ) => Boolean( params.receipt_id ),
 		onConsume: ( { receipt_id: receiptId, cart } ) => {
 			if ( cart === 'referral' ) {

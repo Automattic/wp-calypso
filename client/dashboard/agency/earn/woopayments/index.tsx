@@ -38,8 +38,6 @@ const WooPaymentsLearnMoreModal = lazy(
 		)
 );
 
-const ADD_TO_SITE_PARAMS = [ 'add-woopayments-to-site' ] as const;
-
 export default function EarnWooPayments() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
@@ -63,7 +61,7 @@ export default function EarnWooPayments() {
 	const isApprovalGated = useIsApprovalGated();
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
 	const [ isAddSiteRequested, setIsAddSiteRequested ] = useState( false );
-	useConsumeSearchParams( ADD_TO_SITE_PARAMS, {
+	useConsumeSearchParams( [ 'add-woopayments-to-site' ], {
 		when: ( params ) => params[ 'add-woopayments-to-site' ] === 'true',
 		onConsume: () => setIsAddSiteRequested( true ),
 	} );

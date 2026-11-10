@@ -7,8 +7,6 @@ import { useDifmOffer } from '../../utils/difm-offer';
 import type { DifmOfferSource, Site } from '@automattic/api-core';
 
 const DIFM_OFFER_OPEN = 'open';
-const DEEP_LINK_PARAMS = [ 'difmOffer', 'source' ] as const;
-
 // Surfaces outside the site overview that link here to open the offer.
 const DEEP_LINK_SOURCES: DifmOfferSource[] = [ 'site-setup' ];
 
@@ -29,7 +27,7 @@ export default function DifmOfferDeepLink( { site }: { site: Site } ) {
 	} );
 	const [ modalSource, setModalSource ] = useState< DifmOfferSource | null >( null );
 
-	useConsumeSearchParams( DEEP_LINK_PARAMS, {
+	useConsumeSearchParams( [ 'difmOffer', 'source' ], {
 		when: ( params ) => params.difmOffer === DIFM_OFFER_OPEN && ! isLoading,
 		onConsume: ( { source } ) => {
 			if ( variation !== 'control' ) {
