@@ -19,6 +19,14 @@ class PostCommentContent extends Component {
 		setWithDimensionsRef: () => {},
 	};
 
+	// React 19 rewrites innerHTML whenever this prop is a new object, which reloads embeds.
+	getInnerHtml( content ) {
+		if ( this.innerHtml?.__html !== content ) {
+			this.innerHtml = { __html: content };
+		}
+		return this.innerHtml;
+	}
+
 	render() {
 		// Don't trust comment content unless it was provided by the API
 		const isBlockMarkup = this.props.content.includes( '<!-- wp:' );
@@ -48,7 +56,7 @@ class PostCommentContent extends Component {
 					<div
 						className="comments__comment-content"
 						ref={ this.props.setWithDimensionsRef }
-						dangerouslySetInnerHTML={ { __html: content } }
+						dangerouslySetInnerHTML={ this.getInnerHtml( content ) }
 					/>
 				</div>
 			</AutoDirection>

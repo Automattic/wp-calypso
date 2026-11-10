@@ -68,6 +68,8 @@ class PostCommentList extends Component {
 		commentsTree: PropTypes.object,
 		fetchEarlierComments: PropTypes.func.isRequired,
 		fetchLaterComments: PropTypes.func.isRequired,
+		/** The newest comment the caller knows of. Opening the thread fetches newer comments only when it isn't loaded. */
+		latestCommentId: PropTypes.number,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
 		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
@@ -101,6 +103,11 @@ class PostCommentList extends Component {
 		return !! ( startingCommentId && ! initialComment );
 	};
 
+	hasLatestComment = () => {
+		const { latestCommentId, commentsTree } = this.props;
+		return ! latestCommentId || !! commentsTree[ latestCommentId ];
+	};
+
 	shouldFetchInitialPages = () => {
 		const { startingCommentId, commentsTree } = this.props;
 
@@ -123,11 +130,12 @@ class PostCommentList extends Component {
 			// we could create a gap in the list.
 			if ( this.props.commentsTree ) {
 				// view earlier...
-				this.viewEarlierCommentsHandler();
+				this.viewEarlierCommentsHandler( { skipLaterFetch: this.hasLatestComment() } );
 			}
 		} else if ( this.shouldFetchInitialPages() ) {
-			this.viewEarlierCommentsHandler();
-			this.viewLaterCommentsHandler();
+			const skipLaterFetch = this.hasLatestComment();
+			this.viewEarlierCommentsHandler( { skipLaterFetch } );
+			this.viewLaterCommentsHandler( { skipLaterFetch } );
 			this.alreadyLoadedInitialSet = true;
 		}
 	};
@@ -471,26 +479,29 @@ class PostCommentList extends Component {
 		};
 	};
 
-	viewEarlierCommentsHandler = () => {
+	viewEarlierCommentsHandler = ( { skipLaterFetch = false } = {} ) => {
 		const direction = this.props.commentsFetchingStatus.haveEarlierCommentsToFetch
 			? 'before'
 			: 'after';
-		this.loadMoreCommentsHandler( direction );
+		this.loadMoreCommentsHandler( direction, skipLaterFetch );
 	};
 
-	viewLaterCommentsHandler = () => {
+	viewLaterCommentsHandler = ( { skipLaterFetch = false } = {} ) => {
 		const direction = this.props.commentsFetchingStatus.haveLaterCommentsToFetch
 			? 'after'
 			: 'before';
-		this.loadMoreCommentsHandler( direction );
+		this.loadMoreCommentsHandler( direction, skipLaterFetch );
 	};
 
-	loadMoreCommentsHandler = ( direction ) => {
+	loadMoreCommentsHandler = ( direction, skipLaterFetch = false ) => {
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( { amountOfCommentsToTake } );
 		if ( direction === 'after' ) {
-			this.props.fetchLaterComments();
+			// The first page already holds the newest comments, so a later page finds only ones posted since.
+			if ( ! skipLaterFetch ) {
+				this.props.fetchLaterComments();
+			}
 		} else {
 			this.props.fetchEarlierComments();
 		}
