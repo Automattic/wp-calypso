@@ -340,4 +340,97 @@ describe( 'SiteMigrationCredentials', () => {
 			platform: 'tumblr',
 		} );
 	} );
+
+	describe( 'when our team can’t be sent the migration request', () => {
+		const rejectPath = ( path: string, error: object ) =>
+			( wp.req.post as jest.Mock ).mockImplementation( ( params ) =>
+				( params?.path ?? '' ).includes( path ) ? Promise.reject( error ) : Promise.resolve( {} )
+			);
+
+		it( 'tells the customer our team will reach out when wpcom refused the request', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', {
+				code: 'migration_request_not_submitted',
+				message: 'Server message',
+			} );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tells the customer they reached today’s limit', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', { code: 'too_many_requests' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText( /You’ve already sent us several migration requests today/ )
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'asks the customer to try again when the ticket could not be created', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', { code: 'ticket_creation_failed' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t send your migration request just now. Please try again in a few minutes.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the customer on the step when the ticket for a WordPress.com site fails', async () => {
+			const submit = jest.fn();
+			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
+			rejectPath( '/help/migration-ticket/new', { code: 'internal_error' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t send your migration request just now. Please try again in a few minutes.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tells the customer our team will reach out when a backup request is refused', async () => {
+			const submit = jest.fn();
+			rejectPath( '/automated-migration?', {
+				code: 'migration_request_not_submitted',
+				message: 'Server message',
+			} );
+
+			render( { navigation: { submit } } );
+			await userEvent.click( backupOption() );
+			await userEvent.type( backupFileInput(), 'backup-file.zip' );
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+	} );
 } );

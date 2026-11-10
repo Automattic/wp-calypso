@@ -6,8 +6,13 @@ import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Notice from 'calypso/components/notice';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
+import {
+	getErrorCode,
+	useMigrationTicketErrorMessage,
+} from 'calypso/landing/stepper/hooks/use-migration-ticket-error-message';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -87,6 +92,8 @@ const SiteMigrationSshShareAccess: StepType< {
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 	const [ isProcessingNoSSH, setIsProcessingNoSSH ] = useState( false );
+	const [ ticketErrorMessage, setTicketErrorMessage ] = useState< string | null >( null );
+	const getTicketErrorMessage = useMigrationTicketErrorMessage();
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
 	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
@@ -170,13 +177,23 @@ const SiteMigrationSshShareAccess: StepType< {
 			automated_migration: true,
 		} );
 
+		setTicketErrorMessage( null );
+
 		try {
 			await sendTicketAsync( {
 				locale,
 				from_url: fromUrl,
 				blog_url: siteSlug,
 			} );
+		} catch ( error ) {
+			recordTracksEvent( 'calypso_site_migration_ticket_error', {
+				error_code: getErrorCode( error ),
+			} );
+			setTicketErrorMessage( getTicketErrorMessage( error ) );
+			return;
+		}
 
+		try {
 			// Update migration status to pending DIY
 			await updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
 
@@ -200,6 +217,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		navigation,
 		sendTicketAsync,
 		updateMigrationStatus,
+		getTicketErrorMessage,
 	] );
 
 	const navigateToDoItForMe = useCallback( () => {
@@ -377,6 +395,11 @@ const SiteMigrationSshShareAccess: StepType< {
 			<Step.CenteredColumnLayout columnWidth={ 4 } topBar={ topBar }>
 				<div className="account-template">
 					<Step.Heading text={ title } subText={ subtitle } />
+					{ ticketErrorMessage && (
+						<Notice status="is-warning" showDismiss={ false }>
+							{ ticketErrorMessage }
+						</Notice>
+					) }
 					<SshMigrationContainer>
 						<Accordion steps={ steps } />
 						<div className="migration-site-ssh__continue-button">

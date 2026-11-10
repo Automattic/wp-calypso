@@ -496,6 +496,34 @@ describe( 'StaticSiteImportFailed', () => {
 		);
 	} );
 
+	it.each( [
+		[
+			'tells the customer our team will reach out when wpcom refused the handoff',
+			'migration_request_not_submitted',
+			'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.',
+		],
+		[
+			'tells the customer they reached today’s limit',
+			'too_many_requests',
+			'You’ve already sent us several migration requests today. Our team will follow up by email on the ones we’ve received. If you need to add details, just reply to that email.',
+		],
+		[
+			'asks the customer to try again when our team couldn’t be reached',
+			'internal_error',
+			'We couldn’t reach our team. Please try again.',
+		],
+	] )( '%s', async ( _, code, message ) => {
+		mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 422, { code, message: 'Server message', data: { status: 422 } } );
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Let our team move it' } ) );
+
+		expect( await screen.findByText( message ) ).toBeVisible();
+	} );
+
 	it( 'offers no refund when the site has no plan to refund', async () => {
 		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
 		render( <StaticSiteImportFailed site={ site } search={ search } /> );

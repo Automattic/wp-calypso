@@ -101,6 +101,25 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 }
 
 /**
+ * Why the handoff didn't reach our team. When wpcom refused it, our team already knows and will
+ * email the customer, so asking them to try again would only be refused again.
+ */
+function getHandoffErrorMessage( error: unknown ) {
+	switch ( ( error as { code?: string } | null )?.code ) {
+		case 'migration_request_not_submitted':
+			return __(
+				'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
+			);
+		case 'too_many_requests':
+			return __(
+				'You’ve already sent us several migration requests today. Our team will follow up by email on the ones we’ve received. If you need to add details, just reply to that email.'
+			);
+		default:
+			return __( 'We couldn’t reach our team. Please try again.' );
+	}
+}
+
+/**
  * Hands the move to our migrations team: files a ticket for the Non-WP Migrations queue, which
  * emails the customer to finish the move.
  */
@@ -161,9 +180,7 @@ export function StaticSiteImportFailed( {
 							: __( 'Nothing is lost, and your current site is still online.' ) }
 					</Text>
 					{ handoff.isError && (
-						<Notice variant="error">
-							{ __( 'We couldn’t reach our team. Please try again.' ) }
-						</Notice>
+						<Notice variant="error">{ getHandoffErrorMessage( handoff.error ) }</Notice>
 					) }
 					{ handoff.isSuccess ? (
 						<Notice variant="success" title={ __( 'Our team has your move' ) }>
@@ -413,9 +430,7 @@ export function StaticSiteImportNotice( {
 									) }
 						</span>
 						{ reviewNote && <span>{ reviewNote }</span> }
-						{ handoff.isError && (
-							<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
-						) }
+						{ handoff.isError && <span>{ getHandoffErrorMessage( handoff.error ) }</span> }
 						{ handoff.isSuccess && (
 							<span>
 								{ __( 'Our team has your move. We’ll email you to finish moving your site.' ) }
