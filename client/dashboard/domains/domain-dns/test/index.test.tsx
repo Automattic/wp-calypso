@@ -238,7 +238,7 @@ describe( 'DomainDns', () => {
 		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
-		await user.click( await screen.findByRole( 'menuitem', { name: 'Delete' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Delete…' } ) );
 
 		expect(
 			await screen.findByText( 'The TXT record for mail will be removed. This cannot be undone.' )

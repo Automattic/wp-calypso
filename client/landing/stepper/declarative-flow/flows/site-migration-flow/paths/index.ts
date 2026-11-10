@@ -270,6 +270,8 @@ export const identifyPath = buildPathHelper<
 	{
 		queryParams: {
 			from: string | null;
+			siteId?: number | '';
+			siteSlug?: string;
 			platform?: ImporterPlatform;
 			manualPlatform?: 'wordpress' | '';
 			host?: string;

@@ -1,9 +1,10 @@
 import {
 	__experimentalSpacer as Spacer,
 	__experimentalVStack as VStack,
-	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
+import { useId } from 'react';
 import { Text } from '../../components/text';
 import { ThemedIllustration } from '../../components/themed-illustration';
 import scanScanningIllustrationDark from './scan-scanning-illustration-dark.svg';
@@ -16,6 +17,7 @@ interface ScanStatusProps {
 
 export function ScanStatus( { scanState }: ScanStatusProps ) {
 	const { status, scan } = scanState;
+	const titleId = useId();
 
 	if ( status !== 'enqueued' && status !== 'running' ) {
 		return null;
@@ -47,15 +49,20 @@ export function ScanStatus( { scanState }: ScanStatusProps ) {
 					width={ 408 }
 					height={ 280 }
 				/>
-				<Text weight={ 500 } size={ 20 }>
+				<Text id={ titleId } weight={ 500 } size={ 20 }>
 					{ title }
 				</Text>
 				<Text variant="muted">{ description }</Text>
 				{ status === 'running' && (
-					<ProgressBar
+					<Progress.Root
+						aria-labelledby={ titleId }
 						value={ scan?.current?.progress ?? 0 }
 						className="dashboard-scan__progress-bar"
-					/>
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				) }
 			</VStack>
 		</Spacer>

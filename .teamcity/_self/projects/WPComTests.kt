@@ -123,6 +123,12 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 	});
 }
 
+// Workers per single-variation Atomic run, all hitting one site. The ecomm-plan site answers
+// API calls past the 10s action timeout with 5 concurrent editors and holds at 2; the other
+// sites hold at 5.
+private const val SINGLE_VARIATION_WORKERS = "5"
+private const val SINGLE_VARIATION_ECOMM_WORKERS = "2"
+
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
 
@@ -157,7 +163,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 					targetDevice = targetDevice,
 					additionalEnvVars = mapOf(
 						"ATOMIC_VARIATION" to variation,
-						"PW_WORKERS" to "5",
+						"PW_WORKERS" to if ( variation == "ecomm-plan" ) SINGLE_VARIATION_ECOMM_WORKERS else SINGLE_VARIATION_WORKERS,
 					),
 					stepName = "Run Playwright specs: $variation",
 					// Per-variation report name so the loop's runs don't overwrite each other.
@@ -481,19 +487,19 @@ private object JetpackAtomicE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "5")
 	}
 
 	features {
 		matrix {
-			param("env.ATOMIC_VARIATION", listOf(
-				value("default", label = "Default"),
-				value("php-old", label = "PHP Old"),
-				value("php-new", label = "PHP New"),
-				value("wp-beta", label = "WP Beta"),
-				value("wp-previous", label = "WP Previous"),
-				value("private", label = "Private"),
-				value("ecomm-plan", label = "Ecomm"),
+			// EXTRA_ENV_VARS so each variation can set its own worker count.
+			param("EXTRA_ENV_VARS", listOf(
+				value("ATOMIC_VARIATION=default;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "Default"),
+				value("ATOMIC_VARIATION=php-old;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "PHP Old"),
+				value("ATOMIC_VARIATION=php-new;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "PHP New"),
+				value("ATOMIC_VARIATION=wp-beta;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "WP Beta"),
+				value("ATOMIC_VARIATION=wp-previous;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "WP Previous"),
+				value("ATOMIC_VARIATION=private;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "Private"),
+				value("ATOMIC_VARIATION=ecomm-plan;PW_WORKERS=$SINGLE_VARIATION_ECOMM_WORKERS", label = "Ecomm"),
 			))
 		}
 	}

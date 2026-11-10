@@ -1,4 +1,5 @@
-import { ProgressBar } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import './style.scss';
 
@@ -10,10 +11,19 @@ interface LoadingProps {
 }
 
 const Loading: React.FC< LoadingProps > = ( { title, subtitle, progress, className } ) => {
+	const { __ } = useI18n();
 	return (
 		<div className={ clsx( 'wpcom__loading', className ) }>
 			<h1 className="wpcom__loading-title">{ title }</h1>
-			<ProgressBar value={ progress } className="wpcom__loading-progress-bar" />
+			<Progress.Root
+				aria-label={ __( 'Loading…' ) }
+				value={ progress ?? null }
+				className="wpcom__loading-progress-bar"
+			>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 			{ subtitle && <p className="wpcom__loading-subtitle">{ subtitle }</p> }
 		</div>
 	);

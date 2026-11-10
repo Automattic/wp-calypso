@@ -6,7 +6,7 @@ import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
-import { ColorSchemeProvider } from 'calypso/lib/color-scheme';
+import { ColorSchemeProvider } from 'calypso/lib/color-scheme/query-provider';
 import PreferencesAppearance from '..';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';

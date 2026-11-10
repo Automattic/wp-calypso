@@ -7,9 +7,11 @@ import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary
 export default function NameServersSettingsSummary( {
 	domain,
 	isDisabled,
+	onClick,
 }: {
 	domain: Domain;
 	isDisabled?: boolean;
+	onClick?: () => void;
 } ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	// An active certificate is shown in the domain overview header instead.
@@ -34,6 +36,7 @@ export default function NameServersSettingsSummary( {
 			badges={ badges }
 			density={ 'medium' as const }
 			disabled={ isDisabled }
+			onClick={ onClick }
 		/>
 	);
 }

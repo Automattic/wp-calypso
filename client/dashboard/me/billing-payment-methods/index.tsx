@@ -269,7 +269,6 @@ export default function PaymentMethods() {
 				{ ! isDeletingPaymentMethod && editAddressDialogPaymentMethod && (
 					<PaymentMethodEditDialog
 						paymentMethod={ editAddressDialogPaymentMethod }
-						isVisible={ Boolean( editAddressDialogPaymentMethod ) }
 						onCancel={ () => {
 							recordTracksEvent(
 								'calypso_dashboard_payment_method_edit_billing_address_cancel_click',
