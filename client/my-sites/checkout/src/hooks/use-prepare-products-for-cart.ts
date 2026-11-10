@@ -1,4 +1,5 @@
 import { TitanMailSlugs } from '@automattic/api-core';
+import { ONBOARDING_UNIFIED_FLOW } from '@automattic/onboarding';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -735,12 +736,16 @@ function getTitanNewQuantity( quantity: number | null ): number {
 /**
  * Whether the signup flow asked for the AI Launchpad on the site a Unified checkout creates. A logged-out buyer's
  * site is created with the account from the flow's `siteParams`; a logged-in buyer's is created by the purchase,
- * which only sees the cart.
+ * which only sees the cart. `siteParams` outlives a logged-in purchase and other flows write it too, so only the
+ * onboarding-unified flow's request counts.
  */
 function newSiteRequestsAiLaunchpad(): boolean {
 	try {
 		const siteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
-		return Boolean( siteParams?.options?.wpcom_ai_launchpad_enabled );
+		return Boolean(
+			siteParams?.options?.site_creation_flow === ONBOARDING_UNIFIED_FLOW &&
+			siteParams.options.wpcom_ai_launchpad_enabled
+		);
 	} catch {
 		return false;
 	}

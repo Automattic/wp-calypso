@@ -222,7 +222,9 @@ describe( 'usePrepareProductsForCart AI Launchpad request', () => {
 	beforeEach( () => {
 		window.localStorage.setItem(
 			'siteParams',
-			JSON.stringify( { options: { wpcom_ai_launchpad_enabled: true } } )
+			JSON.stringify( {
+				options: { site_creation_flow: 'onboarding-unified', wpcom_ai_launchpad_enabled: true },
+			} )
 		);
 	} );
 
@@ -235,6 +237,22 @@ describe( 'usePrepareProductsForCart AI Launchpad request', () => {
 		} );
 
 		expect( result.current.productsForCart[ 0 ].extra.wpcom_ai_launchpad_enabled ).toBe( true );
+	} );
+
+	it( 'ignores siteParams left behind by another flow', () => {
+		window.localStorage.setItem(
+			'siteParams',
+			JSON.stringify( {
+				options: { site_creation_flow: 'onboarding', wpcom_ai_launchpad_enabled: true },
+			} )
+		);
+
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'personal-bundle',
+			sitelessCheckoutType: 'unified',
+		} );
+
+		expect( result.current.productsForCart[ 0 ].extra.wpcom_ai_launchpad_enabled ).toBeUndefined();
 	} );
 
 	it( 'leaves it off other siteless checkouts', () => {
