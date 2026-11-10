@@ -322,6 +322,10 @@
 			color: var( --color-text );
 		}
 
+		.like-button__label-count {
+			font-size: inherit;
+		}
+
 		.like-button__label strong {
 			font-weight: 500;
 		}
