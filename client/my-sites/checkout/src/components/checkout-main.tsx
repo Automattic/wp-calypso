@@ -51,6 +51,7 @@ import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
+import { isFirstContactStepComplete } from '../lib/is-first-contact-step-complete';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
@@ -771,7 +772,7 @@ export default function CheckoutMain( {
 			previousStepNumber: number;
 			paymentMethodId: string;
 		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+			if ( isFirstContactStepComplete( { stepNumber, previousStepNumber, contactDetailsType } ) ) {
 				recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
 					payment_method:
 						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
@@ -781,7 +782,7 @@ export default function CheckoutMain( {
 				step: stepNumber,
 			} );
 		},
-		[]
+		[ contactDetailsType ]
 	);
 
 	const handlePaymentMethodChanged = useCallback( ( method: string ) => {
