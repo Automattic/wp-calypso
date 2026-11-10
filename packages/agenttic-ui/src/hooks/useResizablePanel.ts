@@ -376,6 +376,12 @@ export function useResizablePanel( {
 			event.preventDefault();
 			handleEl.setPointerCapture( event.pointerId );
 
+			// The gesture owns width/height from here: a size spring still in flight
+			// (mount/expand morph, controlled size, reset) would keep writing its own
+			// frames over the pointer loop's values.
+			width.stop();
+			height.stop();
+
 			resizingRef.current = {
 				edge,
 				startX: event.clientX,

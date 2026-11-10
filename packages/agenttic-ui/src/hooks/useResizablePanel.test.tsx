@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { animate, useMotionValue } from 'framer-motion';
+import { animate, frame, useMotionValue } from 'framer-motion';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -312,6 +312,44 @@ describe( 'useResizablePanel', () => {
 			width: DEFAULT_SIZE.width + 40,
 			height: DEFAULT_SIZE.height + 20,
 		} );
+	} );
+
+	it( 'keeps the dragged size when a size spring is still in flight at pointer-down', async () => {
+		const onResizeEnd = vi.fn();
+		harness = renderHook( {
+			resizable: true,
+			defaultSize: DEFAULT_SIZE,
+			minSize: MIN_SIZE,
+			maxSize: MAX_SIZE,
+			chatState: 'expanded',
+			compactHeight: 56,
+			onResizeEnd,
+		} );
+		// The mount morph starts a spring whose first frame has not run yet.
+		await harness.render();
+
+		const handle = makeHandle( 'top-right' );
+		await act( async () => {
+			startResize( handle, 0, 0 );
+		} );
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, -20 ) );
+		} );
+		// Let the animation frame run before pointer-up.
+		await act( async () => {
+			await new Promise< void >( ( resolve ) => frame.postRender( () => resolve() ) );
+		} );
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointerup', 40, -20 ) );
+		} );
+
+		const dragged = {
+			width: DEFAULT_SIZE.width + 40,
+			height: DEFAULT_SIZE.height + 20,
+		};
+		expect( onResizeEnd ).toHaveBeenCalledWith( dragged );
+		const { width, height } = harness.captured.current!.result;
+		expect( { width: width.get(), height: height.get() } ).toEqual( dragged );
 	} );
 
 	it( 'does not grow past the bottom dock when dragging the bottom edge of a docked panel', async () => {
