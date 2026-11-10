@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { animate, useMotionValue } from 'framer-motion';
+import { animate, frame, useMotionValue } from 'framer-motion';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -296,6 +296,11 @@ describe( 'useResizablePanel', () => {
 		} );
 		await act( async () => {
 			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, -20 ) );
+		} );
+		// Let a motion frame run mid-gesture: the mount size-morph spring is still
+		// in flight here and must not overwrite the dragged size.
+		await act( async () => {
+			await new Promise< void >( ( resolve ) => frame.postRender( () => resolve() ) );
 		} );
 
 		expect( onResize ).toHaveBeenLastCalledWith( {
