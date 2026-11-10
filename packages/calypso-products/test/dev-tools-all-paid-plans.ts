@@ -10,6 +10,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
+	getFeatureByKey,
 	getPlan,
 } from '../src';
 import type { WPComPlan } from '../src';
@@ -113,6 +114,12 @@ describe( 'hosting/dev-tools-all-paid-plans', () => {
 					FEATURE_SITE_STAGING_SITES
 				);
 			}
+		} );
+
+		it( 'keeps calling the staging site free, as the comparison grid does', () => {
+			expect( getFeatureByKey( FEATURE_SITE_STAGING_SITES ).getTitle() ).toBe(
+				'Free staging site'
+			);
 		} );
 
 		it( 'includes SFTP, SSH and GitHub Deployments in Personal and Premium abilities', () => {

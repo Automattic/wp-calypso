@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { styles } from '@wordpress/icons';
-import { useColorScheme, type ColorScheme } from 'calypso/lib/color-scheme';
+import { useColorScheme, type ColorScheme } from 'calypso/lib/color-scheme/shared';
 import { useAppContext } from '../../app/context';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';

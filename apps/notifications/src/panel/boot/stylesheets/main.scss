@@ -732,6 +732,10 @@ $with-sidebar-min-page-width: 1114px;
 			word-wrap: break-word;
 			margin-top: $wpnc__padding-large;
 
+			p:not(:last-child) {
+				margin-bottom: $wpnc__padding-medium;
+			}
+
 			a {
 				text-decoration: underline;
 
