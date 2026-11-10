@@ -19,3 +19,11 @@ export function shouldUpsellPersonalPlan( context: EligibilityContext | null ): 
 		isEnabled( 'hosting/dev-tools-all-paid-plans' )
 	);
 }
+
+/**
+ * Whether the `NO_BUSINESS_PLAN` hold should ask for any paid plan, because every paid plan
+ * unlocks what the context needs and its CTA lets the user pick one.
+ */
+export function shouldUpsellAnyPaidPlan( context: EligibilityContext | null ): boolean {
+	return context === 'plugin-details' && isEnabled( 'hosting/dev-tools-all-paid-plans' );
+}

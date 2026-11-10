@@ -13,7 +13,11 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { useSelector } from 'calypso/state';
 import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { isAtomicSiteWithoutBusinessPlan, shouldUpsellPersonalPlan } from './utils';
+import {
+	isAtomicSiteWithoutBusinessPlan,
+	shouldUpsellAnyPaidPlan,
+	shouldUpsellPersonalPlan,
+} from './utils';
 import type { EligibilityContext } from './index';
 
 const displayableHolds = [
@@ -45,20 +49,19 @@ function getHoldMessages( {
 	billingPeriod,
 	isMarketplace,
 	hasEnTranslation,
-	mentionsSiteMove,
+	holds,
 }: {
 	context: EligibilityContext | null;
 	translate: LocalizeProps[ 'translate' ];
 	billingPeriod?: string;
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
-	mentionsSiteMove?: boolean;
+	holds: EligibilityHold[];
 } ): HoldMessages {
 	const upsellPersonalPlan =
 		shouldUpsellPersonalPlan( context ) ||
 		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
-	const upsellAnyPaidPlan =
-		context === 'plugin-details' && isEnabled( 'hosting/dev-tools-all-paid-plans' );
+	const upsellAnyPaidPlan = shouldUpsellAnyPaidPlan( context );
 
 	return {
 		NO_BUSINESS_PLAN: {
@@ -78,35 +81,9 @@ function getHoldMessages( {
 				} );
 			} )(),
 			description: ( function () {
-				if ( upsellAnyPaidPlan ) {
-					return mentionsSiteMove
-						? translate(
-								'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
-							)
-						: null;
-				}
-
-				if ( mentionsSiteMove ) {
-					if ( context === 'themes' ) {
-						return translate(
-							'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom plugins, more storage, and priority 24/7 support.'
-						);
-					}
-
-					if ( upsellPersonalPlan ) {
-						return translate(
-							'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get a free domain for one year and fast support.'
-						);
-					}
-
-					if ( billingPeriod === IntervalLength.MONTHLY ) {
-						return translate(
-							'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
-						);
-					}
-
+				if ( upsellAnyPaidPlan && ! isAtomicSiteWithoutBusinessPlan( holds ) ) {
 					return translate(
-						'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and priority 24/7 support.'
+						'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
 					);
 				}
 
@@ -292,7 +269,6 @@ interface ExternalProps {
 	holds: EligibilityHold[];
 	isMarketplace?: boolean;
 	isPlaceholder: boolean;
-	mentionsSiteMove?: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
@@ -346,14 +322,7 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( {
-	context,
-	holds,
-	isMarketplace,
-	isPlaceholder,
-	mentionsSiteMove,
-	translate,
-}: Props ) => {
+export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const billingPeriod = useSelector( getBillingInterval );
@@ -363,7 +332,7 @@ export const HoldList = ( {
 		billingPeriod,
 		isMarketplace,
 		hasEnTranslation,
-		mentionsSiteMove,
+		holds,
 	} );
 
 	return (
@@ -393,11 +362,9 @@ export const HoldList = ( {
 								<div className="eligibility-warnings__message-title">
 									{ holdMessages[ hold ].title }
 								</div>
-								{ holdMessages[ hold ].description && (
-									<p className="eligibility-warnings__message-description">
-										{ holdMessages[ hold ].description }
-									</p>
-								) }
+								<p className="eligibility-warnings__message-description">
+									{ holdMessages[ hold ].description }
+								</p>
 							</div>
 							{ holdMessages[ hold ].supportUrl && (
 								<div className="eligibility-warnings__hold-action">

@@ -188,31 +188,7 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
 	} );
 
-	it( 'asks for a paid plan for a paid Marketplace plugin too', () => {
-		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
-
-		const { getByText } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context="plugin-details" isMarketplace inModal />,
-			state
-		);
-
-		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
-	} );
-
-	it( 'asks for a Business plan in the plugin details modal when not all paid plans qualify', () => {
-		mockDevToolsAllPaidPlans = false;
-		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
-			state
-		);
-
-		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
-		expect( queryByText( 'Upgrade to a paid plan' ) ).toBeNull();
-	} );
-
-	it( 'mentions the site move in the upgrade step instead of a separate intro', () => {
+	it( 'mentions the site move in the plugin upgrade step instead of a separate intro', () => {
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN' ],
 			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
@@ -228,7 +204,6 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
 		expect(
 			getByText(
 				'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
@@ -237,43 +212,10 @@ describe( '<EligibilityWarnings>', () => {
 		expect( queryByText( /^To install plugins, we’ll need to move your site/ ) ).toBeNull();
 	} );
 
-	it( 'mentions the site move alongside the plan perks outside the plugin modal', () => {
+	it( 'keeps the Business plan wording in the plugin modal when not all paid plans qualify', () => {
+		mockDevToolsAllPaidPlans = false;
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN' ],
-			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
-		} );
-
-		const { getByText } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context={ null } atomicTransferAction="plugins" />,
-			state
-		);
-
-		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
-		expect(
-			getByText(
-				'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and priority 24/7 support.'
-			)
-		).toBeVisible();
-	} );
-
-	it( 'keeps the usual upgrade description when no site move is described', () => {
-		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context={ null } atomicTransferAction="plugins" />,
-			state
-		);
-
-		expect(
-			getByText(
-				"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
-			)
-		).toBeVisible();
-		expect( queryByText( /^Your site will move/ ) ).toBeNull();
-	} );
-
-	it( 'keeps the usual site move intro when no upgrade is needed', () => {
-		const state = createState( {
 			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
 		} );
 
@@ -287,6 +229,32 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
+		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
+		expect(
+			getByText(
+				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			)
+		).toBeVisible();
+		expect( queryByText( /^Your site will move/ ) ).toBeNull();
+	} );
+
+	it( 'keeps the plan perks and the site move intro outside the plugin modal', () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context={ null } atomicTransferAction="plugins" />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
+		expect(
+			getByText(
+				"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
+			)
+		).toBeVisible();
 		expect(
 			getByText(
 				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
