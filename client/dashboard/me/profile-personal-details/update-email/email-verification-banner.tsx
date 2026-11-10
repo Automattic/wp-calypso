@@ -13,8 +13,6 @@ import { useEmailVerificationResend } from '../../../utils/use-email-verificatio
 import { useIsEmailWritePending } from '../use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 
-const EMAIL_VERIFICATION_PARAMS = [ 'new_email_result', 'verified', 'new_email_error' ] as const;
-
 // An unrecognised or absent reason falls back to the generic message, so the server can start
 // sending one without waiting on this.
 function emailChangeFailureMessage( emailChangeError: string | null ) {
@@ -38,7 +36,7 @@ export default function EmailVerificationBanner( {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ isSuccessNoticeDismissed, setIsSuccessNoticeDismissed ] = useState( false );
 	const { new_email_result: newEmailResult, verified } = useConsumeSearchParams(
-		EMAIL_VERIFICATION_PARAMS,
+		[ 'new_email_result', 'verified', 'new_email_error' ],
 		{
 			onConsume: ( params ) => {
 				setIsSuccessNoticeDismissed( false );

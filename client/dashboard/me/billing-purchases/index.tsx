@@ -41,8 +41,6 @@ import {
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
 import { useOtherUsersSitePurchases } from './use-other-users-site-purchases';
 
-const REMOVED_NOTICE_PARAMS = [ 'removed', 'removedDomain', 'removedId' ] as const;
-
 export default function PurchasesList() {
 	const { supports } = useAppContext();
 	// Hosts without a `me` section embed these screens already scoped to a site,
@@ -56,7 +54,7 @@ export default function PurchasesList() {
 
 	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const [ isRemovedNoticeHidden, setIsRemovedNoticeHidden ] = useState( false );
-	const removedNotice = useConsumeSearchParams( REMOVED_NOTICE_PARAMS, {
+	const removedNotice = useConsumeSearchParams( [ 'removed', 'removedDomain', 'removedId' ], {
 		when: ( params ) => Boolean( params.removed ),
 		// The removal may have rolled back already, before the page was ready to consume.
 		onConsume: ( { removedId } ) =>

@@ -12,20 +12,16 @@ import WordPressAgentTelegram from '../mcp/wordpress-agent-telegram';
 
 import './style.scss';
 
-const CONNECTION_CALLBACK_PARAMS = [
-	'pair_token',
-	'slack',
-	'telegram_id',
-	'token',
-	'ts',
-	'bot',
-] as const;
-
 export default function WordPressAgent() {
 	const tracksAudienceProps = useMcpTracksAudienceProps();
-	const { pair_token, slack, telegram_id, token, ts, bot } = useConsumeSearchParams(
-		CONNECTION_CALLBACK_PARAMS
-	);
+	const { pair_token, slack, telegram_id, token, ts, bot } = useConsumeSearchParams( [
+		'pair_token',
+		'slack',
+		'telegram_id',
+		'token',
+		'ts',
+		'bot',
+	] );
 
 	return (
 		<PageLayout
