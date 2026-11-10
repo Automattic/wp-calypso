@@ -56,27 +56,6 @@ export function getHostingDashboardEnrollment(
 }
 
 /**
- * Whether the user-facing opt-in toggle should be shown. Hidden for the
- * rollout cohort (the choice no longer exists) and for escape-hatched
- * users (their enrollment changes only via support tooling).
- */
-export function isOptInToggleVisible(
-	preference: HostingDashboardOptIn | undefined,
-	userId: number | undefined
-): boolean {
-	// Ensures the toggle is visible in development for easier testing/dev.
-	if ( config.isEnabled( 'dashboard/force-opt-in-visibility' ) ) {
-		return true;
-	}
-
-	if ( isInRolloutCohort( userId ) || preference?.value === 'forced-opt-out' ) {
-		return false;
-	}
-
-	return true;
-}
-
-/**
  * Whether the advanced notice should be visible for this user. Shown to every
  * user once the flag is on, except escape-hatched users (forced opt-in or
  * opt-out), whose enrollment changes only via support tooling.

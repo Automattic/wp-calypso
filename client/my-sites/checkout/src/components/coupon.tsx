@@ -2,7 +2,6 @@ import { Button } from '@automattic/composite-checkout';
 import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';
 
@@ -67,12 +66,6 @@ export default function Coupon( {
 		</CouponWrapper>
 	);
 }
-
-Coupon.propTypes = {
-	id: PropTypes.string.isRequired,
-	couponAdded: PropTypes.func,
-	disabled: PropTypes.bool,
-};
 
 const animateIn = keyframes`
   from {

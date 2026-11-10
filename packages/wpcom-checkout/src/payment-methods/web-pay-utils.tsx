@@ -3,9 +3,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useState, useEffect, useMemo } from 'react';
 import { getLabel } from '../checkout-labels';
+import {
+	doesPurchaseHaveFullCredits,
+	getCreditsLineItemFromCart,
+	getTaxLineItemFromCart,
+} from '../transformations';
 import { useStableCallback } from '../use-stable-callback';
 import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
-import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 import type { PaymentRequest, Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'wpcom-checkout:web-pay-utils' );
@@ -46,10 +51,10 @@ export function usePaymentRequestOptions(
 			country,
 			currency: currency?.toLowerCase(),
 			total,
-			displayItems: getDisplayItemsForLineItems( responseCart.products ),
+			displayItems: getDisplayItemsForCart( responseCart ),
 			...PAYMENT_REQUEST_OPTIONS,
 		};
-	}, [ country, currency, responseCart.total_cost_integer, responseCart.products, __ ] );
+	}, [ country, currency, responseCart, __ ] );
 	debug(
 		'returning stripe payment request options',
 		paymentRequestOptions,
@@ -155,11 +160,23 @@ export function useStripePaymentRequest( {
 	return paymentRequestState;
 }
 
-function getDisplayItemsForLineItems( products: ResponseCartProduct[] ) {
-	return products.map( ( product ) => ( {
+function getDisplayItemsForCart( cart: ResponseCart ) {
+	const items = cart.products.map( ( product ) => ( {
 		label: getLabel( product ),
 		amount: product.item_subtotal_integer,
 	} ) );
+	const tax = getTaxLineItemFromCart( cart );
+	if ( tax ) {
+		items.push( { label: tax.label, amount: cart.total_tax_integer } );
+	}
+	const credits = getCreditsLineItemFromCart( cart );
+	if ( credits ) {
+		const creditsUsed = doesPurchaseHaveFullCredits( cart )
+			? cart.sub_total_with_taxes_integer
+			: cart.credits_integer;
+		items.push( { label: credits.label, amount: -creditsUsed } );
+	}
+	return items;
 }
 
 function completePaymentMethodTransaction( {

@@ -18,7 +18,8 @@ interface UseShowComponentRetentionOptions {
  *
  * A regeneration deliberately drops the component it replaces (Agenttic sends
  * `preserveUiOnlyMessages: false`), so `pauseRetentionForRegeneration()` pauses retention
- * until that turn settles.
+ * until that turn settles. A history load replaces the transcript, so `expectHistoryLoad()`
+ * resets retention across it.
  */
 export function useShowComponentRetention( {
 	messages,
@@ -32,6 +33,7 @@ export function useShowComponentRetention( {
 	const orderByIdentityRef = useRef< Map< string, number > >( new Map() );
 	const nextOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
+	const isHistoryLoadExpectedRef = useRef( false );
 
 	// Keeps the map reference when already empty, so no re-render is triggered.
 	const clearRetainedMessages = useCallback( () => {
@@ -71,14 +73,16 @@ export function useShowComponentRetention( {
 		const previousMessages = previousMessagesRef.current;
 		previousMessagesRef.current = messages;
 
-		// A full history replacement (server hydration, clearing the chat) swaps
-		// every message id at once. Nothing in it was dropped for a moment, and
-		// the same picker can carry a different identity in loaded history than
-		// it did live — retaining across the swap would show it twice.
+		// A history load, or clearing the chat, replaces the transcript. A loaded picker
+		// can carry another identity than its live copy, so retaining across it would
+		// show it twice.
 		const previousMessageIds = new Set( previousMessages.map( ( message ) => message.id ) );
 		const isHistoryReplaced =
-			previousMessages.length > 0 &&
-			! messages.some( ( message ) => previousMessageIds.has( message.id ) );
+			isHistoryLoadExpectedRef.current ||
+			( previousMessages.length > 0 &&
+				! messages.some( ( message ) => previousMessageIds.has( message.id ) ) );
+
+		isHistoryLoadExpectedRef.current = false;
 
 		if ( isHistoryReplaced ) {
 			clearRetainedMessages();
@@ -115,6 +119,11 @@ export function useShowComponentRetention( {
 		} );
 	}, [ clearRetainedMessages, getShowComponentOrder, messages, isRegenerating ] );
 
+	// Called before a history load, since loaded messages keep their IDs and can't show it.
+	const expectHistoryLoad = useCallback( () => {
+		isHistoryLoadExpectedRef.current = true;
+	}, [] );
+
 	// Clears the retained copies up front: the turn is being rewound, so a
 	// leftover picker would reappear if the new response omits the component.
 	const pauseRetentionForRegeneration = useCallback( () => {
@@ -150,5 +159,5 @@ export function useShowComponentRetention( {
 		[ getShowComponentOrder, retainedMessages ]
 	);
 
-	return { pauseRetentionForRegeneration, withRetainedShowComponents };
+	return { pauseRetentionForRegeneration, withRetainedShowComponents, expectHistoryLoad };
 }

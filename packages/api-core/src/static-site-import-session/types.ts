@@ -6,14 +6,16 @@ export const STATIC_SITE_IMPORT_TERMINAL_STATES: readonly StaticSiteImportState[
 	'failed',
 ];
 
-export const STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES: readonly StaticSiteImportState[] = [
-	'preview_ready',
-	'queued',
-	...STATIC_SITE_IMPORT_TERMINAL_STATES,
-];
-
 export type StaticSiteImportCapability =
-	'booking' | 'commerce' | 'dialogs' | 'embeds' | 'forms' | 'media' | 'membership' | 'navigation';
+	| 'booking'
+	| 'commerce'
+	| 'dialogs'
+	| 'embeds'
+	| 'events'
+	| 'forms'
+	| 'media'
+	| 'membership'
+	| 'navigation';
 
 export type StaticSiteImportBand = 'simple' | 'moderate' | 'complex' | 'unknown';
 
@@ -76,7 +78,15 @@ export interface StaticSiteImportSession {
 	preview_summary: StaticSiteImportPreviewSummary | [];
 	/** Empty until approval binds a destination. */
 	site_url: string;
-	/** Present from `preview_ready`; echoed back to `/approve`. */
+	/**
+	 * What the move found on the old site that may need our team, translated for the reader, e.g.
+	 * "We found a store on example.com." The ready email carries the same sentence. '' when there is
+	 * nothing to say.
+	 */
+	review_note?: string;
+	/** The source domain the customer can connect, or '' for a builder's free address or an upload. */
+	connectable_domain: string;
+	/** Present from `preview_ready`. */
 	archive_hash?: string;
 	/** A short-lived link to the preview's Playground archive, only while `preview_ready`. */
 	archive_url?: string;
@@ -85,6 +95,13 @@ export interface StaticSiteImportSession {
 
 export interface ApproveStaticSiteImportSessionParams {
 	sessionId: string;
-	archiveHash: string;
 	destinationBlogId: number;
+}
+
+export interface StaticSiteImportHandoffParams {
+	blogUrl: string;
+	fromUrl: string;
+	locale: string;
+	/** The move being handed over, so the ticket can say what it found. */
+	importSessionId?: string;
 }

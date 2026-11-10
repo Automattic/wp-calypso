@@ -132,6 +132,45 @@ describe( 'useAgentChat normal send reconcile', () => {
 		expect( latestHookValue?.isProcessing ).toBe( false );
 	} );
 
+	it( 'keeps the final message’s interactive UI surface under the streamed text', async () => {
+		const surface = {
+			type: 'data' as const,
+			data: [ { version: 'v1.0', deleteSurface: { surfaceId: 'form' } } ],
+			metadata: { mimeType: 'application/a2ui+json' as const },
+		};
+
+		vi.mocked( mockClient.sendMessageStream ).mockImplementation(
+			async function* (): AsyncIterable< TaskUpdate > {
+				yield { id: 'task-1', final: false, status: { state: 'working' }, text: 'Here’s a form.' };
+				yield {
+					id: 'task-1',
+					final: true,
+					status: {
+						state: 'completed',
+						message: {
+							...clientMessage( 'agent-1', 'agent', 'Here’s a form.', Date.now() ),
+							parts: [ { type: 'text', text: 'Here’s a form.' }, surface ],
+						},
+					},
+					text: 'Here’s a form.',
+				};
+			}
+		);
+
+		await act( async () => {
+			root.render( <HookHarness /> );
+		} );
+
+		await act( async () => {
+			await latestHookValue?.onSubmit( 'Show me a form.' );
+		} );
+
+		expect( latestHookValue?.messages.at( -1 )?.content ).toEqual( [
+			{ type: 'text', text: 'Here’s a form.' },
+			{ type: 'data', data: { a2ui: surface } },
+		] );
+	} );
+
 	it( 'keeps the optimistic user message when actions re-register mid-send', async () => {
 		// A consumer that re-registers a message action while a send is in
 		// flight must not drop the optimistic user message. The drop is
@@ -185,7 +224,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 			}
 		} );
 
-		// Re-register mid-send, while isSendingRef is true.
+		// Re-register mid-send.
 		await act( async () => {
 			latestHookValue?.registerMessageActions( {
 				id: 'mid-send-action',
@@ -200,6 +239,68 @@ describe( 'useAgentChat normal send reconcile', () => {
 		);
 
 		expect( midSendCopies ).toHaveLength( 1 );
+
+		await act( async () => {
+			releaseFinal();
+			await sendDone;
+		} );
+	} );
+
+	it( 'resolves actions registered mid-send onto earlier messages, keeping the optimistic one', async () => {
+		let releaseFinal: () => void = () => {};
+		const finalGate = new Promise< void >( ( resolve ) => {
+			releaseFinal = resolve;
+		} );
+		vi.mocked( mockClient.sendMessageStream ).mockImplementation(
+			async function* (): AsyncIterable< TaskUpdate > {
+				yield {
+					id: 'task-1',
+					final: false,
+					kind: 'delta',
+					status: { state: 'working' },
+					text: 'Second',
+				};
+				await finalGate;
+				yield {
+					id: 'task-1',
+					final: true,
+					status: {
+						state: 'completed',
+						message: clientMessage( 'agent-2', 'agent', 'Second answer', Date.now() + 2 ),
+					},
+					text: 'Second answer',
+				};
+			}
+		);
+
+		await act( async () => {
+			root.render( <HookHarness /> );
+		} );
+		await act( async () => {
+			await latestHookValue?.loadMessages( [
+				clientMessage( 'user-1', 'user', 'First question', 1 ),
+				clientMessage( 'agent-1', 'agent', 'First answer', 2 ),
+			] );
+		} );
+
+		let sendDone: Promise< void > | undefined;
+		await act( async () => {
+			sendDone = latestHookValue?.onSubmit( 'Second question' );
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+		await act( async () => {
+			latestHookValue?.registerMessageActions( {
+				id: 'copy',
+				actions: [ { id: 'copy', label: 'Copy', onClick: () => {} } ],
+			} );
+		} );
+
+		const firstAnswer = latestHookValue?.messages.find( ( message ) => message.id === 'agent-1' );
+
+		expect( firstAnswer?.actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
+		expect( latestHookValue?.messages.map( ( message ) => message.content[ 0 ].text ) ).toContain(
+			'Second question'
+		);
 
 		await act( async () => {
 			releaseFinal();

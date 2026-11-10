@@ -1,5 +1,6 @@
 const soundCooldownMs = 3000;
 const soundDurationSeconds = 0.4;
+const resumeTimeoutMs = 1000;
 
 export type NotificationSoundResult =
 	| 'played'
@@ -11,7 +12,7 @@ export type NotificationSoundResult =
 	| 'create_failed'
 	| 'failed';
 
-export type NotificationSoundErrorStage = 'create' | 'resume' | 'play' | 'close';
+export type NotificationSoundErrorStage = 'create' | 'resume' | 'suspend' | 'play' | 'close';
 
 export type NotificationSoundOptions = {
 	onError?: ( error: unknown, stage: NotificationSoundErrorStage ) => void;
@@ -22,6 +23,13 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 	let lastPlayedAt: number | undefined;
 	let disposed = false;
 	let unavailableReason: 'unsupported' | 'create_failed' | undefined;
+	let resuming: Promise< void > | undefined;
+	let suspendedForIdle = false;
+	let audioHasRun = false;
+
+	function hasBeenActivated() {
+		return audioHasRun || navigator.userActivation?.hasBeenActive === true;
+	}
 
 	function reportError( error: unknown, stage: NotificationSoundErrorStage ) {
 		try {
@@ -42,7 +50,29 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 
 	function removeGestureListeners() {
 		document.removeEventListener( 'pointerdown', activateAudio );
+		document.removeEventListener( 'pointerup', activateAudio );
 		document.removeEventListener( 'keydown', activateAudio );
+	}
+
+	function updateGestureListeners() {
+		if ( audioContext?.state === 'running' ) {
+			audioHasRun = true;
+		}
+		if ( audioContext?.state !== 'suspended' ) {
+			suspendedForIdle = false;
+		}
+		if (
+			disposed ||
+			suspendedForIdle ||
+			audioContext?.state === 'running' ||
+			audioContext?.state === 'closed'
+		) {
+			removeGestureListeners();
+		} else {
+			document.addEventListener( 'pointerdown', activateAudio );
+			document.addEventListener( 'pointerup', activateAudio );
+			document.addEventListener( 'keydown', activateAudio );
+		}
 	}
 
 	function activateAudio() {
@@ -60,7 +90,10 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 		}
 
 		try {
-			audioContext ??= new AudioContextConstructor();
+			if ( ! audioContext ) {
+				audioContext = new AudioContextConstructor();
+				audioContext.onstatechange = updateGestureListeners;
+			}
 		} catch ( error ) {
 			unavailableReason = 'create_failed';
 			removeGestureListeners();
@@ -69,15 +102,68 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 		}
 
 		const context = audioContext;
-		settle( () => context.resume(), 'resume' );
-		removeGestureListeners();
+		suspendedForIdle = false;
+		updateGestureListeners();
+		if ( context.state === 'running' || context.state === 'closed' ) {
+			return;
+		}
+		let resume: Promise< void >;
+		try {
+			resume = context.resume();
+		} catch ( error ) {
+			reportError( error, 'resume' );
+			return;
+		}
+		// Safari needs a fresh gesture to start audio, so keep listening until it runs.
+		resuming = resume.then( updateGestureListeners, ( error ) => reportError( error, 'resume' ) );
 	}
 
-	document.addEventListener( 'pointerdown', activateAudio );
-	document.addEventListener( 'keydown', activateAudio );
+	async function suspendAudio( context: AudioContext ) {
+		suspendedForIdle = true;
+		try {
+			await context.suspend();
+		} catch ( error ) {
+			suspendedForIdle = false;
+			updateGestureListeners();
+			reportError( error, 'suspend' );
+		}
+	}
+
+	function playTone( context: AudioContext ): NotificationSoundResult {
+		try {
+			const oscillator = context.createOscillator();
+			const gain = context.createGain();
+			oscillator.onended = () => {
+				oscillator.disconnect();
+				gain.disconnect();
+				if ( ! disposed && context.state === 'running' ) {
+					void suspendAudio( context );
+				}
+			};
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime( 660, context.currentTime );
+			gain.gain.setValueAtTime( 0.2, context.currentTime );
+			gain.gain.exponentialRampToValueAtTime( 0.001, context.currentTime + soundDurationSeconds );
+			oscillator.connect( gain );
+			gain.connect( context.destination );
+			oscillator.start();
+			oscillator.stop( context.currentTime + soundDurationSeconds );
+		} catch ( error ) {
+			reportError( error, 'play' );
+			return 'failed';
+		}
+
+		return 'played';
+	}
+
+	updateGestureListeners();
+
+	if ( hasBeenActivated() ) {
+		activateAudio();
+	}
 
 	return {
-		play(): NotificationSoundResult {
+		play(): NotificationSoundResult | Promise< NotificationSoundResult > {
 			if ( disposed ) {
 				return 'disposed';
 			}
@@ -87,36 +173,49 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 			if ( unavailableReason ) {
 				return unavailableReason;
 			}
-			if ( ! audioContext ) {
-				return 'not_activated';
-			}
-
 			const now = Date.now();
 			if ( lastPlayedAt !== undefined && now - lastPlayedAt < soundCooldownMs ) {
 				return 'cooldown';
 			}
-			lastPlayedAt = now;
-
-			try {
-				const oscillator = audioContext.createOscillator();
-				const gain = audioContext.createGain();
-				oscillator.type = 'sine';
-				oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
-				gain.gain.setValueAtTime( 0.2, audioContext.currentTime );
-				gain.gain.exponentialRampToValueAtTime(
-					0.001,
-					audioContext.currentTime + soundDurationSeconds
-				);
-				oscillator.connect( gain );
-				gain.connect( audioContext.destination );
-				oscillator.start();
-				oscillator.stop( audioContext.currentTime + soundDurationSeconds );
-			} catch ( error ) {
-				reportError( error, 'play' );
-				return 'failed';
+			if ( audioContext?.state !== 'running' && hasBeenActivated() ) {
+				activateAudio();
+				if ( unavailableReason ) {
+					return unavailableReason;
+				}
+			}
+			const context = audioContext;
+			if ( ! context || ( context.state !== 'running' && ! hasBeenActivated() ) ) {
+				return 'not_activated';
 			}
 
-			return 'played';
+			const previousLastPlayedAt = lastPlayedAt;
+			lastPlayedAt = now;
+			const finishPlayback = ( result: NotificationSoundResult ) => {
+				if ( lastPlayedAt === now ) {
+					lastPlayedAt = result === 'played' ? Date.now() : previousLastPlayedAt;
+				}
+				return result;
+			};
+
+			if ( context.state === 'running' ) {
+				return finishPlayback( playTone( context ) );
+			}
+
+			// The page was clicked but audio is still starting, so give it a moment.
+			return Promise.race( [
+				resuming,
+				new Promise< void >( ( resolve ) => setTimeout( resolve, resumeTimeoutMs ) ),
+			] )
+				.then( () => {
+					if ( disposed ) {
+						return 'disposed';
+					}
+					if ( document.hidden ) {
+						return 'hidden';
+					}
+					return context.state === 'running' ? playTone( context ) : 'not_activated';
+				} )
+				.then( finishPlayback );
 		},
 		dispose() {
 			if ( disposed ) {
@@ -124,6 +223,9 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 			}
 			disposed = true;
 			removeGestureListeners();
+			if ( audioContext ) {
+				audioContext.onstatechange = null;
+			}
 			if ( audioContext && audioContext.state !== 'closed' ) {
 				const context = audioContext;
 				settle( () => context.close(), 'close' );

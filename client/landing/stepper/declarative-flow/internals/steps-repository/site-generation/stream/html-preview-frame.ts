@@ -3,6 +3,7 @@ import { HTML_PREVIEW_RUNTIME } from './html-preview-runtime';
 export type PreviewFrameStatus =
 	| { v: 1; channel: string; type: 'ready' }
 	| { v: 1; channel: string; type: 'status'; homeReady: boolean }
+	| { v: 1; channel: string; type: 'tour'; title: string | null }
 	| { v: 1; channel: string; type: 'evicted' | 'rejected'; ids: string[] };
 
 function randomKey(): string {
@@ -54,6 +55,9 @@ export function isPreviewFrameStatus(
 		message.channel === channel &&
 		( message.type === 'ready' ||
 			( message.type === 'status' && typeof message.homeReady === 'boolean' ) ||
+			( message.type === 'tour' &&
+				( message.title === null ||
+					( typeof message.title === 'string' && message.title.length <= 100 ) ) ) ||
 			( ( message.type === 'evicted' || message.type === 'rejected' ) &&
 				Array.isArray( message.ids ) &&
 				message.ids.length <= 96 &&

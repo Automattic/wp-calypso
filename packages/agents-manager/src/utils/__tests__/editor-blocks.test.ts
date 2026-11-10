@@ -8,6 +8,7 @@ import {
 	getCurrentPost,
 	getPaletteColor,
 	getRootBlocks,
+	isTemplatePartLoaded,
 	openUndoLevel,
 	replaceRootBlocks,
 	resolveBlocksRoot,
@@ -295,5 +296,96 @@ describe( 'writes', () => {
 		clearBlockSelection();
 
 		expect( clearSelectedBlock ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'isTemplatePartLoaded', () => {
+	const PART_ID = 'assembler//footer';
+
+	function withPart( {
+		blocks = [],
+		attributes = { slug: 'footer', theme: 'assembler' },
+		resolved = true,
+		record,
+	}: {
+		blocks?: EditorBlock[];
+		attributes?: Record< string, unknown >;
+		resolved?: boolean;
+		record?: { blocks?: unknown[]; content?: unknown };
+	} ) {
+		const hasFinishedResolution = jest.fn( () => resolved );
+		const getEditedEntityRecord = jest.fn( () => record );
+
+		jest.mocked( select ).mockImplementation( ( store ) =>
+			store === 'core/block-editor'
+				? ( {
+						getBlocks: () => blocks,
+						getBlock: () => ( { ...block( 'footer', 'core/template-part' ), attributes } ),
+					} as never )
+				: ( {
+						getCurrentTheme: () => ( { stylesheet: 'assembler' } ),
+						hasFinishedResolution,
+						getEditedEntityRecord,
+					} as never )
+		);
+
+		return { hasFinishedResolution, getEditedEntityRecord };
+	}
+
+	it( 'holds once the part has blocks in the tree', () => {
+		withPart( { blocks: [ block( 'credit', 'core/paragraph' ) ], resolved: false } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( true );
+	} );
+
+	it( 'does not hold while the entity is resolving', () => {
+		const { hasFinishedResolution } = withPart( { resolved: false } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( false );
+		expect( hasFinishedResolution ).toHaveBeenCalledWith( 'getEditedEntityRecord', [
+			'postType',
+			'wp_template_part',
+			PART_ID,
+		] );
+	} );
+
+	it.each( [
+		{ case: 'saved with no content', record: { content: '' }, expected: true },
+		{ case: 'edited to no blocks', record: { blocks: [], content: () => '' }, expected: true },
+		{ case: 'missing', record: undefined, expected: true },
+		{ case: 'saved with no raw content', record: { content: { raw: '' } }, expected: true },
+		{
+			case: 'saved with raw blocks the tree does not hold yet',
+			record: { content: { raw: '<!-- wp:site-title /-->' } },
+			expected: false,
+		},
+		{
+			case: 'saved with blocks the tree does not hold yet',
+			record: { content: '<!-- wp:paragraph --><p>Credit</p><!-- /wp:paragraph -->' },
+			expected: false,
+		},
+		{
+			case: 'edited to blocks the tree does not hold yet',
+			record: { blocks: [ {} ] },
+			expected: false,
+		},
+	] )( 'reads a resolved part $case as loaded: $expected', ( { record, expected } ) => {
+		withPart( { record } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( expected );
+	} );
+
+	// Core's block keys the entity the same way.
+	it( 'keys a part that names no theme under the active one', () => {
+		const { getEditedEntityRecord } = withPart( { attributes: { slug: 'footer' }, record: {} } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( true );
+		expect( getEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_template_part', PART_ID );
+	} );
+
+	it( 'does not hold for a part with no slug', () => {
+		withPart( { attributes: {}, record: {} } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( false );
 	} );
 } );

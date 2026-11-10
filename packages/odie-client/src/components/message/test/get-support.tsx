@@ -41,6 +41,11 @@ jest.mock( '../../../data', () => ( {
 
 jest.mock( '../../../hooks', () => ( {
 	useCreateZendeskConversation: () => mockCreateZendeskConversation,
+	// Without a routing step, asking for a human starts the chat.
+	useRequestHumanSupport:
+		() =>
+		( { flags, ...request }: { flags: unknown; createdFrom: string } ) =>
+			mockCreateZendeskConversation( request ),
 } ) );
 
 jest.mock( '../../../hooks/use-open-interaction-status-map', () => ( {

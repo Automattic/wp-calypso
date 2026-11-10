@@ -9,7 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
-import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
+import { leaveDashboard } from '../../crossover/store';
 import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
@@ -22,6 +22,7 @@ import {
 	isPartnerLicense,
 	isPressableAddonLicense,
 	isPressableLicense,
+	isPressableTitanLicense,
 	isWpcomHostingLicense,
 } from './license-status';
 import RevokeLicenseModal from './revoke-license-modal';
@@ -129,7 +130,7 @@ export function getLicenseActions( {
 			label: __( 'Manage in Pressable' ),
 			isEligible: ( item ) =>
 				canAct( item ) && isPressableLicense( item ) && getLicenseStatus( item ) !== 'revoked',
-			callback: () => openExternal( PRESSABLE_AGENCY_URL ),
+			callback: () => leaveDashboard( 'pressable' ),
 		},
 		{
 			id: 'upgrade',
@@ -215,7 +216,8 @@ export function getLicenseActions( {
 			label: __( 'Revoke license' ),
 			// Referral licenses are paid for by the client, so the agency cannot revoke them.
 			isEligible: ( item ) => {
-				if ( ! canAct( item ) || ! canRevoke ) {
+				// Titan inboxes are cancelled in Pressable.
+				if ( ! canAct( item ) || ! canRevoke || isPressableTitanLicense( item ) ) {
 					return false;
 				}
 				// Classic gates a bundle on the capability alone.

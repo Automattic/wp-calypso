@@ -23,6 +23,7 @@ class EmailSignupTitanCard extends Component {
 		onAddButtonClick: PropTypes.func.isRequired,
 		onSkipButtonClick: PropTypes.func.isRequired,
 		product: PropTypes.object,
+		productSlug: PropTypes.string,
 		showChevron: PropTypes.bool,
 		skipButtonTitle: PropTypes.node.isRequired,
 	};
@@ -106,9 +107,9 @@ class EmailSignupTitanCard extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
 	const signupDependencies = getSignupDependencyStore( state );
-	const product = getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG );
+	const product = getProductBySlug( state, ownProps.productSlug ?? TITAN_MAIL_YEARLY_SLUG );
 	return {
 		signupDependencies,
 		product,

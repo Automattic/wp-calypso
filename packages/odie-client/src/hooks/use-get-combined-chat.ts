@@ -26,6 +26,22 @@ import {
 } from '../utils';
 import { useLoggedOutSession } from './use-logged-out-session';
 import type { Chat, Message } from '../types';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
+
+/**
+ * Adds the checkout support variation, as the Odie events recorded through the context do.
+ * @param properties - The event's properties.
+ * @param checkoutSupportVariation - Only set when support was opened from checkout in the experiment.
+ * @returns The properties, with the variation when there is one.
+ */
+function withCheckoutSupportVariation(
+	properties: Record< string, unknown >,
+	checkoutSupportVariation: CheckoutSupportVariation | undefined
+) {
+	return checkoutSupportVariation
+		? { ...properties, checkout_support_variation: checkoutSupportVariation }
+		: properties;
+}
 
 function isEqual( message1: Message, message2: Message ) {
 	const message1Id = getMessageUniqueIdentifier( message1 );
@@ -95,15 +111,22 @@ export const useGetCombinedChat = (
 	const hasEnTranslation = useHasEnTranslation();
 
 	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
-	const { isChatLoaded, connectionStatus, zendeskClientId } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { isChatLoaded, connectionStatus, zendeskClientId, checkoutSupportVariation } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-		return {
-			isChatLoaded: store.getIsChatLoaded(),
-			connectionStatus: store.getZendeskConnectionStatus(),
-			zendeskClientId: store.getZendeskClientId(),
-		};
-	}, [] );
+			return {
+				isChatLoaded: store.getIsChatLoaded(),
+				connectionStatus: store.getZendeskConnectionStatus(),
+				zendeskClientId: store.getZendeskClientId(),
+				checkoutSupportVariation: store.getCheckoutSupportVariation(),
+			};
+		},
+		[]
+	);
+	// Read when an event is recorded, so the effects below don't run again when it changes.
+	const checkoutSupportVariationRef = useRef( checkoutSupportVariation );
+	checkoutSupportVariationRef.current = checkoutSupportVariation;
 	const previousUuidRef = useRef< string | undefined >( undefined );
 	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
@@ -192,11 +215,17 @@ export const useGetCombinedChat = (
 			jwt: authData.jwt,
 		} )
 			.then( ( { messages, truncated } ) => {
-				recordTracksEvent( 'calypso_odie_zendesk_conversation_history_loaded', {
-					conversation_id: historyConversationId,
-					message_count: messages.length,
-					truncated,
-				} );
+				recordTracksEvent(
+					'calypso_odie_zendesk_conversation_history_loaded',
+					withCheckoutSupportVariation(
+						{
+							conversation_id: historyConversationId,
+							message_count: messages.length,
+							truncated,
+						},
+						checkoutSupportVariationRef.current
+					)
+				);
 				if ( messages.length ) {
 					setMainChatState( ( prevChat ) =>
 						prevChat.conversationId === historyConversationId
@@ -209,10 +238,16 @@ export const useGetCombinedChat = (
 				}
 			} )
 			.catch( ( error ) => {
-				recordTracksEvent( 'calypso_odie_zendesk_conversation_history_failed', {
-					conversation_id: historyConversationId,
-					error: error instanceof Error ? error.message : String( error ),
-				} );
+				recordTracksEvent(
+					'calypso_odie_zendesk_conversation_history_failed',
+					withCheckoutSupportVariation(
+						{
+							conversation_id: historyConversationId,
+							error: error instanceof Error ? error.message : String( error ),
+						},
+						checkoutSupportVariationRef.current
+					)
+				);
 			} )
 			.finally( () => {
 				if ( activeZendeskHistoryRequestIdRef.current === requestId ) {
@@ -329,11 +364,17 @@ export const useGetCombinedChat = (
 					}
 				} )
 				.catch( ( error ) => {
-					recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
-						conversation_id: conversationId,
-						odie_id: odieId,
-						error: error instanceof Error ? error.message : String( error ),
-					} );
+					recordTracksEvent(
+						'calypso_odie_zendesk_conversation_not_found',
+						withCheckoutSupportVariation(
+							{
+								conversation_id: conversationId,
+								odie_id: odieId,
+								error: error instanceof Error ? error.message : String( error ),
+							},
+							checkoutSupportVariationRef.current
+						)
+					);
 
 					// Leave the loading state, or this effect re-runs and fetches again, forever.
 					// Keep the conversation the chat already shows; otherwise show it with the

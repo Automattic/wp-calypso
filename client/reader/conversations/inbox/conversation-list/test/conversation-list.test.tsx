@@ -1,48 +1,71 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import {
+	adaptReadConversation,
+	adaptReadConversationOwnComment,
+	type OwnComment,
+} from 'calypso/reader/data/conversations';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationList } from '..';
-import { groupNotesByPost } from '../../group-notes';
-import { makeNote } from '../../test/helpers';
-import { filterConversations } from '../filter-conversations';
+import { makeConversation, makeOwnComment } from '../../test/helpers';
+import type { InboxItem } from '../list-item';
 import type { InboxTab } from '../tabs';
+import type { Density } from '../toolbar';
 
-const conversations = groupNotesByPost( [
-	makeNote( { id: 1, postId: 100, title: 'Unread post', commenter: 'Ana', read: 0 } ),
-	makeNote( { id: 2, postId: 100, title: 'Unread post', commenter: 'Bruno', read: 0 } ),
-	makeNote( { id: 3, postId: 200, title: 'Read post', commenter: 'Carla', read: 1 } ),
-] );
+const conversations = [
+	makeConversation( {
+		postId: 100,
+		title: 'Unread post',
+		commenters: [ 'Ana', 'Bruno' ],
+		unreadNoteIds: [ 1, 2 ],
+	} ),
+	makeConversation( { postId: 200, title: 'Read post', commenters: [ 'Carla' ] } ),
+].map( adaptReadConversation );
 
-function ControlledList( props: Partial< React.ComponentProps< typeof ConversationList > > ) {
+const ownComments = [
+	makeOwnComment( { postId: 300, commentId: 31, title: 'Commented post', newCommentCount: 3 } ),
+	makeOwnComment( { postId: 301, commentId: 32, title: 'Commented post', excerpt: 'Again' } ),
+].map( adaptReadConversationOwnComment );
+
+function ControlledList( {
+	comments = ownComments,
+	...props
+}: Partial< React.ComponentProps< typeof ConversationList > > & { comments?: OwnComment[] } ) {
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
-	const source = props.conversations ?? conversations;
+	const [ density, setDensity ] = useState< Density >( 'comfortable' );
+	const items: InboxItem[] = tab === 'yours' ? comments : ( props.items ?? conversations );
 	return (
 		<ConversationList
-			unreadCount={ source.reduce(
-				( total, { unreadNoteIds } ) => total + unreadNoteIds.length,
-				0
-			) }
+			unreadCount={ 2 }
 			isLoading={ false }
 			tab={ tab }
 			onTabChange={ setTab }
 			search={ search }
 			onSearchChange={ setSearch }
+			density={ density }
+			onDensityChange={ setDensity }
+			sort="newest"
+			onSortChange={ jest.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
+			openOnFocus
+			followFocus
+			markAllCount={ 2 }
+			onMarkAllRead={ jest.fn() }
 			onSelect={ jest.fn() }
 			{ ...props }
-			conversations={ filterConversations( source, tab, search ) }
+			items={ items }
 		/>
 	);
 }
 
-const renderList = ( props: Partial< React.ComponentProps< typeof ConversationList > > = {} ) => {
+const renderList = ( props: React.ComponentProps< typeof ControlledList > = {} ) => {
 	const onSelect = jest.fn();
 	const { rerender } = renderWithProvider( <ControlledList onSelect={ onSelect } { ...props } /> );
 	return {
@@ -77,39 +100,58 @@ describe( 'ConversationList', () => {
 		expect( item ).toHaveTextContent( '2 new' );
 	} );
 
-	it( 'shows only conversations with unread notes on the Unread tab', async () => {
-		const user = userEvent.setup();
-		renderList();
-
-		await user.click( screen.getByRole( 'tab', { name: /Unread/ } ) );
-
-		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /^Read post/ } ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'shows the total unread count on the Unread tab', () => {
 		renderList();
 
 		expect( screen.getByRole( 'tab', { name: /Unread/ } ) ).toHaveTextContent( '2' );
 	} );
 
-	it( 'shows an empty state on the Your comments tab', async () => {
+	it( 'lists your comments on the Your comments tab', async () => {
 		const user = userEvent.setup();
-		renderList();
+		const { onSelect } = renderList();
 
 		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
-		expect( screen.getByText( 'Conversations you commented on will show up here.' ) ).toBeVisible();
+		const rows = screen.getAllByRole( 'button', { name: /^Commented post/ } );
+		expect( rows ).toHaveLength( 2 );
+		expect( rows[ 0 ] ).not.toHaveTextContent( 'You commented' );
+		expect( rows[ 0 ] ).toHaveTextContent( 'My comment' );
+		expect( rows[ 0 ] ).toHaveTextContent( '3 new' );
+		expect( rows[ 0 ] ).not.toHaveClass( 'is-unread' );
+		expect( rows[ 1 ] ).not.toHaveTextContent( 'new' );
+
+		await user.click( rows[ 1 ] );
+
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 301, commentId: 32 } ),
+			'click'
+		);
 	} );
 
-	it( 'filters conversations by search term', async () => {
+	it( 'shows an empty state on the Your comments tab', async () => {
 		const user = userEvent.setup();
-		renderList();
+		renderList( { comments: [] } );
 
-		await user.type( screen.getByRole( 'searchbox' ), 'unread' );
+		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
-		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /^Read post/ } ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'You haven’t commented anywhere yet' ) ).toBeVisible();
+	} );
+
+	it( 'waits for the next page instead of showing an empty state', () => {
+		renderList( { items: [], hasMore: true } );
+
+		expect( screen.queryByText( 'Conversations will appear here' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'retries a page that failed to load', async () => {
+		const user = userEvent.setup();
+		const onLoadMore = jest.fn();
+		renderList( { hasMore: true, isLoadMoreError: true, onLoadMore } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );
+
+		expect( screen.getByText( 'Couldn’t load more.' ) ).toBeVisible();
+		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'selects a conversation on click', async () => {
@@ -119,7 +161,7 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
 
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
-		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
+		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ), 'click' );
 	} );
 
 	it( 'shows the new count only on conversations with unread notes', () => {
@@ -141,23 +183,10 @@ describe( 'ConversationList', () => {
 		);
 	} );
 
-	it( 'shows filter and settings as disabled until they are built', () => {
-		renderList();
-
-		expect( screen.getByRole( 'button', { name: 'Filters are coming soon' } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
-		);
-		expect( screen.getByRole( 'button', { name: 'Settings are coming soon' } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
-		);
-	} );
-
 	it( 'shows an empty state when there are no conversations', () => {
-		renderList( { conversations: [] } );
+		renderList( { items: [] } );
 
-		expect( screen.getByText( 'No conversations yet.' ) ).toBeVisible();
+		expect( screen.getByText( 'Conversations will appear here' ) ).toBeVisible();
 	} );
 
 	it( 'lists the keyboard shortcuts from the header button', async () => {
@@ -195,6 +224,34 @@ describe( 'ConversationList', () => {
 		expect( screen.getByRole( 'searchbox' ) ).toHaveFocus();
 	} );
 
+	it( 'does not take the focus when the inbox selects a conversation itself', () => {
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key, followFocus: false } );
+
+		rerender( { selectedKey: conversations[ 1 ].key, followFocus: false } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveFocus();
+	} );
+
+	it( 'keeps the focus in the list when a tab switch remounts it', () => {
+		const { rerender } = renderList( { tab: 'all' } );
+
+		screen.getByRole( 'button', { name: /^Read post/ } ).focus();
+		rerender( { tab: 'unread' } );
+
+		expect( document.querySelector( '.conversations-inbox__list' ) ).toHaveFocus();
+	} );
+
+	it( 'leaves the focus alone on a tab switch when the list no longer had it', () => {
+		const { rerender } = renderList( { tab: 'all' } );
+
+		const row = screen.getByRole( 'button', { name: /^Read post/ } );
+		row.focus();
+		row.blur();
+		rerender( { tab: 'unread' } );
+
+		expect( document.body ).toHaveFocus();
+	} );
+
 	it( 'does not take the focus on the first render', () => {
 		renderList( { selectedKey: conversations[ 1 ].key } );
 
@@ -210,6 +267,63 @@ describe( 'ConversationList', () => {
 		await user.tab();
 
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
-		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 200 } ),
+			'tab_key'
+		);
+	} );
+
+	it( 'leaves Tab alone when rows do not open on focus', async () => {
+		const user = userEvent.setup();
+		const { onSelect } = renderList( { openOnFocus: false } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Unread post/ } ) );
+		onSelect.mockClear();
+		await user.tab();
+
+		expect( onSelect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports Tab, not click, after a click that did not focus the row', async () => {
+		const user = userEvent.setup();
+		const readPost = conversations.find( ( { postId } ) => postId === 200 );
+		const { onSelect } = renderList( { selectedKey: readPost?.key } );
+		const unreadRow = screen.getByRole( 'button', { name: /^Unread post/ } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
+		// Safari doesn't focus a button on click, and userEvent always does.
+		fireEvent.pointerDown( unreadRow );
+		fireEvent.click( unreadRow );
+		onSelect.mockClear();
+		await user.tab( { shift: true } );
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 100 } ),
+			'tab_key'
+		);
+	} );
+
+	it( 'reports Tab, not click, after a press dragged off the row that has focus', async () => {
+		const user = userEvent.setup();
+		const readPost = conversations.find( ( { postId } ) => postId === 200 );
+		const { onSelect } = renderList( { selectedKey: readPost?.key } );
+		const unreadRow = screen.getByRole( 'button', { name: /^Unread post/ } );
+
+		await user.click( unreadRow );
+		await user.pointer( [
+			{ keys: '[MouseLeft>]', target: unreadRow },
+			{ target: document.body },
+			{ keys: '[/MouseLeft]' },
+		] );
+		await user.tab();
+		onSelect.mockClear();
+		await user.tab( { shift: true } );
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 100 } ),
+			'tab_key'
+		);
 	} );
 } );

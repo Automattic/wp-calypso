@@ -3,13 +3,20 @@ import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
 import { HandleEmailedLinkForm } from '../handle-emailed-link-form';
 
+const mockIsWebAuthnSupported = jest.fn();
+
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '../emailed-login-link-expired', () => () => null );
+jest.mock( 'calypso/lib/webauthn', () => ( {
+	...jest.requireActual( 'calypso/lib/webauthn' ),
+	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
+} ) );
 
 // The two-factor-challenge fields the auth thunk dispatches via LOGIN_REQUEST_SUCCESS.
 const TWO_FACTOR_PROPS = {
 	twoFactorEnabled: true,
 	twoFactorNotificationSent: 'none',
+	twoFactorSupportedAuthTypes: [ 'authenticator', 'backup' ],
 };
 
 function buildInstance( props = {} ) {
@@ -20,6 +27,7 @@ function buildInstance( props = {} ) {
 		// `twoFactorEnabled` is still false on the committed props.
 		twoFactorEnabled: false,
 		twoFactorNotificationSent: null,
+		twoFactorSupportedAuthTypes: null,
 		redirectToSanitized: null,
 		oauth2Client: {},
 		wccomFrom: undefined,
@@ -36,6 +44,46 @@ function buildInstance( props = {} ) {
 describe( 'HandleEmailedLinkForm 2FA handoff', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsWebAuthnSupported.mockReturnValue( false );
+	} );
+
+	it( 'routes a passkey account to the security key prompt when the browser supports WebAuthn', () => {
+		mockIsWebAuthnSupported.mockReturnValue( true );
+		const instance = buildInstance();
+
+		instance.UNSAFE_componentWillUpdate(
+			{
+				...instance.props,
+				...TWO_FACTOR_PROPS,
+				twoFactorSupportedAuthTypes: [ 'webauthn', 'authenticator', 'backup' ],
+				isAuthenticated: true,
+				isFetching: false,
+				authError: null,
+			},
+			{ hasSubmitted: true, isRedirecting: false }
+		);
+
+		expect( page ).toHaveBeenCalledWith( '/log-in/webauthn' );
+	} );
+
+	it( 'routes a passkey account without an authenticator app to the backup code prompt when the browser lacks WebAuthn', () => {
+		// The server issues no authenticator nonce for this account, so the authenticator
+		// prompt would reject every code.
+		const instance = buildInstance();
+
+		instance.UNSAFE_componentWillUpdate(
+			{
+				...instance.props,
+				...TWO_FACTOR_PROPS,
+				twoFactorSupportedAuthTypes: [ 'webauthn', 'backup' ],
+				isAuthenticated: true,
+				isFetching: false,
+				authError: null,
+			},
+			{ hasSubmitted: true, isRedirecting: false }
+		);
+
+		expect( page ).toHaveBeenCalledWith( '/log-in/backup' );
 	} );
 
 	it( 'routes an authenticator-2FA account to the authenticator prompt using nextProps', () => {

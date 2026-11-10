@@ -1,10 +1,25 @@
 body.is-reader-page .main.conversations-inbox-main {
 	max-width: none;
+	height: 100%;
 	margin: 0;
+	// The layout pads the bottom of `.main` below 1400px for the floating help
+	// button, which would leave a gap under the inbox's own scrolling panes.
+	padding-bottom: 0;
+}
+
+// The Reader reserves a scrollbar slot on its content card, but the inbox
+// scrolls inside its panes, so the slot would only leave a gap.
+.is-section-reader
+	.layout.is-global-sidebar-visible.is-group-reader
+	.layout__content
+	.layout__primary
+	> div:has( > .main.conversations-inbox-main ) {
+	scrollbar-gutter: auto;
 }
 
 .conversations-inbox {
-	height: calc( 100vh - var( --masterbar-height, 46px ) - 34px );
+	// Fills the Reader's content card, which sizes itself to the viewport.
+	height: 100%;
 	background: var( --color-surface );
 	color: var( --color-text );
 	overflow: hidden;

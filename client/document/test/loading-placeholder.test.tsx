@@ -31,7 +31,6 @@ const baseProps: DocumentProps = {
 	},
 	env: 'development',
 	featuresHelper: false,
-	feedbackURL: '',
 	head: { title: 'Test', metas: [], links: [] },
 	i18nLocaleScript: '',
 	initialQueryState: null,
@@ -108,7 +107,6 @@ describe( 'Document RTL CSS handling', () => {
 			<Document
 				{ ...baseProps }
 				badge="dev"
-				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
 				lang="ar"
 				entrypoint={ {
 					...baseProps.entrypoint,
@@ -131,7 +129,6 @@ describe( 'Document RTL CSS handling', () => {
 			<Document
 				{ ...baseProps }
 				badge="dev"
-				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
 				lang="ar"
 				entrypoint={ {
 					...baseProps.entrypoint,
@@ -150,13 +147,7 @@ describe( 'Document RTL CSS handling', () => {
 	it( 'renders the helper in LTR dev mode so it can appear after a runtime RTL switch', () => {
 		delete process.env.BUILD_RTL_CSS;
 
-		const html = renderToStaticMarkup(
-			<Document
-				{ ...baseProps }
-				badge="dev"
-				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
-			/>
-		);
+		const html = renderToStaticMarkup( <Document { ...baseProps } badge="dev" /> );
 
 		expect( html ).toContain( 'var RTL_CSS_ENABLED = false' );
 		expect( html ).toContain( 'RTLCSS off: set BUILD_RTL_CSS=true' );

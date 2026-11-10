@@ -86,7 +86,7 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 	const isVisible = hasBeenOverLimit || hasRequestedMediaHandoff;
 
 	const { data: sites } = useQuery( {
-		...sitesQuery( 'all' ),
+		...sitesQuery(),
 		enabled: isVisible,
 	} );
 

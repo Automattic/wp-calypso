@@ -1,6 +1,7 @@
 import './style.scss';
 
 import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,7 +13,7 @@ import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
-import { getDowngradeTargetProductName } from '../../utils/downgrade-target-name';
+import { getScheduledChangeTargetName } from '../../utils/downgrade-target-name';
 import {
 	EXPIRY_ERROR_DAYS,
 	EXPIRY_WARNING_DAYS,
@@ -177,6 +178,7 @@ export function PurchaseExpiryStatus( {
 	isSiteMissing?: boolean;
 } ) {
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const { setShowHelpCenter } = useHelpCenter();
 
 	if (
@@ -249,7 +251,7 @@ export function PurchaseExpiryStatus( {
 		return getInAppPurchaseText( <a href={ purchase.iap_purchase_management_link } /> );
 	}
 
-	const status = describePurchaseExpiry( purchase, locale );
+	const status = describePurchaseExpiry( purchase, locale, hasEnTranslation );
 	return isUrgentExpiry( status ) ? (
 		<UrgentExpiryStatus purchase={ purchase } { ...status } />
 	) : (
@@ -261,8 +263,12 @@ export function PurchaseExpiryStatus( {
  * What a purchase's expiry status says, with no links, for a caller that is itself
  * a link to the purchase. `PurchaseExpiryStatus` adds the links the purchases list offers.
  */
-export function getPurchaseExpiryStatusText( purchase: Purchase, locale: string ) {
-	const status = describePurchaseExpiry( purchase, locale );
+export function getPurchaseExpiryStatusText(
+	purchase: Purchase,
+	locale: string,
+	hasEnTranslation: ( single: string ) => boolean
+) {
+	const status = describePurchaseExpiry( purchase, locale, hasEnTranslation );
 	return isUrgentExpiry( status ) ? (
 		<UrgentExpiryText purchase={ purchase } { ...status } />
 	) : (
@@ -297,7 +303,8 @@ function getInAppPurchaseText( managePurchase: React.JSX.Element ) {
 
 function describePurchaseExpiry(
 	purchase: Purchase,
-	locale: string
+	locale: string,
+	hasEnTranslation: ( single: string ) => boolean
 ): React.ReactNode | UrgentExpiry {
 	// @todo: There isn't currently a way to get the taxName based on the
 	// country. The country is not included in the purchase information
@@ -403,9 +410,7 @@ function describePurchaseExpiry(
 	// renew at its current price — it changes to a lower-tier plan. Say so instead
 	// of the usual "Renews ... on <date>" line.
 	if ( isRenewingOnDate && purchase.is_delayed_downgrade_pending ) {
-		const targetPlanName = getDowngradeTargetProductName(
-			purchase.delayed_downgrade_to_product_slug
-		);
+		const targetPlanName = getScheduledChangeTargetName( purchase, hasEnTranslation );
 		const renewalDate = formatDate( new Date( purchase.renew_date ?? '' ), locale, {
 			dateStyle: 'long',
 		} );

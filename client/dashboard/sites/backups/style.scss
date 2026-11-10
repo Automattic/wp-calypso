@@ -11,6 +11,10 @@
 
 .dashboard-backups__progress-bar{
 	--wp-components-color-foreground: var(--wp-admin-theme-color);
+	// Progress paints its indicator and track with these tokens; mix them from the
+	// foreground color, as ProgressBar did before.
+	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }
 
 .backup-details__file-browser {

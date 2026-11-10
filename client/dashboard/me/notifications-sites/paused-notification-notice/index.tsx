@@ -1,8 +1,7 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import Notice from '../../../components/notice';
+import Notice, { RouterNoticeActionLink } from '../../../components/notice';
 
 export const PausedNotificationNotice = () => {
 	const { data: settings } = useQuery( userSettingsQuery() );
@@ -14,7 +13,11 @@ export const PausedNotificationNotice = () => {
 
 	return (
 		<Notice
-			actions={ <Link to="/me/notifications/emails">{ __( 'Update email preferences' ) }</Link> }
+			actions={
+				<RouterNoticeActionLink to="/me/notifications/emails">
+					{ __( 'Update email preferences' ) }
+				</RouterNoticeActionLink>
+			}
 			variant="warning"
 			title={ __( 'Email updates are turned off until you change your settings' ) }
 		>

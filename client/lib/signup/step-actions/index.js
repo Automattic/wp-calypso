@@ -33,6 +33,7 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
+import { getTitanEmailItem, isTitanTier } from 'calypso/signup/steps/emails/titan-email-item';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	buildDIFMCartExtrasObject,
@@ -617,8 +618,13 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug } = dependencies;
+	const { domainItem, siteSlug } = dependencies;
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
+	// A skipped mailbox step isn't revisited, so its email item can predate a later domain change.
+	const emailItem =
+		dependencies.emailItem && domainItem?.meta
+			? { ...dependencies.emailItem, meta: domainItem.meta }
+			: dependencies.emailItem;
 	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		setTimeout( callback, 0 );
@@ -729,15 +735,6 @@ function addPrivacyProtectionIfSupported( item, state ) {
 	}
 
 	return item;
-}
-
-export function launchSiteApi( callback, dependencies ) {
-	const { siteSlug } = dependencies;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/launch` )
-		.then( () => callback( null ) )
-		.catch( ( error ) => callback( error ) );
 }
 
 export function createAccount(
@@ -923,39 +920,22 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
-	let fulfilledDependencies = [];
-	const domainItem = undefined;
-	const domainCart = undefined;
+/**
+ * Skips the mailbox step when the entry URL already picked a Titan tier, adding
+ * that tier to the cart instead.
+ */
+export function isMailboxFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { signupDependencies, submitSignupStep } = nextProps;
+	const { domainItem, tier, billing } = signupDependencies ?? {};
 
-	submitSignupStep( { stepName, domainItem, wasSkipped: true }, { domainItem, domainCart } );
-	recordExcludeStepEvent( stepName, tracksEventValue );
-
-	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-	}
-}
-
-export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep, flowName } = nextProps;
-
-	// Prevent duplicate processing for launch-site flow's domains-launch step
-	if (
-		flowName === 'launch-site' &&
-		stepName === 'domains-launch' &&
-		flows.excludedSteps.includes( stepName )
-	) {
+	if ( ! isTitanTier( tier ) || flows.excludedSteps.includes( stepName ) ) {
 		return;
 	}
 
-	const customDomains = siteDomains?.filter( ( siteDomain ) => ! siteDomain.isWPCOMDomain ) ?? [];
-
-	if ( customDomains.length > 0 ) {
-		const tracksEventValue = customDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
-		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
-	}
+	const emailItem = getTitanEmailItem( domainItem.meta, tier, billing );
+	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { domainItem, emailItem } );
+	recordExcludeStepEvent( stepName, emailItem.product_slug );
+	flows.excludeStep( stepName );
 }
 
 const FREE_TRIAL_PLAN_SLUGS = [

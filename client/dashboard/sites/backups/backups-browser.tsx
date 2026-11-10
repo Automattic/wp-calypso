@@ -18,15 +18,11 @@ export function useBackupsBrowserState( {
 	site,
 	rewindId,
 	dateRange,
-	timezoneString,
-	gmtOffset,
 	enabled,
 }: {
 	site: Site;
 	rewindId?: string;
 	dateRange?: { start: Date; end: Date };
-	timezoneString?: string;
-	gmtOffset?: number;
 	enabled?: boolean;
 } ) {
 	const isSmallViewport = useIsBackupsSmallViewport();
@@ -34,8 +30,6 @@ export function useBackupsBrowserState( {
 	const { activityLog, isLoadingActivityLog } = useActivityLog( {
 		siteId: site.ID,
 		dateRange,
-		gmtOffset,
-		timezoneString,
 		enabled,
 	} );
 

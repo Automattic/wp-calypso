@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Button, ExternalLink } from '@wordpress/components';
-import Notice from './index';
+import { ExternalLink } from '@wordpress/components';
+import Notice, { NoticeActionButton, NoticeActionLink } from './index';
 
 const meta: Meta< typeof Notice > = {
 	title: 'client/dashboard/Notice',
@@ -24,9 +24,9 @@ const defaultArgs = {
 	),
 	actions: (
 		<>
-			<Button variant="primary">Label</Button>
-			<Button variant="secondary">Label</Button>
-			<Button variant="link">Label</Button>
+			<NoticeActionButton variant="solid">Label</NoticeActionButton>
+			<NoticeActionButton variant="outline">Label</NoticeActionButton>
+			<NoticeActionLink href="#">Label</NoticeActionLink>
 		</>
 	),
 };
@@ -62,27 +62,6 @@ export const Error: Story = {
 	args: {
 		...defaultArgs,
 		variant: 'error',
-	},
-};
-
-export const LowDensity: Story = {
-	args: {
-		...defaultArgs,
-		density: 'low',
-	},
-};
-
-export const MediumDensity: Story = {
-	args: {
-		...defaultArgs,
-		density: 'medium',
-	},
-};
-
-export const HighDensity: Story = {
-	args: {
-		...defaultArgs,
-		density: 'high',
 	},
 };
 

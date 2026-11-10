@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack, ToggleControl } from '@wordpress/compon
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { ApprovalGate } from '../approval-gate';
 import {
 	HOSTING_REFERRAL_COMMISSION_PERCENTAGE,
 	PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE,
@@ -11,24 +12,19 @@ import {
 import { useReferralToggle } from './use-referral-toggle';
 
 export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting' } ) {
-	const { checked, disabled, onChange } = useReferralToggle();
+	const { checked, disabled, onChange, isGateOpen, closeGate } = useReferralToggle();
 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
 	const isMobile = useViewportMatch( 'mobile', '<' );
-	// Shown until the agency's first referral, in both modes, so the header doesn't shift on toggle.
+	// Only in referral mode, so buy mode keeps no empty space beside the switch. It sits before
+	// the switch, so in a right-aligned header it grows away from the switch and the cart.
 	// Phones have no room for it beside the switch.
-	const showEarnings = ! isMobile && referrals?.length === 0;
+	const showEarnings = checked && ! isMobile && referrals?.length === 0;
 
 	return (
 		<HStack spacing={ 2 } expanded={ false } alignment="center">
-			<ToggleControl
-				__nextHasNoMarginBottom
-				checked={ checked }
-				disabled={ disabled }
-				label={ __( 'Refer to clients' ) }
-				onChange={ onChange }
-			/>
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ closeGate } /> }
 			{ showEarnings && (
 				<Badge intent="informational">
 					{ kind === 'hosting'
@@ -44,6 +40,13 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 							) }
 				</Badge>
 			) }
+			<ToggleControl
+				__nextHasNoMarginBottom
+				checked={ checked }
+				disabled={ disabled }
+				label={ __( 'Refer to clients' ) }
+				onChange={ onChange }
+			/>
 		</HStack>
 	);
 }

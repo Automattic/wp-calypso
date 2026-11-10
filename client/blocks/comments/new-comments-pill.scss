@@ -1,0 +1,8 @@
+@import '@wordpress/base-styles/variables';
+
+.comments__new-comments-pill.components-button {
+	position: sticky;
+	inset-block-end: $grid-unit-20;
+	align-self: center;
+	border-radius: $radius-full;
+}

@@ -4,7 +4,11 @@ import {
 	AgencyLeadMatchingResponse,
 	LeadMatchingDetails,
 } from '../../types';
-import { mapLeadMatchingDetailsToProfile } from '../../utils/map-application-form-data';
+import {
+	createDefaultLeadMatchingDetails,
+	mapLeadMatchingDetailsToProfile,
+	mapLeadMatchingProfileToFormData,
+} from '../../utils/map-application-form-data';
 import { SubmitSource } from './use-submit-form';
 
 export type SaveStatus = 'idle' | 'unsaved' | 'saving' | 'saved' | 'error';
@@ -30,7 +34,9 @@ type DraftState = {
 	snapshot: string;
 };
 
-const isSuccessfulResponse = ( response?: AgencyLeadMatchingResponse ) =>
+const isSuccessfulResponse = (
+	response?: AgencyLeadMatchingResponse
+): response is AgencyLeadMatchingResponse =>
 	!! response?.lead_matching_profile && response.sync?.status !== 'failed';
 
 const getProfileSnapshot = ( profile: AgencyLeadMatchingProfile ) => {
@@ -54,14 +60,19 @@ export default function useLeadMatchingSaveState( {
 		[ formData, profile ]
 	);
 	const [ saveStatus, setSaveStatus ] = useState< SaveStatus >( 'idle' );
-	const [ lastSavedSnapshot, setLastSavedSnapshot ] = useState( currentSnapshot );
+	const [ lastSavedSnapshot, setLastSavedSnapshot ] = useState( () =>
+		getPayloadSnapshot(
+			mapLeadMatchingProfileToFormData( profile ) ?? createDefaultLeadMatchingDetails(),
+			profile
+		)
+	);
 	const latestDraftRef = useRef< DraftState >( {
 		formData,
 		profile,
 		acceptingWork,
 		snapshot: currentSnapshot,
 	} );
-	const lastSavedSnapshotRef = useRef( currentSnapshot );
+	const lastSavedSnapshotRef = useRef( lastSavedSnapshot );
 	const isSavingRef = useRef( false );
 	const isMountedRef = useRef( true );
 
@@ -103,11 +114,15 @@ export default function useLeadMatchingSaveState( {
 			} );
 
 			if ( isSuccessfulResponse( response ) ) {
-				const savedSnapshot = snapshot;
+				const savedSnapshot = getPayloadSnapshot(
+					mapLeadMatchingProfileToFormData( response.lead_matching_profile ) ??
+						createDefaultLeadMatchingDetails(),
+					response.lead_matching_profile
+				);
 				lastSavedSnapshotRef.current = savedSnapshot;
 				if ( isMountedRef.current ) {
 					setLastSavedSnapshot( savedSnapshot );
-					setSaveStatus( 'saved' );
+					setSaveStatus( response.ignored_contact_fields?.length ? 'unsaved' : 'saved' );
 				}
 			} else if ( isMountedRef.current ) {
 				setSaveStatus( 'error' );

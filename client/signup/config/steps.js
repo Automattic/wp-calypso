@@ -5,10 +5,8 @@ import {
 	createAccount,
 	createSiteOrDomain,
 	createSiteWithCart,
-	addDomainToCart,
-	launchSiteApi,
 	isPlanFulfilled,
-	isDomainFulfilled,
+	isMailboxFulfilled,
 	createSiteAndAddDIFMToCart,
 	submitWebsiteContent,
 } from 'calypso/lib/signup/step-actions';
@@ -21,10 +19,8 @@ export default generateSteps( {
 	createAccount,
 	createSiteOrDomain,
 	createSiteWithCart,
-	addDomainToCart,
-	launchSiteApi,
 	isPlanFulfilled,
-	isDomainFulfilled,
+	isMailboxFulfilled,
 	createSiteAndAddDIFMToCart,
 	submitWebsiteContent,
 } );

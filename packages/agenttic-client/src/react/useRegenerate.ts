@@ -6,14 +6,9 @@ import {
 	getLatestRegeneratableAgentMessageId,
 	getRegenerateRequest,
 } from './regenerate';
-import type {
-	AgentChatState,
-	InternalSubmitOptions,
-	SubmitOptions,
-	UIMessage,
-} from './useAgentChat';
+import type { LiveChat } from './liveChat';
+import type { InternalSubmitOptions, SubmitOptions, UIMessage } from './useAgentChat';
 import type { Message as ClientMessage } from '../client/types/index';
-import type { MutableRefObject } from 'react';
 
 // The subset of `useAgentChat`'s send function that regenerate relies on:
 // the same signature, including the internal options used to rewind history
@@ -27,10 +22,8 @@ type SendMessage = (
 interface UseRegenerateParams {
 	agentId: string;
 	isValidConfig: boolean;
-	// Guards against starting a regenerate while another send is in flight.
-	isSendingRef: MutableRefObject< boolean >;
-	// Latest chat state, read without re-creating the callbacks each render.
-	stateRef: MutableRefObject< AgentChatState >;
+	// The chat's send lock and latest state, read when a handler runs.
+	getLiveChat: () => LiveChat;
 	transformMessages: ( messages: ClientMessage[] ) => UIMessage[];
 	sendMessage: SendMessage;
 }
@@ -51,8 +44,7 @@ interface UseRegenerateReturn {
  * @param root0                   - Dependencies supplied by `useAgentChat`
  * @param root0.agentId           - Identifier of the active agent
  * @param root0.isValidConfig     - Whether the agent configuration is valid
- * @param root0.isSendingRef      - Ref guarding against concurrent sends
- * @param root0.stateRef          - Ref holding the latest chat state
+ * @param root0.getLiveChat       - Returns the chat's send lock and latest state
  * @param root0.transformMessages - Converts client messages to UI messages
  * @param root0.sendMessage       - The hook's guarded send function
  * @returns Regenerate handler accessor for the chat
@@ -60,14 +52,13 @@ interface UseRegenerateReturn {
 export function useRegenerate( {
 	agentId,
 	isValidConfig,
-	isSendingRef,
-	stateRef,
+	getLiveChat,
 	transformMessages,
 	sendMessage,
 }: UseRegenerateParams ): UseRegenerateReturn {
 	const handleRegenerateActionClick = useCallback(
 		async ( message?: UIMessage ) => {
-			if ( ! isValidConfig || isSendingRef.current ) {
+			if ( ! isValidConfig || getLiveChat().isSending ) {
 				return;
 			}
 
@@ -88,7 +79,7 @@ export function useRegenerate( {
 
 			const restoreOnError = {
 				clientMessages: currentClientMessages,
-				uiMessages: stateRef.current.uiMessages,
+				uiMessages: getLiveChat().state.uiMessages,
 			};
 			const initialUiMessages = transformMessages( regenerateRequest.baseHistory );
 
@@ -111,12 +102,12 @@ export function useRegenerate( {
 				logger( 'Regenerate failed; conversation restored', error );
 			}
 		},
-		[ agentId, isSendingRef, isValidConfig, sendMessage, stateRef, transformMessages ]
+		[ agentId, getLiveChat, isValidConfig, sendMessage, transformMessages ]
 	);
 
 	const getRegenerateHandler = useCallback(
 		( message?: UIMessage ): ( () => Promise< void > ) | null => {
-			const currentState = stateRef.current;
+			const currentState = getLiveChat().state;
 			const agentManager = getAgentManager();
 			const currentClientMessages = agentManager.hasAgent( agentId )
 				? agentManager.getConversationHistory( agentId )
@@ -135,7 +126,7 @@ export function useRegenerate( {
 
 			return () => handleRegenerateActionClick( message );
 		},
-		[ agentId, handleRegenerateActionClick, isValidConfig, stateRef ]
+		[ agentId, getLiveChat, handleRegenerateActionClick, isValidConfig ]
 	);
 
 	return { getRegenerateHandler };

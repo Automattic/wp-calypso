@@ -34,7 +34,7 @@ interface PartnerDirectoryExpertiseAgency {
 	profile?: AgencyProfile | null;
 }
 
-interface Props {
+interface PartnerDirectoryExpertiseContentProps {
 	agency: PartnerDirectoryExpertiseAgency;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	/** Where the Cancel button and the not-submitted state lead back to. */
@@ -58,7 +58,7 @@ export default function PartnerDirectoryExpertiseContent( {
 	onSubmitSuccess,
 	onSubmitError,
 	shouldUseRouterLink,
-}: Props ) {
+}: PartnerDirectoryExpertiseContentProps ) {
 	const initialFormData = getExpertiseFormData( agency.profile );
 	const hasApplication = initialFormData !== null;
 

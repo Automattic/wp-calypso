@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
+import { setCheckpoint } from '../../utils/checkpoints';
 import ButtonPicker from '../button-picker';
 
 // Mock VariationPicker to capture props without deep `@wordpress/components` chain.
@@ -21,6 +22,13 @@ jest.mock( '../variation-picker', () => {
 	MockVariationPicker.displayName = 'MockVariationPicker';
 	return MockVariationPicker;
 } );
+
+jest.mock( '../../utils/checkpoints', () => ( {
+	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	clearCheckpoint: jest.fn(),
+	hasCheckpoint: jest.fn(),
+	setCheckpoint: jest.fn(),
+} ) );
 
 let mockGlobalStyles: Record< string, unknown > | null = null;
 jest.mock( '../../hooks/use-global-styles', () => ( {
@@ -84,6 +92,20 @@ describe( 'ButtonPicker', () => {
 		expect( picker ).toHaveAttribute( 'data-count', '2' );
 		expect( picker ).toHaveAttribute( 'data-type', 'button' );
 		expect( picker ).toHaveAttribute( 'data-max', '12' );
+	} );
+
+	it( 'checkpoints its first pick under its surface, and disables its cards with it', () => {
+		const { rerender } = render( <ButtonPicker { ...defaultProps } surfaceId="buttons-1" /> );
+
+		act( () =>
+			( mockLastPickerProps?.onSelect as ( variation: unknown ) => void )(
+				defaultProps.buttonVariations[ 0 ]
+			)
+		);
+		expect( setCheckpoint ).toHaveBeenCalledWith( 'buttons-1', [ 'button' ], expect.any( Object ) );
+
+		rerender( <ButtonPicker { ...defaultProps } surfaceId="buttons-1" disabled /> );
+		expect( mockLastPickerProps?.disabled ).toBe( true );
 	} );
 
 	it( 'renders null when no variations', () => {

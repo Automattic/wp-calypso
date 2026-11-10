@@ -10,7 +10,7 @@ import { Badge } from '@wordpress/ui';
 import { useIntlLocale } from '../../app/locale';
 import type { ConnectedApplication } from '@automattic/api-core';
 
-interface Props {
+interface ApplicationDetailsModalProps {
 	application: ConnectedApplication;
 	onClose: () => void;
 }
@@ -61,7 +61,10 @@ const DetailItem = ( { label, value }: { label: string; value: React.ReactNode }
 	);
 };
 
-export default function ApplicationDetailsModal( { application, onClose }: Props ) {
+export default function ApplicationDetailsModal( {
+	application,
+	onClose,
+}: ApplicationDetailsModalProps ) {
 	const userLocale = useIntlLocale();
 
 	const siteObj =

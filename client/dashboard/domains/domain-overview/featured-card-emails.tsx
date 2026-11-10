@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { emailsRoute, chooseEmailSolutionRoute } from '../../app/router/emails';
 import OverviewCard from '../../components/overview-card';
+import { useTrackOverviewItem } from './use-track-overview-item';
 import type { EmailProvider } from '@automattic/api-core';
 
 interface DomainMailbox {
@@ -48,12 +49,13 @@ const getDescription = ( mailboxes: DomainMailbox[] ) => {
 		: getAccountTypeLabel( mailboxes[ 0 ].accountType );
 };
 
-interface Props {
+interface FeaturedCardEmailsProps {
 	domain: Domain;
 }
 
-export default function FeaturedCardEmails( { domain }: Props ) {
+export default function FeaturedCardEmails( { domain }: FeaturedCardEmailsProps ) {
 	const router = useRouter();
+	const trackItem = useTrackOverviewItem( domain );
 
 	const { data: accounts } = useQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );
 	if ( accounts === undefined ) {
@@ -91,6 +93,7 @@ export default function FeaturedCardEmails( { domain }: Props ) {
 			icon={ <Icon icon={ envelope } /> }
 			description={ getDescription( mailboxes ) }
 			intent={ mailboxes.length > 0 ? 'success' : 'upsell' }
+			onClick={ () => trackItem( 'emails' ) }
 		/>
 	);
 }

@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
 import {
-	CONNECT_DOMAIN_FLOW,
 	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
-	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -19,7 +17,6 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
@@ -67,11 +64,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 	[ PLAN_UPGRADE_FLOW ]: () =>
 		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 
-	[ WOO_HOSTED_PLANS_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
-		),
-
 	[ ART_PROMO_FLOW ]: () =>
 		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),
 
@@ -113,11 +105,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
-	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
-
-	[ CONNECT_DOMAIN_FLOW ]: () =>
-		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),
-
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './flows/transferring-hosted-site-flow/transferring-hosted-site-flow'
@@ -140,9 +127,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 		import(
 			/* webpackChunkName: "domain-user-transfer-flow" */ './flows/domain-user-transfer/domain-user-transfer'
 		),
-
-	[ REBLOGGING_FLOW ]: () =>
-		import( /* webpackChunkName: "reblogging-flow" */ './flows/reblogging/reblogging' ),
 };
 
 const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =

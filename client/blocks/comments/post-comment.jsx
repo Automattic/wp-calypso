@@ -2,7 +2,9 @@ import './post-comment.scss';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
+import { formatNumber } from '@automattic/number-formatters';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown, chevronUp, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -23,6 +25,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
+import { CommentLabelsContext } from './comment-labels-context';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -48,6 +51,8 @@ const noop = () => {};
  */
 
 class PostComment extends PureComponent {
+	static contextType = CommentLabelsContext;
+
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -84,6 +89,8 @@ class PostComment extends PureComponent {
 		// connect()ed props:
 		currentUser: PropTypes.object,
 		shouldHighlightNew: PropTypes.bool,
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		collapsibleThreads: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -97,6 +104,8 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
+		highlightedCommentIds: [],
+		collapsibleThreads: false,
 		expandComments: noop,
 		comments: [],
 	};
@@ -104,11 +113,26 @@ class PostComment extends PureComponent {
 	state = {
 		showReplies: false,
 		showFull: false,
+		isCollapsed: false,
 	};
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
+
+	handleToggleCollapsedClick = () => {
+		this.setState( { isCollapsed: ! this.state.isCollapsed } );
+	};
+
+	canCollapse = () =>
+		this.props.collapsibleThreads &&
+		this.props.depth === 0 &&
+		this.getAllChildrenIds( this.props.commentId ).length > 0;
+
+	hasPendingReply = () =>
+		this.getAllChildrenIds( this.props.commentId ).some(
+			( id ) => this.props.commentsTree?.[ id ]?.data?.isPlaceholder
+		);
 
 	onLikeToggle = () => {
 		if ( ! this.props.isLoggedIn ) {
@@ -131,7 +155,7 @@ class PostComment extends PureComponent {
 			} );
 		}
 		this.props.onReplyClick( this.props.commentId );
-		this.setState( { showReplies: true } ); // show the comments when replying
+		this.setState( { showReplies: true, isCollapsed: false } ); // show the comments when replying
 	};
 
 	handleAuthorClick = ( event ) => {
@@ -205,12 +229,32 @@ class PostComment extends PureComponent {
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
-		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar;
+		const canCollapse = this.canCollapse();
+		const showReplies =
+			this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar || canCollapse;
 		const childDepth = ! commentsToShow || commentsToShow[ commentId ] ? depth + 1 : depth;
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
 			return null;
+		}
+
+		if ( canCollapse && this.state.isCollapsed ) {
+			const count = this.getAllChildrenIds( commentId ).length;
+			return (
+				<Button
+					__next40pxDefaultSize
+					variant="link"
+					className="comments__collapsed-replies"
+					aria-expanded={ false }
+					onClick={ this.handleToggleCollapsedClick }
+				>
+					{ translate( '%(count)s reply', '%(count)s replies', {
+						count,
+						args: { count: formatNumber( count ) },
+					} ) }
+				</Button>
+			);
 		}
 
 		const showRepliesText = translate(
@@ -232,7 +276,7 @@ class PostComment extends PureComponent {
 		);
 
 		let replyVisibilityText = null;
-		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar ) {
+		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar && ! canCollapse ) {
 			replyVisibilityText = this.state.showReplies ? hideRepliesText : showRepliesText;
 		}
 
@@ -265,6 +309,8 @@ class PostComment extends PureComponent {
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
+								highlightedCommentIds={ this.props.highlightedCommentIds }
+								collapsibleThreads={ this.props.collapsibleThreads }
 								isInlineComment={ this.props.isInlineComment }
 								expandComments={ this.props.expandComments }
 								comments={ this.props.comments }
@@ -340,7 +386,7 @@ class PostComment extends PureComponent {
 			<strong className={ className } id={ `comment-${ commentId }` }>
 				{ authorName }
 
-				{ isExternalUrl && (
+				{ isExternalUrl && ! this.context && (
 					<a
 						className="comments__external-link"
 						href={ authorUrl }
@@ -390,6 +436,7 @@ class PostComment extends PureComponent {
 			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
 			shouldHighlightNew,
+			highlightedCommentIds,
 		} = this.props;
 
 		const comment = commentsTree?.[ commentId ]?.data;
@@ -435,10 +482,22 @@ class PostComment extends PureComponent {
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );
+		const respondee =
+			parentAuthorName &&
+			this.renderAuthorTag( {
+				className: 'comments__comment-respondee-link',
+				authorName: parentAuthorName,
+				authorUrl: parentAuthorUrl,
+				commentId: parentCommentId,
+			} );
 
 		// highlight comments not older than 10s
 		const isHighlighted =
 			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
+
+		const isNew = highlightedCommentIds.includes( commentId );
+		const canCollapse = this.canCollapse();
+		const { isCollapsed } = this.state;
 
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
@@ -459,13 +518,17 @@ class PostComment extends PureComponent {
 					} ) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
-							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
-								className: 'comments__comment-respondee-link',
-								authorName: parentAuthorName,
-								authorUrl: parentAuthorUrl,
-								commentId: parentCommentId,
-							} ) }
+							{ this.context ? (
+								translate( 'to {{author/}}', {
+									components: { author: respondee },
+									comment: 'Names the commenter a reply answers, as in "Petra to Bram".',
+								} )
+							) : (
+								<>
+									<Gridicon icon="chevron-right" size={ 16 } />
+									{ respondee }
+								</>
+							) }
 						</span>
 					) }
 					<div className="comments__comment-timestamp">
@@ -478,6 +541,24 @@ class PostComment extends PureComponent {
 							<TimeSince date={ comment.date } />
 						</a>
 					</div>
+					{ isNew && (
+						<span className="comments__comment-new-label">
+							{ translate( 'New', { context: 'label on a comment the reader has not seen yet' } ) }
+						</span>
+					) }
+					{ canCollapse && (
+						<Button
+							__next40pxDefaultSize
+							size="small"
+							className="comments__comment-collapse-toggle"
+							icon={ isCollapsed ? chevronDown : chevronUp }
+							label={ isCollapsed ? translate( 'Show replies' ) : translate( 'Hide replies' ) }
+							aria-expanded={ ! isCollapsed }
+							disabled={ this.hasPendingReply() }
+							accessibleWhenDisabled
+							onClick={ this.handleToggleCollapsedClick }
+						/>
+					) }
 				</div>
 
 				{ comment.status && comment.status === 'unapproved' ? (

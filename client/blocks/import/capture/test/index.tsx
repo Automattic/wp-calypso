@@ -35,6 +35,59 @@ describe( 'CaptureInput', () => {
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 	} );
 
+	it( 'preserves the URL and focus while busy and allows editing and submission afterward', async () => {
+		const user = userEvent.setup();
+		const onInputEnter = jest.fn();
+		const { rerender } = render( <CaptureInput onInputEnter={ onInputEnter } />, {
+			wrapper: MemoryRouter,
+		} );
+		const input = screen.getByRole( 'textbox' );
+		const continueButton = screen.getByRole( 'button', { name: 'Continue' } );
+		await user.type( input, 'https://example.com' );
+
+		rerender( <CaptureInput onInputEnter={ onInputEnter } isBusy /> );
+
+		expect( input ).toHaveFocus();
+		expect( input ).toHaveAttribute( 'readonly' );
+		expect( continueButton ).toHaveClass( 'is-busy' );
+		expect( continueButton ).toHaveAttribute( 'aria-disabled', 'true' );
+		await user.type( input, '/ignored{Enter}' );
+		await user.click( continueButton );
+		expect( input ).toHaveValue( 'https://example.com' );
+		expect( onInputEnter ).not.toHaveBeenCalled();
+
+		rerender( <CaptureInput onInputEnter={ onInputEnter } isBusy={ false } /> );
+
+		expect( input ).not.toHaveAttribute( 'readonly' );
+		expect( continueButton ).not.toHaveClass( 'is-busy' );
+		expect( continueButton ).toHaveAttribute( 'aria-disabled', 'false' );
+		await user.type( input, '/updated{Enter}' );
+		expect( onInputEnter ).toHaveBeenCalledTimes( 1 );
+		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.com/updated' );
+	} );
+
+	it( 'blocks platform selection while busy and restores it afterward', async () => {
+		const user = userEvent.setup();
+		const props = {
+			onInputEnter: jest.fn(),
+			onDontHaveSiteAddressClick: jest.fn(),
+		};
+		const { rerender } = render( <CaptureInput { ...props } isBusy />, {
+			wrapper: MemoryRouter,
+		} );
+		const platformButton = screen.getByRole( 'button', { name: 'choose a content platform' } );
+
+		expect( platformButton ).toHaveAttribute( 'aria-disabled', 'true' );
+		await user.click( platformButton );
+		expect( props.onDontHaveSiteAddressClick ).not.toHaveBeenCalled();
+
+		rerender( <CaptureInput { ...props } isBusy={ false } /> );
+
+		expect( platformButton ).toHaveAttribute( 'aria-disabled', 'false' );
+		await user.click( platformButton );
+		expect( props.onDontHaveSiteAddressClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'shows an custom input label', async () => {
 		render(
 			<MemoryRouter>
@@ -56,7 +109,7 @@ describe( 'CaptureInput', () => {
 		);
 
 		// enter an invalid URL
-		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'not a url' );
+		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'notaurl' );
 
 		// try to submit the same value twice
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
@@ -75,6 +128,22 @@ describe( 'CaptureInput', () => {
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_importer_capture_input_invalid',
+			{ error_code: 'missing_tld' }
+		);
+	} );
+
+	it( 'does not record a valid URL from the query string as invalid', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=example.com' ] }>
+				<CaptureInput onInputEnter={ jest.fn() } hasError />
+			</MemoryRouter>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows a custom CTA label', async () => {

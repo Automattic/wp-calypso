@@ -1,0 +1,29 @@
+.a4a-import-site {
+	.hosting-dashboard-layout__body-wrapper {
+		padding-block-start: 16px;
+	}
+}
+
+.a4a-import-site__form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	max-width: 560px;
+}
+
+.a4a-import-site__status {
+	max-width: 560px;
+
+	h2 {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+}
+
+.a4a-import-site__actions {
+	display: flex;
+	gap: 8px;
+}

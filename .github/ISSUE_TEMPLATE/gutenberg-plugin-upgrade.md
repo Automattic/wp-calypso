@@ -2,9 +2,8 @@
 name: Gutenberg Plugin Upgrade
 about: Installing and activating a new version of the Gutenberg Plugin
 title: 'Gutenberg: [v#.#.#] plugin upgrade'
-labels: [ 'gutenberg-upgrade', 'Task' ]
+labels: ['gutenberg-upgrade', 'Task']
 assignees: ''
-
 ---
 
 <!--
@@ -36,7 +35,6 @@ As you complete the tasks in this list, please update the relevant lines with di
 **Wrap-up**
 
 - [ ] Clean up unused releases
-- [ ] Add log entry to the Gutenberg Upgrade Log (pcoGjb-g-p2)
 
 ### Blockers 🤷‍♀️
 

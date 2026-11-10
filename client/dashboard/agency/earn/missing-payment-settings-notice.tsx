@@ -1,8 +1,9 @@
 import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
+import { useBackHereSearch } from '../components/fullscreen-page';
+import { isAgencyApproved } from '../marketplace/is-agency-approved';
 
 type CommissionType = 'referrals' | 'migrations' | 'woopayments';
 
@@ -38,7 +39,8 @@ export function useMissingPaymentSettings( {
 } ) {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
-	const enabled = !! agencyId && hasCommissionActivity;
+	// Payout settings stay closed until the agency is approved, so there is nowhere to send it.
+	const enabled = !! agencyId && isAgencyApproved( agency ) && hasCommissionActivity;
 	const {
 		data: tipaltiData,
 		isSuccess,
@@ -59,6 +61,7 @@ export default function MissingPaymentSettingsNotice( {
 	commissionType,
 }: MissingPaymentSettingsNoticeProps ) {
 	const { isEligible } = useMissingPaymentSettings( { hasCommissionActivity } );
+	const backHereSearch = useBackHereSearch();
 
 	if ( ! isEligible ) {
 		return null;
@@ -69,9 +72,13 @@ export default function MissingPaymentSettingsNotice( {
 			variant="warning"
 			title={ __( 'Add your payout information to get paid.' ) }
 			actions={
-				<RouterLinkButton variant="primary" to="/payout-settings">
+				<RouterNoticeActionLinkButton
+					variant="solid"
+					to="/payout-settings"
+					search={ backHereSearch }
+				>
 					{ __( 'Add payout information now' ) }
-				</RouterLinkButton>
+				</RouterNoticeActionLinkButton>
 			}
 		>
 			{ getDescription( commissionType ) }

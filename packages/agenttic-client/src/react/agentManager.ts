@@ -23,6 +23,7 @@ import {
 	extractToolResultsFromMessage,
 	messageCarriesToolPayload,
 } from './conversationUtils';
+import { endResumableChat } from './liveChat';
 import type {
 	Client,
 	ClientConfig,
@@ -328,7 +329,13 @@ function createAgentManager(): AgentManager {
 		},
 
 		removeAgent( key: string ): boolean {
-			return agents.delete( key );
+			const isRemoved = agents.delete( key );
+
+			if ( isRemoved ) {
+				endResumableChat( key );
+			}
+
+			return isRemoved;
 		},
 
 		async sendMessage(
@@ -492,6 +499,9 @@ function createAgentManager(): AgentManager {
 				await persistConversationHistory( key, resolvedConversationHistory );
 			}
 
+			// The user message's history copy. A pre-built message (e.g., tool results) is used directly.
+			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
+
 			let messageObj: Message;
 			if ( optionsMessage ) {
 				// When a pre-built message is provided (e.g., tool results),
@@ -502,11 +512,15 @@ function createAgentManager(): AgentManager {
 					parts: [ ...historyParts, ...optionsMessage.parts ],
 				};
 			} else {
-				messageObj = createTextMessageWithHistory(
-					message,
-					resolvedConversationHistory,
-					options.imageUrls
-				);
+				// Sent under its history copy's ID, so the server stores it under that ID too.
+				messageObj = {
+					...createTextMessageWithHistory(
+						message,
+						resolvedConversationHistory,
+						options.imageUrls
+					),
+					messageId: userMessage.messageId,
+				};
 			}
 
 			// Add metadata to the message object that will be sent to the agent
@@ -531,10 +545,6 @@ function createAgentManager(): AgentManager {
 					};
 				}
 			}
-
-			// Add user message to local conversation history before streaming (always)
-			// When a pre-built message is provided (e.g., tool results), use it directly.
-			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
 
 			// Add image parts if present
 			if ( options.imageUrls && options.imageUrls.length > 0 ) {
@@ -966,6 +976,8 @@ function createAgentManager(): AgentManager {
 		},
 
 		clear(): void {
+			agents.forEach( ( _agent, key ) => endResumableChat( key ) );
+
 			agents.clear();
 		},
 	};

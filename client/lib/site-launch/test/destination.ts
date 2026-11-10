@@ -168,6 +168,16 @@ describe( 'getLaunchCheckoutUrl', () => {
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe( '/sites/test-site?celebrateLaunch=true' );
 	} );
 
+	it( 'lands on a given destination after paying, but returns to the launch one on leaving', () => {
+		const setupUrl = 'https://my.wordpress.com/domains/a.com/domain-connection-setup';
+		const url = parse( getLaunchCheckoutUrl( { siteSlug }, setupUrl ) );
+
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( setupUrl );
+		expect( url.searchParams.get( 'checkoutBackUrl' ) ).toBe(
+			'https://wordpress.com/home/test-site?celebrateLaunch=true&skippedCheckout=1'
+		);
+	} );
+
 	it( 'celebrates the launch when the user leaves checkout', () => {
 		const url = parse( getLaunchCheckoutUrl( { siteSlug } ) );
 

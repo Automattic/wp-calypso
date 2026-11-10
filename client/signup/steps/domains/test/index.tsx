@@ -8,13 +8,22 @@ jest.mock( 'calypso/signup/step-wrapper', () =>
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
 } ) );
+jest.mock( 'calypso/components/domains/wpcom-domain-search/analytics', () => ( {
+	...jest.requireActual( 'calypso/components/domains/wpcom-domain-search/analytics' ),
+	recordUseYourDomainButtonClick: jest.fn( () => ( { type: 'TEST_USE_YOUR_DOMAIN_CLICK' } ) ),
+} ) );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => {
 	const handler = { query: '', setQuery: jest.fn(), clearQuery: jest.fn(), resetQuery: jest.fn() };
 	return { useQueryHandler: jest.fn( () => handler ) };
 } );
 
+import page from '@automattic/calypso-router';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -22,7 +31,11 @@ import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
 const mockUseQueryHandler = useQueryHandler as jest.Mock;
-const mockQueryHandler = mockUseQueryHandler() as { clearQuery: jest.Mock; resetQuery: jest.Mock };
+const mockQueryHandler = mockUseQueryHandler() as {
+	query: string;
+	clearQuery: jest.Mock;
+	resetQuery: jest.Mock;
+};
 const mockStepWrapper = StepWrapper as unknown as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
@@ -190,33 +203,60 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 	} );
 } );
 
-describe( 'DomainSearchStep — launch-site Back button', () => {
-	const launchProps = {
-		...baseProps,
-		flowName: 'launch-site',
-		stepName: 'domains-launch',
+describe( 'DomainSearchStep — "Use a domain I already own" header link', () => {
+	const clickHeaderLink = async ( flowName: string ) => {
+		mockQueryHandler.query = 'coffeeshop';
+		renderStep( { ...baseProps, flowName } );
+		mockQueryHandler.query = '';
+
+		const [ [ { customizedActionButtons } ] ] = mockStepWrapper.mock.calls.slice( -1 );
+		render( customizedActionButtons );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Use a domain I already own' } ) );
 	};
 
-	// The site the signup controller loaded and selected for the flow.
-	const withSelectedSite = ( selectedSiteId: number | null ) => ( {
-		initialState: {
-			currentUser: { id: 12345 },
-			sites: { items: { 77: { ID: 77, URL: 'https://real-site.wordpress.com' } } },
-		},
-		reducers: { ui: () => ( { selectedSiteId } ) },
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockWPCOMDomainSearch.mockReturnValue( null );
 	} );
 
-	const renderWithBackTo = ( backTo: string, selectedSiteId: number | null = 77 ) => {
+	it( 'records the click in the domain-only flow', async () => {
+		await clickHeaderLink( 'domain' );
+
+		expect( recordUseYourDomainButtonClick ).toHaveBeenCalledWith(
+			'domain-first',
+			'header',
+			'domain'
+		);
+		expect( page ).toHaveBeenCalledWith(
+			expect.stringContaining( '/setup/domain-transfer/intro' )
+		);
+	} );
+
+	it( 'records nothing new in other flows', async () => {
+		await clickHeaderLink( 'onboarding' );
+
+		expect( recordUseYourDomainButtonClick ).not.toHaveBeenCalled();
+		expect( page ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'DomainSearchStep — Back button back_to', () => {
+	const onboardingProps = {
+		...baseProps,
+		flowName: 'onboarding',
+		stepName: 'domains',
+	};
+
+	const renderWithBackTo = ( backTo: string ) => {
 		window.history.replaceState(
 			{},
 			'',
-			`/start/launch-site/domains-launch?back_to=${ encodeURIComponent( backTo ) }`
+			`/start/onboarding/domains?back_to=${ encodeURIComponent( backTo ) }`
 		);
 		mockStepWrapper.mockClear();
-		renderWithProvider(
-			<DomainSearchStep { ...launchProps } />,
-			withSelectedSite( selectedSiteId )
-		);
+		renderWithProvider( <DomainSearchStep { ...onboardingProps } />, {
+			initialState: { currentUser: { id: 12345 } },
+		} );
 		return mockStepWrapper.mock.calls.at( -1 )?.[ 0 ];
 	};
 
@@ -229,11 +269,17 @@ describe( 'DomainSearchStep — launch-site Back button', () => {
 		window.history.replaceState( {}, '', '/' );
 	} );
 
-	it( 'returns to a wp-admin screen on the site the flow loaded', () => {
-		const backTo = 'https://real-site.wordpress.com/wp-admin/post.php?post=1&action=edit';
-		const props = renderWithBackTo( backTo );
+	it( 'returns to a relative back_to', () => {
+		const props = renderWithBackTo( '/sites/example.wordpress.com/settings' );
 
-		expect( props?.backUrl ).toBe( backTo );
+		expect( props?.backUrl ).toBe( '/sites/example.wordpress.com/settings' );
+		expect( props?.backLabelText ).toBe( 'Back' );
+	} );
+
+	it( 'returns to a back_to on a dashboard origin', () => {
+		const props = renderWithBackTo( 'https://my.wordpress.com/sites' );
+
+		expect( props?.backUrl ).toBe( 'https://my.wordpress.com/sites' );
 		expect( props?.backLabelText ).toBe( 'Back' );
 	} );
 
@@ -248,12 +294,6 @@ describe( 'DomainSearchStep — launch-site Back button', () => {
 		const props = renderWithBackTo( 'https://my.wordpress.com.evil.example/' );
 
 		expect( props?.backUrl ).not.toContain( 'evil.example' );
-		expect( props?.backLabelText ).toBe( 'Back to sites' );
-	} );
-
-	it( 'ignores a site-host back_to when no site was loaded for the flow', () => {
-		const props = renderWithBackTo( 'https://real-site.wordpress.com/wp-admin/tools.php', null );
-
 		expect( props?.backLabelText ).toBe( 'Back to sites' );
 	} );
 } );

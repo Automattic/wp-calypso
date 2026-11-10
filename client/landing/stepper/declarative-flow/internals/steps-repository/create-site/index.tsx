@@ -186,6 +186,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const flowState = useFlowState();
 	const queryClient = useQueryClient();
+	const urlQueryParams = useQuery();
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -201,9 +202,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	let siteVisibility = Site.Visibility.PublicIndexed;
 	const wooFlows = [ ENTREPRENEUR_FLOW ];
 
-	// These flows default to "Coming Soon"
+	// These flows default to "Coming Soon"; a reblog run's site starts public, as the reblogging flow's did.
 	if (
-		isOnboardingFlow( flow ) ||
+		( isOnboardingFlow( flow ) && ! urlQueryParams.get( 'blog_post' ) ) ||
 		isCopySiteFlow( flow ) ||
 		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
@@ -223,10 +224,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const urlQueryParams = useQuery();
 	const platform = urlQueryParams.get( 'platform' ) || '';
+	// An import's site receives content from elsewhere, so it starts empty and without an intent.
+	const isImport = urlQueryParams.get( 'flow' ) === 'import';
 	const useThemeHeadstart =
-		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
+		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow ) && ! isImport;
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
@@ -337,7 +339,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			// launchpad. Setting it at creation (rather than post-checkout) is what
 			// makes it stick: the Atomic transfer restores the creation-time intent.
 			siteIntent = Onboard.SiteIntent.Sell;
-		} else if ( isSimplifiedOnboarding ) {
+		} else if ( isSimplifiedOnboarding && ! isImport ) {
 			// For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
 			siteIntent = Onboard.SiteIntent.Build;
 		}
@@ -346,11 +348,15 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const isPlaygroundPublish =
 			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
-		// Playground and blueprint runs import a prebuilt site, so they keep the regular landing.
+		// Playground, blueprint and import runs bring in an existing site, so they keep the regular
+		// landing. A reblog's site is launched at creation, so the launchpad's launch task could
+		// never complete.
 		const aiLaunchpadEnabled =
 			isOnboardingFlow( flow ) &&
 			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
+			! urlQueryParams.get( 'blog_post' ) &&
+			! isImport &&
 			! blueprint;
 
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a

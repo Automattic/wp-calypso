@@ -39,12 +39,14 @@ import {
 	getDeleteLabel,
 	getDeleteDescription,
 } from './actions.utils';
+import { useTrackOverviewItem } from './use-track-overview-item';
 
 export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const router = useRouter();
 	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const trackItem = useTrackOverviewItem( domain );
 	const { data: purchase } = useQuery( {
 		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
 		enabled: !! domain.subscription_id,
@@ -121,6 +123,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								size="compact"
 								variant="secondary"
 								href={ getRenewalUrlFromPurchase( purchase ) }
+								onClick={ () => trackItem( 'action-renew' ) }
 								disabled={ isDisabled }
 							>
 								{ __( 'Renew' ) }
@@ -141,6 +144,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								size="compact"
 								variant="secondary"
 								to={ domainTransferRoute.fullPath }
+								onClick={ () => trackItem( 'action-transfer' ) }
 								params={ { domainName } }
 								disabled={ isDisabled }
 							>
@@ -164,6 +168,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 									dashboard: getCurrentDashboard(),
 									back_to: redirectToDashboardLink(),
 								} ) }
+								onClick={ () => trackItem( 'action-transfer-in' ) }
 								disabled={ isDisabled }
 							>
 								{ __( 'Transfer' ) }
@@ -185,7 +190,10 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								variant="secondary"
 								isBusy={ isDisconnecting }
 								disabled={ isDisconnecting }
-								onClick={ () => setIsDisconnectDialogOpen( true ) }
+								onClick={ () => {
+									trackItem( 'action-disconnect' );
+									setIsDisconnectDialogOpen( true );
+								} }
 							>
 								{ __( 'Detach' ) }
 							</Button>
@@ -202,6 +210,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								variant="secondary"
 								isDestructive
 								to={ purchaseSettingsRoute.fullPath }
+								onClick={ () => trackItem( 'action-remove' ) }
 								params={ { purchaseId: purchase.ID } }
 							>
 								{ getDeleteLabel( domain ) }
@@ -219,6 +228,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								variant="secondary"
 								isDestructive
 								to={ cancelPurchaseRoute.fullPath }
+								onClick={ () => trackItem( 'action-cancel' ) }
 								params={ { purchaseId: purchase.ID } }
 							>
 								{ getDeleteLabel( domain ) }

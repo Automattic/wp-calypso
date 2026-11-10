@@ -191,13 +191,13 @@ export default function RemoteAbilitiesSection( {
 				<SectionHeader
 					title={ __( 'Site-published abilities' ) }
 					description={ __(
-						'Advanced: choose which abilities this site’s plugins publish to external AI agents. Off by default.'
+						'Choose which abilities this site’s plugins publish to external AI agents.'
 					) }
 					level={ 3 }
 				/>
 				{ isLoading && namespaces.size === 0 && <Spinner /> }
 				{ isError && (
-					<Notice density="medium">
+					<Notice>
 						{ __(
 							'This site’s abilities can’t be loaded right now. The site may be unreachable or too old to publish them. Your saved settings are shown and still apply.'
 						) }

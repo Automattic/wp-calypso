@@ -143,15 +143,34 @@ export const getVisibleMessages = ( messages: Message[] ): Message[] => {
 };
 
 /**
- * Index where the latest turn starts: after the user's latest message, or at a later message
+ * Index where the latest turn starts: after the user's latest message, skipping UI-only ones, or at a later message
  * that starts a turn, such as a reply to a click in a message.
  * @param messages
  */
 export const getLatestTurnStartIndex = ( messages: Message[] ): number =>
 	messages.reduce( ( startIndex, message, index ) => {
 		if ( message.role === 'user' ) {
-			return index + 1;
+			return message.isUiOnly ? startIndex : index + 1;
 		}
 
 		return message.startsTurn ? index : startIndex;
 	}, 0 );
+
+/**
+ * Id of the latest message when it is an agent reply with nothing visible yet, such as a
+ * reply whose content the host adds after the turn ends.
+ * @param messages
+ * @param visibleMessages - `messages` after `getVisibleMessages`
+ */
+export const getHiddenReplyId = (
+	messages: Message[],
+	visibleMessages: Message[]
+): string | null => {
+	const lastMessage = messages.at( -1 );
+
+	if ( lastMessage?.role !== 'agent' ) {
+		return null;
+	}
+
+	return visibleMessages.some( ( { id } ) => id === lastMessage.id ) ? null : lastMessage.id;
+};

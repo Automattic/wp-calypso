@@ -3,7 +3,6 @@
  */
 
 import config from '@automattic/calypso-config';
-import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import SiteGeneration from '../index';
@@ -18,9 +17,15 @@ jest.mock( '@automattic/calypso-config', () =>
 	Object.assign( jest.fn(), { isEnabled: jest.fn() } )
 );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+let mockIsAutomattician = false;
+let mockIsAutomatticianLoading = false;
+jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
+	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
+		isEnabled:
+			jest.requireMock( '@automattic/calypso-config' ).isEnabled( 'site-spec/design-candidates' ) ||
+			( requested && mockIsAutomattician ),
+		isLoading: requested && mockIsAutomatticianLoading,
+	} ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -51,11 +56,11 @@ describe( 'SiteGeneration recovery', () => {
 	const originalLocation = window.location;
 	const navigation = { submit: jest.fn() };
 	const useSiteGenerationMock = useSiteGeneration as jest.Mock;
-	const useDataQueryMock = useDataQuery as jest.Mock;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		useDataQueryMock.mockReturnValue( { data: true } );
+		mockIsAutomattician = false;
+		mockIsAutomatticianLoading = false;
 		jest
 			.mocked( config.isEnabled )
 			.mockImplementation( ( flag ) => flag === 'site-spec/build-wow-streaming' );
@@ -130,6 +135,48 @@ describe( 'SiteGeneration recovery', () => {
 		);
 	} );
 
+	it.each( [
+		[ true, '2' ],
+		[ false, undefined ],
+	] )(
+		'gives the picked design from the URL to the retry while the flag is %s',
+		( flagOn, expected ) => {
+			jest
+				.mocked( config.isEnabled )
+				.mockImplementation(
+					( flag ) =>
+						flag === 'site-spec/build-wow-streaming' ||
+						( flagOn && flag === 'site-spec/design-candidates' )
+				);
+			window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=2';
+			renderStep();
+
+			expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+				expect.objectContaining( { specId: 'spec-1', designCandidate: expected } )
+			);
+		}
+	);
+
+	it( 'gives the picked design to the retry of an Automattician with the flag off', () => {
+		mockIsAutomattician = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
+		);
+	} );
+
+	it( 'keeps the picked design for the retry while the Automattician check runs', () => {
+		mockIsAutomatticianLoading = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
+		);
+	} );
+
 	it( 'reloads when a failed build has no server retry', () => {
 		renderStep();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Recover' } ) );
@@ -165,7 +212,6 @@ describe( 'SiteGeneration recovery', () => {
 				undefined
 			);
 			expect( useBuildWowStream ).toHaveBeenCalledWith( null );
-			expect( useDataQuery ).toHaveBeenCalledWith( expect.objectContaining( { enabled } ) );
 		}
 	);
 
@@ -193,38 +239,6 @@ describe( 'SiteGeneration recovery', () => {
 				undefined
 			);
 			expect( useBuildWowStream ).toHaveBeenCalledWith( enabled ? mockState.streamInfo : null );
-		}
-	);
-
-	it.each( [
-		{ enabled: false, isAutomattician: true },
-		{ enabled: true, isAutomattician: false },
-		{ enabled: true, isAutomattician: undefined },
-	] )(
-		'blocks streaming with flag=$enabled and Automattician=$isAutomattician',
-		( { enabled, isAutomattician } ) => {
-			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-			useDataQueryMock.mockReturnValue( { data: isAutomattician } );
-			window.location.search = '?build_wow=1&siteId=123';
-			mockState = {
-				...mockState,
-				status: 'working',
-				streamInfo: {
-					protocol: 1,
-					blogId: 123,
-					runId: 'run-1',
-					capabilities: [ 'preview:dsl-html' ],
-					eventsUrl: 'https://example.com/events',
-					snapshotUrl: 'https://example.com/snapshot',
-				},
-			};
-			renderStep();
-
-			expect( useBuildWowStream ).toHaveBeenCalledWith( null );
-			expect( SiteGenerationView ).toHaveBeenCalledWith(
-				expect.objectContaining( { streamRequested: false, stream: null } ),
-				undefined
-			);
 		}
 	);
 

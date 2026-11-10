@@ -31,7 +31,8 @@
 .a4a-sidebar__header {
 	display: flex;
 	align-items: center;
-	padding: 16px 8px;
+	// No bottom padding: the sidebar's 16px gap already separates the logo from the menu.
+	padding: 8px 8px 0;
 	gap: 12px;
 	min-height: 48px;
 
@@ -59,6 +60,66 @@
 
 	.site__title {
 		font-weight: 500;
+	}
+}
+
+// Fades the menu's top and bottom edges while there's more to scroll that way.
+// The fades follow the menu's own scroll position; where it doesn't scroll, or the
+// browser lacks scroll-driven animations, the menu shows as before.
+@property --a4a-sidebar-fade-start {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0;
+}
+
+@property --a4a-sidebar-fade-end {
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0;
+}
+
+@keyframes a4a-sidebar-scroll-fade {
+	0% {
+		--a4a-sidebar-fade-start: 0;
+		--a4a-sidebar-fade-end: 32px;
+	}
+
+	10%,
+	90% {
+		--a4a-sidebar-fade-start: 32px;
+		--a4a-sidebar-fade-end: 32px;
+	}
+
+	100% {
+		--a4a-sidebar-fade-start: 32px;
+		--a4a-sidebar-fade-end: 0;
+	}
+}
+
+// The menu scrolls edge to edge, so its scrollbar sits on the sidebar's edge rather
+// than inside its padding. The extra 1px keeps sidebar-v2's -1px navigator offset.
+.a4a-sidebar .sidebar-v2__main {
+	margin-inline: -17px;
+	padding-inline: 16px;
+	scrollbar-color: var(--color-sidebar-menu-hover-background) transparent;
+}
+
+@supports (animation-timeline: scroll()) {
+	.a4a-sidebar .sidebar-v2__main {
+		mask-image: linear-gradient(
+			to bottom,
+			transparent,
+			#000 var(--a4a-sidebar-fade-start),
+			#000 calc(100% - var(--a4a-sidebar-fade-end)),
+			transparent
+		);
+		animation: a4a-sidebar-scroll-fade linear both;
+		animation-timeline: scroll(self);
+		// Chrome holds a finished scroll-driven animation at its end state even after
+		// the menu stops scrolling, so a menu scrolled to the bottom kept its top fade
+		// once the window grew. Ending the range just past the scroll end keeps the
+		// animation from ever finishing.
+		animation-range-end: calc(100% + 0.5px);
 	}
 }
 
