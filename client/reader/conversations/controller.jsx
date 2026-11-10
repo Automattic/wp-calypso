@@ -23,7 +23,6 @@ export function conversationsInbox( context, next ) {
 	const siteId = Number( context.params.siteId );
 	const postId = Number( context.params.postId );
 	if ( siteId && postId ) {
-		// <Comments> only mounts once the post loads, so start its first page alongside the post.
 		context.queryClient.prefetchInfiniteQuery( siteCommentsInfiniteQuery( { siteId, postId } ) );
 	}
 	trackPageLoad(

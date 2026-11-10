@@ -9,14 +9,13 @@ export interface Commenter {
 	avatar: string;
 }
 
-/** What the detail pane shows of the post, when the list sends it. */
 export interface ConversationPostDetails {
 	siteName: string;
-	siteIcon?: string;
-	author?: ReadConversationPostAuthor;
-	date?: string;
+	siteIcon: string | null;
+	author: ReadConversationPostAuthor | null;
+	date: string | null;
 	excerpt: string;
-	image?: string;
+	image: string | null;
 	discussion: ReadConversationPostDiscussion;
 }
 

@@ -11,10 +11,9 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query';
-import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import striptags from 'striptags';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
@@ -45,11 +44,11 @@ const toPostDetails = ( { post, site }: ReadConversation ): ConversationPostDeta
 	post.discussion && post.excerpt !== undefined
 		? {
 				siteName: site.name,
-				siteIcon: site.icon ?? undefined,
-				author: post.author ?? undefined,
-				date: post.date ?? undefined,
-				excerpt: decodeEntities( striptags( post.excerpt ) ).trim(),
-				image: post.featured_image || undefined,
+				siteIcon: site.icon,
+				author: post.author ?? null,
+				date: post.date,
+				excerpt: decodeEntities( stripHTML( post.excerpt ) ).trim(),
+				image: post.featured_image || null,
 				discussion: post.discussion,
 			}
 		: undefined;

@@ -23,17 +23,18 @@ import {
 	moreHorizontal,
 } from '@wordpress/icons';
 import { useRtl, useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import ReaderAuthorLink, { type ReaderLinkAuthor } from 'calypso/blocks/reader-author-link';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
+	type ConversationPostDetails,
 	getConversationKey,
 	useUnfollowConversation,
 	type Conversation,
 } from 'calypso/reader/data/conversations';
-import { usePost } from 'calypso/reader/data/post';
+import { usePost, type Post } from 'calypso/reader/data/post';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -45,7 +46,11 @@ import { followConversation, muteConversation } from 'calypso/state/reader/conve
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
 import { ConversationContentPlaceholder } from './placeholder';
-import type { ReadConversationReason } from '@automattic/api-core';
+import type {
+	ReadConversationPostAuthor,
+	ReadConversationPostDiscussion,
+	ReadConversationReason,
+} from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -79,6 +84,16 @@ function getTitle( translate: ReturnType< typeof useTranslate >, reason: ReadCon
 	}
 }
 
+const getPostDetails = ( post: Post ): ConversationPostDetails => ( {
+	siteName: String( post.site_name ?? '' ),
+	siteIcon: ( post.site_icon as { img?: string } | undefined )?.img ?? null,
+	author: ( post.author as ReadConversationPostAuthor | undefined ) ?? null,
+	date: post.date ? String( post.date ) : null,
+	excerpt: String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ),
+	image: ( post.canonical_image as { uri?: string } | undefined )?.uri ?? null,
+	discussion: post.discussion as ReadConversationPostDiscussion,
+} );
+
 export function ConversationDetail( {
 	siteId,
 	postId,
@@ -94,16 +109,25 @@ export function ConversationDetail( {
 	const backRef = useRef< HTMLButtonElement >( null );
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
-	const details = conversation?.postDetails;
-	const { data: fetchedPost, isLoading } = usePost( details ? null : { blogId: siteId, postId } );
-	const post =
-		fetchedPost ??
-		( details && {
-			ID: postId,
-			site_ID: siteId,
-			URL: conversation?.url,
-			discussion: details.discussion,
-		} );
+	const listDetails = conversation?.postDetails;
+	const { data: fetchedPost, isLoading } = usePost(
+		listDetails ? null : { blogId: siteId, postId }
+	);
+	const isPostError = !! fetchedPost?.is_error;
+	const details =
+		listDetails ?? ( fetchedPost && ! isPostError ? getPostDetails( fetchedPost ) : undefined );
+	const postUrl = conversation?.url;
+	const post = useMemo(
+		() =>
+			fetchedPost ??
+			( listDetails && {
+				ID: postId,
+				site_ID: siteId,
+				URL: postUrl,
+				discussion: listDetails.discussion,
+			} ),
+		[ fetchedPost, listDetails, postId, siteId, postUrl ]
+	);
 	const currentUserId = useSelector( getCurrentUserId );
 	const showWelcome = useSelector(
 		( state ) =>
@@ -126,26 +150,16 @@ export function ConversationDetail( {
 		setStartingComment( { key: anchorKey, id: anchorId } );
 	}
 
-	const isPostError = !! fetchedPost?.is_error;
-	const commentCount = Number(
-		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
-	);
-	const author = ( details ? details.author : fetchedPost?.author ) as ReaderLinkAuthor | undefined;
+	const commentCount = details?.discussion.comment_count ?? 0;
+	const author = details?.author ?? undefined;
 	// ReaderAuthorLink renders nothing for blocked names, so the dot must skip them too.
 	const showAuthor = !! author?.name && ! isAuthorNameBlocked( author.name );
-	const image = details
-		? details.image
-		: ( fetchedPost?.canonical_image as { uri?: string } | undefined )?.uri;
-	const postDate = details ? details.date : fetchedPost?.date;
-	const date = postDate ? moment( String( postDate ) ) : null;
-	const siteName = details ? details.siteName : String( fetchedPost?.site_name ?? '' );
-	const siteIcon = details
-		? details.siteIcon
-		: ( fetchedPost?.site_icon as { img?: string } | undefined )?.img;
-	const excerpt = details
-		? details.excerpt
-		: String( fetchedPost?.better_excerpt_no_html ?? fetchedPost?.excerpt_no_html ?? '' );
-	const postUrl = post ? getPostUrl( post ) : '';
+	const date = details?.date ? moment( details.date ) : null;
+	const siteIcon = details?.siteIcon;
+	const siteName = details?.siteName;
+	const excerpt = details?.excerpt;
+	const image = details?.image;
+	const readerPostUrl = getPostUrl( { site_ID: siteId, ID: postId } );
 
 	let title: string;
 	if ( conversation ) {
@@ -167,7 +181,7 @@ export function ConversationDetail( {
 	};
 
 	const controls = [
-		{ title: translate( 'View post' ) as string, onClick: () => page( postUrl ) },
+		{ title: translate( 'View post' ) as string, onClick: () => page( readerPostUrl ) },
 		isFollowing
 			? {
 					title: translate( 'Unfollow conversation' ) as string,
@@ -281,7 +295,7 @@ export function ConversationDetail( {
 							) }
 						</Text>
 					) }
-					{ post && ! isPostError && (
+					{ details && post && (
 						<>
 							<VStack spacing={ 3 } className="conversations-inbox__post-card">
 								<HStack
@@ -355,7 +369,7 @@ export function ConversationDetail( {
 										as="a"
 										spacing={ 2 }
 										className="conversations-inbox__post-link"
-										href={ postUrl }
+										href={ readerPostUrl }
 									>
 										<Heading
 											level={ 3 }
