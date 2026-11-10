@@ -47,14 +47,17 @@ export const usePollForDelayedReplies = () => {
 		! interactionHasEnded( currentSupportInteraction ) &&
 		! isStaleOdieChat( chat );
 
-	// The clock restarts whenever the message count changes, from the newest message's
-	// `created_at` when it has one, so a chat opened from history counts from its last message.
-	// Messages added in the browser carry no `created_at`, so those count from now.
+	// The clock restarts whenever the message count changes. A chat opened from history counts
+	// from its last message's `created_at`; every change after that counts from now, by the
+	// browser's clock, so a computer clock that runs ahead of the server cannot end the poll early.
 	const lastChangeRef = useRef( Date.now() );
+	const previousCountRef = useRef( 0 );
 	const messageCount = chat.messages.length;
 	const newestCreatedAt = chat.messages[ messageCount - 1 ]?.created_at;
 	useEffect( () => {
-		const createdAt = newestCreatedAt ? getTimestamp( newestCreatedAt ) * 1000 : NaN;
+		const isFirstLoad = previousCountRef.current === 0;
+		previousCountRef.current = messageCount;
+		const createdAt = isFirstLoad && newestCreatedAt ? getTimestamp( newestCreatedAt ) * 1000 : NaN;
 		lastChangeRef.current = Number.isFinite( createdAt ) ? createdAt : Date.now();
 	}, [ messageCount, newestCreatedAt ] );
 
@@ -108,10 +111,10 @@ export const usePollForDelayedReplies = () => {
 						return prev;
 					}
 
-					// A reply written just before the customer's next message has a lower id than the
-					// bot's answer to it, so it goes in front of that answer. The customer's own messages
-					// are added in the browser without an id: the ones right before the answer belong to
-					// the same exchange, so the reply goes in front of them too.
+					// A reply has a lower id than the bot's answer written after it, so it goes in front of
+					// that answer. The customer's own messages are added in the browser without an id, so
+					// the server's order decides how many of them, right before the answer, the reply also
+					// goes in front of: the ones the server lists between the reply and the answer.
 					const messages = [ ...prev.messages ];
 					for ( const message of fresh ) {
 						let at = messages.findIndex(
@@ -121,8 +124,18 @@ export const usePollForDelayedReplies = () => {
 							messages.push( message );
 							continue;
 						}
-						while ( at > 0 && ! messages[ at - 1 ].message_id ) {
+						const fetchedAt = fetched.messages.indexOf( message );
+						const fetchedAnchor = fetched.messages.findIndex(
+							( m ) => m.message_id === messages[ at ].message_id
+						);
+						let userMessagesBefore = fetched.messages
+							.slice( fetchedAt + 1, fetchedAnchor === -1 ? undefined : fetchedAnchor )
+							.filter( ( m ) => m.role === 'user' ).length;
+						while ( userMessagesBefore > 0 && at > 0 && ! messages[ at - 1 ].message_id ) {
 							at--;
+							if ( messages[ at ].role === 'user' ) {
+								userMessagesBefore--;
+							}
 						}
 						messages.splice( at, 0, message );
 					}

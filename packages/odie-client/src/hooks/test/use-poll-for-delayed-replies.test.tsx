@@ -169,6 +169,67 @@ describe( 'usePollForDelayedReplies', () => {
 		] );
 	} );
 
+	it( "keeps a reply written during the customer's next send below that message", async () => {
+		// The server job wrote the reply after the customer's message and before the bot's answer
+		// to it, so the reply's id sits between the two.
+		const laterUserMessage = { role: 'user', type: 'message', content: 'Anything?' } as Message;
+		const laterBotMessage = { ...botMessage, message_id: 5, content: 'Not yet.' };
+		const replyDuringSend = { ...delayedReply, message_id: 4 };
+		mockFetchOdieChat.mockResolvedValue(
+			serverChat( [
+				userMessage,
+				botMessage,
+				{ ...laterUserMessage, message_id: 3 },
+				replyDuringSend,
+				laterBotMessage,
+			] )
+		);
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		const prev = makeChat( {
+			messages: [ userMessage, botMessage, laterUserMessage, laterBotMessage ],
+		} );
+		expect( applyLastUpdater( prev ).messages ).toEqual( [
+			userMessage,
+			botMessage,
+			laterUserMessage,
+			replyDuringSend,
+			laterBotMessage,
+		] );
+	} );
+
+	it( 'keeps a reply below an error message that came before the customer wrote again', async () => {
+		const errorMessage = { role: 'bot', type: 'error', content: 'Something went wrong' } as Message;
+		const laterUserMessage = { role: 'user', type: 'message', content: 'Anything?' } as Message;
+		const laterBotMessage = { ...botMessage, message_id: 5, content: 'Not yet.' };
+		mockFetchOdieChat.mockResolvedValue(
+			serverChat( [
+				userMessage,
+				botMessage,
+				delayedReply,
+				{ ...laterUserMessage, message_id: 4 },
+				laterBotMessage,
+			] )
+		);
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		const prev = makeChat( {
+			messages: [ userMessage, botMessage, errorMessage, laterUserMessage, laterBotMessage ],
+		} );
+		expect( applyLastUpdater( prev ).messages ).toEqual( [
+			userMessage,
+			botMessage,
+			errorMessage,
+			delayedReply,
+			laterUserMessage,
+			laterBotMessage,
+		] );
+	} );
+
 	it( 'leaves out a reply that asks for a human, which the send handler already replaced', async () => {
 		const escalation = {
 			...delayedReply,
@@ -302,6 +363,23 @@ describe( 'usePollForDelayedReplies', () => {
 		await tick();
 
 		expect( mockFetchOdieChat ).not.toHaveBeenCalled();
+	} );
+
+	it( "counts a message added while polling from the browser's clock, not its server time", async () => {
+		// The computer clock runs 25 minutes ahead of the server.
+		const relayed = {
+			...delayedReply,
+			created_at: serverDate( new Date( Date.now() - 25 * 60 * 1000 ) ),
+		};
+		const { rerender } = renderHook( () => usePollForDelayedReplies() );
+		await tick();
+		expect( mockFetchOdieChat ).toHaveBeenCalledTimes( 1 );
+
+		mockChat = makeChat( { messages: [ userMessage, botMessage, relayed ] } );
+		rerender();
+		await tick();
+
+		expect( mockFetchOdieChat ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'polls a chat opened from history whose last message is recent', async () => {
