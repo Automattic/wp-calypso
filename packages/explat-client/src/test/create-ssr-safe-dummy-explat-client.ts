@@ -37,15 +37,15 @@ describe( 'loadExperimentAssignment', () => {
 		);
 		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name",
-		      "message": "Attempting to load ExperimentAssignment in SSR context",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name",
+			      "message": "Attempting to load ExperimentAssignment in SSR context",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );
 
@@ -67,14 +67,14 @@ describe( 'dangerouslyGetExperimentAssignment', () => {
 		);
 		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name",
-		      "message": "Attempting to dangerously get ExperimentAssignment in SSR context",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name",
+			      "message": "Attempting to dangerously get ExperimentAssignment in SSR context",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );

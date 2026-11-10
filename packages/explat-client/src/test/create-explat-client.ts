@@ -52,7 +52,7 @@ describe( 'createExPlatClient', () => {
 	it( 'should throw if initialized outside of a browser context', () => {
 		setSsrContext();
 		expect( () => createExPlatClient( createMockedConfig() ) ).toThrowErrorMatchingInlineSnapshot(
-			'"Running outside of a browser context."'
+			'[Error: Running outside of a browser context.]'
 		);
 	} );
 
@@ -82,9 +82,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( 'should return a fallback for a disabled Experiment', async () => {
 		const mockedConfig = createMockedConfig();
@@ -110,9 +108,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			retrievedTimestamp: timestamp1,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( '[anonId] should successfully load an ExperimentAssignment', async () => {
 		const mockedConfig = createMockedConfig();
@@ -139,9 +135,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		expect(
 			( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls[ 0 ][ 0 ].anonId
 		).toBe( 'the-anon-id-123' );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( 'Invalid experimentName: should return fallback and log', async () => {
 		const mockedConfig = createMockedConfig();
@@ -161,23 +155,23 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: \\"\\"",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-fallbackError",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: """,
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-fallbackError",
+			    },
+			  ],
+			]
+		` );
 	} );
 	it( 'Could not fetch ExperimentAssignment: should store and return fallback, and log', async () => {
 		const mockedConfig = createMockedConfig();
@@ -199,16 +193,16 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "some-error-123",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "some-error-123",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( 'Timed-out fetch: should return fallback and log', async () => {
@@ -267,23 +261,23 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: \\"\\"",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-fallbackError",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: """,
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-fallbackError",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );
 
@@ -320,7 +314,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 				( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls
 			).toHaveLength( 1 );
 			expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-				'Array []'
+				'[]'
 			);
 
 			const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 1;
@@ -356,7 +350,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 				( await experimentAssignmentE ).retrievedTimestamp
 			);
 			expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-				'Array []'
+				'[]'
 			);
 		} );
 
@@ -398,37 +392,37 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 			1
 		);
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			]
+		` );
 
 		await delayedValue( undefined, 1000 );
 
@@ -466,9 +460,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
 			1
 		);
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 } );
 
@@ -486,16 +478,16 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: ",
-		      "source": "dangerouslyGetExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: ",
+			      "source": "dangerouslyGetExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( "should log and return fallback when the matching experiment hasn't loaded yet", () => {
@@ -511,16 +503,16 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
-		      "source": "dangerouslyGetExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
+			      "source": "dangerouslyGetExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( "should log and return fallback when the matching experiment hasn't loaded yet but is currently loading", async () => {
@@ -540,16 +532,16 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
-		      "source": "dangerouslyGetExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
+			      "source": "dangerouslyGetExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 		vi.runAllTimers();
 		await promise;
 		vi.useRealTimers();
@@ -587,16 +579,16 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
 		client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.",
-		      "source": "dangerouslyGetExperimentAssignment",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.",
+			      "source": "dangerouslyGetExperimentAssignment",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );
 
@@ -614,16 +606,16 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 			isFallbackExperimentAssignment: true,
 		} );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: ",
-		      "source": "dangerouslyGetMaybeLoadedExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: ",
+			      "source": "dangerouslyGetMaybeLoadedExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( "return null when the matching experiment hasn't loaded yet", () => {
