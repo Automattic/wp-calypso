@@ -2,10 +2,12 @@ import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import {
 	siteLastBackupQuery,
 	siteMediaStorageQuery,
+	siteEnvironmentPHPVersionQuery,
 	sitePHPVersionQuery,
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -30,14 +32,19 @@ import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getStorageUsagePercent } from '../../utils/site-storage';
 import { getVisibilityLabels } from '../../utils/site-visibility';
-import { canManageSite } from '../features';
+import { canManageSite, canViewPHPVersion } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
-import { PlanAwaitingCheckout, useSiteAwaitingCheckout } from './plan-awaiting-checkout';
+import {
+	PlanAwaitingCheckout,
+	PlanPreview,
+	useSiteAwaitingCheckout,
+	useSiteIsPreview,
+} from './plan-awaiting-checkout';
 import { PlanExpiryStatus } from './plan-expiry-status';
 import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
-import type { Site } from '@automattic/api-core';
+import type { Site, WowFunnelPendingSite } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
@@ -236,7 +243,8 @@ export function AsyncEngagementStat( {
 			return <IneligibleIndicator />;
 		}
 
-		return stats?.currentData[ type ];
+		const value = stats?.currentData[ type ];
+		return typeof value === 'number' ? formatNumber( value ) : value;
 	};
 
 	return (
@@ -317,14 +325,16 @@ export function Uptime( { site }: { site?: Site } ) {
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
-	const isEligible = hasHostingFeature( site, HostingFeatures.PHP );
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
 	} );
 
+	const isEligible = canViewPHPVersion( site );
 	const { data, isLoading } = useQuery( {
-		...sitePHPVersionQuery( site.ID ),
+		...( hasHostingFeature( site, HostingFeatures.PHP )
+			? sitePHPVersionQuery( site.ID )
+			: siteEnvironmentPHPVersionQuery( site.ID ) ),
 		enabled: isEligible && inView,
 	} );
 
@@ -370,11 +380,14 @@ export function MediaStorage( { site }: { site?: Site } ) {
 	);
 }
 
-function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
+function SiteLaunchNag( { site }: { site: Site } ) {
+	const { ID: siteId, slug: siteSlug } = site;
 	const { recordTracksEvent } = useAnalytics();
 	const { isCompleted, isNoGuidance, setupUrl } = useAiLaunchpad( siteSlug );
+	// A preview has nothing to set up: it is finished by buying it (see the plan column).
+	const { isPreview } = useSiteIsPreview( site );
 
-	if ( isCompleted || isNoGuidance ) {
+	if ( isCompleted || isNoGuidance || isPreview ) {
 		return null;
 	}
 
@@ -384,11 +397,16 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	// uses `overflow:hidden` to prevent any of the fields from overflowing.
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_sites_site_launch_nag_impression"
+				properties={ { site_id: siteId } }
+			/>
 			<ExternalLink
 				href={ href }
 				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
+					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click', {
+						site_id: siteId,
+					} );
 				} }
 			>
 				{ __( 'Finish setup' ) }
@@ -398,12 +416,12 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 }
 
 export function Visibility( {
-	siteSlug,
+	site,
 	visibility,
 	status,
 	isLaunched,
 }: {
-	siteSlug: string;
+	site: Site;
 	visibility: SiteVisibility;
 	status: SiteBlockingStatus;
 	isLaunched?: boolean;
@@ -413,9 +431,49 @@ export function Visibility( {
 		<VStack spacing={ 1 }>
 			<span>{ visibilityLabels[ visibility ] }</span>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
+			{ ! status && ! isLaunched && <SiteLaunchNag site={ site } /> }
 		</VStack>
 	);
+}
+
+/**
+ * The line under the plan name: where to finish buying a site held for checkout or a
+ * preview site, or else how the plan's expiry stands. One place that decides which, so the plan cell
+ * does not.
+ *
+ * This does not keep the page's own elements stable when the held-site lookup answers: one of the
+ * two is still unmounted for the other, as the expiry status already mounts once its purchase
+ * loads. The span above is what stays put.
+ */
+function PlanSubStatus( {
+	site,
+	awaitingCheckout,
+	isPreview,
+}: {
+	site: Site;
+	awaitingCheckout: WowFunnelPendingSite | undefined;
+	isPreview: boolean;
+} ) {
+	if ( awaitingCheckout ) {
+		return <PlanAwaitingCheckout pending={ awaitingCheckout } />;
+	}
+
+	if ( isPreview ) {
+		return <PlanPreview site={ site } />;
+	}
+
+	return <PlanExpiryStatus site={ site } />;
+}
+
+function planLabel(
+	value: string,
+	awaitingCheckout: WowFunnelPendingSite | undefined,
+	isPreview: boolean
+): string {
+	if ( awaitingCheckout ) {
+		return __( 'Awaiting checkout' );
+	}
+	return isPreview ? __( 'Preview' ) : value;
 }
 
 export function Plan( {
@@ -430,6 +488,7 @@ export function Plan( {
 	value: string;
 } ) {
 	const awaitingCheckout = useSiteAwaitingCheckout( site );
+	const { isPreview } = useSiteIsPreview( site );
 
 	if ( isSelfHostedJetpackConnected ) {
 		if ( ! isJetpack ) {
@@ -443,12 +502,8 @@ export function Plan( {
 			{ /* The same span either way, with only its text changing: the answer arrives after
 			     first paint, and swapping elements across that boundary crashes under Google
 			     Translate (react/react#11538). */ }
-			<span>{ awaitingCheckout ? __( 'Awaiting checkout' ) : value }</span>
-			{ awaitingCheckout ? (
-				<PlanAwaitingCheckout pending={ awaitingCheckout } />
-			) : (
-				<PlanExpiryStatus site={ site } />
-			) }
+			<span>{ planLabel( value, awaitingCheckout, isPreview ) }</span>
+			<PlanSubStatus site={ site } awaitingCheckout={ awaitingCheckout } isPreview={ isPreview } />
 		</VStack>
 	);
 }

@@ -1,0 +1,6 @@
+// The dark variant is hidden by default; the dark-theme mixin
+// (client/dashboard/app/_dark-theme.scss) swaps visibility under
+// :root[data-theme='dark'].
+.dashboard-themed-illustration--dark {
+	display: none;
+}

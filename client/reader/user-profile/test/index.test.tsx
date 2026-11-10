@@ -157,11 +157,16 @@ describe( 'UserProfile', () => {
 		expect( screen.getByTestId( 'user-recommended-blogs' ) ).toBeVisible();
 	} );
 
-	test( 'should not show content when isLoading is true', () => {
+	test( 'should not show content when isLoading is true', async () => {
+		const scope = nockGetUser( 'testuser', defaultUserResponse );
+
 		renderWithClient( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.queryByRole( 'heading', { name: 'User not found.' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
+
+		// Let the request settle so it can't consume the next test's mock.
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	test( 'should redirect from user ID path to user login path when user is loaded', async () => {

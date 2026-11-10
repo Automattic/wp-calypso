@@ -3,7 +3,12 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions, LoggedOutOdieChat, LoggedOutOdieChats } from './types';
+import type {
+	CheckoutSupportVariation,
+	HelpCenterOptions,
+	LoggedOutOdieChat,
+	LoggedOutOdieChats,
+} from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -229,6 +234,16 @@ const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	return state;
 };
 
+const checkoutSupportVariation: Reducer<
+	CheckoutSupportVariation | undefined,
+	HelpCenterAction
+> = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CHECKOUT_SUPPORT_VARIATION' ) {
+		return action.variation;
+	}
+	return state;
+};
+
 const currentUser: Reducer< CurrentUser | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_CURRENT_USER' ) {
 		return action.user;
@@ -260,6 +275,7 @@ const reducer = combineReducers( {
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
+	checkoutSupportVariation,
 	currentUser,
 } );
 

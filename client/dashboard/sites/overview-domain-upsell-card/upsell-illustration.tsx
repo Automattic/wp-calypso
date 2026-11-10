@@ -5,10 +5,12 @@ export const DomainUpsellIllustraction = ( {
 	title,
 	domain,
 	search,
+	isLoading,
 }: {
 	title?: string;
 	domain?: string;
 	search: string;
+	isLoading?: boolean;
 } ) => (
 	<SVG
 		width="318"
@@ -21,24 +23,70 @@ export const DomainUpsellIllustraction = ( {
 	>
 		{ title && <title>{ title }</title> }
 		<G clipPath="url(#clip0_8083_30798)">
-			<Rect width="318" height="192" fill="white" />
-			<Rect width="318" height="192" fill="url(#pattern0_8083_30798)" fillOpacity="0.12" />
-			<Path d="M37 49C37 42.3726 42.3726 37 49 37H325V196H37V49Z" fill="white" />
-			<Rect x="51" y="89" width="162" height="20" rx="4" fill="#F7F7F7" />
-			<Rect x="51" y="119" width="288" height="90" rx="4" fill="#F7F7F7" />
-			<Path d="M37 49C37 42.3726 42.3726 37 49 37H325V75H37V49Z" fill="#F7F7F7" />
-			<Circle cx="55" cy="56" r="3.25" fill="#F7F8FE" stroke="#C3C4C7" strokeWidth="1.5" />
-			<Circle cx="67" cy="56" r="3.25" fill="#F7F8FE" stroke="#C3C4C7" strokeWidth="1.5" />
-			<Circle cx="79" cy="56" r="3.25" fill="#F7F8FE" stroke="#C3C4C7" strokeWidth="1.5" />
-			<Rect x="95" y="45" width="240" height="22" rx="4" fill="white" />
+			<Rect
+				width="318"
+				height="192"
+				style={ { fill: 'var(--dashboard-domain-upsell-canvas, white)' } }
+			/>
+			<Rect
+				width="318"
+				height="192"
+				fill="url(#pattern0_8083_30798)"
+				style={ { fillOpacity: 'var(--dashboard-domain-upsell-grid-opacity, 0.12)' } }
+			/>
+			<Path
+				d="M37 49C37 42.3726 42.3726 37 49 37H325V196H37V49Z"
+				style={ { fill: 'var(--dashboard-domain-upsell-window, white)' } }
+			/>
+			<Rect
+				x="51"
+				y="89"
+				width="162"
+				height="20"
+				rx="4"
+				style={ { fill: 'var(--dashboard-domain-upsell-chrome, #F7F7F7)' } }
+			/>
+			<Rect
+				x="51"
+				y="119"
+				width="288"
+				height="90"
+				rx="4"
+				style={ { fill: 'var(--dashboard-domain-upsell-chrome, #F7F7F7)' } }
+			/>
+			<Path
+				d="M37 49C37 42.3726 42.3726 37 49 37H325V75H37V49Z"
+				style={ { fill: 'var(--dashboard-domain-upsell-chrome, #F7F7F7)' } }
+			/>
+			{ [ 55, 67, 79 ].map( ( cx ) => (
+				<Circle
+					key={ cx }
+					cx={ cx }
+					cy="56"
+					r="3.25"
+					strokeWidth="1.5"
+					style={ {
+						fill: 'var(--dashboard-domain-upsell-window, #F7F8FE)',
+						stroke: 'var(--dashboard-domain-upsell-dot-stroke, #C3C4C7)',
+					} }
+				/>
+			) ) }
+			<Rect
+				x="95"
+				y="45"
+				width="240"
+				height="22"
+				rx="4"
+				style={ { fill: 'var(--dashboard-domain-upsell-window, white)' } }
+			/>
 			<text
 				x={ isRTL() ? -119 : 119 }
 				y="60"
 				textAnchor={ isRTL() ? 'end' : 'start' }
 				direction="ltr"
-				fill="#1E1E1E"
+				style={ { fill: 'var(--dashboard__text-color, #1E1E1E)' } }
 				fontSize="12px"
-				{ ...( ! domain ? { filter: 'blur(0.3em)', opacity: 0.5 } : {} ) }
+				{ ...( isLoading ? { filter: 'blur(0.3em)', opacity: 0.5 } : {} ) }
 			>
 				{ domain ?? search }
 			</text>

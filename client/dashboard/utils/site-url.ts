@@ -1,4 +1,5 @@
 import {
+	JetpackPlans,
 	ProductUpgradeMap,
 	AkismetUpgradesProductMap,
 	SubscriptionBillPeriod,
@@ -70,12 +71,29 @@ export function getSiteVisibilityURL( site: Site ) {
 }
 
 /**
+ * Returns the URL of the site's Jetpack AI MCP settings page in wp-admin,
+ * or undefined when the site's admin URL is unknown.
+ */
+export function getSiteJetpackMcpSettingsUrl( site: Site ) {
+	const adminUrl = site.options?.admin_url;
+	return adminUrl
+		? `${ adminUrl.replace( /\/?$/, '/' ) }admin.php?page=jetpack-ai#/mcp`
+		: undefined;
+}
+
+/**
  * Given a site and its current plan's purchase (if any), this function does the following:
  *
  * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.
  * - Otherwise, returns the most appropriate URL to manage the site's current plan.
+ *
+ * Pass `hasBillingRoutes: false` in apps without the `/me/billing` routes, so purchases link to WordPress.com instead.
  */
-export function getSitePlanUrl( site: Site, purchase?: Purchase ) {
+export function getSitePlanUrl(
+	site: Site,
+	purchase?: Purchase,
+	{ hasBillingRoutes = true }: { hasBillingRoutes?: boolean } = {}
+) {
 	if ( site.is_wpcom_staging_site ) {
 		return undefined;
 	}
@@ -92,7 +110,7 @@ export function getSitePlanUrl( site: Site, purchase?: Purchase ) {
 		return getSitePlanUpgradeUrl( site );
 	}
 
-	return isDashboardBackport()
+	return isDashboardBackport() || ! hasBillingRoutes
 		? wpcomLink( `/purchases/subscriptions/${ site.slug }/${ purchase.ID }` )
 		: `/me/billing/purchases/${ purchase.ID }`;
 }
@@ -163,7 +181,16 @@ export function getUpgradedPurchaseRedirectUrl( purchase: Purchase ): string {
 	return withPurchaseNotice( getPurchaseSettingsRedirectBase( purchase ), 'upgraded' );
 }
 
-export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: string ) {
+/**
+ * @param purchase   The purchase to upgrade.
+ * @param redirectTo Where checkout returns after a successful upgrade.
+ * @param isOnSale   Whether a product is on sale; `undefined` while unknown.
+ */
+export function getSitePurchaseUpgradeUrl(
+	purchase: Purchase,
+	redirectTo?: string,
+	isOnSale?: ( productSlug: string ) => boolean
+) {
 	// Titan plans upgrade through the email tier grid, not the generic checkout.
 	if ( config.isEnabled( 'emails/titan-tiers' ) && isTitanMail( purchase ) && purchase.meta ) {
 		return dashboardLink( `/emails/choose-email-solution/${ purchase.meta }?intent=upgrade` );
@@ -185,9 +212,13 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 		return url;
 	}
 
+	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	const isProOnSale = isOnSale?.( JetpackPlans.PLAN_JETPACK_PRO_YEARLY ) === true;
+
+	/* Until Pro is known to be on sale, upgrade straight to the next bundle, unless that bundle is
+	 * known to be off sale. Afterwards the Jetpack store decides, since it offers Pro. */
 	const upgradeProductSlug = ProductUpgradeMap[ purchase.product_slug ];
-	if ( upgradeProductSlug ) {
-		const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	if ( upgradeProductSlug && ! isProOnSale && isOnSale?.( upgradeProductSlug ) !== false ) {
 		return addQueryArgs( wpcomLink( `/checkout/${ purchase.site_slug }/${ upgradeProductSlug }` ), {
 			redirect_to: backUrl,
 			cancel_to: backUrl,
@@ -195,15 +226,18 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 	}
 
 	if ( purchase.is_jetpack_plan_or_product ) {
-		return wpcomLink( `/plans/${ purchase.site_slug }` );
+		const storeUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
+		return isProOnSale
+			? addQueryArgs( storeUrl, { redirect_to: redirectTo ?? backUrl, cancel_to: backUrl } )
+			: storeUrl;
 	}
 
 	return buildSitePlanUpgradeUrl( {
 		siteSlug: purchase.site_slug,
 		isTrial: purchase.is_trial_plan,
 		isWooHosted: purchase.is_woo_hosted_product,
-		redirectTo: redirectTo ?? redirectToDashboardLink( { supportBackport: true } ),
-		cancelTo: redirectToDashboardLink( { supportBackport: true } ),
+		redirectTo: redirectTo ?? backUrl,
+		cancelTo: backUrl,
 	} );
 }
 
@@ -363,11 +397,7 @@ function buildSitePlanUpgradeUrl( {
 		return wpcomLink( `/plans/${ siteSlug }` );
 	}
 
-	const link = isWooHosted
-		? wpcomLink( '/setup/woo-hosted-plans' )
-		: wpcomLink( '/setup/plan-upgrade' );
-
-	return addQueryArgs( link, {
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		siteSlug: siteSlug,
 		cancel_to: cancelTo,
 		dashboard: getCurrentDashboard(),

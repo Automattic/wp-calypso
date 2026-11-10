@@ -35,6 +35,8 @@ type GridItemProps = {
 	/**
 	 * Callback fired when the item is being resized.
 	 * @param delta - The width and height change in grid units
+	 * @param delta.width - The width change in grid units
+	 * @param delta.height - The height change in grid units
 	 */
 	onResize: ( delta: { width: number; height: number } ) => void;
 

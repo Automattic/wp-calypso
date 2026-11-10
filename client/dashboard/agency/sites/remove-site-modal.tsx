@@ -26,9 +26,13 @@ const SITE_INDEXING_DELAY_MS = 1000;
 export default function RemoveSiteModal( {
 	site,
 	closeModal,
+	onRemoved,
+	onRemovingChange,
 }: {
 	site: AgencySite;
 	closeModal?: () => void;
+	onRemoved?: () => void;
+	onRemovingChange?: ( isRemoving: boolean ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -37,10 +41,14 @@ export default function RemoveSiteModal( {
 	const removeSite = useMutation( agencySiteRemoveMutation( agency?.id ) );
 	// The mutation settles before the list has caught up, and the modal stays
 	// open until it has, so the buttons follow this rather than `isPending`.
-	const [ isRemoving, setIsRemoving ] = useState( false );
+	const [ isRemoving, setIsRemovingState ] = useState( false );
+	const setIsRemoving = ( value: boolean ) => {
+		setIsRemovingState( value );
+		onRemovingChange?.( value );
+	};
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_dashboard_agency_sites_remove_site_dialog_open' );
+		recordTracksEvent( 'calypso_a4a_sites_remove_site_dialog_open' );
 	}, [ recordTracksEvent ] );
 
 	// The endpoint keys off the agency's own site id, which the profile only
@@ -55,7 +63,7 @@ export default function RemoveSiteModal( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_dashboard_agency_sites_remove_site_confirm' );
+		recordTracksEvent( 'calypso_a4a_sites_remove_site_confirm' );
 		setIsRemoving( true );
 
 		const notifyFailure = ( message?: string ) => {
@@ -74,6 +82,20 @@ export default function RemoveSiteModal( {
 					return;
 				}
 
+				const finish = () => {
+					createSuccessNotice( __( 'Site removed.' ), {
+						type: 'snackbar',
+					} );
+					closeModal?.();
+					onRemoved?.();
+				};
+
+				// A caller that leaves the removed site's page goes before the refresh,
+				// which would otherwise empty that page while it is still showing.
+				if ( onRemoved ) {
+					finish();
+				}
+
 				// Invalidating here rather than in the mutation factory keeps the delay
 				// below out of the shared data layer, and lets the modal stay open
 				// until the list it is sitting on top of has caught up.
@@ -86,10 +108,9 @@ export default function RemoveSiteModal( {
 				await new Promise( ( resolve ) => setTimeout( resolve, SITE_INDEXING_DELAY_MS ) );
 				await refreshSites();
 
-				createSuccessNotice( __( 'Site removed.' ), {
-					type: 'snackbar',
-				} );
-				closeModal?.();
+				if ( ! onRemoved ) {
+					finish();
+				}
 			},
 			onError: ( error: Error ) => notifyFailure( error.message ),
 		} );

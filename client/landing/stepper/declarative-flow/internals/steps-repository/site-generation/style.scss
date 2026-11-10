@@ -176,6 +176,31 @@
 	}
 }
 
+.site-generation__waiting--live {
+	align-items: stretch;
+	width: 100%;
+	min-height: 0;
+	text-align: start;
+
+	@include break-medium {
+		transform: none;
+	}
+}
+
+.site-generation__canvas:has( .site-generation__waiting--live ) {
+	align-items: stretch;
+	padding: 0;
+}
+
+.site-generation__canvas .site-generation-live__html-preview {
+	box-sizing: border-box;
+	padding-inline: 20px;
+
+	@include break-medium {
+		padding-inline: 24px;
+	}
+}
+
 // The stage sets the height every frame shares: its aspect ratio derives the
 // height from the width, and the width is capped by the container, by an
 // absolute maximum, and by the viewport height (expressed as a width through
@@ -199,10 +224,6 @@
 	}
 }
 
-// The frame's scale is the product of two factors so the hover lift and the
-// morph dip compose instead of overriding each other. The pointer tilt lives
-// on `transform` with its own short transition, and the parallax offsets it
-// sets are read by the atoms below.
 .site-generation__page-preview {
 	--site-generation-morph-easing: cubic-bezier( 0.85, 0, 0.15, 1 );
 	--site-generation-settle-duration: calc( var( --site-generation-morph-duration ) / 2 );
@@ -816,8 +837,9 @@
 	padding-inline: 20px;
 	background-color: var( --site-generation-color-frame );
 	color: var( --site-generation-color-sidebar-foreground );
-	font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-		'Segoe UI Symbol', 'Noto Color Emoji';
+	font-family:
+		ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+		'Noto Color Emoji';
 	font-size: $font-body-small;
 	line-height: 1.65;
 	letter-spacing: -0.01em;
@@ -1272,6 +1294,10 @@
 	.site-generation__build-visual {
 		width: min( 100%, calc( 240px * 16 / 9 ), calc( 45vh * 16 / 9 ) );
 		margin-block-end: 16px;
+	}
+
+	.site-generation-live {
+		gap: 18px;
 	}
 
 	.site-generation__waiting-title {

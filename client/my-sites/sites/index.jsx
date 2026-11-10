@@ -198,9 +198,6 @@ class Sites extends Component {
 			case 'view':
 				path = translate( 'Preview' );
 				break;
-			case 'woocommerce-installation':
-				path = 'WooCommerce';
-				break;
 			case 'store':
 				path = translate( 'Store' );
 				break;

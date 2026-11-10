@@ -222,6 +222,18 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf(
+							[ '/reader/conversations/inbox' ],
+							path,
+							{ 'sidebar-streams__conversations': true }
+						) }
+						label={ translate( 'Conversations' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
+						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
+						link="/reader/conversations/inbox"
+					/>
+
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span role="heading" aria-level="3">
 							{ translate( 'Feeds' ) }
@@ -288,16 +300,6 @@ export class ReaderSidebar extends Component {
 						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 							'sidebar-activity__likes': true,
 						} ) }
-					/>
-
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
-							'sidebar-streams__conversations': true,
-						} ) }
-						label={ translate( 'Conversations' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
-						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
-						link="/reader/conversations"
 					/>
 
 					{ isAutomatticTeamMember( teams ) && (

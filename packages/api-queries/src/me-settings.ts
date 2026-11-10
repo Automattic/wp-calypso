@@ -6,6 +6,7 @@ export const userSettingsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'settings' ],
 		queryFn: fetchUserSettings,
+		meta: { persist: false },
 	} );
 
 // Resending re-saves the address already pending, so it is a write like the others. Two landing

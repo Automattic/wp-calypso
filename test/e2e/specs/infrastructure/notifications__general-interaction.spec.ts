@@ -98,6 +98,19 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 			await notificationsUser.authenticate( page );
 		} );
 
+		// On the Classic interface logging in lands in wp-admin, whose notifications panel
+		// is the legacy widget. The panel under test is Calypso's, which the Reader shows.
+		await test.step( 'Open the Reader', async () => {
+			// Reader onboarding opens over the stream, at any point while the Reader loads,
+			// until the account has dismissed it once.
+			const dismissOnboarding = page
+				.getByRole( 'dialog' )
+				.getByRole( 'button', { name: 'Do it later' } );
+			await page.addLocatorHandler( dismissOnboarding, () => dismissOnboarding.click() );
+
+			await page.goto( DataHelper.getCalypsoURL( 'reader' ) );
+		} );
+
 		await test.step( 'Open Notifications panel', async () => {
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.openNotificationsPanel();

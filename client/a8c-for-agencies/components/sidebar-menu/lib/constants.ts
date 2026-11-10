@@ -11,7 +11,6 @@ export const A4A_SITES_LINK_FAVORITE = '/sites?is_favorite';
 export const A4A_SITES_LINK_DEVELOPMENT = '/sites?is_development';
 export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-walkthrough`;
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
-export const A4A_SITES_CONNECT_URL_LINK = '/sites/connect-url';
 export const A4A_PLUGINS_LINK = '/plugins';
 export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
@@ -40,6 +39,7 @@ export const A4A_MIGRATIONS_LINK = '/migrations';
 export const A4A_MIGRATIONS_OVERVIEW_LINK = `${ A4A_MIGRATIONS_LINK }/overview`;
 export const A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-pressable`;
 export const A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-wpcom`;
+export const A4A_MIGRATIONS_IMPORT_SITE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/import-site`;
 export const A4A_MIGRATIONS_COMMISSIONS_LINK = `${ A4A_MIGRATIONS_LINK }/commissions`;
 export const A4A_MIGRATIONS_PAYMENT_SETTINGS = `${ A4A_MIGRATIONS_LINK }/payment-settings`;
 export const A4A_SETTINGS_LINK = '/settings';
@@ -87,3 +87,4 @@ export const EXTERNAL_WPCOM_BILLING_HISTORY_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL
 
 // Pressable External links
 export const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';
+export const EXTERNAL_PRESSABLE_USAGE_URL = 'https://my.pressable.com/usage';

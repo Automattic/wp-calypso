@@ -57,6 +57,7 @@ export interface DomainData {
 	is_renewable: boolean;
 	is_redeemable: boolean;
 	is_subdomain: boolean;
+	is_suspended_site?: boolean;
 	is_eligible_for_inbound_transfer: boolean;
 	is_locked: boolean;
 	is_wpcom_staging_domain: boolean;

@@ -1,8 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { WEBMCP_SERVER_ABILITY_NAMES } from './contracts';
-import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
+import type { Ability } from '@wordpress/abilities';
 
 const SERVER_ABILITY_NAMES = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
 

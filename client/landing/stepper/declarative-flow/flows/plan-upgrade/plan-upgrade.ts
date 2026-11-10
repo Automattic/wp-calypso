@@ -1,3 +1,5 @@
+import { isWooHostedPlan } from '@automattic/calypso-products';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import { resolveSelect } from '@wordpress/data';
@@ -7,6 +9,7 @@ import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { FlowV2, SubmitHandler } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
@@ -69,11 +72,20 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const query = useQuery();
 		const selectedFeature = query.get( 'feature' ) ?? undefined;
 		const backTo = query.get( 'back_to' ) ?? query.get( 'cancel_to' ) ?? undefined;
+		const siteHostname = query.get( 'siteSlug' )?.split( '::' )[ 0 ];
+		const site = useSite();
+		// Woo Hosted stores can only move between Woo Hosted plans, which come monthly and yearly.
+		const isWooHosted = isWooHostedPlan( site?.plan?.product_slug ?? '' );
 
 		// Validate back_to to prevent open redirect - must not be external (expect for allowed origins).
 		const isValidBackTo = dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+		// The site's own host, such as its wp-admin, is safe: initialize() only runs for sites the user manages.
+		const isSiteBackTo =
+			!! backTo && !! siteHostname && isAllowedRedirectUrl( backTo, [ siteHostname ] );
 		const safeBackTo =
-			backTo && ( ! isExternal( backTo ) || isValidBackTo ) ? backTo : dashboardLink( '/sites' );
+			backTo && ( ! isExternal( backTo ) || isValidBackTo || isSiteBackTo )
+				? backTo
+				: ( isWooHosted && site?.options?.admin_url ) || dashboardLink( '/sites' );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -87,6 +99,11 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
+
+				...( isWooHosted && {
+					intent: 'plans-woo-hosted',
+					displayedIntervals: [ 'monthly', 'yearly' ],
+				} ),
 
 				// Provide a custom back handler that goes to back_to or /sites
 				wrapperProps: {

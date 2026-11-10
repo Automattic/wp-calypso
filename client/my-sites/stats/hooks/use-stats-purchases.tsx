@@ -1,6 +1,7 @@
 import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
+	JETPACK_PRO_PLANS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -71,9 +72,12 @@ const isCommercialPurchaseOwned = ( ownedPurchases: Purchase[] ) => {
 const supportCommercialPurchaseUse = ( ownedPurchases: Purchase[] ) => {
 	return (
 		isCommercialPurchaseOwned( ownedPurchases ) ||
-		[ ...JETPACK_BUSINESS_PLANS, ...JETPACK_COMPLETE_PLANS, ...JETPACK_GROWTH_PLANS ].some(
-			( plan ) => isProductOwned( ownedPurchases, plan )
-		)
+		[
+			...JETPACK_BUSINESS_PLANS,
+			...JETPACK_COMPLETE_PLANS,
+			...JETPACK_PRO_PLANS,
+			...JETPACK_GROWTH_PLANS,
+		].some( ( plan ) => isProductOwned( ownedPurchases, plan ) )
 	);
 };
 
@@ -87,6 +91,10 @@ const hasBusinessPlan = ( ownedPurchases: Purchase[] ) => {
 
 const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
+};
+
+const hasProPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_PRO_PLANS ] );
 };
 
 const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
@@ -157,6 +165,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 	// Which specific bundled plan (if any) is granting commercial Stats access, so purchase-page
 	// copy can name it instead of saying "your current plan".
 	const isCompletePlanOwned = useMemo( () => hasCompletePlan( sitePurchases ), [ sitePurchases ] );
+	const isProPlanOwned = useMemo( () => hasProPlan( sitePurchases ), [ sitePurchases ] );
 	const isGrowthPlanOwned = useMemo( () => hasGrowthPlan( sitePurchases ), [ sitePurchases ] );
 	const isBusinessPlanOwned = useMemo( () => hasBusinessPlan( sitePurchases ), [ sitePurchases ] );
 
@@ -167,6 +176,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isCommercialOwned,
 		supportCommercialUse,
 		isCompletePlanOwned,
+		isProPlanOwned,
 		isGrowthPlanOwned,
 		isBusinessPlanOwned,
 		hasLoadedSitePurchases,

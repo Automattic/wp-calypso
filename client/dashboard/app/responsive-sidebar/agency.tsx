@@ -2,6 +2,9 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { crossoverLinkProps } from '../../agency/crossover/store';
+import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
+import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
@@ -23,7 +26,6 @@ import {
 	marketplaceSections,
 	mcpRoute,
 } from '../router/agency';
-import { buildDashboardLink } from '../routing';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function AgencySidebar() {
@@ -53,10 +55,16 @@ export default function AgencySidebar() {
 	);
 	const canAccessLibrary = !! supports.agency.learn && canAccess( learnRoute );
 	const canAccessPartnerDirectory =
-		!! ( supports.agency.partnerDirectory && activeAgency?.partner_directory?.allowed ) &&
-		canAccess( agencyPartnerDirectoryRoute );
+		!! supports.agency.partnerDirectory && canAccess( agencyPartnerDirectoryRoute );
 	const canAccessTiers = !! supports.agency.tiers && canAccess( agencyTiersRoute );
-	const canAccessEarn = !! supports.agency.earn && earnSectionRoutes.some( canAccess );
+	const canAccessPayoutSettings =
+		canAccess( earnPayoutSettingsRoute ) && isAgencyApproved( activeAgency );
+	const canAccessEarn =
+		!! supports.agency.earn &&
+		( canAccessPayoutSettings ||
+			earnSectionRoutes.some(
+				( route ) => route !== earnPayoutSettingsRoute && canAccess( route )
+			) );
 	const canAccessTeam = !! supports.agency.team && canAccess( agencyTeamRoute );
 	const canAccessMcp = !! supports.agency.mcp && canAccess( mcpRoute );
 	const canAccessBilling =
@@ -69,7 +77,9 @@ export default function AgencySidebar() {
 		canAccessMigrations ||
 		canAccessAmplify;
 	const canAccessGrow = canAccessLibrary || canAccessPartnerDirectory || canAccessTiers;
-	const canAccessAgency = canAccessTeam || canAccessMcp || canAccessBilling;
+	const canAccessDashboardOptIn = canSwitchAgencyDashboard( activeAgency );
+	const canAccessAgency =
+		canAccessTeam || canAccessMcp || canAccessBilling || canAccessDashboardOptIn;
 
 	return (
 		<>
@@ -86,7 +96,7 @@ export default function AgencySidebar() {
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
 					{ canAccessPlugins && (
-						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/plugins' ) }>
+						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-plugins' ) }>
 							{ __( 'Plugins' ) }
 						</SidebarMenuItem>
 					) }
@@ -140,7 +150,7 @@ export default function AgencySidebar() {
 					label={ __( 'Earn' ) }
 					icon={ currencyDollar }
 					to="/referrals"
-					activePaths={ [ '/woopayments', '/payout-settings' ] }
+					activePaths={ [ '/woopayments' ] }
 				>
 					{ canAccess( earnReferralsRoute ) && (
 						<SidebarMenuItem to="/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
@@ -148,7 +158,7 @@ export default function AgencySidebar() {
 					{ canAccess( earnWooPaymentsRoute ) && (
 						<SidebarMenuItem to="/woopayments">{ __( 'WooPayments' ) }</SidebarMenuItem>
 					) }
-					{ canAccess( earnPayoutSettingsRoute ) && (
+					{ canAccessPayoutSettings && (
 						<SidebarMenuItem to="/payout-settings">{ __( 'Payout settings' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
@@ -161,9 +171,12 @@ export default function AgencySidebar() {
 					) }
 					{ /* Billing lives in the WP.com dashboard. */ }
 					{ canAccessBilling && (
-						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/me/billing' ) }>
+						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-billing' ) }>
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
+					) }
+					{ canAccessDashboardOptIn && (
+						<SidebarMenuItem to="/agency/dashboard">{ __( 'Classic dashboard' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

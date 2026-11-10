@@ -69,6 +69,31 @@ describe( '<TierBenefits>', () => {
 		);
 	} );
 
+	test( 'opens contact support through the host callback instead of the link', async () => {
+		const recordTracksEvent = jest.fn();
+		const onContactSupport = jest.fn();
+		render(
+			<TierBenefits
+				currentAgencyTierId="emerging-partner"
+				onScheduleCall={ jest.fn() }
+				onContactSupport={ onContactSupport }
+				recordTracksEvent={ recordTracksEvent }
+				links={ { 'contact-support': '#contact-support' } }
+			/>
+		);
+
+		const card = within( essentialBenefits() );
+		expect( card.queryByRole( 'link', { name: 'Contact support' } ) ).not.toBeInTheDocument();
+
+		await userEvent.click( card.getByRole( 'button', { name: 'Contact support' } ) );
+
+		expect( onContactSupport ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_agency_tier_benefits_action_click',
+			{ agency_tier: 'emerging-partner', action_id: 'contact-support' }
+		);
+	} );
+
 	test( 'renders the download badges action through the host callback', () => {
 		render(
 			<TierBenefits

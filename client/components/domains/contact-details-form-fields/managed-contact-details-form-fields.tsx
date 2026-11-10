@@ -205,22 +205,20 @@ export class ManagedContactDetailsFormFields extends Component<
 	};
 
 	handleBlur = ( name: string ) => () => {
-		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
-			if ( fieldName === 'postalCode' ) {
-				debug( 'reformatting postal code', this.props.contactDetails.postalCode );
-				const formattedPostalCode = tryToGuessPostalCodeFormat(
-					this.props.contactDetails.postalCode?.toUpperCase() ?? '',
-					this.props.contactDetails.countryCode
-				);
-				this.handleFieldChange( 'postal-code', formattedPostalCode );
-			}
-		} );
-
-		// Strip leading and trailing whitespace
-		const updatedValue =
-			this.props.contactDetails[ camelCase( name ) as keyof DomainContactDetailsData ];
+		const fieldName = camelCase( name ) as keyof DomainContactDetailsData;
+		const updatedValue = this.props.contactDetails[ fieldName ];
 		const sanitizedValue = typeof updatedValue === 'string' ? updatedValue.trim() : '';
-		this.handleFieldChange( name, sanitizedValue );
+		const updatedContactDetails = {
+			...this.props.contactDetails,
+			[ fieldName ]: sanitizedValue,
+		};
+
+		debug( 'reformatting postal code', updatedContactDetails.postalCode );
+		updatedContactDetails.postalCode = tryToGuessPostalCodeFormat(
+			updatedContactDetails.postalCode?.toUpperCase() ?? '',
+			updatedContactDetails.countryCode
+		);
+		this.updateParentState( updatedContactDetails );
 	};
 
 	maybeDisplayEmailVerificationNotice = () => {

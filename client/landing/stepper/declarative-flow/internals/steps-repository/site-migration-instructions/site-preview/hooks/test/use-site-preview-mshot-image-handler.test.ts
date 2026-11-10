@@ -26,10 +26,29 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.clearAllMocks();
+		jest.restoreAllMocks();
 	} );
 
 	beforeAll( () => {
 		nock.disableNetConnect();
+	} );
+
+	it( 'keeps the comparison capture at a desktop 3:2 viewport regardless of thumbnail width', async () => {
+		const options = { vpw: 1200, vph: 800, w: 1200, h: 800, screen_height: 800, scale: 2 };
+		const open = jest.spyOn( XMLHttpRequest.prototype, 'open' );
+		const scope = nock( 'https://s0.wp.com' )
+			.get( '/mshots/v1/https%3A%2F%2Fexample.com' )
+			.query( options )
+			.reply( 200, {} );
+		Object.defineProperty( mockRef, 'current', { value: { offsetWidth: 300 } } );
+		const { result } = renderHook( () =>
+			useSitePreviewMShotImageHandler( 'https://example.com', options )
+		);
+		expect( result.current.mShotsOption ).toEqual( options );
+		act( () => window.dispatchEvent( new Event( 'resize' ) ) );
+		expect( result.current.mShotsOption ).toEqual( options );
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( open ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should return the correct segment based on width', () => {
@@ -45,11 +64,11 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 			1200,
 			'desktop',
 			{
-				vpw: 1600,
-				vph: 1600,
-				w: 1600,
-				h: 1624,
-				screen_height: 1600,
+				vpw: 1440,
+				vph: 1440,
+				w: 1440,
+				h: 1462,
+				screen_height: 1440,
 				scale: 2,
 			},
 		],
@@ -120,7 +139,7 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		const url = 'http://example.com';
 
 		const expectedUrls = [
-			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1440&vph=1440&w=1440&h=1462&screen_height=1440&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
 		];
@@ -144,7 +163,7 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		const url = 'http://example.com';
 
 		const expectedUrls = [
-			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1440&vph=1440&w=1440&h=1462&screen_height=1440&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
 		];

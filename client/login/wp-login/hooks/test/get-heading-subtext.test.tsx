@@ -7,6 +7,19 @@ import { useTranslate } from 'i18n-calypso';
 import getHeadingSubText from '../get-heading-subtext';
 
 describe( 'getHeadingSubText', () => {
+	test( 'uses migration login copy when the migration plugin counts', () => {
+		const subtext = getHeadingSubText( {
+			isSocialFirst: true,
+			twoFactorAuthType: '',
+			translate: ( ( text ) => text ) as ReturnType< typeof useTranslate >,
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+		} );
+		expect( subtext?.primary ).toContain( 'start your migration' );
+		expect( subtext?.primary ).toContain( 'Other active plugins' );
+		expect( subtext?.secondary ).toBeTruthy();
+	} );
+
 	const translate = ( ( text ) => text ) as ReturnType< typeof useTranslate >;
 
 	test( 'appends partner consent copy when ToS is primary', () => {
@@ -57,7 +70,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'login',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack' ],
 		} );
 
@@ -77,7 +90,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'login',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'woocommerce', 'jetpack' ],
 		} );
 
@@ -93,12 +106,53 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'lostpassword',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack' ],
 		} );
 
 		expect( subtext?.primary ).toBe(
 			"Please enter your username or email address. You'll receive a link to create a new password via email."
 		);
+	} );
+
+	test.each( [
+		[ 'authenticator', false, 'Enter the code from your authenticator app.' ],
+		[ 'authenticator', true, 'Enter the code from the email we sent you.' ],
+		[ 'email', true, 'Enter the code from the email we sent you.' ],
+		[ 'sms', false, 'Enter the code from the text message we sent you.' ],
+		[
+			'backup',
+			false,
+			'Enter a backup code to continue. Use one of the 10 codes you received during setup.',
+		],
+		[ 'push', false, 'Check your device. Approve your login with the Jetpack mobile app.' ],
+	] )(
+		'shows the help text of the %s two-step screen as the subtitle (email nonce: %s)',
+		( twoFactorAuthType, hasTwoFactorEmailNonce, expected ) => {
+			const subtext = getHeadingSubText( {
+				isSocialFirst: true,
+				twoFactorAuthType: twoFactorAuthType as string,
+				hasTwoFactorEmailNonce: hasTwoFactorEmailNonce as boolean,
+				translate,
+			} );
+
+			expect( subtext?.primary ).toBe( expected );
+			expect( subtext?.secondary ).toBeNull();
+		}
+	);
+
+	test( 'has no subtitle on two-step screens without a help text', () => {
+		expect(
+			getHeadingSubText( { isSocialFirst: true, twoFactorAuthType: 'webauthn', translate } )
+		).toBeNull();
+		expect(
+			getHeadingSubText( { isSocialFirst: true, twoFactorAuthType: 'link', translate } )
+		).toBeNull();
+	} );
+
+	test( 'leaves the two-step help text to the form on Gravatar-powered logins', () => {
+		expect(
+			getHeadingSubText( { isSocialFirst: false, twoFactorAuthType: 'sms', translate } )
+		).toBeNull();
 	} );
 } );

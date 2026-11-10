@@ -25,6 +25,23 @@ export function PageSubNavProvider( {
 	return <PageSubNavContext.Provider value={ subNav }>{ children }</PageSubNavContext.Provider>;
 }
 
+/**
+ * Notices a host shows on every page it wraps, such as an account-level
+ * banner. PageLayout renders them only on pages that pass no `notices` of
+ * their own; a page that does owns the slot.
+ */
+const PageNoticesContext = createContext< React.ReactNode >( null );
+
+export function PageNoticesProvider( {
+	children,
+	notices,
+}: {
+	children: React.ReactNode;
+	notices?: React.ReactNode;
+} ) {
+	return <PageNoticesContext.Provider value={ notices }>{ children }</PageNoticesContext.Provider>;
+}
+
 function PageLayout( {
 	children,
 	header,
@@ -37,6 +54,7 @@ function PageLayout( {
 	size?: 'large' | 'small';
 } ) {
 	const subNav = useContext( PageSubNavContext );
+	const hostNotices = useContext( PageNoticesContext );
 
 	return (
 		<VStack
@@ -46,9 +64,10 @@ function PageLayout( {
 		>
 			{ header }
 			{ subNav }
-			{ notices }
+			{ notices ?? hostNotices }
 			<VStack spacing={ 6 } className="dashboard-page-layout__content">
-				{ children }
+				{ /* A PageLayout nested in this one must not repeat the host notices. */ }
+				<PageNoticesContext.Provider value={ null }>{ children }</PageNoticesContext.Provider>
 			</VStack>
 		</VStack>
 	);

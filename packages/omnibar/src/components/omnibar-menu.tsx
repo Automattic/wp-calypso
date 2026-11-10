@@ -107,7 +107,7 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	useOnView( node.onView );
 
-	const label = node.title || node.label || '';
+	const label = node.label || node.title || '';
 	const menuClassName = [ 'omnibar__menu', className, node.className, node.active && 'is-active' ]
 		.filter( Boolean )
 		.join( ' ' );

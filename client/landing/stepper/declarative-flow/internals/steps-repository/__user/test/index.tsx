@@ -6,29 +6,54 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn(),
 } ) );
 
-import { screen } from '@testing-library/dom';
+jest.mock( '../use-branded-account-layout', () => ( {
+	__esModule: true,
+	default: jest.fn( jest.requireActual( '../use-branded-account-layout' ).default ),
+} ) );
+
+import { fireEvent, screen } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep, { type UserStepAccepts } from '..';
+import useBrandedAccountLayout from '../use-branded-account-layout';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
+const mockUseBrandedAccountLayout = useBrandedAccountLayout as unknown as jest.Mock;
 
-// Drives isMobileViewport = useViewportMatch( 'small', '<' ). Every other call
-// (e.g. useViewportMatch( 'large' )) resolves to false, i.e. not a wide viewport.
-const setViewport = ( { isMobile }: { isMobile: boolean } ) =>
-	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) =>
-		breakpoint === 'small' && operator === '<' ? isMobile : false
-	);
+// isMobileViewport is useViewportMatch( 'small', '<' ) at 600px and isLargeViewport is
+// useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
+const setViewport = ( {
+	isMobile,
+	isLarge = ! isMobile,
+}: {
+	isMobile: boolean;
+	isLarge?: boolean;
+} ) =>
+	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) => {
+		if ( breakpoint === 'small' && operator === '<' ) {
+			return isMobile;
+		}
+		if ( breakpoint === 'large' ) {
+			return isLarge;
+		}
+		return false;
+	} );
 
 const noPartnerBranding = {
 	hasCustomBranding: false,
@@ -83,14 +108,36 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
+	describe( 'Log in link tracking', () => {
+		beforeEach( () => {
+			( recordTracksEvent as jest.Mock ).mockClear();
+		} );
+
+		it.each( [
+			[ 'form', '/onboarding/user', 'onboarding', false ],
+			[ 'top-bar', '/onboarding/user', 'onboarding', true ],
+			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding', false ],
+			[ 'top-bar', '/test-flow/user', 'test-flow', false ],
+		] )( 'records a click on the %s link at %s', ( origin, url, flow, isMobile ) => {
+			setViewport( { isMobile } );
+			renderUserStep( url, {}, flow );
+			fireEvent.click( screen.getByRole( 'link', { name: 'Log in' } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_login_link_click', {
+				flow,
+				step: 'user',
+				origin,
+			} );
+		} );
+	} );
+
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );
-		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( 'hello@wp.com' );
+		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( 'hello@wp.com' );
 	} );
 
 	it( 'defaults userEmail to empty string when user_email is missing', () => {
 		renderUserStep( '/onboarding/user' );
-		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( '' );
+		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( '' );
 	} );
 
 	describe( 'mobile compact layout', () => {
@@ -147,6 +194,69 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
+	describe( 'theme grid layout', () => {
+		const themeGridUrl = '/onboarding/user?ref=marketing_bar&signup_layout=theme_grid';
+		const pitch = 'Turn your idea into a real website';
+
+		it( 'puts the theme grid before an email-first form on desktop', () => {
+			renderUserStep( themeGridUrl );
+
+			const heading = screen.getByRole( 'heading', { name: 'Create an account to get started' } );
+			expect( heading ).toBeVisible();
+			expect( screen.getByText( pitch ) ).toBeVisible();
+			expect(
+				screen.getByText( pitch ).compareDocumentPosition( heading ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+			expect( screen.getByLabelText( 'Enter your email' ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: /Continue with email/i } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'puts the email field below the social buttons', () => {
+			renderUserStep( themeGridUrl );
+
+			expect(
+				screen
+					.getByText( /Continue with Google/i )
+					.compareDocumentPosition( screen.getByLabelText( 'Enter your email' ) ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
+		it.each( [
+			[ 'mobile, in the compact layout', { isMobile: true }, true ],
+			[ 'the band between the breakpoints', { isMobile: false, isLarge: false }, false ],
+		] )( 'shows only the strip above the form on %s', ( _label, viewport, isCompactLayout ) => {
+			setViewport( viewport );
+
+			const { container } = renderUserStep( themeGridUrl );
+
+			expect( container.querySelector( '.signup-theme-grid--compact' ) ).toBeInTheDocument();
+			expect( screen.queryByText( pitch ) ).not.toBeInTheDocument();
+			expect(
+				screen.getByRole( 'heading', { name: 'Create an account to get started' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
+			).not.toBeInTheDocument();
+			// The compact layout's ToS sits inside the form, below the sign-up options.
+			expect( !! screen.queryByText( /By continuing with any of the options above/i ) ).toBe(
+				isCompactLayout
+			);
+			// In the top bar in the compact layout, in the form otherwise.
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'keeps the default layout without the parameter', () => {
+			const { container } = renderUserStep( '/onboarding/user?ref=marketing_bar' );
+
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+			expect( container.querySelector( '.signup-theme-grid' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'accepts-props overrides', () => {
 		it( 'overrides the heading with headerText', () => {
 			renderUserStep( '/onboarding/user', { headerText: 'Join thousands of creators' } );
@@ -167,6 +277,101 @@ describe( 'User email signup step', () => {
 				allowedSocialServices: [ 'google', 'apple' ],
 			} );
 			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'branded layout', () => {
+		it( 'shows the brand panel, with social above email, on large viewports', () => {
+			const { container } = renderUserStep();
+
+			expect( screen.getByText( 'Millions of sites run on WordPress' ) ).toBeVisible();
+			expect( container.getElementsByClassName( 'signup-slider' ) ).toHaveLength( 0 );
+			expect(
+				screen
+					.getByRole( 'button', { name: /Continue with Google/i } )
+					.compareDocumentPosition( screen.getByLabelText( 'Email address' ) ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
+		it( 'uses the same form without the brand panel between the breakpoints', () => {
+			setViewport( { isMobile: false, isLarge: false } );
+
+			const { container } = renderUserStep();
+
+			expect( container.getElementsByClassName( 'signup-brand-panel' ) ).toHaveLength( 0 );
+			expect( screen.getByLabelText( 'Email address' ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /Continue with email/i } ) ).toBeNull();
+		} );
+
+		it( 'keeps the carousel for Woo referrers', () => {
+			const { container } = renderUserStep(
+				'/onboarding/user?user_email=test@example.com&ref=woo-hosting-solutions-flow'
+			);
+
+			expect( container.getElementsByClassName( 'signup-slider' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'signup-brand-panel' ) ).toHaveLength( 0 );
+		} );
+	} );
+
+	describe( 'login link below the buttons', () => {
+		// Partner branding turns the branded layout off, which is when the link moves below.
+		beforeEach( () => {
+			mockUseBrandedAccountLayout.mockReturnValue( false );
+		} );
+
+		afterEach( () => {
+			mockUseBrandedAccountLayout.mockImplementation(
+				jest.requireActual( '../use-branded-account-layout' ).default
+			);
+		} );
+
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+		const gapClass = 'step-container-v2--user-login-below-buttons';
+		const emailButtonIcon = () =>
+			screen.getByRole( 'button', { name: /Continue with email/i } ).querySelector( 'svg' );
+
+		it( 'shows the in-form "Log in", the envelope and the login heading gap on desktop', () => {
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
+			// One route to logging in, not two: the top bar no longer carries its own.
+			expect( screen.getAllByRole( 'link', { name: 'Log in' } ) ).toHaveLength( 1 );
+			expect(
+				screen.getByRole( 'link', { name: 'Log in' } ).closest( loginLinkSelector )
+			).toBeVisible();
+			expect( emailButtonIcon() ).toHaveClass( 'social-icons__envelope' );
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 1 );
+		} );
+
+		it.each( [
+			[ 'the compact mobile layout', { isMobile: true } ],
+			[ 'the band between the breakpoints', { isMobile: false, isLarge: false } ],
+		] )( 'keeps the top-bar "Log in" on %s', ( _label, viewport ) => {
+			setViewport( viewport );
+
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 0 );
+		} );
+
+		it.each( [
+			[ 'other flows', '/site-setup/user', 'site-setup' ],
+			[ 'Woo-referrer users', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
+			[ 'the theme grid layout', '/onboarding/user?signup_layout=theme_grid', 'onboarding' ],
+		] )( 'leaves %s unchanged', ( _label, url, flow ) => {
+			const { container } = renderUserStep( url, {}, flow );
+
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 0 );
+		} );
+
+		it( 'drops the link entirely when hideLoginLink is set', () => {
+			const { container } = renderUserStep( '/onboarding/user', { hideLoginLink: true } );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'link', { name: 'Log in' } ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

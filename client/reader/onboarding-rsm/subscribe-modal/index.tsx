@@ -175,7 +175,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 			     via `useQueries( readSiteQuery / readFeedQuery )`; nothing else needed
 			     at this level. */ }
 			<div className="subscribe-modal__container">
-				<div className="subscribe-modal__content">
+				{ /* pointer-events does not remove these controls from the tab order. */ }
+				<div className="subscribe-modal__content" inert={ promptVerification ? true : undefined }>
 					<div className="subscribe-modal__intro">
 						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
 						<p className="subscribe-modal__description">

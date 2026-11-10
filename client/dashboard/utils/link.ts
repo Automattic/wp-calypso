@@ -8,19 +8,22 @@ const CALYPSO_LIVE_ORIGIN = 'https://calypso.live';
 
 /**
  * On a calypso.live preview, returns a redirector link that resolves to the
- * previewed build's container for the given app flavour. Returns null
- * everywhere else, so callers fall back to their normal static URLs.
+ * previewed build's container for the given app. Returns null everywhere else,
+ * so callers fall back to their normal static URLs.
  *
- * `env` selects the flavour: 'wpcom' for classic Calypso, 'dashboard' for the
- * my.wordpress.com Dashboard. The redirector carries the path and any remaining
- * query params across its 302.
+ * `app` is 'wpcom' for classic Calypso or 'dashboard' for the my.wordpress.com
+ * Dashboard. The `calypso_live_envs` config names the redirector env each app
+ * runs under in this flavour's previews. The redirector carries the path and
+ * any remaining query params across its 302.
  */
 export function calypsoLiveRedirectorLink(
 	path: string,
-	env: 'wpcom' | 'dashboard'
+	app: 'wpcom' | 'dashboard'
 ): string | null {
 	const image = config( 'calypso_live_image' );
-	if ( ! image ) {
+	const envs = config( 'calypso_live_envs' ) as Partial< Record< typeof app, string > > | false;
+	const env = envs && envs[ app ];
+	if ( ! image || ! env ) {
 		return null;
 	}
 
@@ -32,9 +35,7 @@ export function calypsoLiveRedirectorLink(
 	}
 
 	url.searchParams.set( 'image', String( image ) );
-	if ( env === 'dashboard' ) {
-		url.searchParams.set( 'env', env );
-	}
+	url.searchParams.set( 'env', env );
 	return url.href;
 }
 
@@ -46,8 +47,6 @@ export function dashboardOrigins(): string[] {
 	const origins = [
 		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
-		`http://my.woo.localhost:${ port }`,
-		'https://my.woo.ai',
 		`http://my.a4a.localhost:${ port }`,
 		'https://agencies-beta.automattic.com',
 	];
@@ -69,21 +68,8 @@ export function dashboardOrigins(): string[] {
  *
  * For example, the value is set to `calypso.localhost:3000` in `config/dashboard-development.json`,
  * so that the link points to the local Calypso dev server.
- *
- * Exception: for CIAB dashboard, we will use the dashboard origin to serve signup, stepper, and checkout links.
- * This is a temporary measure until we reimplement the screen natively in the dashboard.
  */
 export function wpcomLink( path: string ) {
-	if (
-		[ '/start', '/setup', '/checkout' ].some(
-			( prefix ) => path === prefix || path.startsWith( prefix + '/' )
-		)
-	) {
-		const dashboard = getCurrentDashboard();
-		if ( dashboard === 'ciab' ) {
-			return path;
-		}
-	}
 	if ( A4A_SIGNUP_PATHS.some( ( prefix ) => path === prefix || path.startsWith( prefix + '/' ) ) ) {
 		const dashboard = getCurrentDashboard();
 		if ( dashboard === 'a4a' ) {

@@ -4,6 +4,7 @@
 import { select } from '@wordpress/data';
 import {
 	bindToOpenCanvas,
+	blockCurrentRequest,
 	getBlockingMove,
 	getCanvasMove,
 	startNewUserRequest,
@@ -380,6 +381,75 @@ describe( 'withCanvasGuard', () => {
 
 	it( 'is a no-op without a tool provider', () => {
 		expect( withCanvasGuard( undefined ) ).toBeUndefined();
+	} );
+} );
+
+describe.each( [ 'executeAbility', 'callback' ] as const )( 'save guard through %s', ( path ) => {
+	const save = jest.fn().mockResolvedValue( { result: { success: true }, returnToAgent: true } );
+	const provider = {
+		getAbilities: async () => [ { name: 'big-sky/save-changes', callback: save } ],
+		executeAbility: save,
+	} as unknown as ToolProvider;
+
+	async function invokeSave() {
+		const guarded = withCanvasGuard( provider )!;
+		if ( path === 'executeAbility' ) {
+			return guarded.executeAbility( 'big_sky__save_changes', {} );
+		}
+		const [ ability ] = await guarded.getAbilities();
+		return ability.callback!( {} as never );
+	}
+
+	beforeEach( () => {
+		mockSelect.mockReset();
+		save.mockClear();
+		startNewUserRequest();
+		setOpenPost( ABOUT_PAGE );
+		bindToOpenCanvas();
+	} );
+
+	it( 'allows saves after a canvas move that has not stopped the request', async () => {
+		setOpenPost( CONTACT_PAGE );
+
+		const result = await invokeSave();
+
+		expect( save ).toHaveBeenCalledTimes( 1 );
+		expect( result.result.success ).toBe( true );
+	} );
+
+	it( 'refuses saves after an edit was refused, even after the continuation rebinds', async () => {
+		setOpenPost( CONTACT_PAGE );
+		const edit = jest.fn();
+		await withCanvasGuard( createToolProvider( edit ) )!.executeAbility(
+			'big-sky/apply-block-edits',
+			{}
+		);
+		bindToOpenCanvas();
+
+		const result = await invokeSave();
+
+		expect( edit ).not.toHaveBeenCalled();
+		expect( save ).not.toHaveBeenCalled();
+		expect( result ).toMatchObject( {
+			result: { success: false, error: 'editor_request_blocked' },
+			returnToAgent: true,
+		} );
+		expect( result.result.message ).toContain( 'No changes were saved' );
+		expect( result.result.message ).toContain( 'Do not retry' );
+	} );
+
+	it( 'allows a new explicit save request after the previous request was stopped', async () => {
+		setOpenPost( CONTACT_PAGE );
+		blockCurrentRequest();
+
+		expect( ( await invokeSave() ).result.success ).toBe( false );
+		expect( save ).not.toHaveBeenCalled();
+
+		startNewUserRequest();
+		bindToOpenCanvas();
+
+		expect( ( await invokeSave() ).result.success ).toBe( true );
+		expect( save ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 

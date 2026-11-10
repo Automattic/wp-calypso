@@ -2,20 +2,34 @@
  * @jest-environment jsdom
  */
 
-import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
+import { PRODUCT_AI_CREDITS_LIFETIME, PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { checkoutTheme } from '@automattic/composite-checkout';
+import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { ThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
 import CheckoutPayButtonFooter from '../checkout-pay-button-footer';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-function renderFooter( cart: ResponseCart ) {
+function makePaymentMethod( id: string ): PaymentMethod {
+	return {
+		id,
+		paymentProcessorId: id,
+		label: id,
+		submitButton: <button />,
+		getAriaLabel: () => id,
+	};
+}
+
+function renderFooter( cart: ResponseCart, selectedPaymentMethodId = 'card' ) {
 	return render(
-		<ThemeProvider theme={ checkoutTheme }>
+		<CheckoutProvider
+			paymentMethods={ [ makePaymentMethod( 'card' ), makePaymentMethod( 'free-purchase' ) ] }
+			paymentProcessors={ {} }
+			initiallySelectedPaymentMethodId={ selectedPaymentMethodId }
+		>
 			<CheckoutPayButtonFooter cart={ cart } />
-		</ThemeProvider>
+		</CheckoutProvider>
 	);
 }
 
@@ -43,9 +57,9 @@ describe( 'CheckoutPayButtonFooter', () => {
 		const { container } = renderFooter( cart );
 
 		expect( screen.getByText( /money back guarantee/i ) ).toBeInTheDocument();
-		// 4 direct children: SSL trust line, refund trust line, divider, legal notice.
+		// 5 direct children: SSL trust line, refund trust line, divider, legal notice, processor notice.
 		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
-		expect( wrapper?.childElementCount ).toBe( 4 );
+		expect( wrapper?.childElementCount ).toBe( 5 );
 	} );
 
 	it( 'omits the entire refund row for a cart with no refund window', () => {
@@ -56,8 +70,23 @@ describe( 'CheckoutPayButtonFooter', () => {
 		// refund row in the DOM would add dead space above the divider. Confirm
 		// the row's wrapper element is gone, not just its inner content.
 		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
-		// 3 direct children: SSL trust line, divider, legal notice (modal is closed).
+		// 4 direct children: SSL trust line, divider, legal notice, processor notice (modal is closed).
+		expect( wrapper?.childElementCount ).toBe( 4 );
+	} );
+
+	it( 'omits the SSL line when the free purchase method is selected', () => {
+		const { container } = renderFooter( getEmptyResponseCart(), 'free-purchase' );
+
+		expect( screen.queryByText( /SSL secure payment/ ) ).not.toBeInTheDocument();
+		// 3 direct children: divider, legal notice, processor notice.
+		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
 		expect( wrapper?.childElementCount ).toBe( 3 );
+	} );
+
+	it( 'shows the SSL line on a free cart when a card is selected', () => {
+		renderFooter( getEmptyResponseCart(), 'card' );
+
+		expect( screen.getByText( /SSL secure payment/ ) ).toBeVisible();
 	} );
 
 	it( 'links the AI Credits Guidelines for a cart containing Studio Code AI Credits', () => {
@@ -73,11 +102,27 @@ describe( 'CheckoutPayButtonFooter', () => {
 		).toBeVisible();
 	} );
 
+	it( 'omits the AI Credits Guidelines for a cart containing AI Credits', () => {
+		renderFooter( cartWith( PLAN_PREMIUM, PRODUCT_AI_CREDITS_LIFETIME ) );
+
+		expect(
+			screen.queryByRole( 'link', { name: 'AI Credits Guidelines' } )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'omits the AI Credits Guidelines for any other cart', () => {
 		renderFooter( cartWith( PLAN_PREMIUM ) );
 
 		expect(
 			screen.queryByRole( 'link', { name: 'AI Credits Guidelines' } )
 		).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the payment processor disclosure below the terms notice', () => {
+		const { container } = renderFooter( cartWith( PLAN_PREMIUM ) );
+
+		const wrapper = container.querySelector( '.checkout-pay-button-footer' );
+		expect( screen.getByText( /Your payment will be processed by/ ) ).toBeVisible();
+		expect( wrapper?.lastElementChild ).toHaveClass( 'checkout-processor-notice' );
 	} );
 } );

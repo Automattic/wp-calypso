@@ -12,7 +12,11 @@
  * capture, and drawing cross-origin pixels taints the canvas, which makes
  * `toBlob` throw outright. Whether the right image landed is also the one thing
  * the block tree already answers, through the `url` attribute. The placeholder
- * keeps the element's rendered box so the layout around it is unchanged.
+ * keeps the element's rendered box so the layout around it is unchanged. The
+ * exception is the framed blocks themselves: an edit to an image is judged by
+ * what is in it — a crop, a focal point, text laid over it — so their images
+ * are fetched, downscaled and inlined, and any that cannot be fall back to a
+ * placeholder rather than failing the capture.
  *
  * Fonts are inlined, and a font that cannot be inlined fails the whole capture.
  * Line breaking is a function of font metrics: substitute the font and the
@@ -22,6 +26,12 @@
  * Internals are exported for their tests only; `rasterizeCanvas` is the entry point.
  */
 
+import {
+	drawScaledCopy,
+	getBackgroundImageUrls,
+	rememberImagePixels,
+	URL_PATTERN,
+} from './image-pixels';
 import type { CanvasCaptureContext, CanvasRasterizer } from './capture';
 
 // Bounds the encoded size and the model's per-image token cost, which scale with
@@ -42,6 +52,12 @@ const MAX_LONG_EDGE = 1400;
 const MAX_CAPTURES = 4;
 
 const PLACEHOLDER_FILL = '#d5d7da';
+
+// How many images in the framed blocks are shown for real. Each is a fetch, a
+// decode and a re-encode, all waited on by the edit the capture follows.
+const MAX_INLINED_IMAGES = 6;
+const IMAGE_FETCH_TIMEOUT = 3000;
+const INLINED_IMAGE_QUALITY = 0.85;
 const IMAGE_MIME = 'image/webp';
 const IMAGE_QUALITY = 0.92;
 
@@ -514,7 +530,8 @@ export const getCaptureRects = (
 export const replaceImagesWithPlaceholders = (
 	liveRoot: Element,
 	cloneRoot: Element,
-	view: Window
+	view: Window,
+	inlinedImages: Map< Element, string > = new Map()
 ): void => {
 	const liveImages = Array.from( liveRoot.querySelectorAll( 'img' ) );
 	const cloneImages = Array.from( cloneRoot.querySelectorAll( 'img' ) );
@@ -530,13 +547,17 @@ export const replaceImagesWithPlaceholders = (
 		// intrinsic size, which would shift everything laid out around it and
 		// make the capture misreport the very spacing it exists to show.
 		const box = liveImage.getBoundingClientRect();
-		cloneImage.setAttribute( 'src', BLANK_PIXEL );
+		const inlined = inlinedImages.get( liveImage );
+		cloneImage.setAttribute( 'src', inlined ?? BLANK_PIXEL );
 		cloneImage.removeAttribute( 'srcset' );
 		cloneImage.removeAttribute( 'sizes' );
 		cloneImage.removeAttribute( 'loading' );
 		cloneImage.style.width = `${ box.width }px`;
 		cloneImage.style.height = `${ box.height }px`;
-		cloneImage.style.backgroundColor = PLACEHOLDER_FILL;
+
+		if ( ! inlined ) {
+			cloneImage.style.backgroundColor = PLACEHOLDER_FILL;
+		}
 	} );
 
 	// CSS background images never appear in the markup, so they have to be found
@@ -556,14 +577,25 @@ export const replaceImagesWithPlaceholders = (
 		// A gradient is colour, not a photograph, and paints without a fetch.
 		const backgroundImage = view.getComputedStyle( liveElement ).backgroundImage;
 
-		if ( backgroundImage && /url\(/i.test( backgroundImage ) ) {
+		if ( ! backgroundImage || ! /url\(/i.test( backgroundImage ) ) {
+			return;
+		}
+
+		const inlined = inlinedImages.get( liveElement );
+
+		// Rewritten inside the computed value, so a gradient layered over the
+		// photograph stays where it was.
+		if ( inlined ) {
+			cloneElement.style.backgroundImage = backgroundImage.replace(
+				URL_PATTERN,
+				`url("${ inlined }")`
+			);
+		} else {
 			cloneElement.style.backgroundImage = 'none';
 			cloneElement.style.backgroundColor = PLACEHOLDER_FILL;
 		}
 	} );
 };
-
-const URL_PATTERN = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
 
 // `@font-face` carries no nested braces, so matching to the first `}` is enough.
 const FONT_FACE_PATTERN = /@font-face\s*\{[^}]*\}/gi;
@@ -579,6 +611,28 @@ const FONT_FACE_PATTERN = /@font-face\s*\{[^}]*\}/gi;
  * theme write rewrites a stylesheet in place and no cheap key catches it.
  */
 const fontCache = new Map< string, string >();
+
+/**
+ * Inlined images, keyed by URL and the size they were scaled to, with the
+ * pixels kept for the contrast measurement. Like a font, an image at a given
+ * URL does not change, and a capture after every edit would otherwise decode
+ * and re-encode the same photograph each time. Bounded, unlike the fonts: the
+ * images change with what is framed.
+ */
+interface EncodedImage {
+	dataUri: string;
+	/** An `<img>`'s kept pixels; the measurement reads no CSS background. */
+	pixels: HTMLCanvasElement | null;
+}
+
+// In-flight encodes too, so an image shown twice in one capture is fetched once.
+const imageCache = new Map< string, Promise< EncodedImage > >();
+const MAX_CACHED_IMAGES = 12;
+
+/** Forgets the inlined images. For tests. */
+export const clearImageCache = (): void => {
+	imageCache.clear();
+};
 
 /**
  * Forgets the inlined fonts, so the next capture fetches them again.
@@ -796,6 +850,226 @@ const bytesToBase64 = ( bytes: Uint8Array ): string => {
 };
 
 const toBase64 = ( buffer: ArrayBuffer ): string => bytesToBase64( new Uint8Array( buffer ) );
+
+/** Fetches, scales and encodes one image for `fetchImageAsDataUri`. */
+const encodeImage = async (
+	url: string,
+	box: DOMRect | null,
+	keepPixels: boolean
+): Promise< EncodedImage > => {
+	// A cors-mode request, so it rejects for any server that does not allow
+	// this origin, rather than handing back pixels that would taint the canvas.
+	const response = await fetchWithDeadline( url, IMAGE_FETCH_TIMEOUT );
+
+	if ( ! response.ok ) {
+		throw new Error( `HTTP ${ response.status }` );
+	}
+
+	const blob = await response.blob();
+
+	// Vector, and already small: drawn at any size without re-encoding.
+	if ( blob.type === 'image/svg+xml' ) {
+		return {
+			dataUri: `data:image/svg+xml;base64,${ toBase64( await blob.arrayBuffer() ) }`,
+			pixels: null,
+		};
+	}
+
+	const bitmap = await createImageBitmap( blob );
+	const scale = box
+		? Math.min( 1, Math.max( box.width / bitmap.width, box.height / bitmap.height ) )
+		: 1;
+	let canvas: HTMLCanvasElement | null;
+
+	try {
+		canvas = drawScaledCopy( bitmap, bitmap.width, bitmap.height, scale );
+	} finally {
+		bitmap.close();
+	}
+
+	if ( ! canvas ) {
+		throw new Error( 'No 2d context available' );
+	}
+
+	const pixels = keepPixels ? drawScaledCopy( canvas, canvas.width, canvas.height ) : null;
+	const encoded = await new Promise< Blob | null >( ( resolve ) =>
+		canvas.toBlob( resolve, IMAGE_MIME, INLINED_IMAGE_QUALITY )
+	);
+
+	if ( ! encoded ) {
+		throw new Error( 'Could not encode image' );
+	}
+
+	// The blob's own type: a browser that cannot encode WebP falls back to PNG.
+	return {
+		dataUri: `data:${ encoded.type };base64,${ toBase64( await encoded.arrayBuffer() ) }`,
+		pixels,
+	};
+};
+
+/**
+ * An image as a data URI no larger than the box it renders in.
+ *
+ * Downscaled because a photograph straight from the media library can run to
+ * megabytes, every one of which would be base64-encoded into the SVG and
+ * parsed again by the renderer, only to be drawn into a few hundred pixels.
+ * The scale is the one `cover` would use, so an image fitted to its box is
+ * never drawn larger than it was encoded; a fixed background is fitted to
+ * the viewport instead. One drawn at its own size, as a repeated cover's tiles
+ * are, is kept at that size, since shrinking it would change what the
+ * capture shows.
+ * A small copy of the pixels is kept for the contrast measurement, which
+ * reads text over a cover's photograph against them.
+ * @param element The live element showing the image.
+ * @param url     The image's URL.
+ * @param box     The size it renders at, in CSS pixels, when it is fitted to
+ *                it; `null` when it is drawn at its own size.
+ * @returns The data URI.
+ */
+const fetchImageAsDataUri = async (
+	element: Element,
+	url: string,
+	box: DOMRect | null
+): Promise< string > => {
+	if ( url.startsWith( 'data:' ) ) {
+		return url;
+	}
+
+	// By kind too, since only an `<img>`'s encode keeps pixels.
+	const isImage = element.tagName === 'IMG';
+	const size = box ? `${ Math.round( box.width ) }x${ Math.round( box.height ) }` : 'own';
+	const key = `${ isImage ? 'img' : 'background' } ${ size } ${ url }`;
+	let encoded = imageCache.get( key );
+
+	// Re-set on a hit too, so the eviction below drops the least recently used.
+	imageCache.delete( key );
+
+	if ( ! encoded ) {
+		encoded = encodeImage( url, box, isImage );
+		// Only successes stay: a failure cached would refuse the image for
+		// the rest of the session.
+		encoded.catch( () => imageCache.delete( key ) );
+	}
+
+	imageCache.set( key, encoded );
+
+	// Oldest first, as a Map iterates.
+	if ( imageCache.size > MAX_CACHED_IMAGES ) {
+		imageCache.delete( imageCache.keys().next().value as string );
+	}
+
+	const { dataUri, pixels } = await encoded;
+
+	if ( pixels ) {
+		rememberImagePixels( element, url, pixels );
+	}
+
+	return dataUri;
+};
+
+/**
+ * Where to look for images to inline: the framed blocks, and before them any
+ * cover holding one. Text edited inside a cover is framed without the cover,
+ * and the contrast measurement needs the cover's photograph to read it against.
+ * @param canvasDocument The canvas document.
+ * @param clientIds      The framed blocks.
+ * @returns The elements, covers first.
+ */
+export const findImageRoots = ( canvasDocument: Document, clientIds: string[] ): Element[] => {
+	const blocks = findBlockElements( canvasDocument, clientIds );
+	const covers = blocks.flatMap( ( block ) => {
+		const cover = block.parentElement?.closest( '.wp-block-cover' );
+
+		return cover ? [ cover ] : [];
+	} );
+
+	return [ ...new Set( [ ...covers, ...blocks ] ) ];
+};
+
+/**
+ * The real pixels of the images in the given blocks, keyed by the live element
+ * that shows each one: `<img>`s, and CSS backgrounds, where cover blocks keep
+ * their photograph.
+ *
+ * Never rejects. An image that cannot be fetched — most often a host that does
+ * not send CORS headers — is left out, and `replaceImagesWithPlaceholders`
+ * gives it a placeholder like any other.
+ * @param roots The framed blocks' elements.
+ * @param view  The window they belong to.
+ * @returns Data URIs by live element.
+ */
+export const inlineBlockImages = async (
+	roots: Element[],
+	view: Window
+): Promise< Map< Element, string > > => {
+	const seen = new Set< Element >();
+	const candidates: { element: Element; url: string; box: DOMRect | null }[] = [];
+
+	for ( const element of roots.flatMap( ( root ) => [
+		root,
+		...Array.from( root.querySelectorAll( '*' ) ),
+	] ) ) {
+		if ( candidates.length >= MAX_INLINED_IMAGES ) {
+			break;
+		}
+
+		// A block nested inside another framed block is reached twice.
+		if ( seen.has( element ) ) {
+			continue;
+		}
+
+		seen.add( element );
+
+		const box = element.getBoundingClientRect();
+
+		if ( ! box.width || ! box.height ) {
+			continue;
+		}
+
+		// By tag name: the canvas is an iframe, so its elements are not
+		// instances of this window's `HTMLImageElement`.
+		let url: string | undefined;
+		let fitted: boolean;
+		let fittedTo = box;
+
+		if ( element.tagName === 'IMG' ) {
+			const image = element as HTMLImageElement;
+			url = image.currentSrc || image.src;
+			fitted = ! [ 'none', 'scale-down' ].includes( view.getComputedStyle( image ).objectFit );
+		} else {
+			const style = view.getComputedStyle( element );
+			const urls = getBackgroundImageUrls( style.backgroundImage );
+
+			// One photograph to stand in for. Several layered urls would all be
+			// rewritten to the same one. A data URI is left to its placeholder:
+			// one with quotes in it is cut short by the url pattern, and the
+			// rewrite would leave broken CSS where the background was.
+			url = urls.length === 1 && ! urls[ 0 ].startsWith( 'data:' ) ? urls[ 0 ] : undefined;
+			fitted = [ 'cover', 'contain' ].includes( style.backgroundSize );
+
+			// A fixed background is sized to the viewport, not its box.
+			if ( fitted && style.backgroundAttachment === 'fixed' ) {
+				fittedTo = { width: view.innerWidth, height: view.innerHeight } as DOMRect;
+			}
+		}
+
+		if ( url ) {
+			candidates.push( { element, url, box: fitted ? fittedTo : null } );
+		}
+	}
+
+	const inlined = await Promise.all(
+		candidates.map( async ( { element, url, box } ) => {
+			try {
+				return [ element, await fetchImageAsDataUri( element, url, box ) ] as const;
+			} catch {
+				return null;
+			}
+		} )
+	);
+
+	return new Map( inlined.filter( ( entry ) => entry !== null ) );
+};
 
 const FONT_FAMILY_PATTERN = /font-family\s*:\s*([^;}]+)/i;
 
@@ -1583,6 +1857,16 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		return value;
 	};
 
+	// Started alongside the CSS, which it does not depend on: both are mostly
+	// waiting on the network. Never rejects. The whole page keeps its
+	// placeholders: scaled to fit, no photograph in it is legible, and they
+	// would cost the PNG its compression.
+	const images = wholePage
+		? Promise.resolve( new Map< Element, string >() )
+		: time( 'images', () =>
+				inlineBlockImages( findImageRoots( canvasDocument, clientIds ), canvasWindow )
+			);
+
 	// Split, because the two halves have different fixes if this ever needs
 	// speeding up: reading ~12,000 rules is CPU, and inlining fonts is fetches
 	// and base64. Caching the first needs invalidation that catches a stylesheet
@@ -1602,9 +1886,11 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			}
 		} )
 	);
+	const inlinedImages = await images;
+
 	const clone = await time( 'clone', () => {
 		const cloned = body.cloneNode( true ) as Element;
-		replaceImagesWithPlaceholders( body, cloned, canvasWindow );
+		replaceImagesWithPlaceholders( body, cloned, canvasWindow, inlinedImages );
 
 		// Whenever the document is rendered more than once. A single band
 		// renders it once, so a viewport-positioned element lands where it
@@ -1681,8 +1967,10 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		},
 		metadata: {
 			// Images are placeholders, so a reader of this capture must not
-			// conclude the page's photographs are missing or broken.
+			// conclude the page's photographs are missing or broken — except for
+			// these, the framed blocks' own, which are shown as they are.
 			imagesArePlaceholders: true,
+			inlinedImages: inlinedImages.size,
 			fullPage: wholePage,
 			// Blocks framed by this band, not by the capture as a whole, so a
 			// reader can tell which picture holds what it asked about.

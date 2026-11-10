@@ -8,7 +8,6 @@ import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	planWithoutDomain,
@@ -31,8 +30,6 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -58,7 +55,6 @@ describe( 'Checkout contact step', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
@@ -129,6 +125,35 @@ describe( 'Checkout contact step', () => {
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
+	} );
+
+	it( 'shows the existing-account error on the email field when it loses focus while logged-out', async () => {
+		const user = userEvent.setup();
+		mockCachedContactDetailsEndpoint( { country_code: '', postal_code: '' } );
+		mockUserSignupValidationEndpoint( () => [
+			200,
+			{
+				success: false,
+				messages: { email: { taken: 'An account with this email already exists.' } },
+			},
+		] );
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ { products: [ planWithoutDomain ] } }
+				additionalProps={ { isLoggedOutCart: true } }
+			/>
+		);
+		await screen.findByText( 'Country' );
+
+		await user.type( screen.getByLabelText( 'Email' ), 'test@example.com' );
+		await user.tab();
+
+		expect(
+			await screen.findByText( ( content ) =>
+				content.startsWith( 'That email address is already in use' )
+			)
+		).toBeVisible();
 	} );
 
 	it.each( [

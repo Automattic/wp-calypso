@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
+import CrossoverModalHost from '../../../crossover';
 import MarketplacePurchases from '../index';
 
 const API = 'https://public-api.wordpress.com';
@@ -121,7 +122,7 @@ function mockAssign() {
 
 async function assignLicense() {
 	const user = await openRowActions();
-	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site' } ) );
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site…' } ) );
 	await user.click( await screen.findByRole( 'radio', { name: 'https://client.example.com' } ) );
 	await user.click( screen.getByRole( 'button', { name: 'Assign to selected site' } ) );
 	return user;
@@ -150,6 +151,26 @@ describe( '<MarketplacePurchases>', () => {
 
 		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
+	} );
+
+	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		sessionStorage.setItem( 'referrals-shopping-card-selected-items', 'jetpack-stats-free:1' );
+		sessionStorage.setItem( 'marketplace-type', 'referral' );
+		window.history.replaceState( {}, '', '/purchases?cart=referral&receipt_id=123' );
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'regular' );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
 	} );
 
 	test( 'leaves the cart alone without a receipt', async () => {
@@ -190,7 +211,7 @@ describe( '<MarketplacePurchases>', () => {
 
 		// The action stays in the menu so the agency can see it exists; the Site
 		// column is what says why it is out of reach.
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -206,7 +227,7 @@ describe( '<MarketplacePurchases>', () => {
 		await screen.findByText( 'Not assigned' );
 		await openRowActions();
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).not.toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -273,5 +294,56 @@ describe( '<MarketplacePurchases>', () => {
 			'Jetpack VaultPress Backup has been assigned to https://client.example.com.'
 		);
 		expect( notice ).toBeVisible();
+	} );
+
+	describe( 'Manage in Pressable', () => {
+		const DAY_MS = 24 * 60 * 60 * 1000;
+
+		function mockOwnerAgency() {
+			nock( API )
+				.get( '/wpcom/v2/agency' )
+				.query( true )
+				.reply( 200, [ { id: AGENCY_ID, user: { role: 'a4a_administrator' } } ] )
+				.persist();
+		}
+
+		function pressableLicenseAttached( daysAgo: number ) {
+			// The endpoint reports UTC times without a zone: "YYYY-MM-DD HH:MM:SS".
+			const attachedAt = new Date( Date.now() - daysAgo * DAY_MS )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			return {
+				...unassignedWpcomLicense,
+				license_key: 'pressable-wp-1_abc',
+				product: 'Pressable Signature 1',
+				attached_at: attachedAt,
+			};
+		}
+
+		test( 'asks for feedback within a week of the purchase', async () => {
+			mockOwnerAgency();
+			mockPreferences();
+			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
+			mockPendingSites( 'pending' );
+
+			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			render(
+				<>
+					<MarketplacePurchases />
+					<CrossoverModalHost />
+				</>
+			);
+			await userEvent.click( await screen.findByRole( 'link', { name: /Manage in Pressable/ } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /Continue to Pressable/ } ) );
+
+			expect( open ).toHaveBeenCalledWith(
+				'https://my.pressable.com/agency/auth',
+				'_blank',
+				'noopener,noreferrer'
+			);
+			expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
+			open.mockRestore();
+		} );
 	} );
 } );

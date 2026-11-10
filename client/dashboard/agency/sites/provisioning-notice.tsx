@@ -1,11 +1,18 @@
-import { activeAgencyQuery, provisionedAgencySitesQuery } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	agencySitesQuery,
+	provisionedAgencySitesQuery,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Notice from '../../components/notice';
 import { wpcomLink } from '../../utils/link';
+import { MilestoneFeedbackModal, useMilestoneFeedback } from '../feedback';
 import {
 	holdProvisioningSite,
 	untrackProvisioningSite,
@@ -14,6 +21,9 @@ import {
 import type { MigrationCommissionSite } from '@automattic/api-core';
 
 const POLL_INTERVAL_MS = 5000;
+const SITE_LIST_POLL_INTERVAL_MS = 15000;
+// Ten minutes of checks, after which the button keeps opening WordPress.com.
+const SITE_LIST_POLL_LIMIT = 40;
 
 /**
  * This notice renders on every `/sites` load and polls, so a response that is
@@ -34,6 +44,65 @@ function getSiteSlug( url: string ): string {
 }
 
 /**
+ * The agency site page only opens a site the agency site list already has, and
+ * a new site can take a few minutes to appear there after it reports ready.
+ * Until it does, the button opens the site on WordPress.com instead.
+ */
+function SetUpSiteButton( {
+	siteSlug,
+	onClick,
+}: {
+	siteSlug: string;
+	onClick: ( event: React.MouseEvent, isListed: boolean ) => void;
+} ) {
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const hasSite = ( sites?: { blog_id: number }[] ) =>
+		!! site && !! sites?.some( ( { blog_id } ) => blog_id === site.ID );
+
+	// The same search the site page runs first, kept to one small request a check
+	// rather than the page's fallback to the whole list.
+	const { data: searchResults } = useQuery( {
+		...agencySitesQuery( {
+			search: siteSlug.replace( /^www\./, '' ).split( '.' )[ 0 ],
+			per_page: 100,
+		} ),
+		refetchInterval: ( { state } ) =>
+			hasSite( state.data ) ||
+			state.dataUpdateCount + state.errorUpdateCount >= SITE_LIST_POLL_LIMIT
+				? false
+				: SITE_LIST_POLL_INTERVAL_MS,
+	} );
+	const isListed = hasSite( searchResults );
+
+	// One <Button> whichever way it points: swapping elements crashes React
+	// under Google Translate (react/react#11538).
+	return (
+		<Button
+			variant="primary"
+			href={ isListed ? `/sites/${ siteSlug }` : wpcomLink( `/overview/${ siteSlug }` ) }
+			target={ isListed ? undefined : '_blank' }
+			rel={ isListed ? undefined : 'noreferrer' }
+			onClick={ ( event: React.MouseEvent ) => {
+				// Leave new-tab and new-window clicks to the browser.
+				if (
+					event.button !== 0 ||
+					event.metaKey ||
+					event.ctrlKey ||
+					event.shiftKey ||
+					event.altKey
+				) {
+					return;
+				}
+				onClick( event, isListed );
+			} }
+			__next40pxDefaultSize
+		>
+			{ __( 'Set up your site' ) }
+		</Button>
+	);
+}
+
+/**
  * Reports on sites this browser started creating: one notice each, from the
  * redirect that follows provisioning until the site answers as ready.
  *
@@ -43,6 +112,10 @@ function getSiteSlug( url: string ): string {
 export default function ProvisioningSiteNotices() {
 	const provisioningSiteIds = useProvisioningSiteIds();
 	const { data: agency } = useQuery( activeAgencyQuery() );
+	const navigate = useNavigate();
+	// Open while the survey shows; `siteSlug` is the site to open once it closes.
+	const [ feedback, setFeedback ] = useState< { siteSlug?: string } >();
+	const { shouldAsk } = useMilestoneFeedback( 'purchase-completed' );
 
 	const { data: sites } = useQuery( {
 		...provisionedAgencySitesQuery( agency?.id ?? 0 ),
@@ -73,17 +146,12 @@ export default function ProvisioningSiteNotices() {
 		provisioningSiteIds.filter( ( id ) => readySites.has( id ) ).forEach( holdProvisioningSite );
 	}, [ provisioningSiteIds, readySites ] );
 
-	if ( ! provisioningSiteIds.length ) {
-		return null;
-	}
-
 	return (
 		<>
 			{ provisioningSiteIds.map( ( id ) => {
 				const site = readySites.get( id );
-				// The agency site route may not resolve a new site for a few minutes
-				// yet, so both the button and the link open it on WordPress.com.
-				const overviewUrl = site ? wpcomLink( `/overview/${ getSiteSlug( site.url ) }` ) : '';
+				const siteSlug = site ? getSiteSlug( site.url ) : '';
+				const overviewUrl = site ? wpcomLink( `/overview/${ siteSlug }` ) : '';
 
 				// One <Notice> across both states rather than a component per state:
 				// swapping the mounted element when the site reports ready crashes
@@ -100,15 +168,22 @@ export default function ProvisioningSiteNotices() {
 						onClose={ () => untrackProvisioningSite( id ) }
 						actions={
 							site && (
-								<Button
-									variant="primary"
-									href={ overviewUrl }
-									target="_blank"
-									rel="noreferrer"
-									__next40pxDefaultSize
-								>
-									{ __( 'Set up your site' ) }
-								</Button>
+								<SetUpSiteButton
+									siteSlug={ siteSlug }
+									onClick={ ( event, isListed ) => {
+										if ( isListed ) {
+											event.preventDefault();
+										} else if ( ! shouldAsk ) {
+											return;
+										}
+										untrackProvisioningSite( id );
+										if ( shouldAsk ) {
+											setFeedback( { siteSlug: isListed ? siteSlug : undefined } );
+										} else {
+											navigate( { to: `/sites/${ siteSlug }` } );
+										}
+									} }
+								/>
 							)
 						}
 					>
@@ -134,6 +209,17 @@ export default function ProvisioningSiteNotices() {
 					</Notice>
 				);
 			} ) }
+			{ feedback && (
+				<MilestoneFeedbackModal
+					type="purchase-completed"
+					onClose={ () => {
+						setFeedback( undefined );
+						if ( feedback.siteSlug ) {
+							navigate( { to: `/sites/${ feedback.siteSlug }` } );
+						}
+					} }
+				/>
+			) }
 		</>
 	);
 }

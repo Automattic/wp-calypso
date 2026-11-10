@@ -1,0 +1,24 @@
+@mixin playground-woo-focus {
+	--wpds-color-stroke-focus: var( --studio-woocommerce-purple-40 );
+
+	// Buttons get a focus ring on any `:focus`, including the programmatic focus a modal
+	// moves to its first button, so limit it to keyboard focus.
+	&:focus:not( :focus-visible ) {
+		outline: none;
+	}
+}
+
+@mixin playground-woo-button {
+	--wp-components-color-accent: var( --studio-woocommerce-purple-40 );
+	--wp-components-color-accent-darker-10: var( --studio-woocommerce-purple-50 );
+	--wp-components-color-accent-darker-20: var( --studio-woocommerce-purple-60 );
+	height: auto;
+	min-height: 3rem;
+	padding-inline: 1.5rem;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.5;
+
+	@include playground-woo-focus;
+}

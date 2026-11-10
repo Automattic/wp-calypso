@@ -8,8 +8,15 @@ import { FunctionComponent, useMemo, useCallback, useState, useEffect, useRef } 
 import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import SectionHeader from 'calypso/components/section-header';
+import {
+	getPlanExpiryUrgency,
+	hasPlanExpiryNotice,
+} from 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice';
+import { shouldShowExpiringNotice } from 'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { EXPIRY_ERROR_DAYS, EXPIRY_WARNING_DAYS } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import {
 	getName,
@@ -20,10 +27,8 @@ import {
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Purchase } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -57,16 +62,19 @@ interface SelectedSite {
 interface Props {
 	cart: PartialCart;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
+	site: SelectedSite;
 }
 
-const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
+const UpcomingRenewalsReminder: FunctionComponent< Props > = ( {
+	cart,
+	addItemToCart,
+	site: selectedSite,
+} ) => {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
-	const { data: sitePurchases, isPending: arePurchasesPending } = useQuery( {
-		...sitePurchasesQuery( selectedSite?.ID ?? 0 ),
-		enabled: Boolean( selectedSite?.ID ),
-	} );
+	const { data: sitePurchases, isPending: arePurchasesPending } = useQuery(
+		sitePurchasesQuery( selectedSite.ID )
+	);
 	const renewableSitePurchases = useMemo(
 		() => ( sitePurchases ?? [] ).filter( needsToRenewSoon ),
 		[ sitePurchases ]
@@ -90,16 +98,45 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
 
+	// Days left on the plan being renewed, if it shows an expiry notice.
+	// That notice hides other expiring purchases on the plan's page, so we show them here.
+	const renewingPlanDaysUntilExpiry = useMemo( () => {
+		const days = ( sitePurchases ?? [] )
+			.filter(
+				( purchase ) =>
+					purchasesIdsAlreadyInCart.includes( purchase.ID ) && hasPlanExpiryNotice( purchase )
+			)
+			.map( ( purchase ) => purchase.days_until_expiry )
+			.filter( ( daysUntilExpiry ) => daysUntilExpiry != null );
+		return days.length > 0 ? Math.min( ...days ) : null;
+	}, [ sitePurchases, purchasesIdsAlreadyInCart ] );
+
 	// Urgent = already expired, or expiring within 10 days. daysUntilExpiry is the
 	// server's day count (negative during the post-expiry grace period).
+	// When renewing a plan with an expiry notice, also anything expiring within
+	// 60 days and at most a week after that plan, if its own purchase page warns
+	// about it. The plan expiry notice counts local calendar days, so near a
+	// boundary it can be a day off from daysUntilExpiry.
 	const urgentPurchases = useMemo(
 		() =>
-			renewablePurchasesNotAlreadyInCart.filter(
-				( purchase ) =>
-					purchase.days_until_expiry != null &&
-					purchase.days_until_expiry < URGENT_RENEWAL_WINDOW_IN_DAYS
-			),
-		[ renewablePurchasesNotAlreadyInCart ]
+			renewablePurchasesNotAlreadyInCart.filter( ( purchase ) => {
+				const daysUntilExpiry = purchase.days_until_expiry;
+				if ( daysUntilExpiry == null ) {
+					return false;
+				}
+				if ( daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS ) {
+					return true;
+				}
+				return (
+					renewingPlanDaysUntilExpiry != null &&
+					daysUntilExpiry <= EXPIRY_WARNING_DAYS &&
+					daysUntilExpiry <= renewingPlanDaysUntilExpiry + EXPIRY_ERROR_DAYS &&
+					( getPlanExpiryUrgency( purchase ) === 'warning' ||
+						// Included purchases aren't renewable, so there's no attached plan to pass.
+						shouldShowExpiringNotice( purchase, undefined ) )
+				);
+			} ),
+		[ renewablePurchasesNotAlreadyInCart, renewingPlanDaysUntilExpiry ]
 	);
 
 	// Dismissal key for the current set of urgent purchases. Dismissing keeps the
@@ -138,25 +175,21 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	const addSelectedPurchasesToCart = useCallback(
 		( purchases: Purchase[] ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
-					selected: purchases.length,
-					available: renewablePurchasesNotAlreadyInCart.length,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
+				selected: purchases.length,
+				available: renewablePurchasesNotAlreadyInCart.length,
+			} );
 			addPurchasesToCart( purchases );
 		},
-		[ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ]
+		[ addPurchasesToCart, renewablePurchasesNotAlreadyInCart ]
 	);
 
 	const addAllPurchasesToCart = useCallback( () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_upcoming_renewals_add_all_click', {
-				available: renewablePurchasesNotAlreadyInCart.length,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_upcoming_renewals_add_all_click', {
+			available: renewablePurchasesNotAlreadyInCart.length,
+		} );
 		addPurchasesToCart( renewablePurchasesNotAlreadyInCart );
-	}, [ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ] );
+	}, [ addPurchasesToCart, renewablePurchasesNotAlreadyInCart ] );
 
 	const onConfirm = useCallback(
 		( selectedPurchases: Purchase[] ) => {
@@ -170,7 +203,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		setUpcomingRenewalsDialogVisible( false );
 		if ( dialogVariant === 'urgent' ) {
 			reduxDispatch( dismissCard( dismissPreferenceName ) );
-			reduxDispatch( recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_dismiss' ) );
+			recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_dismiss' );
 		}
 	}, [ dialogVariant, dismissPreferenceName, reduxDispatch ] );
 
@@ -198,11 +231,9 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		hasAutoOpened.current = true;
 		setDialogVariant( 'urgent' );
 		setUpcomingRenewalsDialogVisible( true );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_impression', {
-				urgent_count: urgentPurchases.length,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_impression', {
+			urgent_count: urgentPurchases.length,
+		} );
 	}, [
 		arePurchasesLoaded,
 		arePreferencesLoaded,
@@ -211,7 +242,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		reduxDispatch,
 	] );
 
-	if ( ! userId || ! selectedSite ) {
+	if ( ! userId ) {
 		return null;
 	}
 

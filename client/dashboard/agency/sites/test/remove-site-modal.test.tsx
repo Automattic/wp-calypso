@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { agencySitesQueryKey } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -62,6 +64,25 @@ describe( '<RemoveSiteModal>', () => {
 		expect( closeModal ).not.toHaveBeenCalled();
 
 		await waitFor( () => expect( closeModal ).toHaveBeenCalled(), { timeout: 5000 } );
+	} );
+
+	// A caller on the removed site's own page leaves it before the list refresh
+	// drops the site out from under that page.
+	test( 'hands off to the caller before the sites list refreshes', async () => {
+		mockAgency();
+		mockRemoval( 200 );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( agencySitesQueryKey, [] );
+		let wasListRefreshed: boolean | undefined;
+		const onRemoved = jest.fn( () => {
+			wasListRefreshed = queryClient.getQueryState( agencySitesQueryKey )?.isInvalidated;
+		} );
+
+		render( <RemoveSiteModal site={ site } onRemoved={ onRemoved } />, { queryClient } );
+		await userEvent.click( await findEnabledRemoveButton() );
+
+		await waitFor( () => expect( onRemoved ).toHaveBeenCalled(), { timeout: 5000 } );
+		expect( wasListRefreshed ).toBe( false );
 	} );
 
 	test( 'stays open when the removal fails', async () => {

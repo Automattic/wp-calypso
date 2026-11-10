@@ -1,7 +1,7 @@
-import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Link } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 
@@ -56,9 +56,16 @@ const SiteSubscriptionSubheader = ( {
 	const hostname = getHostname( url );
 	if ( hostname !== '' ) {
 		subheaderItems.push(
-			<ExternalLink key={ url } href={ url } target="_blank">
+			<Link
+				key={ url }
+				className="site-subscription-header__site-link"
+				href={ url }
+				openInNewTab
+				rel="noopener noreferrer"
+				tone="neutral"
+			>
 				{ hostname }
-			</ExternalLink>
+			</Link>
 		);
 	}
 

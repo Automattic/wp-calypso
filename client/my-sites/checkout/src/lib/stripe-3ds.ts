@@ -1,21 +1,17 @@
 import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logStashEvent } from '../lib/analytics';
 import type { Stripe } from '@stripe/stripe-js';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 export async function handle3DSChallenge(
-	reduxDispatch: CalypsoDispatch,
 	stripe: Stripe,
 	paymentIntentClientSecret: string,
 	paymentIntentId: string
 ): Promise< void > {
 	// 3DS authentication required
-	reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_modal_authorization', {
-			payment_intent_id: paymentIntentId,
-		} )
-	);
+	recordTracksEvent( 'calypso_checkout_modal_authorization', {
+		payment_intent_id: paymentIntentId,
+	} );
 	logStashEvent(
 		'calypso_checkout_modal_authorization',
 		{

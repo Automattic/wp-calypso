@@ -85,7 +85,6 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/discover' ), tracking: 'discover_recommended' },
 	{ route: startsWith( '/discover/freshly-pressed' ), tracking: 'freshly-pressed' },
 	{ route: startsWith( '/discover/add-new' ), tracking: 'discover_addnew' },
-	{ route: startsWith( '/discover/reddit' ), tracking: 'discover_reddit' },
 	{ route: startsWith( '/discover/latest' ), tracking: 'discover_latest' },
 	{ route: startsWith( '/discover/recommended' ), tracking: 'discover_recommended' },
 	{
@@ -101,6 +100,7 @@ const Routes: RoutesMapping[] = [
 	// Conversations
 	{ route: exactMatch( '/reader/conversations' ), tracking: 'conversations' },
 	{ route: exactMatch( '/reader/conversations/a8c' ), tracking: 'conversations_a8c' },
+	{ route: startsWith( '/reader/conversations/inbox' ), tracking: 'conversations_inbox' },
 
 	// ATmosphere (Bluesky / ATProto)
 	{ route: exactMatch( '/reader/atmosphere/connect' ), tracking: 'atmosphere_connect' },

@@ -10,6 +10,7 @@ import './style.scss';
 
 const noop = () => {};
 
+/** @augments {Component<any>} */
 class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
 

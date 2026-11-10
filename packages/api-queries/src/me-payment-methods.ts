@@ -52,6 +52,7 @@ export const userPaymentMethodsQuery = ( {
 	queryOptions( {
 		queryKey: [ ...userPaymentMethodsQueryKey, type, expired ],
 		queryFn: () => fetchUserPaymentMethods( type, expired ),
+		meta: { persist: false },
 		select: ( data ) =>
 			Array.isArray( data ) && isForBusiness
 				? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
@@ -62,6 +63,7 @@ export const userPaymentMethodTaxInfoQuery = ( paymentMethodId: string ) =>
 	queryOptions( {
 		queryKey: [ ...userPaymentMethodsQueryKey, paymentMethodId, 'tax-location' ],
 		queryFn: () => fetchPaymentMethodTaxInfo( paymentMethodId ),
+		meta: { persist: false },
 	} );
 
 export const userPaymentMethodSetBackupMutation = () =>

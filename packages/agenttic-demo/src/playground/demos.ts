@@ -1,6 +1,7 @@
 import EmbeddedDemo from '../EmbeddedDemo';
 import FloatingCompactDemo from '../FloatingCompactDemo';
 import FloatingDemo from '../FloatingDemo';
+import LaunchpadDemo from '../LaunchpadDemo';
 import SidebarDemo from '../SidebarDemo';
 import SiteSpecDemo from '../SiteSpecDemo';
 import type React from 'react';
@@ -29,4 +30,5 @@ export const DEMOS: DemoDefinition[] = [
 	},
 	{ id: 'site-spec', label: 'Site Spec', component: SiteSpecDemo },
 	{ id: 'sidebar', label: 'Sidebar', component: SidebarDemo },
+	{ id: 'launchpad', label: 'Launchpad', component: LaunchpadDemo },
 ];

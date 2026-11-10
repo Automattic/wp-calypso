@@ -2,16 +2,23 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { CommentEditorContext } from '../comment-editor-context';
 import PostCommentForm from '../form';
 
 jest.mock( 'calypso/blocks/user-mentions', () => ( {
 	__esModule: true,
 	default: ( Component ) => Component,
 	withUserMentions: ( Component ) => Component,
+} ) );
+
+// The editor's script stays loading, so the form keeps the markup it was given.
+jest.mock( '../load-comment-editor', () => ( {
+	...jest.requireActual( '../load-comment-editor' ),
+	loadCommentEditor: () => new Promise( () => {} ),
 } ) );
 
 jest.mock( 'calypso/reader/stats', () => ( {
@@ -37,12 +44,14 @@ const defaultProps = {
 	onCommentSubmit: jest.fn(),
 };
 
-const renderForm = ( props = {} ) => {
+const renderForm = ( props = {}, { inbox = false } = {} ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 	return renderWithProvider(
 		<QueryClientProvider client={ queryClient }>
-			<PostCommentForm { ...defaultProps } { ...props } />
+			<CommentEditorContext.Provider value={ inbox }>
+				<PostCommentForm { ...defaultProps } { ...props } />
+			</CommentEditorContext.Provider>
 		</QueryClientProvider>,
 		{
 			initialState: {
@@ -108,6 +117,105 @@ describe( 'PostCommentForm', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
 
 			expect( request.isDone() ).toBe( true );
+		} );
+
+		it( 'sends textarea words as typed to a site without block comments', async () => {
+			const content = 'Try <!-- wp:more --> in a post';
+			const request = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content } )
+				.reply( 200, {
+					ID: 5,
+					content,
+					date: '2026-11-06T00:00:00.000Z',
+					parent: false,
+					post: { ID: 123 },
+					status: 'approved',
+				} );
+			const post = {
+				...defaultPost,
+				discussion: { ...defaultPost.discussion, comments_allow_blocks: false },
+			};
+
+			renderForm( { post, commentText: content } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
+
+			expect( request.isDone() ).toBe( true );
+		} );
+	} );
+
+	describe( 'in the inbox', () => {
+		const markup =
+			'<!-- wp:paragraph --><p>Hello <strong>there</strong></p><!-- /wp:paragraph -->\n\n' +
+			'<!-- wp:list --><ul><!-- wp:list-item --><li>One</li><!-- /wp:list-item --></ul><!-- /wp:list -->';
+		const editorSettings = {
+			assetsUrl: 'https://s0.wp.com/build/',
+			loaderUrl: 'https://s0.wp.com/build/editor-loader.js',
+			maxLength: 65525,
+			editorLocale: {},
+			editor: { blockTools: 'Block tools', addBlock: 'Add block', embedUrl: '', images: false },
+		};
+		const mockEditorSettings = ( status, body ) =>
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/comments/editor' )
+				.query( true )
+				.reply( status, body );
+		const postReply = async ( content ) => {
+			const request = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content } )
+				.reply( 200, {
+					ID: 4,
+					content,
+					date: '2026-11-03T00:00:00.000Z',
+					parent: false,
+					post: { ID: 123 },
+					status: 'approved',
+				} );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
+
+			return request.isDone();
+		};
+
+		it.each( [
+			[ 'block markup for a site with block comments', true, markup ],
+			[
+				'plain HTML for a site without block comments',
+				false,
+				'Hello <strong>there</strong>\n\n- One',
+			],
+		] )( 'saves %s', async ( _, blocks, content ) => {
+			mockEditorSettings( 200, editorSettings );
+			const post = {
+				...defaultPost,
+				discussion: { ...defaultPost.discussion, comments_allow_blocks: blocks },
+			};
+			renderForm( { post, commentText: markup }, { inbox: true } );
+
+			await screen.findByRole( 'textbox', { name: 'Comment' } );
+			expect( await postReply( content ) ).toBe( true );
+		} );
+
+		it( 'sends words that only mention block markup as typed', async () => {
+			mockEditorSettings( 200, editorSettings );
+			const content = 'Try <!-- wp:more --> in a post';
+			const post = {
+				...defaultPost,
+				discussion: { ...defaultPost.discussion, comments_allow_blocks: false },
+			};
+			renderForm( { post, commentText: content }, { inbox: true } );
+
+			await screen.findByRole( 'textbox', { name: 'Comment' } );
+			expect( await postReply( content ) ).toBe( true );
+		} );
+
+		it( 'keeps the textarea when the editor settings fail to load', async () => {
+			const settings = mockEditorSettings( 404, { code: 'editor_not_available' } );
+			renderForm( { commentText: 'Plain words' }, { inbox: true } );
+
+			await waitFor( () => expect( settings.isDone() ).toBe( true ) );
+			expect( screen.queryByRole( 'textbox', { name: 'Comment' } ) ).not.toBeInTheDocument();
+			expect( await postReply( 'Plain words' ) ).toBe( true );
 		} );
 	} );
 

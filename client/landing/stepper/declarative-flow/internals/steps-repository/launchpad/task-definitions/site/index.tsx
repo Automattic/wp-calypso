@@ -1,4 +1,4 @@
-import { OnboardActions, SiteActions } from '@automattic/data-stores';
+import { OnboardActions } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
 import { replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -41,7 +41,7 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 		}
 
 		// Launch the site or blog immediately if no items in cart
-		const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
+		const { launchSite } = dispatch( SITE_STORE );
 		setProgressTitle(
 			task.id === 'blog_launched' ? __( 'Launching blog' ) : __( 'Launching website' )
 		);

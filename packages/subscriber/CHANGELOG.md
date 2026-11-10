@@ -1,3 +1,7 @@
+## trunk
+
+- Stop depending on `react-popper` and `@popperjs/core`, which the package never imports.
+
 ## 0.0.2
 
 - Declare React 19 compatibility for package consumers (#111721).

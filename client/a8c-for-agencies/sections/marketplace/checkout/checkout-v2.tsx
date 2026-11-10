@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -18,20 +19,23 @@ import './style-v2.scss';
 interface CheckoutV2Props {
 	siteSlug?: string;
 	planSlug?: string;
+	skipActiveCart?: boolean;
 }
 
-function CheckoutV2( { siteSlug, planSlug }: CheckoutV2Props ) {
+function CheckoutV2( { siteSlug, planSlug, skipActiveCart = false }: CheckoutV2Props ) {
 	const translate = useTranslate();
 	const { selectedCartItems } = useShoppingCart();
 
 	// Fetch selected products by slug for site checkout
 	const { selectedProductsBySlug } = useProductsBySlug();
 
+	const cartItems = selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems;
+
 	const title = translate( 'Checkout' );
 
 	return (
 		<Layout
-			className="checkout"
+			className={ clsx( 'checkout checkout-v2', { 'is-prepared-checkout': skipActiveCart } ) }
 			title={ title }
 			withBorder
 			wide
@@ -55,13 +59,13 @@ function CheckoutV2( { siteSlug, planSlug }: CheckoutV2Props ) {
 			</LayoutTop>
 			<LayoutBody>
 				<BillingDragonCheckout
-					withA8cLogo={ false }
-					cartItems={
-						selectedProductsBySlug.length > 0 ? selectedProductsBySlug : selectedCartItems
-					}
+					withA8cLogo={ skipActiveCart }
+					// A prepared cart never reads the frontend cart, and never clears it on success.
+					cartItems={ skipActiveCart ? [] : cartItems }
 					siteSlug={ siteSlug }
 					planSlug={ planSlug }
-					shouldClearCartOnSuccess={ selectedProductsBySlug.length === 0 }
+					skipActiveCart={ skipActiveCart }
+					shouldClearCartOnSuccess={ ! skipActiveCart && selectedProductsBySlug.length === 0 }
 				/>
 			</LayoutBody>
 		</Layout>

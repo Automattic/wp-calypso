@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
-import { type ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
@@ -30,6 +30,7 @@ import {
 	domainMapping,
 	domainUseMyDomain,
 } from '../paths';
+import type { ContinuedDomainProduct } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-cart';
 
 import './style.scss';
 
@@ -107,7 +108,7 @@ export default function DomainSearch() {
 					} )
 				);
 			},
-			onContinue: ( items: ResponseCartProduct[] ) => {
+			onContinue: ( items: ContinuedDomainProduct[] ) => {
 				if ( items.length === 1 ) {
 					page( domainAddEmailUpsell( selectedSiteSlug, items[ 0 ].meta ) );
 				} else {

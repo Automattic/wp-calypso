@@ -23,7 +23,7 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 
 	const [ isLaunchModalOpen, setIsLaunchModalOpen ] = useState( false );
 
-	const launchUrl = addQueryArgs( '/start/launch-site', { siteSlug: site?.slug } );
+	const launchUrl = addQueryArgs( '/setup/launch-site', { siteSlug: site?.slug } );
 
 	// A free site can never qualify (needs a paid plan), so skip the bridge and
 	// redirect instantly. Unknown plans fall through and settle in the bridge.

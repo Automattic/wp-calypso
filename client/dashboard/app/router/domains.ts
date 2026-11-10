@@ -6,6 +6,8 @@ import {
 	domainForwardingQuery,
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
+	domainsQuery,
+	sitesQuery,
 	sslDetailsQuery,
 	mailboxAccountsQuery,
 	siteByIdQuery,
@@ -20,6 +22,7 @@ import {
 	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { translationExists } from '@automattic/i18n-utils';
 import {
 	createRoute,
 	createLazyRoute,
@@ -31,6 +34,7 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import {
+	DomainPermissionError,
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
 	checkDomainContactInfoPermissions,
@@ -58,10 +62,10 @@ const domainsRoute = createRoute( {
 export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -149,12 +153,17 @@ export const domainRoute = createRoute( {
 				checkDomainTransferPermissions( domain );
 			} catch ( error ) {
 				dispatch( noticesStore ).createWarningNotice(
-					__( 'You do not have permission to transfer this domain.' ),
-					{ type: 'snackbar' }
+					// Snackbars render plain text, so drop the {{strong}} interpolation markup.
+					error instanceof DomainPermissionError
+						? error.message.replace( /{{\/?strong}}/g, '' )
+						: __( 'You do not have permission to transfer this domain.' ),
+					// A fixed id replaces the previous notice instead of stacking one per click.
+					{ type: 'snackbar', id: 'domain-transfer-permission' }
 				);
 				throw dashboardRedirect( {
 					to: '/domains/$domainName',
 					params: { domainName },
+					search: location.search,
 				} );
 			}
 		}
@@ -337,7 +346,7 @@ export const domainForwardingAddRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add domain forwarding' ),
+				title: __( 'Add forwarding' ),
 			},
 		],
 	} ),
@@ -385,7 +394,9 @@ export const domainContactInfoRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Contact details' ),
+				title: translationExists( 'Contact details & privacy' )
+					? __( 'Contact details & privacy' )
+					: __( 'Contact details' ),
 			},
 		],
 	} ),
@@ -586,7 +597,7 @@ export const domainTransferRoute = createRoute( {
 export const domainTransferIndexRoute = createRoute( {
 	getParentRoute: () => domainTransferRoute,
 	path: '/',
-	loader: async ( { params: { domainName } } ) => {
+	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
@@ -600,6 +611,7 @@ export const domainTransferIndexRoute = createRoute( {
 				throw dashboardRedirect( {
 					to: domainTransferSetupRoute.fullPath,
 					params: { domainName },
+					search: location.search,
 				} );
 			}
 			// If there was a transfer error, the user should see the transfer failed page
@@ -610,7 +622,11 @@ export const domainTransferIndexRoute = createRoute( {
 			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
 			DomainTransferStatus.CANCELLED !== domain.transfer_status
 		) {
-			throw dashboardRedirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+			throw dashboardRedirect( {
+				to: domainOverviewRoute.fullPath,
+				params: { domainName },
+				search: location.search,
+			} );
 		}
 
 		return domain;
@@ -635,7 +651,7 @@ export const domainTransferToAnyUserRoute = createRoute( {
 	path: 'any-user',
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
-		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) );
+		await queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.blog_id ) );
 	},
 } ).lazy( () =>
 	import( '../../domains/domain-transfer/transfer-domain-to-any-user' ).then( ( d ) =>
@@ -658,7 +674,7 @@ export const domainTransferToOtherUserRoute = createRoute( {
 	loader: async ( { params: { domainName } } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		await Promise.all( [
-			queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.site_slug ) ),
+			queryClient.ensureQueryData( domainTransferRequestQuery( domainName, domain.blog_id ) ),
 			queryClient.ensureQueryData( siteUsersWpcomQuery( domain.blog_id, 'administrator' ) ),
 		] );
 	},

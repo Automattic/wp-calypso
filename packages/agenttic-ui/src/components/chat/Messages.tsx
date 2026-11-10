@@ -3,12 +3,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import { cn } from '../../utils/classNames';
-import { getVisibleMessages } from '../../utils/message-helpers';
+import {
+	getHiddenReplyId,
+	getLatestTurnStartIndex,
+	getVisibleMessages,
+} from '../../utils/message-helpers';
 import { SourcesCard } from '../sources';
 import { Message } from './Message';
+import { MessageCard } from './MessageCard';
 import styles from './Messages.module.css';
+import { Notice } from './Notice';
 import { ThinkingMessage } from './ThinkingMessage';
-import type { Message as MessageType } from '../../types';
+import type { Message as MessageType, NoticeConfig } from '../../types';
 import type { ComponentType } from 'react';
 
 interface MessagesProps {
@@ -16,7 +22,10 @@ interface MessagesProps {
 	isProcessing?: boolean;
 	/** Whether the latest reply is still streaming. Defaults to `isProcessing`. */
 	isStreaming?: boolean;
+	/** Whether reply text is streaming in. When set, it drives the thinking indicator. */
+	isReplying?: boolean;
 	error?: string | null;
+	errorNotice?: NoticeConfig;
 	emptyView?: React.ReactNode;
 	messageRenderer?: ComponentType< { children: string } >;
 	thinkingMessage?: string;
@@ -31,8 +40,10 @@ function getSpokenText( element: Element | null | undefined ): string {
 	}
 	const walker = element.ownerDocument.createTreeWalker( element, NodeFilter.SHOW_TEXT, {
 		acceptNode: ( node ) => {
-			const hidden = node.parentElement?.closest( '[aria-hidden="true"]' );
-			return hidden && element.contains( hidden )
+			const parent = node.parentElement;
+			const hidden = parent?.closest( '[aria-hidden="true"]' );
+
+			return ( hidden && element.contains( hidden ) ) || parent?.checkVisibility?.() === false
 				? NodeFilter.FILTER_REJECT
 				: NodeFilter.FILTER_ACCEPT;
 		},
@@ -48,7 +59,9 @@ export function Messages( {
 	messages,
 	isProcessing,
 	isStreaming = isProcessing,
+	isReplying,
 	error,
+	errorNotice,
 	emptyView,
 	messageRenderer,
 	thinkingMessage,
@@ -62,24 +75,18 @@ export function Messages( {
 
 	useAutoScroll( { scrollAreaRef, visibleMessages } );
 
-	// The latest turn is everything after the user's latest message.
-	const latestTurnStartIndex =
-		visibleMessages.map( ( message ) => message.role ).lastIndexOf( 'user' ) + 1;
+	const latestTurnStartIndex = getLatestTurnStartIndex( visibleMessages );
 
-	const liveRegionText = useMemo( () => {
-		// Find the last agent message
-		const agentMessages = visibleMessages.filter( ( msg ) => msg.role === 'agent' );
+	const { latestAgentMessageId, liveRegionText } = useMemo( () => {
+		const latestAgentMessage = visibleMessages.filter( ( msg ) => msg.role === 'agent' ).at( -1 );
 
-		if ( ! agentMessages.length ) {
-			return '';
-		}
-
-		const latestAgentMessage = agentMessages[ agentMessages.length - 1 ];
-
-		return latestAgentMessage.content
-			.filter( ( block ) => block.type === 'text' )
-			.map( ( block ) => block.text )
-			.join( ' ' );
+		return {
+			latestAgentMessageId: latestAgentMessage?.id ?? '',
+			liveRegionText: ( latestAgentMessage?.content ?? [] )
+				.filter( ( block ) => block.type === 'text' )
+				.map( ( block ) => block.text )
+				.join( ' ' ),
+		};
 	}, [ visibleMessages ] );
 
 	const [ settledText ] = useDebounce( liveRegionText, 1000 );
@@ -89,29 +96,61 @@ export function Messages( {
 	// shadow: equal means streaming has paused (indicator visible during tool-call
 	// gaps); unequal means deltas are flowing (indicator hidden). The 1s window
 	// is chosen to comfortably exceed typical inter-delta cadence (~430ms) so
-	// the indicator does not flicker during steady streaming.
-	const isAgentTextStreaming = liveRegionText !== settledText;
+	// the indicator does not flicker during steady streaming. `isReplying`, when
+	// set, overrides this.
+	const isAgentTextStreaming = isReplying ?? liveRegionText !== settledText;
 
-	// Announce the rendered reply once it finishes: what is on screen rather than
-	// markdown source, and never history that was already there on open.
+	// Announce the rendered reply once it finishes, when the latest agent message
+	// or its text changed during the turn: what is on screen rather than markdown
+	// source, and never history that was already there on open. A hidden reply is
+	// read when the host shows it.
 	const [ announcement, setAnnouncement ] = useState( '' );
-	const textWhenProcessingStartedRef = useRef< string | null >( null );
+	const replyKey = `${ latestAgentMessageId }:${ liveRegionText }`;
+	const hiddenReplyId = getHiddenReplyId( messages, visibleMessages );
+	const replyWhenProcessingStartedRef = useRef< string | null >( null );
+	const pendingReplyIdRef = useRef< string | null >( null );
+
 	useEffect( () => {
 		if ( isProcessing ) {
-			textWhenProcessingStartedRef.current ??= liveRegionText;
+			replyWhenProcessingStartedRef.current ??= replyKey;
+			// Emptied for the turn, so the same text is read out again when it ends.
+			setAnnouncement( '' );
 			return;
 		}
-		const textWhenStarted = textWhenProcessingStartedRef.current;
-		textWhenProcessingStartedRef.current = null;
-		if ( textWhenStarted === null || textWhenStarted === liveRegionText ) {
+
+		const replyWhenStarted = replyWhenProcessingStartedRef.current;
+		replyWhenProcessingStartedRef.current = null;
+		const pendingReplyId = pendingReplyIdRef.current;
+		pendingReplyIdRef.current = null;
+
+		if ( replyWhenStarted === replyKey ) {
+			pendingReplyIdRef.current = hiddenReplyId;
 			return;
 		}
+
+		// Outside a turn, read only the hidden reply now showing, matched by id so a conversation
+		// switch or history load isn't read out.
+		if ( replyWhenStarted === null && pendingReplyId !== latestAgentMessageId ) {
+			return;
+		}
+
 		const agentMessages = scrollAreaRef.current?.querySelectorAll(
 			'[data-slot="message"][data-role="agent"]'
 		);
 		const latest = agentMessages?.[ agentMessages.length - 1 ];
 		setAnnouncement( getSpokenText( latest?.querySelector( '[data-slot="message-bubble"]' ) ) );
-	}, [ isProcessing, liveRegionText ] );
+	}, [ isProcessing, replyKey, hiddenReplyId, latestAgentMessageId ] );
+
+	// Announce the notice in the message list when it appears or changes, as with a reply.
+	const noticeMessage =
+		errorNotice && [ errorNotice.title, errorNotice.message ].filter( Boolean ).join( '. ' );
+	const announcedNoticeRef = useRef( noticeMessage );
+	useEffect( () => {
+		if ( noticeMessage && noticeMessage !== announcedNoticeRef.current ) {
+			setAnnouncement( noticeMessage );
+		}
+		announcedNoticeRef.current = noticeMessage;
+	}, [ noticeMessage ] );
 
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
@@ -134,7 +173,7 @@ export function Messages( {
 
 	return (
 		<>
-			{ /* Live region for announcing AI responses - hidden from view */ }
+			{ /* Live region for announcing AI responses and the error notice - hidden from view */ }
 			<div
 				aria-live="polite"
 				aria-atomic="true"
@@ -191,6 +230,21 @@ export function Messages( {
 							} }
 						>
 							{ error }
+						</div>
+					) }
+					{ /* A DOM element for the ref AnimatePresence's popLayout measures with. */ }
+					{ errorNotice && (
+						<div key="error-notice" className={ errorNotice.title ? styles.errorCard : undefined }>
+							{ errorNotice.title ? (
+								<MessageCard
+									title={ errorNotice.title }
+									description={ errorNotice.message }
+									url={ errorNotice.action?.href }
+									onClick={ errorNotice.action?.onClick }
+								/>
+							) : (
+								<Notice { ...errorNotice } className={ styles.errorNotice } />
+							) }
 						</div>
 					) }
 				</AnimatePresence>

@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { parseTrackingPrefs } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import {
 	filterLanguageRevisions,
 	isTranslatedIncompletely,
@@ -18,17 +19,12 @@ import express from 'express';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
+import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
 import {
 	A4A_DASHBOARD_SECTION_DEFINITION,
 	A4A_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-a4a/section';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import {
-	CIAB_DASHBOARD_SECTION_DEFINITION,
-	CIAB_DASHBOARD_SECTION_PATHS,
-} from 'calypso/dashboard/app-ciab/section';
 import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
 import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -36,24 +32,28 @@ import {
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
+import { A4A_SIGNUP_URL, JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
-import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
+import { isInStepContainerV2FlowContext, isPlaygroundWooIntentRequest } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
+import { getLegacyLaunchSiteRedirect } from 'calypso/lib/signup/legacy-launch-site-flow';
 import {
-	REDIRECTED_PLAN_FLOWS,
+	REDIRECTED_FLOWS,
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
+import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/server/lib/is-mobile-app';
 import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
@@ -63,6 +63,7 @@ import {
 	attachHead,
 	attachI18n,
 	bumpStat,
+	customizeClientDataForRequest,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -81,6 +82,8 @@ import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
+import { getFrameHeaders } from './frame-options';
+import { isProbingPath } from './probing-paths';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -269,13 +272,15 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
-	const authHelper = config.isEnabled( 'dev/auth-helper' );
-	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
-	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
+	const isCalypsoLive = isCalypsoLiveHostname( request.hostname );
+	const authHelper = isCalypsoLive || config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = isCalypsoLive || config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = isCalypsoLive || config.isEnabled( 'dev/store-sandbox-helper' );
 	const blackboxHelper = config.isEnabled( 'dev/blackbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
-		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
+		( isCalypsoLive || config.isEnabled( 'dev/preferences-helper' ) ) &&
+		entrypoint !== 'entry-gutenboarding';
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
@@ -313,6 +318,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
+		isPlaygroundWoo: isPlaygroundWooIntentRequest( request.path, request.query ),
 		dashboard: getDashboardFromHostname( request.hostname ),
 	} );
 
@@ -329,67 +335,67 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'setup environments', true );
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		// this is for calypso.live, so that branchName can be available while rendering the page
-		if ( request.query.branch ) {
-			context.branchName = request.query.branch;
-		}
+	}
+
+	// calypso.live passes the branch along, so that it can be shown in the environment badge.
+	if ( isCalypsoLive && request.query.branch ) {
+		context.branchName = request.query.branch;
 	}
 
 	if ( calypsoEnv === 'horizon' ) {
-		context.badge = 'feedback';
-		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		if ( isCalypsoLive ) {
+			context.badge = 'horizon';
+		} else {
+			context.badge = 'feedback';
+			context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		}
 	}
 
 	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-stage' ) {
 		context.badge = 'jetpack-cloud-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-development' ) {
 		context.badge = 'jetpack-cloud-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'a8c-for-agencies-stage' ) {
 		context.badge = 'a8c-for-agencies-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'a8c-for-agencies-development' ) {
 		context.badge = 'a8c-for-agencies-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'dashboard-horizon' ) {
-		context.badge = 'dashboard-horizon';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+		if ( isCalypsoLive ) {
+			context.badge = 'dashboard-horizon';
+		} else {
+			context.badge = 'feedback';
+			context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		}
 	}
 
 	if ( calypsoEnv === 'dashboard-stage' ) {
 		context.badge = 'dashboard-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'dashboard-development' ) {
 		context.badge = 'dashboard-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
@@ -429,9 +435,7 @@ function setUpLocalLanguageRevisions( req ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	performanceMark( req.context, 'setup_logged_out_route', true );
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -459,9 +463,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl;
 	let start;
 
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
+	res.set( getFrameHeaders( { env: calypsoEnv, nodeEnv: process.env.NODE_ENV, path: req.path } ) );
 
 	const setupRequests = [];
 
@@ -636,8 +638,8 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			"'report-sample'",
 			// Allow eval only in development for webpack's eval-based source maps (devtool: 'eval')
-			// which enable fast rebuilds and hot module reloading. Production uses 'hidden-source-map'
-			// which doesn't require eval, maintaining strict CSP in production environments.
+			// which enable fast rebuilds and hot module reloading. Production builds don't need eval,
+			// maintaining strict CSP in production environments.
 			...( req.context.app.isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'stats.wp.com',
@@ -891,8 +893,10 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
-	// bumpStat only accepts 32 chars max for the value
-	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	bumpStat(
+		isProbingPath( req.path ) ? 'dashboard-404-probing' : 'dashboard-404',
+		req.path.slice( 0, 32 ) // bumpStat only accepts 32 chars max for the value
+	);
 	next();
 };
 
@@ -906,6 +910,13 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
+const render404ForUnknownHostname = ( req, res, next ) => {
+	if ( getDashboardFromHostname( req.hostname ) ) {
+		return next();
+	}
+	render404()( req, res );
+};
+
 const DASHBOARD_VARIANTS = [
 	{
 		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
@@ -913,13 +924,6 @@ const DASHBOARD_VARIANTS = [
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
-	},
-	{
-		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
-		paths: CIAB_DASHBOARD_SECTION_PATHS,
-		entrypoint: 'entry-dashboard-ciab',
-		devEnv: 'development',
-		isAllowedHostname: isAllowedCiabDashboardHostname,
 	},
 	{
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
@@ -976,6 +980,19 @@ function validateRedirect( req, url ) {
 		// if parsing the URL fails, it is not valid
 		return false;
 	}
+}
+
+/**
+ * The locale of a legacy `/start` URL, or '' for the default one. It's the last non-empty path
+ * segment, so a trailing slash doesn't hide it.
+ * @param {string} requestPath Request path
+ * @returns {string} Locale slug
+ */
+function getLegacyFlowLocale( requestPath ) {
+	const lastPathSegment = requestPath.split( '/' ).filter( Boolean ).pop() ?? '';
+	return getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+		? lastPathSegment
+		: '';
 }
 
 /**
@@ -1250,6 +1267,34 @@ function jetpackCloudPages( app ) {
 	app.get( [ '/manage/pricing', `/${ anyLangParam }/manage/pricing` ], function ( _req, res ) {
 		res.redirect( 302, JETPACK_COM_A4A_LANDING_PAGE );
 	} );
+
+	// Jetpack Manage no longer accepts agency signups; every signup goes through Automattic for
+	// Agencies. Registered here so it runs before the client-side OAuth login gate in
+	// client/boot/common.js, which would otherwise bounce logged-out visitors through login first.
+	// A 302 rather than a 301 so the route can be restored without waiting out caches.
+	// Only the acquisition params A4A signup reads are forwarded (see
+	// client/a8c-for-agencies/sections/signup/hooks/use-acquisition-props.ts).
+	const A4A_SIGNUP_FORWARDED_PARAMS = [
+		'ref',
+		'utm_source',
+		'utm_medium',
+		'utm_campaign',
+		'utm_term',
+		'utm_content',
+	];
+	app.get( [ '/manage/signup', '/agency/signup' ], function ( req, res ) {
+		const target = new URL( A4A_SIGNUP_URL );
+		for ( const key of A4A_SIGNUP_FORWARDED_PARAMS ) {
+			const value = req.query[ key ];
+			if ( typeof value === 'string' && value !== '' ) {
+				target.searchParams.set( key, value );
+			}
+		}
+		if ( ! target.searchParams.has( 'ref' ) ) {
+			target.searchParams.set( 'ref', 'jetpack-manage' );
+		}
+		res.redirect( 302, target.toString() );
+	} );
 }
 
 export default function pages() {
@@ -1312,18 +1357,105 @@ export default function pages() {
 		);
 	}
 
+	if ( isDashboardEnv() ) {
+		app.use( render404ForUnknownHostname );
+	}
+
+	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
+	// preselected, and `/start/plans-first` by onboarding as is. This has to be registered ahead
+	// of the dashboard `/start` route and the section loop below, which bind `/start` for the
+	// signup section and would otherwise match first. The
+	// `/*` variant covers step segments — `/start/personal/domains` is a shape real `redirect_to`
+	// values use.
+	const legacyPlanFlowRoute = `/start/:flow(${ REDIRECTED_FLOWS.join( '|' ) })`;
+	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
+		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
+			return next( 'route' );
+		}
+
+		res.redirect(
+			302,
+			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
+		);
+	} );
+
+	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
+	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res, next ) => {
+		// Shows who still links to the old path (the Referer is sent with the event), so we know
+		// when it can go. The Sec-Fetch headers tell a followed link from a typed, scripted or
+		// restored navigation, and `retry` marks the chunk-retry reload in `layout/error.jsx`.
+		// Only these and the site are sent: the query can carry coupons and redirect URLs, and the
+		// Referer is cut down to its origin and path for the same reason.
+		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
+			const stringArg = ( value ) => ( typeof value === 'string' ? value : undefined );
+			const refererPage = ( referer ) => {
+				try {
+					const { origin, pathname } = new URL( referer );
+					return origin + pathname;
+				} catch {
+					return undefined;
+				}
+			};
+
+			try {
+				analytics.tracks.recordEvent(
+					'calypso_legacy_launch_site_redirect',
+					{
+						path: req.path,
+						ref: stringArg( req.query.ref ),
+						query_source: stringArg( req.query.source ),
+						referer: refererPage( req.get( 'Referer' ) ),
+						site_slug: stringArg( req.query.siteSlug ),
+						retry: stringArg( req.query.retry ),
+						fetch_site: req.get( 'Sec-Fetch-Site' ),
+						fetch_mode: req.get( 'Sec-Fetch-Mode' ),
+						fetch_user: req.get( 'Sec-Fetch-User' ),
+					},
+					req
+				);
+			} catch {
+				// Never let tracking block the redirect.
+			}
+		}
+
+		// Without a `siteSlug` the site may only be known from the signup dependency store, which
+		// lives in the browser; the client-side redirect in the signup controller fills it in.
+		if ( typeof req.query.siteSlug !== 'string' || ! req.query.siteSlug ) {
+			return next( 'route' );
+		}
+
+		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query ) );
+	} );
+
+	app.get( [ '/start/woocommerce-install', '/start/woocommerce-install/*' ], ( req, res ) => {
+		res.redirect( 302, getWooCommercePluginPage( req.query.siteSlug ) );
+	} );
+	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
+		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
+	} );
+
+	app.get(
+		[ '/start/website-design-services', '/start/website-design-services/*' ],
+		( req, res ) => {
+			res.redirect(
+				302,
+				getWebsiteDesignServicesRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
+			);
+		}
+	);
+
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
 		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
+			getDashboardFromHostname( req.hostname )
 		);
 	}
 
@@ -1349,26 +1481,6 @@ export default function pages() {
 				variant.isAllowedHostname( req.hostname )
 			)
 		);
-	} );
-
-	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
-	// preselected. This has to be registered ahead of the section loop below, which binds
-	// `/start` for the signup section and would otherwise match first. The `/*` variant covers
-	// step segments — `/start/personal/domains` is a shape real `redirect_to` values use.
-	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
-	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
-		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
-			return next( 'route' );
-		}
-
-		// Last non-empty segment, so a trailing slash doesn't hide the locale.
-		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
-		const locale =
-			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-				? lastPathSegment
-				: '';
-
-		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
 	} );
 
 	sections
@@ -1410,6 +1522,19 @@ export default function pages() {
 		app.get( '/robots.txt', ( _req, res ) => {
 			res.setHeader( 'Content-Type', 'text/plain' );
 			res.send( 'User-agent: *\nDisallow: /\n' );
+		} );
+
+		// Redirect bots probing the non-existent `/wp-login.php` to the real login page.
+		app.get( '/wp-login.php', ( req, res, next ) => {
+			const { wpcom_login_url: loginUrl } = customizeClientDataForRequest( req, config.clientData );
+			if ( ! loginUrl ) {
+				return next();
+			}
+			const url = new URL( loginUrl );
+			if ( typeof req.query.redirect_to === 'string' ) {
+				url.searchParams.set( 'redirect_to', req.query.redirect_to );
+			}
+			res.redirect( url.toString() );
 		} );
 
 		// Serve the dashboard shell for any otherwise-unmatched path so the client

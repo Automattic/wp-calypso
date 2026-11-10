@@ -18,7 +18,6 @@ const ROUTES: Route[] = [
 	{ path: `/${ DISCOVER_PREFIX }/${ FRESHLY_PRESSED_TAB }`, tab: FRESHLY_PRESSED_TAB },
 	{ path: `/${ DISCOVER_PREFIX }/${ TAGS_TAB }`, tab: TAGS_TAB },
 	{ path: `/${ DISCOVER_PREFIX }/${ LATEST_TAB }`, tab: LATEST_TAB },
-	{ path: `/${ DISCOVER_PREFIX }/reddit`, requiresAuth: true },
 	{ path: `/${ DISCOVER_PREFIX }/add-new`, requiresAuth: true },
 ];
 

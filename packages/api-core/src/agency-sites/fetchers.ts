@@ -1,6 +1,7 @@
 import { FreeSiteAddressType } from '../site-address-change/types';
 import { wpcom } from '../wpcom-fetcher';
 import type {
+	AgencyDevSiteLicense,
 	AgencyPendingSite,
 	AgencySiteAddressValidation,
 	AgencySiteWithPlugin,
@@ -57,5 +58,18 @@ export async function validateAgencySiteAddress(
 			path: `/agency/${ agencyId }/validate-site-address`,
 		},
 		{ site_name: siteName, domain: 'wordpress.com', type: FreeSiteAddressType.BLOG }
+	);
+}
+
+export async function fetchAgencyDevSiteLicense(
+	agencyId: number,
+	blogId: number
+): Promise< AgencyDevSiteLicense > {
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: '/agency/license/dev-site',
+		},
+		{ agency_id: agencyId, blog_id: blogId }
 	);
 }

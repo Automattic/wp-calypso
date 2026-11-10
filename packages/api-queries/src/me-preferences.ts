@@ -9,6 +9,7 @@ const defaultValues: Required< UserPreferences > = {
 	'hosting-dashboard-dark-mode-announcement-dismissed': '',
 	'hosting-dashboard-opt-in': { value: 'unset', updated_at: '' },
 	'hosting-dashboard-welcome-notice-dismissed': '',
+	'hosting-dashboard-difm-offer-dismissed': '',
 	'wordpress-labs-opt-in': { value: 'unset', updated_at: '' },
 	'wordpress-labs-excluded-sites': [],
 	'account-recovery-interstitial-snoozed-until': 0,
@@ -33,17 +34,24 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-hidden-sites': [],
 	two_step_security_key_reregister_required: false,
 	'a4a-dashboard-pd-not-approved-popover': false,
-	'a4a-marketplace-referral-guide-seen': false,
+	'a4a-marketplace-referral-band-folded': false,
 	'a4a-referrals-bank-details-success-notice-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
 	'a4a-feedback': {},
 	'notifications-layout-style': 'simplified',
 	'notifications-view-settings-seen': false,
+	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
+	'a4a-dashboard-onboarding-tour-section': '',
+	'a4a-overview-welcome-band-dismissed': false,
+	'a4a-dashboard-welcome-notice-seen': '',
+	'a4a-library-read-resources': [],
+	'a4a-crossover-dismissed': [],
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
+	'notifications-subscriber-alerts-enabled': 'subalrt',
 	recentSites: 'recent',
 	'hosting-dashboard-color-scheme': 'color',
 	'hosting-dashboard-dark-mode-announcement-dismissed': 'darkann',
@@ -64,12 +72,18 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-hidden-sites': 'hidsit',
 	two_step_security_key_reregister_required: '2fakey',
 	'a4a-dashboard-pd-not-approved-popover': 'a4apd',
-	'a4a-marketplace-referral-guide-seen': 'a4agde',
+	'a4a-marketplace-referral-band-folded': 'a4aband',
 	'a4a-referrals-bank-details-success-notice-seen': 'a4abank',
 	'a4a-marketplace-term-pricing': 'a4aterm',
 	'a4a-feedback': 'a4afb',
 	'pressable-limit-notification-dismissed': 'prslim',
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
+	'a4a-dashboard-onboarding-tour-section': 'a4adtour',
+	'a4a-overview-welcome-band-dismissed': 'a4awelc',
+	'a4a-crossover-dismissed': 'a4across',
+	'a4a-dashboard-welcome-notice-seen': 'a4adwel',
+	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
+	'a4a-library-read-resources': 'a4aread',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
@@ -81,6 +95,7 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
+	'site-migration-completed-notice-dismissed': 'migdone',
 };
 
 function getUserPreferenceMutationStatId(
@@ -108,14 +123,17 @@ export const rawUserPreferencesQuery = () =>
 		queryFn: fetchPreferences,
 	} );
 
-export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) =>
+export const userPreferenceQuery = < P extends keyof UserPreferences >(
+	preferenceName: P,
+	defaultValue: Required< UserPreferences >[ P ] = defaultValues[ preferenceName ]
+) =>
 	queryOptions( {
 		queryKey: rawUserPreferencesQuery().queryKey,
 		queryFn: fetchPreferences,
 		select: ( data ): Required< UserPreferences >[ P ] => {
 			const fetchedValue = data[ preferenceName ];
 			return fetchedValue === undefined
-				? defaultValues[ preferenceName ]
+				? defaultValue
 				: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
 					// as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
 					// the query is used in the component.

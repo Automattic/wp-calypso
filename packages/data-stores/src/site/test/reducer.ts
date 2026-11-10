@@ -130,14 +130,12 @@ describe( 'Site', () => {
 	describe( 'Site Setup Errors', () => {
 		type ClientCredentials = { client_id: string; client_secret: string };
 
-		let siteId: number;
 		let client_id: string;
 		let client_secret: string;
 		let mockedClientCredentials: ClientCredentials;
 		let originalState: { [ key: number ]: SiteLaunchState };
 
 		beforeEach( () => {
-			siteId = 12345;
 			client_id = 'magic_client_id';
 			client_secret = 'magic_client_secret';
 			mockedClientCredentials = { client_id, client_secret };
@@ -167,7 +165,7 @@ describe( 'Site', () => {
 		it( 'should clear a site setup error when a CLEAR_SITE_SETUP_ERROR action is dispatched', () => {
 			const { clearSiteSetupError } = createActions( mockedClientCredentials );
 
-			const action = clearSiteSetupError( siteId );
+			const action = clearSiteSetupError();
 			const expected = {};
 
 			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );

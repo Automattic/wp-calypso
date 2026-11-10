@@ -1,9 +1,11 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
+	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Icon,
@@ -12,19 +14,21 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
+import { useLocale } from '../../app/locale';
 import { purchasesRoute } from '../../app/router/me';
 import Grid from '../../components/grid';
-import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
-import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import { getPurchaseExpiryStatusText } from '../../components/purchase-expiry-status';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { wpcomLink } from '../../utils/link';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
 	JETPACK_PRODUCTS,
 } from '../../utils/site-plan';
-import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import SiteBandwidthStat from './site-bandwidth-stat';
 import SiteStorageStat from './site-storage-stat';
@@ -56,8 +60,22 @@ function SitePlanStats( { site }: { site: Site } ) {
 	);
 }
 
+function useHasBillingRoutes() {
+	const { supports } = useAppContext();
+	return !! supports.me && !! supports.me.billing;
+}
+
+// Without billing routes, every plan link leaves the app, onboarding ones included,
+// so it opens in a new tab.
+function usePlanLinkProps( site: Site, purchase?: Purchase ) {
+	const hasBillingRoutes = useHasBillingRoutes();
+	const url = getSitePlanUrl( site, purchase, { hasBillingRoutes } );
+	return hasBillingRoutes ? { link: url } : { externalLink: url };
+}
+
 function SeeAllPurchasesLink( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasBillingRoutes = useHasBillingRoutes();
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_site_overview_see_all_purchases_click' );
@@ -72,6 +90,17 @@ function SeeAllPurchasesLink( { site }: { site: Site } ) {
 			>
 				{ __( 'See all purchases' ) }
 			</Button>
+		);
+	}
+
+	if ( ! hasBillingRoutes ) {
+		return (
+			<ExternalLink
+				href={ wpcomLink( `/purchases/subscriptions/${ site.slug }` ) }
+				onClick={ handleClick }
+			>
+				{ __( 'See all purchases' ) }
+			</ExternalLink>
 		);
 	}
 
@@ -96,6 +125,8 @@ function JetpackPlanCard( {
 	purchase?: Purchase;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
@@ -104,7 +135,7 @@ function JetpackPlanCard( {
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
+			description={ getCardDescription( site, locale, hasEnTranslation, purchase ) }
 			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
@@ -144,13 +175,17 @@ function WpcomPlanCard( {
 	hasPurchases: boolean;
 	isLoading: boolean;
 } ) {
+	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
+	const planLinkProps = usePlanLinkProps( site, purchase );
+
 	return (
 		<OverviewCard
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
-			link={ getSitePlanUrl( site, purchase ) }
+			description={ getCardDescription( site, locale, hasEnTranslation, purchase ) }
+			{ ...planLinkProps }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={
@@ -188,38 +223,20 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 }
 
 function AgencyPlanCard( { site, isLoading }: { site: Site; isLoading: boolean } ) {
+	const { supports } = useAppContext();
+
 	return (
 		<OverviewCard
 			title={ __( 'Development license' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
 			description={ __( 'Managed by Automattic for Agencies.' ) }
-			link={ getSitePlanUrl( site ) }
+			link={
+				supports.agency ? `/sites/${ site.slug }/settings/site-visibility` : getSitePlanUrl( site )
+			}
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
 			bottom={ <SitePlanStats site={ site } /> }
-		/>
-	);
-}
-
-function CommerceGardenPlanCard( {
-	site,
-	purchase,
-	isLoading,
-}: {
-	site: Site;
-	purchase?: Purchase;
-	isLoading: boolean;
-} ) {
-	return (
-		<OverviewCard
-			title={ __( 'Plan' ) }
-			icon={ commerceGardenPlan }
-			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, purchase ) }
-			link={ getSitePlanUrl( site, purchase ) }
-			tracksId="plan"
-			isLoading={ isLoading }
 		/>
 	);
 }
@@ -235,10 +252,6 @@ export default function PlanCard( { site }: { site: Site } ) {
 
 	if ( site.is_a4a_dev_site ) {
 		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
-	}
-
-	if ( isCommerceGarden( site ) ) {
-		return <CommerceGardenPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
 	}
 
 	if ( isSelfHostedJetpackConnected( site ) ) {
@@ -259,7 +272,12 @@ export default function PlanCard( { site }: { site: Site } ) {
 	);
 }
 
-function getCardDescription( site: Site, purchase?: Purchase ) {
+function getCardDescription(
+	site: Site,
+	locale: string,
+	hasEnTranslation: ( single: string ) => boolean,
+	purchase?: Purchase
+) {
 	switch ( site.plan?.product_slug ) {
 		case DotcomPlans.FREE_PLAN:
 			return __( 'Upgrade to access all hosting features.' );
@@ -272,7 +290,7 @@ function getCardDescription( site: Site, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return <PurchaseExpiryStatus purchase={ purchase } />;
+		return getPurchaseExpiryStatusText( purchase, locale, hasEnTranslation );
 	}
 
 	return undefined;

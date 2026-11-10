@@ -14,6 +14,7 @@ import { Callout } from '../../components/callout';
 import { TextBlur } from '../../components/text-blur';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { dashboardLink, redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { pickBestSuggestion } from './pick-best-suggestion';
 import { DomainUpsellIllustraction } from './upsell-illustration';
 import type { Site } from '@automattic/api-core';
 
@@ -26,7 +27,7 @@ const requiresPlanUpgrade = ( site: Site ) => {
 
 const useDomainSuggestion = ( site: Site ) => {
 	const search = site.slug.split( '.' )[ 0 ];
-	const { data: allDomainSuggestions } = useQuery(
+	const { data: allDomainSuggestions, isLoading } = useQuery(
 		domainSuggestionsQuery( search, {
 			vendor: 'domain-upsell',
 			include_wordpressdotcom: false,
@@ -35,7 +36,8 @@ const useDomainSuggestion = ( site: Site ) => {
 
 	return {
 		search,
-		suggestedDomain: allDomainSuggestions?.[ 0 ],
+		isLoading,
+		suggestedDomain: pickBestSuggestion( allDomainSuggestions, search ),
 	};
 };
 
@@ -43,20 +45,41 @@ const DomainUpsellCardContent = ( {
 	site,
 	title,
 	description,
+	noSuggestionDomainLabel,
 	upsellCTAButtonText,
 	upsellId,
 }: {
 	site: Site;
 	title: string;
 	description: string;
+	noSuggestionDomainLabel: string;
 	upsellCTAButtonText: string;
 	upsellId: string;
 } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const { search, suggestedDomain } = useDomainSuggestion( site );
+	const { search, isLoading, suggestedDomain } = useDomainSuggestion( site );
 	const { createErrorNotice } = useDispatch( noticesStore );
 
+	// Keep a single <domain /> node mounted and vary only its text (loading
+	// placeholder, the real suggestion, or neutral copy once the query resolves
+	// without a trustworthy one) so we never add or remove a node across the
+	// loading boundary, which would risk a Google Translate DOM crash.
+	let domainLabel = noSuggestionDomainLabel;
+	if ( isLoading ) {
+		domainLabel = search;
+	} else if ( suggestedDomain ) {
+		domainLabel = suggestedDomain.domain_name;
+	}
+
 	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	const chooseYourOwnUrl = wpcomLink(
+		getDomainAndPlanUpsellUrl( {
+			siteSlug: site.slug,
+			backUrl,
+			// Literal template to avoid pulling the dashboard router into tests.
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
+		} )
+	);
 	const handleUpsell = async () => {
 		if ( suggestedDomain ) {
 			setIsSubmitting( true );
@@ -89,6 +112,10 @@ const DomainUpsellCardContent = ( {
 					step: 'plans',
 				} )
 			);
+		} else if ( ! suggestedDomain ) {
+			// Nothing to add to the cart, so send the user to pick a domain
+			// instead of landing on an empty checkout.
+			window.location.href = chooseYourOwnUrl;
 		} else {
 			window.location.href = addQueryArgs( wpcomLink( `/checkout/${ site.slug }` ), {
 				cancel_to: backUrl,
@@ -98,15 +125,6 @@ const DomainUpsellCardContent = ( {
 		}
 	};
 
-	const chooseYourOwnUrl = wpcomLink(
-		getDomainAndPlanUpsellUrl( {
-			siteSlug: site.slug,
-			backUrl,
-			// Literal template to avoid pulling the dashboard router into tests.
-			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
-		} )
-	);
-
 	return (
 		<Callout
 			title={ title }
@@ -115,11 +133,7 @@ const DomainUpsellCardContent = ( {
 				<Text variant="muted">
 					{ createInterpolateElement( description, {
 						planName: <span>{ site.plan?.product_name_short ?? '' }</span>,
-						domain: (
-							<TextBlur isBlurred={ ! suggestedDomain }>
-								{ suggestedDomain ? suggestedDomain.domain_name : search }
-							</TextBlur>
-						),
+						domain: <TextBlur isBlurred={ isLoading }>{ domainLabel }</TextBlur>,
 						link: (
 							<UpsellCTAButton
 								variant="link"
@@ -136,6 +150,7 @@ const DomainUpsellCardContent = ( {
 					title={ __( 'Responsive website design' ) }
 					domain={ suggestedDomain?.domain_name }
 					search={ search }
+					isLoading={ isLoading }
 				/>
 			}
 			imageVariant="full-bleed"
@@ -168,6 +183,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				description={ __(
 					'<domain /> is included free for one year with your paid plan. Claim this domain or <link>choose your own</link>.'
 				) }
+				noSuggestionDomainLabel={ __( 'A custom domain' ) }
 				upsellId="site-overview-claim-this-domain"
 				upsellCTAButtonText={ __( 'Claim this domain' ) }
 			/>
@@ -182,6 +198,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				description={ __(
 					'Upgrade to an annual paid plan to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
 				) }
+				noSuggestionDomainLabel={ __( 'a custom domain' ) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Choose a plan' ) }
 			/>
@@ -196,6 +213,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 				description={ __(
 					'Switch your <planName /> plan to annual billing to get <domain /> free for one year. You can also <link>choose your own domain name</link>.'
 				) }
+				noSuggestionDomainLabel={ __( 'a custom domain' ) }
 				upsellId="site-overview-get-this-domain"
 				upsellCTAButtonText={ __( 'Switch to annual billing' ) }
 			/>
@@ -213,6 +231,7 @@ const DomainUpsellCard = ( { site }: { site: Site } ) => {
 			description={ __(
 				'<domain /> is a perfect domain for your site. Grab it now or <link>choose your own</link>.'
 			) }
+			noSuggestionDomainLabel={ __( 'The right name' ) }
 			upsellId="site-overview-get-this-domain"
 			upsellCTAButtonText={ __( 'Get this domain' ) }
 		/>

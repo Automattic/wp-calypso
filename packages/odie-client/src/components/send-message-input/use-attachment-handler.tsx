@@ -81,12 +81,19 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 };
 
 export const useAttachmentHandler = () => {
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const {
+		trackEvent,
+		chat,
+		addMessage,
+		isUserEligibleForPaidSupport,
+		hasOpenZendeskChat,
+		zendeskIntegrationKey,
+	} = useOdieAssistantContext();
 	const [ attachmentPreviewFiles, setAttachmentPreviewFiles ] = useState< File[] >( [] );
 	const [ badFormatNotice, setBadFormatNotice ] = useState< typeof NOTICE_BAD_FORMAT >();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
-		isUserEligibleForPaidSupport,
+		isUserEligibleForPaidSupport || hasOpenZendeskChat,
 		'messenger'
 	);
 
@@ -143,6 +150,7 @@ export const useAttachmentHandler = () => {
 							file,
 							conversationId: chat.conversationId as string,
 							clientId: inferredClientId,
+							integrationKey: zendeskIntegrationKey,
 						} ).then( () => {
 							addMessage( getPlaceholderAttachmentMessage( file ) );
 							trackEvent( 'send_message_attachment', { type: file.type } );
@@ -159,6 +167,7 @@ export const useAttachmentHandler = () => {
 		authData,
 		chat.conversationId,
 		inferredClientId,
+		zendeskIntegrationKey,
 		addMessage,
 		trackEvent,
 		setBadFormatNotice,

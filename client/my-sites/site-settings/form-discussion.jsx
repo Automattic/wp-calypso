@@ -80,7 +80,6 @@ class SiteSettingsFormDiscussion extends Component {
 
 		const commentDisplaySettingsFields = {
 			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
-			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
 			enable_verbum_commenting: fields.enable_verbum_commenting,
 			enable_blocks_comments: fields.enable_blocks_comments,
 		};
@@ -660,7 +659,6 @@ export const getFormSettings = ( settings ) => {
 		'moderation_keys',
 		'disallowed_keys',
 		'highlander_comment_form_prompt',
-		'jetpack_comment_form_color_scheme',
 		'subscriptions',
 		'stb_enabled',
 		'stc_enabled',

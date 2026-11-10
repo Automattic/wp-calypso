@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- mocks must be registered before importing ZendeskChat */
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 
 const mockUseManagedZendeskChat = jest.fn();
+const mockAgentChatProps = jest.fn();
+const mockOnTypingStatusChange = jest.fn();
 let mockZendeskTicketProductFieldValue: string | undefined = 'woocommerce_core_product';
 let mockSite: { ID: number | string; URL: string } | null = {
 	ID: 123,
@@ -29,7 +31,10 @@ jest.mock( '../../contexts', () => ( {
 
 jest.mock( '../agent-chat', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="agent-chat" />,
+	default: ( props: unknown ) => {
+		mockAgentChatProps( props );
+		return <div data-testid="agent-chat" />;
+	},
 } ) );
 
 jest.mock( '../concluded-conversation-footer', () => ( {
@@ -49,7 +54,7 @@ describe( 'ZendeskChat', () => {
 			onSubmit: jest.fn(),
 			isLoadingConversation: false,
 			isProcessing: false,
-			onTypingStatusChange: jest.fn(),
+			onTypingStatusChange: mockOnTypingStatusChange,
 			imageUpload: undefined,
 			supportedImageTypes: [],
 			notice: undefined,
@@ -133,5 +138,40 @@ describe( 'ZendeskChat', () => {
 		expect( mockUseManagedZendeskChat ).toHaveBeenCalledWith(
 			expect.objectContaining( { siteId: undefined } )
 		);
+	} );
+
+	describe( 'typing indicator', () => {
+		function typeInInput( value: string ) {
+			act( () => mockAgentChatProps.mock.calls.at( -1 )![ 0 ].onInputChange( value ) );
+		}
+
+		beforeEach( () => {
+			render(
+				<ZendeskChat
+					chatHeaderOptions={ [] }
+					isDocked={ false }
+					isOpen
+					onClose={ jest.fn() }
+					onExpand={ jest.fn() }
+				/>
+			);
+		} );
+
+		it( 'refreshes the indicator on each non-empty input change', () => {
+			typeInInput( 'H' );
+			typeInInput( 'Hi' );
+
+			expect( mockOnTypingStatusChange ).toHaveBeenCalledTimes( 2 );
+			expect( mockOnTypingStatusChange ).toHaveBeenCalledWith( true );
+			expect( mockAgentChatProps ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { inputValue: 'Hi' } )
+			);
+		} );
+
+		it( 'does not refresh the indicator when the input is cleared', () => {
+			typeInInput( '' );
+
+			expect( mockOnTypingStatusChange ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

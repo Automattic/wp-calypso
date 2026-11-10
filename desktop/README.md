@@ -10,8 +10,6 @@ The steps marked _Production\*_ can be omitted but should be taken when building
 1. Install all root level dependencies with `yarn`
 1. Export the environment variables:
    - _Production\*_: `CONFIG_ENV` (set to `release`)
-   - _Production\*_: `CALYPSO_SECRETS_ENCRYPTION_KEY` (it's a secret!)
-1. _Production\*_: `yarn run build-desktop:secrets`
 1. Build the app with `yarn run build`
 1. Find the built apps in the `desktop/release` folder
 

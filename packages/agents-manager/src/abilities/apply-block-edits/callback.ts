@@ -4,7 +4,13 @@ import { getBlockingMove } from '../../utils/canvas-binding';
 import {
 	captureCanvas,
 	describeCaptureShape,
+	describeMeasuredLayout,
+	describeTextContrast,
+	describeUnmoved,
 	getUnframedClientIds,
+	snapshotLayout,
+	type ContrastBackdrop,
+	type LayoutSnapshot,
 } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
@@ -28,12 +34,7 @@ import { errorResult } from '../ability-result';
 import { areUpdateEditsAlreadySatisfied } from './already-applied';
 import { applyEdits, type ApplyEditsOptions } from './apply-edits';
 import { getChangeType, getEditedMenuIds } from './change-type';
-import {
-	hasRequestedBlockEdits,
-	isCssOnly,
-	normalizeEdits,
-	type RawBlockEdits,
-} from './normalize-edits';
+import { hasRequestedBlockEdits, normalizeEdits, type RawBlockEdits } from './normalize-edits';
 import {
 	captureTargets,
 	getEditedClientIds,
@@ -59,6 +60,13 @@ interface ApplyBlockEditsResultData {
 	message: string;
 	/** What the attached pictures do and do not show, one sentence each. */
 	captureNotes?: string[];
+	/**
+	 * Text blocks measured below their contrast threshold: the edited ones, or
+	 * the whole page's when custom CSS changed. Absent when none were measured.
+	 */
+	contrastFailures?: number;
+	/** The blocks painting backgrounds that text fails contrast against, for the server to name in a correction. */
+	contrastBackdrops?: ContrastBackdrop[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -69,6 +77,15 @@ type ApplyBlockEditsResult = AbilityResult & { result: ApplyBlockEditsResultData
 
 const GLOBAL_STYLES_UNAVAILABLE_ERROR =
 	'Custom CSS could not be updated because global styles are unavailable.';
+
+/** The top-level blocks of the page and of each template part on it, in that order. */
+function getPageClientIds(): string[] {
+	const { blocks, templateParts } = getPageBlocks();
+
+	return [ ...blocks, ...templateParts.flatMap( ( part ) => part.blocks ) ].map(
+		( block ) => block.clientId
+	);
+}
 
 /**
  * The tool-result message the chat renders this apply from. `visualCheckPending`
@@ -341,9 +358,16 @@ export async function applyBlockEditsCallback(
 	let edits: BlockEdits | undefined;
 	let result: ApplyBlockEditsResultData;
 	let insertedClientIds: string[] = [];
+	let layoutBefore: LayoutSnapshot | null = null;
 
 	try {
 		edits = normalizeEdits( input );
+		// Read before the writes, to say afterwards whether anything moved. An
+		// insert or delete moves something by definition.
+		layoutBefore =
+			edits.inserts.length || edits.deletes.length
+				? null
+				: snapshotLayout( getEditedClientIds( edits, resolver.resolve ) );
 		( { result, insertedClientIds } = await applyEditsAction( edits, {
 			toolCallId,
 			summary,
@@ -366,8 +390,10 @@ export async function applyBlockEditsCallback(
 
 	// Captured after every path that reached the page, the no-change and
 	// failure ones most of all: there the block tree cannot say whether the
-	// user's problem is fixed. A CSS-only call gets the whole page; a request
-	// refused before any write, or a call stopped by a move, gets none.
+	// user's problem is fixed. A call that changes custom CSS gets the whole
+	// page, which the CSS can reach anywhere of, with or without block edits;
+	// a request refused before any write, or a call stopped by a move, gets
+	// none.
 	//
 	// A relative request — "make this match Project details" — cannot be checked
 	// from a picture of the edited side alone, so the blocks it is being compared
@@ -387,28 +413,48 @@ export async function applyBlockEditsCallback(
 				! changedClientIds.includes( clientId ) && all.indexOf( clientId ) === index
 		);
 
+	const wholePage = edits?.customCSS !== undefined;
 	const fileParts =
 		! edits || getBlockingMove()
 			? null
 			: await captureCanvas( {
 					clientIds: [ ...changedClientIds, ...referenceClientIds ],
-					fullPage: isCssOnly( edits ),
+					fullPage: wholePage,
 				} );
 
 	// Two separate facts about the pictures that came back. The shape says how
 	// many there are and what they cover, which the rasterizer decides from how
 	// far apart the blocks turned out to be; the reference note says whether a
-	// comparison can be judged from them at all. Kept out of `message`, which
-	// the user may see as the reply.
+	// comparison can be judged from them at all. The measurements are what a
+	// picture cannot settle: an offset of a few dozen pixels, or an image
+	// sitting at the top of a centred block, or an edit that changed settings
+	// and moved nothing. The contrast is measured against what the canvas
+	// renders behind the text, not what the blocks set: an unstyled group can
+	// paint a theme colour the attributes never mention, and dark on dark is
+	// easy to miss in a scaled-down picture. Custom CSS can recolour any block
+	// on the page, edited or not, so with it the whole page is measured, the
+	// edited blocks first. The server acts on the failure count rather than
+	// the notes' wording, so the field is left out when no text was measured.
+	// Kept out of `message`, which the user may see as the reply.
 	if ( fileParts ) {
+		const contrast = describeTextContrast(
+			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
+			{ wholePage }
+		);
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
+			...( contrast?.notes ?? [] ),
+			...describeMeasuredLayout( changedClientIds ),
+			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );
 
-		if ( captureNotes.length ) {
-			result = { ...result, captureNotes };
-		}
+		result = {
+			...result,
+			...( captureNotes.length > 0 && { captureNotes } ),
+			...( typeof contrast?.failures === 'number' && { contrastFailures: contrast.failures } ),
+			...( contrast && contrast.backdrops.length > 0 && { contrastBackdrops: contrast.backdrops } ),
+		};
 	}
 
 	// `visualCheckPending` ships only with an image: the chat withholds the

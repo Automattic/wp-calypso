@@ -499,7 +499,8 @@ body.is-section-earn.theme-default.color-scheme {
 	color: inherit;
 }
 
-.earn__payments-loading {
+.earn__payments-loading,
+.paid-subscriptions__loading {
 	margin-top: 25px;
 
 	.wpcom__loading-ellipsis {

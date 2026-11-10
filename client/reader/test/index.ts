@@ -3,6 +3,7 @@
  */
 import page from '@automattic/calypso-router';
 import { redirectLoggedOutToSignup } from 'calypso/controller';
+import { setupRedirectRoutes } from 'calypso/utils';
 import initReader from '../index';
 import { readerNotFound } from '../lib/reader-router';
 
@@ -119,6 +120,17 @@ describe( 'reader routes', () => {
 		const call = registeredRoutes().find( ( [ route ] ) => route === path );
 		expect( call ).toBeDefined();
 		expect( call?.slice( 1 ) ).toContain( redirectLoggedOutToSignup );
+	} );
+
+	it( 'redirects the retired Reddit add-a-feed page to the generic form', async () => {
+		await initReader();
+
+		const redirects = jest
+			.mocked( setupRedirectRoutes )
+			.mock.calls.flatMap( ( [ routes ] ) => routes );
+		const reddit = redirects.find( ( route ) => route.path === '/reader/new/reddit' );
+
+		expect( reddit?.getRedirect() ).toBe( '/reader/new' );
 	} );
 
 	it( 'keeps list viewing available to logged-out users', async () => {

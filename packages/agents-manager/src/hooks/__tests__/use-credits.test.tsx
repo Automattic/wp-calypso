@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
-import { useCredits } from '../use-credits';
-
-let mockIsProcessing = false;
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		useAgentChat: () => ( { isProcessing: mockIsProcessing } ),
-	} ),
-	{ virtual: true }
-);
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import { useCredits, useCreditsVisit } from '../use-credits';
+import type { CreditsPool } from '../../utils/credits';
 
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
@@ -25,6 +18,30 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
+jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+// A visit with no site, where the seeded mock balance applies. The credits hooks read it
+// from the Agents Manager context.
+const mockVisit = {
+	agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
+	siteKey: 'no-site',
+};
+jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
+
+function useMockCredits( {
+	enabled,
+	...options
+}: Partial< Parameters< typeof useCredits >[ 0 ] > & { enabled: boolean } ) {
+	const creditsVisit = useCreditsVisit( enabled );
+
+	return useCredits( {
+		creditsVisit,
+		isProcessing: false,
+		messages: [],
+		isOpen: true,
+		isNoticeVisible: true,
+		...options,
+	} );
+}
 
 // The seed is read when the hook mounts, so each case sets the URL first.
 function seed( search: string ) {
@@ -33,15 +50,7 @@ function seed( search: string ) {
 
 function renderCredits( enabled = true ) {
 	return renderHook(
-		( { isProcessing }: { isProcessing: boolean } ) => {
-			mockIsProcessing = isProcessing;
-			return useCredits( {
-				enabled,
-				agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
-				siteKey: 'no-site',
-				isOpen: true,
-			} );
-		},
+		( { isProcessing }: { isProcessing: boolean } ) => useMockCredits( { enabled, isProcessing } ),
 		{
 			initialProps: { isProcessing: false },
 		}
@@ -65,6 +74,17 @@ describe( 'useCredits', () => {
 		seed( '?am_credits=55&am_plan=free' );
 		const disabled = renderCredits( false );
 		expect( disabled.result.current.trailingActions ).toBeUndefined();
+	} );
+
+	it( 'leaves the popover’s credits button out of a mock balance, which `/credits` can’t answer', () => {
+		seed( '?am_credits=25&am_plan=free' );
+		const { result } = renderHook( () =>
+			useMockCredits( { enabled: true, onShowCredits: jest.fn() } )
+		);
+		const meter = result.current.trailingActions as React.ReactElement< {
+			onShowCredits?: () => void;
+		} >;
+		expect( meter.props.onShowCredits ).toBeUndefined();
 	} );
 
 	it( 'spends when a request finishes, not on the submit attempt', () => {
@@ -156,12 +176,46 @@ describe( 'useCredits', () => {
 		expect( meter().props.isOpen ).toBe( true );
 	} );
 
+	it.each( [ 'free', 'paid' ] )( 'sends no credits events from a %s demo balance', ( plan ) => {
+		jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+		seed( `?am_credits=15&am_plan=${ plan }` );
+		const { result, rerender } = renderCredits();
+		const meter = () =>
+			result.current.trailingActions as React.ReactElement< {
+				onToggle: ( open: boolean ) => void;
+				action?: { onClick?: () => void };
+			} >;
+		act( () => meter().props.onToggle( true ) );
+		act( () => meter().props.action?.onClick?.() );
+		act( () => result.current.notice?.onDismiss?.() );
+		completeRequest( rerender );
+		completeRequest( rerender );
+		completeRequest( rerender );
+		act( () => {
+			result.current.beforeSubmit();
+		} );
+		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [ 'free', 'paid' ] )(
+		'records nothing when a %s demo balance drains and opens the popover by itself',
+		( plan ) => {
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			seed( `?am_credits=5&am_plan=${ plan }` );
+			const { result, rerender } = renderCredits();
+			completeRequest( rerender );
+			const meter = result.current.trailingActions as React.ReactElement< { isOpen: boolean } >;
+			expect( meter.props.isOpen ).toBe( true );
+			expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+		}
+	);
+
 	it( 'drains the mocked paid pools plan-first, consistently with the aggregate', () => {
 		const pools = ( search: string ) => {
 			seed( search );
 			const { result } = renderCredits();
 			const meter = result.current.trailingActions as React.ReactElement< {
-				status: { pools: Array< { id: string; remaining?: number; percent: number } > };
+				status: { pools: CreditsPool[] };
 			} >;
 			return Object.fromEntries( meter.props.status.pools.map( ( pool ) => [ pool.id, pool ] ) );
 		};
@@ -180,6 +234,6 @@ describe( 'useCredits', () => {
 
 		const out = pools( '?am_credits=0&am_plan=paid' );
 		expect( out.plan.percent ).toBe( 0 );
-		expect( out.topups.percent ).toBe( 0 );
+		expect( out.topups.remaining ).toBe( 0 );
 	} );
 } );

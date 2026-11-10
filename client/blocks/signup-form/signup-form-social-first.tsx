@@ -30,6 +30,7 @@ interface SignupFormSocialFirst {
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
+	onLogInClick?: () => void;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -52,16 +53,17 @@ interface SignupFormSocialFirst {
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
+	/**
+	 * Renders the "Have an account? Log in" line below the buttons. The email-first variants
+	 * always render it.
+	 */
+	showLoginLink?: boolean;
+	/**
+	 * Shows an envelope instead of the WordPress.com logo on the email button.
+	 */
+	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
-	activationEmailFrom?: string;
-	// Holds the email submit (button and Enter) while true, leaving the social options and the email
-	// field alone. The onboarding account step keeps this on until the email-verification arm loads.
-	isSubmitBlocked?: boolean;
-	// Replaces account creation with a change to the account the caller already has, making this an
-	// email-only screen: nothing on it offers a second account. Submitting the address unchanged is
-	// how the caller gets its user back, so there is nothing else to leave by.
-	onUpdateEmail?: ( email: string ) => Promise< void >;
 }
 
 const options = {
@@ -105,6 +107,7 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
+	onLogInClick,
 	socialServiceResponse,
 	handleSocialResponse,
 	onCreateAccountSuccess,
@@ -118,23 +121,16 @@ const SignupFormSocialFirst = ( {
 	isEmailFirstVariant,
 	isEmailAtBottom,
 	isMobileCompactVariant,
+	showLoginLink,
+	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
-	activationEmailFrom,
-	isSubmitBlocked,
-	onUpdateEmail,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
-	let submitButtonLoadingLabel;
-	if ( onUpdateEmail ) {
-		submitButtonLoadingLabel = __( 'Updating…' );
-	} else if ( isGravatar ) {
-		submitButtonLoadingLabel = __( 'Continue' );
-	}
 
 	const renderTermsOfService = () => {
 		// Custom ToS element takes priority (from partner branding)
@@ -176,13 +172,7 @@ const SignupFormSocialFirst = ( {
 		);
 	};
 
-	// Partner legal copy is otherwise only on the screen this mode never shows.
-	const showsPartnerTerms = Boolean( onUpdateEmail && customTosElement );
-
 	const renderEmailStepTermsOfService = () => {
-		if ( showsPartnerTerms ) {
-			return <p className="signup-form-social-first__email-tos-link">{ customTosElement }</p>;
-		}
 		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
@@ -208,8 +198,6 @@ const SignupFormSocialFirst = ( {
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
-		activationEmailFrom,
-		isSubmitBlocked,
 		goToNextStep,
 		logInUrl,
 		queryArgs,
@@ -233,8 +221,7 @@ const SignupFormSocialFirst = ( {
 		},
 		onCreateAccountSuccess,
 		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
-		onUpdateEmail,
-		submitButtonLoadingLabel,
+		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
 	};
 
 	// Both screens stay mounted (stacked, toggled via CSS visibility) and share the
@@ -252,29 +239,27 @@ const SignupFormSocialFirst = ( {
 	const loginLinkParagraph = (
 		<p className="signup-form-social-first__login-link">
 			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-				link: <Step.LinkButton href={ logInUrl } />,
+				link: <Step.LinkButton href={ logInUrl } onClick={ onLogInClick } />,
 			} ) }
 		</p>
 	);
 
-	// Editing an address has no second account to offer, so it drops both routes to one.
 	const emailScreen = (
 		<div className="signup-form-social-first-email">
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
 				blackboxSuspended={ currentStep !== 'email' }
 				renderTerms={ renderEmailStepTermsOfService }
-				// Partner copy is positionally worded — Woo's says "the options below".
-				termsAfterActions={ ! showsPartnerTerms }
+				termsAfterActions
 				secondaryFooterButton={
-					onUpdateEmail || backButtonInFooter ? undefined : (
+					backButtonInFooter ? undefined : (
 						<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
 							{ __( 'See all options' ) }
 						</Button>
 					)
 				}
 			/>
-			{ ! onUpdateEmail && backButtonInFooter ? (
+			{ backButtonInFooter ? (
 				<Button
 					onClick={ () => setCurrentStep( 'initial' ) }
 					className="back-button"
@@ -285,20 +270,6 @@ const SignupFormSocialFirst = ( {
 			) : null }
 		</div>
 	);
-
-	// Only the email field, and no way from it to a second account: no social form, nothing that
-	// returns to one, and no other screen mounted — the signup screen stacks in the same grid cell
-	// and the email-first variants mount a second `signup-email` input on it.
-	if ( onUpdateEmail ) {
-		return (
-			<div className="signup-form signup-form-social-first">
-				<div className={ clsx( 'signup-form-social-first-screen', 'visible' ) }>
-					{ notice }
-					{ emailScreen }
-				</div>
-			</div>
-		);
-	}
 
 	if ( isMobileCompactVariant ) {
 		// In-form ToS: partner branding wins via customTosElement (rendered by
@@ -349,6 +320,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailFirstVariant }
+					showEnvelopeIcon={ showEnvelopeIcon }
 					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ emailLoginBlock && isEmailAtBottom && (
@@ -360,6 +332,8 @@ const SignupFormSocialFirst = ( {
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
+			{ /* Below both screens, so it stays on screen after "Continue with email". */ }
+			{ showLoginLink && ! isEmailFirstVariant && loginLinkParagraph }
 		</div>
 	);
 };

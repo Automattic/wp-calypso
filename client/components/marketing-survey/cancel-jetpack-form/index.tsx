@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, Dialog } from '@automattic/components';
-import { BaseButton } from '@automattic/components/dist/types/dialog/button-bar';
+import { type BaseButton, Button, Dialog } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as React from 'react';

@@ -14,10 +14,10 @@ import {
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isCompleteAndValid,
 	prepareDomainContactValidationRequest,
@@ -37,14 +37,12 @@ import type {
 	RawContactValidationResponseMessages,
 	ContactValidationResponseMessages,
 } from '@automattic/wpcom-checkout';
-import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 
 const getEmailTakenLoginRedirectMessage = (
 	emailAddress: string,
-	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ) => {
 	const { href, pathname } = window.location;
@@ -66,11 +64,9 @@ const getEmailTakenLoginRedirectMessage = (
 
 	const loginUrl = login( { redirectTo, emailAddress } );
 
-	reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
-			email: emailAddress,
-		} )
-	);
+	recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
+		email: emailAddress,
+	} );
 
 	return translate(
 		'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
@@ -79,11 +75,9 @@ const getEmailTakenLoginRedirectMessage = (
 				a: (
 					<a
 						onClick={ () =>
-							reduxDispatch(
-								recordTracksEvent( 'calypso_checkout_composite_login_click', {
-									email: emailAddress,
-								} )
-							)
+							recordTracksEvent( 'calypso_checkout_composite_login_click', {
+								email: emailAddress,
+							} )
 						}
 						href={ loginUrl }
 					/>
@@ -92,6 +86,35 @@ const getEmailTakenLoginRedirectMessage = (
 		}
 	);
 };
+
+const isEmailTaken = ( emailErrors: Record< string, string > ) =>
+	Object.prototype.hasOwnProperty.call( emailErrors, 'taken' );
+
+const getEmailValidationErrors = ( validationResult: unknown ): TranslateResult[] =>
+	( validationResult as { messages?: { email?: TranslateResult[] } } ).messages?.email ?? [];
+
+export async function validateLoggedOutEmailOnBlur(
+	email: string,
+	translate: ReturnType< typeof useTranslate >,
+	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void
+): Promise< void > {
+	if ( ! email.includes( '@' ) ) {
+		return;
+	}
+	try {
+		const { validationResult } = await getSignupEmailValidationResult(
+			email,
+			( newEmail: string ) => getEmailTakenLoginRedirectMessage( newEmail, translate )
+		);
+		if ( isContactValidationResponse( validationResult ) && ! validationResult.success ) {
+			applyDomainContactValidationResults(
+				formatDomainContactValidationResponse( validationResult )
+			);
+		}
+	} catch ( error ) {
+		debug( 'email validation on blur failed', error );
+	}
+}
 
 async function runContactValidationCheck(
 	contactInfo: ManagedContactDetails,
@@ -116,12 +139,11 @@ async function runContactValidationCheck(
 
 async function runLoggedOutEmailValidationCheck(
 	contactInfo: ManagedContactDetails,
-	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ): Promise< { validationResult: unknown; emailErrors: Record< string, string > } > {
 	const email = contactInfo.email?.value ?? '';
 	return getSignupEmailValidationResult( email, ( newEmail: string ) =>
-		getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
+		getEmailTakenLoginRedirectMessage( newEmail, translate )
 	);
 }
 
@@ -129,21 +151,18 @@ export async function validateContactDetails(
 	contactInfo: ManagedContactDetails,
 	isLoggedOutCart: boolean,
 	responseCart: ResponseCart,
-	showErrorMessageBriefly: ( message: string ) => void,
+	showErrorMessageBriefly: ( message: TranslateResult ) => void,
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
-	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >,
 	shouldDisplayErrors: boolean
 ): Promise< boolean > {
 	debug( 'validating contact details; shouldDisplayErrors', shouldDisplayErrors );
 
-	reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_validating_contact_info', {
-			country: contactInfo.countryCode?.value,
-			postal: contactInfo.postalCode?.value,
-		} )
-	);
+	recordTracksEvent( 'calypso_checkout_validating_contact_info', {
+		country: contactInfo.countryCode?.value,
+		postal: contactInfo.postalCode?.value,
+	} );
 
 	const completeValidationCheck = ( validationResult: unknown ): boolean => {
 		debug( 'validating contact details result', validationResult );
@@ -163,19 +182,17 @@ export async function validateContactDetails(
 			isContactValidationResponse( validationResult ) &&
 			! validationResult.success
 		) {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_contact_info_validation_failed', {
-					country: contactInfo.countryCode?.value,
-					messages: validationResult.messages_simple?.join( ', ' ),
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_contact_info_validation_failed', {
+				country: contactInfo.countryCode?.value,
+				messages: validationResult.messages_simple?.join( ', ' ),
+			} );
 		}
 		return isValid;
 	};
 
 	if ( isLoggedOutCart ) {
 		const { validationResult: loggedOutValidationResult, emailErrors } =
-			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate );
+			await runLoggedOutEmailValidationCheck( contactInfo, translate );
 		if ( shouldDisplayErrors ) {
 			handleContactValidationResult( {
 				translate,
@@ -183,18 +200,19 @@ export async function validateContactDetails(
 				validationResult: loggedOutValidationResult,
 				applyDomainContactValidationResults,
 				clearDomainContactErrorMessages,
+				errorMessage: isEmailTaken( emailErrors )
+					? getEmailValidationErrors( loggedOutValidationResult )[ 0 ]
+					: undefined,
 			} );
 		}
 
 		if ( ! isContactValidationResponseValid( loggedOutValidationResult ) ) {
 			if ( shouldDisplayErrors ) {
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_contact_email_validation_failed', {
-						country: contactInfo.countryCode?.value,
-						error_codes: Object.keys( emailErrors ).join( ', ' ) || undefined,
-						messages: Object.values( emailErrors ).join( ', ' ) || undefined,
-					} )
-				);
+				recordTracksEvent( 'calypso_checkout_contact_email_validation_failed', {
+					country: contactInfo.countryCode?.value,
+					error_codes: Object.keys( emailErrors ).join( ', ' ) || undefined,
+					messages: Object.values( emailErrors ).join( ', ' ) || undefined,
+				} );
 			}
 			return false;
 		}
@@ -376,9 +394,11 @@ function handleContactValidationResult( {
 	validationResult,
 	applyDomainContactValidationResults,
 	clearDomainContactErrorMessages,
+	errorMessage,
 }: {
 	translate: ReturnType< typeof useTranslate >;
-	showErrorMessage: ( message: string ) => void;
+	showErrorMessage: ( message: TranslateResult ) => void;
+	errorMessage?: TranslateResult;
 	validationResult: unknown;
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void;
 	clearDomainContactErrorMessages: () => void;
@@ -398,11 +418,12 @@ function handleContactValidationResult( {
 	}
 	if ( validationResult && ! validationResult.success && validationResult.messages ) {
 		showErrorMessage(
-			String(
-				translate(
-					'We could not validate your contact information. Please review and update all the highlighted fields.'
+			errorMessage ??
+				String(
+					translate(
+						'We could not validate your contact information. Please review and update all the highlighted fields.'
+					)
 				)
-			)
 		);
 	}
 	if ( validationResult?.success ) {

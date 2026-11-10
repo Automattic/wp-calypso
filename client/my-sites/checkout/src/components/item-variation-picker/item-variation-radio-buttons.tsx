@@ -11,7 +11,7 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 const TermOptions = styled.ul`
 	flex-basis: 100%;
-	margin: 20px 0;
+	margin: 16px 0;
 	padding: 0;
 
 	&.is-mobile-checkout-sticky-summary {

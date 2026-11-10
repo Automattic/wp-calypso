@@ -1,5 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { getPressableMemoryTarget } from './pressable-memory-addon';
 import type { AgencyProduct } from '@automattic/api-core';
 
 type PressableAddonType = 'sites' | 'storage' | 'visits' | 'phpMemory' | 'unknown';
@@ -98,6 +99,25 @@ export function getPressableAddonCopy( product: AgencyProduct ): PressableAddonC
 			const phpMemory = metadata.php_memory;
 			if ( ! phpMemory ) {
 				return getGenericCopy();
+			}
+			const siteDomain = getPressableMemoryTarget( product );
+			if ( siteDomain ) {
+				return {
+					callout: sprintf(
+						/* translators: %(phpMemory)s is a memory size such as "512MB", %(siteDomain)s the Pressable site the add-on applies to. */
+						__(
+							'PHP memory will be increased by %(phpMemory)s for each PHP worker/process on %(siteDomain)s.'
+						),
+						{ phpMemory, siteDomain }
+					),
+					limit: sprintf(
+						/* translators: %(phpMemory)s is a memory size such as "512MB", %(siteDomain)s the Pressable site the add-on applies to. */
+						__(
+							'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on %(siteDomain)s while your Signature plan is active.'
+						),
+						{ phpMemory, siteDomain }
+					),
+				};
 			}
 			return {
 				callout: sprintf(

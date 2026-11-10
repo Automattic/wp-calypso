@@ -1,4 +1,9 @@
-import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
+import {
+	isJetpackLegacyItem,
+	isJetpackLegacyTermUpgrade,
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -59,7 +64,11 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
+import {
+	getProductSlugFromContext,
+	isContextJetpackSitelessCheckout,
+	isSitelessCheckoutSource,
+} from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -217,6 +226,7 @@ function sitelessCheckout( context, next, extraProps ) {
 				purchaseId={ purchaseId ?? subscriptionId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
+				aiSessionIdFromUrl={ context.query.ai_session_id }
 				couponCode={ couponCode }
 				isComingFromUpsell={ !! context.query.upgrade }
 				redirectTo={ context.query.redirect_to || getStudioRedirectTo( context ) }
@@ -449,6 +459,7 @@ export function checkout( context, next ) {
 			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
+				aiSessionIdFromUrl={ context.query.ai_session_id }
 				purchaseId={ purchaseId }
 				selectedFeature={ feature }
 				couponCode={ couponCode }
@@ -471,6 +482,52 @@ export function checkout( context, next ) {
 			/>
 		</>
 	);
+
+	next();
+}
+
+/**
+ * The site's wp-admin URL (e.g. `https://example.com/wp-admin/`), taken from a
+ * `redirect_to` that is an absolute URL into wp-admin. Checkout appends wp-admin paths to it.
+ * @param   {string|undefined} redirectTo The `redirect_to` the site sent to checkout
+ * @returns {string|undefined}            The wp-admin URL, or undefined when `redirectTo` isn't an absolute wp-admin URL
+ */
+function getAdminUrlFromRedirectTo( redirectTo ) {
+	if ( typeof redirectTo !== 'string' ) {
+		return undefined;
+	}
+
+	return redirectTo.match( /^https?:\/\/[^?#]*?\/wp-admin\// )?.[ 0 ];
+}
+
+/**
+ * Middleware to send logged-out users coming from My Jetpack or the Premium
+ * Analytics upgrade page to siteless checkout
+ * @see pbNhbs-ag3-p2
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectMyJetpack( context, next ) {
+	const state = context.store.getState();
+	const productSlug = getProductSlugFromContext( context );
+	// Strip the slug's quantity suffix, for upgradable quantity based products.
+	const product = productSlug.replace( /:-q-\d+/, '' );
+	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
+
+	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isSitelessCheckoutSource( context ) ) {
+		// Redirect to the siteless checkout page
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: getAdminUrlFromRedirectTo( context.query.redirect_to ),
+			},
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+		page( redirectUrl );
+		return;
+	}
 
 	next();
 }

@@ -5,10 +5,13 @@ import page from '@automattic/calypso-router';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import initDiscover from '../index.web';
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
+jest.mock( '@automattic/calypso-router', () => {
+	const pageMock = Object.assign( jest.fn(), { redirect: jest.fn() } );
+	return {
+		__esModule: true,
+		default: pageMock,
+	};
+} );
 
 jest.mock( '@automattic/i18n-utils', () => ( {
 	getAnyLanguageRouteParam: () => ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})',
@@ -89,5 +92,43 @@ describe( 'reader discover routes', () => {
 
 		expect( router ).toHaveBeenCalledWith( '/discover/*', readerNotFound );
 		expect( page ).not.toHaveBeenCalledWith( '/discover/*', readerNotFound );
+		expect( router ).toHaveBeenCalledWith(
+			[ '/discover/reddit', '/:lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})/discover/reddit' ],
+			expect.any( Function )
+		);
+	} );
+
+	it.each( [
+		{
+			params: {},
+			querystring: '',
+			expected: '/discover/add-new',
+		},
+		{
+			params: { lang: 'es' },
+			querystring: '',
+			expected: '/es/discover/add-new',
+		},
+		{
+			params: {},
+			querystring: 'flags=reader',
+			expected: '/discover/add-new?flags=reader',
+		},
+		{
+			params: { lang: 'fr' },
+			querystring: 'flags=reader',
+			expected: '/fr/discover/add-new?flags=reader',
+		},
+	] )( 'redirects a retired reddit url to $expected', ( { params, querystring, expected } ) => {
+		page.redirect.mockClear();
+		const router = jest.fn();
+		initDiscover( router );
+		const handler = router.mock.calls.find(
+			( [ paths ] ) => Array.isArray( paths ) && paths.includes( '/discover/reddit' )
+		)[ 1 ];
+
+		handler( { params, querystring } );
+
+		expect( page.redirect ).toHaveBeenCalledWith( expected );
 	} );
 } );

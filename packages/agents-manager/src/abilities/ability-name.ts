@@ -1,4 +1,4 @@
-import type { Ability } from './types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * The agent routes tool calls with `/` → `__` and `-` → `_`, so an ability

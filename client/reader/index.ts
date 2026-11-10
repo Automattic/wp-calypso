@@ -89,13 +89,7 @@ export default async function (): Promise< void > {
 	}
 
 	page(
-		[
-			'/reader/new',
-			'/reader/new/reddit',
-			'/reader/new/youtube',
-			'/reader/new/tumblr',
-			'/reader/new/substack',
-		],
+		[ '/reader/new', '/reader/new/youtube', '/reader/new/tumblr', '/reader/new/substack' ],
 		redirectLoggedOutToSignup,
 		sidebar,
 		setSelectedSiteIdByOrigin,
@@ -333,6 +327,11 @@ function setupReaderRedirects(): void {
 		{
 			path: '/reader/feed',
 			getRedirect: () => '/reader',
+		},
+		// Reddit ended RSS. Old add-a-feed links land on the generic form.
+		{
+			path: '/reader/new/reddit',
+			getRedirect: () => '/reader/new',
 		},
 		// Feed stream
 		{

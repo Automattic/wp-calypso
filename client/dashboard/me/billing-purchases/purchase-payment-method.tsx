@@ -99,7 +99,7 @@ export function PurchasePaymentMethod( {
 
 	if ( purchase.payment_type === 'paypal' ) {
 		return (
-			<HStack>
+			<HStack className="purchase-payment-method__wrapper">
 				<HStack justify="flex-start">
 					<PaymentMethodImage paymentMethodType={ purchase.payment_type } />
 					<span>PayPal { purchase.payment_name }</span>

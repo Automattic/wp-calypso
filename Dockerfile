@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.20
 
 ARG cache_mode=seed
-ARG node_version=24.15.0
+ARG node_version=24.22.1
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
@@ -37,6 +37,7 @@ FROM builder-cache-${cache_mode} AS deps
 WORKDIR /calypso
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1
 ENV SKIP_TSC=true
 ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
@@ -45,8 +46,6 @@ ENV IS_CI=true
 
 RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
 
-# For Sentry uploads
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 # Build a "base" layer
 #
 # This layer should never change unless env-config.sh
@@ -89,13 +88,8 @@ FROM deps AS builder
 # Make sure shell options, like pipefail, are set for the build.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Information for Sentry Releases.
-ARG manual_sentry_release=false
 ARG is_default_branch=false
-ARG sentry_auth_token=''
-ENV MANUAL_SENTRY_RELEASE $manual_sentry_release
 ENV IS_DEFAULT_BRANCH $is_default_branch
-ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 ARG commit_sha="(unknown)"
 ARG workers=4

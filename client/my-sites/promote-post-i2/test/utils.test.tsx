@@ -19,7 +19,7 @@ describe( 'Promote Post Utils', () => {
 		[ '2023-06-20T12:00:00+00:00', '3 days ago' ],
 		[ '2023-05-17T12:00:00+00:00', 'May 17' ],
 		[ '2021-01-10T12:00:00+00:00', 'Jan 10, 2021' ],
-	] )( '[%s] returns correct short formatted date: %b', async ( date, expected ) => {
+	] )( '[%s] returns correct short formatted date: %s', async ( date, expected ) => {
 		expect( getShortDateString( date ) ).toBe( expected );
 	} );
 

@@ -8,20 +8,17 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/no-return-text-nodes' );
+const plugin = require( '../../..' );
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: require.resolve( '@babel/eslint-parser' ),
-	parserOptions: {
-		requireConfigFile: false,
-		ecmaFeatures: { jsx: true },
-		babelOptions: { presets: [ '@babel/preset-react' ] },
+	languageOptions: {
+		parserOptions: { ecmaFeatures: { jsx: true } },
 	},
-} ).run( 'no-return-text-nodes', rule, {
+} ).run( 'no-return-text-nodes', plugin.rules[ 'no-return-text-nodes' ], {
 	valid: [
 		// returns JSX
 		{

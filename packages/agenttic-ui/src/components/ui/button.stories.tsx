@@ -1,3 +1,4 @@
+import { userEvent, within } from 'storybook/test';
 import { ArrowUpIcon } from '../icons/ArrowUpIcon';
 import { Button } from './button';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -394,7 +395,6 @@ export const Interactive: Story = {
 		},
 	},
 	play: async ( { canvasElement } ) => {
-		const { within, userEvent } = await import( '@storybook/test' );
 		const canvas = within( canvasElement );
 
 		const button = canvas.getByRole( 'button' );

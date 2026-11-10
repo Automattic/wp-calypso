@@ -35,6 +35,43 @@ jest.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( {
 jest.mock( '@automattic/calypso-router' );
 
 describe( 'redirectJetpack', () => {
+	it( 'preserves legacy migration login when its entry is a top-level query argument', () => {
+		const context = {
+			path: '/log-in',
+			params: {},
+			query: {
+				from: 'wpcom-migration',
+				redirect_to: '/jetpack/connect/authorize?plugins=wpcom-migration',
+			},
+			redirect: jest.fn(),
+		};
+		const next = jest.fn();
+		redirectJetpack( context, next );
+		expect( context.redirect ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'wpcom-migration', false ],
+		[ 'wpcom-migration-plugin', false ],
+		[ 'wpcom_migration', true ],
+		[ 'wpcom_migration_dashboard', true ],
+		[ 'jetpack-connector', true ],
+	] )( 'keeps the expected login routing for from=%s', ( from, redirects ) => {
+		const context = {
+			path: '/log-in',
+			params: {},
+			query: {
+				redirect_to: `/jetpack/connect/authorize?from=${ from }&plugins=wpcom-migration&redirect_after_auth=https%3A%2F%2Fexample.com%2Fwp-admin%2Fadmin.php%3Fpage%3Dwpcom-migration-status`,
+			},
+			redirect: jest.fn(),
+		};
+		const next = jest.fn();
+		redirectJetpack( context, next );
+		expect( context.redirect.mock.calls ).toEqual( redirects ? [ [ '/log-in/jetpack' ] ] : [] );
+		expect( next ).toHaveBeenCalledTimes( redirects ? 0 : 1 );
+	} );
+
 	it( "does not append 'jetpack' to the login path and redirect if it's already present", () => {
 		const context = {
 			path: '/log-in/jetpack',

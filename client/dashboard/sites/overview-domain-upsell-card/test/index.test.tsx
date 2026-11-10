@@ -66,6 +66,8 @@ const mockSite: Site = {
 	plan: {},
 } as Site;
 
+const originalLocation = window.location;
+
 beforeEach( () => {
 	jest.clearAllMocks();
 	mockShoppingCartImportError = null;
@@ -75,6 +77,15 @@ beforeEach( () => {
 	mockFetchDomainSuggestions.mockResolvedValue( [
 		{ domain_name: 'example.com', product_slug: 'domain_reg' },
 	] );
+	mockReplaceProductsInCart.mockResolvedValue( undefined );
+	Object.defineProperty( window, 'location', {
+		value: { href: '', hostname: 'wordpress.com', search: '' },
+		writable: true,
+	} );
+} );
+
+afterEach( () => {
+	Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 } );
 
 describe( 'DomainUpsellCard', () => {
@@ -135,6 +146,32 @@ describe( 'DomainUpsellCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'falls back to generic copy when the vendor returns no trustworthy suggestion', async () => {
+		mockFetchSitePlans.mockResolvedValue( {
+			plans: [ { current_plan: true, has_domain_credit: false } ],
+		} );
+		// "example" is a clean query, so a lone hyphenated respelling is rejected.
+		mockFetchDomainSuggestions.mockResolvedValue( [
+			{ domain_name: 'ex-am-ple.com', product_slug: 'domain_reg' },
+		] );
+
+		render( <DomainUpsellCard site={ { ...mockSite, plan: { is_free: true } } as Site } /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Choose a plan' } ) ).toBeVisible();
+
+		// The "choose your own domain name" CTA stays functional and the copy drops
+		// the specific domain for neutral phrasing.
+		const chooseYourOwnLink = screen.getByRole( 'link', {
+			name: 'choose your own domain name',
+		} );
+		expect( chooseYourOwnLink ).toBeVisible();
+		expect( chooseYourOwnLink.parentElement ).toHaveTextContent(
+			'Upgrade to an annual paid plan to get a custom domain free for one year. You can also choose your own domain name.'
+		);
+		// The mangled respelling must not leak into the copy.
+		expect( screen.queryByText( /ex-am-ple\.com/ ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'shows an error notice when the shopping cart chunk fails to load', async () => {
 		const user = userEvent.setup();
 		mockShoppingCartImportError = new Error( 'Loading chunk failed' );
@@ -169,5 +206,57 @@ describe( 'DomainUpsellCard', () => {
 
 		// The button should no longer be busy after the failure.
 		expect( button ).not.toHaveClass( 'is-busy' );
+	} );
+
+	test( 'claims the suggested domain and continues to checkout', async () => {
+		const user = userEvent.setup();
+
+		render( <DomainUpsellCard site={ mockSite } /> );
+
+		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
+		await user.click( button );
+
+		await waitFor( () => {
+			expect( mockReplaceProductsInCart ).toHaveBeenCalledWith( [
+				{ product_slug: 'domain_reg', meta: 'example.com' },
+			] );
+		} );
+		await waitFor( () => {
+			expect( window.location.href ).toContain( '/checkout/' );
+		} );
+	} );
+
+	test( 'sends the user to pick a domain instead of an empty checkout when there is no trustworthy suggestion', async () => {
+		const user = userEvent.setup();
+		mockFetchDomainSuggestions.mockResolvedValue( [] );
+
+		render(
+			<DomainUpsellCard
+				site={ { ...mockSite, plan: { is_free: false, billing_period: 'Yearly' } } as Site }
+			/>
+		);
+
+		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
+		await user.click( button );
+
+		await waitFor( () => {
+			expect( window.location.href ).toContain( 'upsell-url' );
+		} );
+		// No domain to claim, so nothing is added to the cart and we never land on checkout.
+		expect( mockReplaceProductsInCart ).not.toHaveBeenCalled();
+		expect( window.location.href ).not.toContain( '/checkout/' );
+	} );
+
+	test( 'stops blurring the illustration once the query resolves without a suggestion', async () => {
+		mockFetchDomainSuggestions.mockResolvedValue( [] );
+
+		render( <DomainUpsellCard site={ mockSite } /> );
+
+		// The illustration renders the search term in its address bar. Once the
+		// query resolves without a suggestion it must drop the loading blur
+		// instead of leaving a permanently blurred placeholder.
+		await waitFor( () => {
+			expect( screen.getByText( 'example' ) ).not.toHaveAttribute( 'filter' );
+		} );
 	} );
 } );

@@ -6,11 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -57,6 +53,12 @@ const DEFAULT_VIEW: DnsView = {
 	},
 	fields: [ 'name', 'value' ],
 	filters: [],
+	layout: {
+		styles: {
+			type: { maxWidth: '96px', minWidth: '72px' },
+			name: { maxWidth: '140px', minWidth: '72px' },
+		},
+	},
 };
 
 const DEFAULT_LAYOUTS = {
@@ -298,7 +300,7 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<HStack>
+							<>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -330,7 +332,7 @@ export default function DomainDns() {
 										}
 									/>
 								</PageHeader.ActionMenu>
-							</HStack>
+							</>
 						}
 						description={ <DnsDescription /> }
 					/>

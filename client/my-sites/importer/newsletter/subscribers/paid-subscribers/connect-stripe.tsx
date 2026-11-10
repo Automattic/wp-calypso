@@ -2,7 +2,6 @@ import { useIsMutating } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, addQueryArgs } from '@wordpress/url';
-import { QueryArgParsed } from '@wordpress/url/build-types/get-query-arg';
 import { fixMe } from 'i18n-calypso';
 import StripeLogoSvg from 'calypso/assets/images/jetpack/stripe-logo-white.svg';
 import { setCompPlanMutationKey } from 'calypso/data/paid-newsletter/use-set-comp-plan-mutation';
@@ -20,7 +19,7 @@ import SuccessNotice from './success-notice';
  * @param fromSite
  * @returns string
  */
-function updateConnectUrl( connectUrl: string, fromSite: QueryArgParsed, engine: string ): string {
+function updateConnectUrl( connectUrl: string, fromSite: string, engine: string ): string {
 	let stateQueryString = getQueryArg( connectUrl, 'state' ) as string | string[];
 	stateQueryString = Array.isArray( stateQueryString ) ? stateQueryString[ 0 ] : stateQueryString;
 

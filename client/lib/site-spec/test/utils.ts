@@ -230,6 +230,18 @@ describe( 'SiteSpec Utils', () => {
 			expect( result.features?.siteBrief ).toBe( 'next' );
 		} );
 
+		it( 'shows the design picker only when asked', () => {
+			expect(
+				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } ).features?.designPicker
+			).toBe( false );
+			const config = getBuildWowSiteSpecConfig( {
+				siteSlug: 'example.wordpress.com',
+				designPicker: true,
+			} );
+			expect( config.features?.designPicker ).toBe( true );
+			expect( config.features?.sitePlan ).toBeUndefined();
+		} );
+
 		it( 'should offer social links only', () => {
 			// `links` is a sub-feature of the next brief, so it only means
 			// anything alongside the siteBrief assertion above.
@@ -265,6 +277,30 @@ describe( 'SiteSpec Utils', () => {
 			const result = getBlueprintSiteSpecConfig( { blueprintId: 'coachava' } );
 
 			expect( result.features?.siteBrief ).toBe( 'next' );
+		} );
+
+		it( 'should hand spec meta to the widget through a collector', () => {
+			const result = getBlueprintSiteSpecConfig( {
+				blueprintId: 'zoom',
+				specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+
+			expect( result.collector ).toBeInstanceOf( Function );
+			// Meta only: it is stamped into the spec, and must not open the conversation on
+			// the agent's behalf.
+			// Synchronous, so the widget settles the first screen before its first paint.
+			expect( result.collector?.() ).toEqual( {
+				meta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+			} );
+		} );
+
+		it( 'should attach no collector when there is no spec meta', () => {
+			expect( getBlueprintSiteSpecConfig( { blueprintId: 'zoom' } ) ).not.toHaveProperty(
+				'collector'
+			);
+			expect(
+				getBlueprintSiteSpecConfig( { blueprintId: 'zoom', specMeta: { zoom_booking_url: '' } } )
+			).not.toHaveProperty( 'collector' );
 		} );
 
 		it( 'should offer social links only', () => {

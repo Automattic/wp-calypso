@@ -31,7 +31,7 @@ describe( '<PressablePremiumGate>', () => {
 	test( 'the toggle switches the marketplace to referral mode', async () => {
 		const { recordTracksEvent } = renderGate();
 
-		const toggle = screen.getByRole( 'checkbox', { name: 'Refer products' } );
+		const toggle = screen.getByRole( 'checkbox', { name: 'Refer to clients' } );
 		expect( toggle ).not.toBeChecked();
 		await userEvent.click( toggle );
 
@@ -41,9 +41,26 @@ describe( '<PressablePremiumGate>', () => {
 		);
 	} );
 
-	test( 'the toggle is disabled until the agency is approved', () => {
+	test( 'the toggle opens the approval gate and stays off until the agency is approved', async () => {
 		renderGate( 'pending' );
 
-		expect( screen.getByRole( 'checkbox', { name: 'Refer products' } ) ).toBeDisabled();
+		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Refer to clients' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Referrals unlock once you’re approved' } )
+		).toBeVisible();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBeNull();
+	} );
+
+	test( 'lets an agency in review turn referral mode off', async () => {
+		sessionStorage.setItem( 'marketplace-type', 'referral' );
+		renderGate( 'pending' );
+
+		const toggle = screen.getByRole( 'checkbox', { name: 'Refer to clients' } );
+		expect( toggle ).toBeChecked();
+		await userEvent.click( toggle );
+
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'regular' );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 } );

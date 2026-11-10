@@ -189,16 +189,22 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 				# Resolve the Playwright grep flag. When IGNORE_TEST_GROUP_FOR_E2E_CHANGES is
 				# "true", adapt TEST_GROUP to the changed E2E files (union with changed specs,
-				# or run all but @p2 on a non-spec change; see bin/e2e-grep-flag.sh for the P2
-				# cases); otherwise use TEST_GROUP as is.
+				# or run all but @p2 and @content-blocker on a non-spec change; see
+				# bin/e2e-grep-flag.sh for the P2 cases); otherwise use TEST_GROUP as is. With no
+				# TEST_GROUP, run all tests but @content-blocker, which has its own scheduled build.
 				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
-					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh)
+					# The script always prints a flag, so a failure must not fall through to
+					# running every test.
+					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh) || {
+						echo "bin/e2e-grep-flag.sh failed; not running tests." >&2
+						exit 1
+					}
 				elif [[ -n "%TEST_GROUP%" ]]; then
 					GREP_FLAG="--grep=%TEST_GROUP%"
 				else
-					GREP_FLAG=""
+					GREP_FLAG="--grep-invert=@content-blocker(\s|${'$'})"
 				fi
-				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
+				echo "Playwright grep flag: ${'$'}GREP_FLAG"
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.
@@ -210,7 +216,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
 				export DASHBOARD_BASE_URL="%DASHBOARD_BASE_URL%"
 				echo "Running Playwright tests for project: %PROJECT%"
-				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
+				yarn test:pw:%PROJECT% "${'$'}GREP_FLAG"
 				"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -255,20 +261,15 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			id = "upload_ctrf_report"
 			scriptContent = """
 				export E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%"
-				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
 
 				# Find and upload CTRF report if it exists
 				CTRF_REPORT=${'$'}(find test/e2e/output -name "ctrf-report-*.json" -type f | head -n 1)
 
 				if [[ -n "${'$'}CTRF_REPORT" ]]; then
 					echo "Found CTRF report: ${'$'}CTRF_REPORT"
-					aws s3 cp "${'$'}CTRF_REPORT" %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/reports/ctrf/
-					echo "CTRF report uploaded successfully (deprecated)"
-
 					AWS_ACCESS_KEY_ID=%A8C_TEST_REPORTS_S3_ACCESS_KEY% \
 					AWS_SECRET_ACCESS_KEY=%A8C_TEST_REPORTS_S3_SECRET_ACCESS_KEY% \
-						aws s3 cp "${'$'}CTRF_REPORT" %A8C_TEST_REPORTS_S3_ROOT%/reports/ctrf/wp-calypso/
+						aws s3 cp "${'$'}CTRF_REPORT" %A8C_TEST_REPORTS_S3_ROOT%/reports/ctrf/calypso/
 					echo "CTRF report uploaded successfully"
 				else
 					echo "No CTRF report found, skipping upload"

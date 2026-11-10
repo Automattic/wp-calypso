@@ -45,7 +45,7 @@ function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( ( name ) => name.trim() )
-		.filter( ( name ) => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
+		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.md|\.scss|\.php)$/.test( name ) );
 }
 
 function getPathForCommand( command ) {
@@ -132,7 +132,7 @@ if ( toPrettify.length ) {
 	for ( let i = 0; i < toPrettify.length; i += 500 ) {
 		const batch = toPrettify.slice( i, i + 500 );
 		execSync(
-			`./node_modules/.bin/prettier --ignore-path .eslintignore --write ${ batch.join( ' ' ) }`
+			`./node_modules/.bin/prettier --ignore-path .prettierignore --write ${ batch.join( ' ' ) }`
 		);
 		execSync( `git add ${ batch.join( ' ' ) }` );
 	}
@@ -168,13 +168,13 @@ if ( toPHPCBF.length ) {
 	}
 }
 
-// Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
+// Now run the linters over everything staged to commit (excepting JSON and Markdown), even if they are partially staged
 const {
 	toEslint = [],
 	toStylelint = [],
 	toPHPCS = [],
 } = groupBy(
-	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
+	files.filter( ( file ) => ! file.endsWith( '.json' ) && ! file.endsWith( '.md' ) ),
 	( file ) => {
 		switch ( true ) {
 			case file.endsWith( '.scss' ):
@@ -204,7 +204,6 @@ if ( toEslint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
-		env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 	} );
 
 	if ( lintResult.status ) {

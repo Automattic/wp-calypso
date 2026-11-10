@@ -10,67 +10,72 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/i18n-named-placeholders' );
-const config = { env: { es6: true } }; // support for string templates
+const plugin = require( '../../..' );
+const { ERROR_MESSAGE } = require( '../../../lib/rules/i18n-named-placeholders' );
+const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester( config ).run( 'i18n-named-placeholders', rule, {
-	valid: [
-		{
-			code: 'translate( /* zero args */ );',
-		},
-		{
-			code: "translate( 'Hello %s' );",
-		},
-		{
-			code: "translate( '%1s %2s' );",
-		},
-		{
-			code: 'translate( `%1s %2s` );',
-		},
-		{
-			code: "translate( '%(greeting)s %(toWhom)s' );",
-		},
-		{
-			code: "this.translate( '%(percent)d%% of views', { args: { percent: 40 } } );",
-		},
-	],
+new RuleTester( config ).run(
+	'i18n-named-placeholders',
+	plugin.rules[ 'i18n-named-placeholders' ],
+	{
+		valid: [
+			{
+				code: 'translate( /* zero args */ );',
+			},
+			{
+				code: "translate( 'Hello %s' );",
+			},
+			{
+				code: "translate( '%1s %2s' );",
+			},
+			{
+				code: 'translate( `%1s %2s` );',
+			},
+			{
+				code: "translate( '%(greeting)s %(toWhom)s' );",
+			},
+			{
+				code: "this.translate( '%(percent)d%% of views', { args: { percent: 40 } } );",
+			},
+		],
 
-	invalid: [
-		{
-			code: "translate( '%s %s' );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: 'translate( `%s %s` );',
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: "translate( '%(greeting)s %s' );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: "translate( 'Hello %s', '%s %s', { count: 2 } );",
-			errors: [
-				{
-					message: rule.ERROR_MESSAGE,
-				},
-			],
-		},
-	],
-} );
+		invalid: [
+			{
+				code: "translate( '%s %s' );",
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: 'translate( `%s %s` );',
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: "translate( '%(greeting)s %s' );",
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: "translate( 'Hello %s', '%s %s', { count: 2 } );",
+				errors: [
+					{
+						message: ERROR_MESSAGE,
+					},
+				],
+			},
+		],
+	}
+);

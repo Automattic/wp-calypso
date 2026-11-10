@@ -110,6 +110,84 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
+	describe( 'showEnvelopeIcon', () => {
+		const emailButton = () => screen.getByText( /Continue with email/i ).closest( 'button' );
+
+		test( 'swaps the WordPress logo for an envelope, so email reads as a peer of the social options', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } showEnvelopeIcon /> );
+
+			expect( emailButton() ).toBeVisible();
+			expect( emailButton()?.querySelector( '.social-icons__envelope' ) ).toBeVisible();
+			// The logo renders with the bare `social-icons` class, so count the icons to catch a
+			// regression that leaves both in the button.
+			expect( emailButton()?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		} );
+
+		test( 'carries the enabled-state class the disabled styling keys off', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } showEnvelopeIcon /> );
+
+			const icon = emailButton()?.querySelector( '.social-icons__envelope' );
+			expect( icon ).toHaveClass( 'social-icons', 'social-icons--enabled' );
+			expect( icon ).not.toHaveClass( 'social-icons--disabled' );
+		} );
+
+		test( 'keeps the WordPress logo when unset', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			expect( emailButton()?.querySelector( '.social-icons__envelope' ) ).toBeNull();
+			expect( emailButton()?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'showLoginLink', () => {
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+
+		test( 'renders the "Have an account? Log in" paragraph when set', () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
+
+			const loginLink = container.querySelector( loginLinkSelector );
+			expect( loginLink ).toBeVisible();
+			expect( within( loginLink as HTMLElement ).getByRole( 'link' ) ).toHaveAttribute(
+				'href',
+				'/log-in'
+			);
+		} );
+
+		test( 'keeps the paragraph on screen after "Continue with email"', async () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
+
+			await userEvent.click( screen.getByRole( 'button', { name: /Continue with email/i } ) );
+
+			const visibleScreen = container.querySelector( '.signup-form-social-first-screen.visible' );
+			expect( visibleScreen?.querySelector( 'input[type="email"]' ) ).toBeVisible();
+			const loginLink = container.querySelector( loginLinkSelector );
+			expect( loginLink ).toBeVisible();
+			expect( loginLink?.closest( '.signup-form-social-first-screen' ) ).toBeNull();
+		} );
+
+		test( 'omits the paragraph when unset', () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'email-first variants keep their own paragraph without it', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant />
+			);
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
+		} );
+
+		test( 'renders one paragraph, not two, when both conditions hold', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant showLoginLink />
+			);
+
+			expect( container.querySelectorAll( loginLinkSelector ) ).toHaveLength( 1 );
+		} );
+	} );
+
 	describe( 'isMobileCompactVariant', () => {
 		test( 'renders the mobile-compact wrapper class', () => {
 			const { container } = render(
@@ -191,122 +269,6 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
 			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'emailUpdate', () => {
-		const renderUpdating = ( props = {} ) =>
-			render(
-				<SignupFormSocialFirst
-					{ ...defaultProps }
-					userEmail="typo@example.com"
-					onUpdateEmail={ jest.fn() }
-					{ ...props }
-				/>
-			);
-
-		beforeEach( () => jest.clearAllMocks() );
-
-		// Which of the two would otherwise render depends on where the step container puts its back
-		// button, so neither may.
-		it.each( [
-			[ 'the footer', true ],
-			[ 'the form', false ],
-		] )(
-			'offers no way back to signing up with the back button in %s',
-			( _label, backButtonInFooter ) => {
-				renderUpdating( { backButtonInFooter } );
-
-				expect(
-					screen.queryByRole( 'button', { name: 'See all options' } )
-				).not.toBeInTheDocument();
-				expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
-			}
-		);
-
-		it( 'takes the standard layout rather than the compact one that shows social', () => {
-			renderUpdating( { isMobileCompactVariant: true } );
-
-			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'textbox' ) ).toBeVisible();
-		} );
-
-		it( 'puts the terms under the action they name', () => {
-			renderUpdating();
-			expect(
-				screen
-					.getByRole( 'button', { name: 'Continue' } )
-					.compareDocumentPosition( screen.getByText( /agree to our/ ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
-		} );
-
-		// Partner copy names its own position, so it has to keep it.
-		it( 'leaves copy that points below itself above the action', () => {
-			renderUpdating( {
-				customTosElement: <span>By continuing with any of the options below, you agree.</span>,
-			} );
-
-			expect(
-				screen
-					.getByText( /any of the options below/ )
-					.compareDocumentPosition( screen.getByRole( 'button', { name: 'Continue' } ) )
-			).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
-		} );
-
-		it( 'says it is updating, not signing up, while the request is in flight', async () => {
-			renderUpdating( {
-				onUpdateEmail: () => new Promise< void >( () => {} ),
-			} );
-
-			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-
-			expect( await screen.findByRole( 'button', { name: 'Updating…' } ) ).toBeVisible();
-		} );
-
-		it( 'mounts the email field once, with nothing to sign up with', () => {
-			renderUpdating( {
-				isEmailFirstVariant: true,
-				customTosElement: <span>Partner terms apply.</span>,
-			} );
-
-			expect( screen.getAllByRole( 'textbox' ) ).toHaveLength( 1 );
-			expect( screen.queryByRole( 'button', { name: /Continue with/ } ) ).not.toBeInTheDocument();
-			expect( screen.getAllByText( 'Partner terms apply.' ) ).toHaveLength( 1 );
-		} );
-
-		it( 'shows the email screen even when it was given no address to start from', () => {
-			renderUpdating( { userEmail: '' } );
-
-			expect(
-				screen.getByRole( 'textbox' ).closest( '.signup-form-social-first-screen' )
-			).toHaveClass( 'visible' );
-		} );
-
-		it( 'shows what the caller has to say, and a partner its own terms', () => {
-			renderUpdating( {
-				notice: <div>That address is already in use.</div>,
-				customTosElement: <span>Partner terms apply.</span>,
-			} );
-
-			const emailScreenEl = screen
-				.getByRole( 'textbox' )
-				.closest( '.signup-form-social-first-screen' ) as HTMLElement;
-			const emailScreen = within( emailScreenEl );
-			expect( emailScreen.getByText( 'That address is already in use.' ) ).toBeVisible();
-			// On text content: the generic terms are split across links, so no node holds the phrase.
-			expect( emailScreenEl ).not.toHaveTextContent( 'By clicking' );
-			expect( emailScreen.getByText( 'Partner terms apply.' ) ).toBeVisible();
-		} );
-
-		// Otherwise a refusal leaves the field and the button with nothing to press.
-		it( 'gives the screen back when the change is refused', async () => {
-			renderUpdating( {
-				onUpdateEmail: () => Promise.reject( new Error( 'nope' ) ),
-			} );
-
-			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-
-			expect( await screen.findByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
 		} );
 	} );
 

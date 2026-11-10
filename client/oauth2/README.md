@@ -178,8 +178,6 @@ useAuthorizeMeta fetches authorization metadata
 
 ### Adding a New Client Variant
 
-<!--eslint ignore list-item-content-indent-->
-
 1. **Create the variant component** in `authorize-variants.tsx`:
 
    ```typescript
@@ -214,8 +212,6 @@ useAuthorizeMeta fetches authorization metadata
 ### Custom Action Buttons
 
 Use the `renderActions` prop for complete control:
-
-<!--eslint ignore list-item-content-indent-->
 
 ```tsx
 <Authorize

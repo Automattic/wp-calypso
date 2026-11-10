@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { activateBlackboxSurface } from 'calypso/blocks/login/utils/blackbox-surface';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -10,8 +11,8 @@ export interface BlackboxProtection {
 	isSubmitBlocked: boolean;
 	/** Challenge container element to render in the form. */
 	challenge: ReactElement;
-	/** Resolves the Blackbox session ID (no-op when disabled). */
-	getSessionId: () => Promise< string | undefined >;
+	/** Resolves an ID, undefined without a session, or null when the form becomes inactive. */
+	getSessionId: () => Promise< string | undefined | null >;
 	/** Resets the Blackbox session so a retry starts fresh. */
 	reset: () => void;
 }
@@ -30,9 +31,16 @@ interface UseBlackboxProtectionOptions {
 	 * challenge can render until this flips back to false.
 	 */
 	suspended?: boolean;
+	/**
+	 * When this becomes a failed result, retire the session and start a
+	 * replacement collect. Pass the same value until the next failure.
+	 */
+	resetOnError?: unknown;
 }
 
 const noopGetSessionId = () => Promise.resolve( undefined );
+
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /**
  * Wire Blackbox into a form.
@@ -40,11 +48,28 @@ const noopGetSessionId = () => Promise.resolve( undefined );
 export function useBlackboxProtection( {
 	feature,
 	suspended,
+	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
 	const apiKey = getBlackboxApiKey( feature );
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
-	const [ isSubmitBlocked, setIsSubmitBlocked ] = useState( enabled );
+	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
+
+	// Register before paint so a submit can never see the previous surface.
+	const surfaceSignal = useRef< AbortSignal | undefined >( undefined );
+	useIsomorphicLayoutEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+		const { signal, deactivate } = activateBlackboxSurface( apiKey );
+		surfaceSignal.current = signal;
+		return () => {
+			deactivate();
+			if ( surfaceSignal.current === signal ) {
+				surfaceSignal.current = undefined;
+			}
+		};
+	}, [ enabled, apiKey ] );
 
 	// Re-block during render when a suspended surface re-enables: the challenge
 	// only re-blocks from a post-paint effect, which would leave the submit
@@ -52,20 +77,35 @@ export function useBlackboxProtection( {
 	const prevEnabled = useRef( enabled );
 	if ( prevEnabled.current !== enabled ) {
 		prevEnabled.current = enabled;
-		setIsSubmitBlocked( enabled );
+		setChallengeBlocksSubmit( enabled );
 	}
 
 	const handleSubmitBlockedChange = useCallback( ( isBlocked: boolean ) => {
-		setIsSubmitBlocked( isBlocked );
+		setChallengeBlocksSubmit( isBlocked );
 	}, [] );
 
 	const getSessionId = useCallback(
-		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
+		() =>
+			apiKey ? getBlackboxSessionId( apiKey, surfaceSignal.current ) : Promise.resolve( undefined ),
 		[ apiKey ]
 	);
 
+	const reset = useCallback( () => {
+		try {
+			window.Blackbox?.reset?.();
+		} catch {
+			// Intentionally ignored — Blackbox must never block the host form.
+		}
+	}, [] );
+
+	useEffect( () => {
+		if ( enabled && resetOnError ) {
+			reset();
+		}
+	}, [ enabled, resetOnError, reset ] );
+
 	return {
-		isSubmitBlocked,
+		isSubmitBlocked: challengeBlocksSubmit,
 		challenge: (
 			<BlackboxChallenge
 				enabled={ enabled }
@@ -74,12 +114,6 @@ export function useBlackboxProtection( {
 			/>
 		),
 		getSessionId: enabled ? getSessionId : noopGetSessionId,
-		reset: () => {
-			try {
-				window.Blackbox?.reset?.();
-			} catch {
-				// Intentionally ignored — Blackbox must never block the host form.
-			}
-		},
+		reset,
 	};
 }

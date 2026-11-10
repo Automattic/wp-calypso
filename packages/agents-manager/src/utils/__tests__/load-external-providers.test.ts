@@ -10,14 +10,18 @@ import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
+import { saveChangesAbility } from '../../abilities/save-changes';
 import { setSiteLogoAbility } from '../../abilities/set-site-logo';
 import { showComponentAbility } from '../../abilities/show-component';
 import { showTemplateAbility } from '../../abilities/show-template';
 import { streamPageDesignAbility } from '../../abilities/stream-page-design';
 import { setStreamHandler } from '../../abilities/stream-page-design/stream';
 import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
+import { getEditorPostContext } from '../editor-post-context';
+import { waitForEditedGlobalStyles } from '../global-styles';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
@@ -26,13 +30,15 @@ import {
 import { getLoadedProviderIds, setLoadedProviderIds } from '../loaded-provider-ids';
 import { getPageContentMarkup } from '../page-content-markup';
 import { getPageStructure } from '../page-structure';
-import type { Ability } from '../../extension-types';
 import type {
 	ProviderCapabilities,
 	UseCheckpointReturn,
 	UseSuggestionsHook,
 } from '../load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
+import type { Ability } from '@wordpress/abilities';
+
+const acceptedUploadTypes = DEFAULT_ACCEPTED_UPLOAD_TYPES;
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
 	virtual: true,
@@ -41,6 +47,11 @@ jest.mock( '../canvas-binding', () => ( {
 	...jest.requireActual( '../canvas-binding' ),
 	bindToOpenCanvas: jest.fn(),
 	getBlockingMove: jest.fn( () => null ),
+} ) );
+jest.mock( '../editor-post-context', () => ( { getEditorPostContext: jest.fn( () => ( {} ) ) } ) );
+jest.mock( '../global-styles', () => ( {
+	...jest.requireActual( '../global-styles' ),
+	waitForEditedGlobalStyles: jest.fn( async () => undefined ),
 } ) );
 jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
 jest.mock( '../page-structure', () => ( { getPageStructure: jest.fn( () => null ) } ) );
@@ -55,6 +66,19 @@ jest.mock( '../checkpoints', () => ( {
 	restoreCheckpoint: jest.fn(),
 	setCheckpoint: jest.fn(),
 	swapCheckpoint: jest.fn(),
+} ) );
+// The temporary WooCommerce abilities would join every ability list below.
+jest.mock( '../../abilities/woocommerce', () => ( {
+	wooFallbackToolProvider: { getAbilities: () => Promise.resolve( [] ), executeAbility: jest.fn() },
+} ) );
+jest.mock( '../../hooks/use-block-suggestions', () => ( {
+	useBlockSuggestions: () => ( {
+		suggestions: [
+			{ id: 'translate', label: 'Translate content', prompt: 'Translate this to:' },
+			{ id: 'remove-image-background', label: 'Remove background', prompt: 'Remove it' },
+		],
+		replaceEmptyViewSuggestions: true,
+	} ),
 } ) );
 
 // The abilities facade only loads the editor abilities on editor pages —
@@ -174,6 +198,27 @@ describe( 'mergeCapabilitiesInto', () => {
 	} );
 } );
 
+describe( 'acceptedUploadTypes', () => {
+	afterEach( () => {
+		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
+		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
+		setLoadedProviderIds( undefined );
+	} );
+
+	it( 'tells the agent which files the user can attach', async () => {
+		setAgentsManagerData( {
+			agentProviders: [ { contextProvider: { getClientContext: () => ( { url: 'https://x' } ) } } ],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			url: 'https://x',
+			acceptedUploadTypes: DEFAULT_ACCEPTED_UPLOAD_TYPES,
+		} );
+	} );
+} );
+
 describe( 'loadExternalProviders', () => {
 	afterEach( () => {
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
@@ -283,6 +328,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -326,6 +372,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -343,7 +390,7 @@ describe( 'loadExternalProviders', () => {
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it( 'executes migrated abilities through AM before any provider copy', async () => {
+	it( 'runs AM abilities ahead of a provider ability with the same name', async () => {
 		const bigSkyProvider = {
 			getAbilities: jest.fn( () =>
 				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
@@ -388,6 +435,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -475,6 +523,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			acceptedUploadTypes,
 			url: 'https://example.com/wp-admin/site-editor.php',
 			pathname: '/wp-admin/site-editor.php',
 			search: '',
@@ -532,6 +581,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			acceptedUploadTypes,
 			url: 'https://example.com/wp-admin/site-editor.php',
 			pathname: '/wp-admin/site-editor.php',
 			search: '',
@@ -570,6 +620,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext() ).toEqual( {
+			acceptedUploadTypes,
 			url: window.location.href,
 			pathname: window.location.pathname,
 			search: window.location.search,
@@ -636,6 +687,22 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
+	it( 'collects each provider’s interactive UI catalog in order', async () => {
+		const jetpackAiCatalog = { catalog: { catalogId: 'urn:jetpack-ai:v1' } };
+		const wooAiCatalog = { catalog: { catalogId: 'urn:woo-ai:v1' } };
+		setAgentsManagerData( {
+			agentProviders: [
+				{ interactiveUi: jetpackAiCatalog },
+				{ markdownComponents: {} },
+				{ interactiveUi: wooAiCatalog },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.interactiveUiCatalogs ).toEqual( [ jetpackAiCatalog, wooAiCatalog ] );
+	} );
+
 	it( 'chains markdown code renderers so later providers can handle structured blocks', async () => {
 		const hostCode = jest.fn( ( props ) => ( {
 			type: 'code',
@@ -680,7 +747,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.getChatComponent?.( 'title-picker' ) ).toBe( TitlePicker );
-		expect( providers.getChatComponent?.( 'chat-suggestions' ) ).toBeNull();
+		expect( providers.getChatComponent?.( 'seo-title-picker' ) ).toBeNull();
 	} );
 
 	it( 'chains message transforms across providers', async () => {
@@ -714,21 +781,6 @@ describe( 'loadExternalProviders', () => {
 		expect( providers.transformMessages ).toBeUndefined();
 	} );
 
-	it( 'forwards task updates to the first provider only', async () => {
-		const first = jest.fn();
-		const second = jest.fn();
-		setAgentsManagerData( {
-			agentProviders: [ { onTaskUpdate: first }, { onTaskUpdate: second } ],
-		} );
-		const update = { status: { message: { parts: [ { type: 'text' } ] } } };
-
-		const providers = await loadExternalProviders();
-		await providers.onTaskUpdate?.( update );
-
-		expect( first ).toHaveBeenCalledWith( update );
-		expect( second ).not.toHaveBeenCalled();
-	} );
-
 	describe( 'page-design stream', () => {
 		const text = { type: 'text', text: 'Designing…' };
 		const stream = {
@@ -753,29 +805,22 @@ describe( 'loadExternalProviders', () => {
 			document.body.classList.add( 'site-editor-php' );
 		} );
 
-		// AM paints the page design itself; a provider's own copy must not see the frames.
-		it( 'feeds the frames to the renderer and keeps them from the providers', async () => {
-			const onTaskUpdate = jest.fn();
-			setAgentsManagerData( { agentProviders: [ { onTaskUpdate } ] } );
+		it( 'paints the stream on the editor pages', async () => {
+			setAgentsManagerData( { agentProviders: [ {} ] } );
 
 			const providers = await loadExternalProviders();
 			await providers.onTaskUpdate?.( update );
 
 			expect( renderer ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
-			expect( onTaskUpdate ).toHaveBeenCalledWith( { status: { message: { parts: [ text ] } } } );
 		} );
 
-		// Off the editor pages nothing of AM's paints, so the provider copy keeps its frames.
-		it( 'leaves the frames to the providers off the editor pages', async () => {
-			const onTaskUpdate = jest.fn();
-			setAgentsManagerData( { agentProviders: [ { onTaskUpdate } ] } );
+		it( 'leaves the stream alone off the editor pages', async () => {
+			setAgentsManagerData( { agentProviders: [ {} ] } );
 			document.body.classList.remove( 'site-editor-php' );
 
 			const providers = await loadExternalProviders();
-			await providers.onTaskUpdate?.( update );
 
-			expect( renderer ).not.toHaveBeenCalled();
-			expect( onTaskUpdate ).toHaveBeenCalledWith( update );
+			expect( providers.onTaskUpdate ).toBeUndefined();
 		} );
 	} );
 
@@ -795,7 +840,6 @@ describe( 'loadExternalProviders', () => {
 			checkpointKeys: [ 'color' ],
 			createdAt: 1,
 		};
-		const providerCheckpoint = { ...amCheckpoint, checkpointId: 'toolu_bsp' };
 
 		// Not a once-value: the sidebar case never reads it, and it would leak.
 		afterEach( () => jest.mocked( getPageStructure ).mockReturnValue( null ) );
@@ -809,36 +853,34 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				acceptedUploadTypes,
 				...providerContext,
 				currentPageContentMarkup: '<!-- wp:paragraph /-->',
 			} );
 		} );
 
-		// A provider holds checkpoints only after a failed chunk load, and
-		// restores them itself.
 		it.each( [
 			{
-				case: "sends the checkpoints AM holds, over a provider's",
+				case: 'sends the checkpoints AM holds',
 				amCheckpoints: [ amCheckpoint ],
-				expected: [ amCheckpoint ],
+				expected: { ...providerContext, availableCheckpoints: [ amCheckpoint ] },
 			},
 			{
-				case: "leaves a provider's checkpoints while AM holds none",
+				case: 'adds no checkpoints while AM holds none',
 				amCheckpoints: [],
-				expected: [ providerCheckpoint ],
+				expected: providerContext,
 			},
 		] )( '$case', async ( { amCheckpoints, expected } ) => {
 			jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( amCheckpoints );
-			const context = { ...providerContext, availableCheckpoints: [ providerCheckpoint ] };
 			setAgentsManagerData( {
-				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
+				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
 			} );
 
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
-				...providerContext,
-				availableCheckpoints: expected,
+				...expected,
+				acceptedUploadTypes,
 			} );
 		} );
 
@@ -849,7 +891,10 @@ describe( 'loadExternalProviders', () => {
 
 			const providers = await loadExternalProviders();
 
-			expect( providers.contextProvider?.getClientContext() ).toEqual( providerContext );
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...providerContext,
+				acceptedUploadTypes,
+			} );
 		} );
 
 		// The ids the agent sends back have to be the ones AM's abilities resolve.
@@ -874,10 +919,165 @@ describe( 'loadExternalProviders', () => {
 			const providers = await loadExternalProviders();
 
 			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				acceptedUploadTypes,
 				...context,
 				...expected,
 			} );
 		} );
+	} );
+
+	describe( 'Big Sky page context', () => {
+		const postContext = {
+			current_page_id: 42,
+			id: 'post',
+			type: 'entity',
+			entityType: 'post',
+			entityId: '42',
+		};
+
+		const pageContext = () => ( {
+			url: window.location.href,
+			pathname: window.location.pathname,
+			search: window.location.search,
+			environment: 'wp-admin',
+			...postContext,
+		} );
+
+		beforeEach( () => {
+			jest.mocked( getEditorPostContext ).mockReturnValue( postContext );
+			jest.mocked( waitForEditedGlobalStyles ).mockClear();
+		} );
+
+		afterEach( () => jest.mocked( getEditorPostContext ).mockReturnValue( {} ) );
+
+		it( 'goes first where Big Sky is enabled', async () => {
+			const sidebarContext = { environment: 'gutenberg', titleSuggestionCount: 3 };
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [ { contextProvider: { getClientContext: () => sidebarContext } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				acceptedUploadTypes,
+				...pageContext(),
+				titleSuggestionCount: 3,
+			} );
+		} );
+
+		it( 'is sent with no provider registered', async () => {
+			setAgentsManagerData( { bigSkyEnabled: true, agentProviders: [] } );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...pageContext(),
+				acceptedUploadTypes,
+			} );
+		} );
+
+		// The post editor fetches them only when asked, and the first message needs them.
+		it( 'starts loading the global styles where Big Sky is enabled', async () => {
+			setAgentsManagerData( { bigSkyEnabled: true, agentProviders: [] } );
+
+			await loadExternalProviders();
+
+			// The editor chunk resolves in a later task — let it settle.
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+			expect( waitForEditedGlobalStyles ).toHaveBeenCalled();
+		} );
+
+		it( 'is not sent where Big Sky is off', async () => {
+			const context = { url: 'https://example.com/woo' };
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.contextProvider?.getClientContext() ).toEqual( {
+				...context,
+				acceptedUploadTypes,
+			} );
+			expect( waitForEditedGlobalStyles ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'Big Sky editor suggestions', () => {
+		it( 'go first where Big Sky is enabled and win the dedupe by id', async () => {
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [
+					{
+						getEmptyViewSuggestions: () => [
+							{ id: 'customize-colors', label: 'Provider colors', prompt: 'Provider colors' },
+							{ id: 'provider-chip', label: 'Provider chip', prompt: 'Provider chip' },
+						],
+					},
+				],
+			} );
+
+			const providers = await loadExternalProviders();
+			const suggestions = providers.getEmptyViewSuggestions?.() ?? [];
+
+			expect( suggestions[ 0 ] ).toMatchObject( {
+				id: 'customize-colors',
+				label: 'Customize colors',
+			} );
+		} );
+
+		it( "go first among a provider's block chips", async () => {
+			const providerChip = { id: 'provider-chip', label: 'Provider chip', prompt: 'Provider' };
+			setAgentsManagerData( {
+				bigSkyEnabled: true,
+				agentProviders: [
+					{
+						useSuggestions: () => ( {
+							suggestions: [ providerChip ],
+							replaceEmptyViewSuggestions: true,
+						} ),
+					},
+				],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.useSuggestions?.() ).toEqual( {
+				suggestions: [
+					expect.objectContaining( { id: 'translate' } ),
+					expect.objectContaining( { id: 'remove-image-background' } ),
+					providerChip,
+				],
+				replaceEmptyViewSuggestions: true,
+			} );
+		} );
+
+		it( 'are not offered where Big Sky is off', async () => {
+			setAgentsManagerData( {
+				agentProviders: [ { contextProvider: { getClientContext: () => ( {} ) } } ],
+			} );
+
+			const providers = await loadExternalProviders();
+
+			expect( providers.getEmptyViewSuggestions ).toBeUndefined();
+			expect( providers.useSuggestions ).toBeUndefined();
+		} );
+	} );
+
+	it( 'skips a provider whose empty view suggestions have not loaded yet', async () => {
+		const ready = { id: 'ready', label: 'Ready', prompt: 'Ready prompt.' };
+		setAgentsManagerData( {
+			agentProviders: [
+				{ getEmptyViewSuggestions: () => undefined },
+				{ getEmptyViewSuggestions: () => [ ready ] },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.getEmptyViewSuggestions?.() ).toEqual( [ ready ] );
 	} );
 
 	it( 'merges empty view suggestions from multiple providers and dedupes by id', async () => {
@@ -941,6 +1141,7 @@ describe( 'loadExternalProviders', () => {
 				editorNavigateAbility,
 				openHelpCenterAbility,
 				restoreCheckpointAbility,
+				saveChangesAbility,
 				setSiteLogoAbility,
 				showComponentAbility,
 				streamPageDesignAbility,
@@ -1188,6 +1389,6 @@ describe( 'canvas guard wiring', () => {
 		expect( mockedBinding.bindToOpenCanvas ).toHaveBeenCalled();
 		// The binding adds nothing to the wire: it reads the canvas from the editor
 		// store, so what the server receives is exactly what the provider built.
-		expect( context ).toEqual( providerContext );
+		expect( context ).toEqual( { ...providerContext, acceptedUploadTypes } );
 	} );
 } );

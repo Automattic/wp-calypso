@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useShouldUseWapuu } from '../hooks';
+import { useHasOpenZendeskChat } from '../hooks/use-has-open-zendesk-chat';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import type { JSX } from 'react';
 import './help-center-chat.scss';
@@ -22,8 +23,15 @@ export function HelpCenterChat( {
 } ): JSX.Element {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
-	// Before issuing a redirect, make sure the status is loaded.
-	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport && ! isLoadingStatus;
+	const { hasOpenZendeskChat, isLoading: isLoadingOpenZendeskChat } = useHasOpenZendeskChat();
+	// Before issuing a redirect, make sure the status is loaded. An open human chat is always
+	// reachable, so wait for that check too.
+	const preventOdieAccess =
+		! shouldUseWapuu &&
+		! isUserEligibleForPaidSupport &&
+		! hasOpenZendeskChat &&
+		! isLoadingStatus &&
+		! isLoadingOpenZendeskChat;
 	const {
 		currentUser,
 		site,
@@ -50,7 +58,7 @@ export function HelpCenterChat( {
 	const externalChatProvider = params.get( 'externalChatProvider' );
 	const externalChatId = params.get( 'externalChatId' );
 
-	const userFieldFlowName = featureConfig.chat.flowName || data?.eligibility?.user_field_flow_name;
+	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
 
 	const { forceEmailSupport, isChatRestricted } = useChatStatus();
 
@@ -71,14 +79,21 @@ export function HelpCenterChat( {
 			newInteractionsBotVersion={ newInteractionsBotVersion }
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
-			isLoadingCanConnectToZendesk={ isLoading }
+			// Without paid support, whether the chat loads from Zendesk depends on the open-chat check,
+			// so don't settle on an AI-only chat before it's in.
+			isLoadingCanConnectToZendesk={
+				isLoading || ( ! isUserEligibleForPaidSupport && isLoadingOpenZendeskChat )
+			}
 			selectedSiteId={ selectedSiteId }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
+			zendeskConversationTags={ featureConfig.chat.zendeskConversationTags }
+			zendeskIntegrationKey={ featureConfig.chat.zendeskIntegrationKey }
 			externalChatProvider={ externalChatProvider }
 			externalChatId={ externalChatId }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+			hasOpenZendeskChat={ hasOpenZendeskChat }
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
 			launcherContext={ launcherContext }

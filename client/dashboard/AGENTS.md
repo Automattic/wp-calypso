@@ -10,6 +10,7 @@ This is the new hosting dashboard for WordPress.com.
 ## Conventions
 
 - Use TanStack Query and TanStack Router.
+- Parse and normalize search params in `validateSearch`, write them with `router.navigate`, and avoid `history.replaceState` in components.
 - Don't use Redux and `calypso/state`.
 - **Never branch on `appConfig.name`** (e.g. `if (appConfig.name === 'dotcom')`). The dashboard has many variants; hardcoding behavior per variant doesn't scale. Some alternatives:
   1. If the behavior depends on the **site** (e.g. available features, capabilities), use `siteTypeSupportsFeature()` or extend `SiteTypeFeatureSupports` in `utils/site-type-feature-support.ts`.
@@ -24,7 +25,7 @@ Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to 
 useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
 ```
 
-Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `.eslintrc.js` enforces this.
+Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `eslint.config.mjs` enforces this.
 
 If the mutation needs other options too, wrap only the factory:
 

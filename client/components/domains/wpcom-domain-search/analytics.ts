@@ -72,7 +72,8 @@ export const recordSearchFormSubmit = (
 	vendor: string | undefined,
 	flowName: string,
 	trigger: SearchTrigger,
-	searchStartedAt: number
+	searchStartedAt: number,
+	extraProps?: Record< string, unknown >
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -90,6 +91,7 @@ export const recordSearchFormSubmit = (
 			flow_name: flowName,
 			trigger,
 			search_started_at: searchStartedAt,
+			...extraProps,
 		} )
 	);
 
@@ -104,7 +106,8 @@ export const recordSearchResultsReceive = (
 	suggestions: string[],
 	responseTimeInMs: number,
 	analyticsSection: string,
-	flowName: string
+	flowName: string,
+	extraProps?: Record< string, unknown >
 ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Receive Results', 'Response Time', responseTimeInMs ),
@@ -115,6 +118,7 @@ export const recordSearchResultsReceive = (
 			result_count: suggestions.length,
 			flow_name: flowName,
 			section: analyticsSection,
+			...extraProps,
 		} )
 	);
 
@@ -226,7 +230,8 @@ export function recordShowMoreResults(
 	searchQuery: string,
 	pageNumber: number,
 	section: string,
-	flowName: string
+	flowName: string,
+	extraProps?: Record< string, unknown >
 ) {
 	return composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
@@ -235,6 +240,7 @@ export function recordShowMoreResults(
 			page_number: pageNumber,
 			section,
 			flow_name: flowName,
+			...extraProps,
 		} )
 	);
 }

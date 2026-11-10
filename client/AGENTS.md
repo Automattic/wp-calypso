@@ -40,10 +40,12 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 ### UI
 
 - Prefer `@wordpress/components` primitives (Button, Modal, Card, etc.).
+- Pass `__next40pxDefaultSize` to every new `Button` (including `size="compact"` ones) and other controls that accept it, so they're ready for when 40px becomes the default upstream. `DropdownMenu` renders its own toggle button, so pass it via `toggleProps={ { __next40pxDefaultSize: true } }`; otherwise the toggle stays 36px and misaligns next to 40px buttons.
 - Avoid `__experimental*` components unless already used in the codebase.
 - Prefer `VStack`, `HStack` over `Flex` components.
 - Use the `Heading` component for headings, not `Text` (or raw elements) styled with heading mixins.
-- Minimize custom CSS; rely on the design system first.
+- Minimize custom CSS, inline `style={}` included; rely on the design system first. Before writing any CSS, check the component's prop types for a prop that already does it, and don't treat existing `style={}` overrides as precedent.
+- When adding a state or variant to an existing component, structure it like its siblings. For example, if each screen state is its own component, add a new component rather than inline markup in the parent.
 
 ### CSS/SCSS
 
@@ -52,10 +54,12 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 - Do not use hardcoded color values (`#fff`, `rgb()`, `hsl()`, named colors) in CSS/SCSS.
 - Use predefined color variables instead, preferably semantic CSS custom properties like `var(--color-text)`, `var(--color-surface)`, `var(--color-border-subtle)`, or `var(--color-primary)`.
 - Dialog buttons on mobile: `.dialog__action-buttons` flips to `flex-direction: column-reverse` below `$break-mobile`. Flex labels inside buttons need `width: 100%` for `justify-content: center` to work.
+- Import the stylesheet for every class a component renders. Don't rely on another component having imported it.
 
 ### Internationalization
 
 - Use `@wordpress/i18n` for translations.
+- Format displayed counts and quantities with `formatNumber()` from `@automattic/number-formatters`; preserve required decimal precision, use `%s` for formatted values, and keep numeric counts for plural selection. Use compact notation only when the layout needs it. See [number formatting guidance](../docs/i18n.md#formatting-displayed-quantities).
 
 ### Testing
 

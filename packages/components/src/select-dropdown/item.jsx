@@ -4,6 +4,7 @@ import { createRef, Component } from 'react';
 import Count from '../count';
 import TranslatableString from './translatable/proptype';
 
+/** @augments {Component<any>} */
 class SelectDropdownItem extends Component {
 	static propTypes = {
 		children: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,

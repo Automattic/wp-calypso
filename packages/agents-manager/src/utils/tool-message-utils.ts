@@ -1,3 +1,5 @@
+import type { UIMessage } from '@automattic/agenttic-client';
+
 export const APPLY_BLOCK_EDITS_TOOL_ID = 'big_sky__apply_block_edits';
 export const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
 
@@ -15,6 +17,41 @@ const DISPLAYABLE_TOOL_MESSAGE_TOOL_IDS = new Set( [
 	'big_sky__stream_page_design',
 	'wp_admin__navigate',
 ] );
+
+// Unchecked `JSON.parse` output: callers narrow what they use.
+interface ToolMessageData {
+	toolId?: unknown;
+	toolCallId?: unknown;
+	componentType?: unknown;
+	summary?: unknown;
+}
+
+/** Parses a tool message's JSON text, or `undefined` for invalid JSON. */
+export function parseToolMessageText( text: string ): ToolMessageData | undefined {
+	try {
+		const parsed = JSON.parse( text );
+		return {
+			toolId: parsed?.tool_id,
+			toolCallId: parsed?.tool_call_id,
+			componentType: parsed?.data?.type,
+			summary: parsed?.data?.summary,
+		};
+	} catch {
+		return undefined;
+	}
+}
+
+/** Reads the tool data a message carries as JSON in its first content part. */
+export function getToolMessageData(
+	message: Pick< UIMessage, 'content' >
+): ToolMessageData | undefined {
+	const firstText = message.content?.[ 0 ]?.text;
+	if ( ! firstText ) {
+		return undefined;
+	}
+
+	return parseToolMessageText( firstText );
+}
 
 export function isDisplayableToolMessageTool( toolId: unknown ): toolId is string {
 	return typeof toolId === 'string' && DISPLAYABLE_TOOL_MESSAGE_TOOL_IDS.has( toolId );
@@ -62,6 +99,28 @@ export function isVisualCheckPending( toolId: unknown, data: unknown ): boolean 
 
 export function isBlockEditToolId( toolId: unknown ): boolean {
 	return typeof toolId === 'string' && BLOCK_EDIT_TOOL_IDS.has( toolId );
+}
+
+/**
+ * The tool call the server is retrying, sent on its "Adjusting my approach…"
+ * progress part. The client renders a block edit's outcome before the server
+ * sees it, so this is how an interim "No changes needed" learns it was not final.
+ */
+export function getRetryingToolCallId( message: unknown ): string | undefined {
+	const parts = ( message as { parts?: unknown } | null | undefined )?.parts;
+	if ( ! Array.isArray( parts ) ) {
+		return undefined;
+	}
+
+	for ( const part of parts ) {
+		const retryingToolCallId = ( part as { data?: { retryingToolCallId?: unknown } } | null )?.data
+			?.retryingToolCallId;
+		if ( typeof retryingToolCallId === 'string' && retryingToolCallId ) {
+			return retryingToolCallId;
+		}
+	}
+
+	return undefined;
 }
 
 export function getApplyBlockEditsOutcome(

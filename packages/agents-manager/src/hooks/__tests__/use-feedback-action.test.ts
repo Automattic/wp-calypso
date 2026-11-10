@@ -5,8 +5,8 @@ import { createFeedbackActions } from '@automattic/agenttic-ui';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
-import useFeedbackAction from '../use-feedback-action';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import useFeedbackAction, { submitFeedback } from '../use-feedback-action';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 
 // Capture the onFeedback callback passed to createFeedbackActions
 let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
@@ -45,7 +45,6 @@ const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
 const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
-const mockRegisterMessageActions = jest.fn();
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
 >;
@@ -98,7 +97,6 @@ describe( 'useFeedbackAction', () => {
 	} );
 
 	const defaultConfig = {
-		registerMessageActions: mockRegisterMessageActions,
 		messages: [] as Message[],
 	};
 
@@ -156,6 +154,14 @@ describe( 'useFeedbackAction', () => {
 
 			expect( capturedCondition?.( createMessage( '1', 'agent', 'hi' ) ) ).toBe( true );
 			expect( capturedCondition?.( createMessage( '2', 'user', 'hi' ) ) ).toBe( false );
+		} );
+
+		it( 'leaves out the browser’s own answer to /credits', () => {
+			renderHook( () => useFeedbackAction( defaultConfig ) );
+
+			expect( capturedCondition?.( createMessage( 'credits-command-1', 'agent', 'hi' ) ) ).toBe(
+				false
+			);
 		} );
 	} );
 
@@ -319,6 +325,35 @@ describe( 'useFeedbackAction', () => {
 
 			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
 			expect( body.trace_id ).toBe( 'trace-123' );
+		} );
+
+		it( 'does not send `metadata` with the feedback text', async () => {
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
+			await triggerFeedback( 'msg-1', 'down' );
+
+			await act( async () => {
+				await result.current.submitFeedbackText( 'Not helpful' );
+			} );
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body ).not.toHaveProperty( 'metadata' );
+		} );
+
+		it( 'sends `metadata` with the feedback text when given', async () => {
+			const metadata = { image_url: 'https://example.com/image.png', mode: 'edit' };
+
+			await submitFeedback(
+				mockAuthProvider,
+				'session-abc',
+				'msg-1',
+				'Too dark',
+				undefined,
+				undefined,
+				metadata
+			);
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body.metadata ).toEqual( metadata );
 		} );
 
 		it( 'limits conversation context to last 4 messages', async () => {

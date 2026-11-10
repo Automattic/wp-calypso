@@ -1,49 +1,52 @@
-import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, Button, ToggleControl } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
-import { useEffect } from 'react';
+import { activeAgencyQuery, referralsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { __experimentalHStack as HStack, ToggleControl } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
+import { ApprovalGate } from '../approval-gate';
+import {
+	HOSTING_REFERRAL_COMMISSION_PERCENTAGE,
+	PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE,
+} from './lib/referral-commission';
 import { useReferralToggle } from './use-referral-toggle';
-import useReferralsGuide from './use-referrals-guide';
 
-// Shared with the classic A4A marketplace so the guide only shows once across dashboards.
-const GUIDE_SEEN_PREFERENCE = 'a4a-marketplace-referral-guide-seen';
+export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting' } ) {
+	const { checked, disabled, onChange, isGateOpen, closeGate } = useReferralToggle();
 
-export default function ReferralToggle() {
-	const { checked, disabled, onChange } = useReferralToggle();
-	const { openGuide, guideModal } = useReferralsGuide();
-
-	const { data: guideSeen, isFetched } = useQuery( userPreferenceQuery( GUIDE_SEEN_PREFERENCE ) );
-	const { mutate: saveGuideSeen } = useMutation( userPreferenceMutation( GUIDE_SEEN_PREFERENCE ) );
-
-	useEffect( () => {
-		if ( checked && isFetched && ! guideSeen ) {
-			saveGuideSeen( true );
-			openGuide();
-		}
-	}, [ checked, isFetched, guideSeen, saveGuideSeen, openGuide ] );
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
+	const isMobile = useViewportMatch( 'mobile', '<' );
+	// Only in referral mode, so buy mode keeps no empty space beside the switch. It sits before
+	// the switch, so in a right-aligned header it grows away from the switch and the cart.
+	// Phones have no room for it beside the switch.
+	const showEarnings = checked && ! isMobile && referrals?.length === 0;
 
 	return (
-		<>
-			{ guideModal }
-			<HStack spacing={ 1 } expanded={ false } alignment="center">
-				<ToggleControl
-					__nextHasNoMarginBottom
-					checked={ checked }
-					disabled={ disabled }
-					label={ __( 'Refer products' ) }
-					onChange={ onChange }
-				/>
-				<Button
-					variant="tertiary"
-					size="small"
-					aria-label={ __( 'Learn more about product referral mode' ) }
-					onClick={ openGuide }
-				>
-					<Icon icon={ info } size={ 16 } />
-				</Button>
-			</HStack>
-		</>
+		<HStack spacing={ 2 } expanded={ false } alignment="center">
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ closeGate } /> }
+			{ showEarnings && (
+				<Badge intent="informational">
+					{ kind === 'hosting'
+						? sprintf(
+								/* translators: %d is the commission percentage. */
+								__( 'Earn %d%%' ),
+								HOSTING_REFERRAL_COMMISSION_PERCENTAGE
+							)
+						: sprintf(
+								/* translators: %d is the highest commission percentage. */
+								__( 'Earn up to %d%%' ),
+								PRODUCTS_REFERRAL_COMMISSION_PERCENTAGE
+							) }
+				</Badge>
+			) }
+			<ToggleControl
+				__nextHasNoMarginBottom
+				checked={ checked }
+				disabled={ disabled }
+				label={ __( 'Refer to clients' ) }
+				onChange={ onChange }
+			/>
+		</HStack>
 	);
 }

@@ -1,0 +1,34 @@
+// Shared by the MCP read/write tool pages (client/dashboard/me/mcp/{read,write}):
+// keeps the "Enable all" toggle and tool search pinned while the tool list
+// below scrolls.
+//
+// The toolbar and the tool list below it are deliberately plain block
+// siblings (not flex items sharing a `gap`) — a sticky element mixed into a
+// flex/gap layout as a sibling of non-sticky content lets the browser paint
+// the scrolled-under content above the sticky background despite a correct
+// z-index, so spacing here is done with margin instead.
+.mcp-tools-page {
+	> * + * {
+		margin-block-start: 16px;
+	}
+}
+
+.mcp-tools-toolbar {
+	position: sticky;
+	inset-block-start: var( --masterbar-height, 0px );
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	background: var( --color-surface );
+	padding-block: 20px;
+	border-block-end: 1px solid var( --color-border-subtle );
+
+	// Extend past the toolbar's own box on each side so sub-pixel/
+	// compositor-layer rounding can't leave a seam where scrolled-under
+	// content peeks through in the gap rows between the toggle and the
+	// search field (same fix as .search-stream__fixed-area in the Reader,
+	// widened because the sticky layer's own rounding isn't symmetric).
+	margin-inline: -3px;
+	padding-inline: 3px;
+}

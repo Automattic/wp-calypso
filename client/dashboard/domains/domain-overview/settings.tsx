@@ -6,18 +6,55 @@ import {
 	type DomainMappingStatus,
 } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
+import { getCurrentDashboard } from '../../app/routing';
 import { SectionHeader } from '../../components/section-header';
+import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
-import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
+import { shouldShowTransferInAction } from './actions.utils';
+import DomainEmailsSettingsSummary from './emails-summary';
+import DomainSiteSettingsSummary from './site-summary';
+import { useTrackOverviewItem } from './use-track-overview-item';
+
+// A component of its own because `SummaryButtonList` overrides the density of its direct
+// children, which would hide the description.
+function TransferInSummary( {
+	domain,
+	isDisabled,
+	onClick,
+}: {
+	domain: Domain;
+	isDisabled?: boolean;
+	onClick: () => void;
+} ) {
+	return (
+		<SummaryButton
+			title={ __( 'Bring your domain to WordPress.com' ) }
+			description={ __( 'Manage your site and domain all in one place.' ) }
+			density="medium-low"
+			href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+				initialQuery: domain.domain,
+				initialMode: 'transfer-domain',
+				siteSlug: domain.site_slug,
+				dashboard: getCurrentDashboard(),
+				back_to: redirectToDashboardLink(),
+			} ) }
+			disabled={ isDisabled }
+			onClick={ onClick }
+		/>
+	);
+}
 
 export default function DomainOverviewSettings( {
 	domain,
@@ -30,7 +67,27 @@ export default function DomainOverviewSettings( {
 	domainMappingStatus?: DomainMappingStatus;
 	isDisabled?: boolean;
 } ) {
-	const buttonListItems = [];
+	const trackItem = useTrackOverviewItem( domain );
+	const [ showAdvanced, setShowAdvanced ] = useState( false );
+	const buttonListItems = [
+		<DomainSiteSettingsSummary
+			key="site"
+			domain={ domain }
+			onClick={ () => trackItem( 'site' ) }
+		/>,
+		<DomainEmailsSettingsSummary
+			key="emails"
+			domain={ domain }
+			onClick={ () => trackItem( 'emails' ) }
+		/>,
+	];
+	const advancedButtonListItems = [];
+
+	const isManageable =
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ) &&
+		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC;
+	const canManageDns = isManageable && domain.can_manage_dns_records;
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
@@ -38,6 +95,17 @@ export default function DomainOverviewSettings( {
 				key="connection-setup"
 				domain={ domain }
 				domainMappingStatus={ domainMappingStatus }
+				onClick={ () => trackItem( 'connection-setup' ) }
+			/>
+		);
+	}
+
+	if ( canManageDns ) {
+		buttonListItems.push(
+			<DomainForwardingSettingsSummary
+				key="forwarding"
+				domain={ domain }
+				onClick={ () => trackItem( 'forwarding' ) }
 			/>
 		);
 	}
@@ -47,18 +115,19 @@ export default function DomainOverviewSettings( {
 		! domain.is_gravatar_restricted_domain // TODO: should we show some notice for gravatar domains instead of just hiding the button?
 	) {
 		buttonListItems.push(
-			<NameServersSettingsSummary key="name-servers" domain={ domain } isDisabled={ isDisabled } />
+			<NameServersSettingsSummary
+				key="name-servers"
+				domain={ domain }
+				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'name-servers' ) }
+			/>
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
-		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
+	if ( canManageDns ) {
+		buttonListItems.push(
+			<DnsSettingsSummary key="dns" domain={ domain } onClick={ () => trackItem( 'dns' ) } />
+		);
 	}
 
 	if (
@@ -71,53 +140,19 @@ export default function DomainOverviewSettings( {
 				key="diagnostics"
 				domain={ domain }
 				domainDiagnostics={ domainDiagnostics }
+				onClick={ () => trackItem( 'diagnostics' ) }
 			/>
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
-		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
-	}
-
-	/**
-	 * I simplified the condition heere because the original code seemed to have a logical redundancy.
-	 * see: https://github.com/Automattic/wp-calypso/blob/b1c63880294fcf63f95518a3c42779236f56f5b2/client/my-sites/domains/domain-management/settings/index.tsx#L515
-	 */
-	// `current_user_can_manage` is always false in a support session. The link is still shown so
-	// that support can copy its URL for the user; the route itself blocks editing in that case.
-	if (
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		( domain.current_user_can_manage || isSupportSession() ) &&
-		! domain.pending_transfer &&
-		! domain.expired
-	) {
-		buttonListItems.push(
-			<DomainContactDetailsSettingsSummary
-				key="contact-details"
+	if ( isManageable ) {
+		advancedButtonListItems.push(
+			<DomainSecuritySettingsSummary
+				key="security"
 				domain={ domain }
 				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'security' ) }
 			/>
-		);
-	}
-
-	/**
-	 * TODO: review this one - we need to show the security for transfers but only if there is
-	 * mapping. Right now I copied the code from the original code but it seems wrong
-	 */
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
-	) {
-		buttonListItems.push(
-			<DomainSecuritySettingsSummary key="security" domain={ domain } isDisabled={ isDisabled } />
 		);
 	}
 
@@ -129,21 +164,51 @@ export default function DomainOverviewSettings( {
 		domain.can_manage_dns_records
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
-		buttonListItems.push(
+		advancedButtonListItems.push(
 			<DomainGlueRecordsSettingsSummary
 				key="glue-records"
 				domainName={ domain.domain }
 				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'glue-records' ) }
+			/>
+		);
+	}
+
+	if ( shouldShowTransferInAction( domain ) ) {
+		buttonListItems.push(
+			<TransferInSummary
+				key="transfer-in"
+				domain={ domain }
+				isDisabled={ isDisabled }
+				onClick={ () => trackItem( 'transfer-in' ) }
 			/>
 		);
 	}
 
 	return (
-		buttonListItems.length > 0 && (
-			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
-				<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
-			</VStack>
-		)
+		<VStack spacing={ 3 }>
+			<SectionHeader
+				title={ __( 'Settings' ) }
+				level={ 3 }
+				actions={
+					advancedButtonListItems.length > 0 && (
+						<Button
+							__next40pxDefaultSize
+							variant="link"
+							aria-expanded={ showAdvanced }
+							onClick={ () => {
+								trackItem( 'advanced-toggle', { expanded: ! showAdvanced } );
+								setShowAdvanced( ! showAdvanced );
+							} }
+						>
+							{ showAdvanced ? __( 'Hide advanced settings' ) : __( 'Show advanced settings' ) }
+						</Button>
+					)
+				}
+			/>
+			<SummaryButtonList>
+				{ showAdvanced ? [ ...buttonListItems, ...advancedButtonListItems ] : buttonListItems }
+			</SummaryButtonList>
+		</VStack>
 	);
 }

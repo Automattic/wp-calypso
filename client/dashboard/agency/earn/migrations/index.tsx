@@ -1,4 +1,4 @@
-import { allSitesQuery } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -10,7 +10,10 @@ import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import { AgencyNotices } from '../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import MigrationsCommissionsContent from './commissions-content';
 import useCanTagSitesForCommission from './hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from './hooks/use-fetch-tagged-sites-for-migration';
@@ -20,9 +23,13 @@ export default function EarnMigrations() {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
-	const { data: sites = [] } = useQuery( allSitesQuery() );
+	const { data: sites = [] } = useQuery( sitesQuery() );
 	const { data, isLoading } = useFetchTaggedSitesForMigration();
 	const taggedSites = data ?? [];
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: taggedSites.length > 0,
+		isLoadingActivity: isLoading,
+	} );
 
 	const [ isAddSitesModalOpen, setIsAddSitesModalOpen ] = useState( false );
 
@@ -43,7 +50,7 @@ export default function EarnMigrations() {
 	);
 
 	const onOpenAddSitesModal = useCallback( () => {
-		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_sites_click' );
+		recordTracksEvent( 'calypso_a4a_migrations_commissions_tag_sites_click' );
 		setIsAddSitesModalOpen( true );
 	}, [ recordTracksEvent ] );
 
@@ -55,7 +62,7 @@ export default function EarnMigrations() {
 					description={ __( 'Earn commissions for migrating sites to Automattic hosting.' ) }
 					actions={
 						canTagSitesForCommission ? (
-							<Button variant="primary" onClick={ onOpenAddSitesModal }>
+							<Button variant="primary" __next40pxDefaultSize onClick={ onOpenAddSitesModal }>
 								{ __( 'Tag sites for commission' ) }
 							</Button>
 						) : undefined
@@ -63,9 +70,19 @@ export default function EarnMigrations() {
 				/>
 			}
 			notices={
-				<MissingPaymentSettingsNotice
-					hasCommissionActivity={ taggedSites.length > 0 }
-					commissionType="migrations"
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice
+									hasCommissionActivity={ taggedSites.length > 0 }
+									commissionType="migrations"
+								/>
+							),
+						},
+					] }
 				/>
 			}
 		>

@@ -301,6 +301,21 @@ export const fetchReadLiked = (
 	} );
 
 /**
+ * Fetch the `saved` stream — posts the current user saved to read later. Hits
+ * `/read/saved` on REST `1.2`, newest save first, with each post's `date_saved`.
+ * Unlike `/read/liked` it pages with `page_handle`, and the last page has no
+ * `next_page_handle`.
+ */
+export const fetchReadSaved = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/saved', params ),
+		apiVersion: '1.2',
+		method: 'GET',
+	} );
+
+/**
  * Fetch the `conversations` stream — `/read/conversations`. Calypso stream
  * query params pass `comments_per_post: 20` and (for the a8c variant)
  * `index: 'a8c'`, mirroring the legacy `streamApis.conversations` definition.

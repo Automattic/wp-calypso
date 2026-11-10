@@ -43,9 +43,11 @@
 
 	&__visibility-button {
 		width: 20px;
-		fill: #a7aaad;
 		transition: all 0.2s;
-		&:hover {
+		svg {
+			fill: #a7aaad;
+		}
+		&:hover svg {
 			fill: #787c82;
 		}
 	}

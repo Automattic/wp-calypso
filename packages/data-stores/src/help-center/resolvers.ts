@@ -39,7 +39,9 @@ export function isHelpCenterShown() {
 			const helpCenterOpen = await getPersistedPreference( 'help_center_open' );
 
 			// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
-			if ( helpCenterOpen ) {
+			// The same goes for an open or close that happened while the preference was loading: the block
+			// editor, for example, closes the Help Center as it loads.
+			if ( helpCenterOpen && typeof select.isHelpCenterShown() === 'undefined' ) {
 				dispatch( {
 					type: 'HELP_CENTER_SET_SHOW',
 					show: true,

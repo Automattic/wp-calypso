@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import wp from 'calypso/lib/wp';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CancelDifmMigrationForm from '../index';
 
@@ -116,14 +117,36 @@ describe( 'CancelDifmMigrationForm', () => {
 		} );
 	} );
 
-	it( 'should not show the cancel migration button if there is no zendesk ticket', () => {
+	it( 'cancels a migration without a Zendesk ticket when it is not in progress', async () => {
+		jest.mocked( wp.req.post ).mockResolvedValue( { success: true } );
 		useFindZendeskMigrationTicket.mockReturnValue( {
 			data: {
 				ticket_id: null,
 			},
 		} );
 		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
-		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
+		await userEvent.click( screen.getByRole( 'button', { name: /cancel migration/i } ) );
+		expect( screen.getByText( /your original site will remain unchanged/i ) ).toBeVisible();
+		await userEvent.click(
+			within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: /^cancel migration$/i } )
+		);
+		await waitFor( () => {
+			expect( wp.req.post ).toHaveBeenCalledWith( {
+				path: `/sites/${ siteId }/automated-migration/cancel-migration`,
+				apiNamespace: 'wpcom/v2',
+			} );
+		} );
+	} );
+
+	it( 'does not offer cancellation for an active transfer without a ticket', () => {
+		useSiteMigrationStatus.mockReturnValue( {
+			site: { ID: siteId },
+			isMigrationCompleted: false,
+			isMigrationInProgress: true,
+		} );
+		useFindZendeskMigrationTicket.mockReturnValue( { data: { ticket_id: null } } );
+		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
+		expect( screen.queryByRole( 'button', { name: /cancellation/i } ) ).toBeNull();
 	} );
 
 	it( 'useFindZendeskMigrationTicket should not make a request if the migration is completed', () => {
@@ -134,5 +157,6 @@ describe( 'CancelDifmMigrationForm', () => {
 		} );
 		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
 		expect( useFindZendeskMigrationTicket ).toHaveBeenCalledWith( siteId, false );
+		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
 	} );
 } );

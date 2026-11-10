@@ -255,6 +255,37 @@
 	height: 240px;
 }
 
+// "Check your email": the inbox button, then the help line 16px below it, both on the
+// heading's left edge.
+.magic-login__check-email-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	.social-buttons__button.is-secondary {
+		width: 100%;
+		background-color: var( --color-surface );
+	}
+}
+
+.magic-login__check-email-help {
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+
+	// Without an inbox button it reads as part of the subtitle, so it sits 16px under it
+	// rather than at the template's 32px content gap.
+	&:first-child {
+		margin-block-start: -1rem;
+	}
+}
+
 .magic-login:not( .is-grav-powered-client ) {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
@@ -390,4 +421,8 @@
 		color: var( --magic-login-error-color );
 		margin-bottom: 32px;
 	}
+}
+
+.magic-login__verify-code-form .login__form-blackbox-challenge.has-visible-challenge {
+	margin-block-start: 32px;
 }

@@ -13,6 +13,7 @@ type BeforeSubmit = NonNullable< AgentUIProps[ 'beforeSubmit' ] >;
 
 const SUGGESTIONS: Suggestion[] = [
 	{ id: 'auto', label: 'Run it', prompt: 'Run it now', autoSubmit: true },
+	{ id: 'blank', label: 'Blank', prompt: '   ', autoSubmit: true },
 ];
 
 function setTextareaValue( textarea: HTMLTextAreaElement, value: string ) {
@@ -41,13 +42,14 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 	async function render(
 		beforeSubmit: BeforeSubmit,
 		onSubmit = vi.fn(),
-		onSuggestionClick = vi.fn()
+		onSuggestionClick = vi.fn(),
+		isProcessing = false
 	) {
 		await act( async () => {
 			root.render(
 				<AgentUIContainer
 					messages={ [] }
-					isProcessing={ false }
+					isProcessing={ isProcessing }
 					onSubmit={ onSubmit }
 					variant="embedded"
 					suggestions={ SUGGESTIONS }
@@ -107,6 +109,36 @@ describe( 'AgentUIContainer beforeSubmit', () => {
 			suggestion?.click();
 		} );
 		expect( beforeSubmit ).toHaveBeenCalledWith( 'Run it now', 'suggestion' );
+		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( onSuggestionClick ).not.toHaveBeenCalled();
+		expect(
+			Array.from( container.querySelectorAll( 'button' ) ).some(
+				( button ) => button.textContent === 'Run it'
+			)
+		).toBe( true );
+	} );
+
+	it( 'rejects an auto-submit suggestion whose prompt is blank', async () => {
+		const beforeSubmit = vi.fn( (): boolean => true );
+		const onSuggestionClick = vi.fn();
+		const { onSubmit } = await render( beforeSubmit, vi.fn(), onSuggestionClick );
+		const blank = Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === 'Blank'
+		);
+		await act( async () => {
+			blank?.click();
+		} );
+		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( onSuggestionClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects an auto-submit suggestion while a send is already processing', async () => {
+		const beforeSubmit = vi.fn( (): boolean => true );
+		const onSuggestionClick = vi.fn();
+		const { onSubmit, suggestion } = await render( beforeSubmit, vi.fn(), onSuggestionClick, true );
+		await act( async () => {
+			suggestion?.click();
+		} );
 		expect( onSubmit ).not.toHaveBeenCalled();
 		expect( onSuggestionClick ).not.toHaveBeenCalled();
 		expect(

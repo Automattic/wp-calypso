@@ -18,14 +18,21 @@ import {
 	getAmCheckpointContext,
 	getAmPageContentMarkup,
 	getAmPageStructure,
+	loadAmEditorSuggestions,
+	preloadAmEditorContentContext,
 } from '../abilities';
 import { findAbilityByName } from '../abilities/ability-name';
-import { withPageDesignStream } from '../abilities/stream-page-design/stream';
+import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
+import { wooFallbackToolProvider } from '../abilities/woocommerce';
+import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../constants';
+import { filterInteractiveUiCatalogs } from '../interactive-ui/catalogs';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
+import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isEditorPage } from './is-editor-page';
 import { isReaderChatAgent } from './is-reader-chat-agent';
+import { isWooAiProvider } from './is-woo-ai-provider';
 import { setLoadedProviderIds } from './loaded-provider-ids';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
@@ -33,11 +40,11 @@ import type {
 	ContextProvider,
 	ClientContextType,
 	ContextEntry,
-	Suggestion,
 	BigSkyMessage,
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
+import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 import type { ReactNode } from 'react';
 
 /**
@@ -52,7 +59,6 @@ export type AbilitiesSetupHook = ( actions: {
 	getAgentManager: typeof getAgentManager;
 	isProcessing?: boolean;
 	setIsThinking: ( isThinking: boolean ) => void;
-	deleteMarkedMessages: ( messages: Record< 'id', string >[] ) => void;
 	getSessionId: () => string | undefined;
 	setIsBuildingSite: ( isBuildingSite: boolean ) => void;
 	setThinkingMessage: ( message: string | null ) => void;
@@ -74,25 +80,11 @@ export type SiteBuildUtils = {
 };
 
 /**
- * Supported chat component types for agent messages.
- */
-type ChatComponentType =
-	// TODO (ability-migration): The picker and Help Center button types resolve
-	// to AM's own components first; drop them here once Big Sky deletes its copies.
-	| 'button-picker'
-	| 'font-picker'
-	| 'color-picker'
-	| 'chat-suggestions'
-	| 'open-help-center-button'
-	| 'title-picker'
-	| 'seo-title-picker';
-
-/**
  * Get a chat component by type for rendering in agent messages.
  * @param type - The type of chat component to get
  * @returns The React component for the specified type, or `null` if unknown
  */
-export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentType< unknown > | null;
+export type GetChatComponent = ( type: string ) => React.ComponentType< unknown > | null;
 
 /**
  * Rewrite the visible transcript.
@@ -161,6 +153,22 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	}
 }
 
+/** Tells the agent which files the user can attach, so it never asks for one the composer rejects. */
+function withAcceptedUploadTypes(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return contextProvider;
+	}
+
+	return {
+		getClientContext: () => ( {
+			...contextProvider.getClientContext(),
+			acceptedUploadTypes: DEFAULT_ACCEPTED_UPLOAD_TYPES,
+		} ),
+	};
+}
+
 export interface LoadedProviders {
 	/** Optional stable provider identifier exported by a provider module. */
 	providerId?: string;
@@ -168,8 +176,8 @@ export interface LoadedProviders {
 	providerIds?: string[];
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
-	/** Function to get empty view suggestions. Called when component is ready. */
-	getEmptyViewSuggestions?: () => Suggestion[];
+	/** The empty view's suggestions; `undefined` until a lazily loaded provider's bundle has run. */
+	getEmptyViewSuggestions?: () => Suggestion[] | undefined;
 	/**
 	 * Opt out of the built-in empty-view default suggestions ("Getting started
 	 * with WordPress" etc.) for this provider's surfaces. When any loaded
@@ -181,6 +189,10 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	/** A provider's own interactive UI catalog: its document, components and functions. */
+	interactiveUi?: InteractiveUiCatalogDefinition;
+	/** Every loaded provider's interactive UI catalog, one per catalog ID. */
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -189,10 +201,7 @@ export interface LoadedProviders {
 	useCheckpoint?: UseCheckpointHook;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
-	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
-	 * paint streamed page-design block markup into the editor. First-write-wins
-	 * across providers (a singleton: the delta stream must be processed once, not
-	 * fanned out to every provider).
+	 * On editor pages it paints the streamed page-design markup as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 	capabilities?: ProviderCapabilities;
@@ -440,15 +449,11 @@ function withAmCheckpointActions(
 // the editor's clientIds as they are.
 const JETPACK_AI_SIDEBAR_ENVIRONMENT = 'gutenberg';
 
-// TODO (ability-migration): Big Sky's client context feeds the same keys;
-// these win by running last. Once it stops, describe the page where no
-// provider has a context too — until then Big Sky's always does.
 /**
  * Adds what AM knows of the page: `currentPageContent` and
  * `selectedBlockClientId` under the short ids AM's abilities resolve,
  * `currentPageContentMarkup` for the backend's page-design agent, and AM's
- * `availableCheckpoints`. A provider's list stays while AM holds none, as after
- * a failed chunk load, when its copies restore their own.
+ * `availableCheckpoints` while it holds any.
  */
 function withPageContext(
 	contextProvider: ContextProvider | undefined
@@ -616,34 +621,46 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		};
 	}
 
-	if ( agentProviders.length === 0 ) {
+	// A Big Sky site needs AM's abilities, page context and editor suggestions even with no provider.
+	const isBigSkySite = isBigSkyEnabled();
+
+	if ( agentProviders.length === 0 && ! isBigSkySite ) {
 		setLoadedProviderIds( [] );
 		return { markdownExtensions: defaultMarkdownExtensions };
 	}
 
+	if ( isBigSkySite ) {
+		void preloadAmEditorContentContext();
+	}
+
+	// AM's editor suggestions, loaded alongside the providers; `null` off editor pages.
+	const editorSuggestionsPromise = isBigSkySite ? loadAmEditorSuggestions() : null;
+
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
+	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] | undefined ) | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
 	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
 	// AM's own provider goes first: tool execution resolves first-write-wins
-	// by ability name, so a migrated ability executes through AM even if an
-	// external provider still ships its copy.
+	// by ability name, so AM's abilities run ahead of any provider ability with
+	// the same name.
 	const allToolProviders: ToolProvider[] = [ amToolProvider ];
-	const allContextProviders: ContextProvider[] = [];
+	// Big Sky's page context goes first, so its `wp-admin` environment wins over
+	// the Jetpack AI sidebar's `gutenberg`.
+	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
+	const allInteractiveUiCatalogs: InteractiveUiCatalogDefinition[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
-	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allGetEmptyViewSuggestions: ( () => Suggestion[] | undefined )[] = [];
 	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
@@ -676,6 +693,14 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			}
 		} )
 	) ) as ( LoadedProviderModule | null )[];
+
+	const editorSuggestions = await editorSuggestionsPromise;
+
+	// AM's suggestions go first, so they win the dedupe by id.
+	if ( editorSuggestions ) {
+		allGetEmptyViewSuggestions.push( editorSuggestions.getEditorEmptyViewSuggestions );
+		allUseSuggestions.push( editorSuggestions.useBlockSuggestions );
+	}
 
 	for ( const loadedModule of loadedModules ) {
 		if ( ! loadedModule ) {
@@ -716,13 +741,13 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.markdownExtensions ) {
 			allMarkdownExtensions.push( module.markdownExtensions );
 		}
+		if ( module.interactiveUi ) {
+			allInteractiveUiCatalogs.push( module.interactiveUi );
+		}
 
-		// First-write-wins for singleton exports.
+		// First-write-wins for the singleton export.
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
-			mergedOnTaskUpdate = module.onTaskUpdate;
 		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
@@ -734,12 +759,19 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
+	// TODO: Remove with `abilities/woocommerce` (temporary, AM-110). Added last, so
+	// a provider's ability with the same name wins; skipped where WooCommerce AI
+	// loads, since it owns these abilities.
+	if ( ! isWooAiProvider( allProviderIds ) ) {
+		allToolProviders.push( wooFallbackToolProvider );
+	}
+
 	// Where AM's editor abilities run, it also describes the page, answers the
 	// chat's Undo first and paints the page-design stream.
 	const isEditor = isEditorPage();
 	const contextProvider = mergeContextProviders( allContextProviders );
-	const mergedContextProvider = withCanvasBinding(
-		isEditor ? withPageContext( contextProvider ) : contextProvider
+	const mergedContextProvider = withAcceptedUploadTypes(
+		withCanvasBinding( isEditor ? withPageContext( contextProvider ) : contextProvider )
 	);
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
@@ -823,7 +855,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	} else if ( allGetChatComponents.length > 1 ) {
 		mergedGetChatComponent = ( ( type: string ) => {
 			for ( const fn of allGetChatComponents ) {
-				const result = fn( type as ChatComponentType );
+				const result = fn( type );
 				if ( result ) {
 					return result;
 				}
@@ -862,7 +894,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 			const combined: Suggestion[] = [];
 			const seenIds = new Set< string >();
 			for ( const fn of allGetEmptyViewSuggestions ) {
-				for ( const s of fn() ) {
+				for ( const s of fn() ?? [] ) {
 					if ( ! seenIds.has( s.id ) ) {
 						seenIds.add( s.id );
 						combined.push( s );
@@ -881,9 +913,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
+		interactiveUiCatalogs: filterInteractiveUiCatalogs( allInteractiveUiCatalogs ),
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
-		onTaskUpdate: isEditor ? withPageDesignStream( mergedOnTaskUpdate ) : mergedOnTaskUpdate,
+		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		transformMessages: mergedTransformMessages,

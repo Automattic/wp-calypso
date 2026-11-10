@@ -3,6 +3,7 @@ import {
 	agencyManagedSiteIdsQuery,
 	agencySitesImportMutation,
 	agencySitesQueryKey,
+	sitesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -18,7 +19,6 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { useAppContext } from '../../../app/context';
 import { useIntlLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
@@ -101,7 +101,6 @@ interface ImportFromWPCOMModalProps {
  */
 export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { queries } = useAppContext();
 	const queryClient = useQueryClient();
 	const locale = useIntlLocale();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -119,7 +118,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 		data: sites,
 		isLoading: isLoadingSites,
 		isError: isSitesError,
-	} = useQuery( queries.sitesQuery( { site_visibility: 'all', include_a8c_owned: false } ) );
+	} = useQuery( sitesQuery( 'all', { site_visibility: 'all', include_a8c_owned: false } ) );
 	const {
 		data: managedSiteIds,
 		isLoading: isLoadingManagedSites,
@@ -191,7 +190,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 	const handleAddSites = () => {
 		const blogIds = selection.map( Number );
 
-		recordTracksEvent( 'calypso_dashboard_agency_sites_import_wpcom_sites_click', {
+		recordTracksEvent( 'calypso_a4a_sites_import_wpcom_sites_click', {
 			site_count: blogIds.length,
 		} );
 
@@ -274,6 +273,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 							<DataViewsEmptyStateLayout
 								title={ __( 'No sites to add' ) }
 								description={ __( 'Every site you can add is already managed by your agency.' ) }
+								isBorderless
 							/>
 						}
 					>

@@ -1,6 +1,6 @@
 # API Queries
 
-See `README.md` for the package overview and the general guidelines on adding queries and mutations. This file covers one thing those don't: the `meta.statId` every mutation must carry.
+See `README.md` for the package overview and the general guidelines on adding queries and mutations.
 
 ## Commands
 
@@ -14,6 +14,15 @@ yarn typecheck-packages
 # Lint
 yarn eslint packages/api-queries/src/<file>
 ```
+
+## Adding a query: `meta.persist`
+
+Queries are persisted to `localStorage` by default. Set `meta: { persist: false }` in the query factory when the response carries sensitive data, for example:
+
+- the user's email, real name or phone number
+- other people's contact details
+- card or billing details
+- secrets such as API keys or 2FA seeds
 
 ## Adding a mutation: `meta.statId`
 

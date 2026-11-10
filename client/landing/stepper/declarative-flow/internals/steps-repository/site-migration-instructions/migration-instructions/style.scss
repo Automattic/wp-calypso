@@ -21,6 +21,7 @@
 	}
 
 	.checklist-item__task.completed .checklist-item__task-content:hover .checklist-item__checkmark {
+		color: var(--studio-wordpress-blue-50);
 		fill: var(--studio-wordpress-blue-50);
 	}
 

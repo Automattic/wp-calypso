@@ -157,6 +157,13 @@ button.button.is-borderless.license-bundle-dropdown__button {
 	gap: 8px;
 }
 
+.license-preview__trial-notice {
+	@include body-small;
+	font-style: italic;
+	color: var(--color-neutral-50);
+	margin-block-start: 4px;
+}
+
 .license-preview__client-email {
 	@include body-medium;
 	color: var(--color-neutral-50);

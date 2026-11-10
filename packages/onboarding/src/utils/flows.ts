@@ -10,6 +10,7 @@ export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
+export const STATIC_SITE_IMPORT_FLOW = 'static-site-import';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -45,6 +46,7 @@ export const AI_SITE_BUILDER_ONBOARDING_FLOW = 'ai-site-builder-onboarding';
 export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
+export const LAUNCH_SITE_FLOW = 'launch-site';
 export const FLEX_SITE_FLOW = 'flex-site';
 export const WOO_HOSTED_PLANS_FLOW = 'woo-hosted-plans';
 export const ART_PROMO_FLOW = 'art-domain';
@@ -93,7 +95,9 @@ export const isEcommerceFlow = ( flowName: string | null ) => {
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
+	return Boolean(
+		flowName && [ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW ].includes( flowName )
+	);
 };
 
 export const isBuildFlow = ( flowName: string | null ) => {

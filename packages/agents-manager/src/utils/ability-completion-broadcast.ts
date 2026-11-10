@@ -9,13 +9,12 @@
  * Every ability, deliberately, rather than a curated list of the ones that
  * write. A listener that needs to know whether anything changed can ask the
  * editor once the event arrives; a list here would have to be kept in step with
- * abilities in two codebases as they migrate, and a missed entry would fail
- * silently.
+ * every provider's abilities, and a missed entry would fail silently.
  */
 import { broadcastAbilityCompleted } from './agent-activity-events';
 import { recordAgentsManagerTracksEvent } from './tracks';
-import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Whether an ability answered that it did not do what it was asked.

@@ -7,9 +7,23 @@
 /* Import the default block editor styles. */
 @import "@wordpress/components/build-style/style.css";
 @import "@wordpress/block-editor/build-style/content.css";
-@import "@wordpress/block-library/build-style/editor.css";
-@import "@wordpress/block-library/build-style/theme.css";
-@import "@wordpress/block-library/build-style/style.css";
+@import "@wordpress/block-library/build-style/common.css";
+@import "@wordpress/block-library/build-style/paragraph/style.css";
+@import "@wordpress/block-library/build-style/paragraph/editor.css";
+@import "@wordpress/block-library/build-style/list/style.css";
+@import "@wordpress/block-library/build-style/quote/style.css";
+@import "@wordpress/block-library/build-style/quote/theme.css";
+@import "@wordpress/block-library/build-style/image/style.css";
+@import "@wordpress/block-library/build-style/image/editor.css";
+@import "@wordpress/block-library/build-style/image/theme.css";
+@import "@wordpress/block-library/build-style/embed/style.css";
+@import "@wordpress/block-library/build-style/embed/editor.css";
+@import "@wordpress/block-library/build-style/embed/theme.css";
+
+/* From block-library's combined editor.css: embed previews' iframes have no frameborder. */
+:where(.editor-styles-wrapper) iframe:not([frameborder]) {
+	border: 0;
+}
 
 body {
 	overflow-y: hidden;

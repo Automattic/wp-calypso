@@ -1,0 +1,35 @@
+.site-generation-live__html-preview {
+	position: relative;
+	flex: 1;
+	inline-size: 100%;
+	block-size: 100%;
+	min-block-size: 320px;
+	margin-block: 0;
+	overflow: hidden;
+}
+
+.site-generation-live__html-preview .site-generation-live__preview-frame {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	min-block-size: 320px;
+	border: 0;
+	background: transparent;
+}
+
+.site-generation-live__preview-notice {
+	position: absolute;
+	inset-inline: 16px;
+	inset-block-end: 12px;
+	margin: 0;
+	padding: 8px 12px;
+	color: var( --color-text-subtle );
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.site-generation-live__html-preview .site-generation-live__preview-frame[hidden] {
+	display: none;
+}

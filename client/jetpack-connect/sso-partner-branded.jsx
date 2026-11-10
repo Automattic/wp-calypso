@@ -53,11 +53,7 @@ export default function SsoPartnerBranded( {
 			const sendingTitle = translate( 'Sending…' );
 
 			return (
-				<Notice.Root
-					intent="info"
-					spokenMessage={ sendingTitle }
-					className="jetpack-connect__sso-partner-branded-email-notice"
-				>
+				<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
 					<Notice.Title>{ sendingTitle }</Notice.Title>
 				</Notice.Root>
 			);
@@ -67,11 +63,7 @@ export default function SsoPartnerBranded( {
 			const errorTitle = translate( 'The email could not be sent.' );
 
 			return (
-				<Notice.Root
-					intent="warning"
-					spokenMessage={ errorTitle }
-					className="jetpack-connect__sso-partner-branded-email-notice"
-				>
+				<Notice.Root intent="warning" className="jetpack-connect__sso-partner-branded-email-notice">
 					<Notice.Title>{ errorTitle }</Notice.Title>
 					<Notice.Actions>
 						<Notice.ActionButton onClick={ sendVerificationEmail }>
@@ -90,11 +82,7 @@ export default function SsoPartnerBranded( {
 			} );
 
 			return (
-				<Notice.Root
-					intent="success"
-					spokenMessage={ successDescription }
-					className="jetpack-connect__sso-partner-branded-email-notice"
-				>
+				<Notice.Root intent="success" className="jetpack-connect__sso-partner-branded-email-notice">
 					<Notice.Description>{ successDescription }</Notice.Description>
 				</Notice.Root>
 			);
@@ -105,11 +93,7 @@ export default function SsoPartnerBranded( {
 		);
 
 		return (
-			<Notice.Root
-				intent="info"
-				spokenMessage={ defaultDescription }
-				className="jetpack-connect__sso-partner-branded-email-notice"
-			>
+			<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
 				<Notice.Description>{ defaultDescription }</Notice.Description>
 				<Notice.Actions>
 					<Notice.ActionButton onClick={ sendVerificationEmail }>
@@ -143,7 +127,7 @@ export default function SsoPartnerBranded( {
 
 				<div className="jetpack-connect__sso-partner-branded-logged-in">
 					{ errorNotice }
-					{ ! isEmailVerified && renderEmailVerificationNotice() }
+					{ ! isEmailVerified && <Notice.List>{ renderEmailVerificationNotice() }</Notice.List> }
 					<UserCard
 						className="jetpack-connect__sso-partner-branded-user-card"
 						size="large"

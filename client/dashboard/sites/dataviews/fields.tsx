@@ -1,7 +1,7 @@
-import { queryClient } from '@automattic/api-queries';
+import { dashboardSiteFiltersQuery, queryClient } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import TimeSince from '../../components/time-since';
@@ -25,19 +25,12 @@ import {
 	Uptime,
 	Visibility,
 } from '../site-fields';
-import type { AppConfig } from '../../app/context';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
 export const STAGING_FILTER_FIELD = 'staging';
 
-function getDefaultFields( {
-	viewType,
-	queries,
-}: {
-	viewType?: string;
-	queries: AppConfig[ 'queries' ];
-} ): Field< Site >[] {
+function getDefaultFields( { viewType }: { viewType?: string } ): Field< Site >[] {
 	const visibilityLabels = getVisibilityLabels();
 	return [
 		{
@@ -82,6 +75,7 @@ function getDefaultFields( {
 		{
 			id: 'subscribers_count',
 			label: __( 'Subscribers' ),
+			render: ( { item } ) => formatNumber( item.subscribers_count ),
 		},
 		{
 			id: 'backup',
@@ -103,7 +97,7 @@ function getDefaultFields( {
 			),
 			getElements: async () => {
 				const { plan = [] } = await queryClient.ensureQueryData( {
-					...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+					...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
 					staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 				} );
 
@@ -140,7 +134,7 @@ function getDefaultFields( {
 			},
 			render: ( { item, field } ) => (
 				<Visibility
-					siteSlug={ item.slug }
+					site={ item }
 					visibility={ field.getValue( { item } ) }
 					status={ getSiteBlockingStatus( item ) }
 					isLaunched={ item.launch_status === 'launched' || item.launch_status === false }
@@ -262,10 +256,8 @@ export function useFields( {
 	isAutomattician?: boolean;
 	viewType?: string;
 } ) {
-	const { queries } = useAppContext();
-
 	return useMemo( () => {
-		const defaultFields = getDefaultFields( { viewType, queries } );
+		const defaultFields = getDefaultFields( { viewType } );
 		return defaultFields.filter( ( field ) => {
 			if ( field.id === 'is_a8c' && ! isAutomattician ) {
 				return false;
@@ -281,7 +273,7 @@ export function useFields( {
 
 			return true;
 		} );
-	}, [ isAutomattician, viewType, queries ] );
+	}, [ isAutomattician, viewType ] );
 }
 
 export function sanitizeFields( fields: View[ 'fields' ] ) {

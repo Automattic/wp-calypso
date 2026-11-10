@@ -1,6 +1,7 @@
 import { FormTokenField } from '@wordpress/components';
-import { useEffect, useMemo, useRef } from 'react';
-import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import { useEffect, useMemo, useRef, type ComponentProps } from 'react';
+
+type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
 
 interface TokenSelectorProps {
 	label: string;
@@ -11,6 +12,9 @@ interface TokenSelectorProps {
 	onChange: ( slugs: string[] ) => void;
 	/** Caps the selection at this many options and hides the suggestions once reached. */
 	maxItems?: number;
+	/** Offers the options A–Z. Set to false to keep the order they are declared in. */
+	sortSuggestions?: boolean;
+	help?: string;
 }
 
 /**
@@ -23,6 +27,8 @@ export default function TokenSelector( {
 	value,
 	onChange,
 	maxItems,
+	sortSuggestions = true,
+	help = '',
 }: TokenSelectorProps ) {
 	const containerRef = useRef< HTMLDivElement >( null );
 
@@ -41,7 +47,7 @@ export default function TokenSelector( {
 		options[ slug ] ? [ options[ slug ] ] : []
 	);
 
-	const onLabelsChange = ( tokens: ( string | TokenItem )[] ) => {
+	const onLabelsChange = ( tokens: Tokens ) => {
 		const slugs = tokens.flatMap( ( token ) => {
 			const slug = slugsByLabel[ typeof token === 'string' ? token : token.value ];
 			return slug ? [ slug ] : [];
@@ -50,10 +56,12 @@ export default function TokenSelector( {
 		onChange( maxItems === undefined ? slugs : slugs.slice( 0, maxItems ) );
 	};
 
-	const suggestions =
-		maxItems !== undefined && value.length >= maxItems
-			? []
-			: Object.values( options ).sort( ( a, b ) => a.localeCompare( b ) );
+	let suggestions = Object.values( options );
+	if ( maxItems !== undefined && value.length >= maxItems ) {
+		suggestions = [];
+	} else if ( sortSuggestions ) {
+		suggestions.sort( ( a, b ) => a.localeCompare( b ) );
+	}
 
 	return (
 		<div ref={ containerRef }>
@@ -65,7 +73,7 @@ export default function TokenSelector( {
 				}
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
-				help=""
+				help={ help }
 				label={ label }
 				onChange={ onLabelsChange }
 				suggestions={ suggestions }

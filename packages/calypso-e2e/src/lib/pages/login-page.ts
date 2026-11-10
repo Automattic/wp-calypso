@@ -216,10 +216,13 @@ export class LoginPage {
 	}
 
 	/**
-	 * Clicks the "Create an account" link.
+	 * Clicks the visible link through to signup, "Create an account" or "Sign up". Login views
+	 * show it below the buttons at 960px and up, and in the top bar below that.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
-		const locator = this.page.getByRole( 'link', { name: 'Create an account' } );
+		const locator = this.page
+			.getByRole( 'link', { name: /^(Create an account|Sign up)$/ } )
+			.first();
 		await locator.waitFor();
 		await locator.click();
 
@@ -240,7 +243,8 @@ export class LoginPage {
 	 * Clicks the "Lost your password?" link.
 	 */
 	async clickRetrievePassword(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Lost your password?")' );
+		// Two copies exist on the main login view, one hidden per viewport width.
+		const locator = this.page.locator( ':text-is("Lost your password?"):visible' );
 		await locator.click();
 
 		return locator;

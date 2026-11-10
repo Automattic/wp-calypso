@@ -3,12 +3,14 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 	useNavigator,
 } from '@wordpress/components';
-import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { type JSX, MutableRefObject } from 'react';
 import NavigatorListener from '../navigator-listener';
 import { useNavigatorScreens } from './hooks';
 import type { NavigatorScreenObject } from './types';
+
 import './navigator-screens.scss';
+
+type Navigator = ReturnType< typeof useNavigator >;
 
 const NavigatorRefSetter = ( {
 	navigatorRef,

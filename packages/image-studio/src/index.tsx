@@ -7,6 +7,7 @@ import { createRoot, useCallback, useEffect, useState } from '@wordpress/element
 import { __ } from '@wordpress/i18n';
 import ImageStudio from './components';
 import { registerBlockEditorFilters } from './extensions';
+import { useAttachToEditorPost } from './hooks/use-attach-to-editor-post';
 import { useDraftCleanup } from './hooks/use-draft-cleanup';
 import { useImageFileNavigation } from './hooks/use-image-file-navigation';
 import { type ImageStudioActions, ImageStudioEntryPoint, store as imageStudioStore } from './store';
@@ -25,7 +26,7 @@ import type { JSX } from 'react';
 
 interface ImageStudioData {
 	enabled?: boolean | string;
-	environment?: 'wp-admin' | 'ciab-admin';
+	environment?: 'wp-admin';
 	isDevMode?: boolean;
 	canGenerateVideoClips?: boolean;
 	blogId?: number | string;
@@ -297,6 +298,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 	// Import cleanup hook
 	const { cleanupOnExit } = useDraftCleanup();
+	const attachToEditorPost = useAttachToEditorPost();
 
 	// Handle save (checkpoint)
 	const handleSave = useCallback( async () => {
@@ -324,6 +326,8 @@ function ImageStudioIntegration(): JSX.Element | null {
 			}
 		}
 
+		await attachToEditorPost( attachmentId, originalAttachmentId );
+
 		// Mark this image as saved (checkpoint)
 		// Await these to ensure state is updated before save completes
 		// This prevents race conditions when user quickly clicks X after Save
@@ -338,11 +342,13 @@ function ImageStudioIntegration(): JSX.Element | null {
 		await setHasUpdatedMetadata( false );
 	}, [
 		attachmentId,
+		originalAttachmentId,
 		canvasMetadata,
 		setLastSavedAttachmentId,
 		addSavedAttachmentId,
 		setHasUpdatedMetadata,
 		saveEntityRecord,
+		attachToEditorPost,
 	] );
 
 	// Handle discard - restore original and clear checkpoint

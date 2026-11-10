@@ -11,6 +11,7 @@ jest.mock( 'calypso/state', () => ( {
 } ) );
 
 jest.mock( '../profile-identity-card', () => () => <div data-testid="identity-card" /> );
+jest.mock( '../preferences-card', () => () => <div data-testid="preferences-card" /> );
 jest.mock( '../profile-visibility-card', () => () => <div data-testid="visibility-card" /> );
 jest.mock( '../sites-visibility-card', () => () => <div data-testid="sites-card" /> );
 
@@ -54,6 +55,7 @@ describe( 'UserProfileSettings', () => {
 		renderWithClient( <UserProfileSettings user={ user } /> );
 
 		expect( screen.getByTestId( 'identity-card' ) ).toBeVisible();
+		expect( screen.getByTestId( 'preferences-card' ) ).toBeVisible();
 		expect( screen.getByTestId( 'visibility-card' ) ).toBeVisible();
 		expect( screen.getByTestId( 'sites-card' ) ).toBeVisible();
 	} );

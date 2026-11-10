@@ -307,6 +307,7 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 
 	.icon-list-item__decoration svg {
+		color: var( --dashboard-subtle__color );
 		fill: var( --dashboard-subtle__color );
 	}
 
@@ -375,12 +376,14 @@ This mixin generates alias variables for a color palette. For example, the
 	.components-base-control__label,
 	.components-input-control__label,
 	.components-checkbox-control__label,
+	.components-radio-control__label,
 	.components-toggle-control__label:not( .is-disabled ) {
 		color: var( --dashboard__text-color );
 	}
 
 	.components-base-control__help,
-	.components-checkbox-control__help {
+	.components-checkbox-control__help,
+	.components-radio-control__help {
 		color: var( --dashboard__text-muted-color );
 	}
 
@@ -591,6 +594,11 @@ This mixin generates alias variables for a color palette. For example, the
 @mixin color-scheme-dark-theme-dataviews {
 	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
 
+	// DataViews hard-codes a white background on the sticky infinite-scroll toolbar.
+	.dataviews__view-actions--infinite-scroll {
+		background-color: var( --wp-dataviews-color-background );
+	}
+
 	.dataviews-view-table {
 		color: var( --dashboard__text-muted-color );
 
@@ -738,7 +746,8 @@ This mixin generates alias variables for a color palette. For example, the
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
-	.dataviews-bulk-actions-footer__item-count {
+	.dataviews-bulk-actions-footer__item-count,
+	.dataviews-footer__item-count {
 		color: var( --dashboard__text-color );
 	}
 
@@ -755,6 +764,15 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-popover {
+	// `@wordpress/ui` menus and selects, like the DataViews row actions and page picker, render
+	// into a portal on <body> and paint their surface with WPDS tokens left at their light
+	// defaults, which put the light text on white.
+	[data-wp-compat-overlay-slot],
+	[data-base-ui-portal] {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-stroke-surface-neutral: var( --dashboard-surface__border-color );
+	}
+
 	.components-popover__content {
 		background: var( --dashboard-surface__background-color );
 		color: var( --dashboard__text-color );
@@ -810,15 +828,6 @@ This mixin generates alias variables for a color palette. For example, the
 	// against dark Reader, Themes, and Dashboard surfaces.
 	.site-icon {
 		background: var( --wp-components-color-gray-800 );
-	}
-}
-
-@mixin color-scheme-dark-theme-spinner {
-	// The Spinner track strokes with `@wordpress/components`' deprecated literal
-	// gray palette, so it stays `#ddd` on dark surfaces no matter which tokens
-	// are set.
-	.components-spinner circle {
-		stroke: var( --wp-components-color-gray-300 );
 	}
 }
 
@@ -895,5 +904,61 @@ This mixin generates alias variables for a color palette. For example, the
 @mixin color-scheme-dark-theme-community-translator {
 	.community-translator.is-incompatible {
 		--color-neutral-20: var( --dashboard__text-muted-color );
+	}
+}
+
+// The DataViews filter dropdown ("search widget") comes from the
+// @wordpress/dataviews package, whose CSS prefers --wpds-* tokens with
+// light-only fallbacks. Those tokens are not defined here, so hovered rows
+// fall back to a near-white color-mix and the radio/checkbox indicators to
+// light-mode borders and backgrounds.
+@mixin color-scheme-dark-theme-dataviews-filters-search-widget {
+	.dataviews-filters__search-widget-listitem {
+		color: var( --dashboard__text-color );
+
+		&:hover,
+		&[data-active-item],
+		&:focus {
+			background-color: var( --dashboard-item-selected__background-color );
+		}
+
+		.dataviews-filters__search-widget-listitem-description {
+			color: var( --dashboard-subtle__color );
+		}
+
+		// Scoped to unselected indicators so the accent fill on selected
+		// ones still wins.
+		// Multi-select filters put the attribute on the indicator; single-select ones on the
+		// radio inside it.
+		.dataviews-filters__selection-indicator[data-unchecked],
+		.dataviews-filters__selection-indicator [data-unchecked] {
+			border-color: var( --dashboard-field__border-color );
+			background: var( --dashboard-surface__background-color );
+		}
+	}
+
+	.dataviews-filters__search-widget-filter-combobox-list {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-filters__search-widget-filter-combobox__wrapper
+		.dataviews-filters__search-widget-filter-combobox__input {
+		&:focus {
+			background: var( --dashboard-surface__background-color );
+		}
+
+		&::placeholder {
+			color: var( --dashboard-subtle__color );
+		}
+	}
+
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__search-widget-listbox ),
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__search-widget-no-elements ),
+	.dataviews-filters__summary-operators-container:has( + .dataviews-filters__user-input-widget ) {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.dataviews-filters__summary-operators-container .dataviews-filters__summary-operators-filter-name {
+		color: var( --dashboard-subtle__color );
 	}
 }

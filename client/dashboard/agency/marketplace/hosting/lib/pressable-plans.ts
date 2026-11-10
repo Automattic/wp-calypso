@@ -1,6 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import type { AgencyProduct } from '@automattic/api-core';
 
+export const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
+
 export const PLAN_CATEGORY_STANDARD = 'standard';
 export const PLAN_CATEGORY_ENTERPRISE = 'enterprise';
 export const PLAN_CATEGORY_SIGNATURE = 'signature';
@@ -84,7 +86,7 @@ export const areSignaturePlansFor = (
 
 export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPlans: boolean ) {
 	const pooled = __(
-		'Traffic and storage pooled across all your client sites, from 1 to 150 installs.'
+		'Traffic and storage pooled across all your client sites, from 1 to 150 WordPress installs.'
 	);
 	const large = __( 'For large portfolios of 200 to 500 WordPress installs.' );
 	return [
@@ -109,7 +111,7 @@ export function getPlanCategoryTabs( areSignaturePlans: boolean, hasNewPremiumPl
 			key: PLAN_CATEGORY_PREMIUM,
 			label: hasNewPremiumPlans ? __( 'Premium plans 1–11' ) : __( 'Premium plans' ),
 			description: __(
-				'Dedicated resources for one high-traffic site, from 150K to 10M visits per month.'
+				'Dedicated resources for one high-traffic WordPress site, from 150K to 10M visits per month.'
 			),
 		},
 	];
@@ -185,4 +187,30 @@ export function isLowTabDisabled(
 	);
 }
 
-export const PRESSABLE_PROMOTION_TERMS_URL = 'https://pressable.com/legal/hosting-promotion-terms/';
+/** The pooled plan types of a catalog: the smaller plans and the larger ones. */
+export const getPlanCategories = ( areSignaturePlans: boolean ) =>
+	areSignaturePlans
+		? { lowCategory: PLAN_CATEGORY_SIGNATURE, highCategory: PLAN_CATEGORY_SIGNATURE_HIGH }
+		: { lowCategory: PLAN_CATEGORY_STANDARD, highCategory: PLAN_CATEGORY_ENTERPRISE };
+
+// Whether the agency can buy a bigger pooled plan than the one it owns, as the
+// plan picker offers it. Premium plans are left out: they are sold through referrals.
+export function hasPressableUpgrade(
+	existingPlan: PressablePlan,
+	catalogPlans: PressablePlan[]
+): boolean {
+	const areSignaturePlans = areSignaturePlansFor( existingPlan, false );
+	const plans = catalogPlans.filter(
+		( plan ) => isSignatureCatalogPlan( plan ) === areSignaturePlans
+	);
+	const { lowCategory, highCategory } = getPlanCategories( areSignaturePlans );
+	const lowOptions = sortPlansForCategory( plans, lowCategory );
+	const highOptions = sortPlansForCategory( plans, highCategory );
+	const canMoveUpLow =
+		! isLowTabDisabled( existingPlan, lowOptions ) &&
+		getMinimumSelectableIndex( lowCategory, lowOptions, existingPlan ) < lowOptions.length;
+	return (
+		canMoveUpLow ||
+		getMinimumSelectableIndex( highCategory, highOptions, existingPlan ) < highOptions.length
+	);
+}

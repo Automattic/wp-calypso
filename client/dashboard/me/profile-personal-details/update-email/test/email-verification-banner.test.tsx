@@ -133,7 +133,10 @@ describe( '<EmailVerificationBanner>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 
 		// Held for the server's figure, and reported as a refusal rather than a broken send.
-		expect( await screen.findByRole( 'button', { name: 'Resend email (25:00)' } ) ).toBeDisabled();
+		expect( await screen.findByRole( 'button', { name: 'Resend email (25:00)' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
 		expect( screen.queryByText( /Failed to resend/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -153,7 +156,7 @@ describe( '<EmailVerificationBanner>', () => {
 
 		expect(
 			await screen.findByRole( 'button', { name: 'Resend email (4:00:00)' } )
-		).toBeDisabled();
+		).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	test( 'a resend cannot put back settings saved while it was in flight', async () => {
@@ -192,7 +195,10 @@ describe( '<EmailVerificationBanner>', () => {
 
 		// The button taking up its wait is what tells us the response has been handled.
 		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled()
+			expect( screen.getByRole( 'button', { name: /Resend email \(/ } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			)
 		);
 		expect(
 			queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )?.first_name
@@ -232,7 +238,10 @@ describe( '<EmailVerificationBanner>', () => {
 
 		// The other order matters just as much: a resend started here would re-save the address
 		// the cancellation is in the middle of clearing, putting the change straight back.
-		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
 		deliverCancel!();
 
 		await waitFor( () =>
@@ -267,7 +276,10 @@ describe( '<EmailVerificationBanner>', () => {
 		await waitFor( () => expect( notificationSnackBar() ).toHaveTextContent( 'Failed to resend' ) );
 		// And nothing is held back over an email that never went out.
 		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled()
+			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).not.toHaveAttribute(
+				'aria-disabled',
+				'true'
+			)
 		);
 	} );
 

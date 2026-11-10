@@ -21,7 +21,9 @@ const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] =
 		goto.mockResolvedValueOnce( response );
 	}
 
-	const evaluate = jest.fn( async () => false );
+	const evaluate = jest.fn< ( fn: unknown, arg?: unknown ) => Promise< boolean > >(
+		async () => false
+	);
 	for ( const errorPage of errorPages ) {
 		evaluate.mockResolvedValueOnce( errorPage );
 	}

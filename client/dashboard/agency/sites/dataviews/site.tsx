@@ -3,7 +3,9 @@ import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/compone
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import { useInView } from 'react-intersection-observer';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
+import { useIsSiteUnreachable } from '../../../sites/site-fields/site-unreachable-status';
 import SitePreview from '../../../sites/site-preview';
 import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
 import AgencySiteIcon from '../site-icon';
@@ -39,24 +41,45 @@ export function getSiteNameField(
 		enableSorting: false,
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getSiteName( item ),
-		render: ( { item } ) => (
-			<HStack justify="flex-start" alignment="center" spacing={ 1 } expanded={ false }>
-				<Link
-					to="/sites/$siteSlug"
-					params={ { siteSlug: item.url } }
-					style={ { color: 'inherit', textDecoration: 'none', ...titleFieldTextOverflowStyles } }
-					onClick={ () => onSiteClick?.( item ) }
-				>
-					{ getSiteName( item ) }
-				</Link>
-				{ item.a4a_is_dev_site && (
-					<span style={ { flexShrink: 0 } }>
-						<Badge intent="draft">{ __( 'Development' ) }</Badge>
-					</span>
-				) }
-			</HStack>
-		),
+		render: ( { item } ) => <Name site={ item } onSiteClick={ onSiteClick } />,
 	};
+}
+
+function Name( {
+	site,
+	onSiteClick,
+}: {
+	site: AgencySite;
+	onSiteClick?: ( site: AgencySite ) => void;
+} ) {
+	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isUnreachable = useIsSiteUnreachable(
+		{ ID: site.blog_id, jetpack: ! site.is_simple, is_deleted: false },
+		inView
+	);
+
+	return (
+		<HStack ref={ ref } justify="flex-start" alignment="center" spacing={ 1 } expanded={ false }>
+			<Link
+				to="/sites/$siteSlug"
+				params={ { siteSlug: site.url } }
+				style={ { color: 'inherit', textDecoration: 'none', ...titleFieldTextOverflowStyles } }
+				onClick={ () => onSiteClick?.( site ) }
+			>
+				{ getSiteName( site ) }
+			</Link>
+			{ site.a4a_is_dev_site && (
+				<span style={ { flexShrink: 0 } }>
+					<Badge intent="draft">{ __( 'Development' ) }</Badge>
+				</span>
+			) }
+			{ isUnreachable && (
+				<span style={ { flexShrink: 0 } }>
+					<Badge intent="high">{ __( 'Unreachable' ) }</Badge>
+				</span>
+			) }
+		</HStack>
+	);
 }
 
 export function getSiteUrlField(): Field< AgencySite > {

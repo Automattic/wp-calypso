@@ -13,11 +13,13 @@ import type { Message } from '../../types';
 let mockIsChatLoaded = true;
 let mockConnectionStatus: string | undefined;
 let mockZendeskClientId: string | undefined;
+let mockCheckoutSupportVariation: string | undefined;
 let mockZendeskJwt: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
 const mockGetZendeskConversation = jest.fn();
+const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
 const mockGetZendeskConversationHistory = jest.fn();
 const mockGetQueryData = jest.fn();
 
@@ -26,6 +28,7 @@ jest.mock( '@wordpress/data', () => ( {
 		isChatLoaded: mockIsChatLoaded,
 		connectionStatus: mockConnectionStatus,
 		zendeskClientId: mockZendeskClientId,
+		checkoutSupportVariation: mockCheckoutSupportVariation,
 	} ),
 } ) );
 
@@ -79,7 +82,7 @@ jest.mock( '../../utils', () => ( {
 
 jest.mock( '../../constants', () => ( {
 	HELP_CENTER_STORE: 'automattic/help-center',
-	getOdieTransferMessages: () => [],
+	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
 		content: 'chat-started',
 		role: 'bot',
@@ -116,6 +119,7 @@ beforeEach( () => {
 	mockIsChatLoaded = true;
 	mockConnectionStatus = undefined;
 	mockZendeskClientId = 'client-1';
+	mockCheckoutSupportVariation = undefined;
 	mockZendeskJwt = 'messenger-jwt';
 	mockCurrentSupportInteraction = undefined;
 	mockConversation = null;
@@ -249,6 +253,50 @@ describe( 'useGetCombinedChat — merging the Odie and Zendesk halves', () => {
 	} );
 } );
 
+describe( 'useGetCombinedChat — transfer messages', () => {
+	it( 'refers back to the Odie chat when the human chat followed one', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			bot_slug: 'wpcom-workflow-support_chat',
+			status: 'open',
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		renderCombinedChat();
+
+		await waitFor( () =>
+			expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
+				// The test stubs the translation check with a plain value.
+				expect.anything(),
+				false
+			)
+		);
+	} );
+
+	it( 'uses the direct copy when the user went straight to a human', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: null,
+			bot_slug: 'wpcom-workflow-support_chat',
+			status: 'open',
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		renderCombinedChat();
+
+		await waitFor( () =>
+			expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith(
+				// The test stubs the translation check with a plain value.
+				expect.anything(),
+				true
+			)
+		);
+	} );
+} );
+
 describe( 'useGetCombinedChat — message recovery on Smooch re-init', () => {
 	it( 're-fetches the conversation and recovers gap messages when isChatLoaded flips false → true', async () => {
 		mockCurrentSupportInteraction = {
@@ -372,6 +420,31 @@ describe( 'useGetCombinedChat — when the conversation cannot be fetched', () =
 		} );
 
 		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'adds the checkout support variation to its event', async () => {
+		mockCheckoutSupportVariation = 'human_only';
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_not_found',
+				expect.objectContaining( {
+					conversation_id: 'conv-1',
+					checkout_support_variation: 'human_only',
+				} )
+			);
+		} );
 	} );
 } );
 
@@ -573,5 +646,42 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 				error: 'unauthorized',
 			}
 		);
+	} );
+
+	it( 'adds the checkout support variation to the history events', async () => {
+		mockCheckoutSupportVariation = 'human_only';
+		mockGetZendeskConversationHistory.mockResolvedValue( {
+			messages: [ receivedMessage( 1, 'first', 100 ) ],
+			truncated: false,
+		} );
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_history_loaded',
+				expect.objectContaining( { checkout_support_variation: 'human_only' } )
+			);
+		} );
+	} );
+
+	it( 'adds the checkout support variation when the history cannot be loaded', async () => {
+		mockCheckoutSupportVariation = 'hybrid';
+		mockGetZendeskConversationHistory.mockImplementation( () =>
+			Promise.reject( new Error( 'unauthorized' ) )
+		);
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_history_failed',
+				{
+					conversation_id: 'conv-1',
+					error: 'unauthorized',
+					checkout_support_variation: 'hybrid',
+				}
+			);
+		} );
 	} );
 } );

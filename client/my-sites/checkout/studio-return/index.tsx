@@ -4,8 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef } from 'react';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 import { openStudioCheckoutReturn } from './deep-link';
 import type { FunctionComponent } from 'react';
@@ -26,21 +26,19 @@ const StudioReturn: FunctionComponent< StudioReturnProps > = ( {
 
 	const openStudio = useCallback(
 		( { fromUserClick }: { fromUserClick: boolean } ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_studio_checkout_return', {
-					checkout_result: 'cancelled',
-					click: fromUserClick,
-					studio_site_id: studioSiteId,
-					studio_return_to: studioReturnTo,
-				} )
-			);
+			recordTracksEvent( 'calypso_studio_checkout_return', {
+				checkout_result: 'cancelled',
+				click: fromUserClick,
+				studio_site_id: studioSiteId,
+				studio_return_to: studioReturnTo,
+			} );
 			openStudioCheckoutReturn( {
 				studioSiteId,
 				checkoutResult: 'cancelled',
 				studioReturnTo,
 			} );
 		},
-		[ dispatch, studioSiteId, studioReturnTo ]
+		[ studioSiteId, studioReturnTo ]
 	);
 
 	const hasAttemptedHandoff = useRef( false );

@@ -1,6 +1,12 @@
 import { extractProgressDataFromMessage, extractTextFromMessage, generateMessageId } from '../core';
 import { logger } from '../logger';
-import type { Message, Task, TaskUpdate } from '../../types/index';
+import type {
+	Message,
+	StreamDelta,
+	Task,
+	TaskUpdate,
+	ToolCallStreamDelta,
+} from '../../types/index';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -234,6 +240,7 @@ export async function* parseSSEStream(
 								final: false,
 								text: accumulator.getTextContent(),
 								kind: 'delta',
+								delta,
 							};
 						}
 					}
@@ -372,37 +379,6 @@ export async function streamToTask( stream: AsyncIterable< TaskUpdate > ): Promi
 
 	return finalTask;
 }
-
-/**
- * Delta message types emitted by the server in `message/delta` events.
- */
-export interface ContentStreamDelta {
-	type?: 'delta';
-	deltaType: 'content';
-	content: string;
-}
-
-export interface ToolNameStreamDelta {
-	type?: 'delta';
-	deltaType: 'tool_name';
-	content: string;
-	toolCallId: string;
-	toolCallName?: string;
-	toolCallIndex?: number;
-}
-
-export interface ToolArgumentStreamDelta {
-	type?: 'delta';
-	deltaType: 'tool_argument';
-	content: string;
-	toolCallId: string;
-	toolCallName?: string;
-	toolCallIndex?: number;
-}
-
-export type ToolCallStreamDelta = ToolNameStreamDelta | ToolArgumentStreamDelta;
-
-export type StreamDelta = ContentStreamDelta | ToolNameStreamDelta | ToolArgumentStreamDelta;
 
 function isToolCallStreamDelta( delta: StreamDelta ): delta is ToolCallStreamDelta {
 	return delta.deltaType === 'tool_argument' || delta.deltaType === 'tool_name';

@@ -9,6 +9,13 @@ img.payment-method-image {
 	min-width: 200px;
 }
 
+// The popover focuses its first link on open, even when opened by mouse.
+// Calypso's global `a:focus` dotted outline ignores `:focus-visible`, so
+// suppress it unless the focus came from the keyboard.
+.billing-purchase-info-popover a:focus:not( :focus-visible ) {
+	outline: none;
+}
+
 .checkout-submit-button > button.is-primary {
 	width: 100%;
 	justify-content: center;
@@ -56,6 +63,10 @@ img.payment-method-image {
 
 .dataviews-view-table__cell-content-wrapper .purchase-payment-method__wrapper {
 	width: fit-content;
+	// `HStack` sets `min-width: 0` on its children, which lets a narrow table
+	// column squeeze this below its content so the text runs under the
+	// backup payment method info button next to it.
+	min-width: max-content;
 }
 
 .dataviews-view-table__cell-content-wrapper .billing-purchase__inline-status {

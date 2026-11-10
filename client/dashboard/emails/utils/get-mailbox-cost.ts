@@ -132,31 +132,11 @@ export const getMailboxCost = ( {
 		};
 	}
 
-	let endDate = new Date();
-	if ( hasOffer ) {
-		const count = product.introductory_offer?.interval_count;
-		const unit = product.introductory_offer?.interval_unit;
-		switch ( unit ) {
-			case 'year':
-				endDate = add( new Date(), { years: count } );
-				break;
-			case 'month':
-				endDate = add( new Date(), { months: count } );
-				break;
-			case 'week':
-				endDate = add( new Date(), { weeks: count } );
-				break;
-			case 'day':
-				endDate = add( new Date(), { days: count } );
-				break;
-		}
-	}
-
 	if ( hasOffer && ! showEmailPurchaseDisabledMessage ) {
 		const placeholders = {
 			cost: product.combined_cost_display,
 			termLocalized: product.product_term_localized,
-			endDate: formatDate( endDate, locale, { dateStyle: 'long' } ),
+			endDate: formatDate( getTrialEndDate( product ), locale, { dateStyle: 'long' } ),
 		};
 		const message = isMonthlyBilling
 			? // Translators: %(cost)s is the displayed cost, %(termLocalized)s is the localized term (e.g. "year"), %(endDate)s is the date the trial ends (e.g. "October 26, 2005").
@@ -167,18 +147,21 @@ export const getMailboxCost = ( {
 				__(
 					'Try free today - first renewal at %(firstRenewalPrice)s (excl. taxes) after your free trial ends on %(endDate)s, regular price %(cost)s per %(termLocalized)s (excl. taxes).'
 				);
+		const firstRenewalPriceInteger = product.introductory_offer?.first_renewal_price_integer;
 		const renewalMonths = product.introductory_offer?.interval_unit === 'year' ? 12 : 9;
+		const firstRenewalPrice =
+			firstRenewalPriceInteger !== undefined
+				? formatCurrency( firstRenewalPriceInteger, product.currency_code, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} )
+				: formatCurrency( ( ( product.cost ?? 0 ) * renewalMonths ) / 12, product.currency_code, {
+						stripZeros: true,
+					} );
 		return {
 			amount: 0,
 			currency: product.currency_code,
-			message: sprintf( message, {
-				...placeholders,
-				firstRenewalPrice: formatCurrency(
-					( ( product.cost ?? 0 ) * renewalMonths ) / 12,
-					product.currency_code,
-					{ stripZeros: true }
-				),
-			} ),
+			message: sprintf( message, { ...placeholders, firstRenewalPrice } ),
 		};
 	}
 
@@ -196,3 +179,30 @@ export const getMailboxCost = ( {
 		} ),
 	};
 };
+
+/**
+ * The trial ends at UTC midnight. Return that moment, so the date matches
+ * checkout and the purchase page in any time zone (see #114326).
+ */
+function getTrialEndDate( product: Product ): Date {
+	const now = new Date();
+	// Today's UTC day as a local date, so `add()` counts whole UTC days.
+	const todayInUtc = new Date( now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() );
+	const count = product.introductory_offer?.interval_count;
+	let end = todayInUtc;
+	switch ( product.introductory_offer?.interval_unit ) {
+		case 'year':
+			end = add( todayInUtc, { years: count } );
+			break;
+		case 'month':
+			end = add( todayInUtc, { months: count } );
+			break;
+		case 'week':
+			end = add( todayInUtc, { weeks: count } );
+			break;
+		case 'day':
+			end = add( todayInUtc, { days: count } );
+			break;
+	}
+	return new Date( Date.UTC( end.getFullYear(), end.getMonth(), end.getDate() ) );
+}

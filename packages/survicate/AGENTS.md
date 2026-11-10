@@ -39,7 +39,8 @@ and each needs its own guard:
 
 1. **Explicit events** — our code calls `invokeSurvicateEvent('migrationCompleted')`
    etc. from ~6 call sites (purchase cancel/refund flows, migration completion,
-   checkout thank-you). Guarded inside `invoke-event.ts`.
+   checkout thank-you). Guarded inside `invoke-event.ts`. `invokeSurvicateEventOnce()`
+   wraps it for outcomes a screen keeps reporting on later visits.
 2. **Auto-campaigns** — Survicate's own targeting fires a survey on its own (URL match,
    "show after N seconds", etc.). This **never touches our code**, so an invoke-time
    guard can't catch it. The only universal hook is the SDK's `survey_displayed` event.
@@ -64,7 +65,7 @@ msd_visits_b >= 3`) need no code change.
   `hosting-dashboard-visit-count-<slug>` user preference. Gated on
   `survicate_enabled`.
 - **Publishing**: `useSurvicateVisitTraits()` in
-  `client/dashboard/app/survicate/index.tsx` (mounted in the layout) reads those
+  `client/dashboard/app/survicate/index.ts` (mounted in the layout) reads those
   preferences and pushes `{ msd_visits_<slug>: count }` via
   `setSurvicateVisitorTraits`, re-pushing when counts change. Incrementing and
   publishing are deliberately decoupled — they share only the preference store.
@@ -246,11 +247,6 @@ never interferes with suppression. The wp-admin bundle does **not** emit it:
 Atomic custom domains the wordpress.com consent cookies are absent and the real
 module would record events for users who opted out.
 
-**Until Jetpack #52709 ships**, wp-admin still runs the older inline copy of this
-logic emitted by `jetpack-mu-wpcom/src/features/survicate/class-survicate.php`
-(Jetpack monorepo), not this package. Keep the two in sync when changing selectors
-or behavior; remove this note once wp-admin loads the `apps/survicate` bundle.
-
 **Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
 renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
 pre-display veto. This is largely mitigated by the targeting pause
@@ -266,6 +262,11 @@ race where a survey is already mid-display as a modal or the Help Center appears
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
 - `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
   `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
+- `invoke-event-once.ts` — `invokeSurvicateEventOnce( eventName, key )`: for screens
+  that keep reporting the same outcome on every visit (a migration that completed days
+  ago), marks the event per key in `localStorage` so the survey is asked for once per
+  outcome rather than per visit. The key is marked only once the SDK is handed the event,
+  so a suppressed or abandoned deferred event isn't marked and a later visit asks.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:
@@ -282,7 +283,7 @@ race where a survey is already mid-display as a modal or the Help Center appears
 
 Three consumers, all funnelled through `shouldLoadSurvicate()`:
 
-- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.tsx` (`useSurvicate`),
+- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.ts` (`useSurvicate`),
   gated behind the `survicate_enabled` config flag. Pushes identity and visit-count traits.
 - **Classic Calypso** — `client/lib/analytics/survicate.js` (`addSurvicate`), and
   `invokeSurvicateEvent` from purchase/cancel and checkout flows.
@@ -298,7 +299,7 @@ Three consumers, all funnelled through `shouldLoadSurvicate()`:
 Any PR that changes `packages/survicate/` or `apps/survicate/` ships to wp-admin
 through a separate widgets.wp.com deploy, not just the Calypso deploy. Reviewers
 and whoever merges need those steps, so **always add the two sections below to the
-PR description** (after "Testing Instructions" in `.github/PULL_REQUEST_TEMPLATE.md`).
+PR description** (after "How to Test" in `.github/PULL_REQUEST_TEMPLATE.md`).
 Adapt the feature-specific checks; keep the deploy steps as they are.
 
 ```markdown
@@ -316,14 +317,30 @@ Simple sites pick up the new bundle immediately; Atomic sites within an hour (Je
 ## Testing in wp-admin
 
 1. Sandbox your site and `widgets.wp.com`.
-2. Until Automattic/jetpack#52709 ships, also load the Jetpack branch that enqueues the bundle: `bin/jetpack-downloader test jetpack-mu-wpcom-plugin update/survicate-shared-bundle`.
-3. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
-4. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
-5. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
+2. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
+3. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
+4. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
 ```
 
-Drop step 2 once Automattic/jetpack#52709 has shipped, and update this section
-to match.
+## Seeing a real survey while testing
+
+Use the shared test survey,
+[`572afd0e9cd810f6`](https://panel.survicate.com/o/1314199/w/1280163/surveys/572afd0e9cd810f6)
+("Test Survey - Used for Quake's tests"). It only targets pages whose URL contains
+`test_survey=true`, so add that query parameter to the page you are testing (e.g.
+`/plugins/manage?test_survey=true`). Without it no survey shows, even when the event
+fires correctly. The rule lives in the Survicate panel, not in our code.
+
+- **Which events trigger it**: edit the survey's targeting in the panel to add the event
+  you are testing. To check what is configured, open the workspace's
+  `web_surveys.js` (see the page's network requests) and search it for the event name.
+  A paused survey is missing from that file entirely.
+- **Showing it again**: once the survey has been shown, the SDK's single-tab lock
+  `localStorage['survi::e4794374cce15378101b63de24117572::singleTabId:572afd0e9cd810f6']`
+  blocks it on later pages. Remove that key and reload before testing again.
+- **Confirming the event without the survey**: wrap `window._sva.invokeEvent` in the
+  console to log each call along with `window._sva.disableTargeting`. An event
+  invoked while targeting is disabled never shows an event-triggered survey.
 
 ## Conventions & gotchas
 

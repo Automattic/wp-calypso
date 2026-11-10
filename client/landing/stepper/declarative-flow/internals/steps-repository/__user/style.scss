@@ -10,6 +10,30 @@ $gray-50: #646970;
 $breakpoint-mobile: 660px;
 
 .step-route.user {
+	.step-container-v2--user-branded {
+		// Same space above and below the form, between the top bar and the page's bottom edge.
+		.step-container-v2__content-wrapper.center-aligned {
+			padding-bottom: var(--step-container-v2-content-block-padding);
+		}
+
+		.card.auth-form__social.is-signup.is-social-first
+			.auth-form__social-buttons
+			.auth-form__social-buttons-container {
+			gap: var(--wpds-dimension-gap-sm);
+		}
+
+		// So the form's visible content is what gets centered on the page.
+		.signup-form-social-first__login-link {
+			margin-bottom: 0;
+		}
+	}
+
+	// Match the login page's 2rem so the form does not jump between the two screens. The class
+	// sits on the form's row, so the rule reaches up to the wrapper that owns the gap.
+	.step-container-v2__content-wrapper:has(> .step-container-v2--user-login-below-buttons) {
+		gap: 2rem;
+	}
+
 	.form-fieldset {
 		margin-bottom: 8px;
 	}
@@ -32,6 +56,8 @@ $breakpoint-mobile: 660px;
 		a {
 			color: var(--studio-gray-60, #646970);
 			text-decoration-line: underline;
+			// Step.LinkButton sets 500; links in these lines use the paragraph's 400.
+			font-weight: inherit;
 		}
 	}
 
@@ -313,11 +339,6 @@ $breakpoint-mobile: 660px;
 		.step-container-v2__content-row:first-child {
 			margin-block-start: auto;
 		}
-	}
-
-	// Subtitle color: Gray 50 (#646970) per Figma.
-	.step-container-v2__heading p {
-		color: var(--studio-gray-50);
 	}
 
 	.signup-form-social-first--mobile-compact {

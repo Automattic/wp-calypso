@@ -2,7 +2,6 @@ import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/ap
 import { domainPointToWpcomMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
-	Button,
 	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -12,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 
 export default function PointToWpcomNotice( {
@@ -69,14 +68,14 @@ export default function PointToWpcomNotice( {
 				title={ __( 'Transfer completed' ) }
 				actions={
 					current_user_is_owner ? (
-						<Button
-							variant="primary"
+						<NoticeActionButton
+							variant="solid"
 							onClick={ () => setIsDialogOpen( true ) }
 							disabled={ isDisabled || pointToWpcom.isPending }
-							isBusy={ pointToWpcom.isPending }
+							loading={ pointToWpcom.isPending }
 						>
 							{ __( 'Point to WordPress.com' ) }
-						</Button>
+						</NoticeActionButton>
 					) : undefined
 				}
 			>

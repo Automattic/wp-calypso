@@ -32,7 +32,7 @@ import type { GridPlan } from '../../../types';
 import type { ReactNode } from 'react';
 import './style.scss';
 
-export const ALL_ENTERPRISE_LOGO_SLUGS = [
+const ALL_ENTERPRISE_LOGO_SLUGS = [
 	'slack',
 	'usa-today',
 	'salesforce',
@@ -165,15 +165,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		coupon,
 		helpers,
 		showBillingDescriptionForIncreasedRenewalPrice,
-		isExperimentVariant,
 		showFeatureCheckmarks,
-		isEnterpriseA4AIndia,
 	} = usePlansGridContext();
 
-	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
-		'is-plan-differentiators-experiment-badge': isExperimentVariant,
-	} );
-	const showPricingBadgeTooltip = isExperimentVariant && showFeatureCheckmarks;
+	const pricingBadgeClassName = 'plans-grid-next-header-price__badge';
+	const showPricingBadgeTooltip = showFeatureCheckmarks;
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
@@ -280,10 +276,6 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		// India A4A test: the Enterprise card doesn't show the client logos in the price cell.
-		if ( isEnterpriseA4AIndia ) {
-			return null;
-		}
 		const hasFreePlan = visibleGridPlans.some( ( { planSlug: slug } ) => isFreePlan( slug ) );
 		const logoCount = hasFreePlan ? 7 : 9;
 		return (

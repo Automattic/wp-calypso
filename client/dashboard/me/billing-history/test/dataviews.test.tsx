@@ -31,7 +31,6 @@ const receipt = {
 	cc_num: '',
 	cc_name: '',
 	cc_email: '',
-	credit: '',
 	items: [
 		{
 			id: 1,

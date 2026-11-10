@@ -23,7 +23,7 @@
 		"plop": "^3.1.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"private": true

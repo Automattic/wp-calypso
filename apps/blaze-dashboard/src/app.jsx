@@ -6,7 +6,6 @@ import accessibleFocus from '@automattic/accessible-focus';
 import config, { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';

@@ -1,0 +1,23 @@
+<svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="60" y="56" width="360" height="68" rx="16" fill="white"/>
+<circle cx="96" cy="90" r="20" fill="#E5F1FF"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="86.8438" y="94.1875">M</tspan></text>
+<circle cx="108" cy="102" r="11" fill="white"/>
+<circle cx="108" cy="102" r="9" fill="#873EFF"/>
+<path d="M105.076 99.408C105.837 99.408 106.151 99.7304 106.151 100.491V102.856L107.499 100.218C107.805 99.6229 108.201 99.408 108.698 99.408C109.326 99.408 109.665 99.7552 109.665 100.466V102.856L111.095 100.169C111.41 99.5816 111.757 99.408 112.294 99.408C113.295 99.408 113.617 99.9868 113.163 100.756L111.087 104.262C110.616 105.064 110.128 105.353 109.467 105.353C108.623 105.353 108.077 104.849 108.077 104.005V102.575L107.176 104.262C106.771 105.022 106.234 105.353 105.564 105.353C104.729 105.353 104.158 104.849 104.158 103.997V100.979H103.521C102.951 100.979 102.637 100.69 102.637 100.185C102.637 99.6808 102.934 99.408 103.521 99.408H105.076Z" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="128" y="86.332">Maya Klein</tspan></text>
+<text fill="#646970" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" letter-spacing="0em"><tspan x="128" y="104.621">From the Woo directory</tspan></text>
+<rect x="333" y="80" width="71" height="20" rx="6" fill="#EDF0FD"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="341" y="94.2656">New lead</tspan></text>
+<rect x="60" y="136" width="360" height="68" rx="16" fill="white"/>
+<circle cx="96" cy="170" r="20" fill="#E5F1FF"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="16" font-weight="590" letter-spacing="0em"><tspan x="88.0781" y="174.188">D</tspan></text>
+<circle cx="108" cy="182" r="11" fill="white"/>
+<circle cx="108" cy="182" r="9" fill="#DD3A03"/>
+<path d="M104.145 177.32C103.893 177.32 103.688 177.525 103.688 177.776V186.224C103.688 186.475 103.893 186.68 104.145 186.68H109.055L113.048 182.687V177.776C113.048 177.525 112.844 177.32 112.592 177.32H104.145ZM110.043 182.587C109.636 182.951 109.015 183.133 108.182 183.133H107.622V184.924C107.622 184.997 107.564 185.055 107.491 185.055H106.213C106.141 185.055 106.082 184.997 106.082 184.924V179.074C106.082 179.001 106.141 178.943 106.213 178.943H108.173C109.05 178.943 109.683 179.123 110.071 179.484C110.46 179.846 110.655 180.368 110.655 181.053C110.655 181.737 110.451 182.224 110.043 182.587Z" fill="white"/>
+<path d="M108.882 180.442C108.726 180.32 108.487 180.261 108.164 180.261H107.622V181.829H108.164C108.469 181.829 108.703 181.769 108.869 181.651C109.034 181.533 109.117 181.334 109.117 181.054C109.117 180.774 109.039 180.564 108.883 180.442H108.882Z" fill="white"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="128" y="166.332">Dan Reyes</tspan></text>
+<text fill="#646970" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" letter-spacing="0em"><tspan x="128" y="184.621">From the Pressable directory</tspan></text>
+<rect x="333" y="160" width="71" height="20" rx="6" fill="#EDF0FD"/>
+<text fill="#0240E4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="341" y="174.266">New lead</tspan></text>
+</svg>

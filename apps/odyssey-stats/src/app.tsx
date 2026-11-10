@@ -6,7 +6,6 @@
 import './lib/init-app-config';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
@@ -19,7 +18,6 @@ import sites from 'calypso/state/sites/reducer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import config, { optionalConfig } from './lib/config-api';
-import initSentry from './lib/init-sentry';
 import { initializeSiteData } from './lib/initialize-site-data';
 import loadWpComponentsStyle from './lib/load-wp-components-style';
 import setLocale from './lib/set-locale';
@@ -34,7 +32,7 @@ async function AppBoot() {
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	// Awaited before anything renders so components are never painted unstyled on the WP versions
-	// that need it. Resolves immediately without a request on WP 7.0+, which serves it already.
+	// that need it. Resolves without a request where wp-admin already serves it.
 	await loadWpComponentsStyle();
 
 	const rootReducer = combineReducers( {
@@ -96,6 +94,4 @@ async function AppBoot() {
 	} );
 }
 
-// Caution: We're loading Sentry after initializing Webpack; Webpack load failures may not be captured.
-initSentry();
 AppBoot();

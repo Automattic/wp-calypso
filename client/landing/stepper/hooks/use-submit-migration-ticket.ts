@@ -1,5 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
-import { UseMutationOptions } from '@tanstack/react-query/build/modern';
+import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 interface migrationTicketAPIResponse {

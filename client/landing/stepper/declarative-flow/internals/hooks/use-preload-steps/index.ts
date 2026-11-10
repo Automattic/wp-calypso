@@ -16,7 +16,9 @@ export async function tryPreload( step?: StepperStep, followingStep?: StepperSte
 	if ( step && 'asyncComponent' in step ) {
 		debug( 'Preloading step:', step.slug );
 		const { default: component } = await step.asyncComponent();
-		lazyCache.set( step.asyncComponent, component );
+		if ( ! lazyCache.has( step.asyncComponent ) ) {
+			lazyCache.set( step.asyncComponent, component );
+		}
 	}
 	// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.
 	if ( followingStep ) {

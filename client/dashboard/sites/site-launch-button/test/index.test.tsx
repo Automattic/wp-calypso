@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { SiteLaunchButton } from '..';
@@ -38,6 +38,22 @@ const mockDomainsApi = ( domains: DomainSummary[] = [] ) => {
 		.query( true )
 		.reply( 200, { domains } );
 };
+
+const mockPendingFunnelApi = ( response: object ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/wow-funnel/pending' )
+		.query( true )
+		.reply( 200, response );
+
+const createAtomicFreeSite = (): Site =>
+	createMockSite( {
+		is_wpcom_atomic: true,
+		plan: {
+			product_slug: 'free_plan',
+			product_name: 'Free',
+			is_free: true,
+		},
+	} as Partial< Site > );
 
 const mockLaunchApi = () =>
 	nock( 'https://public-api.wordpress.com' )
@@ -98,7 +114,11 @@ describe( '<SiteLaunchButton>', () => {
 		render( <SiteLaunchButton site={ createMockSite() } tracksContext="test" /> );
 
 		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
-		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/start/launch-site' ) );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
+		expect( launchLink ).not.toHaveAttribute(
+			'href',
+			expect.stringContaining( 'hide_initial_query' )
+		);
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
@@ -118,7 +138,7 @@ describe( '<SiteLaunchButton>', () => {
 		} );
 		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
-		await waitForElementToBeRemoved( dialog );
+		await waitFor( () => expect( dialog ).not.toBeInTheDocument() );
 		expect( launchScope.isDone() ).toBe( false );
 	} );
 
@@ -254,6 +274,32 @@ describe( '<SiteLaunchButton>', () => {
 		}
 	} );
 
+	test( 'sends a preview site to plans instead of launching it', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		mockPendingFunnelApi( {
+			pending: false,
+			preview_sites: [ { blog_id: 1, site_slug: 'kaonashi.wordpress.com' } ],
+		} );
+
+		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/plans/kaonashi.wordpress.com' )
+		);
+	} );
+
+	test( 'an Atomic Free site that is not a preview site keeps the launch flow', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		mockPendingFunnelApi( { pending: false } );
+
+		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
+	} );
+
 	test( 'renders a link to the launch flow for a free site without an immediate launch', async () => {
 		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
 
@@ -271,7 +317,7 @@ describe( '<SiteLaunchButton>', () => {
 		);
 
 		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
-		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/start/launch-site' ) );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 } );

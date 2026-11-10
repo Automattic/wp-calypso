@@ -21,10 +21,6 @@
 
 /* Command Palette */
 @mixin dashboard-dark-theme-command-palette {
-	.commands-command-menu__header-search-icon {
-		fill: var( --dashboard__text-color );
-	}
-
 	.commands-command-menu__header .components-button {
 		border-color: var( --dashboard-field__border-color );
 	}
@@ -87,59 +83,65 @@
 /* Card */
 @mixin dashboard-dark-theme-card {
 	@include color-scheme-dark-theme-card;
+}
 
-	.components-surface.components-card.dashboard-notice {
-		// White would be wrong here. Use a grey slightly lighter than the notice,
-		// so the button still stands out from it.
-		--dashboard-notice-action__background-color: color-mix(
+/* MCP connect card */
+@mixin dashboard-dark-theme-mcp-connect {
+	.mcp-connect__tile.components-card:hover {
+		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
+		background: color-mix(
 			in srgb,
-			var( --dashboard-surface__background-color ) 90%,
-			var( --dashboard__text-color )
+			var( --dashboard-surface__background-color ) 82%,
+			var( --wp-admin-theme-color )
 		);
+		color: var( --dashboard-menu-item-active__color );
+	}
+}
 
-		&.is-info {
-			background-color: color-mix(
+/* Notice */
+@mixin dashboard-dark-theme-notice {
+	// `@wordpress/ui` Notice colors come from the `--wpds-*` intent tokens, which
+	// only have light values here.
+	.dashboard-notice {
+		@each $intent, $color
+			in (
+				info: var( --wp-admin-theme-color ),
+				success: var( --dashboard__foreground-color-success ),
+				warning: var( --dashboard__foreground-color-warning ),
+				error: var( --dashboard__foreground-color-error )
+			)
+		{
+			--wpds-color-background-surface-#{$intent}-weak: color-mix(
 				in srgb,
-				var( --wp-admin-theme-color ) 8%,
+				#{$color} 8%,
 				var( --dashboard-surface__background-color )
 			);
-		}
-
-		&.is-warning {
-			background-color: color-mix(
+			--wpds-color-stroke-surface-#{$intent}: color-mix(
 				in srgb,
-				var( --dashboard__background-color-warning ) 8%,
+				#{$color} 40%,
 				var( --dashboard-surface__background-color )
 			);
-
-			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-warning );
-			}
+			--wpds-color-foreground-content-#{$intent}: var( --dashboard__text-color );
+			--wpds-color-foreground-content-#{$intent}-weak: #{$color};
 		}
 
-		&.is-success {
-			background-color: color-mix(
-				in srgb,
-				var( --dashboard__background-color-success ) 8%,
-				var( --dashboard-surface__background-color )
-			);
-
-			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-success );
-			}
-		}
-
-		&.is-error {
-			background-color: color-mix(
-				in srgb,
-				var( --dashboard__background-color-error ) 8%,
-				var( --dashboard-surface__background-color )
-			);
-
-			.dashboard-notice__icon {
-				fill: var( --dashboard__background-color-error );
-			}
-		}
+		// Neutral solid action buttons, which are near-black by default.
+		--wpds-color-background-interactive-neutral-strong: var( --dashboard__text-color );
+		--wpds-color-background-interactive-neutral-strong-active: var(
+			--wp-components-color-gray-700
+		);
+		--wpds-color-background-interactive-neutral-strong-disabled: var(
+			--wp-components-color-gray-200
+		);
+		--wpds-color-foreground-interactive-neutral-strong: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-foreground-interactive-neutral-strong-active: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-foreground-interactive-neutral-strong-disabled: var(
+			--wp-components-color-gray-600
+		);
 	}
 }
 
@@ -179,21 +181,6 @@
 @mixin dashboard-dark-theme-form-controls {
 	@include color-scheme-dark-theme-form-controls;
 
-	.components-input-control.has-error .components-input-control__backdrop,
-	.components-input-control.has-error
-		.components-input-control__input:focus
-		+ .components-input-control__backdrop {
-		border-color: var( --dashboard-danger__color );
-	}
-
-	.components-input-control.has-error .components-base-control__help {
-		color: var( --dashboard-danger__color-hover );
-	}
-
-	.components-input-control.has-error .components-base-control__help svg {
-		fill: var( --dashboard-danger__color-hover );
-	}
-
 	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
 		.components-input-control__backdrop,
 	.components-validated-control__wrapper-with-error-delegate:has(
@@ -203,13 +190,35 @@
 		border-color: var( --dashboard-danger__color );
 	}
 
-	.components-validated-control__indicator.is-invalid {
-		color: var( --dashboard-danger__color-hover );
+	// Validated controls show their message with `@wordpress/ui`'s validity indicator, which
+	// colors errors with this token; outside DataForm fields it stays the light-mode red.
+	.components-validated-control {
+		--wpds-color-foreground-content-error-weak: var( --dashboard-danger__color-hover );
 	}
 
-	.components-validated-control__indicator.is-invalid
-		.components-validated-control__indicator-icon {
-		fill: var( --dashboard-danger__color-hover );
+	// Since DataViews 19.1, DataForm text fields are `@wordpress/ui` inputs. Their class names
+	// are hashed, and they paint the label, description, border and background with WPDS tokens
+	// that `color-scheme-dark-theme-tokens` leaves at their light defaults.
+	.dataforms-layouts-regular__field,
+	.dataforms-layouts-row__field,
+	.dataforms-layouts-card__field,
+	.dataforms-layouts-panel__field-dropdown {
+		--wpds-color-foreground-content-neutral: var( --dashboard__text-color );
+		--wpds-color-foreground-content-neutral-weak: var( --dashboard__text-muted-color );
+		--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );
+		--wpds-color-foreground-interactive-neutral-disabled: var( --dashboard__text-muted-color );
+		--wpds-color-background-interactive-neutral: transparent;
+		--wpds-color-background-interactive-neutral-active: transparent;
+		--wpds-color-background-interactive-neutral-disabled: var(
+			--dashboard-surface__background-color
+		);
+		--wpds-color-stroke-interactive-neutral: var( --dashboard-field__border-color );
+		--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-gray-700 );
+		--wpds-color-stroke-interactive-neutral-disabled: var( --dashboard-surface__border-color );
+		--wpds-color-stroke-interactive-error: var( --dashboard-danger__color );
+		--wpds-color-stroke-interactive-error-active: var( --dashboard-danger__color-hover );
+		--wpds-color-foreground-content-error-weak: var( --dashboard-danger__color-hover );
+		--wpds-color-foreground-content-success-weak: var( --dashboard__foreground-color-success );
 	}
 }
 
@@ -314,6 +323,25 @@
 		&::after {
 			box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
 		}
+	}
+}
+
+/* Date Range Picker */
+@mixin dashboard-dark-theme-date-range-picker {
+	// `@wordpress/ui`'s calendar paints its surface, weekdays and selected days
+	// with WPDS tokens that `color-scheme-dark-theme-tokens` leaves at their light defaults.
+	.daterange-calendar {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-foreground-content-neutral: var( --dashboard__text-color );
+		--wpds-color-foreground-content-neutral-weak: var( --dashboard__text-muted-color );
+		--wpds-color-foreground-interactive-neutral-weak: var( --wp-components-color-gray-600 );
+		--wpds-color-foreground-interactive-neutral-strong: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-background-interactive-neutral-strong: var( --dashboard__text-color );
+		--wpds-color-background-interactive-neutral-strong-active: var(
+			--wp-components-color-gray-700
+		);
 	}
 }
 
@@ -453,6 +481,28 @@
 	}
 }
 
+/* Primary site address illustration */
+@mixin dashboard-dark-theme-primary-address-illustration {
+	.primary-address-illustration {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-stroke-interactive-brand: var( --wp-admin-theme-color-darker-20 );
+		--wpds-color-foreground-interactive-brand: var( --wp-admin-theme-color-darker-20 );
+		background: var( --dashboard__background-color );
+	}
+
+	.primary-address-illustration__window-dots span {
+		border-color: var( --wp-components-color-gray-600 );
+	}
+
+	.primary-address-illustration__address-line {
+		background: var( --wp-components-color-gray-600 );
+	}
+
+	.primary-address-illustration__address {
+		color: var( --dashboard__text-color );
+	}
+}
+
 @mixin dashboard-dark-theme-site-launch-modal {
 	.celebration-modal--content,
 	.site-launch-pre-launch-modal__preview-card {
@@ -470,6 +520,26 @@
 	}
 }
 
+@mixin dashboard-dark-theme-illustrations {
+	.dashboard-themed-illustration--light {
+		display: none;
+	}
+
+	.dashboard-themed-illustration--dark {
+		display: block;
+	}
+}
+
+// The domain upsell card's illustration is inline SVG that reads these, falling back to its light
+// colors. Hex values match the dark illustration assets.
+@mixin dashboard-dark-theme-domain-upsell-illustration {
+	--dashboard-domain-upsell-canvas: transparent;
+	--dashboard-domain-upsell-grid-opacity: 0;
+	--dashboard-domain-upsell-window: #1e2735;
+	--dashboard-domain-upsell-chrome: #2a3345;
+	--dashboard-domain-upsell-dot-stroke: #50575e;
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
@@ -482,22 +552,28 @@
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-dataviews;
+	@include dashboard-dark-theme-date-range-picker;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-domain-upsell-illustration;
+	@include dashboard-dark-theme-illustrations;
 	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-links;
+	@include dashboard-dark-theme-mcp-connect;
 	@include color-scheme-dark-theme-modal;
 	@include dashboard-dark-theme-modal;
+	@include dashboard-dark-theme-notice;
 	@include color-scheme-dark-theme-palettes;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
+	@include dashboard-dark-theme-primary-address-illustration;
 	@include color-scheme-dark-theme-popover;
 	@include color-scheme-dark-theme-primary-button;
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
-	@include color-scheme-dark-theme-spinner;
 	@include color-scheme-dark-theme-summary-button;
+	@include color-scheme-dark-theme-dataviews-filters-search-widget;
 }

@@ -1,4 +1,4 @@
-import { NextButton } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -94,9 +94,9 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 				/>
 
 				<div className="site-migration-credentials__submit">
-					<NextButton disabled={ isBusy } type="submit">
+					<Button variant="primary" type="submit" disabled={ isBusy } __next40pxDefaultSize>
 						{ getContinueButtonText() }
-					</NextButton>
+					</Button>
 				</div>
 			</div>
 		</form>

@@ -7,11 +7,24 @@ import actions from '../state/actions';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteRead from '../state/selectors/get-is-note-read';
 import NoteBody from './body';
+import { getSignature } from './functions';
 import SummaryInList from './summary-in-list';
 import SummaryInSingle from './summary-in-single';
 
 const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
+
+/**
+ * Returns whether the note has no header and its body opens with a block that has no top spacing of its own.
+ */
+const needsTopSpacing = ( note ) => {
+	if ( note.header && note.header.length > 0 ) {
+		return false;
+	}
+
+	const firstBlock = note.body.slice( 0, 1 );
+	return 'text' === getSignature( firstBlock, note )[ 0 ]?.type && ! hasBadge( firstBlock );
+};
 
 export const Note = React.forwardRef( ( props, ref ) => {
 	const {
@@ -115,7 +128,9 @@ export const Note = React.forwardRef( ( props, ref ) => {
 			) }
 			{ detailView && (
 				<div
-					className="wpnc__note-body"
+					className={ clsx( 'wpnc__note-body', {
+						'wpnc__note-body--needs-top-spacing': needsTopSpacing( note ),
+					} ) }
 					role="region"
 					aria-label={ translate( 'Notification details' ) }
 					tabIndex={ -1 }
@@ -146,6 +161,8 @@ export const Note = React.forwardRef( ( props, ref ) => {
 		</li>
 	);
 } );
+
+Note.displayName = 'Note';
 
 const mapStateToProps = ( state, { note } ) => ( {
 	isApproved: getIsNoteApproved( state, note ),

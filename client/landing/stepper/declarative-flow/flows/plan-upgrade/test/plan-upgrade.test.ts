@@ -5,12 +5,20 @@ import { STEPS } from '../../../internals/steps';
 import planUpgradeFlow from '../plan-upgrade';
 
 let mockQuery: Record< string, string > = {};
+let mockSitePlan = 'personal-bundle';
 
 jest.mock( '@automattic/onboarding', () => ( { PLAN_UPGRADE_FLOW: 'plan-upgrade' } ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'SITE_STORE' } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => ( { get: ( key: string ) => mockQuery[ key ] ?? null } ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: () => ( {
+		plan: { product_slug: mockSitePlan },
+		options: { admin_url: 'https://example.wordpress.com/wp-admin/' },
+	} ),
 } ) );
 
 const mockClearSignupDestination = jest.fn();
@@ -26,10 +34,20 @@ const submitPlan = ( plan: string ) =>
 
 const checkoutUrl = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
 
+const goBack = () => {
+	const stepsProps = planUpgradeFlow.useStepsProps!() as Record<
+		string,
+		{ wrapperProps: { goBack: () => void } }
+	>;
+	stepsProps[ STEPS.UNIFIED_PLANS.slug ].wrapperProps.goBack();
+	return ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
+};
+
 describe( 'plan-upgrade flow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
+		mockSitePlan = 'personal-bundle';
 		Object.defineProperty( window, 'location', {
 			value: { ...window.location, assign: jest.fn() },
 			writable: true,
@@ -114,5 +132,34 @@ describe( 'plan-upgrade flow', () => {
 		submitPlan( 'personal-bundle' );
 
 		expect( checkoutUrl() ).toContain( 'redirect_to=' );
+	} );
+
+	it( 'goes back to the site itself, such as its wp-admin', () => {
+		mockQuery.cancel_to =
+			'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-activity-log';
+
+		expect( goBack() ).toBe( mockQuery.cancel_to );
+	} );
+
+	it( 'does not go back to a host that only looks like the site', () => {
+		mockQuery.cancel_to = 'https://example.wordpress.com.evil.example/wp-admin/';
+
+		expect( goBack() ).toContain( '/sites' );
+	} );
+
+	// Without it, a Woo Hosted store is offered WordPress.com plans it can't move to.
+	it( 'offers a Woo Hosted store the Woo Hosted plans', () => {
+		mockSitePlan = 'woo_hosted_basic_plan_monthly';
+
+		expect( planUpgradeFlow.useStepsProps!()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+			intent: 'plans-woo-hosted',
+		} );
+	} );
+
+	// The store admin's plan nudge links here with nowhere to go back to.
+	it( 'goes back to a Woo Hosted store admin when given nowhere to go back to', () => {
+		mockSitePlan = 'woo_hosted_basic_plan_monthly';
+
+		expect( goBack() ).toBe( 'https://example.wordpress.com/wp-admin/' );
 	} );
 } );

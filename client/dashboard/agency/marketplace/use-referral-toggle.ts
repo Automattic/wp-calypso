@@ -1,18 +1,23 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { isAgencyApproved } from './is-agency-approved';
+import { useIsApprovalGated } from '../approval-gate';
 import { useMarketplaceType } from './use-marketplace-type';
 import { useTermPricing } from './use-term-pricing';
 import type { MarketplaceType } from './use-marketplace-type';
 
-/** The state and handler shared by every “Refer products” toggle, so they cannot drift apart. */
+/**
+ * The state and handler shared by every “Refer to clients” toggle, so they cannot drift apart.
+ * For an agency that is not approved, turning it on sets `isGateOpen`; render `ApprovalGate` from it.
+ */
 export function useReferralToggle() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType, updateMarketplaceType } = useMarketplaceType();
 	const { termPricing } = useTermPricing();
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const onChange = useCallback(
 		( checked: boolean ) => {
@@ -28,7 +33,12 @@ export function useReferralToggle() {
 
 	return {
 		checked: marketplaceType === 'referral',
-		disabled: ! isAgencyApproved( agency ),
-		onChange,
+		disabled: ! agency,
+		// Turning it off stays open, so an agency in referral mode from a link can leave it.
+		onChange: ( nextChecked: boolean ) =>
+			nextChecked && isGated ? setIsGateOpen( true ) : onChange( nextChecked ),
+		isGated,
+		isGateOpen,
+		closeGate: () => setIsGateOpen( false ),
 	};
 }

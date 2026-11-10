@@ -3,6 +3,7 @@
  */
 import { store, init as initState } from '../../state';
 import actions from '../../state/actions';
+import { addListeners, removeListeners } from '../../state/create-listener-middleware';
 import getAllNotes from '../../state/selectors/get-all-notes';
 import getFilteredLoading from '../../state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../state/selectors/get-filtered-note-ids';
@@ -29,9 +30,30 @@ const makeNote = ( id ) => ( {
 const fullPage = ( count, startId ) =>
 	Array.from( { length: count }, ( _, i ) => makeNote( startId - i ) );
 
+const makeFollowNote = ( id, targetSiteId, actorSiteId = 700, noteHash = `hash-${ id }` ) => ( {
+	...makeNote( id ),
+	note_hash: noteHash,
+	type: 'follow',
+	meta: { ids: { site: targetSiteId } },
+	body: [ { type: 'user', meta: { ids: { user: 400, site: actorSiteId } } } ],
+} );
+
+const listenForRenderNotes = () => {
+	const renderNotesActions = [];
+	const handlers = {
+		APP_RENDER_NOTES: [ ( _store, action ) => renderNotesActions.push( action ) ],
+	};
+	store.dispatch( addListeners( handlers ) );
+	return {
+		actions: renderNotesActions,
+		stop: () => store.dispatch( removeListeners( handlers ) ),
+	};
+};
+
 describe( 'RestClient', () => {
 	let getCalls;
 	let client;
+	let pinghubCallback;
 
 	beforeEach( () => {
 		jest.useFakeTimers();
@@ -41,12 +63,17 @@ describe( 'RestClient', () => {
 		initState();
 
 		getCalls = [];
+		pinghubCallback = undefined;
 		init( {
 			req: {
 				get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
 				post: () => {},
 			},
-			pinghub: { connect: () => {} },
+			pinghub: {
+				connect: ( _path, callback ) => {
+					pinghubCallback = callback;
+				},
+			},
 		} );
 		client = new Client();
 		// Pretend the panel is open without going through setVisibility(), which
@@ -790,6 +817,277 @@ describe( 'RestClient', () => {
 			expect( getIsLoading( store.getState() ) ).toBe( false );
 			expect( getFilteredLoading( store.getState() ) ).toBe( 'unread' );
 			expect( client.gettingFilteredNotes ).toBe( true );
+		} );
+	} );
+
+	describe( 'live follow pushes', () => {
+		const seedFollowNote = () => {
+			client.getNotes();
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001 ) ],
+				last_seen_time: 0,
+			} );
+			getCalls.length = 0;
+			pinghubCallback( null, { response: { type: 'open' } } );
+		};
+
+		const receiveMessage = ( message ) =>
+			pinghubCallback( null, {
+				response: { type: 'message', data: JSON.stringify( message ) },
+			} );
+
+		const receiveMessagesTogether = ( ...messages ) => {
+			const main = client.main;
+			client.main = jest.fn();
+			messages.forEach( receiveMessage );
+			client.main = main;
+		};
+
+		const receivePush = ( noteId ) => receiveMessage( { action: 'push', note_id: noteId } );
+
+		it( 'emits only the target site candidate after hydrating a single live follow push', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			const receivedAt = Date.now();
+			receivePush( 99001 );
+			jest.setSystemTime( receivedAt + 1000 );
+
+			client.main();
+			expect( getCalls ).toHaveLength( 1 );
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 800, 'hash-99001-updated' ) ],
+			} );
+
+			expect( subscriberActionListener.actions ).toHaveLength( 1 );
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications ).toEqual( [
+				expect.objectContaining( {
+					targetSiteId: 9001,
+					type: 'follow',
+					receivedAt,
+				} ),
+			] );
+			expect(
+				subscriberActionListener.actions[ 0 ].subscriberNotifications[ 0 ]
+			).not.toHaveProperty( 'noteId' );
+			subscriberActionListener.stop();
+		} );
+
+		it( 'emits candidates for hydrated follow notes in a coalesced push batch', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			receiveMessagesTogether(
+				{ action: 'push', note_id: 99001 },
+				{ action: 'push', note_id: 99002 }
+			);
+
+			client.main();
+			expect( getCalls ).toHaveLength( 1 );
+			getCalls[ 0 ].callback( null, {
+				notes: [
+					makeFollowNote( 99001, 9001, 700, 'hash-99001-updated' ),
+					makeFollowNote( 99002, 9002 ),
+				],
+				last_seen_time: 0,
+			} );
+
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications ).toEqual( [
+				expect.objectContaining( { targetSiteId: 9001, type: 'follow' } ),
+				expect.objectContaining( { targetSiteId: 9002, type: 'follow' } ),
+			] );
+			subscriberActionListener.stop();
+		} );
+
+		it.each( [
+			[ 'non-follow note', { ...makeNote( 99001 ), meta: { ids: { site: 9001 } } } ],
+			[ 'missing target site', { ...makeFollowNote( 99001, undefined ) } ],
+			[ 'non-numeric target site', { ...makeFollowNote( 99001, '9001' ) } ],
+		] )( 'does not emit a candidate for a %s', ( _description, note ) => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			receivePush( 99001 );
+
+			client.main();
+			getCalls[ 0 ].callback( null, { notes: [ note ] } );
+
+			expect( subscriberActionListener.actions[ 0 ] ).not.toHaveProperty(
+				'subscriberNotifications'
+			);
+			subscriberActionListener.stop();
+		} );
+
+		it( 'coalesces repeated note IDs to the earliest receipt in one push batch', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			const firstReceivedAt = Date.now();
+			const main = client.main;
+			client.main = jest.fn();
+			receivePush( 99001 );
+			jest.setSystemTime( firstReceivedAt + 1000 );
+			receivePush( 99001 );
+			client.main = main;
+
+			client.main();
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 700, 'hash-99001-updated' ) ],
+			} );
+
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications ).toHaveLength( 1 );
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications[ 0 ].receivedAt ).toBe(
+				firstReceivedAt
+			);
+			subscriberActionListener.stop();
+		} );
+
+		it( 'does not infer candidates from unrelated messages or unhydrated push IDs', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			receivePush( 99002 );
+			receiveMessage( { action: 'poll', note_id: 99001 } );
+
+			client.main();
+			getCalls[ 0 ].callback( null, { notes: [ makeFollowNote( 99001, 9001 ) ] } );
+
+			expect( subscriberActionListener.actions[ 0 ] ).not.toHaveProperty(
+				'subscriberNotifications'
+			);
+			subscriberActionListener.stop();
+		} );
+
+		it( 'preserves push receipt time when hydration responses arrive out of order', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			const firstReceivedAt = Date.now();
+			receivePush( 99001 );
+			client.main();
+			jest.setSystemTime( firstReceivedAt + 1000 );
+			const secondReceivedAt = Date.now();
+			receivePush( 99001 );
+			client.main();
+
+			getCalls[ 1 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 700, 'hash-99001-updated-2' ) ],
+			} );
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 700, 'hash-99001-updated-1' ) ],
+			} );
+
+			expect( subscriberActionListener.actions ).toHaveLength( 2 );
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications[ 0 ].receivedAt ).toBe(
+				secondReceivedAt
+			);
+			expect( subscriberActionListener.actions[ 1 ].subscriberNotifications[ 0 ].receivedAt ).toBe(
+				firstReceivedAt
+			);
+			subscriberActionListener.stop();
+		} );
+
+		it( 'limits mixed message hydration to IDs from live push messages', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			receiveMessagesTogether(
+				{ action: 'push', note_id: 99001 },
+				{ action: 'poll', note_id: 99002 }
+			);
+
+			client.main();
+			getCalls[ 0 ].callback( null, {
+				notes: [
+					makeFollowNote( 99001, 9001, 700, 'hash-99001-updated' ),
+					makeFollowNote( 99002, 9002 ),
+				],
+				last_seen_time: 0,
+			} );
+
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications ).toEqual( [
+				expect.objectContaining( { targetSiteId: 9001, type: 'follow' } ),
+			] );
+			subscriberActionListener.stop();
+		} );
+
+		it( 'does not emit a candidate when a pushed note is absent from the hydrated response', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			receivePush( 99002 );
+
+			getCalls[ 0 ].callback( null, { notes: [ makeFollowNote( 99001, 9001 ) ] } );
+
+			expect( subscriberActionListener.actions[ 0 ] ).not.toHaveProperty(
+				'subscriberNotifications'
+			);
+			subscriberActionListener.stop();
+		} );
+
+		it( 'preserves hidden receipt state so hydration cannot deliver an alert after becoming visible', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+			client.isVisible = false;
+			receivePush( 99001 );
+			client.isVisible = true;
+			client.main();
+
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 700, 'hash-99001-updated' ) ],
+			} );
+
+			expect( subscriberActionListener.actions[ 0 ].subscriberNotifications ).toEqual( [
+				expect.objectContaining( { targetSiteId: 9001, wasVisibleAtReceipt: false } ),
+			] );
+			subscriberActionListener.stop();
+		} );
+
+		it( 'does not emit candidates during the initial note bootstrap', () => {
+			const subscriberActionListener = listenForRenderNotes();
+
+			client.getNotes();
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001 ) ],
+				last_seen_time: 0,
+			} );
+
+			expect( subscriberActionListener.actions[ 0 ] ).not.toHaveProperty(
+				'subscriberNotifications'
+			);
+			subscriberActionListener.stop();
+		} );
+
+		it( 'suppresses a repeated note snapshot but alerts when the follow note snapshot changes', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+
+			receivePush( 99001 );
+			client.main();
+			getCalls[ 0 ].callback( null, { notes: [ makeFollowNote( 99001, 9001 ) ] } );
+			expect( subscriberActionListener.actions[ 0 ] ).not.toHaveProperty(
+				'subscriberNotifications'
+			);
+
+			getCalls.length = 0;
+			receivePush( 99001 );
+			client.main();
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 700, 'hash-99001-updated' ) ],
+			} );
+
+			expect( subscriberActionListener.actions[ 1 ].subscriberNotifications ).toEqual( [
+				expect.objectContaining( { targetSiteId: 9001, type: 'follow' } ),
+			] );
+			subscriberActionListener.stop();
+		} );
+
+		it( 'does not emit candidates for polling updates to the same follow note', () => {
+			seedFollowNote();
+			const subscriberActionListener = listenForRenderNotes();
+
+			client.getNotes();
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeFollowNote( 99001, 9001, 801 ) ],
+				last_seen_time: 0,
+			} );
+
+			expect( subscriberActionListener.actions[ 0 ] ).not.toHaveProperty(
+				'subscriberNotifications'
+			);
+			subscriberActionListener.stop();
 		} );
 	} );
 } );

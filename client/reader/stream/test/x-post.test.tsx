@@ -59,33 +59,33 @@ describe( 'CrossPost', () => {
 		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
 	} );
 
-	it( 'renders the seen styling when isSeenVisible is true', () => {
+	it( 'renders the unread styling when isUnread is true', () => {
 		const { container } = render(
 			<CrossPost
 				post={ post }
 				postKey={ { feedId: 100, postId: 200 } }
 				canMarkSeen={ false }
-				isSeenVisible
+				isUnread
 				requestMarkAsSeen={ jest.fn() }
 				handleClick={ jest.fn() }
 			/>
 		);
 
-		expect( container.querySelector( 'article' ) ).toHaveClass( 'is-seen' );
+		expect( container.querySelector( 'article' ) ).toHaveClass( 'is-unread' );
 	} );
 
-	it( 'omits the seen styling when isSeenVisible is false', () => {
+	it( 'omits the unread styling when isUnread is false', () => {
 		const { container } = render(
 			<CrossPost
 				post={ { ...post, is_seen: true } }
 				postKey={ { feedId: 100, postId: 200 } }
 				canMarkSeen
-				isSeenVisible={ false }
+				isUnread={ false }
 				requestMarkAsSeen={ jest.fn() }
 				handleClick={ jest.fn() }
 			/>
 		);
 
-		expect( container.querySelector( 'article' ) ).not.toHaveClass( 'is-seen' );
+		expect( container.querySelector( 'article' ) ).not.toHaveClass( 'is-unread' );
 	} );
 } );

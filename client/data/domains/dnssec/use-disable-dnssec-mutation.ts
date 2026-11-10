@@ -13,7 +13,8 @@ export default function useDisableDnssecMutation(
 		mutationFn: () => {
 			return wp.req.post( {
 				method: 'DELETE',
-				path: `/domains/dnssec/${ domainName }`,
+				// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+				path: `/domains/dnssec/${ domainName }/`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},

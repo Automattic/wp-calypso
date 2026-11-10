@@ -1,0 +1,98 @@
+@import "@wordpress/base-styles/colors";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
+// Matches the DIFM offer banner in Figma: a neutral surface without the accent border.
+.banner.card.themes__difm-offer-banner {
+	gap: 16px;
+	padding: 16px 24px;
+	border: 0;
+	border-radius: 8px;
+	box-shadow: none;
+	background: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
+
+	// Keep the call to action clear of the dismiss icon, and center the icon beside it.
+	&.is-dismissible {
+		padding-inline-end: 56px;
+	}
+
+	// Banner draws a 24px cross. Design asked for the small close icon, so draw the cross at
+	// 16px and keep a 24px target with the padding.
+	.banner__close-icon {
+		box-sizing: content-box;
+		top: 50%;
+		width: 16px;
+		height: 16px;
+		margin-top: -12px;
+		padding: 4px;
+	}
+
+	.banner__content {
+		align-items: center;
+		gap: 16px;
+	}
+
+	.banner__title {
+		color: $gray-900;
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	.banner__description {
+		margin-top: 4px;
+		color: var(--color-text-subtle);
+		line-height: 16px;
+		text-wrap: pretty;
+	}
+
+	// The gap on the content spaces the action, so drop the margins Banner adds.
+	.banner__action {
+		margin: 0;
+	}
+
+	.banner__action .button {
+		min-height: 32px;
+		padding: 4px 12px;
+		border-color: var(--wpds-color-stroke-interactive-neutral, #8d8d8d);
+		background: transparent;
+		color: var(--wpds-color-foreground-interactive-neutral, $gray-900);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 20px;
+	}
+
+	// On mobile the thumbnail sits beside the copy, and the call to action fills the width under the copy.
+	@include breakpoint-deprecated( "<480px" ) {
+		.banner__content {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: start;
+			gap: 12px 16px;
+		}
+
+		.themes__difm-offer-banner-image {
+			grid-row: span 2;
+		}
+
+		.banner__action .button {
+			width: 100%;
+		}
+	}
+}
+
+.themes__difm-offer-banner-image {
+	flex-shrink: 0;
+
+	img {
+		display: block;
+		width: 80px;
+		height: 56px;
+		border-radius: 4px;
+		object-fit: cover;
+
+		@include breakpoint-deprecated( "<480px" ) {
+			width: 91px;
+			height: 100px;
+		}
+	}
+}

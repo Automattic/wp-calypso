@@ -1,3 +1,4 @@
+import { getChatPresentation } from './chat-presentation';
 import { isEditorPage } from './is-editor-page';
 
 /**
@@ -52,5 +53,5 @@ function isEditorEntryVisible(): boolean {
  * bundle when the feature is enabled, so editor-entry visibility is the only gate left to check here.
  */
 export function isEditorAiEntryEnabled(): boolean {
-	return isEditorEntryVisible();
+	return getChatPresentation().showEntryPoints && isEditorEntryVisible();
 }

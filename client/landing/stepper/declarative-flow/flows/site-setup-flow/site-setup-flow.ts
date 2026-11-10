@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
@@ -29,7 +30,7 @@ import {
 	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -99,7 +100,7 @@ const siteSetupFlow: Flow = {
 		const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 		const isAtomic = useSelect(
-			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ),
 			[ site ]
 		);
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
@@ -266,10 +267,26 @@ const siteSetupFlow: Flow = {
 					const entryPoint = get( 'flow' )?.entryPoint;
 
 					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
+						const useReprint = config.isEnabled( 'migration/reprint-flow' );
+						const step = useReprint
+							? STEPS.SITE_MIGRATION_IDENTIFY
+							: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE;
 						return window.location.assign(
 							addQueryArgs(
-								{ siteSlug, siteId, from, ref: entryPoint },
-								'/setup/site-migration/' + STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+								{
+									siteSlug,
+									siteId,
+									from,
+									ref: entryPoint,
+									...( useReprint && {
+										manualPlatform: 'wordpress',
+										ref: entryPoint || urlQueryParams.get( 'ref' ),
+										sessionId: urlQueryParams.get( 'sessionId' ),
+										source: urlQueryParams.get( 'source' ),
+										flags: urlQueryParams.get( 'flags' ),
+									} ),
+								},
+								`/setup/${ SITE_MIGRATION_FLOW }/${ step.slug }`
 							)
 						);
 					}
@@ -326,7 +343,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importerPlayground': {
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					// The step waits for the import, so the site is ready here.
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'trialAcknowledge': {
@@ -451,7 +469,7 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 		const fetchingSiteError = useSelect(
-			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			( select ) => select( SITE_STORE ).getFetchingSiteError(),
 			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };

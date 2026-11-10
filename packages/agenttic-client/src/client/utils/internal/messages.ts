@@ -1,6 +1,6 @@
 import { createAbilityDataPart, createContextDataPart, createToolDataPart } from '../core';
 import { logger } from '../logger';
-import type { ContextProvider, Message, ToolProvider } from '../../types/index';
+import type { ClientContext, ContextProvider, Message, ToolProvider } from '../../types/index';
 
 /**
  * Enhance a message with available tools and abilities from the tool provider
@@ -52,7 +52,7 @@ export async function enhanceMessageWithTools(
 }
 
 /**
- * Enhance a message with client context from the context provider
+ * Enhance a message with client context, preserving context-message visibility in server storage.
  * @param message         - The message to enhance
  * @param contextProvider - Optional context provider to get context from
  * @returns The enhanced message
@@ -61,25 +61,54 @@ export function enhanceMessageWithContext(
 	message: Message,
 	contextProvider?: ContextProvider
 ): Message {
-	if ( ! contextProvider ) {
+	const contextOnly = message.parts.some(
+		( part ) => part.type === 'text' && part.metadata?.contentType === 'context'
+	);
+	const promptSource = message.metadata?.promptSource;
+	const hasPromptSource = typeof promptSource === 'string' && promptSource !== '';
+	if ( ! contextProvider && ! contextOnly && ! hasPromptSource ) {
 		return message;
 	}
 
+	let clientContext: ClientContext = {};
 	try {
-		const clientContext = contextProvider.getClientContext();
-		if ( ! clientContext || Object.keys( clientContext ).length === 0 ) {
-			return message;
-		}
-
-		const contextPart = createContextDataPart( clientContext );
-		return {
-			...message,
-			parts: [ ...message.parts, contextPart ],
-		};
+		clientContext = contextProvider?.getClientContext() ?? {};
 	} catch ( error ) {
 		logger( 'Warning: Failed to get context: %s', error );
+	}
+	if ( contextOnly ) {
+		clientContext = {
+			...clientContext,
+			flags: {
+				...( typeof clientContext.flags === 'object' && clientContext.flags !== null
+					? clientContext.flags
+					: {} ),
+				context_only: true,
+			},
+		};
+	}
+	// The prompt source lives in the message's client metadata (see
+	// `SubmitOptions.promptSource`); the server reads it from the context.
+	if ( hasPromptSource ) {
+		const promptSourceId = message.metadata?.promptSourceId;
+		clientContext = {
+			...clientContext,
+			metadata: {
+				...( typeof clientContext.metadata === 'object' && clientContext.metadata !== null
+					? clientContext.metadata
+					: {} ),
+				promptSource,
+				...( typeof promptSourceId === 'string' && promptSourceId !== '' && { promptSourceId } ),
+			},
+		};
+	}
+	if ( Object.keys( clientContext ).length === 0 ) {
 		return message;
 	}
+	return {
+		...message,
+		parts: [ ...message.parts, createContextDataPart( clientContext ) ],
+	};
 }
 
 /**
@@ -100,8 +129,17 @@ export async function enhanceMessage(
 	// Then enhance with context (sync)
 	enhancedMessage = enhanceMessageWithContext( enhancedMessage, contextProvider );
 
-	// Remove metadata before sending to agent (metadata is currently only client-side only to manage message timestammps)
+	// The message's own metadata stays on the client, which uses it for timestamps; the agent gets
+	// only what the context provider gives it.
 	const { metadata, ...messageForAgent } = enhancedMessage;
+	let agentMetadata: Record< string, unknown > | undefined;
+	try {
+		agentMetadata = contextProvider?.getMessageMetadata?.();
+	} catch ( error ) {
+		logger( 'Warning: Failed to get message metadata: %s', error );
+	}
 
-	return messageForAgent;
+	return agentMetadata && Object.keys( agentMetadata ).length > 0
+		? { ...messageForAgent, metadata: agentMetadata }
+		: messageForAgent;
 }

@@ -9,6 +9,7 @@ import { useHelpCenter } from '../../../../../app/help-center';
 import { ButtonStack } from '../../../../../components/button-stack';
 import { SectionHeader } from '../../../../../components/section-header';
 import { redirectToDashboardLink, wpcomLink } from '../../../../../utils/link';
+import { getCancelFlowPlanChangeUrl } from '../../get-cancel-flow-plan-change-url';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type UpsellProps = {
@@ -53,6 +54,20 @@ function Upsell( { ...props }: UpsellProps ) {
 	);
 }
 
+export function getFreeMonthOfferTitle(): string {
+	return __( 'How about a free month?' );
+}
+
+export function getFreeMonthOfferText( planName: string ): string {
+	return sprintf(
+		/* translators: %(currentPlan)s is the name of the plan to which the customer is subscribed */
+		__(
+			'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your %(currentPlan)s plan subscription to continue building your site?'
+		),
+		{ currentPlan: planName }
+	);
+}
+
 function getLiveChatUrl( type: string, purchase: Purchase ) {
 	switch ( type ) {
 		case 'live-chat:plans':
@@ -68,7 +83,7 @@ function getLiveChatUrl( type: string, purchase: Purchase ) {
 	return '';
 }
 
-type StepProps = {
+type UpsellStepProps = {
 	cancelBundledDomain?: boolean;
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
@@ -78,7 +93,6 @@ type StepProps = {
 	downgradePlan?: PlanProduct | null;
 	includedDomainPurchase?: object;
 	intent?: string;
-	onClickDowngrade?: ( upsell: string ) => void;
 	onClickFreeMonthOffer?: () => void;
 	onDeclineUpsell?: () => void;
 	plans: PlanProduct[];
@@ -94,11 +108,11 @@ export default function UpsellStep( {
 	cancellationInProgress,
 	plans,
 	...props
-}: StepProps ) {
+}: UpsellStepProps ) {
 	const hasEnTranslation = useHasEnTranslation();
 	const numberOfPluginsThemes = formatNumber( 50000 );
 	const discountRate = 25;
-	const couponCode = 'BIZWPC25';
+	const couponCode = 'BIZRENEW25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { setSubject, setShowHelpCenter } = useHelpCenter();
@@ -239,7 +253,7 @@ export default function UpsellStep( {
 				<Upsell
 					title={ __( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ __( 'Switch to monthly payments' ) }
-					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					acceptButtonUrl={ getCancelFlowPlanChangeUrl( purchase, 'downgrade-monthly' ) }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
@@ -289,7 +303,7 @@ export default function UpsellStep( {
 					acceptButtonText={ sprintf( __( 'Switch to the %(plan)s plan' ), {
 						plan: personalPlanName,
 					} ) }
-					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					acceptButtonUrl={ getCancelFlowPlanChangeUrl( purchase, 'downgrade-personal' ) }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
@@ -320,7 +334,7 @@ export default function UpsellStep( {
 		case 'free-month-offer':
 			return (
 				<Upsell
-					title={ __( 'How about a free month?' ) }
+					title={ getFreeMonthOfferTitle() }
 					acceptButtonText={ __( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
 					intent={ props.intent }
@@ -328,13 +342,7 @@ export default function UpsellStep( {
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
 				>
-					{ sprintf(
-						/* translators: %(currentPlan)s is the name of the plan to which the customer is subscribed */
-						__(
-							'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your %(currentPlan)s plan subscription to continue building your site?'
-						),
-						{ currentPlan: planName }
-					) }
+					{ getFreeMonthOfferText( planName ) }
 				</Upsell>
 			);
 	}

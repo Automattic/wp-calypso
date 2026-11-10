@@ -1,10 +1,9 @@
 import { userPurchaseSetAutoRenewQuery } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { useEffect, useMemo } from 'react';
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import { isExpiredOrRemoved, mightStillAutoRenew } from '../../utils/purchase';
-import Notice from '../notice';
+import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../notice';
 import { getExpiryStateName, getPlanExpiryNotice } from './get-plan-expiry-notice';
 import type { PlanExpiryNoticeAction, PlanExpiryNoticeScope } from './get-plan-expiry-notice';
 import type { Purchase } from '@automattic/api-core';
@@ -85,8 +84,11 @@ interface PlanExpiryNoticeProps {
 	scope?: PlanExpiryNoticeScope;
 	isPlanOwner?: boolean;
 
-	/** Renders a close button. The caller owns the dismissal; the notice keeps rendering until unmounted. */
-	onClose?: () => void;
+	/**
+	 * Renders a close button. The caller owns the dismissal; the notice keeps rendering until
+	 * unmounted. Gets the notice's event properties, to record the dismissal with.
+	 */
+	onClose?: ( eventProperties: Record< string, unknown > ) => void;
 
 	/** Extra properties for every event this notice records. */
 	eventProperties?: Record< string, unknown >;
@@ -101,7 +103,7 @@ function PlanExpiryNoticeButton( {
 	onAutoRenewEnabled,
 }: {
 	action: PlanExpiryNoticeAction;
-	variant: 'primary' | 'secondary';
+	variant: 'solid' | 'outline';
 	purchaseId: number;
 	addPaymentMethodUrl?: string;
 	onClick: () => void;
@@ -111,10 +113,10 @@ function PlanExpiryNoticeButton( {
 
 	if ( action.type === 'enable-auto-renew' ) {
 		return (
-			<Button
+			<NoticeActionButton
 				variant={ variant }
 				disabled={ isPending }
-				isBusy={ isPending }
+				loading={ isPending }
 				onClick={ () => {
 					onClick();
 					setAutoRenew(
@@ -124,16 +126,24 @@ function PlanExpiryNoticeButton( {
 				} }
 			>
 				{ action.label }
-			</Button>
+			</NoticeActionButton>
 		);
 	}
 
 	const href = action.type === 'add-payment-method' ? addPaymentMethodUrl : action.href;
 
+	if ( ! href ) {
+		return (
+			<NoticeActionButton variant={ variant } onClick={ onClick }>
+				{ action.label }
+			</NoticeActionButton>
+		);
+	}
+
 	return (
-		<Button variant={ variant } href={ href } onClick={ onClick }>
+		<NoticeActionLinkButton variant={ variant } href={ href } onClick={ onClick }>
 			{ action.label }
-		</Button>
+		</NoticeActionLinkButton>
 	);
 }
 
@@ -249,14 +259,14 @@ export function PlanExpiryNotice( {
 		<Notice
 			variant={ notice.variant }
 			title={ notice.title }
-			onClose={ onClose }
+			onClose={ onClose && ( () => onClose( eventProperties ) ) }
 			actions={
 				( primaryAction || secondaryAction ) && (
 					<>
 						{ primaryAction && (
 							<PlanExpiryNoticeButton
 								action={ primaryAction }
-								variant="primary"
+								variant="solid"
 								purchaseId={ purchase.ID }
 								addPaymentMethodUrl={ addPaymentMethodUrl }
 								onClick={ () => recordClick( primaryAction, 'primary' ) }
@@ -266,7 +276,7 @@ export function PlanExpiryNotice( {
 						{ secondaryAction && (
 							<PlanExpiryNoticeButton
 								action={ secondaryAction }
-								variant="secondary"
+								variant="outline"
 								purchaseId={ purchase.ID }
 								addPaymentMethodUrl={ addPaymentMethodUrl }
 								onClick={ () => recordClick( secondaryAction, 'secondary' ) }

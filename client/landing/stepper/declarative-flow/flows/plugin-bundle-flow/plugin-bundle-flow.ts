@@ -24,7 +24,7 @@ import {
 	afterCustomBundleSteps,
 	bundleStepsSettings,
 } from './plugin-bundle-data';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const getNextStep = (
 	currentStep: StepperStep[ 'slug' ],
@@ -88,15 +88,11 @@ const pluginBundleFlow: FlowV1 = {
 
 		const adminUrl = useSelect(
 			( select ) =>
-				String(
-					( site &&
-						( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ) ) ||
-						''
-				),
+				String( ( site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' ) ) || '' ),
 			[ site ]
 		);
 		const isAtomic = useSelect(
-			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ),
 			[ site ]
 		);
 		const storeType = useSelect(
@@ -106,7 +102,7 @@ const pluginBundleFlow: FlowV1 = {
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setDesignOnSite } = useDispatch( SITE_STORE );
 		const siteDetails = useSelect(
-			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
+			( select ) => site && select( SITE_STORE ).getSite( site.ID ),
 			[ site ]
 		);
 		const dispatch = reduxDispatch();
@@ -127,7 +123,7 @@ const pluginBundleFlow: FlowV1 = {
 						return;
 					}
 
-					const pendingActions = [
+					const pendingActions: Promise< unknown >[] = [
 						setIntentOnSite( siteSlug, intent ),
 						setGoalsOnSite( siteSlug, goals ),
 					];
@@ -261,7 +257,7 @@ const pluginBundleFlow: FlowV1 = {
 			[]
 		);
 		const fetchingSiteError = useSelect(
-			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			( select ) => select( SITE_STORE ).getFetchingSiteError(),
 			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };

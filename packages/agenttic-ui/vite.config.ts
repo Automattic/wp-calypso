@@ -16,7 +16,7 @@ export default defineConfig( {
 			fileName: ( format, entryName ) => `${ entryName }.js`,
 			formats: [ 'es' ],
 		},
-		rollupOptions: {
+		rolldownOptions: {
 			external: [
 				// Externalize all dependencies and peerDependencies
 				'react',
@@ -32,7 +32,6 @@ export default defineConfig( {
 				'class-variance-authority',
 				'clsx',
 				'framer-motion',
-				'lucide-react',
 				'react-markdown',
 				'react-textarea-autosize',
 				'remark-gfm',

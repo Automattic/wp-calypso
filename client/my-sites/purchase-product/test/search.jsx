@@ -19,6 +19,10 @@ const SITE_URL = 'https://example.com';
 const NOTICE_PRODUCT = /This site already has a Jetpack Search subscription\./;
 const NOTICE_RENEWAL = /Continuing will renew it\./;
 const NOTICE_PLAN = /Jetpack Search is already included in this site's plan\./;
+const NOTICE_EXPIRED_PRODUCT =
+	/This site already has a Jetpack Search subscription, but it has expired\./;
+const NOTICE_EXPIRED_PLAN =
+	/Jetpack Search is included in this site's plan, but the plan has expired\./;
 
 const render = ( site, jetpackSite = site, url = SITE_URL ) =>
 	renderWithProvider(
@@ -60,16 +64,24 @@ describe( 'SearchPurchase', () => {
 		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not warn for the free Search product or an expired one', () => {
+	test( 'does not warn for the free Search product', () => {
 		render( {
 			URL: SITE_URL,
 			plan: { product_slug: 'jetpack_free' },
-			products: [
-				{ product_slug: 'jetpack_search_free', expired: false },
-				{ product_slug: 'jetpack_search', expired: true },
-			],
+			products: [ { product_slug: 'jetpack_search_free', expired: false } ],
 		} );
 
+		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'warns about an expired Search product the user does not own', () => {
+		render( {
+			URL: SITE_URL,
+			plan: { product_slug: 'jetpack_free' },
+			products: [ { product_slug: 'jetpack_search', expired: true } ],
+		} );
+
+		expect( screen.getByText( NOTICE_EXPIRED_PRODUCT ) ).toBeVisible();
 		expect( screen.queryByText( NOTICE_PRODUCT ) ).not.toBeInTheDocument();
 	} );
 
@@ -152,13 +164,14 @@ describe( 'SearchPurchase', () => {
 		expect( screen.getByText( NOTICE_PLAN ) ).toBeVisible();
 	} );
 
-	test( 'does not warn when the site’s plan includes Search but has expired', () => {
+	test( 'points at the plan when the site’s plan including Search has expired', () => {
 		render( {
 			URL: SITE_URL,
 			plan: { product_slug: 'jetpack_complete', expired: true },
 			products: [],
 		} );
 
+		expect( screen.getByText( NOTICE_EXPIRED_PLAN ) ).toBeVisible();
 		expect( screen.queryByText( NOTICE_PLAN ) ).not.toBeInTheDocument();
 	} );
 } );

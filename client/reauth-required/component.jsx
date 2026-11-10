@@ -12,7 +12,6 @@ import './style.scss';
 // as two-step authentication is only available on production environments.
 export const ALLOWED_ORIGINS = [
 	'https://my.wordpress.com',
-	'https://my.woo.ai',
 	'https://agencies-beta.automattic.com',
 ];
 

@@ -30,6 +30,32 @@ describe( 'SearchResults', () => {
 		expect( await screen.findByTitle( 'test-regular.net' ) ).toBeInTheDocument();
 	} );
 
+	it( 'keeps rendering the other results if one of them throws', async () => {
+		// React logs the error caught by the boundary.
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const onSuggestionNotFound = jest.fn();
+
+		mockGetSuggestionsQuery( {
+			params: { query: 'test' },
+			suggestions: [ buildSuggestion( { domain_name: 'test-regular.com' } ) ],
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions query="test" events={ { onSuggestionNotFound } }>
+				<SearchResults
+					suggestions={ [ 'test-missing.com', 'test-regular.com' ] }
+					getInlineBundle={ () => undefined }
+				/>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByTitle( 'test-regular.com' ) ).toBeInTheDocument();
+		expect( screen.queryByTitle( 'test-missing.com' ) ).not.toBeInTheDocument();
+		expect( onSuggestionNotFound ).toHaveBeenCalledWith( 'test-missing.com' );
+
+		consoleError.mockRestore();
+	} );
+
 	it( 'renders nothing if there are no suggestions and no active filters', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'test-no-suggestions' },

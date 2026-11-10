@@ -334,6 +334,30 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=my-jetpack' );
 	} );
 
+	it.each( [ 'jetpack_pro_yearly', 'jetpack_pro_bi_yearly' ] )(
+		'redirects to My Jetpack if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and %s is in the cart',
+		( productSlug ) => {
+			jest.mocked( isJetpackCloud ).mockReturnValue( true );
+			jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				isJetpackNotAtomic: true,
+				cart: {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: productSlug,
+						},
+					],
+				},
+				adminUrl: 'https://my.site/wp-admin/',
+			} );
+			expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=my-jetpack' );
+		}
+	);
+
 	it( 'redirects to the sites wp-admin with adminPageRedirect if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is supplied', () => {
 		jest.mocked( isJetpackCloud ).mockReturnValue( true );
 		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
@@ -950,7 +974,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank-you page with dashboard query param if present', () => {
-		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'ciab' );
+		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -967,7 +991,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=ciab` );
+		expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }?dashboard=a4a` );
 	} );
 
 	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {

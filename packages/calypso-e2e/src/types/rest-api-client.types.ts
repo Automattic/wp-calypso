@@ -49,6 +49,13 @@ export interface SiteSettingsResponse {
 	settings: { [ key: string ]: unknown };
 }
 
+export interface AdminMenuItem {
+	slug: string;
+	children?: AdminMenuItem[];
+}
+
+export type AdminMenuResponse = Array< AdminMenuItem >;
+
 export interface BearerTokenResponse {
 	success: true;
 	data: {

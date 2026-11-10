@@ -11,18 +11,21 @@ import {
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
+	setWwwPrimaryDomain,
 	type BundleMetadata,
-	type FetchDomainsOptions,
 	type JobStatus,
 	type DomainSuggestionQuery,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { siteQueryFilter } from './site';
+import { siteDomainsQuery } from './site-domains';
+import { sitesQueryKey } from './sites';
 
-export const domainsQuery = ( options?: FetchDomainsOptions ) =>
+export const domainsQuery = () =>
 	queryOptions( {
-		queryKey: [ 'domains', options ],
-		queryFn: () => fetchDomains( options ),
+		queryKey: [ 'domains', 'all' ],
+		queryFn: () => fetchDomains(),
 	} );
 
 export const domainSuggestionsQuery = (
@@ -71,18 +74,20 @@ const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
 export const bundleSuggestionQuery = (
 	query: string,
 	params: Partial< DomainSuggestionQuery > = {}
-) => ( {
-	...bundleMetadataQuery( query, params ),
-	select: selectBundleSuggestion,
-} );
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleSuggestion,
+	} );
 
 export const bundleTriggersQuery = (
 	query: string,
 	params: Partial< DomainSuggestionQuery > = {}
-) => ( {
-	...bundleMetadataQuery( query, params ),
-	select: selectBundleTriggers,
-} );
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleTriggers,
+	} );
 
 export const bundleForDomainQuery = ( fqdn: string ) =>
 	queryOptions( {
@@ -164,4 +169,18 @@ export const bulkDomainsActionMutation = () =>
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );
 		},
+	} );
+
+export const setWwwPrimaryDomainMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'domain-www-primary-toggle' },
+		mutationFn: ( { domain, enabled }: { siteId: number; domain: string; enabled: boolean } ) =>
+			setWwwPrimaryDomain( domain, enabled ),
+		onSuccess: ( data, { siteId } ) =>
+			Promise.all( [
+				queryClient.invalidateQueries( siteQueryFilter( siteId ) ),
+				queryClient.invalidateQueries( { queryKey: sitesQueryKey } ),
+				queryClient.invalidateQueries( siteDomainsQuery( siteId ) ),
+				queryClient.invalidateQueries( { queryKey: [ 'domains' ] } ),
+			] ),
 	} );

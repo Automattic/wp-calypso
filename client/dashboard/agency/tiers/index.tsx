@@ -6,8 +6,9 @@ import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { a4aLink } from '../../utils/link';
+import CertificationTierPageCard from '../certification/tier-page-card';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
+import { useContactSupport } from '../support/use-contact-support';
 import DownloadBadges from './download-badges';
 import InfluencedRevenue from './influenced-revenue';
 import TierBenefits from './tier-benefits';
@@ -15,24 +16,18 @@ import TierCards from './tier-cards';
 import { useScheduleCall } from './use-schedule-call';
 import type { TierBenefitLinks } from './types';
 
-// TODO: the MSD dashboard has no contact-support entry point yet (A4A-3422). This
-// matches the placeholder on the Overview screen — wire both up together.
-const CONTACT_SUPPORT_URL = '#contact-support';
-
-// Client reports are not part of the MSD; the classic dashboard keeps them.
 const BENEFIT_LINKS: TierBenefitLinks = {
 	'manage-sites': '/sites',
-	'create-client-reports': a4aLink( '/reports' ),
 	'manage-purchases': '/purchases',
 	'make-client-referral': '/referrals',
 	'add-woopayments-to-store': '/woopayments',
-	'contact-support': CONTACT_SUPPORT_URL,
 	'manage-profile': PARTNER_DIRECTORY_ROUTE,
 };
 
 export default function AgencyTiers() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
+	const { openContactForm } = useContactSupport();
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 
 	if ( ! agency ) {
@@ -68,11 +63,13 @@ export default function AgencyTiers() {
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<Divider style={ { color: 'var(--color-gray-100)' } } />
+			<CertificationTierPageCard recordTracksEvent={ recordTracksEvent } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracksEvent }
 				onScheduleCall={ handleScheduleCall }
 				isSchedulingCall={ isSchedulingCall }
+				onContactSupport={ () => openContactForm() }
 				links={ BENEFIT_LINKS }
 				renderDownloadBadges={ ( buttonProps ) => (
 					<DownloadBadges

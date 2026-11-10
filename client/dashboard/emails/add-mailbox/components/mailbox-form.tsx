@@ -143,6 +143,11 @@ export const MailboxForm = ( {
 					type={ isPasswordVisible ? 'text' : 'password' }
 					mailboxEntity={ mailboxEntity }
 					label={ __( 'Password' ) }
+					help={
+						mailboxEntity.provider === MailboxProvider.Titan
+							? __( 'Use at least 10 characters, including a number and a special character.' )
+							: undefined
+					}
 					disabled={ disabled }
 					suffix={
 						<InputControlSuffixWrapper>

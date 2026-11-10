@@ -9,7 +9,6 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { WOO_HOSTED_PLANS_FLOW } from '@automattic/onboarding';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -22,10 +21,19 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import { useIsIndiaA4A } from './use-is-india-a4a';
 import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+
+/**
+ * Purchase attribution that arrived on the plans page URL (`source`,
+ * `ai_session_id`). Checkout reads both from its own URL, so the plans page
+ * forwards them to the checkout it opens.
+ */
+export interface CheckoutAttribution {
+	source?: string;
+	aiSessionId?: string;
+}
 
 function useUpgradeHandler( {
 	siteSlug,
@@ -33,13 +41,17 @@ function useUpgradeHandler( {
 	cartHandler,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 }: {
 	siteSlug?: string | null;
 	coupon?: string;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 } ) {
+	const { source, aiSessionId } = checkoutAttribution ?? {};
+
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -73,14 +85,19 @@ function useUpgradeHandler( {
 			}
 
 			const checkoutUrlWithArgs = addQueryArgs(
-				{ ...( coupon && { coupon } ), ...( redirectTo && { redirect_to: redirectTo } ) },
+				{
+					...( coupon && { coupon } ),
+					...( redirectTo && { redirect_to: redirectTo } ),
+					...( source && { source } ),
+					...( aiSessionId && { ai_session_id: aiSessionId } ),
+				},
 				checkoutUrl
 			);
 
 			page( checkoutUrlWithArgs );
 			return;
 		},
-		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug ]
+		[ siteSlug, coupon, cartHandler, redirectTo, pluginSlug, source, aiSessionId ]
 	);
 
 	return useCallback(
@@ -169,6 +186,7 @@ function useGenerateActionCallback( {
 	coupon,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 }: {
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
@@ -181,6 +199,7 @@ function useGenerateActionCallback( {
 	coupon?: string;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 } ): UseActionCallback {
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
 	const siteUrl = useSelector( ( state: IAppState ) => siteId && getSiteUrl( state, siteId ) );
@@ -200,6 +219,7 @@ function useGenerateActionCallback( {
 		cartHandler,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 	} );
 	const handleDowngradeClick = useDowngradeHandler( {
 		siteSlug,
@@ -207,7 +227,6 @@ function useGenerateActionCallback( {
 		currentPlan,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
-	const isIndiaA4A = useIsIndiaA4A();
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
 		async () => {
@@ -221,16 +240,6 @@ function useGenerateActionCallback( {
 
 			/* 1. Send user to VIP if it's an enterprise plan */
 			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-				// India A4A test: the Enterprise card is re-skinned as Automattic for Agencies.
-				if ( isIndiaA4A ) {
-					recordTracksEvent( 'calypso_plan_step_a4a_india_click', { flow: flowName } );
-					window.open(
-						'https://automattic.com/for-agencies/?ref=wordpressdotcomindiapricing',
-						'_blank'
-					);
-					return;
-				}
-
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
 				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
 				window.open(
@@ -263,7 +272,7 @@ function useGenerateActionCallback( {
 			if (
 				sitePlanSlug &&
 				( ! flowName ||
-					flowName === WOO_HOSTED_PLANS_FLOW ||
+					intent === 'plans-woo-hosted' ||
 					intent === 'plans-upgrade-or-downgrade' ) &&
 				intent !== 'plans-p2' &&
 				! availableForPurchase

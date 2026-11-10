@@ -15,7 +15,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 } ) );
 
-jest.mock( '@automattic/posthog', () => ( { init: jest.fn() } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: jest.fn(),
 } ) );
@@ -111,7 +110,23 @@ describe( 'ai-site-builder-spec flow', () => {
 		it( 'shows the error step when the wait fails', () => {
 			submitFrom( 'processing', { processingResult: ProcessingResult.FAILURE } );
 
-			expect( navigate ).toHaveBeenCalledWith( 'error', undefined, true );
+			expect( navigate ).toHaveBeenCalledWith(
+				'error',
+				{ errorReason: 'processing_failed' },
+				true
+			);
 		} );
+
+		it.each( [
+			[ ProcessingResult.SUCCESS, 'processing_no_redirect' ],
+			[ ProcessingResult.NO_ACTION, 'processing_no_action' ],
+		] )(
+			'names the cause when the wait ends with %s and no built site',
+			( processingResult, errorReason ) => {
+				submitFrom( 'processing', { processingResult } );
+
+				expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason }, true );
+			}
+		);
 	} );
 } );

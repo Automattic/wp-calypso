@@ -34,7 +34,7 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
-	isFromJetpackConnector?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	partnerConfig?: PartnerConfig | null;
 	isGravPoweredClient?: boolean;
@@ -112,7 +112,7 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
-	isFromJetpackConnector,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 	partnerConfig,
 	isGravPoweredClient,
@@ -137,7 +137,7 @@ export function getHeaderText( {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		if ( isFromJetpackConnector ) {
+		if ( isUnifiedConnectionFlow ) {
 			// In the unified connection flow the site is already registered by
 			// the time the user lands on the login page, so the H1 stays
 			// neutral. The plugin set is forwarded so the resolver can pick

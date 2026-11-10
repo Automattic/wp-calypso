@@ -9,10 +9,12 @@ import {
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
 	EXTERNAL_PRESSABLE_AUTH_URL,
+	EXTERNAL_PRESSABLE_USAGE_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableAddonProduct,
 	isPressableHostingProduct,
+	isPressableTitanProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -64,6 +66,9 @@ export default function LicenseDetailsActions( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isPressableAddonLicense =
 		isPressableAddonProduct( licenseKey ) || isPressableAddonProduct( product );
+	// Titan inboxes are managed and cancelled in Pressable, not from the license list.
+	const isTitanLicense =
+		isPressableTitanProduct( licenseKey ) || isPressableTitanProduct( product );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const isAutoRenewDisabled =
 		subscription?.status === 'active' && ! subscription.isAutoRenewEnabled;
@@ -170,6 +175,7 @@ export default function LicenseDetailsActions( {
 
 			{ canRevoke &&
 				! isClientLicense &&
+				! isTitanLicense &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
 					: licenseState !== LicenseState.Revoked ) &&
@@ -177,6 +183,21 @@ export default function LicenseDetailsActions( {
 				! isAutoRenewDisabled && (
 					<Button compact onClick={ openRevokeDialog } scary>
 						{ translate( 'Revoke' ) }
+					</Button>
+				) }
+
+			{ isPressableLicense &&
+				! isPressableAddonLicense &&
+				! isClientLicense &&
+				licenseState !== LicenseState.Revoked && (
+					<Button
+						borderless
+						compact
+						href={ EXTERNAL_PRESSABLE_USAGE_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'View plan usage details in Pressable ↗' ) }
 					</Button>
 				) }
 

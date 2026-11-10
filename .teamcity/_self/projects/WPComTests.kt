@@ -40,22 +40,6 @@ object WPComTests : Project({
 		}
 	}
 
-	// Gutenberg Simple
-	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c", atomic=false, edge=false));
-	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada", atomic=false, edge=false));
-	// Gutenberg Simple Edge
-	buildType(gutenbergPlaywrightBuildType("desktop", "e8817ab4-ec4e-4d58-a215-d1f87b2227b6", atomic=false, edge=true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "a655d304-4dcf-4864-8d82-8b22dba29feb", atomic=false, edge=true));
-	// Gutenberg Atomic
-	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , atomic=true, edge=false));
-	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", atomic=true, edge=false));
-	// Gutenberg Atomic Edge
-	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
-	// Gutenberg Atomic Nightly
-	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-
 	// E2E Tests for Jetpack Simple Deployment
 	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
 	buildType(jetpackSimpleDeploymentE2eBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661"));
@@ -73,111 +57,13 @@ object WPComTests : Project({
 	buildType(GutenbergPlaywrightTests);
 
 	// Jetpack E2E Tests (Playwright)
+	// Started from outside this repository by build ID: check the callers listed in
+	// test/e2e/docs/tests_ci.md#jetpack-build-configurations before renaming or removing one.
 	template(JetpackE2ETestsBuildTemplate);
 	buildType(JetpackSimpleE2ETests);
 	buildType(JetpackAtomicE2ETests);
 	buildType(JetpackAtomicSmokeE2ETests);
 })
-
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): BuildType {
-	var siteType = if (atomic) "atomic" else "simple";
-	var releaseType = when {
-		nightly -> "nightly"
-		edge -> "edge"
-		else -> "production"
-	}
-
-	val buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)"
-
-	return BuildType({
-		templates(CalypsoE2ETestsBuildTemplate)
-		id("WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice")
-		uuid = buildUuid
-		name = buildName
-		description = "Runs Gutenberg $siteType E2E tests on $targetDevice size"
-		disableSettings("calypso_e2e_commit_status_publisher")
-
-		params {
-			param("TEST_GROUP", "@gutenberg")
-			param("PROJECT", targetDevice)
-			param("CALYPSO_BASE_URL", "https://wordpress.com")
-			checkbox(
-				name = "env.COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
-			if (atomic) {
-				param("env.TEST_ON_ATOMIC", "true")
-				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
-				// The reason for this is an inconsistent issue breaking the login in AT test sites when
-				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
-				param("env.PW_WORKERS", "1")
-			}
-
-			if (nightly) {
-				param("env.GUTENBERG_NIGHTLY", "true");
-			}
-
-			if (edge) {
-				param("env.GUTENBERG_EDGE", "true")
-			}
-
-			password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
-			// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
-			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
-			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
-			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
-			// Set by an external trigger (Gutenbot's `announce.sh`) to thread the result under
-			// the corresponding GB version announcement. When empty, the helper script exits early.
-			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
-		}
-
-		steps {
-			// These two steps post the build result as a *threaded reply* under the
-			// corresponding Gutenberg version announcement in Slack. They are only relevant
-			// when this build was kicked off by Gutenbot's `announce.sh`, which injects the
-			// announcement's `GB_E2E_ANNOUNCEMENT_THREAD_TS` (and channel/token).
-			//
-			// They run on every build (one per success/failure), but the helper script exits
-			// early and posts nothing when `GB_E2E_ANNOUNCEMENT_THREAD_TS` is empty — i.e. on
-			// normal scheduled or manual runs. This is separate from the `#gutenberg-e2e`
-			// channel notifications handled by the built-in notifier in `buildFeatures` below.
-			exec {
-				name = "Post Successful Message to Slack"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
-			}
-
-			exec {
-				name = "Post Failure Message to Slack"
-				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
-				path = "./bin/post-threaded-slack-message.sh"
-				arguments = "\"%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID%\" \"%GB_E2E_ANNOUNCEMENT_THREAD_TS%\" \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" \"%GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%\""
-			}
-		}
-
-		features {
-			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
-		}
-
-		triggers {
-			schedule {
-				schedulingPolicy = daily {
-					hour = 4
-				}
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-				triggerBuild = always()
-				withPendingChangesOnly = false
-			}
-		}
-	})
-}
 
 fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType({
@@ -237,6 +123,12 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 	});
 }
 
+// Workers per single-variation Atomic run, all hitting one site. The ecomm-plan site answers
+// API calls past the 10s action timeout with 5 concurrent editors and holds at 2; the other
+// sites hold at 5.
+private const val SINGLE_VARIATION_WORKERS = "5"
+private const val SINGLE_VARIATION_ECOMM_WORKERS = "2"
+
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
 
@@ -271,7 +163,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 					targetDevice = targetDevice,
 					additionalEnvVars = mapOf(
 						"ATOMIC_VARIATION" to variation,
-						"PW_WORKERS" to "5",
+						"PW_WORKERS" to if ( variation == "ecomm-plan" ) SINGLE_VARIATION_ECOMM_WORKERS else SINGLE_VARIATION_WORKERS,
 					),
 					stepName = "Run Playwright specs: $variation",
 					// Per-variation report name so the loop's runs don't overwrite each other.
@@ -346,10 +238,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
-				// The spec files spread over the seven Atomic sites, but every worker can still
-				// land on one of them at once: the private site fails at 14 concurrent workers
-				// and holds at 4, so the count stays bounded by what a single site serves.
-				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
+				// No PW_WORKERS: the Playwright config sizes and caps mixed runs per Atomic site.
 			)
 		}
 
@@ -557,7 +446,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
+				sendTo = "#jetpack-alerts"
 				messageFormat = verboseMessageFormat {
 					addStatusText = true
 				}
@@ -598,19 +487,19 @@ private object JetpackAtomicE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "5")
 	}
 
 	features {
 		matrix {
-			param("env.ATOMIC_VARIATION", listOf(
-				value("default", label = "Default"),
-				value("php-old", label = "PHP Old"),
-				value("php-new", label = "PHP New"),
-				value("wp-beta", label = "WP Beta"),
-				value("wp-previous", label = "WP Previous"),
-				value("private", label = "Private"),
-				value("ecomm-plan", label = "Ecomm"),
+			// EXTRA_ENV_VARS so each variation can set its own worker count.
+			param("EXTRA_ENV_VARS", listOf(
+				value("ATOMIC_VARIATION=default;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "Default"),
+				value("ATOMIC_VARIATION=php-old;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "PHP Old"),
+				value("ATOMIC_VARIATION=php-new;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "PHP New"),
+				value("ATOMIC_VARIATION=wp-beta;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "WP Beta"),
+				value("ATOMIC_VARIATION=wp-previous;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "WP Previous"),
+				value("ATOMIC_VARIATION=private;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "Private"),
+				value("ATOMIC_VARIATION=ecomm-plan;PW_WORKERS=$SINGLE_VARIATION_ECOMM_WORKERS", label = "Ecomm"),
 			))
 		}
 	}
@@ -626,7 +515,7 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "14")
+		// No PW_WORKERS: the Playwright config sizes and caps mixed runs per Atomic site.
 		param("env.ATOMIC_VARIATION", "mixed")
 		// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
 		// re-run of a failed build repeats the variations that failed.

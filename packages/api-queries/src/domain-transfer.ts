@@ -48,34 +48,34 @@ export const ipsTagMutation = ( domain: string ) =>
 		mutationFn: ( ipsTag: string ) => saveIpsTag( domain, ipsTag ),
 	} );
 
-export const domainTransferRequestQuery = ( domain: string, siteSlug: string ) =>
+export const domainTransferRequestQuery = ( domain: string, siteId: number ) =>
 	queryOptions( {
-		queryKey: [ 'domains', domain, 'domain-transfer-request', siteSlug ],
-		queryFn: () => fetchDomainTransferRequest( domain, siteSlug ),
+		queryKey: [ 'domains', domain, 'domain-transfer-request', siteId ],
+		queryFn: () => fetchDomainTransferRequest( domain, siteId ),
 	} );
 
-export const updateDomainTransferRequestMutation = ( domain: string, siteSlug: string ) =>
+export const updateDomainTransferRequestMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'domain-xfer-req-update' },
-		mutationFn: ( email: string ) => updateDomainTransferRequest( domain, siteSlug, email ),
+		mutationFn: ( email: string ) => updateDomainTransferRequest( domain, siteId, email ),
 		onSuccess: ( _, email ) => {
 			// Manually update the cache before invalidating the query
-			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, {
+			queryClient.setQueryData( domainTransferRequestQuery( domain, siteId ).queryKey, {
 				email,
 				requested_at: new Date().toISOString(),
 			} );
-			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
+			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteId ) );
 		},
 	} );
 
-export const deleteDomainTransferRequestMutation = ( domain: string, siteSlug: string ) =>
+export const deleteDomainTransferRequestMutation = ( domain: string, siteId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'domain-xfer-req-delete' },
-		mutationFn: () => deleteDomainTransferRequest( domain, siteSlug ),
+		mutationFn: () => deleteDomainTransferRequest( domain, siteId ),
 		onSuccess: () => {
 			// Manually update the cache before invalidating the query
-			queryClient.setQueryData( domainTransferRequestQuery( domain, siteSlug ).queryKey, null );
-			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteSlug ) );
+			queryClient.setQueryData( domainTransferRequestQuery( domain, siteId ).queryKey, null );
+			queryClient.invalidateQueries( domainTransferRequestQuery( domain, siteId ) );
 		},
 	} );
 

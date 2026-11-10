@@ -14,6 +14,8 @@ export interface EmptyViewProps {
 	icon?: React.ReactNode;
 	heading?: string;
 	help?: string;
+	/** Rendered where the suggestions go, instead of them. */
+	children?: React.ReactNode;
 }
 
 export const EmptyView: React.FC< EmptyViewProps > = ( {
@@ -22,12 +24,14 @@ export const EmptyView: React.FC< EmptyViewProps > = ( {
 	icon = <BigSkyIcon size={ 32 } fullBleed className={ styles.defaultIcon } />,
 	heading = __( 'Your WordPress AI — ready to help design, edit, and launch.', 'a8c-agenttic' ),
 	help,
+	children,
 } ) => {
 	return (
 		<div className={ styles.container }>
 			<div className={ styles.icon }>{ icon }</div>
 			<h2 className={ styles.heading }>{ heading }</h2>
-			{ suggestions && suggestions.length > 0 && (
+			{ children && <div className={ styles.suggestionsWrapper }>{ children }</div> }
+			{ ! children && suggestions && suggestions.length > 0 && (
 				<div className={ styles.suggestionsWrapper }>
 					<Suggestions
 						suggestions={ suggestions }

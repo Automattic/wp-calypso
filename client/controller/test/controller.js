@@ -2,22 +2,14 @@
  * @jest-environment jsdom
  */
 
-import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { navigate } from 'calypso/lib/navigate';
-import addQueryArgs from 'calypso/lib/url/add-query-args';
-import {
-	maybeRedirectToMultiSiteDashboard,
-	redirectLoggedOut,
-	redirectMyJetpack,
-} from '../index.web';
+import { maybeRedirectToMultiSiteDashboard, redirectLoggedOut } from '../index.web';
 
 jest.mock( '@automattic/calypso-router' );
 jest.mock( 'wpcom-proxy-request', () => ( {
 	isCookieAuthMissing: jest.fn( () => false ),
 } ) );
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
 jest.mock( 'calypso/dashboard/utils/link', () => ( {
 	dashboardLink: jest.fn( ( path ) => `https://my.wordpress.com${ path }` ),
 } ) );
@@ -42,12 +34,23 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 		path: '/email/example.com/purchase/example.wordpress.com',
 	} );
 
+	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
 	let next;
+	let locationReplace;
 
 	beforeEach( () => {
 		next = jest.fn();
-		navigate.mockClear();
+		locationReplace = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: { replace: locationReplace },
+		} );
 		dashboardLink.mockClear();
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
 	it( 'does not redirect when the flag is disabled and the user is not enrolled', () => {
@@ -56,14 +59,14 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 			next
 		);
 
-		expect( navigate ).not.toHaveBeenCalled();
+		expect( locationReplace ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
 	} );
 
 	it( 'redirects to the flag target when the predicate returns true', () => {
 		maybeRedirectToMultiSiteDashboard( targetPath, () => true )( buildContext(), next );
 
-		expect( navigate ).toHaveBeenCalledWith(
+		expect( locationReplace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
@@ -75,7 +78,7 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 			next
 		);
 
-		expect( navigate ).toHaveBeenCalledWith(
+		expect( locationReplace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
@@ -223,82 +226,5 @@ describe( 'redirectLoggedOut', () => {
 
 			expect( window.location ).toBe( '/log-in?redirect_to=%2Fme%2Fpurchases' );
 		} );
-	} );
-} );
-
-describe( 'redirectMyJetpack', () => {
-	let pageSpy;
-	let next;
-
-	const query = {
-		site: 'example.com',
-		redirect_to: encodeURIComponent( 'http://example.com/wp-admin/admin.php?page=my-jetpack' ),
-		source: 'my-jetpack',
-	};
-
-	const context = {
-		store: mockStore( {
-			currentUser: {
-				id: null,
-			},
-			ui: {
-				selectedSiteId: null,
-			},
-		} ),
-		query,
-		params: {
-			// These properties are parsed from the path
-			domainOrProduct: 'jetpack_backup_t1_yearly',
-			product: '196967475',
-		},
-		path: addQueryArgs( query, `/checkout/123123/jetpack_backup_t1_yearly` ),
-		pathname: '/checkout/123123/jetpack_backup_t1_yearly',
-	};
-
-	beforeEach( () => {
-		pageSpy = jest.spyOn( page, 'default' );
-		next = jest.fn();
-	} );
-
-	afterEach( () => {
-		pageSpy.mockRestore();
-		next.mockRestore();
-	} );
-
-	it( 'should redirect checkout with site id to siteless checkout if user is not logged in', () => {
-		const redirectUrl = addQueryArgs(
-			{
-				connect_after_checkout: true,
-				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
-			},
-			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
-		);
-
-		redirectMyJetpack( context, next );
-
-		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
-		expect( next ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should redirect checkout with site slug to siteless checkout if user is not logged in', () => {
-		const contextWithSiteSlug = {
-			...context,
-			path: addQueryArgs( query, `/checkout/example.com/jetpack_backup_t1_yearly` ),
-			pathname: '/checkout/example.com/jetpack_backup_t1_yearly',
-		};
-		const redirectUrl = addQueryArgs(
-			{
-				connect_after_checkout: true,
-				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
-			},
-			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
-		);
-
-		redirectMyJetpack( contextWithSiteSlug, next );
-
-		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
-		expect( next ).not.toHaveBeenCalled();
 	} );
 } );

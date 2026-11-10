@@ -1,8 +1,8 @@
 import { RuleTester } from 'eslint';
-import rule from '../no-unsafe-wp-apis';
+import plugin from '../../..';
 
 const ruleTester = new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
 		ecmaVersion: 6,
 	},
@@ -10,7 +10,7 @@ const ruleTester = new RuleTester( {
 
 const options = [ { '@wordpress/package': [ '__experimentalSafe', '__unstableSafe' ] } ];
 
-ruleTester.run( 'no-unsafe-wp-apis', rule, {
+ruleTester.run( 'no-unsafe-wp-apis', plugin.rules[ 'no-unsafe-wp-apis' ], {
 	valid: [
 		{ code: "import _ from 'external-module';", options },
 		{ code: "import { map } from 'external-module';", options },
@@ -55,7 +55,6 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 				{
 					message:
 						'Warning: Using `__experimentalUnsafe` from `@wordpress/package` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
-					type: 'ImportSpecifier',
 				},
 			],
 		},
@@ -66,7 +65,6 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 				{
 					message:
 						'Warning: Using `__experimentalSafe` from `@wordpress/unsafe` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
-					type: 'ImportSpecifier',
 				},
 			],
 		},
@@ -77,7 +75,6 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 				{
 					message:
 						'Warning: Using `__experimentalSafe` from `@wordpress/unsafe` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
-					type: 'ImportSpecifier',
 				},
 			],
 		},
@@ -88,7 +85,6 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 				{
 					message:
 						'Warning: Using `__experimentalUnsafe` from `@wordpress/package` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
-					type: 'ImportSpecifier',
 				},
 			],
 		},
@@ -99,7 +95,6 @@ ruleTester.run( 'no-unsafe-wp-apis', rule, {
 				{
 					message:
 						'Warning: Using `__unstableFeature` from `@wordpress/package` could lead to unexpected issues - experimental and unstable features are prone to future breaking changes.',
-					type: 'ImportSpecifier',
 				},
 			],
 		},

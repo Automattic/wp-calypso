@@ -32,7 +32,7 @@ export function CreditsTool( { plan, percent, onPlanChange, onPercentChange }: C
 
 	return (
 		<ToolDropdown label={ plan === 'none' ? 'Credits' : `Credits · ${ percent }%` }>
-			<div className="credits-tool">
+			<div className="tool-panel">
 				<div className="suggestions-tool" role="radiogroup" aria-label="Plan">
 					{ PLANS.map( ( option ) => (
 						<label
@@ -51,7 +51,7 @@ export function CreditsTool( { plan, percent, onPlanChange, onPercentChange }: C
 						</label>
 					) ) }
 				</div>
-				<label className="credits-tool__slider" htmlFor={ sliderId }>
+				<label className="tool-panel__slider" htmlFor={ sliderId }>
 					<span>{ percent }% left</span>
 					<input
 						id={ sliderId }
@@ -64,7 +64,7 @@ export function CreditsTool( { plan, percent, onPlanChange, onPercentChange }: C
 						onChange={ ( event ) => onPercentChange( Number( event.target.value ) ) }
 					/>
 				</label>
-				<div className="credits-tool__presets">
+				<div className="tool-panel__actions">
 					{ PRESETS.map( ( preset ) => (
 						<button
 							key={ preset }

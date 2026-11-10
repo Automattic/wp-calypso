@@ -390,6 +390,14 @@ class ReaderStream extends Component {
 
 			// Open selection.
 			case 'Enter': {
+				// Let a focused button, such as a card's Save button, handle its own Enter.
+				if ( event.target.closest( 'button' ) ) {
+					return;
+				}
+				// A snapshot opens in a new tab, and so does its focused title link.
+				if ( this.props.selectedPostKey?.snapshotId ) {
+					event.preventDefault();
+				}
 				return this.handleOpenSelection();
 			}
 
@@ -928,10 +936,16 @@ const withStreamPosts = ( WrappedComponent ) =>
 		] );
 
 		const streamType = getStreamType( props.streamKey ?? '' );
+		// `saved` only changes when the user saves or unsaves, which refetches it. A
+		// poll would still hold a post the user just unsaved and offer it back as new.
 		const shouldPoll =
-			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'shelf_discover' ].includes(
-				streamType
-			) && ! props.forcePlaceholders;
+			! [
+				'search',
+				'custom_recs_posts_with_images',
+				'discover',
+				'shelf_discover',
+				'saved',
+			].includes( streamType ) && ! props.forcePlaceholders;
 
 		const {
 			pendingCount,

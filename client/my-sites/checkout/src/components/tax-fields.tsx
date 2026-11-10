@@ -48,7 +48,6 @@ type TaxFieldsPropsBase = {
 	onChange: ( taxInfo: ManagedContactDetails ) => void;
 	allowVat?: boolean;
 	isDisabled?: boolean;
-	fullWidthCountryField?: boolean;
 };
 
 // Conditional type: If `showForBusinessUseCheckbox` is true, require `isForBusiness` and `handleIsForBusinessChange`.
@@ -77,7 +76,6 @@ export default function TaxFields( {
 	allowIsForBusinessUseCheckbox = false,
 	allowVat,
 	isDisabled,
-	fullWidthCountryField,
 }: TaxFieldsProps ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
@@ -270,9 +268,7 @@ export default function TaxFields( {
 				.filter( ( _field, index ) => index % 2 === 0 )
 				.map( ( field, index ) => (
 					<FieldRow key={ index }>
-						<LeftColumn fullWidth={ fullWidthCountryField && ! fields[ index * 2 + 1 ] }>
-							{ field }
-						</LeftColumn>
+						<LeftColumn>{ field }</LeftColumn>
 						{ fields[ index * 2 + 1 ] && <RightColumn>{ fields[ index * 2 + 1 ] }</RightColumn> }
 					</FieldRow>
 				) ) }

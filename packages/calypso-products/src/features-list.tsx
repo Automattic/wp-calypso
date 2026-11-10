@@ -343,6 +343,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
@@ -1782,7 +1783,11 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
 			i18n.translate(
-				'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+				'Fee on paid subscriptions and payments (+\u00A0Stripe processing\u00A0fee)'
+			),
+		getDescription: () =>
+			i18n.translate(
+				'Our share of what you earn from paid subscriptions, paid posts and other payments. It drops as you upgrade, to 0% on Commerce. Stripe’s processing fee is separate.'
 			),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
@@ -1899,9 +1904,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_NEWSLETTERS_RSS ]: {
 		getSlug: () => FEATURE_NEWSLETTERS_RSS,
-		getTitle: () => i18n.translate( 'Built-in newsletters & RSS' ),
+		getTitle: () => i18n.translate( 'Built-in newsletter with unlimited subscribers' ),
 		getDescription: () =>
-			i18n.translate( 'Let your followers subscribe to your content as a newsletter or via RSS.' ),
+			i18n.translate(
+				'Email every post to unlimited subscribers, with an RSS feed included. On the Free plan you can import up to 100 subscribers from another platform. Imports are unlimited on paid plans.'
+			),
 	},
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
@@ -2445,7 +2452,9 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,
 		getTitle: () => i18n.translate( 'Paid subscribers' ),
 		getDescription: () =>
-			i18n.translate( 'Turn site visitors into subscribers, with built-in subscription tools.' ),
+			i18n.translate(
+				'Charge readers monthly or yearly for your newsletter or premium posts. Available on every plan, including Free.'
+			),
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
@@ -3283,6 +3292,14 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
+			),
+	},
+	[ FEATURE_CONNECT_AI_AGENTS ]: {
+		getSlug: () => FEATURE_CONNECT_AI_AGENTS,
+		getTitle: () => i18n.translate( 'Connect ChatGPT, Claude, or other agents' ),
+		getDescription: () =>
+			i18n.translate(
+				'MCP (Model Context Protocol) lets AI assistants like ChatGPT and Claude work directly with your site. Ask them to edit content, check your stats, or manage your site.'
 			),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER ]: {

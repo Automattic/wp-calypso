@@ -33,6 +33,7 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
+import { getTitanEmailItem, isTitanTier } from 'calypso/signup/steps/emails/titan-email-item';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	buildDIFMCartExtrasObject,
@@ -214,31 +215,6 @@ export const getNewSiteParams = ( {
 	return newSiteParams;
 };
 
-function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback ) {
-	const cartItem = getSignupDependencyStore( state )?.cartItem;
-	const newCartItems = [ cartItem, domainItem ].filter( ( item ) => item );
-
-	const newCartItemsToAdd = newCartItems.map( ( item ) =>
-		addPrivacyProtectionIfSupported( item, state )
-	);
-
-	try {
-		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
-		window.localStorage.setItem( 'siteParams', JSON.stringify( newSiteParams ) );
-	} catch ( e ) {
-		throw new Error( 'An unexpected error occured while saving your cart: ' + e );
-	}
-
-	const providedDependencies = {
-		domainItem,
-		themeItem,
-		siteId: undefined,
-		siteSlug: 'no-site',
-	};
-
-	callback( undefined, providedDependencies );
-}
-
 export function createSiteWithCart( callback, dependencies, stepData, reduxStore ) {
 	const {
 		domainItem,
@@ -264,7 +240,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const isFreeThemePreselected = ( themeSlugWithRepo ?? '' ).startsWith( 'pub' ) && ! themeItem;
 	const state = reduxStore.getState();
-	const bearerToken = getSignupDependencyStore( state )?.bearer_token ?? null;
 
 	const isManageSiteFlow = getSignupDependencyStore( state )?.isManageSiteFlow ?? false;
 
@@ -286,11 +261,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		state,
 		siteAccentColor,
 	} );
-
-	if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
-		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
-		return;
-	}
 
 	const locale = getLocaleSlug();
 
@@ -648,8 +618,13 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug } = dependencies;
+	const { domainItem, siteSlug } = dependencies;
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
+	// A skipped mailbox step isn't revisited, so its email item can predate a later domain change.
+	const emailItem =
+		dependencies.emailItem && domainItem?.meta
+			? { ...dependencies.emailItem, meta: domainItem.meta }
+			: dependencies.emailItem;
 	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		setTimeout( callback, 0 );
@@ -762,22 +737,12 @@ function addPrivacyProtectionIfSupported( item, state ) {
 	return item;
 }
 
-export function launchSiteApi( callback, dependencies ) {
-	const { siteSlug } = dependencies;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/launch` )
-		.then( () => callback( null ) )
-		.catch( ( error ) => callback( error ) );
-}
-
 export function createAccount(
 	callback,
 	dependencies,
 	{
 		userData,
 		flowName,
-		lastKnownFlow,
 		queryArgs,
 		service,
 		access_token,
@@ -788,20 +753,6 @@ export function createAccount(
 		recaptchaToken,
 	}
 ) {
-	const flowToCheck = flowName || lastKnownFlow;
-
-	if ( 'onboarding-registrationless' === flowToCheck ) {
-		const { cartItem, domainItem, cartItems } = dependencies;
-		const isPurchasingItem =
-			! isEmpty( cartItem ) || ! isEmpty( domainItem ) || ! isEmpty( cartItems );
-
-		// If purchasing item in this flow, return without creating a user account.
-		if ( isPurchasingItem ) {
-			const providedDependencies = { allowUnauthenticated: true };
-			return setTimeout( () => callback( undefined, providedDependencies ), 0 );
-		}
-	}
-
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
 
@@ -969,71 +920,22 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	return isEmpty( dependenciesNotProvided );
 }
 
-function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
-	let fulfilledDependencies = [];
-	const domainItem = undefined;
-	const domainCart = undefined;
+/**
+ * Skips the mailbox step when the entry URL already picked a Titan tier, adding
+ * that tier to the cart instead.
+ */
+export function isMailboxFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { signupDependencies, submitSignupStep } = nextProps;
+	const { domainItem, tier, billing } = signupDependencies ?? {};
 
-	submitSignupStep( { stepName, domainItem, wasSkipped: true }, { domainItem, domainCart } );
-	recordExcludeStepEvent( stepName, tracksEventValue );
-
-	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-	}
-}
-
-export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep, flowName } = nextProps;
-
-	// Prevent duplicate processing for launch-site flow's domains-launch step
-	if (
-		flowName === 'launch-site' &&
-		stepName === 'domains-launch' &&
-		flows.excludedSteps.includes( stepName )
-	) {
+	if ( ! isTitanTier( tier ) || flows.excludedSteps.includes( stepName ) ) {
 		return;
 	}
 
-	const customDomains = siteDomains?.filter( ( siteDomain ) => ! siteDomain.isWPCOMDomain ) ?? [];
-
-	if ( customDomains.length > 0 ) {
-		const tracksEventValue = customDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
-		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
-	}
-}
-
-export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {
-	if ( 'onboarding-registrationless' !== nextProps.flowName ) {
-		return;
-	}
-
-	const { submitSignupStep } = nextProps;
-	const cartItem = nextProps?.signupDependencies?.cartItem ?? false;
-	const domainItem = nextProps?.signupDependencies?.domainItem ?? false;
-	const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
-
-	if ( isPurchasingItem ) {
-		if ( flows.excludedSteps.includes( stepName ) ) {
-			return;
-		}
-
-		submitSignupStep(
-			{ stepName },
-			{ bearer_token: null, username: null, marketing_price_group: null }
-		);
-		recordExcludeStepEvent( stepName, null );
-
-		const fulfilledDependencies = [ 'bearer_token', 'username', 'marketing_price_group' ];
-
-		if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-			flows.excludeStep( stepName );
-		}
-	} else if ( flows.excludedSteps.includes( stepName ) ) {
-		flows.resetExcludedStep( stepName );
-		nextProps.removeStep( { stepName } );
-	}
+	const emailItem = getTitanEmailItem( domainItem.meta, tier, billing );
+	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { domainItem, emailItem } );
+	recordExcludeStepEvent( stepName, emailItem.product_slug );
+	flows.excludeStep( stepName );
 }
 
 const FREE_TRIAL_PLAN_SLUGS = [

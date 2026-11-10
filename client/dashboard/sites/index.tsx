@@ -1,10 +1,11 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
 import {
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-	keepPreviousData,
-} from '@tanstack/react-query';
+	dashboardSiteFiltersQuery,
+	isAutomatticianQuery,
+	paginatedSitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
@@ -128,17 +129,14 @@ const getFetchPaginatedSitesOptions = (
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const queryClient = useQueryClient();
 
-	const { queries } = useAppContext();
-
 	const { data: siteFilters } = useQuery( {
-		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+		...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 		enabled: !! view.filters?.find( ( filter ) => filter.field === 'plan' ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
-		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
-		placeholderData: keepPreviousData,
+		...paginatedSitesQuery( 'all', getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
 		meta: {
 			fullPageLoader: true,
 		},
@@ -146,9 +144,7 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 
 	const result = {
 		sites: paginatedSitesQueryResult.data?.sites,
-		hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
 		isLoadingSites: paginatedSitesQueryResult.isLoading,
-		isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
 		totalItems: paginatedSitesQueryResult.data?.total,
 	};
 
@@ -209,14 +205,11 @@ export default function Sites() {
 		sanitizeFields,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData, hasNoData, totalItems } = useSiteListQuery(
-		view,
-		{
-			isDefaultView: ! resetView && ! view.search && view.page === 1,
-			isRestoringAccount,
-			isAutomattician,
-		}
-	);
+	const { sites, isLoadingSites, totalItems } = useSiteListQuery( view, {
+		isDefaultView: ! resetView && ! view.search && view.page === 1,
+		isRestoringAccount,
+		isAutomattician,
+	} );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
@@ -268,10 +261,7 @@ export default function Sites() {
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite
-						context="sites-dashboard"
-						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
-					/>
+					<AddNewSite context="sites-dashboard" />
 				</Modal>
 			) }
 			<PageLayout
@@ -310,8 +300,7 @@ export default function Sites() {
 						sites={ filteredData }
 						fields={ fields }
 						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						isPlaceholderData={ isPlaceholderData }
+						isLoading={ isLoadingSites }
 						empty={
 							<DataViewsEmptyStateLayout
 								title={ __( 'No sites match your search' ) }

@@ -1,9 +1,9 @@
 import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
+import { useBackHereSearch } from '../components/fullscreen-page';
+import { isAgencyApproved } from '../marketplace/is-agency-approved';
 
 type CommissionType = 'referrals' | 'migrations' | 'woopayments';
 
@@ -29,22 +29,41 @@ function getDescription( commissionType?: CommissionType ) {
 	}
 }
 
+// Stays loading until the commission activity is known, so the notice doesn't pop in late.
+export function useMissingPaymentSettings( {
+	hasCommissionActivity,
+	isLoadingActivity = false,
+}: {
+	hasCommissionActivity: boolean;
+	isLoadingActivity?: boolean;
+} ) {
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id ?? 0;
+	// Payout settings stay closed until the agency is approved, so there is nowhere to send it.
+	const enabled = !! agencyId && isAgencyApproved( agency ) && hasCommissionActivity;
+	const {
+		data: tipaltiData,
+		isSuccess,
+		isLoading,
+	} = useQuery( {
+		...tipaltiPayeeQuery( agencyId ),
+		enabled,
+	} );
+
+	return {
+		isEligible: enabled && isSuccess && ! tipaltiData?.IsPayable,
+		isLoading: isLoadingActivity || ( enabled && isLoading ),
+	};
+}
+
 export default function MissingPaymentSettingsNotice( {
 	hasCommissionActivity,
 	commissionType,
 }: MissingPaymentSettingsNoticeProps ) {
-	const { data: agency } = useQuery( activeAgencyQuery() );
-	const agencyId = agency?.id ?? 0;
-	// Dismissal is not persisted: the agency still has money waiting on these
-	// details, so the notice comes back on the next visit.
-	const [ isDismissed, setIsDismissed ] = useState( false );
+	const { isEligible } = useMissingPaymentSettings( { hasCommissionActivity } );
+	const backHereSearch = useBackHereSearch();
 
-	const { data: tipaltiData, isSuccess } = useQuery( {
-		...tipaltiPayeeQuery( agencyId ),
-		enabled: !! agencyId && hasCommissionActivity,
-	} );
-
-	if ( ! hasCommissionActivity || ! isSuccess || tipaltiData?.IsPayable || isDismissed ) {
+	if ( ! isEligible ) {
 		return null;
 	}
 
@@ -52,11 +71,14 @@ export default function MissingPaymentSettingsNotice( {
 		<Notice
 			variant="warning"
 			title={ __( 'Add your payout information to get paid.' ) }
-			onClose={ () => setIsDismissed( true ) }
 			actions={
-				<RouterLinkButton variant="primary" to="/payout-settings">
+				<RouterNoticeActionLinkButton
+					variant="solid"
+					to="/payout-settings"
+					search={ backHereSearch }
+				>
 					{ __( 'Add payout information now' ) }
-				</RouterLinkButton>
+				</RouterNoticeActionLinkButton>
 			}
 		>
 			{ getDescription( commissionType ) }

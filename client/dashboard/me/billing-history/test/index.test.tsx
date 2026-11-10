@@ -50,7 +50,6 @@ function makeReceipt( id: number, siteId: number, variation: string ): Receipt {
 		cc_num: '',
 		cc_name: '',
 		cc_email: '',
-		credit: '',
 		items: [
 			{
 				id,
@@ -136,7 +135,7 @@ describe( '<BillingHistory>', () => {
 		await screen.findByRole( 'table' );
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Site' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'menuitem', { name: 'Site' } ) ).toBeVisible();
 	} );
 
 	test( 'does not offer a site filter when the user only has one site', async () => {

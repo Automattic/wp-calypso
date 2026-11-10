@@ -18,8 +18,6 @@ interface SupportGuideProps {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
-	/** Called when the user aborts the current request. */
-	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -30,7 +28,6 @@ export default function SupportGuide( {
 	isOpen,
 	chatHeaderOptions,
 	isDocked,
-	onAbort,
 	onClose,
 	onExpand,
 }: SupportGuideProps ) {
@@ -44,14 +41,12 @@ export default function SupportGuide( {
 	const isFromChat = state?.from === FROM_CHAT || !! state?.conversationId;
 	const title = __( 'Support Guides', __i18n_text_domain__ );
 
-	// Navigate back to the source route, preserving relevant state.
+	// Navigate back to the conversation the guide was opened from.
 	const handleBack = () => {
-		if ( state?.from === FROM_CHAT ) {
-			navigate( '/chat' );
-		} else if ( state?.conversationId ) {
+		if ( state?.from !== FROM_CHAT && state?.conversationId ) {
 			navigate( '/zendesk', { state } );
 		} else {
-			navigate( '/support-guides', { state } );
+			navigate( '/chat' );
 		}
 	};
 
@@ -70,7 +65,6 @@ export default function SupportGuide( {
 			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
-			onStop={ onAbort }
 			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>

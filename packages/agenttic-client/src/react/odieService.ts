@@ -3,7 +3,11 @@
  */
 
 import { logger } from '../client/utils/logger';
-import { serverChatToLoadResult, ServerConversationError } from './serverTypes';
+import {
+	serverChatToLoadResult,
+	ServerConversationError,
+	withUniqueMessageIds,
+} from './serverTypes';
 import type { ServerChat, ServerConversationListItem, ServerLoadResult } from './serverTypes';
 import type { AuthProvider } from '../client/types/index';
 
@@ -232,21 +236,17 @@ export async function loadAllMessagesFromServer(
 		}
 
 		return {
-			messages: allMessages,
+			...firstPage,
+			messages: withUniqueMessageIds( allMessages ),
 			pagination: {
 				...firstPage.pagination,
 				currentPage: totalPagesToLoad,
 				hasMore: totalPagesToLoad < firstPage.pagination.totalPages,
 			},
-			chatId: firstPage.chatId,
 		};
 	} catch ( error ) {
 		logger( 'Failed to load all pages: %O', error );
 		// Return what we have so far
-		return {
-			messages: allMessages,
-			pagination: firstPage.pagination,
-			chatId: firstPage.chatId,
-		};
+		return { ...firstPage, messages: allMessages };
 	}
 }

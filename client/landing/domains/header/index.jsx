@@ -1,6 +1,7 @@
 import { Card, WordPressLogo } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import spacefastLogoUrl from './spacefast-logo.svg';
 
 import './style.scss';
 
@@ -28,6 +29,9 @@ class DomainsLandingHeader extends Component {
 			case 'tumblr_live':
 			case 'tumblr_ote':
 				return tumblrLogo;
+			case 'spacefast_live':
+			case 'spacefast_ote':
+				return <img className="header__wordmark" src={ spacefastLogoUrl } alt="Spacefast" />;
 			case 'wordpress':
 				return <WordPressLogo className="header__logo" size={ 52 } />;
 			default:

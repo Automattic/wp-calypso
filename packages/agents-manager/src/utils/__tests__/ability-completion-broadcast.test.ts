@@ -4,7 +4,8 @@
 import { withAbilityCompletionBroadcast } from '../ability-completion-broadcast';
 import { ABILITY_COMPLETED_EVENT, type AbilityCompletedDetail } from '../agent-activity-events';
 import { recordAgentsManagerTracksEvent } from '../tracks';
-import type { Ability, ToolProvider } from '../../types';
+import type { ToolProvider } from '../../types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '../tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
 

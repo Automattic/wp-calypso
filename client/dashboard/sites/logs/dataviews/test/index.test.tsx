@@ -138,8 +138,7 @@ const fixedDateRange = {
 };
 
 describe( 'SiteLogsDataViews', () => {
-	test( 'renders PHP logs and syncs URL params', async () => {
-		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
+	test( 'renders PHP logs', async () => {
 		mockPreferences();
 		mockPhpLogsOnce();
 
@@ -159,8 +158,6 @@ describe( 'SiteLogsDataViews', () => {
 		// Also verify PHP logs content renders
 		expect( await screen.findByText( 'Hello', {}, { timeout: 5000 } ) ).toBeVisible();
 		expect( await screen.findByText( 'User', {}, { timeout: 5000 } ) ).toBeVisible();
-		expect( replaceSpy ).toHaveBeenCalled();
-		replaceSpy.mockRestore();
 	} );
 
 	test( 'renders Server logs', async () => {
@@ -211,6 +208,7 @@ describe( 'SiteLogsDataViews', () => {
 		expect( autoRefresh ).not.toHaveBeenCalled();
 	} );
 
+	// Renders the full DataViews and opens its filter menu; a loaded CI agent can push it past Jest's 5s default.
 	test( 'picking a filter from the menu makes no new logs request', async () => {
 		mockPreferences();
 		const requestedQueries = mockServerLogs();
@@ -238,7 +236,7 @@ describe( 'SiteLogsDataViews', () => {
 
 		await screen.findByRole( 'option', { name: '404' } );
 		expect( requestedQueries ).toHaveLength( requestsBefore );
-	} );
+	}, 10_000 );
 
 	// When the parent supplies 'autoRefreshDisabledReason', the toggle control must be disabled to prevent interaction.
 	test( 'auto-refresh toggle is disabled when reason provided', async () => {
@@ -262,6 +260,7 @@ describe( 'SiteLogsDataViews', () => {
 		expect( toggle ).toBeDisabled();
 	} );
 
+	// Drives many popover interactions; a loaded CI agent can push it past Jest's 5s default.
 	test( 'filters by request URL, and Reset view clears it', async () => {
 		mockPreferences();
 		const requestedQueries = mockServerLogs();
@@ -303,7 +302,7 @@ describe( 'SiteLogsDataViews', () => {
 		// Role queries cost ~130ms each once the view options popover has opened.
 		await user.click( await screen.findByText( 'Reset view' ) );
 
-		await user.click( screen.getByLabelText( 'Add filter' ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Add filter' } ) );
 		expect( await screen.findByRole( 'menuitem', { name: 'Request URL' } ) ).toBeVisible();
-	} );
+	}, 10_000 );
 } );

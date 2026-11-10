@@ -108,7 +108,15 @@ export function useBasePersistentView( {
 	const { data: persistedView } = useSuspenseQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: persistView } = useMutation( userPreferenceOptimisticMutation( preferenceName ) );
 
-	const baseView = persistedView ?? defaultView;
+	// A persisted view only stores `fields` when they differ from the default's,
+	// so screens that adjust the default's fields (e.g. by width) keep doing so.
+	const baseView = useMemo(
+		() =>
+			persistedView && ! ( 'fields' in persistedView )
+				? { ...persistedView, fields: defaultView.fields }
+				: ( persistedView ?? defaultView ),
+		[ persistedView, defaultView ]
+	);
 
 	const page = parseInt( queryParams?.page ) || baseView.page || 1;
 	const search = queryParams?.search || baseView.search || '';
@@ -232,7 +240,7 @@ export function useBasePersistentView( {
 				if ( fastDeepEqual( viewToPersist, defaultView ) ) {
 					persistView( undefined );
 				} else {
-					persistView( viewToPersist );
+					persistView( removeDefaultFieldsFromView( viewToPersist, defaultView ) );
 				}
 			}
 		},
@@ -303,6 +311,15 @@ function removeEmptyFiltersFromView( view: View ): View {
 		delete view.filters;
 	}
 	return view;
+}
+
+function removeDefaultFieldsFromView( view: View, defaultView: View ): View {
+	if ( ! fastDeepEqual( view.fields, defaultView.fields ) ) {
+		return view;
+	}
+	const viewToPersist = { ...view };
+	delete viewToPersist.fields;
+	return viewToPersist;
 }
 
 function clearQueryParamsFromTransientFilters( queryParams: any, transientFilterFields: string[] ) {

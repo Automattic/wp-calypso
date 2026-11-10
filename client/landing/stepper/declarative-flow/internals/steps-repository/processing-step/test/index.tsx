@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -13,8 +13,13 @@ import { recordStepComponentType, recordStepRouteMount } from '../../../step-mou
 import { mockStepProps, renderStep } from '../../test/helpers/index';
 import type { OnboardActions } from '@automattic/data-stores';
 
+const mockRecordSignupComplete = jest.fn();
+
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
-	useRecordSignupComplete: () => jest.fn(),
+	useRecordSignupComplete: () => mockRecordSignupComplete,
+} ) );
+jest.mock( 'calypso/landing/stepper/declarative-flow/registered-flows', () => ( {
+	onboarding: async () => ( { default: { isSignupFlow: true } } ),
 } ) );
 jest.mock( 'calypso/lib/analytics/signup', () => ( {
 	recordSignupProcessingScreen: jest.fn(),
@@ -38,6 +43,32 @@ describe( 'ProcessingStep', () => {
 		onboardActions().setTransferStatus( null );
 		onboardActions().setTransferStartedAt( null );
 		onboardActions().setTransferTimedOut( false );
+		onboardActions().setPendingAction( undefined );
+	} );
+
+	describe( 'signup completion', () => {
+		const runPendingAction = async ( props: Partial< ProcessingStepProps > ) => {
+			onboardActions().setPendingAction( async () => ( { siteSlug: 'example.wordpress.com' } ) );
+			const stepProps = mockStepProps( { flow: ONBOARDING_FLOW, ...props } ) as ProcessingStepProps;
+			renderStep( <ProcessingStep { ...stepProps } /> );
+			await waitFor( () => expect( stepProps.navigation.submit ).toHaveBeenCalled() );
+			// The flow is looked up asynchronously before the completion is recorded.
+			await act( async () => {} );
+		};
+
+		it( 'records the completion of a signup flow', async () => {
+			await runPendingAction( {} );
+
+			expect( mockRecordSignupComplete ).toHaveBeenCalledWith(
+				expect.objectContaining( { siteSlug: 'example.wordpress.com' } )
+			);
+		} );
+
+		it( 'leaves the completion to a run that already recorded it', async () => {
+			await runPendingAction( { skipSignupComplete: true } );
+
+			expect( mockRecordSignupComplete ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'shows the transfer wait for a transferring hosted site creation flow', () => {

@@ -1056,7 +1056,7 @@ const StepWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	box-sizing: border-box;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 50px 0 0 0;
+		padding: 32px 0 0 0;
 	}
 `;
 

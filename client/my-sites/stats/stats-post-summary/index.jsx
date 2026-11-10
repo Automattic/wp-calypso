@@ -16,6 +16,7 @@ import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 import { getPublishMonthKey } from './publish-month';
+import { clampRangeEnd, getRangeEndCeiling } from './range-end';
 
 import './style.scss';
 
@@ -179,15 +180,22 @@ class StatsPostSummary extends Component {
 				// months before the post was published. Drop both rather than
 				// paginating into fake empty bars; post-publish months with
 				// zero views are kept, consistent with Days/Weeks paging.
-				const today = moment();
-				// The month buckets are site-local, so the publish boundary is
-				// resolved in the site's timezone too (see getPublishMonthKey);
-				// comparing YYYY-MM keys keeps the trim independent of the
-				// viewer's zone.
+				// Both boundaries are site-local month keys: the site's current
+				// month (floored at the newest month with views) and the publish month.
+				const records = [ ...statsByMonth( stats, moment ) ];
+				const newestMonthWithViews = records.reduce(
+					( newest, record ) => ( record.value > 0 ? record.startDate : newest ),
+					undefined
+				);
+				const lastMonth = getRangeEndCeiling(
+					this.props.momentSiteZone(),
+					newestMonthWithViews,
+					'YYYY-MM'
+				);
 				const publishMonth = getPublishMonthKey( stats.post, this.props.momentSiteZone );
-				return [ ...statsByMonth( stats, moment ) ].filter(
+				return records.filter(
 					( record ) =>
-						moment( record.startDate ).isSameOrBefore( today, 'month' ) &&
+						record.startDate.slice( 0, 7 ) <= lastMonth &&
 						( ! publishMonth || record.startDate.slice( 0, 7 ) >= publishMonth )
 				);
 			}
@@ -225,12 +233,15 @@ class StatsPostSummary extends Component {
 				break;
 		}
 
-		// Don't extend the range into the future when the last bar is still
-		// the current, in-progress period (e.g. this month before it ends).
-		const today = moment();
-		if ( end.isAfter( today, 'day' ) ) {
-			end = today;
-		}
+		// Don't extend an in-progress period past the site's today, floored at
+		// the newest bar charted. Callers only format() the result.
+		end = moment(
+			clampRangeEnd(
+				end.format( 'YYYY-MM-DD' ),
+				this.props.momentSiteZone(),
+				chartData[ chartData.length - 1 ].startDate
+			)
+		);
 
 		return { start, end };
 	}

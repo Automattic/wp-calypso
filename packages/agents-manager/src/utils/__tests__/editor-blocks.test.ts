@@ -8,11 +8,13 @@ import {
 	getCurrentPost,
 	getPaletteColor,
 	getRootBlocks,
+	isTemplatePartLoaded,
 	openUndoLevel,
 	replaceRootBlocks,
 	resolveBlocksRoot,
 	stageRootBlocks,
 	type EditorBlock,
+	type UndoLevel,
 } from '../editor-blocks';
 
 const block = ( clientId: string, name: string ): EditorBlock => ( {
@@ -28,23 +30,56 @@ const markNextChangeAsNotPersistent = jest.fn();
 const markLastChangeAsPersistent = jest.fn();
 const clearSelectedBlock = jest.fn();
 
+// Each record's blocks, by its clientId (`''` for the document), as the writes leave them.
+let records: Record< string, EditorBlock[] > = {};
+const NO_BLOCKS: EditorBlock[] = [];
+
+// A write to the list of the block it names, which lands in `record`, or is
+// dropped without one, as a restricted list does.
+const land = jest.fn( ( _clientId: string, record?: string ) => {
+	if ( record !== undefined ) {
+		records[ record ] = [ ...( records[ record ] ?? [] ) ];
+	}
+} );
+const writeTo = ( level: UndoLevel ) =>
+	level.write< [ string, string? ] >( land, ( clientId ) => clientId );
+
 function withEditor( {
 	blocks = [],
 	postContent,
 	sectionRoot,
 	postId,
 	title,
+	parents = {},
+	controlled = [],
 }: {
 	blocks?: EditorBlock[];
 	postContent?: string;
 	sectionRoot?: string;
 	postId?: number;
 	title?: string;
+	/** Each block's parent. */
+	parents?: Record< string, string >;
+	/** The blocks whose inner blocks sync to their own record. */
+	controlled?: string[];
 } = {} ) {
 	( select as jest.Mock ).mockImplementation( ( store: string ) =>
 		store === 'core/block-editor'
 			? {
-					getBlocks: ( root?: string ) => ( root ? [] : blocks ),
+					getBlocks: ( root?: string ) => records[ root ?? '' ] ?? ( root ? NO_BLOCKS : blocks ),
+					getBlock: ( clientId: string ) =>
+						clientId in parents ? block( clientId, 'core/group' ) : null,
+					getBlockParents: ( clientId: string ) => {
+						const ancestors: string[] = [];
+
+						for ( let parent = parents[ clientId ]; parent; parent = parents[ parent ] ) {
+							ancestors.unshift( parent );
+						}
+
+						// Frozen, as the selector's cached result must not be changed.
+						return Object.freeze( ancestors );
+					},
+					areInnerBlocksControlled: ( clientId: string ) => controlled.includes( clientId ),
 					getBlocksByName: ( name: string ) =>
 						name === 'core/post-content' && postContent ? [ postContent ] : [],
 					getSectionRootClientId: () => sectionRoot,
@@ -65,7 +100,10 @@ function withEditor( {
 	} );
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => {
+	jest.clearAllMocks();
+	records = {};
+} );
 
 describe( 'resolveBlocksRoot', () => {
 	it.each( [
@@ -158,20 +196,73 @@ describe( 'writes', () => {
 	it( 'folds several writes into one undo level', () => {
 		withEditor();
 		const level = openUndoLevel();
-		const write = level.write( replaceInnerBlocks );
+		const write = writeTo( level );
 
-		write( 'a', blocks );
+		write( 'a', '' );
 
 		expect( level.hasWritten() ).toBe( true );
 		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 1 );
 		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
-		expect( replaceInnerBlocks ).toHaveBeenCalledWith( 'a', blocks );
+		expect( land ).toHaveBeenCalledWith( 'a', '' );
 
-		write( 'b', blocks );
+		write( 'b', '' );
 		level.close();
 
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 1 );
 		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledWith();
 		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	// A write that changes nothing opens no undo record: a later write marked
+	// transient would fold into the record before it, and leave its own record
+	// with nothing to save (WPAGENT-201).
+	it( 'opens the level on the first write that lands', () => {
+		withEditor( { parents: { header: '', button: 'header' }, controlled: [ 'header' ] } );
+		const level = openUndoLevel();
+		const write = writeTo( level );
+
+		write( 'header' );
+		write( 'header', 'header' );
+
+		expect( markLastChangeAsPersistent ).toHaveBeenCalledTimes( 1 );
+		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
+
+		write( 'button', 'header' );
+
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'opens the level in each record it writes', () => {
+		withEditor( {
+			parents: { header: '', button: 'header', paragraph: '' },
+			controlled: [ 'header' ],
+		} );
+		const level = openUndoLevel();
+		const write = writeTo( level );
+
+		write( 'button', 'header' );
+		write( 'paragraph', '' );
+
+		expect( markNextChangeAsNotPersistent ).not.toHaveBeenCalled();
+
+		write( 'button', 'header' );
+		write( 'paragraph', '' );
+
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'writes to the nearest record, every time, for a record nested in another', () => {
+		withEditor( {
+			parents: { header: '', nav: 'header', item: 'nav', link: 'item' },
+			controlled: [ 'header', 'nav' ],
+		} );
+		const level = openUndoLevel();
+		const write = writeTo( level );
+
+		write( 'link', 'nav' );
+		write( 'link', 'nav' );
+
+		expect( markNextChangeAsNotPersistent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'closes nothing when nothing was written', () => {
@@ -205,5 +296,96 @@ describe( 'writes', () => {
 		clearBlockSelection();
 
 		expect( clearSelectedBlock ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'isTemplatePartLoaded', () => {
+	const PART_ID = 'assembler//footer';
+
+	function withPart( {
+		blocks = [],
+		attributes = { slug: 'footer', theme: 'assembler' },
+		resolved = true,
+		record,
+	}: {
+		blocks?: EditorBlock[];
+		attributes?: Record< string, unknown >;
+		resolved?: boolean;
+		record?: { blocks?: unknown[]; content?: unknown };
+	} ) {
+		const hasFinishedResolution = jest.fn( () => resolved );
+		const getEditedEntityRecord = jest.fn( () => record );
+
+		jest.mocked( select ).mockImplementation( ( store ) =>
+			store === 'core/block-editor'
+				? ( {
+						getBlocks: () => blocks,
+						getBlock: () => ( { ...block( 'footer', 'core/template-part' ), attributes } ),
+					} as never )
+				: ( {
+						getCurrentTheme: () => ( { stylesheet: 'assembler' } ),
+						hasFinishedResolution,
+						getEditedEntityRecord,
+					} as never )
+		);
+
+		return { hasFinishedResolution, getEditedEntityRecord };
+	}
+
+	it( 'holds once the part has blocks in the tree', () => {
+		withPart( { blocks: [ block( 'credit', 'core/paragraph' ) ], resolved: false } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( true );
+	} );
+
+	it( 'does not hold while the entity is resolving', () => {
+		const { hasFinishedResolution } = withPart( { resolved: false } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( false );
+		expect( hasFinishedResolution ).toHaveBeenCalledWith( 'getEditedEntityRecord', [
+			'postType',
+			'wp_template_part',
+			PART_ID,
+		] );
+	} );
+
+	it.each( [
+		{ case: 'saved with no content', record: { content: '' }, expected: true },
+		{ case: 'edited to no blocks', record: { blocks: [], content: () => '' }, expected: true },
+		{ case: 'missing', record: undefined, expected: true },
+		{ case: 'saved with no raw content', record: { content: { raw: '' } }, expected: true },
+		{
+			case: 'saved with raw blocks the tree does not hold yet',
+			record: { content: { raw: '<!-- wp:site-title /-->' } },
+			expected: false,
+		},
+		{
+			case: 'saved with blocks the tree does not hold yet',
+			record: { content: '<!-- wp:paragraph --><p>Credit</p><!-- /wp:paragraph -->' },
+			expected: false,
+		},
+		{
+			case: 'edited to blocks the tree does not hold yet',
+			record: { blocks: [ {} ] },
+			expected: false,
+		},
+	] )( 'reads a resolved part $case as loaded: $expected', ( { record, expected } ) => {
+		withPart( { record } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( expected );
+	} );
+
+	// Core's block keys the entity the same way.
+	it( 'keys a part that names no theme under the active one', () => {
+		const { getEditedEntityRecord } = withPart( { attributes: { slug: 'footer' }, record: {} } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( true );
+		expect( getEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_template_part', PART_ID );
+	} );
+
+	it( 'does not hold for a part with no slug', () => {
+		withPart( { attributes: {}, record: {} } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( false );
 	} );
 } );

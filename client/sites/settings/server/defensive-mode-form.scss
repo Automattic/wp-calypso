@@ -14,9 +14,6 @@
 }
 
 @keyframes defensive-mode-card__enabled-indicator-pulse {
-	from {
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--studio-wordpress-blue-10) 0%);
-	}
 	to {
 		box-shadow: 0 0 0 3px var(--studio-wordpress-blue-10);
 	}

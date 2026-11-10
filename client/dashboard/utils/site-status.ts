@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import type { SiteBlockingStatus, SiteMigrationStatus } from '../types';
 import type { Site } from '@automattic/api-core';
 
@@ -9,11 +10,15 @@ export function getSiteBlockingStatus( item: Site ): SiteBlockingStatus {
 		return 'deleted';
 	}
 
-	const { migration_status } = item.site_migration;
-	if ( migration_status?.startsWith( 'migration-pending' ) ) {
+	const { migration_status, status_v2 } = item.site_migration;
+	if ( isWordPressMigration( item ) ) {
+		// Goes by the same state as the lock, so the two can't disagree when the flow sticker lags.
+		if ( isSiteMigrationInProgress( item ) ) {
+			return status_v2 === 'pending' ? 'migration_pending' : 'migration_started';
+		}
+	} else if ( migration_status?.startsWith( 'migration-pending' ) ) {
 		return 'migration_pending';
-	}
-	if (
+	} else if (
 		migration_status?.startsWith( 'migration-started' ) ||
 		migration_status?.startsWith( 'migration-in-progress' )
 	) {
@@ -52,7 +57,25 @@ export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null 
 	};
 }
 
+// A WordPress (Reprint) migration, which has its own views.
+export function isWordPressMigration( item: Site ) {
+	return config.isEnabled( 'migration/reprint-flow' ) && item.site_migration.type === 'wordpress';
+}
+
+// A WordPress migration handed to our team, which has its own views too.
+export function isAssistedWordPressMigration( item: Site ) {
+	return (
+		config.isEnabled( 'migration/reprint-flow' ) &&
+		item.site_migration.type === 'assisted-wordpress'
+	);
+}
+
 export function isSiteMigrationInProgress( item: Site ) {
+	// A WordPress (Reprint) migration reports its own state. The others still go by their flow sticker.
+	if ( isWordPressMigration( item ) || isAssistedWordPressMigration( item ) ) {
+		return item.site_migration.status_v2 !== 'completed';
+	}
+
 	const { status } = getSiteMigrationState( item ) ?? {};
 	if ( ! status ) {
 		return false;

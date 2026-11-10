@@ -36,6 +36,7 @@ describe( 'actions', () => {
 				type: PRODUCTS_LIST_RECEIVE,
 				productsList: { businessPlan },
 				productsListType: null,
+				isPartialList: false,
 			} );
 		} );
 	} );
@@ -65,6 +66,7 @@ describe( 'actions', () => {
 					type: PRODUCTS_LIST_RECEIVE,
 					productsList: { businessPlan },
 					productsListType: null,
+					isPartialList: false,
 				} );
 			} );
 		} );

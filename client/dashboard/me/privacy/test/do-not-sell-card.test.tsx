@@ -41,8 +41,8 @@ function mockSaveSettings() {
 
 const originalFetch = global.fetch;
 
-// The geo lookup uses `fetch` rather than wpcom, so nock can't intercept it.
-// TODO: Update nock.
+// nock can't intercept the geo lookup because it passes JSDOM's `AbortSignal`, which Node's
+// `fetch()` rejects.
 function mockGeoLookup( countryCode: string, region: string ) {
 	global.fetch = jest.fn().mockResolvedValue( {
 		ok: true,

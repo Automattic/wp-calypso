@@ -300,7 +300,12 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	return (
 		<>
 			{ promptVerification && <InterestsVerificationNudge /> }
-			<VStack spacing={ 4 } className="interests-modal__content">
+			{ /* pointer-events does not remove these controls from the tab order. */ }
+			<VStack
+				spacing={ 4 }
+				className="interests-modal__content"
+				inert={ promptVerification ? true : undefined }
+			>
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
 					<p className="interests-modal__subtitle">

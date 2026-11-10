@@ -7,7 +7,7 @@
 Pass with a `require` string for the module path to be loaded:
 
 ```jsx
-<AsyncLoad require="calypso/components/async-load" />;
+<AsyncLoad require="calypso/components/async-load" />
 ```
 
 Depending on the environment configuration, this will be transformed automatically into either a `require` or `require.ensure` call.
@@ -18,7 +18,8 @@ See [`babel-plugin-transform-wpcalypso-async` documentation](https://github.com/
 
 The following props can be passed to the AsyncLoad component:
 
-| property      | type              | required | comment                                                                                                                                                                                                                                                                                             |
-| ------------- | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `require`     | String (Function) | yes      | In general usage, this should be passed as a string of the module to be imported. During build, the string prop is [transformed to a function](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/babel-plugin-transform-wpcalypso-async) which is called to require the specified module. |
-| `placeholder` | PropTypes.node    | no       | A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown. If `null` is provided, then no placeholder is shown.                                                                                                                  |
+| property              | type              | required | comment                                                                                                                                                                                                                                                                                                                                                           |
+| --------------------- | ----------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `require`             | String (Function) | yes      | In general usage, this should be passed as a string of the module to be imported. During build, the string prop is [transformed to a function](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/babel-plugin-transform-wpcalypso-async) which is called to require the specified module.                                                               |
+| `placeholder`         | PropTypes.node    | no       | A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown. If `null` is provided, then no placeholder is shown.                                                                                                                                                                                |
+| `loadFailureFallback` | PropTypes.node    | no       | A fallback to render if the module's chunk fails to load (e.g. it is blocked or missing); the failure is recorded as a `calypso_chunk_error` stat and logged to Logstash (once per chunk per page session). Other errors, such as one thrown while the module evaluates or inside the loaded component, are not caught. If omitted, chunk failures propagate too. |

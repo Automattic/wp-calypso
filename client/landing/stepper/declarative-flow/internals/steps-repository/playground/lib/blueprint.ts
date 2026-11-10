@@ -1,3 +1,4 @@
+import { BlueprintLoadError } from './blueprint-load-error';
 import { BLUEPRINT_LIB_HOST, FALLBACK_PHP_VERSION } from './constants';
 import { ZipFilesystem, resolveRemoteBlueprint } from './resolve-remote-blueprint-standalone';
 import type {
@@ -175,6 +176,20 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 	return 'unknown';
 }
 
+// The host serving a `blueprint-url` blueprint, such as woocommerce.com for its `/start/` store.
+export function getBlueprintUrlHost( query: URLSearchParams ): string | null {
+	const blueprintUrl = query.get( 'blueprint-url' );
+	if ( ! blueprintUrl ) {
+		return null;
+	}
+
+	try {
+		return new URL( blueprintUrl ).host;
+	} catch {
+		return null;
+	}
+}
+
 async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Blueprint > {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
@@ -275,6 +290,6 @@ async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.error( error );
-		throw new Error( `Failed to resolve blueprint: ${ source }` );
+		throw new BlueprintLoadError( source, error );
 	}
 }

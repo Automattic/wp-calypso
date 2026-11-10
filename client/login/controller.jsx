@@ -7,6 +7,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
+import { getConnectionFlowFromRedirectTo } from './connection-flow';
 import { LocalizedMagicLogin } from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -290,7 +291,8 @@ export function redirectJetpack( context, next ) {
 	const isUserComingFromPricingPage =
 		redirect_to?.includes( 'source=jetpack-plans' ) ||
 		redirect_to?.includes( 'source=jetpack-connect-plans' );
-	const isUserComingFromMigrationPlugin = redirect_to?.includes( 'wpcom-migration' );
+	const { connectorFrom } = getConnectionFlowFromRedirectTo( redirect_to, context.query );
+	const isUserComingFromMigrationPlugin = connectorFrom?.startsWith( 'wpcom-migration' );
 
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page

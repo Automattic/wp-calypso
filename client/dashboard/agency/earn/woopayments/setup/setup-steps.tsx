@@ -53,6 +53,7 @@ export default function SetupSteps( {
 						hasError ? (
 							<Button
 								variant="primary"
+								size="compact"
 								href={ wpAdminInstallUrl }
 								target="_blank"
 								rel="noopener noreferrer"
@@ -63,6 +64,7 @@ export default function SetupSteps( {
 						) : (
 							<Button
 								variant="primary"
+								size="compact"
 								disabled={ isInstalling }
 								isBusy={ isInstalling }
 								onClick={ onInstallClick }

@@ -2,11 +2,16 @@ import * as actions from './actions';
 import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import type { HelpCenterAction } from './actions';
+import type { CHECKOUT_SUPPORT_VARIATIONS } from './constants';
 import type { Location } from 'history';
+
+export type CheckoutSupportVariation = ( typeof CHECKOUT_SUPPORT_VARIATIONS )[ number ];
+
 export interface HelpCenterShowOptions {
 	hasPremiumSupport: boolean;
 	hideBackButton: boolean;
 	contextTerm: string;
+	checkoutSupportVariation?: CheckoutSupportVariation;
 }
 export interface SiteLogo {
 	id: number;

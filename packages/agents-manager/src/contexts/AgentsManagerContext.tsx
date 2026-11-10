@@ -33,6 +33,8 @@ export interface AgentsManagerContextType {
 	currentRoute?: string;
 	/** Whether this screen is currently enabled only for internal users. */
 	isInternalOnly: boolean;
+	/** Whether the host's masterbar renders the AI chat button, even before it's in the DOM. */
+	hasMasterbarAiChatButton: boolean;
 	/**
 	 * Whether the user is eligible for chat support.
 	 *
@@ -63,6 +65,7 @@ const defaultContext: AgentsManagerContextType = {
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isInternalOnly: false,
+	hasMasterbarAiChatButton: false,
 	isEligibleForChat: false,
 	zendeskConversationTags: [],
 	agentConfig: null,
@@ -82,6 +85,7 @@ export interface AgentsManagerContextProviderProps {
 			| 'site'
 			| 'currentRoute'
 			| 'isInternalOnly'
+			| 'hasMasterbarAiChatButton'
 			| 'isEligibleForChat'
 			| 'zendeskConversationTags'
 			| 'zendeskSmoochIntegrationKey'

@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -20,7 +21,8 @@ class PostCommentContent extends Component {
 
 	render() {
 		// Don't trust comment content unless it was provided by the API
-		if ( this.props.isPlaceholder ) {
+		const isBlockMarkup = this.props.content.includes( '<!-- wp:' );
+		if ( this.props.isPlaceholder && ! isBlockMarkup ) {
 			return (
 				<div className={ clsx( 'comments__comment-content', this.props.className ) }>
 					{ this.props.content.split( '\n' ).map( ( item, key ) => {
@@ -34,6 +36,11 @@ class PostCommentContent extends Component {
 				</div>
 			);
 		}
+		// A pending comment from the block editor shows its markup sanitized, as the API will render it.
+		const content = this.props.isPlaceholder
+			? DOMPurify.sanitize( this.props.content )
+			: this.props.content;
+
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
@@ -41,7 +48,7 @@ class PostCommentContent extends Component {
 					<div
 						className="comments__comment-content"
 						ref={ this.props.setWithDimensionsRef }
-						dangerouslySetInnerHTML={ { __html: this.props.content } }
+						dangerouslySetInnerHTML={ { __html: content } }
 					/>
 				</div>
 			</AutoDirection>

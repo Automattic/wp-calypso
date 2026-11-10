@@ -11,25 +11,31 @@ import {
 	fetchSitePurchases,
 	fetchCancellationFeatures,
 	setDelayedDowngrade,
+	fetchPurchaseSiteTransferPreview,
+	transferPurchaseToSite,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { sitesQueryKey } from './sites';
 import type {
 	AssignPaymentMethodParams,
 	PurchaseCancelOptions,
 	PurchaseDowngradeOptions,
+	SiteTransferRequest,
 } from '@automattic/api-core';
 
 export const userPurchasesQuery = () =>
 	queryOptions( {
 		queryKey: [ 'upgrades' ],
 		queryFn: () => fetchUserPurchases(),
+		meta: { persist: false },
 	} );
 
 export function userTransferredPurchasesQuery() {
 	return queryOptions( {
 		queryKey: [ 'upgrades', 'transferred' ],
 		queryFn: () => fetchUserTransferredPurchases(),
+		meta: { persist: false },
 	} );
 }
 
@@ -43,6 +49,7 @@ export const purchaseQuery = ( purchaseId: number ) =>
 	queryOptions( {
 		queryKey: [ 'upgrades', purchaseId ],
 		queryFn: () => fetchPurchase( purchaseId ),
+		meta: { persist: false },
 	} );
 
 /**
@@ -136,5 +143,34 @@ export const setDelayedDowngradeMutation = () =>
 		onSuccess: ( _data, params ) => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
 			queryClient.invalidateQueries( purchaseQuery( params.purchaseId ) );
+		},
+	} );
+
+/**
+ * What moving a purchase to another site would do. The preview carries a state
+ * token that the transfer must send back, so it is never served from a stale
+ * cache entry.
+ */
+export const purchaseSiteTransferPreviewQuery = ( purchaseId: number, targetBlogId: number ) =>
+	queryOptions( {
+		queryKey: [ 'upgrades', purchaseId, 'site-transfer-preview', targetBlogId ],
+		queryFn: () => fetchPurchaseSiteTransferPreview( purchaseId, targetBlogId ),
+		staleTime: 0,
+		gcTime: 0,
+	} );
+
+export const purchaseSiteTransferMutation = ( purchaseId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'purch-site-transfer' },
+		mutationFn: ( request: SiteTransferRequest ) => transferPurchaseToSite( purchaseId, request ),
+		onSuccess: () => {
+			// Purchases, plans and domains all change site, so refresh everything
+			// that reports which site has what.
+			queryClient.invalidateQueries( userPurchasesQuery() );
+			queryClient.invalidateQueries( { queryKey: sitesQueryKey } );
+			queryClient.invalidateQueries( { queryKey: [ 'site-by-id' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'site-by-slug' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'site' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );

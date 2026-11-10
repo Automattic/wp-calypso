@@ -14,12 +14,13 @@ import {
 	updateBlockAttributes,
 } from '../../utils/editor-blocks';
 import { NAVIGATION_BLOCK } from '../../utils/navigation-menu';
+import { attributesAlreadyMatch } from './already-applied';
 import { syncCoverWithImage } from './cover-image';
 import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from './merge-blocks';
 import { getReorderOperations, getUnmappedParentReorder } from './reorder';
 import type { ReorderOperation } from './reorder';
 import type { BlockData, BlockEdits, BlockInsert, BlockUpdate, ResolveClientId } from './types';
-import type { EditorBlock, UndoLevel } from '../../utils/editor-blocks';
+import type { EditorBlock, UndoLevel, WrittenList } from '../../utils/editor-blocks';
 
 export interface ApplyEditsOptions {
 	resolve: ResolveClientId;
@@ -52,8 +53,11 @@ const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( r
 // Every write checks the canvas first, before the undo level marks anything:
 // the batch yields between steps, and the user may leave the page while it does.
 const createWriters = ( level: UndoLevel ) => {
-	const guarded = < Args extends unknown[] >( write: ( ...args: Args ) => void ) => {
-		const inLevel = level.write( write );
+	const guarded = < Args extends unknown[] >(
+		write: ( ...args: Args ) => void,
+		writtenList: WrittenList< Args >
+	) => {
+		const inLevel = level.write( write, writtenList );
 
 		return ( ...args: Args ) => {
 			assertCanvasUnmoved();
@@ -62,11 +66,11 @@ const createWriters = ( level: UndoLevel ) => {
 	};
 
 	return {
-		insert: guarded( insertBlock ),
-		remove: guarded( removeBlock ),
-		replace: guarded( replaceBlock ),
-		replaceChildren: guarded( replaceInnerBlocks ),
-		updateAttributes: guarded( updateBlockAttributes ),
+		insert: guarded( insertBlock, ( _block, _index, rootClientId ) => rootClientId ),
+		remove: guarded( removeBlock, getBlockRootClientId ),
+		replace: guarded( replaceBlock, getBlockRootClientId ),
+		replaceChildren: guarded( replaceInnerBlocks, ( clientId ) => clientId ),
+		updateAttributes: guarded( updateBlockAttributes, getBlockRootClientId ),
 	};
 };
 
@@ -205,11 +209,22 @@ async function applyUpdate(
 	await beforeWrite( clientId );
 
 	const innerBlocks = blockData.innerBlocks ?? [];
+	// The parent's own attributes are left out: children listed by id alone,
+	// as the agent sends them to keep, are no reason to rebuild the parent,
+	// which drops an attribute change where a restricted list refuses it.
 	const reorderOperations = innerBlocks.length
-		? getReorderOperations( target, blockData, resolve )
+		? getReorderOperations( target, { ...blockData, attributes: undefined }, resolve )
 		: null;
 
 	if ( reorderOperations ) {
+		if ( ! attributesAlreadyMatch( target, blockData ) ) {
+			writers.updateAttributes(
+				clientId,
+				mergeAttributes( target.attributes, blockData.attributes )
+			);
+			await syncCoverWithImage( clientId, target, blockData.attributes, writers.updateAttributes );
+		}
+
 		applyReorders( reorderOperations, writers );
 	} else if ( REPLACE_INNER_BLOCKS_STRUCTURAL_PARENTS.has( target.name ) && innerBlocks.length ) {
 		// The parent's own attributes travel with the reorder.

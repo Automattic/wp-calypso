@@ -10,8 +10,19 @@ describe( 'getPlansIntent', () => {
 		window.localStorage.clear();
 	} );
 
+	it( 'uses the shared paid migration grid for site migration', () => {
+		expect( getPlansIntent( 'site-migration' ) ).toBe( 'plans-migration' );
+	} );
+
 	it( 'maps the ai-site-builder-onboarding flow to the four paid plans intent', () => {
 		expect( getPlansIntent( 'ai-site-builder-onboarding' ) ).toBe( 'plans-ai-assembler-paid-only' );
+	} );
+
+	// Without this, an import is offered Commerce, whose site is still moving to Atomic at hand-off.
+	it( 'offers an import the plans that can take one', () => {
+		window.history.replaceState( {}, '', '/?flow=import' );
+
+		expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-import' );
 	} );
 
 	it( 'uses the fixed Playground plans intent', () => {

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { showComponentCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 // Component types the `show-component` ability can render. Single source for
 // the input schema enum, the `ShowComponentType` union, and the component map.
@@ -12,8 +12,7 @@ export type ShowComponentType = ( typeof SHOW_COMPONENT_TYPES )[ number ];
 /**
  * The `show-component` ability definition.
  *
- * Keeps the `big-sky/` name so the backend route allowlists keep matching;
- * the category mirrors Big Sky's client-side registration.
+ * Keeps the `big-sky/` name so the backend route allowlists keep matching.
  */
 export const showComponentAbility: Ability = {
 	name: 'big-sky/show-component',

@@ -1,15 +1,5 @@
 @import '@wordpress/base-styles/mixins';
 
-.referral-checkout {
-	min-height: 100vh;
-	background: var( --color-surface );
-}
-
-.referral-checkout__top-bar {
-	padding-block: 16px;
-	padding-inline: 24px;
-}
-
 .referral-checkout__body {
 	display: grid;
 	grid-template-columns: minmax( 0, 1fr );
@@ -30,22 +20,6 @@
 	margin-inline: auto;
 	padding-block: 24px;
 	padding-inline: 24px;
-}
-
-.referral-checkout__title-check {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 40px;
-	height: 40px;
-	flex-shrink: 0;
-	border-radius: 50%;
-	background: var( --color-success );
-	color: var( --color-text-inverted );
-
-	svg {
-		fill: currentColor;
-	}
 }
 
 .referral-checkout__line-check {

@@ -2,16 +2,15 @@ import page from '@automattic/calypso-router';
 import { Button, CheckoutStepBody } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
-import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export function NonRenewableDomain() {
-	const reduxDispatch = useDispatch();
 	useEffect( () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_non_renewable_domain' ) );
-	}, [ reduxDispatch ] );
+		recordTracksEvent( 'calypso_checkout_non_renewable_domain' );
+	}, [] );
 
 	return (
 		<CheckoutStepBody
@@ -46,7 +45,6 @@ function NonRenewableDomainExplanation() {
  */
 export function SearchForNewDomainButton() {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
@@ -54,7 +52,7 @@ export function SearchForNewDomainButton() {
 			buttonType="primary"
 			fullWidth
 			onClick={ () => {
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_non_renewable_domain_search_click' ) );
+				recordTracksEvent( 'calypso_checkout_non_renewable_domain_search_click' );
 				page( domainAddNew( siteSlug ) );
 			} }
 		>

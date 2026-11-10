@@ -6,20 +6,14 @@ import type {
 } from './types';
 
 /**
- * One provider per mode, matching leandomainsearch.com. `donuts` is filtered
- * out server-side, so naming it has no effect.
- */
-const KEYWORD_PROVIDERS = 'domainsbot';
-const AI_PROVIDERS = 'verisign';
-
-/**
+ * The endpoint picks providers and timeout from `use_ai`.
+ *
  * Provider errors ride along in `errors[]`; only when every provider fails does
  * the endpoint reply with a 400.
  */
 export async function fetchNamePulseSuggestions( {
 	query,
 	use_ai = false,
-	timeout,
 	tlds,
 }: NamePulseSuggestionsQuery ): Promise< NamePulseSuggestionsResponse > {
 	const response: Partial< NamePulseSuggestionsResponse > = await wpcom.req.get(
@@ -29,10 +23,8 @@ export async function fetchNamePulseSuggestions( {
 		},
 		{
 			query,
-			use_ai: use_ai ? 1 : 0,
 			allow_premium: 'true',
-			providers: use_ai ? AI_PROVIDERS : KEYWORD_PROVIDERS,
-			...( timeout ? { timeout } : {} ),
+			...( use_ai ? { use_ai: 1 } : {} ),
 			...( tlds?.length ? { tlds: tlds.join( ',' ) } : {} ),
 		}
 	);

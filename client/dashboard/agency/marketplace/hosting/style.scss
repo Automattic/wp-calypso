@@ -1,15 +1,143 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
 
-// Content on the left, the purchase rail on the right.
+// The steps, then the purchase rail, then the rest. From xlarge the rail moves
+// to the right of both; below it, it follows the steps so its button is close.
 .dashboard-marketplace-hosting__layout {
 	display: grid;
-	grid-template-columns: 1fr;
-	gap: 24px;
+	grid-template-columns: minmax( 0, 1fr );
+	grid-template-areas:
+		'steps'
+		'rail'
+		'more';
+	gap: 32px 24px;
 	align-items: start;
+
+	// Room under the last block so the phone buy bar never covers it. On the
+	// narrowest phones the bar can wrap to two rows.
+	&.has-buy-bar {
+		padding-block-end: 136px;
+
+		@include break-mobile {
+			padding-block-end: 88px;
+		}
+
+		@include break-small {
+			padding-block-end: 0;
+		}
+	}
 
 	@include break-xlarge {
 		grid-template-columns: minmax( 0, 2fr ) minmax( 0, 1fr );
+		grid-template-rows: auto 1fr;
+		grid-template-areas:
+			'steps rail'
+			'more rail';
 	}
+}
+
+.dashboard-marketplace-hosting__layout-steps {
+	grid-area: steps;
+}
+
+.dashboard-marketplace-hosting__layout-more {
+	grid-area: more;
+}
+
+.dashboard-marketplace-hosting__rail {
+	grid-area: rail;
+}
+
+// As many hosts side by side as fit at 320px or wider, so each card's text
+// keeps its usual lines and the rows line up; on phones the column fills the width.
+.dashboard-marketplace-hosting__hosts {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 320px, 100% ), 1fr ) );
+	gap: 24px;
+}
+
+// Tier, logo and the owned badge; it keeps room for the badge once any card
+// has one, so the rows below line up across the cards.
+.dashboard-marketplace-hosting__host-brand.has-badge {
+	// Tier 18px, logo 32px, badge 24px, and the two 8px gaps.
+	min-block-size: 90px;
+}
+
+.dashboard-marketplace-hosting__host-logo {
+	block-size: 32px;
+	inline-size: auto;
+	max-inline-size: 100%;
+	object-fit: contain;
+	object-position: left;
+
+	[dir='rtl'] & {
+		object-position: right;
+	}
+}
+
+.dashboard-marketplace-hosting__host-lead {
+	max-inline-size: 280px;
+	min-block-size: 44px;
+	text-wrap: balance;
+}
+
+.dashboard-marketplace-hosting__host-art {
+	padding: 8% 8% 0;
+	border-radius: 8px;
+	background: $studio-gray-0;
+
+	&.is-wpcom {
+		background: mix( $studio-blue-10, $studio-blue-5, 30% );
+	}
+
+	&.is-pressable {
+		background: $studio-orange-0;
+	}
+
+	&.is-vip {
+		background: $studio-yellow-0;
+	}
+
+	img {
+		display: block;
+		inline-size: 100%;
+		aspect-ratio: 320 / 214;
+		object-fit: cover;
+		object-position: top;
+		border-radius: 8px 8px 0 0;
+		box-shadow:
+			0 1px 2px rgba( $black, 0.05 ),
+			0 8px 24px rgba( $black, 0.06 );
+	}
+}
+
+.dashboard-marketplace-hosting__step-number {
+	flex: none;
+	inline-size: 24px;
+	block-size: 24px;
+	border-radius: 50%;
+	background: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	color: var( --wp-components-color-accent-inverted, $white );
+}
+
+// Phones: the selected plan and its button stay in a bar at the bottom of the
+// screen until the order summary scrolls into view.
+.dashboard-marketplace-hosting__buy-bar {
+	position: fixed;
+	inset-inline: 0;
+	inset-block-end: 0;
+	z-index: 20;
+	box-sizing: border-box;
+	padding: 12px 16px calc( 12px + env( safe-area-inset-bottom ) );
+	background: var( --wp-components-color-background, $white );
+	box-shadow:
+		0 -1px 0 rgba( $black, 0.1 ),
+		0 -4px 16px rgba( $black, 0.06 );
+}
+
+.dashboard-marketplace-hosting__buy-bar-text {
+	min-inline-size: 0;
 }
 
 .dashboard-marketplace-hosting__grid {
@@ -118,11 +246,21 @@
 	flex-shrink: 0;
 }
 
-// The WordPress.com volume tiers: total sites on top, the discount below.
+// The WordPress.com volume tiers: total sites on top, the discount below. All
+// in one row when they fit; otherwise two by two, or one per row for an odd
+// count, so no card is left alone on a row.
+.dashboard-marketplace-hosting__tiers-frame {
+	container-type: inline-size;
+}
+
 .dashboard-marketplace-hosting__tiers {
 	display: grid;
-	grid-template-columns: repeat( auto-fit, minmax( 120px, 1fr ) );
+	grid-template-columns: repeat( var( --tier-narrow-columns, 2 ), minmax( 0, 1fr ) );
 	gap: 8px;
+
+	@container ( min-width: 520px ) {
+		grid-template-columns: repeat( var( --tier-count, 4 ), minmax( 0, 1fr ) );
+	}
 }
 
 .dashboard-marketplace-hosting__tier {
@@ -153,14 +291,16 @@
 	fill: var( --wpds-color-foreground-content-neutral-weak, currentColor );
 }
 
-// Plan types as selectable cards, like the tiles on the Products page.
+// Plan types as selectable cards, all in one row from medium.
 .dashboard-marketplace-hosting__option-grid {
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: minmax( 0, 1fr );
 	gap: 16px;
 
-	@include break-small {
-		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	@include break-medium {
+		grid-auto-columns: minmax( 0, 1fr );
+		grid-auto-flow: column;
+		grid-template-columns: none;
 	}
 }
 

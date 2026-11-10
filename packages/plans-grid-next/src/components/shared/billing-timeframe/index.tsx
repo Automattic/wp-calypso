@@ -4,7 +4,6 @@ import {
 	isWooExpressPlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
@@ -56,8 +55,7 @@ interface Props {
 }
 
 const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
-	const translate = useTranslate();
-	const { helpers, gridPlansIndex, coupon, siteId, isEnterpriseA4AIndia } = usePlansGridContext();
+	const { helpers, gridPlansIndex, coupon, siteId } = usePlansGridContext();
 	const { isMonthlyPlan, billingTimeframe, pricing } = gridPlansIndex[ planSlug ];
 
 	const { introOffer, billingPeriod } = pricing;
@@ -85,21 +83,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		if ( ! isEnterpriseA4AIndia ) {
-			return null;
-		}
-
-		const price = formatCurrency( 54, 'INR', { stripZeros: true } );
-
-		return (
-			<BillingTimeframeContainer>
-				{ translate( 'Starts at %(price)s/month per site, excl. taxes', {
-					args: { price },
-					comment:
-						'Translators: %(price)s is the monthly price for agencies. "Excl. taxes" is short for excluding taxes',
-				} ) }
-			</BillingTimeframeContainer>
-		);
+		return null;
 	}
 
 	return (

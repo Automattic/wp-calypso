@@ -1,7 +1,10 @@
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
-import NewTabLabel from './new-tab-label';
+import { Text } from '../../components/text';
+import NewTabLabel from '../components/new-tab-label';
 import type { RecordTracksEvent } from '../tiers/types';
 
 export interface HelpfulLink {
@@ -11,6 +14,25 @@ export interface HelpfulLink {
 	/** Opens the link in a new tab. */
 	isExternal?: boolean;
 	onClick?: () => void;
+	/** A short pill beside the label, such as "Beta". */
+	badge?: string;
+}
+
+function HelpfulLinkTitle( { link }: { link: HelpfulLink } ) {
+	const label = link.isExternal ? (
+		<NewTabLabel justify="flex-start">{ link.label }</NewTabLabel>
+	) : (
+		link.label
+	);
+	if ( ! link.badge ) {
+		return label;
+	}
+	return (
+		<HStack alignment="left" spacing={ 2 } expanded={ false }>
+			<Text>{ label }</Text>
+			<Badge intent="stable">{ link.badge }</Badge>
+		</HStack>
+	);
 }
 
 interface HelpfulLinksCardProps {
@@ -24,13 +46,7 @@ export default function HelpfulLinksCard( { links, recordTracksEvent }: HelpfulL
 			{ links.map( ( link ) => (
 				<SummaryButton
 					key={ link.id }
-					title={
-						link.isExternal ? (
-							<NewTabLabel justify="flex-start">{ link.label }</NewTabLabel>
-						) : (
-							link.label
-						)
-					}
+					title={ <HelpfulLinkTitle link={ link } /> }
 					href={ link.href }
 					target={ link.isExternal ? '_blank' : undefined }
 					rel={ link.isExternal ? 'noreferrer' : undefined }

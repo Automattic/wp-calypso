@@ -11,6 +11,18 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
+private val releaseBuildTags = listOf(
+	"notifications-release-build",
+	"odyssey-stats-release-build",
+	"blaze-dashboard-release-build",
+	"wpcom-block-editor-release-build",
+	"o2-blocks-release-build",
+	"happy-blocks-release-build",
+	"help-center-release-build",
+	"agents-manager-release-build",
+	"survicate-release-build",
+)
+
 object WPComPlugins : Project({
 	id("WPComPlugins")
 	name = "WPCom Plugins"
@@ -27,27 +39,36 @@ object WPComPlugins : Project({
 	cleanup {
 		keepRule {
 			id = "keepReleaseBuilds"
-			keepAtLeast = allBuilds()
+			keepAtLeast = days(180)
 			applyToBuilds {
 				inBranches {
 					branchFilter = patterns("+:<default>")
 				}
 				withStatus = successful()
-				withTags = anyOf(
-					"notifications-release-build",
-					"odyssey-stats-release-build",
-					"blaze-dashboard-release-build",
-					"wpcom-block-editor-release-build",
-					"o2-blocks-release-build",
-					"happy-blocks-release-build",
-					"help-center-release-build",
-					"agents-manager-release-build",
-					"survicate-release-build",
-				)
+				withTags = anyOf(*releaseBuildTags.toTypedArray())
 			}
 			dataToKeep = everything()
 			applyPerEachBranch = true
 			preserveArtifactsDependencies = true
+		}
+
+		// Always keep each app's latest release build, however old: the release
+		// diff and source map uploads download it via its .tcbuildtag URL.
+		releaseBuildTags.forEach { tag ->
+			keepRule {
+				id = "keepLatest-$tag"
+				keepAtLeast = builds(1)
+				applyToBuilds {
+					inBranches {
+						branchFilter = patterns("+:<default>")
+					}
+					withStatus = successful()
+					withTags = anyOf(tag)
+				}
+				dataToKeep = everything()
+				applyPerEachBranch = true
+				preserveArtifactsDependencies = true
+			}
 		}
 	}
 })
@@ -122,8 +143,12 @@ object CalypsoApps: BuildType({
 		bashNodeScript {
 			name = "Install dependencies"
 			scriptContent = """
-				composer install
-				yarn install
+				# Webpack reads most workspace packages from source, so skip the full
+				# postinstall build; the packages that still need theirs are built below.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
+				ELECTRON_SKIP_BINARY_DOWNLOAD=1 yarn install
+				yarn build-packages:apps
 			"""
 		}
 

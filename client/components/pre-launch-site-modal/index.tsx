@@ -17,7 +17,7 @@ interface PreLaunchSiteModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	// Where launch is handed off to. The caller owns this so the destination
-	// (and the `/start/launch-site` path) stays explicit at each call site.
+	// (and the `/setup/launch-site` path) stays explicit at each call site.
 	launchUrl: string;
 }
 
@@ -56,7 +56,7 @@ function PreLaunchSiteModalContent( {
 		( siteResult.isSuccess || siteResult.isError ) &&
 		( domainsResult.isSuccess || domainsResult.isError );
 	// A "custom domain" is any non-default address, mirroring the launch flow's
-	// domain-skip rule (`isDomainFulfilled` / `! isWPCOMDomain`) so confirming
+	// domain-skip rule (`getLaunchSiteSteps` / `! wpcom_domain`) so confirming
 	// "launch" never drops the user onto a domain step.
 	const customDomains = ( domainsResult.data ?? [] ).filter(
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS

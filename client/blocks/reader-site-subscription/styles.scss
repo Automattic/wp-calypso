@@ -70,7 +70,7 @@
 					overflow: hidden;
 					text-overflow: ellipsis;
 
-					&:not(.external-link) {
+					&:not(.site-subscription-header__site-link) {
 						min-width: max-content;
 					}
 				}
@@ -221,6 +221,10 @@
 	.site-subscription-page {
 		&__back-button.components-button.has-icon.has-text {
 			box-shadow: none;
+		}
+
+		.jetpack-colophon {
+			margin-bottom: 40px;
 		}
 
 		&__header {

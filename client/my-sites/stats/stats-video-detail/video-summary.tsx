@@ -12,9 +12,11 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_SUMMARY_MAX_BARS } from '../constants';
+import { useMomentInSite } from '../hooks/use-moment-site-zone';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
+import { clampRangeEnd } from '../stats-post-summary/range-end';
 import SummaryChart from '../stats-summary';
 import { calculatePlayWeightedRetention } from './retention';
 import VideoMetricTabs, {
@@ -81,6 +83,7 @@ export default function VideoSummary( {
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const momentSiteZone = useMomentInSite();
 	const siteId = useSelector( getSelectedSiteId );
 	const [ uiPeriod, setUiPeriod ] = useState< UiPeriod >( 'day' );
 	const [ page, setPage ] = useState( 1 );
@@ -203,18 +206,17 @@ export default function VideoSummary( {
 				break;
 		}
 
-		// Don't extend the range into the future when the last bucket is
-		// still the current, in-progress period.
-		const today = moment();
-		if ( end.isAfter( today, 'day' ) ) {
-			end = today;
-		}
-
+		// Don't extend an in-progress period past the site's today, floored at
+		// the newest bucket charted.
 		return {
 			chartStart: start.format( 'YYYY-MM-DD' ),
-			chartEnd: end.format( 'YYYY-MM-DD' ),
+			chartEnd: clampRangeEnd(
+				end.format( 'YYYY-MM-DD' ),
+				momentSiteZone(),
+				visibleRows[ visibleRows.length - 1 ].period
+			),
 		};
-	}, [ visibleRows, uiPeriod, moment ] );
+	}, [ visibleRows, uiPeriod, moment, momentSiteZone ] );
 
 	// Card totals cover the window shown in the chart (the current page).
 	// Retention is play-weighted rather than summed — see retention.ts.

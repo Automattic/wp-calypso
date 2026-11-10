@@ -84,6 +84,7 @@ export interface APIPartner {
 	partner_type: string;
 	has_valid_payment_method: boolean;
 	can_issue_licenses: boolean;
+	jetpack_manage_store_closed: boolean;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -230,6 +231,7 @@ export interface Partner {
 	partner_type: string;
 	has_valid_payment_method: boolean;
 	can_issue_licenses: boolean;
+	jetpack_manage_store_closed: boolean;
 }
 
 export interface PartnerStore {
@@ -269,6 +271,8 @@ export interface LicenseMeta {
 	devSitePeriodEnd?: string;
 	transferredSubscriptionId?: string;
 	transferredSubscriptionExpiration?: string;
+	titanDomain?: string;
+	titanPlan?: string;
 }
 
 export interface LicenseSubscription {
@@ -279,6 +283,8 @@ export interface LicenseSubscription {
 	billingIntervalUnit: string;
 	status: string;
 	expiry: string | null;
+	trialEnd: string | null;
+	isActiveTrial: boolean;
 	isAutoRenewEnabled: boolean;
 	isRefundable: boolean;
 }

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import config from '@automattic/calypso-config';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
@@ -49,6 +50,10 @@ let agencyBlogResponse: { status: number; body: unknown } = {
 };
 
 let mediaStorageResponse: [ number, unknown ];
+
+// Default: a clean exact-match suggestion. Tests can override to exercise the
+// upsell card's no-good-suggestion fallback.
+let domainSuggestionsResponse: unknown;
 
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
@@ -100,10 +105,12 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( 200, { domains: [] } );
 
+		domainSuggestionsResponse = [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ];
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( '/rest/v1.1/domains/suggestions' )
 			.query( true )
-			.reply( 200, [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ] );
+			.reply( () => [ 200, domainSuggestionsResponse ] );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/activity` )
@@ -164,15 +171,12 @@ describe( '<SiteOverview>', () => {
 			.get( `/wpcom/v2/sites/${ site.ID }/hosting/metrics` )
 			.query( true )
 			.reply( 200, { data: { periods: {} } } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/${ site.ID }/flex-usage` )
-			.query( true )
-			.reply( 200, {} );
 	} );
 
 	afterEach( () => {
 		window.localStorage.clear();
+		window.history.replaceState( null, '', '/' );
+		config.disable( 'migration/reprint-flow' );
 	} );
 
 	test( 'renders the overview when the user cannot read media storage', async () => {
@@ -216,6 +220,38 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Plan' ) ).toBeVisible();
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'falls back to generic domain-upsell copy when the vendor returns no clean suggestion', async () => {
+		// "examplesite" is a clean query, so the hyphenated respelling is rejected.
+		domainSuggestionsResponse = [
+			{ domain_name: 'ex-ample-site.com', product_slug: 'dotcom_domain' },
+		];
+		const freeSite = {
+			...site,
+			slug: 'examplesite.wordpress.com',
+			plan: {
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				is_free: true,
+				features: { active: [] },
+			},
+		} as unknown as Site;
+		mockSite( freeSite );
+
+		render( <SiteOverview siteSlug={ freeSite.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Free' );
+
+		const domainCard = await getCard( 'The perfect domain awaits' );
+		// The suggestions query resolves after the card mounts; wait for the copy to
+		// settle on the no-suggestion fallback rather than the blurred placeholder.
+		await waitFor( () =>
+			expect( domainCard ).toHaveTextContent(
+				'Upgrade to an annual paid plan to get a custom domain free for one year. You can also choose your own domain name.'
+			)
+		);
+		expect( domainCard ).not.toHaveTextContent( 'ex-ample-site.com' );
 	} );
 
 	test( 'renders the overview of a site with a paid plan on Atomic', async () => {
@@ -287,19 +323,6 @@ describe( '<SiteOverview>', () => {
 			expect( within( card ).queryByRole( 'progressbar' ) ).not.toBeInTheDocument()
 		);
 		expect( screen.queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders the overview of a commerce garden site', async () => {
-		mockSite( { ...site, is_garden: true, garden_name: 'commerce' } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
-
-		await screen.findByRole( 'heading', { name: 'Test Site' } );
-
-		expect( screen.getByRole( 'link', { name: 'Manage store' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: /WP Admin/ } ) ).not.toBeInTheDocument();
-
-		expect( await getCard( 'Plan' ) ).toBeVisible();
-		expect( await getCard( 'Visibility' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a self-hosted free Jetpack connected site', async () => {
@@ -382,24 +405,6 @@ describe( '<SiteOverview>', () => {
 		);
 	} );
 
-	test( 'renders the overview of a site with Flex plan', async () => {
-		mockSite( { ...site, is_wpcom_flex: true } as Site );
-
-		render( <SiteOverview siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await waitForFeatureGatedCards( 'Business' );
-
-		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
-
-		expect( await getCard( 'Last backup' ) ).toBeVisible();
-		expect( await getCard( 'Performance' ) ).toBeVisible();
-		expect( await getCard( 'Last scan' ) ).toBeVisible();
-		expect( await getCard( 'Plan' ) ).toBeVisible();
-		expect( await getCard( 'Latest activity' ) ).toBeVisible();
-		expect( await getCard( 'Month-to-date site usage' ) ).toBeVisible();
-		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
-	} );
-
 	test( 'shows the two-step-required notice when the site requires it and the user has no two-step', async () => {
 		// The notice links to /me, so it only renders where the dashboard variant supports it.
 		const configWithMeSupport: AppConfig = {
@@ -426,6 +431,32 @@ describe( '<SiteOverview>', () => {
 			await screen.findByText( 'Set up two-step authentication to access WP Admin' )
 		).toBeVisible();
 		expect( screen.getByText( /Test Site requires two-step authentication/ ) ).toBeVisible();
+	} );
+
+	test( 'confirms a migration that just finished alongside the notice the arbiter picks', async () => {
+		config.enable( 'migration/reprint-flow' );
+		mediaStorageResponse = [ 200, { max_storage_bytes: 1000, storage_used_bytes: 2000 } ];
+		const migratedSite = {
+			...site,
+			site_migration: {
+				type: 'wordpress',
+				status_v2: 'completed',
+				source_domain: 'example.com',
+				completed_at: Math.floor( Date.now() / 1000 ) - 60,
+			},
+		} as unknown as Site;
+
+		mockSite( migratedSite );
+		const { unmount } = render( <SiteOverview siteSlug={ site.slug } /> );
+		expect( await screen.findByText( 'Your site is out of storage' ) ).toBeVisible();
+		expect( screen.queryByText( 'Your site is ready' ) ).not.toBeInTheDocument();
+		unmount();
+
+		window.history.replaceState( null, '', '/?migration=completed' );
+		mockSite( migratedSite );
+		render( <SiteOverview siteSlug={ site.slug } /> );
+		expect( await screen.findByText( 'Your site is out of storage' ) ).toBeVisible();
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of an inaccessible Jetpack site', async () => {

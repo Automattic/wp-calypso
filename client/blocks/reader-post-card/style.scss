@@ -41,15 +41,14 @@
 
 		.reader-following-feed,
 		.reader-follow-feed {
-			path {
-				fill: var(--color-text-inverted);
-			}
+			color: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
 		}
 	}
 
 	&:hover,
 	&:focus {
-		svg {
+		svg:not( .reader-follow-feed, .reader-following-feed, .reader-following-conversation ) {
 			path {
 				fill: var(--color-text-inverted);
 			}
@@ -94,10 +93,6 @@
 				left: -16px;
 			}
 		}
-	}
-
-	&.is-seen {
-		opacity: 0.65;
 	}
 
 	&.has-thumbnail {
@@ -366,17 +361,16 @@
 	height: 300px;
 	margin: 24px 0 0;
 	max-width: 100%;
+	overflow: hidden;
 
-	&:hover {
+	&.is-zoomable:hover {
 		cursor: zoom-in;
 	}
 
 	&.is-expanded {
 		background-position: center !important;
 		border-radius: 4px;
-		min-width: 100%;
 		max-width: 100%;
-		background-size: cover;
 
 		&:hover {
 			cursor: pointer;
@@ -713,8 +707,8 @@
 			fill: var( --color-link );
 		}
 
-		svg,
-		svg path {
+		svg {
+			color: inherit;
 			fill: currentColor;
 		}
 

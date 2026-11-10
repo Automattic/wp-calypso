@@ -81,7 +81,7 @@ jest.mock( '@automattic/site-launch-modals', () => ( {
 	),
 } ) );
 
-const LAUNCH_URL = '/start/launch-site?siteSlug=example.wordpress.com';
+const LAUNCH_URL = '/setup/launch-site?siteSlug=example.wordpress.com';
 const registeredDomain = {
 	blog_id: 1,
 	domain: 'example.com',

@@ -1,7 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
-import { getAgencySiteCheckoutParams } from '../agency-checkout/lib/agency-checkout-params';
+import {
+	getAgencySiteCheckoutExitUrl,
+	getAgencySiteCheckoutParams,
+} from '../agency-checkout/lib/agency-checkout-params';
 import { AgencyCheckoutPlaceholder, AgencyCheckoutShell } from '../agency-checkout/shell';
 import CheckoutMain from '../src/components/checkout-main';
 import useSitePlanCart from './use-site-plan-cart';
@@ -24,7 +27,8 @@ function AgencySiteCheckoutContent( { siteId, siteSlug, productSlug }: Props ) {
 		() => getAgencySiteCheckoutParams( window.location.search, siteSlug ),
 		[ siteSlug ]
 	);
-	const { isReady, error } = useSitePlanCart( siteId, productSlug, term );
+	const exitUrl = useMemo( () => getAgencySiteCheckoutExitUrl( window.location.search ), [] );
+	const { isReady, error } = useSitePlanCart( siteId, productSlug, term, exitUrl );
 
 	if ( error ) {
 		return <EmptyContent title={ translate( 'Error' ) } line={ error } />;

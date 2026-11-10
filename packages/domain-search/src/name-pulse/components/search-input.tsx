@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
-import { sanitizeDomainInput } from '../helpers';
+import { getWordCount, sanitizeDomainInput } from '../helpers';
 import { useNamePulseUrlQuery } from '../hooks/use-name-pulse-url-query';
 import { NamePulseFilter } from './filter';
 import './search-input.scss';
@@ -43,8 +43,16 @@ export const NamePulseSearchInput = ( { showFilter = false }: { showFilter?: boo
 					setLocalQuery( value );
 
 					if ( trimmedValue ) {
+						// Reloading results while scrolled down pushes the page further down.
+						window.scrollTo( { top: 0 } );
 						setQuery( trimmedValue, 'input_changed' );
 					} else {
+						if ( query ) {
+							events.onNamePulseTracksEvent( 'query_clear', {
+								previous_query_length: query.length,
+								previous_word_count: getWordCount( query ),
+							} );
+						}
 						events.onQueryClear();
 					}
 				} }

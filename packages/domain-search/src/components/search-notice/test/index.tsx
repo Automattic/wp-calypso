@@ -1,12 +1,28 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import {
+	type DomainAvailability,
+	type DomainSuggestion,
+	DomainAvailabilityStatus,
+} from '@automattic/api-core';
+import { useMutation } from '@tanstack/react-query';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { useEffect } from 'react';
 import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
+import { buildCart } from '../../../test-helpers/factories/cart';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../../test-helpers/queries/availability';
-import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
-import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
+import {
+	mockGetSuggestionsQuery,
+	mockGetSuggestionsQueryEmptyResults,
+} from '../../../test-helpers/queries/suggestions';
+import {
+	TestDomainSearch,
+	TestDomainSearchWithSuggestions,
+	WaitForSuggestions,
+} from '../../../test-helpers/renderer';
+import type { DomainSearchProps } from '../../../page/types';
 
 const AVAILABLE_DOMAIN_STATUSES = [
 	DomainAvailabilityStatus.AVAILABLE,
@@ -65,6 +81,44 @@ describe( 'SearchNotice', () => {
 		const [ notice ] = screen.getAllByText( 'Failed to fetch the suggestions' );
 
 		expect( notice ).toBeInTheDocument();
+	} );
+
+	it( 'renders the error notice from the suggestion query for a bare-term query when it returns empty results', async () => {
+		mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo' } } );
+
+		render(
+			<TestDomainSearchWithSuggestions query="foo">
+				<SearchNotice />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+		const [ notice ] = screen.getAllByText( 'No available domains for that search.' );
+
+		expect( notice ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the error notice from the suggestion query if the queried FQDN is available', async () => {
+		mockGetSuggestionsQueryEmptyResults( { params: { query: 'foo.live' } } );
+		mockGetAvailabilityQuery( {
+			params: { domainName: 'foo.live' },
+			availability: buildAvailability( {
+				domain_name: 'foo.live',
+				tld: 'live',
+				status: DomainAvailabilityStatus.AVAILABLE,
+			} ),
+		} );
+
+		const { container } = render(
+			<TestDomainSearchWithSuggestions query="foo.live">
+				<SearchNotice />
+			</TestDomainSearchWithSuggestions>
+		);
+
+		await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'renders the error notice from the availability query if that query failed', async () => {
@@ -1149,6 +1203,149 @@ describe( 'SearchNotice', () => {
 		);
 	} );
 
+	describe( 'subdomain with an unavailable root domain', () => {
+		it( 'renders the ownership message when the root is mapped by another account', async () => {
+			// A mapped root comes back with the searched subdomain in domain_name.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					root_domain_owned_by_other_user: true,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( /only its owner can add/ )[ 0 ] ).toBeInTheDocument();
+
+			expect( screen.getAllByText( 'example.com' )[ 0 ] ).toBeInTheDocument();
+			expect( screen.getAllByText( 'cms.example.com' )[ 0 ] ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'renders the ownership message when the root is registered by another account', async () => {
+			// A registered root comes back with the root itself in domain_name.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.REGISTERED,
+					root_domain_owned_by_other_user: true,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect( screen.getAllByText( /owned by another account/ )[ 0 ] ).toBeInTheDocument();
+
+			expect(
+				screen.queryByText( 'This domain is already connected to a WordPress.com site.' )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'does not show the ownership message when the root is not owned by another account', async () => {
+			// The user's own already-mapped subdomain of an externally-registered root: the
+			// backend reports root_domain_owned_by_other_user = false, so no ownership notice.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'cms.example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.FORBIDDEN,
+					root_domain_owned_by_other_user: false,
+				} )
+			);
+
+			const { container } = render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( "shows the generic already-connected message, not the breakdown, for the user's own already-mapped subdomain", async () => {
+			// A subdomain the current user has already mapped comes back (after the
+			// backend rewrite) as status=mappable, mappable=mapped_domain. It must fall
+			// through to the generic "already connected" message, not the breakdown that
+			// would wrongly blame another account.
+			mockNoSuggestionsAndAvailability(
+				'cms.example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPABLE,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="cms.example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			expect(
+				screen.getAllByText( 'This domain is already connected to a WordPress.com site.' )[ 0 ]
+			).toBeInTheDocument();
+
+			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still renders the generic message for a mapped root domain', async () => {
+			mockNoSuggestionsAndAvailability(
+				'example.com',
+				buildAvailability( {
+					domain_name: 'example.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="example.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			const [ notice ] = screen.getAllByText(
+				'This domain is already connected to a WordPress.com site.'
+			);
+
+			expect( notice ).toBeInTheDocument();
+
+			expect( screen.queryByText( /owned by another account/ ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'notice hidden scenarios', () => {
 		it( 'renders nothing if there is no availability result', async () => {
 			mockGetSuggestionsQuery( {
@@ -1316,5 +1513,449 @@ describe( 'SearchNotice', () => {
 				expect( container ).toBeEmptyDOMElement();
 			}
 		);
+	} );
+
+	describe( 'skip link for domains connected to another account', () => {
+		const SKIP_NOTICE_TEXT =
+			'This domain is already connected to a WordPress.com site. You can skip the domain for now and keep building.';
+
+		const CONNECTED_TO_OTHER_ACCOUNT_CASES = [
+			{ status: DomainAvailabilityStatus.REGISTERED, mappable: DomainAvailabilityStatus.MAPPED },
+			{ status: DomainAvailabilityStatus.REGISTERED, mappable: 'mappable' },
+			{ status: DomainAvailabilityStatus.MAPPED, mappable: DomainAvailabilityStatus.MAPPED },
+		];
+
+		it.each( CONNECTED_TO_OTHER_ACCOUNT_CASES )(
+			'skips the domain step when status is $status and mappable is $mappable',
+			async ( { status, mappable } ) => {
+				const query = `taken-${ status }-${ mappable }.com`;
+				const onSkip = jest.fn();
+				const onSearchNoticeSkipClick = jest.fn();
+
+				mockNoSuggestionsAndAvailability(
+					query,
+					buildAvailability( { domain_name: query, tld: 'com', status, mappable } )
+				);
+
+				render(
+					<TestDomainSearchWithSuggestions
+						query={ query }
+						config={ { skippable: true } }
+						events={ { onSkip, onSearchNoticeSkipClick } }
+					>
+						<SearchNotice />
+					</TestDomainSearchWithSuggestions>
+				);
+
+				expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+				expect( screen.getAllByText( SKIP_NOTICE_TEXT )[ 0 ] ).toBeVisible();
+
+				await userEvent.click( screen.getByRole( 'button', { name: 'skip the domain for now' } ) );
+
+				expect( onSearchNoticeSkipClick ).toHaveBeenCalledWith( query, status );
+				expect( onSkip ).toHaveBeenCalledWith();
+			}
+		);
+
+		it.each( [
+			{ name: 'the skip event is not provided', config: { skippable: true }, events: {} },
+			{
+				name: 'the search is not skippable',
+				config: { skippable: false },
+				events: { onSearchNoticeSkipClick: jest.fn() },
+			},
+		] )( 'keeps the original message when $name', async ( { config, events } ) => {
+			mockNoSuggestionsAndAvailability(
+				'taken-default.com',
+				buildAvailability( {
+					domain_name: 'taken-default.com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="taken-default.com"
+					config={ config }
+					events={ events }
+				>
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+			expect(
+				screen.getAllByText( 'This domain is already connected to a WordPress.com site.' )[ 0 ]
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'skip the domain for now' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER,
+			DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+			DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER,
+			DomainAvailabilityStatus.REGISTERED_SAME_SITE,
+		] )( 'does not add the skip link for the same-user status %s', async ( status ) => {
+			const query = `own-${ status }.com`;
+
+			mockNoSuggestionsAndAvailability(
+				query,
+				buildAvailability( {
+					domain_name: query,
+					status,
+					mappable: DomainAvailabilityStatus.MAPPED,
+					other_site_domain: 'other-site.com',
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query={ query }
+					config={ { skippable: true } }
+					events={ { onSearchNoticeSkipClick: jest.fn() } }
+				>
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+			expect( screen.queryByText( SKIP_NOTICE_TEXT ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: 'skip the domain for now' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'connected domain moves', () => {
+		const DOMAIN = 'connected-domain.com';
+
+		const config = { includeOwnedDomainInSuggestions: true };
+
+		const TestDomainSearchWithCustomCart = ( {
+			children,
+			...props
+		}: Partial< DomainSearchProps > & { children: React.ReactNode } ) => (
+			<TestDomainSearch config={ config } { ...props }>
+				<WaitForSuggestions>{ children }</WaitForSuggestions>
+			</TestDomainSearch>
+		);
+
+		const mockMovableConnectedDomain = (
+			overrides: Partial< DomainAvailability > = {},
+			{
+				siteSlug,
+				includeInternalMoveEligible = true,
+				suggestions = [],
+				siteName = 'Other Site',
+			}: {
+				siteSlug?: string;
+				includeInternalMoveEligible?: boolean;
+				suggestions?: DomainSuggestion[] | Error;
+				siteName?: string;
+			} = {}
+		) => {
+			mockGetSuggestionsQuery( {
+				params: {
+					query: DOMAIN,
+					include_internal_move_eligible: includeInternalMoveEligible,
+					...( siteSlug && { site_slug: siteSlug } ),
+				},
+				suggestions,
+			} );
+
+			mockGetAvailabilityQuery( {
+				params: { domainName: DOMAIN },
+				availability: buildAvailability( {
+					domain_name: DOMAIN,
+					tld: 'com',
+					status: DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER,
+					other_site_domain: 'other-site.com',
+					product_slug: 'domain_move_internal',
+					is_connected_domain: true,
+					will_remove_from_site: 123,
+					moves_email_subscriptions: false,
+					requires_plan: false,
+					...overrides,
+				} ),
+			} );
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( /\/sites\/123(\?|$)/ )
+				.reply( 200, { ID: 123, name: siteName } );
+		};
+
+		// Not every test opens the dialog, so an unused site mock would leak into the next test.
+		afterEach( () => {
+			nock.cleanAll();
+		} );
+
+		const findMoveExplanation = ( text: string ) =>
+			screen.findByText(
+				( _, element ) => element?.tagName === 'P' && element.textContent === text
+			);
+
+		it( 'offers to move the domain to the new site instead of contacting support', async () => {
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			expect(
+				await screen.findByRole( 'button', { name: 'move it to your new site' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'link', { name: 'Contact us' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the contact support notice in flows that do not offer moves', async () => {
+			mockMovableConnectedDomain( {}, { includeInternalMoveEligible: false } );
+
+			render(
+				<TestDomainSearchWithSuggestions query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByRole( 'link', { name: 'Contact us' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'move it to your new site' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'still offers the move when the suggestions request fails', async () => {
+			mockMovableConnectedDomain( {}, { suggestions: new Error( 'Failed to fetch' ) } );
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			expect(
+				await screen.findByRole( 'button', { name: 'move it to your new site' } )
+			).toBeVisible();
+			expect( screen.queryByText( /Failed to fetch/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'tracks the move and closes the dialog once it succeeds', async () => {
+			const user = userEvent.setup();
+			const onAddDomainToCart = jest.fn();
+			const onSuggestionInteract = jest.fn();
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart
+					query={ DOMAIN }
+					cart={ buildCart( { onAddItem: jest.fn().mockResolvedValue( undefined ) } ) }
+					events={ { onAddDomainToCart, onSuggestionInteract } }
+				>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Use this domain' } ) );
+
+			expect( onSuggestionInteract ).toHaveBeenCalledWith(
+				expect.objectContaining( { domain_name: DOMAIN, position: 0 } )
+			);
+			expect( onAddDomainToCart ).toHaveBeenCalledWith( DOMAIN, 0, false, expect.any( String ) );
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the contact support notice when there is a current site', async () => {
+			mockMovableConnectedDomain( {}, { siteSlug: 'current-site.com' } );
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query={ DOMAIN }
+					currentSiteUrl="current-site.com"
+					config={ config }
+				>
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByRole( 'link', { name: 'Contact us' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'move it to your new site' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps the contact support notice when there is only a current site ID', async () => {
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN } currentSiteId={ 123 }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			expect( await screen.findByRole( 'link', { name: 'Contact us' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'move it to your new site' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'waits for another add-to-cart to finish before allowing the move', async () => {
+			const user = userEvent.setup();
+			let finishOtherAdd = () => {};
+			const otherAdd = new Promise< void >( ( resolve ) => {
+				finishOtherAdd = resolve;
+			} );
+			mockMovableConnectedDomain();
+
+			const OtherAddToCart = () => {
+				const { mutate } = useMutation( { mutationFn: () => otherAdd } );
+
+				useEffect( () => mutate(), [ mutate ] );
+
+				return null;
+			};
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<OtherAddToCart />
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect( screen.getByRole( 'button', { name: 'Use this domain' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeEnabled();
+
+			finishOtherAdd();
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Use this domain' } ) ).toBeEnabled()
+			);
+		} );
+
+		it( 'moves the domain only after the user confirms', async () => {
+			const user = userEvent.setup();
+			const onAddItem = jest.fn().mockResolvedValue( undefined );
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN } cart={ buildCart( { onAddItem } ) }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect(
+				screen.getByRole( 'dialog', { name: `Move ${ DOMAIN } to your new site?` } )
+			).toBeVisible();
+			expect(
+				await findMoveExplanation(
+					`After checkout, Other Site will stay online, but visitors won’t reach it at ${ DOMAIN } anymore.`
+				)
+			).toBeVisible();
+			expect( onAddItem ).not.toHaveBeenCalled();
+
+			await user.click( screen.getByRole( 'button', { name: 'Use this domain' } ) );
+
+			expect( onAddItem ).toHaveBeenCalledWith(
+				expect.objectContaining( { domain_name: DOMAIN, product_slug: 'domain_move_internal' } )
+			);
+		} );
+
+		it( 'names the other site by its domain when it has no title', async () => {
+			const user = userEvent.setup();
+			mockMovableConnectedDomain( {}, { siteName: '' } );
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect(
+				await findMoveExplanation(
+					`After checkout, other-site.com will stay online, but visitors won’t reach it at ${ DOMAIN } anymore.`
+				)
+			).toBeVisible();
+		} );
+
+		it( 'does not move the domain when the user cancels', async () => {
+			const user = userEvent.setup();
+			const onAddItem = jest.fn();
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN } cart={ buildCart( { onAddItem } ) }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( onAddItem ).not.toHaveBeenCalled();
+		} );
+
+		it( 'mentions email subscriptions and the paid plan only when they apply', async () => {
+			const user = userEvent.setup();
+			mockMovableConnectedDomain( { moves_email_subscriptions: true, requires_plan: true } );
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect(
+				screen.getByText( `Your email subscriptions for ${ DOMAIN } will move along with it.` )
+			).toBeVisible();
+			expect( screen.getByText( 'Connected domains require a paid plan.' ) ).toBeVisible();
+		} );
+
+		it( 'leaves out the email and plan sentences when they do not apply', async () => {
+			const user = userEvent.setup();
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect( screen.queryByText( /email subscriptions/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /paid plan/ ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows the error in the dialog when the move fails', async () => {
+			const user = userEvent.setup();
+			const onAddItem = jest.fn().mockRejectedValue( new Error( 'Something went wrong' ) );
+			mockMovableConnectedDomain();
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN } cart={ buildCart( { onAddItem } ) }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Use this domain' } ) );
+
+			const [ error ] = await screen.findAllByText( 'Something went wrong' );
+
+			expect( error ).toBeVisible();
+		} );
 	} );
 } );

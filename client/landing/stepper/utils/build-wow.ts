@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -19,6 +20,27 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 
 	return BUILD_WOW_GRAPHS.find( ( graph ) => graph === requested );
 }
+
+/**
+ * Shows the site-spec widget's design picker in build-wow: after the user
+ * confirms the brief, four designs of the top of the front page to pick from
+ * before the build. The widget's site plan has its own picker.
+ */
+export const DESIGN_CANDIDATES_FLAG = 'site-spec/design-candidates';
+
+/**
+ * The design candidate the user picked in the site-spec widget: "1" to "4",
+ * or undefined when there is none. The build continues that candidate.
+ */
+export function getDesignCandidate( value: unknown ): string | undefined {
+	return typeof value === 'string' && /^[1-4]$/.test( value ) ? value : undefined;
+}
+
+/**
+ * The live feed's switch in Calypso. While it is on, every build asks for the
+ * feed and the generation screen follows the stream the server advertises.
+ */
+export const BUILD_WOW_STREAMING_FLAG = 'site-spec/build-wow-streaming';
 
 type BuildWowAtomicState = {
 	is_atomic?: boolean;
@@ -107,8 +129,15 @@ export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
 	graph?: BuildWowGraph,
-	blueprintId?: string
+	blueprintId?: string,
+	designCandidate?: string
 ): Promise< BuildWowResponse > {
+	// Like graph, only a call that queues a build carries the opt-in, and only
+	// while the streaming flag is on. It only requests the live feed: the server
+	// decides eligibility and pins the choice to the run, and the status
+	// endpoint's `stream` block says whether this run actually streams.
+	const streamEvents = Boolean( specId ) && config.isEnabled( BUILD_WOW_STREAMING_FLAG );
+
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteIdentifier }/big-sky/build-wow`,
@@ -120,9 +149,12 @@ export async function requestBuildWowSite(
 			// queues a build: the server records the graph with that build, and a
 			// call without a spec queues nothing to record it against.
 			...( specId && graph ? { graph } : {} ),
+			...( streamEvents ? { stream_events: true } : {} ),
 			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
 			// the server otherwise refuses as somebody's established site.
 			...( blueprintId ? { blueprint_id: blueprintId } : {} ),
+			// The design candidate the widget picked; the server builds it on the DSL graph.
+			...( specId && designCandidate ? { design_candidate: Number( designCandidate ) } : {} ),
 		}
 	);
 }

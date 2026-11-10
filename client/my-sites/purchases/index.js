@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
@@ -13,6 +14,7 @@ import {
 	purchaseCancel,
 	purchaseChangePaymentMethod,
 	purchaseSiteActions,
+	purchaseMove,
 	billingHistory,
 	receiptView,
 	paymentMethods,
@@ -65,6 +67,16 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
+	if ( isEnabled( 'purchases/site-transfer' ) ) {
+		page(
+			'/purchases/subscriptions/:site/:purchaseId/move',
+			...commonHandlers,
+			purchaseMove,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/change',
