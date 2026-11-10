@@ -91,6 +91,32 @@ describe( '<DataViews>', () => {
 			expect( onPageCorrection ).not.toHaveBeenCalled();
 		} );
 
+		test( 'is called once when the list finishes loading, whatever the callback given since', () => {
+			const onPageCorrection = jest.fn();
+			const renderWith = ( isLoading: boolean ) => (
+				<DataViews< NamedItem >
+					data={ [] }
+					fields={ fields }
+					view={ { ...defaultView, page: 99 } }
+					isLoading={ isLoading }
+					onChangeView={ jest.fn() }
+					onPageCorrection={ ( page ) => onPageCorrection( page ) }
+					paginationInfo={ { totalItems: 6, totalPages: 3 } }
+					defaultLayouts={ { table: {} } }
+					getItemId={ ( item ) => item.id }
+				/>
+			);
+
+			const { rerender } = render( renderWith( true ) );
+			expect( onPageCorrection ).not.toHaveBeenCalled();
+
+			rerender( renderWith( false ) );
+			rerender( renderWith( false ) );
+
+			expect( onPageCorrection ).toHaveBeenCalledTimes( 1 );
+			expect( onPageCorrection ).toHaveBeenCalledWith( 3 );
+		} );
+
 		test( 'is not called for a page the list has', () => {
 			const { onPageCorrection } = renderDataViews( { page: 3, totalPages: 3 } );
 
@@ -108,7 +134,7 @@ describe( '<DataViews>', () => {
 			const homeRoute = createRoute( {
 				getParentRoute: () => rootRoute,
 				path: '/',
-				component: () => <p>Home</p>,
+				component: () => <h1>Home</h1>,
 			} );
 			const listRoute = createRoute( {
 				getParentRoute: () => rootRoute,
@@ -160,27 +186,27 @@ describe( '<DataViews>', () => {
 		test( 'corrects a page past the last one in place, so that Back leaves the list', async () => {
 			const router = renderList( [ '/', '/list?page=99' ] );
 
-			expect( await screen.findByText( 'Five' ) ).toBeVisible();
+			expect( await screen.findByRole( 'cell', { name: 'Five' } ) ).toBeVisible();
 			expect( router.state.location.search ).toEqual( { page: 3 } );
 
 			act( () => router.history.back() );
 
-			expect( await screen.findByText( 'Home' ) ).toBeVisible();
+			expect( await screen.findByRole( 'heading', { name: 'Home' } ) ).toBeVisible();
 		} );
 
 		test( 'keeps a history entry for each page the user moves to', async () => {
 			const user = userEvent.setup();
 			const router = renderList( [ '/', '/list' ] );
 
-			expect( await screen.findByText( 'One' ) ).toBeVisible();
+			expect( await screen.findByRole( 'cell', { name: 'One' } ) ).toBeVisible();
 
 			await user.click( screen.getByRole( 'button', { name: 'Next page' } ) );
 
-			expect( await screen.findByText( 'Three' ) ).toBeVisible();
+			expect( await screen.findByRole( 'cell', { name: 'Three' } ) ).toBeVisible();
 
 			act( () => router.history.back() );
 
-			expect( await screen.findByText( 'One' ) ).toBeVisible();
+			expect( await screen.findByRole( 'cell', { name: 'One' } ) ).toBeVisible();
 			await waitFor( () => expect( router.state.location.pathname ).toBe( '/list' ) );
 		} );
 	} );

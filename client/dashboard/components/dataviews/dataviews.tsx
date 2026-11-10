@@ -1,3 +1,4 @@
+import { useEvent } from '@wordpress/compose';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -55,11 +56,13 @@ export function DataViews< Item >( {
 	const isPastLastPage = ! isLoading && lastPage !== undefined && ( view.page ?? 1 ) > lastPage;
 	const correctedPage = onPageCorrection && isPastLastPage ? lastPage : undefined;
 
+	const correctPage = useEvent( ( page: number ) => onPageCorrection?.( page ) );
+
 	useEffect( () => {
 		if ( correctedPage !== undefined ) {
-			onPageCorrection?.( correctedPage );
+			correctPage( correctedPage );
 		}
-	}, [ correctedPage, onPageCorrection ] );
+	}, [ correctedPage, correctPage ] );
 
 	const sanitizedView = sanitizeView(
 		correctedPage !== undefined ? { ...view, page: correctedPage } : view,
