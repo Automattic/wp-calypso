@@ -77,7 +77,7 @@ interface Opened {
 	// Unset while the notes a post outside the loaded pages needs are still loading.
 	unread?: Unread;
 	// Set when opened from Your comments, which starts the thread at that comment.
-	anchor?: { key: string; commentId: number };
+	anchor?: { commentId: number };
 	// Keeps the header and highlights when a search filters the conversation out of the list.
 	conversation?: Conversation;
 }
@@ -140,8 +140,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
 	const [ opened, setOpened ] = useState< Opened >();
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
-	const selectedItemKey = tab === 'yours' ? activeOpened?.anchor?.key : selectedKey;
-	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedItemKey );
+	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedKey );
 	const found = findConversation( selectedKey );
 	const selected = found ?? activeOpened?.conversation;
 	const [ previousKey, setPreviousKey ] = useState( selectedKey );
@@ -223,7 +222,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 							unreadCommentIds: union( previous.unreadCommentIds, unread?.unreadCommentIds ),
 						}
 					: unread,
-				anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
+				anchor: 'commentId' in item ? { commentId: item.commentId } : undefined,
 				conversation,
 			},
 			unreadNoteIds
@@ -361,7 +360,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onMarkAllRead={ markAllRead }
 					isShortcutsOpen={ isShortcutsOpen }
 					onShortcutsToggle={ setIsShortcutsOpen }
-					selectedKey={ selectedItemKey }
+					selectedKey={ selectedKey }
 					openOnFocus={ ! isNarrow }
 					onSelect={ openConversation }
 				/>

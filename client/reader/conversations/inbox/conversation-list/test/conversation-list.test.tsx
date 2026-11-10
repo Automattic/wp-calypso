@@ -28,7 +28,7 @@ const conversations = [
 
 const ownComments = [
 	makeOwnComment( { postId: 300, commentId: 31, title: 'Commented post', newCommentCount: 3 } ),
-	makeOwnComment( { postId: 300, commentId: 32, title: 'Commented post', excerpt: 'Again' } ),
+	makeOwnComment( { postId: 301, commentId: 32, title: 'Commented post', excerpt: 'Again' } ),
 ].map( adaptReadConversationOwnComment );
 
 function ControlledList( {
@@ -105,7 +105,7 @@ describe( 'ConversationList', () => {
 		expect( screen.getByRole( 'tab', { name: /Unread/ } ) ).toHaveTextContent( '2' );
 	} );
 
-	it( 'lists one row per comment on the Your comments tab', async () => {
+	it( 'lists your comments on the Your comments tab', async () => {
 		const user = userEvent.setup();
 		const { onSelect } = renderList();
 
@@ -121,7 +121,7 @@ describe( 'ConversationList', () => {
 		await user.click( rows[ 1 ] );
 
 		expect( onSelect ).toHaveBeenCalledWith(
-			expect.objectContaining( { postId: 300, commentId: 32 } ),
+			expect.objectContaining( { postId: 301, commentId: 32 } ),
 			'click'
 		);
 	} );
