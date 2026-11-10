@@ -94,7 +94,16 @@ export function ConversationDetail( {
 	const backRef = useRef< HTMLButtonElement >( null );
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
-	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
+	const details = conversation?.postDetails;
+	const { data: fetchedPost, isLoading } = usePost( details ? null : { blogId: siteId, postId } );
+	const post =
+		fetchedPost ??
+		( details && {
+			ID: postId,
+			site_ID: siteId,
+			URL: conversation?.url,
+			discussion: details.discussion,
+		} );
 	const currentUserId = useSelector( getCurrentUserId );
 	const showWelcome = useSelector(
 		( state ) =>
@@ -117,14 +126,25 @@ export function ConversationDetail( {
 		setStartingComment( { key: anchorKey, id: anchorId } );
 	}
 
+	const isPostError = !! fetchedPost?.is_error;
 	const commentCount = Number(
 		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
 	);
-	const author = post?.author as ReaderLinkAuthor | undefined;
+	const author = ( details ? details.author : fetchedPost?.author ) as ReaderLinkAuthor | undefined;
 	// ReaderAuthorLink renders nothing for blocked names, so the dot must skip them too.
 	const showAuthor = !! author?.name && ! isAuthorNameBlocked( author.name );
-	const image = ( post?.canonical_image as { uri?: string } | undefined )?.uri;
-	const date = post?.date ? moment( String( post.date ) ) : null;
+	const image = details
+		? details.image
+		: ( fetchedPost?.canonical_image as { uri?: string } | undefined )?.uri;
+	const postDate = details ? details.date : fetchedPost?.date;
+	const date = postDate ? moment( String( postDate ) ) : null;
+	const siteName = details ? details.siteName : String( fetchedPost?.site_name ?? '' );
+	const siteIcon = details
+		? details.siteIcon
+		: ( fetchedPost?.site_icon as { img?: string } | undefined )?.img;
+	const excerpt = details
+		? details.excerpt
+		: String( fetchedPost?.better_excerpt_no_html ?? fetchedPost?.excerpt_no_html ?? '' );
 	const postUrl = post ? getPostUrl( post ) : '';
 
 	let title: string;
@@ -251,7 +271,7 @@ export function ConversationDetail( {
 						</Notice>
 					) }
 					{ isLoading && ! post && <ConversationContentPlaceholder /> }
-					{ !! post?.is_error && (
+					{ isPostError && (
 						<Text as="p" color="var(--color-text-subtle)">
 							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
 							{ conversation?.url && (
@@ -261,7 +281,7 @@ export function ConversationDetail( {
 							) }
 						</Text>
 					) }
-					{ post && ! post.is_error && (
+					{ post && ! isPostError && (
 						<>
 							<VStack spacing={ 3 } className="conversations-inbox__post-card">
 								<HStack
@@ -271,15 +291,8 @@ export function ConversationDetail( {
 									className="conversations-inbox__post-meta"
 								>
 									<HStack expanded={ false }>
-										{ !! post.site_icon && (
-											<img
-												src={ ( post.site_icon as { img?: string } )?.img }
-												alt=""
-												width={ 28 }
-												height={ 28 }
-											/>
-										) }
-										<strong>{ String( post.site_name ?? '' ) }</strong>
+										{ !! siteIcon && <img src={ siteIcon } alt="" width={ 28 } height={ 28 } /> }
+										<strong>{ siteName }</strong>
 									</HStack>
 									<HStack spacing={ 1.5 } expanded={ false }>
 										{ showAuthor && author && (
@@ -354,7 +367,7 @@ export function ConversationDetail( {
 											truncate
 											numberOfLines={ 1 }
 										>
-											{ String( post.title ?? conversation?.title ?? '' ) }
+											{ String( fetchedPost?.title ?? conversation?.title ?? '' ) }
 										</Heading>
 										<Text
 											size={ 14 }
@@ -363,7 +376,7 @@ export function ConversationDetail( {
 											numberOfLines={ 2 }
 											color="color-mix(in srgb, var(--color-text-subtle) 80%, var(--color-text))"
 										>
-											{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
+											{ excerpt }
 										</Text>
 									</VStack>
 									{ image && (

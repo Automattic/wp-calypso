@@ -122,6 +122,48 @@ describe( 'ConversationDetail', () => {
 		);
 	} );
 
+	it( 'draws the post from the list without requesting it', () => {
+		mockedUsePost.mockReturnValue( { data: undefined, isLoading: false } as never );
+		const withDetails = adaptReadConversation( {
+			...makeConversation( { blogId: 10, postId: 100, title: 'A post title' } ),
+			site: {
+				name: 'Ana’s blog',
+				icon: 'https://example.com/icon.png',
+				url: 'https://example.com',
+			},
+			post: {
+				title: 'A post title',
+				url: 'https://example.com/100',
+				date: '2024-01-01T00:00:00Z',
+				author: {
+					ID: 7,
+					login: 'ana',
+					name: 'Ana',
+					URL: 'https://ana.example.com',
+					avatar_URL: '',
+				},
+				excerpt: '<p>An excerpt &amp; more [&hellip;]</p>\n',
+				featured_image: 'https://example.com/image.jpg',
+				discussion: {
+					comments_open: true,
+					comment_status: 'open',
+					pings_open: false,
+					ping_status: 'closed',
+					comment_count: 4,
+				},
+			},
+		} );
+
+		renderDetail( { conversation: withDetails } );
+
+		expect( mockedUsePost ).toHaveBeenLastCalledWith( null );
+		expect( screen.getByRole( 'heading', { name: 'A post title' } ) ).toBeVisible();
+		expect( screen.getByText( 'Ana’s blog' ) ).toBeVisible();
+		expect( screen.getByText( 'Ana' ) ).toBeVisible();
+		expect( screen.getByText( 'An excerpt & more […]' ) ).toBeVisible();
+		expect( screen.getByRole( 'feed', { name: /^4 comments/ } ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders the comment thread with the starting comment and count from the post', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
