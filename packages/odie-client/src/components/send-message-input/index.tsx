@@ -1,6 +1,7 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
 import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -28,19 +29,29 @@ const AiDisclosureLink = ( { children }: { children?: React.ReactNode } ) => (
 	<ExternalLink href="https://automattic.com/ai-guidelines">{ children }</ExternalLink>
 );
 
-const AiDisclosure = ( { id }: { id: string } ) => (
-	<div className="odie-ai-disclosure" id={ id }>
-		{ createInterpolateElement(
-			__(
-				'You’re chatting with an AI assistant. Responses may be inaccurate. <a>Learn more</a>',
-				__i18n_text_domain__
-			),
-			{
-				a: <AiDisclosureLink />,
-			}
-		) }
-	</div>
-);
+const AiDisclosure = ( { id }: { id: string } ) => {
+	const hasEnTranslation = useHasEnTranslation();
+
+	return (
+		<div className="odie-ai-disclosure" id={ id }>
+			{ createInterpolateElement(
+				hasEnTranslation(
+					'Responses may be inaccurate. <a>Learn more</a>',
+					undefined,
+					__i18n_text_domain__
+				)
+					? __( 'Responses may be inaccurate. <a>Learn more</a>', __i18n_text_domain__ )
+					: __(
+							'You’re chatting with an AI assistant. Responses may be inaccurate. <a>Learn more</a>',
+							__i18n_text_domain__
+						),
+				{
+					a: <AiDisclosureLink />,
+				}
+			) }
+		</div>
+	);
+};
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
@@ -54,7 +65,7 @@ const getTextAreaPlaceholder = (
 		: __( 'Ask anything…', __i18n_text_domain__ );
 };
 
-export const OdieSendMessageButton = () => {
+export const OdieSendMessageButton = ( { aiDisclosureId }: { aiDisclosureId?: string } = {} ) => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const {
 		trackEvent,
@@ -182,21 +193,21 @@ export const OdieSendMessageButton = () => {
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
-	const aiDisclosureId = useId();
-	const showAiDisclosure = ! isLiveChat && ! isEmailFallback;
+	// Set only while the AI disclosure line shows, so the note follows the same rule.
+	const showAiDisclosure = !! aiDisclosureId;
+
+	const aiNoteId = useId();
 
 	// ChatInput doesn't forward aria attributes to the textarea, so associate the
-	// disclosure through the ref to have screen readers announce it on focus.
+	// AI disclosure line and the note through the ref to have screen readers announce them on focus.
 	useEffect( () => {
 		const textarea = textareaRef.current;
-		if ( ! textarea ) {
+		if ( ! textarea || ! aiDisclosureId ) {
 			return;
 		}
-		if ( showAiDisclosure ) {
-			textarea.setAttribute( 'aria-describedby', aiDisclosureId );
-			return () => textarea.removeAttribute( 'aria-describedby' );
-		}
-	}, [ textareaRef, showAiDisclosure, aiDisclosureId ] );
+		textarea.setAttribute( 'aria-describedby', `${ aiDisclosureId } ${ aiNoteId }` );
+		return () => textarea.removeAttribute( 'aria-describedby' );
+	}, [ textareaRef, aiDisclosureId, aiNoteId ] );
 
 	// Handle key events including Enter submission and paste
 	const handleKeyDown = useCallback(
@@ -268,7 +279,7 @@ export const OdieSendMessageButton = () => {
 						actionOrder="before-submit"
 					/>
 				) }
-				{ showAiDisclosure && <AiDisclosure id={ aiDisclosureId } /> }
+				{ showAiDisclosure && <AiDisclosure id={ aiNoteId } /> }
 			</div>
 			<AttachmentDropZone />
 		</>

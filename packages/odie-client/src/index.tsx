@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
+import { AiDisclosureLine } from './components/ai-disclosure-line';
 import { ClosedConversationFooter } from './components/closed-conversation-footer';
 import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
@@ -6,12 +7,18 @@ import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import { useCurrentSupportInteraction } from './data/use-current-support-interaction';
 import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
 import { useRefreshChatOnFocus } from './hooks/use-refresh-chat-on-focus';
-import { hasCSATMessage, interactionHasEnded, isStaleOdieChat } from './utils';
+import {
+	hasCSATMessage,
+	interactionHasEnded,
+	isStaleOdieChat,
+	shouldShowAiDisclosureLine,
+} from './utils';
 
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { trackEvent, currentUser, chat } = useOdieAssistantContext();
+	const { trackEvent, currentUser, chat, productName } = useOdieAssistantContext();
+	const aiDisclosureId = useId();
 	useRefreshChatOnFocus();
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
@@ -24,6 +31,11 @@ export const OdieAssistant: React.FC = () => {
 		chatHasCSATMessage ||
 		interactionHasEnded( currentSupportInteraction ) ||
 		isStaleOdieChat( chat );
+	const showAiDisclosureLine = shouldShowAiDisclosureLine( {
+		chat,
+		interaction: currentSupportInteraction,
+		isChatPending,
+	} );
 
 	const currentUuid = currentSupportInteraction?.uuid;
 	const { mostRecentSupportInteractionId, openCount } = useOpenLiveInteractions( currentUuid );
@@ -48,6 +60,9 @@ export const OdieAssistant: React.FC = () => {
 
 	return (
 		<div className="chatbox">
+			{ showAiDisclosureLine && (
+				<AiDisclosureLine id={ aiDisclosureId } productName={ productName } />
+			) }
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
@@ -58,7 +73,9 @@ export const OdieAssistant: React.FC = () => {
 						targetInteractionId={ openChatTarget }
 					/>
 				) : (
-					<OdieSendMessageButton />
+					<OdieSendMessageButton
+						aiDisclosureId={ showAiDisclosureLine ? aiDisclosureId : undefined }
+					/>
 				) ) }
 		</div>
 	);

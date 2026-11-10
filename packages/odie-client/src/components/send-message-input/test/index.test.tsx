@@ -11,11 +11,18 @@ import { useSendChatMessage } from '../../../hooks';
 import type { Chat, Message } from '../../../types';
 
 jest.mock( '@automattic/agenttic-ui/index.css', () => ( {} ), { virtual: true } );
+// Changed by each test.
+let mockTextarea: HTMLTextAreaElement | null = null;
+let mockHasEnTranslation = true;
+
 jest.mock(
 	'@automattic/agenttic-ui',
-	() => ( { useInput: () => ( { textareaRef: { current: null } } ) } ),
+	() => ( { useInput: () => ( { textareaRef: { current: mockTextarea } } ) } ),
 	{ virtual: true }
 );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	useHasEnTranslation: () => () => mockHasEnTranslation,
+} ) );
 jest.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 	useConnectionStatusNotice: () => undefined,
@@ -72,10 +79,13 @@ function mockChat( chat: Chat, { isUserEligibleForPaidSupport = false } = {} ) {
 	} as unknown as ReturnType< typeof useOdieAssistantContext > );
 }
 
-function renderInput( route: string, { strict = false } = {} ) {
+function renderInput(
+	route: string,
+	{ strict = false, aiDisclosureId }: { strict?: boolean; aiDisclosureId?: string } = {}
+) {
 	const tree = (
 		<MemoryRouter initialEntries={ [ route ] }>
-			<OdieSendMessageButton />
+			<OdieSendMessageButton aiDisclosureId={ aiDisclosureId } />
 		</MemoryRouter>
 	);
 	return render( strict ? <StrictMode>{ tree }</StrictMode> : tree );
@@ -168,5 +178,44 @@ describe( 'OdieSendMessageButton while a chat with a human starts', () => {
 		renderInput( route( { provider: 'zendesk', query: QUERY } ) );
 
 		expect( sendMessage ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'OdieSendMessageButton AI note', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: jest.fn() } );
+		mockTextarea = null;
+		mockHasEnTranslation = true;
+		mockChat( makeChat() );
+	} );
+
+	it( 'hides the note when the AI line is hidden', () => {
+		renderInput( '/odie' );
+
+		expect( screen.queryByText( /Responses may be inaccurate/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'says only that responses may be inaccurate', () => {
+		renderInput( '/odie', { aiDisclosureId: 'line-id' } );
+
+		expect( screen.getByText( /Responses may be inaccurate/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /chatting with/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the old note until the new one is translated', () => {
+		mockHasEnTranslation = false;
+		renderInput( '/odie', { aiDisclosureId: 'line-id' } );
+
+		expect( screen.getByText( /You’re chatting with an AI assistant/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'describes the input with the AI line, then the note', () => {
+		mockTextarea = document.createElement( 'textarea' );
+		renderInput( '/odie', { aiDisclosureId: 'line-id' } );
+
+		const noteId = screen.getByText( /Responses may be inaccurate/ ).closest( '[id]' )?.id;
+		expect( noteId ).toBeTruthy();
+		expect( mockTextarea ).toHaveAttribute( 'aria-describedby', `line-id ${ noteId }` );
 	} );
 } );
