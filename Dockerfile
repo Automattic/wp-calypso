@@ -44,6 +44,8 @@ ENV SKIP_CALYPSO_PACKAGE_BUILDS=true
 ENV CONTAINER=docker
 ENV IS_CI=true
 
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
+
 # Build a "base" layer
 #
 # This layer should never change unless env-config.sh
