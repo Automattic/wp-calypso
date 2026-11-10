@@ -346,7 +346,7 @@ export function ConversationDetail( {
 											color="inherit"
 											isBlock={ false }
 											truncate
-											numberOfLines={ 2 }
+											numberOfLines={ 1 }
 										>
 											{ String( post.title ?? conversation?.title ?? '' ) }
 										</Heading>

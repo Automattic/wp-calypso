@@ -82,18 +82,28 @@
 	}
 }
 
+// $elevation-x-small at three-quarters of its opacity.
+$conversations-inbox-post-card-shadow:
+	0 1px 1px rgba( $black, 0.0225 ),
+	0 1px 2px rgba( $black, 0.015 ),
+	0 3px 3px rgba( $black, 0.015 ),
+	0 4px 4px rgba( $black, 0.0075 );
+
 .conversations-inbox__post-card {
 	box-sizing: border-box;
 	padding: 24px;
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	position: relative;
-	box-shadow: $elevation-x-small;
+	box-shadow: $conversations-inbox-post-card-shadow;
 	color: var( --color-text );
-	transition: border-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+	transition-property: border-color, box-shadow;
+	transition-duration: var( --wpds-motion-duration-sm );
+	transition-timing-function: var( --wpds-motion-easing-balanced );
 
 	&:hover {
 		border-color: color-mix( in srgb, var( --color-border-subtle ) 88%, var( --color-text ) );
+		box-shadow: none;
 	}
 }
 
