@@ -3,6 +3,6 @@ module.exports = {
 	// run tests for all packages that have a Jest config file
 	projects: [ '<rootDir>/packages/*/jest.config.js' ],
 	moduleNameMapper: {
-		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
+		'^react-markdown$': '<rootDir>/test/mocks/react-markdown.js',
 	},
 };
