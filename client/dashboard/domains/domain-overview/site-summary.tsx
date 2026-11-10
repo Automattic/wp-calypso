@@ -8,6 +8,7 @@ import SiteIcon from '../../components/site-icon';
 import SummaryButton from '../../components/summary-button';
 import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
+import './site-summary.scss';
 
 export default function DomainSiteSettingsSummary( {
 	domain,
@@ -38,6 +39,7 @@ export default function DomainSiteSettingsSummary( {
 	// Not a link: the site already leads to this page, so linking back would be circular.
 	return (
 		<SummaryButton
+			className="dashboard-summary-button domain-overview-site-summary"
 			title={ __( 'Site' ) }
 			suffix={
 				site ? (
