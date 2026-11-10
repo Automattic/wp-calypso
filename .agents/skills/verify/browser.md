@@ -117,6 +117,8 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
   await page.goto( page.url() );
   ```
 
+- **Checking Back.** Make the history entries inside the page. In a fresh tab that is already signed in, move with `location.assign( '/sites?page=99' )`, then call `history.back()` and read where it lands. A browser tool's own navigate and back commands, and a login redirect on the way, can add or replace entries, so they don't show what Back does for a user.
+
 ## Other browsers
 
 When you drive a browser yourself (Claude in Chrome, Playwright MCP, an automated Chrome profile), sign in by hand:
