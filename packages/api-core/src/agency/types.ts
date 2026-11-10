@@ -318,6 +318,35 @@ export interface AgencyNotification {
  */
 export type AgencyApiResponse = Agency[] | { is_client_user: boolean; billing_type?: string };
 
+/**
+ * Body of POST /wpcom/v2/agency, which creates an agency for the current user.
+ */
+export interface AgencyCreateRequest {
+	first_name: string;
+	last_name: string;
+	agency_name: string;
+	agency_url: string;
+	agency_size?: string;
+	number_sites?: string;
+	user_type: string;
+	initial_source?: string;
+	services_offered: string[];
+	products_offered: string[];
+	products_to_offer: string[];
+	expansion_planned?: 'Yes' | 'No';
+	address_line1: string;
+	address_line2: string;
+	address_city: string;
+	address_country: string;
+	address_state: string;
+	address_postal_code: string;
+	phone_number: string;
+	referral_status?: string | null;
+	skip_hubspot: boolean;
+	/** HubSpot's tracking cookie, which ties the signup to the visitor's marketing history. */
+	hubspotutk?: string;
+}
+
 export interface McpAvailableAbility {
 	name: string;
 	title: string;

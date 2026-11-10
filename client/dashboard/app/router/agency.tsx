@@ -82,6 +82,10 @@ import {
 	PARTNER_DIRECTORY_LEAD_MATCHING_SEGMENT,
 	PARTNER_DIRECTORY_ROUTE,
 } from '../../agency/partner-directory/paths';
+import {
+	getSignupDataFromLocalStorage,
+	getSignupDataFromSearch,
+} from '../../agency/signup/finish/signup-data';
 import { isPressableSite } from '../../agency/sites/lib';
 import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
@@ -983,6 +987,36 @@ export const agencyTeamAcceptInviteRoute = createRoute( {
 					secret,
 				} = agencyTeamAcceptInviteRoute.useSearch();
 				return <d.default agencyId={ agencyId } inviteId={ inviteId } secret={ secret } />;
+			},
+		} )
+	)
+);
+
+// `/signup/finish` – creates the agency from the signup answers, then opens Overview.
+// Sits outside the agency routes: the user has no agency yet.
+export const agencySignupFinishRoute = createRoute( {
+	staticData: { isFullscreen: true },
+	head: () => ( {
+		meta: [ { title: __( 'Sign up' ) } ],
+	} ),
+	getParentRoute: () => rootRoute,
+	path: 'signup/finish',
+	// The answers arrive from outside the dashboard: in the query string from the agencies
+	// marketing site, or in local storage from the classic signup form.
+	beforeLoad: ( { location } ) => {
+		const signupData =
+			getSignupDataFromSearch( location.searchStr ) ?? getSignupDataFromLocalStorage();
+		if ( ! signupData ) {
+			throw dashboardRedirect( { href: '/signup', reloadDocument: true, replace: true } );
+		}
+		return { signupData };
+	},
+} ).lazy( () =>
+	import( '../../agency/signup/finish' ).then( ( d ) =>
+		createLazyRoute( 'agency-signup-finish' )( {
+			component: () => {
+				const { signupData } = agencySignupFinishRoute.useRouteContext();
+				return <d.default signupData={ signupData } />;
 			},
 		} )
 	)
@@ -2346,6 +2380,7 @@ const agencySiteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const createAgencyRoutes = () => [
+	agencySignupFinishRoute,
 	agencyTeamAcceptInviteRoute,
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,

@@ -1,3 +1,5 @@
+import { A4A_DASHBOARD_SIGNUP_PATHS } from '../section';
+
 export const A4A_DASHBOARD_SECTION_DEFINITION = {
 	name: 'dashboard-a4a',
 	module: 'dashboard/app-a4a',
@@ -6,6 +8,7 @@ export const A4A_DASHBOARD_SECTION_DEFINITION = {
 export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/',
 	'/oauth/token',
+	...A4A_DASHBOARD_SIGNUP_PATHS,
 	'/overview',
 	'/sites',
 	'/dev-tools',
