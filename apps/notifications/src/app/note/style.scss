@@ -192,6 +192,10 @@
 		max-width: 128px;
 	}
 
+	p:not(:last-child) {
+		margin-bottom: $grid-unit-20;
+	}
+
 	blockquote {
 		padding: 0 $grid-unit-20;
 		margin: 0 0 $grid-unit-20 0;

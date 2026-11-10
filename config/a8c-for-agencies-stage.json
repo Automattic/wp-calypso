@@ -39,6 +39,7 @@
 		"a4a-unified-onboarding-tour": true,
 		"a4a-updated-add-new-site": true,
 		"a4a/site-migration": false,
+		"a4a/static-site-import": true,
 		"a8c-for-agencies": true,
 		"ad-tracking": false,
 		"checkout/stripe-upi": true,

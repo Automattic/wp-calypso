@@ -143,7 +143,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 
 		expect( await getOptionalRows() ).toEqual( [ SECURITY ] );
-		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 3 );
+		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 2 );
 	} );
 
 	test( 'keeps security and glue records behind a tracked toggle, after the default rows', async () => {

@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act, createRef, useReducer } from 'react';
+import { vi } from 'vitest';
 import Search from '..';
 
 describe( 'search', () => {
@@ -56,8 +57,8 @@ describe( 'search', () => {
 	describe( '"on-enter" search mode', () => {
 		it( "shouldn't call onSearch and onSearchChange when search changes", async () => {
 			const searchString = '12345';
-			const onSearch = jest.fn();
-			const onSearchChange = jest.fn();
+			const onSearch = vi.fn();
+			const onSearchChange = vi.fn();
 			render(
 				<Search onSearch={ onSearch } searchMode="on-enter" onSearchChange={ onSearchChange } />
 			);
@@ -70,8 +71,8 @@ describe( 'search', () => {
 
 		it( 'should call onSearch and onSearchChange when user hits enter', async () => {
 			const searchString = '12345{enter}';
-			const onSearch = jest.fn();
-			const onSearchChange = jest.fn();
+			const onSearch = vi.fn();
+			const onSearchChange = vi.fn();
 			render(
 				<Search onSearch={ onSearch } searchMode="on-enter" onSearchChange={ onSearchChange } />
 			);
@@ -87,8 +88,8 @@ describe( 'search', () => {
 
 	it( 'should call onSearch and onSearchChange when search changes', async () => {
 		const searchString = '12345';
-		const onSearch = jest.fn();
-		const onSearchChange = jest.fn();
+		const onSearch = vi.fn();
+		const onSearchChange = vi.fn();
 		render( <Search onSearch={ onSearch } onSearchChange={ onSearchChange } /> );
 		const searchbox = screen.getByRole( 'searchbox' );
 		const user = userEvent.setup();
@@ -109,7 +110,7 @@ describe( 'search', () => {
 
 	it( 'should call onKeyDown when typing into search', async () => {
 		const searchString = '12345';
-		const onKeyDown = jest.fn();
+		const onKeyDown = vi.fn();
 		render( <Search onKeyDown={ onKeyDown } /> );
 		const searchbox = screen.getByRole( 'searchbox' );
 		const user = userEvent.setup();
@@ -133,7 +134,7 @@ describe( 'search', () => {
 	} );
 
 	it( 'should call onSearchOpen when search is focused', async () => {
-		const onSearchOpen = jest.fn();
+		const onSearchOpen = vi.fn();
 		render( <Search onSearchOpen={ onSearchOpen } /> );
 		const searchbox = screen.getByRole( 'searchbox' );
 		const user = userEvent.setup();
@@ -142,7 +143,7 @@ describe( 'search', () => {
 	} );
 
 	it( 'should open and focus the search element when clicking the open search button', async () => {
-		const onSearchOpen = jest.fn();
+		const onSearchOpen = vi.fn();
 		render( <Search pinned defaultIsOpen={ false } onSearchOpen={ onSearchOpen } /> );
 		const openButton = screen.getByLabelText( 'Open Search' );
 		const user = userEvent.setup();
@@ -154,7 +155,7 @@ describe( 'search', () => {
 	} );
 
 	it( 'should close search and call onSearchClose when clicking the close button', async () => {
-		const onSearchClose = jest.fn();
+		const onSearchClose = vi.fn();
 		render(
 			<Search
 				pinned
@@ -174,8 +175,8 @@ describe( 'search', () => {
 	} );
 
 	it( 'should call onSearch without debouncing when a default value is provided but not call onSearchChange', () => {
-		const onSearch = jest.fn();
-		const onSearchChange = jest.fn();
+		const onSearch = vi.fn();
+		const onSearchChange = vi.fn();
 		const defaultValue = 'a default search value';
 		render(
 			<Search
@@ -192,7 +193,7 @@ describe( 'search', () => {
 	} );
 
 	it( 'should call onSearch without debouncing when reverting to empty keyword', async () => {
-		const onSearch = jest.fn();
+		const onSearch = vi.fn();
 		render( <Search onSearch={ onSearch } defaultValue="a" delaySearch delayTimeout={ 1000 } /> );
 
 		// check that `onSearch` has been called with the default value on mount

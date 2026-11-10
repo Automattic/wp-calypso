@@ -1,3 +1,7 @@
+## Unreleased
+
+- `SummaryButton`: set `color` alongside `fill` on the navigation and decoration icons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) take the same grey, and the accent color on hover.
+
 ## 5.0.0
 
 ### Breaking Changes

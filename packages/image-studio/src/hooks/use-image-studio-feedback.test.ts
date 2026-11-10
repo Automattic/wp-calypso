@@ -1,5 +1,6 @@
 import { rateMessage, submitFeedback } from '@automattic/agents-manager';
 import { renderHook } from '@testing-library/react';
+import { ImageStudioMode } from '../types';
 import { useImageStudioFeedback } from './use-image-studio-feedback';
 
 jest.mock( '@automattic/agents-manager', () => ( {
@@ -50,8 +51,26 @@ describe( 'useImageStudioFeedback', () => {
 			'msg-1',
 			'too dark',
 			undefined,
-			'trace-1'
+			'trace-1',
+			undefined
 		);
+	} );
+
+	it( 'sends the same image metadata with the typed feedback as with the rating', async () => {
+		const { result } = renderHook( () =>
+			useImageStudioFeedback( {
+				...baseConfig,
+				displayImageUrl: 'https://example.com/image.png',
+				mode: ImageStudioMode.Edit,
+			} )
+		);
+
+		result.current.handleFeedback( 'down' );
+		await result.current.handleSubmitFeedbackText( 'too dark' );
+
+		const expectedMetadata = { image_url: 'https://example.com/image.png', mode: 'edit' };
+		expect( ( rateMessage as jest.Mock ).mock.calls[ 0 ][ 5 ] ).toEqual( expectedMetadata );
+		expect( ( submitFeedback as jest.Mock ).mock.calls[ 0 ][ 6 ] ).toEqual( expectedMetadata );
 	} );
 
 	it( 'omits the trace id when none is known', async () => {

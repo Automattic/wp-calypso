@@ -30,15 +30,12 @@ function renderSummary( customProps: Partial< Domain > = {} ) {
 }
 
 describe( 'DomainSiteSettingsSummary', () => {
-	test( 'links to the site, with its favicon and name', async () => {
+	test( 'shows the site favicon and name without linking to the site', async () => {
 		renderSummary();
 
-		expect( await screen.findByRole( 'link', { name: /Site/ } ) ).toHaveAttribute(
-			'href',
-			'/sites/example.wordpress.com'
-		);
-		expect( screen.getByRole( 'img', { name: 'My site' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'img', { name: 'My site' } ) ).toBeVisible();
 		expect( screen.getByText( 'My site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers to attach a domain-only domain to a site', async () => {

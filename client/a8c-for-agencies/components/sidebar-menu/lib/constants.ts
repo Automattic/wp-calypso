@@ -39,6 +39,7 @@ export const A4A_MIGRATIONS_LINK = '/migrations';
 export const A4A_MIGRATIONS_OVERVIEW_LINK = `${ A4A_MIGRATIONS_LINK }/overview`;
 export const A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-pressable`;
 export const A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-wpcom`;
+export const A4A_MIGRATIONS_IMPORT_SITE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/import-site`;
 export const A4A_MIGRATIONS_COMMISSIONS_LINK = `${ A4A_MIGRATIONS_LINK }/commissions`;
 export const A4A_MIGRATIONS_PAYMENT_SETTINGS = `${ A4A_MIGRATIONS_LINK }/payment-settings`;
 export const A4A_SETTINGS_LINK = '/settings';

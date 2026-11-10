@@ -53,7 +53,6 @@ describe( 'domain overview item tracking', () => {
 	const registration = <DomainOverviewRegistration domain={ domain } />;
 
 	test.each( [
-		[ 'site', settings, /Site/ ],
 		[ 'emails', settings, /Professional email/ ],
 		[ 'renew', registration, /Renewal & billing/ ],
 		[ 'contact-details', registration, /Contact details & privacy/ ],
