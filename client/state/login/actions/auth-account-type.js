@@ -6,6 +6,7 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 } from 'calypso/state/action-types';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 import 'calypso/state/data-layer/wpcom/users/auth-options';
 
 import 'calypso/state/login/init';
@@ -13,9 +14,14 @@ import 'calypso/state/login/init';
 /**
  * Retrieves the type of authentication of the account (regular, passwordless ...) of the specified user.
  * @param  {string}   usernameOrEmail Identifier of the user
+ * @param  {Object} blackbox Blackbox protection helpers for the login form.
  * @returns {Function}                 A thunk that can be dispatched
  */
-export const getAuthAccountType = ( usernameOrEmail ) => ( dispatch ) => {
+export const getAuthAccountType = ( usernameOrEmail, blackbox ) => async ( dispatch, getState ) => {
+	if ( isFormDisabled( getState() ) ) {
+		return;
+	}
+
 	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' ) );
 
 	dispatch( {
@@ -47,9 +53,16 @@ export const getAuthAccountType = ( usernameOrEmail ) => ( dispatch ) => {
 		return;
 	}
 
+	const blackboxSessionId = await blackbox.getSessionId();
+	if ( blackboxSessionId === null ) {
+		dispatch( { type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE, error: null } );
+		return;
+	}
+
 	dispatch( {
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 		usernameOrEmail,
+		blackboxSessionId,
 	} );
 };
 
