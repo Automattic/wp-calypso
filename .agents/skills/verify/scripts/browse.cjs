@@ -20,6 +20,7 @@ const {
 	launchBrowser,
 	logInTestAccount,
 	statePath,
+	testAccountSite,
 } = require( './lib.cjs' );
 
 const { values: options, positionals } = parseArgs( {
@@ -54,8 +55,9 @@ const LOADING_SELECTOR = [
 	'[aria-busy="true"]',
 ].join( ', ' );
 const LOADING_TIMEOUT = 60000;
-// A spinner may only mount once the first render has fired its queries.
-const LOADING_QUIET_PERIOD = 1000;
+// A spinner may only mount once the first render has fired its queries, which after a
+// click in the dashboard can take over a second.
+const LOADING_QUIET_PERIOD = 2000;
 
 const BUILD_TIMEOUT = 90000;
 
@@ -116,7 +118,8 @@ function watch( page ) {
 	const requests = [];
 	const logPattern = options[ 'log-requests' ] && new RegExp( options[ 'log-requests' ] );
 	page.on( 'console', ( message ) => {
-		if ( message.type() === 'error' ) {
+		// Report-only CSP violations block nothing; the site preview logs them on Atomic sites.
+		if ( message.type() === 'error' && ! /report-only/i.test( message.text() ) ) {
 			problems.push( `console: ${ clip( message.text() ) }` );
 		}
 	} );
@@ -249,43 +252,42 @@ async function takeScreenshot( page, file, { selector, fullPage = false } = {} )
 	console.log( 'screenshot:', target );
 }
 
-async function main() {
-	const [ target ] = positionals;
-	if ( ! target ) {
-		throw new UserActionRequired( 'Usage: node browse.cjs <url> [options]' );
-	}
-	const url = new URL( target, `http://my.localhost:${ PORT }` ).toString();
-	const account = options.as;
+const accounts = options.as.split( ',' );
 
-	if ( options.screenshot ) {
-		screenshotTarget( options.screenshot );
+// With several accounts, `after.png` becomes `after-atomicUser.png`.
+function screenshotPathFor( file, account ) {
+	if ( accounts.length === 1 ) {
+		return file;
 	}
+	const { dir, name, ext } = path.parse( file );
+	return path.join( dir, `${ name }-${ account }${ ext }` );
+}
 
-	await waitForDevServer();
-	console.log( `dev server: up on port ${ PORT }` );
+async function check( browser, account, target ) {
+	const resolved = target.includes( '{site}' )
+		? target.replaceAll( '{site}', testAccountSite( account ) )
+		: target;
+	const url = new URL( resolved, `http://my.localhost:${ PORT }` ).toString();
 	await ensureState( account );
 
-	const browser = await launchBrowser();
-	try {
-		let { context, page, problems, requests } = await open( browser, account, url );
+	let { context, page, problems, requests } = await open( browser, account, url );
 
-		if ( isLoginUrl( page.url() ) && ! isLoginUrl( url ) ) {
-			if ( account === OWN_ACCOUNT ) {
-				throw new UserActionRequired(
-					'The saved login has expired. Ask the user to log in again with: ' + AUTH_COMMAND
-				);
-			}
-			console.log( `The ${ account } session has expired. Logging in again…` );
-			await context.close();
-			await logInTestAccount( account );
-			( { context, page, problems, requests } = await open( browser, account, url ) );
-			if ( isLoginUrl( page.url() ) ) {
-				throw new Error(
-					`Still redirected to the login page after logging in ${ account } again.`
-				);
-			}
+	if ( isLoginUrl( page.url() ) && ! isLoginUrl( url ) ) {
+		if ( account === OWN_ACCOUNT ) {
+			throw new UserActionRequired(
+				'The saved login has expired. Ask the user to log in again with: ' + AUTH_COMMAND
+			);
 		}
+		console.log( `The ${ account } session has expired. Logging in again…` );
+		await context.close();
+		await logInTestAccount( account );
+		( { context, page, problems, requests } = await open( browser, account, url ) );
+		if ( isLoginUrl( page.url() ) ) {
+			throw new Error( `Still redirected to the login page after logging in ${ account } again.` );
+		}
+	}
 
+	try {
 		const waitFor = options[ 'wait-for' ];
 		if ( waitFor ) {
 			await page.locator( waitFor ).first().waitFor( { timeout: 60000 } );
@@ -296,11 +298,21 @@ async function main() {
 			( options[ 'eval-file' ] && fs.readFileSync( options[ 'eval-file' ], 'utf8' ) );
 		if ( code ) {
 			await waitUntilLoaded( page );
-			const screenshot = ( file, settings ) => takeScreenshot( page, file, settings );
-			const result = await new AsyncFunction( 'page', 'context', 'screenshot', code )(
+			const screenshot = ( file, settings ) =>
+				takeScreenshot( page, screenshotPathFor( file, account ), settings );
+			const loaded = async () => {
+				const left = await waitUntilLoaded( page );
+				if ( left.length ) {
+					throw new Error(
+						`Still loading after ${ LOADING_TIMEOUT / 1000 }s: ${ left.join( ', ' ) }`
+					);
+				}
+			};
+			const result = await new AsyncFunction( 'page', 'context', 'screenshot', 'loaded', code )(
 				page,
 				context,
-				screenshot
+				screenshot,
+				loaded
 			);
 			if ( result !== undefined ) {
 				console.log(
@@ -330,7 +342,7 @@ async function main() {
 		}
 
 		if ( options.screenshot ) {
-			await takeScreenshot( page, options.screenshot, {
+			await takeScreenshot( page, screenshotPathFor( options.screenshot, account ), {
 				selector: options.clip,
 				fullPage: options[ 'full-page' ],
 			} );
@@ -339,6 +351,31 @@ async function main() {
 		if ( ! options[ 'no-snapshot' ] ) {
 			const root = await mainContent( page );
 			console.log( '\nARIA snapshot:\n' + ( await root.ariaSnapshot() ) );
+		}
+	} finally {
+		await context.close();
+	}
+}
+
+async function main() {
+	const [ target ] = positionals;
+	if ( ! target ) {
+		throw new UserActionRequired( 'Usage: node browse.cjs <url> [options]' );
+	}
+	if ( options.screenshot ) {
+		screenshotTarget( options.screenshot );
+	}
+
+	await waitForDevServer();
+	console.log( `dev server: up on port ${ PORT }` );
+
+	const browser = await launchBrowser();
+	try {
+		for ( const account of accounts ) {
+			if ( accounts.length > 1 ) {
+				console.log( `\n===== ${ account } =====` );
+			}
+			await check( browser, account, target );
 		}
 	} finally {
 		await browser.close();

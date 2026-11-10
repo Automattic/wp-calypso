@@ -307,6 +307,7 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 
 	.icon-list-item__decoration svg {
+		color: var( --dashboard-subtle__color );
 		fill: var( --dashboard-subtle__color );
 	}
 

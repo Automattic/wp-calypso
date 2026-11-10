@@ -1,4 +1,4 @@
-import { isWpError } from '@automattic/api-core';
+import { fetchWordPressMigrationStatus, isWpError } from '@automattic/api-core';
 import {
 	siteQueryFilter,
 	siteWordPressMigrationConfigurationQuery,
@@ -24,6 +24,8 @@ const UNLOCK_GRACE_PERIOD = 30000;
 
 const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed' ];
 
+const CONNECTION_FAILURES = [ 'source_connection_failed', 'source_plugin_unreachable' ];
+
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -34,6 +36,18 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetch,
 	} = useQuery( {
 		...siteWordPressMigrationStatusQuery( site.ID ),
+		// Refetch the main site query if the migration state comes back as failed w/ a handoff finding.
+		queryFn: async () => {
+			const status = await fetchWordPressMigrationStatus( site.ID );
+			const mayBeHandedOff =
+				status.status === 'failed' &&
+				status.findings.some( ( { resolution } ) => resolution === 'assisted_handoff' );
+			if ( mayBeHandedOff ) {
+				// Get the higher-level migration status again, in case it was handed off.
+				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
+			}
+			return status;
+		},
 		refetchInterval: ( { state } ) => {
 			const status = state.data?.status;
 			if ( status === 'running' ) {
@@ -51,10 +65,10 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
 
-	// Only connecting the source again gets past a refused connection, so go straight back to that step.
+	// A refused connection, or a plugin we can't reach, takes setting the source up again, so go straight back to that step.
 	const connectionFailure =
 		migration?.status === 'failed'
-			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
+			? migration.findings.find( ( { code } ) => CONNECTION_FAILURES.includes( code ) )
 			: undefined;
 
 	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
@@ -137,17 +151,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		const interval = setInterval( reloadSite, isUnlockOverdue ? 30000 : 5000 );
 		return () => clearInterval( interval );
 	}, [ isCompleted, isSiteUnlocked, isUnlockOverdue, queryClient, navigate, site.ID, site.slug ] );
-
-	// An "assisted_handoff" failure automatically switches to the assisted flow,
-	// so read the state again in case a redirect is needed.
-	const hasHandoffFinding =
-		migration?.status === 'failed' &&
-		migration.findings.some( ( { resolution } ) => resolution === 'assisted_handoff' );
-	useEffect( () => {
-		if ( hasHandoffFinding ) {
-			queryClient.invalidateQueries( siteQueryFilter( site.ID ) );
-		}
-	}, [ hasHandoffFinding, queryClient, site.ID ] );
 
 	const contactUs = (
 		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
