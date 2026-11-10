@@ -367,10 +367,22 @@ $conversations-inbox-post-card-shadow:
 
 	// "to Petra" on a reply reads as metadata, like the time.
 	.comments__comment-respondee {
-		margin-inline-end: 8px;
+		margin-inline-end: 6px;
 		font-size: 13px;
 		font-weight: 400;
 		line-height: 20px;
+
+		// The post card's dot, between the reply's "to" name and its date.
+		&::after {
+			content: "";
+			display: inline-block;
+			width: 2px;
+			height: 2px;
+			margin-inline-start: 6px;
+			border-radius: 50%;
+			background: currentcolor;
+			vertical-align: middle;
+		}
 	}
 
 	.comments__comment-respondee-link,
