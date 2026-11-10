@@ -459,7 +459,6 @@ const SiteSubscriptionRow = ( {
 						icon={ trash }
 						css={ {
 							color: 'var(--studio-gray-60) !important;',
-							fill: 'var(--studio-gray-60) !important;',
 						} }
 					/>
 				</Button>

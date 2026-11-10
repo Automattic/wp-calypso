@@ -242,7 +242,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		.reader-following-feed,
 		.reader-follow-feed {
 			color: var( --color-text-subtle ) !important;
-			fill: var( --color-text-subtle ) !important;
+			fill: var( --color-text-subtle );
 		}
 
 		// Override green text color when following
@@ -255,7 +255,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			.reader-following-feed,
 			.reader-follow-feed {
 				color: var( --color-link ) !important;
-				fill: var( --color-link ) !important;
+				fill: var( --color-link );
 				opacity: 1;
 			}
 

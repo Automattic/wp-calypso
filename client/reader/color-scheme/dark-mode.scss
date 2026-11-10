@@ -145,8 +145,7 @@
 		border-color: var( --color-neutral-20 );
 		color: var( --color-text );
 
-		svg,
-		svg * {
+		svg {
 			color: inherit;
 			fill: currentColor;
 		}

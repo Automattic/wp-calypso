@@ -48,7 +48,7 @@
 
 	&:hover,
 	&:focus {
-		svg {
+		svg:not( .reader-follow-feed, .reader-following-feed ) {
 			path {
 				fill: var(--color-text-inverted);
 			}
@@ -707,8 +707,7 @@
 			fill: var( --color-link );
 		}
 
-		svg,
-		svg path {
+		svg {
 			color: inherit;
 			fill: currentColor;
 		}
