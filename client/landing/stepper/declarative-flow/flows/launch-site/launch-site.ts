@@ -43,6 +43,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors/get-produ
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { getLaunchSiteSteps } from './get-launch-site-steps';
+import { isPreviewSite, useIsPreviewSite } from './preview-site';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
@@ -228,6 +229,16 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const launchParams = useLaunchParams();
 		const isPlansFirstStep = ! getStepSlugs( this ).includes( STEPS.DOMAIN_SEARCH.slug );
+		const site = useSelect(
+			( select ) =>
+				launchParams.siteSlug
+					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )
+					: undefined,
+			[ launchParams.siteSlug ]
+		);
+		// A preview is kept by buying a plan, so it is offered only paid ones; hidden while asked, so
+		// Free never shows on a preview.
+		const { isLoading: isPreviewLoading, isPreview } = useIsPreviewSite( site );
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -235,6 +246,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				isLaunchPage: true,
 				isCustomDomainAllowedOnFreePlan: true,
 				deemphasizeFreePlan: true,
+				...( ( isPreviewLoading || isPreview ) && { hideFreePlan: true } ),
 				...( isPlansFirstStep && {
 					wrapperProps: {
 						goBack: () => window.location.assign( getLaunchReturnUrl( launchParams ) ),
@@ -267,13 +279,14 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			setProgressTitle,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
-		const siteId = useSelect(
+		const site = useSelect(
 			( select ) =>
 				launchParams.siteSlug
-					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )?.ID
+					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )
 					: undefined,
 			[ launchParams.siteSlug ]
 		);
+		const siteId = site?.ID;
 
 		// The processing step runs the launch and submits its result.
 		const launch = () => {
@@ -283,7 +296,10 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 					throw new Error( 'Unknown site' );
 				}
 
-				await launchSite( siteId );
+				// A preview goes on to checkout unlaunched: buying its plan launches it.
+				if ( ! ( await isPreviewSite( site ) ) ) {
+					await launchSite( siteId );
+				}
 
 				return { siteSlug: launchParams.siteSlug };
 			} );

@@ -16,6 +16,10 @@ The Stepper replacement for `/start/launch-site`. It takes the owner of a privat
 
 Logged-out users log in first; the steps are then worked out for their site.
 
+## Preview sites
+
+A preview site its owner hasn't bought (an Atomic site on Free that `/wpcom/v2/wow-funnel/pending` lists in `preview_sites`) is launched by buying it, and launching it unpaid is refused. For a preview, the plans step offers only paid plans, and the launch step leaves the site as it is and goes on to checkout, where buying the plan launches it.
+
 ## Query parameters
 
 - `siteSlug` – **Required.** The site to launch. Without it, or for a site that can't be found, the user goes to `/sites`.
