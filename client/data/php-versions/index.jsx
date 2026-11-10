@@ -21,6 +21,11 @@ export const getPHPVersions = () => {
 			value: '8.4',
 			disabled: false, // EOL 31 December 2028
 		},
+		{
+			label: '8.5',
+			value: '8.5',
+			disabled: false, // EOL 31 December 2029
+		},
 	];
 
 	return { recommendedValue, phpVersions };
