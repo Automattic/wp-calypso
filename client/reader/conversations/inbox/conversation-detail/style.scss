@@ -268,9 +268,9 @@
 		font-size: 15px;
 		line-height: 24px;
 
-		// Half a line between paragraphs, lists and quotes, in place of a full blank line.
+		// Less than a full blank line between paragraphs, lists and quotes.
 		> * {
-			margin-block: 0 12px;
+			margin-block: 0 16px;
 		}
 
 		> :last-child {
