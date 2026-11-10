@@ -60,7 +60,8 @@ export const adaptReadConversation = ( conversation: ReadConversation ): Convers
 export const adaptReadConversationOwnComment = (
 	row: ReadConversationOwnComment
 ): OwnComment => ( {
-	key: row.id,
+	// Keyed by post, so a row keeps its key when a newer comment replaces it.
+	key: getConversationKey( row.blog_id, row.post_id ),
 	siteId: row.blog_id,
 	postId: row.post_id,
 	commentId: row.comment_id,
@@ -121,17 +122,15 @@ export function useConversations( {
 
 /**
  * Lists each post once, at its first row's place, with the user's latest comment on it. The
- * endpoint returns a row per comment. Keyed by post, so the row keeps its key when a newer
- * comment replaces it.
+ * endpoint returns a row per comment, and with a search only the comments that match.
  */
 function groupByPost( comments: OwnComment[] ): OwnComment[] {
 	const byPost = new Map< string, OwnComment >();
 	for ( const comment of comments ) {
-		const key = getConversationKey( comment.siteId, comment.postId );
-		const kept = byPost.get( key );
+		const kept = byPost.get( comment.key );
 		// Comment IDs grow with each comment on a site, so the highest is the latest.
 		if ( ! kept || comment.commentId > kept.commentId ) {
-			byPost.set( key, { ...comment, key } );
+			byPost.set( comment.key, comment );
 		}
 	}
 	return [ ...byPost.values() ];
