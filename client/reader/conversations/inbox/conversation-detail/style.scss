@@ -409,9 +409,18 @@
 		padding: 0 0 0 16px;
 		border-inline-start: 2px solid var( --color-border-subtle );
 
+		> * {
+			margin-block: 0 16px;
+		}
+
 		> :last-child {
 			margin-block-end: 0;
 		}
+	}
+
+	// A quote opening the comment clears the name row instead of hugging it.
+	.comments__comment-content > blockquote:first-child {
+		margin-block-start: 12px;
 	}
 }
 
