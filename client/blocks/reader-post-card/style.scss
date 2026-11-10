@@ -48,7 +48,7 @@
 
 	&:hover,
 	&:focus {
-		svg:not( .reader-follow-feed, .reader-following-feed ) {
+		svg:not( .reader-follow-feed, .reader-following-feed, .reader-following-conversation ) {
 			path {
 				fill: var(--color-text-inverted);
 			}
