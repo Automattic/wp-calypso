@@ -145,8 +145,8 @@
 		border-color: var( --color-neutral-20 );
 		color: var( --color-text );
 
-		svg,
-		svg * {
+		svg {
+			color: inherit;
 			fill: currentColor;
 		}
 	}
@@ -182,8 +182,8 @@
 		color: var( --wp-components-color-foreground-inverted );
 	}
 
-	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed,
-	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed * {
+	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed {
+		color: var( --wp-components-color-foreground-inverted );
 		fill: var( --wp-components-color-foreground-inverted );
 	}
 

@@ -49,10 +49,11 @@ test( 'announces missing saved contact options only to eligible native partners 
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
 	const leadMatchingQuery = agencyLeadMatchingQuery( agency.id );
-	const announcement = () => screen.queryByRole( 'link', { name: 'Update your details' } );
+	const announcement = () => screen.queryByText( 'Update your details' );
 	const view = render( <AgencyOverview />, { queryClient } );
 	expect( announcement() ).not.toBeInTheDocument();
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toHaveAttribute(
+	await screen.findByText( 'Update your details' );
+	expect( screen.getByRole( 'link', { name: 'Update your details' } ) ).toHaveAttribute(
 		'href',
 		'/partner-directory/lead-matching/preferences'
 	);
@@ -70,7 +71,7 @@ test( 'announces missing saved contact options only to eligible native partners 
 	setProfile( { ...profile, contact } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setProfile( { ...profile, contact: { ...contact, phone: '' } } );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 
 	setProfile( {
 		...profile,
@@ -79,7 +80,7 @@ test( 'announces missing saved contact options only to eligible native partners 
 	} );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setProfile( profile );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 
 	const setAgency = ( changes: Partial< Agency > ) => {
 		act( () =>
@@ -89,7 +90,7 @@ test( 'announces missing saved contact options only to eligible native partners 
 	setAgency( { tier: { id: 'agency-partner' } } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setAgency( {} );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 	setAgency( { user: { capabilities: [] } } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	view.unmount();

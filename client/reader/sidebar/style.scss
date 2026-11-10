@@ -167,6 +167,7 @@ body.is-section-reader {
 
 		.sidebar__expandable-arrow {
 			background: none;
+			color: var( --studio-gray-20 );
 			fill: var( --studio-gray-20 );
 			transition: transform 0.15s ease;
 			transform: rotate( -90deg );
@@ -184,6 +185,7 @@ body.is-section-reader {
 			border-radius: 4px;
 
 			&:hover .sidebar__expandable-arrow {
+				color: var( --studio-gray-20 );
 				fill: var( --studio-gray-20 );
 			}
 		}
@@ -323,10 +325,12 @@ body.is-section-reader {
 				}
 
 				.sidebar__expandable-arrow {
+					color: var( --studio-gray-70 );
 					fill: var( --studio-gray-70 );
 				}
 
 				&:hover .sidebar__expandable-arrow {
+					color: var( --studio-gray-30 );
 					fill: var( --studio-gray-30 );
 				}
 			}
@@ -343,6 +347,7 @@ body.is-section-reader {
 
 			&:hover {
 				.sidebar__expandable-arrow {
+					color: var( --studio-gray-70 );
 					fill: var( --studio-gray-70 );
 				}
 			}
