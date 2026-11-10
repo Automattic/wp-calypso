@@ -371,6 +371,11 @@
 		}
 	}
 
+	// A reply's editor opens with room under the comment's actions.
+	.comments__comment .comments__form {
+		margin-block-start: 16px;
+	}
+
 	.comments__collapsed-replies.components-button.is-link {
 		margin-block-start: 8px;
 		color: var( --color-text-subtle );
