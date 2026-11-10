@@ -377,16 +377,19 @@ export function useResizablePanel( {
 			handleEl.setPointerCapture( event.pointerId );
 
 			// A size-morph spring still in flight would keep writing its target over
-			// the gesture's width/height on every frame.
+			// the gesture's width/height on every frame. Commit where it stopped, so a
+			// press-and-release without a move doesn't leave the ref at the old target.
 			width.stop();
 			height.stop();
+			const startSize = { width: width.get(), height: height.get() };
+			expandedSizeRef.current = startSize;
 
 			resizingRef.current = {
 				edge,
 				startX: event.clientX,
 				startY: event.clientY,
-				startWidth: width.get(),
-				startHeight: height.get(),
+				startWidth: startSize.width,
+				startHeight: startSize.height,
 				startPosX: x.get(),
 				startPosY: y.get(),
 			};
