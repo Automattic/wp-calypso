@@ -23,7 +23,7 @@ const render = () =>
 	} );
 
 const tryAgainMessage =
-	'We couldn’t send your migration request just now. Please try again in a few minutes.';
+	/We couldn’t send your migration request just now. Please try again in a few minutes./;
 
 describe( 'SiteMigrationSupportInstructions', () => {
 	beforeEach( () => jest.clearAllMocks() );
@@ -38,8 +38,12 @@ describe( 'SiteMigrationSupportInstructions', () => {
 
 		expect( await screen.findByText( tryAgainMessage ) ).toBeVisible();
 
+		const retry = screen.getByRole( 'button', { name: 'Try again' } );
+		// The notice only gives buttons inside its text readable colors.
+		expect( retry.closest( '.calypso-notice__text' ) ).not.toBeNull();
+
 		// A keyboard user can retry too.
-		screen.getByRole( 'button', { name: 'Try again' } ).focus();
+		retry.focus();
 		await userEvent.keyboard( '{Enter}' );
 
 		await waitFor( () => expect( screen.queryByText( tryAgainMessage ) ).not.toBeInTheDocument() );

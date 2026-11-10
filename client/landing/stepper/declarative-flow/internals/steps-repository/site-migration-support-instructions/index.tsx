@@ -122,11 +122,9 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
 				{ canRetry && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ getTicketErrorMessage( ticketError ) }
-					>
+					// Inside the notice text, so the button takes the notice's link colors.
+					<Notice status="is-warning" showDismiss={ false }>
+						{ getTicketErrorMessage( ticketError ) }{ ' ' }
 						<Button variant="link" onClick={ requestMigration }>
 							{ translate( 'Try again' ) }
 						</Button>
