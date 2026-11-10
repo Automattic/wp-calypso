@@ -34,7 +34,7 @@ const signupData: SignupData = {
 	acquisition: { utm_source: 'newsletter' },
 };
 
-function mockAgency( response: unknown ) {
+function mockAgency( response: { is_client_user: boolean } | { id: number }[] ) {
 	nock( API_ROOT ).get( '/wpcom/v2/agency' ).query( true ).reply( 200, response );
 }
 
