@@ -55,6 +55,20 @@ export class NotificationsComponent {
 	}
 
 	/**
+	 * Approves the open notification's comment with its `a` shortcut.
+	 */
+	async approveNotification(): Promise< void > {
+		await this.page.keyboard.press( 'a' );
+	}
+
+	/**
+	 * Marks the open notification's comment as spam with its `s` shortcut.
+	 */
+	async spamNotification(): Promise< void > {
+		await this.page.keyboard.press( 's' );
+	}
+
+	/**
 	 * Trashes the open notification's comment.
 	 *
 	 * Trash lives inside the per-note "Actions" dropdown, whose popover animates
