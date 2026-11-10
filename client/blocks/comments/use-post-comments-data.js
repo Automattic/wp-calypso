@@ -74,17 +74,14 @@ export const usePostCommentsData = ( props ) => {
 		fetchEarlierComments,
 		fetchLaterComments,
 		data,
-	} = useComments(
-		{
-			siteId,
-			postId,
-			status: props.commentsFilter,
-			displayStatus: props.commentsFilterDisplay ?? props.commentsFilter,
-			commentTotal: props.commentCount,
-			authorId: currentUserId,
-		},
-		props.queryOptions
-	);
+	} = useComments( {
+		siteId,
+		postId,
+		status: props.commentsFilter,
+		displayStatus: props.commentsFilterDisplay ?? props.commentsFilter,
+		commentTotal: props.commentCount,
+		authorId: currentUserId,
+	} );
 	const { deferNewComments } = props;
 
 	const pollForNewComments = useCallback( async () => {

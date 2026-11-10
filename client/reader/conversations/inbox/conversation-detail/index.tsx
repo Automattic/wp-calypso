@@ -79,9 +79,6 @@ function getTitle( translate: ReturnType< typeof useTranslate >, reason: ReadCon
 	}
 }
 
-// The list's poll and the comments' own poll keep it current, so a refocus or reopen doesn't refetch it.
-const COMMENTS_QUERY_OPTIONS = { staleTime: 60 * 1000, refetchOnWindowFocus: false };
-
 export function ConversationDetail( {
 	siteId,
 	postId,
@@ -398,7 +395,6 @@ export function ConversationDetail( {
 								highlightedCommentIds={ highlightedCommentIds }
 								collapsibleThreads
 								spellOutLabels
-								queryOptions={ COMMENTS_QUERY_OPTIONS }
 							/>
 						</>
 					) }

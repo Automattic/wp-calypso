@@ -24,7 +24,6 @@ export const postLikesQuery = ( siteId?: number | null, postId?: number | null )
 		enabled: Boolean( siteId && postId ),
 		staleTime: STALE_TIME,
 		refetchInterval: REFRESH_INTERVAL,
-		// Already polled, so focusing the window doesn't need to refetch too.
 		refetchOnWindowFocus: false,
 		meta: { persist: false },
 	} );
