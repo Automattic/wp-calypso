@@ -45,7 +45,14 @@ export function ConversationListTabs( { tab, unreadCount, onChange, children }: 
 				</Tabs.List>
 			</div>
 			{ INBOX_TABS.map( ( name ) => (
-				<Tabs.Panel key={ name } value={ name } className="conversations-inbox__tab-panel">
+				// The search field is the panel's first stop, so the panel itself isn't one.
+				<Tabs.Panel
+					key={ name }
+					value={ name }
+					tabIndex={ -1 }
+					className="conversations-inbox__tab-panel"
+				>
+					{ /* The panel being left stays mounted for a frame, so it mustn't render the list too. */ }
 					{ tab === name && children }
 				</Tabs.Panel>
 			) ) }

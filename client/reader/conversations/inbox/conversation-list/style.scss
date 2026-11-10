@@ -42,7 +42,8 @@
 	min-height: 0;
 }
 
-.conversations-inbox__tab-panel[hidden] {
+// The panel being left stays mounted for a frame, empty and without `[hidden]`.
+.conversations-inbox__tab-panel:empty {
 	display: none;
 }
 
@@ -211,7 +212,7 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 	border-block-start-color: transparent;
 }
 
-// Only takes focus from code, after the load-more button goes away.
+// Only takes focus from code, when a focused control inside it goes away.
 .conversations-inbox__list:focus {
 	outline: none;
 }
@@ -254,6 +255,11 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 		// through. The next avatar is centered 22px in, with a 10px radius.
 		&:not( :last-child ) {
 			mask-image: radial-gradient( circle at 22px 50%, transparent 11px, currentcolor 11.5px );
+
+			// rtlcss doesn't flip gradient positions.
+			&:dir( rtl ) {
+				mask-image: radial-gradient( circle at -2px 50%, transparent 11px, currentcolor 11.5px );
+			}
 		}
 
 		& + img {
@@ -267,7 +273,8 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 }
 
 .conversations-inbox__settings {
-	width: 320px;
+	// Leaves room for the wrapper's padding on narrow screens.
+	width: min( 320px, calc( 100vw - 64px ) );
 }
 
 .conversations-inbox__list-end {
@@ -281,6 +288,10 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 	.conversations-inbox__list-pane {
 		--conversations-ink: var( --color-text );
 		--conversations-ink-weak: var( --color-text-subtle );
+		// The tabs read these, and they stay at their light values here too.
+		--wpds-color-foreground-interactive-neutral: var( --color-text );
+		--wpds-color-foreground-interactive-neutral-active: var( --color-text );
+		--wpds-color-stroke-interactive-neutral-strong: var( --color-text-subtle );
 	}
 }
 

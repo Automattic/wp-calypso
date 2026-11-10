@@ -55,6 +55,7 @@ function ControlledList( {
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
 			openOnFocus
+			followFocus
 			markAllCount={ 2 }
 			onMarkAllRead={ jest.fn() }
 			onSelect={ jest.fn() }
@@ -223,12 +224,32 @@ describe( 'ConversationList', () => {
 		expect( screen.getByRole( 'searchbox' ) ).toHaveFocus();
 	} );
 
-	it( 'does not take the focus when the first conversation is selected', () => {
-		const { rerender } = renderList();
+	it( 'does not take the focus when the inbox selects a conversation itself', () => {
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key, followFocus: false } );
 
-		rerender( { selectedKey: conversations[ 1 ].key } );
+		rerender( { selectedKey: conversations[ 1 ].key, followFocus: false } );
 
 		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveFocus();
+	} );
+
+	it( 'keeps the focus in the list when a tab switch remounts it', () => {
+		const { rerender } = renderList( { tab: 'all' } );
+
+		screen.getByRole( 'button', { name: /^Read post/ } ).focus();
+		rerender( { tab: 'unread' } );
+
+		expect( document.querySelector( '.conversations-inbox__list' ) ).toHaveFocus();
+	} );
+
+	it( 'leaves the focus alone on a tab switch when the list no longer had it', () => {
+		const { rerender } = renderList( { tab: 'all' } );
+
+		const row = screen.getByRole( 'button', { name: /^Read post/ } );
+		row.focus();
+		row.blur();
+		rerender( { tab: 'unread' } );
+
+		expect( document.body ).toHaveFocus();
 	} );
 
 	it( 'does not take the focus on the first render', () => {

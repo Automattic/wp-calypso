@@ -116,12 +116,17 @@ export function useInboxKeyboardShortcuts( {
 					handlers.onPrevious();
 					break;
 				case 'ArrowRight':
-					event.preventDefault();
-					handlers.onNextTab();
-					break;
 				case 'ArrowLeft':
+					// The tab list moves the focus through its own tabs.
+					if ( target?.closest?.( '[role="tablist"]' ) ) {
+						break;
+					}
 					event.preventDefault();
-					handlers.onPreviousTab();
+					if ( event.key === 'ArrowRight' ) {
+						handlers.onNextTab();
+					} else {
+						handlers.onPreviousTab();
+					}
 					break;
 				case 'l':
 					handlers.onToggleLike();

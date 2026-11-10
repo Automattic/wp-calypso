@@ -44,6 +44,8 @@ interface Props {
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
 	openOnFocus: boolean;
+	/** Whether a newly selected row takes the focus. */
+	followFocus: boolean;
 	onSelect: ( item: InboxItem, source: OpenSource ) => void;
 }
 
@@ -71,18 +73,12 @@ export function ConversationList( {
 	onShortcutsToggle,
 	selectedKey,
 	openOnFocus,
+	followFocus,
 	onSelect,
 }: Props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { ref: endRef, inView: isEndInView } = useInView();
-
-	// Focus follows a move from one conversation to another, like j/k, but not the
-	// first selection, which the inbox makes on its own when the page loads.
-	const [ selection, setSelection ] = useState( { key: selectedKey, isMove: false } );
-	if ( selection.key !== selectedKey ) {
-		setSelection( { key: selectedKey, isMove: selection.key !== undefined } );
-	}
 
 	// Runs again after each page, in case the end of the list is still in view.
 	useEffect( () => {
@@ -104,6 +100,21 @@ export function ConversationList( {
 			listRef.current?.focus( { preventScroll: true } );
 		}
 	}, [ isLoadingMore, hasMore, isLoadMoreError ] );
+
+	// Switching tabs remounts the list, which drops the focus of anything inside it. The
+	// render still sees the old DOM, so it can tell whether the focus was in there.
+	const [ shownTab, setShownTab ] = useState( tab );
+	const [ refocusList, setRefocusList ] = useState( false );
+	if ( tab !== shownTab ) {
+		setShownTab( tab );
+		setRefocusList( !! document.activeElement?.closest( '.conversations-inbox__tab-panel' ) );
+	}
+	useEffect( () => {
+		if ( refocusList ) {
+			setRefocusList( false );
+			listRef.current?.focus( { preventScroll: true } );
+		}
+	}, [ refocusList ] );
 
 	const emptyStates = {
 		all: {
@@ -230,7 +241,7 @@ export function ConversationList( {
 										item={ item }
 										isSelected={ item.key === selectedKey }
 										openOnFocus={ openOnFocus }
-										followFocus={ selection.isMove }
+										followFocus={ followFocus }
 										density={ density }
 										onSelect={ onSelect }
 									/>
