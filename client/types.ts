@@ -155,6 +155,13 @@ declare global {
 				apiKey: string;
 				challengeContainer?: string | HTMLElement;
 				challengeMaxWidth?: string;
+				challengeStyles?: {
+					backgroundColor?: string;
+					color?: string;
+					borderColor?: string;
+					borderRadius?: string;
+					boxShadow?: string;
+				};
 				onChallengeStart?: () => void;
 				onChallengeComplete?: () => void;
 				onChallengeFailure?: ( reason: 'timeout' | 'exhausted' ) => void;

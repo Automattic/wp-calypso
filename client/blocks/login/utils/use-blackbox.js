@@ -65,6 +65,13 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 							apiKey,
 							challengeContainer: containerRef.current,
 							challengeMaxWidth: '100%',
+							challengeStyles: {
+								backgroundColor: '#f6f7f7',
+								color: '#1e1e1e',
+								borderColor: '#c3c4c7',
+								borderRadius: '0px',
+								boxShadow: 'none',
+							},
 						},
 						true
 					);
