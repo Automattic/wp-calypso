@@ -66,7 +66,7 @@ describe( 'CommentActions', () => {
 		expect( screen.getByText( '7' ) ).toBeVisible();
 	} );
 
-	it( 'puts Cancel reply in place of Reply when labels are spelled out', async () => {
+	it( 'puts Cancel in place of Reply when labels are spelled out', async () => {
 		const user = userEvent.setup();
 		const onReplyCancel = jest.fn();
 

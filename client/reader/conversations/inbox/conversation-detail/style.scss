@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/variables';
 
 .conversations-inbox__detail-pane {
 	flex: 1;
@@ -374,7 +373,7 @@ $conversations-inbox-post-card-shadow:
 
 		// The post card's dot, between the reply's "to" name and its date.
 		&::after {
-			content: "";
+			content: '';
 			display: inline-block;
 			width: 2px;
 			height: 2px;

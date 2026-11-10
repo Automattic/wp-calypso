@@ -28,7 +28,7 @@ const CommentActions = ( {
 	const commentId = comment.ID;
 	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
-	// Spelled out, Cancel reply takes Reply's place while the editor is open, in place of sitting beside it.
+	// Spelled out, Cancel takes Reply's place while the editor is open, instead of sitting beside it.
 	const swapReplyForCancel = spellOutLabels && showCancelReplyButton;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = isRebloggable( post, hasSites );
