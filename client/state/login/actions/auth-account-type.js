@@ -63,6 +63,7 @@ export const getAuthAccountType = ( usernameOrEmail, blackbox ) => async ( dispa
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 		usernameOrEmail,
 		blackboxSessionId,
+		...( blackboxSessionId && { onComplete: () => blackbox.reset( blackboxSessionId ) } ),
 	} );
 };
 
