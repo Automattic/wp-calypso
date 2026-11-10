@@ -58,13 +58,8 @@ export function BackupsList( {
 			return { after: undefined, before: undefined };
 		}
 
-		return buildTimeRangeForActivityLog(
-			dateRange.start,
-			dateRange.end,
-			timezoneString,
-			gmtOffset
-		);
-	}, [ dateRange, timezoneString, gmtOffset ] );
+		return buildTimeRangeForActivityLog( dateRange.start, dateRange.end );
+	}, [ dateRange ] );
 
 	const { data: groupCountsData } = useQuery(
 		siteBackupActivityLogGroupCountsQuery( siteId, after, before )
