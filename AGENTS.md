@@ -64,11 +64,12 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 
 ```bash
 # JavaScript tests
-yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps and Vitest packages)
+yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps)
 yarn test-build-tools                           # Run unit tests for build-tools
 yarn test-client                                # Run unit tests for client
 yarn test-apps                                  # Run apps unit tests
-yarn test-packages                              # Run Jest unit tests for packages
+yarn test-packages                              # Run packages unit tests (arguments go to Jest only)
+yarn test-packages:vitest [path]                # Run unit tests for packages on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
