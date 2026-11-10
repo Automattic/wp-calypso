@@ -101,11 +101,19 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 }
 
 /**
- * Why the handoff didn't reach our team. When wpcom refused it, our team already knows and will
- * email the customer, so asking them to try again would only be refused again.
+ * The errors wpcom returns when it refused the handoff. Our team already knows and will email the
+ * customer, so asking them to try again would only be refused again.
  */
+const HANDOFF_REFUSED_CODES = [ 'migration_request_not_submitted', 'too_many_requests' ];
+
+function getHandoffErrorCode( error: unknown ) {
+	const code = ( error as { code?: unknown } | null | undefined )?.code;
+	return typeof code === 'string' ? code : undefined;
+}
+
+/** Why the handoff didn't reach our team. */
 function getHandoffErrorMessage( error: unknown ) {
-	switch ( ( error as { code?: string } | null )?.code ) {
+	switch ( getHandoffErrorCode( error ) ) {
 		case 'migration_request_not_submitted':
 			return __(
 				'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
@@ -133,7 +141,11 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 			locale,
 			importSessionId: search.importSessionId,
 		} );
-	return { handoff, requestHandoff };
+	// Offer the handoff only while it can still reach our team.
+	const canRequestHandoff =
+		! handoff.isSuccess &&
+		! HANDOFF_REFUSED_CODES.includes( getHandoffErrorCode( handoff.error ) ?? '' );
+	return { handoff, requestHandoff, canRequestHandoff };
 }
 
 /** Takes the place of the progress card when a move fails. */
@@ -144,7 +156,7 @@ export function StaticSiteImportFailed( {
 	site: Site;
 	search: StaticSiteImportSearch;
 } ) {
-	const { handoff, requestHandoff } = useMoveHandoff( site, search );
+	const { handoff, requestHandoff, canRequestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( search.from );
 	const { data: planPurchase } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
@@ -188,15 +200,17 @@ export function StaticSiteImportFailed( {
 						</Notice>
 					) : (
 						<HStack justify="flex-start" spacing={ 4 } wrap>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								isBusy={ handoff.isPending }
-								disabled={ handoff.isPending }
-								onClick={ requestHandoff }
-							>
-								{ __( 'Let our team move it' ) }
-							</Button>
+							{ canRequestHandoff && (
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									isBusy={ handoff.isPending }
+									disabled={ handoff.isPending }
+									onClick={ requestHandoff }
+								>
+									{ __( 'Let our team move it' ) }
+								</Button>
+							) }
 							{ refundUrl && (
 								<Button variant="link" href={ refundUrl }>
 									{ __( 'Get a refund' ) }
@@ -262,7 +276,7 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
-	const { handoff, requestHandoff } = useMoveHandoff( site, search );
+	const { handoff, requestHandoff, canRequestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
 	// What the move found that may need our team, already in the reader's language.
 	const reviewNote = siteImport.session?.review_note;
@@ -399,7 +413,7 @@ export function StaticSiteImportNotice( {
 							>
 								{ __( 'Preview site' ) }
 							</NoticeActionLinkButton>
-							{ ! handoff.isSuccess && (
+							{ canRequestHandoff && (
 								<NoticeActionButton
 									variant="minimal"
 									loading={ handoff.isPending }
