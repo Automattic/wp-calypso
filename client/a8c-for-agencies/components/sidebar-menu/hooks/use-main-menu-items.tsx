@@ -46,7 +46,7 @@ import {
 	A4A_RESOURCES_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
-	A4A_AMPLIFY_LINK,
+	A4A_PROSPECT_REPORTS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -232,8 +232,8 @@ const useMainMenuItems = ( path: string ) => {
 				? [
 						{
 							icon: megaphone,
-							path: A4A_AMPLIFY_LINK,
-							link: A4A_AMPLIFY_LINK,
+							path: A4A_PROSPECT_REPORTS_LINK,
+							link: A4A_PROSPECT_REPORTS_LINK,
 							title: getFeatureName(),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
