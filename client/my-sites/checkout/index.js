@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	redirectLoggedOut,
-	redirectMyJetpack,
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller';
@@ -31,6 +30,7 @@ import {
 	jetpackCheckoutThankYou,
 	giftThankYou,
 	redirectJetpackLegacyPlans,
+	redirectMyJetpack,
 	redirectToSupportSession,
 	upsellNudge,
 	upsellRedirect,

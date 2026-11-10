@@ -11,6 +11,7 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -44,11 +45,13 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
+	BLUEPRINT_BUILD_DEST_SIMPLE,
 	getBlueprintArchiveSiteSpecUrl,
 	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
 	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
+	ZOOM_BLUEPRINT_SLUG,
 } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
@@ -89,7 +92,6 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
 import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
@@ -298,7 +300,36 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 	return true;
 }
 
+/**
+ * Send a preview site's owner, arriving from the badge on their own share link, to the site's plans.
+ *
+ * The badge can't tell the owner from a visitor: being signed in to WordPress.com doesn't sign
+ * them in to the preview's own domain, so every share-link viewer is sent here with the site in
+ * `preview_site`. Only here is it known who is signed in.
+ * @param reduxStore The Calypso store, for the logged-in check.
+ * @returns True when the owner is being redirected and the flow should not render.
+ */
+async function goToOwnPreviewSitePlans( reduxStore: Store ): Promise< boolean > {
+	const { preview_site: previewSite, ...args } = getQueryArgs( window.location.href );
+	if ( typeof previewSite !== 'string' || ! isUserLoggedIn( reduxStore.getState() ) ) {
+		return false;
+	}
+
+	// Resolves to undefined for a site that isn't theirs.
+	const site = await resolveSelect( SITE_STORE ).getSite( previewSite );
+	if ( ! site?.capabilities?.manage_options ) {
+		return false;
+	}
+
+	window.location.assign( addQueryArgs( `/plans/${ encodeURIComponent( previewSite ) }`, args ) );
+	return true;
+}
+
 async function initialize( reduxStore: Store ) {
+	if ( await goToOwnPreviewSitePlans( reduxStore ) ) {
+		return false as const;
+	}
+
 	// Before anything renders: a customer with an unpaid funnel site is sent back to it, and the
 	// flow is killed rather than started behind the redirect.
 	if ( await resumeWowFunnelRun( reduxStore ) ) {
@@ -309,7 +340,6 @@ async function initialize( reduxStore: Store ) {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
-		STEPS.EMAIL_VERIFICATION,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
@@ -318,7 +348,13 @@ async function initialize( reduxStore: Store ) {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
+	return [
+		...stepsWithRequiredLogin( steps ),
+		STEPS.PLAYGROUND,
+		STEPS.BLUEPRINT,
+		STEPS.ZOOM_BLUEPRINT,
+		STEPS.ERROR,
+	];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -367,10 +403,6 @@ const onboarding: FlowV2< typeof initialize > = {
 	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		// Variant B: the account step doesn't gate; the verification step is met after the free plan
-		// selection or, for a paid order, on return from checkout.
-		const postPlanSelectionEmailVerification = useIsPostPlanSelectionEmailVerification( flowName );
-
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -564,16 +596,15 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		/**
 		 * With a plan already in the cart the plans step has nothing left to ask, so the flow
-		 * goes straight to site creation. The free-plan and email-verification branches in the
-		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
+		 * goes straight to site creation. The free-plan branch in the plans handler below only
+		 * applies when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
 			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
 			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
-			// below, including its email-verification gate: a fully free order never reaches
-			// checkout, so this is where the gate is met. A connected or transferred domain is
-			// the exception: it needs a paid plan, so that run still picks one on the grid and
-			// reaches the same destination through checkout's redirect.
+			// below. A connected or transferred domain is the exception: it needs a paid plan, so
+			// that run still picks one on the grid and reaches the same destination through
+			// checkout's redirect.
 			if ( blueprintSimpleSlug && ! requiresPaidPlan ) {
 				setPlanCartItem( null );
 				setProductCartItems( [] );
@@ -581,14 +612,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					signupDomainOrigin === 'choose-later' ? signupDomainOrigin : SIGNUP_DOMAIN_ORIGIN.FREE
 				);
 				setSignupCompleteFlowName( flowName );
-
-				if ( postPlanSelectionEmailVerification ) {
-					return navigate(
-						'email-verification?next=create-site' as typeof currentStepSlug,
-						undefined,
-						false
-					);
-				}
 
 				return navigate( 'create-site', undefined, false );
 			}
@@ -676,25 +699,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					setSignupCompleteFlowName( flowName );
 
-					// A fully free order never reaches checkout, so the post-plan-selection gate is met here,
-					// right after the plan is chosen, before the site is created.
-					if ( postPlanSelectionEmailVerification && ! pickedPlan ) {
-						return navigate(
-							'email-verification?next=create-site' as typeof currentStepSlug,
-							undefined,
-							false
-						);
-					}
-
 					return navigate( 'create-site', undefined, false );
-				}
-				case 'email-verification': {
-					const next = queryParams.get( 'next' ) || 'create-site';
-					// Replaced rather than pushed, so a gate that has been passed leaves no history
-					// entry behind it. Pushed, Back off the destination lands here again, and the
-					// step advances on sight of a verified account without being asked — into site
-					// creation, under the name the site it just went back past already holds.
-					return navigate( next as typeof currentStepSlug, undefined, true );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
@@ -857,7 +862,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							let redirectTo: string =
+							const redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -873,24 +878,6 @@ const onboarding: FlowV2< typeof initialize > = {
 												...( refParameter ? { ref: refParameter } : {} ),
 											}
 										);
-
-							// Variant B: a paid order meets the post-plan-selection gate on return from checkout,
-							// before post-checkout-onboarding. The Playground import path keeps its own
-							// return target.
-							const returnsThroughVerification =
-								postPlanSelectionEmailVerification && ! playgroundId;
-							if ( returnsThroughVerification ) {
-								redirectTo = addQueryArgs(
-									withLocale( '/setup/onboarding/email-verification', locale ),
-									{
-										next: 'post-checkout-onboarding',
-										siteSlug,
-										siteId: providedDependencies.siteId,
-										...( refParameter ? { ref: refParameter } : {} ),
-										...persistedQueryArgs,
-									}
-								);
-							}
 
 							// Leaving checkout must not turn a reblog or an import into plain onboarding.
 							// The plans grid prices a coupon only from the URL.
@@ -910,13 +897,12 @@ const onboarding: FlowV2< typeof initialize > = {
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 									// build_dest=wow, the WoW funnel (dest=editor), a reblog and an import
 									// go straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser. A reblog or an import
-									// meets the email-verification gate first.
+									// post-checkout-onboarding hop, no chooser.
 									redirect_to:
 										blueprintArchiveSlug ||
 										blueprintSimpleSlug ||
 										isKnownWowFunnel( wowFunnelSlug ) ||
-										( hasCustomDestination && ! returnsThroughVerification )
+										hasCustomDestination
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -948,9 +934,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
-							// destination itself, so it never comes back through here. A paid reblog
-							// does, after email verification, and skips the domain setup instructions
-							// below, as the reblogging flow did.
+							// destination itself, so it never comes back through here.
 							window.location.replace( destination );
 						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
 							// A connected domain still has to be pointed at the site once it is paid
@@ -975,9 +959,13 @@ const onboarding: FlowV2< typeof initialize > = {
 						}
 					} else {
 						// NO_ACTION reaches here only without a siteSlug to send it back with.
-						return navigate( 'error' as typeof currentStepSlug, {
-							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
-						} );
+						// Replaced so Back skips processing. Pushed, Back re-runs processing, which
+						// fails at once and pushes the error step again, once per press.
+						return navigate(
+							'error' as typeof currentStepSlug,
+							{ errorReason: getProcessingErrorReason( providedDependencies.processingResult ) },
+							true
+						);
 					}
 					return;
 				}
@@ -998,6 +986,28 @@ const onboarding: FlowV2< typeof initialize > = {
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
+				case 'zoom': {
+					// The Zoom partner link: from here the run is the blueprint entry it stands for. What the
+					// link leaves out is filled in here; what it names (these, the spec meta, ref) rides along
+					// as given. This step is replaced in history, since Back onto it would only forward again.
+					const linkParams = new URLSearchParams( window.location.search );
+					const defaults: Record< string, string > = {
+						blueprint: ZOOM_BLUEPRINT_SLUG,
+						build_dest: BLUEPRINT_BUILD_DEST_SIMPLE,
+						// The title is the only thing the blueprint's interview would open to ask for.
+						site_title: String( translate( 'My Booking Site' ) ),
+					};
+					return navigate(
+						addQueryArgs(
+							'blueprint',
+							Object.fromEntries(
+								Object.entries( defaults ).filter( ( [ key ] ) => ! linkParams.get( key ) )
+							)
+						) as typeof currentStepSlug,
+						undefined,
+						true
 					);
 				}
 				default:

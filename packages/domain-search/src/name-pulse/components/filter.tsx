@@ -8,7 +8,7 @@ const POPOVER_PROPS = {
 	offset: 10,
 	noArrow: false,
 	inline: true,
-};
+} as const;
 
 const NO_TLDS: string[] = [];
 
@@ -26,7 +26,6 @@ export const NamePulseFilter = () => {
 
 	return (
 		<Dropdown
-			showArrow={ false }
 			className="domain-search__search-bar-filters name-pulse-filter"
 			popoverProps={ POPOVER_PROPS }
 			renderToggle={ ( { onToggle } ) => (

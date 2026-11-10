@@ -10,12 +10,12 @@ import {
 import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ButtonStack } from '../button-stack';
 import { Card, CardBody } from '../card';
 import InlineSupportLink from '../inline-support-link';
-import Notice from '../notice';
+import { SectionHeader } from '../section-header';
 import { getCaContactFormFields, getCaContactFormLayout, hasCaDomain } from './ca-contact-fields';
 import { getContactFormFields } from './contact-form-fields';
 import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
@@ -36,6 +36,7 @@ import {
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
 	initialData?: DomainContactDetails;
+	title?: string;
 	beforeFormCard?: React.ReactNode;
 	beforeForm?: React.ReactNode;
 	/**
@@ -50,6 +51,7 @@ interface ContactFormProps {
 
 export default function ContactForm( {
 	initialData,
+	title,
 	domainNames,
 	isSubmitting,
 	beforeFormCard,
@@ -174,6 +176,10 @@ export default function ContactForm( {
 				layout: { type: 'regular' as const, labelPosition: 'none' as const },
 			} as FormField,
 			'email',
+			{
+				id: 'emailNotice',
+				layout: { type: 'regular' as const, labelPosition: 'none' as const },
+			} as FormField,
 			'phone',
 			'countryCode',
 			...RegionAddressFieldsLayout( {
@@ -271,87 +277,58 @@ export default function ContactForm( {
 
 	return (
 		<VStack spacing={ 10 }>
-			<Notice>
-				<VStack>
-					<Text as="p">{ __( 'Provide accurate contact information' ) }</Text>
-					<Text as="p">
-						{ createInterpolateElement(
-							sprintf(
-								/* translators: %s: ICANN acronym */
-								__(
-									'<external>%s</external> requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.'
-								),
-								'ICANN'
-							),
-							{
-								external: (
-									<ExternalLink href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en">
-										ICANN
-									</ExternalLink>
-								),
-							}
-						) }
-					</Text>
-					<Text as="p">
-						{ __( 'Domain privacy service is included for free on applicable domains.' ) }{ ' ' }
-						<InlineSupportLink supportContext="domain-registrations-and-privacy" />
-					</Text>
-				</VStack>
-			</Notice>
-
 			{ beforeFormCard }
 
-			<Card>
-				<CardBody>
-					<VStack spacing={ 4 }>
-						{ beforeForm }
-						<div ref={ fieldsContainerRef }>
-							<DataForm< DomainContactDetails >
-								data={ normalizedFormData }
-								fields={ fields }
-								form={ form }
-								validity={ validityWithFieldErrors }
-								onChange={ ( edits: Partial< DomainContactDetails > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-						</div>
-						<Notice>
-							<VStack>
-								<Text as="p">
-									{ createInterpolateElement(
-										__(
-											'By clicking <strong>Save</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
+			<VStack spacing={ 4 }>
+				{ title && <SectionHeader title={ title } level={ 3 } /> }
+				<Card>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							{ beforeForm }
+							<div ref={ fieldsContainerRef }>
+								<DataForm< DomainContactDetails >
+									data={ normalizedFormData }
+									fields={ fields }
+									form={ form }
+									validity={ validityWithFieldErrors }
+									onChange={ ( edits: Partial< DomainContactDetails > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+							</div>
+							<Text as="p" variant="muted">
+								{ createInterpolateElement(
+									__(
+										'By clicking <strong>Save</strong>, you agree to the applicable <agreementlink>Domain Registration Agreement</agreementlink> and confirm that the Transferee has agreed in writing to be bound by the same agreement. You authorize the respective registrar to act as your <agentlink>Designated Agent</agentlink>.'
+									),
+									{
+										strong: <strong />,
+										agreementlink: (
+											<ExternalLink href="https://wordpress.com/automattic-domain-name-registration-agreement/">
+												{ __( 'Domain Registration Agreement' ) }
+											</ExternalLink>
 										),
-										{
-											strong: <strong />,
-											agreementlink: (
-												<ExternalLink href="https://wordpress.com/automattic-domain-name-registration-agreement/">
-													{ __( 'Domain Registration Agreement' ) }
-												</ExternalLink>
-											),
-											agentlink: <InlineSupportLink supportContext="domain-designated-agent" />,
-										}
-									) }
-								</Text>
-							</VStack>
-						</Notice>
-						<form onSubmit={ handleSubmit }>
-							<ButtonStack justify="flex-start">
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									type="submit"
-									isBusy={ isSubmitting }
-									disabled={ ! canSave || ! isDirty || isSubmitting }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</form>
-					</VStack>
-				</CardBody>
-			</Card>
+										agentlink: <InlineSupportLink supportContext="domain-designated-agent" />,
+									}
+								) }
+							</Text>
+							<form onSubmit={ handleSubmit }>
+								<ButtonStack justify="flex-start">
+									<Button
+										__next40pxDefaultSize
+										variant="primary"
+										type="submit"
+										isBusy={ isSubmitting }
+										disabled={ ! canSave || ! isDirty || isSubmitting }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</form>
+						</VStack>
+					</CardBody>
+				</Card>
+			</VStack>
 		</VStack>
 	);
 }

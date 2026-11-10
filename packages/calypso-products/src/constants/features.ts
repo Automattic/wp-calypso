@@ -582,6 +582,7 @@ export const FEATURE_AI_WEBSITE_BUILDER = 'feature-ai-website-builder';
 export const FEATURE_AI_WEBSITE_BUILDER_LIMITED = 'feature-ai-website-builder-limited';
 export const FEATURE_GUIDED_WEBSITE_BUILDER = 'feature-guided-website-builder';
 export const FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED = 'feature-guided-website-builder-limited';
+export const FEATURE_CONNECT_AI_AGENTS = 'feature-connect-ai-agents';
 export const FEATURE_AI_WRITER_DESIGNER = 'feature-ai-writer-designer';
 export const FEATURE_AI_WRITER_DESIGNER_LIMITED = 'feature-ai-writer-designer-limited';
 export const FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS = 'feature-enhanced-ai-assistant-and-tools';

@@ -4,6 +4,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
+import { useTrackOverviewItem } from './use-track-overview-item';
 
 interface FeaturedCardPrivacyProps {
 	domain: Domain;
@@ -11,6 +12,7 @@ interface FeaturedCardPrivacyProps {
 }
 
 export default function FeaturedCardPrivacy( { domain, isDisabled }: FeaturedCardPrivacyProps ) {
+	const trackItem = useTrackOverviewItem( domain );
 	const privacyWarning = __(
 		'Privacy protection is not available due to the registry’s policies.'
 	);
@@ -30,6 +32,10 @@ export default function FeaturedCardPrivacy( { domain, isDisabled }: FeaturedCar
 			externalLink={ ! domain.privacy_available ? PRIVACY_PROTECTION : undefined }
 			description={ ! domain.privacy_available ? privacyWarning : privacyProtectionNote }
 			intent={ domain.private_domain ? 'success' : 'warning' }
+			// OverviewCard turns a card with `onClick` and no link into a button.
+			onClick={
+				contactInfoLink || ! domain.privacy_available ? () => trackItem( 'privacy' ) : undefined
+			}
 		/>
 	);
 }

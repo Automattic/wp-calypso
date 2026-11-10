@@ -57,7 +57,7 @@
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
+		"@wordpress/icons": "^15.5.0",
 		"@wordpress/keycodes": "^4.48.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
@@ -66,7 +66,7 @@
 		"tslib": "^2.8.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.48.0",
+		"@wordpress/data": "^10.48.0 || ^11.0.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
@@ -75,8 +75,8 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"copyfiles": "^2.4.1",
-		"postcss": "^8.5.30",
-		"storybook": "^10.6.2",
+		"postcss": "^8.5.32",
+		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
 	}

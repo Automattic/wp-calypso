@@ -1,10 +1,4 @@
-import {
-	ACCOUNT_FLOW,
-	HOSTING_LP_FLOW,
-	ENTREPRENEUR_FLOW,
-	READER_FLOW,
-	WPCC_FLOW,
-} from '@automattic/onboarding';
+import { ACCOUNT_FLOW, ENTREPRENEUR_FLOW, READER_FLOW, WPCC_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -36,9 +30,6 @@ const useSteps = ( {
 	let steps: Step[] = [];
 
 	switch ( flowName ) {
-		case 'launch-site':
-			steps = [ { title: __( 'Your site will be live shortly.' ) } ]; // copy from 'packages/launch/src/focused-launch/success'
-			break;
 		case 'domain':
 			steps = [ { title: __( 'Preparing your domain' ) } ];
 			break;
@@ -54,7 +45,6 @@ const useSteps = ( {
 			];
 			break;
 		case ACCOUNT_FLOW:
-		case HOSTING_LP_FLOW:
 		case ENTREPRENEUR_FLOW:
 		case READER_FLOW:
 		case WPCC_FLOW:

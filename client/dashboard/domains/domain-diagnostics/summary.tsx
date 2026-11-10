@@ -5,9 +5,11 @@ import type { Domain, DomainDiagnostics } from '@automattic/api-core';
 export default function DomainDiagnosticsSettingsSummary( {
 	domain,
 	domainDiagnostics,
+	onClick,
 }: {
 	domain: Domain;
 	domainDiagnostics: DomainDiagnostics;
+	onClick?: () => void;
 } ) {
 	let badges = [];
 	const emailDnsDiagnostics = domainDiagnostics.email_dns_records;
@@ -34,6 +36,7 @@ export default function DomainDiagnosticsSettingsSummary( {
 			to={ `/domains/${ domain.domain }/diagnostics` }
 			title={ __( 'Diagnostics' ) }
 			badges={ badges }
+			onClick={ onClick }
 			density={ 'medium' as const }
 		/>
 	);

@@ -477,6 +477,7 @@ import {
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 	FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	FEATURE_BLAZE_AD_CREDITS,
@@ -599,6 +600,27 @@ const getMonthlyTimeframe = (): BillingTerm => ( {
 			comment: 'Excl. Taxes is short for excluding taxes',
 		} ),
 } );
+
+const isDevToolsOnAllPaidPlans = () => isEnabled( 'hosting/dev-tools-all-paid-plans' );
+
+// SFTP/SSH, WP-CLI, Git commands and GitHub Deployments move from Business to every paid plan
+// when the flag is on. The comparison grid is cumulative, so Personal lists them for every plan
+// above it.
+const getPaidPlanDevToolsFeatures = () =>
+	isDevToolsOnAllPaidPlans() ? [ FEATURE_DEV_TOOLS_GIT, FEATURE_DEV_TOOLS_SSH ] : [];
+
+const getBusinessOnlyDevToolsFeatures = () =>
+	isDevToolsOnAllPaidPlans() ? [] : [ FEATURE_DEV_TOOLS_GIT, FEATURE_DEV_TOOLS_SSH ];
+
+const getPaidPlanDevToolsIncludedFeatures = () =>
+	isDevToolsOnAllPaidPlans()
+		? [ FEATURE_SFTP, FEATURE_SSH, WPCOM_FEATURES_GITHUB_DEPLOYMENTS ]
+		: [];
+
+// Dev tools no longer set Business apart, so the promo grid leads with the staging site instead.
+const getDevToolsPromoFeature = () =>
+	isDevToolsOnAllPaidPlans() ? FEATURE_SITE_STAGING_SITES : FEATURE_DEV_TOOLS;
+
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
 		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce stores' ) },
@@ -614,6 +636,7 @@ const getDotcomPlanDetails = () => ( {
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		FEATURE_WOO_HOSTED_FREE_DOMAIN_1_YEAR,
+		FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 	],
 } );
 
@@ -948,6 +971,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ISOLATED_INFRA,
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_PLUGINS_THEMES,
+		...getPaidPlanDevToolsFeatures(),
 	],
 	// Comparison grid when plans pricing differentiators experiment is active (non-control).
 	get2023PlanComparisonFeatureOverrideForExperiment: () => [
@@ -963,8 +987,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
 		FEATURE_AI_ASSISTANT,
 		FEATURE_BUILT_IN_SITE_ASSISTANT,
+		FEATURE_CONNECT_AI_AGENTS,
 		FEATURE_WORDPRESS_STUDIO_SYNC,
 		FEATURE_PLUGINS_THEMES,
+		...getPaidPlanDevToolsFeatures(),
 	],
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [
@@ -1047,6 +1073,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
 		WPCOM_FEATURES_LOGS,
+		...getPaidPlanDevToolsIncludedFeatures(),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1157,7 +1184,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_VIDEO,
 		FEATURE_STATS_ADVANCED_20250206,
 		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 		FEATURE_WOOCOMMERCE_HOSTING,
 	],
 	getVar42NoAiSignupWpcomFeatures: () => [
@@ -1176,7 +1203,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
 		FEATURE_REALTIME_BACKUPS_JP,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 		FEATURE_WOOCOMMERCE_HOSTING,
 		FEATURE_SELL_60_COUNTRIES,
 	],
@@ -1233,6 +1260,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_AI_ASSISTANT,
 			FEATURE_BUILT_IN_SITE_ASSISTANT,
+			FEATURE_CONNECT_AI_AGENTS,
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
@@ -1357,8 +1385,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_SECURITY_SCANS,
 		FEATURE_99_999_UPTIME,
 		FEATURE_SITE_STAGING_SITES,
-		FEATURE_DEV_TOOLS_GIT,
-		FEATURE_DEV_TOOLS_SSH,
+		...getBusinessOnlyDevToolsFeatures(),
 		FEATURE_PRIORITY_24_7_SUPPORT,
 		// Additional Commerce features
 		FEATURE_ACCEPT_PAYMENTS,
@@ -1791,6 +1818,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_AI_ASSISTANT,
 			FEATURE_BUILT_IN_SITE_ASSISTANT,
+			FEATURE_CONNECT_AI_AGENTS,
 			FEATURE_WORDPRESS_STUDIO_SYNC,
 			FEATURE_PLUGINS_THEMES,
 		];
@@ -1867,6 +1895,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 		WPCOM_FEATURES_BIG_SKY,
 		WPCOM_FEATURES_LOGS,
+		...getPaidPlanDevToolsIncludedFeatures(),
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -1996,7 +2025,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_VIDEO,
 		FEATURE_STATS_ADVANCED_20250206,
 		FEATURE_UPLOAD_PLUGINS,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 	],
 	getVar42NoAiSignupWpcomFeatures: () => [
 		FEATURE_UNLIMITED_ENTITIES,
@@ -2014,7 +2043,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_MARKETING,
 		FEATURE_BLAZE_AD_CREDITS,
 		FEATURE_REALTIME_BACKUPS_JP,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 	],
 
 	get2023PlanComparisonFeatureOverride: () => {
@@ -2033,8 +2062,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REAL_TIME_SECURITY_SCANS,
 			FEATURE_SPAM_JP,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS_GIT,
-			FEATURE_DEV_TOOLS_SSH,
+			...getBusinessOnlyDevToolsFeatures(),
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 			FEATURE_WP_UPDATES,
@@ -2064,8 +2092,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REAL_TIME_SECURITY_SCANS,
 			FEATURE_SPAM_JP,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS_GIT,
-			FEATURE_DEV_TOOLS_SSH,
+			...getBusinessOnlyDevToolsFeatures(),
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 			FEATURE_WP_UPDATES,
@@ -2082,6 +2109,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_AI_ASSISTANT,
 			FEATURE_BUILT_IN_SITE_ASSISTANT,
+			FEATURE_CONNECT_AI_AGENTS,
 			FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_EMAIL_MARKETING,
@@ -2095,7 +2123,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CDN,
 		FEATURE_ADVANCED_SEO_TOOLS,
 		FEATURE_PRIORITY_24_7_SUPPORT,
-		FEATURE_DEV_TOOLS,
+		...( isDevToolsOnAllPaidPlans() ? [] : [ FEATURE_DEV_TOOLS ] ),
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 		FEATURE_SECURITY_DDOS,
@@ -2191,7 +2219,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_SECURITY_MALWARE,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS,
+			! isDevToolsOnAllPaidPlans() && FEATURE_DEV_TOOLS,
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_WP_UPDATES,
 			FEATURE_MULTI_SITE,
@@ -2249,7 +2277,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getCancellationFeatures: () => [
 		FEATURE_PLUGINS_THEMES,
 		FEATURE_ADVANCED_SEO_TOOLS,
-		FEATURE_DEV_TOOLS,
+		getDevToolsPromoFeature(),
 		FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 		FEATURE_SITE_BACKUPS_AND_RESTORE,
 		FEATURE_AD_FREE_EXPERIENCE,
@@ -2266,8 +2294,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_SECURITY_SCANS,
 		FEATURE_99_999_UPTIME,
 		FEATURE_SITE_STAGING_SITES,
-		FEATURE_DEV_TOOLS_GIT,
-		FEATURE_DEV_TOOLS_SSH,
+		...getBusinessOnlyDevToolsFeatures(),
 		FEATURE_PRIORITY_24_7_SUPPORT,
 	],
 } );

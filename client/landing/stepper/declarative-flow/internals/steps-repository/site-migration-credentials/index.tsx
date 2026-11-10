@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -9,8 +9,6 @@ import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import {
 	recordMigrationCredentialsEvent,
 	recordMigrationRequestSubmittedFacebookEvent,
@@ -21,9 +19,12 @@ import { resetSite } from 'calypso/state/sites/actions';
 import { isHostingSupportedForSSHMigration } from '../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
+import { useRequestMigrationHelp } from './hooks/use-request-migration-help';
 import { ApplicationPasswordsInfo } from './types';
 import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
+
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => {
@@ -63,10 +64,9 @@ const SiteMigrationCredentials: StepType< {
 		from?: string;
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
-		hasError?: 'ticket-creation';
 		host?: string;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow, stepName } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const dispatch = useDispatch();
@@ -75,27 +75,13 @@ const SiteMigrationCredentials: StepType< {
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
-	const siteSlugParam = useSiteSlugParam();
-	const siteSlug = siteSlugParam ?? '';
-	const { sendTicketAsync } = useSubmitMigrationTicket( {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_success', {
-				blog_url: siteSlug,
-				from_url: fromUrl,
-			} );
-		},
-		onError: ( error ) => {
-			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_error', {
-				blog_url: siteSlug,
-				from_url: fromUrl,
-				error: error.message,
-			} );
-			navigation.submit?.( {
-				action: 'skip',
-				hasError: 'ticket-creation',
-				from: fromUrl,
-			} );
-		},
+	const { requestHelp, isHelpRequested } = useRequestMigrationHelp( () => {
+		// Reset the site in the state to ensure the correct overview screen is shown.
+		if ( siteId ) {
+			dispatch( resetSite( siteId ) );
+		}
+
+		navigation.submit?.( { action: 'skip' } );
 	} );
 
 	const handleSubmit = (
@@ -108,7 +94,9 @@ const SiteMigrationCredentials: StepType< {
 
 		// If SSH migration is available and hosting is supported and locale is English, redirect to SSH flow
 		if ( isSSHMigrationAvailable && isHostingSupported && locale === 'en' ) {
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 			return navigation.submit?.( {
 				action: 'redirect-to-ssh',
 				from: siteInfo?.url || fromUrl,
@@ -122,7 +110,9 @@ const SiteMigrationCredentials: StepType< {
 		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
 		recordMigrationRequestSubmittedFacebookEvent( 'SiteMigrationCredentials' );
 
-		siteId && dispatch( resetSite( siteId ) );
+		if ( siteId ) {
+			dispatch( resetSite( siteId ) );
+		}
 		return navigation.submit?.( {
 			action,
 			from: siteInfo?.url,
@@ -131,7 +121,7 @@ const SiteMigrationCredentials: StepType< {
 		} );
 	};
 
-	const handleSkip = async () => {
+	const handleSkip = () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: true,
@@ -140,23 +130,7 @@ const SiteMigrationCredentials: StepType< {
 		// Fire Google Ads tracking event when credentials are skipped
 		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
 
-		try {
-			await sendTicketAsync( {
-				locale,
-				from_url: fromUrl,
-				blog_url: siteSlug,
-			} );
-
-			// Reset the site in the state to ensure the correct overview screen is shown.
-			siteId && dispatch( resetSite( siteId ) );
-
-			return navigation.submit?.( {
-				action: 'skip',
-			} );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'There was an error submitting the ticket', error );
-		}
+		requestHelp();
 	};
 
 	useEffect( () => {
@@ -168,7 +142,11 @@ const SiteMigrationCredentials: StepType< {
 	const title = translate( 'Tell us about your WordPress site' );
 	const subHeaderText = translate( 'Provide the following details to get your migration started.' );
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
-	const skipButton = <NeedHelpLink onHelpLinkClicked={ handleSkip } />;
+	const skipButton = (
+		<div className="account-template__top-bar-links">
+			<NeedHelpLink onHelpLinkClicked={ handleSkip } isBusy={ isHelpRequested } />
+		</div>
+	);
 
 	return (
 		<>
@@ -177,16 +155,19 @@ const SiteMigrationCredentials: StepType< {
 				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar
-						leftElement={
-							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
+						logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+						onLogoClick={ () =>
+							recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
 						}
 						rightElement={ skipButton }
 					/>
 				}
-				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 				className="site-migration-credentials-v2"
 			>
-				{ mainForm }
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subHeaderText } />
+					{ mainForm }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

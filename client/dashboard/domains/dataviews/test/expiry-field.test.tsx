@@ -2,14 +2,22 @@
  * @jest-environment jsdom
  */
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import { useFields } from '../fields';
 import { filterSortAndPaginateDomains } from '../filter-sort-and-paginate';
 import { DEFAULT_VIEW } from '../views';
 import type { DomainSummary } from '@automattic/api-core';
 import type { Field, Filter, Operator, View } from '@wordpress/dataviews';
+
+let mockHasEnTranslation = true;
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => () => mockHasEnTranslation,
+} ) );
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -43,8 +51,6 @@ const DOMAINS = [
 	domain( 'sooner.com', inDays( 10 ) ),
 ];
 
-type AppQueries = typeof APP_CONTEXT_DEFAULT_CONFIG.queries;
-
 async function getFields() {
 	let fields: Field< DomainSummary >[] = [];
 
@@ -53,19 +59,12 @@ async function getFields() {
 		return null;
 	}
 
-	render( <Probe />, {
-		config: {
-			...APP_CONTEXT_DEFAULT_CONFIG,
-			queries: {
-				...APP_CONTEXT_DEFAULT_CONFIG.queries,
-				domainsQuery: () =>
-					( {
-						queryKey: [ 'test', 'domains' ],
-						queryFn: async () => DOMAINS,
-					} ) as unknown as ReturnType< AppQueries[ 'domainsQuery' ] >,
-			},
-		},
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
+	queryClient.setQueryData( domainsQuery().queryKey, DOMAINS );
+
+	render( <Probe />, { queryClient } );
 
 	await waitFor( () => expect( fields.length ).toBeGreaterThan( 0 ) );
 	return fields;
@@ -86,7 +85,24 @@ const query = ( fields: Field< DomainSummary >[], view: Partial< View > ) =>
 
 const names = ( result: { data: DomainSummary[] } ) => result.data.map( ( d ) => d.domain );
 
-describe( 'domains "Paid until" field', () => {
+describe( 'domains expiry field', () => {
+	beforeEach( () => {
+		mockHasEnTranslation = true;
+	} );
+
+	const expiryLabel = ( fields: Field< DomainSummary >[] ) =>
+		fields.find( ( field ) => field.id === 'expiry' )?.label;
+
+	it( 'is labelled "Renews on"', async () => {
+		expect( expiryLabel( await getFields() ) ).toBe( 'Renews on' );
+	} );
+
+	it( 'keeps the "Paid until" label until "Renews on" is translated', async () => {
+		mockHasEnTranslation = false;
+
+		expect( expiryLabel( await getFields() ) ).toBe( 'Paid until' );
+	} );
+
 	it( 'sorts by date with undated domains last in both directions', async () => {
 		const fields = await getFields();
 

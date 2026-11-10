@@ -41,15 +41,14 @@
 
 		.reader-following-feed,
 		.reader-follow-feed {
-			path {
-				fill: var(--color-text-inverted);
-			}
+			color: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
 		}
 	}
 
 	&:hover,
 	&:focus {
-		svg {
+		svg:not( .reader-follow-feed, .reader-following-feed, .reader-following-conversation ) {
 			path {
 				fill: var(--color-text-inverted);
 			}
@@ -708,8 +707,8 @@
 			fill: var( --color-link );
 		}
 
-		svg,
-		svg path {
+		svg {
+			color: inherit;
 			fill: currentColor;
 		}
 

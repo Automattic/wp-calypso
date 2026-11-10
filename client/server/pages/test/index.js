@@ -142,6 +142,7 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
@@ -151,6 +152,7 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
@@ -564,19 +566,57 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
 		} );
+	} );
 
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
+	describe( 'on calypso.live', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'horizon' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
 		} );
 
 		it( 'sets the branch name', async () => {
 			const { request } = await customApp.run( {
-				request: { query: { branch: 'my-branch' } },
+				request: { hostname: 'hash-abcd1234.calypso.live', query: { branch: 'my-branch' } },
 			} );
 			expect( request.context.branchName ).toEqual( 'my-branch' );
+		} );
+
+		it( 'enables the dev helpers', async () => {
+			const { request } = await customApp.run( {
+				request: { hostname: 'hash-abcd1234.calypso.live' },
+			} );
+			expect( request.context ).toMatchObject( {
+				accountSettingsHelper: true,
+				authHelper: true,
+				preferencesHelper: true,
+				storeSandboxHelper: true,
+			} );
+		} );
+
+		it( 'does not enable the dev helpers outside calypso.live', async () => {
+			const { request } = await customApp.run();
+			expect( request.context.accountSettingsHelper ).toBeFalsy();
+			expect( request.context.authHelper ).toBeFalsy();
+			expect( request.context.preferencesHelper ).toBeFalsy();
+			expect( request.context.storeSandboxHelper ).toBeFalsy();
+		} );
+
+		it( 'does not set the branch name outside calypso.live', async () => {
+			const { request } = await customApp.run( {
+				request: { query: { branch: 'my-branch' } },
+			} );
+			expect( request.context.branchName ).toBeUndefined();
 		} );
 	} );
 
@@ -629,13 +669,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment development', () => {
@@ -662,13 +695,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
 		} );
 
 		it( 'sets the branch name', async () => {
@@ -703,13 +729,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment jetpack-cloud-development', () => {
@@ -738,13 +757,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-dev' );
 		} );
 
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
-
 		it( 'sets the branch name', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.branchName ).toEqual( 'my-branch' );
@@ -753,6 +765,65 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the commit checksum', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.commitChecksum ).toEqual( 'abcd0123' );
+		} );
+	} );
+
+	describe( 'with environment jetpack-cloud-production', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'jetpack-cloud-production' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
+
+		describe( 'Route /manage/signup', () => {
+			it( 'redirects logged-out visitors to A4A signup before login', async () => {
+				const { response } = await customApp.run( { request: { url: '/manage/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects logged-in visitors too', async () => {
+				const { response } = await customApp.run( {
+					request: { url: '/manage/signup', cookies: { wordpress_logged_in: true } },
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects the legacy /agency/signup path', async () => {
+				const { response } = await customApp.run( { request: { url: '/agency/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'forwards acquisition params and drops everything else', async () => {
+				const { response } = await customApp.run( {
+					request: {
+						url: '/manage/signup',
+						query: { ref: 'agencies-lp', utm_source: 'newsletter', foo: 'bar' },
+					},
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=agencies-lp&utm_source=newsletter'
+				);
+			} );
 		} );
 	} );
 };
@@ -1841,6 +1912,21 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'bumps dashboard-404 for unmatched paths', async () => {
+		await app.run( { request: { url: '/does-not-exist', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith( 'dashboard-404', '/does-not-exist' );
+	} );
+
+	it( 'bumps dashboard-404-probing for paths bots probe', async () => {
+		await app.run( { request: { url: '/sitemap.xml', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith(
+			'dashboard-404-probing',
+			'/sitemap.xml'
+		);
 	} );
 
 	it( 'serves known dashboard routes without a 404', async () => {

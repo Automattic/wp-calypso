@@ -80,24 +80,48 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
-	describe( 'Conversations (WIP)', () => {
-		it( 'is shown to Automattic team members', () => {
-			const instance = new ReaderSidebar( {
-				...defaultProps,
-				teams: [ { slug: 'a8c', title: 'Automattic' } ],
-			} );
-
-			render( instance.renderSidebarMenu() );
-
-			expect( screen.getByText( 'Conversations (WIP)' ) ).toBeVisible();
-		} );
-
-		it( 'is hidden from everyone else', () => {
+	describe( 'Conversations', () => {
+		it( 'shows a single Conversations item without the WIP label', () => {
 			const instance = new ReaderSidebar( defaultProps );
 
 			render( instance.renderSidebarMenu() );
 
+			expect( screen.getAllByText( 'Conversations' ) ).toHaveLength( 1 );
 			expect( screen.queryByText( 'Conversations (WIP)' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'sits in the main group above Feeds', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			const conversations = screen.getByText( 'Conversations' );
+			const feeds = screen.getByText( 'Feeds' );
+			const library = screen.getByText( 'Library' );
+			expect(
+				conversations.compareDocumentPosition( feeds ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+			expect(
+				conversations.compareDocumentPosition( library ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+	} );
+
+	describe( 'Saved', () => {
+		it( 'is shown once the saved posts feature is on', () => {
+			jest
+				.mocked( isEnabled )
+				.mockImplementation( ( feature: string ) => feature === 'reader/saved-posts' );
+
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.getByText( 'Saved' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden while the feature is off', () => {
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.queryByText( 'Saved' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

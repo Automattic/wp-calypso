@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import EarnWooPayments from '../index';
@@ -34,7 +35,7 @@ function mockSitesWithPlugins( sites: unknown[] = [] ) {
 }
 
 describe( 'EarnWooPayments', () => {
-	test( 'shows the onboarding empty state when the agency has no WooPayments sites', async () => {
+	test( 'shows the landing page when the agency has no WooPayments sites', async () => {
 		mockAgency();
 		mockLicenses( [] );
 		mockSitesWithPlugins( [] );
@@ -42,9 +43,16 @@ describe( 'EarnWooPayments', () => {
 		render( <EarnWooPayments /> );
 
 		expect(
-			await screen.findByText( 'Earn Revenue Share when clients use WooPayments' )
+			await screen.findByRole( 'heading', {
+				name: 'Transform your clients’ success into real agency revenue',
+			} )
 		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Add WooPayments to site' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'How Revenue Share works' } ) ).toBeVisible();
+		expect( screen.getByRole( 'table' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'button', { name: 'Add WooPayments to site' } ) ).toHaveLength(
+			1
+		);
+		expect( screen.queryByRole( 'button', { name: 'Learn more' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the commissions table and stat cards for a site with WooPayments', async () => {
@@ -88,7 +96,13 @@ describe( 'EarnWooPayments', () => {
 		expect( await screen.findByText( 'store.example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Total WooPayments commissions paid' ) ).toBeVisible();
 		expect(
-			screen.queryByText( 'Earn Revenue Share when clients use WooPayments' )
+			screen.queryByText( 'Transform your clients’ success into real agency revenue' )
 		).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Learn more' } ) );
+		expect(
+			await screen.findByRole( 'dialog', { name: 'About WooPayments commissions' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'How Revenue Share works' } ) ).toBeVisible();
 	} );
 } );

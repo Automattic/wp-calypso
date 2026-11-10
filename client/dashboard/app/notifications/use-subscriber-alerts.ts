@@ -60,7 +60,10 @@ export default function useSubscriberAlerts(
 	}, [ recordTracksEvent ] );
 	const isSubscriberAlertsFeatureEnabled = config.isEnabled( 'notifications/subscriber-alerts' );
 	const subscriberAlerts = useQuery( {
-		...userPreferenceQuery( 'notifications-subscriber-alerts-enabled' ),
+		...userPreferenceQuery(
+			'notifications-subscriber-alerts-enabled',
+			config.isEnabled( 'notifications/subscriber-alerts-default-on' )
+		),
 		enabled: isSubscriberAlertsFeatureEnabled,
 		refetchOnWindowFocus: 'always',
 	} );

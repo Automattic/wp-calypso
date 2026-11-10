@@ -1,5 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { siteSettingsMutation } from '@automattic/api-queries';
+import { domainsQuery, siteSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -13,8 +13,10 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import Notice, {
+	NoticeActionLinkButton,
+	RouterNoticeActionLinkButton,
+} from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { ShareSiteForm } from './share-site-form';
@@ -121,9 +123,9 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const { queries, supports } = useAppContext();
+	const { supports } = useAppContext();
 	const { data: domains = [] } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -193,21 +195,21 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 	// Dashboards without their own domains route (e.g. A4A) send users to the WordPress.com dashboard.
 	const manageDomainsButton =
 		isDashboardBackport() || supports.domains ? (
-			<RouterLinkButton
-				variant="secondary"
+			<RouterNoticeActionLinkButton
+				variant="outline"
 				to={
 					isDashboardBackport() ? `/domains/manage/${ site.slug }` : `/sites/${ site.slug }/domains`
 				}
 			>
 				{ __( 'Manage domains' ) }
-			</RouterLinkButton>
+			</RouterNoticeActionLinkButton>
 		) : (
-			<Button
-				variant="secondary"
+			<NoticeActionLinkButton
+				variant="outline"
 				href={ buildDashboardLink( 'dotcom', `/sites/${ site.slug }/domains` ) }
 			>
 				{ __( 'Manage domains' ) }
-			</Button>
+			</NoticeActionLinkButton>
 		);
 
 	return (
@@ -238,9 +240,12 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 											hasNonWpcomDomain ? (
 												manageDomainsButton
 											) : (
-												<Button variant="secondary" href={ getAddSiteDomainUrl( site.slug ) }>
+												<NoticeActionLinkButton
+													variant="outline"
+													href={ getAddSiteDomainUrl( site.slug ) }
+												>
 													{ __( 'Add new domain' ) }
-												</Button>
+												</NoticeActionLinkButton>
 											)
 										}
 									>

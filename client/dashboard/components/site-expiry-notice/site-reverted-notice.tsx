@@ -1,8 +1,7 @@
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo } from 'react';
 import { getCalendarDaysUntil } from '../../utils/datetime';
-import Notice from '../notice';
+import Notice, { NoticeActionButton } from '../notice';
 import { getExpiryStateName, getSiteRevertedNotice } from '../plan-expiry-notice';
 import { useExpiryNoticeDismissal } from './use-expiry-notice-dismissal';
 import type { PlanExpiryEventStage } from '../plan-expiry-notice';
@@ -79,9 +78,9 @@ export function SiteRevertedNotice( {
 			onClose={ dismiss && ( () => dismiss( eventProperties ) ) }
 			actions={
 				onContactSupport && (
-					<Button variant="primary" onClick={ contactSupport }>
+					<NoticeActionButton variant="solid" onClick={ contactSupport }>
 						{ __( 'Contact support' ) }
-					</Button>
+					</NoticeActionButton>
 				)
 			}
 		>
