@@ -12,11 +12,13 @@ type UsePostCommentsQueryParams = {
 export type UseCommentsOptions = {
 	enabled?: boolean;
 	retry?: boolean | number;
+	staleTime?: number;
+	refetchOnWindowFocus?: boolean;
 };
 
 export const usePostCommentsQuery = (
 	{ siteId, postId, status = 'approved', number }: UsePostCommentsQueryParams,
-	{ enabled = true, retry = false }: UseCommentsOptions = {}
+	{ enabled = true, retry = false, staleTime, refetchOnWindowFocus }: UseCommentsOptions = {}
 ) => {
 	const queryClient = useQueryClient();
 	const queryOptions = siteCommentsInfiniteQuery( {
@@ -40,5 +42,7 @@ export const usePostCommentsQuery = (
 		},
 		enabled: Boolean( enabled && siteId && postId ),
 		retry,
+		...( staleTime !== undefined && { staleTime } ),
+		...( refetchOnWindowFocus !== undefined && { refetchOnWindowFocus } ),
 	} );
 };

@@ -18,6 +18,10 @@ class PostComments extends Component {
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
 		} ).isRequired,
+		queryOptions: PropTypes.shape( {
+			staleTime: PropTypes.number,
+			refetchOnWindowFocus: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {
