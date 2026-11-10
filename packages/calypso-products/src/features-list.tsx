@@ -343,6 +343,7 @@ import {
 	FEATURE_AI_WEBSITE_BUILDER_LIMITED,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_AI_WRITER_DESIGNER_LIMITED,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
@@ -2137,11 +2138,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
-		getTitle: () =>
-			isEnabled( 'hosting/dev-tools-all-paid-plans' )
-				? i18n.translate( 'Staging site' )
-				: i18n.translate( 'Free staging site' ),
-		getAlternativeTitle: () => i18n.translate( 'Free staging site' ),
+		getTitle: () => i18n.translate( 'Free staging site' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate(
@@ -3295,6 +3292,14 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'Skip the blank screen — create and launch a WordPress.com website in minutes by chatting with AI.'
+			),
+	},
+	[ FEATURE_CONNECT_AI_AGENTS ]: {
+		getSlug: () => FEATURE_CONNECT_AI_AGENTS,
+		getTitle: () => i18n.translate( 'Connect ChatGPT, Claude, or other agents' ),
+		getDescription: () =>
+			i18n.translate(
+				'MCP (Model Context Protocol) lets AI assistants like ChatGPT and Claude work directly with your site. Ask them to edit content, check your stats, or manage your site.'
 			),
 	},
 	[ FEATURE_AI_WRITER_DESIGNER ]: {

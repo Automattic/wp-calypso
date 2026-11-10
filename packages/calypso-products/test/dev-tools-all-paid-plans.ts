@@ -71,12 +71,6 @@ describe( 'hosting/dev-tools-all-paid-plans', () => {
 			);
 		} );
 
-		it( 'calls the staging site free in the promo and comparison grids', () => {
-			const staging = getFeatureByKey( FEATURE_SITE_STAGING_SITES );
-			expect( staging.getTitle() ).toBe( 'Free staging site' );
-			expect( staging.getAlternativeTitle?.() ).toBe( 'Free staging site' );
-		} );
-
 		it( 'leaves SFTP, SSH and GitHub Deployments out of Personal and Premium abilities', () => {
 			for ( const slug of [ PLAN_PERSONAL, PLAN_PREMIUM ] ) {
 				const included = plan( slug ).getIncludedFeatures?.() ?? [];
@@ -122,10 +116,10 @@ describe( 'hosting/dev-tools-all-paid-plans', () => {
 			}
 		} );
 
-		it( 'drops "Free" from the staging site in the promo grid only', () => {
-			const staging = getFeatureByKey( FEATURE_SITE_STAGING_SITES );
-			expect( staging.getTitle() ).toBe( 'Staging site' );
-			expect( staging.getAlternativeTitle?.() ).toBe( 'Free staging site' );
+		it( 'keeps calling the staging site free, as the comparison grid does', () => {
+			expect( getFeatureByKey( FEATURE_SITE_STAGING_SITES ).getTitle() ).toBe(
+				'Free staging site'
+			);
 		} );
 
 		it( 'includes SFTP, SSH and GitHub Deployments in Personal and Premium abilities', () => {
