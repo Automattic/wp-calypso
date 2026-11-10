@@ -24,6 +24,7 @@ export const getAuthAccountType = ( action ) =>
 	);
 
 export const receiveSuccess = ( action, data ) => {
+	action.onComplete?.();
 	const isPasswordless = data?.passwordless;
 
 	return [
@@ -37,20 +38,23 @@ export const receiveSuccess = ( action, data ) => {
 	];
 };
 
-export const receiveError = ( action, { error: code, message } ) => [
-	{
-		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
-		error: {
-			code,
-			message,
-			field: 'usernameOrEmail',
+export const receiveError = ( action, { error: code, message } ) => {
+	action.onComplete?.();
+	return [
+		{
+			type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+			error: {
+				code,
+				message,
+				field: 'usernameOrEmail',
+			},
 		},
-	},
-	recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
-		error_code: code,
-		error_message: message,
-	} ),
-];
+		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
+			error_code: code,
+			error_message: message,
+		} ),
+	];
+};
 
 const getAuthAccountTypeRequest = dispatchRequest( {
 	fetch: getAuthAccountType,
