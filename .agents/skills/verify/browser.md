@@ -5,7 +5,7 @@
 ## Choosing where to test
 
 - When a PR is open or you were asked to open one, prefer [Calypso Live](#calypso-live) for final signed-in checks. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built. Draft PRs opened from branches in this repository get preview links, so you can run those checks before marking the PR ready. Each preview lets you verify the intended commit without sharing a local dev server across worktrees.
-- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. Before reusing a running server, confirm it's serving the intended checkout: `lsof -nP -iTCP:3000 -sTCP:LISTEN` with the server's port lists the listener's PID, and `lsof -a -d cwd -p 12345` with that PID shows its directory.
+- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. The script exits with code 2 when the server on its port runs from another checkout.
 
 ## Accounts
 
@@ -51,7 +51,7 @@ node .agents/skills/verify/scripts/browse.cjs 'PASTE_THE_FULL_PR_PREVIEW_URL_HER
 
 If you're a subagent that can't ask the user, report back to the agent that started you instead of acting on your own. When no one can answer at all (a pipeline or cloud run), don't stop to ask:
 
-- If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build. If another checkout's server holds the port, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard` and `PORT=3100 node .agents/skills/verify/scripts/browse.cjs /sites`.
+- If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build. If another checkout's server holds the port, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard` and `PORT=3100 node .agents/skills/verify/scripts/browse.cjs /sites`. Stop a server you started once your checks are done.
 - If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
@@ -77,6 +77,7 @@ node .agents/skills/verify/scripts/browse.cjs <url> [options]
 | `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                                      |
 | `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                                         |
 | `--log-requests <regex>`               | List matching responses with their status and envelope code.                                                         |
+| `--other-checkout`                     | Check a local dev server that runs from another checkout, which the script refuses by default.                       |
 
 With several accounts, the script reports on each in turn and adds `-<account>` to screenshot names.
 
