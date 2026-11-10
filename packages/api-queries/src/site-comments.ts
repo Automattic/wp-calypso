@@ -128,7 +128,7 @@ export const siteCommentsInfiniteQuery = ( {
 				offset: pageParam?.offset,
 			} ),
 		initialPageParam: undefined,
-		// Threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
+		// Most threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
 		staleTime: 60 * 1000,
 		refetchOnWindowFocus: false,
 		getNextPageParam: ( lastPage, allPages ) => {
