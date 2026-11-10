@@ -52,7 +52,6 @@ export const useActions = ( {
 	domains,
 	layout,
 	onChangePrimaryDomain,
-	supportsBulk = true,
 }: {
 	user: User;
 	site?: Site;
@@ -60,7 +59,6 @@ export const useActions = ( {
 	domains?: DomainSummary[];
 	layout: View[ 'type' ];
 	onChangePrimaryDomain?: () => void;
-	supportsBulk?: boolean;
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
@@ -518,7 +516,7 @@ export const useActions = ( {
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk,
+				supportsBulk: false,
 				callback: ( domains ) => {
 					if ( domains.length === 0 ) {
 						return;
@@ -556,7 +554,7 @@ export const useActions = ( {
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk,
+				supportsBulk: false,
 				callback: () => {},
 				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
 					<>
@@ -594,7 +592,6 @@ export const useActions = ( {
 			layout,
 			site,
 			onChangePrimaryDomain,
-			supportsBulk,
 		]
 	);
 

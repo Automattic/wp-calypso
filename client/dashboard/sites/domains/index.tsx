@@ -170,7 +170,7 @@ function SiteDomains() {
 					onChangeView={ updateView }
 					onReset={ resetView }
 					view={ view }
-					// The cards render their own actions, and DataViews would add a bulk selection footer.
+					// The cards render their own actions.
 					actions={ isCardsLayout || ! hasEligibleActions ? [] : actions }
 					search
 					paginationInfo={ paginationInfo }
