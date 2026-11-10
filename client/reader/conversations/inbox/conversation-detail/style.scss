@@ -373,7 +373,8 @@ $conversations-inbox-post-card-shadow:
 		line-height: 20px;
 	}
 
-	.comments__comment-respondee-link {
+	.comments__comment-respondee-link,
+	.comments__comment-timestamp a {
 		color: var( --color-text-subtle );
 		text-decoration: none;
 
