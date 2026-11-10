@@ -7,7 +7,6 @@
  * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT).
  * The options are documented in ../browser.md.
  */
-const { execFileSync } = require( 'node:child_process' );
 const fs = require( 'node:fs' );
 const path = require( 'node:path' );
 const { setTimeout: delay } = require( 'node:timers/promises' );
@@ -37,7 +36,6 @@ const { values: options, positionals } = parseArgs( {
 		arrow: { type: 'string' },
 		'full-page': { type: 'boolean', default: false },
 		'no-snapshot': { type: 'boolean', default: false },
-		'other-checkout': { type: 'boolean', default: false },
 		viewport: { type: 'string', default: '1440x1000' },
 		settle: { type: 'string', default: '2000' },
 		'log-requests': { type: 'string' },
@@ -76,65 +74,25 @@ function isLocalTarget( url ) {
 	);
 }
 
-function localPort( url ) {
-	const { port, protocol } = new URL( url, LOCAL_DASHBOARD_ORIGIN );
-	return port || ( protocol === 'https:' ? '443' : '80' );
-}
-
 function isCalypsoLiveTarget( url ) {
 	const { hostname } = new URL( url );
 	return hostname === 'calypso.live' || hostname.endsWith( '.calypso.live' );
-}
-
-function lsof( ...args ) {
-	return execFileSync( 'lsof', args, { encoding: 'utf8', stdio: [ 'ignore', 'pipe', 'ignore' ] } );
-}
-
-/**
- * Returns the working directory of the process listening on a port, or nothing when there
- * is no listener or `lsof` can't tell.
- */
-function devServerDirectory( port ) {
-	try {
-		const [ pid ] = lsof( '-nP', `-iTCP:${ port }`, '-sTCP:LISTEN', '-t' ).split( '\n' );
-		const directory = lsof( '-a', '-d', 'cwd', '-p', pid, '-Fn' )
-			.split( '\n' )
-			.find( ( line ) => line.startsWith( 'n' ) );
-		return directory && fs.realpathSync( directory.slice( 1 ) );
-	} catch {}
-}
-
-/**
- * Every checkout without its own PORT shares one port, so the server that answers may be
- * building another worktree's code.
- */
-function checkDevServerCheckout( port ) {
-	const directory = devServerDirectory( port );
-	if ( ! directory || directory === fs.realpathSync( REPO_ROOT ) || options[ 'other-checkout' ] ) {
-		return;
-	}
-	throw new UserActionRequired(
-		`The dev server on port ${ port } runs from another checkout: ${ directory }\n` +
-			`To check this one (${ REPO_ROOT }), start its dev server on a free port and pass the ` +
-			'same port here, e.g. `PORT=3100 yarn start-dashboard` and `PORT=3100 node browse.cjs …`. ' +
-			'To check that server on purpose, pass --other-checkout.'
-	);
 }
 
 /**
  * Until the first webpack build finishes, the dev server answers `/` with a "please wait"
  * page and holds every other request.
  */
-async function waitForDevServer( port ) {
+async function waitForDevServer() {
 	const deadline = Date.now() + BUILD_TIMEOUT;
 	let announced = false;
 	for (;;) {
 		let body;
 		try {
-			body = await ( await fetch( `http://127.0.0.1:${ port }/` ) ).text();
+			body = await ( await fetch( `http://127.0.0.1:${ PORT }/` ) ).text();
 		} catch {
 			throw new UserActionRequired(
-				`The dev server isn't running on port ${ port }. Start it with ` +
+				`The dev server isn't running on port ${ PORT }. Start it with ` +
 					'`yarn start-dashboard` (Dashboard only) or `yarn start` (all of Calypso).'
 			);
 		}
@@ -563,10 +521,8 @@ async function main() {
 	}
 
 	if ( isLocalTarget( target ) ) {
-		const port = localPort( target );
-		checkDevServerCheckout( port );
-		await waitForDevServer( port );
-		console.log( `dev server: up on port ${ port }` );
+		await waitForDevServer();
+		console.log( `dev server: up on port ${ PORT }` );
 	}
 
 	const browser = await launchBrowser();

@@ -5,7 +5,7 @@
 ## Choosing where to test
 
 - When a PR is open or you were asked to open one, prefer [Calypso Live](#calypso-live) for final signed-in checks. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built. Draft PRs opened from branches in this repository get preview links, so you can run those checks before marking the PR ready. Each preview lets you verify the intended commit without sharing a local dev server across worktrees.
-- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. The script exits with code 2 when the server on its port runs from another checkout.
+- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. Before reusing a running server, confirm it's serving the intended checkout: `lsof -nP -iTCP:3000 -sTCP:LISTEN` with the server's port lists the listener's PID, and `lsof -a -d cwd -p 12345` with that PID shows its directory.
 
 ## Accounts
 
@@ -77,7 +77,6 @@ node .agents/skills/verify/scripts/browse.cjs <url> [options]
 | `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                                      |
 | `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                                         |
 | `--log-requests <regex>`               | List matching responses with their status and envelope code.                                                         |
-| `--other-checkout`                     | Check a local dev server that runs from another checkout, which the script refuses by default.                       |
 
 With several accounts, the script reports on each in turn and adds `-<account>` to screenshot names.
 
