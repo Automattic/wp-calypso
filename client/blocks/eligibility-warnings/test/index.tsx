@@ -216,6 +216,9 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		expect( getByText( /isn’t indexed by search engines/ ) ).toBeVisible();
+		expect( getByText( 'add a custom domain so your site can be indexed' ).tagName ).toBe(
+			'STRONG'
+		);
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {
