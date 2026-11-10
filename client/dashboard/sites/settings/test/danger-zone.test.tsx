@@ -6,7 +6,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import SiteActions from '../site-actions';
+import DangerZone from '../danger-zone';
 import type { Site } from '@automattic/api-core';
 
 const siteId = 123;
@@ -25,7 +25,7 @@ function mockRestoreRequest( status = 200 ) {
 }
 
 async function openDialog( user: UserEvent ) {
-	render( <SiteActions site={ site } /> );
+	render( <DangerZone site={ site } /> );
 	await user.click( await screen.findByRole( 'button', { name: 'Restore' } ) );
 	return within( await screen.findByRole( 'dialog', { name: 'Restore plugins and themes?' } ) );
 }
@@ -34,7 +34,7 @@ function expectDialogClosed() {
 	expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 }
 
-describe( '<SiteActions>', () => {
+describe( '<DangerZone>', () => {
 	test( 'asks for confirmation before restoring plan software', async () => {
 		const requests = mockRestoreRequest();
 
@@ -95,7 +95,14 @@ describe( '<SiteActions>', () => {
 	} );
 
 	test( 'does not offer the restore action on non-Atomic sites', async () => {
-		render( <SiteActions site={ { ...site, is_wpcom_atomic: false } } /> );
+		render( <DangerZone site={ { ...site, is_wpcom_atomic: false } } /> );
+
+		await waitFor( () => expect( screen.queryByTestId( 'loading' ) ).not.toBeInTheDocument() );
+		expect( screen.queryByRole( 'button', { name: 'Restore' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not offer the restore action on staging sites', async () => {
+		render( <DangerZone site={ { ...site, is_wpcom_staging_site: true } } /> );
 
 		await waitFor( () => expect( screen.queryByTestId( 'loading' ) ).not.toBeInTheDocument() );
 		expect( screen.queryByRole( 'button', { name: 'Restore' } ) ).not.toBeInTheDocument();
