@@ -216,7 +216,7 @@ describe( '<Domains>', () => {
 		expect( domainNames() ).toHaveLength( 0 );
 	} );
 
-	test( 'switches to a table with bulk selection and tracks the change', async () => {
+	test( 'switches to a table without bulk selection and tracks the change', async () => {
 		const user = userEvent.setup();
 		mockApis( [ mockDomain( 1 ) ] );
 		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
@@ -225,7 +225,9 @@ describe( '<Domains>', () => {
 		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
 
 		const table = await screen.findByRole( 'table' );
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		await user.click( within( table ).getByRole( 'button', { name: 'Actions' } ) );
+		expect( await screen.findByRole( 'menuitem', { name: /Manage auto-renew/ } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_view_type_changed',
 			{ type: 'table' }
@@ -262,8 +264,8 @@ describe( '<Domains>', () => {
 		const table = await screen.findByRole( 'table' );
 		const headers = within( table ).getAllByRole( 'columnheader' );
 		expect( headers.map( ( header ) => header.textContent ) ).not.toContain( 'SSL' );
-		// Selection, name, site, paid until, status and actions.
-		expect( headers ).toHaveLength( 6 );
+		// Name, site, paid until, status and actions.
+		expect( headers ).toHaveLength( 5 );
 		expect( screen.queryByRole( 'group', { name: 'domain01.com' } ) ).not.toBeInTheDocument();
 	} );
 

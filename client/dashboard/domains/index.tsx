@@ -68,7 +68,7 @@ function Domains() {
 		},
 	} );
 
-	const actions = useActions( { user, sites, domains, layout: view.type } );
+	const actions = useActions( { user, sites, domains, layout: view.type, supportsBulk: false } );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
