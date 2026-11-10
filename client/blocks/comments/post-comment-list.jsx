@@ -142,7 +142,14 @@ class PostCommentList extends Component {
 				amountOfCommentsToTake: amountOfCommentsToTake + this.props.pageSize,
 			} ) );
 		}
-		if ( latestCommentId && ! commentsTree[ latestCommentId ] ) {
+		// Once per comment, since one that never loads (held for moderation, deleted) would refetch on every update.
+		if (
+			latestCommentId &&
+			commentsFetchingStatus.hasReceivedBefore &&
+			! commentsTree[ latestCommentId ] &&
+			this.requestedLatestCommentId !== latestCommentId
+		) {
+			this.requestedLatestCommentId = latestCommentId;
 			this.props.fetchLaterComments();
 		}
 	};

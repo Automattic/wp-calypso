@@ -400,6 +400,21 @@ describe( 'PostComments', () => {
 		);
 	} );
 
+	it( 'requests later comments once when the latest one never loads', async () => {
+		replyWithNewestPage();
+		const laterRequests = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' )
+			.times( 3 )
+			.reply( 200, { comments: [], found: 2 } );
+
+		renderComments( { startingCommentId: 2, latestCommentId: 3 } );
+
+		await waitFor( () => expect( laterRequests.pendingMocks() ).toHaveLength( 1 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
+		expect( laterRequests.pendingMocks() ).toHaveLength( 1 );
+	} );
+
 	it( 'resets inline expansion when the post changes', async () => {
 		const nextPost = {
 			...post,
