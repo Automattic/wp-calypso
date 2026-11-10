@@ -238,9 +238,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 			height: 24px;
 		}
 
-		// Override default green color from follow button component
+		// Override default green color from follow button component. The state selectors outrank the
+		// follow button's own state rules; fill can't use !important, which would beat the inline
+		// fill: none of stroke-drawn icons.
 		.reader-following-feed,
-		.reader-follow-feed {
+		.reader-follow-feed,
+		&.is-following .reader-following-feed,
+		&.is-disabled .reader-following-feed,
+		&.is-disabled .reader-follow-feed {
 			color: var( --color-text-subtle ) !important;
 			fill: var( --color-text-subtle );
 		}
@@ -251,14 +256,15 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		}
 
 		// Hover state
-		&:hover {
-			.reader-following-feed,
-			.reader-follow-feed {
-				color: var( --color-link ) !important;
-				fill: var( --color-link );
-				opacity: 1;
-			}
+		&:hover .reader-following-feed,
+		&:hover .reader-follow-feed,
+		&.is-following:hover .reader-following-feed {
+			color: var( --color-link ) !important;
+			fill: var( --color-link );
+			opacity: 1;
+		}
 
+		&:hover {
 			.follow-button__label {
 				color: var( --color-link ) !important;
 			}
