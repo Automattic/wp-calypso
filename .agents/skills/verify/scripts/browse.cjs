@@ -76,6 +76,11 @@ function isLocalTarget( url ) {
 	);
 }
 
+function localPort( url ) {
+	const { port, protocol } = new URL( url, LOCAL_DASHBOARD_ORIGIN );
+	return port || ( protocol === 'https:' ? '443' : '80' );
+}
+
 function isCalypsoLiveTarget( url ) {
 	const { hostname } = new URL( url );
 	return hostname === 'calypso.live' || hostname.endsWith( '.calypso.live' );
@@ -86,12 +91,12 @@ function lsof( ...args ) {
 }
 
 /**
- * Returns the working directory of the process listening on the dev server's port, or
- * nothing when there is no listener or `lsof` can't tell.
+ * Returns the working directory of the process listening on a port, or nothing when there
+ * is no listener or `lsof` can't tell.
  */
-function devServerDirectory() {
+function devServerDirectory( port ) {
 	try {
-		const [ pid ] = lsof( '-nP', `-iTCP:${ PORT }`, '-sTCP:LISTEN', '-t' ).split( '\n' );
+		const [ pid ] = lsof( '-nP', `-iTCP:${ port }`, '-sTCP:LISTEN', '-t' ).split( '\n' );
 		const directory = lsof( '-a', '-d', 'cwd', '-p', pid, '-Fn' )
 			.split( '\n' )
 			.find( ( line ) => line.startsWith( 'n' ) );
@@ -103,13 +108,13 @@ function devServerDirectory() {
  * Every checkout without its own PORT shares one port, so the server that answers may be
  * building another worktree's code.
  */
-function checkDevServerCheckout() {
-	const directory = devServerDirectory();
+function checkDevServerCheckout( port ) {
+	const directory = devServerDirectory( port );
 	if ( ! directory || directory === fs.realpathSync( REPO_ROOT ) || options[ 'other-checkout' ] ) {
 		return;
 	}
 	throw new UserActionRequired(
-		`The dev server on port ${ PORT } runs from another checkout: ${ directory }\n` +
+		`The dev server on port ${ port } runs from another checkout: ${ directory }\n` +
 			`To check this one (${ REPO_ROOT }), start its dev server on a free port and pass the ` +
 			'same port here, e.g. `PORT=3100 yarn start-dashboard` and `PORT=3100 node browse.cjs …`. ' +
 			'To check that server on purpose, pass --other-checkout.'
@@ -120,16 +125,16 @@ function checkDevServerCheckout() {
  * Until the first webpack build finishes, the dev server answers `/` with a "please wait"
  * page and holds every other request.
  */
-async function waitForDevServer() {
+async function waitForDevServer( port ) {
 	const deadline = Date.now() + BUILD_TIMEOUT;
 	let announced = false;
 	for (;;) {
 		let body;
 		try {
-			body = await ( await fetch( `http://127.0.0.1:${ PORT }/` ) ).text();
+			body = await ( await fetch( `http://127.0.0.1:${ port }/` ) ).text();
 		} catch {
 			throw new UserActionRequired(
-				`The dev server isn't running on port ${ PORT }. Start it with ` +
+				`The dev server isn't running on port ${ port }. Start it with ` +
 					'`yarn start-dashboard` (Dashboard only) or `yarn start` (all of Calypso).'
 			);
 		}
@@ -558,9 +563,10 @@ async function main() {
 	}
 
 	if ( isLocalTarget( target ) ) {
-		checkDevServerCheckout();
-		await waitForDevServer();
-		console.log( `dev server: up on port ${ PORT }` );
+		const port = localPort( target );
+		checkDevServerCheckout( port );
+		await waitForDevServer( port );
+		console.log( `dev server: up on port ${ port }` );
 	}
 
 	const browser = await launchBrowser();
