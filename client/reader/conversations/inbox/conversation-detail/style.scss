@@ -258,10 +258,6 @@
 		}
 	}
 
-	.comments__comment-username {
-		margin-inline-end: 8px;
-	}
-
 	.comments__comment-timestamp a,
 	.comments__comment-new-label {
 		font-size: 13px;
@@ -292,8 +288,8 @@
 		text-transform: none;
 	}
 
-	.comments__comment-username,
-	.comments__comment-respondee-link {
+	.comments__comment-username {
+		margin-inline-end: 8px;
 		color: var( --color-text );
 		text-decoration: none;
 
@@ -301,6 +297,61 @@
 		&:focus {
 			color: var( --color-text );
 			text-decoration: underline;
+		}
+	}
+
+	// "to Petra" on a reply reads as metadata, like the time.
+	.comments__comment-respondee {
+		margin-inline-end: 8px;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 20px;
+	}
+
+	.comments__comment-respondee-link {
+		color: var( --color-text-subtle );
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+
+	// Next to the time, not pushed to the far edge.
+	.comments__comment-author .comments__comment-collapse-toggle {
+		margin-inline-start: 4px;
+	}
+
+	// Replies spell out their actions too, like top-level comments.
+	.comments__comment:not( .depth-0 ) .comments__comment-actions {
+		.comments__comment-actions-reply-label,
+		.reader-share__label {
+			display: inline;
+		}
+	}
+
+	.comments__collapsed-replies.components-button.is-link {
+		margin-block-start: 8px;
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		line-height: 20px;
+		text-decoration: none;
+
+		&:hover {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+
+	.comments__comment-content blockquote {
+		margin: 0 0 24px;
+		padding: 0 0 0 16px;
+		border-inline-start: 2px solid var( --color-border-subtle );
+
+		> :last-child {
+			margin-block-end: 0;
 		}
 	}
 }
