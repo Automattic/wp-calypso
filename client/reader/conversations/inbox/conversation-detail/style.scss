@@ -302,9 +302,9 @@
 			transform: scaleX( -1 );
 		}
 
-		// Once liked, only the star takes the brand color, as on P2.
+		// Once liked, the star takes the brand color and the label the text color.
 		.components-button.like-button:is( .is-liked, .is-pressed ) {
-			color: var( --color-text-subtle );
+			color: var( --color-text );
 		}
 	}
 
