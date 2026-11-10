@@ -118,10 +118,12 @@ let replyConversations: ( uri: string ) => object;
 let markReadStatus: number;
 let markReadBodies: { counts: Record< string, number > }[];
 
-const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
-	renderWithProvider( <ConversationsInbox { ...props } />, {
-		queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ),
-	} );
+let queryClient: QueryClient | undefined;
+
+const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) => {
+	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return renderWithProvider( <ConversationsInbox { ...props } />, { queryClient } );
+};
 
 // The list loads asynchronously, so wait for a row before acting on it.
 const findRow = ( key: string ) => screen.findByRole( 'button', { name: key } );
@@ -166,7 +168,19 @@ beforeEach( () => {
 		} );
 } );
 
-afterEach( () => nock.cleanAll() );
+afterEach( async () => {
+	// A refetch still in flight would otherwise land in the next test's requests.
+	const client = queryClient;
+	queryClient = undefined;
+	if ( client ) {
+		await waitFor( () => {
+			if ( client.isFetching() ) {
+				throw new Error( 'Still fetching' );
+			}
+		} );
+	}
+	nock.cleanAll();
+} );
 
 const markedNoteIds = () =>
 	markReadBodies.map( ( { counts } ) => Object.keys( counts ).map( Number ) );
