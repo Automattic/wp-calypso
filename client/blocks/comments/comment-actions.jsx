@@ -1,10 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, keyboardReturn } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import ShareButton from 'calypso/blocks/reader-share';
 import { isCommentsOpen, isRebloggable } from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { CommentLabelsContext } from './comment-labels-context';
 import CommentLikeButtonContainer from './comment-likes';
 
 import './comment-actions.scss';
@@ -21,6 +24,7 @@ const CommentActions = ( {
 	onLikeToggle,
 } ) => {
 	const translate = useTranslate();
+	const spellOutLabels = useContext( CommentLabelsContext );
 	const commentId = comment.ID;
 	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
@@ -46,7 +50,15 @@ const CommentActions = ( {
 			) }
 			{ showReplyButton && (
 				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
-					<Gridicon icon="reply" size={ 18 } />
+					{ spellOutLabels ? (
+						<Icon
+							icon={ keyboardReturn }
+							size={ 18 }
+							className="comments__comment-actions-reply-icon"
+						/>
+					) : (
+						<Gridicon icon="reply" size={ 18 } />
+					) }
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 				</Button>
 			) }

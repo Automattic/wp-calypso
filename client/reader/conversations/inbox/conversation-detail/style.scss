@@ -295,6 +295,17 @@
 			width: 20px;
 			height: 20px;
 		}
+
+		// The design's reply arrow is the return icon, mirrored.
+		.comments__comment-actions-reply-icon {
+			fill: currentcolor;
+			transform: scaleX( -1 );
+		}
+
+		// Once liked, only the star takes the brand color, as on P2.
+		.components-button.like-button:is( .is-liked, .is-pressed ) {
+			color: var( --color-text-subtle );
+		}
 	}
 
 	.comments__comment-count-phrase {
