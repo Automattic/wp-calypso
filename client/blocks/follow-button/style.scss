@@ -13,10 +13,8 @@ button.follow-button {
 
 	svg.reader-follow-feed {
 		pointer-events: auto;
-
-		path {
-			fill: var(--color-text-subtle);
-		}
+		color: var(--color-text-subtle);
+		fill: var(--color-text-subtle);
 	}
 
 	.follow-button__label {
@@ -32,7 +30,8 @@ button.follow-button {
 			color: var(--color-success);
 		}
 
-		svg.reader-follow-feed path {
+		svg.reader-follow-feed {
+			color: var(--color-success);
 			fill: var(--color-success);
 		}
 	}
@@ -51,10 +50,8 @@ button.follow-button {
 		svg.reader-following-feed {
 			display: inline-block;
 			pointer-events: auto;
-
-			path {
-				fill: var(--color-success);
-			}
+			color: var(--color-success);
+			fill: var(--color-success);
 		}
 
 		.follow-button__label {
@@ -71,9 +68,8 @@ button.follow-button {
 			color: var(--color-success);
 
 			svg.reader-following-feed {
-				path {
-					fill: var(--color-success);
-				}
+				color: var(--color-success);
+				fill: var(--color-success);
 			}
 		}
 	}
@@ -90,9 +86,8 @@ button.follow-button {
 
 		svg.reader-follow-feed,
 		svg.reader-following-feed {
-			path {
-				fill: $follow-button-gray-disabled;
-			}
+			color: $follow-button-gray-disabled;
+			fill: $follow-button-gray-disabled;
 		}
 
 		&:hover {
@@ -101,9 +96,8 @@ button.follow-button {
 
 			svg.reader-follow-feed,
 			svg.reader-following-feed {
-				path {
-					fill: $follow-button-gray-disabled;
-				}
+				color: $follow-button-gray-disabled;
+				fill: $follow-button-gray-disabled;
 			}
 		}
 
@@ -120,7 +114,8 @@ button.follow-button {
 		font-weight: 500;
 		padding: 12px 24px 12px 20px;
 
-		svg.reader-follow-feed * {
+		svg.reader-follow-feed {
+			color: var(--color-text-inverted);
 			fill: var(--color-text-inverted);
 		}
 

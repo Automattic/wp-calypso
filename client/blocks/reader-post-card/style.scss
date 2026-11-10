@@ -41,9 +41,8 @@
 
 		.reader-following-feed,
 		.reader-follow-feed {
-			path {
-				fill: var(--color-text-inverted);
-			}
+			color: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
 		}
 	}
 
@@ -710,6 +709,7 @@
 
 		svg,
 		svg path {
+			color: inherit;
 			fill: currentColor;
 		}
 

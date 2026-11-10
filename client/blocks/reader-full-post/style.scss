@@ -240,9 +240,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 		// Override default green color from follow button component
 		.reader-following-feed,
-		.reader-following-feed path,
-		.reader-follow-feed,
-		.reader-follow-feed path {
+		.reader-follow-feed {
+			color: var( --color-text-subtle ) !important;
 			fill: var( --color-text-subtle ) !important;
 		}
 
@@ -254,9 +253,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		// Hover state
 		&:hover {
 			.reader-following-feed,
-			.reader-following-feed path,
-			.reader-follow-feed,
-			.reader-follow-feed path {
+			.reader-follow-feed {
+				color: var( --color-link ) !important;
 				fill: var( --color-link ) !important;
 				opacity: 1;
 			}
@@ -407,10 +405,12 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	text-decoration: none;
 
 	.reader-full-post__view-original-button-icon {
+		color: var( --color-text-subtle );
 		fill: var( --color-text-subtle );
 	}
 
 	&:hover .reader-full-post__view-original-button-icon {
+		color: var( --color-link );
 		fill: var( --color-link );
 	}
 
