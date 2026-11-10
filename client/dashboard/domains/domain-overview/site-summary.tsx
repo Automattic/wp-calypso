@@ -44,8 +44,8 @@ export default function DomainSiteSettingsSummary( {
 			suffix={
 				site ? (
 					<HStack as="span" spacing={ 2 } expanded={ false }>
-						<SiteIcon site={ site } size={ 24 } />
-						<Text variant="muted">{ getSiteDisplayName( site ) }</Text>
+						<SiteIcon site={ site } size={ 16 } />
+						<Text>{ getSiteDisplayName( site ) }</Text>
 					</HStack>
 				) : undefined
 			}
