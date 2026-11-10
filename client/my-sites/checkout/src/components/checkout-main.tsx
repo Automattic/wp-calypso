@@ -341,6 +341,7 @@ export default function CheckoutMain( {
 	}, [ getThankYouUrlBase ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
+	const hasContactStep = contactDetailsType !== 'none';
 
 	useDetectedCountryCode();
 
@@ -771,7 +772,12 @@ export default function CheckoutMain( {
 			previousStepNumber: number;
 			paymentMethodId: string;
 		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+			// When the first step is auto-completed and the next step completes
+			// immediately too, batched updates mean the step goes straight from 1 to 0.
+			// Only count that when a contact step exists; otherwise step 1 is payment.
+			const isFirstStepComplete =
+				previousStepNumber === 1 && ( stepNumber === 2 || ( stepNumber === 0 && hasContactStep ) );
+			if ( isFirstStepComplete ) {
 				recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
 					payment_method:
 						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
@@ -781,7 +787,7 @@ export default function CheckoutMain( {
 				step: stepNumber,
 			} );
 		},
-		[]
+		[ hasContactStep ]
 	);
 
 	const handlePaymentMethodChanged = useCallback( ( method: string ) => {
