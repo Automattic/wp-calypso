@@ -69,6 +69,7 @@ class PostCommentList extends Component {
 		fetchEarlierComments: PropTypes.func.isRequired,
 		fetchLaterComments: PropTypes.func.isRequired,
 		latestCommentId: PropTypes.number,
+		loadedComments: PropTypes.array,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
 		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
@@ -134,7 +135,7 @@ class PostCommentList extends Component {
 	// A fresh first page already holds the newest comments, so later ones are missing only when
 	// the caller knows of a newer comment than a cached thread has.
 	loadInitialPages = () => {
-		const { commentsFetchingStatus, latestCommentId, commentsTree } = this.props;
+		const { commentsFetchingStatus, latestCommentId, loadedComments } = this.props;
 		if ( commentsFetchingStatus.haveEarlierCommentsToFetch ) {
 			this.loadMoreCommentsHandler( 'before' );
 		} else {
@@ -146,7 +147,7 @@ class PostCommentList extends Component {
 		if (
 			latestCommentId &&
 			commentsFetchingStatus.hasReceivedBefore &&
-			! commentsTree[ latestCommentId ] &&
+			! loadedComments?.some( ( comment ) => comment.ID === latestCommentId ) &&
 			this.requestedLatestCommentId !== latestCommentId
 		) {
 			this.requestedLatestCommentId = latestCommentId;
