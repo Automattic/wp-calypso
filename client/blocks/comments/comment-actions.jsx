@@ -51,10 +51,14 @@ const CommentActions = ( {
 				</Button>
 			) }
 			{ showReplyButton && swapReplyForCancel && (
-				<Button className="comments__comment-actions-reply" onClick={ onReplyCancel }>
+				<Button
+					className="comments__comment-actions-reply"
+					aria-label={ translate( 'Cancel reply' ) }
+					onClick={ onReplyCancel }
+				>
 					<Icon icon={ close } size={ 18 } className="comments__comment-actions-cancel-icon" />
 					<span className="comments__comment-actions-reply-label">
-						{ translate( 'Cancel reply' ) }
+						{ translate( 'Cancel', { context: 'verb' } ) }
 					</span>
 				</Button>
 			) }

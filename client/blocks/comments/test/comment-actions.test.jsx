@@ -74,6 +74,9 @@ describe( 'CommentActions', () => {
 
 		expect( screen.queryByRole( 'button', { name: 'Reply' } ) ).not.toBeInTheDocument();
 		expect( screen.getAllByRole( 'button', { name: 'Cancel reply' } ) ).toHaveLength( 1 );
+		expect( screen.getByRole( 'button', { name: 'Cancel reply' } ) ).toHaveTextContent(
+			/^Cancel$/
+		);
 
 		await user.click( screen.getByRole( 'button', { name: 'Cancel reply' } ) );
 
