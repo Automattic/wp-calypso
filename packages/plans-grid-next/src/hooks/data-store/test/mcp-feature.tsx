@@ -23,6 +23,14 @@ import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from '../use-restructured-plan-features-for-comparison-grid';
 import type { GridPlan } from '../../../types';
 
+let mockFlagEnabled = false;
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => '';
+	config.isEnabled = ( flag: string ) =>
+		flag === 'hosting/dev-tools-all-paid-plans' && mockFlagEnabled;
+	return { __esModule: true, default: config, isEnabled: config.isEnabled };
+} );
+
 const PAID_PLANS = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
 const toGridPlans = ( planSlugs: string[] ) =>
@@ -107,9 +115,17 @@ describe( 'mcp_features experiment variant', () => {
 	} );
 } );
 
-describe( 'staging site on the plan cards', () => {
+describe( 'staging site once dev tools move to all paid plans', () => {
+	beforeEach( () => {
+		mockFlagEnabled = true;
+	} );
+
+	afterEach( () => {
+		mockFlagEnabled = false;
+	} );
+
 	it.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )(
-		'replaces the dev tools on %s for every variant',
+		'replaces the dev tools on the %s card as "Staging site"',
 		( planSlug ) => {
 			[ false, true ].forEach( ( useMcpFeature ) => {
 				const features = cardFeatures( planSlug, useMcpFeature );
@@ -124,4 +140,27 @@ describe( 'staging site on the plan cards', () => {
 			} );
 		}
 	);
+
+	it( 'keeps "Free staging site" in the comparison grid', () => {
+		const { result } = renderHook( () =>
+			useRestructuredPlanFeaturesForComparisonGrid( {
+				gridPlans: toGridPlans( [ PLAN_BUSINESS ] ),
+				allFeaturesList: getFeaturesList(),
+			} )
+		);
+		const stagingFeature = result.current[ PLAN_BUSINESS ].wpcomFeatures.find(
+			( feature ) => feature.getSlug() === FEATURE_SITE_STAGING_SITES
+		);
+
+		expect( stagingFeature?.getTitle() ).toBe( 'Free staging site' );
+	} );
+} );
+
+describe( 'dev tools on the plan cards before they move to all paid plans', () => {
+	it.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )( 'keeps the dev tools on %s', ( planSlug ) => {
+		const slugs = cardFeatureSlugs( planSlug, false );
+
+		expect( slugs ).toContain( FEATURE_DEV_TOOLS );
+		expect( slugs ).not.toContain( FEATURE_SITE_STAGING_SITES );
+	} );
 } );
