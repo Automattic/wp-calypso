@@ -6,6 +6,7 @@
 
 import { act, Component, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { vi } from 'vitest';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -13,15 +14,15 @@ let helpers;
 
 const listeners = {};
 
-const matchesMock = jest.fn( () => true );
-const addListenerMock = jest.fn( ( query, listener ) => {
+const matchesMock = vi.fn( () => true );
+const addListenerMock = vi.fn( ( query, listener ) => {
 	if ( listeners[ query ] ) {
 		listeners[ query ].push( listener );
 	} else {
 		listeners[ query ] = [ listener ];
 	}
 } );
-const removeListenerMock = jest.fn( ( query, listener ) => {
+const removeListenerMock = vi.fn( ( query, listener ) => {
 	if ( listeners[ query ] ) {
 		listeners[ query ] = listeners[ query ].filter( ( item ) => item !== listener );
 	}
@@ -33,7 +34,7 @@ function callQueryListeners( query, value ) {
 	}
 }
 
-const matchMediaMock = jest.fn( ( query ) => {
+const matchMediaMock = vi.fn( ( query ) => {
 	const mediaListObjectMock = {
 		addListener: ( listener ) => addListenerMock( query, listener ),
 		removeListener: ( listener ) => removeListenerMock( query, listener ),
@@ -94,7 +95,7 @@ describe( '@automattic/viewport-react', () => {
 		window.matchMedia = matchMediaMock;
 		helpers = await import( '../src' );
 		// Disable console warnings.
-		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );
 
 	beforeEach( () => {
@@ -117,7 +118,7 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	afterAll( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	describe( 'useBreakpoint', () => {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	createExPlatClient as createBrowserExPlatClient,
 	createSsrSafeDummyExPlatClient,
@@ -5,7 +6,7 @@ import {
 import { setBrowserContext, setSsrContext } from '../internal/test-common';
 
 beforeEach( () => {
-	jest.resetModules();
+	vi.resetModules();
 } );
 
 describe( 'index.ts', () => {

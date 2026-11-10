@@ -1,20 +1,21 @@
+import { vi } from 'vitest';
 import { createSsrSafeDummyExPlatClient } from '../create-explat-client';
 import * as Timing from '../internal/timing';
 import type { Config } from '../types';
 
-const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
+const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
 type MockedFunction = ReturnType< typeof jest.fn >;
 const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
-	logError: jest.fn(),
-	fetchExperimentAssignment: jest.fn(),
-	getAnonId: jest.fn(),
+	logError: vi.fn(),
+	fetchExperimentAssignment: vi.fn(),
+	getAnonId: vi.fn(),
 	isDevelopmentMode: false,
 	...override,
 } );
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 } );
 
 describe( 'loadExperimentAssignment', () => {

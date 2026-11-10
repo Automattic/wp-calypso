@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { createExPlatClient } from '../create-explat-client';
 import localStorage from '../internal/local-storage';
 import {
@@ -13,12 +14,12 @@ import type { Config, ExperimentAssignment } from '../types';
 
 type MockedFunction = ReturnType< typeof jest.fn >;
 
-const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
+const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
 const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
-	logError: jest.fn(),
-	fetchExperimentAssignment: jest.fn(),
-	getAnonId: jest.fn(),
+	logError: vi.fn(),
+	fetchExperimentAssignment: vi.fn(),
+	getAnonId: vi.fn(),
 	isDevelopmentMode: false,
 	...override,
 } );
@@ -42,7 +43,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 }
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 	setBrowserContext();
 	localStorage.clear();
 } );
@@ -211,7 +212,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	} );
 
 	it( 'Timed-out fetch: should return fallback and log', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		const mockedConfig = createMockedConfig();
 		( mockedConfig.fetchExperimentAssignment as MockedFunction ).mockImplementationOnce(
@@ -231,7 +232,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		jest.advanceTimersByTime( 10 * 1000 );
+		vi.advanceTimersByTime( 10 * 1000 );
 		await expectationPromise;
 		// Temporary hack for the A/B experiment, see https://github.com/Automattic/wp-calypso/pull/54507
 		const error = ( mockedConfig.logError as MockedFunction ).mock.calls[ 0 ][ 0 ];
@@ -242,7 +243,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			} )
 		);
 		expect( error.message ).toMatch( /Promise has timed-out after [0-9]+ms\./ );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 	it( 'logError throws/secondary error: should attempt to log secondary error and return fallback', async () => {
 		// Using invalid name as the initial error
@@ -431,7 +432,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 
 		await delayedValue( undefined, 1000 );
 
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 10;
 		const refreshedValidExperimentAssignment = {
 			...validExperimentAssignment,
@@ -523,7 +524,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 	} );
 
 	it( "should log and return fallback when the matching experiment hasn't loaded yet but is currently loading", async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
@@ -549,9 +550,9 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		  ],
 		]
 	` );
-		jest.runAllTimers();
+		vi.runAllTimers();
 		await promise;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'should return a loaded ExperimentAssignment', async () => {
@@ -637,7 +638,7 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 	} );
 
 	it( "return null when the matching experiment hasn't loaded yet but is currently loading", async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
@@ -649,9 +650,9 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
 		).toBeNull();
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls.length ).toEqual( 0 );
-		jest.runAllTimers();
+		vi.runAllTimers();
 		await promise;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'should return a loaded ExperimentAssignment', async () => {
