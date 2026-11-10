@@ -27,16 +27,23 @@ function isLinkedWorktree( repoRoot ) {
 }
 
 /**
+ * Returns the port derived from a linked worktree's path, or nothing in any other checkout.
+ */
+function getWorktreePort( repoRoot ) {
+	if ( ! isLinkedWorktree( repoRoot ) ) {
+		return undefined;
+	}
+	const hash = crypto.createHash( 'sha1' ).update( fs.realpathSync( repoRoot ) ).digest();
+	return WORKTREE_PORT_START + ( hash.readUInt32BE( 0 ) % WORKTREE_PORT_COUNT );
+}
+
+/**
  * Returns the port a checkout's dev server uses when `PORT` isn't set: 3000 in the main
  * checkout, and a port derived from the checkout's path in a linked worktree, so that
  * servers of different worktrees don't answer on each other's port.
  */
 function getDefaultPort( repoRoot ) {
-	if ( ! isLinkedWorktree( repoRoot ) ) {
-		return MAIN_CHECKOUT_PORT;
-	}
-	const hash = crypto.createHash( 'sha1' ).update( fs.realpathSync( repoRoot ) ).digest();
-	return WORKTREE_PORT_START + ( hash.readUInt32BE( 0 ) % WORKTREE_PORT_COUNT );
+	return getWorktreePort( repoRoot ) || MAIN_CHECKOUT_PORT;
 }
 
 module.exports = {
@@ -44,4 +51,5 @@ module.exports = {
 	WORKTREE_PORT_START,
 	WORKTREE_PORT_COUNT,
 	getDefaultPort,
+	getWorktreePort,
 };

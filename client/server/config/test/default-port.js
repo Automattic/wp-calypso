@@ -6,6 +6,7 @@ import {
 	WORKTREE_PORT_COUNT,
 	WORKTREE_PORT_START,
 	getDefaultPort,
+	getWorktreePort,
 } from '@automattic/calypso-config/default-port';
 
 describe( 'getDefaultPort', () => {
@@ -45,6 +46,14 @@ describe( 'getDefaultPort', () => {
 		expect( Number.isInteger( port ) ).toBe( true );
 		expect( port ).toBeGreaterThanOrEqual( WORKTREE_PORT_START );
 		expect( port ).toBeLessThan( WORKTREE_PORT_START + WORKTREE_PORT_COUNT );
+	} );
+
+	test( 'should leave the port to the config files outside a linked worktree', () => {
+		expect( getWorktreePort( makeCheckout( 'main', 'dir' ) ) ).toBeUndefined();
+		expect( getWorktreePort( makeCheckout( 'image' ) ) ).toBeUndefined();
+
+		const root = makeCheckout( 'worktree', 'file' );
+		expect( getWorktreePort( root ) ).toBe( getDefaultPort( root ) );
 	} );
 
 	test( 'should be stable for a worktree', () => {
