@@ -45,20 +45,28 @@ function getHoldMessages( {
 	billingPeriod,
 	isMarketplace,
 	hasEnTranslation,
+	mentionsSiteMove,
 }: {
 	context: EligibilityContext | null;
 	translate: LocalizeProps[ 'translate' ];
 	billingPeriod?: string;
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
+	mentionsSiteMove?: boolean;
 } ): HoldMessages {
 	const upsellPersonalPlan =
 		shouldUpsellPersonalPlan( context ) ||
 		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
+	const upsellAnyPaidPlan =
+		context === 'plugin-details' && isEnabled( 'hosting/dev-tools-all-paid-plans' );
 
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
+				if ( upsellAnyPaidPlan ) {
+					return translate( 'Upgrade to a paid plan' );
+				}
+
 				if ( upsellPersonalPlan ) {
 					return translate( 'Upgrade to a %(personalPlanName)s plan', {
 						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
@@ -70,6 +78,38 @@ function getHoldMessages( {
 				} );
 			} )(),
 			description: ( function () {
+				if ( upsellAnyPaidPlan ) {
+					return mentionsSiteMove
+						? translate(
+								'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
+							)
+						: null;
+				}
+
+				if ( mentionsSiteMove ) {
+					if ( context === 'themes' ) {
+						return translate(
+							'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom plugins, more storage, and priority 24/7 support.'
+						);
+					}
+
+					if ( upsellPersonalPlan ) {
+						return translate(
+							'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get a free domain for one year and fast support.'
+						);
+					}
+
+					if ( billingPeriod === IntervalLength.MONTHLY ) {
+						return translate(
+							'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
+						);
+					}
+
+					return translate(
+						'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and priority 24/7 support.'
+					);
+				}
+
 				if ( context === 'themes' ) {
 					return hasEnTranslation(
 						"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
@@ -252,6 +292,7 @@ interface ExternalProps {
 	holds: EligibilityHold[];
 	isMarketplace?: boolean;
 	isPlaceholder: boolean;
+	mentionsSiteMove?: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
@@ -305,7 +346,14 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( {
+	context,
+	holds,
+	isMarketplace,
+	isPlaceholder,
+	mentionsSiteMove,
+	translate,
+}: Props ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const billingPeriod = useSelector( getBillingInterval );
@@ -315,6 +363,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		billingPeriod,
 		isMarketplace,
 		hasEnTranslation,
+		mentionsSiteMove,
 	} );
 
 	return (
@@ -344,9 +393,11 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 								<div className="eligibility-warnings__message-title">
 									{ holdMessages[ hold ].title }
 								</div>
-								<p className="eligibility-warnings__message-description">
-									{ holdMessages[ hold ].description }
-								</p>
+								{ holdMessages[ hold ].description && (
+									<p className="eligibility-warnings__message-description">
+										{ holdMessages[ hold ].description }
+									</p>
+								) }
 							</div>
 							{ holdMessages[ hold ].supportUrl && (
 								<div className="eligibility-warnings__hold-action">

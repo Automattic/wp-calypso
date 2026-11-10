@@ -15,6 +15,20 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
+let mockDevToolsAllPaidPlans = true;
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	const actualConfig = actual.default ?? actual;
+	const isEnabled = ( flag: string ) =>
+		flag === 'hosting/dev-tools-all-paid-plans'
+			? mockDevToolsAllPaidPlans
+			: actualConfig.isEnabled( flag );
+	const config = Object.assign( ( key: string ) => actualConfig( key ), actualConfig, {
+		isEnabled,
+	} );
+	return { __esModule: true, ...actual, default: config, isEnabled };
+} );
+
 jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
 		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
@@ -65,6 +79,7 @@ function createState( {
 describe( '<EligibilityWarnings>', () => {
 	beforeEach( () => {
 		page.redirect.mockReset();
+		mockDevToolsAllPaidPlans = true;
 	} );
 
 	afterAll( () => {
@@ -170,10 +185,34 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
-		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
+		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
 	} );
 
-	it( 'describes the site move as happening after the upgrade', () => {
+	it( 'asks for a paid plan for a paid Marketplace plugin too', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="plugin-details" isMarketplace inModal />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
+	} );
+
+	it( 'asks for a Business plan in the plugin details modal when not all paid plans qualify', () => {
+		mockDevToolsAllPaidPlans = false;
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
+		expect( queryByText( 'Upgrade to a paid plan' ) ).toBeNull();
+	} );
+
+	it( 'mentions the site move in the upgrade step instead of a separate intro', () => {
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN' ],
 			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
@@ -189,12 +228,48 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
+		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
 		expect(
 			getByText(
-				'Once you’ve upgraded, we’ll move your site over to WordPress.com’s advanced managed cloud hosting.'
+				'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
 			)
 		).toBeVisible();
 		expect( queryByText( /^To install plugins, we’ll need to move your site/ ) ).toBeNull();
+	} );
+
+	it( 'mentions the site move alongside the plan perks outside the plugin modal', () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context={ null } atomicTransferAction="plugins" />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
+		expect(
+			getByText(
+				'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and priority 24/7 support.'
+			)
+		).toBeVisible();
+	} );
+
+	it( 'keeps the usual upgrade description when no site move is described', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context={ null } atomicTransferAction="plugins" />,
+			state
+		);
+
+		expect(
+			getByText(
+				"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
+			)
+		).toBeVisible();
+		expect( queryByText( /^Your site will move/ ) ).toBeNull();
 	} );
 
 	it( 'keeps the usual site move intro when no upgrade is needed', () => {
@@ -217,7 +292,7 @@ describe( '<EligibilityWarnings>', () => {
 				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
 			)
 		).toBeVisible();
-		expect( queryByText( /^Once you’ve upgraded/ ) ).toBeNull();
+		expect( queryByText( /^Your site will move/ ) ).toBeNull();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {

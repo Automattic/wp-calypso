@@ -137,6 +137,11 @@ export const EligibilityWarnings = ( {
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasValidBlockingHold;
+	const holdDescribesSiteMove =
+		listHolds.includes( 'NO_BUSINESS_PLAN' ) &&
+		! showFreeTrial &&
+		showWarnings &&
+		!! atomicTransferAction;
 	const classes = clsx(
 		'eligibility-warnings',
 		{
@@ -229,6 +234,7 @@ export const EligibilityWarnings = ( {
 						holds={ listHolds }
 						isPlaceholder={ isPlaceholder }
 						isMarketplace={ isMarketplace }
+						mentionsSiteMove={ holdDescribesSiteMove }
 					/>
 				</CompactCard>
 			) }
@@ -249,7 +255,7 @@ export const EligibilityWarnings = ( {
 						warnings={ warnings }
 						showContact={ false }
 						transferAction={ atomicTransferAction }
-						isAfterUpgrade={ listHolds.includes( 'NO_BUSINESS_PLAN' ) && ! showFreeTrial }
+						showTransferIntro={ ! holdDescribesSiteMove }
 					/>
 				</CompactCard>
 			) }
