@@ -279,7 +279,7 @@ function ShelfUpsertModalContent( {
 							recordReaderTracksEvent( 'calypso_reader_shelves_shelf_created', {
 								tag_count: createdShelf.tags.length,
 								language_count: createdShelf.languages.length,
-								source_count: selectedFeeds.length,
+								source_count: createdShelf.sources.length,
 								layout: view,
 								icon,
 								color,

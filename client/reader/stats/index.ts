@@ -81,6 +81,9 @@ const Routes: RoutesMapping[] = [
 	// Likes
 	{ route: startsWith( '/activities/likes' ), tracking: 'postlike' },
 
+	{ route: matches( /^\/reader\/shelves\/[^/]+\/discover\/?$/ ), tracking: 'shelf_discover' },
+	{ route: matches( /^\/reader\/shelves\/[^/]+\/?$/ ), tracking: 'shelf' },
+
 	// Discover
 	{ route: exactMatch( '/discover' ), tracking: 'discover_recommended' },
 	{ route: startsWith( '/discover/freshly-pressed' ), tracking: 'freshly-pressed' },
@@ -367,9 +370,8 @@ export function recordFollow(
 	additionalProps: Record< string, unknown > = {},
 	pathnameOverride?: string
 ) {
-	const source =
-		( additionalProps.follow_source as string ) ??
-		getLocation( window.location.pathname + window.location.search );
+	const currentLocation = getLocation( window.location.pathname + window.location.search );
+	const source = ( additionalProps.follow_source as string ) ?? currentLocation;
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -381,7 +383,10 @@ export function recordFollow(
 			...additionalProps,
 		},
 		{
-			pathnameOverride,
+			pathnameOverride:
+				currentLocation === 'shelf' || currentLocation === 'shelf_discover'
+					? undefined
+					: pathnameOverride,
 		}
 	);
 	if ( railcar ) {

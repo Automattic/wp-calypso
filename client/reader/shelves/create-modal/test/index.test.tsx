@@ -280,13 +280,14 @@ describe( 'CreateShelfModal', () => {
 		expect( shelves?.[ 0 ] ).not.toHaveProperty( 'tags' );
 		const detail = queryClient.getQueryData< ReadShelfDetails >( readShelfQuery( '7' ).queryKey );
 		expect( detail?.layout.view ).toBe( 'legacy' );
+		expect( detail?.sources ).toEqual( [] );
 		expect( onClose ).toHaveBeenCalled();
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_shelves_shelf_created',
 			{
 				tag_count: 0,
 				language_count: 0,
-				source_count: 1,
+				source_count: 0,
 				layout: 'legacy',
 				icon: 'star',
 				color: 'green',
