@@ -60,7 +60,7 @@
 		"@automattic/number-formatters": "^1.2.12",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@emotion/react": "11.11.1",
+		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",
