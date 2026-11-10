@@ -149,6 +149,7 @@ export type CheckoutPageErrorCallback = (
 export type StepChangedEventArguments = {
 	stepNumber: number | null;
 	previousStepNumber: number;
+	totalSteps: number;
 	paymentMethodId: string;
 };
 

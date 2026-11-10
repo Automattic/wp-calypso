@@ -313,7 +313,7 @@ describe( 'Checkout', () => {
 							paymentProcessors={ getMockPaymentProcessors() }
 							selectFirstAvailablePaymentMethod
 						>
-							<CheckoutStepGroup>
+							<CheckoutStepGroup onStepChanged={ props.onStepChanged }>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
 								<CheckoutFormSubmit validateForm={ validateForm } />
@@ -715,6 +715,36 @@ describe( 'Checkout', () => {
 			await waitFor( () => {
 				const submitButton = getByText( 'Pay Please' );
 				expect( submitButton ).not.toBeDisabled();
+			} );
+		} );
+
+		it( 'reports the total number of steps to onStepChanged', async () => {
+			function CompleteAllButton() {
+				const completeAllSteps = useCompleteAllSteps();
+				return <button onClick={ () => completeAllSteps() }>Complete all steps</button>;
+			}
+			const stepOne = {
+				...steps[ 1 ],
+				id: 'step-one',
+				className: 'step-one',
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: <CompleteAllButton />,
+			};
+			const stepTwo = {
+				...steps[ 1 ],
+				id: 'step-two',
+				className: 'step-two',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const onStepChanged = jest.fn();
+			const { getByText } = render(
+				<MyCheckout steps={ [ stepOne, stepTwo ] } onStepChanged={ onStepChanged } />
+			);
+			const user = userEvent.setup();
+			await user.click( getByText( 'Complete all steps' ) );
+			await waitFor( () => expect( onStepChanged ).toHaveBeenCalled() );
+			onStepChanged.mock.calls.forEach( ( [ args ] ) => {
+				expect( args.totalSteps ).toBe( 2 );
 			} );
 		} );
 

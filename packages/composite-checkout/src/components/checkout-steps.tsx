@@ -538,6 +538,7 @@ function CheckoutStepGroupWrapper( {
 			onStepChanged?.( {
 				stepNumber: newStep,
 				previousStepNumber: prevStep,
+				totalSteps: store.state.totalSteps,
 				paymentMethodId: activePaymentMethod?.id ?? '',
 			} );
 			previousStepNumber.current = newStep;

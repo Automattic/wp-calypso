@@ -765,13 +765,17 @@ export default function CheckoutMain( {
 		( {
 			stepNumber,
 			previousStepNumber,
+			totalSteps,
 			paymentMethodId,
 		}: {
 			stepNumber: number | null;
 			previousStepNumber: number;
+			totalSteps: number;
 			paymentMethodId: string;
 		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+			const isFirstStepComplete =
+				previousStepNumber === 1 && ( stepNumber === 2 || ( stepNumber === 0 && totalSteps > 1 ) );
+			if ( isFirstStepComplete ) {
 				recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
 					payment_method:
 						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
