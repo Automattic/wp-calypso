@@ -110,6 +110,11 @@
 	}
 }
 
+// Centered in the empty list while the first page loads.
+.conversations-inbox__list .conversations-inbox__list-spinner {
+	margin: auto;
+}
+
 .conversations-inbox__day {
 	padding: 6px 16px;
 	border-block-start: 1px solid var( --conversations-line );

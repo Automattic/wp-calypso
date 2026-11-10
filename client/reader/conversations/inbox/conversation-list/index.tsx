@@ -191,7 +191,7 @@ export function ConversationList( {
 					tabIndex={ -1 }
 					className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }
 				>
-					{ isLoading && <Spinner /> }
+					{ isLoading && <Spinner className="conversations-inbox__list-spinner" /> }
 					{ ! isLoading && isError && (
 						<ListMessage
 							title={ translate( 'Couldn’t load conversations' ) }
