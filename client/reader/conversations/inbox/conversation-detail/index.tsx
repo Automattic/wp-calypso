@@ -91,7 +91,7 @@ const getPostDetails = ( post: Post ): ConversationPostDetails => ( {
 	date: post.date ? String( post.date ) : null,
 	excerpt: String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ),
 	image: ( post.canonical_image as { uri?: string } | undefined )?.uri ?? null,
-	discussion: post.discussion as ReadConversationPostDiscussion,
+	discussion: ( post.discussion ?? { comment_count: 0 } ) as ReadConversationPostDiscussion,
 } );
 
 export function ConversationDetail( {
