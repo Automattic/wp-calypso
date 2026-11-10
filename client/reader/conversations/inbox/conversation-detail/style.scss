@@ -475,6 +475,11 @@ $conversations-inbox-post-card-shadow:
 	.conversations-inbox__detail-content .comments__info-bar {
 		border-block-end-color: var( --color-border-subtle );
 	}
+
+	// The shared dark theme gives commenters' names the link color.
+	.conversations-inbox__detail-content a.comments__comment-username {
+		color: var( --color-text );
+	}
 }
 
 :root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
