@@ -9,11 +9,13 @@ import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import * as CheckoutMainContentModule from '../components/checkout-main-content';
 import * as PrePurchaseNotices from '../components/prepurchase-notices';
 import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
 import {
@@ -38,6 +40,10 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/notices/actions' );
 jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
 	const { useEffect } = jest.requireActual( 'react' );
@@ -937,6 +943,70 @@ describe( 'CheckoutMain', () => {
 			expect( errorNotice ).toHaveBeenCalledWith( expect.anything(), {
 				id: 'checkout-cart-error',
 			} );
+		} );
+	} );
+
+	describe( 'step change tracking', () => {
+		async function renderAndGetStepChangedHandler( cart ) {
+			const actual = jest.requireActual( '../components/checkout-main-content' ).default;
+			let onStepChanged;
+			const spy = jest
+				.spyOn( CheckoutMainContentModule, 'default' )
+				.mockImplementation( ( props ) => {
+					onStepChanged = props.onStepChanged;
+					return actual( props );
+				} );
+			render( <MockCheckout initialCart={ cart } setCart={ mockSetCartEndpoint } /> );
+			await waitFor( () => expect( onStepChanged ).toBeDefined() );
+			return { onStepChanged, spy };
+		}
+
+		const firstStepEvent = 'calypso_checkout_composite_first_step_complete';
+
+		it( 'records first step complete when moving from step 1 to step 2', async () => {
+			const { onStepChanged, spy } = await renderAndGetStepChangedHandler( initialCart );
+			try {
+				( recordTracksEvent as jest.Mock ).mockClear();
+				onStepChanged( { stepNumber: 2, previousStepNumber: 1, paymentMethodId: 'card' } );
+				expect( recordTracksEvent ).toHaveBeenCalledWith( firstStepEvent, expect.anything() );
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_checkout_composite_step_changed',
+					{ step: 2 }
+				);
+			} finally {
+				spy.mockRestore();
+			}
+		} );
+
+		it( 'records first step complete when batched updates jump from step 1 to 0 with a contact step', async () => {
+			const { onStepChanged, spy } = await renderAndGetStepChangedHandler( initialCart );
+			try {
+				( recordTracksEvent as jest.Mock ).mockClear();
+				onStepChanged( { stepNumber: 0, previousStepNumber: 1, paymentMethodId: 'card' } );
+				expect( recordTracksEvent ).toHaveBeenCalledWith( firstStepEvent, expect.anything() );
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_checkout_composite_step_changed',
+					{ step: 0 }
+				);
+			} finally {
+				spy.mockRestore();
+			}
+		} );
+
+		it( 'does not record first step complete from step 1 to 0 without a contact step', async () => {
+			const cart = { ...initialCart, products: [], total_cost_integer: 0, cart_key: String( mainCartKey ) };
+			const { onStepChanged, spy } = await renderAndGetStepChangedHandler( cart );
+			try {
+				( recordTracksEvent as jest.Mock ).mockClear();
+				onStepChanged( { stepNumber: 0, previousStepNumber: 1, paymentMethodId: 'card' } );
+				expect( recordTracksEvent ).not.toHaveBeenCalledWith( firstStepEvent, expect.anything() );
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_checkout_composite_step_changed',
+					{ step: 0 }
+				);
+			} finally {
+				spy.mockRestore();
+			}
 		} );
 	} );
 } );
