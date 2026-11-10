@@ -39,6 +39,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { getLaunchDestination } from 'calypso/lib/site-launch/destination';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -522,8 +523,9 @@ export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'se
 
 	/**
 	 * A preview site reads as Free, but it is already built and any paid plan keeps it. So it is
-	 * offered only paid plans, and checkout returns the buyer to the site rather than the generic
-	 * thank-you page. Only an Atomic site on Free can be a preview, so only one asks.
+	 * offered only paid plans, and buying one ends where the launch flow does: My Home, celebrating
+	 * the launch, rather than the generic thank-you page. Only an Atomic site on Free can be a
+	 * preview, so only one asks.
 	 */
 	const site = useSelector( getSelectedSite );
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ) );
@@ -542,7 +544,10 @@ export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'se
 				{ ...props }
 				currentPlan={ currentPlan }
 				isPreviewSite={ isPreviewSite }
-				redirectTo={ props.redirectTo ?? ( isPreviewSite ? site?.URL : undefined ) }
+				redirectTo={
+					props.redirectTo ??
+					( isPreviewSite && site?.slug ? getLaunchDestination( { siteSlug: site.slug } ) : undefined )
+				}
 				selectedSiteId={ selectedSiteId }
 				intervalType={ isSupportedIntervalType( intervalType ) ? intervalType : undefined }
 			/>
