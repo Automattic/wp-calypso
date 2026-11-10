@@ -19,6 +19,8 @@ export interface CreateDevSiteParams {
 	php_version?: string;
 	primary_data_center?: string;
 	is_fully_managed_agency_site?: boolean;
+	/** The requester's own static-site import, delivered onto the dev site once it exists. */
+	import_session_id?: string;
 }
 
 interface APIResponse {

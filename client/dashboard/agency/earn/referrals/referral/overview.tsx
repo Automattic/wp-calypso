@@ -25,7 +25,9 @@ import { getActivePurchases, sortReferralOrders } from '../lib/referral-orders';
 import SubscriptionStatus from '../subscription-status';
 import ReferralNotFound from './not-found';
 import OrderSummary from './order-summary';
+import { usePlacePurchaseActions } from './place-purchase';
 import PreviewListCard from './preview-list-card';
+import { useReferralActions } from './referral-actions';
 import type { AgencyProduct, ReferralApiResponse, ReferralPurchase } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -33,6 +35,21 @@ type PurchaseItem = ReferralPurchase & { _id: string };
 
 const REFERRAL_LIST_VIEW: View = { type: 'list', titleField: 'summary', fields: [ 'status' ] };
 const PURCHASE_LIST_VIEW: View = { type: 'list', titleField: 'product', fields: [ 'status' ] };
+
+function WrappableEmail( { email }: { email: string } ) {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex <= 0 ) {
+		return email;
+	}
+
+	return (
+		<span style={ { wordBreak: 'break-word', hyphens: 'none' } }>
+			{ email.slice( 0, atIndex ) }
+			<wbr />
+			{ email.slice( atIndex ) }
+		</span>
+	);
+}
 
 function StatusBadge( { status }: { status: string } ) {
 	const { status: label, type } = getReferralStatus( status );
@@ -92,6 +109,11 @@ export default function ReferralOverview() {
 
 	const referralFields = useMemo( () => getReferralFields( products ), [ products ] );
 	const purchaseFields = useMemo( () => getPurchaseFields( products ), [ products ] );
+	const purchaseActions = usePlacePurchaseActions< PurchaseItem >( {
+		products,
+		clientEmail: referral?.client.email,
+	} );
+	const referralActions = useReferralActions( agencyId );
 	const missingPaymentSettings = useMissingPaymentSettings( { hasCommissionActivity: true } );
 
 	if ( ! referral ) {
@@ -111,7 +133,7 @@ export default function ReferralOverview() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ referral.client.email }
+					title={ <WrappableEmail email={ referral.client.email } /> }
 					description={
 						<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
 							<Text>{ __( 'Payment status' ) }</Text>
@@ -154,6 +176,7 @@ export default function ReferralOverview() {
 					<DataViews< ReferralApiResponse >
 						data={ recentReferrals }
 						fields={ referralFields }
+						actions={ referralActions }
 						view={ REFERRAL_LIST_VIEW }
 						onChangeView={ () => {} }
 						getItemId={ ( item ) => String( item.id ) }
@@ -173,6 +196,7 @@ export default function ReferralOverview() {
 					<DataViews< PurchaseItem >
 						data={ recentPurchases }
 						fields={ purchaseFields }
+						actions={ purchaseActions }
 						view={ PURCHASE_LIST_VIEW }
 						onChangeView={ () => {} }
 						getItemId={ ( item ) => item._id }

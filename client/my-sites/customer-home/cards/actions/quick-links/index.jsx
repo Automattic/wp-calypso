@@ -67,11 +67,10 @@ export const QuickLinks = ( {
 	adminInterface,
 } ) => {
 	const translate = useTranslate();
-	const [
-		debouncedUpdateHomeQuickLinksToggleStatus,
-		,
-		flushDebouncedUpdateHomeQuickLinksToggleStatus,
-	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const debouncedUpdateHomeQuickLinksToggleStatus = useDebouncedCallback(
+		updateHomeQuickLinksToggleStatus,
+		1000
+	);
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 	const siteId = useSelector( getSelectedSiteId );
 	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
@@ -281,9 +280,9 @@ export const QuickLinks = ( {
 
 	useEffect( () => {
 		return () => {
-			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+			debouncedUpdateHomeQuickLinksToggleStatus.flush();
 		};
-	}, [] );
+	}, [ debouncedUpdateHomeQuickLinksToggleStatus ] );
 
 	return (
 		<FoldableCard

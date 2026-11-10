@@ -1,10 +1,4 @@
-import {
-	useRouter,
-	useCanGoBack,
-	useNavigate,
-	useSearch,
-	useRouterState,
-} from '@tanstack/react-router';
+import { useRouter, useCanGoBack, useSearch, useRouterState } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
@@ -14,27 +8,12 @@ import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 
 import './style.scss';
 
-type SnackbarBackTo = 'site-overview' | 'site-domains' | 'site-settings-sftp-ssh';
+export type SnackbarBackTo = 'site-overview' | 'site-domains' | 'site-settings-sftp-ssh';
 
-function getSnackbarBackButtonText( to: SnackbarBackTo | undefined ) {
-	switch ( to ) {
-		case 'site-overview':
-		case 'site-domains':
-			return __( 'Back to site' );
-		case 'site-settings-sftp-ssh':
-			return __( 'Back to SFTP/SSH settings' );
-		default:
-			return null;
-	}
-}
-
-function getSnackbarBackButtonNavigateOptions< Params >(
+export function getSnackbarBackButtonNavigateOptions< Params >(
 	to: SnackbarBackTo | undefined,
-	params: Params | undefined
+	params: Params
 ) {
-	if ( ! params ) {
-		return null;
-	}
 	switch ( to ) {
 		case 'site-overview':
 			return { to: siteOverviewRoute.fullPath, params };
@@ -45,17 +24,8 @@ function getSnackbarBackButtonNavigateOptions< Params >(
 	}
 }
 
-export interface SnackbarBackButtonProps {
-	/**
-	 * When provided, the button navigates to `back_to` explicitly with the params,
-	 * instead of going back the browser history.
-	 */
-	backToParams?: Record< string, string >;
-}
-
-export default function SnackbarBackButton( { backToParams }: SnackbarBackButtonProps = {} ) {
+export default function SnackbarBackButton() {
 	const router = useRouter();
-	const navigate = useNavigate();
 	const canGoBack = useCanGoBack();
 	const { back_to: backTo } = useSearch( { strict: false } ) as { back_to?: SnackbarBackTo };
 	const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
@@ -69,20 +39,9 @@ export default function SnackbarBackButton( { backToParams }: SnackbarBackButton
 		);
 	}, [ pathname, backTo ] );
 
-	const text = getSnackbarBackButtonText( backTo );
-
-	if ( ! text || ( ! backToParams && ! canGoBack ) ) {
+	if ( backTo !== 'site-settings-sftp-ssh' || ! canGoBack ) {
 		return null;
 	}
-
-	const handleBack = () => {
-		const navigateOptions = getSnackbarBackButtonNavigateOptions( backTo, backToParams );
-		if ( navigateOptions ) {
-			navigate( navigateOptions as unknown as Parameters< typeof navigate >[ 0 ] );
-		} else {
-			router.history.back();
-		}
-	};
 
 	return (
 		<div
@@ -98,9 +57,9 @@ export default function SnackbarBackButton( { backToParams }: SnackbarBackButton
 				variant="primary"
 				icon={ isRTL() ? chevronRight : chevronLeft }
 				iconPosition="left"
-				onClick={ handleBack }
+				onClick={ () => router.history.back() }
 			>
-				{ text }
+				{ __( 'Back to SFTP/SSH settings' ) }
 			</Button>
 		</div>
 	);

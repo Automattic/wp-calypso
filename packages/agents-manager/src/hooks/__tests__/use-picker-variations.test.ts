@@ -22,6 +22,16 @@ jest.mock( '../../utils/site-editor-context', () => ( {
 	setSiteEditorAction: ( name: string, value: unknown ) => mockSetSiteEditorAction( name, value ),
 } ) );
 
+const mockSetCheckpoint = jest.fn();
+const mockClearCheckpoint = jest.fn();
+const mockHasCheckpoint = jest.fn< boolean, [ string ] >( () => false );
+jest.mock( '../../utils/checkpoints', () => ( {
+	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	clearCheckpoint: ( id: string ) => mockClearCheckpoint( id ),
+	hasCheckpoint: ( id: string ) => mockHasCheckpoint( id ),
+	setCheckpoint: ( ...args: unknown[] ) => mockSetCheckpoint( ...args ),
+} ) );
+
 const mockRecordBigSkyTracksEvent = jest.fn();
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: ( name: string, props: unknown ) =>
@@ -82,6 +92,50 @@ describe( 'usePickerVariations', () => {
 			'Bold',
 			'Pastel',
 		] );
+	} );
+
+	it( 'checkpoints its surface’s styles before the first pick lands, once', () => {
+		mockHasCheckpoint.mockReturnValueOnce( false ).mockReturnValueOnce( true );
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variationType: 'color', surfaceId: 'colors-1' } ) )
+		);
+
+		act( () => {
+			result.current.handleSelect( variations[ 0 ] );
+			result.current.handleSelect( variations[ 1 ] );
+		} );
+
+		expect( mockSetCheckpoint ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetCheckpoint ).toHaveBeenCalledWith( 'colors-1', [ 'color' ], {
+			toolId: 'wpcom__render_interactive_ui',
+			summary: 'Picked a color style from the picker',
+		} );
+		expect( mockSetCheckpoint.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			mockSetStyles.mock.invocationCallOrder[ 0 ]
+		);
+		expect( mockClearCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'drops the checkpoint of a first pick that doesn’t land, such as before the styles load', () => {
+		mockSetStyles.mockReturnValueOnce( false );
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variationType: 'color', surfaceId: 'colors-1' } ) )
+		);
+
+		act( () => result.current.handleSelect( variations[ 0 ] ) );
+
+		expect( mockSetCheckpoint ).toHaveBeenCalledTimes( 1 );
+		expect( mockClearCheckpoint ).toHaveBeenCalledWith( 'colors-1' );
+	} );
+
+	it( 'takes no checkpoint off a surface, where show-component took one', () => {
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variationType: 'color' } ) )
+		);
+
+		act( () => result.current.handleSelect( variations[ 0 ] ) );
+
+		expect( mockSetCheckpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records the pick into the site editor actions', () => {

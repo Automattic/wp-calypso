@@ -642,4 +642,208 @@ describe( 'homepage section presentation', () => {
 		expect( flights() ).toHaveLength( 0 );
 		expect( roots[ 0 ].querySelector< HTMLElement >( '#welcome' )!.style.visibility ).toBe( '' );
 	} );
+
+	it( 'keeps the camera off a companion page while its sections arrive', async () => {
+		// Stacked at 480 px the story page lands below a 100 px viewport.
+		const viewport = document.querySelector< HTMLElement >( '.preview-viewport' )!;
+		Object.defineProperty( viewport, 'clientWidth', { configurable: true, value: 480 } );
+		Object.defineProperty( viewport, 'clientHeight', { configurable: true, value: 100 } );
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		Object.defineProperty( scene, 'offsetHeight', { configurable: true, value: 4000 } );
+		const hours =
+			'<section id="hours"><h2>Opening hours</h2><p>Tuesday to Sunday, seven to three.</p></section>';
+		const story = ( revision: number, extra: string ) =>
+			send( {
+				type: 'render',
+				route: '/story/',
+				revision,
+				title: 'Story',
+				epoch: '1:1',
+				html: preparePreviewDocument( first.replace( '</main>', `${ extra }</main>` ) )!.html,
+			} );
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			ready: true,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		story( 1, '' );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( scene.dataset.presentation ).toBe( 'showcase' );
+		story( 2, hours );
+		await jest.advanceTimersByTimeAsync( 2000 );
+		expect( roots[ 1 ].textContent ).toContain( 'Opening hours' );
+		expect( viewport.scrollTop ).toBe( 0 );
+	} );
+
+	it( 'keeps rendering after the user takes the camera while sections arrive', async () => {
+		const viewport = document.querySelector< HTMLElement >( '.preview-viewport' )!;
+		Object.defineProperty( viewport, 'clientWidth', { configurable: true, value: 480 } );
+		Object.defineProperty( viewport, 'clientHeight', { configurable: true, value: 100 } );
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		Object.defineProperty( scene, 'offsetHeight', { configurable: true, value: 4000 } );
+		const hours =
+			'<section id="hours"><h2>Opening hours</h2><p>Tuesday to Sunday, seven to three.</p></section>';
+		const cakes =
+			'<section id="cakes"><h2>Cakes to order</h2><p>Three days ahead, please.</p></section>';
+		const story = ( revision: number, extra: string ) =>
+			send( {
+				type: 'render',
+				route: '/story/',
+				revision,
+				title: 'Story',
+				epoch: '1:1',
+				html: preparePreviewDocument( first.replace( '</main>', `${ extra }</main>` ) )!.html,
+			} );
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			ready: true,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		story( 1, '' );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( scene.dataset.presentation ).toBe( 'showcase' );
+		story( 2, hours );
+		await jest.advanceTimersByTimeAsync( 100 );
+		viewport.dispatchEvent( new Event( 'wheel' ) );
+		await jest.advanceTimersByTimeAsync( 2000 );
+		story( 3, hours + cakes );
+		await jest.advanceTimersByTimeAsync( 2000 );
+		expect( roots[ 1 ].textContent ).toContain( 'Cakes to order' );
+	} );
+
+	async function showcaseWithStory() {
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			ready: true,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		send( {
+			type: 'render',
+			route: '/story/',
+			revision: 1,
+			title: 'Story',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
+			'showcase'
+		);
+	}
+
+	function tourMessages() {
+		return port.postMessage.mock.calls
+			.map( ( [ message ] ) => message )
+			.filter( ( message ) => message.type === 'tour' );
+	}
+
+	it( 'drops the chip highlight when the user scrolls away', async () => {
+		await showcaseWithStory();
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		send( { type: 'focus', route: '/story/' } );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		expect( tourMessages().pop() ).toMatchObject( { title: 'Story' } );
+		document.querySelector( '.preview-viewport' )!.dispatchEvent( new Event( 'wheel' ) );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( false );
+		expect( tourMessages().pop() ).toMatchObject( { title: null } );
+	} );
+
+	it( 'walks the homepage once, back to its top, and then stops for good', async () => {
+		await showcaseWithStory();
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		const viewport = document.querySelector< HTMLElement >( '.preview-viewport' )!;
+		// A 10 px viewport over a tall scene leaves the homepage room to read down.
+		Object.defineProperty( viewport, 'clientHeight', { configurable: true, value: 10 } );
+		Object.defineProperty( scene, 'offsetHeight', { configurable: true, value: 4000 } );
+		const writes: number[] = [];
+		let scrollTop = 0;
+		Object.defineProperty( viewport, 'scrollTop', {
+			configurable: true,
+			get: () => scrollTop,
+			set: ( value: number ) => {
+				scrollTop = value;
+				writes.push( value );
+			},
+		} );
+		send( { type: 'focus', route: '/story/' } );
+		writes.length = 0;
+		send( { type: 'config', active: true, generating: true, complete: false, finishing: true } );
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		expect( tourMessages().pop() ).toMatchObject( { title: 'Home' } );
+		const walked = tourMessages().length;
+		await jest.advanceTimersByTimeAsync( 7000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( false );
+		expect( Math.max( ...writes ) ).toBeGreaterThan( 0 );
+		expect( writes.at( -1 ) ).toBe( 0 );
+		const settled = writes.length;
+		// Past the chip timer, the user's resume timer and several idle lulls.
+		viewport.dispatchEvent( new Event( 'wheel' ) );
+		await jest.advanceTimersByTimeAsync( 30000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( false );
+		expect( writes ).toHaveLength( settled );
+		const later = tourMessages().slice( walked );
+		expect( later.map( ( message ) => message.title ) ).toEqual( [ null ] );
+	} );
+
+	it( 'releases buffered companion pages for the walk when the host is finishing without a ready homepage', async () => {
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		send( {
+			type: 'render',
+			route: '/story/',
+			revision: 1,
+			title: 'Story',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		await jest.advanceTimersByTimeAsync( 3000 );
+		const story = document.querySelectorAll< HTMLElement >( '.preview-page' )[ 1 ];
+		expect( story.hidden ).toBe( true );
+		send( { type: 'config', active: true, generating: true, complete: false, finishing: true } );
+		await jest.advanceTimersByTimeAsync( 6000 );
+		expect( story.hidden ).toBe( false );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
+			'showcase'
+		);
+	} );
+
+	it( 'starts the idle walk even while re-renders that change nothing keep arriving', async () => {
+		await showcaseWithStory();
+		for ( let revision = 2; revision <= 5; revision++ ) {
+			await jest.advanceTimersByTimeAsync( 2000 );
+			send( {
+				type: 'render',
+				route: '/story/',
+				revision,
+				title: 'Story',
+				epoch: '1:1',
+				html: preparePreviewDocument( first )!.html,
+			} );
+		}
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( tourMessages().map( ( message ) => message.title ) ).toContain( 'Home' );
+	} );
 } );

@@ -1,12 +1,16 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
+import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import WordPressLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
+import { CERTIFICATION_EXAM_URL, PROMO_LAST_DAY } from '../certification/constants';
 import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	PRESSABLE_OFFER_ENDS_AT,
 } from './constants';
+import type { CSSProperties, ReactNode } from 'react';
 
 export interface FeaturedEventCta {
 	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
@@ -23,6 +27,22 @@ export interface FeaturedEventCta {
 	legacyTrackEventName?: string;
 }
 
+/** What the card passes an action CTA, so its button matches the link CTAs beside it. */
+export interface FeaturedEventCtaButtonProps {
+	size: 'compact';
+	variant: 'primary' | 'secondary';
+	style?: CSSProperties;
+	/** Records the CTA click. */
+	onClick: () => void;
+}
+
+/** A CTA that acts in place, such as opening a dialog, instead of linking somewhere. */
+export interface FeaturedEventActionCta {
+	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
+	id: string;
+	render: ( buttonProps: FeaturedEventCtaButtonProps ) => ReactNode;
+}
+
 export interface FeaturedEvent {
 	/** Used as the `event_id` tracks property, so keep it stable per event. */
 	id: string;
@@ -33,14 +53,14 @@ export interface FeaturedEvent {
 	logo?: string;
 	logoAlt?: string;
 	/** Uppercase eyebrow above the title: a date for events, a label for announcements. */
-	when: string;
+	when?: string;
 	title: string;
-	subtitle: string;
-	/** One entry per paragraph. */
+	subtitle?: string;
+	/** One entry per paragraph. Supports `<strong>` and `<coupon>` tags. */
 	description: string[];
-	ctas: FeaturedEventCta[];
-	/** ISO date the card stops showing itself, typically the day after the event. */
-	endsAt: string;
+	ctas: ( FeaturedEventCta | FeaturedEventActionCta )[];
+	/** ISO expiry for dated events; omitted for announcements without an expiry. */
+	endsAt?: string;
 }
 
 /**
@@ -51,43 +71,49 @@ export interface FeaturedEvent {
  * legacy list lives in client/a8c-for-agencies/sections/overview/body/events.
  */
 export const FEATURED_EVENT: FeaturedEvent | null = {
-	id: 'a4a-bfcm-webinar-2026',
-	logo: A4ALogo,
-	logoAlt: __( 'Automattic for Agencies' ),
-	when: __( 'Upcoming webinar' ),
-	title: __( 'Building a repeatable Black Friday playbook' ),
-	subtitle: __( 'Support your clients during peak season' ),
+	id: 'a4a-evolvedigital-nyc-2026',
+	logo: EvolveDigitalLogo,
+	logoAlt: __( 'EvolveDigital' ),
+	when: __( 'November 19–20 · Civic Hall, NYC' ),
+	title: __( 'Join us at EvolveDigital NYC 2026' ),
+	subtitle: __( 'Automattic for Agencies & EvolveDigital' ),
 	description: [
 		__(
-			'Join us September 29th at 11 AM ET (4 PM BST) for a live panel with experts from Woo, Pressable, and Automattic. Learn how to make peak-season readiness a process you run every year, instead of one you rebuild from scratch. Includes product demos & a fireside chat.'
+			'Automattic is a Presenting Sponsor of EvolveDigital NYC 2026, bringing the teams behind WordPress.com, WordPress VIP, and WooCommerce to a room of developers, designers, strategists, and digital leaders from higher ed, government, nonprofits, and agencies.'
+		),
+		/* translators: Automattic50Off is a ticket discount code. Keep it exactly as written. */
+		__(
+			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <coupon>Automattic50Off</coupon>, so come say hello to our team while you’re there.'
 		),
 	],
 	ctas: [
 		{
-			id: 'rsvp',
-			label: __( 'RSVP now' ),
-			url: 'https://automattic.registration.goldcast.io/webinar/f6c62e86-e9b6-48f3-a9c6-961e4fcf67be',
+			id: 'purchase-tickets',
+			label: __( 'Purchase tickets' ),
+			url: 'https://www.evolvedigital.com/',
 			variant: 'primary',
 			isExternal: true,
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_evolvedigital_nyc_2026_purchase_tickets_click',
 		},
 	],
-	// Hidden once the webinar starts (11 AM ET), not at midnight UTC, which
-	// would drop it the evening before for US agencies.
-	endsAt: '2026-09-29T15:00:00Z',
+	// Hidden at midnight ET when the event starts (November 19), not at
+	// midnight UTC, which would drop it the evening before for US agencies.
+	endsAt: '2026-11-19T05:00:00Z',
 };
 
 /**
- * The Q3 2026 Pressable promos, shown to eligible agencies alongside the
+ * The Pressable promos, shown to eligible agencies alongside the
  * featured event. Which one an agency sees is decided by the shells through
  * the eligibility props on AgencyOverviewContent: the introductory offer
  * targets agencies without a Pressable plan through A4A, the expansion offer
  * agencies with one that missed the introductory offer.
  */
 export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): FeaturedEvent => ( {
-	id: 'a4a-pressable-promo-offer-2026-q3',
+	id: 'a4a-pressable-promo-offer-2026-holiday',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
-	when: __( 'Limited time offer · Until September 30, 2026' ),
+	when: __( 'Limited time offer · Until November 30, 2026' ),
 	title: __( 'Get up to 6 months of free Pressable hosting on new plans!' ),
 	subtitle: __( 'Automattic for Agencies & Pressable' ),
 	description: [
@@ -102,7 +128,7 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 			url: pressableHostingHref,
 			variant: 'primary',
 			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
+				'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_view_promo_details_click',
 		},
 		{
 			id: 'see-full-terms',
@@ -110,10 +136,10 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 			url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 			isExternal: true,
 			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
+				'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 		},
 	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_OFFER_ENDS_AT,
 } );
 
 export const getPressableExpansionOfferEvent = (
@@ -151,7 +177,25 @@ export const getPressableExpansionOfferEvent = (
 				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
 		},
 	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_OFFER_ENDS_AT,
+} );
+
+export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): FeaturedEvent => ( {
+	id: 'a4a-lead-matching-contact-options',
+	title: __( 'Add your phone number and booking link for newly matched leads' ),
+	description: [
+		__(
+			'You can now add your agency’s phone number and booking link so new leads you’re matched with can contact you right away.'
+		),
+	],
+	ctas: [
+		{
+			id: 'update-details',
+			label: __( 'Update your details' ),
+			url: leadMatchingHref,
+			variant: 'secondary',
+		},
+	],
 } );
 
 /**
@@ -191,4 +235,48 @@ export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {
 		},
 	],
 	endsAt: '2026-10-08',
+} );
+
+/**
+ * The Q1 2027 doubled developer certification discount, shown only to agencies
+ * with an active code, since "Get your code" leads to the tier page card.
+ * `discount` is the agency's own, already doubled.
+ */
+export const getCertificationPromoEvent = (
+	tiersHref: string,
+	discount: number,
+	shareCta?: FeaturedEventActionCta
+): FeaturedEvent => ( {
+	id: 'a4a-certification-promo-2027-q1',
+	logo: WordPressLogo,
+	logoAlt: __( 'WordPress' ),
+	when: __( 'Limited time offer · Until March 31, 2027' ),
+	title: __( 'Certify your developers at double the discount' ),
+	subtitle: __( 'Automattic for Agencies & WordPress Certifications' ),
+	description: [
+		sprintf(
+			/* translators: %d is the agency's percentage discount, e.g. 30 */
+			__(
+				'Until March 31, 2027, your agency’s code takes %d%% off the Advanced Professional WordPress Developer exam, twice your usual discount.'
+			),
+			discount
+		),
+	],
+	ctas: [
+		{
+			id: 'get-your-code',
+			label: __( 'Get your code' ),
+			url: `${ tiersHref }#certification`,
+			variant: 'primary',
+		},
+		...( shareCta ? [ shareCta ] : [] ),
+		{
+			id: 'about-the-exam',
+			label: __( 'About the exam' ),
+			url: CERTIFICATION_EXAM_URL,
+			isExternal: true,
+		},
+	],
+	// The same moment the "Doubled until" badge goes, which is UTC-based.
+	endsAt: `${ PROMO_LAST_DAY }T23:59:59.999Z`,
 } );

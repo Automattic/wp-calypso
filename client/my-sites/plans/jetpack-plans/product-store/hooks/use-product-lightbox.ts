@@ -26,7 +26,7 @@ export const useProductLightbox = () => {
 			return;
 		}
 
-		// A linked bundle opens only while it may be offered, so the hash cannot offer Pro early.
+		// A linked bundle opens only while it is on sale, so the hash cannot offer a retired plan.
 		const isOffSaleBundle = isJetpackPlanSlug( slug ) && ! isOnSale( slug );
 		setCurrentProduct( isOffSaleBundle ? null : slugToSelectorProduct( slug ) );
 	}, [ translate, isOnSale ] );

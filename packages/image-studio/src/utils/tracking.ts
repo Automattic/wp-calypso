@@ -5,6 +5,7 @@
  * Adapted from big-sky-plugin for wp-calypso using calypso-analytics.
  */
 
+import { getAgentEnvironment } from '@automattic/agents-manager';
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 // ImageStudioEntryPoint is a value import here, not type-only: the Feature Clip
@@ -12,6 +13,7 @@ import { select } from '@wordpress/data';
 import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
+import { contextProvider } from './client-context';
 import { parseErrorUrl } from './parse-error-url';
 import type { CreditsCtaType } from '@automattic/agents-manager';
 
@@ -252,6 +254,7 @@ type ImageStudioErrorType =
 	| 'draft_cleanup_permission_denied'
 	| 'delete_permanently_failed'
 	| 'save_metadata_failed'
+	| 'attach_to_post_failed'
 	| 'other';
 
 interface TrackImageStudioErrorOptions {
@@ -567,10 +570,13 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
-/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+/**
+ * What showed the notice: the credits check on open, a re-check after a turn or on returning
+ * to the page, or a failed request.
+ */
 export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
 
-/** What opened the credits dot's popover, as the Agent's `credits_meter_opened` event names it. */
+/** What opened the credits meter's popover, as the Agent's `credits_meter_opened` event names it. */
 export type CreditsMeterOpenedTrigger = 'click' | 'exhausted' | 'submit_blocked';
 
 /**
@@ -584,6 +590,8 @@ export interface CreditsMeterDetails {
 	state: 'ok' | 'low' | 'zero';
 	planTier: string;
 	creditsLeft: number | 'none';
+	/** The popover's top-ups row, so a used-up pack sends 0. */
+	topUpCreditsLeft: number | 'none';
 }
 
 export interface UpgradeNoticeCredits extends CreditsMeterDetails {
@@ -598,7 +606,7 @@ interface UpgradeNoticeEvent extends UpgradeNoticeCredits {
 	trigger: UpgradeNoticeTrigger;
 }
 
-/** What showed the Upgrade or Add credits link: the notice's trigger, or the credits dot's popover. */
+/** What showed the Upgrade or Add credits link: the notice's trigger, or the credits meter's popover. */
 export type UpgradeLinkTrigger = UpgradeNoticeTrigger | 'popover';
 
 interface UpgradeNoticeClickEvent extends UpgradeNoticeCredits {
@@ -614,6 +622,8 @@ function getUpgradeNoticeProperties( event: UpgradeNoticeEvent | UpgradeNoticeCl
 		state: event.state,
 		plan_tier: event.planTier,
 		credits_left: event.creditsLeft,
+		top_up_credits_left: event.topUpCreditsLeft,
+		agent_environment: getAgentEnvironment( contextProvider ),
 		cta_type: event.ctaType,
 		ref: event.ref,
 	};
@@ -637,7 +647,7 @@ interface CreditsMeterOpenedEvent extends CreditsMeterDetails {
 }
 
 /**
- * Tracks the credits dot's popover opening: a click on the dot, a known balance
+ * Tracks the credits meter's popover opening: a click on the meter, a known balance
  * running out, or a blocked Send at zero. Mirrors the Agent's
  * `calypso_agents_manager_credits_meter_opened`.
  * @param event - The popover's mode, trigger and balance details
@@ -650,11 +660,13 @@ export function trackImageStudioCreditsMeterOpened( event: CreditsMeterOpenedEve
 		state: event.state,
 		plan_tier: event.planTier,
 		credits_left: event.creditsLeft,
+		top_up_credits_left: event.topUpCreditsLeft,
+		agent_environment: getAgentEnvironment( contextProvider ),
 	} );
 }
 
 /**
- * Tracks a click on the Upgrade or Add credits link, in the notice or in the credits dot's popover.
+ * Tracks a click on the Upgrade or Add credits link, in the notice or in the credits meter's popover.
  * For the Jetpack AI quota, also fires the product-wide `jetpack_ai_upgrade_button`
  * event so this surface appears in the same funnel as every other Jetpack AI
  * upgrade button.

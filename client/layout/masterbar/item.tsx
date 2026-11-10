@@ -1,6 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
 import React, { Component, Fragment, forwardRef } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import type {
@@ -57,25 +56,6 @@ type MasterbarItemWithInnerRef = MasterbarItemOwnProps & {
 };
 
 class MasterbarItem extends Component< MasterbarItemWithInnerRef > {
-	static propTypes = {
-		url: PropTypes.string,
-		tipTarget: PropTypes.string,
-		onClick: PropTypes.func,
-		tooltip: PropTypes.string,
-		icon: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
-		className: PropTypes.string,
-		isActive: PropTypes.bool,
-		preloadSection: PropTypes.func,
-		alwaysShowContent: PropTypes.bool,
-		subItems: PropTypes.array,
-		hasGlobalBorderStyle: PropTypes.bool,
-		as: PropTypes.elementType,
-		ariaLabel: PropTypes.string,
-		openSubMenuOnClick: PropTypes.bool,
-		closeSubMenuOnItemClick: PropTypes.bool,
-		asProps: PropTypes.object,
-	};
-
 	static defaultProps = {
 		icon: '',
 		onClick: noop,

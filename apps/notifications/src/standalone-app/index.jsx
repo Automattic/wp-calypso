@@ -1,5 +1,6 @@
 import { useViewportMatch } from '@wordpress/compose';
 import { setLocaleData } from '@wordpress/i18n';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -53,23 +54,23 @@ const ACTION_HANDLERS = {
 				: sendMessage( { action: 'renderAllSeen' } ),
 	],
 	CLOSE_PANEL: [ () => sendMessage( { action: 'togglePanel' } ) ],
-	OPEN_LINK: [ ( st, { href } ) => window.open( href, '_blank' ) ],
+	OPEN_LINK: [ ( st, { href } ) => window.open( href, '_blank', 'noopener' ) ],
 	OPEN_SITE: [
 		( st, { siteId, href } ) => {
 			sendMessage( { action: 'openSite', siteId } );
-			window.open( href, '_blank' );
+			window.open( href, '_blank', 'noopener' );
 		},
 	],
 	OPEN_POST: [
 		( st, { siteId, postId, href } ) => {
 			sendMessage( { action: 'openPost', siteId, postId } );
-			window.open( href, '_blank' );
+			window.open( href, '_blank', 'noopener' );
 		},
 	],
 	OPEN_COMMENT: [
 		( st, { siteId, postId, commentId, href } ) => {
 			sendMessage( { action: 'openComment', siteId, postId, commentId } );
-			window.open( href, '_blank' );
+			window.open( href, '_blank', 'noopener' );
 		},
 	],
 	// Note: the host widescreen resize is driven from the detail pane's
@@ -96,6 +97,7 @@ const ACTION_HANDLERS = {
 };
 
 const NotesWrapper = ( { wpcom } ) => {
+	useEnableWpCompatOverlaySlot();
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 	const [ preferences, setPreferences ] = useState();
@@ -232,6 +234,7 @@ const NotesWrapper = ( { wpcom } ) => {
 			locale={ locale }
 			wpcom={ wpcom }
 			isDismissible={ isMobileViewport }
+			constrainTabbing
 			isViewSettingsEnabled={ isViewSettingsEnabled }
 			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
 			preferences={ preferences }

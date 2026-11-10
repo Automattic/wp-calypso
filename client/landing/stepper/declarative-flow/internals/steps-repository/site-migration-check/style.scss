@@ -20,13 +20,6 @@
 		height: 18px;
 	}
 
-	.step-container-v2__top-bar-left-element::before {
-		content: '';
-		height: 16px;
-		border-inline-start: 1px solid var( --color-neutral-5 );
-		margin-inline: 8px 16px;
-	}
-
 	.step-container-v2__back-button {
 		text-decoration: none;
 		font-weight: 400;
@@ -84,7 +77,7 @@
 		grid-template-columns: minmax( 0, 1fr ) 24px minmax( 0, 1fr );
 		gap: 16px;
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			grid-template-columns: minmax( 0, 1fr );
 		}
 	}
@@ -101,7 +94,7 @@
 			grid-column: 3;
 		}
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			grid-template-rows: auto;
 			grid-row: auto;
 
@@ -161,7 +154,7 @@
 		color: var( --color-neutral-50 );
 		font-size: $font-size-large;
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			grid-column: 1;
 			grid-row: auto;
 			transform: rotate( 90deg );
@@ -186,10 +179,18 @@
 		&:disabled {
 			color: var( --color-neutral-50 );
 		}
+	}
 
-		&:not( :disabled ):hover {
-			border-color: var( --color-link );
-		}
+	.site-migration-check__choice--ineligible.components-button {
+		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice.components-button:not(
+			:disabled,
+			[aria-disabled='true'],
+			.site-migration-check__choice--ineligible
+		):hover {
+		border-color: var( --color-link );
 	}
 
 	.site-migration-check__choice-content {
@@ -217,6 +218,15 @@
 		font-size: 1.375rem;
 		line-height: 1.09;
 		color: var( --color-neutral-50 );
+	}
+
+	.site-migration-check__choice-arrow--external {
+		font-size: 1rem;
+	}
+
+	.site-migration-check__choice-learn-more {
+		color: var( --color-link );
+		text-decoration: underline;
 	}
 
 	.migration-instructions-from-preview {

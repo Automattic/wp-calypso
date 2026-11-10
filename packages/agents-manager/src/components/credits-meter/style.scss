@@ -1,3 +1,10 @@
+// The light muted token is 4.49:1 on the popover; a touch of foreground clears 4.5:1.
+$credits-meter-muted-foreground: color-mix(
+	in srgb,
+	var( --color-muted-foreground ) 95%,
+	var( --color-foreground )
+);
+
 .agents-manager-credits-meter {
 	display: inline-flex;
 
@@ -10,9 +17,14 @@
 		padding: 0;
 		border-radius: 50%;
 
+		// A translucent tint, so the hover follows whichever composer surface sits behind it.
 		&:hover:not( :disabled ),
 		&[aria-expanded='true'] {
-			background-color: var( --color-muted );
+			background-color: color-mix( in srgb, var( --color-foreground ) 5%, transparent );
+
+			.agenttic.dark & {
+				background-color: color-mix( in srgb, var( --color-input-border ) 30%, transparent );
+			}
 		}
 
 		// Show the focus ring for keyboard focus only.
@@ -20,6 +32,12 @@
 			box-shadow: none;
 			outline: none;
 		}
+	}
+
+	// The arc is hidden at 0%, so the track is the toggle's only mark. The muted text grey
+	// keeps it at 3:1 on the composer and on the hover tint.
+	.agents-manager-credits-meter__ring--empty {
+		--color-progress-ring-track: var( --color-muted-foreground );
 	}
 }
 
@@ -46,16 +64,29 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: 8px;
 }
 
 .agents-manager-credits-meter__title {
 	font-weight: 600;
 }
 
+.agents-manager-credits-meter__show-credits.components-button {
+	margin-inline-start: auto;
+	color: color-mix( in srgb, var( --color-foreground ) 80%, var( --color-popover ) );
+}
+
+.agents-manager-credits-meter__total {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
 .agents-manager-credits-meter__manage.components-button {
 	height: auto;
 	padding: 0;
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 	font-size: 13px;
 	text-decoration: none;
 
@@ -84,12 +115,12 @@
 
 // A balance-only row leads with its amount, so its label is muted instead.
 .agents-manager-credits-meter__pool.is-balance-only .agents-manager-credits-meter__pool-label {
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 }
 
 .agents-manager-credits-meter__pool-date,
 .agents-manager-credits-meter__pool-detail {
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 	font-size: 12px;
 }
 
@@ -97,7 +128,7 @@
 	font-weight: 600;
 
 	&.is-exhausted {
-		color: var( --color-error-accent );
+		color: var( --color-error-strong );
 	}
 }
 
@@ -116,7 +147,7 @@
 
 .agents-manager-credits-meter__message {
 	margin: 0;
-	color: var( --color-muted-foreground );
+	color: $credits-meter-muted-foreground;
 	font-size: 12px;
 }
 

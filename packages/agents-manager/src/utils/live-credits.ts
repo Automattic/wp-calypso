@@ -152,7 +152,7 @@ export function getLiveCreditSiteId(
 		: undefined;
 }
 
-/** The dot's status for a valid allowance snapshot, so other chats can show the same balance. */
+/** The meter's status for a valid allowance snapshot, so other chats can show the same balance. */
 export function parseLiveCreditsStatus(
 	value: unknown,
 	siteId: number
@@ -161,20 +161,21 @@ export function parseLiveCreditsStatus(
 	return snapshot && buildLiveCreditsStatus( snapshot );
 }
 
+/** The reset date as the credits UI shows it: month and day in UTC, in the browser's language. */
+export function formatCreditsResetDate( resetsAt: string ): string {
+	const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone: 'UTC' };
+	try {
+		return new Date( resetsAt ).toLocaleDateString( getBrowserSafeLocale() ?? 'en', options );
+	} catch {
+		return new Date( resetsAt ).toLocaleDateString( 'en', options );
+	}
+}
+
 export function buildLiveCreditsStatus( snapshot: CreditSnapshot ): CreditsStatus {
 	const percent = ( 100 * snapshot.credits_remaining ) / snapshot.credits_limit;
 	const { top_up_credits_purchased: topUpsPurchased, top_up_credits_remaining: topUpsRemaining } =
 		snapshot;
-	const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', timeZone: 'UTC' };
-	let resetDate: string;
-	try {
-		resetDate = new Date( snapshot.resets_at ).toLocaleDateString(
-			getBrowserSafeLocale() ?? 'en',
-			options
-		);
-	} catch {
-		resetDate = new Date( snapshot.resets_at ).toLocaleDateString( 'en', options );
-	}
+	const resetDate = formatCreditsResetDate( snapshot.resets_at );
 	return {
 		plan: 'paid',
 		...( snapshot.plan_tier ? { planTier: snapshot.plan_tier } : {} ),
@@ -247,6 +248,26 @@ function getAiSessionQuery( aiSessionId?: string ): { ai_session_id?: string } {
 	return aiSessionId && aiSessionId !== 'none' ? { ai_session_id: aiSessionId } : {};
 }
 
+/** The checkout for one credits pack, which any site can buy whatever its plan. */
+function getTopUpPurchaseLink(
+	site: string | number,
+	isSimpleSite: boolean,
+	aiSessionId?: string
+): CreditsPurchaseLink {
+	const siteFragment = encodeURIComponent( site );
+	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
+	const query = new URLSearchParams( {
+		source: CREDITS_UPGRADE_SOURCE,
+		...getAiSessionQuery( aiSessionId ),
+		redirect_to: returnUrl,
+		cancel_to: returnUrl,
+	} );
+	return {
+		kind: 'top_up',
+		url: `https://wordpress.com/checkout/${ siteFragment }/${ CREDITS_TOP_UP_PRODUCT }:-q-${ CREDITS_TOP_UP_AMOUNT }?${ query }`,
+	};
+}
+
 /**
  * The plans page or the credits pack checkout, by the site's plan. Calypso's
  * plans and checkout routes take the site's domain or its ID. Add credits returns to
@@ -264,26 +285,34 @@ export function getCreditsPurchaseLink(
 		return undefined;
 	}
 
-	const siteFragment = encodeURIComponent( site );
-	const attribution = { source: CREDITS_UPGRADE_SOURCE, ...getAiSessionQuery( aiSessionId ) };
 	if ( kind === 'upgrade' ) {
 		// No return address: the plans page passes `redirect_to` on to checkout, which then
 		// skips its own pages after a plan purchase. Only the plans page's downgrade and
 		// renewal buttons read `cancel_to`.
-		const query = new URLSearchParams( attribution );
-		return { kind, url: `https://wordpress.com/plans/${ siteFragment }?${ query }` };
+		const query = new URLSearchParams( {
+			source: CREDITS_UPGRADE_SOURCE,
+			...getAiSessionQuery( aiSessionId ),
+		} );
+		return { kind, url: `https://wordpress.com/plans/${ encodeURIComponent( site ) }?${ query }` };
 	}
 
-	const returnUrl = getCreditsReturnUrl( siteFragment, isSimpleSite );
-	const query = new URLSearchParams( {
-		...attribution,
-		redirect_to: returnUrl,
-		cancel_to: returnUrl,
-	} );
-	return {
-		kind,
-		url: `https://wordpress.com/checkout/${ siteFragment }/${ CREDITS_TOP_UP_PRODUCT }:-q-${ CREDITS_TOP_UP_AMOUNT }?${ query }`,
-	};
+	return getTopUpPurchaseLink( site, isSimpleSite, aiSessionId );
+}
+
+/** The site's domain when it is the one the authenticated balance belongs to. */
+function getLiveCreditsSiteDomain(
+	siteId: number | undefined,
+	site?: AgentsManagerSite | null
+): string | undefined {
+	if (
+		! siteId ||
+		Number( site?.ID ) !== siteId ||
+		! site?.domain.trim() ||
+		[ '.', '..' ].includes( site.domain )
+	) {
+		return undefined;
+	}
+	return site.domain;
 }
 
 /**
@@ -295,18 +324,24 @@ export function getLiveCreditsPurchaseLink(
 	siteId: number | undefined,
 	site?: AgentsManagerSite | null
 ): CreditsPurchaseLink | undefined {
-	if (
-		! siteId ||
-		Number( site?.ID ) !== siteId ||
-		! site?.domain.trim() ||
-		[ '.', '..' ].includes( site.domain )
-	) {
-		return undefined;
-	}
-	return getCreditsPurchaseLink(
-		status,
-		site.domain,
-		window._currentSiteType === 'simple',
-		getActiveSessionId()
-	);
+	const domain = getLiveCreditsSiteDomain( siteId, site );
+	return domain
+		? getCreditsPurchaseLink(
+				status,
+				domain,
+				window._currentSiteType === 'simple',
+				getActiveSessionId()
+			)
+		: undefined;
+}
+
+/** The credits pack checkout, bound to the balance's site as `getLiveCreditsPurchaseLink()` is. */
+export function getLiveCreditsTopUpLink(
+	siteId: number | undefined,
+	site?: AgentsManagerSite | null
+): CreditsPurchaseLink | undefined {
+	const domain = getLiveCreditsSiteDomain( siteId, site );
+	return domain
+		? getTopUpPurchaseLink( domain, window._currentSiteType === 'simple', getActiveSessionId() )
+		: undefined;
 }

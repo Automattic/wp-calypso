@@ -66,7 +66,7 @@ describe( 'getPlansToDisplay', () => {
 		).toEqual( [ PLAN_JETPACK_COMPLETE_MONTHLY ] );
 	} );
 
-	it( 'shows no bundle when nothing is offered', () => {
+	it( 'shows no bundle when product data is missing', () => {
 		expect(
 			displayedSlugs( { duration: TERM_ANNUALLY, currentPlanSlug: null, isOnSale: () => false } )
 		).toEqual( [] );

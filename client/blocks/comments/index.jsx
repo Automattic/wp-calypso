@@ -2,12 +2,18 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
+import { CommentEditorContext } from './comment-editor-context';
+import { CommentLabelsContext } from './comment-labels-context';
+import NewCommentsPill from './new-comments-pill';
 import PostCommentsList from './post-comment-list';
 import { usePostCommentsData } from './use-post-comments-data';
 
 class PostComments extends Component {
 	static propTypes = {
+		deferNewComments: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
+		spellOutLabels: PropTypes.bool,
+		useBlockEditor: PropTypes.bool,
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
@@ -15,16 +21,28 @@ class PostComments extends Component {
 	};
 
 	static defaultProps = {
+		deferNewComments: false,
 		shouldHighlightNew: false,
 		shouldPollForNewComments: false,
+		spellOutLabels: false,
+		useBlockEditor: false,
 	};
 
 	pollForNewComments = () => {
-		this.props.fetchLaterComments();
+		this.props.pollForNewComments();
 	};
 
 	render() {
-		const { siteId, postId, shouldPollForNewComments } = this.props;
+		const {
+			siteId,
+			postId,
+			deferNewComments,
+			pendingCommentIds,
+			revealPendingComments,
+			shouldPollForNewComments,
+			spellOutLabels,
+			useBlockEditor,
+		} = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
@@ -35,7 +53,14 @@ class PostComments extends Component {
 				{ shouldPollForNewComments && (
 					<Interval onTick={ this.pollForNewComments } period={ EVERY_MINUTE } />
 				) }
-				<PostCommentsList { ...this.props } />
+				<CommentEditorContext.Provider value={ useBlockEditor }>
+					<CommentLabelsContext.Provider value={ spellOutLabels }>
+						<PostCommentsList { ...this.props } />
+					</CommentLabelsContext.Provider>
+				</CommentEditorContext.Provider>
+				{ deferNewComments && (
+					<NewCommentsPill commentIds={ pendingCommentIds } onReveal={ revealPendingComments } />
+				) }
 			</Fragment>
 		);
 	}

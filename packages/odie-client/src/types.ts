@@ -1,7 +1,7 @@
 import { ODIE_ALLOWED_BOTS } from './constants';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
 import type { SmoochIntegrationKey, ZendeskConversation } from '@automattic/zendesk-client';
-import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
+import type { ComponentType, ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
@@ -28,6 +28,10 @@ export type OdieAssistantContextInterface = {
 	userFieldFlowName?: string | null;
 	zendeskConversationTags?: string[];
 	zendeskIntegrationKey?: SmoochIntegrationKey | null;
+	humanSupportRouting?: HumanSupportRouting | null;
+	// A request for a human that the routing step hasn't decided on yet.
+	pendingHumanSupportRequest: HumanSupportRequest | null;
+	setPendingHumanSupportRequest: ( request: HumanSupportRequest | null ) => void;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
@@ -59,6 +63,7 @@ export type OdieAssistantProviderProps = {
 	userFieldFlowName?: string | null;
 	zendeskConversationTags?: string[];
 	zendeskIntegrationKey?: SmoochIntegrationKey | null;
+	humanSupportRouting?: HumanSupportRouting | null;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	version?: string | null;
@@ -133,6 +138,10 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
+		// Sent with `forward_to_human_support` by the Woo bot.
+		is_emergency?: boolean;
+		emergency_type?: string | null;
+		route_to_email?: boolean;
 	};
 };
 
@@ -287,4 +296,35 @@ export type SupportInteraction = {
 	users: SupportInteractionUser[];
 	events: SupportInteractionEvent[];
 	environment: 'staging' | 'production';
+};
+
+/** The bot's flags that come with a request for a human. */
+export type HumanSupportFlags = {
+	isEmergency: boolean;
+	emergencyType: string | null;
+	routeToEmail: boolean;
+};
+
+export type HumanSupportRequest = {
+	createdFrom: string;
+	flags: HumanSupportFlags;
+	isFromError?: boolean;
+	errorReason?: string;
+	escalationOnSecondAttempt?: boolean;
+};
+
+export type HumanSupportRoutingStepProps = {
+	request: HumanSupportRequest;
+	/** Starts the Zendesk chat for the request. */
+	startChat: () => void;
+	/** Drops the request, for example after sending the user somewhere else. */
+	dismiss: () => void;
+};
+
+/**
+ * Lets the host decide where a request for a human goes. When set, requests show `Step` in
+ * the chat instead of starting a Zendesk chat right away.
+ */
+export type HumanSupportRouting = {
+	Step: ComponentType< HumanSupportRoutingStepProps >;
 };

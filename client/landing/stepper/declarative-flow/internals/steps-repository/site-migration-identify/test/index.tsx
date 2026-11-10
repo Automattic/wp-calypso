@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { setImmediate as realSetImmediate } from 'timers';
+import { setTimeout as realSetTimeout } from 'timers';
 import config from '@automattic/calypso-config';
 import { act, configure, getConfig, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -63,7 +63,7 @@ const originalIsEnabled = config.isEnabled;
 describe( 'SiteMigrationIdentify', () => {
 	let user: ReturnType< typeof userEvent.setup >;
 
-	const realTick = () => new Promise( ( resolve ) => realSetImmediate( resolve ) );
+	const realTick = () => new Promise( ( resolve ) => realSetTimeout( resolve, 1 ) );
 	const { asyncUtilTimeout, unstable_advanceTimersWrapper: advanceTimers } = getConfig();
 
 	beforeAll( () => {
@@ -84,7 +84,7 @@ describe( 'SiteMigrationIdentify', () => {
 		jest.clearAllMocks();
 		mockFlowState.clear();
 		mockFlowState.set( 'flow', { entryPoint: 'goals' } );
-		jest.useFakeTimers();
+		jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
 		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		jest
 			.spyOn( config, 'isEnabled' )
@@ -93,6 +93,7 @@ describe( 'SiteMigrationIdentify', () => {
 			);
 	} );
 	afterEach( () => {
+		nock.cleanAll();
 		jest.useRealTimers();
 		jest.restoreAllMocks();
 	} );
@@ -296,7 +297,7 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it.each( [ false, true ] )(
-		'shows the source placeholder and hosting benefits (reprint: %s)',
+		'shows the source placeholder without a hosting pitch (reprint: %s)',
 		( enabled ) => {
 			jest
 				.spyOn( config, 'isEnabled' )
@@ -307,22 +308,12 @@ describe( 'SiteMigrationIdentify', () => {
 			render( { navigation: { submit } } );
 
 			expect( getInput() ).toHaveAttribute( 'placeholder', 'your-existing-site.com' );
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-			expect(
-				screen.getByText(
-					/Blazing fast speeds with lightning-fast load times for a seamless experience/
-				)
-			).toBeVisible();
-			expect(
-				screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
-			).toBeVisible();
-			expect(
-				screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
-			).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /Blazing fast speeds/ ) ).not.toBeInTheDocument();
 		}
 	);
 
-	it( 'shows the back link when the "ref" param is set', () => {
+	it( 'links the logo to the homepage as its way out, without a Back button', () => {
 		render(
 			{
 				navigation: {
@@ -333,7 +324,12 @@ describe( 'SiteMigrationIdentify', () => {
 			{ initialEntry: '/some-path?ref=goals' }
 		);
 
-		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
+		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Change address' } ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'with migration/reprint-flow enabled', () => {
@@ -359,16 +355,228 @@ describe( 'SiteMigrationIdentify', () => {
 				);
 		} );
 
+		it( 'rejects known destination addresses and lets the user correct the source', async () => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationIdentify
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					destinationSiteUrls={ [
+						'destination.wordpress.com',
+						'https://custom.example.com',
+						'https://default.wpcomstaging.com',
+					] }
+				/>,
+				{ initialEntry: '/some-path?manualPlatform=wordpress' }
+			);
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( true )
+				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+			mockHost();
+			for ( const url of [
+				'http://WWW.DESTINATION.WORDPRESS.COM/a-page?example=1',
+				'custom.example.com/',
+				'https://default.wpcomstaging.com/',
+			] ) {
+				await user.clear( getInput() );
+				await checkSite( url );
+				expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+					'This is your destination site. Enter the address of the site you want to migrate from.'
+				);
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			}
+			await act( async () => {
+				jest.advanceTimersByTime( 2000 );
+				await realTick();
+			} );
+			expect( analysis.isDone() ).toBe( false );
+			expect( submit ).not.toHaveBeenCalled();
+			await user.clear( getInput() );
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+			await checkSite();
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { action: 'continue', from: 'https://example.com' } )
+				)
+			);
+		} );
+
+		it( 'blocks the destination when checking on arrival or opening the platform list', async () => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationIdentify
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					checkOnArrival
+					destinationSiteUrls={ [ 'example.com' ] }
+				/>,
+				{ initialEntry: '/some-path?from=https://example.com&start=true' }
+			);
+			expect( screen.getByRole( 'alert' ) ).toBeVisible();
+			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'changes the address during a check without leaving the step', async () => {
+			const goBack = jest.fn();
+			const submit = jest.fn();
+			render( { navigation: { goBack, submit } } );
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, () => new Promise( () => {} ) );
+			await checkSite();
+			await waitFor( () => expect( analysis.isDone() ).toBe( true ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
+
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).toHaveFocus();
+			expect( goBack ).not.toHaveBeenCalled();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
 		it( 'keeps the platform list available on the simplified address screen', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
 			expect(
 				screen.queryByRole( 'button', { name: /Only have a backup file/ } )
 			).not.toBeInTheDocument();
 			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
+		} );
+
+		it.each( [ '', 'https://example.com' ] )(
+			'leaves the address "%s" editable without analyzing until Continue',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+				const host = mockHost();
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&start=&platform=unknown`,
+					}
+				);
+				await act( async () => {
+					jest.advanceTimersByTime( 3000 );
+					await realTick();
+				} );
+				expect( getInput() ).toHaveValue( from );
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				expect( analysis.isDone() ).toBe( false );
+				expect( host.isDone() ).toBe( false );
+				expect( submit ).not.toHaveBeenCalled();
+				await user.clear( getInput() );
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( { action: 'continue', platform: 'wordpress' } )
+					)
+				);
+			}
+		);
+
+		it.each( [
+			[ '', false ],
+			[ 'https://manual.example.com', true ],
+		] as const )(
+			'checks hosting without overriding manual WordPress selection (prefill: "%s", WordPress.com: %s)',
+			async ( from, isWpcom ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis(
+					{
+						...API_RESPONSE_WORDPRESS_PLATFORM,
+						url: 'https://manual.example.com',
+						platform: 'squarespace',
+						static_site_importable: true,
+						platform_data: { is_wpcom: isWpcom },
+					},
+					200,
+					from || 'manual.example.com'
+				);
+				mockApi()
+					.get( '/wpcom/v2/site-profiler/hosting-provider/manual.example.com' )
+					.reply( 200, { hosting_provider: { slug: 'bluehost' } } );
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&manualPlatform=wordpress`,
+					}
+				);
+
+				expect(
+					screen.getByRole( 'heading', { name: "Let's find your WordPress site" } )
+				).toBeVisible();
+				expect(
+					screen.getByRole( 'button', { name: 'select another platform from the list' } )
+				).toBeVisible();
+				expect( getInput() ).toHaveValue( from );
+				expect( submit ).not.toHaveBeenCalled();
+				if ( ! from ) {
+					await user.type( getInput(), 'manual.example.com' );
+				}
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith( {
+						action: 'continue',
+						platform: 'wordpress',
+						from: 'https://manual.example.com',
+						host: 'bluehost',
+						...( isWpcom ? { isWpcom: true } : {} ),
+					} )
+				);
+				expect( analysis.isDone() ).toBe( true );
+			}
+		);
+
+		it.each( [
+			[ 200, { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'unreachable' } ],
+			[ 500, { code: 'http_request_failed', data: { site_health: 'unreachable' } } ],
+		] )(
+			'preserves manual WordPress selection when checking fails (%s)',
+			async ( status, response ) => {
+				const submit = jest.fn();
+				render(
+					{ navigation: { submit } },
+					{ initialEntry: '/some-path?manualPlatform=wordpress' }
+				);
+				mockAnalysis( response, status );
+				if ( status === 200 ) {
+					mockHost();
+				}
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( {
+							action: 'continue',
+							platform: 'wordpress',
+							from: 'https://example.com',
+						} )
+					)
+				);
+			}
+		);
+
+		it( 'lets users change their selected platform while keeping the address', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://example.com&manualPlatform=wordpress' }
+			);
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'select another platform from the list' } )
+			);
+
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
 		} );
 
 		it( 'preserves the current address when opening the platform list before checking', async () => {
@@ -413,30 +621,29 @@ describe( 'SiteMigrationIdentify', () => {
 					completeHost = () => callback( null, { hosting_provider: { slug: 'bluehost' } } );
 				} );
 			await user.clear( getInput() );
-			await checkSite( 'example.com' );
+			await user.type( getInput(), 'example.com{Enter}' );
 
-			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
-			expect(
-				screen.getByRole( 'progressbar', { name: 'Checking your site' } )
-			).toBeInTheDocument();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-			expect( screen.getByRole( 'link', { name: 'View site ↗' } ) ).toHaveAttribute(
-				'href',
-				'https://example.com'
-			);
-			expect( getInput() ).not.toBeVisible();
+			expect( screen.getByRole( 'heading', { name: "Let's find your site" } ) ).toBeVisible();
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Checking your site' );
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveFocus();
+			expect( getInput() ).toHaveAttribute( 'readonly' );
+			const continueButton = screen.getByRole( 'button', { name: 'Continue' } );
+			expect( continueButton ).toHaveClass( 'is-busy' );
+			expect( continueButton ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( continueButton ).toBeEnabled();
+			await user.type( getInput(), 'another-site.com{Enter}' );
+			expect( getInput() ).toHaveValue( 'example.com' );
+			await user.click( continueButton );
+			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
 			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completePlatform ).toEqual( expect.any( Function ) ) );
 			await act( async () => completePlatform?.() );
-			await waitFor( () =>
-				expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toBeVisible()
-			);
-			expect(
-				screen.getByRole( 'progressbar', { name: 'Checking your site' } )
-			).toBeInTheDocument();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-			expect( submit ).not.toHaveBeenCalled();
 			await waitFor( () => expect( completeHost ).toEqual( expect.any( Function ) ) );
+			expect( continueButton ).toHaveClass( 'is-busy' );
+			expect( getInput() ).toHaveAttribute( 'readonly' );
+			expect( submit ).not.toHaveBeenCalled();
 			await act( async () => completeHost?.() );
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith( {
@@ -446,6 +653,7 @@ describe( 'SiteMigrationIdentify', () => {
 					host: 'bluehost',
 				} )
 			);
+			expect( submit ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'checks a handed-over address right away', async () => {
@@ -457,7 +665,10 @@ describe( 'SiteMigrationIdentify', () => {
 				{ initialEntry: '/some-path?from=https://example.com&start=true&platform=wordpress' }
 			);
 
-			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
+			expect( getInput() ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).toHaveAttribute( 'readonly' );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith( {
 					action: 'continue',
@@ -510,7 +721,7 @@ describe( 'SiteMigrationIdentify', () => {
 				} );
 			}
 
-			expect( screen.getByRole( 'heading', { name: 'Checking your site' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			expect( submit ).not.toHaveBeenCalled();
 
 			await act( async () => jest.advanceTimersByTime( 100 ) );
@@ -542,6 +753,12 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.getByRole( 'button', { name: /pick your current platform/ } ) ).toBeVisible();
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'false'
+			);
+			expect( screen.getByRole( 'status' ) ).toBeEmptyDOMElement();
 			expect( submit ).not.toHaveBeenCalled();
 
 			mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
@@ -625,7 +842,7 @@ describe( 'SiteMigrationIdentify', () => {
 			} );
 		} );
 
-		it( 'does not complete or reopen an outcome when Back cancels a retry', async () => {
+		it( 'does not complete or reopen an outcome when Change address cancels a retry', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			mockAnalysis( { code: 'http_request_failed' }, 500 );
@@ -639,12 +856,14 @@ describe( 'SiteMigrationIdentify', () => {
 					completeRetry = () => callback( null, API_RESPONSE_WORDPRESS_PLATFORM );
 				} );
 			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-			await screen.findByRole( 'heading', { name: 'Checking your site' } );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			await waitFor( () => expect( completeRetry ).toEqual( expect.any( Function ) ) );
-			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
 			await act( async () => completeRetry?.() );
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( getInput() ).toHaveFocus();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 

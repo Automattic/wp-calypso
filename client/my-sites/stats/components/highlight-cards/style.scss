@@ -44,12 +44,11 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 .highlight-cards a.highlight-cards-heading-wrapper {
 	color: var(--color-text);
-	text-decoration: underline solid color-mix(in srgb, var(--color-link) 0%, transparent);
-	transition: color 100ms linear, text-decoration-color 100ms linear;
+	text-decoration: none;
+	transition: color 100ms linear;
 	&:focus,
 	&:hover {
 		color: var(--color-link);
-		text-decoration-color: var(--color-link);
 	}
 }
 

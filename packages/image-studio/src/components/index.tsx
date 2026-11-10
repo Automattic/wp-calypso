@@ -1,4 +1,4 @@
-import { CreditsMeter } from '@automattic/agents-manager';
+import { CreditsMeter, useAgentTraceIds } from '@automattic/agents-manager';
 import { getAgentManager, useAgentChat, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { AgentUI, cn, ThinkingMessage } from '@automattic/agenttic-ui';
 import {
@@ -241,7 +241,7 @@ function ImageStudioAgentChat( {
 						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
 						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
 						<AgentUI.Notice />
-						{ /* Stacked puts the pickers on the same row as the credits dot and send button. */ }
+						{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
 						<AgentUI.Input
 							layout="stacked"
 							disabled={ isStopDisabled ? true : undefined }
@@ -385,7 +385,9 @@ const ImageStudioContent = withInstanceId(
 			null
 		);
 		const [ isSaving, setIsSaving ] = useState( false );
+		const getTraceIdForMessage = useAgentTraceIds( agentConfigState );
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
+			getTraceIdForMessage,
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
 			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,

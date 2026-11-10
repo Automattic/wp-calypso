@@ -39,7 +39,8 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
-		"@sentry/react": "^7.54.0",
+		"@automattic/calypso-url": "workspace:^",
+		"@sentry/react": "^7.120.4",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {

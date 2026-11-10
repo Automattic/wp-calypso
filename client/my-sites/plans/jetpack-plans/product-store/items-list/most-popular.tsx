@@ -66,7 +66,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					const price = (
 						<ItemPrice
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
-							isIncludedInPlan={ isIncludedInPlan }
+							isIncludedInPlan={ isIncludedInPlanOrSuperseded }
 							isOwned={ isOwned }
 							isExpired={ isExpired }
 							item={ item }
@@ -90,14 +90,14 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						isSuperseded
 					);
 
-					// TODO remove this isEnglish check once we have translations for the new strings
-					const amountSaved = item.productsIncluded?.length ? (
-						<AmountSaved
-							siteId={ siteId }
-							product={ item }
-							onClickMoreInfo={ onClickMoreInfoFactory( item ) }
-						/>
-					) : null;
+					const amountSaved =
+						! hideMoreInfoLink && item.productsIncluded?.length ? (
+							<AmountSaved
+								siteId={ siteId }
+								product={ item }
+								onClickMoreInfo={ onClickMoreInfoFactory( item ) }
+							/>
+						) : null;
 
 					return (
 						<li key={ item.productSlug } className="jetpack-product-store__most-popular--item">

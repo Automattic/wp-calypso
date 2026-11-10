@@ -329,6 +329,12 @@ const sections = [
 		enableLoggedOut: true,
 		isomorphic: true,
 	},
+	{
+		name: 'site-redesign',
+		paths: [ '/site-redesign' ],
+		module: 'calypso/my-sites/site-redesign',
+		group: 'sites',
+	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
@@ -747,12 +753,6 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'jetpack-cloud-agency-signup',
-		paths: [ '/manage/signup', '/agency/signup' ],
-		module: 'calypso/jetpack-cloud/sections/agency-signup',
-		group: 'jetpack-cloud',
-	},
-	{
 		name: 'jetpack-cloud-golden-token',
 		paths: [ '/golden-token' ],
 		module: 'calypso/jetpack-cloud/sections/golden-token',
@@ -775,12 +775,6 @@ const sections = [
 		paths: [ '/monetize' ],
 		module: 'calypso/my-sites/earn',
 		group: 'jetpack-cloud',
-	},
-	{
-		name: 'woocommerce-installation',
-		paths: [ '/woocommerce-installation' ],
-		module: 'calypso/my-sites/woocommerce',
-		group: 'woocommerce-installation',
 	},
 	{
 		name: 'woocommerce',
@@ -850,6 +844,13 @@ const sections = [
 		name: 'a8c-for-agencies-auth',
 		paths: [ '/log-in', '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-error',
+		paths: [ '/error' ],
+		module: 'calypso/a8c-for-agencies/sections/error',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},

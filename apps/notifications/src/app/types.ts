@@ -4,11 +4,12 @@ export type FilterName = keyof ReturnType< typeof getFilters >;
 
 export type LayoutStyle = 'detailed' | 'simplified';
 
-type Range = {
+export type Range = {
 	type: string;
 	indices: [ number, number ];
 	id: string | number;
 	parent: string | number | null;
+	value?: string;
 	url?: string;
 	site_id?: number;
 	post_id?: number;
@@ -25,6 +26,7 @@ type Media = {
 	parent?: string | number | null;
 	height?: string | number;
 	width?: string | number;
+	emoji?: boolean;
 };
 
 export type Subject = {
@@ -38,11 +40,13 @@ export type NotePost = {
 	url: string;
 	date: string | null;
 	author_name: string;
+	author_avatar?: string | null;
 };
 
 export type NoteSite = {
 	name: string;
 	icon: string;
+	url?: string;
 };
 
 export type NoteParentComment = {
@@ -52,6 +56,7 @@ export type NoteParentComment = {
 	author_url?: string | null;
 	date: string | null;
 	url: string;
+	content?: Block;
 };
 
 export type NoteActor = {

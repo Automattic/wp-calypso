@@ -23,6 +23,7 @@ import {
 	extractToolResultsFromMessage,
 	messageCarriesToolPayload,
 } from './conversationUtils';
+import { endResumableChat } from './liveChat';
 import type {
 	Client,
 	ClientConfig,
@@ -194,7 +195,7 @@ interface ManagedAgent {
 	storageConfig: ConversationStorageConfig;
 	conversationHistory: Message[];
 	currentAbortController: AbortController | null;
-	/** User turn awaiting delivery resolution across tool follow-ups. */
+	/** User turn still running, across its tool follow-ups. */
 	inFlightUserMessageId: string | null;
 }
 
@@ -328,7 +329,13 @@ function createAgentManager(): AgentManager {
 		},
 
 		removeAgent( key: string ): boolean {
-			return agents.delete( key );
+			const isRemoved = agents.delete( key );
+
+			if ( isRemoved ) {
+				endResumableChat( key );
+			}
+
+			return isRemoved;
 		},
 
 		async sendMessage(
@@ -492,6 +499,9 @@ function createAgentManager(): AgentManager {
 				await persistConversationHistory( key, resolvedConversationHistory );
 			}
 
+			// The user message's history copy. A pre-built message (e.g., tool results) is used directly.
+			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
+
 			let messageObj: Message;
 			if ( optionsMessage ) {
 				// When a pre-built message is provided (e.g., tool results),
@@ -502,11 +512,15 @@ function createAgentManager(): AgentManager {
 					parts: [ ...historyParts, ...optionsMessage.parts ],
 				};
 			} else {
-				messageObj = createTextMessageWithHistory(
-					message,
-					resolvedConversationHistory,
-					options.imageUrls
-				);
+				// Sent under its history copy's ID, so the server stores it under that ID too.
+				messageObj = {
+					...createTextMessageWithHistory(
+						message,
+						resolvedConversationHistory,
+						options.imageUrls
+					),
+					messageId: userMessage.messageId,
+				};
 			}
 
 			// Add metadata to the message object that will be sent to the agent
@@ -532,10 +546,6 @@ function createAgentManager(): AgentManager {
 				}
 			}
 
-			// Add user message to local conversation history before streaming (always)
-			// When a pre-built message is provided (e.g., tool results), use it directly.
-			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
-
 			// Add image parts if present
 			if ( options.imageUrls && options.imageUrls.length > 0 ) {
 				const imageParts: FilePart[] = options.imageUrls.map( ( imageData ) => {
@@ -560,12 +570,8 @@ function createAgentManager(): AgentManager {
 				userMessage.parts.push( ...imageParts );
 			}
 			// Tool-result follow-ups reuse the opener's in-flight id; only
-			// mark a new pending delivery for real user turns that persist.
+			// real user turns that persist start a new one.
 			if ( withHistory && ! isToolResultOnlyMessage( userMessage ) ) {
-				userMessage.metadata = {
-					...( userMessage.metadata || {} ),
-					deliveryStatus: 'pending',
-				};
 				managedAgent.inFlightUserMessageId = userMessage.messageId;
 			}
 
@@ -723,31 +729,7 @@ function createAgentManager(): AgentManager {
 						// Clear tool call tracking for next batch
 						currentToolCallIds = [];
 
-						// Resolve only the in-flight opener; older pending stay.
-						const inFlightId = managedAgent.inFlightUserMessageId;
-						const nextStatus =
-							update.status?.state === 'failed' || update.status?.state === 'canceled'
-								? 'failed'
-								: 'complete';
-						if ( inFlightId ) {
-							currentConversationHistory = currentConversationHistory.map( ( m ) => {
-								if ( m.messageId !== inFlightId ) {
-									return m;
-								}
-								const status = m.metadata?.deliveryStatus;
-								if ( status === 'pending' || status === 'streaming' ) {
-									return {
-										...m,
-										metadata: {
-											...( m.metadata || {} ),
-											deliveryStatus: nextStatus,
-										},
-									};
-								}
-								return m;
-							} );
-							managedAgent.inFlightUserMessageId = null;
-						}
+						managedAgent.inFlightUserMessageId = null;
 
 						if ( update.status?.message ) {
 							const finalAgentMessage = extractNewContentFromMessage( update.status.message );
@@ -994,6 +976,8 @@ function createAgentManager(): AgentManager {
 		},
 
 		clear(): void {
+			agents.forEach( ( _agent, key ) => endResumableChat( key ) );
+
 			agents.clear();
 		},
 	};

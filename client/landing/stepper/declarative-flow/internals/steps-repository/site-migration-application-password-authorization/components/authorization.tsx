@@ -1,5 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { NextButton } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { loop, backup, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChecklistCard } from 'calypso/landing/stepper/declarative-flow/internals/components/checklist-card';
@@ -12,20 +13,19 @@ interface AuthorizationProps {
 const Authorization = ( { onShareCredentialsClick, onAuthorizationClick }: AuthorizationProps ) => {
 	const translate = useTranslate();
 	return (
-		<div className="site-migration-application-password-authorization__authorization">
-			<div>
-				<NextButton onClick={ onAuthorizationClick }>
-					{ translate( 'Authorize access' ) }
-				</NextButton>
-			</div>
-			<div>
-				<button
-					className="button navigation-link step-container__navigation-link has-underline is-borderless"
-					type="button"
-					onClick={ onShareCredentialsClick }
-				>
+		<>
+			<Button
+				className="site-migration-application-password-authorization__authorize"
+				variant="primary"
+				onClick={ onAuthorizationClick }
+				__next40pxDefaultSize
+			>
+				{ translate( 'Authorize access' ) }
+			</Button>
+			<div className="account-template__secondary-actions">
+				<Step.LinkButton onClick={ onShareCredentialsClick }>
 					{ translate( 'Share credentials instead' ) }
-				</button>
+				</Step.LinkButton>
 			</div>
 			<ChecklistCard
 				title={ translate( "Here's what else you're getting" ) }
@@ -54,7 +54,7 @@ const Authorization = ( { onShareCredentialsClick, onAuthorizationClick }: Autho
 					},
 				] }
 			/>
-		</div>
+		</>
 	);
 };
 

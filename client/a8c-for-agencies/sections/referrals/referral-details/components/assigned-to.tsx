@@ -9,6 +9,7 @@ import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_ID_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import { useSubscriptionDetails } from 'calypso/a8c-for-agencies/hooks/use-subscription-details';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
@@ -16,6 +17,7 @@ import { ReferralPurchase } from '../../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
+	referralId: number;
 	purchase: ReferralPurchase;
 	isFetching: boolean;
 	handleAssignToSite: ( redirectUrl: string ) => void;
@@ -46,7 +48,7 @@ function getPurchaseStatus(
 	return [ 'medium', translate( 'Awaiting payment' ) ];
 }
 
-const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props ) => {
+const AssignedTo = ( { referralId, purchase, handleAssignToSite, data, isFetching }: Props ) => {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 	const product = data?.find( ( product ) => product.product_id === purchase.product_id );
@@ -57,7 +59,10 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 		purchase.license &&
 		( isWPCOMLicense
 			? addQueryArgs( { license_key: licenseKey }, A4A_SITES_LINK_NEEDS_SETUP )
-			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' ) );
+			: addQueryArgs(
+					{ key: licenseKey, [ REFERRAL_ID_QUERY_PARAM_KEY ]: referralId },
+					'/marketplace/assign-license'
+				) );
 
 	const showAssignButton = purchase.status === 'active' && redirectUrl;
 	const [ statusType, statusText ] = getPurchaseStatus( purchase, translate );

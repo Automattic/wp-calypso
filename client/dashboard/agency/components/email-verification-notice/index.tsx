@@ -1,10 +1,10 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAuth } from '../../../app/auth';
-import { Notice } from '../../../components/notice';
+import { Notice, NoticeActionButton, NoticeActionLinkButton } from '../../../components/notice';
 import { formatCooldown } from '../../../utils/email-verification-resend';
+import { wpcomLink } from '../../../utils/link';
 import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
 
 export function useEmailToVerify() {
@@ -28,8 +28,8 @@ export default function EmailVerificationNotice() {
 	const { emailToVerify, isEmailChangePending } = useEmailToVerify();
 	const { resend, isResending, secondsUntilResend } = useEmailVerificationResend( {
 		originalEmail: user.email,
-		pendingEmail: isEmailChangePending ? ( emailToVerify ?? undefined ) : undefined,
-		isEmailChangePending,
+		// Always false: a pending change links to WordPress.com below instead of re-saving here.
+		isEmailChangePending: false,
 		errorMessage: __( 'There was an error while resending the email. Please try again.' ),
 	} );
 	const isAwaitingResend = secondsUntilResend > 0;
@@ -43,21 +43,33 @@ export default function EmailVerificationNotice() {
 			variant="warning"
 			title={ __( 'Verify your email address' ) }
 			actions={
-				<Button
-					variant="primary"
-					size="compact"
-					onClick={ resend }
-					disabled={ isAwaitingResend || isResending }
-					isBusy={ isResending }
-				>
-					{ isAwaitingResend
-						? sprintf(
-								/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
-								__( 'Resend email (%s)' ),
-								formatCooldown( secondsUntilResend )
-							)
-						: __( 'Resend email' ) }
-				</Button>
+				// Resending to a pending address re-saves it, which WordPress.com only accepts from
+				// its own clients, so that resend happens there.
+				isEmailChangePending ? (
+					<NoticeActionLinkButton
+						variant="solid"
+						href={ wpcomLink( '/me' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ __( 'Resend email' ) }
+					</NoticeActionLinkButton>
+				) : (
+					<NoticeActionButton
+						variant="solid"
+						onClick={ resend }
+						disabled={ isAwaitingResend || isResending }
+						loading={ isResending }
+					>
+						{ isAwaitingResend
+							? sprintf(
+									/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
+									__( 'Resend email (%s)' ),
+									formatCooldown( secondsUntilResend )
+								)
+							: __( 'Resend email' ) }
+					</NoticeActionButton>
+				)
 			}
 		>
 			{ sprintf(

@@ -30,13 +30,8 @@ export default function AgencySiteActivity() {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		resetPageOnChange: true,
 	} );
-	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
-
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		handleDateRangeChange( next );
-		setDateRangeVersion( ( v ) => v + 1 );
-	};
 
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
@@ -60,7 +55,7 @@ export default function AgencySiteActivity() {
 							gmtOffset={ gmtOffset }
 							timezoneString={ timezoneString }
 							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
+							onChange={ handleDateRangeChange }
 						/>
 					}
 				/>
@@ -68,14 +63,9 @@ export default function AgencySiteActivity() {
 		>
 			<Card className="site-logs-card site-logs-card--activity">
 				<CardBody>
-					{ /* TODO(A4A-2917): the reused activity DataViews shows a primary "Manage backup"
-					     row action on rewindable entries that navigates to the dotcom
-					     siteBackupDetailRoute, which A4A doesn't register — it dead-ends until
-					     agency backups routes exist. Hide or re-point it once backups land. */ }
 					<SiteActivityLogsDataViews
 						logType={ LogType.ACTIVITY }
 						dateRange={ dateRange }
-						dateRangeVersion={ dateRangeVersion }
 						autoRefresh={ autoRefresh }
 						setAutoRefresh={ setAutoRefresh }
 						gmtOffset={ gmtOffset }

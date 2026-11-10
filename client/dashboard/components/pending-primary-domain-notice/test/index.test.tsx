@@ -10,7 +10,7 @@ import PendingPrimaryDomainNotice from '../index';
 function mockDomainQuery( domainName: string, overrides = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
-		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.get( `/rest/v1.2/domain-details/${ domainName }/` )
 		.reply( 200, {
 			domain: domainName,
 			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },

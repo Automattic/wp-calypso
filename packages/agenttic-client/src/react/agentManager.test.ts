@@ -11,6 +11,7 @@ import {
 } from '../client/utils/index';
 import { type AgentManager, getAgentManager } from './agentManager';
 import { clearConversation, loadConversation, storeConversation } from './conversationStorage';
+import { getResumableChat } from './liveChat';
 import type {
 	ClientConfig,
 	DataPart,
@@ -198,6 +199,18 @@ describe( 'agentManager', () => {
 	} );
 
 	describe( 'removeAgent', () => {
+		it.each( [
+			[ 'removeAgent', () => agentManager.removeAgent( 'test-key' ) ],
+			[ 'clear', () => agentManager.clear() ],
+		] )( 'should end the resumable chat of an agent that %s removes', async ( _method, remove ) => {
+			await agentManager.createAgent( 'test-key', testConfig );
+			const liveChat = getResumableChat( 'test-key' );
+
+			remove();
+
+			expect( getResumableChat( 'test-key' ) ).not.toBe( liveChat );
+		} );
+
 		it( 'should remove existing agent', async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
 			const removed = agentManager.removeAgent( 'test-key' );
@@ -442,6 +455,27 @@ describe( 'agentManager', () => {
 	describe( 'sendMessageStream', () => {
 		beforeEach( async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
+		} );
+
+		it( 'sends a message under its history copy’s ID', async () => {
+			vi.mocked( createTextMessage ).mockReturnValueOnce( {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'Hello' } ],
+				messageId: 'user-1',
+			} );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+				void update;
+			}
+
+			expect( mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.messageId ).toBe(
+				'user-1'
+			);
+			expect( agentManager.getConversationHistory( 'test-key' ).at( -1 )?.messageId ).toBe(
+				'user-1'
+			);
 		} );
 
 		it( 'sendToolResult supersedes a stale recorded result for the same call', async () => {

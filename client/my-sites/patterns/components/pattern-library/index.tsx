@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
@@ -13,14 +12,12 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { ReadymadeTemplates } from 'calypso/my-sites/patterns/components/readymade-templates';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
 import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
-import { useReadymadeTemplates } from 'calypso/my-sites/patterns/hooks/use-readymade-templates';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { filterPatternsByType } from 'calypso/my-sites/patterns/lib/filter-patterns-by-type';
@@ -68,15 +65,6 @@ function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowT
 	} );
 }
 
-function scrollToSection( element: HTMLDivElement, scrollBehavior: ScrollBehavior = 'smooth' ) {
-	requestAnimationFrame( () => {
-		element.scrollIntoView( {
-			behavior: scrollBehavior,
-			block: 'center',
-		} );
-	} );
-}
-
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
@@ -89,10 +77,9 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
-	const readymadeTemplateSectionRef = useRef< HTMLDivElement >( null );
 
 	const { recordPatternsEvent } = useRecordPatternsEvent();
-	const { category, searchTerm, section, isGridView, patternTypeFilter, patternPermalinkId } =
+	const { category, searchTerm, isGridView, patternTypeFilter, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -101,7 +88,6 @@ export const PatternLibrary = ( {
 		category,
 		{ enabled: Boolean( category || searchTerm ) }
 	);
-	const { data: readymadeTemplates = [] } = useReadymadeTemplates();
 
 	const patterns = searchTerm
 		? filterPatternsByTerm( rawPatterns, searchTerm )
@@ -167,16 +153,6 @@ export const PatternLibrary = ( {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
 	}, [] );
-
-	useEffect( () => {
-		if (
-			'readymade-templates-section' === section &&
-			readymadeTemplateSectionRef.current &&
-			! searchTerm
-		) {
-			scrollToSection( readymadeTemplateSectionRef.current, 'instant' );
-		}
-	}, [ searchTerm, section ] );
 
 	// `calypso-router` has trouble with the onboarding URL we use. This code prevents click
 	// events on onboarding links from propagating to the `calypso-router` event listener,
@@ -362,13 +338,8 @@ export const PatternLibrary = ( {
 				) }
 
 				{ isHomePage && (
-					<PatternsCopyPasteInfo
-						theme={ isEnabled( 'readymade-templates/showcase' ) ? 'gray' : 'dark' }
-					/>
-				) }
-
-				{ isHomePage && (
 					<>
+						<PatternsCopyPasteInfo />
 						<CategoryGallery
 							title={ translate( 'Beautiful, curated page layouts', {
 								comment:
@@ -381,17 +352,11 @@ export const PatternLibrary = ( {
 							categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
 							patternTypeFilter={ PatternTypeFilter.PAGES }
 						/>
-						{ isEnabled( 'readymade-templates/showcase' ) && (
-							<ReadymadeTemplates
-								readymadeTemplates={ readymadeTemplates }
-								forwardRef={ readymadeTemplateSectionRef }
-							/>
-						) }
 					</>
 				) }
 			</div>
 
-			<PatternsGetStarted theme={ isEnabled( 'readymade-templates/showcase' ) ? 'blue' : 'dark' } />
+			<PatternsGetStarted />
 		</>
 	);
 };

@@ -1,15 +1,17 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
+import { getTwoFactorHelpText } from 'calypso/blocks/login/two-factor-authentication/get-two-factor-help-text';
 import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
+	hasTwoFactorEmailNonce?: boolean;
 	action?: string;
 	isWooJPC?: boolean;
 	partnerConfig?: PartnerConfig | null;
-	isFromJetpackConnector?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -20,15 +22,22 @@ interface Props {
 const getHeadingSubText = ( {
 	isSocialFirst,
 	twoFactorAuthType,
+	hasTwoFactorEmailNonce,
 	action,
 	translate,
 	isWooJPC,
 	partnerConfig,
-	isFromJetpackConnector,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 }: Props ) => {
-	if ( ! isSocialFirst || twoFactorAuthType ) {
+	if ( ! isSocialFirst ) {
 		return null;
+	}
+
+	if ( twoFactorAuthType ) {
+		const primary = getTwoFactorHelpText( twoFactorAuthType, !! hasTwoFactorEmailNonce, translate );
+
+		return primary ? { primary, secondary: null } : null;
 	}
 
 	const tos = (
@@ -79,13 +88,13 @@ const getHeadingSubText = ( {
 		</span>
 	);
 
-	// Unified connection flow (jetpack-connector): a prominent, dotcom-styled
+	// Unified connection flow: a prominent, dotcom-styled
 	// subtitle sourced from the shared resolver sits between the H1 and the
 	// existing ToS line. The resolver returns the family-driven benefit
 	// clause for the active plugin set; the ToS keeps its established
 	// subtle styling underneath. Lostpassword keeps the standard
 	// reset-instructions copy.
-	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
+	if ( isUnifiedConnectionFlow && 'lostpassword' !== action ) {
 		return {
 			primary: getLoginCopy( connectorPlugins ).subtitle,
 			secondary: tos,

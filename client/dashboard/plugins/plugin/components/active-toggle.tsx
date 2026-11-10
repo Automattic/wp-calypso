@@ -3,7 +3,7 @@ import FieldActionToggle from './field-action-toggle';
 import type { SiteWithPluginData } from '../use-plugin';
 import type { Dispatch, SetStateAction } from 'react';
 
-type ActiveFieldProps = {
+type ActiveToggleProps = {
 	item: SiteWithPluginData;
 	plugin: { id?: string; name?: string } | null | undefined;
 	// The current active value from the server for this plugin on this site.
@@ -24,7 +24,7 @@ export const ActiveToggle = ( {
 	optimisticActive,
 	setOptimisticActive,
 	disabled = false,
-}: ActiveFieldProps ) => {
+}: ActiveToggleProps ) => {
 	const serverChecked = active;
 	const optimistic = optimisticActive[ item.ID ];
 

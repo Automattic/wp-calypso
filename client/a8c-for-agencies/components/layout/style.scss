@@ -11,6 +11,33 @@
 	}
 }
 
+.theme-a8c-for-agencies .layout:has( .checkout-v2.is-prepared-checkout ) {
+	.layout__secondary,
+	.hosting-dashboard-layout > .current-section,
+	.hosting-dashboard-layout__header {
+		display: none;
+	}
+
+	.layout__content {
+		padding-inline: 16px;
+	}
+
+	.hosting-dashboard-layout__top-wrapper {
+		padding-block: 0;
+		border-block-end: 0;
+	}
+
+	.layout__primary .hosting-dashboard-layout {
+		pointer-events: auto;
+		opacity: 1;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			max-block-size: none;
+			transform: none;
+		}
+	}
+}
+
 .a4a-layout__banner {
 	margin-inline: 0;
 	max-height: 100%;

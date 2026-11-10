@@ -58,7 +58,10 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	// The menu should render "on top" of the profile picture & site switcher
 	z-index: 20;
 
-	width: 220px;
+	// Grows past 220px only when an item needs it, so labels stay on one line.
+	width: max-content;
+	min-width: 220px;
+	max-width: calc(100vw - 32px);
 	margin: 0;
 	padding: 8px;
 

@@ -281,12 +281,6 @@ export type GridContextProps = {
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 
 	/**
-	 * When true, the user is in the rolled-out pricing differentiation cohort.
-	 * Used to display cohort-specific feature titles in the comparison grid.
-	 */
-	isExperimentVariant?: boolean;
-
-	/**
 	 * Display availability checkmarks next to features in the features grid.
 	 */
 	showFeatureCheckmarks?: boolean;

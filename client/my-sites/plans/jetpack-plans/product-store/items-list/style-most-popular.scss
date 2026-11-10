@@ -27,8 +27,9 @@
 	margin: 0;
 
 	@media only screen and (min-width: $break-xlarge) {
-		grid-template-columns: 1fr 1fr 1fr;
-		justify-items: space-between;
+		// auto-fit collapses unused tracks, so fewer than three cards stay centered.
+		grid-template-columns: repeat(auto-fit, calc((100% - 48px) / 3));
+		justify-content: center;
 		margin: 32px auto 0;
 		gap: 24px;
 	}

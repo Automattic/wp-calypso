@@ -33,7 +33,10 @@ import { useSiteData } from '../../../hooks/use-site-data';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { AssertConditionState, type FlowV2, type SubmitHandler } from '../../internals/types';
 
 function initialize() {
@@ -477,7 +480,9 @@ const domain: FlowV2< typeof initialize > = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					} else {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 					return;
 				}

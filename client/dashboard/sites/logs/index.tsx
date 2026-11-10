@@ -31,6 +31,8 @@ const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
 } );
 
 function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string } ) {
+	// The route stays mounted when the site changes, so the content is keyed by slug to start
+	// auto-refresh and the pinned date range over for each site.
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Sites with a Jetpack connection error can't reach the settings endpoint;
@@ -38,6 +40,7 @@ function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string }
 	if ( site.__inaccessible_jetpack_error ) {
 		return (
 			<SiteLogsContent
+				key={ siteSlug }
 				site={ site }
 				logType={ logType }
 				gmtOffset={ 0 }
@@ -46,7 +49,7 @@ function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string }
 		);
 	}
 
-	return <SiteLogsForReachableSite site={ site } logType={ logType } />;
+	return <SiteLogsForReachableSite key={ siteSlug } site={ site } logType={ logType } />;
 }
 
 function SiteLogsForReachableSite( { site, logType }: { site: Site; logType: LogType } ) {
@@ -93,59 +96,30 @@ function SiteLogsContent( {
 		siteId,
 	} );
 
-	// Normalize any incoming ?from/&to query params to Unix seconds (canonical form)
-	useEffect( () => {
-		try {
-			const url = new URL( window.location.href );
-			const searchParams = url.searchParams;
-			let changed = false;
-			let sawParam = false;
-			( [ 'from', 'to' ] as const ).forEach( ( key ) => {
-				const raw = searchParams.get( key );
-				if ( ! raw ) {
-					return;
-				}
-				sawParam = true;
-				const number = Number.parseInt( raw, 10 );
-				if ( ! Number.isFinite( number ) ) {
-					return;
-				}
-				if ( number > 1e12 ) {
-					searchParams.set( key, String( Math.floor( number / 1000 ) ) );
-					changed = true;
-				}
-			} );
-
-			// Only rewrite if we saw a param and actually changed it; preserve hash
-			if ( sawParam && changed ) {
-				history.replaceState( null, '', url.toString() );
-			}
-		} catch ( _e ) {
-			// noop: if URL is not parseable, skip normalization
-		}
-	}, [] );
-
 	const { dateRange, handleDateRangeChange } = useDateRange( {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
 		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
+		resetPageOnChange: true,
+		initializeUrl:
+			( logType === LogType.PHP || logType === LogType.SERVER ) &&
+			hasHostingFeature( site, HostingFeatures.LOGS ),
 	} );
-	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
-	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
-
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		if ( autoRefresh && ! isLast7Days( next, timezoneString, gmtOffset ) ) {
+	// Only stop refresh after the router accepts a non-live range. Clear the warning here
+	// too, since Back/Forward can restore a live range without going through the picker.
+	useEffect( () => {
+		if ( isLast7Days( dateRange, timezoneString, gmtOffset ) ) {
+			setAutoRefreshDisabledReason( null );
+		} else if ( autoRefresh ) {
 			setAutoRefresh( false );
 			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
-		} else {
-			// Clear on any other change, including non–last-7 → non–last-7
-			setAutoRefreshDisabledReason( null );
 		}
+	}, [ autoRefresh, dateRange, timezoneString, gmtOffset ] );
 
+	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
+		setAutoRefreshDisabledReason( null );
 		handleDateRangeChange( next );
-
-		setDateRangeVersion( ( v ) => v + 1 );
 	};
 
 	const handleAutoRefreshToggle = ( isChecked: boolean ) => {
@@ -226,9 +200,9 @@ function SiteLogsContent( {
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
 						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
 							<SiteLogsDataViews
+								key={ site.ID }
 								logType={ logType }
 								dateRange={ dateRange }
-								dateRangeVersion={ dateRangeVersion }
 								autoRefresh={ autoRefresh }
 								setAutoRefresh={ setAutoRefresh }
 								autoRefreshDisabledReason={ autoRefreshDisabledReason }
@@ -242,7 +216,6 @@ function SiteLogsContent( {
 						<SiteActivityLogsDataViews
 							logType={ logType }
 							dateRange={ dateRange }
-							dateRangeVersion={ dateRangeVersion }
 							autoRefresh={ autoRefresh }
 							setAutoRefresh={ setAutoRefresh }
 							gmtOffset={ gmtOffset }

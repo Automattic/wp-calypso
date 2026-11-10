@@ -32,11 +32,21 @@
 			cursor: pointer;
 		}
 
-		&.is-visible {
+		&.is-visible,
+		&.is-reserved {
 			position: relative;
 			z-index: z-index("root", ".comments__form .button:not(.components-button)");
 			float: right;
+		}
+
+		&.is-visible {
 			opacity: 1;
+		}
+
+		// Holding its place under an open editor, so it fades in with the first word instead of
+		// pushing the page down.
+		&.is-reserved:not(.is-visible) {
+			visibility: hidden;
 		}
 	}
 
@@ -45,9 +55,11 @@
 		color: var(--color-link);
 	}
 
-	.comments__cancel-reply {
-		font-size: $font-body-extra-small;
-		cursor: pointer;
+	// The block editor's side padding, so the words don't shift over when it takes over. The
+	// hidden mirror that sizes the textarea gets it too.
+	&.has-block-editor .expanding-area pre,
+	&.has-block-editor .expanding-area textarea {
+		padding-inline: 12px;
 	}
 
 	@include ui-mixins.when-dark-theme {

@@ -24,7 +24,7 @@ import {
 	getPurchasedStorageQuantity,
 	getStorageTierYearlyPrice,
 	type StorageTierOption,
-} from './storage-utils';
+} from './utils';
 import type { Site } from '@automattic/api-core';
 
 interface AddStorageModalProps {

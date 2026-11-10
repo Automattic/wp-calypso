@@ -1,6 +1,8 @@
+import { readConversationsQuery, siteCommentsInfiniteQuery } from '@automattic/api-queries';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
+import { ConversationsInboxPlaceholder } from 'calypso/reader/conversations/inbox/placeholder';
 import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
@@ -9,50 +11,30 @@ const loadStream = () =>
 		/* webpackChunkName: "async-load-calypso-reader-conversations-stream" */ 'calypso/reader/conversations/stream'
 	);
 
-export function conversations( context, next ) {
-	const basePath = sectionify( context.path );
-	const mcKey = 'conversations';
-	const title = 'Reader > Conversations';
-	const state = context.store.getState();
-
-	trackPageLoad( basePath, 'Reader > Conversations', mcKey );
-	recordTrack(
-		'calypso_reader_conversations_viewed',
-		{},
-		{ pathnameOverride: getCurrentRoute( state ) }
-	);
-
-	const streamKey = 'conversations';
-	const scrollTracker = trackScrollPage.bind(
-		null,
-		'/reader/conversations',
-		title,
-		'Reader',
-		mcKey
-	);
-
-	context.primary = (
-		<AsyncLoad
-			require={ loadStream }
-			key="conversations"
-			streamKey={ streamKey }
-			trackScrollPage={ scrollTracker }
-			placeholder={ null }
-		/>
-	);
-	next();
-}
-
 const loadInbox = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-conversations-inbox" */ 'calypso/reader/conversations/inbox'
 	).then( ( { ConversationsInbox } ) => ( { default: ConversationsInbox } ) );
 
 export function conversationsInbox( context, next ) {
+	// Same key as the inbox's first query. Opening a conversation runs this again, so only fetch
+	// when nothing is cached.
+	context.queryClient.prefetchInfiniteQuery( { ...readConversationsQuery(), staleTime: Infinity } );
+	const siteId = Number( context.params.siteId );
+	const postId = Number( context.params.postId );
+	if ( siteId && postId ) {
+		// <Comments> only mounts once the post loads, so start its first page alongside the post.
+		context.queryClient.prefetchInfiniteQuery( siteCommentsInfiniteQuery( { siteId, postId } ) );
+	}
 	trackPageLoad(
 		'/reader/conversations/inbox',
 		'Reader > Conversations > Inbox',
 		'conversations-inbox'
+	);
+	recordTrack(
+		'calypso_reader_conversations_viewed',
+		{},
+		{ pathnameOverride: getCurrentRoute( context.store.getState() ) }
 	);
 
 	context.primary = (
@@ -61,7 +43,11 @@ export function conversationsInbox( context, next ) {
 			key="conversations-inbox"
 			siteId={ context.params.siteId }
 			postId={ context.params.postId }
-			placeholder={ null }
+			placeholder={
+				<ConversationsInboxPlaceholder
+					hasConversation={ Boolean( context.params.siteId && context.params.postId ) }
+				/>
+			}
 		/>
 	);
 	next();

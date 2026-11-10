@@ -88,9 +88,9 @@ export const useSiteCopy = (
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
-	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
+	const shouldShowSiteCopyItem = Boolean(
+		options.enabled && hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases
+	);
 
 	const startSiteCopy = useCallback( () => {
 		if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
