@@ -97,12 +97,14 @@ $conversations-inbox-post-card-shadow:
 	position: relative;
 	box-shadow: $conversations-inbox-post-card-shadow;
 	color: var( --color-text );
-	transition-property: border-color, box-shadow;
+	transition-property: background-color, border-color, box-shadow;
 	transition-duration: var( --wpds-motion-duration-sm );
 	transition-timing-function: var( --wpds-motion-easing-balanced );
 
+	// The notifications panel's post card hover, a shade lighter.
 	&:hover {
-		border-color: color-mix( in srgb, var( --color-border-subtle ) 88%, var( --color-text ) );
+		border-color: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, var( --color-border-subtle ) );
+		background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 1%, transparent );
 		box-shadow: none;
 	}
 }
@@ -134,7 +136,7 @@ $conversations-inbox-post-card-shadow:
 // The same arrow as the notifications panel's post card, shown while the card is hovered or focused.
 .conversations-inbox__post-arrow {
 	flex-shrink: 0;
-	fill: var( --wp-components-color-gray-600, #{$gray-600} );
+	fill: var( --color-text );
 	opacity: 0;
 	transition: opacity var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
 
