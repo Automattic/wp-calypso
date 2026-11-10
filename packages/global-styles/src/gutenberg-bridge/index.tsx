@@ -64,7 +64,10 @@ const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	'withExperimentalBlockEditorProvider'
 );
 
-const useSafeGlobalStylesOutput = (): [ unknown[], Record< string, unknown > ] => {
+const useSafeGlobalStylesOutput = (): [
+	Parameters< typeof transformStyles >[ 0 ],
+	Record< string, unknown >,
+] => {
 	const { merged } = useContext( GlobalStylesContext );
 	try {
 		const [ stylesheets, settings ] = generateGlobalStyles(

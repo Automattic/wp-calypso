@@ -106,7 +106,7 @@ describe( '<WelcomeBand>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'Welcome to Automattic for Agencies' } )
 		).toBeVisible();
-		const lockedLabels = screen.getAllByText( 'Unlocks when your account is activated' );
+		const lockedLabels = screen.getAllByText( 'Unlocks when your account is approved' );
 		expect( lockedLabels ).toHaveLength( 2 );
 		lockedLabels.forEach( ( label ) => expect( label ).toBeVisible() );
 		expect( screen.queryByRole( 'link', { name: 'Explore referrals' } ) ).not.toBeInTheDocument();

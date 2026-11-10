@@ -29,6 +29,7 @@ const ActionButton = ( {
 			isDestructive={ isDestructive }
 			isBusy={ isBusy }
 			disabled={ isBusy }
+			accessibleWhenDisabled
 			onClick={ ( event ) => {
 				// Prevent the notification panel from being closed.
 				event.stopPropagation();

@@ -47,13 +47,13 @@ describe( 'hasBenefitedFromIntroductoryOffer', () => {
 	} );
 
 	it( 'returns true when the earliest plan license was issued within the offer window', () => {
-		const licenses = [ license( { issued_at: '2026-08-12 10:00:00' } ) ];
+		const licenses = [ license( { issued_at: '2026-11-10 10:00:00' } ) ];
 
 		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( true );
 	} );
 
 	it( 'counts a license issued exactly on the offer start date as benefited', () => {
-		const licenses = [ license( { issued_at: '2026-08-11 00:00:00' } ) ];
+		const licenses = [ license( { issued_at: '2026-11-09 00:00:00' } ) ];
 
 		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( true );
 	} );

@@ -165,23 +165,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arraypress/waveform-player@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@arraypress/waveform-player@npm:1.2.1"
-  checksum: 87340c73833ccdaa721fa3cdadba5bc2ad2952dc45c0f5f85a3c4fc986fc7a6e094ed2d9ceb86af5e81080188b1c3229e96471bbf77845b19260ae5e77f542f1
-  languageName: node
-  linkType: hard
-
-"@asamuzakjp/css-color@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "@asamuzakjp/css-color@npm:3.2.0"
-  dependencies:
-    "@csstools/css-calc": "npm:^2.1.3"
-    "@csstools/css-color-parser": "npm:^3.0.9"
-    "@csstools/css-parser-algorithms": "npm:^3.0.4"
-    "@csstools/css-tokenizer": "npm:^3.0.3"
-    lru-cache: "npm:^10.4.3"
-  checksum: a4bf1c831751b1fae46b437e37e8a38c0b5bd58d23230157ae210bd1e905fe509b89b7c243e63d1522d852668a6292ed730a160e21342772b4e5b7b8ea14c092
+"@arraypress/waveform-player@npm:^1.27.0":
+  version: 1.30.0
+  resolution: "@arraypress/waveform-player@npm:1.30.0"
+  checksum: 73849b5f781b3c206bae23f544206c2ae2a272443e1ca4c57f375dd40e003f6e325e51e8596571e677e7373b9168655dc51bffc6947710d246da77302c378a9c
   languageName: node
   linkType: hard
 
@@ -310,7 +297,7 @@ __metadata:
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
-    "@wordpress/plugins": "npm:^7.48.0"
+    "@wordpress/plugins": "npm:^8.1.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^4.1.0"
     copy-webpack-plugin: "npm:^14.0.0"
     postcss-prefix-selector: "npm:^1.16.1"
@@ -320,7 +307,7 @@ __metadata:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^11.1.0
     "@wordpress/element": ^10.1.0
-    postcss: ^8.5.31
+    postcss: ^8.5.32
     react: ^18.2.0
     react-dom: ^18.2.0
     redux: ^5.0.1
@@ -352,11 +339,11 @@ __metadata:
     "@wordpress/abilities": "npm:^0.25.0"
     "@wordpress/api-fetch": "npm:^8.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
+    "@wordpress/core-data": "npm:^9.1.0"
     "@wordpress/html-entities": "npm:^5.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
@@ -392,7 +379,7 @@ __metadata:
     "@wordpress/api-fetch": "npm:^7.0.0"
     autoprefixer: "npm:^10.4.0"
     marked: "npm:^16.4.2"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
     typescript: "npm:^5.9.3"
@@ -453,9 +440,9 @@ __metadata:
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     framer-motion: "npm:^12.23.0"
-    jsdom: "npm:^24.1.3"
+    jsdom: "npm:^20.0.3"
     marked: "npm:^16.4.2"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
     react-markdown: "npm:^10.1.0"
@@ -518,7 +505,7 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/url": "npm:^4.48.0"
     he: "npm:^1.2.0"
-    qs: "npm:^6.15.2"
+    qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
@@ -593,7 +580,7 @@ __metadata:
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-oxc-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
-    "@wordpress/admin-ui": "npm:^2.3.0"
+    "@wordpress/admin-ui": "npm:^3.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
@@ -606,9 +593,9 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     html-webpack-plugin: "npm:^5.6.8"
     i18n-calypso: "workspace:^"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     path-browserify: "npm:^1.0.1"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -630,7 +617,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/global-styles": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
+    "@wordpress/block-editor": "npm:^20.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     clsx: "npm:^2.1.1"
     react: "npm:^18.3.1"
@@ -743,7 +730,7 @@ __metadata:
     webpack-cli: "npm:^7.2.3"
     yargs: "npm:^17.7.2"
   peerDependencies:
-    postcss: ^8.5.31
+    postcss: ^8.5.32
     webpack: ^5.101.0
   bin:
     build-app-languages: ./bin/build-app-languages.js
@@ -765,7 +752,7 @@ __metadata:
     "@types/node": "npm:^24.12.2"
     "@wordpress/base-styles": "npm:^9.1.0"
     chroma-js: "npm:^2.6.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     postcss-custom-properties: "npm:^12.1.11"
     sass: "npm:1.77.8"
   languageName: unknown
@@ -1097,9 +1084,9 @@ __metadata:
     colord: "npm:2.9.4"
     debug: "npm:^4.4.3"
     fast-deep-equal: "npm:^3.1.3"
-    gridicons: "npm:^3.4.2"
+    gridicons: "npm:^3.4.3"
     i18n-calypso: "workspace:^"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.3"
     storybook: "npm:^10.6.5"
@@ -1180,7 +1167,7 @@ __metadata:
     debug: "npm:^4.4.3"
     i18n-calypso: "workspace:^"
     nock: "npm:^14.0.17"
-    qs: "npm:^6.15.2"
+    qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
@@ -1220,7 +1207,7 @@ __metadata:
     "@wordpress/url": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
     jest: "npm:^30.5.2"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
@@ -1316,9 +1303,9 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/ui": "npm:^0.26.0"
     clsx: "npm:^2.1.1"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     nock: "npm:^14.0.17"
-    qs: "npm:^6.15.2"
+    qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^10.6.5"
@@ -1353,7 +1340,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     date-fns: "npm:^4.4.0"
     jest: "npm:^30.5.2"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
@@ -1446,19 +1433,19 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/wordpress__block-library": "npm:^2.6.3"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/block-library": "npm:^9.48.0"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/block-library": "npm:^12.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
-    "@wordpress/global-styles-engine": "npm:^1.14.1"
-    "@wordpress/global-styles-ui": "npm:^1.14.1"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/global-styles-ui": "npm:^2.1.0"
     "@wordpress/keycodes": "npm:^5.1.0"
     "@wordpress/private-apis": "npm:^3.1.0"
     clsx: "npm:^2.1.1"
     deepmerge: "npm:^4.3.1"
     i18n-calypso: "workspace:^"
-    is-plain-object: "npm:^5.0.0"
+    is-plain-object: "npm:^5.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
@@ -1488,7 +1475,7 @@ __metadata:
     "@storybook/addon-docs": "npm:^10.6.5"
     "@storybook/react-webpack5": "npm:^10.6.5"
     "@wordpress/compose": "npm:^8.2.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
@@ -1521,10 +1508,10 @@ __metadata:
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
     "@wordpress/dom-ready": "npm:^5.1.0"
-    "@wordpress/editor": "npm:^14.51.0"
+    "@wordpress/editor": "npm:^16.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
-    "@wordpress/plugins": "npm:^7.48.0"
+    "@wordpress/plugins": "npm:^8.1.0"
     "@wordpress/private-apis": "npm:^3.1.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^4.1.0"
     "@wordpress/router": "npm:^2.1.0"
@@ -1570,7 +1557,7 @@ __metadata:
     "@wordpress/icons": "npm:^15.5.0"
     "@wordpress/primitives": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-draggable: "npm:^4.4.6"
@@ -1629,14 +1616,15 @@ __metadata:
     "@wordpress/abilities": "npm:^0.25.0"
     "@wordpress/api-fetch": "npm:^8.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/editor": "npm:^14.51.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/editor": "npm:^16.1.0"
     "@wordpress/hooks": "npm:^5.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
-    "@wordpress/plugins": "npm:^7.48.0"
+    "@wordpress/plugins": "npm:^8.1.0"
     "@wordpress/primitives": "npm:^5.1.0"
     "@wordpress/url": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
@@ -1685,7 +1673,7 @@ __metadata:
     "@wordpress/icons": "npm:^15.5.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.3"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
@@ -1712,8 +1700,8 @@ __metadata:
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@wordpress/abilities": "npm:^0.25.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/hooks": "npm:^5.1.0"
@@ -1735,6 +1723,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -1766,7 +1755,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     jest: "npm:^30.5.2"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
@@ -1810,7 +1799,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     msw: "npm:^2.1.7"
     msw-storybook-addon: "npm:2.0.7"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     social-logos: "npm:^3.4.0"
@@ -1909,7 +1898,7 @@ __metadata:
     debug: "npm:^4.4.3"
     html-webpack-plugin: "npm:^5.6.8"
     i18n-calypso: "workspace:^"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     postcss-custom-properties: "npm:^12.1.11"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
@@ -1943,11 +1932,11 @@ __metadata:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@wordpress/api-fetch": "npm:^8.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/data": "npm:^11.1.0"
-    "@wordpress/editor": "npm:^14.51.0"
+    "@wordpress/editor": "npm:^16.1.0"
     "@wordpress/element": "npm:^10.1.0"
     "@wordpress/hooks": "npm:^5.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
@@ -1956,9 +1945,9 @@ __metadata:
     "@wordpress/primitives": "npm:^5.1.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^4.1.0"
     clsx: "npm:^2.1.1"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     new-github-issue-url: "npm:^0.2.1"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
@@ -2043,11 +2032,13 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-oxc-makepot": "workspace:^"
+    "@react-spring/web": "npm:10.1.1"
     "@size-limit/file": "npm:^8.2.6"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@testing-library/user-event": "npm:^14.6.8"
+    "@visx/xychart": "npm:^4.0.0"
     "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/data": "npm:^11.1.0"
@@ -2061,11 +2052,11 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     html-webpack-plugin: "npm:^5.6.8"
     jest: "npm:^30.5.2"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     moment-timezone: "npm:^0.5.48"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     path-browserify: "npm:^1.0.1"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     postcss-prefix-selector: "npm:^1.16.1"
     postcss-selector-parser: "npm:^7.1.7"
     prop-types: "npm:^15.8.1"
@@ -2192,7 +2183,7 @@ __metadata:
     webpack: "npm:^5.111.1"
   peerDependencies:
     "@wordpress/i18n": ^6.21.0 || ^7.0.0
-    postcss: ^8.5.31
+    postcss: ^8.5.32
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -2219,7 +2210,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.3"
     "@wordpress/components": "npm:^37.0.0"
     clsx: "npm:^2.1.1"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react-modal: "npm:^3.16.3"
     require-from-string: "npm:^2.0.2"
     storybook: "npm:^10.6.5"
@@ -2265,13 +2256,15 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     fuse.js: "npm:^6.6.2"
-    postcss: "npm:^8.5.31"
+    jsdom: "npm:^20.0.3"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
     webpack: "npm:^5.111.1"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
@@ -2317,7 +2310,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     history: "npm:^5.3.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     route-recognizer: "npm:^0.3.4"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
@@ -2347,7 +2340,7 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^15.5.0"
     canvas-confetti: "npm:^1.6.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^10.6.5"
@@ -2513,7 +2506,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@base-ui/react": "npm:^1.5.0"
+    "@base-ui/react": "npm:^1.9.0"
     "@microsoft/api-extractor": "npm:^7.59.4"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
@@ -2529,7 +2522,7 @@ __metadata:
     date-fns: "npm:^4.4.0"
     esbuild: "npm:^0.25.5"
     esbuild-sass-plugin: "npm:^3.1.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     postcss-modules: "npm:^6.0.1"
     react-day-picker: "npm:^9.7.0"
     sass-embedded: "npm:^1.89.0"
@@ -2566,17 +2559,17 @@ __metadata:
     "@types/wordpress__block-editor": "npm:^11.5.16"
     "@typescript-eslint/eslint-plugin": "npm:^8.72.0"
     "@typescript-eslint/parser": "npm:^8.72.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
-    "@wordpress/block-library": "npm:^9.48.0"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/block-library": "npm:^12.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/element": "npm:^10.1.0"
     "@wordpress/eslint-plugin": "npm:^28.1.0"
-    "@wordpress/format-library": "npm:^5.48.0"
+    "@wordpress/format-library": "npm:^6.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/keycodes": "npm:^5.1.0"
-    "@wordpress/rich-text": "npm:^7.54.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
     "@wordpress/stylelint-config": "npm:^27.1.0"
     "@wordpress/url": "npm:^5.1.0"
     css-loader: "npm:^7.1.5"
@@ -2684,31 +2677,31 @@ __metadata:
     "@babel/runtime": "npm:^8.0.7"
     "@wordpress/api-fetch": "npm:^8.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
     "@wordpress/dom-ready": "npm:^5.1.0"
-    "@wordpress/edit-post": "npm:^8.48.0"
-    "@wordpress/edit-site": "npm:^6.48.0"
-    "@wordpress/editor": "npm:^14.51.0"
+    "@wordpress/edit-post": "npm:^9.1.0"
+    "@wordpress/edit-site": "npm:^8.1.0"
+    "@wordpress/editor": "npm:^16.1.0"
     "@wordpress/element": "npm:^10.1.0"
     "@wordpress/hooks": "npm:^5.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
     "@wordpress/is-shallow-equal": "npm:^6.1.0"
-    "@wordpress/plugins": "npm:^7.48.0"
+    "@wordpress/plugins": "npm:^8.1.0"
     "@wordpress/private-apis": "npm:^3.1.0"
-    "@wordpress/rich-text": "npm:^7.54.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
     "@wordpress/router": "npm:^2.1.0"
     "@wordpress/url": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.3"
     fast-deep-equal: "npm:^3.1.3"
     npm-run-all: "npm:^4.1.5"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
@@ -2746,7 +2739,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     debug: "npm:^4.4.3"
     i18n-calypso: "workspace:^"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     prop-types: "npm:^15.8.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^6.0.3"
@@ -4425,7 +4418,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.5.0, @base-ui/react@npm:^1.9.0":
+"@base-ui/react@npm:^1.9.0":
   version: 1.9.0
   resolution: "@base-ui/react@npm:1.9.0"
   dependencies:
@@ -4531,23 +4524,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/color-helpers@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@csstools/color-helpers@npm:5.1.0"
-  checksum: b7f99d2e455cf1c9b41a67a5327d5d02888cd5c8802a68b1887dffef537d9d4bc66b3c10c1e62b40bbed638b6c1d60b85a232f904ed7b39809c4029cb36567db
-  languageName: node
-  linkType: hard
-
-"@csstools/css-calc@npm:^2.1.3, @csstools/css-calc@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@csstools/css-calc@npm:2.1.4"
-  peerDependencies:
-    "@csstools/css-parser-algorithms": ^3.0.5
-    "@csstools/css-tokenizer": ^3.0.4
-  checksum: 42ce5793e55ec4d772083808a11e9fb2dfe36db3ec168713069a276b4c3882205b3507c4680224c28a5d35fe0bc2d308c77f8f2c39c7c09aad8747708eb8ddd8
-  languageName: node
-  linkType: hard
-
 "@csstools/css-calc@npm:^3.3.0":
   version: 3.4.3
   resolution: "@csstools/css-calc@npm:3.4.3"
@@ -4555,28 +4531,6 @@ __metadata:
     "@csstools/css-parser-algorithms": ^4.0.2
     "@csstools/css-tokenizer": ^4.0.2
   checksum: 2138888cd2f2736eba4eed09a23f2666b343ab57a6dcb55fcaf8d0cfc768ab1b01ad8f35ccca3d043f30fbf862f9beac2ba4a68c3b7a086835957f99ca50939d
-  languageName: node
-  linkType: hard
-
-"@csstools/css-color-parser@npm:^3.0.9":
-  version: 3.1.0
-  resolution: "@csstools/css-color-parser@npm:3.1.0"
-  dependencies:
-    "@csstools/color-helpers": "npm:^5.1.0"
-    "@csstools/css-calc": "npm:^2.1.4"
-  peerDependencies:
-    "@csstools/css-parser-algorithms": ^3.0.5
-    "@csstools/css-tokenizer": ^3.0.4
-  checksum: 0e0c670ad54ec8ec4d9b07568b80defd83b9482191f5e8ca84ab546b7be6db5d7cc2ba7ac9fae54488b129a4be235d6183d3aab4416fec5e89351f73af4222c5
-  languageName: node
-  linkType: hard
-
-"@csstools/css-parser-algorithms@npm:^3.0.4":
-  version: 3.0.5
-  resolution: "@csstools/css-parser-algorithms@npm:3.0.5"
-  peerDependencies:
-    "@csstools/css-tokenizer": ^3.0.4
-  checksum: d9a1c888bd43849ae3437ca39251d5c95d2c8fd6b5ccdb7c45491dfd2c1cbdc3075645e80901d120e4d2c1993db9a5b2d83793b779dbbabcfb132adb142eb7f7
   languageName: node
   linkType: hard
 
@@ -4598,13 +4552,6 @@ __metadata:
     css-tree:
       optional: true
   checksum: 81fa30efa74821793a4c683f79d9ac20b29f426660362ac8eb61f2a5c364a25850258cc5578739f8448532c99f49c6f89b9ae03f386e2ec384cafe43da0a745e
-  languageName: node
-  linkType: hard
-
-"@csstools/css-tokenizer@npm:^3.0.3":
-  version: 3.0.4
-  resolution: "@csstools/css-tokenizer@npm:3.0.4"
-  checksum: 3b589f8e9942075a642213b389bab75a2d50d05d203727fcdac6827648a5572674caff07907eff3f9a2389d86a4ee47308fafe4f8588f4a77b7167c588d2559f
   languageName: node
   linkType: hard
 
@@ -6356,14 +6303,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/react-is-18@npm:react-is@^18.3.1, react-is@npm:^18.0.0, react-is@npm:^18.3.0":
+"@jest/react-is-18@npm:react-is@^18.3.1, react-is@npm:^18.0.0":
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
   checksum: f2f1e60010c683479e74c63f96b09fb41603527cd131a9959e2aee1e5a8b0caf270b365e5ca77d4a6b18aae659b60a86150bb3979073528877029b35aecd2072
   languageName: node
   linkType: hard
 
-"@jest/react-is-19@npm:react-is@^19.2.5":
+"@jest/react-is-19@npm:react-is@^19.2.5, react-is@npm:^19.3.0":
   version: 19.3.1
   resolution: "react-is@npm:19.3.1"
   checksum: 428e02d986d56f1859c57756084489f6d2900fd686905003c405b32f1168738b78772bfa4bb6c706f5ac821199171522c28bf6434281f524f901459390a19606
@@ -8750,19 +8697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/animated@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/animated@npm:9.7.5"
-  dependencies:
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: f8c2473c60f39a878c7dd0fdfcfcdbc720521e1506aa3f63c9de64780694a0a73d5ccc535a5ccec3520ddb70a71cf43b038b32c18e99531522da5388c510ecd7
-  languageName: node
-  linkType: hard
-
-"@react-spring/core@npm:~10.1.1":
+"@react-spring/core@npm:~10.1.1, @react-spring/core@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/core@npm:10.1.2"
   dependencies:
@@ -8775,30 +8710,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/core@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/core@npm:9.7.5"
-  dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 5bfd83dfe248cd91889f215f015d908c7714ef445740fd5afa054b27ebc7d5a456abf6c309e2459d9b5b436e78d6fda16b62b9601f96352e9130552c02270830
-  languageName: node
-  linkType: hard
-
 "@react-spring/rafz@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/rafz@npm:10.1.2"
   checksum: d019061af956a0320fab8a664f1470de5744f968a68b2d53cc609fcbfe4edf97e0d1bfc1d6ef1526e5d689745f2fe6bf7893fa242a3dd4f3b6bb3e34d67b3bb6
-  languageName: node
-  linkType: hard
-
-"@react-spring/rafz@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/rafz@npm:9.7.5"
-  checksum: 8bdad180feaa9a0e870a513043a5e98a4e9b7292a9f887575b7e6fadab2677825bc894b7ff16c38511b35bfe6cc1072df5851c5fee64448d67551559578ca759
   languageName: node
   linkType: hard
 
@@ -8814,29 +8729,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/shared@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/shared@npm:9.7.5"
-  dependencies:
-    "@react-spring/rafz": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 0207eacccdedd918a2fc55e78356ce937f445ce27ad9abd5d3accba8f9701a39349b55115641dc2b39bb9d3a155b058c185b411d292dc8cc5686bfa56f73b94f
-  languageName: node
-  linkType: hard
-
 "@react-spring/types@npm:~10.1.1, @react-spring/types@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/types@npm:10.1.2"
   checksum: 073f4ecd5e0cc18524ef36c8d28ef0fbd2582f8cbeb3e433680314d0df96a7a1279cbe7c13f2167132fe42f4e7bb68f50d24744b2b0d1e6c55c5eba8b6e643c2
-  languageName: node
-  linkType: hard
-
-"@react-spring/types@npm:~9.7.5":
-  version: 9.7.5
-  resolution: "@react-spring/types@npm:9.7.5"
-  checksum: 85c05121853cacb64f7cf63a4855e9044635e1231f70371cd7b8c78bc10be6f4dd7c68f592f92a2607e8bb68051540989b4677a2ccb525dba937f5cd95dc8bc1
   languageName: node
   linkType: hard
 
@@ -8856,18 +8752,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/web@npm:^9.4.5":
-  version: 9.7.5
-  resolution: "@react-spring/web@npm:9.7.5"
+"@react-spring/web@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "@react-spring/web@npm:10.1.2"
   dependencies:
-    "@react-spring/animated": "npm:~9.7.5"
-    "@react-spring/core": "npm:~9.7.5"
-    "@react-spring/shared": "npm:~9.7.5"
-    "@react-spring/types": "npm:~9.7.5"
+    "@react-spring/animated": "npm:~10.1.2"
+    "@react-spring/core": "npm:~10.1.2"
+    "@react-spring/shared": "npm:~10.1.2"
+    "@react-spring/types": "npm:~10.1.2"
+    csstype: "npm:^3.2.3"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: bcd1e052e1b16341a12a19bf4515f153ca09d1fa86ff7752a5d02d7c4db58e8baf80e6283e64411f1e388c65340dce2254b013083426806b5dbae38bd151e53e
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: e6f518ba53ec87fe542876e6c7662170672f4890f72d186f0aef42ade503cafd2e69fe6a50aacb8a9747b9b310b49a72da86c74cd269c2ee3955c2d4f825df8e
   languageName: node
   linkType: hard
 
@@ -10714,15 +10611,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:^4.17.22":
-  version: 4.17.22
-  resolution: "@types/express@npm:4.17.22"
+"@types/express@npm:^4.17.25":
+  version: 4.17.25
+  resolution: "@types/express@npm:4.17.25"
   dependencies:
     "@types/body-parser": "npm:*"
     "@types/express-serve-static-core": "npm:^4.17.33"
     "@types/qs": "npm:*"
-    "@types/serve-static": "npm:*"
-  checksum: 15c10a5ebb40a0356baa95ed374a2150d862786c9fccbdd724df12acc9c8cb08fbe1d34b446b1bcef2dbe5305cb3013fb39fba791baa54ef6df8056482776abb
+    "@types/serve-static": "npm:^1"
+  checksum: f42b616d2c9dbc50352c820db7de182f64ebbfa8dba6fb6c98e5f8f0e2ef3edde0131719d9dc6874803d25ad9ca2d53471d0fec2fbc60a6003a43d015bab72c4
   languageName: node
   linkType: hard
 
@@ -11064,10 +10961,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/qs@npm:*, @types/qs@npm:^6.9.7":
-  version: 6.9.7
-  resolution: "@types/qs@npm:6.9.7"
-  checksum: 157eb05f4c75790b0ebdcf7b0547ff117feabc8cda03c3cac3d3ea82bb19a1912e76a411df3eb0bdd01026a9770f07bc0e7e3fbe39ebb31c1be4564c16be35f1
+"@types/qs@npm:*, @types/qs@npm:^6.15.1":
+  version: 6.15.1
+  resolution: "@types/qs@npm:6.15.1"
+  checksum: 1dfdbcb4cf2a8f66d57f0b9a9fe6b1c7091cb816687b6698c1351eaf31f62e412cea9b7453a9637b570cd5fad8dced527e5a9e69b4fcc6e318daacd8b749f094
   languageName: node
   linkType: hard
 
@@ -11162,24 +11059,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/send@npm:*":
-  version: 0.17.1
-  resolution: "@types/send@npm:0.17.1"
+"@types/send@npm:*, @types/send@npm:<1":
+  version: 0.17.6
+  resolution: "@types/send@npm:0.17.6"
   dependencies:
     "@types/mime": "npm:^1"
     "@types/node": "npm:*"
-  checksum: 1aad6bfafdaa3a3cadad1b441843dfd166821c0e93513daabe979de85b552a1298cfb6f07d40f80b5ecf14a3194dc148deb138605039841f1dadc7132c73e634
+  checksum: a9d76797f0637738062f1b974e0fcf3d396a28c5dc18c3f95ecec5dabda82e223afbc2d56a0bca46b6326fd7bb229979916cea40de2270a98128fd94441b87c2
   languageName: node
   linkType: hard
 
-"@types/serve-static@npm:*":
-  version: 1.15.7
-  resolution: "@types/serve-static@npm:1.15.7"
+"@types/serve-static@npm:^1":
+  version: 1.15.10
+  resolution: "@types/serve-static@npm:1.15.10"
   dependencies:
     "@types/http-errors": "npm:*"
     "@types/node": "npm:*"
-    "@types/send": "npm:*"
-  checksum: 26ec864d3a626ea627f8b09c122b623499d2221bbf2f470127f4c9ebfe92bd8a6bb5157001372d4c4bd0dd37a1691620217d9dc4df5aa8f779f3fd996b1c60ae
+    "@types/send": "npm:<1"
+  checksum: 842fca14c9e80468f89b6cea361773f2dcd685d4616a9f59013b55e1e83f536e4c93d6d8e3ba5072d40c4e7e64085210edd6646b15d538ded94512940a23021f
   languageName: node
   linkType: hard
 
@@ -12388,21 +12285,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/admin-ui@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@wordpress/admin-ui@npm:2.3.0"
+"@wordpress/admin-ui@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@wordpress/admin-ui@npm:3.1.0"
   dependencies:
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/route": "npm:^0.14.0"
-    "@wordpress/style-runtime": "npm:^0.4.0"
-    "@wordpress/ui": "npm:^0.15.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/route": "npm:^0.25.0"
+    "@wordpress/style-runtime": "npm:^0.15.0"
+    "@wordpress/ui": "npm:^0.26.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-  checksum: 79aeb85cf91a4510a7d89bacf2ce31a613570fb3a47d76b03cf8d5979fc9c4e342ef81df3d3187eb3529a1b5b5084339ee90edb78d69320ba57eacc77e72a441
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 997437ab2809e425b2e1b858da9a1a08b63018baa35d6d8a0d014e5013f368654ff235b4bd7a8c4288b783e919f2a89429f2c2169525355dc1e13c3902ec7b9c
   languageName: node
   linkType: hard
 
@@ -12438,247 +12343,190 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/block-editor@npm:^15.21.0":
-  version: 15.21.0
-  resolution: "@wordpress/block-editor@npm:15.21.0"
+"@wordpress/block-editor@npm:20.0.0":
+  version: 20.0.0
+  resolution: "@wordpress/block-editor@npm:20.0.0"
   dependencies:
-    "@react-spring/web": "npm:^9.4.5"
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/block-serialization-default-parser": "npm:^5.48.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/commands": "npm:^1.48.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/escape-html": "npm:^3.48.0"
-    "@wordpress/global-styles-engine": "npm:^1.15.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/image-cropper": "npm:^1.12.0"
-    "@wordpress/interactivity": "npm:^6.48.0"
-    "@wordpress/is-shallow-equal": "npm:^5.48.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.48.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/preferences": "npm:^4.48.0"
-    "@wordpress/priority-queue": "npm:^3.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/rich-text": "npm:^7.48.0"
-    "@wordpress/style-engine": "npm:^2.48.0"
-    "@wordpress/token-list": "npm:^3.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/upload-media": "npm:^0.33.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/warning": "npm:^3.48.0"
-    "@wordpress/wordcount": "npm:^4.48.0"
+    "@react-spring/web": "npm:^10.1.2"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/block-serialization-default-parser": "npm:^6.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/commands": "npm:^2.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/image-cropper": "npm:^2.1.0"
+    "@wordpress/interactivity": "npm:^8.1.0"
+    "@wordpress/is-shallow-equal": "npm:^6.1.0"
+    "@wordpress/kebab-case": "npm:^2.1.0"
+    "@wordpress/keyboard-shortcuts": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/priority-queue": "npm:^4.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/react-inert-value": "npm:^2.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/style-engine": "npm:^3.1.0"
+    "@wordpress/token-list": "npm:^4.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/upload-media": "npm:^0.44.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/warning": "npm:^4.1.0"
     change-case: "npm:^4.1.2"
     clsx: "npm:^2.1.1"
-    colord: "npm:^2.7.0"
-    deepmerge: "npm:^4.3.0"
-    diff: "npm:^4.0.2"
+    colord: "npm:^2.9.4"
+    diff: "npm:^8.0.3"
     fast-deep-equal: "npm:^3.1.3"
-    memize: "npm:^2.1.0"
     parsel-js: "npm:^1.1.2"
-    postcss: "npm:^8.4.21"
+    postcss: "npm:^8.4.38"
     postcss-prefix-selector: "npm:^1.16.0"
     postcss-urlrebase: "npm:^1.4.0"
-    react-autosize-textarea: "npm:^7.1.0"
-    react-easy-crop: "npm:^5.0.6"
     remove-accents: "npm:^0.5.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: e18c721b40996de4e377fd9a79e3ba7776d20519df69159434d908943efee21ae4fee851a29dc99047861a6919278fed4dd114b2da46f9b86ba8f13a99d44be3
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: d60be54d3b5dcfef61d3502046880d42df001b1b36d76e024e1f586eac6087238235a9810c1b5cb1f30d418749719c975d3a72e9bb690347986d71e6fea85178
   languageName: node
   linkType: hard
 
-"@wordpress/block-editor@patch:@wordpress/block-editor@^15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch":
-  version: 15.21.0
-  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch::version=15.21.0&hash=5a8fa2"
+"@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A20.0.0#~/.yarn/patches/@wordpress-block-editor-npm-20.0.0.patch":
+  version: 20.0.0
+  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A20.0.0#~/.yarn/patches/@wordpress-block-editor-npm-20.0.0.patch::version=20.0.0&hash=54c5d0"
   dependencies:
-    "@react-spring/web": "npm:^9.4.5"
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/block-serialization-default-parser": "npm:^5.48.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/commands": "npm:^1.48.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/escape-html": "npm:^3.48.0"
-    "@wordpress/global-styles-engine": "npm:^1.15.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/image-cropper": "npm:^1.12.0"
-    "@wordpress/interactivity": "npm:^6.48.0"
-    "@wordpress/is-shallow-equal": "npm:^5.48.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.48.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/preferences": "npm:^4.48.0"
-    "@wordpress/priority-queue": "npm:^3.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/rich-text": "npm:^7.48.0"
-    "@wordpress/style-engine": "npm:^2.48.0"
-    "@wordpress/token-list": "npm:^3.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/upload-media": "npm:^0.33.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/warning": "npm:^3.48.0"
-    "@wordpress/wordcount": "npm:^4.48.0"
+    "@react-spring/web": "npm:^10.1.2"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/block-serialization-default-parser": "npm:^6.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/commands": "npm:^2.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/image-cropper": "npm:^2.1.0"
+    "@wordpress/interactivity": "npm:^8.1.0"
+    "@wordpress/is-shallow-equal": "npm:^6.1.0"
+    "@wordpress/kebab-case": "npm:^2.1.0"
+    "@wordpress/keyboard-shortcuts": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/priority-queue": "npm:^4.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/react-inert-value": "npm:^2.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/style-engine": "npm:^3.1.0"
+    "@wordpress/token-list": "npm:^4.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/upload-media": "npm:^0.44.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/warning": "npm:^4.1.0"
     change-case: "npm:^4.1.2"
     clsx: "npm:^2.1.1"
-    colord: "npm:^2.7.0"
-    deepmerge: "npm:^4.3.0"
-    diff: "npm:^4.0.2"
+    colord: "npm:^2.9.4"
+    diff: "npm:^8.0.3"
     fast-deep-equal: "npm:^3.1.3"
-    memize: "npm:^2.1.0"
     parsel-js: "npm:^1.1.2"
-    postcss: "npm:^8.4.21"
+    postcss: "npm:^8.4.38"
     postcss-prefix-selector: "npm:^1.16.0"
     postcss-urlrebase: "npm:^1.4.0"
-    react-autosize-textarea: "npm:^7.1.0"
-    react-easy-crop: "npm:^5.0.6"
     remove-accents: "npm:^0.5.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 3c92fd7bfc67a0f220e94801610fc0938b1427d06ae5e7794b39e083dc3dfbf3c576c27c5cb62cd1aa98d7b7a66022fc5983295fa24d9695999453eb0efa41e9
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: e49909a2a9d30f0676f7357b98873bb25e8296b929939a87fd3551f705471773beb9d33353bcb21b02427b82008ae480f61425b2d23a76e001f8f6b19aae221b
   languageName: node
   linkType: hard
 
-"@wordpress/block-library@npm:9.48.0":
-  version: 9.48.0
-  resolution: "@wordpress/block-library@npm:9.48.0"
+"@wordpress/block-library@npm:12.1.0":
+  version: 12.1.0
+  resolution: "@wordpress/block-library@npm:12.1.0"
   dependencies:
-    "@arraypress/waveform-player": "npm:1.2.1"
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/autop": "npm:^4.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/escape-html": "npm:^3.48.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/interactivity": "npm:^6.48.0"
-    "@wordpress/interactivity-router": "npm:^2.48.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.48.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/latex-to-mathml": "npm:^1.16.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/patterns": "npm:^2.48.0"
-    "@wordpress/primitives": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/reusable-blocks": "npm:^5.48.0"
-    "@wordpress/rich-text": "npm:^7.48.0"
-    "@wordpress/server-side-render": "npm:^6.24.0"
-    "@wordpress/shortcode": "npm:^4.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/upload-media": "npm:^0.33.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/viewport": "npm:^6.48.0"
-    "@wordpress/wordcount": "npm:^4.48.0"
+    "@arraypress/waveform-player": "npm:^1.27.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/autop": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/escape-html": "npm:^4.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/interactivity": "npm:^8.1.0"
+    "@wordpress/interactivity-router": "npm:^3.1.0"
+    "@wordpress/kebab-case": "npm:^2.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/latex-to-mathml": "npm:^2.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/patterns": "npm:^3.1.0"
+    "@wordpress/primitives": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/react-inert-value": "npm:^2.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/server-side-render": "npm:^7.1.0"
+    "@wordpress/shortcode": "npm:^5.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/upload-media": "npm:^0.44.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/wordcount": "npm:^5.1.0"
     change-case: "npm:^4.1.2"
     clsx: "npm:^2.1.1"
-    colord: "npm:^2.7.0"
+    colord: "npm:^2.9.4"
     fast-average-color: "npm:^9.1.1"
-    fast-deep-equal: "npm:^3.1.3"
-    html-react-parser: "npm:5.2.11"
-    memize: "npm:^2.1.0"
-    remove-accents: "npm:^0.5.0"
+    html-react-parser: "npm:^5.2.11"
+    memize: "npm:^2.1.1"
     uuid: "npm:^14.0.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: df167d091b63948d41424bbecdc5edb5daaa5cf5175ca7fab1cc5bdc1697541810b0388e8c67c9334cab93efc7b3bd1c1419d46f9029e230ae17abd2a661b06f
-  languageName: node
-  linkType: hard
-
-"@wordpress/block-library@patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch":
-  version: 9.48.0
-  resolution: "@wordpress/block-library@patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch::version=9.48.0&hash=ae9f52"
-  dependencies:
-    "@arraypress/waveform-player": "npm:1.2.1"
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/autop": "npm:^4.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/escape-html": "npm:^3.48.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/interactivity": "npm:^6.48.0"
-    "@wordpress/interactivity-router": "npm:^2.48.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.48.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/latex-to-mathml": "npm:^1.16.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/patterns": "npm:^2.48.0"
-    "@wordpress/primitives": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/reusable-blocks": "npm:^5.48.0"
-    "@wordpress/rich-text": "npm:^7.48.0"
-    "@wordpress/server-side-render": "npm:^6.24.0"
-    "@wordpress/shortcode": "npm:^4.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/upload-media": "npm:^0.33.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/viewport": "npm:^6.48.0"
-    "@wordpress/wordcount": "npm:^4.48.0"
-    change-case: "npm:^4.1.2"
-    clsx: "npm:^2.1.1"
-    colord: "npm:^2.7.0"
-    fast-average-color: "npm:^9.1.1"
-    fast-deep-equal: "npm:^3.1.3"
-    html-react-parser: "npm:5.2.11"
-    memize: "npm:^2.1.0"
-    remove-accents: "npm:^0.5.0"
-    uuid: "npm:^14.0.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 34de96c2bb90c09daef2abc50baaa9465114ddfd6eec55335ef4d6943e2e1896235c4b60c88349120135abeb5c9d935b2ce675af18046155c2b1cad4cb09b08c
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10baebc5832f42ef0c84f7a7aa654a21cbdd32892b586d85d135fcf07ba4be172d171ec8cdf8d888f04718fd3d2555dd5552a314865f6a53105524b9ac50a464
   languageName: node
   linkType: hard
 
@@ -12689,43 +12537,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/blocks@npm:15.23.0":
-  version: 15.23.0
-  resolution: "@wordpress/blocks@npm:15.23.0"
+"@wordpress/blocks@npm:17.1.0":
+  version: 17.1.0
+  resolution: "@wordpress/blocks@npm:17.1.0"
   dependencies:
-    "@wordpress/autop": "npm:^4.50.0"
-    "@wordpress/blob": "npm:^4.50.0"
-    "@wordpress/block-serialization-default-parser": "npm:^5.50.0"
-    "@wordpress/data": "npm:^10.50.0"
-    "@wordpress/deprecated": "npm:^4.50.0"
-    "@wordpress/dom": "npm:^4.50.0"
-    "@wordpress/element": "npm:^8.2.0"
-    "@wordpress/hooks": "npm:^4.50.0"
-    "@wordpress/html-entities": "npm:^4.50.0"
-    "@wordpress/i18n": "npm:^6.23.0"
-    "@wordpress/is-shallow-equal": "npm:^5.50.0"
-    "@wordpress/private-apis": "npm:^1.50.0"
-    "@wordpress/rich-text": "npm:^7.50.0"
-    "@wordpress/shortcode": "npm:^4.50.0"
-    "@wordpress/warning": "npm:^3.50.0"
+    "@wordpress/autop": "npm:^5.1.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/block-serialization-default-parser": "npm:^6.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/is-shallow-equal": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/shortcode": "npm:^5.1.0"
+    "@wordpress/warning": "npm:^4.1.0"
     change-case: "npm:^4.1.2"
-    colord: "npm:^2.9.3"
+    colord: "npm:^2.9.4"
     fast-deep-equal: "npm:^3.1.3"
-    hpq: "npm:^1.3.0"
-    is-plain-object: "npm:^5.0.0"
+    hpq: "npm:^1.4.0"
+    is-plain-object: "npm:^5.1.0"
     marked: "npm:^18.0.3"
-    memize: "npm:^2.1.0"
-    react-is: "npm:^18.3.0"
+    memize: "npm:^2.1.1"
+    react-is: "npm:^19.3.0"
     remove-accents: "npm:^0.5.0"
     simple-html-tokenizer: "npm:^0.5.7"
     uuid: "npm:^14.0.0"
   peerDependencies:
-    "@types/react": ^18.3.27
-    react: ^18.0.0
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: effb23669c76e44ae30e4e67b00a9c89467426015571297fd70427b56dbadf036c11458bab200998f6d96a42bab0562c9d5871420dadd173d1a250c73ad628b5
+    "@types/react-dom":
+      optional: true
+  checksum: d2a2311c8401610ecef09e35ed789da993a5af3bef5dd83d815af0f2fb594760c60305d940dd68d5745584db205a1684901883a144cb9b74392b472bf97c4dcd
   languageName: node
   linkType: hard
 
@@ -12908,35 +12761,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/core-data@npm:7.48.0":
-  version: 7.48.0
-  resolution: "@wordpress/core-data@npm:7.48.0"
+"@wordpress/core-data@npm:9.1.0":
+  version: 9.1.0
+  resolution: "@wordpress/core-data@npm:9.1.0"
   dependencies:
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/is-shallow-equal": "npm:^5.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/rich-text": "npm:^7.48.0"
-    "@wordpress/sync": "npm:^1.48.0"
-    "@wordpress/undo-manager": "npm:^1.48.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/warning": "npm:^3.48.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/sync": "npm:^3.1.0"
+    "@wordpress/undo-manager": "npm:^2.1.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/warning": "npm:^4.1.0"
     change-case: "npm:^4.1.2"
+    clsx: "npm:^2.1.1"
     equivalent-key-map: "npm:^0.2.2"
     fast-deep-equal: "npm:^3.1.3"
-    memize: "npm:^2.1.0"
+    memize: "npm:^2.1.1"
     uuid: "npm:^14.0.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 931efa930d77ef1ea297c0cd3f8430f25ab81510ac0359033fc6bc32a6168473b03080fb620586aa0ef3c7927a428c70fc950b6ab6c707552a772c7b4c4102a5
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 0b48028c38cb516232e84c45dba2d9d786332b42f29f179d59019b5af884045e385b1c684e3d13cd0611b81d4de1111de508f1419bdacd4e0351d78e3b3e0e8a
   languageName: node
   linkType: hard
 
@@ -13090,171 +12952,151 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/edit-post@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@wordpress/edit-post@npm:8.48.0"
+"@wordpress/edit-post@npm:9.1.0":
+  version: 9.1.0
+  resolution: "@wordpress/edit-post@npm:9.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/admin-ui": "npm:^2.3.0"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/block-library": "npm:^9.48.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/commands": "npm:^1.48.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/editor": "npm:^14.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/global-styles-engine": "npm:^1.15.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.48.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/plugins": "npm:^7.48.0"
-    "@wordpress/preferences": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/viewport": "npm:^6.48.0"
-    "@wordpress/warning": "npm:^3.48.0"
-    "@wordpress/widgets": "npm:^4.48.0"
+    "@wordpress/admin-ui": "npm:^3.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/block-library": "npm:^12.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/commands": "npm:^2.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/editor": "npm:^16.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/keyboard-shortcuts": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/plugins": "npm:^8.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/theme": "npm:^4.0.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/widgets": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
-    memize: "npm:^2.1.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 9eedaaef06f236578e1fc0b2db9c3d799323a1b2993cfc6f0cd00f76ad7d310d639ffa694a5f32b598f5fdd25ec0353e2f04836efc096906a7b68fb76013ffeb
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: cc721ad6655ae7ba4113c194d2503353f3f6c7bb11884ee657af3c1a0a4851a0f01e16772dccfeb535f1de26418654111ab1a789b97fd5c49e11d181a14c66d1
   languageName: node
   linkType: hard
 
-"@wordpress/edit-site@npm:6.48.0":
-  version: 6.48.0
-  resolution: "@wordpress/edit-site@npm:6.48.0"
+"@wordpress/edit-site@npm:8.1.0":
+  version: 8.1.0
+  resolution: "@wordpress/edit-site@npm:8.1.0"
   dependencies:
-    "@react-spring/web": "npm:^9.4.5"
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/admin-ui": "npm:^2.3.0"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/block-library": "npm:^9.48.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/commands": "npm:^1.48.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/editor": "npm:^14.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/escape-html": "npm:^3.48.0"
-    "@wordpress/fields": "npm:^0.40.0"
-    "@wordpress/global-styles-engine": "npm:^1.15.0"
-    "@wordpress/global-styles-ui": "npm:^1.15.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.48.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/media-utils": "npm:^5.48.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/patterns": "npm:^2.48.0"
-    "@wordpress/plugins": "npm:^7.48.0"
-    "@wordpress/preferences": "npm:^4.48.0"
-    "@wordpress/primitives": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/reusable-blocks": "npm:^5.48.0"
-    "@wordpress/router": "npm:^1.48.0"
-    "@wordpress/style-engine": "npm:^2.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/viewport": "npm:^6.48.0"
-    "@wordpress/views": "npm:^1.15.0"
-    "@wordpress/widgets": "npm:^4.48.0"
-    "@wordpress/wordcount": "npm:^4.48.0"
+    "@react-spring/web": "npm:^10.1.2"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/admin-ui": "npm:^3.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/block-library": "npm:^12.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/commands": "npm:^2.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/editor": "npm:^16.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/fields": "npm:^0.51.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/global-styles-ui": "npm:^2.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/keyboard-shortcuts": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/patterns": "npm:^3.1.0"
+    "@wordpress/plugins": "npm:^8.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/router": "npm:^2.1.0"
+    "@wordpress/theme": "npm:^4.0.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/views": "npm:^3.1.0"
+    "@wordpress/widgets": "npm:^5.1.0"
     change-case: "npm:^4.1.2"
     clsx: "npm:^2.1.1"
-    colord: "npm:^2.9.2"
-    fast-deep-equal: "npm:^3.1.3"
-    memize: "npm:^2.1.0"
-    react-autosize-textarea: "npm:^7.1.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: af91140964c92a912125d5e15ab9cf6a196c3e05674b0fdf3cd22848d349f69be1091d41b27380a697d306560c55748de7317cb70fc17f8ab68c1b3995150a1f
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: 78f4a209b170b7fdd54d22dcef1d5da37b8f5b7f27be20a3a8ae673ad144a80fee631b7a9f8648e7360593a53593d8e9400833a6acafba26e4c84f67da9c0099
   languageName: node
   linkType: hard
 
-"@wordpress/editor@npm:14.51.0":
-  version: 14.51.0
-  resolution: "@wordpress/editor@npm:14.51.0"
+"@wordpress/editor@npm:16.1.0":
+  version: 16.1.0
+  resolution: "@wordpress/editor@npm:16.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.51.0"
-    "@wordpress/api-fetch": "npm:^7.51.0"
-    "@wordpress/base-styles": "npm:^11.0.0"
-    "@wordpress/blob": "npm:^4.51.0"
-    "@wordpress/block-editor": "npm:^16.0.0"
-    "@wordpress/block-serialization-default-parser": "npm:^5.51.0"
-    "@wordpress/blocks": "npm:^15.24.0"
-    "@wordpress/commands": "npm:^1.51.0"
-    "@wordpress/components": "npm:^37.0.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/core-data": "npm:^7.51.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/dataviews": "npm:^17.2.0"
-    "@wordpress/date": "npm:^5.51.0"
-    "@wordpress/deprecated": "npm:^4.51.0"
-    "@wordpress/dom": "npm:^4.51.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/fields": "npm:^0.43.0"
-    "@wordpress/global-styles-engine": "npm:^1.18.0"
-    "@wordpress/global-styles-ui": "npm:^1.18.0"
-    "@wordpress/hooks": "npm:^4.51.0"
-    "@wordpress/html-entities": "npm:^4.51.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/icons": "npm:^15.2.0"
-    "@wordpress/interface": "npm:^9.36.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.51.0"
-    "@wordpress/keycodes": "npm:^4.51.0"
-    "@wordpress/media-editor": "npm:^0.14.0"
-    "@wordpress/media-fields": "npm:^0.16.0"
-    "@wordpress/media-utils": "npm:^5.51.0"
-    "@wordpress/notices": "npm:^5.51.0"
-    "@wordpress/patterns": "npm:^2.51.0"
-    "@wordpress/plugins": "npm:^7.51.0"
-    "@wordpress/preferences": "npm:^4.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/reusable-blocks": "npm:^5.51.0"
-    "@wordpress/rich-text": "npm:^7.51.0"
-    "@wordpress/server-side-render": "npm:^6.27.0"
-    "@wordpress/ui": "npm:^0.18.0"
-    "@wordpress/upload-media": "npm:^0.36.0"
-    "@wordpress/url": "npm:^4.51.0"
-    "@wordpress/views": "npm:^1.18.0"
-    "@wordpress/warning": "npm:^3.51.0"
-    "@wordpress/wordcount": "npm:^4.51.0"
+    "@base-ui/react": "npm:^1.9.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/block-serialization-default-parser": "npm:^6.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/commands": "npm:^2.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/global-styles-ui": "npm:^2.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/interface": "npm:^11.1.0"
+    "@wordpress/kebab-case": "npm:^2.1.0"
+    "@wordpress/keyboard-shortcuts": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/media-editor": "npm:^0.22.0"
+    "@wordpress/media-utils": "npm:^6.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/patterns": "npm:^3.1.0"
+    "@wordpress/plugins": "npm:^8.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/primitives": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/server-side-render": "npm:^7.1.0"
+    "@wordpress/theme": "npm:^4.0.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/upload-media": "npm:^0.44.0"
+    "@wordpress/url": "npm:^5.1.0"
+    "@wordpress/views": "npm:^3.1.0"
+    "@wordpress/warning": "npm:^4.1.0"
+    "@wordpress/wordcount": "npm:^5.1.0"
     change-case: "npm:^4.1.2"
-    client-zip: "npm:^2.4.5"
     clsx: "npm:^2.1.1"
-    colord: "npm:^2.9.3"
-    date-fns: "npm:^4.1.0"
+    colord: "npm:^2.9.4"
+    date-fns: "npm:^4.4.0"
     diff: "npm:^8.0.3"
-    fast-deep-equal: "npm:^3.1.3"
-    memize: "npm:^2.1.0"
-    react-autosize-textarea: "npm:^7.1.0"
     redux: "npm:^5.0.1"
     remove-accents: "npm:^0.5.0"
     uuid: "npm:^14.0.0"
@@ -13265,7 +13107,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 4040d623935305f3ebc8cfba9a0f66c5707a48ccd9d4c6f7ee2f0ea91c030adf3e5a550baff746d36d99fb8967e3bc85ea2c447f08195f0f2408a0b2d457cfa6
+  checksum: b4b86fa0ab912ca857ba5cf2208cb6af23735282b375da4ffda3d7577efcf919923a34ad516d3fc7c81a32eaafa0fd4e88599a00ac40202b1b23643616ef96db
   languageName: node
   linkType: hard
 
@@ -13332,192 +13174,161 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/fields@npm:^0.40.0":
-  version: 0.40.0
-  resolution: "@wordpress/fields@npm:0.40.0"
+"@wordpress/fields@npm:^0.51.0":
+  version: 0.51.0
+  resolution: "@wordpress/fields@npm:0.51.0"
   dependencies:
-    "@react-spring/web": "npm:^9.4.5"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/media-utils": "npm:^5.48.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/patterns": "npm:^2.48.0"
-    "@wordpress/primitives": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/router": "npm:^1.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/warning": "npm:^3.48.0"
-    "@wordpress/wordcount": "npm:^4.48.0"
-    change-case: "npm:4.1.2"
-    client-zip: "npm:^2.4.5"
-    clsx: "npm:2.1.1"
-    remove-accents: "npm:^0.5.0"
-  peerDependencies:
-    react: ^18.0.0
-  checksum: f63514f0b0125c2cbc3fa16ec1322873e45ba72cbe8f8f8dfec622483277c21e22e10432e16b9a863c7b1456239fb69755a990a94f10fbe1c3ca1f63dfb31851
-  languageName: node
-  linkType: hard
-
-"@wordpress/fields@npm:^0.43.0":
-  version: 0.43.0
-  resolution: "@wordpress/fields@npm:0.43.0"
-  dependencies:
-    "@react-spring/web": "npm:^9.4.5"
-    "@wordpress/a11y": "npm:^4.51.0"
-    "@wordpress/api-fetch": "npm:^7.51.0"
-    "@wordpress/base-styles": "npm:^11.0.0"
-    "@wordpress/blob": "npm:^4.51.0"
-    "@wordpress/blocks": "npm:^15.24.0"
-    "@wordpress/components": "npm:^37.0.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/core-data": "npm:^7.51.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/dataviews": "npm:^17.2.0"
-    "@wordpress/date": "npm:^5.51.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/hooks": "npm:^4.51.0"
-    "@wordpress/html-entities": "npm:^4.51.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/icons": "npm:^15.2.0"
-    "@wordpress/media-utils": "npm:^5.51.0"
-    "@wordpress/notices": "npm:^5.51.0"
-    "@wordpress/patterns": "npm:^2.51.0"
-    "@wordpress/primitives": "npm:^4.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/router": "npm:^1.51.0"
-    "@wordpress/ui": "npm:^0.18.0"
-    "@wordpress/url": "npm:^4.51.0"
-    "@wordpress/warning": "npm:^3.51.0"
-    "@wordpress/wordcount": "npm:^4.51.0"
-    change-case: "npm:^4.1.2"
-    client-zip: "npm:^2.4.5"
+    "@react-spring/web": "npm:^10.1.2"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/media-utils": "npm:^6.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
     clsx: "npm:^2.1.1"
-    remove-accents: "npm:^0.5.0"
   peerDependencies:
     "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
     react: ^18 || ^19
+    react-dom: ^18 || ^19
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 89a6cd8d88a6f05d85ee233733e3c851ed60abb6376b8a1cdb90ce9a79cff6024680fc34d2d03852ec752b2c37cd1b5c945acc22c665560fc336fbbf86740d9e
+    "@types/react-dom":
+      optional: true
+  checksum: 9f4e24e32e3352e185473590d5587dd1bc5cf4d2b7d1c8ae5f724e49cf0d3043f03a2ac676a5b80832290a8be9fd39d97ad84224ec0afa7ae05fd3740b56c48f
   languageName: node
   linkType: hard
 
-"@wordpress/format-library@npm:^5.48.0":
-  version: 5.48.0
-  resolution: "@wordpress/format-library@npm:5.48.0"
+"@wordpress/format-library@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@wordpress/format-library@npm:6.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/latex-to-mathml": "npm:^1.16.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/rich-text": "npm:^7.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/url": "npm:^4.48.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/latex-to-mathml": "npm:^2.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/url": "npm:^5.1.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 3e836bf6b6643dfe402bc75862374109c6d8b377209a1d53e307543deb6dbb7f7d5111a7414b653eb821418bc8edc8db74b71dc2283fbeedac27a9574a6a96dc
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: 00ec3dad4e2ead54e122474d4bcf986036be46a16a74615540286d8d6bbc9146cef7895ac4af1779342580e9f8695af5dd221fe69075916079cef96391f0373d
   languageName: node
   linkType: hard
 
-"@wordpress/global-styles-engine@npm:^1.14.1, @wordpress/global-styles-engine@npm:^1.15.0, @wordpress/global-styles-engine@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "@wordpress/global-styles-engine@npm:1.18.0"
+"@wordpress/global-styles-engine@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@wordpress/global-styles-engine@npm:2.1.0"
   dependencies:
-    "@wordpress/blocks": "npm:^15.24.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/style-engine": "npm:^2.51.0"
-    colord: "npm:^2.9.3"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/style-engine": "npm:^3.1.0"
+    colord: "npm:^2.9.4"
     deepmerge: "npm:^4.3.1"
     fast-deep-equal: "npm:^3.1.3"
-    is-plain-object: "npm:^5.0.0"
-    memize: "npm:^2.1.0"
-  checksum: b6ac64682c984bb17720f7253a7ccf5f509525481c870e15ef2c44ce163eb28b20824422775ea8e75165312a4a11afcdd981ce55455f1f2500622703c2dde15d
+    is-plain-object: "npm:^5.1.0"
+    memize: "npm:^2.1.1"
+  peerDependencies:
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: a450a5cb7123d15c3ec7bf2b4965aa392f9444b8fd3059ae8d85446ca7aa5b63bef74ad7c19fd4ad0dbbbf67097225a09e893c2e20178ff5339b8bc030a06fbe
   languageName: node
   linkType: hard
 
-"@wordpress/global-styles-ui@npm:1.15.0":
-  version: 1.15.0
-  resolution: "@wordpress/global-styles-ui@npm:1.15.0"
+"@wordpress/global-styles-ui@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@wordpress/global-styles-ui@npm:2.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/global-styles-engine": "npm:^1.15.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    change-case: "npm:^4.1.2"
-    clsx: "npm:^2.1.0"
-    colord: "npm:^2.7.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/kebab-case": "npm:^2.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 124c7c1b443578ed4f33673bee21ff1f046c23c94084195b502a2dda767251eebdc92ed06d6655a7d15a1a8606afe07b31ea38c4cdf7127428d9d97970eded92
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: c0455f1951ef006438415e510c753d89b21aeaecd5135f52a840b2d68a2bea837fd4f74b56598198b61f83361b67bbef6ac2007741bd4aa48eb53c6d7e98e2dd
   languageName: node
   linkType: hard
 
-"@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch":
-  version: 1.15.0
-  resolution: "@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch::version=1.15.0&hash=ac577c"
+"@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A2.1.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-2.1.0.patch":
+  version: 2.1.0
+  resolution: "@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A2.1.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-2.1.0.patch::version=2.1.0&hash=63a783"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/global-styles-engine": "npm:^1.15.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    change-case: "npm:^4.1.2"
-    clsx: "npm:^2.1.0"
-    colord: "npm:^2.7.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/global-styles-engine": "npm:^2.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/kebab-case": "npm:^2.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: ad3c71aebf72b01c36f7f592165663ffb90e601a190eea67ceb9d7dd8ceaab3b2462f674f694dbe2a82c95feacf4fe67524cf6d0f45a0467ef7bfcf920515797
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 6819464996c8798666bc993c1454234d857aa0b26de4105fd7829b9fb0a85f6bbf87f494e6cb73f151317d9c3b78084c88b7e3716a4ee2b98c6cfbbb4a0505a8
   languageName: node
   linkType: hard
 
@@ -13549,7 +13360,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:20.0.0":
+"@wordpress/icons@npm:^15.0.0, @wordpress/icons@npm:^15.5.0":
+  version: 15.5.0
+  resolution: "@wordpress/icons@npm:15.5.0"
+  dependencies:
+    "@wordpress/element": "npm:^8.6.0"
+    "@wordpress/primitives": "npm:^4.54.0"
+    change-case: "npm:^4.1.2"
+  peerDependencies:
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 2d83bfd828ba2d4a8d52ec9a4f061d973f6405d108fe8058bf2a61c7ea632e8f2645126d2e5a7d1bc234a76cea3dcb958350907a4c233564aee33653b30046c9
+  languageName: node
+  linkType: hard
+
+"@wordpress/icons@npm:^20.0.0":
   version: 20.0.0
   resolution: "@wordpress/icons@npm:20.0.0"
   dependencies:
@@ -13570,83 +13398,73 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^15.5.0":
-  version: 15.5.0
-  resolution: "@wordpress/icons@npm:15.5.0"
+"@wordpress/image-cropper@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@wordpress/image-cropper@npm:2.1.0"
   dependencies:
-    "@wordpress/element": "npm:^8.6.0"
-    "@wordpress/primitives": "npm:^4.54.0"
-    change-case: "npm:^4.1.2"
-  peerDependencies:
-    "@types/react": ^18 || ^19
-    react: ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 2d83bfd828ba2d4a8d52ec9a4f061d973f6405d108fe8058bf2a61c7ea632e8f2645126d2e5a7d1bc234a76cea3dcb958350907a4c233564aee33653b30046c9
-  languageName: node
-  linkType: hard
-
-"@wordpress/image-cropper@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "@wordpress/image-cropper@npm:1.12.0"
-  dependencies:
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    clsx: "npm:^2.1.1"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
     dequal: "npm:^2.0.3"
     react-easy-crop: "npm:^5.4.2"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: c326ead6b4f4f7d35fd1439bbcd226931b7097fa6032c02cece328afa0ab4ef7b63427b405484a2156c72d8ac23474d9b1273eb8ac8273fb408ef79fef4584c3
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 4bcb011f396c25561e9a2f1614ef043e0d0f68b7def65685cf2e1a94caf77c42f8779af31d79885501d22ecea8514e2d18da7aa444ca6250b474550e7ac841c2
   languageName: node
   linkType: hard
 
-"@wordpress/interactivity-router@npm:^2.48.0":
-  version: 2.48.0
-  resolution: "@wordpress/interactivity-router@npm:2.48.0"
+"@wordpress/interactivity-router@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@wordpress/interactivity-router@npm:3.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/interactivity": "npm:^6.48.0"
-    es-module-lexer: "npm:^1.5.4"
-  checksum: 22cf5cb3fff173651513ddcec2682c19f79722529b078ba2cd71a471c6941c2f5ff270047c7703a279619d0277f272c77da2d318836683de7d65f9ca492ceab7
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/interactivity": "npm:^8.1.0"
+    es-module-lexer: "npm:^1.7.0"
+  checksum: 3138f546772fecf6d818ca2e4450b8ddedf2091050b6833d81aaa8a41f8728bcdf455ae873ed831b7bcb34d9bbc03b73e9a5fe57a28a2e56413c71f8b003ac92
   languageName: node
   linkType: hard
 
-"@wordpress/interactivity@npm:^6.48.0":
-  version: 6.48.0
-  resolution: "@wordpress/interactivity@npm:6.48.0"
+"@wordpress/interactivity@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "@wordpress/interactivity@npm:8.1.0"
   dependencies:
     "@preact/signals": "npm:^1.3.0"
+    "@preact/signals-core": "npm:^1.7.0"
     preact: "npm:^10.29.1"
-  checksum: e239fdaca85d700ff9a4d63b367c264351bcdfdd2ef3452680c8caf4b41e88bfc7b4428d074c2befdae6767aba92421ed7f74be05eeb1557e57decbefeed6c99
+  checksum: e64f5fabe050c7e6028180b25bbcdd866f67a1f311115275f243409c6d566fabd375fbb17eaf417e04ec9566df2ad4c711546b2fe3847b24d8fe1384fbbeed97
   languageName: node
   linkType: hard
 
-"@wordpress/interface@npm:9.33.0":
-  version: 9.33.0
-  resolution: "@wordpress/interface@npm:9.33.0"
+"@wordpress/interface@npm:11.1.0":
+  version: 11.1.0
+  resolution: "@wordpress/interface@npm:11.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/admin-ui": "npm:^2.3.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/plugins": "npm:^7.48.0"
-    "@wordpress/preferences": "npm:^4.48.0"
-    "@wordpress/viewport": "npm:^6.48.0"
+    "@wordpress/admin-ui": "npm:^3.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/plugins": "npm:^8.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/viewport": "npm:^7.1.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 6a3ca43c17ca8bbf3e15485b37d802ca5068697c4db55158ecdcf4e395ea7c60af21bd149317e1d39da1ecd07b74ee6899db4dda8ef9cfe836c70aa38e067e75
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: ec0f356c087acd5b8bfb6136a19a42f56542e0ce3a42234d11319ffe0d6a833b5a9ca6fb2b68ef9b706906c0343568f28b6c46014e7a6324aae467688cd061ee
   languageName: node
   linkType: hard
 
@@ -13710,128 +13528,137 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/media-editor@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@wordpress/media-editor@npm:0.14.0"
+"@wordpress/media-editor@npm:^0.22.0":
+  version: 0.22.0
+  resolution: "@wordpress/media-editor@npm:0.22.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.51.0"
-    "@wordpress/api-fetch": "npm:^7.51.0"
-    "@wordpress/base-styles": "npm:^11.0.0"
-    "@wordpress/components": "npm:^37.0.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/core-data": "npm:^7.51.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/dataviews": "npm:^17.2.0"
-    "@wordpress/date": "npm:^5.51.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/icons": "npm:^15.2.0"
-    "@wordpress/interface": "npm:^9.36.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.51.0"
-    "@wordpress/keycodes": "npm:^4.51.0"
-    "@wordpress/notices": "npm:^5.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/ui": "npm:^0.18.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/admin-ui": "npm:^3.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/keyboard-shortcuts": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
     clsx: "npm:^2.1.1"
+    fast-deep-equal: "npm:^3.1.3"
     gl-matrix: "npm:^3.4.3"
   peerDependencies:
     "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
     react: ^18 || ^19
+    react-dom: ^18 || ^19
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 512e31f810cabe469b47315e2a1840abee9c8ae4e5e9c15dc50d80003cbb0610e21017f635411210130019c24e4afdede5f396a9ccfae235bddba3e00f31adb5
+    "@types/react-dom":
+      optional: true
+  checksum: 35275120f1748d08b3812ab1c688e2f8b953ff416bccea96a77a2f4682f108e83462a8d97a485317f2b7e4ba0c41881f462123b88286c361c24b1cef7ad7615e
   languageName: node
   linkType: hard
 
-"@wordpress/media-fields@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "@wordpress/media-fields@npm:0.13.0"
+"@wordpress/media-fields@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@wordpress/media-fields@npm:0.24.0"
   dependencies:
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
-    "@wordpress/date": "npm:^5.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/primitives": "npm:^4.48.0"
-    "@wordpress/url": "npm:^4.48.0"
-    clsx: "npm:2.1.1"
-  peerDependencies:
-    react: ^18.0.0
-  checksum: 9a545a6cd4b6e4a32daaf1409d1c8ff54e6199d971cabd1017b0f9284582e3ffacd34cc8132f91fb6a270e5de7fdb832a36687c11fd645d002105eacfdd86b8c
-  languageName: node
-  linkType: hard
-
-"@wordpress/media-fields@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "@wordpress/media-fields@npm:0.16.0"
-  dependencies:
-    "@wordpress/base-styles": "npm:^11.0.0"
-    "@wordpress/components": "npm:^37.0.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/core-data": "npm:^7.51.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/dataviews": "npm:^17.2.0"
-    "@wordpress/date": "npm:^5.51.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/icons": "npm:^15.2.0"
-    "@wordpress/primitives": "npm:^4.51.0"
-    "@wordpress/ui": "npm:^0.18.0"
-    "@wordpress/url": "npm:^4.51.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/url": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
     "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
     react: ^18 || ^19
+    react-dom: ^18 || ^19
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 40fe656d9a0c185ccd8e9132ece889b53ddc32d17d897faea330e854fac71d4dbb32d66ae580b2be4f6347ce4518094eca7b2f4fb94afb1285d5ec9d997ff891
+    "@types/react-dom":
+      optional: true
+  checksum: 1b9b86b1fe6b5416ff5aeff71fea3437c984bdd7d90de2aadd6954d984bae76da7be7b13057ce959435e0f5e3c0d529858e43d652c3a2f21776ddfbe94b70f99
   languageName: node
   linkType: hard
 
-"@wordpress/media-utils@npm:5.48.0":
-  version: 5.48.0
-  resolution: "@wordpress/media-utils@npm:5.48.0"
+"@wordpress/media-utils@npm:6.1.0":
+  version: 6.1.0
+  resolution: "@wordpress/media-utils@npm:6.1.0"
   dependencies:
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^16.0.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/media-fields": "npm:^0.13.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/ui": "npm:^0.15.0"
-    "@wordpress/views": "npm:^1.15.0"
+    "@react-spring/web": "npm:^10.1.2"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/media-fields": "npm:^0.24.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/views": "npm:^3.1.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-  checksum: 8c1f3b8377e6a0d15893e61951bc49cdd03f4b80b41612e85f57c21a79119c8b42ad701bbce54414a1be003d27b58e261adae5677d97fb415dadd894a64cc562
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 036d1233048e7409b09428075ac12161b650d2f49b3dbddca65dc231d11ce122a4f789cc07f49e49b7106bb682bf43607d378d75e9c73cff5efb670ffc7965b5
   languageName: node
   linkType: hard
 
-"@wordpress/notices@npm:5.48.0":
-  version: 5.48.0
-  resolution: "@wordpress/notices@npm:5.48.0"
+"@wordpress/notices@npm:6.1.0":
+  version: 6.1.0
+  resolution: "@wordpress/notices@npm:6.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-  checksum: 811ab6213edb5749abcb487d88ecdf5b5fe5c1e74012adc50bcd5c3d1c90cd54fd115f76dfc7919251db99cb6156ae313cbe2debacc66138efe69bbb80729e57
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 0116f32b7b91873f8b4b4556c65e55f11b656887d85a6a90516f3351e3036e0780b9f2bcd932ca141a10f9d09c492f22218f5443da882f89c4164bbdd6a03af8
   languageName: node
   linkType: hard
 
@@ -13844,71 +13671,80 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/patterns@npm:^2.48.0, @wordpress/patterns@npm:^2.51.0":
-  version: 2.51.0
-  resolution: "@wordpress/patterns@npm:2.51.0"
+"@wordpress/patterns@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@wordpress/patterns@npm:3.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.51.0"
-    "@wordpress/base-styles": "npm:^11.0.0"
-    "@wordpress/block-editor": "npm:^16.0.0"
-    "@wordpress/blocks": "npm:^15.24.0"
-    "@wordpress/components": "npm:^37.0.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/core-data": "npm:^7.51.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/html-entities": "npm:^4.51.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/icons": "npm:^15.2.0"
-    "@wordpress/notices": "npm:^5.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/ui": "npm:^0.18.0"
-    "@wordpress/url": "npm:^4.51.0"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/url": "npm:^5.1.0"
+    change-case: "npm:^4.1.2"
   peerDependencies:
     react: ^18 || ^19
     react-dom: ^18 || ^19
-  checksum: 9798439589a0f5221839b7a031e819204399846d2fa0c38147070f9f9cb0021f313e47410d2078a9d9b6c31d9e63013bd765c82f3f88e7af47528d99b560757e
+  checksum: 0519c297cf78b7be7b493959b02dd0748f1758ff3725e11542fd79fdc2233798e91c4679ab8548c47268d222119873c7dd673fdfdfb6a659fc0919f2cfc000b1
   languageName: node
   linkType: hard
 
-"@wordpress/plugins@npm:7.48.0":
-  version: 7.48.0
-  resolution: "@wordpress/plugins@npm:7.48.0"
+"@wordpress/plugins@npm:8.1.0":
+  version: 8.1.0
+  resolution: "@wordpress/plugins@npm:8.1.0"
   dependencies:
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/is-shallow-equal": "npm:^5.48.0"
-    memize: "npm:^2.0.1"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/is-shallow-equal": "npm:^6.1.0"
+    memize: "npm:^2.1.1"
+    react-is: "npm:^19.3.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: d7a94aff6f544c625f797a9994baf5d837301fc5a8c3abcbaeec311ee4712f9e0ea2b8c91cb838a9fffde7925924cf088bbdc0430b0f7d78b7a8ea88e7317c9f
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: d315e5c71c5625834fc70b69c26f1f48775db5b3ee4385918c475ea254a33350cf498ff667e9cbe77d18e99ece27cbf3133af967a52905b1fbaf4b44f68b50f8
   languageName: node
   linkType: hard
 
-"@wordpress/preferences@npm:4.48.0":
-  version: 4.48.0
-  resolution: "@wordpress/preferences@npm:4.48.0"
+"@wordpress/preferences@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@wordpress/preferences@npm:5.1.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    clsx: "npm:^2.1.1"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 884fb6e4716a0099408c04c92e2911f3e89aaa785d71df01c591001d83c70da98e7cfca559a1b58ff59530bf60dc62fce3a3c3ade12af8749f76da1501ec8273
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 871d4f7467aedb5990b6deb026e887c0695abf7fe9b5586ebbbce5440f99cad233569d4a6e6df4537d6bc3719de9fb85fbd085773312f73ccfe58bab2f22171b
   languageName: node
   linkType: hard
 
@@ -14013,54 +13849,53 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/reusable-blocks@npm:7.1.0":
-  version: 7.1.0
-  resolution: "@wordpress/reusable-blocks@npm:7.1.0"
+"@wordpress/rich-text@npm:8.1.0":
+  version: 8.1.0
+  resolution: "@wordpress/rich-text@npm:8.1.0"
   dependencies:
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/deprecated": "npm:^5.1.0"
-  peerDependencies:
-    react: ^18 || ^19
-    react-dom: ^18 || ^19
-  checksum: 4a53c1d2ca771ee1772b0a0bf421d1f374c11933fa1b83eb79afd0cfa767d9548b8dd9b76ffa5f5f0ea1e99193dcbce96e1976b807a3e86cb108c4c927368634
-  languageName: node
-  linkType: hard
-
-"@wordpress/rich-text@npm:7.54.0":
-  version: 7.54.0
-  resolution: "@wordpress/rich-text@npm:7.54.0"
-  dependencies:
-    "@wordpress/a11y": "npm:^4.54.0"
-    "@wordpress/compose": "npm:^8.7.0"
-    "@wordpress/data": "npm:^10.54.0"
-    "@wordpress/deprecated": "npm:^4.54.0"
-    "@wordpress/dom": "npm:^4.54.0"
-    "@wordpress/element": "npm:^8.6.0"
-    "@wordpress/escape-html": "npm:^3.54.0"
-    "@wordpress/i18n": "npm:^6.27.0"
-    "@wordpress/keycodes": "npm:^4.54.0"
-    "@wordpress/private-apis": "npm:^1.54.0"
-    colord: "npm:^2.9.3"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/escape-html": "npm:^4.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    colord: "npm:^2.9.4"
   peerDependencies:
     "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
     react: ^18 || ^19
+    react-dom: ^18 || ^19
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 782f697ffcf79b0a892611f6f4fd534750018a6cd1db11061f1d7f825f74b99a7cb32a7d9c5fe1fc38f93041ee4b25bbc1316cb13bdf9b974c2cdbbe7bc4f685
+    "@types/react-dom":
+      optional: true
+  checksum: 256752b21d22c4f5302fa0153daf52c725578aac3ca74dcdc67a83da02cea3379ab6a71e98b1a13884b4d5ad5af1e3e6604abb7ef131d5d14db9611f4110ff5c
   languageName: node
   linkType: hard
 
-"@wordpress/route@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@wordpress/route@npm:0.14.0"
+"@wordpress/route@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "@wordpress/route@npm:0.25.0"
   dependencies:
     "@tanstack/history": "npm:^1.133.28"
     "@tanstack/react-router": "npm:^1.120.5"
-    "@wordpress/private-apis": "npm:^1.48.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
   peerDependencies:
-    react: ^18.0.0
-  checksum: 7f05f9cc544d933f898abb99db721dde5d4bda93466cc81132babfe798a73ed6578d2084eae7acb319e3d583a8ef1716f46981bd8881c96bfa662f4ef516e54a
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: fc052297e73af4bad9f4e3d6873ce7ef3eb5fb347b933ad1f88585eef995f34e97f99f562c4b8f060adcdc741e08916f6af7bef19a1fec47e142273ca6b4e744
   languageName: node
   linkType: hard
 
@@ -14088,23 +13923,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/server-side-render@npm:6.24.0":
-  version: 6.24.0
-  resolution: "@wordpress/server-side-render@npm:6.24.0"
+"@wordpress/server-side-render@npm:7.1.0":
+  version: 7.1.0
+  resolution: "@wordpress/server-side-render@npm:7.1.0"
   dependencies:
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/deprecated": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/url": "npm:^4.48.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/url": "npm:^5.1.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: ebaba2db932c63813061344008e6051bc6b4a1d6febd4a1677091d2fba41e4dc3e514128604ef6d732a0b295305e3e00e2d0d0cca7b5aa952284eeaac1476834
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 1e9bfee921f1aed95ae478a231f80352c6f81b10c32f92ee28fef8715afe44b07ac2e8f5bd8300c06b94641d55a67f7e193b24ba922599833e43525ee18ad7f3
   languageName: node
   linkType: hard
 
@@ -14138,13 +13976,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/style-runtime@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@wordpress/style-runtime@npm:0.4.0"
-  checksum: 106a46256123ff7b0a1a36d076d6115abcc9dd44bae79a5c3fa6a4bd5f5c4fc4df13d77f55dd65db9d9a253d031be3a313adea7b543140dc306f8dc0b0d6deeb
-  languageName: node
-  linkType: hard
-
 "@wordpress/stylelint-config@npm:27.1.0":
   version: 27.1.0
   resolution: "@wordpress/stylelint-config@npm:27.1.0"
@@ -14164,20 +13995,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/sync@npm:^1.48.0":
-  version: 1.48.0
-  resolution: "@wordpress/sync@npm:1.48.0"
+"@wordpress/sync@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@wordpress/sync@npm:3.1.0"
   dependencies:
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/hooks": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/undo-manager": "npm:^1.48.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
     diff: "npm:^8.0.3"
     fast-deep-equal: "npm:^3.1.3"
-    lib0: "npm:0.2.99"
+    lib0: "npm:^0.2.99"
     y-protocols: "npm:^1.0.7"
-    yjs: "npm:13.6.29"
-  checksum: 8c4112a0d50671ff24998bee01e61e48f7d8e98266ebd51123947bb04678d4df59897e3705ed194964add7aa7f3b405bb1c94870f21e127861695e1a1ecca093
+    yjs: "npm:^13.6.29"
+  checksum: 8f4d78c5fc9f4a9e8ddf6cadcd4aa88272fa5532b855b3f7e543a5cb99cd14467c93ac4de4d8e6e987fed41ef523ef2dcc36f817c7ab79ab0353face8a0924df
   languageName: node
   linkType: hard
 
@@ -14288,41 +14117,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/upload-media@npm:^0.33.0":
-  version: 0.33.0
-  resolution: "@wordpress/upload-media@npm:0.33.0"
+"@wordpress/upload-media@npm:^0.44.0":
+  version: 0.44.0
+  resolution: "@wordpress/upload-media@npm:0.44.0"
   dependencies:
-    "@wordpress/blob": "npm:^4.48.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/preferences": "npm:^4.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/url": "npm:^4.48.0"
-    "@wordpress/vips": "npm:^2.1.0"
-    uuid: "npm:^14.0.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 3186a2c8ad382f6fb01f991897a4588c17cdb299b6f01a330075a9863ac5e376aee16c8ebdb2e07f8b789b756f39650097dfd508f6582cb556ab000564dc1e8f
-  languageName: node
-  linkType: hard
-
-"@wordpress/upload-media@npm:^0.36.0":
-  version: 0.36.0
-  resolution: "@wordpress/upload-media@npm:0.36.0"
-  dependencies:
-    "@wordpress/blob": "npm:^4.51.0"
-    "@wordpress/compose": "npm:^8.4.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/i18n": "npm:^6.24.0"
-    "@wordpress/preferences": "npm:^4.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
-    "@wordpress/url": "npm:^4.51.0"
-    "@wordpress/video-conversion": "npm:^0.2.0"
-    "@wordpress/vips": "npm:^2.4.0"
+    "@wordpress/blob": "npm:^5.1.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/video-conversion": "npm:^0.10.0"
+    "@wordpress/vips": "npm:^5.1.0"
     uuid: "npm:^14.0.0"
   peerDependencies:
     "@types/react": ^18 || ^19
@@ -14331,7 +14137,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 56a0694de75af3d77c6734489c83d3c174a438244dc61ebacfedfebdb0054785ea27eceb39e2f38aaf3053b323b6249b434ade86196e8379a126e39b046cb89e
+  checksum: c16bc62006b26204acb4d1a6049a02c02b05576ced80eaa935635e097fc3fd8a14134c3ff360ee20fc5694569e846a8f161beb1e72650c4dbfd29cc7d92d55c1
   languageName: node
   linkType: hard
 
@@ -14342,13 +14148,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/video-conversion@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@wordpress/video-conversion@npm:0.2.0"
+"@wordpress/video-conversion@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@wordpress/video-conversion@npm:0.10.0"
   dependencies:
-    "@wordpress/worker-threads": "npm:^1.11.0"
+    "@wordpress/worker-threads": "npm:^2.1.0"
     mediabunny: "npm:^1.45.2"
-  checksum: 44b3161daa9f21a27345b301a01f8230c8bc05e7de8d7c50ca18799c9754e3888e63495dd1092ac21a34c2091df718422460b1f35c638520c5933a86055e1d94
+  checksum: e536d8991581a886be963853892106f2b927174ac13d74d49ac903529e429ca5d3b9faf12d341ba38014b939bef4af71313b2daf631775f6ed16da90e1c7fc27
   languageName: node
   linkType: hard
 
@@ -14373,28 +14179,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/views@npm:^1.15.0, @wordpress/views@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "@wordpress/views@npm:1.18.0"
+"@wordpress/views@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@wordpress/views@npm:3.1.0"
   dependencies:
-    "@wordpress/core-data": "npm:^7.51.0"
-    "@wordpress/data": "npm:^10.51.0"
-    "@wordpress/dataviews": "npm:^17.2.0"
-    "@wordpress/element": "npm:^8.3.0"
-    "@wordpress/preferences": "npm:^4.51.0"
-    "@wordpress/private-apis": "npm:^1.51.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/dataviews": "npm:^22.0.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/preferences": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
     dequal: "npm:^2.0.3"
-  checksum: 969d283d6936a6493babdcd94e6de850f5ce02bea59a4ef6844be5f20dce40efb0756d73f83b6f41f2a0edb0f886d89a9c60d068f41352721bce5175fce2e7dd
+  peerDependencies:
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 38806504adf5c389aecf9560f16351ad4e1844af50ecd39871c22fd8ce9feef6891088c747759b6c1e1bf625a57984b4e1a0fbd41c843fe5f68eedc391ecfda7
   languageName: node
   linkType: hard
 
-"@wordpress/vips@npm:^2.1.0, @wordpress/vips@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "@wordpress/vips@npm:2.4.0"
+"@wordpress/vips@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@wordpress/vips@npm:5.1.0"
   dependencies:
-    "@wordpress/worker-threads": "npm:^1.11.0"
-    wasm-vips: "npm:^0.0.18"
-  checksum: 8b139448166a6a570fbee2c658084266311d14e282f936036e7331695b7747436eab1706d6e86cf677d2ca41a92ee450d64ddb0c7937cfe4ff66dc7086224c3c
+    "@wordpress/worker-threads": "npm:^2.1.0"
+    wasm-vips: "npm:^0.0.19"
+  checksum: af28dbab4059aded003bac62362328df6c105f2f34f7af444059a5414be00a62a20efbd01a6a15df60c3f361ab14ab65b20e2267037a008f92504ea364ffaf19
   languageName: node
   linkType: hard
 
@@ -14405,27 +14221,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/widgets@npm:4.48.0":
-  version: 4.48.0
-  resolution: "@wordpress/widgets@npm:4.48.0"
+"@wordpress/widgets@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@wordpress/widgets@npm:5.1.0"
   dependencies:
-    "@wordpress/api-fetch": "npm:^7.48.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/compose": "npm:^8.1.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/notices": "npm:^5.48.0"
+    "@wordpress/api-fetch": "npm:^8.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
+    "@wordpress/components": "npm:^44.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/core-data": "npm:^9.1.0"
+    "@wordpress/data": "npm:^11.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/notices": "npm:^6.1.0"
+    "@wordpress/ui": "npm:^0.26.0"
     clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: d26c144d6c051424fa3831edeb6621c10c62f3db1256216d25f7c5ac78ec770708dab8c117f13981fab6067bec14a79f40827098d613b6a6103dd81c1dfa55a3
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: 4dbdd004985fdefae053e995371c3d9032e55090fcdae44db58722977f41228841f79e2f84882547d48df429556402b961181de00d3fe3283c10ac60d3d2f0d5
   languageName: node
   linkType: hard
 
@@ -14502,7 +14319,7 @@ __metadata:
     jest: "npm:^30.5.2"
     js-yaml: "npm:5.4.1"
     playwright: "npm:1.57.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     semver: "npm:^7.7.2"
@@ -15318,7 +15135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autosize@npm:^4.0.2, autosize@npm:^4.0.4":
+"autosize@npm:^4.0.4":
   version: 4.0.4
   resolution: "autosize@npm:4.0.4"
   checksum: 3397348ff385702a4eca49b65b45e27c6e1881414e4eddc9ceaa6dbcda9dda24b5c01d021d2888ea745ebcc6353395dc5f5735ad5e76f076c864dd95e2ffb71d
@@ -16050,7 +15867,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
     "@testing-library/user-event": "npm:^14.6.8"
-    "@types/express": "npm:^4.17.22"
+    "@types/express": "npm:^4.17.25"
     "@types/prismjs": "npm:^1.26.6"
     "@types/react": "npm:19.2.16"
     "@types/react-slider": "npm:^1.3.6"
@@ -16067,14 +15884,14 @@ __metadata:
     "@wordpress/dataviews": "npm:^22.0.0"
     "@wordpress/date": "npm:^6.1.0"
     "@wordpress/dom": "npm:^5.1.0"
-    "@wordpress/edit-post": "npm:^8.48.0"
+    "@wordpress/edit-post": "npm:^9.1.0"
     "@wordpress/element": "npm:^10.1.0"
     "@wordpress/hooks": "npm:^5.1.0"
     "@wordpress/html-entities": "npm:^5.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
     "@wordpress/is-shallow-equal": "npm:^6.1.0"
-    "@wordpress/notices": "npm:5.48.0"
+    "@wordpress/notices": "npm:^6.1.0"
     "@wordpress/private-apis": "npm:^3.1.0"
     "@wordpress/react-i18n": "npm:^5.1.0"
     "@wordpress/theme": "npm:^4.0.0"
@@ -16109,7 +15926,7 @@ __metadata:
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     email-validator: "npm:^2.0.4"
     emoji-text: "npm:^0.2.6"
-    express: "npm:^4.21.2"
+    express: "npm:^4.22.3"
     express-async-handler: "npm:^1.1.4"
     express-useragent: "npm:^2.1.0"
     fake-indexeddb: "npm:^3.1.8"
@@ -16131,19 +15948,19 @@ __metadata:
     lru: "npm:^3.1.0"
     mock-fs: "npm:^5.5.0"
     mockdate: "npm:^2.0.5"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     moment-timezone: "npm:^0.5.48"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     nock: "npm:^14.0.17"
     path-browserify: "npm:^1.0.1"
-    phone: "npm:^3.1.71"
+    phone: "npm:^3.1.72"
     photon: "workspace:^"
     pkg-dir: "npm:^5.0.0"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     prismjs: "npm:^1.30.0"
     prop-types: "npm:^15.8.1"
     qrcode.react: "npm:^3.1.0"
-    qs: "npm:^6.15.2"
+    qs: "npm:^6.17.1"
     react: "npm:19.2.7"
     react-day-picker: "npm:^7.4.10"
     react-dom: "npm:19.2.7"
@@ -16338,7 +16155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"change-case@npm:4.1.2, change-case@npm:^4.1.2":
+"change-case@npm:^4.1.2":
   version: 4.1.2
   resolution: "change-case@npm:4.1.2"
   dependencies:
@@ -16633,13 +16450,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"client-zip@npm:^2.4.5":
-  version: 2.4.5
-  resolution: "client-zip@npm:2.4.5"
-  checksum: b3ec15c8487575a992f86ced6f66a9905ef1955675e431bbe1a74e780448fff284904b2c9565678f97e31ae4f2b128fbc55f84af1b5a89f3d52c9225b8d7c14a
-  languageName: node
-  linkType: hard
-
 "clipboard@npm:^2.0.11":
   version: 2.0.11
   resolution: "clipboard@npm:2.0.11"
@@ -16700,7 +16510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:2.1.1, clsx@npm:^2.1.0, clsx@npm:^2.1.1":
+"clsx@npm:2.1.1, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
@@ -16807,7 +16617,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colord@npm:^2.10.0, colord@npm:^2.7.0, colord@npm:^2.9.2, colord@npm:^2.9.3, colord@npm:^2.9.4":
+"colord@npm:^2.10.0, colord@npm:^2.9.4":
   version: 2.10.0
   resolution: "colord@npm:2.10.0"
   checksum: 2f5d1d1759124f593deca17bbbab8a88bdc3ab68bbcc88db76c1192d9a5d575db202badde044bf61789561fa0ed7a9eb895382becad1af27ec65934c216e9e04
@@ -17004,13 +16814,6 @@ __metadata:
     normalize-path: "npm:^3.0.0"
     readable-stream: "npm:^3.6.0"
   checksum: 784ef2964cdce04fb6e91e3a4b8e2565db2024141259e8f843675ef556662b90a1d65aeaabe703f88d2eb0291fa4ed10a674a6c28f93b5fb37e569aad1b374fe
-  languageName: node
-  linkType: hard
-
-"computed-style@npm:~0.1.3":
-  version: 0.1.4
-  resolution: "computed-style@npm:0.1.4"
-  checksum: d7cb13bae10f8453d873953db5d8382b5e1a13f263d333b4bddd0398461adf2cfeee480757fc5702ddb0fbb8855adea1280922749c6e6c2ea16dc59543231dc9
   languageName: node
   linkType: hard
 
@@ -17681,16 +17484,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssstyle@npm:^4.0.1":
-  version: 4.6.0
-  resolution: "cssstyle@npm:4.6.0"
-  dependencies:
-    "@asamuzakjp/css-color": "npm:^3.2.0"
-    rrweb-cssom: "npm:^0.8.0"
-  checksum: 71add1b0ffafa1bedbef6855db6189b9523d3320e015a0bf3fbd504760efb9a81e1f1a225228d5fa892ee58e56d06994ca372e7f4e461cda7c4c9985fe075f65
-  languageName: node
-  linkType: hard
-
 "csstype@npm:^2.6.7":
   version: 2.6.9
   resolution: "csstype@npm:2.6.9"
@@ -17889,16 +17682,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"data-urls@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "data-urls@npm:5.0.0"
-  dependencies:
-    whatwg-mimetype: "npm:^4.0.0"
-    whatwg-url: "npm:^14.0.0"
-  checksum: 1b894d7d41c861f3a4ed2ae9b1c3f0909d4575ada02e36d3d3bc584bdd84278e20709070c79c3b3bff7ac98598cb191eb3e86a89a79ea4ee1ef360e1694f92ad
-  languageName: node
-  linkType: hard
-
 "data-view-buffer@npm:^1.0.2":
   version: 1.0.2
   resolution: "data-view-buffer@npm:1.0.2"
@@ -18011,7 +17794,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decimal.js@npm:^10.4.2, decimal.js@npm:^10.4.3":
+"decimal.js@npm:^10.4.2":
   version: 10.6.0
   resolution: "decimal.js@npm:10.6.0"
   checksum: 07d69fbcc54167a340d2d97de95f546f9ff1f69d2b45a02fd7a5292412df3cd9eb7e23065e532a318f5474a2e1bccf8392fdf0443ef467f97f3bf8cb0477e5aa
@@ -18076,7 +17859,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:4.3.1, deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0, deepmerge@npm:^4.3.1":
+"deepmerge@npm:4.3.1, deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.1":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
@@ -18273,7 +18056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"diff@npm:^4.0.2, diff@npm:^4.0.4":
+"diff@npm:^4.0.4":
   version: 4.0.4
   resolution: "diff@npm:4.0.4"
   checksum: 855fb70b093d1d9643ddc12ea76dca90dc9d9cdd7f82c08ee8b9325c0dc5748faf3c82e2047ced5dcaa8b26e58f7903900be2628d0380a222c02d79d8de385df
@@ -18464,7 +18247,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^3.2.1, domutils@npm:^3.2.2":
+"domutils@npm:^3.2.2":
   version: 3.2.2
   resolution: "domutils@npm:3.2.2"
   dependencies:
@@ -18875,6 +18658,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"entities@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "entities@npm:7.0.1"
+  checksum: b4fb9937bb47ecb00aaaceb9db9cdd1cc0b0fb649c0e843d05cf5dbbd2e9d2df8f98721d8b1b286445689c72af7b54a7242fc2d63ef7c9739037a8c73363e7ca
+  languageName: node
+  linkType: hard
+
 "env-paths@npm:^2.2.0, env-paths@npm:^2.2.1":
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
@@ -19041,7 +18831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^1.5.0, es-module-lexer@npm:^1.5.4":
+"es-module-lexer@npm:^1.5.0, es-module-lexer@npm:^1.7.0":
   version: 1.7.0
   resolution: "es-module-lexer@npm:1.7.0"
   checksum: 4c935affcbfeba7fb4533e1da10fa8568043df1e3574b869385980de9e2d475ddc36769891936dbb07036edb3c3786a8b78ccf44964cd130dedc1f2c984b6c7b
@@ -20064,7 +19854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^4.21.2":
+"express@npm:^4.22.3":
   version: 4.22.3
   resolution: "express@npm:4.22.3"
   dependencies:
@@ -21379,14 +21169,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gridicons@npm:^3.4.2":
-  version: 3.4.2
-  resolution: "gridicons@npm:3.4.2"
+"gridicons@npm:^3.4.3":
+  version: 3.4.3
+  resolution: "gridicons@npm:3.4.3"
   dependencies:
     prop-types: "npm:^15.5.7"
   peerDependencies:
-    react: 15 - 18
-  checksum: b2e508243bf1fa0e0daacc5e1fb52d0d74b000ca0b8862ece672cf8fea9f561c9e1a96979ee9ea9ca9e595c55c970c82bb6b7b29a42d06c139e2c657f3ecdb49
+    react: 15 - 19
+  checksum: c6956b526c4ece67ba0276746840ae486d3a1d7691ae3afce3e908e089c0c563247d644996f252fe0f927fb33095b44f90e3595774c1b83b36798f48262f7691
   languageName: node
   linkType: hard
 
@@ -21429,8 +21219,8 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@wordpress/base-styles": "npm:^15.0.0"
-    "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/element": "npm:^10.1.0"
@@ -21440,7 +21230,7 @@ __metadata:
     copy-webpack-plugin: "npm:^14.0.0"
     glob: "npm:^7.2.3"
     i18n-calypso: "workspace:^"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     webpack: "npm:^5.111.1"
@@ -21710,20 +21500,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hpq@npm:^1.3.0":
+"hpq@npm:^1.4.0":
   version: 1.4.0
   resolution: "hpq@npm:1.4.0"
   checksum: e4321e60a014a6d94eaa860bda45e0f637e3746d5940df203328f507315abf015015cd11a444db976493fd83cf05ed916b3e9d562391027cd0f374fadb989e3c
   languageName: node
   linkType: hard
 
-"html-dom-parser@npm:5.1.2":
-  version: 5.1.2
-  resolution: "html-dom-parser@npm:5.1.2"
+"html-dom-parser@npm:5.1.8":
+  version: 5.1.8
+  resolution: "html-dom-parser@npm:5.1.8"
   dependencies:
     domhandler: "npm:5.0.3"
-    htmlparser2: "npm:10.0.0"
-  checksum: 59e0b626a5248142781986230dfe22e8e1e2893fb07f21ef2fc8a1749b96d36b7590eba1dd91c85b5e228b479118a75239bd66f2c2e7f1e5fc6c3a71c545ec65
+    htmlparser2: "npm:10.1.0"
+  checksum: 749c2b7767e8385c95d3ed6e78cce8ddea65d63b7d3c310b5e51d8ae96a71689f13eb5a0ba22775a981edacf13f1f4ab616e6469ce8ae1bd805887082bda32b9
   languageName: node
   linkType: hard
 
@@ -21733,15 +21523,6 @@ __metadata:
   dependencies:
     whatwg-encoding: "npm:^2.0.0"
   checksum: b17b3b0fb5d061d8eb15121c3b0b536376c3e295ecaf09ba48dd69c6b6c957839db124fe1e2b3f11329753a4ee01aa7dedf63b7677999e86da17fbbdd82c5386
-  languageName: node
-  linkType: hard
-
-"html-encoding-sniffer@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "html-encoding-sniffer@npm:4.0.0"
-  dependencies:
-    whatwg-encoding: "npm:^3.1.1"
-  checksum: 523398055dc61ac9b34718a719cb4aa691e4166f29187e211e1607de63dc25ac7af52ca7c9aead0c4b3c0415ffecb17326396e1202e2e86ff4bca4c0ee4c6140
   languageName: node
   linkType: hard
 
@@ -21812,12 +21593,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-react-parser@npm:5.2.11":
-  version: 5.2.11
-  resolution: "html-react-parser@npm:5.2.11"
+"html-react-parser@npm:^5.2.11":
+  version: 5.2.17
+  resolution: "html-react-parser@npm:5.2.17"
   dependencies:
     domhandler: "npm:5.0.3"
-    html-dom-parser: "npm:5.1.2"
+    html-dom-parser: "npm:5.1.8"
     react-property: "npm:2.0.2"
     style-to-js: "npm:1.1.21"
   peerDependencies:
@@ -21826,7 +21607,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 9173df6db4523aab142e1e4c4b55bf9ae6a18a6581d98a2ce9d92af0d3a5dccebb39f26719cf3b5d35d7cc21d49fc774508dda54146771ac7e67e9a1fa252d8a
+  checksum: 57b3ea22f851fbd9a6a5772550981d4608053f018afbadf8a31484c90a1f333f8f5d0f371ccce0b3d396dc46095b1b67ba417ee6c4747135858222f7e7b34d53
   languageName: node
   linkType: hard
 
@@ -21865,15 +21646,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmlparser2@npm:10.0.0":
-  version: 10.0.0
-  resolution: "htmlparser2@npm:10.0.0"
+"htmlparser2@npm:10.1.0":
+  version: 10.1.0
+  resolution: "htmlparser2@npm:10.1.0"
   dependencies:
     domelementtype: "npm:^2.3.0"
     domhandler: "npm:^5.0.3"
-    domutils: "npm:^3.2.1"
-    entities: "npm:^6.0.0"
-  checksum: 47cfa37e529c86a7ba9a1e0e6f951ad26ef8ca5af898ab6e8916fa02c0264c1453b4a65f28b7b8a7f9d0d29b5a70abead8203bf8b3f07bc69407e85e7d9a68e4
+    domutils: "npm:^3.2.2"
+    entities: "npm:^7.0.1"
+  checksum: 36394e29b80cfcc5e78e0fa4d3aa21fdaac3e6778d23e5c933e625c290987cd9a724a2eb0753ab60ed0c69dfaba0ab115f0ee50fb112fd8f0c4d522e7e0089a2
   languageName: node
   linkType: hard
 
@@ -21931,7 +21712,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-agent@npm:^7.0.0, http-proxy-agent@npm:^7.0.2":
+"http-proxy-agent@npm:^7.0.0":
   version: 7.0.2
   resolution: "http-proxy-agent@npm:7.0.2"
   dependencies:
@@ -21986,7 +21767,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:^7.0.0, https-proxy-agent@npm:^7.0.1, https-proxy-agent@npm:^7.0.5":
+"https-proxy-agent@npm:^7.0.0, https-proxy-agent@npm:^7.0.1":
   version: 7.0.6
   resolution: "https-proxy-agent@npm:7.0.6"
   dependencies:
@@ -23702,40 +23483,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:^24.1.3":
-  version: 24.1.3
-  resolution: "jsdom@npm:24.1.3"
-  dependencies:
-    cssstyle: "npm:^4.0.1"
-    data-urls: "npm:^5.0.0"
-    decimal.js: "npm:^10.4.3"
-    form-data: "npm:^4.0.0"
-    html-encoding-sniffer: "npm:^4.0.0"
-    http-proxy-agent: "npm:^7.0.2"
-    https-proxy-agent: "npm:^7.0.5"
-    is-potential-custom-element-name: "npm:^1.0.1"
-    nwsapi: "npm:^2.2.12"
-    parse5: "npm:^7.1.2"
-    rrweb-cssom: "npm:^0.7.1"
-    saxes: "npm:^6.0.0"
-    symbol-tree: "npm:^3.2.4"
-    tough-cookie: "npm:^4.1.4"
-    w3c-xmlserializer: "npm:^5.0.0"
-    webidl-conversions: "npm:^7.0.0"
-    whatwg-encoding: "npm:^3.1.1"
-    whatwg-mimetype: "npm:^4.0.0"
-    whatwg-url: "npm:^14.0.0"
-    ws: "npm:^8.18.0"
-    xml-name-validator: "npm:^5.0.0"
-  peerDependencies:
-    canvas: ^2.11.2
-  peerDependenciesMeta:
-    canvas:
-      optional: true
-  checksum: e48b342afacd7418a23dac204a62deea729c50f4d072a7c04c09fd32355fdb4335f8779fa79fd0277a2dbeb2d356250a950955719d00047324b251233b11277f
-  languageName: node
-  linkType: hard
-
 "jsesc@npm:^3.0.2, jsesc@npm:^3.1.0, jsesc@npm:~3.1.0":
   version: 3.1.0
   resolution: "jsesc@npm:3.1.0"
@@ -24006,19 +23753,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lib0@npm:0.2.99":
-  version: 0.2.99
-  resolution: "lib0@npm:0.2.99"
-  dependencies:
-    isomorphic.js: "npm:^0.2.4"
-  bin:
-    0ecdsa-generate-keypair: bin/0ecdsa-generate-keypair.js
-    0gentesthtml: bin/gentesthtml.js
-    0serve: bin/0serve.js
-  checksum: 24f914e5ab025a3e647396a22dcdb748754a9ce9eb1b98ac9a51e4a25d589c4382c82dda8330252c77f2755288097ccb3654e34eb03b1ae957422f8ebeae04d2
-  languageName: node
-  linkType: hard
-
 "lib0@npm:^0.2.85, lib0@npm:^0.2.99":
   version: 0.2.117
   resolution: "lib0@npm:0.2.117"
@@ -24188,15 +23922,6 @@ __metadata:
   version: 3.1.4
   resolution: "lilconfig@npm:3.1.4"
   checksum: 20ed0899f58a26b7be69564b8b2f2be770378a242b7bfe2522a9f88056a5cbe2b11ac533c3acdd7c27ce9f8317168040c41c0c037061e9da21e3bbe29393f3f8
-  languageName: node
-  linkType: hard
-
-"line-height@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "line-height@npm:0.3.1"
-  dependencies:
-    computed-style: "npm:~0.1.3"
-  checksum: b9cab3ce23dfdb2a036cc45dc3adec118aef66efa56de90598e09c7dcac5bedd98c4631d9b4603b2028aad54f7ec18b862774d150b94686814c7da3db1391061
   languageName: node
   linkType: hard
 
@@ -24601,7 +24326,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
+"lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: ebd04fbca961e6c1d6c0af3799adcc966a1babe798f685bb84e6599266599cd95d94630b10262f5424539bc4640107e8a33aa28585374abf561d30d16f4b39fb
@@ -25216,7 +24941,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"memize@npm:^2.0.1, memize@npm:^2.1.0, memize@npm:^2.1.1":
+"memize@npm:^2.1.1":
   version: 2.1.1
   resolution: "memize@npm:2.1.1"
   checksum: 3bc5b5814ad568656411cfdc9a5c2aaef6be9e11f4fa7edde53f62cc18bd431769bc23cfb36c9e61ef482707a086cae4f3ece6a34a6bc76356f5c5524c2b431e
@@ -26308,7 +26033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment@npm:^2.19.3, moment@npm:^2.29.4, moment@npm:^2.30.1, moment@npm:^2.31.0":
+"moment@npm:^2.19.3, moment@npm:^2.29.4, moment@npm:^2.31.0":
   version: 2.31.0
   resolution: "moment@npm:2.31.0"
   checksum: 3755b186b8ff62c565685ce69dde55bf46003c0329139be5c8dd7845cd567bfd7d02be3a13e379a25acb9e98f6b87136c4776745e440615a4f5ca8dd9a8815b9
@@ -27815,10 +27540,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"phone@npm:^3.1.71":
-  version: 3.1.71
-  resolution: "phone@npm:3.1.71"
-  checksum: 8f4ac65b82e64d7d73fb4c6e50ab36ebeea7697327c224b3586fc8b23b1e8220c0d08bdb131c4d6abe2955404bb9df8140fe8d8e3c8cb6702b5a9b58b46a2269
+"phone@npm:^3.1.72":
+  version: 3.1.72
+  resolution: "phone@npm:3.1.72"
+  checksum: 1afc1b8d43989574c25ba9cc6f96539762b6cfe1006135025efc961787f1ed1c20c4c989a0bcfd6640a0fc2b63fa6ac79f37b3a921f31a72182e218d5b1300be
   languageName: node
   linkType: hard
 
@@ -28609,7 +28334,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.4, postcss@npm:^8.4.21, postcss@npm:^8.4.40, postcss@npm:^8.5.26, postcss@npm:^8.5.3, postcss@npm:^8.5.30, postcss@npm:^8.5.31":
+"postcss@npm:^8.2.4, postcss@npm:^8.4.38, postcss@npm:^8.4.40, postcss@npm:^8.5.26, postcss@npm:^8.5.3, postcss@npm:^8.5.30, postcss@npm:^8.5.32":
   version: 8.5.32
   resolution: "postcss@npm:8.5.32"
   dependencies:
@@ -28767,7 +28492,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.0.0, prop-types@npm:^15.5.6, prop-types@npm:^15.5.7, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.0.0, prop-types@npm:^15.5.7, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -28861,7 +28586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"punycode@npm:^2.1.0, punycode@npm:^2.1.1, punycode@npm:^2.3.1":
+"punycode@npm:^2.1.0, punycode@npm:^2.1.1":
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
   checksum: 14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
@@ -28909,13 +28634,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.14.1, qs@npm:^6.15.2, qs@npm:^6.5.1":
-  version: 6.17.0
-  resolution: "qs@npm:6.17.0"
+"qs@npm:^6.14.1, qs@npm:^6.17.1, qs@npm:^6.5.1":
+  version: 6.17.1
+  resolution: "qs@npm:6.17.1"
   dependencies:
     es-define-property: "npm:^1.0.1"
     side-channel: "npm:^1.1.1"
-  checksum: 62d59fddc00fa6e141a8b3de78df89bb5863a02346af844403c6ad3b1d175b236602df293c1f2c0fa010b95ea862cacef337f108a2eef0a34556897454fcebe6
+  checksum: 55f09dd0282fda70ce9475719158f910f2214477b95aa7284675fb9977c9cdae89fb495423399227331de76766703aaa71372e96cded05046e21713c033e885d
   languageName: node
   linkType: hard
 
@@ -28990,20 +28715,6 @@ __metadata:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.13.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 964c37b02b03ba9103fd67e4a486cf8cb57856eb92508677d8e2a350ec2b2a978014ed7dd4e2531c90ba89eedb0982b613590311471bfd66b14fdec709a09f17
-  languageName: node
-  linkType: hard
-
-"react-autosize-textarea@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "react-autosize-textarea@npm:7.1.0"
-  dependencies:
-    autosize: "npm:^4.0.2"
-    line-height: "npm:^0.3.1"
-    prop-types: "npm:^15.5.6"
-  peerDependencies:
-    react: ^0.14.0 || ^15.0.0 || ^16.0.0
-    react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0
-  checksum: 3b791f2455808682241c9fc00cccce31804cb696c489a4800cd124fce8be6b624a4c21836e06568b6d7d45b6a8e4945460249c77235990ce015f9899cda10a7f
   languageName: node
   linkType: hard
 
@@ -29109,7 +28820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-easy-crop@npm:^5.0.6, react-easy-crop@npm:^5.4.2":
+"react-easy-crop@npm:^5.4.2":
   version: 5.5.7
   resolution: "react-easy-crop@npm:5.5.7"
   dependencies:
@@ -30344,20 +30055,6 @@ __metadata:
   version: 0.3.4
   resolution: "route-recognizer@npm:0.3.4"
   checksum: dee14947275d6ee4d48371983590b7c9835d612a9e8347038476424da83db5631affe3b04085a13a9f7b0bd042da5c50d79a81ccbbc490e18978fd860a0f9ddd
-  languageName: node
-  linkType: hard
-
-"rrweb-cssom@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "rrweb-cssom@npm:0.7.1"
-  checksum: 127b8ca6c8aac45e2755abbae6138d4a813b1bedc2caabf79466ae83ab3cfc84b5bfab513b7033f0aa4561c7753edf787d0dd01163ceacdee2e8eb1b6bf7237e
-  languageName: node
-  linkType: hard
-
-"rrweb-cssom@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "rrweb-cssom@npm:0.8.0"
-  checksum: 56f2bfd56733adb92c0b56e274c43f864b8dd48784d6fe946ef5ff8d438234015e59ad837fc2ad54714b6421384141c1add4eb569e72054e350d1f8a50b8ac7b
   languageName: node
   linkType: hard
 
@@ -32643,7 +32340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tough-cookie@npm:^4.1.2, tough-cookie@npm:^4.1.4":
+"tough-cookie@npm:^4.1.2":
   version: 4.1.4
   resolution: "tough-cookie@npm:4.1.4"
   dependencies:
@@ -32670,15 +32367,6 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.1"
   checksum: cdc47cad3a9d0b6cb293e39ccb1066695ae6fdd39b9e4f351b010835a1f8b4f3a6dc3a55e896b421371187f22b48d7dac1b693de4f6551bdef7b6ab6735dfe3b
-  languageName: node
-  linkType: hard
-
-"tr46@npm:^5.1.0":
-  version: 5.1.1
-  resolution: "tr46@npm:5.1.1"
-  dependencies:
-    punycode: "npm:^2.3.1"
-  checksum: ae270e194d52ec67ebd695c1a42876e0f19b96e4aca2ab464ab1d9d17dc3acd3e18764f5034c93897db73421563be27c70c98359c4501136a497e46deda5d5ec
   languageName: node
   linkType: hard
 
@@ -34101,15 +33789,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"w3c-xmlserializer@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "w3c-xmlserializer@npm:5.0.0"
-  dependencies:
-    xml-name-validator: "npm:^5.0.0"
-  checksum: 8712774c1aeb62dec22928bf1cdfd11426c2c9383a1a63f2bcae18db87ca574165a0fbe96b312b73652149167ac6c7f4cf5409f2eb101d9c805efe0e4bae798b
-  languageName: node
-  linkType: hard
-
 "wait-for-expect@npm:^3.0.2":
   version: 3.0.2
   resolution: "wait-for-expect@npm:3.0.2"
@@ -34126,10 +33805,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wasm-vips@npm:^0.0.18":
-  version: 0.0.18
-  resolution: "wasm-vips@npm:0.0.18"
-  checksum: e727be01df57c256d42fca751514f51ccc2948f34e5de5854de224eec17223fc9c9d9351ebe48ff1701e14ce18f98e932fd09fba8026a905dfc971d68637435f
+"wasm-vips@npm:^0.0.19":
+  version: 0.0.19
+  resolution: "wasm-vips@npm:0.0.19"
+  checksum: baf9932d21d11da8485e150fddc4e178ba8bbad3d5fbde7b1499f7a469b2ac4f4ee37c0b83b67d98ec1dbde96603ad91ba46ed3ed668551502e5672fe4a87ac7
   languageName: node
   linkType: hard
 
@@ -34373,26 +34052,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whatwg-encoding@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "whatwg-encoding@npm:3.1.1"
-  dependencies:
-    iconv-lite: "npm:0.6.3"
-  checksum: 273b5f441c2f7fda3368a496c3009edbaa5e43b71b09728f90425e7f487e5cef9eb2b846a31bd760dd8077739c26faf6b5ca43a5f24033172b003b72cf61a93e
-  languageName: node
-  linkType: hard
-
 "whatwg-mimetype@npm:^3.0.0":
   version: 3.0.0
   resolution: "whatwg-mimetype@npm:3.0.0"
   checksum: 323895a1cda29a5fb0b9ca82831d2c316309fede0365047c4c323073e3239067a304a09a1f4b123b9532641ab604203f33a1403b5ca6a62ef405bcd7a204080f
-  languageName: node
-  linkType: hard
-
-"whatwg-mimetype@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "whatwg-mimetype@npm:4.0.0"
-  checksum: a773cdc8126b514d790bdae7052e8bf242970cebd84af62fb2f35a33411e78e981f6c0ab9ed1fe6ec5071b09d5340ac9178e05b52d35a9c4bcf558ba1b1551df
   languageName: node
   linkType: hard
 
@@ -34414,16 +34077,6 @@ __metadata:
     tr46: "npm:^3.0.0"
     webidl-conversions: "npm:^7.0.0"
   checksum: f7ec264976d7c725e0696fcaf9ebe056e14422eacbf92fdbb4462034609cba7d0c85ffa1aab05e9309d42969bcf04632ba5ed3f3882c516d7b093053315bf4c1
-  languageName: node
-  linkType: hard
-
-"whatwg-url@npm:^14.0.0":
-  version: 14.2.0
-  resolution: "whatwg-url@npm:14.2.0"
-  dependencies:
-    tr46: "npm:^5.1.0"
-    webidl-conversions: "npm:^7.0.0"
-  checksum: f746fc2f4c906607d09537de1227b13f9494c171141e5427ed7d2c0dd0b6a48b43d8e71abaae57d368d0c06b673fd8ec63550b32ad5ed64990c7b0266c2b4272
   languageName: node
   linkType: hard
 
@@ -34674,7 +34327,7 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.12.2"
-    "@types/qs": "npm:^6.9.7"
+    "@types/qs": "npm:^6.15.1"
     "@types/react": "npm:19.2.16"
     "@types/react-modal": "npm:^3.16.3"
     "@types/react-transition-group": "npm:^4.4.12"
@@ -34686,10 +34339,10 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.72.0"
     "@vgs/collect-js": "npm:^0.7.2"
     "@vgs/collect-js-react": "npm:^2.1.1"
-    "@wordpress/admin-ui": "npm:^2.3.0"
+    "@wordpress/admin-ui": "npm:^3.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.23.0"
+    "@wordpress/block-editor": "npm:^20.0.0"
+    "@wordpress/blocks": "npm:^17.1.0"
     "@wordpress/components": "npm:^44.0.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/element": "npm:^10.1.0"
@@ -34699,7 +34352,7 @@ __metadata:
     "@wordpress/is-shallow-equal": "npm:^6.1.0"
     "@wordpress/keycodes": "npm:^5.1.0"
     "@wordpress/primitives": "npm:^5.1.0"
-    "@wordpress/rich-text": "npm:^7.54.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
     "@wordpress/stylelint-config": "npm:^27.1.0"
     "@wordpress/url": "npm:^5.1.0"
     "@zip.js/zip.js": "npm:2.8.17"
@@ -34745,12 +34398,12 @@ __metadata:
     lodash: "npm:^4.18.1"
     lottie-web: "npm:^5.9.6"
     mixedindentlint: "npm:^1.2.0"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     ncp: "npm:^2.0.0"
     nock: "npm:^14.0.17"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     postcss-cli: "npm:^9.0.1"
     postcss-custom-properties: "npm:^12.1.11"
     postcss-scss: "npm:^4.0.9"
@@ -34772,6 +34425,7 @@ __metadata:
     swiper: "npm:^12.1.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:6.0.3"
+    vitest: "npm:^4.1.12"
     webpack: "npm:^5.111.1"
     webpack-bundle-analyzer: "npm:^5.4.0"
     webpack-cli: "npm:^7.2.3"
@@ -34833,7 +34487,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^8.0.7"
     debug: "npm:^4.4.3"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     webpack: "npm:^5.111.1"
     wp-error: "npm:^1.3.0"
   languageName: unknown
@@ -34847,7 +34501,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^8.0.7"
     debug: "npm:^4.4.3"
-    postcss: "npm:^8.5.31"
+    postcss: "npm:^8.5.32"
     superagent: "npm:^10.2.3"
     webpack: "npm:^5.111.1"
     wp-error: "npm:^1.3.0"
@@ -34864,8 +34518,8 @@ __metadata:
     "@babel/runtime": "npm:^8.0.7"
     debug: "npm:^4.4.3"
     npm-run-all: "npm:^4.1.5"
-    postcss: "npm:^8.5.31"
-    qs: "npm:^6.15.2"
+    postcss: "npm:^8.5.32"
+    qs: "npm:^6.17.1"
     webpack: "npm:^5.111.1"
     webpack-cli: "npm:^7.2.3"
     wpcom-oauth-cors: "npm:^1.0.2-beta"
@@ -34947,7 +34601,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.11.0, ws@npm:^8.18.0, ws@npm:^8.19.0, ws@npm:^8.21.1":
+"ws@npm:^8.11.0, ws@npm:^8.19.0, ws@npm:^8.21.1":
   version: 8.22.0
   resolution: "ws@npm:8.22.0"
   peerDependencies:
@@ -34986,13 +34640,6 @@ __metadata:
   version: 4.0.0
   resolution: "xml-name-validator@npm:4.0.0"
   checksum: c1bfa219d64e56fee265b2bd31b2fcecefc063ee802da1e73bad1f21d7afd89b943c9e2c97af2942f60b1ad46f915a4c81e00039c7d398b53cf410e29d3c30bd
-  languageName: node
-  linkType: hard
-
-"xml-name-validator@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "xml-name-validator@npm:5.0.0"
-  checksum: 3fcf44e7b73fb18be917fdd4ccffff3639373c7cb83f8fc35df6001fecba7942f1dbead29d91ebb8315e2f2ff786b508f0c9dc0215b6353f9983c6b7d62cb1f5
   languageName: node
   linkType: hard
 
@@ -35107,12 +34754,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yjs@npm:13.6.29":
-  version: 13.6.29
-  resolution: "yjs@npm:13.6.29"
+"yjs@npm:^13.6.29":
+  version: 13.6.33
+  resolution: "yjs@npm:13.6.33"
   dependencies:
     lib0: "npm:^0.2.99"
-  checksum: f300786ea63deac8a83e85598707ab9542e0a90b72fc0a1bcc77a58e618799de531ba4f85bcf349e647ad9e72bc4186edf50c4ecf67c8144cd53d3ac80d27351
+  checksum: 85dd66a715b04fe4eda0a7676d363b2e0573830113c941568112ffe83857e9b9092b4912de135896fb56e6a7242eaca0abc5804fda7d2847dcf719fc77ba4940
   languageName: node
   linkType: hard
 

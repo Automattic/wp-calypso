@@ -12,9 +12,11 @@ import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary
 export default function DomainConnectionSetupSummary( {
 	domain,
 	domainMappingStatus,
+	onClick,
 }: {
 	domain: Domain;
 	domainMappingStatus?: DomainMappingStatus;
+	onClick?: () => void;
 } ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	const isConnected =
@@ -36,6 +38,7 @@ export default function DomainConnectionSetupSummary( {
 			title={ __( 'Domain connection setup' ) }
 			density={ 'medium' as const }
 			badges={ badges }
+			onClick={ onClick }
 		/>
 	);
 }

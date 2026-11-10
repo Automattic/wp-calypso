@@ -31,11 +31,10 @@ const DEFAULT_LAYOUTS = {
 // note is highlighted via our own `is-active` marker), so this never changes.
 const NO_SELECTION: string[] = [];
 
-// DataViews 14 only loads more in response to scroll events, so the rendered
-// window (`perPage` rows) must be tall enough to overflow the panel and produce
-// a scrollbar. The REST client may fetch smaller network pages
-// (`increment_limit`); the effect below loads as many as needed to fill this
-// window, so it never outruns the loaded notes.
+// DataViews 14 only loads more in response to scroll events, so the list must
+// hold enough notes to overflow the panel and produce a scrollbar. The REST
+// client may fetch smaller network pages (`increment_limit`); the effect below
+// keeps loading until each scroll request has added this many notes.
 const NOTES_PER_PAGE = 20;
 
 type NoteListProps = {
@@ -136,8 +135,13 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		groupBy: { field: 'timeGroup', direction: 'asc', showLabel: false },
 	} );
 
-	const view = { ...initialView, perPage: NOTES_PER_PAGE };
-	const startPosition = view.startPosition ?? 1;
+	const [ targetNoteCount, setTargetNoteCount ] = useState( NOTES_PER_PAGE );
+
+	const view = {
+		...initialView,
+		startPosition: 1,
+		perPage: visibleNotes.length || NOTES_PER_PAGE,
+	};
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
 	// The setting is only offered where the flag is on, so only honour it there. A host
@@ -151,14 +155,10 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const { data, paginationInfo } = filterSortAndPaginate( visibleNotes, view, fields );
 
 	// `filterSortAndPaginate` reports `totalItems` as the count of notes loaded
-	// so far. DataViews advances its infinite-scroll window only while
-	// `totalItems` stays ahead of the window, so reporting the loaded count
-	// alone stalls scrolling after the first page: the window catches up, no
-	// `onChangeView` fires, and `loadMore()` is never called again. While the REST
-	// client still has notes left to fetch, report two extra: DataViews then
-	// advances as soon as the window is full, landing on the first unloaded note.
-	// More would let it skip past unloaded notes; fewer can strand a reader at the
-	// bottom when the next page lands outside the window and adds no rows.
+	// so far. DataViews asks for more (advancing `startPosition`) only while
+	// `totalItems` exceeds its rendered rows, every loaded note here, by at least
+	// two. So while the REST client still has notes left to fetch, report two
+	// extra: DataViews then asks for the first unloaded note.
 	// Pass the rendered tab: the client's own `filterName` lags a render behind
 	// a switch, which would answer for the previous tab and stall scroll.
 	const hasMoreNotes = client?.hasMoreNotes( filterName ) ?? false;
@@ -172,17 +172,17 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		}
 	}, [ client, isLoading ] );
 
-	// Fetch pages until the window is filled (a network page can be smaller), so a
+	// Fetch pages until `targetNoteCount` is loaded (a network page can be smaller), so a
 	// short list still overflows the panel and gets a scrollbar to drive more.
 	// Depend on `cachedNoteIds` by reference, not length: a same-length refresh must
 	// still re-run this to retry a `loadMore` the client's in-flight lock had
 	// blocked — else a switch back to a short cached tab strands it with no scrollbar.
 	useEffect( () => {
-		if ( startPosition + NOTES_PER_PAGE > visibleNotes.length && ! isLoading && hasMoreNotes ) {
+		if ( targetNoteCount >= visibleNotes.length && ! isLoading && hasMoreNotes ) {
 			infiniteScrollHandler();
 		}
 	}, [
-		startPosition,
+		targetNoteCount,
 		visibleNotes.length,
 		cachedNoteIds,
 		isLoading,
@@ -190,13 +190,19 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		infiniteScrollHandler,
 	] );
 
-	// DataViews drives infinite scroll by advancing `startPosition`; the effect
-	// above reacts to that and loads more as the window nears the loaded notes.
-	const handleChangeView = useCallback( ( nextView: View ) => setView( nextView ), [] );
+	// DataViews asks for more by advancing `startPosition`; raise the count the effect
+	// above loads towards.
+	const handleChangeView = useCallback( ( nextView: View ) => {
+		const requestedStartPosition = nextView.startPosition ?? 1;
+		if ( requestedStartPosition > 1 ) {
+			setTargetNoteCount( requestedStartPosition - 1 + NOTES_PER_PAGE );
+		}
+		setView( nextView );
+	}, [] );
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
-	useNoteListFocusOnNoteClose( { noteListRef, selectedNoteId } );
+	useNoteListFocusOnNoteClose( { noteListRef, notes: tab.notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
 		noteListRef,
 		visibleNotes,
@@ -213,8 +219,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
 	// our own at the foot of the list, while a fetch is in flight. An empty list
-	// uses the `empty` slot above instead. Check the loaded notes, not `data`: the
-	// window can move past them while DataViews still renders the earlier rows.
+	// uses the `empty` slot above instead.
 	const showLoadMore = hasMoreNotes && visibleNotes.length > 0 && tab.isLoading;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews

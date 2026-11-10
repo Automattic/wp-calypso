@@ -116,4 +116,38 @@ describe( 'useStatsLink', () => {
 			'/?from=2026-03-03T00%3A00%3A00.000-05%3A00&to=2026-03-09T23%3A59%3A59.999-04%3A00'
 		);
 	} );
+
+	// A Jetpack from before the config carried the zone: today's offset would date a summer
+	// bucket an hour out, so the link reads the zone Premium Analytics prints instead.
+	it( 'dates a range in the timezone the script data carries when the config has none', () => {
+		mockSite( undefined, false );
+		( optionalConfig as jest.Mock ).mockReturnValue( undefined );
+		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+			analytics: { enabled: true, can_view: true, timezone: 'Europe/Amsterdam' },
+		};
+
+		const url = new URL(
+			statsLink( STATS_URL, '/', { from: '2026-07-01', to: '2026-07-31', gmtOffset: 1 } )
+		);
+
+		expect( url.searchParams.get( 'p' ) ).toBe(
+			'/?from=2026-07-01T00%3A00%3A00.000%2B02%3A00&to=2026-07-31T23%3A59%3A59.999%2B02%3A00'
+		);
+	} );
+
+	it( 'prefers the timezone the config carries to the one the script data does', () => {
+		mockSite( undefined, false );
+		( optionalConfig as jest.Mock ).mockReturnValue( 'America/New_York' );
+		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
+			analytics: { enabled: true, can_view: true, timezone: 'Europe/Amsterdam' },
+		};
+
+		const url = new URL(
+			statsLink( STATS_URL, '/', { from: '2026-07-01', to: '2026-07-31', gmtOffset: 1 } )
+		);
+
+		expect( url.searchParams.get( 'p' ) ).toBe(
+			'/?from=2026-07-01T00%3A00%3A00.000-04%3A00&to=2026-07-31T23%3A59%3A59.999-04%3A00'
+		);
+	} );
 } );

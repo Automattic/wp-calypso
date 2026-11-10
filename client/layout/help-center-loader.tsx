@@ -1,4 +1,4 @@
-import { userPurchasesQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, userPurchasesQuery } from '@automattic/api-queries';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -7,6 +7,7 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
 import { hasCancelablePurchases } from 'calypso/dashboard/utils/purchase';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
@@ -41,14 +42,25 @@ export default function HelpCenterLoader( { sectionName, loadHelpCenter, current
 		enabled: false,
 	} );
 	const user = useSelector( getCurrentUser );
-	const agency = useSelector( getActiveAgency );
 	const { site } = useHelpCenterSite();
+
+	// Checkout on the A4A dashboard host doesn't run as A4A, so the host decides there. The agency
+	// store isn't loaded there either, so the agency comes from the dashboard's query.
+	const isOnA4ADashboardHost =
+		typeof window !== 'undefined' && isAllowedA4ADashboardHostname( window.location.hostname );
+	const isAgencyHelpCenter = isA8CForAgencies() || isOnA4ADashboardHost;
+	const storeAgency = useSelector( getActiveAgency );
+	const { data: dashboardAgency } = useQuery( {
+		...activeAgencyQuery(),
+		enabled: isOnA4ADashboardHost,
+	} );
+	const agency = isOnA4ADashboardHost ? dashboardAgency : storeAgency;
 
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
 
-	const additionalHelpCenterProps = isA8CForAgencies()
+	const additionalHelpCenterProps = isAgencyHelpCenter
 		? {
 				newInteractionsBotSlug: 'automattic-chat-support_a4a',
 				agency: agency
