@@ -14,6 +14,7 @@ import { useInView } from 'react-intersection-observer';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem, type InboxItem, type OpenSource } from './list-item';
+import { ConversationListPlaceholder } from './placeholder';
 import { ConversationListTabs, type InboxTab } from './tabs';
 import { ConversationListToolbar, type Density, type SortOrder } from './toolbar';
 
@@ -202,7 +203,7 @@ export function ConversationList( {
 					tabIndex={ -1 }
 					className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }
 				>
-					{ isLoading && <Spinner className="conversations-inbox__list-spinner" /> }
+					{ isLoading && <ConversationListPlaceholder density={ density } /> }
 					{ ! isLoading && isError && (
 						<ListMessage
 							title={ translate( 'Couldn’t load conversations' ) }

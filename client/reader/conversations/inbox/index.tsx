@@ -1,12 +1,8 @@
 import { type NotificationNote } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import { useBreakpoint } from '@automattic/viewport-react';
-import { __experimentalHStack as HStack } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import ReaderMain from 'calypso/reader/components/reader-main';
 import {
 	getConversationKey,
 	useConversations,
@@ -18,20 +14,24 @@ import { useCommentNotes } from 'calypso/reader/data/notifications';
 import { useSelectedPostCommands } from 'calypso/reader/stream/use-selected-post-commands';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { ConversationDetail } from './conversation-detail';
+import { ConversationDetailPlaceholder } from './conversation-detail/placeholder';
 import { ConversationList } from './conversation-list';
 import { type InboxItem, type OpenSource } from './conversation-list/list-item';
 import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
 import { type Density, type SortOrder } from './conversation-list/toolbar';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
+import {
+	ConversationsInboxLayout,
+	DENSITY_PREFERENCE,
+	useInboxDensity,
+	useIsNarrowInbox,
+} from './layout';
 
 import './style.scss';
-
-const DENSITY_PREFERENCE = 'reader_conversations_inbox_density';
 
 interface Props {
 	siteId?: string;
@@ -42,9 +42,6 @@ const REFRESH_INTERVAL = 60 * 1000;
 const SEARCH_DEBOUNCE = 300;
 // The routes reject longer search terms.
 const MAX_SEARCH_LENGTH = 100;
-// The Reader sidebar (~272px) and the 372px list leave the detail pane about 540px at this width.
-// It has to be one @automattic/viewport defines, or useBreakpoint never matches.
-const SINGLE_PANE_BREAKPOINT = '<1180px';
 
 type Unread = Pick< Conversation, 'unreadNoteIds' | 'unreadCommentIds' >;
 
@@ -128,13 +125,11 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
 	const { mutate: markRead } = useMarkConversationsRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
-	const isNarrow = useBreakpoint( SINGLE_PANE_BREAKPOINT );
+	const isNarrow = useIsNarrowInbox();
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
 	const inboxRef = useRef< HTMLDivElement >( null );
 	const wasShowingDetailRef = useRef( false );
-	const density: Density = useSelector(
-		( state ) => getPreference( state, DENSITY_PREFERENCE ) ?? 'comfortable'
-	);
+	const density = useInboxDensity();
 
 	const visible: InboxItem[] = tab === 'yours' ? ownCommentsQuery.comments : conversations;
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
@@ -317,7 +312,6 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	} );
 
 	const hasConversation = Boolean( siteId && postId );
-	const isShowingDetail = isNarrow && hasConversation;
 
 	useEffect( () => {
 		// The back button unmounts with the detail, which would drop focus to the body.
@@ -330,16 +324,12 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	}, [ isNarrow, hasConversation ] );
 
 	return (
-		<ReaderMain className="conversations-inbox-main no-padding" wideLayout>
+		<>
 			<DocumentHead title={ translate( 'Conversations' ) } />
-			<HStack
+			<ConversationsInboxLayout
 				ref={ inboxRef }
-				spacing={ 0 }
-				alignment="stretch"
-				className={ clsx( 'conversations-inbox', {
-					'is-narrow': isNarrow,
-					'is-showing-detail': isShowingDetail,
-				} ) }
+				isNarrow={ isNarrow }
+				hasConversation={ hasConversation }
 			>
 				<ConversationList
 					items={ visible }
@@ -368,6 +358,9 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					followFocus={ hasOpened }
 					onSelect={ openConversation }
 				/>
+				{ ! hasConversation && ! isNarrow && listQuery.isLoading && (
+					<ConversationDetailPlaceholder />
+				) }
 				{ hasConversation && (
 					<ConversationDetail
 						siteId={ Number( siteId ) }
@@ -380,7 +373,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 						onNext={ goTo( nextIndex, 'button' ) }
 					/>
 				) }
-			</HStack>
-		</ReaderMain>
+			</ConversationsInboxLayout>
+		</>
 	);
 }

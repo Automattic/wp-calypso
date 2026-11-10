@@ -8,7 +8,6 @@ import {
 	MenuGroup,
 	MenuItem,
 	Notice,
-	Spinner,
 	VisuallyHidden,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -45,6 +44,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
+import { ConversationContentPlaceholder } from './placeholder';
 import type { ReadConversationReason } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
@@ -226,11 +226,6 @@ export function ConversationDetail( {
 				</HStack>
 			</HStack>
 			<div className="conversations-inbox__detail-body">
-				{ isLoading && ! post && (
-					<div className="conversations-inbox__detail-loading">
-						<Spinner />
-					</div>
-				) }
 				{ /* Keyed so the card and comments mount, and fade in, for each conversation. */ }
 				<VStack
 					key={ getConversationKey( siteId, postId ) }
@@ -255,6 +250,7 @@ export function ConversationDetail( {
 							</VStack>
 						</Notice>
 					) }
+					{ isLoading && ! post && <ConversationContentPlaceholder /> }
 					{ !! post?.is_error && (
 						<Text as="p" color="var(--color-text-subtle)">
 							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
