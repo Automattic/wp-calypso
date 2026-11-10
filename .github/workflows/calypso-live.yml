@@ -30,10 +30,6 @@ jobs:
             const hasComment = existingComment ? "true" : "false";
             console.log( `Has existing comment: ${ hasComment }` );
             return hasComment;
-      - name: Build calypso.live link
-        run: |
-          echo "QUERY=image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
-        id: build_link
       - name: Post comment on PR
         uses: actions/github-script@v6
         if: steps.has_comment.outputs.result == 'false'
@@ -41,24 +37,17 @@ jobs:
           # Skip adding a comment if we already have one.
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const link = `https://calypso.live?${{steps.build_link.outputs.QUERY}}`;
-            const readerLink = `https://calypso.live/reader?${{steps.build_link.outputs.QUERY}}`;
-
-            const environments = [
-              { label: 'WordPress.com Dashboard', url: `${link}&env=dashboard` },
-              { label: 'WordPress.com (/reader)', url: readerLink },
-              { label: 'Automattic for Agencies Dashboard', url: `${link}&env=dashboard-a4a` },
-              { label: 'Automattic for Agencies', url: `${link}&env=a8c-for-agencies` },
-              { label: 'Jetpack Cloud', url: `${link}&env=jetpack` },
-            ];
-
+            // The Docker image build replaces this comment with the links once
+            // it has an image to link to (see `linksBlock` in
+            // .teamcity/_self/projects/WebApp.kt). Don't guess a link here: the
+            // image doesn't exist yet, and the `commit-<sha>` tag is not
+            // reliably published for the commit a PR is opened with.
             const body = [
               '<!--calypso-live-watermark:apr@v1-->',
               '<h2>🧐 Test on Calypso Live ⛅</h2>',
               '',
-              '| Environment | 🔗 |',
-              '| - | - |',
-              ...environments.map( env => `| ${ env.label } | [live link](${ env.url }) |` ),
+              'Calypso Live links are being generated...',
+              'They will replace this message when the `Docker image (Web app)` check finishes, usually within a few minutes.',
             ].join( '\n' );
 
             github.rest.issues.createComment({
