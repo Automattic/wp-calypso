@@ -35,6 +35,7 @@ import {
 	type Conversation,
 } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -120,6 +121,8 @@ export function ConversationDetail( {
 		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
 	);
 	const author = post?.author as ReaderLinkAuthor | undefined;
+	// ReaderAuthorLink renders nothing for blocked names, so the dot must skip them too.
+	const showAuthor = !! author?.name && ! isAuthorNameBlocked( author.name );
 	const image = ( post?.canonical_image as { uri?: string } | undefined )?.uri;
 	const date = post?.date ? moment( String( post.date ) ) : null;
 	const postUrl = post ? getPostUrl( post ) : '';
@@ -283,7 +286,7 @@ export function ConversationDetail( {
 										<strong>{ String( post.site_name ?? '' ) }</strong>
 									</HStack>
 									<HStack spacing={ 1.5 } expanded={ false }>
-										{ author?.name && (
+										{ showAuthor && author && (
 											<ReaderAuthorLink
 												author={ author }
 												className="conversations-inbox__post-author"
@@ -291,7 +294,7 @@ export function ConversationDetail( {
 												{ author.name }
 											</ReaderAuthorLink>
 										) }
-										{ author?.name && date && (
+										{ showAuthor && date && (
 											<span className="conversations-inbox__post-dot" aria-hidden="true" />
 										) }
 										{ date && (
@@ -322,15 +325,15 @@ export function ConversationDetail( {
 										>
 											{ ( { onClose } ) => (
 												<MenuGroup>
-													{ controls.map( ( { title, onClick } ) => (
+													{ controls.map( ( { title: label, onClick } ) => (
 														<MenuItem
-															key={ title }
+															key={ label }
 															onClick={ () => {
 																onClick();
 																onClose();
 															} }
 														>
-															{ title }
+															{ label }
 														</MenuItem>
 													) ) }
 												</MenuGroup>

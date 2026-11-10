@@ -28,10 +28,21 @@ const CommentActions = ( {
 	const commentId = comment.ID;
 	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
-	// Spelled out, Cancel takes Reply's place while the editor is open, instead of sitting beside it.
-	const swapReplyForCancel = spellOutLabels && showCancelReplyButton;
+	// Spelled out, Cancel takes over Reply's button while the editor is open, so focus stays on it.
+	const swapReplyForCancel = spellOutLabels && showReplyButton && showCancelReplyButton;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = isRebloggable( post, hasSites );
+
+	let replyIcon = <Gridicon icon="reply" size={ 18 } />;
+	if ( swapReplyForCancel ) {
+		replyIcon = (
+			<Icon icon={ close } size={ 18 } className="comments__comment-actions-cancel-icon" />
+		);
+	} else if ( spellOutLabels ) {
+		replyIcon = (
+			<Icon icon={ keyboardReturn } size={ 18 } className="comments__comment-actions-reply-icon" />
+		);
+	}
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {
@@ -50,30 +61,18 @@ const CommentActions = ( {
 					{ translate( 'Read More' ) }
 				</Button>
 			) }
-			{ showReplyButton && swapReplyForCancel && (
+			{ showReplyButton && (
 				<Button
 					className="comments__comment-actions-reply"
-					aria-label={ translate( 'Cancel reply' ) }
-					onClick={ onReplyCancel }
+					aria-label={ swapReplyForCancel ? translate( 'Cancel reply' ) : undefined }
+					onClick={ swapReplyForCancel ? onReplyCancel : handleReply }
 				>
-					<Icon icon={ close } size={ 18 } className="comments__comment-actions-cancel-icon" />
+					{ replyIcon }
 					<span className="comments__comment-actions-reply-label">
-						{ translate( 'Cancel', { context: 'verb' } ) }
+						{ swapReplyForCancel
+							? translate( 'Cancel', { context: 'verb' } )
+							: translate( 'Reply' ) }
 					</span>
-				</Button>
-			) }
-			{ showReplyButton && ! swapReplyForCancel && (
-				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
-					{ spellOutLabels ? (
-						<Icon
-							icon={ keyboardReturn }
-							size={ 18 }
-							className="comments__comment-actions-reply-icon"
-						/>
-					) : (
-						<Gridicon icon="reply" size={ 18 } />
-					) }
-					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 				</Button>
 			) }
 			{ showReblogButton && (

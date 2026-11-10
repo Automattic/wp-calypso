@@ -1,5 +1,10 @@
 @import '@wordpress/base-styles/colors';
 
+// Calypso defines the WPDS tokens only after another page loads them, so fall back until then.
+$conversations-inbox-stroke: var( --wpds-color-stroke-surface-neutral-weak, #f0f0f0 );
+$conversations-inbox-duration: var( --wpds-motion-duration-sm, 100ms );
+$conversations-inbox-easing: var( --wpds-motion-easing-balanced, cubic-bezier( 0.4, 0, 0.2, 1 ) );
+
 .conversations-inbox__detail-pane {
 	flex: 1;
 	min-width: 0;
@@ -9,7 +14,7 @@
 	box-sizing: border-box;
 	min-height: 64px;
 	padding: 0 24px;
-	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral-weak );
+	border-block-end: 1px solid $conversations-inbox-stroke;
 
 	.components-button {
 		color: var( --color-text );
@@ -61,8 +66,7 @@
 // The post card and comments fade in when a conversation opens, instead of popping in.
 .conversations-inbox__post-card,
 .conversations-inbox__detail-content .comments__comment-list {
-	animation: conversations-inbox-appear var( --wpds-motion-duration-sm )
-		var( --wpds-motion-easing-balanced );
+	animation: conversations-inbox-appear $conversations-inbox-duration $conversations-inbox-easing;
 
 	@media ( prefers-reduced-motion: reduce ) {
 		animation: none;
@@ -97,12 +101,16 @@ $conversations-inbox-post-card-shadow:
 	box-shadow: $conversations-inbox-post-card-shadow;
 	color: var( --color-text );
 	transition-property: background-color, border-color, box-shadow;
-	transition-duration: var( --wpds-motion-duration-sm );
-	transition-timing-function: var( --wpds-motion-easing-balanced );
+	transition-duration: $conversations-inbox-duration;
+	transition-timing-function: $conversations-inbox-easing;
 
 	// The notifications panel's post card hover, with a slightly less blue border.
 	&:hover {
-		border-color: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, var( --color-border-subtle ) );
+		border-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 10%,
+			var( --color-border-subtle )
+		);
 		background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 2%, transparent );
 		box-shadow: none;
 	}
@@ -137,7 +145,7 @@ $conversations-inbox-post-card-shadow:
 	flex-shrink: 0;
 	fill: var( --color-text );
 	opacity: 0;
-	transition: opacity var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+	transition: opacity $conversations-inbox-duration $conversations-inbox-easing;
 
 	.conversations-inbox__post-card:is( :hover, :focus-within ) & {
 		opacity: 1;
@@ -173,15 +181,18 @@ $conversations-inbox-post-card-shadow:
 		transform: translateY( 1px );
 	}
 
-	// Sits above the card's stretched post link.
 	.conversations-inbox__post-author {
+		color: var( --color-text );
+	}
+
+	// Sits above the card's stretched post link. Without a URL it's a span, which lets clicks through.
+	a.conversations-inbox__post-author {
 		position: relative;
 		z-index: 1;
 		color: var( --color-text );
 		text-decoration: underline;
 		text-decoration-color: transparent;
-		transition: text-decoration-color var( --wpds-motion-duration-sm )
-			var( --wpds-motion-easing-balanced );
+		transition: text-decoration-color $conversations-inbox-duration $conversations-inbox-easing;
 
 		&:visited,
 		&:focus {
@@ -210,7 +221,7 @@ $conversations-inbox-post-card-shadow:
 
 	.comments__info-bar {
 		padding-block-end: 12px;
-		border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral-weak );
+		border-block-end: 1px solid $conversations-inbox-stroke;
 	}
 
 	.comments__info-bar-title-links {
@@ -222,7 +233,7 @@ $conversations-inbox-post-card-shadow:
 		font-size: 13px;
 		line-height: 20px;
 		text-decoration: underline;
-		transition: color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+		transition: color $conversations-inbox-duration $conversations-inbox-easing;
 
 		&:hover,
 		&:active {
@@ -321,6 +332,11 @@ $conversations-inbox-post-card-shadow:
 
 		.comments__comment-actions-reply-icon {
 			transform: scaleX( -1 );
+
+			// RTLCSS leaves transforms alone, and RTL already faces the arrow the right way.
+			&:dir( rtl ) {
+				transform: none;
+			}
 		}
 
 		// The close glyph fills more of its box than the arrow and star do.
@@ -434,7 +450,8 @@ $conversations-inbox-post-card-shadow:
 	// Quotes get more room than paragraphs, to set them apart.
 	.comments__comment-content blockquote {
 		margin-block: 24px;
-		padding: 0 0 0 16px;
+		padding: 0;
+		padding-inline-start: 16px;
 		border-inline-start: 2px solid var( --color-border-subtle );
 		border-radius: 0;
 		color: color-mix( in srgb, var( --color-text-subtle ) 80%, var( --color-text ) );
