@@ -9,7 +9,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { PRESSABLE_Q3_2026_OFFER_START_DATE } from '../constants';
+import { PRESSABLE_OFFER_START_DATE } from '../constants';
 import type { License } from 'calypso/state/partner-portal/types';
 
 // The offer only covers moves up within the Signature and Premium tiers, the
@@ -45,7 +45,7 @@ export function hasBenefitedFromIntroductoryOffer(
 		license.issuedAt < earliest.issuedAt ? license : earliest
 	);
 
-	return earliestLicense.issuedAt.slice( 0, 10 ) >= PRESSABLE_Q3_2026_OFFER_START_DATE;
+	return earliestLicense.issuedAt.slice( 0, 10 ) >= PRESSABLE_OFFER_START_DATE;
 }
 
 // An agency on a legacy plan has no upgrade path the offer applies to, so the

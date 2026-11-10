@@ -116,7 +116,7 @@ export default function WelcomeBand( {
 			art: callArt,
 			title: __( 'Plan your growth with an advisor' ),
 			description: __(
-				'A free 30-minute call to identify your business challenges and ways to grow your agency.'
+				'A free 30-minute call to find your challenges and ways to grow your agency.'
 			),
 			action: (
 				<Button
@@ -199,29 +199,24 @@ export default function WelcomeBand( {
 								<Text variant="muted" lineHeight="20px">
 									{ createInterpolateElement(
 										__(
-											'<strong>We’re reviewing your account</strong>, and <strong>you can book your advisor call now</strong>. Most are activated within one business day.'
+											'<strong>We’re reviewing your account</strong>, and <strong>you can book your advisor call now</strong>. Most are approved within one business day.'
 										),
 										{ strong: <strong /> }
 									) }
 								</Text>
 							) }
 							<Text lineHeight="20px">
-								{ createInterpolateElement(
-									__( 'Start with these three steps, or <tour>take the full tour</tour>.' ),
-									{
-										tour: (
-											<Button
-												variant="link"
-												onClick={ () => {
-													recordTracksEvent( 'calypso_a4a_overview_welcome_band_full_tour_click', {
-														state,
-													} );
-													onTakeTour();
-												} }
-											/>
-										),
-									}
-								) }
+								<Button
+									variant="link"
+									onClick={ () => {
+										recordTracksEvent( 'calypso_a4a_overview_welcome_band_full_tour_click', {
+											state,
+										} );
+										onTakeTour();
+									} }
+								>
+									{ __( 'Take the full tour' ) }
+								</Button>
 							</Text>
 						</VStack>
 					</div>
@@ -254,7 +249,7 @@ export default function WelcomeBand( {
 								<div className="a4a-welcome-band-action">
 									{ step.isLocked ? (
 										<Text size={ 12 } lineHeight="16px" color={ MUTED_ON_FIELD }>
-											{ __( 'Unlocks when your account is activated' ) }
+											{ __( 'Unlocks when your account is approved' ) }
 										</Text>
 									) : (
 										<HStack justify="flex-start">{ step.action }</HStack>

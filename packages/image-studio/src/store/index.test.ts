@@ -345,6 +345,23 @@ describe( 'Image Studio Store', () => {
 			} );
 		} );
 
+		describe( 'reopening from the featured image panel', () => {
+			it( 'drops the ratio picked in the previous session', () => {
+				const picked = reducer( getInitialState(), actions.setSelectedAspectRatio( '1:1' ) );
+				const closed = reducer( picked, actions.closeImageStudio() );
+				const reopened = reducer(
+					closed,
+					actions.openImageStudio(
+						null,
+						undefined,
+						'jetpack_ai_featured_image' as ImageStudioEntryPoint
+					)
+				);
+
+				expect( reopened.selectedAspectRatio ).toBeNull();
+			} );
+		} );
+
 		describe( 'CLOSE_IMAGE_STUDIO', () => {
 			it( 'resets to initial state', () => {
 				const previousState: ImageStudioState = {

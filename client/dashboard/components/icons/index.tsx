@@ -1,7 +1,7 @@
 import { SVG, Path, Circle } from '@wordpress/primitives';
 
 export const wordpressLabs = (
-	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style={ { fill: 'none' } }>
 		<Path d="M9.75 3.75H14.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
 		<Path
 			d="M10.5 4V9.6754C10.5 9.98903 10.4024 10.2949 10.2206 10.5503L6.94714 15.1435C6.09884 16.3346 6.95166 18 8.41442 18H15.5856C17.0483 18 17.9012 16.3346 17.0529 15.1435L13.7794 10.5503C13.5976 10.2949 13.5 9.98903 13.5 9.6754V4"

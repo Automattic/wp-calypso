@@ -44,7 +44,7 @@ jest.mock( '../auth', () => ( {
 jest.mock( '../i18n', () => ( {
 	I18nProvider: ( { children }: PropsWithChildren ) => children,
 } ) );
-jest.mock( 'calypso/lib/color-scheme', () => ( {
+jest.mock( 'calypso/lib/color-scheme/with-color-scheme', () => ( {
 	withColorScheme: ( element: ReactNode ) => element,
 } ) );
 

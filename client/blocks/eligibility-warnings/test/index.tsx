@@ -199,6 +199,28 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
 	} );
 
+	it( 'warns that the new address is not indexed by search engines', () => {
+		const state = createState( {
+			warnings: [
+				{
+					name: 'Subdomain',
+					description: 'Your site address will change',
+					domainNames: { current: 'example.wordpress.com', new: 'example.wpcomstaging.com' },
+				},
+			],
+		} );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="hosting-features" inModal />,
+			state
+		);
+
+		expect( getByText( /isn’t indexed by search engines/ ) ).toBeVisible();
+		expect( getByText( 'add a custom domain so your site can be indexed' ).tagName ).toBe(
+			'STRONG'
+		);
+	} );
+
 	it( "doesn't render warnings when there are blocking holds", () => {
 		const state = createState( {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER' ],
