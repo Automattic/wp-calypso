@@ -1,8 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
+
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import { useState } from 'react';
 import {
 	adaptReadConversation,
@@ -135,6 +138,13 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
 		expect( screen.getByText( 'You haven’t commented anywhere yet' ) ).toBeVisible();
+	} );
+
+	it( 'shows placeholder rows while the first page loads', () => {
+		renderList( { items: [], isLoading: true } );
+
+		expect( speak ).toHaveBeenCalledWith( 'Loading conversations…' );
+		expect( screen.queryByText( 'Conversations will appear here' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'waits for the next page instead of showing an empty state', () => {
