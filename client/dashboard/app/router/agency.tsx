@@ -266,6 +266,7 @@ const agencyAmplifyOverviewRoute = createRoute( {
 
 // The page used to live at `/amplify`, and its reports at `/amplify/reports`.
 const agencyAmplifyLegacyRedirectRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
 	getParentRoute: () => agencyRoute,
 	path: 'amplify',
 	beforeLoad: () => {
@@ -274,6 +275,7 @@ const agencyAmplifyLegacyRedirectRoute = createRoute( {
 } );
 
 const agencyAmplifyLegacySubpageRedirectRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
 	getParentRoute: () => agencyRoute,
 	path: 'amplify/$',
 	beforeLoad: () => {
