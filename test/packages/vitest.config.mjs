@@ -20,5 +20,7 @@ export default defineConfig( {
 		globals: true,
 		include: [ '**/test/*.{js,jsx,ts,tsx}' ],
 		exclude: [ ...configDefaults.exclude, '**/dist/**' ],
+		// Vitest otherwise cuts `$name` test titles at 40 characters.
+		chaiConfig: { truncateThreshold: 0 },
 	},
 } );
