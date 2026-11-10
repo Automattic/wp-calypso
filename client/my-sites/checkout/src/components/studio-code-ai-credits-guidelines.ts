@@ -3,7 +3,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 // The guidelines doc is published in English only, so this skips localizeUrl().
 const AI_CREDITS_GUIDELINES_URL =
-	'https://developer.wordpress.com/docs/developer-tools/studio/studio-code/ai-credits-guidelines/';
+	'https://wordpress.studio/docs/studio-code/ai-credits-guidelines/';
 
 export function getStudioCodeAiCreditsGuidelinesUrl() {
 	return AI_CREDITS_GUIDELINES_URL;

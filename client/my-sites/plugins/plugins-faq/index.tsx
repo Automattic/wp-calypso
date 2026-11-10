@@ -121,7 +121,7 @@ export function PluginsFAQ() {
 				'Yes. Developers can create custom plugins and upload them to WordPress.com on paid plans. You can also connect GitHub and use tools like WP-CLI for advanced workflows. Check out {{a}}WordPress Studio{{/a}} for local plugin development.',
 				{
 					components: {
-						a: <a href="https://developer.wordpress.com/studio/" />,
+						a: <a href="https://wordpress.studio/" />,
 					},
 				}
 			),

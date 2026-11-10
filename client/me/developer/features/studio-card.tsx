@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useHandleClickLink } from './use-handle-click-link';
 
@@ -21,7 +20,7 @@ export const StudioCard = () => {
 			<div className="developer-features-list__item-learn-more">
 				<a
 					id="studio"
-					href={ localizeUrl( 'https://developer.wordpress.com/studio/' ) }
+					href="https://wordpress.studio/"
 					rel="noopener noreferrer"
 					onClick={ handleClickLink }
 				>
