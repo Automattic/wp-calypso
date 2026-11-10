@@ -277,6 +277,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -547,6 +548,7 @@ __metadata:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     gettext-parser: "npm:^4.0.3"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     "@babel/core": ^7.29.7
   languageName: unknown
@@ -657,6 +659,7 @@ __metadata:
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -755,6 +758,7 @@ __metadata:
     postcss: "npm:^8.5.32"
     postcss-custom-properties: "npm:^12.1.11"
     sass: "npm:1.77.8"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -770,6 +774,7 @@ __metadata:
     cookie: "npm:^0.7.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -1137,6 +1142,7 @@ __metadata:
     cookie: "npm:^0.7.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -1381,11 +1387,11 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
-    jest: "npm:^30.5.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:>=2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -1396,9 +1402,9 @@ __metadata:
   resolution: "@automattic/explat-client@workspace:packages/explat-client"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    jest: "npm:^30.5.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -1409,6 +1415,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -1418,6 +1425,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -1481,6 +1489,7 @@ __metadata:
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
     webpack: "npm:^5.111.1"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
@@ -1650,6 +1659,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^8.0.10"
     react-dom: "npm:^18.3.1"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     "@types/react": ">=16.14.65"
     react: ">=16.2.0"
@@ -1759,13 +1769,13 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    jest: "npm:^30.5.2"
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
     webpack: "npm:^5.111.1"
   languageName: unknown
   linkType: soft
@@ -1870,6 +1880,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -2495,6 +2506,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -2609,6 +2621,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@wordpress/compose": "npm:^8.2.0"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
@@ -2622,6 +2635,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     react: "npm:^18.3.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -2647,6 +2661,7 @@ __metadata:
     css-loader: "npm:^7.1.5"
     mini-css-extract-plugin: "npm:^2.10.2"
     rtlcss: "npm:^3.1.2"
+    vitest: "npm:^4.1.12"
     webpack: "npm:^5.111.1"
   peerDependencies:
     webpack: ^5.99.8
@@ -19295,6 +19310,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@eslint/js": "npm:^9.39.5"
     espree: "npm:^11.2.0"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     eslint: ^10.14.0
     eslint-plugin-inclusive-language: ^2.2.1
@@ -21558,6 +21574,7 @@ __metadata:
     commander: "npm:^5.1.0"
     debug: "npm:^4.4.3"
     globby: "npm:^10.0.2"
+    vitest: "npm:^4.1.12"
     xgettext-js: "npm:^3.0.0"
   bin:
     i18n-calypso: cli.js
@@ -21588,6 +21605,7 @@ __metadata:
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     use-subscription: "npm:1.11.0"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -26943,6 +26961,7 @@ __metadata:
     seed-random: "npm:^2.2.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 

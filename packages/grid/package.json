@@ -28,7 +28,7 @@
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"storybook:start": "storybook dev -p 56834",
-		"test": "cd ../.. && yarn test-packages packages/grid"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@dnd-kit/core": "^6.3.1",
@@ -50,6 +50,7 @@
 		"postcss": "^8.5.32",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
+		"vitest": "^4.1.12",
 		"webpack": "^5.111.1"
 	}
 }

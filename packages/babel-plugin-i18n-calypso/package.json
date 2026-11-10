@@ -10,7 +10,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"vitest": "^4.1.12"
 	},
 	"peerDependencies": {
 		"@babel/core": "^7.29.7"
