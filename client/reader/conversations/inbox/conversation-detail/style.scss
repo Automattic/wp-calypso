@@ -284,7 +284,7 @@
 
 	.comments__comment-actions {
 		gap: 16px;
-		margin-block-start: 8px;
+		margin-block-start: 12px;
 
 		.components-button {
 			font-size: 13px;
@@ -310,6 +310,16 @@
 		// Once liked, the star takes the brand color and the label the text color.
 		.components-button.like-button:is( .is-liked, .is-pressed ) {
 			color: var( --color-text );
+		}
+
+		.like-button__label strong {
+			font-weight: 500;
+		}
+
+		// Clicking an action shouldn't leave a focus ring; keyboard focus still shows it.
+		.components-button:focus:not( :focus-visible ) {
+			box-shadow: none;
+			outline: none;
 		}
 	}
 
