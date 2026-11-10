@@ -79,7 +79,7 @@ function PrimaryMenuSidebar() {
 			) }
 			{ supports.domains && (
 				<SidebarMenuItem icon={ globe } to="/domains">
-					{ __( 'Domains' ) }
+					{ __( 'Domain List' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.emails && (
