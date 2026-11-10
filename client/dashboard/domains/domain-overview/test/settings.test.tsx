@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,9 +21,11 @@ const connected = { subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Doma
 const NAME_SERVERS = 'Name servers';
 const DNS = 'DNS records';
 const FORWARDING = 'Domain forwarding';
-const SECURITY = 'Domain security';
+const SECURITY = 'DNSSEC';
+const CONNECTED_SECURITY = 'Domain security';
 const GLUE = 'Glue records';
-const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ];
+const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, CONNECTED_SECURITY, GLUE ];
+const SHOW_ADVANCED = { name: 'Show advanced settings' };
 
 function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled = false ) {
 	const domain = {
@@ -45,7 +47,12 @@ function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled =
 	);
 }
 
+async function showAdvanced() {
+	await userEvent.click( await screen.findByRole( 'button', SHOW_ADVANCED ) );
+}
+
 async function getOptionalRows() {
+	await showAdvanced();
 	await screen.findByText( 'Site' );
 	expect( screen.getByText( 'Professional email' ) ).toBeVisible();
 
@@ -54,7 +61,11 @@ async function getOptionalRows() {
 
 describe( 'DomainOverviewSettings', () => {
 	test.each< [ string, Partial< Domain >, string[] ] >( [
-		[ 'a fully manageable registered domain', {}, OPTIONAL_ROWS ],
+		[
+			'a fully manageable registered domain',
+			{},
+			[ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ],
+		],
 		[
 			'a gravatar restricted domain',
 			{ is_gravatar_restricted_domain: true },
@@ -70,11 +81,11 @@ describe( 'DomainOverviewSettings', () => {
 			{ current_user_can_manage: false },
 			[ NAME_SERVERS, DNS, FORWARDING, SECURITY ],
 		],
-		[ 'a connected domain', connected, [ DNS, FORWARDING, SECURITY ] ],
+		[ 'a connected domain', connected, [ DNS, FORWARDING, CONNECTED_SECURITY ] ],
 		[
 			'a connected domain whose DNS cannot be managed',
 			{ ...connected, can_manage_dns_records: false },
-			[ SECURITY ],
+			[ CONNECTED_SECURITY ],
 		],
 	] )( 'shows the right rows for %s', async ( _, customProps, expected ) => {
 		renderDomainSettings( customProps );
@@ -85,6 +96,7 @@ describe( 'DomainOverviewSettings', () => {
 	test( 'shows glue records in a support session even when the user cannot manage', async () => {
 		( isSupportSession as jest.Mock ).mockReturnValue( true );
 		renderDomainSettings( { current_user_can_manage: false } );
+		await showAdvanced();
 
 		expect( await screen.findByText( GLUE ) ).toBeVisible();
 	} );
@@ -123,7 +135,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 	} );
 
-	test( 'keeps only Site, Emails and Security for a partially restricted domain', async () => {
+	test( 'keeps only Site, Professional email and DNSSEC for a partially restricted domain', async () => {
 		renderDomainSettings( {
 			current_user_can_manage: false,
 			can_manage_dns_records: false,
@@ -132,5 +144,39 @@ describe( 'DomainOverviewSettings', () => {
 
 		expect( await getOptionalRows() ).toEqual( [ SECURITY ] );
 		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 2 );
+	} );
+
+	test( 'keeps security and glue records behind a tracked toggle, after the default rows', async () => {
+		const { recordTracksEvent } = renderDomainSettings();
+		const trackedToggle = ( expanded: boolean ) =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domain_overview_item_click',
+				expect.objectContaining( { item: 'advanced-toggle', expanded } )
+			);
+
+		const visibleRows = () =>
+			screen
+				.getAllByText( new RegExp( `^(${ OPTIONAL_ROWS.join( '|' ) })$` ) )
+				.map( ( row ) => row.textContent );
+		const defaultRows = [ FORWARDING, NAME_SERVERS, DNS ];
+
+		await screen.findByText( DNS );
+		expect( visibleRows() ).toEqual( defaultRows );
+
+		await showAdvanced();
+		await screen.findByText( SECURITY );
+		expect( visibleRows() ).toEqual( [ ...defaultRows, SECURITY, GLUE ] );
+		trackedToggle( true );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Hide advanced settings' } ) );
+		expect( visibleRows() ).toEqual( defaultRows );
+		trackedToggle( false );
+	} );
+
+	test( 'hides the toggle when there are no advanced rows', async () => {
+		renderDomainSettings( { ...connected, transfer_status: DomainTransferStatus.PENDING_ASYNC } );
+
+		await screen.findByText( 'Site' );
+		expect( screen.queryByRole( 'button', SHOW_ADVANCED ) ).not.toBeInTheDocument();
 	} );
 } );
