@@ -105,6 +105,7 @@
 
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
+				color: var( --color-link );
 				fill: var( --color-link );
 			}
 		}
