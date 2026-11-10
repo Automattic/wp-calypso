@@ -3,12 +3,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 	CardHeader,
-	privateApis,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { Badge } from '@wordpress/ui';
+import { Badge, Tabs } from '@wordpress/ui';
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
@@ -20,13 +18,6 @@ import CloseButton from '../templates/close-button';
 import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import NotePanelActions from './actions';
 import type { FilterName } from '../types';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-
-const { Tabs } = unlock( privateApis );
 
 export const getNotificationTabs = () =>
 	Object.values( getFilters() ).map( ( { name, label } ) => ( {
@@ -110,7 +101,7 @@ const NotePanel = ( {
 	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled, selectedNoteId ] );
 
 	return (
-		<>
+		<Tabs.Root className="wpnc-app__tabs" value={ filterName } onValueChange={ handleSelect }>
 			<CardHeader
 				size="small"
 				style={ { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 0 } }
@@ -138,44 +129,41 @@ const NotePanel = ( {
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
-					<Tabs selectedTabId={ filterName } onSelect={ handleSelect }>
-						<Tabs.TabList
-							style={ {
-								maxWidth: '100%',
-							} }
-						>
-							{ notificationTabs.map( ( { name, title } ) => (
-								<Tabs.Tab
-									key={ name }
-									tabId={ name }
-									style={ { fontFamily: 'inherit', fontWeight: 500, lineHeight: '16px' } }
-									ref={ ( element: HTMLButtonElement ) => {
-										tabRefs.current[ name ] = element;
-									} }
-								>
-									{ title }
-								</Tabs.Tab>
-							) ) }
-						</Tabs.TabList>
-					</Tabs>
+					<Tabs.List variant="minimal">
+						{ notificationTabs.map( ( { name, title } ) => (
+							<Tabs.Tab
+								key={ name }
+								value={ name }
+								ref={ ( element: HTMLButtonElement ) => {
+									tabRefs.current[ name ] = element;
+								} }
+							>
+								{ title }
+							</Tabs.Tab>
+						) ) }
+					</Tabs.List>
 				</VStack>
 			</CardHeader>
-			{ /* Scope the boundary to the list content so a render error there
-			   leaves the header controls (tabs, settings) intact and only
-			   overlays the message, instead of collapsing the whole panel. */ }
-			<ErrorBoundary>
-				{ /* Key by `filterName` so switching tabs remounts the list. The tab
-				   filter is applied outside the DataViews `view`, so DataViews'
-				   infinite-scroll row accumulation would otherwise carry stale
-				   notes from the previously selected tab. */ }
-				<NoteList
-					key={ filterName }
-					filterName={ filterName }
-					selectedNoteId={ selectedNoteId }
-					setSelectedNoteId={ setSelectedNoteId }
-				/>
-			</ErrorBoundary>
-		</>
+			{ notificationTabs.map( ( { name } ) => (
+				<Tabs.Panel key={ name } value={ name } className="wpnc-app__tab-panel">
+					{ /* Scope the boundary to the list content so a render error there
+					   leaves the header controls (tabs, settings) intact and only
+					   overlays the message, instead of collapsing the whole panel. */ }
+					<ErrorBoundary>
+						{ /* Key by `filterName` so switching tabs remounts the list. The tab
+						   filter is applied outside the DataViews `view`, so DataViews'
+						   infinite-scroll row accumulation would otherwise carry stale
+						   notes from the previously selected tab. */ }
+						<NoteList
+							key={ filterName }
+							filterName={ filterName }
+							selectedNoteId={ selectedNoteId }
+							setSelectedNoteId={ setSelectedNoteId }
+						/>
+					</ErrorBoundary>
+				</Tabs.Panel>
+			) ) }
+		</Tabs.Root>
 	);
 };
 
