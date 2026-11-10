@@ -15,7 +15,7 @@ export default defineConfig( {
 			fileName: ( format, entryName ) => `${ entryName }.js`,
 			formats: [ 'es' ],
 		},
-		rollupOptions: {
+		rolldownOptions: {
 			external: [
 				// React and related
 				'react',

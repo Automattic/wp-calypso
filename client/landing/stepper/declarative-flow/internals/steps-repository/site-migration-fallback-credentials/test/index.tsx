@@ -166,6 +166,25 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'tells the customer they reached today’s limit instead of the server message', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		( wp.req.post as jest.Mock ).mockRejectedValue( {
+			code: 'too_many_requests',
+			message: 'Error message from backend',
+		} );
+
+		await fillAllFields();
+		await userEvent.click( continueButton() );
+
+		expect(
+			await findByText( /You’ve already sent us several migration requests today/ )
+		).toBeVisible();
+		expect( screen.queryByText( /Error message from backend/ ) ).not.toBeInTheDocument();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
 	it( 'shows an generic error when server doesn`t return error and shows normal Continue button', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
