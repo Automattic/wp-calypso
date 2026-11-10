@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
+import { omnibarCurrentUrlQuery, omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import {
 	Outlet,
 	RouterProvider,
@@ -13,7 +13,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useSyncOmnibarSite } from '../site';
 import type { Site } from '@automattic/api-core';
 
-// The shared `render()` has no route loader, so a site-bearing route needs its own router.
 function renderRouterWithSiteRoute( site: Site ) {
 	function RootComponent() {
 		useSyncOmnibarSite();
@@ -65,17 +64,21 @@ describe( 'useSyncOmnibarSite', () => {
 		);
 	} );
 
-	test( 'does not publish a route site the user is not a member of', async () => {
-		const router = renderRouterWithSiteRoute( { ID: 456 } as Site );
+	test( 'publishes a link back to the current page', async () => {
+		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
 		await screen.findByText( 'home' );
-		// The site the omnibar was showing before this navigation.
-		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, 111 );
 
-		router.navigate( { to: '/sites/$slug', params: { slug: 'foo' } } );
+		router.navigate( {
+			to: '/sites/$slug',
+			params: { slug: 'foo' },
+			search: { purchased_plan: 'value_bundle' },
+		} );
 		await screen.findByText( 'site' );
 
 		await waitFor( () =>
-			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()
+			expect( queryClient.getQueryData( omnibarCurrentUrlQuery().queryKey ) ).toBe(
+				'/sites/foo?purchased_plan=value_bundle'
+			)
 		);
 	} );
 } );

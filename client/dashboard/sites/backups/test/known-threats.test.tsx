@@ -74,6 +74,7 @@ jest.mock( '@tanstack/react-router', () => ( {
 jest.mock( '../../../app/router/sites', () => ( {
 	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
 	siteBackupsRoute: { useSearch: () => ( {} ) },
+	siteBackupsIndexRoute: { fullPath: '/sites/$siteSlug/backups/' },
 	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
 } ) );
 
@@ -152,6 +153,11 @@ function renderPage( {
 			totalItems: entries.length,
 			totalPages: 1,
 		} );
+	nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v2/sites/${ siteId }/activity/rewindable/count/group` )
+		.query( true )
+		.reply( 200, { groups: {} } );
 	nock( API_BASE )
 		.persist()
 		.get( '/rest/v1.1/me/preferences' )

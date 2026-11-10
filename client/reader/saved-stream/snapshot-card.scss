@@ -1,0 +1,43 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
+.saved-snapshot-card {
+	cursor: pointer;
+
+	.reader-post-card__post {
+		flex-direction: row;
+		gap: 24px;
+		align-items: flex-start;
+	}
+
+	.reader-post-card__post-details {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.saved-snapshot-card__video {
+		margin-block-start: 24px;
+		aspect-ratio: 16 / 9;
+
+		iframe {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: 0;
+			border-radius: 4px;
+		}
+	}
+
+	.saved-snapshot-card__image {
+		flex: none;
+		width: 160px;
+		max-height: 160px;
+		margin-block-start: 24px;
+		object-fit: cover;
+		border-radius: 4px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			width: 96px;
+			max-height: 96px;
+		}
+	}
+}

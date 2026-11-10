@@ -24,7 +24,7 @@ type SidebarNavigationItemProps = {
 	uid: string;
 	to?: string;
 	icon?: React.ReactElement;
-} & ComponentProps< typeof Item >;
+} & Omit< ComponentProps< typeof Item >, 'as' >;
 
 export function SidebarNavigationItem( {
 	suffix,

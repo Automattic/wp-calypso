@@ -93,6 +93,18 @@ describe( 'OneLoginLayout logo link', () => {
 		} );
 	} );
 
+	test( 'uses dynamic branding when switching into a mixed-plugin migration account', () => {
+		renderLayout( {
+			isJetpack: true,
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+		} );
+		expect( screen.getByRole( 'img', { name: 'Jetpack Connection logo' } ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect.svg'
+		);
+	} );
+
 	test( 'records a login event when the logo is clicked', () => {
 		renderLayout( { linkLogoToHome: true } );
 		fireEvent.click( screen.getByRole( 'link', { name: 'WordPress.com home' } ) );
@@ -129,12 +141,7 @@ describe( 'OneLoginLayout logo link', () => {
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not link the logo for Jetpack connector logins', () => {
-		renderLayout( { linkLogoToHome: true, isFromJetpackConnector: true } );
-		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'does not link the logo for Jetpack onboarding and connector flows', () => {
+	test( 'does not link the logo on the unified connection flow', () => {
 		renderLayout( { linkLogoToHome: true, isUnifiedConnectionFlow: true } );
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );

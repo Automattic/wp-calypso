@@ -11,7 +11,8 @@ import {
 	type CancelIntent,
 } from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
-import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
+import KeepSubscriptionButton from '../keep-subscription-button';
+import { useCancelOptionsExperiment } from '../use-cancel-options-experiment';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep, { shouldShowCancellationReason } from './step-components/feedback-step';
@@ -50,7 +51,6 @@ interface CancelPurchaseFormProps {
 	clickNext?: () => void;
 	closeDialog?: () => void;
 	disableButtons?: boolean;
-	downgradeClick?: ( upsell: string ) => void;
 	downgradePlan?: PlanProduct;
 	downgradePlanToMonthlyPrice?: number;
 	downgradePlanToPersonalPrice?: number;
@@ -72,12 +72,12 @@ interface CancelPurchaseFormProps {
 	onClickAcceptForCancellationOffer?: () => void;
 	onGetCancellationOffer: ( newPurchaseId?: string ) => void;
 	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
+	onKeepSubscriptionClick: () => void;
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
 	onSurveyComplete?: () => void;
-	onSwitchToMonthly?: () => void;
 	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
@@ -96,6 +96,7 @@ interface CancelPurchaseFormProps {
 	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
+	solutionsReason?: string;
 	surveyStep?: string;
 	upsell?: string;
 	willAtomicSiteRevert?: boolean;
@@ -111,7 +112,6 @@ function SurveyContent( {
 	cancellationOffer,
 	clickNext,
 	closeDialog,
-	downgradeClick,
 	downgradePlan,
 	flowType,
 	freeMonthOfferClick,
@@ -137,17 +137,17 @@ function SurveyContent( {
 	surveyStep,
 	upsell,
 	siteSlug,
+	solutionsReason,
 	cancelBundledDomain,
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
 	intent,
-	onSwitchToMonthly,
 	recordEvent,
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -166,25 +166,22 @@ function SurveyContent( {
 	if ( surveyStep === UPSELL_STEP ) {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-		const solutions = getSolutionsForReason( questionOneText ?? '' );
-		const useSolutionsCards = isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
+		const solutions = getSolutionsForReason( solutionsReason ?? '' );
+		const useSolutionsCards = showCancelOptionsCards && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
 				<SolutionsCardsUpsellStep
 					cancellationInProgress={ cancellationInProgress }
-					cancellationReason={ questionOneText }
-					cancelBundledDomain={ cancelBundledDomain }
+					cancellationReason={ solutionsReason }
 					closeDialog={ closeDialog }
-					downgradePlan={ downgradePlan }
-					includedDomainPurchase={ includedDomainPurchase }
 					intent={ intent ?? undefined }
-					onClickDowngrade={ downgradeClick }
+					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
-					onSwitchToMonthly={ onSwitchToMonthly }
+					plans={ plans }
 					purchase={ purchase }
 					recordEvent={ recordEvent }
-					refundAmount={ refundAmount }
+					showFreeMonthOffer={ upsell === 'free-month-offer' }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
@@ -212,7 +209,6 @@ function SurveyContent( {
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
 				intent={ intent ?? undefined }
-				onClickDowngrade={ downgradeClick }
 				onClickFreeMonthOffer={ freeMonthOfferClick }
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 				plans={ plans }
@@ -311,11 +307,12 @@ function SurveyContent( {
 function StepButtons( {
 	canGoNext,
 	clickNext,
-	closeDialog,
 	disableButtons,
 	intent,
 	isSubmitting,
+	onKeepSubscriptionClick,
 	onSubmit,
+	purchase,
 	solution,
 	surveyStep,
 	allSteps,
@@ -375,19 +372,18 @@ function StepButtons( {
 					className="cancel-purchase-form__remove-plan-button"
 					disabled={ ! canGoNext }
 					isBusy={ isCancelling }
+					isDestructive
 					onClick={ onSubmit }
 					variant="primary"
 				>
-					{ __( 'Continue' ) }
+					{ __( 'Complete removal' ) }
 				</Button>
-				<Button
-					disabled={ ! canGoNext }
-					isBusy={ isCancelling }
-					onClick={ closeDialog }
-					variant="secondary"
-				>
-					{ __( 'Keep plan' ) }
-				</Button>
+				<KeepSubscriptionButton
+					purchase={ purchase }
+					intent="remove"
+					onKeepSubscriptionClick={ onKeepSubscriptionClick }
+					disabled={ isCancelling }
+				/>
 			</ButtonStack>
 		);
 	}
@@ -526,14 +522,11 @@ function canGoToNextStep( {
 }
 
 function getSurveyTitle( surveyStep: string ) {
-	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
-		return '';
-	}
-	if ( surveyStep === UPSELL_STEP ) {
-		return '';
+	if ( surveyStep === FEEDBACK_STEP || surveyStep === NEXT_ADVENTURE_STEP ) {
+		return __( 'Before you go, please answer a few quick questions to help us improve.' );
 	}
 
-	return __( 'Before you go, please answer a few quick questions to help us improve.' );
+	return '';
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {

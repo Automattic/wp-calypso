@@ -1,4 +1,4 @@
-@import './variables.scss';
+@use './variables' as *;
 
 // The label beside an AI chat entry button. It reveals by growing its grid
 // track from nothing while fading in, so neighbours slide rather than jump;

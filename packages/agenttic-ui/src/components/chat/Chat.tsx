@@ -23,6 +23,7 @@ export function Chat( {
 	isStreaming,
 	isReplying,
 	error,
+	errorNotice,
 	onSubmit,
 	beforeSubmit,
 	leadingActions,
@@ -291,6 +292,7 @@ export function Chat( {
 					suggestions={ suggestions }
 					clearSuggestions={ clearSuggestions }
 					error={ error }
+					errorNotice={ errorNotice }
 					emptyView={ emptyView }
 					messageRenderer={ messageRenderer }
 					showAgentIcon={ showAgentIcon }
@@ -450,6 +452,7 @@ export function Chat( {
 								suggestions={ suggestions }
 								clearSuggestions={ clearSuggestions }
 								error={ error }
+								errorNotice={ errorNotice }
 								emptyView={ emptyView }
 								messageRenderer={ messageRenderer }
 								showAgentIcon={ showAgentIcon }

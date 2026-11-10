@@ -5,9 +5,11 @@ import type { Domain } from '@automattic/api-core';
 export default function NameServersSettingsSummary( {
 	domain,
 	isDisabled,
+	onClick,
 }: {
 	domain: Domain;
 	isDisabled?: boolean;
+	onClick?: () => void;
 } ) {
 	let badges = [];
 	if ( domain.has_wpcom_nameservers ) {
@@ -23,6 +25,7 @@ export default function NameServersSettingsSummary( {
 			badges={ badges }
 			density={ 'medium' as const }
 			disabled={ isDisabled }
+			onClick={ onClick }
 		/>
 	);
 }

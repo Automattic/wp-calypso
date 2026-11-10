@@ -3,6 +3,11 @@
  */
 import { render, screen } from '@testing-library/react';
 import RecommendedSections from '../recommended-sections';
+import type { ReactNode } from 'react';
+
+jest.mock( 'calypso/my-sites/site-redesign/design-your-own-card', () => ( {
+	DesignYourOwnCard: () => <a href="/site-redesign/example">Design Your Own</a>,
+} ) );
 
 jest.mock( '../theme-section', () => {
 	return {
@@ -12,11 +17,13 @@ jest.mock( '../theme-section', () => {
 			seeAllUrl,
 			variant,
 			sectionSlug,
+			leadingCard,
 		}: {
 			title: string;
 			seeAllUrl: string;
 			variant?: string;
 			sectionSlug: string;
+			leadingCard?: ReactNode;
 		} ) => (
 			<div
 				data-testid={ `theme-section-${ sectionSlug }` }
@@ -24,6 +31,7 @@ jest.mock( '../theme-section', () => {
 				data-see-all-url={ seeAllUrl }
 			>
 				{ title }
+				{ leadingCard }
 			</div>
 		),
 	};
@@ -50,6 +58,13 @@ const defaultProps = {
 };
 
 describe( 'RecommendedSections', () => {
+	test( 'offers redesign only in the first section', () => {
+		render( <RecommendedSections { ...defaultProps } /> );
+		expect( screen.getByTestId( 'theme-section-favorites' ) ).toContainElement(
+			screen.getByRole( 'link', { name: 'Design Your Own' } )
+		);
+	} );
+
 	test( 'renders all three sections', () => {
 		render( <RecommendedSections { ...defaultProps } /> );
 		expect( screen.getByTestId( 'theme-section-favorites' ) ).toBeVisible();

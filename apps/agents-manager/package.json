@@ -27,7 +27,7 @@
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/agents-manager",
 		"prepack": "yarn run clean && yarn run build",
-		"translate": "rm -rf dist/strings && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --jobs 4 --output './dist/agents-manager.pot' && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS'"
+		"translate": "rm -rf dist/strings && (cd ../.. && wp-oxc-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './apps/agents-manager/dist/strings' --jobs 4 --output './apps/agents-manager/dist/agents-manager.pot') && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS'"
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
@@ -36,17 +36,17 @@
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
-		"@wordpress/compose": "^8.2.0",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/plugins": "^7.48.0"
+		"@wordpress/compose": "^9.1.0",
+		"@wordpress/data": "^11.1.0",
+		"@wordpress/i18n": "^7.1.0",
+		"@wordpress/plugins": "^8.1.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
-		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^3.57.0",
+		"@automattic/wp-oxc-makepot": "workspace:^",
+		"@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^4.1.0",
 		"copy-webpack-plugin": "^14.0.0",
 		"postcss-prefix-selector": "^1.16.1",
 		"sass": "1.77.8",
@@ -54,9 +54,9 @@
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/element": "^8.0.0",
-		"postcss": "^8.5.15",
+		"@wordpress/data": "^11.1.0",
+		"@wordpress/element": "^10.1.0",
+		"postcss": "^8.5.32",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^5.0.1"

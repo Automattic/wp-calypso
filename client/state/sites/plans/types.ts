@@ -21,6 +21,8 @@ export interface SitePlanData {
 	hasRedeemedDomainCredit?: boolean;
 	id: number;
 	interval: number;
+	isDelayedDowngradeAvailable?: boolean;
+	isInstantDowngradeAvailable?: boolean;
 	productName: string;
 	productSlug: string;
 	rawDiscount: string;

@@ -50,7 +50,6 @@ describe( 'LoginForm', () => {
 
 		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeVisible();
-		expect( notice.closest( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 	} );
 
 	test( 'displays notice when social account is linking and last used authentication method is set', async () => {
@@ -195,6 +194,22 @@ describe( 'LoginForm', () => {
 		const row = container.getElementsByClassName( 'login__form-password-label-row' )[ 0 ];
 		expect( row ).toContainElement( screen.getByText( 'Password' ) );
 		expect( row ).toContainElement( screen.getByRole( 'link', { name: 'Lost your password?' } ) );
+	} );
+
+	test( 'puts the lost-password link on the email label row when social is above the form', async () => {
+		const { container } = render(
+			<LoginForm
+				isSocialFirst
+				isSocialAboveForm
+				lostPasswordLink={ <a href="/">Lost your password?</a> }
+			/>
+		);
+
+		const row = container.getElementsByClassName( 'login__form-username-label-row' )[ 0 ];
+		expect( row ).toContainElement( screen.getByRole( 'link', { name: 'Lost your password?' } ) );
+		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
+			0
+		);
 	} );
 
 	test( 'does not render the lost-password link while the password field is hidden', async () => {

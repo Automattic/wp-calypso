@@ -3,7 +3,7 @@ import { usePrevious } from '@wordpress/compose';
 import { Children, forwardRef, isValidElement, useMemo } from 'react';
 import { SidebarNavigatorContext } from './context';
 import SidebarNavigatorScreen from './sidebar-navigator-screen';
-import type { ScreenProps } from './sidebar-navigator-screen';
+import type { SidebarNavigatorScreenProps } from './sidebar-navigator-screen';
 import type { ForwardedRef, ReactElement } from 'react';
 
 interface SidebarNavigatorProps {
@@ -64,7 +64,7 @@ function UnforwardedSidebarNavigator(
 	const matches = allMatches.filter( ( m ) => m.status !== 'notFound' && m.status !== 'error' );
 
 	const screens = Children.toArray( children ).filter(
-		( child ): child is ReactElement< ScreenProps > =>
+		( child ): child is ReactElement< SidebarNavigatorScreenProps > =>
 			isValidElement( child ) && child.type === SidebarNavigatorScreen
 	);
 

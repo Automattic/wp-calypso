@@ -101,7 +101,8 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 			.find( ( element ) => element.tagName === 'S' );
 		expect( crossedOut ).toBeVisible();
 		expect( screen.getAllByText( /\$29\b/ ) ).toHaveLength( 2 );
-		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 2 );
+		// The undiscounted bundle's total also appears in its renewal disclosure.
+		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 3 );
 
 		// Only the discounted bundle shows a strikethrough.
 		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );

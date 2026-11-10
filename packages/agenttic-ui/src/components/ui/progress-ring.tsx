@@ -25,7 +25,8 @@ export function clampPercent( percent: number ): number {
 /**
  * Presentational donut. The arc tweens between values via CSS, and is hidden
  * (rather than drawn at zero length) at 0% so the round cap leaves no dot.
- * Decorative only: the host labels whatever wraps it.
+ * Decorative only: the host labels whatever wraps it. A host recolours the
+ * track with `--color-progress-ring-track`.
  */
 export function ProgressRing( {
 	percent,

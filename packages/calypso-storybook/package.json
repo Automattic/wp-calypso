@@ -22,17 +22,17 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-docs": "^10.6.2",
-		"@storybook/addon-themes": "^10.6.2",
+		"@storybook/addon-docs": "^10.6.5",
+		"@storybook/addon-themes": "^10.6.5",
 		"@storybook/addon-webpack5-compiler-babel": "^4.0.1",
-		"@storybook/react-webpack5": "^10.6.2",
+		"@storybook/react-webpack5": "^10.6.5",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"storybook": "^10.6.2"
+		"storybook": "^10.6.5"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
-		"sass-loader": "^16.0.5",
+		"sass-loader": "^16.0.8",
 		"webpack": "^5.111.1"
 	},
 	"peerDependencies": {

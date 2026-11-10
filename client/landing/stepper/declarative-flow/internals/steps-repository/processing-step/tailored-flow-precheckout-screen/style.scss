@@ -9,7 +9,6 @@
 		}
 	}
 	.newsletter,
-	.free,
 	.update-design {
 		.signup-header {
 			.signup-header__right {
@@ -49,10 +48,7 @@
 		}
 
 		.wpcom__loading-progress-bar {
-			background-color: var(--studio-gray-5);
-			&::before {
-				background: var(--studio-black);
-			}
+			--wpds-color-background-track-neutral: var(--studio-gray-5);
 		}
 	}
 }

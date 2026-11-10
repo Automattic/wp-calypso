@@ -21,16 +21,11 @@ $blueberry-color: #3858e9;
 
 	.plan-storage__bar {
 		width: 100%;
-		background: color-mix(in srgb, $blueberry-color 8%, transparent);
-
-		> div {
-			background: $blueberry-color;
-		}
+		--wpds-color-background-track-neutral: color-mix(in srgb, #{$blueberry-color} 8%, transparent);
+		--wpds-color-background-thumb-neutral: #{$blueberry-color};
 
 		&.is-alert {
-			> div {
-				background-color: var(--studio-red-30);
-			}
+			--wpds-color-background-thumb-neutral: var(--studio-red-30);
 		}
 	}
 

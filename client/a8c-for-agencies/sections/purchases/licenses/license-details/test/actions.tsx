@@ -24,13 +24,17 @@ const initialState = {
 	},
 };
 
-function renderActions( licenseKey: string, product: string ) {
+function renderActions(
+	licenseKey: string,
+	product: string,
+	licenseState: LicenseState = LicenseState.Detached
+) {
 	return renderWithProvider(
 		<LicenseDetailsActions
 			licenseKey={ licenseKey }
 			product={ product }
 			siteUrl={ null }
-			licenseState={ LicenseState.Detached }
+			licenseState={ licenseState }
 			licenseType={ LicenseType.Partner }
 			hasDownloads={ false }
 		/>,
@@ -53,5 +57,25 @@ describe( 'LicenseDetailsActions', () => {
 		renderActions( 'pressable-addon-sites-1_abc', 'pressable-addon-sites-1' );
 
 		expect( screen.getByRole( 'button', { name: 'Revoke' } ) ).toBeVisible();
+	} );
+
+	it( 'links a Pressable plan license to its usage in Pressable', () => {
+		renderActions( 'pressable-signature-2_abc', 'pressable-signature-2', LicenseState.Attached );
+
+		expect(
+			screen.getByRole( 'link', { name: /View plan usage details in Pressable/ } )
+		).toHaveAttribute( 'href', 'https://my.pressable.com/usage' );
+	} );
+
+	it( 'does not link a Pressable addon to plan usage', () => {
+		renderActions(
+			'pressable-addon-sites-1_abc',
+			'pressable-addon-sites-1',
+			LicenseState.Attached
+		);
+
+		expect(
+			screen.queryByRole( 'link', { name: /View plan usage details in Pressable/ } )
+		).not.toBeInTheDocument();
 	} );
 } );

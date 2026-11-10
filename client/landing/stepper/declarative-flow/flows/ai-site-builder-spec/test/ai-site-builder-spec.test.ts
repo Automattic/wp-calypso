@@ -15,7 +15,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 } ) );
 
-jest.mock( '@automattic/posthog', () => ( { init: jest.fn() } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: jest.fn(),
 } ) );

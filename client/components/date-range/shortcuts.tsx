@@ -2,7 +2,6 @@ import { Button } from '@wordpress/components';
 import { Icon, check, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import moment, { Moment } from 'moment';
-import PropTypes from 'prop-types';
 import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
 import { useShortcuts } from './use-shortcuts';
 
@@ -58,13 +57,11 @@ const DateRangePickerShortcuts = ( {
 	shortcutList = shortcutList || defaultShortcutList;
 
 	const handleClick = ( shortcut: DateRangePickerShortcut ) => {
-		! locked &&
-			shortcut.startDate &&
-			shortcut.endDate &&
+		if ( ! locked && shortcut.startDate && shortcut.endDate ) {
 			onClick( moment( shortcut.startDate ), moment( shortcut.endDate ), shortcut );
+		}
 
-		// Call the onShortcutClick if provided
-		onShortcutClick && onShortcutClick( shortcut );
+		onShortcutClick?.( shortcut );
 	};
 
 	selectedShortcutId = selectedShortcutId || selectedShortcut?.id || '';
@@ -89,15 +86,6 @@ const DateRangePickerShortcuts = ( {
 			</ul>
 		</div>
 	);
-};
-
-DateRangePickerShortcuts.propTypes = {
-	selectedShortcutId: PropTypes.string,
-	onClick: PropTypes.func.isRequired,
-	onShortcutClick: PropTypes.func,
-	locked: PropTypes.bool,
-	startDate: PropTypes.object,
-	endDate: PropTypes.object,
 };
 
 export default DateRangePickerShortcuts;

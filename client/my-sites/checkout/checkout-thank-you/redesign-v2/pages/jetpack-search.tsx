@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThankYouJetpackSearchProduct from '../products/jetpack-search-product';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 export type JetpackSearchThankYouProps = {
 	purchase: ReceiptPurchase;

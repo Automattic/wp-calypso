@@ -6,6 +6,8 @@ import {
 	domainForwardingQuery,
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
+	domainsQuery,
+	sitesQuery,
 	sslDetailsQuery,
 	mailboxAccountsQuery,
 	siteByIdQuery,
@@ -20,6 +22,7 @@ import {
 	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { translationExists } from '@automattic/i18n-utils';
 import {
 	createRoute,
 	createLazyRoute,
@@ -59,10 +62,10 @@ const domainsRoute = createRoute( {
 export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -160,6 +163,7 @@ export const domainRoute = createRoute( {
 				throw dashboardRedirect( {
 					to: '/domains/$domainName',
 					params: { domainName },
+					search: location.search,
 				} );
 			}
 		}
@@ -342,7 +346,7 @@ export const domainForwardingAddRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add domain forwarding' ),
+				title: __( 'Add forwarding' ),
 			},
 		],
 	} ),
@@ -390,7 +394,9 @@ export const domainContactInfoRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Contact details' ),
+				title: translationExists( 'Contact details & privacy' )
+					? __( 'Contact details & privacy' )
+					: __( 'Contact details' ),
 			},
 		],
 	} ),
@@ -591,7 +597,7 @@ export const domainTransferRoute = createRoute( {
 export const domainTransferIndexRoute = createRoute( {
 	getParentRoute: () => domainTransferRoute,
 	path: '/',
-	loader: async ( { params: { domainName } } ) => {
+	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
@@ -605,6 +611,7 @@ export const domainTransferIndexRoute = createRoute( {
 				throw dashboardRedirect( {
 					to: domainTransferSetupRoute.fullPath,
 					params: { domainName },
+					search: location.search,
 				} );
 			}
 			// If there was a transfer error, the user should see the transfer failed page
@@ -615,7 +622,11 @@ export const domainTransferIndexRoute = createRoute( {
 			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
 			DomainTransferStatus.CANCELLED !== domain.transfer_status
 		) {
-			throw dashboardRedirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+			throw dashboardRedirect( {
+				to: domainOverviewRoute.fullPath,
+				params: { domainName },
+				search: location.search,
+			} );
 		}
 
 		return domain;

@@ -1,12 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
-import { Button, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import { useFormattedTime } from '../../components/formatted-time';
 import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLinkButton } from '../../components/notice';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import type { BackupState } from './use-backup-state';
 import type { Site } from '@automattic/api-core';
@@ -94,9 +94,9 @@ export function BackupNotices( {
 				title={ __( 'Latest backup couldn’t be completed' ) }
 				onClose={ handleDismiss }
 				actions={
-					<Button variant="primary" href={ JETPACK_CONTACT_SUPPORT } target="_blank">
+					<NoticeActionLinkButton variant="solid" href={ JETPACK_CONTACT_SUPPORT } target="_blank">
 						{ __( 'Contact support' ) }
-					</Button>
+					</NoticeActionLinkButton>
 				}
 			>
 				{ createInterpolateElement(

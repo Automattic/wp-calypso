@@ -1,4 +1,4 @@
-import { getAgentManager, type TaskUpdate } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, type TaskUpdate } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -22,24 +22,26 @@ import { useCheckpointAvailability } from '../../hooks/use-checkpoint-availabili
 import { useContextCardActions } from '../../hooks/use-context-card-actions';
 import { useConversationHydration } from '../../hooks/use-conversation-hydration';
 import useCopyAction from '../../hooks/use-copy-action';
-import { useCredits } from '../../hooks/use-credits';
+import { useCredits, useCreditsVisit } from '../../hooks/use-credits';
+import { useCreditsCommand } from '../../hooks/use-credits-command';
 import { useDynamicSuggestions } from '../../hooks/use-dynamic-suggestions';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useGatedRegenerateHandler } from '../../hooks/use-gated-regenerate-handler';
 import { useInlineSuggestionClick } from '../../hooks/use-inline-suggestion-click';
-import { useInteractiveUi } from '../../hooks/use-interactive-ui';
 import { useNavigationContinuation } from '../../hooks/use-navigation-continuation';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import { useResponseOutcomeTracking } from '../../hooks/use-response-outcome-tracking';
 import { useRetriedToolCalls } from '../../hooks/use-retried-tool-calls';
 import { useShowComponentRetention } from '../../hooks/use-show-component-retention';
+import useSiteSetupChecklist from '../../hooks/use-site-setup-checklist';
 import useSourcesAction from '../../hooks/use-sources-action';
 import { useStreamedCheckpointMessages } from '../../hooks/use-streamed-checkpoint-messages';
 import { useSuggestionTracking } from '../../hooks/use-suggestion-tracking';
+import { convertInteractiveUiMessagesToComponents } from '../../interactive-ui/convert-messages-to-components';
+import { useInteractiveUi } from '../../interactive-ui/use-interactive-ui';
 import { markSessionSent } from '../../utils/agent-session';
 import { convertBigSkyMessageToUIMessage } from '../../utils/convert-big-sky-message';
-import { convertInteractiveUiMessagesToComponents } from '../../utils/convert-interactive-ui-messages-to-components';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
 } from '../../utils/convert-tool-messages-to-components';
@@ -54,6 +56,7 @@ import {
 } from '../../utils/message-actions';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import SiteSetupChecklist from '../site-setup-checklist';
 import type { BigSkyMessage } from '../../types';
 import type {
 	AbilitiesSetupHook,
@@ -93,8 +96,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
-	/** The providers' interactive UI components and functions. */
-	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
+	/** The providers' interactive UI catalogs. */
+	interactiveUiCatalogs?: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	/** Rewrite the transcript before it is displayed. See `TransformMessages`. */
@@ -123,7 +126,7 @@ export default function OrchestratorChat( {
 	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
-	interactiveUi,
+	interactiveUiCatalogs,
 	siteBuildUtils,
 	transformMessages,
 	useCheckpoint,
@@ -131,7 +134,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 
 	// Set by the providers' abilities, e.g. while Big Sky builds a site.
@@ -154,6 +157,9 @@ export default function OrchestratorChat( {
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
+	// Credits runs after the chat, so task updates reach it through its visit.
+	const creditsVisit = useCreditsVisit( ! isReaderChat );
+
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -163,7 +169,11 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			trackReplying: true,
+			// History and closing the panel unmount the chat mid-reply.
+			resumeOnRemount: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
+				creditsVisit.onTaskUpdate( update );
+
 				// A previous session's stream must not write into this one.
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
 					recordRetriedToolCall( update );
@@ -176,6 +186,7 @@ export default function OrchestratorChat( {
 		};
 	}, [
 		agentConfig,
+		creditsVisit,
 		isCurrentStreamGeneration,
 		recordRetriedToolCall,
 		recordTaskUpdate,
@@ -183,19 +194,10 @@ export default function OrchestratorChat( {
 		trackResponseOutcome,
 	] );
 
-	// The chat runtime, behind the credits gate.
-	const credits = useCredits( {
-		enabled: ! isReaderChat,
-		agentConfig: agentChatConfig!,
-		siteKey,
-		userId: currentUser?.ID,
-		site,
-		// The compact composer can send too, so it keeps the balance fresh.
-		isOpen: isOpen || ( ! isDocked && isCompactMode ),
-		isNoticeVisible: isOpen,
-	} );
+	// The chat runtime, then the credits that gate it.
 	const {
 		addMessage,
+		clearError,
 		messages,
 		suggestions,
 		isProcessing,
@@ -209,17 +211,42 @@ export default function OrchestratorChat( {
 		getRegenerateHandler,
 		progressMessage,
 		isReplying,
-	} = credits.chat;
+	} = useAgentChat( agentChatConfig! );
+
+	// The composer's retry send is created after credits, so the notice reaches it through a ref.
+	const retrySendRef = useRef< ( message: string ) => void >( () => {} );
+	const tryAgain = useCallback( ( message: string ) => retrySendRef.current( message ), [] );
+	// The same for the popover's button, which sends `/credits` through the composer.
+	const showCreditsRef = useRef< () => void >( () => {} );
+	const showCredits = useCallback( () => showCreditsRef.current(), [] );
+	const credits = useCredits( {
+		onTryAgain: tryAgain,
+		onShowCredits: isReaderChat ? undefined : showCredits,
+		creditsVisit,
+		isProcessing,
+		messages,
+		// The compact composer can send too, so it keeps the balance fresh.
+		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+		isNoticeVisible: isOpen,
+	} );
+
+	const creditsCommand = useCreditsCommand( {
+		reply: credits.creditsCommand,
+		beforeSubmit: credits.beforeSubmit,
+		addMessage,
+		clearError,
+	} );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 
 	useCanvasMoveAbort( { isProcessing, abortCurrentRequest, addMessage } );
 
 	// Keeps pickers on screen while a stream drops them. A regeneration rewinds
 	// them along with the turn's streamed checkpoints.
-	const { pauseRetentionForRegeneration, withRetainedShowComponents } = useShowComponentRetention( {
-		messages,
-		isProcessing,
-	} );
+	const { pauseRetentionForRegeneration, withRetainedShowComponents, expectHistoryLoad } =
+		useShowComponentRetention( {
+			messages,
+			isProcessing,
+		} );
 
 	const handleRegenerationStart = useCallback(
 		( messageId: string | undefined ) => {
@@ -269,8 +296,22 @@ export default function OrchestratorChat( {
 		abortCurrentRequest,
 		beforeSubmit: credits.beforeSubmit,
 		flushPendingNavigation,
+		handleCommand: isReaderChat ? undefined : creditsCommand.handleCommand,
 		suggestionPromptsRef,
 	} );
+
+	// What's in the box wins, as it sits right under the notice; the refused question is the fallback.
+	// The draft goes as typed, so the composer recognises and clears it.
+	retrySendRef.current = ( message ) =>
+		submitRetryMessage( inputValue.trim() ? inputValue : message );
+
+	showCreditsRef.current = () => {
+		// The compact composer expands the chat as it sends; this send skips that step.
+		if ( ! isOpen ) {
+			onExpand();
+		}
+		submitComposerMessage( '/credits' );
+	};
 
 	// Marks the session as sent whichever path started the turn.
 	useEffect( () => {
@@ -287,14 +328,34 @@ export default function OrchestratorChat( {
 		hadParkedNavigation,
 		loadMessages,
 		onFetch: invalidateLoadedCheckpoints,
+		onHistoryLoad: expectHistoryLoad,
 		isProcessing,
 		onRetry: submitRetryMessage,
 		onSubmit,
 	} );
+	const siteSetupChecklist = useSiteSetupChecklist( {
+		enabled: ! isReaderChat,
+		isProcessing,
+		isLoadingConversation,
+		messages,
+	} );
+	// The empty view waits for the checklist too, or it flashes before the list.
+	const isPreparingConversation = isLoadingConversation || siteSetupChecklist.isLoading;
+	const siteSetupChecklistNode = siteSetupChecklist.variant ? (
+		<SiteSetupChecklist
+			variant={ siteSetupChecklist.variant }
+			items={ siteSetupChecklist.items }
+			busy={ isProcessing }
+			focusHeaderOnMount={ siteSetupChecklist.focusHeaderOnMount }
+			activeItemId={ siteSetupChecklist.activeItemId }
+		/>
+	) : null;
+
 	const chatError = useChatError( {
 		error: hasFailedResume ? null : error,
 		isReaderChat,
 		takeRefusalCode: credits.takeRefusalCode,
+		refusalNotice: credits.refusalNotice,
 	} );
 
 	// Registered before the providers' ability setup below, whose effects may
@@ -465,9 +526,8 @@ export default function OrchestratorChat( {
 		sessionId,
 		isProcessing,
 		isUploadingImages,
-		agentConfig,
 		submitContextMessage,
-		interactiveUi,
+		interactiveUiCatalogs,
 		currentPostId,
 	} );
 
@@ -487,7 +547,7 @@ export default function OrchestratorChat( {
 	// Empty-view suggestions and their tracking.
 	const displayedEmptyViewSuggestions = getDisplayedEmptyViewSuggestions( {
 		isVisible: suggestionsVisible,
-		isChatEmpty: ! isLoadingConversation && ! hasMessages,
+		isChatEmpty: ! isPreparingConversation && ! hasMessages,
 		emptyViewSuggestions,
 		registeredSuggestions: suggestions,
 		dynamicSuggestions,
@@ -499,7 +559,7 @@ export default function OrchestratorChat( {
 
 	const { onSuggestionsRendered, trackSuggestionClick } = useSuggestionTracking( {
 		contextualSuggestionIds,
-		hasSuggestionsToRender: ! isLoadingConversation && displayedEmptyViewSuggestions.length > 0,
+		hasSuggestionsToRender: ! isPreparingConversation && displayedEmptyViewSuggestions.length > 0,
 	} );
 
 	const handleSuggestionClick = useCallback(
@@ -537,10 +597,13 @@ export default function OrchestratorChat( {
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
-			error={ chatError || uploadError }
+			error={ chatError.message || uploadError }
+			errorNotice={ chatError.notice }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
-			isLoadingConversation={ isLoadingConversation }
+			isLoadingConversation={ isPreparingConversation }
+			pinnedContent={ siteSetupChecklist.variant === 'pinned' ? siteSetupChecklistNode : null }
+			emptyViewContent={ siteSetupChecklist.variant === 'empty' ? siteSetupChecklistNode : null }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
 			onClose={ onClose }
@@ -556,9 +619,9 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice ?? replyNotice }
+			notice={ credits.notice ?? replyNotice ?? credits.topUpsNotice }
 			trailingActions={ credits.trailingActions }
-			beforeSubmit={ credits.beforeSubmit }
+			beforeSubmit={ isReaderChat ? credits.beforeSubmit : creditsCommand.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

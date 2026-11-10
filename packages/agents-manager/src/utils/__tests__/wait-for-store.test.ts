@@ -65,6 +65,30 @@ describe( 'waitForStore', () => {
 		await expect( pending ).resolves.toBe( false );
 	} );
 
+	it( 'listens to every store it names, and stops listening to all of them', async () => {
+		const unsubscribes = [ jest.fn(), jest.fn() ];
+		const listeners: ( () => void )[] = [];
+
+		const listen = ( listener: () => void ) => {
+			listeners.push( listener );
+			return unsubscribes[ listeners.length - 1 ];
+		};
+
+		jest.mocked( subscribe ).mockImplementationOnce( listen ).mockImplementationOnce( listen );
+
+		let ready = false;
+		const pending = waitForStore( [ 'core/block-editor', 'core' ], () => ready, 1000 );
+
+		expect( subscribe ).toHaveBeenCalledWith( expect.any( Function ), 'core/block-editor' );
+		expect( subscribe ).toHaveBeenCalledWith( expect.any( Function ), 'core' );
+
+		ready = true;
+		listeners[ 1 ]();
+
+		await expect( pending ).resolves.toBe( true );
+		unsubscribes.forEach( ( unsubscribe ) => expect( unsubscribe ).toHaveBeenCalled() );
+	} );
+
 	it( 'settles once, even when the store keeps changing', async () => {
 		let ready = false;
 		const pending = waitForStore( 'core/editor', () => ready, 1000 );

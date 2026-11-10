@@ -1,52 +1,517 @@
+@import '@wordpress/base-styles/colors';
+
+// Calypso defines the WPDS tokens only after another page loads them, so fall back until then.
+$conversations-inbox-stroke: var( --wpds-color-stroke-surface-neutral-weak, #f0f0f0 );
+$conversations-inbox-duration: var( --wpds-motion-duration-sm, 100ms );
+$conversations-inbox-easing: var( --wpds-motion-easing-balanced, cubic-bezier( 0.4, 0, 0.2, 1 ) );
+
 .conversations-inbox__detail-pane {
 	flex: 1;
 	min-width: 0;
 }
 
 .conversations-inbox__detail-header {
-	padding: 16px 24px;
-	border-block-end: 1px solid var( --color-border-subtle );
+	box-sizing: border-box;
+	min-height: 64px;
+	padding: 0 24px;
+	border-block-end: 1px solid $conversations-inbox-stroke;
 
 	.components-button {
 		color: var( --color-text );
 	}
 }
 
+// The back button's label matches the title it stands in for.
+.conversations-inbox__back.components-button {
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+// The chevron glyphs sit 1.2px off center in their 24px icons, up for the up
+// chevron and down for the down one, so nudge them onto the button's center.
+.conversations-inbox__previous svg {
+	transform: translateY( 1.2px );
+}
+
+.conversations-inbox__next svg {
+	transform: translateY( -1.2px );
+}
+
 .conversations-inbox__detail-body {
+	position: relative;
 	flex: 1;
 	overflow-y: auto;
 	padding: 32px 24px;
 }
 
+.conversations-inbox__detail-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// The spinner's default top margin would push it below center.
+	.components-spinner {
+		margin: 0;
+	}
+}
+
 .conversations-inbox__detail-content {
-	max-width: 860px;
+	max-width: 750px;
 	margin-inline: auto;
 }
 
+// The post card and comments fade in when a conversation opens, instead of popping in.
+.conversations-inbox__post-card,
+.conversations-inbox__detail-content .comments__comment-list {
+	animation: conversations-inbox-appear $conversations-inbox-duration $conversations-inbox-easing;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+	}
+}
+
+@keyframes conversations-inbox-appear {
+	from {
+		opacity: 0;
+		transform: translateY( 4px );
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}
+
+// $elevation-x-small at three-quarters of its opacity.
+$conversations-inbox-post-card-shadow:
+	0 1px 1px rgba( $black, 0.0225 ),
+	0 1px 2px rgba( $black, 0.015 ),
+	0 3px 3px rgba( $black, 0.015 ),
+	0 4px 4px rgba( $black, 0.0075 );
+
 .conversations-inbox__post-card {
+	box-sizing: border-box;
 	padding: 24px;
 	border: 1px solid var( --color-border-subtle );
-	border-radius: 4px;
+	border-radius: 8px;
+	position: relative;
+	box-shadow: $conversations-inbox-post-card-shadow;
+	color: var( --color-text );
+	transition-property: background-color, border-color, box-shadow;
+	transition-duration: $conversations-inbox-duration;
+	transition-timing-function: $conversations-inbox-easing;
+
+	// The notifications panel's post card hover, with a slightly less blue border.
+	&:hover {
+		border-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 10%,
+			var( --color-border-subtle )
+		);
+		background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 2%, transparent );
+		box-shadow: none;
+	}
+}
+
+.conversations-inbox__post-link {
+	flex: 1;
+	min-width: 0;
 	color: var( --color-text );
 	text-decoration: none;
 
-	&:hover {
-		border-color: var( --color-border );
+	&:visited,
+	&:hover,
+	&:focus {
+		color: var( --color-text );
+	}
+
+	// Stretches the link over the whole card, so its padding opens the post too.
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+}
+
+.conversations-inbox__post-actions {
+	margin-inline-start: auto;
+}
+
+// The same arrow as the notifications panel's post card, shown while the card is hovered or focused.
+.conversations-inbox__post-arrow {
+	flex-shrink: 0;
+	fill: var( --color-text );
+	opacity: 0;
+	transition: opacity $conversations-inbox-duration $conversations-inbox-easing;
+
+	.conversations-inbox__post-card:is( :hover, :focus-within ) & {
+		opacity: 1;
+	}
+}
+
+.conversations-inbox__post-menu {
+	position: relative;
+	z-index: 1;
+
+	.components-button {
 		color: var( --color-text );
 	}
 }
 
 .conversations-inbox__post-meta {
 	white-space: nowrap;
-	font-size: 0.875rem;
+	font-size: 13px;
+	line-height: 20px;
 	color: var( --color-text-subtle );
 
-	strong {
+	img {
+		border-radius: 4px;
+	}
+
+	.conversations-inbox__post-dot {
+		flex-shrink: 0;
+		width: 2px;
+		height: 2px;
+		border-radius: 50%;
+		background: currentcolor;
+		// Centers it on the lowercase letters rather than the line box.
+		transform: translateY( 1px );
+	}
+
+	.conversations-inbox__post-author {
 		color: var( --color-text );
-		font-weight: 500;
+	}
+
+	// Sits above the card's stretched post link. Without a URL it's a span, which lets clicks through.
+	a.conversations-inbox__post-author {
+		position: relative;
+		z-index: 1;
+		color: var( --color-text );
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		transition: text-decoration-color $conversations-inbox-duration $conversations-inbox-easing;
+
+		&:visited,
+		&:focus {
+			color: var( --color-text );
+		}
+
+		&:hover {
+			color: var( --color-text );
+			text-decoration-color: currentcolor;
+		}
+	}
+
+	strong {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: var( --color-text );
+		font-weight: 600;
 	}
 }
 
 .conversations-inbox__detail-content .comments__comment-list {
 	margin-block-start: 0;
+	padding-block-start: 0;
+	border-block-start: 0;
+
+	.comments__info-bar {
+		padding-block-end: 12px;
+		border-block-end: 1px solid $conversations-inbox-stroke;
+	}
+
+	.comments__info-bar-title-links {
+		align-items: baseline;
+	}
+
+	.button.comments__manage-comments-button {
+		color: var( --color-text );
+		font-size: 13px;
+		line-height: 20px;
+		text-decoration: underline;
+		transition: color $conversations-inbox-duration $conversations-inbox-easing;
+
+		&:hover,
+		&:active {
+			color: var( --color-primary );
+		}
+
+		.gridicon {
+			display: none;
+		}
+	}
+
+	.comments__comment-count {
+		margin-block-end: 0;
+		color: var( --color-text );
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 24px;
+	}
+
+	// Padding, not margin, so the first comment's margin can't collapse into it.
+	.comments__list.is-root {
+		padding-block-start: 4px;
+	}
+
+	// Comments sit 24px apart, with the name centered on the 32px avatar.
+	.comments__comment {
+		margin-block-start: 24px;
+
+		&.depth-0,
+		&.depth-1,
+		&.depth-2 {
+			padding-inline-start: 44px;
+		}
+	}
+
+	.comments__comment-author {
+		align-items: center;
+		min-height: 32px;
+		font-size: 15px;
+		line-height: 20px;
+
+		.user-avatar {
+			top: 0;
+		}
+	}
+
+	.comments__comment-timestamp a,
+	.comments__comment-new-label {
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	.comments__comment-content {
+		margin-block-start: 4px;
+		font-size: 15px;
+		line-height: 24px;
+
+		// Less than a full blank line between paragraphs, lists and quotes.
+		> * {
+			margin-block: 0 16px;
+		}
+
+		> :first-child {
+			margin-block-start: 0;
+		}
+
+		> :last-child {
+			margin-block-end: 0;
+		}
+	}
+
+	.comments__comment-actions {
+		gap: 12px;
+		margin-block-start: 16px;
+
+		.components-button {
+			font-size: 13px;
+			line-height: 20px;
+		}
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		// The design's reply arrow is the return icon, mirrored.
+		// Its 24-unit outline renders 1.25px wide at 20px; a 0.3-unit stroke brings it
+		// to the 1.5px of the star beside it.
+		.comments__comment-actions-reply-icon,
+		.comments__comment-actions-cancel-icon {
+			fill: currentcolor;
+			stroke: currentcolor;
+			stroke-width: 0.3;
+			stroke-linejoin: round;
+		}
+
+		.comments__comment-actions-reply-icon {
+			transform: scaleX( -1 );
+
+			// RTLCSS leaves transforms alone, and RTL already faces the arrow the right way.
+			&:dir( rtl ) {
+				transform: none;
+			}
+		}
+
+		// The close glyph fills more of its box than the arrow and star do.
+		.comments__comment-actions-cancel-icon {
+			transform: scale( 0.9 );
+		}
+
+		// Once liked, the star takes the brand color and the label the text color.
+		.components-button.like-button:is( .is-liked, .is-pressed ) {
+			color: var( --color-text );
+		}
+
+		.like-button__label-count {
+			font-size: inherit;
+		}
+
+		.like-button__label strong {
+			font-weight: 500;
+		}
+
+		// Clicking an action shouldn't leave a focus ring; keyboard focus still shows it.
+		.components-button:focus:not( :focus-visible ) {
+			box-shadow: none;
+			outline: none;
+		}
+	}
+
+	.comments__comment-count-phrase {
+		text-transform: none;
+	}
+
+	.comments__comment-username {
+		margin-inline-end: 8px;
+		color: var( --color-text );
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+
+	// "to Petra" on a reply reads as metadata, like the time.
+	.comments__comment-respondee {
+		margin-inline-end: 6px;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 20px;
+
+		// The post card's dot, between the reply's "to" name and its date.
+		&::after {
+			content: '';
+			display: inline-block;
+			width: 2px;
+			height: 2px;
+			margin-inline-start: 6px;
+			border-radius: 50%;
+			background: currentcolor;
+			vertical-align: middle;
+		}
+	}
+
+	.comments__comment-respondee-link,
+	.comments__comment-timestamp a {
+		color: var( --color-text-subtle );
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+
+	// Next to the time, not pushed to the far edge.
+	.comments__comment-author .comments__comment-collapse-toggle {
+		margin-inline-start: 4px;
+	}
+
+	// Replies spell out their actions too, like top-level comments.
+	.comments__comment:not( .depth-0 ) .comments__comment-actions {
+		.comments__comment-actions-reply-label,
+		.reader-share__label {
+			display: inline;
+		}
+	}
+
+	// A reply's editor opens with room under the comment's actions.
+	.comments__comment .comments__form {
+		margin-block-start: 24px;
+	}
+
+	> .comments__form {
+		margin-block-start: 32px;
+	}
+
+	.comments__collapsed-replies.components-button.is-link {
+		margin-block-start: 8px;
+		color: var( --color-text-subtle );
+		font-size: 13px;
+		line-height: 20px;
+		text-decoration: none;
+
+		&:hover {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+
+	// Quotes get more room than paragraphs, to set them apart.
+	.comments__comment-content blockquote {
+		margin-block: 24px;
+		padding: 0;
+		padding-inline-start: 16px;
+		border-inline-start: 2px solid var( --color-border-subtle );
+		border-radius: 0;
+		color: color-mix( in srgb, var( --color-text-subtle ) 80%, var( --color-text ) );
+
+		> * {
+			margin-block: 0 16px;
+		}
+
+		> :last-child {
+			margin-block-end: 0;
+		}
+	}
+
+	// A quote opening the comment clears the name row instead of hugging it.
+	.comments__comment-content > blockquote:first-child {
+		margin-block-start: 12px;
+	}
+}
+
+@mixin conversations-inbox-detail-dark {
+	.conversations-inbox__welcome {
+		--wp-components-notice-background-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 16%,
+			var( --color-surface )
+		);
+		--wp-components-notice-border-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 48%,
+			var( --color-surface )
+		);
+		--wp-components-notice-text-color: var( --color-text );
+	}
+
+	// The WPDS stroke token stays light in the Reader's dark mode.
+	.conversations-inbox__detail-header,
+	.conversations-inbox__detail-content .comments__info-bar {
+		border-block-end-color: var( --color-border-subtle );
+	}
+
+	// The shared dark theme gives commenters' names the link color.
+	.conversations-inbox__detail-content a.comments__comment-username {
+		color: var( --color-text );
+	}
+}
+
+:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
+	@include conversations-inbox-detail-dark;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
+		@include conversations-inbox-detail-dark;
+	}
+}
+
+.conversations-inbox__post-image {
+	flex-shrink: 0;
+	width: 108px;
+	height: 72px;
+	border-radius: 4px;
+	object-fit: cover;
 }

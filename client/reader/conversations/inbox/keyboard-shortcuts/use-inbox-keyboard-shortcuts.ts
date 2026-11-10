@@ -16,6 +16,10 @@ interface Options {
 	onSelectTab: ( tab: InboxTab ) => void;
 	/** `i` — open or close the shortcuts popover. */
 	onToggleShortcuts: () => void;
+	/** `l` — like or unlike the open conversation's post. */
+	onToggleLike: () => void;
+	/** `n` — open the notifications panel, which only listens while focus is on the page body or a link. */
+	onOpenNotifications: () => void;
 }
 
 const INTERACTIVE_TAGS = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
@@ -43,6 +47,8 @@ export function useInboxKeyboardShortcuts( {
 	onPreviousTab,
 	onSelectTab,
 	onToggleShortcuts,
+	onToggleLike,
+	onOpenNotifications,
 }: Options ): void {
 	const handlersRef = useRef( {
 		onNext,
@@ -51,6 +57,8 @@ export function useInboxKeyboardShortcuts( {
 		onPreviousTab,
 		onSelectTab,
 		onToggleShortcuts,
+		onToggleLike,
+		onOpenNotifications,
 	} );
 	handlersRef.current = {
 		onNext,
@@ -59,6 +67,8 @@ export function useInboxKeyboardShortcuts( {
 		onPreviousTab,
 		onSelectTab,
 		onToggleShortcuts,
+		onToggleLike,
+		onOpenNotifications,
 	};
 
 	useEffect( () => {
@@ -106,12 +116,26 @@ export function useInboxKeyboardShortcuts( {
 					handlers.onPrevious();
 					break;
 				case 'ArrowRight':
-					event.preventDefault();
-					handlers.onNextTab();
-					break;
 				case 'ArrowLeft':
+					// The tab list moves the focus through its own tabs.
+					if ( target?.closest?.( '[role="tablist"]' ) ) {
+						break;
+					}
 					event.preventDefault();
-					handlers.onPreviousTab();
+					if ( event.key === 'ArrowRight' ) {
+						handlers.onNextTab();
+					} else {
+						handlers.onPreviousTab();
+					}
+					break;
+				case 'l':
+					handlers.onToggleLike();
+					break;
+				case 'n':
+					// Keep the notifications panel's own `n` listener from toggling it back closed.
+					event.stopPropagation();
+					event.preventDefault();
+					handlers.onOpenNotifications();
 					break;
 				default:
 					if ( TAB_KEYS[ event.key ] ) {

@@ -1,5 +1,19 @@
+$actions-row-height: 32px;
+
 .MessageActions-module_container:has(.agents-manager-sources-display) {
 	gap: 0;
+}
+
+// Earlier turns: reserve the hover-only actions' row, so their panel opens beside Sources.
+.MessageActions-module_container:has(> .agents-manager-sources-display:first-child)
+	> .MessageActions-module_dock {
+	order: -1;
+	min-height: $actions-row-height;
+
+	// Its full-width layer would cover Sources; the panel takes clicks back when shown.
+	.MessageActions-module_dockInner {
+		pointer-events: none;
+	}
 }
 
 .agents-manager-sources-display {
@@ -10,16 +24,23 @@
 		flex-direction: column;
 		background-color: transparent;
 		box-shadow: none;
-		margin: -32px 0 0;
+		margin: 0;
 		pointer-events: none;
+
+		// FoldableCard animates margin; snap into the row when the actions appear.
+		transition: none;
+
+		// Sit in the actions row, unless there's none (the latest turn streaming).
+		&:not(:only-child) {
+			margin-top: -$actions-row-height;
+		}
 	}
 
 	.foldable-card__header {
 		width: auto;
-		height: 32px;
+		height: $actions-row-height;
 		min-height: unset;
 		flex-direction: row-reverse;
-		justify-content: end;
 		align-self: flex-end;
 		gap: 4px;
 		padding: 0;
@@ -34,7 +55,6 @@
 	}
 
 	.foldable-card__content {
-		width: 100%;
 		pointer-events: initial;
 	}
 
@@ -64,10 +84,8 @@
 	}
 
 	&.is-expanded {
-		width: 100%;
-
 		.foldable-card__header {
-			height: 32px;
+			height: $actions-row-height;
 			min-height: unset;
 		}
 

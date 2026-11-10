@@ -179,8 +179,22 @@ describe( 'ReaderPostActions', () => {
 			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'is hidden on an RSS post', () => {
-			renderActions( { post: { ...defaultProps.post, is_external: true } } );
+		it( 'shows on an RSS post', () => {
+			renderActions( {
+				post: {
+					ID: 9000,
+					feed_ID: 60,
+					feed_item_ID: 9000,
+					is_external: true,
+					URL: 'https://example.com/post',
+				},
+			} );
+
+			expect( screen.getByTestId( 'save-button' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden on a post without the IDs the saved posts API needs', () => {
+			renderActions( { post: { ...defaultProps.post, site_ID: undefined } } );
 
 			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
 		} );

@@ -2,10 +2,13 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
+import { useCertification } from '../certification/use-certification';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
-import EventCard from './event-card';
+import EventCard, { SingleEventCard } from './event-card';
+import { getLeadMatchingContactAnnouncement } from './events';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
+import MatchingProfileCard from './matching-profile-card';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -24,6 +27,7 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
+	leadMatching: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
 	aiMcp: string;
@@ -41,6 +45,9 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	showMatchingProfileCard?: boolean;
+	matchingProfileAnswered?: number;
+	showContactOptionsAnnouncement?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
 	/** Shows the Pressable expansion offer in the news column. */
@@ -55,6 +62,8 @@ export interface AgencyOverviewContentProps {
 	tourLabel?: string;
 	/** The welcome band is showing and already says what the Pending card would. */
 	hidesPendingCard?: boolean;
+	/** Replaces the snackbar after the certification share message is copied, for hosts that don't render `@wordpress/notices`. */
+	onCertificationShareCopy?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -70,6 +79,9 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	showMatchingProfileCard = false,
+	matchingProfileAnswered = 0,
+	showContactOptionsAnnouncement = false,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	links,
@@ -80,6 +92,7 @@ export default function AgencyOverviewContent( {
 	onRelaunchTour,
 	tourLabel,
 	hidesPendingCard,
+	onCertificationShareCopy,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -89,7 +102,8 @@ export default function AgencyOverviewContent( {
 	const canAccessEarnings = ! capabilities || capabilities.includes( REFERRALS_CAPABILITY );
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
-	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
+	const lockedNote = isPending ? __( 'Unlocks when your account is approved' ) : undefined;
+	const certification = useCertification();
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -116,6 +130,21 @@ export default function AgencyOverviewContent( {
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
 						partnerManager={ partnerManager }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ showMatchingProfileCard && (
+					<MatchingProfileCard
+						href={ links.leadMatching }
+						answered={ matchingProfileAnswered }
+						agencyId={ agencyId }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ showContactOptionsAnnouncement && links.leadMatching && (
+					<SingleEventCard
+						event={ getLeadMatchingContactAnnouncement( links.leadMatching ) }
+						shouldUseRouterLink={ shouldUseRouterLink ?? true }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
@@ -152,7 +181,14 @@ export default function AgencyOverviewContent( {
 				<EventCard
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
+					isEligibleForCertificationOffer={ certification.isEligible && certification.isPromo }
+					certificationOffer={ {
+						discount: certification.discount,
+						shareMessage: certification.shareMessage,
+					} }
+					onCertificationShareCopy={ onCertificationShareCopy }
 					aiMcpHref={ links.aiMcp }
+					tiersHref={ links.tiers }
 					pressableHostingHref={ links.pressableHosting }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }

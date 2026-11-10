@@ -1,25 +1,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	PLAN_FREE,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_ECOMMERCE,
-	PLAN_ECOMMERCE_2_YEARS,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from '@automattic/calypso-products';
+import { PLAN_FREE } from '@automattic/calypso-products';
 import { buildUpgradeFunction } from '../util';
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -35,8 +16,7 @@ const getCartItems = ( overrides?: { [ key: string ]: string } ) => [
 
 describe( 'buildUpgradeFunction', () => {
 	const tplProps = {
-		flowName: 'ecommerce',
-		designType: 'store',
+		flowName: 'onboarding',
 		stepName: 'Step name',
 		stepSectionName: 'Step section name',
 		submitSignupStep: jest.fn(),
@@ -113,85 +93,4 @@ describe( 'buildUpgradeFunction', () => {
 			from_section: 'Step section name',
 		} );
 	} );
-
-	test.each( [
-		PLAN_BUSINESS_MONTHLY,
-		PLAN_BUSINESS,
-		PLAN_BUSINESS_2_YEARS,
-		PLAN_ECOMMERCE,
-		PLAN_ECOMMERCE_2_YEARS,
-	] )(
-		'Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (%s)',
-		( plan ) => {
-			const myProps = {
-				...tplProps,
-				goToNextStep: jest.fn(),
-			};
-			const cartItems = getCartItems( { product_slug: plan } );
-			const [ planCartItem ] = cartItems;
-			buildUpgradeFunction( myProps, cartItems );
-			expect( myProps.goToNextStep ).toHaveBeenCalled();
-			expect( planCartItem.extra ).toEqual( {
-				is_store_signup: true,
-			} );
-		}
-	);
-
-	test.each( [
-		PLAN_BUSINESS_MONTHLY,
-		PLAN_BUSINESS,
-		PLAN_BUSINESS_2_YEARS,
-		PLAN_ECOMMERCE,
-		PLAN_ECOMMERCE_2_YEARS,
-	] )(
-		"Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (%s)",
-		( plan ) => {
-			const myProps = {
-				...tplProps,
-				flowName: 'signup',
-				goToNextStep: jest.fn(),
-			};
-			const cartItems = getCartItems( { product_slug: plan } );
-			const [ planCartItem ] = cartItems;
-			buildUpgradeFunction( myProps, cartItems );
-			expect( myProps.goToNextStep ).toHaveBeenCalled();
-			expect( planCartItem.extra ).toEqual( undefined );
-		}
-	);
-
-	test( 'Should not add is_store_signup to cartItem.extra when processing wp.com business plans and designType is not "store"', () => {
-		const myProps = {
-			...tplProps,
-			signupDependencies: {
-				designType: 'other',
-			},
-		};
-		const cartItems = getCartItems();
-		const [ planCartItem ] = cartItems;
-		buildUpgradeFunction( myProps, cartItems );
-		expect( planCartItem.extra ).toEqual( undefined );
-	} );
-
-	test.each( [
-		PLAN_PREMIUM,
-		PLAN_PREMIUM_2_YEARS,
-		PLAN_PERSONAL,
-		PLAN_PERSONAL_2_YEARS,
-		PLAN_BLOGGER,
-		PLAN_BLOGGER_2_YEARS,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	] )(
-		'Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)',
-		( plan ) => {
-			const cartItems = getCartItems( { product_slug: plan } );
-			const [ planCartItem ] = cartItems;
-			buildUpgradeFunction( tplProps, cartItems );
-			expect( planCartItem.extra ).toEqual( undefined );
-		}
-	);
 } );

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
+import { activeAgencyQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -9,6 +11,7 @@ import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import { getReferralConfig } from '../config';
 import ReferHostingForm from '../form';
+import type { Agency } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
 
@@ -92,6 +95,30 @@ describe( '<ReferHostingForm>', () => {
 		expect( screen.getByText( 'Please enter a valid email' ) ).toBeVisible();
 		expect( screen.getByText( 'Please select a lead type' ) ).toBeVisible();
 		expect( request.isDone() ).toBe( false );
+		expect( onSubmitted ).not.toHaveBeenCalled();
+	} );
+
+	test( 'opens the approval gate instead of sending a referral while the agency is in review', async () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( activeAgencyQuery().queryKey, {
+			id: 1,
+			approval_status: 'pending',
+		} as Agency );
+		const onSubmitted = jest.fn();
+		render(
+			<ReferHostingForm
+				agencyId={ 1 }
+				config={ getReferralConfig( 'premium' ) }
+				onSubmitted={ onSubmitted }
+			/>,
+			{ queryClient }
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Referrals unlock once you’re approved' } )
+		).toBeVisible();
 		expect( onSubmitted ).not.toHaveBeenCalled();
 	} );
 

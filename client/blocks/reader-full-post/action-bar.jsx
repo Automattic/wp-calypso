@@ -22,6 +22,7 @@ const ReaderFullPostActionBar = ( {
 	feedUrl,
 	siteUrl,
 	onFollowToggle,
+	onFollowSuccess,
 } ) => {
 	const translate = useTranslate();
 	const canEdit = site && userCan( 'edit_post', post );
@@ -93,6 +94,7 @@ const ReaderFullPostActionBar = ( {
 						siteId={ siteId }
 						siteUrl={ followUrl }
 						onFollowToggle={ onFollowToggle }
+						onFollowSuccess={ onFollowSuccess }
 						railcar={ post?.railcar }
 					/>
 				) }
@@ -113,6 +115,7 @@ ReaderFullPostActionBar.propTypes = {
 	feedUrl: PropTypes.string,
 	siteUrl: PropTypes.string,
 	onFollowToggle: PropTypes.func,
+	onFollowSuccess: PropTypes.func,
 };
 
 export default ReaderFullPostActionBar;

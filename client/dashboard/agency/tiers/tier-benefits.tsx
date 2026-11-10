@@ -56,12 +56,13 @@ function BenefitRow( {
 			variant: ( isSmallViewport ? 'secondary' : 'tertiary' ) as ComponentProps<
 				typeof ButtonComponent
 			>[ 'variant' ],
+			style: isSmallViewport ? { justifyContent: 'center' } : undefined,
 		};
 
 		const buttons = benefit.actions.map( ( action ) => {
 			if ( action.id === 'download-badge' ) {
 				return renderDownloadBadges ? (
-					<span key={ action.id }>{ renderDownloadBadges( buttonProps ) }</span>
+					<Fragment key={ action.id }>{ renderDownloadBadges( buttonProps ) }</Fragment>
 				) : null;
 			}
 			if ( action.id === 'schedule-call' ) {
@@ -210,7 +211,7 @@ export default function TierBenefits( {
 	const allTiersToShow = [ currentTier, ...lowerTiers, ...higherTiers ];
 
 	return (
-		<VStack spacing={ 6 } style={ { alignItems: 'center' } }>
+		<VStack spacing={ 6 } alignment="center">
 			{ allTiersToShow.map( ( tier ) => {
 				const isCurrentTier = tier.id === currentAgencyTierId;
 				const isLowerTier = tier.level < currentTier.level;

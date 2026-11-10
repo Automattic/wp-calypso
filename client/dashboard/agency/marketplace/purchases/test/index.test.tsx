@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
+import CrossoverModalHost from '../../../crossover';
 import MarketplacePurchases from '../index';
 
 const API = 'https://public-api.wordpress.com';
@@ -121,7 +122,7 @@ function mockAssign() {
 
 async function assignLicense() {
 	const user = await openRowActions();
-	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site' } ) );
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site…' } ) );
 	await user.click( await screen.findByRole( 'radio', { name: 'https://client.example.com' } ) );
 	await user.click( screen.getByRole( 'button', { name: 'Assign to selected site' } ) );
 	return user;
@@ -210,7 +211,7 @@ describe( '<MarketplacePurchases>', () => {
 
 		// The action stays in the menu so the agency can see it exists; the Site
 		// column is what says why it is out of reach.
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -226,7 +227,7 @@ describe( '<MarketplacePurchases>', () => {
 		await screen.findByText( 'Not assigned' );
 		await openRowActions();
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).not.toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -326,10 +327,23 @@ describe( '<MarketplacePurchases>', () => {
 			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
 			mockPendingSites( 'pending' );
 
-			render( <MarketplacePurchases /> );
+			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			render(
+				<>
+					<MarketplacePurchases />
+					<CrossoverModalHost />
+				</>
+			);
 			await userEvent.click( await screen.findByRole( 'link', { name: /Manage in Pressable/ } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /Continue to Pressable/ } ) );
 
+			expect( open ).toHaveBeenCalledWith(
+				'https://my.pressable.com/agency/auth',
+				'_blank',
+				'noopener,noreferrer'
+			);
 			expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
+			open.mockRestore();
 		} );
 	} );
 } );

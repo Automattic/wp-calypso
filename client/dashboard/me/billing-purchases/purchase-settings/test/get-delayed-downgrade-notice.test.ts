@@ -95,4 +95,44 @@ describe( 'getDelayedDowngradeNotice', () => {
 			)
 		).toBeNull();
 	} );
+
+	describe( 'a change to a shorter term', () => {
+		const termChange = {
+			delayed_downgrade_to_product_slug: DotcomPlans.PREMIUM_MONTHLY,
+			delayed_downgrade_bill_period_days: 31,
+			bill_period_days: 365,
+		} as Partial< Purchase >;
+
+		test( 'names the new term and calls it a change', () => {
+			expect( getDelayedDowngradeNotice( makePurchase( termChange ), 'en', translated ) ).toEqual( {
+				message:
+					'Your plan is scheduled to change to Premium (monthly) at your next renewal on May 9, 2027.',
+				isRetryingRenewal: false,
+			} );
+		} );
+
+		test( 'falls back to the downgrade copy until the new strings are translated', () => {
+			expect( getDelayedDowngradeNotice( makePurchase( termChange ), 'en', untranslated ) ).toEqual(
+				{
+					message:
+						'Your plan is scheduled to downgrade to Premium at your next renewal on May 9, 2027.',
+					isRetryingRenewal: false,
+				}
+			);
+		} );
+
+		test( 'keeps the downgrade copy when the backend does not report the new term', () => {
+			expect(
+				getDelayedDowngradeNotice(
+					makePurchase( { ...termChange, delayed_downgrade_bill_period_days: undefined } ),
+					'en',
+					translated
+				)
+			).toEqual( {
+				message:
+					'Your plan is scheduled to downgrade to Premium at your next renewal on May 9, 2027.',
+				isRetryingRenewal: false,
+			} );
+		} );
+	} );
 } );

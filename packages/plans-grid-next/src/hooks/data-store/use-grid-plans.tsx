@@ -332,7 +332,6 @@ const useGridPlans: UseGridPlansType = ( {
 	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
@@ -453,12 +452,13 @@ const useGridPlans: UseGridPlansType = ( {
 		}
 
 		/*
-		 * The focused copy is written for the standard WordPress.com plans, so it only replaces a
-		 * tagline that is not already specific to this surface: an intent that supplies its own
-		 * (newsletter, blog onboarding, Woo hosting solutions), or a plan outside the wpcom group
-		 * that overrides getPlanTagline -- P2 Free, which is TYPE_FREE but GROUP_P2, is the live case.
+		 * The focused and redesign copy are written for the standard WordPress.com plans, so they
+		 * only replace a tagline that is not already specific to this surface: an intent that
+		 * supplies its own (newsletter, blog onboarding, Woo hosting solutions), or a plan outside
+		 * the wpcom group that overrides getPlanTagline -- P2 Free, which is TYPE_FREE but
+		 * GROUP_P2, is the live case.
 		 */
-		if ( useFocusedNewCopyTaglines && ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
+		if ( ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
 			const existingTagline = tagline;
 			if ( isFreePlan( planSlug ) ) {
 				tagline =
@@ -499,7 +499,11 @@ const useGridPlans: UseGridPlansType = ( {
 			}
 		}
 
-		if ( usePlansGridRedesignNewDescription ) {
+		if (
+			usePlansGridRedesignNewDescription &&
+			! hasIntentSpecificTagline &&
+			isWpComPlan( planSlug )
+		) {
 			const existingTagline = tagline;
 			if ( isFreePlan( planSlug ) ) {
 				tagline =

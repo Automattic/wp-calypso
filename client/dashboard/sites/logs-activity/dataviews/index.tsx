@@ -9,7 +9,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { View, Field, Filter } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import fastDeepEqual from 'fast-deep-equal/es6';
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
@@ -28,7 +28,7 @@ import type { Activity } from '../../../components/logs-activity/types';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 import './style.scss';
 
-type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
+type SiteActivityLogsDataViewsProps = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 	hasActivityLogsAccess: boolean;
 	// View state deep-linked via the URL, read from the active route's search.
@@ -42,10 +42,9 @@ function SiteActivityLogsDataViews( {
 	timezoneString,
 	site,
 	dateRange,
-	dateRangeVersion,
 	hasActivityLogsAccess,
 	searchParams,
-}: SiteLogsDataViewsPropsActivity ) {
+}: SiteActivityLogsDataViewsProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 
@@ -192,12 +191,6 @@ function SiteActivityLogsDataViews( {
 			page: datasetChanged ? 1 : requestedPage,
 		} );
 	};
-
-	// Reset pagination when the date range changes
-	useEffect( () => {
-		updateView( { ...view, page: 1 } );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
-	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];
 

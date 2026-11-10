@@ -36,7 +36,9 @@ export const RemovedFromCartItem = ( {
 	const translate = useTranslate();
 
 	return (
-		<RemovedFromCartItemWrapper key={ product.uuid }>
+		<RemovedFromCartItemWrapper
+			key={ `${ product.uuid }-${ isPlaceholder ? 'loading' : 'ready' }` }
+		>
 			{ isPlaceholder ? (
 				<LoadingCopy width="350px" />
 			) : (

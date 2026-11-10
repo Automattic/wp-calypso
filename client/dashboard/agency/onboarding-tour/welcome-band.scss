@@ -38,7 +38,7 @@
 	grid-template-columns: minmax( 0, 1fr );
 
 	@container a4a-welcome-band ( min-width: 1080px ) {
-		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
+		grid-template-columns: minmax( 220px, 260px ) minmax( 0, 1fr );
 	}
 }
 
@@ -47,7 +47,8 @@
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
 	column-gap: 24px;
 	margin: 0;
-	padding: 32px;
+	padding-block: 32px;
+	padding-inline: 24px;
 	list-style: none;
 	background-color: var( --dashboard-marketplace-referral__tint-color );
 
@@ -62,12 +63,12 @@
 	}
 }
 
-// Each step spans three rows of the list (drawing, text, action) and shares them with the
-// other steps, so the actions line up however the descriptions wrap.
+// The steps stretch to the tallest one and each pins its action to the bottom, so the
+// actions line up however the descriptions wrap. A shared subgrid let Chrome size the text
+// row shorter than a wrapped description, and the action covered its last line.
 .a4a-welcome-band-step {
 	display: grid;
-	grid-row: span 3;
-	grid-template-rows: subgrid;
+	grid-template-rows: auto auto 1fr;
 	grid-template-columns: auto minmax( 0, 1fr );
 	grid-template-areas:
 		'art art'
@@ -77,11 +78,10 @@
 	position: relative;
 	justify-self: center;
 	inline-size: 100%;
-	max-inline-size: 280px;
+	max-inline-size: 300px;
 	min-inline-size: 0;
 
 	@container a4a-welcome-band ( max-width: 719px ) {
-		grid-row: auto;
 		grid-template-rows: none;
 		grid-template-areas:
 			'number text'
@@ -103,6 +103,11 @@
 .a4a-welcome-band-text {
 	grid-area: text;
 	padding-block-start: 4px;
+}
+
+// A wrapped title splits evenly instead of leaving one word on its own line.
+.a4a-welcome-band-text .a4a-welcome-band-title {
+	text-wrap: balance;
 }
 
 .a4a-welcome-band-action {

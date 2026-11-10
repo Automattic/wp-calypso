@@ -108,6 +108,12 @@ describe( 'license key helpers', () => {
 		expect( isBundleParent( license() ) ).toBe( false );
 	} );
 
+	it( 'treats a Titan quantity as inboxes, not a bundle', () => {
+		expect(
+			isBundleParent( license( { license_key: 'pressable-addon-titan-inbox_abc', quantity: 5 } ) )
+		).toBe( false );
+	} );
+
 	it( 'treats user-owned licenses as standard rather than partner licenses', () => {
 		expect( isPartnerLicense( license() ) ).toBe( true );
 		expect( isPartnerLicense( license( { owner_type: null } ) ) ).toBe( true );
@@ -264,6 +270,10 @@ describe( 'getLicenseTags', () => {
 				} )
 			)
 		).toEqual( [ 'Referral', 'Development' ] );
+	} );
+
+	it( 'tags licenses purchased on Jetpack.com as standard licenses', () => {
+		expect( getLicenseTags( license( { owner_type: 'user' } ) ) ).toEqual( [ 'Standard license' ] );
 	} );
 } );
 

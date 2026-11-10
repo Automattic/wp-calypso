@@ -57,8 +57,6 @@ export interface FormProps {
 }
 
 class RegistrantExtraInfoFrForm extends PureComponent< FormProps & LocalizeProps > {
-	static propTypes = {};
-
 	static defaultProps = {
 		isVisible: true,
 		onSubmit: noop,

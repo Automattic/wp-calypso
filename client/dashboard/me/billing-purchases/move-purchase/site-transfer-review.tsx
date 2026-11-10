@@ -21,7 +21,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getTitleForDisplay, isDotcomPlan } from '../../../utils/purchase';
@@ -42,7 +42,7 @@ import type {
 	SiteTransferPreview,
 } from '@automattic/api-core';
 
-interface Props {
+interface SiteTransferReviewProps {
 	purchase: Purchase;
 	targetSite: Site;
 	onChangeSite: () => void;
@@ -118,7 +118,11 @@ function getMoveDescription( purchase: Purchase, preview: SiteTransferPreview ):
 	return __( 'The renewal date and price stay the same.' );
 }
 
-export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Props ) {
+export function SiteTransferReview( {
+	purchase,
+	targetSite,
+	onChangeSite,
+}: SiteTransferReviewProps ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
@@ -162,12 +166,12 @@ export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Prop
 				title={ __( 'Failed to check whether this purchase can move' ) }
 				actions={
 					<>
-						<Button variant="secondary" onClick={ () => refetchPreview() }>
+						<NoticeActionButton variant="outline" onClick={ () => refetchPreview() }>
 							{ __( 'Try again' ) }
-						</Button>
-						<Button variant="tertiary" onClick={ onChangeSite }>
+						</NoticeActionButton>
+						<NoticeActionButton variant="minimal" onClick={ onChangeSite }>
 							{ __( 'Choose a different site' ) }
-						</Button>
+						</NoticeActionButton>
 					</>
 				}
 			>

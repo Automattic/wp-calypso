@@ -21,6 +21,7 @@
 	"logout_url": false,
 	"wpcom_url": "https://wordpress.com",
 	"calypso_live_image": false,
+	"calypso_live_envs": false,
 	"wpcom_signup_url": false,
 	"wpcom_login_url": false,
 	"wpcom_authorize_endpoint": false,
@@ -36,7 +37,6 @@
 	"github_app_slug": "wordpress-com-for-developers",
 	"github_oauth_client_id": "Iv1.a72902e7053ea8aa",
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
-	"ciab_posthog_api_key": "phc_tHmeIeJcb4zGfiX4akJwyGq7lioUpCoHd65LKbVPcoR",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
@@ -214,7 +214,7 @@
 		}
 	],
 	"restricted_me_access": true,
-	"theme_color": "",
+	"theme_color": "#1E1E1E",
 	"theme_color_admin_color_scheme_override": true,
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"dolly_telegram_auth_url": "",
@@ -227,7 +227,7 @@
 	"blackbox_api_key": "1b4f123e7dae4d83bbd18170c4358f8e",
 	"blackbox_signup_api_key": "ee892f3691e15bbc28b5cc1f18f05262",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.21.0/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.21.0/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.23.0/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.23.0/style.css"
 	}
 }

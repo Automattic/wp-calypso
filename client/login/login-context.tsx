@@ -21,6 +21,16 @@ export interface LoginContextType {
 		subHeading?: TranslateResult | null;
 		subHeadingSecondary?: TranslateResult | null;
 	} ) => void;
+	/**
+	 * The icon of the site the user is logging in to, e.g. a newsletter's login link page.
+	 */
+	siteIcon?: SiteIcon | null;
+	setSiteIcon: ( siteIcon: SiteIcon | null ) => void;
+}
+
+export interface SiteIcon {
+	src: string;
+	alt: string;
 }
 
 export interface LoginContextProviderProps {
@@ -47,6 +57,8 @@ const LoginContextProvider = ( {
 	const [ subHeadingTextSecondary, setSubHeadingTextSecondary ] = useState<
 		TranslateResult | undefined | null
 	>( initialSubHeadingSecondary ?? undefined );
+
+	const [ siteIcon, setSiteIcon ] = useState< SiteIcon | null >( null );
 
 	// Track if headers have been explicitly set via setHeaders
 	const headersExplicitlySet = useRef( false );
@@ -96,6 +108,8 @@ const LoginContextProvider = ( {
 				subHeadingText,
 				subHeadingTextSecondary,
 				setHeaders,
+				siteIcon,
+				setSiteIcon,
 			} }
 		>
 			{ children }

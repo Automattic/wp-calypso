@@ -7,13 +7,15 @@ import { layout } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 import SiteIcon from '../../components/site-icon';
 import { Truncate } from '../../components/truncate';
+import { useTrackOverviewItem } from './use-track-overview-item';
 
-interface Props {
+interface FeaturedCardSiteProps {
 	domain: Domain;
 }
 
-export default function FeaturedCardSite( { domain }: Props ) {
+export default function FeaturedCardSite( { domain }: FeaturedCardSiteProps ) {
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
+	const trackItem = useTrackOverviewItem( domain );
 
 	if ( ! site ) {
 		return <OverviewCard icon={ <Icon icon={ layout } /> } title={ __( 'Site' ) } isLoading />;
@@ -45,6 +47,7 @@ export default function FeaturedCardSite( { domain }: Props ) {
 				)
 			}
 			intent={ shouldShowAddAttachSite ? 'upsell' : 'success' }
+			onClick={ () => trackItem( 'site' ) }
 		/>
 	);
 }

@@ -34,7 +34,7 @@ const usernameInput = () => getByLabelText( 'WordPress admin username' );
 const passwordInput = () => getByLabelText( 'Password' );
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /I need help, please contact me/ } );
+const skipButton = () => getByRole( 'button', { name: /Have our team email you/ } );
 
 const fillAllFields = async () => {
 	await userEvent.type( usernameInput(), 'username' );
@@ -99,14 +99,29 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'skips the credential creation when the user does not fill the fields', async () => {
+	it( 'asks our team for help and leaves the flow without the fields filled in', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
 		await userEvent.click( skipButton() );
 
-		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wp.req.post ).not.toHaveBeenCalled();
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{ path: '/help/migration-ticket/new', apiNamespace: 'wpcom/v2' },
+			{},
+			expect.objectContaining( { blog_url: 'site-url.wordpress.com', context: 'help_requested' } )
+		);
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
+	} );
+
+	it( 'asks only once, and still leaves the flow, when asking for help fails', async () => {
+		const submit = jest.fn();
+		( wp.req.post as jest.Mock ).mockRejectedValueOnce( new Error( 'Ticket failed' ) );
+		render( { navigation: { submit } } );
+
+		await userEvent.dblClick( skipButton() );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
+		expect( wp.req.post ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {

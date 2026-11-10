@@ -19,7 +19,6 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -175,14 +174,14 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 	);
 
 	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
-		`Jetpack Security Daily for (%s)`,
+		`Jetpack plans page for (%s)`,
 		( product_slug ) => {
 			render( <SeoForm { ...props } siteIsJetpack selectedSite={ { plan: { product_slug } } } /> );
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalled();
 			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
 				expect.objectContaining( {
-					href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ),
+					href: expect.stringMatching( /^\/plans\// ),
 				} )
 			);
 		}

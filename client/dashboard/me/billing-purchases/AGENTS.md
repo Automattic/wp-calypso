@@ -33,7 +33,7 @@ Non-obvious details about sibling directories under `client/dashboard/me/`:
 ### Data Layer
 
 Helpers in `client/dashboard/utils/purchase.ts` (~50 functions). Queries are loaded
-via router loaders in `client/dashboard/app/router/me.tsx`.
+via router loaders in `client/dashboard/app/router/me.ts`.
 
 ### Architecture Context
 
@@ -87,7 +87,7 @@ marketplace subscriptions on site.
    WordPress.com self-serve management doesn't apply. The backend reports this directly:
    `is_partner_managed` (a partner provisioned and bills it, excluding A4A store
    purchases) and `is_host_managed` (that subset provisioned by a host rather than an
-   agency). Agencies buy through WordPress.com and *do* cancel here, so only
+   agency). Agencies buy through WordPress.com and _do_ cancel here, so only
    `is_host_managed` gates cancel/remove; the cancel flow separately skips their survey.
 
    The flags replace a client-side derivation: a `partner_name` check paired with
@@ -127,7 +127,7 @@ marketplace subscriptions on site.
 
    The user is not a member of the holding site, so those requests return `403 authorization_required`. `AuthProvider` (`app/auth/index.tsx`) subscribes to the whole query cache and once treated that as a signed-out session, redirecting to `/log-in` — which bounced straight back, looping forever (SHILL-2295). Its classifier now requires `statusCode === 401`, so a 403 no longer redirects, but keep these queries disabled anyway: the error still lands in the cache and every downstream consumer has to cope with it.
 
-   **`hasQueryableSite()` is a holding-site check, not a reachability check.** A purchase can also point at a real site the owner has since been removed from — WPCOM removes users from the blog when Jetpack disconnects, and deleted sites behave the same way. `blog_id` is set and `is_attached_to_holding_site` is false, so `hasQueryableSite()` returns `true`, but `/upgrades?site={blog_id}` and friends return `403 unauthorized` / `User cannot access upgrades.`. No purchase field reports this today, so **route loaders must `.catch()` their site-scoped `ensureQueryData` calls** — an unhandled rejection fails the whole route into the generic `500 Error` page and the user cannot enter the flow at all (SHILL-1442). `cancelPurchaseRoute` and `purchaseSettingsIndexRoute` in `app/router/me.tsx` both do this.
+   **`hasQueryableSite()` is a holding-site check, not a reachability check.** A purchase can also point at a real site the owner has since been removed from — WPCOM removes users from the blog when Jetpack disconnects, and deleted sites behave the same way. `blog_id` is set and `is_attached_to_holding_site` is false, so `hasQueryableSite()` returns `true`, but `/upgrades?site={blog_id}` and friends return `403 unauthorized` / `User cannot access upgrades.`. No purchase field reports this today, so **route loaders must `.catch()` their site-scoped `ensureQueryData` calls** — an unhandled rejection fails the whole route into the generic `500 Error` page and the user cannot enter the flow at all (SHILL-1442). `cancelPurchaseRoute` and `purchaseSettingsIndexRoute` in `app/router/me.ts` both do this.
 
    When gating a query with `enabled`, read `isLoading` rather than `isPending` in loading conditions. A disabled query stays `isPending` forever, so an `isPending`-based gate leaves the screen stuck on its loading placeholder.
 

@@ -654,6 +654,16 @@ describe( 'reader stats', () => {
 					description: 'reader conversations a8c page',
 				},
 				{
+					url: '/reader/conversations/inbox',
+					expected: 'conversations_inbox',
+					description: 'reader conversations inbox',
+				},
+				{
+					url: '/reader/conversations/inbox/10/100',
+					expected: 'conversations_inbox',
+					description: 'reader conversations inbox with a conversation open',
+				},
+				{
 					url: '/reader/users/matt/recommended-blogs',
 					expected: 'user_profile_recommended_blogs',
 					description: 'user profile recommended blogs',

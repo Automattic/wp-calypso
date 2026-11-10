@@ -41,8 +41,8 @@ function Band( { approvalStatus, tierId, createdAt }: AgencyProps ) {
 	return isVisible ? (
 		<WelcomeBand
 			isPending={ approvalStatus === 'pending' }
-			sitesHref="/sites"
-			marketplaceHref="/marketplace"
+			referralsHref="/referrals"
+			wooPaymentsHref="/woopayments"
 			onScheduleCall={ jest.fn() }
 			onTakeTour={ jest.fn() }
 			recordTracksEvent={ jest.fn() }
@@ -78,8 +78,8 @@ describe( '<WelcomeBand>', () => {
 		renderBand();
 
 		expect( await screen.findByRole( 'heading', { name: 'Your account is ready' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Connect your first site' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Explore products & hosting' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Explore referrals' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Set up WooPayments' } ) ).toBeVisible();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
@@ -99,22 +99,29 @@ describe( '<WelcomeBand>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'locks the marketplace step while the account is under review', async () => {
+	test( 'locks the referrals and WooPayments steps while the account is under review', async () => {
 		mockPreferences();
 		renderBand( { approvalStatus: 'pending' } );
 
 		expect(
 			await screen.findByRole( 'heading', { name: 'Welcome to Automattic for Agencies' } )
 		).toBeVisible();
-		expect( screen.getByText( 'Unlocks when your account is activated' ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'link', { name: 'Explore products & hosting' } )
-		).not.toBeInTheDocument();
+		const lockedLabels = screen.getAllByText( 'Unlocks when your account is approved' );
+		expect( lockedLabels ).toHaveLength( 2 );
+		lockedLabels.forEach( ( label ) => expect( label ).toBeVisible() );
+		expect( screen.queryByRole( 'link', { name: 'Explore referrals' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Set up WooPayments' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows for an agency at Emerging Partner that joined recently', async () => {
+	test.each( [
+		[ 'an agency at Emerging Partner that joined recently', NEW_EMERGING_PARTNER ],
+		[
+			'an approved agency that joined recently and has no tier yet',
+			{ ...NEW_EMERGING_PARTNER, tierId: undefined },
+		],
+	] )( 'shows for %s', async ( _, props ) => {
 		mockPreferences();
-		renderBand();
+		renderBand( props );
 
 		expect( await screen.findByRole( 'heading', { name: 'Your account is ready' } ) ).toBeVisible();
 	} );

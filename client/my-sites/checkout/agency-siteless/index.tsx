@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
+import { buildA4ADashboardLink } from 'calypso/dashboard/app-a4a/routing';
 import { getAgencyCheckoutParams } from '../agency-checkout/lib/agency-checkout-params';
 import { AgencyCheckoutPlaceholder, AgencyCheckoutShell } from '../agency-checkout/shell';
 import CheckoutMain from '../src/components/checkout-main';
@@ -19,7 +20,11 @@ function AgencySitelessCheckoutContent() {
 		() => getAgencyCheckoutParams( window.location.search ),
 		[]
 	);
-	const { isReady, error } = useAgencyCart( entries, term );
+	const { isReady, error } = useAgencyCart(
+		entries,
+		term,
+		cancelTo ?? buildA4ADashboardLink( '/marketplace' )
+	);
 
 	if ( error ) {
 		return <EmptyContent title={ translate( 'Error' ) } line={ error } />;
