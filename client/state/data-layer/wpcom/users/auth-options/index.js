@@ -14,6 +14,9 @@ export const getAuthAccountType = ( action ) =>
 		{
 			path: `/users/${ encodeURIComponent( action.usernameOrEmail ) }/auth-options`,
 			method: 'GET',
+			query: {
+				...( action.blackboxSessionId && { blackbox_session_id: action.blackboxSessionId } ),
+			},
 			apiVersion: '1.1',
 			retryPolicy: noRetry(),
 		},
