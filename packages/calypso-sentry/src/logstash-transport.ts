@@ -1,7 +1,6 @@
 import type * as SentryApi from '@sentry/react';
 
 type Transport = ReturnType< typeof SentryApi.makeFetchTransport >;
-type TransportOptions = Parameters< typeof SentryApi.makeFetchTransport >[ 0 ];
 type Envelope = Parameters< Transport[ 'send' ] >[ 0 ];
 
 const LOGSTASH_URL = 'https://public-api.wordpress.com/rest/v1.1/logstash';
@@ -218,9 +217,9 @@ export function eventToLogstashPayload( event: SentryApi.Event ): LogstashPayloa
 
 function createLogstashSender() {
 	let pendingBytes = 0;
-	let pendingCount = 0;
 	let recentSendTimes: number[] = [];
 	let throttledCount = 0;
+	const pendingRequests = new Set< Promise< void > >();
 
 	function isThrottled( now: number ) {
 		recentSendTimes = recentSendTimes.filter( ( time ) => now - time < WINDOW_MS );
@@ -246,26 +245,32 @@ function createLogstashSender() {
 		const body = new URLSearchParams( { params: JSON.stringify( payload ) } );
 		const bodySize = body.toString().length;
 		pendingBytes += bodySize;
-		pendingCount++;
 
-		const settle = () => {
-			pendingBytes -= bodySize;
-			pendingCount--;
-		};
-
+		const keepalive =
+			pendingBytes <= MAX_KEEPALIVE_BYTES && pendingRequests.size < MAX_KEEPALIVE_REQUESTS;
+		let request: Promise< void >;
 		try {
-			fetch( LOGSTASH_URL, {
+			request = fetch( LOGSTASH_URL, {
 				method: 'POST',
 				body,
 				credentials: 'omit',
-				keepalive: pendingBytes <= MAX_KEEPALIVE_BYTES && pendingCount < MAX_KEEPALIVE_REQUESTS,
-			} ).then( settle, settle );
+				keepalive,
+			} ).then(
+				() => undefined,
+				() => undefined
+			);
 		} catch {
-			settle();
+			request = Promise.resolve();
 		}
+
+		pendingRequests.add( request );
+		request.then( () => {
+			pendingBytes -= bodySize;
+			pendingRequests.delete( request );
+		} );
 	}
 
-	return ( envelope: Envelope ) => {
+	function sendEnvelope( envelope: Envelope ) {
 		if ( typeof fetch !== 'function' ) {
 			return;
 		}
@@ -275,33 +280,41 @@ function createLogstashSender() {
 				send( item as SentryApi.Event );
 			}
 		}
-	};
+	}
+
+	function flush( timeout?: number ): Promise< boolean > {
+		const settled = Promise.all( pendingRequests ).then( () => true );
+		if ( ! timeout ) {
+			return settled;
+		}
+		let timer: ReturnType< typeof setTimeout > | undefined;
+		const timedOut = new Promise< boolean >( ( resolve ) => {
+			timer = setTimeout( () => resolve( false ), timeout );
+		} );
+		return Promise.race( [ settled, timedOut ] ).finally( () => clearTimeout( timer ) );
+	}
+
+	return { sendEnvelope, flush };
 }
 
 /**
- * Wraps Sentry's fetch transport so that every error event is also sent to
- * logstash. Sentry's response is always the one returned, so a logstash
- * failure can't affect Sentry delivery or rate limiting.
+ * A Sentry transport that sends error events to logstash instead of Sentry.
+ * Sessions, client reports and other non-error items are dropped.
  */
-export function makeLogstashMirrorTransport(
-	makeFetchTransport: typeof SentryApi.makeFetchTransport
-) {
-	return ( options: TransportOptions ): Transport => {
-		const sentryTransport = makeFetchTransport( options );
-		const sendToLogstash = createLogstashSender();
+export function makeLogstashTransport(): Transport {
+	const sender = createLogstashSender();
 
-		return {
-			send( envelope ) {
-				try {
-					sendToLogstash( envelope );
-				} catch {
-					// Never let the logstash copy interfere with delivery to Sentry.
-				}
-				return sentryTransport.send( envelope );
-			},
-			flush( timeout ) {
-				return sentryTransport.flush( timeout );
-			},
-		};
+	return {
+		send( envelope ) {
+			try {
+				sender.sendEnvelope( envelope );
+			} catch {
+				// An event that can't be serialized is dropped rather than thrown into the SDK.
+			}
+			return Promise.resolve( {} );
+		},
+		flush( timeout ) {
+			return sender.flush( timeout );
+		},
 	};
 }
