@@ -68,8 +68,6 @@ class PostCommentList extends Component {
 		commentsTree: PropTypes.object,
 		fetchEarlierComments: PropTypes.func.isRequired,
 		fetchLaterComments: PropTypes.func.isRequired,
-		/** The newest comment the caller knows of. Opening the thread fetches newer comments only when it isn't loaded. */
-		latestCommentId: PropTypes.number,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
 		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
@@ -103,11 +101,6 @@ class PostCommentList extends Component {
 		return !! ( startingCommentId && ! initialComment );
 	};
 
-	hasLatestComment = () => {
-		const { latestCommentId, commentsTree } = this.props;
-		return ! latestCommentId || !! commentsTree[ latestCommentId ];
-	};
-
 	shouldFetchInitialPages = () => {
 		const { startingCommentId, commentsTree } = this.props;
 
@@ -129,14 +122,22 @@ class PostCommentList extends Component {
 			// in this case we can't just load the exact comment in question because
 			// we could create a gap in the list.
 			if ( this.props.commentsTree ) {
-				// view earlier...
-				this.viewEarlierCommentsHandler( { skipLaterFetch: this.hasLatestComment() } );
+				this.loadInitialPages();
 			}
 		} else if ( this.shouldFetchInitialPages() ) {
-			const skipLaterFetch = this.hasLatestComment();
-			this.viewEarlierCommentsHandler( { skipLaterFetch } );
-			this.viewLaterCommentsHandler( { skipLaterFetch } );
+			this.loadInitialPages();
 			this.alreadyLoadedInitialSet = true;
+		}
+	};
+
+	// The first page already holds the newest comments, so only earlier ones can be missing.
+	loadInitialPages = () => {
+		if ( this.props.commentsFetchingStatus.haveEarlierCommentsToFetch ) {
+			this.loadMoreCommentsHandler( 'before' );
+		} else {
+			this.setState( ( { amountOfCommentsToTake } ) => ( {
+				amountOfCommentsToTake: amountOfCommentsToTake + this.props.pageSize,
+			} ) );
 		}
 	};
 
@@ -479,29 +480,26 @@ class PostCommentList extends Component {
 		};
 	};
 
-	viewEarlierCommentsHandler = ( { skipLaterFetch = false } = {} ) => {
+	viewEarlierCommentsHandler = () => {
 		const direction = this.props.commentsFetchingStatus.haveEarlierCommentsToFetch
 			? 'before'
 			: 'after';
-		this.loadMoreCommentsHandler( direction, skipLaterFetch );
+		this.loadMoreCommentsHandler( direction );
 	};
 
-	viewLaterCommentsHandler = ( { skipLaterFetch = false } = {} ) => {
+	viewLaterCommentsHandler = () => {
 		const direction = this.props.commentsFetchingStatus.haveLaterCommentsToFetch
 			? 'after'
 			: 'before';
-		this.loadMoreCommentsHandler( direction, skipLaterFetch );
+		this.loadMoreCommentsHandler( direction );
 	};
 
-	loadMoreCommentsHandler = ( direction, skipLaterFetch = false ) => {
+	loadMoreCommentsHandler = ( direction ) => {
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( { amountOfCommentsToTake } );
 		if ( direction === 'after' ) {
-			// The first page already holds the newest comments, so a later page finds only ones posted since.
-			if ( ! skipLaterFetch ) {
-				this.props.fetchLaterComments();
-			}
+			this.props.fetchLaterComments();
 		} else {
 			this.props.fetchEarlierComments();
 		}
