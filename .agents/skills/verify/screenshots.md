@@ -51,7 +51,7 @@ Use the local dev server on `trunk` only when production can't show the baseline
 - the page or feature isn't on production yet, e.g. it's new in `trunk` or behind a feature flag that only the local config turns on;
 - the before and after shots differ in more than the change (step 4), e.g. because of a local-only flag or a `trunk` change that hasn't been deployed yet.
 
-Switching disturbs anyone else working in the tree or checking its dev server, so ask first if the user or another agent might be. When no one can answer, don't switch: take after shots only and report that the before shots are missing. Then:
+Switching disturbs anyone else working in the tree, so ask first if the user or another agent might be editing it. Then:
 
 1. Check `git status`. With uncommitted changes, set them aside in a temporary commit: `git add -A && git commit --no-verify -m 'WIP: before shots'`. Don't use `git stash`: every worktree shares its stack, so another session can pop your entry.
 2. Run `git switch --detach $(git merge-base HEAD origin/trunk)`.
