@@ -15,6 +15,7 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
+import { isDIFMFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -141,6 +142,9 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
+const isFlowWithoutAiLaunchpad = ( flowName ) =>
+	isDIFMFlow( flowName ?? null ) || flowName === 'onboarding-with-email';
+
 export const getNewSiteParams = ( {
 	dependencies,
 	flowToCheck,
@@ -187,8 +191,9 @@ export const getNewSiteParams = ( {
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: launchAsComingSoon,
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
-			// Every /start flow that creates a site gets the wp-admin AI Launchpad (Site Setup).
-			wpcom_ai_launchpad_enabled: true,
+			// /start flows get the wp-admin AI Launchpad (Site Setup), except where we build the site
+			// for the user (DIFM) or the signup is about email.
+			...( ! isFlowWithoutAiLaunchpad( flowToCheck ) && { wpcom_ai_launchpad_enabled: true } ),
 		},
 		validate: false,
 	};
