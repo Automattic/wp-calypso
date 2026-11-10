@@ -57,6 +57,7 @@ node .agents/skills/verify/scripts/browse.cjs <url> [options]
 | `--eval <code>` / `--eval-file <path>` | Async Playwright code with `page`, `context`, `screenshot()` and `loaded()` in scope; its `return` value is printed. |
 | `--screenshot <path>`                  | Save a screenshot outside the repo; add `--full-page` for the whole page.                                            |
 | `--clip <selector>`                    | Crop the screenshot to the first element matching the selector.                                                      |
+| `--arrow <selector>`                   | Point a red arrow at the first element matching the selector in the screenshot.                                      |
 | `--no-snapshot`                        | Skip the ARIA snapshot of `<main>`, printed by default.                                                              |
 | `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                                      |
 | `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                                         |
