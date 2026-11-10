@@ -2,6 +2,11 @@
 
 `scripts/browse.cjs` drives headless Chromium against a local dev server or a hosted build, logged in as a WordPress.com user, and reports what the page shows. Use it by default. Drive a browser yourself (see [Other browsers](#other-browsers)) only when the user asks for one, when the check needs a long interactive session, or when `browse.cjs` can't log in.
 
+## Choosing where to test
+
+- When a PR is open or you were asked to open one, prefer [Calypso Live](#calypso-live) for final signed-in checks. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built. Draft PRs opened from branches in this repository get preview links, so you can run those checks before marking the PR ready. Each preview lets you verify the intended commit without sharing a local dev server across worktrees.
+- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. Before reusing a running server, confirm it's serving the intended checkout: `lsof -a -d cwd -p $(lsof -ti tcp:<port> -s tcp:listen)` shows the directory of the server on that port.
+
 ## Accounts
 
 - **E2E test accounts (default).** Shared accounts from the E2E secrets, e.g. `defaultUser`, `simpleSiteFreePlanUser`, `atomicUser`. Pick one with `--as <name>`.
@@ -23,7 +28,7 @@
 ## Setup
 
 - Local targets require a running dev server (`yarn start` or `yarn start-dashboard`). Don't start it yourself unless asked or [running unattended](#running-unattended). The script waits up to 90s for its first build. Hosted URLs skip this check.
-- If the script exits with code 2 because the local server is unavailable, try [Calypso Live](#calypso-live) first. If you still need something from the user, ask directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps. For anything the user has to run, give the exact command. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`: that one goes in the user's own terminal, to keep the key out of the conversation. For a failed login, offer, in plain words without setup details:
+- If you need something from the user, ask directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps. For anything the user has to run, give the exact command. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`: that one goes in the user's own terminal, to keep the key out of the conversation. For a failed login, offer, in plain words without setup details:
   1. **Playwright with the E2E test accounts:** the user runs `.agents/skills/verify/scripts/setup-test-accounts.sh` in their own terminal.
   2. **Playwright with their own account:** the user runs `! node .agents/skills/verify/scripts/auth.cjs me`.
   3. **Claude in Chrome with their own account:** usually already signed in; the user connects it with `/chrome` in Claude Code.
@@ -34,10 +39,8 @@
 
 ## Calypso Live
 
-If local verification stalls and a PR preview is available, try Calypso Live before asking someone to run the check manually.
-
 1. Use the preview link from the PR bot for each affected client. Set the path you want to check and keep the image and environment query parameters. Pass the full URL to `browse.cjs` in single quotes with the usual test account. The script retries startup responses for up to 90 seconds and fails if it cannot load a build. Use a fresh bot link if a container URL has expired.
-2. Check the final host and path to confirm the intended client. A signed-in account can redirect from Classic to Dashboard. The report's `preview commit` identifies the PR head. The preview may also include trunk as of build time.
+2. Check the final host and path to confirm the intended client. A signed-in account can redirect from Classic to Dashboard. Confirm that the report's `preview commit` matches the PR head you intend to verify. If it doesn't, the build for your push isn't done: wait for the `Docker image (Web app)` check on the head commit, then use the updated bot link. Don't verify an older build. The preview may also include trunk as of build time.
 3. Run the same interactions and capture the same states you would check locally. When using response fixtures with a shared test account, keep the live account read-only. Report which UI checks used fixtures and which real backend behavior remains unverified.
 
 ```bash
@@ -48,7 +51,7 @@ node .agents/skills/verify/scripts/browse.cjs 'PASTE_THE_FULL_PR_PREVIEW_URL_HER
 
 If you're a subagent that can't ask the user, report back to the agent that started you instead of acting on your own. When no one can answer at all (a pipeline or cloud run), don't stop to ask:
 
-- If the dev server isn't running, use Calypso Live when a preview is available. If you need a local build, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build.
+- If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build. If another checkout's server holds the port, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard` and `PORT=3100 node .agents/skills/verify/scripts/browse.cjs /sites`.
 - If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
