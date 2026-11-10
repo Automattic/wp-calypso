@@ -761,28 +761,11 @@ export default function CheckoutMain( {
 		fromSiteSlug,
 	} );
 
-	const handleStepChanged = useCallback(
-		( {
-			stepNumber,
-			previousStepNumber,
-			paymentMethodId,
-		}: {
-			stepNumber: number | null;
-			previousStepNumber: number;
-			paymentMethodId: string;
-		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
-				recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
-					payment_method:
-						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-				} );
-			}
-			recordTracksEvent( 'calypso_checkout_composite_step_changed', {
-				step: stepNumber,
-			} );
-		},
-		[]
-	);
+	const handleStepChanged = useCallback( ( { stepNumber }: { stepNumber: number | null } ) => {
+		recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+			step: stepNumber,
+		} );
+	}, [] );
 
 	const handlePaymentMethodChanged = useCallback( ( method: string ) => {
 		logStashEvent( 'payment_method_select', { newMethodId: String( method ) }, 'info' );

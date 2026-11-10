@@ -32,6 +32,7 @@ import {
 	getContactDetailsType,
 	ContactDetailsType,
 	RestorableProductsProvider,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
 import { Icon } from '@wordpress/components';
@@ -640,6 +641,9 @@ export default function CheckoutMainContent( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
+	// A ref so the contact step's async callback reads the current method, not a stale one.
+	const paymentMethodIdRef = useRef( paymentMethod?.id );
+	paymentMethodIdRef.current = paymentMethod?.id;
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -1019,6 +1023,12 @@ export default function CheckoutMainContent( {
 									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 										step: 1,
 										step_name: 'contact-form',
+									} );
+									recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+										payment_method:
+											translateCheckoutPaymentMethodToWpcomPaymentMethod(
+												paymentMethodIdRef.current ?? ''
+											) || '',
 									} );
 								}
 								return validationResponse;
