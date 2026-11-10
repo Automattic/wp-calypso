@@ -56,7 +56,9 @@ describe( 'SiteMigrationSshShareAccess', () => {
 				'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
 			)
 		).toBeVisible();
-		expect( submit ).not.toHaveBeenCalledWith( { destination: 'do-it-for-me' } );
+		expect( submit ).not.toHaveBeenCalled();
+		// Only the ticket was requested: the status isn't moved to DIFM without a ticket.
+		expect( wp.req.post ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'hands the migration to our team when the request is sent', async () => {

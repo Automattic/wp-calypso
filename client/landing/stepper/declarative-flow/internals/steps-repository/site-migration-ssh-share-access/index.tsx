@@ -157,6 +157,8 @@ const SiteMigrationSshShareAccess: StepType< {
 			// On error, fallback to credentials step
 			recordTracksEvent( 'calypso_site_migration_ssh_fallback_error', {
 				error: error instanceof Error ? error.message : 'Unknown error',
+				// API errors are plain objects, so the code is what tells failures apart.
+				error_code: getErrorCode( error ),
 			} );
 			return navigation.submit?.( { destination: 'no-ssh-access' } );
 		} finally {
@@ -206,7 +208,10 @@ const SiteMigrationSshShareAccess: StepType< {
 				destination: 'do-it-for-me',
 			} );
 		} catch ( error ) {
-			// TODO: Handle error
+			// The ticket was filed, so our team has the request; record the failure instead of hiding it.
+			recordTracksEvent( 'calypso_site_migration_ssh_status_update_error', {
+				error_code: getErrorCode( error ),
+			} );
 		}
 	}, [
 		locale,
