@@ -67,6 +67,9 @@ const LostPasswordForm = ( {
 		formData.set( 'user_login', userLogin );
 
 		const blackboxSessionId = await blackbox.getSessionId();
+		if ( blackboxSessionId === null ) {
+			return null;
+		}
 		if ( blackboxSessionId ) {
 			formData.set( 'blackbox_session_id', blackboxSessionId );
 		}
@@ -121,6 +124,9 @@ const LostPasswordForm = ( {
 			setBusy( true );
 			const result = await lostPasswordRequest();
 			setBusy( false );
+			if ( result === null ) {
+				return;
+			}
 			if ( result.includes( 'Unable to reset password' ) ) {
 				blackbox.reset();
 				return setError(
