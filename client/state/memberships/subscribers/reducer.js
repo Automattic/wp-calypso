@@ -25,7 +25,7 @@ const list = ( state = {}, action ) => {
 			break;
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
 			const siteState = state[ action.siteId ];
-			if ( ! siteState?.ownerships?.hasOwnProperty( action.subscriptionId ) ) {
+			if ( ! siteState?.ownerships.hasOwnProperty( action.subscriptionId ) ) {
 				return state;
 			}
 
@@ -34,7 +34,7 @@ const list = ( state = {}, action ) => {
 
 				[ action.siteId ]: {
 					...siteState,
-					total: Math.max( 0, ( siteState.total ?? 0 ) - 1 ),
+					total: Math.max( 0, siteState.total - 1 ),
 					ownerships: omit( siteState.ownerships, action.subscriptionId ),
 				},
 			};
