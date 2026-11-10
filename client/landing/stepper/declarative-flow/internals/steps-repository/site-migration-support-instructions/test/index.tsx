@@ -38,7 +38,9 @@ describe( 'SiteMigrationSupportInstructions', () => {
 
 		expect( await screen.findByText( tryAgainMessage ) ).toBeVisible();
 
-		await userEvent.click( screen.getByText( 'Try again' ) );
+		// A keyboard user can retry too.
+		screen.getByRole( 'button', { name: 'Try again' } ).focus();
+		await userEvent.keyboard( '{Enter}' );
 
 		await waitFor( () => expect( screen.queryByText( tryAgainMessage ) ).not.toBeInTheDocument() );
 		expect( wp.req.post ).toHaveBeenCalledTimes( 2 );
@@ -53,6 +55,6 @@ describe( 'SiteMigrationSupportInstructions', () => {
 		// Let the rejected request settle, so a notice would have rendered by now.
 		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
 		expect( screen.getByText( 'We’ll take it from here!' ) ).toBeVisible();
-		expect( screen.queryByText( 'Try again' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 	} );
 } );

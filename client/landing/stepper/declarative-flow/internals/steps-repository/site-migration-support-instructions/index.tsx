@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import {
 	getErrorCode,
 	MIGRATION_TICKET_REFUSED_CODES,
@@ -127,7 +127,9 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 						showDismiss={ false }
 						text={ getTicketErrorMessage( ticketError ) }
 					>
-						<NoticeAction onClick={ requestMigration }>{ translate( 'Try again' ) }</NoticeAction>
+						<Button variant="link" onClick={ requestMigration }>
+							{ translate( 'Try again' ) }
+						</Button>
 					</Notice>
 				) }
 				<StepContent />
