@@ -139,12 +139,12 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 				await page.getByRole( 'main' ).hover();
 				await expect( page.locator( '#wpcom-omnibar' ).getByRole( 'menuitem' ) ).toHaveCount( 0 );
 
-				// With omnibar: click Domains in the responsive sidebar.
+				// With omnibar: click Domain List in the responsive sidebar.
 				// On mobile, open the sidebar first via the masterbar menu button.
 				if ( viewportName === 'mobile' ) {
 					await page.getByRole( 'button', { name: 'Menu', exact: true } ).first().click();
 				}
-				await page.locator( '#wpcom' ).getByRole( 'link', { name: 'Domains' } ).click();
+				await page.locator( '#wpcom' ).getByRole( 'link', { name: 'Domain List' } ).click();
 			} else if ( viewportName === 'mobile' ) {
 				await page.getByRole( 'button', { name: 'Menu' } ).click();
 				await page
