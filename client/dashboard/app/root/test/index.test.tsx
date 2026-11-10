@@ -64,13 +64,13 @@ describe( '<Root>', () => {
 		renderRoot( '/regular' );
 
 		expect( await screen.findByRole( 'heading', { name: 'Regular page' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Sites' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Site List' } ) ).toBeVisible();
 	} );
 
 	test( 'leaves the sidebar out on a fullscreen route', async () => {
 		renderRoot( '/fullscreen' );
 
 		expect( await screen.findByRole( 'heading', { name: 'Fullscreen page' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Sites' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Site List' } ) ).not.toBeInTheDocument();
 	} );
 } );
