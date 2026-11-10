@@ -42,6 +42,23 @@ Often your changes will affect other parts of the application, so it's a good id
 
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
 
+## Package tests
+
+This test configuration contains unit tests for the packages in the `packages` top level folder. Packages are moving from Jest to Vitest one batch at a time: a package with a `vitest.config.mjs` runs on Vitest, and one with a `jest.config.js` runs on Jest. Test files go in a `test` subfolder, as in `client`.
+
+```bash
+> # run every package's tests, on Jest and then on Vitest
+> yarn run test-packages
+> # run the packages on Jest; arguments are Jest's
+> yarn run test-packages:jest [ path ]
+> # run the packages on Vitest; arguments are Vitest's, for example a path
+> yarn run test-packages:vitest [ path ]
+> # run one package's tests on whichever runner it uses, if it has a `test` script
+> yarn workspace <package name> test
+```
+
+`yarn run test-packages` passes any arguments to Jest only.
+
 ## Integration tests
 
 This test configuration contains integration tests that verify code located in `bin`, `client`, `server` and `test` top level folders. They should test how a group of components or a larger part of business logic works together.
