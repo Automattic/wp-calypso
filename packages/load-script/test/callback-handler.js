@@ -199,7 +199,7 @@ describe( 'loadScript/callback-handler', () => {
 		const eventObject = { target: elementObject };
 		const callback = vi.fn();
 
-		beforeAll( function () {
+		beforeEach( function () {
 			addScriptCallback( url, callback );
 			handleRequestSuccess.bind( elementObject )( eventObject );
 		} );
@@ -220,7 +220,7 @@ describe( 'loadScript/callback-handler', () => {
 		const eventObject = { target: elementObject };
 		const callback = vi.fn();
 
-		beforeAll( function () {
+		beforeEach( function () {
 			addScriptCallback( url, callback );
 			handleRequestError.bind( elementObject )( eventObject );
 		} );

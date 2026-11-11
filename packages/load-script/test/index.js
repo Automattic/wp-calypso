@@ -23,7 +23,7 @@ describe( 'loadScript', () => {
 
 		const callback = vi.fn();
 
-		beforeAll( function () {
+		beforeEach( function () {
 			removeAllScriptCallbacks();
 			loadScript( url, callback, args );
 		} );
