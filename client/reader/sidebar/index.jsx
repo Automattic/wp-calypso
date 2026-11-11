@@ -49,7 +49,6 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import { ReaderSidebarShelves } from './shelves';
 
 const TrackingKeys = {
 	conversations: {
@@ -247,8 +246,6 @@ export class ReaderSidebar extends Component {
 							path={ path }
 						/>
 					</li>
-
-					{ isEnabled( 'reader/shelves' ) && <ReaderSidebarShelves path={ path } /> }
 
 					{ this.props.organizations && (
 						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />

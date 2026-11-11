@@ -293,10 +293,6 @@ function setupSearchRedirects(): void {
  * Shelves has been retired. Old shelf links land on the Reader, which explains why.
  */
 function setupShelvesRedirects(): void {
-	if ( config.isEnabled( 'reader/shelves' ) ) {
-		return;
-	}
-
 	page( [ '/reader/shelves', '/reader/shelves/*' ], () => page.redirect( SHELVES_RETIRED_PATH ) );
 }
 

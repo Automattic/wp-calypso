@@ -121,7 +121,6 @@ export * from './read-saved';
 export * from './read-seen-posts';
 export * from './read-site-recommendations';
 export * from './read-sites';
-export * from './read-shelves';
 export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';
