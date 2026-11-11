@@ -13,6 +13,12 @@ import type { Site, User } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
 let mockSearchParams: { action?: string } = {};
+let mockHasEnTranslation = true;
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => () => mockHasEnTranslation,
+} ) );
 
 jest.mock( '../../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../../app/router/sites' );
@@ -179,6 +185,7 @@ const waitForSslDetails = ( queryClient: QueryClient, domainName: string ) =>
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
 		mockSearchParams = {};
+		mockHasEnTranslation = true;
 		mockApis();
 	} );
 
@@ -186,20 +193,33 @@ describe( '<SiteDomains>', () => {
 		nock.cleanAll();
 	} );
 
-	test( 'shows "Add domain name" button for site owner', async () => {
+	test( 'shows "Use a domain name I own" and "Add new domain" buttons for site owner', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'heading', { name: 'Domains' } );
+
+		expect( screen.getByRole( 'button', { name: 'Use a domain name I own' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add new domain' } ) ).toBeVisible();
+	} );
+
+	test( 'shows "Use a domain name I own" and "Add new domain" buttons for non-owner', async () => {
+		render( <SiteDomains />, { user: nonOwnerUser } );
+
+		await screen.findByRole( 'heading', { name: 'Domains' } );
+
+		expect( screen.getByRole( 'button', { name: 'Use a domain name I own' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add new domain' } ) ).toBeVisible();
+	} );
+
+	test( 'falls back to the previous copy until the new strings are translated', async () => {
+		mockHasEnTranslation = false;
+
 		render( <SiteDomains />, { user: ownerUser } );
 
 		await screen.findByRole( 'heading', { name: 'Domains' } );
 
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
-	} );
-
-	test( 'shows "Add domain name" button for non-owner', async () => {
-		render( <SiteDomains />, { user: nonOwnerUser } );
-
-		await screen.findByRole( 'heading', { name: 'Domains' } );
-
-		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Add new domain' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'opens the change site address modal when deep linked', async () => {
@@ -354,7 +374,7 @@ describe( '<SiteDomains>', () => {
 		);
 	} );
 
-	test( 'keeps a saved table view, with bulk selection', async () => {
+	test( 'keeps a saved table view, without bulk selection', async () => {
 		nock.cleanAll();
 		mockApis( {
 			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
@@ -366,7 +386,7 @@ describe( '<SiteDomains>', () => {
 		expect(
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {

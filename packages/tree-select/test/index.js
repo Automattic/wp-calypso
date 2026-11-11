@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import treeSelect from '../src';
 
 describe( 'index', () => {
@@ -11,10 +12,10 @@ describe( 'index', () => {
 		let getDependents;
 
 		beforeEach( () => {
-			selector = jest.fn( ( [ posts ], siteId ) =>
+			selector = vi.fn( ( [ posts ], siteId ) =>
 				Object.values( posts ).filter( ( p ) => p.siteId === siteId )
 			);
-			getDependents = jest.fn( ( state ) => [ state.posts ] );
+			getDependents = vi.fn( ( state ) => [ state.posts ] );
 			getSitePosts = treeSelect( getDependents, selector );
 		} );
 
@@ -60,11 +61,11 @@ describe( 'index', () => {
 				},
 			};
 
-			const takeOne = jest.fn( ( [ posts, sites ] ) => [
+			const takeOne = vi.fn( ( [ posts, sites ] ) => [
 				Object.values( posts )[ 0 ],
 				Object.values( sites )[ 0 ],
 			] );
-			const getDeps = jest.fn( ( state ) => [ state.posts, state.sites ] );
+			const getDeps = vi.fn( ( state ) => [ state.posts, state.sites ] );
 			const arborealTakeOne = treeSelect( getDeps, takeOne );
 
 			arborealTakeOne( reduxState, 42 );
@@ -159,7 +160,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should maintain the cache for unique dependents simultaneously', () => {
-			const getPostByIdWithDataSpy = jest.fn( ( [ post ] ) => {
+			const getPostByIdWithDataSpy = vi.fn( ( [ post ] ) => {
 				return {
 					...post,
 					withData: true,

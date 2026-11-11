@@ -1,4 +1,5 @@
-export type ReadConversationsScope = 'following' | 'commented';
+/** `unread` keeps the conversations with unread comment notes. */
+export type ReadConversationsScope = 'following' | 'commented' | 'unread';
 
 export type ReadConversationsSort = 'newest' | 'most_active';
 
@@ -14,11 +15,40 @@ export interface ReadConversationPerson {
 	url: string | null;
 }
 
+/** The Reader post endpoint's `author`. */
+export interface ReadConversationPostAuthor {
+	ID: number;
+	login: string;
+	name: string;
+	URL: string;
+	avatar_URL: string;
+	has_avatar?: boolean;
+	wpcom_id?: number;
+	wpcom_login?: string;
+}
+
+/** The Reader post endpoint's `discussion`. */
+export interface ReadConversationPostDiscussion {
+	comments_open: boolean;
+	comment_status: string;
+	pings_open: boolean;
+	ping_status: string;
+	comment_count: number;
+	comments_require_registration?: boolean;
+	comments_allow_blocks?: boolean;
+}
+
 export interface ReadConversationPost {
 	title: string;
 	url: string;
 	/** ISO 8601 date the post was published. */
 	date: string | null;
+	/** Built like the Reader post endpoint's fields, by servers that send them. */
+	author?: ReadConversationPostAuthor | null;
+	/** HTML. */
+	excerpt?: string;
+	featured_image?: string;
+	discussion?: ReadConversationPostDiscussion;
 }
 
 export interface ReadConversationSite {
@@ -54,6 +84,8 @@ export interface ReadConversation {
 	unread_count: number | null;
 	/** At most 50; `unread_count` counts the rest. */
 	unread_note_ids: number[];
+	/** The comments of `unread_note_ids`, in the same order. */
+	unread_comment_ids: number[];
 	/** Whether the user explicitly follows the conversation. */
 	is_following: boolean;
 }
@@ -99,4 +131,11 @@ export type ReadConversationsCommentsParams = Omit< ReadConversationsParams, 'sc
 export interface ReadConversationsCommentsResponse {
 	comments: ReadConversationOwnComment[];
 	next_cursor: string | null;
+}
+
+/**
+ * Response shape for `POST /wpcom/v2/read/sites/{blog_id}/posts/{post_id}/unfollow`.
+ */
+export interface ReadConversationUnfollowResponse {
+	success: boolean;
 }

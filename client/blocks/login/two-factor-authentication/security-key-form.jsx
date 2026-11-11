@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
+import { isTwoFactorEnhancedSecurityEnabled } from 'calypso/state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
 import './security-key-form.scss';
@@ -14,6 +15,7 @@ import './security-key-form.scss';
 class SecurityKeyForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isEnhancedSecurityEnabled: PropTypes.bool,
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -54,7 +56,16 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
+		const { translate, isEnhancedSecurityEnabled, isWoo, switchTwoFactorAuthType } = this.props;
+
+		// Rendered inside whichever block is showing, so it takes that block's alignment.
+		const enhancedSecurityText = isEnhancedSecurityEnabled && (
+			<p>
+				{ translate(
+					'Enhanced account security is on, so you need a passkey or security key to log in.'
+				) }
+			</p>
+		);
 
 		return (
 			<form
@@ -81,6 +92,7 @@ class SecurityKeyForm extends Component {
 									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
+							{ enhancedSecurityText }
 						</div>
 					) }
 					{ this.state.isAuthenticating && (
@@ -94,6 +106,7 @@ class SecurityKeyForm extends Component {
 									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
 								) }
 							</p>
+							{ enhancedSecurityText }
 						</div>
 					) }
 					<Button
@@ -118,8 +131,13 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, {
-	formUpdate,
-	loginUserWithSecurityKey,
-	recordTracksEvent,
-} )( localize( SecurityKeyForm ) );
+export default connect(
+	( state ) => ( {
+		isEnhancedSecurityEnabled: isTwoFactorEnhancedSecurityEnabled( state ),
+	} ),
+	{
+		formUpdate,
+		loginUserWithSecurityKey,
+		recordTracksEvent,
+	}
+)( localize( SecurityKeyForm ) );

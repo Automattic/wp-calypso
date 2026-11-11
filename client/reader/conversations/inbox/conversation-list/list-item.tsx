@@ -1,4 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	VisuallyHidden,
 	__experimentalHStack as HStack,
@@ -11,26 +12,30 @@ import { useEffect, useRef } from 'react';
 import { usePost } from 'calypso/reader/data/post';
 import { formatCompactTime } from './format-compact-time';
 import type { Density } from './toolbar';
-import type { Conversation } from '../group-notes';
+import type { Conversation, OwnComment } from 'calypso/reader/data/conversations';
 
 export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
 
+/** A row in the list: a conversation, or on Your comments, one of the user's comments. */
+export type InboxItem = Conversation | OwnComment;
+
 interface Props {
-	conversation: Conversation;
+	item: InboxItem;
 	isSelected: boolean;
 	openOnFocus: boolean;
+	followFocus: boolean;
 	density: Density;
-	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
+	onSelect: ( item: InboxItem, source: OpenSource ) => void;
 }
 
 const MAX_AVATARS = 5;
 
 function getContextLine(
 	translate: ReturnType< typeof useTranslate >,
-	{ context, commenters }: Conversation
+	{ reason, commenters, commenterCount }: Conversation
 ) {
 	const [ { name } ] = commenters;
-	const othersCount = commenters.length - 1;
+	const othersCount = Math.max( commenterCount, commenters.length ) - 1;
 	const options = { args: { name, count: othersCount }, components: { b: <strong /> } };
 	if ( othersCount > 0 ) {
 		return translate(
@@ -39,8 +44,8 @@ function getContextLine(
 			{ ...options, count: othersCount }
 		);
 	}
-	switch ( context ) {
-		case 'post':
+	switch ( reason ) {
+		case 'own_post':
 			return translate( '{{b}}%(name)s{{/b}} commented on your post', options );
 		case 'reply':
 			return translate( '{{b}}%(name)s{{/b}} replied to you', options );
@@ -52,21 +57,32 @@ function getContextLine(
 }
 
 export function ConversationListItem( {
-	conversation,
+	item,
 	isSelected,
 	openOnFocus,
+	followFocus,
 	density,
 	onSelect,
 }: Props ) {
 	const translate = useTranslate();
 	const locale = useLocale();
-	const { siteId, postId, excerpt, timestamp, commenters, unreadNoteIds } = conversation;
-	const { data: post } = usePost( conversation.title ? null : { blogId: siteId, postId } );
-	const title = conversation.title || String( post?.title ?? '' );
-	const unreadCount = unreadNoteIds.length;
+	const { siteId, postId, excerpt, timestamp } = item;
+	const isOwnComment = 'commentId' in item;
+	const { data: post } = usePost( item.title ? null : { blogId: siteId, postId } );
+	const title = item.title || String( post?.title ?? '' );
+	const unreadCount = isOwnComment ? item.newCommentCount : item.unreadCount;
 	const newCount = unreadCount > 0 && (
-		<Text color="var(--color-primary)" className="conversations-inbox__item-new">
-			{ translate( '%(count)d new', { args: { count: unreadCount } } ) }
+		<Text
+			size={ 12 }
+			lineHeight="16px"
+			weight={ 500 }
+			color="var(--color-primary)"
+			className="conversations-inbox__item-new"
+		>
+			{ translate( '%(count)s new', '%(count)s new', {
+				count: unreadCount,
+				args: { count: formatNumber( unreadCount ) },
+			} ) }
 		</Text>
 	);
 	const itemRef = useRef< HTMLLIElement >( null );
@@ -86,20 +102,25 @@ export function ConversationListItem( {
 		// alone on first render and when it sits elsewhere, like the previous/next buttons.
 		const { activeElement, body } = item.ownerDocument;
 		const list = item.closest( '.conversations-inbox__list' );
-		if ( ! isFirstRun && ( activeElement === body || list?.contains( activeElement ) ) ) {
+		if (
+			! isFirstRun &&
+			followFocus &&
+			( activeElement === body || list?.contains( activeElement ) )
+		) {
 			item.querySelector( 'button' )?.focus( { preventScroll: true } );
 		}
-	}, [ isSelected ] );
+	}, [ isSelected, followFocus ] );
 
 	return (
 		<li ref={ itemRef }>
 			<VStack
 				as="button"
-				spacing={ 2.5 }
+				spacing={ 2 }
 				type="button"
 				className={ clsx( 'conversations-inbox__item', {
 					'is-selected': isSelected,
-					'is-unread': unreadCount > 0,
+					// Your comments count newer replies, which opening doesn't clear, so they aren't unread.
+					'is-unread': ! isOwnComment && unreadCount > 0,
 				} ) }
 				aria-current={ isSelected || undefined }
 				onClick={ () => {
@@ -110,7 +131,7 @@ export function ConversationListItem( {
 						openedOnFocusRef.current = false;
 						return;
 					}
-					onSelect( conversation, 'click' );
+					onSelect( item, 'click' );
 				} }
 				onPointerDown={ () => {
 					pointerDownRef.current = true;
@@ -127,19 +148,27 @@ export function ConversationListItem( {
 					pointerDownRef.current = false;
 					if ( openOnFocus && ! isSelected ) {
 						openedOnFocusRef.current = true;
-						onSelect( conversation, source );
+						onSelect( item, source );
 					}
 				} }
 			>
 				<HStack as="span">
-					<span className="conversations-inbox__item-title">{ title }</span>
-					<Text size={ 14 } color="var(--color-text-subtle)">
+					<Text
+						size={ 13 }
+						lineHeight="20px"
+						weight={ 600 }
+						color="inherit"
+						className="conversations-inbox__item-title"
+					>
+						{ title }
+					</Text>
+					<Text size={ 12 } lineHeight="16px" color="var(--color-text-subtle)">
 						<span aria-hidden="true">{ formatCompactTime( timestamp, locale ) }</span>
 						<VisuallyHidden>{ formatCompactTime( timestamp, locale, 'long' ) }</VisuallyHidden>
 					</Text>
 					{ density !== 'comfortable' && newCount }
 				</HStack>
-				{ density !== 'compact' && commenters.length > 0 && (
+				{ density !== 'compact' && ! isOwnComment && item.commenters.length > 0 && (
 					<HStack as="span" justify="flex-start">
 						<HStack
 							as="span"
@@ -147,16 +176,26 @@ export function ConversationListItem( {
 							expanded={ false }
 							className="conversations-inbox__avatars"
 						>
-							{ commenters.slice( 0, MAX_AVATARS ).map( ( { name, avatar } ) => (
-								<img key={ name } src={ avatar } alt="" width={ 24 } height={ 24 } />
+							{ /* Two commenters can share a name, and the list never reorders. */ }
+							{ item.commenters.slice( 0, MAX_AVATARS ).map( ( { avatar }, index ) => (
+								<img key={ index } src={ avatar } alt="" width={ 20 } height={ 20 } />
 							) ) }
 						</HStack>
-						<span>{ getContextLine( translate, conversation ) }</span>
+						<Text size={ 13 } lineHeight="20px" color="inherit">
+							{ getContextLine( translate, item ) }
+						</Text>
 					</HStack>
 				) }
 				{ density === 'comfortable' && (
 					<HStack as="span">
-						<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
+						<Text
+							size={ 13 }
+							lineHeight="20px"
+							color="inherit"
+							className="conversations-inbox__item-excerpt"
+						>
+							{ excerpt }
+						</Text>
 						{ newCount }
 					</HStack>
 				) }

@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_ADVANCED_SEO_TOOLS,
 	FEATURE_BLAZE_AD_CREDITS,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_DEV_TOOLS,
 	FEATURE_EARLY_ONBOARDING_CALLS,
@@ -20,6 +22,7 @@ import {
 	isPremiumPlan,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_SELL_60_COUNTRIES,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_UNLIMITED_ENTITIES,
 	FEATURE_UPLOAD_PLUGINS,
@@ -66,6 +69,14 @@ function getPricingDifferentiationFeatureBadgeText(
 	return undefined;
 }
 
+// Dev tools no longer set Business apart once they're on every paid plan, so lead with the
+// staging site instead.
+function getDevToolsPromoFeature(): Feature {
+	return isEnabled( 'hosting/dev-tools-all-paid-plans' )
+		? FEATURE_SITE_STAGING_SITES
+		: FEATURE_DEV_TOOLS;
+}
+
 function getPlansGridRedesignFeatureSlugsForPlan(
 	planSlug: string,
 	defaultFeatureSlugs: Feature[]
@@ -103,7 +114,7 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 			FEATURE_EMAIL_MARKETING,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_DEV_TOOLS,
+			getDevToolsPromoFeature(),
 			FEATURE_EARLY_ONBOARDING_CALLS,
 		];
 	}
@@ -125,7 +136,7 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 			FEATURE_EMAIL_MARKETING,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_DEV_TOOLS,
+			getDevToolsPromoFeature(),
 			FEATURE_EARLY_ONBOARDING_CALLS,
 			FEATURE_WOOCOMMERCE_HOSTING,
 			FEATURE_SELL_60_COUNTRIES,
@@ -133,6 +144,15 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 	}
 
 	return defaultFeatureSlugs;
+}
+
+function replacePremiumThemesWithAiAgents( featureSlugs: Feature[] ): Feature[] {
+	return featureSlugs.map( ( featureSlug ) =>
+		featureSlug === WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ||
+		featureSlug === FEATURE_PREMIUM_STORE_THEMES
+			? FEATURE_CONNECT_AI_AGENTS
+			: featureSlug
+	);
 }
 
 function isBusinessOrEcommercePlan( planSlug: string ): boolean {
@@ -170,6 +190,9 @@ function getPlansGridRedesignFeatureTitleOverride(
 	}
 	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_BLAZE_AD_CREDITS ) {
 		return translate( '$200 in ad credits' );
+	}
+	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_SITE_STAGING_SITES ) {
+		return translate( 'Staging site' );
 	}
 	return undefined;
 }
@@ -209,6 +232,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
+	useMcpFeature,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -218,6 +242,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
+	useMcpFeature?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -234,6 +259,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
+	useMcpFeature,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -259,10 +285,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 						[];
+					const redesignFeatureSlugs = getPlansGridRedesignFeatureSlugsForPlan(
+						planSlug,
+						featureSlugs
+					);
 
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						getPlansGridRedesignFeatureSlugsForPlan( planSlug, featureSlugs ),
+						useMcpFeature
+							? replacePremiumThemesWithAiAgents( redesignFeatureSlugs )
+							: redesignFeatureSlugs,
 						true
 					);
 
@@ -491,6 +523,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		usePlansGridRedesignFeatures,
+		useMcpFeature,
 		translate,
 	] );
 };

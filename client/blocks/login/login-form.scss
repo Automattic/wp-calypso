@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -56,6 +57,32 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 	@include break-large {
 		display: inline;
+	}
+}
+
+// The layout's own padding centers the stacked login, and this would push it off center.
+.wp-login__main.is-stacked-login.main {
+	@include break-small {
+		padding-bottom: 0;
+	}
+}
+
+// The main login's link, on the email field's row at every width.
+.login__form-username-label-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--wpds-dimension-gap-lg);
+}
+
+.login .login__form-username-label-row .login__form-lost-password {
+	font-size: $font-body-small;
+	color: var(--color-link);
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: var(--color-link-dark);
 	}
 }
 
@@ -120,6 +147,38 @@ form {
 			}
 		}
 	}
+
+	.wp-login__main.is-stacked-login form.is-social-first {
+		flex-direction: column;
+		max-width: none;
+
+		.card.login__form {
+			padding: 0;
+		}
+
+		// As in the account template: the field and its button are a gap apart, and the login's own
+		// gap is all there is between the button and the footer.
+		.login__form-userdata input {
+			margin-bottom: 0;
+		}
+
+		.login__form-password:not(.is-hidden) {
+			margin-top: var(--wpds-dimension-gap-lg);
+		}
+
+		.login__form-action .components-button {
+			margin: var(--wpds-dimension-gap-lg) 0 0;
+		}
+
+		.auth-form__social-buttons .auth-form__social-buttons-container {
+			gap: var(--wpds-dimension-gap-sm);
+		}
+	}
+
+	// An empty wrapper would still take a gap.
+	.wp-login__main.is-stacked-login .one-login__footer .one-login__footer-links-wrapper:empty {
+		display: none;
+	}
 }
 
 .is-jetpack .login__form-account-tip {
@@ -167,4 +226,8 @@ form {
 // since the form already separates the challenge from the Continue button.
 .login__form-blackbox-challenge.has-visible-challenge {
 	margin-block-end: 8px;
+}
+
+.login__form .login__form-blackbox-challenge.has-visible-challenge {
+	margin-block-start: var(--wpds-dimension-gap-lg, 16px);
 }

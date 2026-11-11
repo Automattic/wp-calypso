@@ -30,7 +30,7 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@babel/runtime": "^8.0.7",
+		"@babel/runtime": "^8.0.10",
 		"debug": "^4.4.3"
 	},
 	"scripts": {

@@ -48,7 +48,7 @@ export const WarningList = ( {
 							{ domainNames ? (
 								<>
 									{ translate(
-										'{{strong}}Your site’s address will change{{/strong}} to the one below. Links to your old address will redirect automatically.',
+										'{{strong}}Your site’s address will change{{/strong}} to the one below, and links to your old address will redirect automatically. The new address is intended for temporary use and isn’t indexed by search engines. Once the move is complete, {{strong}}add a custom domain so your site can be indexed{{/strong}}.',
 										{ components: { strong: <strong /> } }
 									) }{ ' ' }
 									<InlineSupportLink

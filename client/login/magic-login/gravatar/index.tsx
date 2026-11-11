@@ -7,6 +7,7 @@ import { useRef, useState, useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { getDefaultTwoFactorAuthType } from 'calypso/blocks/login/two-factor-authentication/get-default-two-factor-auth-type';
 import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -23,6 +24,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -35,6 +37,7 @@ import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants
 import {
 	getLastCheckedUsernameOrEmail,
 	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	getRedirectToSanitized,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
@@ -70,7 +73,7 @@ const GravPoweredMagicLoginTos = () => {
 		components: {
 			tosLink: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					href={ localizeUrl( 'https://automattic.com/tos/' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				/>
@@ -581,7 +584,7 @@ interface GravPoweredEmailCodeVerificationProps {
 	recordTracksEvent: ( eventName: string, properties?: Record< string, any > ) => void;
 }
 
-const GravPoweredEmailCodeVerification = ( {
+export const GravPoweredEmailCodeVerification = ( {
 	locale,
 	oauth2Client,
 	oauth2ClientId,
@@ -608,6 +611,7 @@ const GravPoweredEmailCodeVerification = ( {
 	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature: 'blackbox-signup',
+		flow: 'signup',
 		suspended: ! isNewAccount,
 		resetOnError: codeValidationError,
 	} );
@@ -626,6 +630,9 @@ const GravPoweredEmailCodeVerification = ( {
 		}
 		try {
 			const blackboxSessionId = await getSessionId();
+			if ( blackboxSessionId === null ) {
+				return;
+			}
 			handleGravPoweredCodeSubmit( event, blackboxSessionId );
 		} finally {
 			if ( shouldCollect ) {
@@ -638,6 +645,7 @@ const GravPoweredEmailCodeVerification = ( {
 	const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const twoFactorSupportedAuthTypes = useSelector( getTwoFactorSupportedAuthTypes );
 	const redirectToSanitized = useSelector( getRedirectToSanitized );
 	const isProcessingCode = isCollectingSession || isValidatingCode || isCodeValidated;
 	// A challenge raised by this submit's collect holds the request, so stop spinning while it is up.
@@ -653,8 +661,11 @@ const GravPoweredEmailCodeVerification = ( {
 		} else {
 			page(
 				login( {
-					// If no notification is sent, the user is using the authenticator for 2FA by default.
-					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ) ?? '',
+					twoFactorAuthType: getDefaultTwoFactorAuthType( {
+						supportedAuthTypes: twoFactorSupportedAuthTypes,
+						notificationSent: twoFactorNotificationSent,
+						isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
+					} ),
 					redirectTo: redirectToSanitized ?? '',
 					oauth2ClientId: oauth2Client.id,
 					locale,
@@ -665,6 +676,7 @@ const GravPoweredEmailCodeVerification = ( {
 		isCodeValidated,
 		twoFactorEnabled,
 		twoFactorNotificationSent,
+		twoFactorSupportedAuthTypes,
 		redirectToSanitized,
 		oauth2Client,
 		locale,

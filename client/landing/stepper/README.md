@@ -409,8 +409,8 @@ flows keep working unchanged:
   and `deemphasizeFreePlan` (de-emphasizes the Free plan). All optional and default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 - The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
-  "Log in" link: the V2 top bar's, the V2 in-form "Have an account? Log in" line that the
-  onboarding flow's `calypso_account_step_entry_clarity_202609` treatment shows at 960px and up,
+  "Log in" link: the V2 top bar's, the V2 in-form "Have an account? Log in" line that
+  partner-branded onboarding signups show at 960px and up,
   and the V1 footer's. The email-first account-step variant keeps its own in-form
   link, and existing users can still sign in via the social / email buttons regardless) and
   `allowedSocialServices` (restricts which social sign-in providers are offered). This step is special: it is **auto-injected** by

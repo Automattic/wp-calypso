@@ -53,13 +53,14 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/number-formatters": "^1.2.12",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@emotion/react": "11.11.1",
+		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",
@@ -75,7 +76,7 @@
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^6.21.0 || ^7.0.0",
-		"postcss": "^8.5.31",
+		"postcss": "^8.5.32",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
@@ -93,7 +94,7 @@
 		"msw": "^2.2.14",
 		"msw-storybook-addon": "^2.0.7",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^10.6.3",
+		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
 	},

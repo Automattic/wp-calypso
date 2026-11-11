@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { LoginPage } from '../../../lib/pages/login-page';
 import type { Page, Response } from 'playwright';
 
@@ -16,12 +16,12 @@ const buildResponse = ( status: number ) => ( { status: () => status } ) as unkn
  * error-page detector answers with the given results in turn (false after).
  */
 const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] = [] ) => {
-	const goto = jest.fn( async () => null as Response | null );
+	const goto = vi.fn( async () => null as Response | null );
 	for ( const response of responses ) {
 		goto.mockResolvedValueOnce( response );
 	}
 
-	const evaluate = jest.fn< ( fn: unknown, arg?: unknown ) => Promise< boolean > >(
+	const evaluate = vi.fn< ( fn: unknown, arg?: unknown ) => Promise< boolean > >(
 		async () => false
 	);
 	for ( const errorPage of errorPages ) {
@@ -31,8 +31,8 @@ const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] =
 	const page = {
 		goto,
 		evaluate,
-		route: jest.fn( async () => undefined ),
-		waitForTimeout: jest.fn( async () => undefined ),
+		route: vi.fn( async () => undefined ),
+		waitForTimeout: vi.fn( async () => undefined ),
 	};
 
 	return page;
@@ -40,7 +40,7 @@ const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] =
 
 describe( 'LoginPage.visit', () => {
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test.each( [ HTTP_BAD_GATEWAY, HTTP_SERVICE_UNAVAILABLE, HTTP_GATEWAY_TIMEOUT ] )(
@@ -48,7 +48,7 @@ describe( 'LoginPage.visit', () => {
 		async ( status ) => {
 			const ok = buildResponse( HTTP_OK );
 			const page = buildPage( [ buildResponse( status ), ok ] );
-			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 			await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
 
@@ -62,7 +62,7 @@ describe( 'LoginPage.visit', () => {
 	test( 'throws once every attempt returned a 502, waiting before each retry', async () => {
 		const badGateway = buildResponse( HTTP_BAD_GATEWAY );
 		const page = buildPage( [ badGateway, badGateway, badGateway, badGateway, badGateway ] );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		await expect( new LoginPage( page as unknown as Page ).visit() ).rejects.toThrow(
 			/status 502\) after 4 attempts/
@@ -80,7 +80,7 @@ describe( 'LoginPage.visit', () => {
 	test( 'retries a gateway-error page served with a 200 status', async () => {
 		const ok = buildResponse( HTTP_OK );
 		const page = buildPage( [ buildResponse( HTTP_OK ), ok ], [ true ] );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
 
@@ -93,7 +93,7 @@ describe( 'LoginPage.visit', () => {
 	test( 'retries a gateway-error page that came with no response', async () => {
 		const ok = buildResponse( HTTP_OK );
 		const page = buildPage( [ null, ok ], [ true ] );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
 

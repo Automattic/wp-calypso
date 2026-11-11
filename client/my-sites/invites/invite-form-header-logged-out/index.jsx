@@ -36,7 +36,7 @@ function InviteFormHeaderLoggedOut( { site, partnerConfig } ) {
 			{
 				tosLink: (
 					<a
-						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						href={ localizeUrl( 'https://automattic.com/tos/' ) }
 						onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
 						target="_blank"
 						rel="noopener noreferrer"

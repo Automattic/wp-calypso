@@ -42,7 +42,11 @@ const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
-let mockAgentConfig: { agentId: string; sessionId?: string } = {
+let mockAgentConfig: {
+	agentId: string;
+	sessionId?: string;
+	onTaskUpdate?: ( update: TaskUpdate ) => Promise< void >;
+} = {
 	agentId: 'wp-orchestrator',
 };
 let mockTabSessionId: string | undefined = 'session-id';
@@ -471,17 +475,30 @@ const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 const mockCreditsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsCommand: unknown;
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
+const mockTopUpsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 let mockCreditsOnShowCredits: ( () => void ) | undefined;
+const mockCreditsOnTaskUpdate = jest.fn();
+// One visit per site, as the real hook gives, each bound to its site.
+const mockCreditsVisits = new Map< string, { onTaskUpdate: ( update: TaskUpdate ) => void } >();
 jest.mock( '../../hooks/use-credits', () => ( {
+	useCreditsVisit: () => {
+		const siteKey = mockSiteKey;
+
+		if ( ! mockCreditsVisits.has( siteKey ) ) {
+			mockCreditsVisits.set( siteKey, {
+				onTaskUpdate: ( update ) => mockCreditsOnTaskUpdate( update, siteKey ),
+			} );
+		}
+
+		return mockCreditsVisits.get( siteKey );
+	},
 	useCredits: ( {
-		agentConfig,
 		isOpen,
 		isNoticeVisible,
 		onTryAgain,
 		onShowCredits,
 	}: {
-		agentConfig: unknown;
 		isOpen: boolean;
 		isNoticeVisible: boolean;
 		onTryAgain?: ( message: string ) => void;
@@ -492,12 +509,12 @@ jest.mock( '../../hooks/use-credits', () => ( {
 		mockCreditsOnTryAgain = onTryAgain;
 		mockCreditsOnShowCredits = onShowCredits;
 		return {
-			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
 			notice: mockCreditsNotice(),
 			creditsCommand: mockCreditsCommand,
 			refusalNotice: mockRefusalNotice(),
+			topUpsNotice: mockTopUpsNotice(),
 		};
 	},
 } ) );
@@ -809,6 +826,7 @@ describe( 'OrchestratorChat', () => {
 		mockCreditsNotice.mockReturnValue( undefined );
 		mockCreditsCommand = undefined;
 		mockRefusalNotice.mockReturnValue( undefined );
+		mockTopUpsNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
@@ -860,6 +878,32 @@ describe( 'OrchestratorChat', () => {
 		render( chat() );
 
 		expect( mockAgentChatConfig ).toEqual( expect.objectContaining( { resumeOnRemount: true } ) );
+	} );
+
+	it( 'sends each task update to credits with the visit its request was sent in', async () => {
+		const update = { id: 'task', status: { state: 'completed' }, final: true } as TaskUpdate;
+		const { rerender } = render( chat() );
+		// Agenttic keeps the `onTaskUpdate` a request was sent with.
+		const sentOnFirstSite = mockAgentChatConfig?.onTaskUpdate;
+
+		mockSiteKey = 'site-2';
+		rerender( chat() );
+		await act( async () => sentOnFirstSite?.( update ) );
+
+		expect( mockCreditsOnTaskUpdate ).toHaveBeenCalledWith( update, 'site-1' );
+	} );
+
+	it( 'forwards a provider’s task observer error unchanged', async () => {
+		const error = new Error( 'provider observer failed' );
+		mockAgentConfig = { ...mockAgentConfig, onTaskUpdate: jest.fn().mockRejectedValue( error ) };
+		render( chat() );
+
+		await expect(
+			mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task',
+				status: { state: 'working' },
+			} as TaskUpdate )
+		).rejects.toBe( error );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
@@ -5005,6 +5049,30 @@ describe( 'OrchestratorChat', () => {
 			expect( props.notice ).toEqual( notice );
 			expect( props.isProcessing ).toBe( false );
 			expect( mockConversationConfig?.waitForReply ).toBe( true );
+		} );
+
+		it( 'shows the top-ups notice only once neither the credits notice nor a reply notice applies', () => {
+			const creditsNotice = { message: '6k credits left.', dismissible: true };
+			const replyNotice = { message: 'Waiting for the reply…' };
+			const topUpsNotice = { message: 'Now using top-ups: 25k left.', dismissible: true };
+			const noticeProp = () =>
+				( mockAgentChat.mock.calls.at( -1 )![ 0 ] as { notice?: unknown } ).notice;
+			mockTopUpsNotice.mockReturnValue( topUpsNotice );
+			mockCreditsNotice.mockReturnValue( creditsNotice );
+			mockUseConversation.mockReturnValue( { isLoading: false, notice: replyNotice } );
+			const { rerender } = render( chat() );
+
+			expect( noticeProp() ).toBe( creditsNotice );
+
+			mockCreditsNotice.mockReturnValue( undefined );
+			rerender( chat() );
+
+			expect( noticeProp() ).toBe( replyNotice );
+
+			mockUseConversation.mockReturnValue( { isLoading: false } );
+			rerender( chat() );
+
+			expect( noticeProp() ).toBe( topUpsNotice );
 		} );
 
 		it( 'does not wait while a turn runs in this tab', () => {

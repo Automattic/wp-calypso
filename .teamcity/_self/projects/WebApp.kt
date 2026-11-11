@@ -78,7 +78,7 @@ object BuildDockerImage : BuildType({
     // Emoji are written as HTML character references because TeamCity mangles non-ASCII
     // characters in build scripts.
     val linksBlock = buildString {
-        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x1F305;</h2>")
+        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x26C5;</h2>")
         appendLine()
         appendLine("| Environment | &#x1F517; |")
         appendLine("| - | - |")
@@ -93,14 +93,6 @@ object BuildDockerImage : BuildType({
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
 		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
-		checkbox(
-			name = "MANUAL_SENTRY_RELEASE",
-			value = "false",
-			label = "Create a sentry release.",
-			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
-			checked = "true",
-			unchecked = "false"
-		)
 		checkbox(
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
@@ -239,9 +231,7 @@ object BuildDockerImage : BuildType({
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
-			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
-			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 

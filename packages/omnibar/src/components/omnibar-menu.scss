@@ -1,17 +1,18 @@
 @import './variables';
 
 .omnibar__popover {
-	// All colors used by the Menu's internal Emotion styles read from these
-	// CSS custom properties (see node_modules/@wordpress/components/src/menu/styles.ts).
+	// All colors used by the Menu's internal styles read from these CSS custom
+	// properties (see node_modules/@wordpress/components/src/menu/style.module.scss).
 	// Setting them here re-skins the entire popover without specificity wars.
 	--wp-components-color-background: var( --omnibar-submenu-background );
 	--wp-components-color-foreground: var( --omnibar-submenu-text-color );
-	--wp-components-color-accent: transparent; // hover/active item bg
-	--wp-components-color-accent-inverted: var(
+	--wpds-color-foreground-interactive-neutral: var( --omnibar-submenu-text-color ); // item text
+	--wpds-color-background-interactive-brand-strong-active: transparent; // hover/active item bg
+	--wpds-color-foreground-interactive-brand-strong-active: var(
 		--omnibar-submenu-highlight-color
 	); // hover/active item text
-	--wp-components-color-gray-100: transparent; // submenu-trigger-open bg
-	--wp-components-color-gray-700: var( --omnibar-submenu-text-color ); // prefix / suffix text
+	--wpds-color-background-interactive-neutral-weak-active: transparent; // submenu-trigger-open bg
+	--wpds-color-foreground-content-neutral-weak: var( --omnibar-submenu-text-color ); // prefix / suffix text
 
 	// Padding, border-radius, and the elevation portion of the popover's
 	// box-shadow are hardcoded (not tokens). Class is doubled to outrank

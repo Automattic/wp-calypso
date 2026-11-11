@@ -25,11 +25,10 @@ export const QuickLinks = ( {
 	isP2Hub,
 } ) => {
 	const translate = useTranslate();
-	const [
-		debouncedUpdateHomeQuickLinksToggleStatus,
-		,
-		flushDebouncedUpdateHomeQuickLinksToggleStatus,
-	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const debouncedUpdateHomeQuickLinksToggleStatus = useDebouncedCallback(
+		updateHomeQuickLinksToggleStatus,
+		1000
+	);
 
 	const quickLinks = (
 		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
@@ -74,9 +73,9 @@ export const QuickLinks = ( {
 
 	useEffect( () => {
 		return () => {
-			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+			debouncedUpdateHomeQuickLinksToggleStatus.flush();
 		};
-	}, [] );
+	}, [ debouncedUpdateHomeQuickLinksToggleStatus ] );
 
 	return (
 		<FoldableCard

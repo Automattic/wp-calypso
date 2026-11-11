@@ -990,7 +990,7 @@ export default function CampaignItemDetails( props: Props ) {
 									components: {
 										wpcomTos: (
 											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												href={ localizeUrl( 'https://automattic.com/tos/' ) }
 												target="_blank"
 												rel="noopener noreferrer"
 											/>
@@ -1190,14 +1190,12 @@ export default function CampaignItemDetails( props: Props ) {
 													<div>
 														<div className="campaign-item-page__graph">
 															<DropdownMenu
-																class="campaign-item-page__graph-selector"
 																controls={ chartControls }
 																icon={ chevronDown }
 																text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
 																label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
 															/>
 															<DropdownMenu
-																class="campaign-item-page__graph-selector"
 																controls={ [
 																	{
 																		onClick: () => setChartSource( ChartSourceOptions.Clicks ),

@@ -74,11 +74,9 @@
 		color: inherit;
 		font-size: inherit;
 		font-weight: 500;
+		line-height: inherit;
 		text-decoration: underline;
-
-		@media ( min-width: 960px ) {
-			padding: 1px 0;
-		}
+		vertical-align: baseline;
 
 		&:hover,
 		&:focus {

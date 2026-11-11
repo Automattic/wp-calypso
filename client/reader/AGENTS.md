@@ -131,11 +131,10 @@ patches React Query caches, walk this list:
   cross-pollute. Filter the walk by `connectionId` (or whichever slot
   scopes the cache key for your protocol). The same applies to
   `cancelQueries` — pass a `predicate` rather than the broad root key.
-- **Wrap `cancelQueries` in `try`/`catch` inside `onMutate`.** TanStack
-  docs flag it as best-effort; if it rejects (rare — route-change
-  teardown races), `onMutate` resolves to `undefined` and the actual
-  mutationFn never runs. The optimistic patch + mutationFn must still
-  fire if the cancel fails.
+- **Await `cancelQueries` in `onMutate` without a `try`/`catch`.** In
+  this repo's TanStack Query (5.83), `cancelQueries` ends in
+  `.catch( noop )` and can't reject, so a `try`/`catch` around it is
+  dead code.
 - **Add a `default:` arm to error-message switches.** TypeScript
   exhaustiveness keeps `MastodonError['kind']` / `AtmosphereError['kind']`
   switches complete today, but a future widening returns `undefined` →

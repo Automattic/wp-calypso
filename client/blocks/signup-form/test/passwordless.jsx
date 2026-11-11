@@ -126,6 +126,7 @@ describe( 'Blackbox integration', () => {
 
 		await waitFor( () => expect( getRequestBody() ).toBeTruthy() );
 		expect( getRequestBody().blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		expect( getRequestBody().blackbox_key_version ).toBe( 2 );
 	} );
 
 	it( 'omits blackbox_session_id when the signup feature flag is off', async () => {
@@ -188,6 +189,16 @@ describe( 'Blackbox integration', () => {
 		await waitFor( () => expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
+	it( 'cancels signup without sending a request when its form becomes inactive', async () => {
+		getBlackboxSessionId.mockResolvedValue( null );
+		const getRequestBody = interceptUsersNew( 403, { error: 'throttled' } );
+		renderFormAndSubmit();
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled()
+		);
+		expect( getRequestBody() ).toBeUndefined();
+	} );
+
 	it( 'resets Blackbox when the signup request fails', async () => {
 		window.Blackbox = { reset: jest.fn() };
 		interceptUsersNew( 500, { error: 'internal_server_error' } );
@@ -221,7 +232,10 @@ describe( 'Blackbox integration', () => {
 
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
 			expect( submitForm ).toHaveBeenCalledWith(
-				expect.objectContaining( { blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv' } ),
+				expect.objectContaining( {
+					blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv',
+					blackbox_key_version: 2,
+				} ),
 				expect.any( Function )
 			);
 		} );
@@ -234,6 +248,7 @@ describe( 'Blackbox integration', () => {
 
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
 			expect( submitForm.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty( 'blackbox_session_id' );
+			expect( submitForm.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty( 'blackbox_key_version' );
 		} );
 
 		it( 'resets Blackbox when the parent reports a submit error', async () => {

@@ -26,7 +26,6 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
-import { useEntryClarityLoginTreatment } from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -77,7 +76,6 @@ export class Login extends Component {
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isWoo: PropTypes.bool,
-		isEntryClarityTreatment: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -228,8 +226,8 @@ export class Login extends Component {
 	}
 
 	/**
-	 * The same link for desktop, where it sits on the password field's label row, beside the
-	 * field it resets. Only one of the two is ever visible: see login-form.scss.
+	 * The same link on the form: on the email field's label row for the stacked login, at every
+	 * width, otherwise on the password field's for desktop, with the footer's hidden there.
 	 */
 	getLostPasswordFormLink() {
 		if ( this.props.twoFactorAuthType ) {
@@ -240,6 +238,22 @@ export class Login extends Component {
 			<a className="login__form-lost-password" { ...this.getLostPasswordLinkProps() }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
+		);
+	}
+
+	/**
+	 * The main WordPress.com login, for logged-out visitors, stacks the social buttons above the
+	 * form. Partner, OAuth2 and connection logins keep the side-by-side layout.
+	 */
+	isStackedLogin() {
+		return (
+			this.props.isLoginView &&
+			! this.props.isUserLoggedIn &&
+			! this.props.isGravPoweredClient &&
+			! this.props.isJetpack &&
+			! this.props.isUnifiedConnectionFlow &&
+			! this.props.oauth2Client &&
+			! this.props.isWoo
 		);
 	}
 
@@ -278,7 +292,7 @@ export class Login extends Component {
 		);
 	}
 
-	renderContent( isSocialFirst ) {
+	renderContent( isSocialFirst, hasSignupLinkBelowButtons ) {
 		const {
 			clientId,
 			domain,
@@ -295,7 +309,6 @@ export class Login extends Component {
 			action,
 			currentRoute,
 			isLoginView,
-			isEntryClarityTreatment,
 		} = this.props;
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
@@ -308,11 +321,11 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
 
+		const isStackedLogin = this.isStackedLogin();
+
 		// Gravatar-powered clients and Woo render their own lost-password link.
 		const lostPasswordFormLink =
-			isEntryClarityTreatment && ! isGravPoweredClient && ! this.props.isWoo
-				? this.getLostPasswordFormLink()
-				: undefined;
+			hasSignupLinkBelowButtons && ! this.props.isWoo ? this.getLostPasswordFormLink() : undefined;
 
 		return (
 			<LoginBlock
@@ -329,6 +342,7 @@ export class Login extends Component {
 				domain={ domain }
 				fromSite={ fromSite }
 				lostPasswordLink={ lostPasswordFormLink }
+				isSocialAboveForm={ isStackedLogin }
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
@@ -336,8 +350,9 @@ export class Login extends Component {
 						<OneLoginFooter
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
-							showSignupPrompt={ isEntryClarityTreatment }
-							lostPasswordLink={ this.getLostPasswordLink() }
+							showSignupPrompt={ hasSignupLinkBelowButtons }
+							isNewHereSignupPrompt={ isStackedLogin }
+							lostPasswordLink={ isStackedLogin ? undefined : this.getLostPasswordLink() }
 							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
@@ -382,7 +397,6 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
-			isEntryClarityTreatment,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -391,6 +405,13 @@ export class Login extends Component {
 
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
+
+		const isStackedLogin = this.isStackedLogin();
+
+		// In desktop layouts, the signup link goes below the buttons and "Lost your password?" goes on
+		// the form. Mobile layouts keep both in the top bar and footer. Gravatar-powered logins have their own layout.
+		const hasSignupLinkBelowButtons =
+			this.props.isLoginView && ! this.props.isUserLoggedIn && ! isGravPoweredClient;
 
 		// Each returns null when it has nothing to say.
 		const notices = (
@@ -404,6 +425,7 @@ export class Login extends Component {
 			<Main
 				className={ clsx( 'wp-login__main', {
 					'is-social-first': isSocialFirst,
+					'is-stacked-login': isStackedLogin,
 					'is-generic-oauth': isGenericOauth,
 					'is-jetpack': isJetpack,
 				} ) }
@@ -427,7 +449,9 @@ export class Login extends Component {
 					] }
 				/>
 
-				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+				<div className="wp-login__container">
+					{ this.renderContent( isSocialFirst, hasSignupLinkBelowButtons ) }
+				</div>
 
 				{ ! isGravPoweredClient && this.renderI18nSuggestions() }
 			</Main>
@@ -448,10 +472,10 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						columnWidth={ isLoginFormView ? 6 : undefined }
-						isCentered={ isLoginFormView || undefined }
+						columnWidth={ isLoginFormView && ! isStackedLogin ? 6 : undefined }
+						isCentered={ ( isLoginFormView && ! isStackedLogin ) || undefined }
 						// The footer carries the route to signup on desktop instead.
-						signupLinkMobileOnly={ isEntryClarityTreatment }
+						signupLinkMobileOnly={ hasSignupLinkBelowButtons }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						notice={ notices }
 						linkLogoToHome
@@ -542,11 +566,6 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
-	// Logged-out visitors on the main login view. Gravatar-powered logins have their own layout,
-	// which the treatment does not change.
-	const isEntryClarityTreatment = useEntryClarityLoginTreatment(
-		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
-	);
 
 	return (
 		<LoginContextProvider
@@ -554,11 +573,7 @@ const LoginWithContext = ( props ) => {
 			initialSubHeading={ subHeadingPrimary }
 			initialSubHeadingSecondary={ subHeadingSecondary }
 		>
-			<Login
-				{ ...props }
-				translate={ translate }
-				isEntryClarityTreatment={ isEntryClarityTreatment }
-			/>
+			<Login { ...props } translate={ translate } />
 		</LoginContextProvider>
 	);
 };

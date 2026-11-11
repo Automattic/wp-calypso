@@ -3,15 +3,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
 export default defineConfig( {
-	plugins: [
-		react( {
-			babel: {
-				parserOpts: {
-					plugins: [ 'decorators-legacy' ],
-				},
-			},
-		} ),
-	],
+	plugins: [ react() ],
 	root: __dirname,
 	build: {
 		outDir: resolve( __dirname, 'dist-dev' ),
@@ -24,11 +16,6 @@ export default defineConfig( {
 	server: {
 		port: 3000,
 		open: true,
-	},
-	esbuild: {
-		loader: 'tsx',
-		include: /src\/.*\.[tj]sx?$/,
-		exclude: [],
 	},
 	define: {
 		// Mock WordPress globals for development

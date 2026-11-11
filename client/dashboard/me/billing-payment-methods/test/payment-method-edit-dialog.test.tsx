@@ -29,7 +29,6 @@ function renderDialog( {
 			paymentMethod={
 				taxLocation ? { ...paymentMethod, tax_location: taxLocation } : paymentMethod
 			}
-			isVisible
 			onCancel={ () => {} }
 			onConfirm={ onConfirm }
 		/>

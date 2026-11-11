@@ -77,7 +77,7 @@
 .wpnc-simplified__pending-approval {
 	flex-shrink: 0;
 	font-size: $font-size-medium;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	color: var(--wpds-color-foreground-content-warning-weak, #926300);
 
 	@include ui-mixins.when-dark-theme {
@@ -119,6 +119,9 @@
 .wpnc-simplified__card {
 	display: block;
 	overflow-wrap: anywhere;
+	transition:
+		background-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease),
+		box-shadow var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 
 	&,
 	&:visited {
@@ -135,11 +138,20 @@
 		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 2%, transparent);
 		box-shadow: 0 0 0 1px color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
 	}
+
+	&:hover .wpnc-simplified__card-arrow {
+		fill: var(--wp-components-color-foreground, #{$gray-900});
+	}
+}
+
+.wpnc-simplified__card-author {
+	color: var(--wp-components-color-foreground, #{$gray-900});
 }
 
 .wpnc-simplified__card-arrow {
 	flex-shrink: 0;
-	fill: var(--wp-components-color-gray-600, #{$gray-600});
+	fill: var(--wp-components-color-gray-400, #{$gray-400});
+	transition: fill var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 }
 
 .wpnc-simplified__site-icon {

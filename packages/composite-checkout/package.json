@@ -59,9 +59,10 @@
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@testing-library/user-event": "^14.6.8",
+		"@types/prop-types": "^15.7.15",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"storybook": "^10.6.3",
+		"storybook": "^10.6.5",
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {

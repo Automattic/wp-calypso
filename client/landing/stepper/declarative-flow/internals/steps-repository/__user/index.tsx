@@ -23,7 +23,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
-import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -33,9 +32,10 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
+import { SignupBrandPanel } from './signup-brand-panel';
 import { SignupSlider } from './signup-slider';
 import { SignupThemeGrid } from './signup-theme-grid';
-import useAccountCreationExperiment from './use-account-creation-experiment';
+import useBrandedAccountLayout from './use-branded-account-layout';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
@@ -79,26 +79,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118, and the
-	// theme grid layout is email-first with the grid instead of the slider, email below social: that
-	// round lost fewer social signups than email on top.
-	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
-	//   - control                            -> default single-column signup
-	//   - treatment_email_slider_webp        -> open email + slider, email on top
-	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
+	// theme grid layout is email-first with the grid instead of the slider, email below social.
+	// Everyone else at 600 px and up gets the branded form, with the brand panel from 960 px, unless
+	// a partner's branding applies.
 	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const isThemeGridLayout = queryArgs.get( 'signup_layout' ) === THEME_GRID_SIGNUP_LAYOUT;
-	const {
-		isEmailFirstVariant: isEmailFirstFromExperiment,
-		isEmailAtBottom: isEmailAtBottomFromExperiment,
-	} = useAccountCreationExperiment( { flow } );
-	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isEmailFirstFromExperiment;
-	const isEmailAtBottom = isThemeGridLayout || isEmailAtBottomFromExperiment;
-	// The experiment runs on onboarding only. Woo referrers and the theme grid layout are left out:
-	// their email-first layout already has the in-form link and no email button, so the treatment
-	// would not change it.
-	const isEntryClarityTreatment = useEntryClarityExperiment(
-		flow === ONBOARDING_FLOW && ! isWooReferrer && ! isThemeGridLayout
-	);
+	const isBrandedLayout = useBrandedAccountLayout( flow ) && ! hasCustomBranding;
+	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isBrandedLayout;
+	const isEmailAtBottom = isThemeGridLayout || isBrandedLayout;
+	const isLargeViewport = useViewportMatch( 'large' );
+	// Email-first layouts have their own in-form link and no email button.
+	const isLoginLinkBelowButtons =
+		isLargeViewport && flow === ONBOARDING_FLOW && ! isEmailFirstVariant;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -149,7 +141,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
-	const isLargeViewport = useViewportMatch( 'large' );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
@@ -159,9 +150,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
 
-	const showsInFormLoginLink = isEntryClarityTreatment && ! hideLoginLink;
-
-	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
+	let emailLabelText;
+	if ( isStepContainerV2 ) {
+		emailLabelText = isBrandedLayout
+			? translate( 'Email address' )
+			: translate( 'Enter your email' );
+	}
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
 	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
 	// — it keeps the "partners never get the compact SSO set" invariant local to
@@ -198,8 +192,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
-				showLoginLink={ showsInFormLoginLink }
-				showEnvelopeIcon={ isEntryClarityTreatment }
+				showLoginLink={ isLoginLinkBelowButtons && ! hideLoginLink }
+				showEnvelopeIcon={ isLoginLinkBelowButtons }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 			/>
@@ -256,7 +250,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					// Email-first forms carry their own login link, except the compact one.
 					hideLoginLink ||
 					( isEmailFirstVariant && ! isMobileCompactLayout ) ||
-					showsInFormLoginLink ? null : (
+					isLoginLinkBelowButtons ? null : (
 						<nav className="account-template__top-bar-links">
 							<Step.LinkButton
 								href={ loginLink }
@@ -271,7 +265,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		);
 
 		if ( isLargeViewport && isEmailFirstVariant ) {
-			const formColumn = (
+			const formColumn = isBrandedLayout ? (
+				<Step.CenteredColumnLayout verticalAlign="center" columnWidth={ 4 } topBar={ topBar }>
+					<div className="account-template">
+						{ heading }
+						{ stepContent }
+					</div>
+				</Step.CenteredColumnLayout>
+			) : (
 				<Step.CenteredColumnLayout
 					verticalAlign="center"
 					headingColumnWidth={ 4 }
@@ -286,7 +287,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 			return (
 				<Step.TwoColumnLayout
-					className="step-container-v2--user"
+					className={ clsx( 'step-container-v2--user', {
+						'step-container-v2--user-branded': isBrandedLayout,
+					} ) }
 					firstColumnWidth={ 6 }
 					secondColumnWidth={ 6 }
 					columns={ 12 }
@@ -302,7 +305,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					) : (
 						<>
 							{ formColumn }
-							<SignupSlider />
+							{ isBrandedLayout ? <SignupBrandPanel /> : <SignupSlider /> }
 						</>
 					) }
 				</Step.TwoColumnLayout>
@@ -312,8 +315,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		return (
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--user', {
+					'step-container-v2--user-branded': isBrandedLayout,
 					'step-container-v2--user-mobile': isMobileCompactLayout,
-					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
+					'step-container-v2--user-login-below-buttons': isLoginLinkBelowButtons,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }

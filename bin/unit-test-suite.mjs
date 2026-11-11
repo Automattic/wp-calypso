@@ -88,7 +88,11 @@ const tscCommands = [
 //
 // --workerIdleMemoryLimit=512MB is added because of https://github.com/jestjs/jest/issues/11956
 const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB' );
-const testPackages = withUnitTestInfo( 'test-packages --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
+// Keeps the `test-packages` testId so the packages' Jest test names in TeamCity stay the same.
+const testPackages = {
+	...withUnitTestInfo( 'test-packages:jest --maxWorkers=4 --workerIdleMemoryLimit=1GB' ),
+	testId: 'test-packages',
+};
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testBuildTools = withUnitTestInfo(
 	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
@@ -96,11 +100,12 @@ const testBuildTools = withUnitTestInfo(
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
-// wp-oxc-makepot's tests run on Vitest, outside the shared Jest projects.
-const testWpOxcMakepot = {
+// TeamCity reads the Vitest results from a JUnit report, imported after the task.
+const vitestReport = 'test-results-test_packages_vitest.xml';
+const testPackagesVitest = {
 	name: 'yarn',
-	args: 'workspace @automattic/wp-oxc-makepot test',
-	testId: 'test_wp_oxc_makepot',
+	args: `test-packages:vitest --maxWorkers=4 --reporter=default --reporter=junit --outputFile.junit=${ vitestReport }`,
+	testId: 'test_packages_vitest',
 };
 
 const testWorkspaces = {
@@ -136,7 +141,11 @@ try {
 		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
-		await runTask( testWpOxcMakepot );
+		try {
+			await runTask( testPackagesVitest );
+		} finally {
+			console.log( `##teamcity[importData type='junit' path='${ vitestReport }']` );
+		}
 		await runTask( testWorkspaces );
 		await runTask( testApps );
 	} )();

@@ -1,9 +1,12 @@
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
 .wordpress-migration__progress-bar {
-	// !important because the component's own styles can load after ours.
-	width: 100% !important;
+	width: 100%;
 	--wp-components-color-foreground: var( --wp-admin-theme-color );
+	// Progress paints its indicator and track with these tokens; mix them from the
+	// foreground color, as ProgressBar did before.
+	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }
 
 // Each new message rolls up into view as the last rolls out, so it's clear the text moves on with the migration.
@@ -69,17 +72,19 @@
 	display: none;
 }
 
-// The dashboard's lists have no bullets by default.
-.wordpress-migration__fallbacks {
+// The dashboard's lists have no markers by default. Bullets for the help, numbers for the steps, so a long domain wraps
+// under the item's text rather than under its marker.
+.wordpress-migration__list {
 	margin: 0;
 	padding-inline-start: 20px;
-	list-style: disc;
+	list-style: revert;
 }
 
 // Centered on the first line of text: the icon is 18px, its line 20px.
 .wordpress-migration__connected-hint svg {
 	flex-shrink: 0;
 	margin-block-start: 1px;
+	color: var( --dashboard__foreground-color-success );
 	fill: var( --dashboard__foreground-color-success );
 }
 
@@ -97,6 +102,11 @@
 		width: auto;
 		height: 20px;
 	}
+
+	// A title can name the source, and a long domain has nowhere to break on its own.
+	.dashboard-section-header__heading {
+		overflow-wrap: anywhere;
+	}
 }
 
 // SectionHeader greys out and enlarges its decoration's icon, this one is a small status. Specific enough to outrank
@@ -104,6 +114,7 @@
 .dashboard-section-header.wordpress-migration__card-header .dashboard-section-header__decoration svg.wordpress-migration__status-icon {
 	width: 22px;
 	height: 22px;
+	color: var( --wp-admin-theme-color );
 	fill: var( --wp-admin-theme-color );
 }
 
@@ -141,6 +152,7 @@
 	background: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, transparent );
 
 	svg {
+		color: var( --wp-admin-theme-color );
 		fill: var( --wp-admin-theme-color );
 	}
 }
@@ -180,4 +192,9 @@
 			inset -1px 0 0 var( --dashboard-surface__border-color ),
 			inset 0 -1px 0 var( --dashboard-surface__border-color );
 	}
+}
+
+// A domain is one long word, so let it break anywhere rather than run past the card.
+.wordpress-migration__domain {
+	overflow-wrap: anywhere;
 }

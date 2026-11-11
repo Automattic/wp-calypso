@@ -8,7 +8,7 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { focusManager } from '@tanstack/react-query';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -62,10 +62,12 @@ const configuration = {
 	],
 };
 
-const refused = ( extra = {} ) =>
+const unreachable = ( extra = {} ) =>
 	migration( 'failed', {
 		phase: 'preflight',
-		findings: [ { ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' } ],
+		findings: [
+			{ ...finding( 'source_plugin_unreachable', 'failure' ), resolution: 'assisted_handoff' },
+		],
 		...extra,
 	} );
 
@@ -93,6 +95,29 @@ describe( 'WordPressMigration', () => {
 		// flight would take the next test's mocked replies.
 		focusManager.setFocused( undefined );
 		window.history.replaceState( {}, '', '/' );
+		window._sva = undefined;
+		window.localStorage.clear();
+	} );
+
+	test( 'asks for the migration survey once per migration, even when the run is resumed', async () => {
+		const invokeEvent = jest.fn();
+		Object.assign( window, { _sva: { invokeEvent } } );
+		const started = { ...running, started_at: '2026-11-05T10:00:00+00:00' };
+		mockApi().get( statusPath ).query( true ).reply( 200, started );
+
+		const { unmount } = render( <WordPressMigration site={ site } />, { queryClient } );
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'migrationStarted' );
+		unmount();
+
+		// Coming back to the same migration, resumed after a pause, doesn't ask again.
+		queryClient.clear();
+		const resumed = { ...running, started_at: '2026-11-05T11:00:00+00:00' };
+		mockApi().get( statusPath ).query( true ).reply( 200, resumed );
+		render( <WordPressMigration site={ site } />, { queryClient } );
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'walks through connecting the source, then follows the migration once it starts', async () => {
@@ -139,7 +164,9 @@ describe( 'WordPressMigration', () => {
 		const run = mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+		);
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect(
@@ -167,7 +194,7 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Ready to migrate example.com' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /Install the plugin/ } ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Install and activate/ ) ).not.toBeVisible();
+		expect( screen.queryByText( /install and activate/ ) ).not.toBeVisible();
 		expect(
 			screen.getByRole( 'button', { name: /Having trouble/, hidden: true } )
 		).not.toBeVisible();
@@ -190,28 +217,28 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
 	} );
 
-	it( 'keeps a refusal up on its own until the next run, but offers to start once connected', async () => {
-		mockApi().get( statusPath ).query( true ).reply( 200, refused() );
+	it( 'keeps an unreachable plugin up on its own until the next run, but offers to start once connected', async () => {
+		mockApi().get( statusPath ).query( true ).reply( 200, unreachable() );
 		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
+		expect( await screen.findByText( lastAttempt( 'source_plugin_unreachable' ) ) ).toBeVisible();
 		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 
 		// Connected in another tab, then back to this one. The source may still refuse a run, so the refusal stays,
 		// without a success notice beside it, and the steps give way to how the source reads now.
-		mockApi().get( statusPath ).query( true ).reply( 200, refused() );
+		mockApi().get( statusPath ).query( true ).reply( 200, unreachable() );
 		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
 		act( () => focusManager.setFocused( true ) );
 
 		await waitFor( () =>
 			expect( screen.queryByRole( 'link', { name: /Install the plugin/ } ) ).not.toBeInTheDocument()
 		);
-		expect( screen.getByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
+		expect( screen.getByText( lastAttempt( 'source_plugin_unreachable' ) ) ).toBeVisible();
 		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( /appears to have the plugin installed/ ) ).toBeVisible();
-		expect( screen.queryByText( /Install and activate/ ) ).not.toBeVisible();
+		expect( screen.queryByText( /install and activate/ ) ).not.toBeVisible();
 		expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeVisible();
 
 		const configure = mockApi()
@@ -227,15 +254,18 @@ describe( 'WordPressMigration', () => {
 		expect( run.isDone() ).toBe( true );
 	} );
 
-	it( 'starts over from a refusal without checking once the source is connected', async () => {
+	it( 'starts over from an unreachable plugin without checking once the source is connected', async () => {
 		mockApi()
 			.get( statusPath )
 			.query( true )
 			.reply(
 				200,
-				refused( {
+				unreachable( {
 					findings: [
-						{ ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' },
+						{
+							...finding( 'source_plugin_unreachable', 'failure' ),
+							resolution: 'assisted_handoff',
+						},
 						{ ...finding( 'source_redirect_invalid', 'failure' ), resolution: 'retry' },
 					],
 				} )
@@ -244,7 +274,7 @@ describe( 'WordPressMigration', () => {
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
+		expect( await screen.findByText( lastAttempt( 'source_plugin_unreachable' ) ) ).toBeVisible();
 
 		// The source is connected, so starting over doesn't need checking first.
 		const configure = mockApi().post( configurePath ).reply( 200, configuration );
@@ -359,7 +389,9 @@ describe( 'WordPressMigration', () => {
 		mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+		);
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 
@@ -430,47 +462,42 @@ describe( 'WordPressMigration', () => {
 		}
 	);
 
-	it( 'sends a refused connection straight back to the connect step', async () => {
+	it( 'sends a refused connection to adding the key by hand, then runs again without configuring', async () => {
 		const failed = migration( 'failed', {
 			phase: 'preflight',
 			findings: [ { ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' } ],
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, failed );
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect(
-			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
-		).toBeVisible();
+		// Even when the source reads as connected: that can be another account's connection.
+		expect( await screen.findByRole( 'heading', { name: 'Add the migration key' } ) ).toBeVisible();
 		expect( screen.getByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox', { name: 'Migration key' } ) ).toHaveValue( 'public-key' );
+		expect( screen.getByRole( 'link', { name: /Open the migration key page/ } ) ).toHaveAttribute(
+			'href',
+			configuration.available_source_connections[ 0 ].manual_url
+		);
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 		// Our team can take it from here instead.
 		expect(
 			screen.getByRole( 'link', { name: /Have our team handle this migration/ } )
 		).toHaveAttribute( 'href', '/sites/example.wordpress.com/migration-overview/assisted' );
 
-		const configure = mockApi()
-			.post( configurePath, { source_connection: { method: 'manual-wpcom-install' } } )
-			.reply( 200, configuration );
+		// Configuring again would forget what was accepted, like an unverified certificate, so it only runs.
+		const configure = mockApi().post( configurePath ).reply( 200, configuration );
 		const run = mockApi().post( runPath, {} ).reply( 202, running );
 		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Start the migration' } ) ).toBeEnabled()
-		);
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
-
-		// The source isn't connected and the key was never looked at, so it checks first.
-		const dialog = screen.getByRole( 'dialog', { name: 'Have you connected your site?' } );
-		expect( dialog ).toHaveTextContent( /haven’t been able to confirm/ );
 		await userEvent.click(
-			within( dialog ).getByRole( 'button', { name: 'Start the migration' } )
+			screen.getByRole( 'button', { name: 'The key is added, start the migration' } )
 		);
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
-		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
+		expect( configure.isDone() ).toBe( false );
 	} );
 
 	it( 'checks before starting a migration that can’t reach its source', async () => {
@@ -480,9 +507,13 @@ describe( 'WordPressMigration', () => {
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Start the migration' } ) ).toBeEnabled()
+			expect(
+				screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+			).toBeEnabled()
 		);
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'The plugin is connected, start the migration' } )
+		);
 		await userEvent.click( screen.getByRole( 'button', { name: 'Go back' } ) );
 
 		// Nothing was started: going back leaves the connect step as it was.

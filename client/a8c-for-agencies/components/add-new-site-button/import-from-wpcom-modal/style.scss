@@ -115,12 +115,8 @@ p.import-from-wpcom-modal__instruction {
 	}
 
 	.dataviews-wrapper tr.dataviews-view-table__row {
-		.components-checkbox-control__input {
+		.dataviews-selection-checkbox {
 			opacity: 1;
-		}
-
-		.components-checkbox-control__label {
-			cursor: pointer;
 		}
 
 		td {

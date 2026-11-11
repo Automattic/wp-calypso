@@ -118,7 +118,6 @@ export function UpcomingRenewalsDialog( {
 
 	return (
 		<ConfirmDialog
-			overlayClassName="upcoming-renewals-dialog"
 			size="medium"
 			confirmButtonText={ submitButtonText ?? __( 'Renew now' ) }
 			onConfirm={ handleConfirm }
