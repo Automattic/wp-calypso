@@ -45,7 +45,11 @@ const PostCheckoutOnboarding: StepType< {
 		siteSlug: string;
 		postCheckoutBigSky?: boolean;
 	};
-} > = ( { flow, navigation } ) => {
+	accepts: {
+		// The site was created by checkout, which can't set the AI Launchpad option on it.
+		enableAiLaunchpad?: boolean;
+	};
+} > = ( { flow, navigation, enableAiLaunchpad } ) => {
 	const { __ } = useI18n();
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -106,7 +110,7 @@ const PostCheckoutOnboarding: StepType< {
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
 		useWaitForAtomic( { siteId: site?.ID } );
 
-	const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
+	const { setIntentOnSite, setGoalsOnSite, saveSiteSettings } = useDispatch( SITE_STORE );
 
 	const waitForAtomic = async () => {
 		await waitForTransfer();
@@ -205,6 +209,11 @@ const PostCheckoutOnboarding: StepType< {
 				}
 			}
 
+			// After any transfer, so the option lands on the site the user ends up with.
+			if ( enableAiLaunchpad ) {
+				await saveSiteSettings( site.ID, { wpcom_ai_launchpad_enabled: true } );
+			}
+
 			// Poll for the Woo ref regardless of the atomic path above — the
 			// site may already be Atomic when this effect mounts while
 			// WooCommerce is still finishing installation. This covers both the
@@ -250,6 +259,7 @@ const PostCheckoutOnboarding: StepType< {
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
 		shouldInstallPlugin,
+		enableAiLaunchpad,
 	] );
 
 	if ( hasError ) {
