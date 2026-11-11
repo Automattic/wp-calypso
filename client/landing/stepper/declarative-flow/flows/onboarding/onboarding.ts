@@ -301,7 +301,7 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 }
 
 /**
- * Send a preview site's owner, arriving from the badge on their own share link, to the site's plans.
+ * Send a preview site's owner, arriving from the badge on their own share link, to launch it.
  *
  * The badge can't tell the owner from a visitor: being signed in to WordPress.com doesn't sign
  * them in to the preview's own domain, so every share-link viewer is sent here with the site in
@@ -309,7 +309,7 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
  * @param reduxStore The Calypso store, for the logged-in check.
  * @returns True when the owner is being redirected and the flow should not render.
  */
-async function goToOwnPreviewSitePlans( reduxStore: Store ): Promise< boolean > {
+async function goToOwnPreviewSiteLaunch( reduxStore: Store ): Promise< boolean > {
 	const { preview_site: previewSite, ...args } = getQueryArgs( window.location.href );
 	if ( typeof previewSite !== 'string' || ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return false;
@@ -321,12 +321,14 @@ async function goToOwnPreviewSitePlans( reduxStore: Store ): Promise< boolean > 
 		return false;
 	}
 
-	window.location.assign( addQueryArgs( `/plans/${ encodeURIComponent( previewSite ) }`, args ) );
+	window.location.assign(
+		addQueryArgs( '/setup/launch-site', { siteSlug: previewSite, ...args } )
+	);
 	return true;
 }
 
 async function initialize( reduxStore: Store ) {
-	if ( await goToOwnPreviewSitePlans( reduxStore ) ) {
+	if ( await goToOwnPreviewSiteLaunch( reduxStore ) ) {
 		return false as const;
 	}
 

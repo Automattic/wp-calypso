@@ -29,31 +29,49 @@ describe( 'getBlackboxSessionId', () => {
 	} );
 
 	test( 'flushes before returning an ID and releases its subscription', async () => {
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBe( 'sid' );
+		await expect( getBlackboxSessionId( 'login-key', undefined, 'login' ) ).resolves.toBe( 'sid' );
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'login-key', 'login' );
 		expect( sdk.api.flush ).toHaveBeenCalledWith( { deadlineMs: 5000 } );
 		expect( sdk.listeners.size ).toBe( 0 );
 	} );
 
+	test.each( [
+		[ 'login-key', 'login' ],
+		[ 'signup-key', 'signup' ],
+	] )(
+		'passes collect flow through configureBlackbox before flush (%s, %s)',
+		async ( apiKey, flow ) => {
+			await getBlackboxSessionId( apiKey, undefined, flow );
+			expect( sdk.api.configure ).toHaveBeenCalledWith(
+				expect.objectContaining( { apiKey, flow } )
+			);
+		}
+	);
+
 	test.each( [ 'timeout', 'error' ] )( 'retains a valid ID after %s', async ( outcome ) => {
 		sdk.api.flush.mockResolvedValue( { sessionId: 'sid', challengePending: false, outcome } );
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBe( 'sid' );
+		await expect( getBlackboxSessionId( 'login-key', undefined, 'login' ) ).resolves.toBe( 'sid' );
 	} );
 
 	test( 'continues without an ID when collection fails without a session', async () => {
 		sdk.setState( { status: 'loading' } );
 		sdk.api.flush.mockResolvedValue( { sessionId: '', challengePending: false, outcome: 'error' } );
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
+		await expect(
+			getBlackboxSessionId( 'login-key', undefined, 'login' )
+		).resolves.toBeUndefined();
 	} );
 
 	test( 'continues without an ID when the SDK is unavailable', async () => {
 		delete window.Blackbox;
-		await expect( getBlackboxSessionId( 'login-key' ) ).resolves.toBeUndefined();
+		await expect(
+			getBlackboxSessionId( 'login-key', undefined, 'login' )
+		).resolves.toBeUndefined();
 	} );
 
 	test( 'bounds script loading and clears the timer', async () => {
 		delete window.Blackbox;
 		loadBlackboxSdk.mockReturnValue( new Promise( () => {} ) );
-		const result = getBlackboxSessionId( 'login-key' );
+		const result = getBlackboxSessionId( 'login-key', undefined, 'login' );
 		await jest.advanceTimersByTimeAsync( 5000 );
 		await expect( result ).resolves.toBeUndefined();
 		expect( jest.getTimerCount() ).toBe( 0 );
@@ -66,7 +84,7 @@ describe( 'getBlackboxSessionId', () => {
 			return { sessionId: 'sid', challengePending: true, outcome: 'ok' };
 		} );
 		const submitted = jest.fn();
-		const result = getBlackboxSessionId( 'login-key' ).then( submitted );
+		const result = getBlackboxSessionId( 'login-key', undefined, 'login' ).then( submitted );
 		await jest.advanceTimersByTimeAsync( 60000 );
 		expect( submitted ).not.toHaveBeenCalled();
 		sdk.setState( { status: 'ready', sessionId: 'sid' } );
@@ -76,7 +94,7 @@ describe( 'getBlackboxSessionId', () => {
 
 	test( 'returns the current ID after a challenge replaces the session', async () => {
 		sdk.setState( { status: 'challenge', sessionId: 'old' } );
-		const result = getBlackboxSessionId( 'login-key' );
+		const result = getBlackboxSessionId( 'login-key', undefined, 'login' );
 		await tick();
 		sdk.setState( { status: 'ready', sessionId: 'replacement' } );
 		await expect( result ).resolves.toBe( 'replacement' );
@@ -84,7 +102,7 @@ describe( 'getBlackboxSessionId', () => {
 
 	test( 'flushes a replacement when a challenge session expires', async () => {
 		sdk.setState( { status: 'challenge', sessionId: 'old' } );
-		const result = getBlackboxSessionId( 'login-key' );
+		const result = getBlackboxSessionId( 'login-key', undefined, 'login' );
 		await tick();
 		sdk.api.flush.mockImplementationOnce( async () => {
 			sdk.setState( { status: 'ready', sessionId: 'replacement' } );
@@ -105,7 +123,7 @@ describe( 'getBlackboxSessionId', () => {
 			} else {
 				sdk.setState( { status, sessionId: 'sid' } );
 			}
-			const result = getBlackboxSessionId( 'login-key', controller.signal );
+			const result = getBlackboxSessionId( 'login-key', controller.signal, 'login' );
 			await tick();
 			controller.abort();
 			await expect( result ).resolves.toBeNull();

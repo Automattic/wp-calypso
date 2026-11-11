@@ -126,6 +126,7 @@ describe( 'Blackbox integration', () => {
 
 		await waitFor( () => expect( getRequestBody() ).toBeTruthy() );
 		expect( getRequestBody().blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		expect( getRequestBody().blackbox_key_version ).toBe( 2 );
 	} );
 
 	it( 'omits blackbox_session_id when the signup feature flag is off', async () => {
@@ -231,7 +232,10 @@ describe( 'Blackbox integration', () => {
 
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
 			expect( submitForm ).toHaveBeenCalledWith(
-				expect.objectContaining( { blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv' } ),
+				expect.objectContaining( {
+					blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv',
+					blackbox_key_version: 2,
+				} ),
 				expect.any( Function )
 			);
 		} );
@@ -244,6 +248,7 @@ describe( 'Blackbox integration', () => {
 
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
 			expect( submitForm.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty( 'blackbox_session_id' );
+			expect( submitForm.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty( 'blackbox_key_version' );
 		} );
 
 		it( 'resets Blackbox when the parent reports a submit error', async () => {

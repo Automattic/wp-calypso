@@ -20,11 +20,12 @@ export interface BlackboxProtection {
 interface UseBlackboxProtectionOptions {
 	/**
 	 * Feature flag gating Blackbox for this surface. Form is only protected when
-	 * this flag is enabled and that surface's public key is configured. Signup
-	 * surfaces use `blackbox_signup_api_key`; other surfaces use `blackbox_api_key`.
+	 * this flag is enabled and that surface's public key is configured.
 	 * When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
+	/** Collect flow sent as `X-Blackbox-Flow`. */
+	flow: 'login' | 'signup';
 	/**
 	 * Keep Blackbox off while the host form is mounted but not the active
 	 * surface (e.g. hidden behind another step). No collect happens and no
@@ -47,10 +48,11 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
  */
 export function useBlackboxProtection( {
 	feature,
+	flow,
 	suspended,
 	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
-	const apiKey = getBlackboxApiKey( feature );
+	const apiKey = getBlackboxApiKey();
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
@@ -86,8 +88,10 @@ export function useBlackboxProtection( {
 
 	const getSessionId = useCallback(
 		() =>
-			apiKey ? getBlackboxSessionId( apiKey, surfaceSignal.current ) : Promise.resolve( undefined ),
-		[ apiKey ]
+			apiKey
+				? getBlackboxSessionId( apiKey, surfaceSignal.current, flow )
+				: Promise.resolve( undefined ),
+		[ apiKey, flow ]
 	);
 
 	const reset = useCallback( () => {
@@ -110,6 +114,7 @@ export function useBlackboxProtection( {
 			<BlackboxChallenge
 				enabled={ enabled }
 				apiKey={ apiKey }
+				flow={ flow }
 				onSubmitBlockedChange={ handleSubmitBlockedChange }
 			/>
 		),

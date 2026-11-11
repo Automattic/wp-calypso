@@ -8,7 +8,7 @@ const subscribeWithoutSdk = () => () => {};
 const BLACKBOX_FAIL_OPEN_TIMEOUT_MS = 5000;
 
 /** Connect SDK state and the challenge container to the active form. */
-export function useBlackbox( { containerRef, enabled, apiKey } ) {
+export function useBlackbox( { containerRef, enabled, apiKey, flow } ) {
 	const isEnabled = enabled && !! apiKey;
 	const [ loaded, setLoaded ] = useState( null );
 	const api = isEnabled && loaded?.apiKey === apiKey ? loaded.api : undefined;
@@ -48,7 +48,7 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 			return;
 		}
 		let cancelled = false;
-		loadBlackboxSdk( apiKey )
+		loadBlackboxSdk( apiKey, flow )
 			.then( () => {
 				if ( cancelled ) {
 					return;
@@ -63,6 +63,7 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 						sdk,
 						{
 							apiKey,
+							flow,
 							challengeContainer: containerRef.current,
 							challengeMaxWidth: '100%',
 							challengeStyles: {
@@ -88,7 +89,7 @@ export function useBlackbox( { containerRef, enabled, apiKey } ) {
 		return () => {
 			cancelled = true;
 		};
-	}, [ apiKey, containerRef, isEnabled ] );
+	}, [ apiKey, containerRef, flow, isEnabled ] );
 
 	return {
 		isChallengeActive: isEnabled && snapshot.status === 'challenge',

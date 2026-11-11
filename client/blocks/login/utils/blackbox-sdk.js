@@ -4,18 +4,16 @@ import { rememberBlackboxKey } from 'calypso/blocks/login/utils/blackbox-surface
 
 let loadPromise = null;
 
-// Account creation collects under its own client so its thresholds stay
-// independent of login. Logged-out checkout creates the account.
-const SIGNUP_FEATURES = new Set( [ 'blackbox-signup', 'blackbox-userless-checkout' ] );
+// Sent with a signup session so wpcom verifies it with `blackbox_api_key`.
+// A signup that sends no version is verified with `blackbox_signup_api_key`.
+export const BLACKBOX_KEY_VERSION = 2;
 
 /**
- * Public key for a Blackbox surface.
- * @param {string} [feature] Feature flag for the surface. Signup surfaces use `blackbox_signup_api_key`.
+ * Public key for Blackbox collects.
  * @returns {string|undefined} Configured public key.
  */
-export function getBlackboxApiKey( feature ) {
-	const configKey = SIGNUP_FEATURES.has( feature ) ? 'blackbox_signup_api_key' : 'blackbox_api_key';
-	const configApiKey = config( configKey );
+export function getBlackboxApiKey() {
+	const configApiKey = config( 'blackbox_api_key' );
 
 	if ( process.env.NODE_ENV === 'development' ) {
 		// Guarded require so the dev-only override module is dead-code
@@ -35,9 +33,10 @@ export function getBlackboxApiKey( feature ) {
  * Callers are responsible for calling window.Blackbox.configure() after this resolves.
  * The script loads once, and this key is what auto-init collects with.
  * @param {string} apiKey Public key stamped on the script tag.
+ * @param {'login'|'signup'} flow Collect flow for `data-flow` on the script tag.
  * @returns {Promise<void>}
  */
-export function loadBlackboxSdk( apiKey ) {
+export function loadBlackboxSdk( apiKey, flow ) {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}
@@ -68,7 +67,10 @@ export function loadBlackboxSdk( apiKey ) {
 				}
 				resolve();
 			},
-			{ 'data-apikey': apiKey }
+			{
+				'data-apikey': apiKey,
+				'data-flow': flow,
+			}
 		);
 	} );
 

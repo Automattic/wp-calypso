@@ -73,7 +73,7 @@ const GravPoweredMagicLoginTos = () => {
 		components: {
 			tosLink: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					href={ localizeUrl( 'https://automattic.com/tos/' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				/>
@@ -611,6 +611,7 @@ export const GravPoweredEmailCodeVerification = ( {
 	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature: 'blackbox-signup',
+		flow: 'signup',
 		suspended: ! isNewAccount,
 		resetOnError: codeValidationError,
 	} );

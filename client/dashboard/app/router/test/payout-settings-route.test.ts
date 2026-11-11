@@ -33,7 +33,7 @@ describe( 'earnPayoutSettingsRoute', () => {
 
 			const redirect = await runGuard().catch( ( error ) => error );
 
-			expect( redirect ).toMatchObject( { isRedirect: true, to: '/overview' } );
+			expect( redirect ).toMatchObject( { options: { to: '/overview' } } );
 		}
 	);
 

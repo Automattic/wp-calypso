@@ -1,5 +1,5 @@
-import { describe, expect, test, jest } from '@jest/globals';
 import { Message } from 'mailosaur/lib/models';
+import { describe, expect, test, vi } from 'vitest';
 import { EmailClient } from '../email-client';
 import { SecretsManager, Secrets } from '../secrets';
 
@@ -17,7 +17,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'EmailClient: get2FACodeFromMessage', function () {
 	const createBaseSMSMessage = (): Partial< Message > => {

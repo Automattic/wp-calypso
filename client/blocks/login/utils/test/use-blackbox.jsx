@@ -11,12 +11,13 @@ jest.mock( '../blackbox-sdk', () => ( {
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 
-function TestComponent( { enabled = true, apiKey = 'test-api-key' } ) {
+function TestComponent( { enabled = true, apiKey = 'test-api-key', flow = 'login' } ) {
 	const containerRef = useRef( null );
 	const { hasChallengeContent, isChallengeActive, isLoading } = useBlackbox( {
 		containerRef,
 		enabled,
 		apiKey,
+		flow,
 	} );
 	return (
 		<>
@@ -53,7 +54,17 @@ describe( 'useBlackbox', () => {
 	test( 'uses ready state immediately after SDK loading', async () => {
 		render( <TestComponent /> );
 		await act( async () => {} );
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'test-api-key', 'login' );
 		expect( screen.getByTestId( 'state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'passes collect flow through load and configure', async () => {
+		render( <TestComponent apiKey="signup-key" flow="signup" /> );
+		await act( async () => {} );
+		expect( loadBlackboxSdk ).toHaveBeenCalledWith( 'signup-key', 'signup' );
+		expect( sdk.api.configure ).toHaveBeenCalledWith(
+			expect.objectContaining( { apiKey: 'signup-key', flow: 'signup' } )
+		);
 	} );
 
 	test( 'observes challenges and failures without callbacks', async () => {
@@ -130,15 +141,15 @@ describe( 'useBlackbox', () => {
 	} );
 
 	test( 'configures the new key before resetting after a surface change', async () => {
-		const { rerender } = render( <TestComponent apiKey="login-key" /> );
+		const { rerender } = render( <TestComponent apiKey="login-key" flow="login" /> );
 		await act( async () => {} );
 		sdk.api.reset.mockImplementation( () => {
 			expect( sdk.api.configure ).toHaveBeenLastCalledWith(
-				expect.objectContaining( { apiKey: 'signup-key' } )
+				expect.objectContaining( { apiKey: 'signup-key', flow: 'signup' } )
 			);
 			sdk.setState( { status: 'loading' } );
 		} );
-		rerender( <TestComponent apiKey="signup-key" /> );
+		rerender( <TestComponent apiKey="signup-key" flow="signup" /> );
 		await act( async () => {} );
 		expect( sdk.api.reset ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByTestId( 'state' ) ).toHaveTextContent( 'loading/inactive' );
