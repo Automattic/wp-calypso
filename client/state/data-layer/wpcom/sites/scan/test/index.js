@@ -1,5 +1,5 @@
-import { createReduxStore } from 'calypso/state';
 import { JETPACK_SCAN_REQUEST } from 'calypso/state/action-types';
+import { createReduxStore } from 'calypso/state/create-store';
 import * as wpcomHttpActions from 'calypso/state/data-layer/wpcom-http/actions';
 import * as jetpackScanActions from 'calypso/state/jetpack-scan/actions';
 

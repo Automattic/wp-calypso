@@ -68,8 +68,8 @@ import {
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
-import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
