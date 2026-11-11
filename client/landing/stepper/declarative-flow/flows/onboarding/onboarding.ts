@@ -533,8 +533,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				const params: Record< string, string | number > = {
 					siteSlug: providedDependencies.siteSlug as string,
-					siteId: ( providedDependencies.siteId ?? ( playgroundId ? siteIdParam : undefined ) ) as
-						string | number,
+					siteId: providedDependencies.siteId as number,
 				};
 
 				// build_dest=simple: land on the AI site-spec too, which starts the Simple
@@ -865,13 +864,12 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * redirect the user back to Playground to start the import.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
-							const playgroundSiteId = providedDependencies.siteId ?? siteIdParam;
 							const redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 											siteSlug,
-											siteId: playgroundSiteId,
+											siteId: providedDependencies.siteId,
 											playground: playgroundId,
 										} )
 									: addQueryArgs(
@@ -887,12 +885,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							// The plans grid prices a coupon only from the URL.
 							const checkoutBackQueryArgs = {
 								...persistedQueryArgs,
-								...( playgroundId
-									? {
-											playground: playgroundId,
-											...( playgroundSiteId ? { siteId: playgroundSiteId } : {} ),
-										}
-									: {} ),
+								...( playgroundId ? { playground: playgroundId } : {} ),
 								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
 							};
