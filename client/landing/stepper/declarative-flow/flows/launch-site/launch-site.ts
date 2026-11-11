@@ -290,9 +290,11 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				}
 
 				// WordPress.com refuses to launch a preview site nobody has bought: buying its plan at
-				// checkout launches it, so the flow goes on to checkout.
+				// checkout launches it, so with a plan in the cart the flow goes on to checkout. Without
+				// one, such as Free picked, the refusal stands.
 				await launchSite( siteId ).catch( ( error ) => {
-					if ( error?.error !== 'preview_site_unpaid' ) {
+					const isBuyingPlan = stepSlugs.includes( STEPS.UNIFIED_PLANS.slug ) && !! getPlanCartItem();
+					if ( error?.error !== 'preview_site_unpaid' || ! isBuyingPlan ) {
 						throw error;
 					}
 				} );

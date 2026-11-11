@@ -462,16 +462,20 @@ describe( 'launch-site flow', () => {
 		} );
 
 		// WordPress.com refuses to launch a preview nobody has bought; buying its plan at checkout does.
-		it( 'goes on to checkout when the site is a preview nobody has bought', async () => {
+		it.each( [
+			[ 'goes on to checkout with a plan', [ { product_slug: 'personal-bundle' } ], true ],
+			[ 'stops on the refusal with Free', null, false ],
+		] )( 'for a preview nobody has bought, %s', async ( _name, cartItems, goesOn ) => {
 			mockSite = freeSite;
 			( launchSite as jest.Mock ).mockRejectedValueOnce(
 				Object.assign( new Error( 'Choose a plan' ), { error: 'preview_site_unpaid' } )
 			);
-			submit( STEPS.UNIFIED_PLANS.slug, { cartItems: null } );
+			submit( STEPS.UNIFIED_PLANS.slug, { cartItems } );
 
-			await expect( mockOnboard.pendingAction?.() ).resolves.toEqual( {
-				siteSlug: 'example.wordpress.com',
-			} );
+			const result = mockOnboard.pendingAction?.();
+			await ( goesOn
+				? expect( result ).resolves.toEqual( { siteSlug: 'example.wordpress.com' } )
+				: expect( result ).rejects.toMatchObject( { error: 'preview_site_unpaid' } ) );
 		} );
 
 		it( 'lets the processing step see a failed launch', async () => {
