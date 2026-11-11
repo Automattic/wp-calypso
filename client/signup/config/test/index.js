@@ -51,6 +51,23 @@ describe( 'index', () => {
 		expect( [ ...loadedModules ].filter( ( name ) => ! mappedModules.has( name ) ) ).toEqual( [] );
 	} );
 
+	test( 'Every step module loader should resolve its module', async () => {
+		const unresolvedModules = [];
+		await Promise.all(
+			Object.entries( getStepModuleLoaders() ).map( async ( [ moduleName, load ] ) => {
+				try {
+					await load();
+				} catch ( e ) {
+					if ( e.message.includes( 'Cannot find module' ) ) {
+						unresolvedModules.push( moduleName );
+					}
+				}
+			} )
+		);
+
+		expect( unresolvedModules ).toEqual( [] );
+	} );
+
 	test( 'Every step directory should have a loader, and every loader a step directory', () => {
 		const stepDirectories = fs
 			.readdirSync( path.join( __dirname, '../../steps' ), { withFileTypes: true } )

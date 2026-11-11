@@ -1,3 +1,5 @@
+import { captureMessage } from '@automattic/calypso-sentry';
+
 const stepNameToModuleName = {
 	'creds-confirm': 'creds-confirm',
 	'creds-permission': 'creds-permission',
@@ -146,6 +148,16 @@ export async function getStepComponent( stepName ) {
 		console.error( 'Error: unknown `stepName` to retrieve the component for.' );
 		return;
 	}
-	const module = await stepModuleLoaders[ moduleName ]();
+	const loadStepModule = stepModuleLoaders[ moduleName ];
+	if ( ! loadStepModule ) {
+		const message = `Signup: no loader for step module \`${ moduleName }\`.`;
+		if ( process.env.NODE_ENV !== 'production' ) {
+			// eslint-disable-next-line no-console
+			console.error( message );
+		}
+		captureMessage( message, { level: 'error', tags: { stepName, moduleName } } );
+		return;
+	}
+	const module = await loadStepModule();
 	return module.default;
 }
