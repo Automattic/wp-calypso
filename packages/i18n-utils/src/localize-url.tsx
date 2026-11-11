@@ -7,6 +7,7 @@ import {
 	localesWithWpcomDeveloperSiteFullySupported,
 	localesWithWpcomDeveloperSite,
 	localesWithPrivacyPolicy,
+	localesWithTermsOfService,
 	localesWithCookiePolicy,
 	localesToSubdomains,
 	localesWithLearn,
@@ -129,13 +130,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
 	},
 	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
-	'automattic.com/tos/': ( url: URL, localeSlug: Locale ): URL => {
-		// Translated terms are only published on wordpress.com.
-		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
-			url.host = 'wordpress.com';
-		}
-		return prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
-	},
+	'automattic.com/tos/': prefixLocalizedUrlPath( localesWithTermsOfService ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
 	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),

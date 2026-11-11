@@ -473,10 +473,16 @@ describe( '#localizeUrl', () => {
 			'https://automattic.com/tos/'
 		);
 		expect( localizeUrl( 'https://automattic.com/tos/', 'de' ) ).toEqual(
-			'https://wordpress.com/de/tos/'
+			'https://automattic.com/de/tos/'
+		);
+		expect( localizeUrl( 'https://automattic.com/tos/', 'fr' ) ).toEqual(
+			'https://automattic.com/fr/tos/'
+		);
+		expect( localizeUrl( 'https://automattic.com/tos/', 'es' ) ).toEqual(
+			'https://automattic.com/es/tos/'
 		);
 		expect( localizeUrl( 'https://automattic.com/tos/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/pt-br/tos/'
+			'https://automattic.com/tos/'
 		);
 		expect( localizeUrl( 'https://automattic.com/tos/', 'pl' ) ).toEqual(
 			'https://automattic.com/tos/'
