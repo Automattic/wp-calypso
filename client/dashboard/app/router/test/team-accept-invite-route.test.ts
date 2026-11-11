@@ -93,7 +93,7 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 
 		const redirect = await runRootGuard( '/overview' ).catch( ( error ) => error );
 
-		expect( redirect ).toMatchObject( { isRedirect: true, href: '/signup' } );
+		expect( redirect ).toMatchObject( { options: { href: '/signup' } } );
 	} );
 
 	it( 'lets a new member into the dashboard even when a "no agency" answer was cached', async () => {

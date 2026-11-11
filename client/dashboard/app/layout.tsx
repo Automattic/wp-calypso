@@ -10,7 +10,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { useMemo, useEffect } from 'react';
-import { withColorScheme } from 'calypso/lib/color-scheme';
+import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
@@ -65,14 +65,10 @@ function AnalyticsProviderWithClient( {
 		}
 
 		const recordUnifiedPageView = () => {
-			if ( router.state.matches.some( ( match ) => match.status === 'redirected' ) ) {
-				return;
-			}
-
 			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
 				source: 'msd',
 				app,
-				path: router.state.location.pathname,
+				path: router.history.location.pathname,
 				route: getNormalizedPath( router.state.matches, router.basepath ),
 			} );
 		};

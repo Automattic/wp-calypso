@@ -30,6 +30,7 @@ import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
 import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
@@ -62,13 +63,12 @@ export const useActions = ( {
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createInfoNotice, removeNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice, createInfoNotice, removeNotice } =
+		useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
-		withSnackbar( siteSetPrimaryDomainMutation(), {
-			error: { source: 'server' },
-		} )
+		siteSetPrimaryDomainMutation()
 	);
 
 	const { mutate: setWwwPrimaryDomain, isPending: isSettingWwwPrimaryDomain } = useMutation(
@@ -346,6 +346,10 @@ export const useActions = ( {
 									origin: 'dataviews_actions',
 									error_message: error.message,
 								} );
+
+								createErrorNotice( getPrimaryDomainErrorMessage( error ), {
+									type: 'snackbar',
+								} );
 							},
 						}
 					);
@@ -516,7 +520,7 @@ export const useActions = ( {
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: ( domains ) => {
 					if ( domains.length === 0 ) {
 						return;
@@ -554,7 +558,7 @@ export const useActions = ( {
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: () => {},
 				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
 					<>
@@ -583,6 +587,7 @@ export const useActions = ( {
 			setWwwPrimaryDomain,
 			isSettingWwwPrimaryDomain,
 			createSuccessNotice,
+			createErrorNotice,
 			createInfoNotice,
 			removeNotice,
 			sitesByBlogId,

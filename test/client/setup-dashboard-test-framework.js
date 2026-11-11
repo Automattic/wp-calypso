@@ -26,6 +26,16 @@ if (
 	global.Element.prototype.scrollIntoView = function () {};
 }
 
+// jsdom doesn't implement scrollTo: on an element it's missing, and on the window it logs a
+// "Not implemented" error. The dashboard's DataViews wrapper calls one or the other after
+// a page change.
+if ( typeof global.Element !== 'undefined' ) {
+	global.Element.prototype.scrollTo = function () {};
+}
+if ( typeof global.window !== 'undefined' ) {
+	global.window.scrollTo = function () {};
+}
+
 // jsdom doesn't implement structuredClone; mirror the client test setup so
 // transitively-loaded Calypso code that relies on it works under jsdom.
 if ( typeof global.structuredClone !== 'function' ) {

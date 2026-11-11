@@ -78,15 +78,19 @@ export async function submitFeedback(
 	messageId: string,
 	feedback: string,
 	previousMessages?: PreviousMessage[],
-	traceId?: string
+	traceId?: string,
+	metadata?: Record< string, string >
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
 
-	const data: Record< string, string | PreviousMessage[] > = {
+	const data: Record< string, string | PreviousMessage[] | Record< string, string > > = {
 		message_id: messageId,
 		feedback,
 	};
+	if ( metadata ) {
+		data.metadata = metadata;
+	}
 	if ( traceId ) {
 		data.trace_id = traceId;
 	}

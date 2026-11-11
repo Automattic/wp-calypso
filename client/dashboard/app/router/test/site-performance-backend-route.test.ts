@@ -73,10 +73,11 @@ describe( 'sitePerformanceBackendRoute', () => {
 		mockIsAutomattician( false );
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
-			isRedirect: true,
-			to: '/sites/$siteSlug/performance/frontend',
-			params: { siteSlug },
-			search: { flash: 'route-not-allowed' },
+			options: {
+				to: '/sites/$siteSlug/performance/frontend',
+				params: { siteSlug },
+				search: { flash: 'route-not-allowed' },
+			},
 		} );
 	} );
 
@@ -86,10 +87,11 @@ describe( 'sitePerformanceBackendRoute', () => {
 			.reply( 403, { error: 'unauthorized', message: 'User cannot read teams' } );
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
-			isRedirect: true,
-			to: '/sites/$siteSlug/performance/frontend',
-			params: { siteSlug },
-			search: { flash: 'route-not-allowed' },
+			options: {
+				to: '/sites/$siteSlug/performance/frontend',
+				params: { siteSlug },
+				search: { flash: 'route-not-allowed' },
+			},
 		} );
 	} );
 
@@ -138,10 +140,11 @@ describe( 'siteSettingsApmRoute', () => {
 		mockIsAutomattician( false );
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
-			isRedirect: true,
-			to: '/sites/$siteSlug/settings',
-			params: { siteSlug },
-			search: { flash: 'route-not-allowed' },
+			options: {
+				to: '/sites/$siteSlug/settings',
+				params: { siteSlug },
+				search: { flash: 'route-not-allowed' },
+			},
 		} );
 	} );
 

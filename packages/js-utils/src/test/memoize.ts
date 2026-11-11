@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import memoize from '../memoize';
 
 describe( 'memoize', () => {
 	it( 'caches by the first argument by default', () => {
-		const fn = jest.fn( ( a: number, b: number ) => a + b );
+		const fn = vi.fn( ( a: number, b: number ) => a + b );
 		const memoized = memoize( fn );
 
 		expect( memoized( 1, 2 ) ).toBe( 3 );
@@ -13,7 +14,7 @@ describe( 'memoize', () => {
 	} );
 
 	it( 'uses the resolver to compute the cache key', () => {
-		const fn = jest.fn( ( a: number, b: number ) => a + b );
+		const fn = vi.fn( ( a: number, b: number ) => a + b );
 		const memoized = memoize( fn, ( a, b ) => `${ a }-${ b }` );
 
 		expect( memoized( 1, 2 ) ).toBe( 3 );
@@ -23,7 +24,7 @@ describe( 'memoize', () => {
 	} );
 
 	it( 'caches falsy and undefined results', () => {
-		const fn = jest.fn( () => undefined );
+		const fn = vi.fn( () => undefined );
 		const memoized = memoize( fn );
 
 		expect( memoized( 'x' ) ).toBeUndefined();
@@ -32,7 +33,7 @@ describe( 'memoize', () => {
 	} );
 
 	it( 'exposes a clearable cache', () => {
-		const fn = jest.fn( ( a: number ) => a * 2 );
+		const fn = vi.fn( ( a: number ) => a * 2 );
 		const memoized = memoize( fn );
 
 		memoized( 2 );

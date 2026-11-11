@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/agenttic-ui",
-	"version": "0.1.90",
+	"version": "0.2.0",
 	"type": "module",
 	"description": "UI components for the Agenttic framework.",
 	"main": "dist/index.js",
@@ -57,7 +57,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"engines": {
-		"node": ">=20.0.0"
+		"node": "^22.12.0 || ^24.0.0 || >=26.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
@@ -66,20 +66,20 @@
 		"@storybook/addon-docs": "^10.6.5",
 		"@storybook/react": "^10.6.5",
 		"@storybook/react-vite": "^10.6.5",
-		"@types/node": "^20.0.0",
+		"@types/node": "^24.12.2",
 		"@types/react": "^18.0.0 || ^19.0.0",
 		"@types/react-dom": "^18.0.0 || ^19.0.0",
-		"@vitejs/plugin-react": "^4.7.0",
+		"@vitejs/plugin-react": "^6.2.1",
 		"autoprefixer": "^10.4.0",
-		"jsdom": "^24.1.3",
+		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"storybook": "^10.6.5",
 		"typescript": "^5.9.3",
-		"vite": "^6.4.5",
+		"vite": "^8.3.7",
 		"vite-plugin-lib-inject-css": "^2.2.2",
-		"vitest": "^4.1.12"
+		"vitest": "^5.1.0"
 	},
 	"dependencies": {
 		"@automattic/charts": "^1.10.0",

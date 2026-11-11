@@ -25,11 +25,12 @@ import {
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
-	DOMAINS_LIST_LAYOUTS,
 	SITE_CONTEXT_VIEW,
 	sanitizeDomainFields,
 	sanitizeDomainsListPageSize,
 	useBulkActionsProgressNotice,
+	useDomainsListLayouts,
+	withDomainsListDefaultLayout,
 } from '../../domains/dataviews';
 import {
 	canUserSetPrimaryDomain,
@@ -94,11 +95,21 @@ function SiteDomains() {
 		resetView,
 	} = usePersistentView( {
 		slug: 'site-domains',
-		defaultView: SITE_CONTEXT_VIEW,
+		defaultView: withDomainsListDefaultLayout( SITE_CONTEXT_VIEW, siteDomains.length ),
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListPageSize( persistentView );
+	const {
+		layouts,
+		recordLayoutChoice,
+		resetView: resetViewAndLayoutChoice,
+	} = useDomainsListLayouts( {
+		slug: 'site-domains',
+		domainCount: siteDomains.length,
+		view,
+		resetView,
+	} );
 	const isCardsLayout = view.type === 'grid';
 
 	const actions = useActions( {
@@ -130,7 +141,12 @@ function SiteDomains() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={ <AddDomainButton siteSlug={ site.slug } /> }
+				/>
+			}
 			notices={
 				<>
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
@@ -167,15 +183,18 @@ function SiteDomains() {
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
-					onChangeView={ updateView }
-					onReset={ resetView }
+					onChangeView={ ( nextView ) => {
+						recordLayoutChoice( view, nextView );
+						updateView( nextView );
+					} }
+					onReset={ resetViewAndLayoutChoice }
 					view={ view }
-					// The cards render their own actions, and DataViews would add a bulk selection footer.
+					// The cards render their own actions.
 					actions={ isCardsLayout || ! hasEligibleActions ? [] : actions }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+					defaultLayouts={ layouts }
 					config={ DOMAINS_LIST_CONFIG }
 				>
 					{ isCardsLayout ? (

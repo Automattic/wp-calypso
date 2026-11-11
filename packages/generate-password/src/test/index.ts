@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import { webcrypto } from 'node:crypto';
+import { vi } from 'vitest';
 import { generatePassword, DIGITS, SPECIAL_CHARS, EXTRA_SPECIAL_CHARS } from '../';
 
 describe( 'generatePassword', () => {
-	const mockRandomValues = jest.fn( ( array ) => webcrypto.getRandomValues( array ) );
+	const mockRandomValues = vi.fn( ( array ) => webcrypto.getRandomValues( array ) );
 
 	Object.defineProperty( window, 'crypto', {
 		value: {
