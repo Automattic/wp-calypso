@@ -51,9 +51,12 @@ export default function setup() {
 		// `de.wordpress.com` accepts POST requests to `/wp-login.php` exactly like `wordpress.com`.
 		if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
 			const { createProxyMiddleware } = require( 'http-proxy-middleware' );
+			// Not mounted on the path: the proxy would forward `/wp-login.php/?…`, which de.wordpress.com rejects.
 			app.use(
-				'/wp-login.php',
-				createProxyMiddleware( { target: 'https://de.wordpress.com/wp-login.php' } )
+				createProxyMiddleware( {
+					target: 'https://de.wordpress.com',
+					pathFilter: ( pathname ) => pathname === '/wp-login.php',
+				} )
 			);
 		}
 
