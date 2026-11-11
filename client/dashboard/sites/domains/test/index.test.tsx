@@ -424,6 +424,18 @@ describe( '<SiteDomains>', () => {
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 	} );
 
+	test( 'keeps the layout switch for a layout choice', async () => {
+		nock.cleanAll();
+		mockApis( {
+			preferences: { 'hosting-dashboard-dataviews-layout-chosen-site-domains': true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'group', { name: domain.domain } );
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {
 		nock.cleanAll();
 		mockApis( {

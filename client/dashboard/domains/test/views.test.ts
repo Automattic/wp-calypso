@@ -3,7 +3,6 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
-	getDomainsListLayouts,
 	withDomainsListDefaultLayout,
 } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
@@ -403,16 +402,5 @@ describe( 'withDomainsListDefaultLayout', () => {
 			...cardsView,
 			type: 'table',
 		} );
-	} );
-} );
-
-describe( 'getDomainsListLayouts', () => {
-	test.each( [
-		[ 8, false, [ 'grid' ] ],
-		[ 9, false, [ 'table', 'grid' ] ],
-		[ 8, true, [ 'table', 'grid' ] ],
-		[ 17, false, [ 'table', 'grid' ] ],
-	] )( 'offers these layouts for %i domains, with a saved view: %s', ( count, saved, layouts ) => {
-		expect( Object.keys( getDomainsListLayouts( count, saved ) ) ).toEqual( layouts );
 	} );
 } );

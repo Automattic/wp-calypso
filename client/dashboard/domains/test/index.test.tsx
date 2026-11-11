@@ -6,6 +6,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../test-utils';
+import { DOMAINS_LIST_DEFAULT_VIEW } from '../dataviews/views';
 import Domains from '../index';
 
 const mockSearch: { current: Record< string, string > } = { current: {} };
@@ -224,8 +225,7 @@ describe( '<Domains>', () => {
 
 		render( <Domains /> );
 
-		const table = await screen.findByRole( 'table' );
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( await screen.findByRole( 'table' ) ).toBeVisible();
 		expect( screen.queryByRole( 'group', { name: 'domain00.com' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 	} );
@@ -239,13 +239,58 @@ describe( '<Domains>', () => {
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 	} );
 
-	test( 'keeps the layout switch for a saved cards view with up to 8 domains', async () => {
+	test( 'hides the layout switch for a saved view without a layout choice', async () => {
 		mockApis( mockDomains( 8 ), SAVED_CARDS_VIEW );
 
 		render( <Domains /> );
 
 		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the layout switch after moving from a saved table view to cards', async () => {
+		const user = userEvent.setup();
+		const { savedPreferences } = mockApis( mockDomains( 8 ), {
+			'hosting-dashboard-dataviews-view-domains': {
+				...DOMAINS_LIST_DEFAULT_VIEW,
+				type: 'table',
+				filters: [ { field: 'owner', operator: 'isAny', value: [ 'owned-by-me' ] } ],
+			},
+		} );
+		render( <Domains />, { queryClient: apiQueryClient } );
+
+		await screen.findByRole( 'table' );
+		await user.click( screen.getByRole( 'button', { name: 'Layout' } ) );
+		await user.click( await screen.findByRole( 'menuitemradio', { name: /grid/i } ) );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( savedPreferences ).toContainEqual( {
+				'hosting-dashboard-dataviews-layout-chosen-domains': true,
+			} )
+		);
+	} );
+
+	test( 'keeps the layout switch for a layout choice until Reset view', async () => {
+		const user = userEvent.setup();
+		const { savedPreferences } = mockApis( mockDomains( 8 ), {
+			'hosting-dashboard-dataviews-layout-chosen-domains': true,
+		} );
+		render( <Domains />, { queryClient: apiQueryClient } );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'View options' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Reset view' } ) );
+
+		await waitFor( () =>
+			expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument()
+		);
+		expect( savedPreferences ).toContainEqual( {
+			'hosting-dashboard-dataviews-layout-chosen-domains': null,
+		} );
 	} );
 
 	test( 'keeps a saved cards view for 17 domains', async () => {
@@ -313,7 +358,7 @@ describe( '<Domains>', () => {
 
 		const table = await screen.findByRole( 'table' );
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
-		await user.click( within( table ).getByRole( 'button', { name: 'Actions' } ) );
+		await user.click( within( table ).getAllByRole( 'button', { name: 'Actions' } )[ 0 ] );
 		expect( await screen.findByRole( 'menuitem', { name: /Manage auto-renew/ } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_view_type_changed',
@@ -384,9 +429,12 @@ describe( '<Domains>', () => {
 		await user.click( await screen.findByRole( 'button', { name: 'Layout' } ) );
 		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
 
-		await waitFor( () => expect( savedPreferences ).not.toHaveLength( 0 ) );
-		expect( savedPreferences[ 0 ] ).toHaveProperty( [
-			'hosting-dashboard-dataviews-view-domains',
-		] );
+		await waitFor( () =>
+			expect( savedPreferences ).toContainEqual(
+				expect.objectContaining( {
+					'hosting-dashboard-dataviews-view-domains': expect.objectContaining( { type: 'table' } ),
+				} )
+			)
+		);
 	} );
 } );

@@ -18,6 +18,7 @@ import {
 	filterSortAndPaginateDomains,
 	getDomainId,
 	useActions,
+	useDomainsListLayouts,
 	useFields,
 	DOMAINS_LIST_CONFIG,
 	DOMAINS_LIST_DEFAULT_VIEW,
@@ -25,7 +26,6 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
-	getDomainsListLayouts,
 	withDomainsListDefaultLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
@@ -67,6 +67,11 @@ function Domains() {
 		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
+	const {
+		layouts,
+		recordLayoutChoice,
+		resetView: resetViewAndLayoutChoice,
+	} = useDomainsListLayouts( { slug: 'domains', domainCount: domains.length, view, resetView } );
 
 	const actions = useActions( { user, sites, domains, layout: view.type } );
 
@@ -105,16 +110,17 @@ function Domains() {
 							fields={ fields }
 							onChangeView={ ( nextView ) => {
 								recordDomainViewChanges( view, nextView, recordTracksEvent );
+								recordLayoutChoice( view, nextView );
 								updateView( nextView );
 							} }
-							onReset={ resetView }
+							onReset={ resetViewAndLayoutChoice }
 							view={ view }
 							// The cards render their own actions.
 							actions={ isCardsLayout ? undefined : actions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
-							defaultLayouts={ getDomainsListLayouts( domains.length, !! resetView ) }
+							defaultLayouts={ layouts }
 							config={ DOMAINS_LIST_CONFIG }
 							empty={
 								<DataViewsEmptyStateLayout

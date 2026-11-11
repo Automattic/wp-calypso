@@ -29,7 +29,7 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListPageSize,
 	useBulkActionsProgressNotice,
-	getDomainsListLayouts,
+	useDomainsListLayouts,
 	withDomainsListDefaultLayout,
 } from '../../domains/dataviews';
 import {
@@ -100,6 +100,16 @@ function SiteDomains() {
 		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListPageSize( persistentView );
+	const {
+		layouts,
+		recordLayoutChoice,
+		resetView: resetViewAndLayoutChoice,
+	} = useDomainsListLayouts( {
+		slug: 'site-domains',
+		domainCount: siteDomains.length,
+		view,
+		resetView,
+	} );
 	const isCardsLayout = view.type === 'grid';
 
 	const actions = useActions( {
@@ -168,15 +178,18 @@ function SiteDomains() {
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
-					onChangeView={ updateView }
-					onReset={ resetView }
+					onChangeView={ ( nextView ) => {
+						recordLayoutChoice( view, nextView );
+						updateView( nextView );
+					} }
+					onReset={ resetViewAndLayoutChoice }
 					view={ view }
 					// The cards render their own actions.
 					actions={ isCardsLayout || ! hasEligibleActions ? [] : actions }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					defaultLayouts={ getDomainsListLayouts( siteDomains.length, !! resetView ) }
+					defaultLayouts={ layouts }
 					config={ DOMAINS_LIST_CONFIG }
 				>
 					{ isCardsLayout ? (
