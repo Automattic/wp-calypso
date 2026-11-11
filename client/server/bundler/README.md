@@ -78,7 +78,7 @@ There are two different modes of operation:
 
 ## Other bundlers
 
-The server doesn't depend on webpack outside this module. A bundler running in development can replace how the server finds the assets of each entry and section with `app.set( 'assets provider', provider )`, where `provider` returns (a promise of) an object shaped like `assets.json`; see `client/server/middleware/assets.js`. It can also listen for the `http-server` event on the app to receive the `http.Server` once it's created, for example to serve hot updates on the same port.
+The server doesn't depend on webpack outside this module. A bundler running in development can replace how the server finds the assets of each entry and section with `app.set( 'assets-provider', provider )`, where `provider` returns (a promise of) an object shaped like `assets.json`; see `client/server/middleware/assets.js`. Once the `http.Server` is created, the server stores it as the `http-server` setting and emits `http-server-created` on the app with it, so the bundler can attach to it, for example to serve hot updates on the same port.
 
 ## Caching
 

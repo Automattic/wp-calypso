@@ -59,7 +59,7 @@ describe( 'assets middleware', () => {
 	test( 'uses the provider set on the parent app, without reading build/assets.json', async () => {
 		mockFs( {} );
 		const app = express();
-		app.set( 'assets provider', async () => ( {
+		app.set( 'assets-provider', async () => ( {
 			manifests: [],
 			assets: { 'entry-main': [ '/client/boot/app.js' ] },
 		} ) );

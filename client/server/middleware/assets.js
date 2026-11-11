@@ -48,7 +48,7 @@ function createAssetsFileReader() {
 
 /**
  * Reads the assets from `build/assets.json`, which webpack writes, unless a bundler replaces the
- * provider with `app.set( 'assets provider', provider )`. A provider is a function that returns
+ * provider with `app.set( 'assets-provider', provider )`. A provider is a function that returns
  * (a promise of) an object shaped like `assets.json`: `{ manifests, assets }`. The file is only
  * read when no other provider is set, so it doesn't have to exist then.
  * @returns {import('express').RequestHandler}
@@ -57,7 +57,7 @@ export default () => {
 	const readAssetsFile = createAssetsFileReader();
 
 	return asyncHandler( async ( req, res, next ) => {
-		const readAssets = req.app.get( 'assets provider' ) ?? readAssetsFile;
+		const readAssets = req.app.get( 'assets-provider' ) ?? readAssetsFile;
 		const assets = await readAssets();
 
 		req.getAssets = () => assets;
