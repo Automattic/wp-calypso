@@ -36,7 +36,7 @@ There is currently an ongoing migration effort in modularizing all of Calypso st
 ## Usage
 
 ```js
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 
 const store = createReduxStore();
 ```

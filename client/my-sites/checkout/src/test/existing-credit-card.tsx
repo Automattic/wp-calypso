@@ -18,7 +18,7 @@ import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { CheckoutSubmitButtonContent } from 'calypso/my-sites/checkout/src/components/checkout-submit-button-content';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 
 const mockResponseCart = {
 	...getEmptyResponseCart(),
