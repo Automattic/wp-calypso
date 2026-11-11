@@ -9,6 +9,12 @@ import type { AgencyTierId } from '@automattic/api-core';
  */
 export const getFeatureName = () => __( 'Prospect reports' );
 
+/** The page description under the title, in both dashboards. */
+export const getFeatureDescription = () =>
+	__(
+		'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
+	);
+
 /** Timing copy used everywhere, per the v1 PRD. */
 export const getReportTiming = () => __( '10 to 20 minutes' );
 
