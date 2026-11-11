@@ -230,30 +230,6 @@ describe( '<SiteDomains>', () => {
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'shows "Change site address" action for the default address', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( { domains: [ defaultAddressDomain ] } );
-
-		render( <SiteDomains />, { user: ownerUser } );
-
-		await user.click( await screen.findByLabelText( 'Actions' ) );
-
-		const action = await screen.findByText( 'Change site address' );
-		await waitFor( () => expect( action ).toBeVisible() );
-	} );
-
-	test( 'hides "Change site address" action when the site is suspended', async () => {
-		nock.cleanAll();
-		mockApis( { domains: [ { ...defaultAddressDomain, is_suspended_site: true } ] } );
-
-		render( <SiteDomains />, { user: ownerUser } );
-
-		await screen.findByRole( 'group', { name: 'test-site.wordpress.com' } );
-
-		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'sorts domains by whether they are primary', async () => {
 		nock.cleanAll();
 		mockApis( {
@@ -374,7 +350,7 @@ describe( '<SiteDomains>', () => {
 		);
 	} );
 
-	test( 'keeps a saved table view, without bulk selection', async () => {
+	test( 'keeps a saved table view, with Settings and no actions menu or bulk selection', async () => {
 		nock.cleanAll();
 		mockApis( {
 			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
@@ -387,6 +363,8 @@ describe( '<SiteDomains>', () => {
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( within( table ).getByRole( 'button', { name: 'View settings' } ) ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {
@@ -501,43 +479,6 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( saveRequest.isDone() ).toBe( true );
 		} );
-	} );
-
-	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: false },
-		} );
-
-		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
-
-		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'shows "Make primary site address" action once SSL is active', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
-		} );
-
-		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
-
-		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		const action = await screen.findByText( 'Make primary site address' );
-		await waitFor( () => expect( action ).toBeVisible() );
 	} );
 
 	test( 'shows a newly registered domain as activating until its certificate is issued', async () => {

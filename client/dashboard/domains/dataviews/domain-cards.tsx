@@ -1,9 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import {
 	Button,
-	DropdownMenu,
-	MenuGroup,
-	MenuItem,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,7 +8,6 @@ import {
 import { useDispatch, useRegistry } from '@wordpress/data';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { moreVertical } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { Card, CardBody, CardFooter } from '../../components/card';
@@ -52,7 +48,7 @@ function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) 
 
 /*
  * Every renewable domain is eligible for "Renew", so it only moves to the footer once the domain has expired.
- * That's also when DNS stops being what the domain needs next, so it leaves the footer for the menu.
+ * That's also when DNS stops being what the domain needs next, so it leaves the footer.
  */
 function getFooterActionIds( item: DomainSummary ) {
 	return [
@@ -112,9 +108,6 @@ function DomainCard( {
 	const footerActions = footerActionIds.flatMap(
 		( id ) => eligibleActions.find( ( action ) => action.id === id ) ?? []
 	);
-	const menuActions = eligibleActions.filter(
-		( action ) => ! footerActionIds.includes( action.id )
-	);
 
 	return (
 		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>
@@ -142,35 +135,6 @@ function DomainCard( {
 							</Text>
 						) }
 					</VStack>
-					{ menuActions.length > 0 && (
-						<DropdownMenu
-							icon={ moreVertical }
-							label={ __( 'Actions' ) }
-							toggleProps={ {
-								__next40pxDefaultSize: true,
-								size: 'small',
-								'aria-describedby': titleId,
-							} }
-							popoverProps={ { placement: 'bottom-end' } }
-						>
-							{ ( { onClose } ) => (
-								<MenuGroup>
-									{ menuActions.map( ( action ) => (
-										<MenuItem
-											key={ action.id }
-											disabled={ !! action.disabled }
-											onClick={ () => {
-												onClose();
-												runAction( action );
-											} }
-										>
-											{ getActionLabel( action, item ) }
-										</MenuItem>
-									) ) }
-								</MenuGroup>
-							) }
-						</DropdownMenu>
-					) }
 				</HStack>
 				<dl className="domain-cards__fields">
 					{ fields.map(

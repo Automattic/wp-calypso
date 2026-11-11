@@ -1,0 +1,9 @@
+// DataViews reveals inline row actions only on hover or focus. With no row menu they are the
+// only way to act on a domain from the table, so keep them visible.
+.domains-table
+	.dataviews-view-table
+	tr
+	.dataviews-item-actions
+	.components-button:not( .dataviews-all-actions-button ) {
+	opacity: 1;
+}

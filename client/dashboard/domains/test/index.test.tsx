@@ -216,7 +216,7 @@ describe( '<Domains>', () => {
 		expect( domainNames() ).toHaveLength( 0 );
 	} );
 
-	test( 'switches to a table without bulk selection and tracks the change', async () => {
+	test( 'switches to a table with Settings and no actions menu, and tracks the change', async () => {
 		const user = userEvent.setup();
 		mockApis( [ mockDomain( 1 ) ] );
 		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
@@ -226,8 +226,8 @@ describe( '<Domains>', () => {
 
 		const table = await screen.findByRole( 'table' );
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
-		await user.click( within( table ).getByRole( 'button', { name: 'Actions' } ) );
-		expect( await screen.findByRole( 'menuitem', { name: /Manage auto-renew/ } ) ).toBeVisible();
+		expect( within( table ).getByRole( 'button', { name: 'View settings' } ) ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_view_type_changed',
 			{ type: 'table' }

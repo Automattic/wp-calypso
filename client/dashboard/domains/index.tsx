@@ -2,6 +2,7 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
@@ -14,9 +15,11 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	getDomainId,
+	getTableActions,
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
@@ -69,6 +72,7 @@ function Domains() {
 	} );
 
 	const actions = useActions( { user, sites, domains, layout: view.type } );
+	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
@@ -99,7 +103,7 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard>
+					<DataViewsCard className={ DOMAINS_TABLE_CLASS_NAME }>
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }
@@ -110,7 +114,7 @@ function Domains() {
 							onReset={ resetView }
 							view={ view }
 							// The cards render their own actions.
-							actions={ isCardsLayout ? undefined : actions }
+							actions={ isCardsLayout ? undefined : tableActions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
