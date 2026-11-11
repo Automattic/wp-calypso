@@ -46,6 +46,33 @@ describe( 'mergeIdenticalLineItems', () => {
 		);
 	} );
 
+	test( 'keeps a line the cart discounted alone apart from the rest', () => {
+		const plan = { slug: 'wpcom-hosting-business', productId: 1000 };
+		const prorated = {
+			...buildLine( 'a', plan ),
+			item_subtotal_integer: 1000,
+			cost_overrides: [
+				{
+					human_readable_reason: 'Prorated renewal discount',
+					override_code: 'recent-plan-proration',
+					old_subtotal_integer: 4000,
+					new_subtotal_integer: 1000,
+					does_override_original_cost: false,
+					percentage: 0,
+					first_unit_only: false,
+				},
+			],
+		};
+		const fullPrice = { ...buildLine( 'b', plan ), item_subtotal_integer: 4000 };
+		const fullPriceAgain = { ...buildLine( 'c', plan ), item_subtotal_integer: 4000 };
+
+		const [ single, merged ] = mergeIdenticalLineItems(
+			asEntries( [ prorated, fullPrice, fullPriceAgain ] )
+		);
+		expect( single ).toEqual( { type: 'product', product: prorated } );
+		expect( merged ).toMatchObject( { type: 'merged', products: [ fullPrice, fullPriceAgain ] } );
+	} );
+
 	test( 'keeps each term of a product on its own line', () => {
 		const monthly = { slug: 'jetpack_wc_composite_products_monthly', productId: 2714 };
 		const [ yearlyLine, monthlyLine ] = mergeIdenticalLineItems(

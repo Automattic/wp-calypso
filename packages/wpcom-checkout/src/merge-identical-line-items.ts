@@ -21,7 +21,9 @@ const POSITIONAL_EXTRA_KEYS = [ 'cart_item_index', 'add_sequence' ];
 
 /**
  * Lines are identical when everything but their position matches: the
- * product, its term, its meta and the rest of its extras.
+ * product, its term, its meta, the rest of its extras and its price. The cart
+ * can discount one line alone (a proration lands on the first), and a merged
+ * line shows one price for all of them.
  */
 function getIdenticalItemKey( product: ResponseCartProduct ): string {
 	const sortedExtra = Object.fromEntries(
@@ -29,12 +31,17 @@ function getIdenticalItemKey( product: ResponseCartProduct ): string {
 			.filter( ( [ key ] ) => ! POSITIONAL_EXTRA_KEYS.includes( key ) )
 			.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
 	);
+	const overrideCodes = ( product.cost_overrides ?? [] )
+		.map( ( override ) => override.override_code )
+		.sort();
 	return JSON.stringify( [
 		product.product_slug,
 		product.product_id,
 		product.meta,
 		product.volume,
 		sortedExtra,
+		product.item_subtotal_integer,
+		overrideCodes,
 	] );
 }
 
