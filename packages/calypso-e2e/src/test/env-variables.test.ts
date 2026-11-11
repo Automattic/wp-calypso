@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import vm from 'vm';
 import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { vi } from 'vitest';
 import envVariables, {
 	ATOMIC_VARIATIONS,
 	MIXED_RUN_WORKERS,
@@ -196,7 +197,7 @@ describe( 'EnvVariables Tests', function () {
 
 		// Files whose hashes collide still have to keep their variations across re-runs.
 		test( 'the same commit assigns the same variations when hashes collide', function () {
-			const collision = jest.spyOn( crypto, 'createHash' ).mockReturnValue( {
+			const collision = vi.spyOn( crypto, 'createHash' ).mockReturnValue( {
 				update() {
 					return this;
 				},
@@ -216,7 +217,7 @@ describe( 'EnvVariables Tests', function () {
 		// A re-run on a machine with another locale, e.g. da_DK sorting "aa" after "f", has to match.
 		test( 'the assignment ignores the locale', function () {
 			const expected = assignAtomicVariations( SPEC_FILES );
-			const reversedCollation = jest
+			const reversedCollation = vi
 				.spyOn( String.prototype, 'localeCompare' )
 				.mockImplementation( function ( this: string, other: string ) {
 					return this < other ? 1 : -1;

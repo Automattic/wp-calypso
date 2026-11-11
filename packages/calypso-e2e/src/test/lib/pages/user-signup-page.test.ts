@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, jest, test } from '@jest/globals';
+import { vi } from 'vitest';
 import {
 	assertSuccessfulNewUserResponse,
 	UserSignupPage,
@@ -75,21 +76,21 @@ const settle = () => new Promise( ( resolve ) => setImmediate( resolve ) );
  */
 const buildRoutedPage = () => {
 	const locator = {
-		click: jest.fn( async () => undefined ),
-		fill: jest.fn( async () => undefined ),
-		isVisible: jest.fn( async () => true ),
-		scrollIntoViewIfNeeded: jest.fn( async () => undefined ),
-		waitFor: jest.fn( async () => undefined ),
+		click: vi.fn( async () => undefined ),
+		fill: vi.fn( async () => undefined ),
+		isVisible: vi.fn( async () => true ),
+		scrollIntoViewIfNeeded: vi.fn( async () => undefined ),
+		waitFor: vi.fn( async () => undefined ),
 	};
 	const handlers: RouteHandler[] = [];
 	const page = {
-		evaluate: jest.fn( async () => false ),
-		getByRole: jest.fn( () => locator ),
-		locator: jest.fn( () => locator ),
-		route: jest.fn( async ( _pattern: RegExp, handler: RouteHandler ) => {
+		evaluate: vi.fn( async () => false ),
+		getByRole: vi.fn( () => locator ),
+		locator: vi.fn( () => locator ),
+		route: vi.fn( async ( _pattern: RegExp, handler: RouteHandler ) => {
 			handlers.push( handler );
 		} ),
-		waitForResponse: jest.fn( () => new Promise( () => undefined ) ),
+		waitForResponse: vi.fn( () => new Promise( () => undefined ) ),
 	} as unknown as Page;
 
 	return { handlers, page };
@@ -100,8 +101,8 @@ const buildRoutedPage = () => {
  * would, and reports what was handed back to the page.
  */
 const answerSignupRequest = async ( handler: RouteHandler, status: number, body: unknown ) => {
-	const fallback = jest.fn( async () => undefined );
-	const fulfill = jest.fn( async () => undefined );
+	const fallback = vi.fn( async () => undefined );
+	const fulfill = vi.fn( async () => undefined );
 	const text = JSON.stringify( body );
 
 	await handler( {
@@ -120,7 +121,7 @@ const answerSignupRequest = async ( handler: RouteHandler, status: number, body:
 
 describe( 'UserSignupPage', () => {
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test( 'surfaces a rejected signup response without waiting for an ok response', async () => {
@@ -187,11 +188,11 @@ describe( 'UserSignupPage', () => {
 		// A deploy rollout serves a stock 502 for a few seconds; reloading straight
 		// away lands on the same 502 and burns every attempt in milliseconds.
 		const { page } = buildRoutedPage();
-		const waitForTimeout = jest.fn( async () => undefined );
-		const reload = jest.fn( async () => null );
+		const waitForTimeout = vi.fn( async () => undefined );
+		const reload = vi.fn( async () => null );
 		Object.assign( page, { waitForTimeout, reload } );
-		jest.mocked( page.evaluate ).mockResolvedValue( true );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		vi.mocked( page.evaluate ).mockResolvedValue( true );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		await expect(
 			new UserSignupPage( page ).signupWithEmail( 'test@example.com' )
@@ -207,11 +208,11 @@ describe( 'UserSignupPage', () => {
 
 	test( 'recovers through signupWithEmail once the server error clears', async () => {
 		const { handlers, page } = buildRoutedPage();
-		const waitForTimeout = jest.fn( async () => undefined );
-		const reload = jest.fn( async () => null );
+		const waitForTimeout = vi.fn( async () => undefined );
+		const reload = vi.fn( async () => null );
 		Object.assign( page, { waitForTimeout, reload } );
-		jest.mocked( page.evaluate ).mockResolvedValueOnce( true );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		vi.mocked( page.evaluate ).mockResolvedValueOnce( true );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		const response = {
 			code: 200,
 			body: { success: true, user_id: 123, username: 'e2eflowtesting123', bearer_token: 'token' },
@@ -229,10 +230,10 @@ describe( 'UserSignupPage', () => {
 
 	test( 'throws a non-transient signup failure without waiting or reloading', async () => {
 		const { page } = buildRoutedPage();
-		const waitForTimeout = jest.fn( async () => undefined );
-		const reload = jest.fn( async () => null );
+		const waitForTimeout = vi.fn( async () => undefined );
+		const reload = vi.fn( async () => null );
 		Object.assign( page, { waitForTimeout, reload } );
-		jest
+		vi
 			.mocked( page.locator( 'input[name="email"]' ).fill )
 			.mockRejectedValue( new Error( 'Form broke.' ) );
 

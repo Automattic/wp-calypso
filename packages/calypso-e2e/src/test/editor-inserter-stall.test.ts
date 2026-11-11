@@ -1,4 +1,5 @@
 import { describe, expect, jest, test } from '@jest/globals';
+import { type Mock, vi } from 'vitest';
 import { EditorSidebarBlockInserterComponent } from '../lib/components/editor-sidebar-block-inserter-component';
 import { EditorToolbarComponent } from '../lib/components/editor-toolbar-component';
 import type { EditorComponent } from '../lib/components/editor-component';
@@ -21,7 +22,7 @@ type ClickOptions = { timeout?: number; noWaitAfter?: boolean };
  * click budget is asserted on the options the components pass to Playwright.
  */
 function fakeEditor( attributes: Record< string, string > = {} ) {
-	const click = jest.fn( async ( options?: ClickOptions ) => options );
+	const click = vi.fn( async ( options?: ClickOptions ) => options );
 	const locator = {
 		locator: () => locator,
 		getByRole: () => locator,
@@ -39,7 +40,7 @@ function fakeEditor( attributes: Record< string, string > = {} ) {
 /**
  * Returns the timeout the single recorded click ran with, or the default.
  */
-function clickTimeout( click: jest.Mock< ( options?: ClickOptions ) => unknown > ) {
+function clickTimeout( click: Mock< ( options?: ClickOptions ) => unknown > ) {
 	expect( click ).toHaveBeenCalledTimes( 1 );
 	return click.mock.calls[ 0 ][ 0 ]?.timeout ?? ACTION_TIMEOUT;
 }

@@ -2,6 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { vi } from 'vitest';
 import {
 	appendOwnBuildLog,
 	fetchBuildLog,
@@ -43,7 +44,7 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 	delete process.env.TEAMCITY_BUILD_PROPERTIES_FILE;
 	rmSync( dir, { recursive: true, force: true } );
 } );
@@ -73,7 +74,7 @@ describe( 'readProperty', () => {
 
 describe( 'fail-open', () => {
 	test( 'no properties file: reports nothing, tags nothing, never throws', async () => {
-		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
+		const fetchSpy = vi.spyOn( globalThis, 'fetch' );
 
 		await expect( tagOwnBuild( 'throttle-signup' ) ).resolves.toBeNull();
 		expect( fetchSpy ).not.toHaveBeenCalled();
@@ -81,7 +82,7 @@ describe( 'fail-open', () => {
 
 	test( 'properties file missing keys: no request, and the caller is told', async () => {
 		writeProperties( 'teamcity.build.id=18847887\n' );
-		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
+		const fetchSpy = vi.spyOn( globalThis, 'fetch' );
 
 		// An agent whose properties name no credentials must not read like a
 		// laptop: every lookup it makes would otherwise pass for a quiet day.
@@ -93,7 +94,7 @@ describe( 'fail-open', () => {
 
 	test( 'unreadable properties file: no request, and the caller is told', async () => {
 		process.env.TEAMCITY_BUILD_PROPERTIES_FILE = path.join( dir, 'does-not-exist' );
-		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
+		const fetchSpy = vi.spyOn( globalThis, 'fetch' );
 
 		// Unlike a local run, this build may be taggable a moment later.
 		await expect( tagOwnBuild( 'throttle-signup' ) ).rejects.toThrow(
@@ -106,7 +107,7 @@ describe( 'fail-open', () => {
 describe( 'fetchBuildsByTag', () => {
 	test( 'reads the finish dates TeamCity renders, and takes a running build as unfinished', async () => {
 		writeProperties( completeProperties() );
-		jest.spyOn( globalThis, 'fetch' ).mockResolvedValue(
+		vi.spyOn( globalThis, 'fetch' ).mockResolvedValue(
 			Response.json( {
 				build: [
 					{ id: 11, finishDate: '20260810T124500+0000' },
@@ -125,7 +126,7 @@ describe( 'fetchBuildsByTag', () => {
 
 	test( 'a refused lookup is reported, not read as no throttle', async () => {
 		writeProperties( completeProperties() );
-		jest
+		vi
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
 
@@ -139,7 +140,7 @@ describe( 'fetchBuildsByTag', () => {
 
 	test( 'a refused log read is reported, not read as an empty log', async () => {
 		writeProperties( completeProperties() );
-		jest
+		vi
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( 'Access denied', { status: 401 } ) );
 
@@ -155,7 +156,7 @@ describe( 'fetchBuildsByTag', () => {
 describe( 'tagOwnBuild', () => {
 	test( 'sends the token in the Authorization header, never in the URL', async () => {
 		writeProperties( completeProperties() );
-		const fetchSpy = jest
+		const fetchSpy = vi
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( '', { status: 200 } ) );
 
@@ -178,12 +179,12 @@ describe( 'tagOwnBuild', () => {
 		const encoded = Buffer.from( `TeamCityBuildId=18847887:${ PASSWORD }` ).toString( 'base64' );
 		// A rejection carrying both the raw and the derived credential: TeamCity
 		// masks neither in a log line written by us.
-		jest
+		vi
 			.spyOn( globalThis, 'fetch' )
 			.mockRejectedValue( new Error( `connect ECONNREFUSED (basic ${ encoded }, ${ PASSWORD })` ) );
 
 		const consoleSpies = ( [ 'log', 'warn', 'error', 'info', 'debug' ] as const ).map( ( method ) =>
-			jest.spyOn( console, method ).mockImplementation( () => undefined )
+			vi.spyOn( console, method ).mockImplementation( () => undefined )
 		);
 
 		await expect( tagOwnBuild( 'throttle-signup-123' ) ).rejects.toThrow(
@@ -198,7 +199,7 @@ describe( 'tagOwnBuild', () => {
 	test( 'a request that never settles is abandoned, not left hanging', async () => {
 		writeProperties( completeProperties() );
 		// What the deadline does to it, without waiting out the deadline.
-		const fetchSpy = jest
+		const fetchSpy = vi
 			.spyOn( globalThis, 'fetch' )
 			.mockRejectedValue( new Error( 'The operation was aborted due to timeout' ) );
 
@@ -211,7 +212,7 @@ describe( 'tagOwnBuild', () => {
 
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
 		writeProperties( completeProperties() );
-		jest
+		vi
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
 
@@ -222,7 +223,7 @@ describe( 'tagOwnBuild', () => {
 describe( 'appendOwnBuildLog', () => {
 	test( 'posts the line to this build, with the token only in the header', async () => {
 		writeProperties( completeProperties() );
-		const fetchSpy = jest
+		const fetchSpy = vi
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( '', { status: 200 } ) );
 
@@ -239,7 +240,7 @@ describe( 'appendOwnBuildLog', () => {
 	} );
 
 	test( 'no TeamCity build around it is nothing to write, not a failure', async () => {
-		const fetchSpy = jest.spyOn( globalThis, 'fetch' );
+		const fetchSpy = vi.spyOn( globalThis, 'fetch' );
 		await expect( appendOwnBuildLog( 'a line' ) ).resolves.toBeNull();
 		expect( fetchSpy ).not.toHaveBeenCalled();
 	} );
@@ -247,12 +248,12 @@ describe( 'appendOwnBuildLog', () => {
 	test( 'a failing request logs nothing, so no derived credential can leak', async () => {
 		writeProperties( completeProperties() );
 		const encoded = Buffer.from( `TeamCityBuildId=18847887:${ PASSWORD }` ).toString( 'base64' );
-		jest
+		vi
 			.spyOn( globalThis, 'fetch' )
 			.mockRejectedValue( new Error( `connect ECONNREFUSED (basic ${ encoded }, ${ PASSWORD })` ) );
 
 		const consoleSpies = ( [ 'log', 'warn', 'error', 'info', 'debug' ] as const ).map( ( method ) =>
-			jest.spyOn( console, method ).mockImplementation( () => undefined )
+			vi.spyOn( console, method ).mockImplementation( () => undefined )
 		);
 
 		await expect( appendOwnBuildLog( 'a line' ) ).rejects.toThrow(
@@ -266,7 +267,7 @@ describe( 'appendOwnBuildLog', () => {
 
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
 		writeProperties( completeProperties() );
-		jest
+		vi
 			.spyOn( globalThis, 'fetch' )
 			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
 

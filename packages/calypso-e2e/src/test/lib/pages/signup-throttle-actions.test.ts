@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { type Mock, vi } from 'vitest';
 import { SignupPickPlanPage } from '../../../lib/pages/signup/signup-pick-plan-page';
 import * as teamcity from '../../../lib/teamcity';
 import {
@@ -10,16 +11,16 @@ import type { Page } from 'playwright';
 
 const VARIABLES = [ 'E2E_THROTTLE_SIGNUP_ACTION', 'THROTTLE_SIGNUP_EXPIRATION' ] as const;
 
-let actionHandler: jest.Mock;
+let actionHandler: Mock;
 let unregister: () => void;
 
 beforeEach( () => {
 	// A flag raised here is raised through the real helpers, which would tag the
 	// build running the unit tests and write the ban to its log for every E2E
 	// build in the project to read.
-	jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-	jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
-	actionHandler = jest.fn();
+	vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+	actionHandler = vi.fn();
 	unregister = registerThrottleActionHandler( actionHandler );
 	VARIABLES.forEach( ( name ) => delete process.env[ name ] );
 } );
@@ -29,7 +30,7 @@ afterEach( async () => {
 	await flushThrottleWrites();
 	resetThrottleState();
 	VARIABLES.forEach( ( name ) => delete process.env[ name ] );
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 /**
@@ -37,8 +38,8 @@ afterEach( async () => {
  */
 function siteCreationPage( body: string, status = 200 ): Page {
 	return {
-		getByRole: jest.fn( () => undefined ),
-		route: jest.fn( async ( _pattern: unknown, handler: ( route: unknown ) => Promise< void > ) => {
+		getByRole: vi.fn( () => undefined ),
+		route: vi.fn( async ( _pattern: unknown, handler: ( route: unknown ) => Promise< void > ) => {
 			await handler( {
 				fetch: async () => ( {
 					url: () => 'https://public-api.wordpress.com/rest/v1.1/sites/new?locale=en',

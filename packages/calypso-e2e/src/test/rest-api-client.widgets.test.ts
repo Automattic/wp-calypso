@@ -3,6 +3,7 @@
  */
 import { describe, expect, test, jest, beforeEach } from '@jest/globals';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -14,7 +15,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'RestAPIClient: deleteAllWidgets', function () {
 	const restAPIClient = new RestAPIClient( {

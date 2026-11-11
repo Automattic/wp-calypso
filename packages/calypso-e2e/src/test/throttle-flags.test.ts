@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { vi } from 'vitest';
 import * as teamcity from '../lib/teamcity';
 import {
 	activeThrottleForUrl,
@@ -75,12 +76,12 @@ async function raiseAndSettle( id: ThrottleId ): Promise< void > {
 }
 
 beforeEach( () => {
-	jest.spyOn( Date, 'now' ).mockReturnValue( NOW );
-	tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-	appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
-	fetchBuildLog = jest.spyOn( teamcity, 'fetchBuildLog' ).mockResolvedValue( null );
-	fetchBuildsByTag = jest.spyOn( teamcity, 'fetchBuildsByTag' ).mockResolvedValue( null );
-	warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+	vi.spyOn( Date, 'now' ).mockReturnValue( NOW );
+	tagOwnBuild = vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	appendOwnBuildLog = vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+	fetchBuildLog = vi.spyOn( teamcity, 'fetchBuildLog' ).mockResolvedValue( null );
+	fetchBuildsByTag = vi.spyOn( teamcity, 'fetchBuildsByTag' ).mockResolvedValue( null );
+	warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 	for ( const id of [ 'SIGNUP', 'DOMAIN_SUGGESTIONS', 'DOMAIN_AVAILABILITY' ] ) {
 		delete process.env[ `THROTTLE_${ id }_EXPIRATION` ];
 		delete process.env[ `E2E_THROTTLE_${ id }_ACTION` ];
@@ -113,7 +114,7 @@ describe( 'throttle actions', () => {
 	} );
 
 	test( 'does nothing for clear and expired signals', () => {
-		const handler = jest.fn();
+		const handler = vi.fn();
 		const unregister = registerThrottleActionHandler( handler );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW - 1 );
 		handleActiveThrottles( [ 'signup', 'domain-suggestions' ] );
@@ -122,7 +123,7 @@ describe( 'throttle actions', () => {
 	} );
 
 	test( 'uses the registered handler for an active throttle', () => {
-		const handler = jest.fn();
+		const handler = vi.fn();
 		const unregister = registerThrottleActionHandler( handler );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
 		handleActiveThrottles( [ 'signup' ] );
@@ -165,7 +166,7 @@ describe( 'throttle actions', () => {
 	} );
 
 	test( 'gives fail precedence across active throttles', () => {
-		const handler = jest.fn();
+		const handler = vi.fn();
 		const unregister = registerThrottleActionHandler( handler );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
 		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
@@ -176,7 +177,7 @@ describe( 'throttle actions', () => {
 	} );
 
 	test( 'does nothing for a noop action, even when the ban is active', () => {
-		const handler = jest.fn();
+		const handler = vi.fn();
 		const unregister = registerThrottleActionHandler( handler );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
 		process.env.E2E_THROTTLE_SIGNUP_ACTION = 'noop';
@@ -186,7 +187,7 @@ describe( 'throttle actions', () => {
 	} );
 
 	test( 'leaves a noop throttle out of the action on the ones that are not', () => {
-		const handler = jest.fn();
+		const handler = vi.fn();
 		const unregister = registerThrottleActionHandler( handler );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( NOW + 1 );
 		process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION = String( NOW + 1 );
@@ -212,7 +213,7 @@ describe( 'throttle actions', () => {
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 describe( 'the log line', () => {
@@ -331,7 +332,7 @@ describe( 'raiseFlag', () => {
 
 	test( 'the next restatement tries the write again', async () => {
 		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => clock );
 		appendOwnBuildLog.mockRejectedValueOnce( new Error( 'TeamCity is down' ) );
 
 		await raiseAndSettle( 'signup' );
@@ -458,7 +459,7 @@ describe( 'raiseFlag', () => {
 
 	test( 'a tag that keeps being refused is given up on, not asked forever', async () => {
 		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => clock );
 		tagOwnBuild.mockResolvedValue( 403 );
 
 		// Tagging hangs off writing, and a refusal inside the damping window writes
@@ -474,7 +475,7 @@ describe( 'raiseFlag', () => {
 
 	test( 'a ban refused again before it lapses runs from the later refusal', async () => {
 		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => clock );
 
 		await raiseAndSettle( 'signup' );
 		clock += 500_000;
@@ -492,7 +493,7 @@ describe( 'raiseFlag', () => {
 
 	test( 'a ban restated no more than ten times over its length', async () => {
 		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => clock );
 
 		// What a keystroke-per-request endpoint does to a log: a refusal every
 		// 100ms for the length of the ban, which is 600 of them.
@@ -658,7 +659,7 @@ describe( 'readActiveThrottles', () => {
 
 	test( 'a build there was no time to read is passed over', async () => {
 		let clock = NOW;
-		jest.spyOn( Date, 'now' ).mockImplementation( () => clock );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => clock );
 		fetchBuildsByTag.mockImplementation( async ( tag ) =>
 			tag === 'throttle-signup' ? [ taggedBuild( 11 ), taggedBuild( 22 ) ] : null
 		);
@@ -903,22 +904,22 @@ describe( 'recording a response', () => {
 	} );
 
 	test( 'a successful search is never read', async () => {
-		const text = jest.fn( async () => '{"suggestions":["error"]}' );
+		const text = vi.fn( async () => '{"suggestions":["error"]}' );
 		await expect(
 			recordResponseThrottle( { url: () => SUGGESTIONS, status: () => 200, text } )
 		).resolves.toBeNull();
 	} );
 
 	test( 'a body that never arrives leaves the caller its own timeout', async () => {
-		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
+		vi.useFakeTimers( { toNotFake: [ 'Date' ] } );
 		try {
 			const recording = recordResponseThrottle(
 				response( 429, new Promise< string >( () => {} ) )
 			);
-			await jest.advanceTimersByTimeAsync( 2 * 1000 );
+			await vi.advanceTimersByTimeAsync( 2 * 1000 );
 			await expect( recording ).resolves.toBeNull();
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 } );

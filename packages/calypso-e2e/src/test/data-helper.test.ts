@@ -1,4 +1,5 @@
 import { describe, expect, test, jest } from '@jest/globals';
+import { vi } from 'vitest';
 import {
 	getRandomInteger,
 	getAccountCredential,
@@ -27,7 +28,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'DataHelper Tests', function () {
 	describe( 'Test: getRandomInteger', function () {
