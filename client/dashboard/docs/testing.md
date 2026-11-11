@@ -53,7 +53,7 @@ act( () => router.history.back() );
 expect( await screen.findByRole( 'heading', { name: 'Home' } ) ).toBeVisible();
 ```
 
-Assert on what the previous entry renders, and on `router.state.location` when the URL itself is the behavior. `components/dataviews/test/dataviews.test.tsx` covers both for a list that keeps its page in the URL.
+Assert on what the previous entry renders, and on `router.state.location` when the URL itself is the behavior. `components/dataviews/test/dataviews.test.tsx` does both for a list that keeps its page in the URL.
 
 When the test builds a DataViews `view` by hand, include `search: ''`. Without it, the search control calls `onChangeView` once on mount to add it, which shows up as a view change the user never made, and can add a history entry when `onChangeView` navigates.
 
