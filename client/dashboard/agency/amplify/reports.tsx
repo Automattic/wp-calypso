@@ -4,7 +4,6 @@ import {
 	Button,
 	ExternalLink,
 	Modal,
-	VisuallyHidden,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -300,7 +299,8 @@ export default function AmplifyReportsList( {
 					label,
 				} ) ),
 				filterBy: { operators: [ 'isAny' ] },
-				render: ( { item } ) => <Text>{ getStatusLabels()[ item.status ] }</Text>,
+				// The actions column shows the status, so this field is only a filter.
+				enableHiding: false,
 			},
 			{
 				id: 'humanScore',
@@ -351,8 +351,7 @@ export default function AmplifyReportsList( {
 			},
 			{
 				id: 'actions',
-				label: __( 'Actions' ),
-				header: <VisuallyHidden>{ __( 'Actions' ) }</VisuallyHidden>,
+				label: __( 'Status' ),
 				render: ( { item } ) => (
 					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
 						{ item.status === 'completed' && (
