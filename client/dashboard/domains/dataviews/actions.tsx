@@ -6,6 +6,7 @@ import {
 	sslDetailsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery, useMutation, useQueries } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -64,6 +65,7 @@ export const useActions = ( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createInfoNotice, removeNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
 		withSnackbar( siteSetPrimaryDomainMutation(), {
@@ -210,7 +212,7 @@ export const useActions = ( {
 					const domain = items[ 0 ];
 					return domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER
 						? __( 'View transfer' )
-						: __( 'View settings' );
+						: __( 'Settings' );
 				},
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
@@ -484,7 +486,11 @@ export const useActions = ( {
 			},
 			{
 				id: 'change-site-address',
-				label: __( 'Change site address' ),
+				isPrimary: true,
+				label: hasEnTranslation( 'Rename address' )
+					? __( 'Rename address' )
+					: __( 'Change site address' ),
+				modalHeader: __( 'Change site address' ),
 				supportsBulk: false,
 				callback: () => {},
 				isEligible: ( item: DomainSummary ) => {
@@ -578,6 +584,7 @@ export const useActions = ( {
 			user,
 			router,
 			purchases,
+			hasEnTranslation,
 			setPrimaryDomain,
 			isSettingPrimaryDomain,
 			setWwwPrimaryDomain,
