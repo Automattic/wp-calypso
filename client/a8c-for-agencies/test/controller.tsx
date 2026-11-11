@@ -69,9 +69,9 @@ describe( 'requireAccessContext', () => {
 	it( 'sends an opted-in agency to Prospect reports on the Multi-site Dashboard', () => {
 		const next = jest.fn();
 
-		requireAccessContext( buildContext( '/amplify', 'opt-in' ), next );
+		requireAccessContext( buildContext( '/prospect-reports', 'opt-in' ), next );
 
-		expect( replace ).toHaveBeenCalledWith( 'https://msd.test/amplify' );
+		expect( replace ).toHaveBeenCalledWith( 'https://msd.test/prospect-reports' );
 		expect( next ).not.toHaveBeenCalled();
 	} );
 

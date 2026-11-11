@@ -128,6 +128,18 @@ describe( 'Static site import flow', () => {
 				);
 			}
 		);
+
+		it( 'reads the site onto a preview, after login, for a customer who left checkout', () => {
+			window.location.pathname = readingPath;
+			window.location.search = '?from=example.com&platform=unknown&checkoutExit=1';
+
+			const steps = staticSiteImportFlow.initialize();
+
+			expect( window.location.replace ).not.toHaveBeenCalled();
+			expect(
+				steps.find( ( step ) => step.slug === STEPS.STATIC_SITE_IMPORT_READING.slug )
+			).toMatchObject( { requiresLoggedInUser: true } );
+		} );
 	} );
 
 	describe( 'authentication', () => {
@@ -209,7 +221,7 @@ describe( 'Static site import flow', () => {
 			{ locale: 'en', suffix: '' },
 			{ locale: 'es', suffix: '/es' },
 		] )(
-			'uses unified checkout for a new destination and returns to reading ($locale)',
+			'uses unified checkout for a new destination, returning to reading paid or not ($locale)',
 			( { locale, suffix } ) => {
 				jest.mocked( useFlowLocale ).mockReturnValue( locale );
 				jest.mocked( isUserLoggedIn ).mockReturnValue( false );
@@ -233,8 +245,8 @@ describe( 'Static site import flow', () => {
 					query: { ...query, newSite: '1', siteId: ':siteId' },
 				} );
 				expect( parseUrl( cancelDestination ) ).toEqual( {
-					path: `${ plansPath }${ suffix }`,
-					query,
+					path: `${ readingPath }${ suffix }`,
+					query: { ...query, checkoutExit: '1' },
 				} );
 			}
 		);
@@ -295,6 +307,33 @@ describe( 'Static site import flow', () => {
 				path: expect.stringMatching( new RegExp( `/sites/${ SITE.siteSlug }$` ) ),
 				query: { ...SOURCE, importSessionId: 'abc123', ref: 'static-site-import' },
 			} );
+		} );
+
+		it( 'sends a customer who left checkout to their preview site’s overview', () => {
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: {
+					action: 'continue',
+					importSessionId: 'abc123',
+					previewSiteSlug: 'preview.wpcomstaging.com',
+				},
+				query: { ...SOURCE, checkoutExit: '1' },
+			} );
+
+			expect( lastExit() ).toMatchObject( {
+				path: expect.stringMatching( /\/sites\/preview\.wpcomstaging\.com$/ ),
+				query: { ...SOURCE, importSessionId: 'abc123', ref: 'static-site-import' },
+			} );
+		} );
+
+		it( 'returns a customer who left checkout to plans when no preview can be built', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'preview_failed' },
+				query: { ...SOURCE, checkoutExit: '1' },
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
 		} );
 
 		it( 'requires an upgrade before continuing an old session for a free site', () => {

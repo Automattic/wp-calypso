@@ -39,9 +39,12 @@ describe( 'getDashboardPath', () => {
 		);
 	} );
 
-	it.each( [ '/amplify', '/amplify/reports' ] )( 'sends %s to Prospect reports', ( pathname ) => {
-		expect( getDashboardPath( pathname ) ).toBe( '/amplify' );
-	} );
+	it.each( [ '/prospect-reports', '/amplify', '/amplify/reports' ] )(
+		'sends %s to Prospect reports',
+		( pathname ) => {
+			expect( getDashboardPath( pathname ) ).toBe( '/prospect-reports' );
+		}
+	);
 
 	it.each( [
 		'/reports',

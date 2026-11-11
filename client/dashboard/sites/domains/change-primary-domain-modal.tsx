@@ -8,9 +8,11 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -18,6 +20,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import { isSubdomain } from '../../utils/domain';
+import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
 import PrimaryAddressIllustration from './primary-address-illustration';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './change-primary-domain-modal.scss';
@@ -36,6 +39,7 @@ export default function ChangePrimaryDomainModal( {
 	onClose,
 }: ChangePrimaryDomainModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const titleId = useId();
 	const primaryAddress = currentPrimaryDomain?.domain ?? '';
 	const addresses = [
@@ -62,21 +66,19 @@ export default function ChangePrimaryDomainModal( {
 		address: string;
 		message: string;
 	} | null >( null );
-	const errorSnackbar = { error: { source: 'server' as const } };
 	const snackbar = {
-		...errorSnackbar,
 		success: sprintf(
 			/* translators: %s is domain */
 			__( 'Primary site address changed: all domains will redirect to %s.' ),
 			selectedDomain
 		),
+		error: { source: 'server' as const },
 	};
 	const setPrimaryDomainMutation = useMutation(
-		withSnackbar(
-			siteSetPrimaryDomainMutation(),
+		withSnackbar( siteSetPrimaryDomainMutation(), {
 			// The www request that follows shows the success message.
-			selected?.www ? errorSnackbar : snackbar
-		)
+			success: selected?.www ? undefined : snackbar.success,
+		} )
 	);
 	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
 	// The modal explains a failure here, because the primary site address has already changed.
@@ -129,7 +131,12 @@ export default function ChangePrimaryDomainModal( {
 
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain },
-			{ onSuccess: selected.www ? setWwwAfterPrimary : onClose }
+			{
+				onSuccess: selected.www ? setWwwAfterPrimary : onClose,
+				onError: ( error ) => {
+					createErrorNotice( getPrimaryDomainErrorMessage( error ), { type: 'snackbar' } );
+				},
+			}
 		);
 	};
 

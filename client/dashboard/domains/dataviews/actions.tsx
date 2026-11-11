@@ -24,11 +24,11 @@ import {
 } from '../../app/router/domains';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { getCurrentDashboard } from '../../app/routing';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
@@ -60,13 +60,11 @@ export const useActions = ( {
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
-		withSnackbar( siteSetPrimaryDomainMutation(), {
-			error: { source: 'server' },
-		} )
+		siteSetPrimaryDomainMutation()
 	);
 
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
@@ -329,6 +327,10 @@ export const useActions = ( {
 									origin: 'dataviews_actions',
 									error_message: error.message,
 								} );
+
+								createErrorNotice( getPrimaryDomainErrorMessage( error ), {
+									type: 'snackbar',
+								} );
 							},
 						}
 					);
@@ -499,6 +501,7 @@ export const useActions = ( {
 			setPrimaryDomain,
 			isSettingPrimaryDomain,
 			createSuccessNotice,
+			createErrorNotice,
 			sitesByBlogId,
 			sslActiveByDomain,
 			recordTracksEvent,

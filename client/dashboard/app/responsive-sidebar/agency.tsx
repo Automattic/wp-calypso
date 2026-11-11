@@ -48,9 +48,7 @@ export default function AgencySidebar() {
 		!! supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' );
 	const canAccessDevTools = !! supports.agency.devTools && canAccess( devToolsRoute );
 	const canAccessMigrations = !! supports.agency.earn && canAccess( earnMigrationsRoute );
-	const canAccessAmplify =
-		!! ( supports.agency.amplify && activeAgency?.amplify?.allowed ) &&
-		canAccess( agencyAmplifyRoute );
+	const canAccessAmplify = !! supports.agency.amplify && canAccess( agencyAmplifyRoute );
 	const accessibleMarketplaceSections = marketplaceSections.filter( ( section ) =>
 		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
 	);
@@ -92,7 +90,7 @@ export default function AgencySidebar() {
 					label={ __( 'Clients' ) }
 					icon={ people }
 					to="/sites"
-					activePaths={ [ '/dev-tools', '/migrations', '/amplify' ] }
+					activePaths={ [ '/dev-tools', '/migrations', '/prospect-reports' ] }
 				>
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
@@ -108,7 +106,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
 					) }
 					{ canAccessAmplify && (
-						<SidebarMenuItem to="/amplify">{ getAmplifyFeatureName() }</SidebarMenuItem>
+						<SidebarMenuItem to="/prospect-reports">{ getAmplifyFeatureName() }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
