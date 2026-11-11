@@ -9,24 +9,28 @@ import { getBlackboxSessionId } from '../utils/get-blackbox-session-id';
 
 jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => true } ) );
 jest.mock( '../utils/blackbox-sdk', () => ( {
-	getBlackboxApiKey: ( feature ) => feature,
+	getBlackboxApiKey: jest.fn( () => 'checkout-key' ),
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 
 function TestForm( {
 	layout = 'wide',
 	suspended = false,
-	feature = 'checkout-key',
+	feature = 'blackbox-userless-checkout',
+	flow = 'signup',
 	direct = false,
 	onResult,
 	onSubmit,
 } ) {
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature,
+		flow,
 		suspended,
 	} );
 	const submit = async () => {
-		const sessionId = await ( direct ? getBlackboxSessionId( feature ) : getSessionId() );
+		const sessionId = await ( direct
+			? getBlackboxSessionId( 'checkout-key', undefined, flow )
+			: getSessionId() );
 		onResult( sessionId );
 		if ( sessionId !== null ) {
 			onSubmit( sessionId );
@@ -98,7 +102,9 @@ describe( 'Blackbox form lifetime', () => {
 		sdk.api.flush.mockResolvedValue( { sessionId: 'sid', challengePending: false, outcome: 'ok' } );
 		sdk.setState( { status: 'ready', sessionId: 'sid' } );
 
-		await expect( getBlackboxSessionId( 'signup-key' ) ).resolves.toBe( 'sid' );
+		await expect( getBlackboxSessionId( 'checkout-key', undefined, 'signup' ) ).resolves.toBe(
+			'sid'
+		);
 	} );
 
 	test( 'keeps an earlier form usable while a later form is mounted and after it unmounts', async () => {
@@ -128,10 +134,8 @@ describe( 'Blackbox form lifetime', () => {
 	test.each( [
 		[ 'unmount', 'flush' ],
 		[ 'suspend', 'flush' ],
-		[ 'key change', 'flush' ],
 		[ 'unmount', 'challenge' ],
 		[ 'suspend', 'challenge' ],
-		[ 'key change', 'challenge' ],
 	] )( 'cancels on %s during %s', async ( action, stage ) => {
 		const { rerender, unmount, formProps } = await startSubmission();
 		if ( stage === 'challenge' ) {
@@ -143,13 +147,7 @@ describe( 'Blackbox form lifetime', () => {
 		if ( action === 'unmount' ) {
 			unmount();
 		} else {
-			rerender(
-				<TestForm
-					{ ...formProps }
-					suspended={ action === 'suspend' }
-					feature={ action === 'key change' ? 'signup-key' : 'checkout-key' }
-				/>
-			);
+			rerender( <TestForm { ...formProps } suspended={ action === 'suspend' } /> );
 		}
 		await act( async () => {} );
 		expect( onResult ).toHaveBeenCalledWith( null );

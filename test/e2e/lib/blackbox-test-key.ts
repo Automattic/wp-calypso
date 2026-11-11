@@ -1,6 +1,6 @@
 import { DataHelper } from '@automattic/calypso-e2e';
 import type { NewTestUserDetails } from '@automattic/calypso-e2e';
-import type { Page } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
 
 const BLACKBOX_COLLECT_ROUTE = 'https://blackbox-api.wp.com/v1/collect**';
 
@@ -46,6 +46,23 @@ export function waitForCollectData( page: Page ): Promise< BlackboxCollectBody >
 			{ timeout: 60 * 1000 }
 		)
 		.then( ( response ) => response.json() );
+}
+
+/**
+ * Counts Blackbox collect POSTs for the remainder of the test page lifetime.
+ */
+export function trackBlackboxCollectPosts( page: Page ): { getCount: () => number } {
+	let count = 0;
+	const onRequest = ( request: Request ) => {
+		if (
+			request.method() === HTTP_POST &&
+			request.url().includes( 'blackbox-api.wp.com/v1/collect' )
+		) {
+			count += 1;
+		}
+	};
+	page.on( 'request', onRequest );
+	return { getCount: () => count };
 }
 
 export type LoginEndpointCapture = {

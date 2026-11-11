@@ -10,14 +10,16 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
  * @param {Object}   props
  * @param {boolean}  props.enabled Whether Blackbox is active for this surface.
  * @param {string}   [props.apiKey] Public key for this surface.
+ * @param {'login'|'signup'} props.flow Collect flow for `X-Blackbox-Flow`.
  * @param {Function} props.onSubmitBlockedChange Called with true/false when Blackbox should block submit.
  */
-export default function BlackboxChallenge( { enabled, apiKey, onSubmitBlockedChange } ) {
+export default function BlackboxChallenge( { enabled, apiKey, flow, onSubmitBlockedChange } ) {
 	const containerRef = useRef( null );
 	const { isChallengeActive, isLoading, hasChallengeContent } = useBlackbox( {
 		containerRef,
 		enabled,
 		apiKey,
+		flow,
 	} );
 
 	useIsomorphicLayoutEffect( () => {

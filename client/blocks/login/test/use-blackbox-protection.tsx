@@ -76,6 +76,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 			( props: { resetOnError: { code: number } | null; suspended?: boolean } ) =>
 				useBlackboxProtection( {
 					feature: 'blackbox-signup',
+					flow: 'signup',
 					suspended: props.suspended,
 					resetOnError: props.resetOnError,
 				} ),
@@ -127,6 +128,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 	function ContinueButton( { resetOnError }: { resetOnError: { code: number } | null } ) {
 		const { challenge, isSubmitBlocked } = useBlackboxProtection( {
 			feature: 'blackbox-signup',
+			flow: 'signup',
 			resetOnError,
 		} );
 
@@ -175,5 +177,26 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		expect( screen.getByRole( 'button' ) ).toBeDisabled();
 		act( () => jest.advanceTimersByTime( 1 ) );
 		expect( screen.getByRole( 'button' ) ).toBeEnabled();
+	} );
+} );
+
+describe( 'useBlackboxProtection key', () => {
+	beforeEach( () => {
+		( getBlackboxSessionId as jest.Mock ).mockReset();
+		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+	} );
+
+	it( 'collects with the login key', async () => {
+		const { result } = renderHook( () =>
+			useBlackboxProtection( { feature: 'blackbox-signup', flow: 'signup' } )
+		);
+
+		await result.current.getSessionId();
+
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+			'login-key',
+			expect.any( AbortSignal ),
+			'signup'
+		);
 	} );
 } );
