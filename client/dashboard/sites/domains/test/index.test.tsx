@@ -292,14 +292,32 @@ describe( '<SiteDomains>', () => {
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
 		expect( within( card ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
 		expect( within( card ).getByRole( 'button', { name: 'DNS' } ) ).toBeVisible();
 	} );
 
-	test( 'shows a table by default when the site has more domains than fit on one page', async () => {
+	test( 'shows cards with the layout switch when the site has 16 domains', async () => {
 		nock.cleanAll();
 		mockApis( {
-			domains: Array.from( { length: 13 }, ( _, index ) => ( {
+			domains: Array.from( { length: 16 }, ( _, index ) => ( {
+				...domain,
+				domain: `domain${ index }.com`,
+				primary_domain: index === 0,
+			} ) ),
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'group', { name: 'domain0.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'shows a table by default when the site has 17 domains', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: Array.from( { length: 17 }, ( _, index ) => ( {
 				...domain,
 				domain: `domain${ index }.com`,
 				primary_domain: index === 0,
@@ -403,6 +421,7 @@ describe( '<SiteDomains>', () => {
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 	} );
 
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {

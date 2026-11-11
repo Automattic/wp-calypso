@@ -25,11 +25,11 @@ import {
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
-	DOMAINS_LIST_LAYOUTS,
 	SITE_CONTEXT_VIEW,
 	sanitizeDomainFields,
 	sanitizeDomainsListPageSize,
 	useBulkActionsProgressNotice,
+	getDomainsListLayouts,
 	withDomainsListDefaultLayout,
 } from '../../domains/dataviews';
 import {
@@ -176,7 +176,7 @@ function SiteDomains() {
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+					defaultLayouts={ getDomainsListLayouts( siteDomains.length, !! resetView ) }
 					config={ DOMAINS_LIST_CONFIG }
 				>
 					{ isCardsLayout ? (

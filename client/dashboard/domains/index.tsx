@@ -21,11 +21,11 @@ import {
 	useFields,
 	DOMAINS_LIST_CONFIG,
 	DOMAINS_LIST_DEFAULT_VIEW,
-	DOMAINS_LIST_LAYOUTS,
 	recordDomainViewChanges,
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
+	getDomainsListLayouts,
 	withDomainsListDefaultLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
@@ -114,7 +114,7 @@ function Domains() {
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
-							defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+							defaultLayouts={ getDomainsListLayouts( domains.length, !! resetView ) }
 							config={ DOMAINS_LIST_CONFIG }
 							empty={
 								<DataViewsEmptyStateLayout

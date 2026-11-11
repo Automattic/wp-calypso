@@ -67,13 +67,28 @@ export const SITE_CONTEXT_VIEW: View = {
 	fields: [ 'expiry', 'domain_status' ],
 };
 
-// Cards suit a portfolio that fits on one page, but a table is easier to scan when there are more.
+const DOMAINS_LIST_CARDS_ONLY_MAX = 8;
+const DOMAINS_LIST_CARDS_DEFAULT_MAX = 16;
+
+// Cards suit a small portfolio, but a table is easier to scan when there are many domains.
 export function withDomainsListDefaultLayout( view: View, domainCount: number ): View {
-	if ( domainCount <= ( DOMAINS_LIST_DEFAULT_VIEW.perPage ?? 0 ) ) {
+	if ( domainCount <= DOMAINS_LIST_CARDS_DEFAULT_MAX ) {
 		return view;
 	}
 
 	return { ...view, type: 'table' } as View;
+}
+
+// A saved view keeps the layout switch, so someone who picked a layout can still change it.
+export function getDomainsListLayouts(
+	domainCount: number,
+	hasSavedView: boolean
+): SupportedLayouts {
+	if ( domainCount <= DOMAINS_LIST_CARDS_ONLY_MAX && ! hasSavedView ) {
+		return { grid: DOMAINS_LIST_LAYOUTS.grid };
+	}
+
+	return DOMAINS_LIST_LAYOUTS;
 }
 
 // Saved views can still list the removed SSL field, which the table would render as a blank column.

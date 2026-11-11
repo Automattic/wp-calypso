@@ -3,6 +3,7 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
+	getDomainsListLayouts,
 	withDomainsListDefaultLayout,
 } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
@@ -393,14 +394,25 @@ describe( 'withDomainsListDefaultLayout', () => {
 		sort: { field: 'domain', direction: 'asc' },
 	};
 
-	test( 'keeps the cards when the domains fit on one page', () => {
-		expect( withDomainsListDefaultLayout( cardsView, 12 ) ).toBe( cardsView );
+	test( 'keeps the cards for up to 16 domains', () => {
+		expect( withDomainsListDefaultLayout( cardsView, 16 ) ).toBe( cardsView );
 	} );
 
-	test( 'switches to a table, keeping the other settings, when there are more domains', () => {
-		expect( withDomainsListDefaultLayout( cardsView, 13 ) ).toEqual( {
+	test( 'switches to a table, keeping the other settings, from 17 domains', () => {
+		expect( withDomainsListDefaultLayout( cardsView, 17 ) ).toEqual( {
 			...cardsView,
 			type: 'table',
 		} );
+	} );
+} );
+
+describe( 'getDomainsListLayouts', () => {
+	test.each( [
+		[ 8, false, [ 'grid' ] ],
+		[ 9, false, [ 'table', 'grid' ] ],
+		[ 8, true, [ 'table', 'grid' ] ],
+		[ 17, false, [ 'table', 'grid' ] ],
+	] )( 'offers these layouts for %i domains, with a saved view: %s', ( count, saved, layouts ) => {
+		expect( Object.keys( getDomainsListLayouts( count, saved ) ) ).toEqual( layouts );
 	} );
 } );
