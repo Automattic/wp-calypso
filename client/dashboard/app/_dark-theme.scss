@@ -202,7 +202,8 @@
 	.dataforms-layouts-regular__field,
 	.dataforms-layouts-row__field,
 	.dataforms-layouts-card__field,
-	.dataforms-layouts-panel__field-dropdown {
+	.dataforms-layouts-panel__field-dropdown,
+	.performance-page-selector {
 		--wpds-color-foreground-content-neutral: var( --dashboard__text-color );
 		--wpds-color-foreground-content-neutral-weak: var( --dashboard__text-muted-color );
 		--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );

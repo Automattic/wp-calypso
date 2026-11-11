@@ -1,33 +1,25 @@
-import { CustomSelectControl } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Field, Select, Stack } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { SitePerformancePage } from '@automattic/api-core';
-import type { CSSProperties } from 'react';
 import './page-selector.scss';
 
-interface PageOption {
-	key: string;
-	name: string;
-	hint?: string;
-	style?: CSSProperties;
+interface PageItem {
+	value: string;
+	label: string;
+	path: string;
 }
 
-const defaultStyle = {
-	lineHeight: 1.2,
-};
-
-function mapPageToPageOption( page: SitePerformancePage, siteUrl: string ): PageOption {
-	const key = page.id.toString();
-	const name = page.title.rendered || __( 'No title' );
+function mapPageToItem( page: SitePerformancePage, siteUrl: string ): PageItem {
+	const label = page.title.rendered || __( 'No title' );
 	const path = page.link.replace( siteUrl ?? '', '' );
 
 	return {
-		key,
-		name: name.replace( /&nbsp;/g, ' ' ),
-		hint: path.length > 1 ? path.replace( /\/$/, '' ) : path,
-		style: defaultStyle,
+		value: page.id.toString(),
+		label: label.replace( /&nbsp;/g, ' ' ),
+		path: path.length > 1 ? path.replace( /\/$/, '' ) : path,
 	};
 }
 
@@ -35,54 +27,49 @@ export default function PageSelector( {
 	siteUrl,
 	pages,
 	currentPage,
+	isLoading,
 	onChange,
 }: {
 	siteUrl: string;
 	pages: SitePerformancePage[];
 	currentPage: SitePerformancePage | undefined;
-	onChange: ( page_id: string | null | undefined ) => void;
+	isLoading: boolean;
+	onChange: ( page_id: string | null ) => void;
 } ) {
 	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
-	const pageOptions = useMemo( () => {
-		if ( ! pages ) {
-			return [];
-		}
-
-		const mappedPages: PageOption[] = pages.map( ( page: SitePerformancePage ) =>
-			mapPageToPageOption( page, siteUrl )
-		);
-
-		return [
-			...mappedPages,
-			{
-				key: '-1',
-				name: __( 'Performance testing is available for the 20 most popular pages.' ),
-				style: {
-					...defaultStyle,
-					color: '#949494',
-					pointerEvents: 'none' as const,
-				},
-			},
-		];
-	}, [ pages, siteUrl ] );
-
-	const currentPageOption: PageOption | undefined = currentPage
-		? pageOptions.find( ( pageOptions ) => pageOptions.key === currentPage.id.toString() )
-		: undefined;
-
-	const handleChange = ( { selectedItem }: { selectedItem: PageOption } ) => {
-		onChange( selectedItem.key );
-	};
+	const pageItems = useMemo(
+		() => pages.map( ( page ) => mapPageToItem( page, siteUrl ) ),
+		[ pages, siteUrl ]
+	);
 
 	return (
-		<CustomSelectControl
+		<Field.Root
 			className="performance-page-selector"
-			label={ __( 'Page' ) }
-			value={ currentPageOption }
-			options={ pageOptions }
-			__next40pxDefaultSize
-			hideLabelFromVision={ isDesktop ? false : true }
-			onChange={ handleChange }
-		/>
+			render={ <Stack direction="row" align="center" gap="sm" /> }
+		>
+			<Field.Label hideFromVision={ ! isDesktop }>{ __( 'Page' ) }</Field.Label>
+			<Select.Root< string >
+				items={ pageItems }
+				value={ currentPage ? currentPage.id.toString() : null }
+				onValueChange={ onChange }
+				disabled={ isLoading || ! pageItems.length }
+			>
+				<Select.Trigger
+					className="performance-page-selector__trigger"
+					placeholder={ isLoading ? __( 'Loading pages…' ) : __( 'No pages found' ) }
+				/>
+				<Select.Popup positioner={ <Select.Positioner alignItemWithTrigger={ false } /> }>
+					<Select.Group>
+						<Select.GroupLabel>{ __( '20 most popular pages' ) }</Select.GroupLabel>
+						{ pageItems.map( ( item ) => (
+							<Select.Item key={ item.value } value={ item.value } label={ item.label }>
+								<Select.ItemLabel>{ item.label }</Select.ItemLabel>
+								<Select.ItemDescription>{ item.path }</Select.ItemDescription>
+							</Select.Item>
+						) ) }
+					</Select.Group>
+				</Select.Popup>
+			</Select.Root>
+		</Field.Root>
 	);
 }
