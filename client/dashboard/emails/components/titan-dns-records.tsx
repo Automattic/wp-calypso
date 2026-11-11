@@ -23,7 +23,7 @@ interface DnsRecordProps {
 	help?: string;
 }
 
-const DnsRecord = ( { type, note, name, value, help }: DnsRecordProps ) => (
+export const DnsRecord = ( { type, note, name, value, help }: DnsRecordProps ) => (
 	<VStack spacing={ 2 }>
 		<HStack spacing={ 2 } justify="flex-start">
 			<Text weight={ 500 }>{ type }</Text>

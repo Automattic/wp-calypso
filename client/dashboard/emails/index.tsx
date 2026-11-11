@@ -1,4 +1,4 @@
-import { DomainSubtype, EmailProvider } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -14,7 +14,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../componen
 import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import DkimMissingNotices from './components/dkim-missing-notices';
+import DkimMissingNotice from './components/dkim-missing-notice';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
 import EmptyDomainsState from './empty-domains-state';
@@ -22,7 +22,9 @@ import {
 	EmptyMailboxesStateContent,
 	EmptyMailboxesSearchStateContent,
 } from './empty-mailboxes-state';
+import { useDkimRecordChecks } from './hooks/use-dkim-record-checks';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import { hasTitanAccount } from './utils/has-titan-account';
 import type { DomainWithUnusedMailboxes } from './components/unused-mailbox-notice';
 import type { Email } from './types';
 
@@ -78,9 +80,7 @@ function Emails() {
 			} ) );
 	}, [ domainsWithEmails, allEmailAccounts ] );
 
-	const hasTitanAccount = ( allEmailAccounts ?? [] ).some(
-		( account ) => account.account_type === EmailProvider.Titan
-	);
+	const dkimRecordChecks = useDkimRecordChecks( hasTitanAccount( allEmailAccounts ) );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
@@ -193,8 +193,12 @@ function Emails() {
 				/>
 			}
 		>
-			<DkimMissingNotices enabled={ hasTitanAccount } />
-			<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
+			{ /* One notice at a time: a missing DKIM record can send mail to spam, so it comes first. */ }
+			{ dkimRecordChecks.entries.length ? (
+				<DkimMissingNotice { ...dkimRecordChecks } />
+			) : (
+				<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
+			) }
 			{ renderContent() }
 		</PageLayout>
 	);

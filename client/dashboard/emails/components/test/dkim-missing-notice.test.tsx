@@ -7,7 +7,12 @@ import { select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import DkimMissingNotices, { DKIM_POLL_INTERVAL, DKIM_POLL_TIMEOUT } from '../dkim-missing-notices';
+import {
+	DKIM_POLL_INTERVAL,
+	DKIM_POLL_TIMEOUT,
+	useDkimRecordChecks,
+} from '../../hooks/use-dkim-record-checks';
+import DkimMissingNotice from '../dkim-missing-notice';
 import type { TitanDkimStatus } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
@@ -40,10 +45,18 @@ const mockForce = ( body: TitanDkimStatus[] ) =>
 
 const checkAgainButton = () => screen.getByRole( 'button', { name: 'Check again' } );
 
-const fieldValue = ( name: string ) =>
-	( screen.getByRole( 'textbox', { name } ) as HTMLInputElement ).value;
+const fieldValues = ( name: 'Name' | 'Value' ) =>
+	screen
+		.getAllByRole( 'textbox', { name } )
+		.map( ( input ) => ( input as HTMLInputElement ).value );
 
-describe( '<DkimMissingNotices>', () => {
+// Wires the hook to the notice the way the Emails page does.
+function DkimNotice( { enabled = true }: { enabled?: boolean } ) {
+	const checks = useDkimRecordChecks( enabled );
+	return checks.entries.length ? <DkimMissingNotice { ...checks } /> : null;
+}
+
+describe( '<DkimMissingNotice>', () => {
 	test( 'shows a notice only for domains whose DKIM record is missing', async () => {
 		const scope = mockStatus( [
 			entry( { domain: 'found.com', status: 'found' } ),
@@ -51,7 +64,7 @@ describe( '<DkimMissingNotices>', () => {
 			entry( { domain: 'new.com', status: 'unknown', checked_at: null, record: null } ),
 			entry(),
 		] );
-		render( <DkimMissingNotices enabled /> );
+		render( <DkimNotice /> );
 
 		expect( await screen.findByText( TITLE ) ).toBeVisible();
 		expect( scope.isDone() ).toBe( true );
@@ -61,18 +74,30 @@ describe( '<DkimMissingNotices>', () => {
 
 	test( 'shows the record from the response', async () => {
 		mockStatus( [ entry() ] );
-		render( <DkimMissingNotices enabled /> );
+		render( <DkimNotice /> );
 
 		await screen.findByText( TITLE );
-		expect( fieldValue( 'Name' ) ).toBe( record( DOMAIN ).name );
-		expect( fieldValue( 'Type' ) ).toBe( 'TXT' );
-		expect( screen.getByText( record( DOMAIN ).data ) ).toBeVisible();
+		expect( fieldValues( 'Name' ) ).toEqual( [ record( DOMAIN ).name ] );
+		expect( fieldValues( 'Value' ) ).toEqual( [ record( DOMAIN ).data ] );
+		expect( screen.getByText( 'TXT' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Copy Value' } ) ).toBeVisible();
+	} );
+
+	test( 'lists every domain with a missing record in one notice', async () => {
+		mockStatus( [ entry(), entry( { domain: 'other.com' } ) ] );
+		render( <DkimNotice /> );
+
+		expect( await screen.findByText( 'Add the DKIM records for 2 domains' ) ).toBeVisible();
+		expect( fieldValues( 'Name' ) ).toEqual( [
+			record( DOMAIN ).name,
+			record( 'other.com' ).name,
+		] );
+		expect( screen.getAllByRole( 'button', { name: 'Check again' } ) ).toHaveLength( 2 );
 	} );
 
 	test( 'shows nothing when the request fails', async () => {
 		const scope = nock( API ).get( PATH ).reply( 500, { code: 'error', message: 'Oops' } );
-		render( <DkimMissingNotices enabled /> );
+		render( <DkimNotice /> );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect( screen.queryByRole( 'button', { name: 'Check again' } ) ).not.toBeInTheDocument();
@@ -80,7 +105,7 @@ describe( '<DkimMissingNotices>', () => {
 
 	test( 'does not fetch when disabled', () => {
 		const scope = mockStatus( [ entry() ] );
-		render( <DkimMissingNotices enabled={ false } /> );
+		render( <DkimNotice enabled={ false } /> );
 
 		expect( scope.isDone() ).toBe( false );
 	} );
@@ -103,7 +128,7 @@ describe( '<DkimMissingNotices>', () => {
 
 		test( 'sends force=true, polls, and hides the notice once the record is found', async () => {
 			mockStatus( [ entry() ] );
-			render( <DkimMissingNotices enabled /> );
+			render( <DkimNotice /> );
 
 			const force = mockForce( [ entry() ] );
 			const unchanged = mockStatus( [ entry() ] );
@@ -133,7 +158,7 @@ describe( '<DkimMissingNotices>', () => {
 
 		test( 'keeps the notice and asks to try later when the record is still missing', async () => {
 			mockStatus( [ entry() ] );
-			render( <DkimMissingNotices enabled /> );
+			render( <DkimNotice /> );
 
 			mockForce( [ entry() ] );
 			const stillMissing = mockStatus( [ entry( { checked_at: NEW_CHECKED_AT } ) ] );
@@ -148,7 +173,7 @@ describe( '<DkimMissingNotices>', () => {
 
 		test( 'stops polling and asks to try later when the time runs out', async () => {
 			mockStatus( [ entry() ] );
-			render( <DkimMissingNotices enabled /> );
+			render( <DkimNotice /> );
 
 			mockForce( [ entry() ] );
 			const polls = nock( API ).get( PATH ).times( 100 ).reply( 200, [ entry() ] );
