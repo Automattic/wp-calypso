@@ -203,6 +203,7 @@
 		"@wordpress/primitives": "^5.1.0",
 		"@wordpress/rich-text": "^8.1.0",
 		"@wordpress/url": "^5.1.0",
+		"@wp-playground/mcp": "3.1.64",
 		"@zip.js/zip.js": "2.8.17",
 		"animate.css": "^4.1.1",
 		"calypso": "workspace:^",
@@ -437,7 +438,8 @@
 		"@wordpress/worker-threads": "2.1.0",
 		"@emotion/native": "patch:@emotion/native@npm%3A11.11.0#~/.yarn/patches/@emotion-native-npm-11.11.0-8a3c683556.patch",
 		"nwsapi": "2.2.28",
-		"marked@npm:^18.0.3": "18.1.1"
+		"marked@npm:^18.0.3": "18.1.1",
+		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {

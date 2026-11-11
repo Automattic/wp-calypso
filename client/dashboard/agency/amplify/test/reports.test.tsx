@@ -32,7 +32,8 @@ const failedReport = {
 	status: 'failed',
 	score: { human: null, ai: null },
 	has_pdf: false,
-	failure_reason: 'The site took too long to load.',
+	failure_reason:
+		'amplify_run_failed: The agent finished without submitting a report via submit_scores/submit_findings.',
 } as AmplifyReport;
 
 function renderList( reports: AmplifyReport[] ) {
@@ -72,6 +73,17 @@ describe( '<AmplifyReportsList>', () => {
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		await waitFor( () => expect( URL.createObjectURL ).toHaveBeenCalled() );
+	} );
+
+	test( 'explains a failed report without the API’s failure reason', async () => {
+		renderList( [ failedReport ] );
+
+		expect(
+			await screen.findByText(
+				'We couldn’t finish this report. If the site loads, retry it. If the URL is wrong, archive it and start a new report.'
+			)
+		).toBeVisible();
+		expect( screen.queryByText( /submit_scores/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'tells the agency when a report can’t be retried again', async () => {
@@ -126,11 +138,8 @@ describe( '<AmplifyReportsList>', () => {
 		const user = userEvent.setup();
 
 		renderList( [ completedReport ] );
-		await user.click(
-			await screen.findByRole( 'button', {
-				name: 'Archive report for oliveandember.example',
-			} )
-		);
+		await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Archive' } ) );
 		const dialog = await screen.findByRole( 'dialog', { name: 'Archive report?' } );
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Archive' } ) );
 

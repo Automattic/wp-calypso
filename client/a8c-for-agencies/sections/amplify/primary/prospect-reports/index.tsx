@@ -1,5 +1,6 @@
 import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { removeQueryArgs } from '@wordpress/url';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -19,14 +20,24 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
+import type { AmplifyNewReportRequest } from 'calypso/dashboard/agency/amplify/types';
 
 import './style.scss';
 
 const TIERS_LINK = { tiersPath: A4A_AGENCY_TIER_LINK };
 
-function ProspectReportsLayout() {
+function ProspectReportsLayout( { isNewReportRequested }: { isNewReportRequested: boolean } ) {
 	const title = getFeatureName();
 	const page = useAmplifyPage();
+	const newReportRequest: AmplifyNewReportRequest = {
+		isRequested: isNewReportRequested,
+		onClear: () =>
+			window.history.replaceState(
+				window.history.state,
+				'',
+				removeQueryArgs( window.location.href, 'action' )
+			),
+	};
 
 	return (
 		<Layout className="prospect-reports" title={ title } wide>
@@ -39,7 +50,11 @@ function ProspectReportsLayout() {
 					<Subtitle>{ getFeatureDescription() }</Subtitle>
 					<Actions>
 						<MobileSidebarNavigation />
-						<AmplifyHeaderActions page={ page } tiersLink={ TIERS_LINK } />
+						<AmplifyHeaderActions
+							page={ page }
+							tiersLink={ TIERS_LINK }
+							newReportRequest={ newReportRequest }
+						/>
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
@@ -50,14 +65,18 @@ function ProspectReportsLayout() {
 	);
 }
 
-export default function ProspectReports() {
+export default function ProspectReports( {
+	isNewReportRequested = false,
+}: {
+	isNewReportRequested?: boolean;
+} ) {
 	const analyticsClient = useAnalyticsClient( undefined, window.location.pathname );
 
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>
 				<AnalyticsProvider client={ analyticsClient }>
-					<ProspectReportsLayout />
+					<ProspectReportsLayout isNewReportRequested={ isNewReportRequested } />
 					<Snackbars />
 				</AnalyticsProvider>
 			</AuthProvider>

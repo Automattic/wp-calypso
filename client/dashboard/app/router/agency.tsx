@@ -55,7 +55,10 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
+import {
+	getFeatureName as getAmplifyFeatureName,
+	NEW_REPORT_ACTION as AMPLIFY_NEW_REPORT_ACTION,
+} from '../../agency/amplify/constants';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
 	canSwitchAgencyDashboard,
@@ -238,21 +241,16 @@ export const agencyTiersRoute = createRoute( {
 	)
 );
 
-// `/amplify` – prospect-site analyses and reports.
+// `/prospect-reports` – prospect-site analyses and reports.
 export const agencyAmplifyRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
 	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
 	getParentRoute: () => agencyRoute,
-	path: 'amplify',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.amplify?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
+	path: 'prospect-reports',
+	// `?action=new-report` opens the New report modal, e.g. from the Tiers page.
+	validateSearch: ( search ): { action?: typeof AMPLIFY_NEW_REPORT_ACTION } => ( {
+		action: search.action === AMPLIFY_NEW_REPORT_ACTION ? AMPLIFY_NEW_REPORT_ACTION : undefined,
+	} ),
 } );
 
 const agencyAmplifyOverviewRoute = createRoute( {
@@ -264,11 +262,22 @@ const agencyAmplifyOverviewRoute = createRoute( {
 	)
 );
 
-const agencyAmplifyReportsRoute = createRoute( {
-	getParentRoute: () => agencyAmplifyRoute,
-	path: 'reports',
+// The page used to live at `/amplify`, and its reports at `/amplify/reports`.
+const agencyAmplifyLegacyRedirectRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
+	getParentRoute: () => agencyRoute,
+	path: 'amplify',
 	beforeLoad: () => {
-		throw dashboardRedirect( { to: '/amplify' } );
+		throw dashboardRedirect( { to: '/prospect-reports' } );
+	},
+} );
+
+const agencyAmplifyLegacySubpageRedirectRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
+	getParentRoute: () => agencyRoute,
+	path: 'amplify/$',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/prospect-reports' } );
 	},
 } );
 
@@ -2385,7 +2394,9 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
-		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute, agencyAmplifyReportsRoute ] ),
+		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute ] ),
+		agencyAmplifyLegacyRedirectRoute,
+		agencyAmplifyLegacySubpageRedirectRoute,
 		agencyPartnerDirectoryRoute.addChildren( [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,
