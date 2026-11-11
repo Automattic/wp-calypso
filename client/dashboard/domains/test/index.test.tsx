@@ -80,6 +80,10 @@ function mockApis( domains: unknown[], preferences = {} ) {
 	return { savedPreferences };
 }
 
+const SAVED_CARDS_VIEW = {
+	'hosting-dashboard-dataviews-view-domains': { type: 'grid', titleField: 'domain', perPage: 12 },
+};
+
 describe( '<Domains>', () => {
 	beforeEach( () => {
 		mockSearch.current = {};
@@ -177,8 +181,31 @@ describe( '<Domains>', () => {
 		expect( within( card ).queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows 12 cards per page with pagination', async () => {
+	test( 'shows cards when all the domains fit on one page', async () => {
+		mockApis( Array.from( { length: 12 }, ( _, index ) => mockDomain( index ) ) );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( domainNames() ).toHaveLength( 12 );
+	} );
+
+	test( 'shows a table by default when there are more domains than fit on one page', async () => {
 		mockApis( Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ) );
+
+		render( <Domains /> );
+
+		const table = await screen.findByRole( 'table' );
+		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( screen.queryByRole( 'group', { name: 'domain00.com' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows 12 cards per page with pagination', async () => {
+		mockApis(
+			Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ),
+			SAVED_CARDS_VIEW
+		);
 
 		render( <Domains /> );
 
@@ -189,7 +216,10 @@ describe( '<Domains>', () => {
 
 	test( 'shows the page from the URL', async () => {
 		mockSearch.current = { page: '2' };
-		mockApis( Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ) );
+		mockApis(
+			Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ),
+			SAVED_CARDS_VIEW
+		);
 
 		render( <Domains /> );
 

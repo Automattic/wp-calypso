@@ -30,6 +30,7 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListPageSize,
 	useBulkActionsProgressNotice,
+	withDomainsListDefaultLayout,
 } from '../../domains/dataviews';
 import {
 	canUserSetPrimaryDomain,
@@ -94,7 +95,7 @@ function SiteDomains() {
 		resetView,
 	} = usePersistentView( {
 		slug: 'site-domains',
-		defaultView: SITE_CONTEXT_VIEW,
+		defaultView: withDomainsListDefaultLayout( SITE_CONTEXT_VIEW, siteDomains.length ),
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );

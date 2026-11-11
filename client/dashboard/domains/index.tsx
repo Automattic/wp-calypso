@@ -26,6 +26,7 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
+	withDomainsListDefaultLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -48,6 +49,12 @@ function Domains() {
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
+	const { data: domains } = useSuspenseQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
 
 	const {
 		view: persistentView,
@@ -55,18 +62,11 @@ function Domains() {
 		resetView,
 	} = usePersistentView( {
 		slug: 'domains',
-		defaultView,
+		defaultView: withDomainsListDefaultLayout( defaultView, domains.length ),
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
-
-	const { data: domains } = useSuspenseQuery( {
-		...domainsQuery(),
-		select: ( data ) => {
-			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
-		},
-	} );
 
 	const actions = useActions( { user, sites, domains, layout: view.type } );
 

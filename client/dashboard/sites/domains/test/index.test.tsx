@@ -296,6 +296,22 @@ describe( '<SiteDomains>', () => {
 		expect( within( card ).getByRole( 'button', { name: 'DNS' } ) ).toBeVisible();
 	} );
 
+	test( 'shows a table by default when the site has more domains than fit on one page', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: Array.from( { length: 13 }, ( _, index ) => ( {
+				...domain,
+				domain: `domain${ index }.com`,
+				primary_domain: index === 0,
+			} ) ),
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByRole( 'table' ) ).toBeVisible();
+		expect( screen.queryByRole( 'group', { name: 'domain0.com' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'marks the primary address on its card, with its www prefix', async () => {
 		nock.cleanAll();
 		mockApis( { domains: [ { ...domain, primary_domain: true, primary_is_www: true } ] } );
