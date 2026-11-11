@@ -51,22 +51,13 @@ async function writeMomentLocaleLoaders() {
 
 async function writeFlagUrls() {
 	const codes = listFiles( 'flag-icons', 'flags/4x3', '.svg' );
-	// `do` and `in` are country codes, so prefix each import name to keep them valid identifiers.
-	const identifier = ( code ) =>
-		'flag' + code.replace( /(?:^|-)([a-z])/g, ( _, letter ) => letter.toUpperCase() );
-	// Sorted by file name, as the import/order lint rule expects: `gb-eng.svg` before `gb.svg`.
-	const imports = codes
-		.map( ( code ) => `${ code }.svg` )
-		.sort()
-		.map(
-			( file ) =>
-				`import ${ identifier( file.slice( 0, -4 ) ) } from 'flag-icons/flags/4x3/${ file }';`
-		);
-	const entries = codes.map( ( code ) => `${ quoteKey( code ) }: ${ identifier( code ) },` );
-	await writeFormatted(
-		'client/lib/flags/flag-urls.js',
-		`${ HEADER }${ imports.join( '\n' ) }\n\nexport default {\n${ entries.join( '\n' ) }\n};\n`
+	// Codes such as `gb-eng` aren't identifiers, so they're exported under string names.
+	const exportName = ( code ) => ( /^[a-z]+$/.test( code ) ? code : `'${ code }'` );
+	const exports = codes.map(
+		( code ) =>
+			`export { default as ${ exportName( code ) } } from 'flag-icons/flags/4x3/${ code }.svg';`
 	);
+	await writeFormatted( 'client/lib/flags/flag-urls.js', `${ HEADER }${ exports.join( '\n' ) }\n` );
 	return codes.length;
 }
 

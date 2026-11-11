@@ -1,4 +1,4 @@
-import flagUrls from './flag-urls';
+import * as flagUrls from './flag-urls';
 
 /**
  * Given a country code, return a flag SVG file path
@@ -7,6 +7,7 @@ import flagUrls from './flag-urls';
  */
 export function flagUrl( countryCode ) {
 	if ( Object.hasOwn( flagUrls, countryCode ) ) {
+		// eslint-disable-next-line import/namespace -- the key was just checked with Object.hasOwn.
 		return flagUrls[ countryCode ];
 	}
 

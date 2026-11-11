@@ -2,10 +2,8 @@ import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import momentLocaleLoaders from '../moment-locale-loaders';
 
-const REGENERATE = 'node bin/generate-moment-locale-and-flag-maps.mjs';
-
 describe( 'moment-locale-loaders', () => {
-	test( `has one loader per moment/locale file (if not, run \`${ REGENERATE }\`)`, () => {
+	test( 'has one loader per moment/locale file (if not, run `node bin/generate-moment-locale-and-flag-maps.mjs`)', () => {
 		const localeDir = path.join(
 			path.dirname( require.resolve( 'moment/package.json' ) ),
 			'locale'

@@ -1,3 +1,4 @@
+import { captureException } from '@automattic/calypso-sentry';
 import debugFactory from 'debug';
 import moment from 'moment';
 import { Component } from 'react';
@@ -36,6 +37,7 @@ class MomentProvider extends Component {
 				await this.loadingLocalePromise;
 			} catch ( error ) {
 				debug( 'Failed to load moment locale for %s', currentLocale, error );
+				captureException( error, { tags: { moment_locale: currentLocale } } );
 				return;
 			}
 			debug( 'Loaded moment locale for %s', currentLocale );

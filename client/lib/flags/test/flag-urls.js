@@ -1,11 +1,9 @@
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
-import flagUrls from '../flag-urls';
-
-const REGENERATE = 'node bin/generate-moment-locale-and-flag-maps.mjs';
+import * as flagUrls from '../flag-urls';
 
 describe( 'flag-urls', () => {
-	test( `has one URL per flag-icons 4x3 SVG (if not, run \`${ REGENERATE }\`)`, () => {
+	test( 'has one URL per flag-icons 4x3 SVG (if not, run `node bin/generate-moment-locale-and-flag-maps.mjs`)', () => {
 		const flagDir = path.join(
 			path.dirname( require.resolve( 'flag-icons/package.json' ) ),
 			'flags/4x3'
@@ -17,6 +15,6 @@ describe( 'flag-urls', () => {
 		);
 
 		// The Jest file transform turns each SVG import into its file name.
-		expect( flagUrls ).toEqual( expected );
+		expect( { ...flagUrls } ).toEqual( expected );
 	} );
 } );
