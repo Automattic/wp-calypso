@@ -5,8 +5,8 @@
  * See LICENSE.md file in root directory for full license.
  */
 
+import getTextContentFromNode from '../../../lib/util/get-text-content-from-node.js';
 const { parse } = require( 'espree' );
-const getTextContentFromNode = require( '../../../lib/util/get-text-content-from-node.js' );
 
 function parseCode( code ) {
 	const programNode = parse( code, { ecmaVersion: 'latest' } );

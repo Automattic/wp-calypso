@@ -9,9 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
-const { ERROR_MESSAGE } = require( '../../../lib/rules/post-message-no-wildcard-targets' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
+import rule from '../../../lib/rules/post-message-no-wildcard-targets';
+const { ERROR_MESSAGE } = rule;
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } };
 
 //------------------------------------------------------------------------------

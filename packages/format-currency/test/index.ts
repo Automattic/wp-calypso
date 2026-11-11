@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import formatCurrency, { getCurrencyObject, createFormatter } from '../src';
 import type { CurrencyFormatter } from '../src/types';
 
@@ -154,7 +155,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to $ if geolocation is US and locale is en', async () => {
-		globalThis.fetch = jest.fn(
+		globalThis.fetch = vi.fn(
 			( url: string ) =>
 				Promise.resolve( {
 					json: () =>
@@ -170,7 +171,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to US$ if geolocation is US but locale is not en', async () => {
-		globalThis.fetch = jest.fn(
+		globalThis.fetch = vi.fn(
 			( url: string ) =>
 				Promise.resolve( {
 					json: () =>
@@ -186,7 +187,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to US$ if geolocation is US but locale is an en variant', async () => {
-		globalThis.fetch = jest.fn(
+		globalThis.fetch = vi.fn(
 			( url: string ) =>
 				Promise.resolve( {
 					json: () =>
@@ -202,7 +203,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'does not change USD currency symbol from $ if geolocation is unknown and locale is en', async () => {
-		globalThis.fetch = jest.fn(
+		globalThis.fetch = vi.fn(
 			( url: string ) =>
 				Promise.resolve( {
 					json: () =>
@@ -218,7 +219,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to US$ if geolocation is not US and locale is en', async () => {
-		globalThis.fetch = jest.fn(
+		globalThis.fetch = vi.fn(
 			( url: string ) =>
 				Promise.resolve( {
 					json: () =>
