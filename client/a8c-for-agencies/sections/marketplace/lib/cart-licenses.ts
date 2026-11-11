@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { isWPCOMHostingProduct } from './hosting';
+import { isPressablePhpMemoryAddon } from './pressable-memory-addon';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 /** The most licenses of one product an agency can buy in one order. */
@@ -12,11 +13,12 @@ type CartProduct = Pick< APIProductFamilyProduct, 'slug' | 'family_slug' >;
 
 /**
  * How many of `product` one cart line can hold: a Pressable plan is the
- * agency's one plan, WordPress.com hosting counts sites, and every other
- * product stops at the per-order maximum.
+ * agency's one plan, a PHP memory add-on applies to one Pressable site,
+ * WordPress.com hosting counts sites, and every other product stops at the
+ * per-order maximum.
  */
 export function getMaxLicenses( product: CartProduct ): number {
-	if ( product.family_slug === 'pressable-hosting' ) {
+	if ( product.family_slug === 'pressable-hosting' || isPressablePhpMemoryAddon( product ) ) {
 		return 1;
 	}
 	if ( isWPCOMHostingProduct( product.family_slug ) ) {
