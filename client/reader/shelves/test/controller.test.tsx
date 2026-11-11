@@ -38,11 +38,11 @@ describe( 'shelves controller', () => {
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'redirects to the Reader’s retirement modal without mounting the view when reader/shelves is off', () => {
+	it( 'redirects to /reader without mounting the view when reader/shelves is off', () => {
 		jest.mocked( isEnabled ).mockReturnValue( false );
 		const ctx = makeContext();
 		shelves( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader?retired=shelves' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
 		expect( ctx.primary ).toBeNull();
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );

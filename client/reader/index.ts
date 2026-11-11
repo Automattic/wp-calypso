@@ -41,6 +41,7 @@ import {
 	listListing,
 } from './list/controller';
 import { onThisDay } from './on-this-day/controller';
+import { SHELVES_RETIRED_PATH } from './shelves-retired/constants';
 import { redirectMeToCurrentUser, userProfile } from './user-profile/controller';
 
 function forceTeamA8C( context: Context, next: () => void ): void {
@@ -261,6 +262,7 @@ export default async function (): Promise< void > {
 
 	setupReaderRedirects();
 	setupSearchRedirects();
+	setupShelvesRedirects();
 
 	// Catch-all: render a 404 for unrecognized /reader/* and /read/* paths instead of
 	// hanging. `readerNotFound` yields to sibling reader sections (search,
@@ -285,6 +287,17 @@ function setupSearchRedirects(): void {
 	page( '/reader/search', redirectToDiscoverSearch );
 	page( `/${ anyLangParam }/reader/search`, redirectToDiscoverSearch );
 	page( '/recommendations', redirectToDiscoverSearch );
+}
+
+/**
+ * Shelves has been retired. Old shelf links land on the Reader, which explains why.
+ */
+function setupShelvesRedirects(): void {
+	if ( config.isEnabled( 'reader/shelves' ) ) {
+		return;
+	}
+
+	page( [ '/reader/shelves', '/reader/shelves/*' ], () => page.redirect( SHELVES_RETIRED_PATH ) );
 }
 
 /**
