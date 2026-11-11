@@ -130,7 +130,12 @@ function SiteDomains() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={ <AddDomainButton siteSlug={ site.slug } /> }
+				/>
+			}
 			notices={
 				<>
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
