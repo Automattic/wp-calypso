@@ -161,7 +161,7 @@ test( 'disables Restore now until the box is ticked', async () => {
 	} );
 	expect(
 		screen.getByText(
-			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+			'This backup contains 3 known security threats and may restore malware on your site.'
 		)
 	).toBeVisible();
 	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
@@ -224,7 +224,7 @@ test( 'announces the warning once when it appears', async () => {
 	renderForm();
 
 	const sentence =
-		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+		'This backup contains 3 known security threats and may restore malware on your site.';
 	await screen.findByText( sentence );
 	expect( speak ).toHaveBeenCalledTimes( 1 );
 	expect( speak ).toHaveBeenCalledWith( sentence );
@@ -246,7 +246,7 @@ test( 'uses the singular for one threat', async () => {
 
 	expect(
 		await screen.findByText(
-			'This backup is known to contain 1 security threat. Restoring it may bring malware back to your site.'
+			'This backup contains 1 known security threat and may restore malware on your site.'
 		)
 	).toBeVisible();
 } );
@@ -256,7 +256,7 @@ test( 'renders the sentence without a raw paragraph so it lines up with the noti
 	renderForm();
 
 	const sentence = await screen.findByText(
-		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+		'This backup contains 3 known security threats and may restore malware on your site.'
 	);
 	expect( sentence.tagName ).not.toBe( 'P' );
 	expect( sentence.closest( 'p' ) ).toBeNull();
@@ -293,7 +293,7 @@ test( 'does nothing for backups without known threats', async () => {
 	renderForm();
 
 	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
-	expect( screen.queryByText( /known to contain/ ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( /known security threat/ ) ).not.toBeInTheDocument();
 	expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument();
 	expect( restoreButton() ).toBeEnabled();
 	scope.done();
@@ -305,7 +305,7 @@ test( 'does nothing before VaultPress ships', async () => {
 	renderForm();
 
 	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
-	expect( screen.queryByText( /known to contain/ ) ).not.toBeInTheDocument();
+	expect( screen.queryByText( /known security threat/ ) ).not.toBeInTheDocument();
 	expect( restoreButton() ).toBeEnabled();
 	expect( consoleError ).not.toHaveBeenCalled();
 	consoleError.mockRestore();
@@ -316,20 +316,16 @@ test( 'links to the latest backup without known threats', async () => {
 	renderForm();
 
 	const link = await screen.findByRole( 'link', {
-		name: 'Restore Oct 17, 2026 at 12:28 PM backup instead',
+		name: 'restore the latest backup without known threats, from Oct 17, 2026 at 12:28 PM',
 	} );
 	expect( link ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
-	expect( link ).toHaveAccessibleDescription(
-		"It's the most recent backup with no known security threats."
+	// One sentence with the warning: the link finishes it.
+	expect( link.parentElement ).toHaveTextContent(
+		'This backup contains 3 known security threats and may restore malware on your site. Instead, restore the latest backup without known threats, from Oct 17, 2026 at 12:28 PM.'
 	);
-	expect( link ).not.toHaveAttribute( 'title' );
-	// Shown as text, not in a tooltip.
-	expect(
-		screen.getByText( "It's the most recent backup with no known security threats." )
-	).toBeVisible();
 } );
 
 test( 'moves focus to the restore point after opening the clean backup', async () => {
@@ -352,7 +348,9 @@ test( 'moves focus to the restore point after opening the clean backup', async (
 	}
 	render( <RoutedForm /> );
 
-	const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
+	const link = await screen.findByRole( 'link', {
+		name: /^restore the latest backup without known threats/,
+	} );
 	expect( screen.getByText( /Choose what to restore/ ) ).not.toHaveFocus();
 	await user.click( link );
 
@@ -376,27 +374,24 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
-	expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
-	expect( toggle.querySelector( 'svg' ) ).toBeInTheDocument();
-	expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
-	await user.unhover( toggle );
-	await user.click( toggle );
+	const summary = await screen.findByText( 'Threat details' );
+	expect( summary.tagName ).toBe( 'SUMMARY' );
+	expect( summary.closest( 'details' ) ).not.toHaveAttribute( 'open' );
+	await user.click( summary );
 
 	expect(
 		await screen.findByRole( 'list', { name: 'Known threats in this backup' } )
 	).toBeVisible();
-	const expanded = screen.getByRole( 'button', { name: 'Hide threats' } );
-	expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
-	await user.unhover( expanded );
-	expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
+	expect( summary.closest( 'details' ) ).toHaveAttribute( 'open' );
 	expect(
-		await screen.findAllByRole( 'link', { name: /^Restore .+ backup instead$/ } )
+		await screen.findAllByRole( 'link', {
+			name: /^restore the latest backup without known threats/,
+		} )
 	).toHaveLength( 1 );
 	expect( threatsScope.isDone() ).toBe( true );
 } );
 
-test( 'shows no Show threats toggle without Scan', async () => {
+test( 'shows no threat details without Scan', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	render(
 		<SiteBackupRestoreForm
@@ -409,8 +404,8 @@ test( 'shows no Show threats toggle without Scan', async () => {
 		/>
 	);
 
-	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
-	expect( screen.queryByRole( 'button', { name: /show threats/i } ) ).not.toBeInTheDocument();
+	expect( await screen.findByText( /contains 3 known/ ) ).toBeVisible();
+	expect( screen.queryByText( 'Threat details' ) ).not.toBeInTheDocument();
 	expect( screen.getByRole( 'checkbox', { name: /I understand/ } ) ).toBeVisible();
 } );
 
@@ -479,6 +474,6 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 		/>
 	);
 
-	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
+	expect( await screen.findByText( /contains 3 known/ ) ).toBeVisible();
 	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).not.toBeInTheDocument();
 } );

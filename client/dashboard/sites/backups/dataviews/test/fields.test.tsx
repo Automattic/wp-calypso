@@ -88,7 +88,7 @@ test( 'explains the badge to screen readers without an unreachable tooltip', asy
 
 	const badge = await screen.findByText( 'Known threats (3)' );
 	expect( screen.getByTestId( 'content_text' ) ).toHaveTextContent(
-		'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.'
+		'This backup contains 3 known security threats and may restore malware on your site.'
 	);
 	await user.hover( badge );
 	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();

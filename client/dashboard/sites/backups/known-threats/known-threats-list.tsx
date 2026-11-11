@@ -2,7 +2,6 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { Fragment } from 'react';
 import { useIntlLocale } from '../../../app/locale';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
-import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import './known-threats-list.scss';
 import type { BackupThreat, BackupThreats } from '@automattic/api-core';
 
@@ -29,25 +28,11 @@ function getThreatWhere( threat: BackupThreat ) {
 }
 
 interface KnownThreatsListProps {
-	siteId: number;
-	siteSlug: string;
-	restoreLinkTo?: string;
 	threats: BackupThreats;
-	latestWithoutKnownThreats?: number | null;
-	currentBackupPeriod?: number | null;
-	showRestoreLink?: boolean;
 }
 
 // One threat per item, stacked, so long paths have the full width at any screen size.
-export function KnownThreatsList( {
-	siteId,
-	siteSlug,
-	restoreLinkTo,
-	threats,
-	latestWithoutKnownThreats,
-	currentBackupPeriod,
-	showRestoreLink = true,
-}: KnownThreatsListProps ) {
+export function KnownThreatsList( { threats }: KnownThreatsListProps ) {
 	const locale = useIntlLocale();
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
 
@@ -107,15 +92,6 @@ export function KnownThreatsList( {
 				) ) }
 			</ul>
 			{ threats.summary.vulnerable > 0 && <p>{ vulnerableNote }</p> }
-			{ showRestoreLink && (
-				<RestoreThatOneInsteadLink
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					restoreLinkTo={ restoreLinkTo }
-					latestWithoutKnownThreats={ latestWithoutKnownThreats }
-					currentBackupPeriod={ currentBackupPeriod }
-				/>
-			) }
 		</div>
 	);
 }

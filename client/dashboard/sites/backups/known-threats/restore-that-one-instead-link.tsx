@@ -4,12 +4,11 @@ import {
 	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Link } from '@tanstack/react-router';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useCallback, useId } from 'react';
+import { useCallback } from 'react';
 import { useIntlLocale } from '../../../app/locale';
-import RouterLinkButton from '../../../components/router-link-button';
-import { Text } from '../../../components/text';
 import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
 
 // The Activity Log entries a successful backup ends with.
@@ -96,7 +95,6 @@ export function RestoreThatOneInsteadLink( {
 	currentBackupPeriod,
 }: RestoreThatOneInsteadLinkProps ) {
 	const locale = useIntlLocale();
-	const descriptionId = useId();
 	const hasTarget =
 		!! restoreLinkTo &&
 		latestWithoutKnownThreats !== null &&
@@ -113,41 +111,36 @@ export function RestoreThatOneInsteadLink( {
 		return null;
 	}
 
-	let label: string = __( 'Restore the latest backup without known threats instead' );
-	if ( completedAt ) {
-		const timezoneString = siteSettings.timezone_string || undefined;
-		const format = ( options: Intl.DateTimeFormatOptions ) =>
-			timezoneString
-				? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
-				: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
-		label = sprintf(
-			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM". Reads "Restore Oct 17, 2026 at 2:30 PM backup instead".
-			__( 'Restore %1$s at %2$s backup instead' ),
-			format( { dateStyle: 'medium' } ),
-			format( { timeStyle: 'short' } )
+	const target = {
+		to: restoreLinkTo,
+		params: { siteSlug, rewindId: String( latestWithoutKnownThreats ) },
+		onClick: () => {
+			rewindIdAwaitingFocus = String( latestWithoutKnownThreats );
+		},
+	};
+
+	if ( ! completedAt ) {
+		return createInterpolateElement(
+			__( 'Instead, <link>restore the latest backup without known threats</link>.' ),
+			{ link: <Link { ...target } /> }
 		);
 	}
 
-	const reason = __( "It's the most recent backup with no known security threats." );
+	const timezoneString = siteSettings.timezone_string || undefined;
+	const format = ( options: Intl.DateTimeFormatOptions ) =>
+		timezoneString
+			? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
+			: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
 
-	// The reason shows under the link, which also takes it as its description.
-	return (
-		<VStack spacing={ 1 } alignment="flex-start">
-			<RouterLinkButton
-				__next40pxDefaultSize
-				variant="link"
-				to={ restoreLinkTo }
-				params={ { siteSlug, rewindId: String( latestWithoutKnownThreats ) } }
-				aria-describedby={ descriptionId }
-				onClick={ () => {
-					rewindIdAwaitingFocus = String( latestWithoutKnownThreats );
-				} }
-			>
-				{ label }
-			</RouterLinkButton>
-			<Text variant="muted" size={ 12 } id={ descriptionId }>
-				{ reason }
-			</Text>
-		</VStack>
+	return createInterpolateElement(
+		sprintf(
+			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM". Follows the warning that the backup being viewed has known threats.
+			__(
+				'Instead, <link>restore the latest backup without known threats, from %1$s at %2$s</link>.'
+			),
+			format( { dateStyle: 'medium' } ),
+			format( { timeStyle: 'short' } )
+		),
+		{ link: <Link { ...target } /> }
 	);
 }
