@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import {
 	UrlFriendlyTermType,
 	isDomainTransfer,
+	PLAN_FREE,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	PlanSlug,
 } from '@automattic/calypso-products';
@@ -496,10 +497,12 @@ function UnifiedPlansStep( {
 		paidDomainName = getDomainFromUrl( selectedSite.URL );
 	}
 
+	const isPlaygroundOnboarding = flowName === ONBOARDING_FLOW && intent === 'plans-playground';
 	const deemphasizeFreePlan =
-		( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
+		! isPlaygroundOnboarding &&
+		( ( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
 			( paidDomainName != null || isPaidTheme ) ) ||
-		deemphasizeFreePlanFromProps;
+			deemphasizeFreePlanFromProps );
 
 	const shouldUseModalBackedFreePlanCTA =
 		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
@@ -717,7 +720,16 @@ function UnifiedPlansStep( {
 				hidePlanTypeSelector={ hidePlanTypeSelector }
 				highlightLabelOverrides={ highlightLabelOverrides }
 				titleBadgeOverrides={ titleBadgeOverrides }
-				taglineOverrides={ taglineOverrides }
+				taglineOverrides={
+					isPlaygroundOnboarding
+						? {
+								...taglineOverrides,
+								[ PLAN_FREE ]: translate(
+									'Your Playground site won’t be imported with the Free plan.'
+								),
+							}
+						: taglineOverrides
+				}
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }
