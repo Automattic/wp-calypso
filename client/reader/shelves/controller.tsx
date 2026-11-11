@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
+import { SHELVES_RETIRED_PATH } from 'calypso/reader/shelves-retired/constants';
 import { getShelfPath, parseShelfTab } from './routes';
 
 const loadShelvesView = () =>
@@ -10,7 +11,7 @@ const loadShelvesView = () =>
 
 function ensureShelvesEnabled(): boolean {
 	if ( ! isEnabled( 'reader/shelves' ) ) {
-		page.redirect( '/reader' );
+		page.redirect( SHELVES_RETIRED_PATH );
 		return false;
 	}
 	return true;
