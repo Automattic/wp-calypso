@@ -10,6 +10,8 @@ import { AmplifyApprovalNotice } from './usage-meter';
 import { useAmplifyPage } from './use-amplify-page';
 import type { AmplifyNewReportRequest, AmplifyTiersLink } from './types';
 
+import './style.scss';
+
 export default function AgencyAmplify() {
 	const page = useAmplifyPage();
 	const navigate = useNavigate();
