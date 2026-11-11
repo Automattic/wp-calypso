@@ -4,8 +4,7 @@ import { rememberBlackboxKey } from 'calypso/blocks/login/utils/blackbox-surface
 
 let loadPromise = null;
 
-// Sent with a signup session so wpcom verifies it with `blackbox_api_key`.
-// A signup that sends no version is verified with `blackbox_signup_api_key`.
+// Sent with a signup session so signup verify uses the unified production key.
 export const BLACKBOX_KEY_VERSION = 2;
 
 /**
