@@ -51,7 +51,7 @@ describe( 'ChangePrimaryDomainModal', () => {
 			"We couldn't make this domain your primary domain. Please try again in a few minutes, or contact support if it keeps happening.",
 		],
 		[ 'domain_not_active', 'This domain is not active.', 'This domain is not active.' ],
-		[ 'unknown_error', '', "Something went wrong and we couldn't change your primary domain." ],
+		[ 'unknown_error', '', 'Failed to change primary domain.' ],
 	] )( 'keeps the modal open and shows an error for %s', async ( error, message, expected ) => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/sites/123/domains/primary', { domain: 'example.com' } )
