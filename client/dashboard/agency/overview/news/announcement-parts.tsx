@@ -1,12 +1,13 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { useIntlLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
+import { formatDate, getCalendarDaysUntil, parseYmdLocal } from '../../../utils/datetime';
 import { isDashboardPath } from '../../../utils/link';
 import NewTabLabel from '../../components/new-tab-label';
 import { ANNOUNCEMENT_LOGOS } from './announcements';
@@ -61,30 +62,21 @@ export function AnnouncementLogoImage( {
 	);
 }
 
-const DAY = 24 * 60 * 60 * 1000;
 // Announcements have no date of their own; for two weeks after they start they read as new.
 const NEW_FOR_DAYS = 14;
-
-function calendarDaysFrom( iso: string, now: Date ) {
-	const day = new Date( iso.length > 10 ? iso : `${ iso }T12:00:00` );
-	const from = new Date( now );
-	day.setHours( 0, 0, 0, 0 );
-	from.setHours( 0, 0, 0, 0 );
-	return Math.round( ( day.getTime() - from.getTime() ) / DAY );
-}
 
 /**
  * The date column: when an event happens (and how soon), when an offer ends, or a
  * New badge for an announcement in its first two weeks.
  */
 export function AnnouncementDate( { announcement }: { announcement: Announcement } ) {
-	const locale = useIntlLocale();
+	const locale = useLocale();
 	const { when } = announcement;
-	if ( ! when ) {
+	const date = when ? ( parseYmdLocal( when.date ) ?? new Date( when.date ) ) : null;
+	if ( ! when || ! date || isNaN( date.getTime() ) ) {
 		return null;
 	}
-	const now = new Date();
-	const days = calendarDaysFrom( when.date, now );
+	const days = getCalendarDaysUntil( date );
 	if ( when.kind === 'started' ) {
 		return days > -NEW_FOR_DAYS ? (
 			<span className="a4a-news-date">
@@ -92,8 +84,7 @@ export function AnnouncementDate( { announcement }: { announcement: Announcement
 			</span>
 		) : null;
 	}
-	const date = new Date( when.date.length > 10 ? when.date : `${ when.date }T12:00:00` );
-	const label = date.toLocaleDateString( locale, { month: 'short', day: 'numeric' } );
+	const label = formatDate( date, locale, { month: 'short', day: 'numeric' } );
 	let note = '';
 	if ( when.kind === 'event' ) {
 		if ( days <= 0 ) {
@@ -151,10 +142,10 @@ function trackCta(
 	announcement: Announcement,
 	ctaId: 'primary' | 'secondary'
 ) {
-	recordTracksEvent?.( 'calypso_a4a_overview_news_cta_click', {
-		announcement_id: announcement.id,
-		announcement_type: announcement.type,
+	recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+		event_id: announcement.id,
 		cta_id: ctaId,
+		announcement_type: announcement.type,
 	} );
 }
 
