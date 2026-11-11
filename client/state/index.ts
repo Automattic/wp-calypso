@@ -4,15 +4,7 @@ import {
 	useDispatch as reduxUseDispatch,
 	useStore as reduxUseStore,
 } from 'react-redux';
-import {
-	AnyAction,
-	createStore,
-	applyMiddleware,
-	compose,
-	Middleware,
-	Store,
-	StoreEnhancer,
-} from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { WithAddReducer } from 'calypso/state/add-reducer';
@@ -25,6 +17,7 @@ import desktopMiddleware from './desktop/middleware.js';
 import libraryMiddleware from './lib/middleware.js';
 import initialReducer from './reducer';
 import { IAppState, CalypsoDispatch } from './types';
+import type { AnyAction, Middleware, Store, StoreEnhancer } from 'redux';
 
 export function createReduxStore(
 	initialState: Record< string, unknown >,
