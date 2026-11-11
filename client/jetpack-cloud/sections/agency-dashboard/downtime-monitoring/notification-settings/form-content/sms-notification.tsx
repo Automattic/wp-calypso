@@ -59,7 +59,7 @@ export default function SMSNotification( {
 						</div>
 					</div>
 					<div className="notification-settings__content-sub-heading">
-						{ translate( 'Set up text messages to send to one or more people.' ) }
+						{ translate( 'Set up text messages to send to one phone number.' ) }
 					</div>
 					{ restriction === 'upgrade_required' && (
 						<div>{ ! isA8CForAgencies() && <UpgradeLink /> }</div>
