@@ -144,21 +144,14 @@ describe( 'safeImageUrl()', () => {
 	}
 
 	describe( 'browser', () => {
-		beforeAll( () => {
-			// this allows overwriting location
-			global.window = Object.create( window );
-			Object.defineProperty( window, 'location', {
-				value: {
-					origin: 'https://wordpress.com',
-				},
-			} );
+		beforeAll( async () => {
+			vi.stubGlobal( 'location', { origin: 'https://wordpress.com' } );
 			vi.resetModules();
-			safeImageUrl = require( '../' ).safeImageUrl;
+			safeImageUrl = ( await import( '../' ) ).safeImageUrl;
 		} );
 
 		afterAll( () => {
-			delete globalThis.location;
-			delete require.cache[ require.resolve( '../' ) ];
+			vi.unstubAllGlobals();
 		} );
 
 		test( 'should ignore a blob url for current origin', () => {
@@ -177,8 +170,9 @@ describe( 'safeImageUrl()', () => {
 	} );
 
 	describe( 'node', () => {
-		beforeAll( () => {
-			safeImageUrl = require( '../' ).safeImageUrl;
+		beforeAll( async () => {
+			vi.resetModules();
+			safeImageUrl = ( await import( '../' ) ).safeImageUrl;
 		} );
 
 		test( 'should make a blob url safe', () => {

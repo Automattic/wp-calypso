@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 
-virt { vi } from 'vitest';
-jest.mock( '@wordpress/data', () => ( {
+import { vi } from 'vitest';
+import { invokeSurvicateEventOnce } from '../invoke-event-once';
+
+vi.mock( '@wordpress/data', () => ( {
 	select: vi.fn(),
 	subscribe: vi.fn( () => vi.fn() ),
 } ) );
@@ -15,8 +17,6 @@ vi.mock( '@automattic/calypso-analytics', () => ( {
 vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: vi.fn( () => false ),
 } ) );
-
-import { invokeSurvicateEventOnce } from '../invoke-event-once';
 
 describe( 'invokeSurvicateEventOnce', () => {
 	const invokeEvent = vi.fn();

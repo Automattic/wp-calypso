@@ -1,1 +1,6 @@
-export { default } from '../../test/packages/vitest.config.mjs';
+import { mergeConfig } from 'vitest/config';
+import base from '../../test/packages/vitest.config.mjs';
+
+export default mergeConfig( base, {
+	test: { setupFiles: [ '@testing-library/jest-dom/vitest' ] },
+} );

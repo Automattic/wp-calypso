@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { loadScript } from '@automattic/load-script';
+import { select, subscribe } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
+import { loadSurvicateScript } from '../load-script';
+
 vi.mock( '@automattic/load-script', () => ( {
 	loadScript: vi.fn( () => Promise.resolve() ),
 } ) );
@@ -20,12 +26,6 @@ vi.mock( '@automattic/calypso-analytics', () => ( {
 vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: () => false,
 } ) );
-
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { loadScript } from '@automattic/load-script';
-import { select, subscribe } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
-import { loadSurvicateScript } from '../load-script';
 
 const mockSelect = select as Mock;
 const mockSubscribe = subscribe as unknown as Mock;

@@ -8,11 +8,13 @@ import {
 	filterLanguageRevisions,
 } from '../';
 
-vi.mock( '@automattic/calypso-config', () => ( { default: ( key ) => {
-	if ( 'i18n_default_locale_slug' === key ) {
-		return 'en';
-	}
-} } ) );
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: ( key ) => {
+		if ( 'i18n_default_locale_slug' === key ) {
+			return 'en';
+		}
+	},
+} ) );
 
 describe( '#getMappedLanguageSlug', () => {
 	test( 'should Norwegian `no` locale slug to `nb`.', () => {

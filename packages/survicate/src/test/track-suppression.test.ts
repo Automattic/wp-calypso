@@ -2,13 +2,13 @@
  * @jest-environment jsdom
  */
 
-vi.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: vi.fn(),
-} ) );
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { type Mock, vi } from 'vitest';
 import { recordSurveySuppressed } from '../track-suppression';
+
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
+} ) );
 
 const mockRecordTracksEvent = recordTracksEvent as Mock;
 

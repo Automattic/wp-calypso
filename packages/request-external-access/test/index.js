@@ -11,7 +11,10 @@ const popupMonitorMocks = {
 	getScreenCenterSpecs: vi.fn( () => '<screenSpecs>' ),
 };
 
-PopupMonitor.mockImplementation( () => ( { ...popupMonitorMocks } ) );
+// `requestExternalAccess` calls it with `new`, which Vitest refuses for an arrow function.
+PopupMonitor.mockImplementation( function () {
+	return { ...popupMonitorMocks };
+} );
 
 describe( 'requestExternalAccess', () => {
 	const serviceURL = 'http://example.com';

@@ -36,7 +36,7 @@ const genericContent: CookieBannerProps[ 'content' ] = {
 describe( 'CookieBanner', () => {
 	test( 'renders in simple consent correctly', () => {
 		const { container } = render(
-			<CookieBanner content={ genericContent } onAccept={ vi.fn } />
+			<CookieBanner content={ genericContent } onAccept={ vi.fn() } />
 		);
 
 		expect( getByText( container, 'acceptAllButton' ) ).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe( 'CookieBanner', () => {
 	} );
 	test( 'renders in customized consent correctly (after customize button click)', () => {
 		const { container } = render(
-			<CookieBanner content={ genericContent } onAccept={ vi.fn } />
+			<CookieBanner content={ genericContent } onAccept={ vi.fn() } />
 		);
 		fireEvent.click( getByText( container, 'customizeButton' ) );
 

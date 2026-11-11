@@ -5,15 +5,12 @@
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 import { localizeUrl, useLocalizeUrl } from '../';
+import { useLocale } from '../locale-context';
 
-vi.mock( '../locale-context', async () => {
-	const original = ( await vi.importActual< typeof import( '../locale-context' ) >( '../locale-context' ) );
-	return { default: Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
-		useLocale: vi.fn( () => 'en' ),
-	} ) };
-} );
-
-const { useLocale } = ( await import( '../locale-context' ) );
+vi.mock( '../locale-context', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	useLocale: vi.fn( () => 'en' ),
+} ) );
 
 describe( '#localizeUrl', () => {
 	function testLocalizeUrl( locale = 'en' ) {
