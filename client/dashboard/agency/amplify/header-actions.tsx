@@ -1,23 +1,40 @@
 import { Button, Tooltip, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import AmplifyLearnMoreModal from './learn-more-modal';
 import AmplifyNewReportModal from './new-report-modal';
-import type { AmplifyTiersLink } from './types';
+import type { AmplifyNewReportRequest, AmplifyTiersLink } from './types';
 import type { AmplifyPage } from './use-amplify-page';
 
 /** "Learn more" and "New report" for the page header, with the modals they open. */
 export default function AmplifyHeaderActions( {
 	page,
 	tiersLink,
+	newReportRequest,
 }: {
 	page: AmplifyPage;
 	tiersLink?: AmplifyTiersLink;
+	newReportRequest?: AmplifyNewReportRequest;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const [ isNewReportOpen, setIsNewReportOpen ] = useState( false );
+	const [ isNewReportOpen, setIsNewReportOpen ] = useState(
+		newReportRequest?.isRequested ?? false
+	);
+	const closeNewReport = () => {
+		if ( newReportRequest?.isRequested ) {
+			newReportRequest.onClear();
+		}
+		setIsNewReportOpen( false );
+	};
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
+
+	// With no reports yet, the page body already shows the URL form.
+	useEffect( () => {
+		if ( page.state === 'empty' && isNewReportOpen ) {
+			closeNewReport();
+		}
+	} );
 
 	if ( page.state === 'empty' || page.state === 'loading' ) {
 		return null;
@@ -64,7 +81,7 @@ export default function AmplifyHeaderActions( {
 				</Button>
 			) }
 			{ newReportButton }
-			{ isNewReportOpen && (
+			{ isNewReportOpen && page.state === 'reports' && (
 				<AmplifyNewReportModal
 					agencyId={ page.agencyId }
 					canScan={ page.canScan }
@@ -73,8 +90,8 @@ export default function AmplifyHeaderActions( {
 					tierId={ page.tierId }
 					tiersLink={ tiersLink }
 					onUsageError={ page.handleUsageError }
-					onClose={ () => setIsNewReportOpen( false ) }
-					onCreated={ () => setIsNewReportOpen( false ) }
+					onClose={ closeNewReport }
+					onCreated={ closeNewReport }
 				/>
 			) }
 			{ isLearnMoreOpen && <AmplifyLearnMoreModal onClose={ () => setIsLearnMoreOpen( false ) } /> }

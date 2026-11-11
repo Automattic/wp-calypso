@@ -79,14 +79,6 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
-
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: () => [ false, null ],
-} ) );
-
 jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
 	__esModule: true,
 	default: () => 'cart-key',

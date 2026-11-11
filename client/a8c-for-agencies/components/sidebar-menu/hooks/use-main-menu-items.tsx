@@ -228,19 +228,15 @@ const useMainMenuItems = ( path: string ) => {
 						},
 					]
 				: [] ),
-			...( agency?.amplify?.allowed
-				? [
-						{
-							icon: megaphone,
-							path: A4A_PROSPECT_REPORTS_LINK,
-							link: A4A_PROSPECT_REPORTS_LINK,
-							title: getFeatureName(),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Amplify',
-							},
-						},
-					]
-				: [] ),
+			{
+				icon: megaphone,
+				path: A4A_PROSPECT_REPORTS_LINK,
+				link: A4A_PROSPECT_REPORTS_LINK,
+				title: getFeatureName(),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Amplify',
+				},
+			},
 			{
 				icon: chartBar,
 				path: A4A_REPORTS_LINK,

@@ -21,14 +21,15 @@ import {
 	getDomainId,
 	getTableActions,
 	useActions,
+	useDomainsListLayouts,
 	useFields,
 	DOMAINS_LIST_CONFIG,
 	DOMAINS_LIST_DEFAULT_VIEW,
-	DOMAINS_LIST_LAYOUTS,
 	recordDomainViewChanges,
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
+	withDomainsListDefaultLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -51,6 +52,12 @@ function Domains() {
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
+	const { data: domains } = useSuspenseQuery( {
+		...domainsQuery(),
+		select: ( data ) => {
+			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
+		},
+	} );
 
 	const {
 		view: persistentView,
@@ -58,18 +65,16 @@ function Domains() {
 		resetView,
 	} = usePersistentView( {
 		slug: 'domains',
-		defaultView,
+		defaultView: withDomainsListDefaultLayout( defaultView, domains.length ),
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
-
-	const { data: domains } = useSuspenseQuery( {
-		...domainsQuery(),
-		select: ( data ) => {
-			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
-		},
-	} );
+	const {
+		layouts,
+		recordLayoutChoice,
+		resetView: resetViewAndLayoutChoice,
+	} = useDomainsListLayouts( { slug: 'domains', domainCount: domains.length, view, resetView } );
 
 	const actions = useActions( { user, sites, domains, layout: view.type } );
 	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
@@ -109,16 +114,17 @@ function Domains() {
 							fields={ fields }
 							onChangeView={ ( nextView ) => {
 								recordDomainViewChanges( view, nextView, recordTracksEvent );
+								recordLayoutChoice( view, nextView );
 								updateView( nextView );
 							} }
-							onReset={ resetView }
+							onReset={ resetViewAndLayoutChoice }
 							view={ view }
 							// The cards render their own actions.
 							actions={ isCardsLayout ? undefined : tableActions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
-							defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+							defaultLayouts={ layouts }
 							config={ DOMAINS_LIST_CONFIG }
 							empty={
 								<DataViewsEmptyStateLayout
