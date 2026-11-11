@@ -11,12 +11,14 @@ jest.mock( 'i18n-calypso', () => ( {
 	useRtl: () => false,
 } ) );
 
+let mockDifferentiationFeatures = [ 'differentiation-feature' ];
+
 // Only the plan-constants lookup is stubbed; the FEATURE_* constants and helpers stay real so the
 // branch under test is the real one.
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	applyTestFiltersToPlansList: () => ( {
-		getVar42NoAiSignupWpcomFeatures: () => [ 'differentiation-feature' ],
+		getVar42NoAiSignupWpcomFeatures: () => mockDifferentiationFeatures,
 		getNewsletterSignupFeatures: () => [ 'newsletter-feature' ],
 		get2023PricingGridSignupWpcomFeatures: () => [ 'default-feature' ],
 		get2023PricingGridSignupJetpackFeatures: () => [],
@@ -26,11 +28,13 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	} ),
 } ) );
 
+import { FEATURE_CUSTOM_DOMAIN, FEATURE_SIMPLE_PAYMENTS } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
 import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
 import type { GridPlan, PlansIntent } from '../../../types';
 import type { FeatureList } from '@automattic/calypso-products';
 
+const PERSONAL = 'personal-bundle';
 const PREMIUM = 'value_bundle';
 
 const ALL_FEATURES = {
@@ -71,5 +75,49 @@ describe( 'usePlanFeaturesForGridPlans feature-list precedence', () => {
 
 	it( 'leaves non-curated intents on the differentiation list', () => {
 		expect( slugsFor( 'plans-upgrade' ) ).toEqual( [ 'differentiation-feature' ] );
+	} );
+} );
+
+describe( 'usePlanFeaturesForGridPlans badges', () => {
+	const BADGE_FEATURES = {
+		[ FEATURE_CUSTOM_DOMAIN ]: { getSlug: () => FEATURE_CUSTOM_DOMAIN, getTitle: () => 'Domain' },
+		[ FEATURE_SIMPLE_PAYMENTS ]: {
+			getSlug: () => FEATURE_SIMPLE_PAYMENTS,
+			getTitle: () => 'Payments',
+		},
+	} as unknown as FeatureList;
+
+	beforeEach( () => {
+		mockDifferentiationFeatures = [ FEATURE_CUSTOM_DOMAIN, FEATURE_SIMPLE_PAYMENTS ];
+	} );
+
+	afterEach( () => {
+		mockDifferentiationFeatures = [ 'differentiation-feature' ];
+	} );
+
+	function badgeFor( planSlug: string, featureSlug: string, hideFreeDomainBadge?: boolean ) {
+		const { result } = renderHook( () =>
+			usePlanFeaturesForGridPlans( {
+				gridPlans: [ { planSlug } ] as Omit< GridPlan, 'features' >[],
+				allFeaturesList: BADGE_FEATURES,
+				hideFreeDomainBadge,
+			} )
+		);
+
+		return result.current[ planSlug ].wpcomFeatures.find(
+			( feature ) => feature.getSlug() === featureSlug
+		)?.badgeText;
+	}
+
+	it( 'shows the Free badge on the Personal custom domain by default', () => {
+		expect( badgeFor( PERSONAL, FEATURE_CUSTOM_DOMAIN ) ).toBe( 'Free' );
+	} );
+
+	it( 'hides the Free badge on the Personal custom domain with hideFreeDomainBadge', () => {
+		expect( badgeFor( PERSONAL, FEATURE_CUSTOM_DOMAIN, true ) ).toBeUndefined();
+	} );
+
+	it( 'keeps the New badge on Premium with hideFreeDomainBadge', () => {
+		expect( badgeFor( PREMIUM, FEATURE_SIMPLE_PAYMENTS, true ) ).toBe( 'New' );
 	} );
 } );

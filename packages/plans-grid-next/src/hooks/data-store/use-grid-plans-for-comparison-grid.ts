@@ -30,6 +30,7 @@ const useGridPlansForComparisonGrid = ( {
 	reflectStorageSelectionInPlanPrices,
 	usePlansGridRedesignNewDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
+	hideFreeDomainBadge,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -59,6 +60,7 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
+		hideFreeDomainBadge,
 	} );
 
 	return useMemo( () => {

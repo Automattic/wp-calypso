@@ -48,10 +48,11 @@ import type { TranslateResult } from 'i18n-calypso';
 function getPricingDifferentiationFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
-	translate: ( text: string ) => TranslateResult
+	translate: ( text: string ) => TranslateResult,
+	hideFreeDomainBadge?: boolean
 ): TranslateResult | undefined {
 	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
-		return translate( 'Free' );
+		return hideFreeDomainBadge ? undefined : translate( 'Free' );
 	}
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
@@ -233,6 +234,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	isInSignup,
 	usePlansGridRedesignFeatures,
 	useMcpFeature,
+	hideFreeDomainBadge,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -243,6 +245,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	isInSignup?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
 	useMcpFeature?: boolean;
+	hideFreeDomainBadge?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -260,6 +263,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	isInSignup,
 	usePlansGridRedesignFeatures,
 	useMcpFeature,
+	hideFreeDomainBadge,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -475,7 +479,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						const badgeText = getPricingDifferentiationFeatureBadgeText(
 							planSlug,
 							featureSlug,
-							translate
+							translate,
+							hideFreeDomainBadge
 						);
 
 						wpcomFeaturesTransformed.push( {
@@ -524,6 +529,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		hasRedeemedDomainCredit,
 		usePlansGridRedesignFeatures,
 		useMcpFeature,
+		hideFreeDomainBadge,
 		translate,
 	] );
 };
