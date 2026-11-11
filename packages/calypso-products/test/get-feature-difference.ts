@@ -16,7 +16,6 @@ import {
 	FEATURE_WOOCOMMERCE_HOSTING,
 	PLAN_FREE,
 	FEATURE_AD_FREE_EXPERIENCE,
-	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_CUSTOM_DOMAIN,
@@ -27,7 +26,16 @@ import {
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	getPlan,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_SITE_STAGING_SITES,
 } from '../src';
+
+let mockDevToolsOnAllPaidPlans = false;
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => '';
+	config.isEnabled = ( flag: string ) =>
+		flag === 'hosting/dev-tools-all-paid-plans' && mockDevToolsOnAllPaidPlans;
+	return { __esModule: true, default: config, isEnabled: config.isEnabled };
+} );
 
 describe( 'getFeatureDifference function related tests', () => {
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Free --> Personal difference', () => {
@@ -36,7 +44,7 @@ describe( 'getFeatureDifference function related tests', () => {
 		).toEqual( [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
-			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_SUPPORT_FROM_EXPERTS,
 			FEATURE_STATS_BASIC_20250206,
 			FEATURE_UPLOAD_PLUGINS,
@@ -48,7 +56,6 @@ describe( 'getFeatureDifference function related tests', () => {
 		expect(
 			getFeatureDifference( PLAN_PERSONAL, PLAN_PREMIUM, 'get2023PricingGridSignupWpcomFeatures' )
 		).toEqual( [
-			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_UPLOAD_VIDEO,
@@ -60,6 +67,17 @@ describe( 'getFeatureDifference function related tests', () => {
 		expect(
 			getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
 		).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_DEV_TOOLS ] );
+	} );
+
+	it( 'get2023PricingGridSignupWpcomFeatures bundle selector: Premium --> Business difference with dev tools on all paid plans', () => {
+		mockDevToolsOnAllPaidPlans = true;
+		try {
+			expect(
+				getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
+			).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_SITE_STAGING_SITES ] );
+		} finally {
+			mockDevToolsOnAllPaidPlans = false;
+		}
 	} );
 
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Business --> Woo difference', () => {

@@ -37,9 +37,9 @@ interface SurveyResponse {
 }
 
 // Purchase-mutating requests below bypass Redux, so consumers reading purchases
-// through `@automattic/api-queries` (e.g. the manage-purchase page) won't see the
-// change until their queries are refetched. Invalidate the `[ 'upgrades' ]` root
-// key on the app's query client to cover every purchase query at once.
+// through `@automattic/api-queries` won't see the change until their queries are
+// refetched. Invalidate the `[ 'upgrades' ]` root key on the app's query client
+// to cover every purchase query at once.
 function invalidatePurchaseQueries() {
 	getCalypsoQueryClient()?.invalidateQueries( userPurchasesQuery() );
 }
@@ -83,35 +83,6 @@ export function cancelAndRefundPurchase(
 			onComplete?.( error, response );
 		}
 	);
-}
-
-export async function cancelPurchaseAsync( purchaseId: number ): Promise< boolean > {
-	try {
-		const data = await wpcom.req.post< CancelResponse >(
-			`/upgrades/${ purchaseId }/disable-auto-renew`
-		);
-		debug( null, data );
-		if ( data.success ) {
-			invalidatePurchaseQueries();
-		}
-		return data.success;
-	} catch ( error ) {
-		debug( error, null );
-		return false;
-	}
-}
-
-export async function cancelAndRefundPurchaseAsync(
-	purchaseId: number,
-	data: CancelAndRefundBody
-): Promise< CancelAndRefundResponse > {
-	const response = await wpcom.req.post< CancelAndRefundResponse >( {
-		path: `/purchases/${ purchaseId }/cancel`,
-		body: data,
-		apiNamespace: 'wpcom/v2',
-	} );
-	invalidatePurchaseQueries();
-	return response;
 }
 
 export const submitSurvey =

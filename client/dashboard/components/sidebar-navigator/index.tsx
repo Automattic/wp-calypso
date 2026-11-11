@@ -3,7 +3,7 @@ import { usePrevious } from '@wordpress/compose';
 import { Children, forwardRef, isValidElement, useMemo } from 'react';
 import { SidebarNavigatorContext } from './context';
 import SidebarNavigatorScreen from './sidebar-navigator-screen';
-import type { ScreenProps } from './sidebar-navigator-screen';
+import type { SidebarNavigatorScreenProps } from './sidebar-navigator-screen';
 import type { ForwardedRef, ReactElement } from 'react';
 
 interface SidebarNavigatorProps {
@@ -18,7 +18,10 @@ import './style.scss';
  * Example: given routeId `/sites/$siteSlug` and screen paths `['/', '/sites/$siteSlug', '/me']`,
  * it tries `/sites` (no match), then `/` (match) → returns `/`.
  */
-function findParentPath( routeId: string, screenPaths: string[] ): string | undefined {
+function findParentPath( routeId: string | undefined, screenPaths: string[] ): string | undefined {
+	if ( ! routeId ) {
+		return undefined;
+	}
 	const parts = routeId.split( '/' );
 	while ( parts.length > 1 ) {
 		parts.pop();
@@ -61,7 +64,7 @@ function UnforwardedSidebarNavigator(
 	const matches = allMatches.filter( ( m ) => m.status !== 'notFound' && m.status !== 'error' );
 
 	const screens = Children.toArray( children ).filter(
-		( child ): child is ReactElement< ScreenProps > =>
+		( child ): child is ReactElement< SidebarNavigatorScreenProps > =>
 			isValidElement( child ) && child.type === SidebarNavigatorScreen
 	);
 
@@ -76,9 +79,7 @@ function UnforwardedSidebarNavigator(
 
 	const previousPath = usePrevious( activePath );
 	const isBack =
-		previousPath !== undefined &&
-		activePath !== previousPath &&
-		activePath === findParentPath( previousPath, screenPaths );
+		activePath !== previousPath && activePath === findParentPath( previousPath, screenPaths );
 
 	const contextValue = useMemo( () => ( { activePath, isBack } ), [ activePath, isBack ] );
 

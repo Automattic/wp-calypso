@@ -2,8 +2,7 @@ import { styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const CheckboxWrapper = styled.div`
 	margin-top: 16px;
@@ -28,15 +27,12 @@ export default function AssignToAllPaymentMethods( {
 	onChange: ( isChecked: boolean ) => void;
 } ) {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
 
 	const handleChangeEvent = ( newIsChecked: boolean ): void => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_add_credit_card_form_assign_to_all_methods_toggle', {
-				old_value: isChecked,
-				new_value: newIsChecked,
-			} )
-		);
+		recordTracksEvent( 'calypso_add_credit_card_form_assign_to_all_methods_toggle', {
+			old_value: isChecked,
+			new_value: newIsChecked,
+		} );
 		onChange( newIsChecked );
 	};
 

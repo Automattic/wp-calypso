@@ -9,7 +9,7 @@ export default function useWPCOMDiscountTiers() {
 	const wpcomProducts = products
 		? ( products.find(
 				( product ) => product.slug === 'wpcom-hosting'
-		  ) as unknown as APIProductFamily )
+			) as unknown as APIProductFamily )
 		: undefined;
 
 	return useMemo( () => {

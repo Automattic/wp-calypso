@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { AI_SITE_BUILDER_SPEC_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { init as initPostHog } from '@automattic/posthog';
-import { useEffect } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2 } from '../../internals/types';
 
 function initialize() {
@@ -22,6 +22,9 @@ function initialize() {
 	const shouldEarlyProvisionSite = queryParams.get( 'early_provision_site' ) === '1';
 	const shouldProvisionAtomicSite = queryParams.get( 'provision_target' ) === 'wpcom-atomic';
 	const shouldBuildWow = queryParams.get( 'build_wow' ) === '1';
+	const shouldImportBlueprint =
+		queryParams.get( 'blueprint_archive_import' ) === '1' ||
+		queryParams.get( 'blueprint_simple_import' ) === '1';
 
 	if ( specId && ! shouldEarlyProvisionSite && ! shouldProvisionAtomicSite && ! shouldBuildWow ) {
 		// Redirect to main ai-site-builder flow preserving query parameters
@@ -29,7 +32,20 @@ function initialize() {
 		return [];
 	}
 
-	return shouldBuildWow ? [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION ] : [ STEPS.SITE_SPEC ];
+	// Build-wow builds a site the customer already owns, so it needs a logged-in user and
+	// somewhere to land when the build request fails.
+	if ( shouldBuildWow ) {
+		return stepsWithRequiredLogin( [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION, STEPS.ERROR ] );
+	}
+
+	// A blueprint run still has work to wait on once the spec is confirmed — the Atomic transfer
+	// and the archive restore, or on a Simple site the Playground import. That wait belongs on
+	// the standard processing screen, not behind a spec page the customer has already finished with.
+	if ( shouldImportBlueprint ) {
+		return [ STEPS.SITE_SPEC, STEPS.PROCESSING, STEPS.ERROR ];
+	}
+
+	return [ STEPS.SITE_SPEC ];
 }
 
 const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
@@ -37,25 +53,44 @@ const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
-	useSideEffect() {
-		const queryParams = useQuery();
-		const source = queryParams.get( 'source' );
-		const currentUser = useSelector( getCurrentUser );
+	useStepNavigation: ( currentStepSlug, navigate ) => {
+		return {
+			submit: ( submittedStep ) => {
+				switch ( submittedStep.slug ) {
+					case 'site-spec':
+						if ( submittedStep.providedDependencies?.buildWowError ) {
+							return navigate( 'error', undefined, true );
+						}
+						// Replaced, not pushed: the spec is confirmed and its only action taken, so
+						// Back belongs to whatever sent the customer here.
+						return navigate( 'processing', undefined, true );
 
-		useEffect( () => {
-			if ( source?.startsWith( 'ciab-' ) && config.isEnabled( 'posthog-tracking' ) ) {
-				initPostHog(
-					config( 'ciab_posthog_api_key' ),
-					currentUser ? { ID: currentUser.ID } : undefined,
-					{
-						session_recording: { maskAllInputs: false, maskTextSelector: '' },
+					case 'processing': {
+						const result = submittedStep.providedDependencies;
+						if ( ProcessingResult.SUCCESS === result.processingResult && result.redirectTo ) {
+							// The hand-off leaves Calypso for the built site, so it is a location
+							// change rather than a step navigation.
+							window.location.assign( result.redirectTo );
+							return;
+						}
+
+						// The pending action reports a failed or timed-out build by throwing, and
+						// the processing step has already stashed its message for the error step.
+						// The other outcomes store nothing. The reason tags every outcome, failure included.
+						return navigate(
+							'error',
+							{
+								errorReason: getProcessingErrorReason(
+									result.processingResult,
+									'processing_no_redirect'
+								),
+							},
+							true
+						);
 					}
-				);
-			}
-		}, [ source, currentUser ] );
-	},
-	useStepNavigation: () => {
-		return { submit: () => {} };
+				}
+			},
+		};
 	},
 };
 

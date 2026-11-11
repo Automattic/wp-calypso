@@ -1,8 +1,9 @@
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -10,7 +11,6 @@ import {
 } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { useAppContext } from '../../../app/context';
 import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../components/action-list';
@@ -22,16 +22,49 @@ import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getSiteDisplayName } from '../../../utils/site-name';
-import { getSiteDisplayUrl } from '../../../utils/site-url';
-import PreferencesLoginSiteDropdown from '../../preferences-primary-site/site-dropdown';
+import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
+import { getSiteDisplayUrl, getSiteJetpackMcpSettingsUrl } from '../../../utils/site-url';
+import PreferencesLoginSiteDropdown from '../../preferences-defaults/site-dropdown';
 import type { Site } from '@automattic/api-core';
+
+/**
+ * Self-hosted Jetpack sites can't open the dashboard's site settings routes, so
+ * their Manage link goes to the site's wp-admin MCP page instead. Hidden when
+ * the user couldn't open that page anyway.
+ */
+function SiteManageButton( { site }: { site: Site } ) {
+	if ( isSelfHostedJetpackConnected( site ) ) {
+		const href = getSiteJetpackMcpSettingsUrl( site );
+		if ( ! href || site.capabilities?.manage_options === false ) {
+			return null;
+		}
+		return (
+			<Button variant="tertiary" size="compact" __next40pxDefaultSize href={ href }>
+				{ __( 'Manage' ) }
+			</Button>
+		);
+	}
+	if ( ! site.slug ) {
+		return null;
+	}
+	return (
+		<RouterLinkButton
+			variant="tertiary"
+			size="compact"
+			to={ siteSettingsAIToolsRoute.fullPath }
+			params={ { siteSlug: site.slug } }
+		>
+			{ __( 'Manage' ) }
+		</RouterLinkButton>
+	);
+}
 
 export default function McpMcpSites() {
 	const { recordTracksEvent } = useAnalytics();
-	const { queries } = useAppContext();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
-		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
 	const isSiteListLoading = sitesQueryResult.isLoading;
@@ -87,7 +120,7 @@ export default function McpMcpSites() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( eventName, { site_id: siteId } );
+					recordTracksEvent( eventName, { ...tracksAudienceProps, site_id: siteId } );
 				},
 			}
 		);
@@ -102,7 +135,10 @@ export default function McpMcpSites() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', { site_id: siteId } );
+					recordTracksEvent( 'calypso_dashboard_mcp_site_removed', {
+						...tracksAudienceProps,
+						site_id: siteId,
+					} );
 				},
 			}
 		);
@@ -144,7 +180,10 @@ export default function McpMcpSites() {
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_mcp_sites_view" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_mcp_sites_view"
+				properties={ tracksAudienceProps }
+			/>
 			<VStack spacing={ 8 }>
 				<Card>
 					<CardBody>
@@ -181,16 +220,7 @@ export default function McpMcpSites() {
 									decoration={ site.site ? <SiteIcon site={ site.site } size={ 40 } /> : undefined }
 									actions={
 										<>
-											{ site.slug && (
-												<RouterLinkButton
-													variant="tertiary"
-													size="compact"
-													to={ siteSettingsAIToolsRoute.fullPath }
-													params={ { siteSlug: site.slug } }
-												>
-													{ __( 'Manage' ) }
-												</RouterLinkButton>
-											) }
+											{ site.site && <SiteManageButton site={ site.site } /> }
 											<Button
 												variant="secondary"
 												size="compact"

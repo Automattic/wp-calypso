@@ -87,6 +87,7 @@ export const twoStepAuthAppSetupQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'app-auth-setup' ],
 		queryFn: fetchTwoStepAuthAppSetup,
+		meta: { persist: false },
 	} );
 
 export const validateTwoStepAuthCodeMutation = () =>

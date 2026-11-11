@@ -1,5 +1,13 @@
 export { shouldLoadSurvicate, SURVICATE_WORKSPACE_ID } from './conditions';
 export { closeSurvicateSurvey } from './close-survey';
 export { isSurvicateScriptLoaded, loadSurvicateScript } from './load-script';
-export { invokeSurvicateEvent } from './invoke-event';
+export {
+	invokeSurvicateEvent,
+	shouldSuppressSurvey,
+	getSuppressionReason,
+	observeHelpCenter,
+} from './invoke-event';
+export { invokeSurvicateEventOnce } from './invoke-event-once';
+export { isModalOpen, isSurveyVisible, observeModals, MODAL_SELECTOR } from './modal-detection';
+export { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 export { getAccountAgeInDays, setSurvicateVisitorTraits } from './visitor-traits';

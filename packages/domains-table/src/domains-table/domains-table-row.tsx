@@ -101,7 +101,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				isAllSitesView,
 				selectedFeature,
 				isHostingOverview
-		  )
+			)
 		: '';
 
 	const renderOwnerCell = () => {
@@ -154,7 +154,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 						__nextHasNoMarginBottom
 						checked={ isSelected }
 						onChange={ () => handleSelectDomain( domain ) }
-						/* translators: Label for a checkbox control that selects a domain name.*/
+						/* translators: %(domain)s is a domain name. Label for a checkbox control that selects a domain name.*/
 						aria-label={ sprintf( __( 'Tick box for %(domain)s', __i18n_text_domain__ ), {
 							domain: domain.domain,
 						} ) }

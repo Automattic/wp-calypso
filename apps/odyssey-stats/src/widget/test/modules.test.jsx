@@ -1,0 +1,323 @@
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import wpcom from 'calypso/lib/wp';
+import useModuleDataQuery from '../../hooks/use-module-data-query';
+import config, { optionalConfig } from '../../lib/config-api';
+import canCurrentUser from '../../lib/selectors/can-current-user';
+import Modules from '../modules';
+
+jest.mock( '../../lib/config-api', () => {
+	const configApi = jest.fn();
+	configApi.isEnabled = jest.fn();
+	return { __esModule: true, default: configApi, optionalConfig: jest.fn() };
+} );
+jest.mock( '../../hooks/use-module-data-query' );
+jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn( () => Promise.resolve( {} ) ) } } ) );
+jest.mock( '../../lib/selectors/can-current-user' );
+
+const SITE_ID = 123;
+
+/**
+ * @param {Object} values Config values, as printed by stats-admin.
+ */
+function mockConfigValues( values ) {
+	optionalConfig.mockImplementation( ( key ) => values[ key ] );
+}
+
+/**
+ * @param {Object} states         What each module's query returns: `{ data }` or `{ error }`.
+ * @param {Object} states.protect Protect's state.
+ * @param {Object} states.akismet Akismet's state.
+ */
+const moduleStates = ( { protect, akismet } ) => {
+	useModuleDataQuery.mockImplementation( ( module ) => {
+		const state = module === 'protect' ? protect : akismet;
+		return {
+			data: state.data,
+			isPending: !! ( state.loading || state.paused ),
+			isLoading: !! state.loading,
+			isError: !! state.error,
+			error: state.error ? new Error( state.error ) : null,
+			refetch: jest.fn(),
+		};
+	} );
+};
+
+const ok = ( data ) => ( { data } );
+const failed = ( error = 'not_active' ) => ( { error } );
+const pending = () => ( { loading: true } );
+// Waiting for the connection to come back: still pending, but not fetching.
+const paused = () => ( { paused: true } );
+
+function renderModules() {
+	return render( <Modules siteId={ SITE_ID } adminBaseUrl="https://example.com/wp-admin/" /> );
+}
+
+describe( 'Modules', () => {
+	beforeEach( () => {
+		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		config.isEnabled.mockImplementation( ( feature ) => feature === 'is_running_in_jetpack_site' );
+		mockConfigValues( { jetpack_version: '15.1' } );
+		canCurrentUser.mockReturnValue( true );
+		moduleStates( { protect: ok( 12345 ), akismet: ok( 9520 ) } );
+		useModuleDataQuery.mockClear();
+		wpcom.req.post.mockClear();
+	} );
+
+	afterEach( () => optionalConfig.mockReset() );
+
+	it.each( [
+		[ 'a site without the Jetpack plugin', { jetpack_version: '' }, true ],
+		[ 'a Simple site', { jetpack_version: '15.1' }, false ],
+	] )(
+		'renders nothing on %s, and asks it for no module data, whose routes it would 404 on',
+		( _, values, isJetpackSite ) => {
+			config.isEnabled.mockReturnValue( isJetpackSite );
+			mockConfigValues( values );
+
+			const { container } = renderModules();
+
+			expect( container ).toBeEmptyDOMElement();
+			expect( useModuleDataQuery ).not.toHaveBeenCalled();
+		}
+	);
+
+	it.each( [
+		[ 'the Jetpack plugin is active', { jetpack_version: '15.1' } ],
+		[ 'a stats-admin release older than the key omits it', {} ],
+	] )( 'shows the cards when %s', ( _, values ) => {
+		mockConfigValues( values );
+		renderModules();
+		expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
+	} );
+
+	it( 'stands a placeholder in for a figure that is still loading', () => {
+		moduleStates( { protect: pending(), akismet: ok( 9520 ) } );
+		const { container } = renderModules();
+
+		expect( container.querySelectorAll( '.stats-widget-metric__value-skeleton' ) ).toHaveLength(
+			1
+		);
+		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '9.5K' ) ).toBeInTheDocument();
+	} );
+
+	it( 'tells a screen reader the counts are loading, once, until both have landed', () => {
+		moduleStates( { protect: pending(), akismet: pending() } );
+		const { rerender } = renderModules();
+		expect( screen.getByText( 'Loading…' ) ).toHaveClass( 'screen-reader-text' );
+
+		moduleStates( { protect: ok( 12345 ), akismet: ok( 9520 ) } );
+		rerender( <Modules siteId={ SITE_ID } adminBaseUrl="https://example.com/wp-admin/" /> );
+		expect( screen.queryByText( 'Loading…' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'for a user who cannot manage modules', () => {
+		beforeEach( () => canCurrentUser.mockReturnValue( false ) );
+
+		it( 'hides a failed metric rather than showing it as zero, and its Anti-spam link', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed() } );
+			renderModules();
+
+			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Blocked spam comments' ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'hides the whole section when neither metric can be shown', () => {
+			moduleStates( { protect: failed(), akismet: failed() } );
+			const { container } = renderModules();
+
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( 'shows both metrics but withholds the Anti-spam link, whose page asks for more', () => {
+			renderModules();
+
+			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'for an administrator who cannot activate plugins', () => {
+		beforeEach( () =>
+			canCurrentUser.mockImplementation(
+				( _siteId, capability ) => capability !== 'activate_plugins'
+			)
+		);
+
+		it( 'hides the Akismet card rather than an Install button My Jetpack would refuse', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			renderModules();
+
+			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Blocked spam comments' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Install' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still offers to activate Protect, a module that needs only manage_options', () => {
+			moduleStates( { protect: failed( 'not_active' ), akismet: ok( 9520 ) } );
+			renderModules();
+
+			expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'still points an invalid key at the page that fixes it', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'invalid_key' ) } );
+			renderModules();
+
+			expect( screen.getByRole( 'link', { name: 'Manage Akismet key' } ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'for a user who can manage modules', () => {
+		it( 'keeps a failed metric, so they can activate it', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			renderModules();
+
+			expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'installs Akismet through the My Jetpack per-product route where it still exists', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+			expect( wpcom.req.post ).toHaveBeenCalledWith( {
+				apiNamespace: 'my-jetpack/v1',
+				path: '/site/products/anti-spam',
+			} );
+		} );
+
+		it( 'moves on to the products route once Jetpack no longer has the per-product one', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			wpcom.req.post.mockRejectedValueOnce( { code: 'rest_no_route', status: 404 } );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+
+			expect( wpcom.req.post ).toHaveBeenLastCalledWith(
+				{ apiNamespace: 'my-jetpack/v1', path: '/site/products/activate' },
+				{ products: [ 'anti-spam' ] }
+			);
+		} );
+
+		it( 'says what went wrong when the route refuses, and lets them try again', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'rest_forbidden',
+				status: 403,
+				message: 'Sorry, you are not allowed to do that.',
+			} );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Sorry, you are not allowed to do that.'
+			);
+			expect( screen.getByRole( 'button', { name: 'Install' } ) ).not.toHaveClass( 'is-busy' );
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'falls back to a generic message when the failure is not a REST error', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
+			wpcom.req.post.mockRejectedValueOnce(
+				Object.assign( new Error( '500 status code for "POST /site/products/anti-spam"' ), {
+					status: 500,
+				} )
+			);
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Something went wrong. Please try again.'
+			);
+		} );
+
+		it( 'falls back to a generic message for a code whose text is not written for the viewer', async () => {
+			moduleStates( { protect: failed( 'not_active' ), akismet: ok( 12345 ) } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'some_updated',
+				status: 400,
+				message: ' protect: The requested Jetpack module is not supported by your plan.',
+			} );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Something went wrong. Please try again.'
+			);
+		} );
+
+		it( 'clears the message when they try again', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'rest_forbidden',
+				message: 'Sorry, you are not allowed to do that.',
+			} );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+			await screen.findByRole( 'alert' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it.each( [ 'not_installed', 'not_active' ] )(
+			'hides the Anti-spam link while Akismet is %s, since its page is not registered yet',
+			( error ) => {
+				moduleStates( { protect: ok( 12345 ), akismet: failed( error ) } );
+				renderModules();
+
+				expect(
+					screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+				).not.toBeInTheDocument();
+			}
+		);
+
+		it.each( [
+			[ 'loading', pending ],
+			[ 'paused', paused ],
+		] )( 'waits for a %s figure before offering the link', ( _, state ) => {
+			moduleStates( { protect: ok( 12345 ), akismet: state() } );
+			renderModules();
+
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'offers the link once Akismet reports a figure', () => {
+			renderModules();
+
+			expect( screen.getByRole( 'link', { name: 'Anti-spam insights' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'points an invalid key at the page that fixes it, from the card rather than the footer', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'invalid_key' ) } );
+			renderModules();
+
+			expect( screen.getByRole( 'link', { name: 'Manage Akismet key' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+} );

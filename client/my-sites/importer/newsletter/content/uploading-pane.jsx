@@ -1,6 +1,6 @@
 import { truncate } from '@automattic/js-utils';
-import { ProgressBar } from '@wordpress/components';
 import { Icon, cloudUpload } from '@wordpress/icons';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -86,13 +86,22 @@ export class UploadingPane extends PureComponent {
 					importerState === appStates.UPLOADING && uploadPercent < 99
 						? this.props.translate( 'Uploading %(filename)s\u2026', {
 								args: { filename: truncate( filename, { length: 40 } ) },
-						  } )
+							} )
 						: this.props.translate( 'Processing uploaded file\u2026' );
 
 				return (
 					<div className="content-upload-form__in-progress">
-						<p>{ uploaderPrompt }</p>
-						<ProgressBar className="content-upload-form__in-progress-bar is-larger-progress-bar" />
+						{ /* Only one upload pane renders per page, so a fixed id stays unique. */ }
+						<p id="content-upload-form-prompt">{ uploaderPrompt }</p>
+						<Progress.Root
+							className="content-upload-form__in-progress-bar is-larger-progress-bar"
+							aria-labelledby="content-upload-form-prompt"
+							value={ null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
 					</div>
 				);
 			}

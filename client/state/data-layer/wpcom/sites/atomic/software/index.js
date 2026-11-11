@@ -28,13 +28,13 @@ const installSoftware = ( action ) => [
 ];
 
 const receiveInstallResponse = () => [
-	recordTracksEvent( 'calypso_atomic_software_install_inititate_success', {
+	recordTracksEvent( 'calypso_atomic_software_install_initiate_success', {
 		context: 'atomic_software_install',
 	} ),
 ];
 
 const receiveInstallError = ( action, error ) => [
-	recordTracksEvent( 'calypso_atomic_software_install_inititate_failure', {
+	recordTracksEvent( 'calypso_atomic_software_install_initiate_failure', {
 		context: 'atomic_software_install',
 		error: error.error,
 	} ),

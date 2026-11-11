@@ -10,7 +10,7 @@ import type { Domain } from '@automattic/api-core';
 /**
  * TLDs that have restricted transfer capabilities
  */
-const RESTRICTED_TRANSFER_TLDS = [ 'uk', 'fr', 'ca', 'de', 'jp' ] as const;
+const RESTRICTED_TRANSFER_TLDS = [ 'uk', 'fr', 'ca', 'jp' ] as const;
 
 /**
  * Transfer action configuration type

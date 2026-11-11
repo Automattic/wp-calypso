@@ -197,6 +197,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .login__form-change-username {
+	&.is-link {
+		margin-bottom: 6px;
+	}
+	
 	font-weight: inherit;
 
 	.gridicon {

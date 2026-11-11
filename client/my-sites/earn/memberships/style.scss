@@ -440,6 +440,11 @@ body.is-section-earn.theme-default.color-scheme {
 	margin-top: 10px;
 	margin-left: -5px;
 }
+.memberships__products-product-read-only {
+	flex-shrink: 0;
+	margin-inline-start: 8px;
+	cursor: help;
+}
 .memberships__coupons-coupon-badge {
 	float: left;
 	margin-top: 10px;
@@ -494,7 +499,8 @@ body.is-section-earn.theme-default.color-scheme {
 	color: inherit;
 }
 
-.earn__payments-loading {
+.earn__payments-loading,
+.paid-subscriptions__loading {
 	margin-top: 25px;
 
 	.wpcom__loading-ellipsis {

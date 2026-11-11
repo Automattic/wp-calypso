@@ -5,6 +5,7 @@ export const userReceiptsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'billing-transactions', 'past' ],
 		queryFn: () => fetchUserReceipts(),
+		meta: { persist: false },
 	} );
 
 export const receiptQueryKey = (
@@ -16,6 +17,7 @@ export const receiptQuery = ( receiptId: number, options?: { includeFailedPurcha
 	queryOptions( {
 		queryKey: receiptQueryKey( receiptId, options ),
 		queryFn: () => fetchReceipt( receiptId, options ),
+		meta: { persist: false },
 	} );
 
 export const sendReceiptEmailMutation = () =>

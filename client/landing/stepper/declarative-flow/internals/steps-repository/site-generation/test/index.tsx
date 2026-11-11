@@ -1,0 +1,253 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import config from '@automattic/calypso-config';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { pollForBuildWowStatus } from '../build-status-poller';
+import SiteGeneration from '../index';
+import { useBuildWowStream } from '../stream/use-build-wow-stream';
+import { useSiteGeneration } from '../use-site-generation';
+import { SiteGenerationView } from '../view';
+import type { SiteGenerationState } from '../use-site-generation';
+
+let mockState: SiteGenerationState;
+
+jest.mock( '@automattic/calypso-config', () =>
+	Object.assign( jest.fn(), { isEnabled: jest.fn() } )
+);
+
+let mockIsAutomattician = false;
+let mockIsAutomatticianLoading = false;
+jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
+	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
+		isEnabled:
+			jest.requireMock( '@automattic/calypso-config' ).isEnabled( 'site-spec/design-candidates' ) ||
+			( requested && mockIsAutomattician ),
+		isLoading: requested && mockIsAutomatticianLoading,
+	} ),
+} ) );
+
+jest.mock( 'i18n-calypso', () => ( {
+	useTranslate: () => ( text: string ) => text,
+} ) );
+
+jest.mock( 'calypso/components/data/document-head', () => () => null );
+
+jest.mock( '../use-site-generation', () => ( {
+	useSiteGeneration: jest.fn( () => mockState ),
+} ) );
+
+jest.mock( '../build-status-poller', () => ( {
+	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
+} ) );
+
+jest.mock( '../stream/use-build-wow-stream', () => ( {
+	useBuildWowStream: jest.fn( () => null ),
+} ) );
+
+jest.mock( '../view', () => ( {
+	SiteGenerationView: jest.fn( ( { onReload }: { onReload: () => void } ) => (
+		<button onClick={ onReload }>Recover</button>
+	) ),
+} ) );
+
+describe( 'SiteGeneration recovery', () => {
+	const originalLocation = window.location;
+	const navigation = { submit: jest.fn() };
+	const useSiteGenerationMock = useSiteGeneration as jest.Mock;
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockIsAutomattician = false;
+		mockIsAutomatticianLoading = false;
+		jest
+			.mocked( config.isEnabled )
+			.mockImplementation( ( flag ) => flag === 'site-spec/build-wow-streaming' );
+		useSiteGenerationMock.mockImplementation( () => mockState );
+		mockState = {
+			status: 'failed',
+			failureReason: 'build-failed',
+			steps: [],
+			retryBuild: null,
+			isRetryingBuild: false,
+		};
+		Object.defineProperty( window, 'location', {
+			value: {
+				search:
+					'?build_wow=1&siteId=123&siteSlug=example.wordpress.com&specId=spec-1&editorUrl=https%3A%2F%2Fexample.wordpress.com%2Fwp-admin%2Fadmin.php%3Fpage%3Deasy-site-editor&ref=site-card&source=site-overview',
+				assign: jest.fn(),
+				reload: jest.fn(),
+			},
+			configurable: true,
+		} );
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			configurable: true,
+		} );
+	} );
+
+	const renderStep = () =>
+		render(
+			<SiteGeneration
+				flow="ai-site-builder-spec"
+				navigation={ navigation }
+				stepName="site-generation"
+			/>
+		);
+
+	it.each( [
+		'',
+		'https://evil.example/wp-admin/site-editor.php?spec_id=untrusted',
+		'https://old-domain.com/wp-admin/site-editor.php?source=old-source',
+		// eslint-disable-next-line no-script-url
+		'javascript:alert(1)',
+	] )( 'uses the API destination and ignores an old editorUrl parameter: %s', ( editorUrl ) => {
+		const query = new URLSearchParams( {
+			siteSlug: 'example.wordpress.com',
+			source: 'sites-dashboard',
+		} );
+		if ( editorUrl ) {
+			query.set( 'editorUrl', editorUrl );
+		}
+		window.location.search = `?${ query }`;
+		useSiteGenerationMock.mockImplementation(
+			jest.requireActual( '../use-site-generation' ).useSiteGeneration
+		);
+		renderStep();
+
+		const statusPollMock = pollForBuildWowStatus as jest.Mock;
+		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+		expect( statusPollMock.mock.calls[ 0 ][ 0 ].siteIdentifier ).toBe( 'example.wordpress.com' );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+		act( () =>
+			statusPollMock.mock.calls[ 0 ][ 0 ].onReady( {
+				build_status: 'live',
+				site_editor_url:
+					'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit',
+			} )
+		);
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit&source=sites-dashboard'
+		);
+	} );
+
+	it.each( [
+		[ true, '2' ],
+		[ false, undefined ],
+	] )(
+		'gives the picked design from the URL to the retry while the flag is %s',
+		( flagOn, expected ) => {
+			jest
+				.mocked( config.isEnabled )
+				.mockImplementation(
+					( flag ) =>
+						flag === 'site-spec/build-wow-streaming' ||
+						( flagOn && flag === 'site-spec/design-candidates' )
+				);
+			window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=2';
+			renderStep();
+
+			expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+				expect.objectContaining( { specId: 'spec-1', designCandidate: expected } )
+			);
+		}
+	);
+
+	it( 'gives the picked design to the retry of an Automattician with the flag off', () => {
+		mockIsAutomattician = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
+		);
+	} );
+
+	it( 'keeps the picked design for the retry while the Automattician check runs', () => {
+		mockIsAutomatticianLoading = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
+		);
+	} );
+
+	it( 'reloads when a failed build has no server retry', () => {
+		renderStep();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Recover' } ) );
+
+		expect( window.location.reload ).toHaveBeenCalledTimes( 1 );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uses the same fallback step IDs as the server checklist', () => {
+		renderStep();
+
+		const { steps } = useSiteGenerationMock.mock.calls[ 0 ][ 0 ];
+		expect( steps.map( ( step: { id: string } ) => step.id ) ).toEqual( [
+			'prepare',
+			'design',
+			'pages',
+			'images',
+			'polish',
+			'publish',
+		] );
+	} );
+
+	it.each( [ true, false ] )(
+		'waits for the server to advertise a stream with streaming enabled: %s',
+		( enabled ) => {
+			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
+			mockState = { ...mockState, status: 'working', streamInfo: null };
+			renderStep();
+
+			expect( SiteGenerationView ).toHaveBeenCalledWith(
+				expect.objectContaining( { streamRequested: false, siteSlug: 'example.wordpress.com' } ),
+				undefined
+			);
+			expect( useBuildWowStream ).toHaveBeenCalledWith( null );
+		}
+	);
+
+	it.each( [ true, false ] )(
+		'gates a server-advertised stream with streaming enabled: %s',
+		( enabled ) => {
+			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
+			mockState = {
+				...mockState,
+				status: 'working',
+				streamInfo: {
+					protocol: 1,
+					blogId: 123,
+					runId: 'run-1',
+					capabilities: [ 'progress' ],
+					eventsUrl: 'https://example.com/events',
+					snapshotUrl: 'https://example.com/snapshot',
+				},
+			};
+			renderStep();
+
+			expect( SiteGenerationView ).toHaveBeenCalledWith(
+				expect.objectContaining( { streamRequested: enabled, siteSlug: 'example.wordpress.com' } ),
+				undefined
+			);
+			expect( useBuildWowStream ).toHaveBeenCalledWith( enabled ? mockState.streamInfo : null );
+		}
+	);
+
+	it( 'reloads when checking again after a timeout', () => {
+		mockState.failureReason = 'timed-out';
+		renderStep();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Recover' } ) );
+
+		expect( window.location.reload ).toHaveBeenCalledTimes( 1 );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+} );

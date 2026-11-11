@@ -36,7 +36,10 @@ export function useActions(): Action< Site >[] {
 			label: __( 'WP Admin ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'admin' } );
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
+					action: 'admin',
+					site_id: site.ID,
+				} );
 				if ( site.options?.admin_url ) {
 					window.open( siteWpAdminLandingUrl( site.options.admin_url ), '_blank' );
 				}
@@ -48,7 +51,10 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Visit site ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'site' } );
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
+					action: 'site',
+					site_id: site.ID,
+				} );
 				if ( site.URL ) {
 					window.open( site.URL, '_blank' );
 				}
@@ -60,7 +66,10 @@ export function useActions(): Action< Site >[] {
 			label: isDashboardBackport() ? __( 'Domains ↗' ) : __( 'Domains' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'domains' } );
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
+					action: 'domains',
+					site_id: site.ID,
+				} );
 				if ( isDashboardBackport() ) {
 					window.open( `/domains/manage/${ site.slug }`, '_blank' );
 					return;
@@ -78,7 +87,10 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Jetpack Cloud ↗' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'jetpack-cloud' } );
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
+					action: 'jetpack-cloud',
+					site_id: site.ID,
+				} );
 				window.open( `https://cloud.jetpack.com/landing/${ site.slug }` );
 			},
 			isEligible: ( item: Site ) => isSelfHostedJetpackConnected( item ),
@@ -95,6 +107,7 @@ export function useActions(): Action< Site >[] {
 
 				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
 					action: 'prepare-for-launch',
+					site_id: site.ID,
 				} );
 				// Legacy event, kept for continuity with existing dashboards/queries. Now
 				// redundant with the unified action_click event above; remove once teams
@@ -112,7 +125,10 @@ export function useActions(): Action< Site >[] {
 			label: __( 'Settings' ),
 			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
-				recordTracksEvent( 'calypso_dashboard_sites_action_click', { action: 'settings' } );
+				recordTracksEvent( 'calypso_dashboard_sites_action_click', {
+					action: 'settings',
+					site_id: site.ID,
+				} );
 				router.navigate( { to: '/sites/$siteSlug/settings', params: { siteSlug: site.slug } } );
 			},
 			isEligible: ( item: Site ) =>
@@ -133,7 +149,7 @@ export function useActions(): Action< Site >[] {
 				<Suspense fallback={ null }>
 					<ComponentViewTracker
 						eventName="calypso_dashboard_sites_action_click"
-						properties={ { action: 'restore' } }
+						properties={ { action: 'restore', site_id: items[ 0 ].ID } }
 					/>
 					<SiteRestoreContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>
@@ -147,7 +163,7 @@ export function useActions(): Action< Site >[] {
 				<Suspense fallback={ null }>
 					<ComponentViewTracker
 						eventName="calypso_dashboard_sites_action_click"
-						properties={ { action: 'disconnect' } }
+						properties={ { action: 'disconnect', site_id: items[ 0 ].ID } }
 					/>
 					<JetpackSiteDisconnect site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>
@@ -161,7 +177,7 @@ export function useActions(): Action< Site >[] {
 				<Suspense fallback={ null }>
 					<ComponentViewTracker
 						eventName="calypso_dashboard_sites_action_click"
-						properties={ { action: 'leave' } }
+						properties={ { action: 'leave', site_id: items[ 0 ].ID } }
 					/>
 					<SiteLeaveContentInfo site={ items[ 0 ] } onClose={ closeModal ?? noop } />
 				</Suspense>

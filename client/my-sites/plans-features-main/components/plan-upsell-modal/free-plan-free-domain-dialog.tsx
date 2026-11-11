@@ -186,7 +186,7 @@ export function FreePlanFreeDomainDialog( {
 									break: <br />,
 								},
 							}
-					  )
+						)
 					: translate(
 							'{{strong}}Need premium themes, live chat support, and advanced design tools?{{/strong}}{{break}}{{/break}}Go with our %(planTitle)s plan, starting at just %(planPrice)s/month. All annual plans come with a 14-day money-back guarantee.',
 							{
@@ -199,7 +199,7 @@ export function FreePlanFreeDomainDialog( {
 									break: <br />,
 								},
 							}
-					  ) }
+						) }
 			</TextBox>
 
 			<ButtonRow>

@@ -1,6 +1,5 @@
 import {
 	__experimentalHStack as HStack,
-	__experimentalScrollable as Scrollable,
 	__experimentalVStack as VStack,
 	Button,
 	Modal,
@@ -15,7 +14,7 @@ export type ScreenShotsTimeLine = {
 	timing: number;
 };
 
-type Props = { screenshots: ScreenShotsTimeLine[] };
+type ScreenshotTimelineProps = { screenshots: ScreenShotsTimeLine[] };
 
 type OverlayState = {
 	isOpen: boolean;
@@ -23,7 +22,7 @@ type OverlayState = {
 	timing?: string;
 };
 
-export default function ScreenshotTimeline( { screenshots }: Props ) {
+export default function ScreenshotTimeline( { screenshots }: ScreenshotTimelineProps ) {
 	const [ selectedScreenshot, setSelectedScreenshot ] = useState< OverlayState >( {
 		isOpen: false,
 	} );
@@ -51,7 +50,7 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 							/>
 						</Modal>
 					) }
-					<Scrollable scrollDirection="x">
+					<div style={ { overflowX: 'auto', overflowY: 'hidden' } }>
 						<HStack spacing={ 4 } justify="flex-start">
 							{ screenshots.map( ( screenshot, index ) => {
 								const timing = `${ ( screenshot.timing / 1000 ).toFixed( 1 ) }s`;
@@ -105,7 +104,7 @@ export default function ScreenshotTimeline( { screenshots }: Props ) {
 								);
 							} ) }
 						</HStack>
-					</Scrollable>
+					</div>
 				</VStack>
 			</CardBody>
 		</Card>

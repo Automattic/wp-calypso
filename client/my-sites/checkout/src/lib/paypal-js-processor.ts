@@ -1,6 +1,6 @@
+import { confirmPayPalPPCPPayment } from '@automattic/api-core';
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { addUrlToPendingPageRedirect } from '../lib/pending-page';
@@ -20,33 +20,12 @@ type PayPalSubmitData = {
 	payPalApprovalPromise: Promise< void >;
 };
 
-type PayPalConfirmFailResponse = {
-	error: string;
-	message: string;
-};
-type PayPalConfirmSuccessResponse = {
-	success: true;
-};
-type PayPalConfirmResponse = PayPalConfirmFailResponse | PayPalConfirmSuccessResponse;
-
 function isValidPayPalJsSubmitData( data: unknown ): data is PayPalSubmitData {
 	const payPalData = data as PayPalSubmitData;
 	if ( 'resolvePayPalOrderPromise' in payPalData ) {
 		return true;
 	}
 	return false;
-}
-
-async function payPalJsApproval(
-	bdOrderId: string,
-	payPalOrderId: string
-): Promise< PayPalConfirmResponse > {
-	const body = {
-		bd_order_id: bdOrderId,
-		paypal_order_id: payPalOrderId,
-	};
-	const path = '/me/paypal-ppcp-confirm-payment';
-	return wp.req.post( { path, body } );
 }
 
 export async function payPalJsProcessor(
@@ -59,7 +38,6 @@ export async function payPalJsProcessor(
 	const {
 		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
-		reduxDispatch,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
@@ -68,7 +46,7 @@ export async function payPalJsProcessor(
 		contactDetails,
 		fromSiteSlug,
 	} = transactionOptions;
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-js' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-js' } );
 
 	let currentUrl;
 	try {
@@ -133,10 +111,10 @@ export async function payPalJsProcessor(
 		await submitData.payPalApprovalPromise;
 
 		// Capture PayPal order information after dialog approval.
-		const confirmResponse = await payPalJsApproval(
-			response.order_id.toString(),
-			response.paypal_order_id
-		);
+		const confirmResponse = await confirmPayPalPPCPPayment( {
+			orderId: response.order_id.toString(),
+			payPalOrderId: response.paypal_order_id,
+		} );
 		if ( 'error' in confirmResponse ) {
 			if (
 				confirmResponse.error === 'paypal_ppcp_payment_confirm_no_order' &&

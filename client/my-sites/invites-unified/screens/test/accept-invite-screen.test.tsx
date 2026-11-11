@@ -136,6 +136,11 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: ( url: string ) => mockNavigate( url ),
 } ) );
 
+const mockNavigateToLandingPage = jest.fn( () => ( { type: 'TEST_NAVIGATE_TO_LANDING_PAGE' } ) );
+jest.mock( 'calypso/lib/landing-page', () => ( {
+	navigateToLandingPage: () => mockNavigateToLandingPage(),
+} ) );
+
 const mockWooBranding = {
 	windowTitleSuffix: 'Woo',
 	logo: {
@@ -173,6 +178,7 @@ jest.mock( 'calypso/lib/paths', () => ( {
 
 const mockGetRedirectAfterAccept = jest.fn( () => '/redirect-url' );
 jest.mock( 'calypso/my-sites/invites/utils', () => ( {
+	...jest.requireActual( 'calypso/my-sites/invites/utils' ),
 	getRedirectAfterAccept: ( ...args: Parameters< typeof mockGetRedirectAfterAccept > ) =>
 		mockGetRedirectAfterAccept( ...args ),
 } ) );
@@ -414,6 +420,32 @@ describe( 'AcceptInviteScreen', () => {
 			expect( screen.getByText( /invited@example.com/i ) ).toBeInTheDocument();
 		} );
 
+		test( 'does not show EmailMismatchScreen when emails differ only by letter case', () => {
+			setupUser( { email: 'Invited@Example.com' } );
+			const store = createStore();
+			const invite = createInvite( {
+				invite: {
+					blog_id: '123',
+					invite_slug: 'test',
+					meta: {
+						role: 'administrator',
+						sent_to: 'invited@example.com',
+						force_matching_email: true,
+						blog_id: 123,
+					},
+				},
+			} );
+
+			render(
+				<Provider store={ store }>
+					<AcceptInviteScreen invite={ invite } />
+				</Provider>
+			);
+
+			expect( screen.queryByTestId( 'email-mismatch-screen' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'action-buttons' ) ).toBeInTheDocument();
+		} );
+
 		test( 'does not show EmailMismatchScreen when emails match', () => {
 			setupUser( { email: 'invited@example.com' } );
 			const store = createStore();
@@ -482,8 +514,7 @@ describe( 'AcceptInviteScreen', () => {
 	} );
 
 	describe( 'decline flow', () => {
-		test( 'redirects to home on decline', () => {
-			const page = require( '@automattic/calypso-router' ).default;
+		test( 'navigates to the landing destination on decline', () => {
 			const store = createStore();
 			const invite = createInvite();
 
@@ -495,7 +526,7 @@ describe( 'AcceptInviteScreen', () => {
 
 			fireEvent.click( screen.getByTestId( 'secondary-button' ) );
 
-			expect( page ).toHaveBeenCalledWith( '/' );
+			expect( mockNavigateToLandingPage ).toHaveBeenCalled();
 		} );
 
 		test( 'tracks decline button click', () => {

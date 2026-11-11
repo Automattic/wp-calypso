@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GSuiteLearnMore it renders GSuiteLearnMore with no props 1`] = `
 <div

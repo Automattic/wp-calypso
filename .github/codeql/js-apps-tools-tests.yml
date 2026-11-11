@@ -7,5 +7,5 @@ paths:
   - build-tools
   - test
   - .storybook
-  - .eslintrc.js
+  - eslint.config.mjs
   - babel.config.js

@@ -40,8 +40,12 @@ body.is-section-accept-invite {
 		max-height: 340px;
 	}
 
-	.signup-form {
+	// Grows in place of the signup form, so the footer links sit directly under the form.
+	.invite-accept-logged-out__form {
 		flex: 1;
+	}
+
+	.signup-form {
 		display: flex;
 		flex-direction: column;
 	}

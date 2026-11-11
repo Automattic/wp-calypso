@@ -1,68 +1,20 @@
-import { loadExperimentAssignment } from 'calypso/lib/explat';
-
-export const LAUNCHPAD_PERSONALIZATION_EXPERIMENT = 'wpcom_launchpad_personalization_202607_v1';
-
-export type LaunchpadPersonalizationVariation = 'control' | 'ai_launchpad' | 'no_guidance';
+import { isLaunchpadNoGuidance, type AiLaunchpadSiteOptions } from '@automattic/api-core';
 
 /**
- * Resolve the launchpad-personalization variation. The `?diy-launchpad` query param is a
- * dev/QA override that forces the `ai_launchpad` variation without consulting ExPlat;
- * otherwise the variation comes from the sticky ExPlat assignment.
+ * The wp-admin landing for a site's launchpad state, or null when the caller keeps its own default.
+ * @param options  The site's options.
+ * @param adminUrl Site admin URL ending in a slash, e.g. `https://x/wp-admin/`.
  */
-export async function resolveLaunchpadPersonalizationVariation(
-	diyLaunchpad: string | null
-): Promise< LaunchpadPersonalizationVariation > {
-	if ( diyLaunchpad ) {
-		return 'ai_launchpad';
+export function getLaunchpadDestination(
+	options: AiLaunchpadSiteOptions | undefined,
+	adminUrl: string
+): string | null {
+	// Only called right after signup, where the user is the site's administrator.
+	if ( isLaunchpadNoGuidance( { capabilities: { manage_options: true }, options } ) ) {
+		return adminUrl;
 	}
-	const assignment = await loadExperimentAssignment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
-	return normalizeVariation( assignment?.variationName );
-}
-
-/**
- * Map an ExPlat variation name onto a known variation. Anything unrecognized (including
- * null/undefined for an unassigned or not-yet-loaded user) is treated as `control`,
- * so an absent or misconfigured experiment degrades to today's default behavior.
- */
-export function normalizeVariation(
-	variationName: string | null | undefined
-): LaunchpadPersonalizationVariation {
-	switch ( variationName ) {
-		case 'ai_launchpad':
-			return 'ai_launchpad';
-		case 'no_guidance':
-			return 'no_guidance';
-		default:
-			return 'control';
+	if ( options?.wpcom_ai_launchpad_enabled ) {
+		return `${ adminUrl }admin.php?page=site-setup-wp-admin`;
 	}
-}
-
-interface DestinationArgs {
-	variation: LaunchpadPersonalizationVariation;
-	/** Site admin URL, guaranteed to end in a trailing slash (e.g. `https://x/wp-admin/`). */
-	adminUrl: string;
-	/** Append `&enable-ai-launchpad=1` for the post-checkout hand-off. Defaults to false. */
-	enableAiLaunchpad?: boolean;
-}
-
-/**
- * The wp-admin destination for a treatment variation, or null for control (the caller keeps
- * its existing destination logic). `ai_launchpad` lands in Site Setup; `no_guidance`
- * lands on the plain wp-admin dashboard.
- */
-export function getLaunchpadPersonalizationDestination( {
-	variation,
-	adminUrl,
-	enableAiLaunchpad = false,
-}: DestinationArgs ): string | null {
-	switch ( variation ) {
-		case 'ai_launchpad':
-			return `${ adminUrl }admin.php?page=site-setup-wp-admin${
-				enableAiLaunchpad ? '&enable-ai-launchpad=1' : ''
-			}`;
-		case 'no_guidance':
-			return adminUrl;
-		default:
-			return null;
-	}
+	return null;
 }

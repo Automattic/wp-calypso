@@ -28,7 +28,7 @@
 	color: theme.$components-color-foreground;
 	background-color: theme.$components-color-background;
 	font-size: variables.$font-size-medium;
-	font-weight: variables.$font-weight-regular;
+	font-weight: var(--wpds-typography-font-weight-default, 400);
 	z-index: 0; // Create a stacking context and render on top of the background.
 
 	*, *::before, *::after {

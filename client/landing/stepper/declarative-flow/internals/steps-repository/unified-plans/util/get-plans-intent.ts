@@ -7,7 +7,8 @@ import {
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
+	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
 } from '@automattic/onboarding';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { playgroundPlansIntent } from '../../playground/lib/plans';
@@ -39,10 +40,26 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-ai-assembler-paid-only';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
-				return playgroundPlansIntent( search.get( 'playground' )! );
+				return playgroundPlansIntent();
+			}
+			// WoW funnel: the site is always transferred to Atomic, so only plans that grant
+			// the transfer make sense. Hide the free plan. Kept after the playground check so a
+			// playground entry keeps its own intent.
+			if ( search.has( 'wow_funnel' ) ) {
+				return 'plans-ai-assembler-paid-only';
+			}
+			// Blueprint imports targeting Atomic (build_dest=wow) need a plan that
+			// supports the transfer, so hide the free plan. Plain blueprint imports
+			// build on a Simple site and keep the default grid.
+			if ( search.has( 'blueprint' ) && search.get( 'build_dest' ) === 'wow' ) {
+				return 'plans-ai-assembler-paid-only';
 			}
 			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
+			}
+			// No Commerce: its site would still be moving to Atomic when the import hands it to site migration.
+			if ( search.get( 'flow' ) === 'import' ) {
+				return 'plans-import';
 			}
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
@@ -54,8 +71,10 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return search.get( 'allow_downgrade' ) === 'true'
 				? 'plans-upgrade-or-downgrade'
 				: 'plans-upgrade';
-		case WOO_HOSTED_PLANS_FLOW:
-			return 'plans-woo-hosted';
+		// Paid plans only: the import is delivered through an Atomic transfer.
+		case SITE_MIGRATION_FLOW:
+		case STATIC_SITE_IMPORT_FLOW:
+			return 'plans-migration';
 		default:
 			return null;
 	}

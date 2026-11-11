@@ -42,7 +42,7 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 
 	const authorLinkUrl = author.wpcom_login
 		? getUserProfileUrl( author.wpcom_login )
-		: props.siteUrl ?? author.URL;
+		: ( props.siteUrl ?? author.URL );
 
 	const authorName = author.name;
 	// If the author name is blocked, don't return anything

@@ -42,7 +42,7 @@ import BillingTimeframe from '../shared/billing-timeframe';
 
 describe( 'BillingTimeframe', () => {
 	const defaultProps = {
-		billingTimeframe: 'per month, billed annually',
+		billingTimeframe: 'per month, billed yearly, excl. taxes',
 	};
 
 	beforeEach( () => {
@@ -259,6 +259,39 @@ describe( 'BillingTimeframe', () => {
 		expect( container ).toHaveTextContent(
 			`per month, ${ originalPrice } billed every three years, excl. taxes`
 		);
+	} );
+
+	// Signup renders this branch. It silently lost its "excl. taxes" suffix in
+	// #103041 and nobody noticed for a year (MARTECH-3020), so pin the suffix.
+	describe( 'simplified billing description', () => {
+		test.each( [
+			[ PLAN_BUSINESS, PLAN_ANNUAL_PERIOD, 12 ],
+			[ PLAN_BUSINESS_2_YEARS, PLAN_BIENNIAL_PERIOD, 24 ],
+			[ PLAN_BUSINESS_3_YEARS, PLAN_TRIENNIAL_PERIOD, 36 ],
+		] )( 'should show months and excl. taxes for %s', ( planSlug, billingPeriod, months ) => {
+			usePlansGridContext.mockImplementation( () => ( {
+				showSimplifiedBillingDescription: true,
+				gridPlansIndex: {
+					[ planSlug ]: {
+						isMonthlyPlan: false,
+						pricing: {
+							currencyCode: 'USD',
+							originalPrice: { full: 120, monthly: 10 },
+							discountedPrice: { full: null, monthly: null },
+							billingPeriod,
+						},
+					},
+				},
+			} ) );
+
+			const { container } = render(
+				<BillingTimeframe { ...defaultProps } planSlug={ planSlug } />
+			);
+
+			expect( container ).toHaveTextContent(
+				`per month, billed every ${ months } months, excl. taxes`
+			);
+		} );
 	} );
 
 	test( 'show refund period period for annual plan', () => {

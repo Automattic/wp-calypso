@@ -13,6 +13,7 @@ export const siteMigrationKeyQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'migration', 'key' ],
 		queryFn: () => fetchSiteMigrationKey( siteId ),
+		meta: { persist: false },
 	} );
 
 export const siteMigrationZendeskTicketQuery = ( siteId: number ) =>

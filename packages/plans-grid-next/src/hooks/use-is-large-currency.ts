@@ -47,7 +47,7 @@ function hasExceededCombinedPriceThreshold( displayPrices?: string[] ) {
 		return false;
 	}
 
-	for ( let i = 0; i < displayPrices.length - 1; i++ ) {
+	for ( let i = 0; i < displayPrices.length - 1; i += 2 ) {
 		const originalPrice = displayPrices[ i ];
 		const discountedPrice = displayPrices[ i + 1 ];
 

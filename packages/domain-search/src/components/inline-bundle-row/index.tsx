@@ -124,7 +124,7 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 	const errorMessage =
 		isCurrentMutation && addBundleError
 			? addBundleError.message ||
-			  __( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
+				__( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
 			: undefined;
 
 	return (

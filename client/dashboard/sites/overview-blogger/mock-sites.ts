@@ -10,12 +10,15 @@
 import {
 	getPersistQueryClientPromise,
 	queryClient,
+	siteAdminBarQuery,
 	siteByIdQuery,
 	siteBySlugQuery,
 	siteCurrentPlanQuery,
 	siteLastFiveActivityLogEntriesQuery,
+	siteEnvironmentPHPVersionQuery,
 	siteMediaStorageQuery,
 	sitePreviewLinksQuery,
+	sitePurchasesQuery,
 	siteRedirectQuery,
 	siteSettingsQuery,
 	sslDetailsQuery,
@@ -30,6 +33,7 @@ import slowMorningsPreview from 'calypso/assets/images/untangling-previews/slow-
 import { getActivityLogHiddenGroups } from '../../utils/site-features';
 import type {
 	ActivityLogEntry,
+	AdminBarNode,
 	DomainSummary,
 	Site,
 	SiteContextualPlan,
@@ -65,6 +69,16 @@ interface MockSiteInput {
 	renewalDate: string | null;
 	/** Only shown in the solo-blogger persona (?persona=blogger). */
 	solo?: boolean;
+	/** Live omnibar offer from the Studio site (`untangling/v1/upsell`), when one is active. */
+	offer?: MockOmnibarOffer | null;
+}
+
+interface MockOmnibarOffer {
+	active: boolean;
+	pill: string;
+	text: string;
+	gem: boolean;
+	href: string;
 }
 
 // A spec-shaped admin base URL (trailing slash), so consumers concatenating
@@ -250,7 +264,6 @@ function makeMockSite( input: MockSiteInput ): Site {
 		is_coming_soon: false,
 		is_private: false,
 		is_wpcom_atomic: isAtomicTier( input.tier ),
-		is_wpcom_flex: false,
 		is_wpcom_staging_site: false,
 		is_vip: false,
 		lang: 'en',
@@ -267,10 +280,6 @@ function makeMockSite( input: MockSiteInput ): Site {
 		was_migration_trial: false,
 		was_hosting_trial: false,
 		was_upgraded_from_trial: false,
-		is_garden: false,
-		garden_name: null,
-		garden_partner: null,
-		garden_is_provisioned: null,
 	};
 }
 
@@ -397,21 +406,15 @@ const MOCK_SITE_BY_SLUG = new Map(
 );
 
 const LOCAL_WP_ADMIN_ORIGINS = new Set(
-	MOCK_SITE_INPUTS.map( ( input ) => new window.URL( input.localUrl ).origin )
+	MOCK_SITE_INPUTS.map( ( input ) => new URL( input.localUrl ).origin )
 );
 
 const PLAYGROUND_URL_BY_ORIGIN = new Map(
-	MOCK_SITE_INPUTS.map( ( input ) => [
-		new window.URL( input.localUrl ).origin,
-		input.playgroundUrl,
-	] )
+	MOCK_SITE_INPUTS.map( ( input ) => [ new URL( input.localUrl ).origin, input.playgroundUrl ] )
 );
 
 const PREVIEW_IMAGE_BY_ORIGIN = new Map(
-	MOCK_SITE_INPUTS.map( ( input ) => [
-		new window.URL( input.localUrl ).origin,
-		input.previewImage,
-	] )
+	MOCK_SITE_INPUTS.map( ( input ) => [ new URL( input.localUrl ).origin, input.previewImage ] )
 );
 
 function playgroundUrlForOrigin( origin: string ): string | undefined {
@@ -533,9 +536,12 @@ export function hydrateMockBloggerSites(): Promise< void > {
 				try {
 					const controller = new AbortController();
 					const timer = setTimeout( () => controller.abort(), 2500 );
-					const [ response, snapshotResponse ] = await Promise.all( [
+					const [ response, snapshotResponse, offerResponse ] = await Promise.all( [
 						fetch( `${ input.localUrl }/wp-json/`, { signal: controller.signal } ),
 						fetch( `${ input.localUrl }/wp-json/untangling/v1/site`, {
+							signal: controller.signal,
+						} ).catch( () => undefined ),
+						fetch( `${ input.localUrl }/wp-json/untangling/v1/upsell`, {
 							signal: controller.signal,
 						} ).catch( () => undefined ),
 					] );
@@ -553,6 +559,7 @@ export function hydrateMockBloggerSites(): Promise< void > {
 						const snapshot: StudioSiteSnapshot = await snapshotResponse.json();
 						applyStudioSnapshot( input, site, snapshot );
 					}
+					input.offer = offerResponse?.ok ? await offerResponse.json() : null;
 				} catch {
 					// Studio site not running; the static mock stands in.
 				}
@@ -720,6 +727,9 @@ function getMockQueryKeys( input: MockSiteInput ) {
 		siteSettingsQuery( input.ID ).queryKey,
 		siteRedirectQuery( input.ID ).queryKey,
 		sitePreviewLinksQuery( input.ID ).queryKey,
+		siteAdminBarQuery( input.ID ).queryKey,
+		sitePurchasesQuery( input.ID ).queryKey,
+		siteEnvironmentPHPVersionQuery( input.ID ).queryKey,
 	];
 }
 
@@ -788,6 +798,51 @@ export function getMockDomains(): DomainSummary[] {
 	);
 }
 
+/**
+ * The site half of the omnibar. Production builds it from the site's wp-admin
+ * admin bar (`wpcom/v2/sites/:id/admin-bar`), which does not exist for a mock
+ * id; this mirrors the nodes a WordPress.com site sends: site name, updates,
+ * comments, + New, and the upsell pill when the Studio site has an offer on.
+ */
+function makeMockSiteAdminBar( input: MockSiteInput, site: Site ): AdminBarNode[] {
+	const adminUrl = site.options?.admin_url;
+	const admin = ( path: string ) => wpAdminPageUrl( adminUrl, path ) ?? '';
+	const node = (
+		id: string,
+		title: string,
+		href: string,
+		parent: string | false = false,
+		meta?: AdminBarNode[ 'meta' ]
+	): AdminBarNode => ( { id, title, href, parent, group: false, meta } );
+	const icon = site.icon?.img ? `<img src="${ site.icon.img }" alt="" />` : '';
+	const nodes: AdminBarNode[] = [
+		node( 'site-name', `${ icon }${ site.name }`, mockSiteRemoteUrl( site.URL ) ?? site.URL ),
+		node( 'view-site', 'Visit Site', mockSiteRemoteUrl( site.URL ) ?? site.URL, 'site-name' ),
+		node(
+			'updates',
+			'<span class="ab-label">5</span><span class="screen-reader-text">5 updates available</span>',
+			admin( 'update-core.php' )
+		),
+		node(
+			'comments',
+			'<span class="ab-label pending-count">0</span><span class="screen-reader-text">0 Comments in moderation</span>',
+			admin( 'edit-comments.php' )
+		),
+		node( 'new-content', 'New', admin( 'post-new.php' ) ),
+		node( 'new-post', 'Post', admin( 'post-new.php' ), 'new-content' ),
+		node( 'new-media', 'Media', admin( 'media-new.php' ), 'new-content' ),
+		node( 'new-page', 'Page', admin( 'post-new.php?post_type=page' ), 'new-content' ),
+	];
+	if ( input.offer?.active ) {
+		nodes.push(
+			node( 'free-domain-upsell', input.offer.pill, input.offer.href, false, {
+				title: input.offer.text,
+			} )
+		);
+	}
+	return nodes;
+}
+
 function writeMockSiteCaches() {
 	for ( const input of MOCK_SITE_INPUTS ) {
 		const site = MOCK_SITE_BY_SLUG.get( input.slug ) as Site;
@@ -819,6 +874,12 @@ function writeMockSiteCaches() {
 		} );
 		queryClient.setQueryData( siteRedirectQuery( input.ID ).queryKey, {} );
 		queryClient.setQueryData( sitePreviewLinksQuery( input.ID ).queryKey, [] );
+		queryClient.setQueryData( siteAdminBarQuery( input.ID ).queryKey, {
+			nodes: makeMockSiteAdminBar( input, site ),
+		} );
+		queryClient.setQueryData( sitePurchasesQuery( input.ID ).queryKey, [] );
+		// Production now shows the PHP version on Simple sites too.
+		queryClient.setQueryData( siteEnvironmentPHPVersionQuery( input.ID ).queryKey, '8.3' );
 		// The custom domain's SSL column reads a per-domain query that would hit
 		// the real API (and read "SSL pending"); a registered mock domain is secure.
 		if ( input.tier !== 'free' ) {

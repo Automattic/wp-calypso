@@ -34,7 +34,7 @@ describe( 'getIsAgentsManagerAvailable', () => {
 		expect( getIsAgentsManagerAvailable() ).toBe( false );
 	} );
 
-	it( 'returns true when the non-headless Agents Manager actions are ready', () => {
+	it( 'returns true when the Agents Manager actions are ready', () => {
 		testWindow.__agentsManagerActions = {
 			isReady: true,
 		};

@@ -76,9 +76,7 @@ export function login( {
 	}
 
 	if ( redirectTo ) {
-		url = redirectTo.includes( 'jetpack-sso' )
-			? redirectTo
-			: addQueryArgs( { redirect_to: redirectTo }, url );
+		url = addQueryArgs( { redirect_to: redirectTo }, url );
 	}
 
 	if ( emailAddress ) {

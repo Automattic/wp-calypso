@@ -1,14 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Badge } from '@automattic/ui';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ExternalLink, Tooltip } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ComponentProps } from 'react';
 import InfoModal from 'calypso/a8c-for-agencies/components/a4a-info-modal';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_ID_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import { useSubscriptionDetails } from 'calypso/a8c-for-agencies/hooks/use-subscription-details';
 import { isWPCOMHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
@@ -16,13 +17,14 @@ import { ReferralPurchase } from '../../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 type Props = {
+	referralId: number;
 	purchase: ReferralPurchase;
 	isFetching: boolean;
 	handleAssignToSite: ( redirectUrl: string ) => void;
 	data?: APIProductFamilyProduct[];
 };
 
-type BadgeIntent = 'default' | 'info' | 'success' | 'warning' | 'error';
+type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 function getPurchaseStatus(
 	purchase: ReferralPurchase,
@@ -30,23 +32,23 @@ function getPurchaseStatus(
 ): [ BadgeIntent, string ] {
 	if ( purchase.status === 'active' ) {
 		if ( purchase.site_assigned ) {
-			return [ 'success', translate( 'Assigned' ) ];
+			return [ 'stable', translate( 'Assigned' ) ];
 		}
-		return [ 'warning', translate( 'Unassigned' ) ];
+		return [ 'medium', translate( 'Unassigned' ) ];
 	}
 
 	if ( purchase.status === 'canceled' ) {
-		return [ 'info', translate( 'Canceled' ) ];
+		return [ 'informational', translate( 'Canceled' ) ];
 	}
 
 	if ( purchase.status === 'error' ) {
-		return [ 'error', translate( 'Error' ) ];
+		return [ 'high', translate( 'Error' ) ];
 	}
 
-	return [ 'warning', translate( 'Awaiting payment' ) ];
+	return [ 'medium', translate( 'Awaiting payment' ) ];
 }
 
-const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props ) => {
+const AssignedTo = ( { referralId, purchase, handleAssignToSite, data, isFetching }: Props ) => {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 	const product = data?.find( ( product ) => product.product_id === purchase.product_id );
@@ -57,7 +59,10 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 		purchase.license &&
 		( isWPCOMLicense
 			? addQueryArgs( { license_key: licenseKey }, A4A_SITES_LINK_NEEDS_SETUP )
-			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' ) );
+			: addQueryArgs(
+					{ key: licenseKey, [ REFERRAL_ID_QUERY_PARAM_KEY ]: referralId },
+					'/marketplace/assign-license'
+				) );
 
 	const showAssignButton = purchase.status === 'active' && redirectUrl;
 	const [ statusType, statusText ] = getPurchaseStatus( purchase, translate );
@@ -75,7 +80,7 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 
 	if ( purchase.site_assigned ) {
 		return isPressable ? (
-			<Badge intent="success">{ translate( 'Pressable' ) }</Badge>
+			<Badge intent="stable">{ translate( 'Pressable' ) }</Badge>
 		) : (
 			<Button
 				className="referrals-purchases__assign-button"
@@ -141,11 +146,8 @@ const AssignedTo = ( { purchase, handleAssignToSite, data, isFetching }: Props )
 	return (
 		<div className="badge-assigned-to">
 			{ tooltip ? (
-				// Badge does not forward refs, so Tooltip needs a DOM element to anchor to.
 				<Tooltip text={ tooltip }>
-					<span style={ { display: 'inline-flex' } }>
-						<Badge intent={ statusType }>{ statusText }</Badge>
-					</span>
+					<Badge intent={ statusType }>{ statusText }</Badge>
 				</Tooltip>
 			) : (
 				<Badge intent={ statusType }>{ statusText }</Badge>

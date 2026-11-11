@@ -11,6 +11,7 @@ import {
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import {
 	login,
 	magicLogin,
@@ -50,6 +51,7 @@ const ReduxWrappedLayout = ( {
 				currentSection={ currentSection }
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
+				onRouteCommit={ recordUnifiedAdminPageView }
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>

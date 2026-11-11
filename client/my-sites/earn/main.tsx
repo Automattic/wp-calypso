@@ -266,7 +266,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 										learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
 									},
 								}
-						  )
+							)
 						: undefined
 				}
 			>

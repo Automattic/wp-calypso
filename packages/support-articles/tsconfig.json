@@ -7,5 +7,6 @@
 		"types": []
 	},
 	"include": [ "src" ],
+	"exclude": [ "**/test/*" ],
 	"references": [ { "path": "../zendesk-client" }, { "path": "../odie-client" } ]
 }

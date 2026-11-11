@@ -7,7 +7,9 @@ const Head = ( {
 	children,
 	branchName,
 	faviconUrl,
+	faviconBrand,
 	shouldPrefetchRestProxy = true,
+	allowZoom = false,
 } ) => {
 	return (
 		<head>
@@ -15,7 +17,14 @@ const Head = ( {
 
 			<meta charSet="utf-8" />
 			<meta httpEquiv="X-UA-Compatible" content="IE=Edge" />
-			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			<meta
+				name="viewport"
+				content={
+					allowZoom
+						? 'width=device-width, initial-scale=1'
+						: 'width=device-width, initial-scale=1, maximum-scale=1'
+				}
+			/>
 			<meta name="format-detection" content="telephone=no" />
 			<meta name="mobile-web-app-capable" content="yes" />
 			<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -30,7 +39,10 @@ const Head = ( {
 				/>
 			) }
 
-			<Favicons environmentFaviconURL={ faviconUrl || config( 'favicon_url' ) } />
+			<Favicons
+				environmentFaviconURL={ faviconUrl || config( 'favicon_url' ) }
+				brand={ faviconBrand }
+			/>
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
@@ -52,7 +64,9 @@ Head.propTypes = {
 	children: PropTypes.node,
 	branchName: PropTypes.string,
 	faviconUrl: PropTypes.string,
+	faviconBrand: PropTypes.oneOf( [ 'a4a', 'jetpack', 'wordpress' ] ),
 	shouldPrefetchRestProxy: PropTypes.bool,
+	allowZoom: PropTypes.bool,
 };
 
 export default Head;

@@ -35,19 +35,6 @@ async function clickWhenEnabled( button: Locator, timeout = 30 * 1000 ): Promise
 }
 
 /**
- * Completes the cancellation survey for a non-plan subscription (e.g. a storage
- * add-on), whose survey is a single step.
- *
- * On the refund-and-remove (`intent=remove`) path the step button reads "Complete
- * removal"; legacy/other variants read "Submit" or "Complete". `surveyStepButton`
- * (scoped to the survey form) matches whichever renders, and `clickWhenEnabled`
- * rides out the busy/disabled state while the request is in flight.
- */
-export async function cancelSubscriptionFlow( page: Page ) {
-	await clickWhenEnabled( surveyStepButton( page ) );
-}
-
-/**
  * Returns a locator that matches the cancellation survey's primary step button.
  *
  * The button's label depends on the survey step and the active intent/variant:

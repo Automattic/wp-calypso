@@ -143,16 +143,46 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.posts?.[ 0 ].date_liked ).toBe( '2026-04-10' );
 	} );
 
-	it( 'fetches a space feed from /wpcom/v2/reader/spaces/<id>/posts', async () => {
+	it( 'fetches saved posts from /read/saved with the page handle', async () => {
 		const scope = nock( BASE )
-			.get( '/wpcom/v2/reader/spaces/6/posts' )
+			.get( '/rest/v1.2/read/saved' )
+			.query( ( query ) => query.page_handle === 'abc' && query.number === '7' )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 40,
+						site_ID: 400,
+						date: '2026-01-01',
+						date_saved: '2026-10-15T12:00:00+00:00',
+						URL: 'https://example.com/saved',
+					},
+				],
+				date_range: { after: '2026-10-15T12:00:00+00:00' },
+				next_page_handle: 'def',
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() => useQuery( readStreamQuery( 'saved', { page_handle: 'abc', number: 7 }, 'abc' ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.posts?.[ 0 ].date_saved ).toBe( '2026-10-15T12:00:00+00:00' );
+		expect( result.current.data?.next_page_handle ).toBe( 'def' );
+	} );
+
+	it( 'fetches a shelf feed from /wpcom/v2/reader/shelves/<id>/posts', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/shelves/6/posts' )
 			.query( true )
 			.reply( 200, {
 				cards: [
 					{
 						type: 'post',
 						date: 1718000000,
-						data: { ID: 7, site_ID: 700, date: '2026-06-10', URL: 'https://example.com/space' },
+						data: { ID: 7, site_ID: 700, date: '2026-06-10', URL: 'https://example.com/shelf' },
 					},
 				],
 				next_page_handle: 'NEXT',
@@ -160,7 +190,7 @@ describe( 'readStreamQuery', () => {
 
 		const client = newClient();
 		const { result } = renderHook(
-			() => useQuery( readStreamQuery( 'space:6', { count: 4 }, null ) ),
+			() => useQuery( readStreamQuery( 'shelf:6', { count: 4 }, null ) ),
 			{ wrapper: makeWrapper( client ) }
 		);
 
@@ -170,9 +200,9 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.next_page_handle ).toBe( 'NEXT' );
 	} );
 
-	it( 'fetches a space Discover feed from /wpcom/v2/reader/spaces/<id>/discover', async () => {
+	it( 'fetches a shelf Discover feed from /wpcom/v2/reader/shelves/<id>/discover', async () => {
 		const scope = nock( BASE )
-			.get( '/wpcom/v2/reader/spaces/6/discover' )
+			.get( '/wpcom/v2/reader/shelves/6/discover' )
 			.query( true )
 			.reply( 200, {
 				cards: [
@@ -187,7 +217,7 @@ describe( 'readStreamQuery', () => {
 
 		const client = newClient();
 		const { result } = renderHook(
-			() => useQuery( readStreamQuery( 'space_discover:6', { count: 4 }, null ) ),
+			() => useQuery( readStreamQuery( 'shelf_discover:6', { count: 4 }, null ) ),
 			{ wrapper: makeWrapper( client ) }
 		);
 

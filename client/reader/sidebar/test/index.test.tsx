@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn();
-	const isEnabledMock = jest.fn( ( feature: string ) => feature === 'reader/spaces' );
+	const isEnabledMock = jest.fn( ( feature: string ) => feature === 'reader/shelves' );
 	return {
 		__esModule: true,
 		default: Object.assign( config, { isEnabled: isEnabledMock } ),
@@ -20,8 +20,8 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/reader/components/app-title', () => () => <div>Reader</div> );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-recent', () => () => <div>Following</div> );
-jest.mock( 'calypso/reader/sidebar/spaces', () => ( {
-	ReaderSidebarSpaces: () => <li>Spaces</li>,
+jest.mock( 'calypso/reader/sidebar/shelves', () => ( {
+	ReaderSidebarShelves: () => <li>Shelves</li>,
 } ) );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-lists', () => () => <li>Lists</li> );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-tags', () => () => <li>Tags</li> );
@@ -67,7 +67,7 @@ describe( 'ReaderSidebar', () => {
 		jest.clearAllMocks();
 		jest
 			.mocked( isEnabled )
-			.mockImplementation( ( feature: string ) => feature === 'reader/spaces' );
+			.mockImplementation( ( feature: string ) => feature === 'reader/shelves' );
 	} );
 
 	it( 'renders the four section labels as presentational headings', () => {
@@ -77,6 +77,79 @@ describe( 'ReaderSidebar', () => {
 
 		[ 'Explore', 'Feeds', 'Library', 'Account' ].forEach( ( label ) => {
 			expect( screen.getByText( label ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'Conversations', () => {
+		it( 'shows a single Conversations item without the WIP label', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getAllByText( 'Conversations' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( 'Conversations (WIP)' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'sits in the main group above Feeds', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			const conversations = screen.getByText( 'Conversations' );
+			const feeds = screen.getByText( 'Feeds' );
+			const library = screen.getByText( 'Library' );
+			expect(
+				conversations.compareDocumentPosition( feeds ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+			expect(
+				conversations.compareDocumentPosition( library ) & Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+	} );
+
+	describe( 'Saved', () => {
+		it( 'is shown once the saved posts feature is on', () => {
+			jest
+				.mocked( isEnabled )
+				.mockImplementation( ( feature: string ) => feature === 'reader/saved-posts' );
+
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.getByText( 'Saved' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden while the feature is off', () => {
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.queryByText( 'Saved' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'title actions', () => {
+		it( 'links to the new subscription page and to search', () => {
+			const instance = new ReaderSidebar( defaultProps );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'New subscription' } ) ).toHaveAttribute(
+				'href',
+				'/reader/new'
+			);
+			expect( screen.getByRole( 'link', { name: 'Search' } ) ).toHaveAttribute(
+				'href',
+				'/discover/search'
+			);
+		} );
+
+		it( 'marks the search action as selected on the search page', () => {
+			const instance = new ReaderSidebar( { ...defaultProps, path: '/discover/search' } );
+
+			render( instance.renderSidebarMenu() );
+
+			expect( screen.getByRole( 'link', { name: 'Search' } ) ).toHaveClass( 'is-selected' );
+			expect( screen.getByRole( 'link', { name: 'New subscription' } ) ).not.toHaveClass(
+				'is-selected'
+			);
 		} );
 	} );
 
@@ -133,24 +206,6 @@ describe( 'ReaderSidebar', () => {
 			expect( recordGaEvent ).not.toHaveBeenCalled();
 			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalled();
 			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should handle search menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_search',
-				gaEvent: 'Clicked Reader Sidebar Search',
-				tracksEvent: 'calypso_reader_sidebar_search_clicked',
-			};
-			const path = '/reader/search';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_search' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Search' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_search_clicked'
-			);
 		} );
 
 		it( 'should handle likes menu click with correct tracking keys', () => {

@@ -1,15 +1,14 @@
-import { siteLaunchpadQuery } from '@automattic/api-queries';
+import { siteLaunchpadQuery, sitePreviewLinksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
-import { useExperiment } from 'calypso/lib/explat';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
 import { getSiteVisibilityURL } from '../../utils/site-url';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
+import { useSiteIsPreview } from '../site-fields/plan-awaiting-checkout';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -37,23 +36,19 @@ function getLaunchpadChecklistSlug( site: Site ) {
 function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 	const {
 		isActive: isAiLaunchpad,
+		isNoGuidance,
 		setupUrl,
 		tasks: aiTasks,
 	} = useAiLaunchpad( site.slug, {
 		withTasks: true,
 	} );
 
-	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
-	const isNoGuidance =
-		normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance';
-
 	const { data: launchpad } = useQuery( {
 		...siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) ),
 		enabled: ! isAiLaunchpad && ! isNoGuidance,
 	} );
 
-	// The no_guidance launchpad-personalization variation gets no setup guidance at all:
-	// the card behaves like a plain coming-soon site, pointing at the visibility settings.
+	// No-guidance sites get no setup guidance: a plain coming-soon card.
 	if ( isNoGuidance ) {
 		return <VisibilityCardComingSoon site={ site } />;
 	}
@@ -73,16 +68,22 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 						heading: __( 'Launch site' ),
 						description: __( 'Ready to go public?' ),
 						link: getSiteVisibilityURL( site ),
-				  }
+					}
 				: {
 						heading: __( 'Coming soon' ),
 						description: __( 'Finish setting up your site.' ),
 						externalLink: setupLink,
-				  } ) }
+					} ) }
 			progress={ {
 				value: completedTasks,
 				max: numberOfTasks,
 				label: `${ completedTasks }/${ numberOfTasks }`,
+				ariaValueText: sprintf(
+					/* translators: %1$d: number of completed steps, %2$d: total number of steps. e.g. "2 of 5 steps complete" */
+					__( '%1$d of %2$d steps complete' ),
+					completedTasks,
+					numberOfTasks
+				),
 				...( isLaunchpadCompleted && { variant: 'success' as const } ),
 			} }
 		/>
@@ -98,6 +99,25 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 				site.is_wpcom_staging_site
 					? __( 'Visitors will see a coming soon page.' )
 					: __( 'Ready to go public?' )
+			}
+			link={ getSiteVisibilityURL( site ) }
+		/>
+	);
+}
+
+// A preview is shared, not set up: it stays Coming Soon until it is bought, and visitors reach it
+// through a preview link.
+function VisibilityCardPreview( { site }: { site: Site } ) {
+	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
+
+	return (
+		<OverviewCard
+			{ ...CARD_PROPS }
+			heading={ __( 'Coming soon' ) }
+			description={
+				links.length > 0
+					? __( 'Anyone with the preview link can view it.' )
+					: __( 'Share it with a preview link.' )
 			}
 			link={ getSiteVisibilityURL( site ) }
 		/>
@@ -134,8 +154,14 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 }
 
 export default function VisibilityCard( { site }: { site: Site } ) {
+	const { isPreview } = useSiteIsPreview( site );
+
 	if ( site.__inaccessible_jetpack_error ) {
 		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
+	if ( isPreview ) {
+		return <VisibilityCardPreview site={ site } />;
 	}
 
 	if ( site.launch_status === 'unlaunched' ) {

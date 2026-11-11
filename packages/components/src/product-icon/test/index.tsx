@@ -20,6 +20,11 @@ describe( 'ProductIcon', () => {
 		expect( container.querySelector( `img.product-icon.is-${ iconKey }` ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders the Student plan icon as is-wpcom-student', () => {
+		const { container } = render( <ProductIcon slug="wp_bundle_student_yearly" /> );
+		expect( container.querySelector( 'img.product-icon.is-wpcom-student' ) ).toBeInTheDocument();
+	} );
+
 	// Regression guard: every term variant of the four mapped WPCOM families resolves to an icon.
 	const familyTerms: SupportedSlugs[] = [
 		'personal-bundle',

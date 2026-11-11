@@ -1,11 +1,14 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
-import Notice from '../../../components/notice';
+import Notice, {
+	NoticeActionButton,
+	RouterNoticeActionLinkButton,
+} from '../../../components/notice';
 import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
 import {
 	isExpiring,
@@ -96,7 +99,7 @@ function NoticeContent( {
 	setUpcomingRenewalsDialogVisible,
 	noticeStatus,
 	noticeText,
-	noticeActionHref,
+	noticeActionChangesPaymentMethod,
 	noticeActionOnClick,
 	noticeActionText,
 }: {
@@ -106,7 +109,7 @@ function NoticeContent( {
 	setUpcomingRenewalsDialogVisible: ( visible: boolean ) => void;
 	noticeStatus: NoticeVariant;
 	noticeText: React.ReactNode;
-	noticeActionHref?: string;
+	noticeActionChangesPaymentMethod?: boolean;
 	noticeActionOnClick?: () => void;
 	noticeActionText?: string;
 } ) {
@@ -129,14 +132,20 @@ function NoticeContent( {
 			<Notice
 				variant={ noticeStatus }
 				actions={
-					( noticeActionHref || noticeActionOnClick ) && (
-						<Button
-							variant="primary"
-							href={ noticeActionHref ?? undefined }
-							onClick={ noticeActionOnClick ?? undefined }
+					noticeActionChangesPaymentMethod ? (
+						<RouterNoticeActionLinkButton
+							variant="solid"
+							to={ changePaymentMethodRoute.fullPath }
+							params={ { purchaseId: purchase.ID } }
 						>
 							{ noticeActionText }
-						</Button>
+						</RouterNoticeActionLinkButton>
+					) : (
+						noticeActionOnClick && (
+							<NoticeActionButton variant="solid" onClick={ noticeActionOnClick }>
+								{ noticeActionText }
+							</NoticeActionButton>
+						)
 					)
 				}
 			>
@@ -155,7 +164,6 @@ export function OtherRenewablePurchasesNotice( {
 	purchaseAttachedTo: Purchase | undefined;
 	renewableSitePurchases: Purchase[];
 } ) {
-	const router = useRouter();
 	const [ isUpcomingRenewalsDialogVisible, setUpcomingRenewalsDialogVisible ] =
 		useState< boolean >( false );
 
@@ -222,7 +230,7 @@ export function OtherRenewablePurchasesNotice( {
 		expiringPurchases.length > 0 ? expiringPurchases[ 0 ] : undefined;
 
 	const purchaseName = currentPurchase.is_domain
-		? currentPurchase.meta ?? ''
+		? ( currentPurchase.meta ?? '' )
 		: currentPurchase.product_name;
 	// These slots feed both past-tense ("expired %(expiry)s") and future-tense
 	// ("will expire %(expiry)s") sentences, so each is clamped to match the
@@ -232,13 +240,13 @@ export function OtherRenewablePurchasesNotice( {
 		isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
 	);
 	const includedPurchaseName = includedPurchase.is_domain
-		? includedPurchase.meta ?? ''
+		? ( includedPurchase.meta ?? '' )
 		: includedPurchase.product_name;
 	const earliestOtherExpiry = earliestOtherExpiringPurchase
 		? getRelativeDayString(
 				new Date( earliestOtherExpiringPurchase.expiry_date ),
 				isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
-		  )
+			)
 		: '';
 	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
@@ -692,14 +700,14 @@ export function OtherRenewablePurchasesNotice( {
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  )
+					)
 				: sprintf(
 						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
 						__(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  );
+					);
 
 			return (
 				<NoticeContent
@@ -709,12 +717,7 @@ export function OtherRenewablePurchasesNotice( {
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus={ shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info' }
 					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
-					noticeActionHref={
-						router.buildLocation( {
-							to: changePaymentMethodRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-						} ).href
-					}
+					noticeActionChangesPaymentMethod
 					noticeActionText={ __( 'Update all' ) }
 				/>
 			);
@@ -741,7 +744,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  )
+				)
 			: createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
@@ -751,7 +754,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  );
+				);
 
 		return (
 			<NoticeContent
@@ -871,7 +874,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  )
+				)
 			: createInterpolateElement(
 					sprintf(
 						// translators: purchaseName is the name of the product, earliestOtherExpiry is a string like "3 months ago", and includedPurchaseName is the name of another product
@@ -881,7 +884,7 @@ export function OtherRenewablePurchasesNotice( {
 						{ earliestOtherExpiry }
 					),
 					{ link }
-			  );
+				);
 
 		return (
 			<NoticeContent
@@ -936,14 +939,14 @@ export function OtherRenewablePurchasesNotice( {
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  )
+					)
 				: sprintf(
 						// translators: cardType is a credit card brand, cardNumber is the last 4 digits of the credit card number, and cardExpiry is the card expiration date.
 						__(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have <link>other upgrades</link> on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.'
 						),
 						cardDetails
-				  );
+					);
 
 			return (
 				<NoticeContent
@@ -953,12 +956,7 @@ export function OtherRenewablePurchasesNotice( {
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus="info"
 					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
-					noticeActionHref={
-						router.buildLocation( {
-							to: changePaymentMethodRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-						} ).href
-					}
+					noticeActionChangesPaymentMethod
 					noticeActionText={ __( 'Update all' ) }
 				/>
 			);

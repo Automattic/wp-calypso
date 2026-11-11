@@ -1,7 +1,39 @@
 import { SITE_SETUP_FLOW, ONBOARDING_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
-import { isInStepContainerV2FlowContext } from '../utils';
+import {
+	isInStepContainerV2FlowContext,
+	getStepperFlowFromContext,
+	isPlaygroundWooIntentRequest,
+} from '../utils';
 
 describe( 'layout/utils', () => {
+	describe( 'isPlaygroundWooIntentRequest', () => {
+		it( 'should return true for the Playground step with the woocommerce intent', () => {
+			const query = { intent: 'woocommerce' };
+
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/playground', query ) ).toBe( true );
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/playground/es', query ) ).toBe(
+				true
+			);
+		} );
+
+		it( 'should return false without the woocommerce intent', () => {
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/playground', {} ) ).toBe( false );
+			expect(
+				isPlaygroundWooIntentRequest( '/setup/onboarding/playground', { intent: 'build' } )
+			).toBe( false );
+		} );
+
+		it( 'should return false for other steps and flows', () => {
+			const query = { intent: 'woocommerce' };
+
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding/domains', query ) ).toBe( false );
+			expect( isPlaygroundWooIntentRequest( '/setup/entrepreneur/playground', query ) ).toBe(
+				false
+			);
+			expect( isPlaygroundWooIntentRequest( '/setup/onboarding', query ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'isInStepContainerV2FlowContext', () => {
 		describe( 'setup path', () => {
 			it( 'should return false when path starts with /setup and flow is a not supported flow', () => {
@@ -62,6 +94,53 @@ describe( 'layout/utils', () => {
 
 				expect( result ).toBe( false );
 			} );
+		} );
+	} );
+
+	describe( 'getStepperFlowFromContext', () => {
+		it( 'should return the flow from the URL when path starts with /setup', () => {
+			const pathname = '/setup/' + SITE_MIGRATION_FLOW;
+			const query = 'step=step1';
+
+			const result = getStepperFlowFromContext( pathname, query );
+
+			expect( result ).toBe( SITE_MIGRATION_FLOW );
+		} );
+
+		it( 'should return the flow inferred from redirect_to when path starts with /checkout', () => {
+			const pathname = '/checkout/site.com';
+			const query = 'redirect_to=%2Fsetup%2F' + SITE_SETUP_FLOW;
+
+			const result = getStepperFlowFromContext( pathname, query );
+
+			expect( result ).toBe( SITE_SETUP_FLOW );
+		} );
+
+		it( 'should return the flow inferred from cancel_to when path starts with /checkout and redirect_to has no flow', () => {
+			const pathname = '/checkout/site.com';
+			const query = 'redirect_to=%2Fsome-path&cancel_to=%2Fsetup%2F' + ONBOARDING_FLOW;
+
+			const result = getStepperFlowFromContext( pathname, query );
+
+			expect( result ).toBe( ONBOARDING_FLOW );
+		} );
+
+		it( 'should return an empty string when path starts with /checkout but neither redirect_to nor cancel_to has a flow', () => {
+			const pathname = '/checkout/site.com';
+			const query = 'redirect_to=%2Fsome-path&cancel_to=%2Fother-path';
+
+			const result = getStepperFlowFromContext( pathname, query );
+
+			expect( result ).toBe( '' );
+		} );
+
+		it( 'should return an empty string for paths that do not start with /setup or /checkout', () => {
+			const pathname = '/some-other-path';
+			const query = '';
+
+			const result = getStepperFlowFromContext( pathname, query );
+
+			expect( result ).toBe( '' );
 		} );
 	} );
 } );

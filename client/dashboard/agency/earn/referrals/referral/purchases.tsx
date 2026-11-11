@@ -13,6 +13,7 @@ import { getProductName } from '../lib/get-product-name';
 import { getPurchaseTotal } from '../lib/get-purchase-total';
 import { getActivePurchases } from '../lib/referral-orders';
 import ReferralNotFound from './not-found';
+import { usePlacePurchaseActions } from './place-purchase';
 import PurchaseSiteDetails from './purchase-site-details';
 import type { ReferralPurchase } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
@@ -80,6 +81,11 @@ export default function ReferralPurchases() {
 		[ locale, products ]
 	);
 
+	const actions = usePlacePurchaseActions< PurchaseItem >( {
+		products,
+		clientEmail: referral?.client.email,
+	} );
+
 	const { data: paginatedItems, paginationInfo } = useMemo(
 		() => filterSortAndPaginate( items, view, fields ),
 		[ items, view, fields ]
@@ -95,6 +101,7 @@ export default function ReferralPurchases() {
 				<DataViews< PurchaseItem >
 					data={ paginatedItems }
 					fields={ fields }
+					actions={ actions }
 					view={ view }
 					onChangeView={ setView }
 					search={ false }

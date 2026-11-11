@@ -17,8 +17,8 @@ export const JumpToRecent = ( {
 	const [ needsScrolling, setNeedsScrolling ] = useState(
 		Boolean(
 			scrollParent &&
-				scrollParent.scrollTop + scrollParent.offsetHeight <
-					scrollParent.scrollHeight - SCROLL_THRESHOLD
+			scrollParent.scrollTop + scrollParent.offsetHeight <
+				scrollParent.scrollHeight - SCROLL_THRESHOLD
 		)
 	);
 
@@ -65,7 +65,7 @@ export const JumpToRecent = ( {
 		<div className={ className }>
 			<button className="odie-jump-to-recent-message-button" onClick={ jumpToRecent }>
 				{ __( 'Jump to recent', __i18n_text_domain__ ) }
-				<Icon icon={ chevronDown } fill="white" />
+				<Icon icon={ chevronDown } />
 			</button>
 		</div>
 	);

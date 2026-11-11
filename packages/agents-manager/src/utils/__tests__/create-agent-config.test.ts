@@ -10,13 +10,23 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 	canConnectToZendesk: jest.fn( () => Promise.resolve( false ) ),
 } ) );
 
+jest.mock( '../turn-id', () => ( {
+	getTurnId: jest.fn( () => '' ),
+} ) );
+
+import { DOLLY_AGENT_ID } from '../../constants';
+import { getInteractiveUiSession, showInteractiveUiSession } from '../../interactive-ui/session';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import { getSessionId } from '../agent-session';
+import { getTurnId } from '../turn-id';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
+const mockGetTurnId = getTurnId as jest.Mock;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =
@@ -34,6 +44,17 @@ describe( 'createAgentConfig', () => {
 			.agentsManagerData;
 		document.body.className = '';
 		clearSiteEditorActions();
+		sessionStorage.clear();
+	} );
+
+	it( 'records the site and user captured by its authentication provider', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '456',
+			sessionUserId: 123,
+			siteId: 456,
+		} );
+		expect( config.authenticationScope ).toEqual( { siteId: 456, userId: 123 } );
 	} );
 
 	it( 'does not add reader page context for regular agents', async () => {
@@ -45,6 +66,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: 'wp-orchestrator',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -58,6 +80,46 @@ describe( 'createAgentConfig', () => {
 		expect( context ).not.toHaveProperty( 'siteUrl' );
 	} );
 
+	it( 'saves server-assigned session IDs as the tab session via onSessionIdChange', async () => {
+		sessionStorage.clear();
+
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: 'no-site',
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId( 'wp-orchestrator' ) ).toBe( 'server-session-id' );
+	} );
+
+	// The callback can fire after a logout and login in the same tab, so it must
+	// write under the user captured at creation, not whoever is current then.
+	it( 'persists server-assigned sessions under the captured sessionUserId', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '111',
+			sessionUserId: 101,
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId( undefined, '111', 101 ) ).toBe( 'server-session-id' );
+		expect( getSessionId( undefined, '111', 202 ) ).toBe( '' );
+	} );
+
+	it( 'persists server-assigned sessions under an explicit sessionSiteKey', async () => {
+		const config = await createAgentConfig( {
+			sessionId: '',
+			sessionSiteKey: '111',
+			agentId: 'wp-orchestrator',
+		} );
+		config.onSessionIdChange?.( 'server-session-id' );
+
+		expect( getSessionId( undefined, '111' ) ).toBe( 'server-session-id' );
+		expect( getSessionId() ).toBe( '' );
+	} );
+
 	it( 'adds reader page context for Reader Chat agents', async () => {
 		const currentPost = { id: 1, title: 'Reader post' };
 		setAgentsManagerData( {
@@ -68,6 +130,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: 'reader-chat',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -93,6 +156,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			agentId: 'reader-chat',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -100,10 +164,25 @@ describe( 'createAgentConfig', () => {
 		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 247750866 } ) );
 	} );
 
+	it( 'binds the auth provider to the current user and site', async () => {
+		await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: '987',
+			sessionUserId: 123,
+			siteId: 987,
+		} );
+
+		expect( mockCreateCalypsoAuthProvider ).toHaveBeenCalledWith( 987, {
+			logWpcomJwtFailure: true,
+			userId: 123,
+		} );
+	} );
+
 	it( 'adds site editor constructor arguments from the host environment', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
 			environment: 'site-editor',
 			version: '1.2.3',
 		} );
@@ -122,7 +201,8 @@ describe( 'createAgentConfig', () => {
 	it( 'adds site editor constructor arguments when the route is site-editor.php', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
 			currentRoute: '/wp-admin/site-editor.php',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -139,7 +219,8 @@ describe( 'createAgentConfig', () => {
 	it( 'adds loaded provider IDs to default client context', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
 			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -151,12 +232,51 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
+	it( 'lists the providers’ interactive UI catalogs in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+			interactiveUiCatalogs: [ { catalog: { catalogId: 'urn:woo-ai:v1' } } ],
+		} );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toHaveProperty(
+			[ 'a2uiRendererCapabilities', 'v1.0', 'supportedCatalogIds' ],
+			expect.arrayContaining( [ 'urn:woo-ai:v1' ] )
+		);
+		expect( config.contextProvider?.getClientContext() ).not.toHaveProperty(
+			'a2uiRendererCapabilities'
+		);
+	} );
+
+	it( 'sends the shown conversation’s interactive UI data in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+		} );
+
+		const dataModel = { version: 'v1.0', surfaces: { form: { name: 'Ada' } } };
+		const session = getInteractiveUiSession( undefined, 'scope', 'session-1' );
+		session.runtime = { getDataModel: () => dataModel } as unknown as InteractiveUiRuntime;
+
+		const hide = showInteractiveUiSession( session );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toEqual( {
+			a2uiRendererCapabilities: expect.any( Object ),
+			a2uiRendererDataModel: dataModel,
+		} );
+
+		hide();
+	} );
+
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
 		} );
 		const context = config.contextProvider?.getClientContext();
 
@@ -174,8 +294,9 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
 			siteId: 987,
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 			environment: 'site-editor',
 			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 			contextProvider: {
@@ -209,5 +330,102 @@ describe( 'createAgentConfig', () => {
 				},
 			} )
 		);
+	} );
+	const clientContexts = [
+		[ 'default', undefined ],
+		[
+			'provider',
+			{
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/',
+					pathname: '/wp-admin/',
+					search: '',
+					environment: 'wp-admin',
+				} ),
+			},
+		],
+	] as const;
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-in, the turn id and the traffic flags in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: true, isDevMode: true, isA11n: true } );
+			mockGetTurnId.mockReturnValueOnce( 'turn-1' );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toEqual(
+				expect.objectContaining( {
+					isTrackingAllowed: true,
+					turnId: 'turn-1',
+					isTest: true,
+					isA11n: true,
+				} )
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-out in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: false } );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toHaveProperty(
+				'isTrackingAllowed',
+				false
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the browser events’ surface in the %s client context',
+		async ( _, contextProvider ) => {
+			const createConfig = () =>
+				createAgentConfig( {
+					sessionId: 'session-1',
+					sessionSiteKey: 'no-site',
+					agentId: DOLLY_AGENT_ID,
+					contextProvider,
+				} );
+
+			const calypsoConfig = await createConfig();
+			expect( calypsoConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'calypso'
+			);
+
+			setAgentsManagerData( {} );
+			const wpAdminConfig = await createConfig();
+			expect( wpAdminConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'wp-admin'
+			);
+		}
+	);
+
+	it( 'omits the tracking opt-in and the Automattician flag when the host does not set them, and the turn id before a send', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).not.toHaveProperty( 'isTrackingAllowed' );
+		expect( context ).not.toHaveProperty( 'turnId' );
+		expect( context ).not.toHaveProperty( 'isA11n' );
+		expect( context ).toHaveProperty( 'isTest', false );
 	} );
 } );

@@ -2,7 +2,6 @@
 .sass-cache
 .babel-cache
 .superpowers/
-.vagrant
 .unison
 .env
 .DS_Store
@@ -42,7 +41,6 @@ checkstyle.xml
 /coverage
 
 /build
-/packages/webpack-inline-constant-exports-plugin/test/build
 
 /public/
 
@@ -122,15 +120,13 @@ yarn-json-output.json
 storybook-static
 packages/plans-grid-next/static/mockServiceWorker.js
 
-# PHPUnit cache
-.phpunit.result.cache
-.phpunit.cache
-
 # Playwright
 playwright-report/
 .playwright-mcp/
 /cookies
 output/
+# Deferred account closes; hold bearer tokens, so kept out of the published output/.
+.teardown-pending/
 
 # Claude settings and rules
 # Allow user-contributed files, but keep Claude.md and main settings under version control
@@ -142,3 +138,6 @@ output/
 # husky's auto-generated init directory (not the committed pre-commit/pre-push scripts)
 .husky/_
 CLAUDE.local.md
+
+# Agenttic downloaded translation files
+packages/agenttic-ui/languages/wpcom-agenttic-*.jed.json

@@ -1,14 +1,8 @@
 import page from '@automattic/calypso-router';
-import { isAllowedRedirectUrl } from '@automattic/calypso-url';
-import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	PROCESSING,
-	ASYNC_PENDING,
-} from 'calypso/state/order-transactions/constants';
+import { determineUrlType, isAllowedRedirectUrl, URL_TYPE } from '@automattic/calypso-url';
+import { SUCCESS, ERROR, FAILURE, PROCESSING, ASYNC_PENDING } from '../types/order-transaction';
+import type { OrderTransaction } from '../types/order-transaction';
 import type { Receipt } from '@automattic/api-core';
-import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
 	siteSlug?: string | undefined;
@@ -39,7 +33,6 @@ export interface RedirectInstructions {
 
 export interface RedirectForTransactionStatusArgs {
 	isLoadingOrder: boolean;
-	error?: Error | null;
 	transaction?: OrderTransaction | null;
 	orderId?: number;
 	receiptId?: number;
@@ -270,8 +263,7 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
  * which is absolute and on an unknown host.
  */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
-	// Allow relative paths (but not protocol-relative URLs like //evil.com).
-	if ( url.startsWith( '/' ) && ! url.startsWith( '//' ) ) {
+	if ( determineUrlType( url ) === URL_TYPE.PATH_ABSOLUTE ) {
 		return true;
 	}
 
@@ -313,7 +305,9 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'gravatar.com',
 		'difmrequest.com',
 		'agencies.automattic.com',
+		'agencies-beta.automattic.com',
 		'agencies.localhost',
+		'my.pressable.com',
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 
@@ -362,7 +356,13 @@ function buildSuccessRedirect( {
 	purchaseId: number | undefined;
 } ): RedirectInstructions {
 	const fallbackUrl = getDefaultSuccessUrl( siteSlug, effectiveReceiptId );
-	let interpolated = interpolateReceiptId( redirectTo ?? fallbackUrl, effectiveReceiptId );
+	let destination = redirectTo ?? fallbackUrl;
+	if ( destination === '/' || destination.startsWith( '/?' ) || destination.startsWith( '/#' ) ) {
+		// The bare root is not a useful post-checkout destination; swap it for the
+		// thank-you page, keeping any query params (e.g. ?checkout_type=unified).
+		destination = fallbackUrl + destination.slice( 1 );
+	}
+	let interpolated = interpolateReceiptId( destination, effectiveReceiptId );
 	if ( interpolated.includes( ':purchaseId' ) ) {
 		if ( purchaseId === undefined ) {
 			return { url: fallbackUrl };
@@ -397,7 +397,6 @@ function buildSuccessRedirect( {
  */
 export function getRedirectFromPendingPage( {
 	isLoadingOrder,
-	error,
 	transaction,
 	orderId,
 	receiptId,
@@ -453,7 +452,10 @@ export function getRedirectFromPendingPage( {
 				effectiveReceiptId: receiptId,
 				redirectTo,
 				siteSlug,
-				fromSiteSlug,
+				// `from_site_slug` comes from the URL, so only allow redirects to its
+				// host once the receipt has loaded, proving this is the user's own
+				// purchase. Otherwise anyone could craft an open redirect.
+				fromSiteSlug: receipt ? fromSiteSlug : undefined,
 				purchaseId,
 			} )
 		);
@@ -507,15 +509,6 @@ export function getRedirectFromPendingPage( {
 		transaction?.processingStatus === ASYNC_PENDING
 	) {
 		return undefined;
-	}
-
-	// A HTTP or other unknown error occured; we will send the user back to
-	// checkout.
-	if ( error ) {
-		return {
-			url: checkoutUrl,
-			isError: true,
-		};
 	}
 
 	return {

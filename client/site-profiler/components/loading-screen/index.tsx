@@ -32,7 +32,7 @@ export const LoadingScreen = ( { isSavedReport }: LoadingScreenProps ) => {
 				translate( 'Analyzing speed metrics…' ),
 				translate( 'Comparing with top sites…' ),
 				translate( 'Finalizing your report…' ),
-		  ];
+			];
 
 	const [ progress, setProgress ] = useState( 0 );
 	const [ tick, setTick ] = useState( 0 );

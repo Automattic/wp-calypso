@@ -4,6 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor } from '@testing-library/react';
 import transferringHostedSite from '../flows/transferring-hosted-site-flow/transferring-hosted-site-flow';
+import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
 import { getFlowLocation, renderFlow } from './helpers';
 
 // we need to save the original object for later to not affect tests from other files
@@ -93,6 +94,23 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'https://my.wordpress.com/sites/mysite.com'
 			);
+		} );
+
+		it( 'returns to the wait when a reload left nothing to process', async () => {
+			mockIsAdminInterfaceWPAdminMock = false;
+			window.location.assign.mockClear();
+
+			runUseStepNavigationSubmit( {
+				currentStep: 'processing',
+				dependencies: {
+					processingResult: ProcessingResult.NO_ACTION,
+				},
+			} );
+
+			await waitFor( () => {
+				expect( getFlowLocation().path ).toBe( '/waitForAtomic' );
+			} );
+			expect( window.location.assign ).not.toHaveBeenCalled();
 		} );
 
 		it( 'redirects the user to the redirectTo when it is provided', async () => {

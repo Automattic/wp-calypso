@@ -237,15 +237,6 @@ body.is-section-plugins #primary .main.is-logged-out {
 	background-color: var(--studio-gray-100);
 }
 
-.full-width-section.plugins-discovery-page__telex-banner {
-	padding-top: 5px;
-	padding-bottom: 15px;
-
-	@media ( min-width: $break-small ) {
-		padding-top: 24px;
-		padding-bottom: 80px;
-	}
-}
 .plugins-discovery-page__business-plan-banner {
 	padding-bottom: 2px;
 }

@@ -1,15 +1,15 @@
 import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { DateRangePicker } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDateRange } from '../../../app/hooks/use-date-range';
 import { useSiteTimezoneWithJetpackFallback } from '../../../app/hooks/use-site-timezone';
-import { useLocale } from '../../../app/locale';
+import { useIntlLocale } from '../../../app/locale';
 import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency';
 import { Card, CardBody } from '../../../components/card';
+import { DateRangePicker } from '../../../components/date-range-picker';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -21,7 +21,7 @@ export default function AgencySiteActivity() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { gmtOffset, timezoneString } = useSiteTimezoneWithJetpackFallback( site );
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const searchParams = agencySiteActivityRoute.useSearch();
 
 	// Activity has no auto-refresh, but the shared DataViews props require this state.
@@ -30,13 +30,8 @@ export default function AgencySiteActivity() {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		resetPageOnChange: true,
 	} );
-	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
-
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		handleDateRangeChange( next );
-		setDateRangeVersion( ( v ) => v + 1 );
-	};
 
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
@@ -60,7 +55,7 @@ export default function AgencySiteActivity() {
 							gmtOffset={ gmtOffset }
 							timezoneString={ timezoneString }
 							locale={ locale }
-							onChange={ handleDateRangeChangeWrapper }
+							onChange={ handleDateRangeChange }
 						/>
 					}
 				/>
@@ -68,14 +63,9 @@ export default function AgencySiteActivity() {
 		>
 			<Card className="site-logs-card site-logs-card--activity">
 				<CardBody>
-					{ /* TODO(A4A-2917): the reused activity DataViews shows a primary "Manage backup"
-					     row action on rewindable entries that navigates to the dotcom
-					     siteBackupDetailRoute, which A4A doesn't register — it dead-ends until
-					     agency backups routes exist. Hide or re-point it once backups land. */ }
 					<SiteActivityLogsDataViews
 						logType={ LogType.ACTIVITY }
 						dateRange={ dateRange }
-						dateRangeVersion={ dateRangeVersion }
 						autoRefresh={ autoRefresh }
 						setAutoRefresh={ setAutoRefresh }
 						gmtOffset={ gmtOffset }

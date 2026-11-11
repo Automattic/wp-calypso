@@ -371,7 +371,7 @@ export class SiteSelector extends Component {
 						multiSiteContext
 							? {
 									multi_site_context_slug: multiSiteContext.slug,
-							  }
+								}
 							: undefined
 					)
 				}

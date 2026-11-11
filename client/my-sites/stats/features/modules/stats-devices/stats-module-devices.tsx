@@ -132,6 +132,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_devices_module_menu_clicked`, {
 			button: optionLabels[ filter ]?.analyticsId ?? filter,
+			blog_id: siteId,
 		} );
 
 		setSelectedOption( filter );

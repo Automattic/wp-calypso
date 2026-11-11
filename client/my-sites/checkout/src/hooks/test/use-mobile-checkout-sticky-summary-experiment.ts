@@ -28,7 +28,7 @@ const mockUseIsStepContainerV2 = useInitialIsInStepContainerV2FlowContext as jes
 >;
 
 const treatmentAssignment = {
-	experimentName: 'calypso_mobile_checkout_sticky_summary_v1',
+	experimentName: 'calypso_mobile_checkout_sticky_summary_v1_1',
 	variationName: 'treatment',
 	retrievedTimestamp: 0,
 	ttl: 0,
@@ -48,9 +48,12 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 	it( 'only requests experiment assignment on mobile inside a StepContainerV2 flow', () => {
 		renderHook( () => useMobileCheckoutStickySummaryExperiment() );
 
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_mobile_checkout_sticky_summary_v1', {
-			isEligible: true,
-		} );
+		expect( mockUseExperiment ).toHaveBeenCalledWith(
+			'calypso_mobile_checkout_sticky_summary_v1_1',
+			{
+				isEligible: true,
+			}
+		);
 	} );
 
 	it( 'opts out of experiment assignment on large viewports', () => {
@@ -58,9 +61,12 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 
 		renderHook( () => useMobileCheckoutStickySummaryExperiment() );
 
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_mobile_checkout_sticky_summary_v1', {
-			isEligible: false,
-		} );
+		expect( mockUseExperiment ).toHaveBeenCalledWith(
+			'calypso_mobile_checkout_sticky_summary_v1_1',
+			{
+				isEligible: false,
+			}
+		);
 	} );
 
 	// The sticky summary only exists in the StepContainerV2 branch, and these
@@ -71,9 +77,12 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 
 		renderHook( () => useMobileCheckoutStickySummaryExperiment() );
 
-		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_mobile_checkout_sticky_summary_v1', {
-			isEligible: false,
-		} );
+		expect( mockUseExperiment ).toHaveBeenCalledWith(
+			'calypso_mobile_checkout_sticky_summary_v1_1',
+			{
+				isEligible: false,
+			}
+		);
 	} );
 
 	it( 'returns isLoading false and isMobileCheckoutStickySummary false on large viewports', () => {
@@ -163,7 +172,7 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 			rerender();
 
 			expect( mockUseExperiment ).toHaveBeenLastCalledWith(
-				'calypso_mobile_checkout_sticky_summary_v1',
+				'calypso_mobile_checkout_sticky_summary_v1_1',
 				{ isEligible: false }
 			);
 		} );

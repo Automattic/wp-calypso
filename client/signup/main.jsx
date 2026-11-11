@@ -8,7 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase, kebabCase, omit, isEmpty } from '@automattic/js-utils';
+import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
@@ -56,11 +56,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import {
-	getDomainsBySiteId,
-	hasLoadedSiteDomains,
-	isRequestingSiteDomains,
-} from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
 	isCurrentPlanPaid,
@@ -139,7 +135,7 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		let providedDependencies = this.getDependenciesInQuery();
+		let providedDependencies = this.getEntryDependencies();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		// Note that there are in general three ways of touching this code that can be obscured:
@@ -247,8 +243,7 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies, siteDomains } =
-			this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
 		const didCurrentStepBecomeFulfillmentReady =
 			! this.isStepFulfillmentReady( stepName, prevProps ) &&
 			this.isStepFulfillmentReady( stepName );
@@ -286,7 +281,7 @@ class Signup extends Component {
 			clearDomainsDependencies();
 		}
 
-		if ( siteDomains !== prevProps.siteDomains || didCurrentStepBecomeFulfillmentReady ) {
+		if ( didCurrentStepBecomeFulfillmentReady ) {
 			this.removeFulfilledSteps( this.props );
 
 			if ( ! flows.excludedSteps.includes( stepName ) && ! this._recordedSteps.has( stepName ) ) {
@@ -476,7 +471,7 @@ class Signup extends Component {
 
 		await this.handlePostFlowCallbacks( dependencies );
 
-		this.handleDestination( dependencies, filteredDestination, this.props.flowName );
+		this.handleDestination( dependencies, filteredDestination );
 	};
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -569,8 +564,35 @@ class Signup extends Component {
 
 		if ( flows.excludedSteps.includes( stepName ) ) {
 			this._recordStepsInOrder( { forStep: stepName } );
-			this.goToNextStep( flowName );
+			this.skipExcludedStep( nextProps );
 		}
+	};
+
+	// The excluded step is gone from `getFlow()` and `this.props` may still describe the
+	// previous step, so resolve the successor from the full step order. Replacing the history
+	// entry keeps browser Back from landing on the excluded step again.
+	skipExcludedStep = ( { flowName, isLoggedIn, stepName } ) => {
+		const allSteps = flows.getFlows()[ flowName ]?.steps ?? [];
+		const availableSteps = flows.getFlow( flowName, isLoggedIn ).steps;
+		const nextStepName = allSteps
+			.slice( allSteps.indexOf( stepName ) + 1 )
+			.find( ( step ) => availableSteps.includes( step ) );
+
+		if ( ! nextStepName || this.isEveryStepSubmitted() ) {
+			this.goToNextStep( flowName );
+			return;
+		}
+
+		const locale = ! isLoggedIn ? this.props.locale : '';
+		page.replace(
+			getStepUrl(
+				flowName,
+				nextStepName,
+				this.props.progress?.[ nextStepName ]?.stepSectionName || '',
+				locale,
+				this.getCurrentFlowSupportedQueryParams()
+			)
+		);
 	};
 
 	preloadNextStep() {
@@ -622,7 +644,7 @@ class Signup extends Component {
 			const signupDomainOriginValue =
 				isTransfer || isMapping
 					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
-					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
+					: ( signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET );
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -647,7 +669,7 @@ class Signup extends Component {
 		}
 	};
 
-	handleDestination( dependencies, destination, flowName ) {
+	handleDestination( dependencies, destination ) {
 		if ( this.props.isLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
@@ -657,11 +679,6 @@ class Signup extends Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			setTimeout( () => {
 				debug( `Redirecting you to "${ destination }"` );
-				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
-				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
-					page( destination );
-					return;
-				}
 				window.location.href = destination;
 			}, 0 );
 
@@ -703,14 +720,6 @@ class Signup extends Component {
 
 			const { bearer_token: bearerToken, username } = dependencies;
 
-			if (
-				isEmpty( bearerToken ) &&
-				isEmpty( username ) &&
-				'onboarding-registrationless' === this.props.flowName
-			) {
-				return;
-			}
-
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
 				debug( 'Performing regular login' );
 				this.setState( {
@@ -751,6 +760,17 @@ class Signup extends Component {
 		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
 
 		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
+	};
+
+	getEntryDependencies = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const clearedDependencies = flow?.clearsMissingDependenciesInQuery
+			? Object.fromEntries(
+					( flow.optionalDependenciesInQuery ?? [] ).map( ( key ) => [ key, undefined ] )
+				)
+			: {};
+
+		return { ...clearedDependencies, ...this.getDependenciesInQuery() };
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {
@@ -857,12 +877,6 @@ class Signup extends Component {
 	getPositionInFlow() {
 		const { flowName, stepName } = this.props;
 		return flows.getFlow( flowName, this.props.isLoggedIn ).steps.indexOf( stepName );
-	}
-
-	getInteractiveStepsCount() {
-		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
-		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
-		return flowSteps.length;
 	}
 
 	renderProcessingScreen() {
@@ -1003,7 +1017,9 @@ class Signup extends Component {
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
 										positionInFlow={ this.getPositionInFlow() }
-										flowLength={ this.getInteractiveStepsCount() }
+										flowLength={
+											flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps.length
+										}
 										flowName={ this.props.flowName }
 									/>
 								)
@@ -1053,8 +1069,6 @@ export default connect(
 			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
-			hasLoadedSiteDomains: hasLoadedSiteDomains( state, siteId ),
-			isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 			siteId,
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,

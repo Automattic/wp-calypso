@@ -1,6 +1,7 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
+	hasQueryableSite,
 	isAkismetProduct,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	DisplayVariant,
@@ -239,9 +240,13 @@ export default function CancellationMainContent( {
 				</h2>
 			) }
 
-			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
+			{ hasQueryableSite( purchase ) && (
+				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
+			) }
 
-			{ isGSuite && ! isSplitCancelRemoveEnabled && (
+			{ /* Cancel and auto-renew only: the message is worded around cancelling and counts
+			    the grace period from expiry, neither of which applies to an immediate removal. */ }
+			{ isGSuite && displayVariant !== 'remove' && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 

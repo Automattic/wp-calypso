@@ -1,7 +1,7 @@
 import calypsoConfig from '@automattic/calypso-config';
 import { createLazyRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
-import { handleOnCatch } from 'calypso/dashboard/app/logger';
+import { handleOnCatch, initLogger } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute } from '../router';
 import siteOverviewRouter from '../site-overview/router';
@@ -82,13 +82,15 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = createRouter( {
 		...getRouterOptions( config ),
 		routeTree,
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+		defaultOnCatch: ( error: unknown, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
 				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
 				dashboard_backport: true,
 			} );
 		},
 	} );
+
+	initLogger( router );
 
 	return router;
 };

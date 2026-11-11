@@ -41,7 +41,7 @@ export const SearchForm = () => {
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		setQuery( localQuery );
+		setQuery( localQuery, 'submit' );
 
 		if ( localQuery === '' ) {
 			setShowSearchHint( true );
@@ -83,14 +83,14 @@ export const SearchForm = () => {
 								studioLink: (
 									<Button
 										variant="link"
-										onClick={ () => setQuery( 'studio' ) }
+										onClick={ () => setQuery( 'studio', 'hint_link' ) }
 										className="domain-search__search-form-hint"
 									/>
 								),
 								coffeeLink: (
 									<Button
 										variant="link"
-										onClick={ () => setQuery( 'coffee' ) }
+										onClick={ () => setQuery( 'coffee', 'hint_link' ) }
 										className="domain-search__search-form-hint"
 									/>
 								),

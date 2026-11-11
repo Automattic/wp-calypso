@@ -31,6 +31,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { formatPluginNames } from 'calypso/lib/login';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -85,6 +86,7 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
+import { isStandardEntryPoint, isUnifiedFlow } from './entry-points';
 import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
@@ -357,6 +359,11 @@ export class JetpackAuthorize extends Component {
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
 			navigate( `/setup/site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
+		} else if ( this.isFromStandardEntryPoint() && redirectAfterAuth ) {
+			// Standard entry points put their own marker in the return URL, so
+			// there's no plans page and no `from` to append.
+			debug( `Redirecting straight back to: ${ redirectAfterAuth }` );
+			this.externalRedirectOnce( redirectAfterAuth );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -526,12 +533,16 @@ export class JetpackAuthorize extends Component {
 		return from === 'jetpack-connector';
 	}
 
+	isFromStandardEntryPoint( props = this.props ) {
+		return isStandardEntryPoint( props.authQuery.from );
+	}
+
 	isUnifiedConnectionFlow( props = this.props ) {
-		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
+		return isUnifiedFlow( props.authQuery.from );
 	}
 
 	isSecondaryConnection( props = this.props ) {
-		return this.isFromJetpackConnector( props ) && props.authQuery.hasConnectedOwner;
+		return this.isUnifiedConnectionFlow( props ) && props.authQuery.hasConnectedOwner;
 	}
 
 	isAdminConnection( props = this.props ) {
@@ -574,7 +585,7 @@ export class JetpackAuthorize extends Component {
 					const { redirect_to: redirectTo } = await this.props.logoutUser( targetLoginURL );
 					disablePersistence();
 					await clearStore();
-					window.location.href = redirectTo || '/';
+					window.location.href = redirectTo || '/log-in';
 				} catch ( error ) {
 					// The logout endpoint might fail if the nonce has expired.
 					// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
@@ -1066,7 +1077,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isFromJetpackConnector() ) {
+		if ( this.isUnifiedConnectionFlow() ) {
 			const isSecondary = this.isSecondaryConnection();
 			const isAdmin = this.isAdminConnection();
 
@@ -1076,9 +1087,9 @@ export class JetpackAuthorize extends Component {
 			if ( isSecondary && ! isAdmin ) {
 				featureCardsResult = { cards: [], heroFirstCard: false };
 			} else if ( isSecondary ) {
-				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins );
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.connectorPlugins );
 			} else {
-				featureCardsResult = getConnectorFeatureCards( authQuery.plugins );
+				featureCardsResult = getConnectorFeatureCards( authQuery.connectorPlugins );
 			}
 			const { cards, heroFirstCard } = featureCardsResult;
 
@@ -1103,8 +1114,8 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
-			const branding = getConnectorBranding( authQuery.plugins );
+		if ( this.isFromMyJetpack() ) {
+			const branding = getConnectorBranding( authQuery.connectorPlugins );
 			const siteURL = decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
 			const permissionsTitle = branding.permissionsTitle( { siteURL } );
 
@@ -1346,6 +1357,37 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	renderWooBrandHeaderDescription( siteName ) {
+		const { translate } = this.props;
+		const wooDna = this.getWooDnaConfig();
+		const pluginName =
+			wooDna.getServiceName() || formatPluginNames( this.props.authQuery.plugin_name, translate );
+		const components = {
+			siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
+			doc: wooDna.getServiceHelpUrl() ? (
+				<a href={ wooDna.getServiceHelpUrl() } target="_blank" rel="noreferrer" />
+			) : (
+				<a
+					href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+					target="_blank"
+					rel="noreferrer"
+				/>
+			),
+		};
+
+		if ( ! pluginName ) {
+			return translate(
+				'To access all of the features and functionality of the extensions you’ve chosen, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+				{ args: { siteName }, components }
+			);
+		}
+
+		return translate(
+			'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+			{ args: { pluginName, siteName }, components }
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
@@ -1359,17 +1401,15 @@ export class JetpackAuthorize extends Component {
 		);
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const isUnifiedConnection = this.isUnifiedConnectionFlow();
-		const isFromJetpackConnector = this.isFromJetpackConnector();
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
-		const connectorBranding = isFromJetpackConnector
-			? getConnectorBranding( this.props.authQuery.plugins )
-			: null;
+		const { connectorPlugins } = this.props.authQuery;
+		const connectorBranding = isUnifiedConnection ? getConnectorBranding( connectorPlugins ) : null;
 		const isSecondary = this.isSecondaryConnection();
 		let authCopy = null;
-		if ( isFromJetpackConnector && isSecondary ) {
-			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
-		} else if ( isFromJetpackConnector ) {
-			authCopy = getAuthCopy( this.props.authQuery.plugins );
+		if ( isSecondary ) {
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), connectorPlugins );
+		} else if ( isUnifiedConnection ) {
+			authCopy = getAuthCopy( connectorPlugins );
 		}
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
@@ -1394,12 +1434,12 @@ export class JetpackAuthorize extends Component {
 				className={ clsx( {
 					'jetpack-connect__authorize-form-wrapper--onboarding':
 						isUnifiedConnection || isFromMyJetpack,
-					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
+					'jetpack-connect__authorize-form-wrapper--connector': isUnifiedConnection,
 				} ) }
 				isWooJPC={ this.isWooJPC() }
-				isJetpackConnector={ isFromJetpackConnector }
+				isJetpackConnector={ isUnifiedConnection }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-				useCompactLogo={ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector }
+				useCompactLogo={ isFromMyJetpack }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
@@ -1416,7 +1456,7 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						{ isFromJetpackConnector && connectorBranding && authCopy && (
+						{ isUnifiedConnection && (
 							<BrandHeader
 								logo={ connectorBranding.logo }
 								logoAlt=""
@@ -1424,7 +1464,7 @@ export class JetpackAuthorize extends Component {
 								description={ authCopy.subtitle }
 							/>
 						) }
-						{ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector && (
+						{ isFromMyJetpack && (
 							<div className="jetpack-connect__authorize-form-header--left-aligned">
 								<h1>{ translate( 'Now let’s connect your account' ) }</h1>
 								<p>
@@ -1437,27 +1477,7 @@ export class JetpackAuthorize extends Component {
 						{ ! ( isUnifiedConnection || isFromMyJetpack ) && this.isWooJPC() && (
 							<BrandHeader
 								title={ translate( 'Connect your account' ) }
-								description={ translate(
-									'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect {{siteName}}%(siteName)s{{/siteName}} to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
-									{
-										args: {
-											pluginName: wooDna.getServiceName() || wooDna.getPluginName(),
-											siteName,
-										},
-										components: {
-											siteName: <span className="jetpack-connect__woo-brand-header-site-name" />,
-											doc: wooDna.getServiceHelpUrl() ? (
-												<a href={ wooDna.getServiceHelpUrl() } target="_blank" rel="noreferrer" />
-											) : (
-												<a
-													href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
-													target="_blank"
-													rel="noreferrer"
-												/>
-											),
-										},
-									}
-								) }
+								description={ this.renderWooBrandHeaderDescription( siteName ) }
 							/>
 						) }
 						{ ! ( isUnifiedConnection || isFromMyJetpack ) && ! this.isWooJPC() && (

@@ -62,10 +62,12 @@ Query argument examples:
 You can use the same syntax in a cookie or via session storage
 
 Cookies:
+
 - `document.cookie = 'flags=+flag1,-flag2;max-age=1209600;path=/';`: Enable feature `flag1` and disable feature `flag2`.
 - `document.cookie = 'flags= ; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';`: Reset flags cookie to config values.
 
-Session Storage: 
+Session Storage:
+
 - `window.sessionStorage.setItem( 'flags', 'flag1,-flag2' );`: Enable feature `flag1` and disable feature `flag2`.
 - `window.sessionStorage.removeItem( 'flags' );`: Reset flags session item to config values.
 
@@ -74,17 +76,33 @@ server. For this case, you can use the
 [`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../../config/README.md#feature-flags)
 environment variables instead.
 
-## Testing for calypso.live environment
+## Reading a key that may be missing
 
-We often need to enable or disable certain features not only based on the Calypso environment
-(development, production, staging, horizon, ...) but also when Calypso runs in the calypso.live
-testing environment. The `config` module exports a helper function `isCalypsoLive` that returns
-`true` if Calypso is running on the `*.calypso.live` origin.
+`config( key )` throws a `ReferenceError` in development, and logs a console error in the browser,
+when the key is not in the config data. For a key that only some environments print, use
+`optionalConfig( key )`: it returns `undefined` for a missing key, and the same value as
+`config( key )` for a key that is there.
 
 ```js
-import { isCalypsoLive } from '@automattic/calypso-config';
+import { optionalConfig } from '@automattic/calypso-config';
 
-if ( isCalypsoLive() ) {
+// Odyssey Stats prints `jetpack_version`; Calypso does not.
+const jetpackVersion = optionalConfig( 'jetpack_version' );
+```
+
+Odyssey Stats replaces this module with its own config API (`apps/odyssey-stats/src/lib/config-api.ts`),
+which exports a function of the same name, so a change to `optionalConfig()` belongs in both.
+
+## Testing for calypso.live environment
+
+To check whether Calypso runs on `*.calypso.live`, use `isCalypsoLiveHostname` from
+`@automattic/calypso-url`. It takes the hostname explicitly, so the same helper works on the server
+with the request hostname.
+
+```js
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
+
+if ( isCalypsoLiveHostname( window.location.hostname ) ) {
 	/* ... */
 }
 ```

@@ -1,142 +1,234 @@
+import { Notice } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
-import { useState, useEffect, useRef, FunctionComponent } from 'react';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
-import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
-import { rectIsEqual, rectIsZero, NullableDOMRect } from 'calypso/lib/track-element-size';
+import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
+import { PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from 'calypso/dashboard/utils/premium-analytics-url';
+import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
+import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
-import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
-import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
-import nothing from '../components/nothing';
+import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { Unit } from '../typings';
+import { getBucketDays, ResolvedDateRange } from '../lib/date-ranges';
+import ChartBoundary from './chart-boundary';
+import MetricValue from './metric-value';
+import { recordWidgetEventThenFollow, recordWidgetEventThenOpen } from './record-widget-event';
+import Skeleton from './skeleton';
+import useStatsLink from './use-stats-link';
+
+const OverviewChart = lazy( () => import( './overview-chart' ) );
 
 import './mini-chart.scss';
 
 interface MiniChartProps {
 	siteId: number;
-	quantity?: number;
-	gmtOffset: number;
 	statsBaseUrl: string;
+	range: ResolvedDateRange;
+	gmtOffset: number;
 }
 
-interface BarData {
+interface VisitRecord {
 	period: string;
-	value: number;
+	views?: number;
+	visitors?: number;
 }
+
+const CHART_HEIGHT = 160;
 
 const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	siteId,
-	gmtOffset,
 	statsBaseUrl,
-	quantity = 7,
+	range,
+	gmtOffset,
 } ) => {
 	const translate = useTranslate();
+	const statsLink = useStatsLink( siteId );
+	const { id: rangeId, unit, startDate, endDate } = range;
 
-	const chartViews = {
-		attr: 'views',
-		legendOptions: [ 'visitors' ],
-		label: translate( 'Views', { context: 'noun' } ),
-	};
-	const chartVisitors = {
-		attr: 'visitors',
-		label: translate( 'Visitors', { context: 'noun' } ),
-	};
-	const charts = [ chartViews, chartVisitors ];
-
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
-	const [ period, setPeriod ] = useState< Unit >( 'day' );
-
-	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
-
-	const barClick = ( bar: { data: BarData } ) => {
-		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams( bar.data.period, period );
-
-		window.location.href = `${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`;
-	};
-
-	const chartData = buildChartData(
-		chartViews.legendOptions,
-		chartViews.attr,
-		data,
-		period,
-		queryDate
+	// "More stats" opens the days the chart shows, on Stats or Premium Analytics.
+	const moreStatsUrl = statsLink(
+		`${ statsBaseUrl }/stats/${ unit }/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
+		PREMIUM_ANALYTICS_TRAFFIC_ROUTE,
+		{ from: startDate, to: endDate, gmtOffset }
 	);
 
-	const chartWrapperRef = useRef< HTMLDivElement >( null );
-	const lastRect = useRef< NullableDOMRect >( null );
-	useEffect( () => {
-		if ( ! chartWrapperRef?.current ) {
-			return;
-		}
-		const observer = new ResizeObserver( () => {
-			const rect = chartWrapperRef.current ? chartWrapperRef.current.getBoundingClientRect() : null;
-			if ( ! rectIsEqual( lastRect.current, rect ) && ! rectIsZero( rect ) ) {
-				lastRect.current = rect;
-				// Trigger a resize event to force the chart to redraw.
-				window?.dispatchEvent( new Event( 'resize' ) );
-			}
-		} );
+	// A click on a point opens its bucket, as the old widget and the Stats v2 chart do: a day
+	// by the hour, a week or month by the day. On Premium Analytics the dashboard picks the
+	// interval for the days.
+	const openBucket = ( date: Date ) => {
+		const bucket = getBucketDays( date, range );
+		const url = statsLink(
+			`${ statsBaseUrl }/stats/${ 'day' === unit ? 'hour' : 'day' }/${ siteId }?chartStart=${
+				bucket.startDate
+			}&chartEnd=${ bucket.endDate }`,
+			PREMIUM_ANALYTICS_TRAFFIC_ROUTE,
+			{ from: bucket.startDate, to: bucket.endDate, gmtOffset }
+		);
+		recordWidgetEventThenOpen( url, 'chart_bucket_clicked', { range: rangeId, unit } );
+	};
 
-		observer.observe( chartWrapperRef.current );
+	// The admin colour scheme's series colours, as on the Stats page's line chart. Read from the
+	// widget's own element, since the scheme class that sets them is on the widget root.
+	const [ rootElement, setRootElement ] = useState< HTMLDivElement | null >( null );
+	const viewsColor = useCssVariable( '--chart-series-views', rootElement );
+	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
 
-		return () => observer.disconnect();
-	} );
+	// Read once: the choice is made on the Stats page, so a change there shows on the next
+	// load of the dashboard. Bars on a phone too, as Stats v2 draws them, rather than the Stats
+	// page's lines.
+	const chartType = useMemo( () => readChartType( siteId, false ), [ siteId ] );
 
-	const isEmptyChart = ! chartData.some( ( bar: BarData ) => bar.value > 0 );
-	const placeholderChartData = Array.from( { length: 7 }, () => ( {
-		value: Math.random(),
-	} ) );
+	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
+	// pending, while `isLoading` is false and would read the range as empty.
+	const { status, data } = useVisitsQuery( siteId, range );
+
+	const totals = useMemo( () => {
+		const records = ( data ?? [] ) as VisitRecord[];
+		return records.reduce(
+			( accumulator, record ) => ( {
+				views: accumulator.views + ( record.views ?? 0 ),
+				visitors: accumulator.visitors + ( record.visitors ?? 0 ),
+			} ),
+			{ views: 0, visitors: 0 }
+		);
+	}, [ data ] );
+
+	const series = useMemo( () => {
+		const chartData = buildChartData( [ 'visitors' ], 'views', data, unit, endDate );
+		const toPoints = ( attribute: 'views' | 'visitors' ) =>
+			chartData
+				.map( ( record: { data: VisitRecord } ) => ( {
+					// Periods are bare dates ("2026-09-20"), which `new Date()` reads as UTC
+					// midnight: behind UTC that lands each point on the previous evening.
+					date: parseLocalDate( record.data.period ),
+					value: record.data[ attribute ] ?? 0,
+				} ) )
+				.filter( ( point: { date: Date } ) => ! isNaN( point.date.getTime() ) );
+
+		return [
+			{
+				label: translate( 'Views', { context: 'noun' } ) as string,
+				data: toPoints( 'views' ),
+				options: { stroke: viewsColor },
+			},
+			{
+				label: translate( 'Visitors', { context: 'noun' } ) as string,
+				data: toPoints( 'visitors' ),
+				options: { stroke: visitorsColor },
+			},
+		];
+	}, [ data, unit, endDate, viewsColor, visitorsColor, translate ] );
+
+	const isPending = status === 'pending';
+	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;
+	const hasChart = status === 'success' && ! isEmpty;
+	// Fixed, so the card keeps its height from the placeholder to the chart. The footer below
+	// holds its place the same way, by staying mounted while the data loads.
+	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
+	// One placeholder for both waits: for the data, and for the chart's chunk.
+	const chartPlaceholder = (
+		<div className="stats-widget-chart" style={ chartBoxStyle }>
+			<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+			<Skeleton className="stats-widget-chart__skeleton" />
+		</div>
+	);
+	const noData = (
+		<p className="stats-widget-minichart__error">{ translate( 'No data to show' ) }</p>
+	);
 
 	return (
-		<div
-			ref={ chartWrapperRef }
-			id="stats-widget-minichart"
-			className="stats-widget-minichart"
-			aria-hidden="true"
-		>
-			<div className="stats-widget-minichart__chart-head">
-				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
-			</div>
-			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isLoading && (
-				<>
-					<Chart
-						barClick={ barClick }
-						data={ isEmptyChart ? placeholderChartData : chartData }
-						minBarWidth={ 35 }
-						isPlaceholder={ isEmptyChart }
-					>
-						<StatsEmptyState
-							headingText=""
-							infoText={ translate(
-								'Once stats become available, this chart will show you details about your views and visitors. {{a}}Learn more about stats{{/a}}',
-								{
-									components: {
-										a: (
-											<a
-												href="https://jetpack.com/stats/"
-												target="_blank"
-												rel="noopener noreferrer"
-											></a>
-										),
-									},
-								}
-							) }
+		<div className="stats-widget-minichart" ref={ setRootElement }>
+			{ ( isPending || hasChart ) && (
+				<div className="stats-widget-metrics">
+					<div className="stats-widget-metric">
+						<div className="stats-widget-metric__title">
+							{ translate( 'Views', { context: 'noun' } ) }
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-views', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
+						</div>
+						<MetricValue
+							value={ totals.views }
+							isLoading={ isPending }
+							describe={ ( count ) =>
+								translate( '%(count)s view', '%(count)s views', {
+									count: totals.views,
+									args: { count },
+								} ) as string
+							}
 						/>
-					</Chart>
-					<Legend
-						availableCharts={ [ 'visitors' ] }
-						activeCharts={ [ 'visitors' ] }
-						tabs={ charts }
-						activeTab={ chartViews }
-						clickHandler={ nothing }
-					/>
-				</>
+					</div>
+					<div className="stats-widget-metric">
+						<div className="stats-widget-metric__title">
+							{ translate( 'Visitors', { context: 'noun' } ) }
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-visitors', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
+						</div>
+						<MetricValue
+							value={ totals.visitors }
+							isLoading={ isPending }
+							describe={ ( count ) =>
+								translate( '%(count)s visitor', '%(count)s visitors', {
+									count: totals.visitors,
+									args: { count },
+								} ) as string
+							}
+						/>
+					</div>
+				</div>
+			) }
+
+			{ isPending && chartPlaceholder }
+			{ /* Mounted while loading, so it announces the notice when it replaces the loading state. */ }
+			<Notice.List>
+				{ isEmpty && (
+					<Notice.Root intent="info" className="stats-widget-empty-notice">
+						<Notice.Description>
+							{ translate( 'We are collecting traffic data for your site' ) }
+						</Notice.Description>
+						<Notice.Actions>
+							<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
+								{ translate( 'Learn more about stats' ) }
+							</Notice.ActionLink>
+						</Notice.Actions>
+					</Notice.Root>
+				) }
+			</Notice.List>
+			{ status === 'error' && noData }
+			{ hasChart && (
+				// Around the chart alone, so a failed chart takes only its own box with it.
+				<ChartBoundary fallback={ noData }>
+					<Suspense fallback={ chartPlaceholder }>
+						<div className="stats-widget-chart is-clickable" style={ chartBoxStyle }>
+							<OverviewChart
+								series={ series }
+								height={ CHART_HEIGHT }
+								range={ range }
+								chartType={ chartType }
+								onBucketClick={ openBucket }
+							/>
+						</div>
+					</Suspense>
+				</ChartBoundary>
+			) }
+			{ /* The link follows the data, as the totals do, not the chart: Stats is still there when
+			     the chart's chunk fails. Hidden rather than unmounted while the data loads, so the
+			     sections below don't jump as the footer comes and goes. */ }
+			{ ( isPending || hasChart ) && (
+				<div className={ clsx( 'stats-widget-minichart__footer', { 'is-loading': isPending } ) }>
+					<a
+						href={ moreStatsUrl }
+						onClick={ recordWidgetEventThenFollow( 'more_stats_clicked', { range: rangeId } ) }
+					>
+						{ translate( 'More stats' ) }
+					</a>
+				</div>
 			) }
 		</div>
 	);

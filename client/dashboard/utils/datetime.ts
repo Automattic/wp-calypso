@@ -2,6 +2,7 @@ import { translationExists } from '@automattic/i18n-utils';
 import { dateI18n } from '@wordpress/date';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { parse, isValid, format, differenceInCalendarDays } from 'date-fns';
+import { getIntlLocale } from './locale';
 
 const HOUR_MS = 3_600_000;
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -14,7 +15,7 @@ export function formatDate(
 	if ( isNaN( date.getTime() ) ) {
 		return '';
 	}
-	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
+	return new Intl.DateTimeFormat( getIntlLocale( locale ), formatOptions ).format( date );
 }
 
 const msPerHour = 60 * 60 * 1000;

@@ -1,8 +1,7 @@
 import type { JSX } from 'react';
 const PlanDivOrTdContainer = (
 	props: (
-		| React.HTMLAttributes< HTMLDivElement >
-		| React.TdHTMLAttributes< HTMLTableCellElement >
+		React.HTMLAttributes< HTMLDivElement > | React.TdHTMLAttributes< HTMLTableCellElement >
 	) & { isTableCell?: boolean; scope?: string; isHeader?: boolean }
 ): JSX.Element => {
 	const { children, isTableCell, isHeader, ...otherProps } = props;

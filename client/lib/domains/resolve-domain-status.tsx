@@ -10,7 +10,8 @@ import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
-import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import { shouldRenderExpiringCreditCard } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
@@ -19,7 +20,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
 
@@ -100,11 +101,11 @@ export function resolveDomainStatus(
 									args: { expiryDate: moment.utc( domain.expiry ).format( 'LL' ) },
 									components: { strong: <strong /> },
 								}
-						  )
+							)
 						: translate( 'Domain connection expires in {{strong}}%(days)s{{/strong}}', {
 								args: { days: moment.utc( domain.expiry ).fromNow( true ) },
 								components: { strong: <strong /> },
-						  } );
+							} );
 
 				let noticeText = null;
 
@@ -289,10 +290,10 @@ export function resolveDomainStatus(
 									domainName: domain.name,
 								},
 							}
-					  )
+						)
 					: translate(
 							'We sent an email to the domain owner. Please complete the verification or your domain will stop working.'
-					  );
+						);
 
 				return {
 					statusText: translate( 'Action required' ),
@@ -326,7 +327,7 @@ export function resolveDomainStatus(
 										},
 										args: { renewableUntil },
 									}
-							  )
+								)
 							: translate(
 									'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
 									{
@@ -335,7 +336,7 @@ export function resolveDomainStatus(
 										},
 										args: { renewableUntil },
 									}
-							  );
+								);
 				} else if ( domain.isRedeemable ) {
 					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
@@ -355,7 +356,7 @@ export function resolveDomainStatus(
 										},
 										args: { redeemableUntil },
 									}
-							  )
+								)
 							: translate(
 									'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
 									{
@@ -364,7 +365,7 @@ export function resolveDomainStatus(
 										},
 										args: { redeemableUntil },
 									}
-							  );
+								);
 				}
 
 				const domainExpirationMessage = translate(
@@ -406,7 +407,7 @@ export function resolveDomainStatus(
 										/>
 									),
 								},
-						  } )
+							} )
 						: translate( 'It can be renewed by the owner.' );
 
 				const domainExpirationMessage = translate(
@@ -703,7 +704,7 @@ export function resolveDomainStatus(
 					? translate(
 							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. {{a}}Learn more{{/a}}',
 							transferOptions
-					  )
+						)
 					: null,
 				listStatusWeight: 200,
 			};

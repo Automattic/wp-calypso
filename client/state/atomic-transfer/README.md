@@ -20,11 +20,12 @@ The status of an automated transfer represents where in the transfer process a g
 The highest-level values of the status are _has never attempted to transfer_, _is transferring_, and _has transferred_.
 However, inside of _is transferring_ there are many sub-states that are more granular in the process tracking.
 
-|   status    | meaning                                                        |
-| :---------: | -------------------------------------------------------------- |
-|  `PENDING`  | A Transfer record was created but the transfer has not started |
-|  `ACTIVE`   | A transfer is in progress                                      |
-| `COMPLETED` | The transfer has completed and the Atomic site is ready        |
-|   `ERROR`   | The transfer failed                                            |
-| `REVERTED`  | The transfer was reverted                                      |
-|  _falsey_   | No information about any transfers exists in Calypso           |
+|      status      | meaning                                                                                |
+| :--------------: | -------------------------------------------------------------------------------------- |
+|    `PENDING`     | A Transfer record was created but the transfer has not started                         |
+|     `ACTIVE`     | A transfer is in progress                                                              |
+|   `COMPLETED`    | The transfer has completed and the Atomic site is ready                                |
+|     `ERROR`      | The transfer failed                                                                    |
+|    `REVERTED`    | The transfer was reverted                                                              |
+| `CLIENT_TIMEOUT` | The client stopped waiting after five minutes; transfer may still finish on the server |
+|     _falsey_     | No information about any transfers exists in Calypso                                   |

@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -25,18 +24,11 @@ import {
 } from 'calypso/lib/titan/constants';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { EmailPlanHeader } from 'calypso/my-sites/email/email-management/home/email-plan-header';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
+import { hasEmailSubscription } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	getEmailManagementPath,
 	getTitanControlPanelRedirectPath,
 } from 'calypso/my-sites/email/paths';
-import {
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -52,8 +44,6 @@ class TitanManageMailboxes extends Component {
 		currentRoute: PropTypes.string.isRequired,
 		domain: PropTypes.object,
 		hasSubscription: PropTypes.bool.isRequired,
-		isLoadingPurchase: PropTypes.bool.isRequired,
-		purchase: PropTypes.object,
 		selectedSite: PropTypes.object.isRequired,
 
 		// Props injected via localize()
@@ -153,14 +143,11 @@ class TitanManageMailboxes extends Component {
 	};
 
 	render() {
-		const { domain, hasSubscription, isLoadingPurchase, purchase, selectedSite, translate } =
-			this.props;
+		const { domain, hasSubscription, selectedSite, translate } = this.props;
 
 		return (
 			<>
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
-
-				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout>
 					<DocumentHead title={ titleCase( translate( 'Manage all mailboxes' ) ) } />
@@ -175,8 +162,6 @@ class TitanManageMailboxes extends Component {
 						domain={ domain }
 						hasEmailSubscription={ hasSubscription }
 						isLoadingEmails={ false }
-						isLoadingPurchase={ isLoadingPurchase }
-						purchase={ purchase }
 						selectedSite={ selectedSite }
 					/>
 
@@ -225,9 +210,6 @@ export default connect( ( state, ownProps ) => {
 		currentRoute: getCurrentRoute( state ),
 		domain,
 		hasSubscription: hasEmailSubscription( domain ),
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		purchase: getEmailPurchaseByDomain( state, domain ),
 		selectedSite,
 	};
 } )( localize( TitanManageMailboxes ) );

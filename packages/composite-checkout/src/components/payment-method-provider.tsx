@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { PaymentMethodProviderContext } from '../lib/payment-method-provider-context';
 import type {
 	PaymentMethod,
@@ -50,13 +50,23 @@ export function PaymentMethodProvider( {
 		initiallySelectedPaymentMethodId
 	);
 
+	// Remember which method the user explicitly picked (as opposed to one
+	// selected automatically) so that a late change to the list of available
+	// methods does not discard their choice.
+	const userSelectedPaymentMethodId = useRef< string | null >( null );
+	const setPaymentMethodIdFromUser = useCallback( ( id: string ) => {
+		userSelectedPaymentMethodId.current = id;
+		setPaymentMethodId( id );
+	}, [] );
+
 	useDisablePaymentMethodsWhenListChanges( paymentMethods, setDisabledPaymentMethodIds );
 
 	// Reset the selected payment method if the list of payment methods changes.
 	useResetSelectedPaymentMethodWhenListChanges(
 		availablePaymentMethodIds,
 		initiallySelectedPaymentMethodId,
-		setPaymentMethodId
+		setPaymentMethodId,
+		userSelectedPaymentMethodId
 	);
 
 	const value: PaymentMethodProviderContextInterface = useMemo(
@@ -66,13 +76,14 @@ export function PaymentMethodProvider( {
 			disabledPaymentMethodIds,
 			setDisabledPaymentMethodIds,
 			paymentMethodId,
-			setPaymentMethodId,
+			setPaymentMethodId: setPaymentMethodIdFromUser,
 			onPaymentMethodChanged,
 			loadingPaymentMethodIds,
 			setLoadingPaymentMethodIds,
 		} ),
 		[
 			paymentMethodId,
+			setPaymentMethodIdFromUser,
 			paymentMethods,
 			disabledPaymentMethodIds,
 			onPaymentMethodChanged,
@@ -124,24 +135,41 @@ function useDisablePaymentMethodsWhenListChanges(
 	] );
 }
 
-// Reset the selected payment method if the list of payment methods changes.
+// Reset the selected payment method if the list of payment methods changes,
+// unless the user explicitly picked a method that is still available (for
+// example, a wallet that becomes available after the user has already started
+// filling in the credit card form must not close that form).
 function useResetSelectedPaymentMethodWhenListChanges(
 	availablePaymentMethodIds: string[],
 	initiallySelectedPaymentMethodId: string | null | undefined,
-	setPaymentMethodId: ( id: string | null | undefined ) => void
+	setPaymentMethodId: ( id: string | null | undefined ) => void,
+	userSelectedPaymentMethodId: React.MutableRefObject< string | null >
 ) {
 	const hashKey = availablePaymentMethodIds.join( '-_-' );
 	const previousKey = useRef< string >( undefined );
 
 	useEffect( () => {
-		if ( previousKey.current !== hashKey ) {
-			debug(
-				'paymentMethods changed; setting payment method to initial selection ',
-				initiallySelectedPaymentMethodId
-			);
-
-			previousKey.current = hashKey;
-			setPaymentMethodId( initiallySelectedPaymentMethodId );
+		if ( previousKey.current === hashKey ) {
+			return;
 		}
-	}, [ hashKey, setPaymentMethodId, initiallySelectedPaymentMethodId ] );
+		previousKey.current = hashKey;
+
+		const userSelection = userSelectedPaymentMethodId.current;
+		if ( userSelection && hashKey.split( '-_-' ).includes( userSelection ) ) {
+			debug( 'paymentMethods changed; keeping user-selected payment method', userSelection );
+			return;
+		}
+
+		debug(
+			'paymentMethods changed; setting payment method to initial selection ',
+			initiallySelectedPaymentMethodId
+		);
+		userSelectedPaymentMethodId.current = null;
+		setPaymentMethodId( initiallySelectedPaymentMethodId );
+	}, [
+		hashKey,
+		setPaymentMethodId,
+		initiallySelectedPaymentMethodId,
+		userSelectedPaymentMethodId,
+	] );
 }

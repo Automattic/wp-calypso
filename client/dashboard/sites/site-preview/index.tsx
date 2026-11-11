@@ -1,20 +1,22 @@
 import { __ } from '@wordpress/i18n';
-import { mockSitePreviewImage } from '../overview-blogger/mock-sites';
+import { getPrototypePreviewImage } from './prototype-preview-image';
 
 export default function SitePreview( {
 	url,
 	scale = 1,
 	width = 1200,
 	height = 800,
+	onLoad,
 }: {
 	url: string;
 	scale?: number;
 	width?: number;
 	height?: number;
+	onLoad?: () => void;
 } ) {
 	// Prototype: on a remote MSD (calypso.live) the local Studio sites backing
 	// the mock sites are unreachable, so their cards show a static screenshot.
-	const mockPreviewImage = mockSitePreviewImage( url );
+	const mockPreviewImage = getPrototypePreviewImage( url );
 	if ( mockPreviewImage ) {
 		return (
 			<img
@@ -54,6 +56,7 @@ export default function SitePreview( {
 			// @ts-expect-error For some reason there's no inert type.
 			inert="true"
 			title={ __( 'Site Preview' ) }
+			onLoad={ onLoad }
 			// Hide banners + `preview` hides cookie banners + `iframe` hides
 			// admin bar for atomic sites.
 			src={ `${ secureUrl }/?hide_banners=true&preview=true&iframe=true` }

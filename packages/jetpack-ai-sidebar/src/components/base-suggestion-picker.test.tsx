@@ -19,11 +19,65 @@ describe( 'BaseSuggestionPicker', () => {
 		expect( screen.getByText( 'Second option' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders nothing when there are no options', () => {
+		// Mirrors the alt-text picker: an empty list means there is nothing to
+		// choose, so no intro renders either.
+		const { container } = render(
+			<BaseSuggestionPicker intro="Pick one:" options={ [] } onApply={ jest.fn() } />
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
 	it( 'calls onApply with the clicked value', () => {
 		const onApply = jest.fn();
-		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ onApply } /> );
+		const onResponseAction = jest.fn();
+		render(
+			<BaseSuggestionPicker
+				intro="Pick one:"
+				options={ options }
+				onApply={ onApply }
+				onResponseAction={ onResponseAction }
+			/>
+		);
 		fireEvent.click( screen.getByText( 'Second option' ) );
 		expect( onApply ).toHaveBeenCalledWith( 'Second option' );
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'accept',
+			target: 'option',
+			outcome: 'success',
+		} );
+	} );
+
+	it( 'reports a failed apply without marking the option as applied', () => {
+		const onApply = jest.fn( () => {
+			throw new Error( 'Could not apply suggestion' );
+		} );
+		const onComplete = jest.fn();
+		const onResponseAction = jest.fn();
+		render(
+			<BaseSuggestionPicker
+				intro="Pick one:"
+				options={ options }
+				onApply={ onApply }
+				onComplete={ onComplete }
+				onResponseAction={ onResponseAction }
+			/>
+		);
+
+		const preventUnhandledError = ( event: ErrorEvent ) => event.preventDefault();
+		window.addEventListener( 'error', preventUnhandledError );
+		fireEvent.click( screen.getByText( 'Second option' ) );
+		window.removeEventListener( 'error', preventUnhandledError );
+		expect( screen.getByText( 'Second option' ).closest( 'button' ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+		expect( onComplete ).not.toHaveBeenCalled();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'accept',
+			target: 'option',
+			outcome: 'failed',
+		} );
 	} );
 
 	it( 'highlights only the applied option', () => {
@@ -36,6 +90,7 @@ describe( 'BaseSuggestionPicker', () => {
 	} );
 
 	it( 'marks the option matching currentValue as applied without a click', () => {
+		const onResponseAction = jest.fn();
 		render(
 			<BaseSuggestionPicker
 				intro="Pick one:"
@@ -43,11 +98,13 @@ describe( 'BaseSuggestionPicker', () => {
 				onApply={ jest.fn() }
 				appliedMessage="Applied."
 				currentValue="Second option"
+				onResponseAction={ onResponseAction }
 			/>
 		);
 		const second = screen.getByText( 'Second option' ).closest( 'button' ) as HTMLButtonElement;
 		expect( second ).toHaveAttribute( 'aria-pressed', 'true' );
 		expect( screen.getByText( 'Applied.' ) ).toBeInTheDocument();
+		expect( onResponseAction ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores a currentValue that matches no option', () => {

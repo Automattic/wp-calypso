@@ -3,22 +3,36 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
-import type { UserSettings } from '@automattic/api-core';
+import type { User, UserSettings } from '@automattic/api-core';
 
 const settings = {
 	first_name: 'John',
 	last_name: 'Doe',
+	display_name: 'John Doe',
+	user_URL: 'https://example.com',
+	description: 'Hello world',
+	avatar_URL: 'https://gravatar.com/avatar/test',
 	user_login: 'johndoe',
 	user_email: 'john@example.com',
 	email_verified: true,
 	user_login_can_be_changed: true,
-	is_dev_account: false,
 } as unknown as UserSettings;
+
+const unverifiedUser = {
+	ID: 1,
+	username: 'johndoe',
+	email: 'john@example.com',
+	email_verified: false,
+	language: 'en',
+} as User;
 
 function mockUserSettings( data: UserSettings ) {
 	return nock( 'https://public-api.wordpress.com' )
@@ -26,10 +40,13 @@ function mockUserSettings( data: UserSettings ) {
 		.reply( 200, data );
 }
 
-function mockValidateUsername( username: string ) {
+function mockValidateUsername(
+	username: string,
+	allowedActions: Record< string, string > = { none: 'Keep your current URL' }
+) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/me/username/validate/${ username }` )
-		.reply( 200, { success: true, allowed_actions: { none: 'Keep your current URL' } } );
+		.reply( 200, { success: true, allowed_actions: allowedActions } );
 }
 
 function mockIsAutomattician( isAutomattician: boolean ) {
@@ -56,36 +73,60 @@ function mockAccountRecovery( {
 }
 
 describe( '<PersonalDetailsSection>', () => {
-	test( 'renders the form and saves the form', async () => {
+	afterEach( () => {
+		jest.useRealTimers();
+		act( () => {
+			dispatch( noticesStore ).removeAllNotices( 'snackbar' );
+		} );
+	} );
+
+	test( 'renders the saved values', async () => {
+		mockUserSettings( settings );
+		mockIsAutomattician( false );
+
+		render( <PersonalDetailsSection /> );
+		await screen.findByRole( 'textbox', { name: 'Email address' }, { timeout: 2000 } );
+
+		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
+		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
+		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
+		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveAttribute(
+			'autocomplete',
+			'username'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
+			'john@example.com'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveAttribute(
+			'autocomplete',
+			'email'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Display name' } ) ).toHaveValue( 'John Doe' );
+		expect( screen.getByRole( 'textbox', { name: 'Web address' } ) ).toHaveValue(
+			'https://example.com'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'About me' } ) ).toHaveValue( 'Hello world' );
+	} );
+
+	test( 'saves the changed fields', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );
 		mockIsAutomattician( false );
 
 		render( <PersonalDetailsSection /> );
-		await screen.findByRole( 'heading', { name: 'Personal details' } );
+		await screen.findByRole( 'textbox', { name: 'Email address' }, { timeout: 2000 } );
 
-		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
-		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
-		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
-		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
-			'john@example.com'
-		);
-		expect( screen.getByRole( 'checkbox', { name: 'I am a developer' } ) ).not.toBeChecked();
-
-		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
-		await user.clear( firstNameInput );
-		await user.type( firstNameInput, 'Jane' );
-
-		const lastNameInput = screen.getByRole( 'textbox', { name: 'Last name' } );
-		await user.clear( lastNameInput );
-		await user.type( lastNameInput, 'Smith' );
-
-		const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
-		await user.clear( emailInput );
-		await user.type( emailInput, 'jane@example.com' );
-
-		const devCheckbox = screen.getByRole( 'checkbox', { name: 'I am a developer' } );
-		await user.click( devCheckbox );
+		const changes = [
+			[ 'First name', 'Jane' ],
+			[ 'Last name', 'Smith' ],
+			[ 'Email address', 'jane@example.com' ],
+			[ 'Display name', 'Jane Smith' ],
+			[ 'About me', 'Updated bio' ],
+		];
+		for ( const [ name, value ] of changes ) {
+			await user.clear( screen.getByRole( 'textbox', { name } ) );
+			await user.paste( value );
+		}
 
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => {
@@ -94,7 +135,8 @@ describe( '<PersonalDetailsSection>', () => {
 						first_name: 'Jane',
 						last_name: 'Smith',
 						user_email: 'jane@example.com',
-						is_dev_account: true,
+						display_name: 'Jane Smith',
+						description: 'Updated bio',
 					} )
 				);
 				return true;
@@ -104,7 +146,8 @@ describe( '<PersonalDetailsSection>', () => {
 				first_name: 'Jane',
 				last_name: 'Smith',
 				user_email: 'jane@example.com',
-				is_dev_account: true,
+				display_name: 'Jane Smith',
+				description: 'Updated bio',
 			} );
 
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
@@ -112,6 +155,31 @@ describe( '<PersonalDetailsSection>', () => {
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
+	} );
+
+	test( 'explains what each field is for', async () => {
+		mockUserSettings( settings );
+		mockIsAutomattician( false );
+
+		render( <PersonalDetailsSection /> );
+		await screen.findByRole( 'textbox', { name: 'Email address' }, { timeout: 2000 } );
+
+		expect( screen.getByText( 'Avatar' ) ).toBeVisible();
+		expect( screen.getAllByRole( 'button', { name: 'Change avatar' } )[ 0 ] ).toBeVisible();
+		expect(
+			screen.getByText(
+				'Used to fill in forms, such as domain contact details, or whenever we need your official name.'
+			)
+		).toBeVisible();
+		expect( screen.getByText( 'Sign-in and @mentions. Changes can’t be undone.' ) ).toBeVisible();
+		expect( screen.getByText( 'The name shown on your posts and comments.' ) ).toBeVisible();
+		expect( screen.getByText( 'Sign-in and account emails. Not shown publicly.' ) ).toBeVisible();
+		expect( screen.getByText( 'A short bio shown on your public profile.' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'Your name links here when you comment. Only on WordPress.com, not on your Gravatar profile.'
+			)
+		).toBeVisible();
 	} );
 
 	describe( 'username field', () => {
@@ -128,10 +196,10 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 
 		test( 'disables username field for unverified email users', async () => {
-			mockUserSettings( { ...settings, email_verified: false } as unknown as UserSettings );
+			mockUserSettings( settings );
 			mockIsAutomattician( false );
 
-			render( <PersonalDetailsSection /> );
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
@@ -141,7 +209,7 @@ describe( '<PersonalDetailsSection>', () => {
 			).toBeVisible();
 		} );
 
-		test( 'shows username update form and submits username change', async () => {
+		test( 'keeps focus in the username inputs while typing', async () => {
 			const user = userEvent.setup();
 			mockUserSettings( settings );
 			mockIsAutomattician( false );
@@ -149,23 +217,153 @@ describe( '<PersonalDetailsSection>', () => {
 
 			render( <PersonalDetailsSection /> );
 
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			expect( usernameInput ).toHaveValue( 'newusername' );
+			expect( usernameInput ).toHaveFocus();
+
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'newusername' );
+
+			expect( confirmInput ).toHaveValue( 'newusername' );
+			expect( confirmInput ).toHaveFocus();
+
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
+		} );
+
+		test( 'confirms an available username once the field is left', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+			await user.tab();
+
+			expect(
+				await screen.findByText( 'Nice username!', undefined, { timeout: 2000 } )
+			).toBeVisible();
+		} );
+
+		test( 'shows why a username is not allowed', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'abc' );
+			await user.tab();
+
+			expect(
+				await screen.findByText( 'Usernames must be at least 4 characters.', undefined, {
+					timeout: 2000,
+				} )
+			).toBeVisible();
+			expect( usernameInput ).toBeInvalid();
+		} );
+
+		test( 'flags a confirmation that does not match the new username', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'otherusername' );
+			await user.tab();
+
+			expect( screen.getByText( 'Usernames do not match.' ) ).toBeVisible();
+			expect( confirmInput ).toBeInvalid();
+
+			await user.clear( confirmInput );
+			await user.type( confirmInput, 'newusername' );
+
+			expect( screen.getByText( 'Thanks for confirming your new username!' ) ).toBeVisible();
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
+		} );
+
+		async function openConfirmationDialog( {
+			allowedActions,
+			chooseAction,
+		}: { allowedActions?: Record< string, string >; chooseAction?: string } = {} ) {
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername', allowedActions );
+
+			const { recordTracksEvent } = render( <PersonalDetailsSection /> );
+
 			await waitFor( () => {
 				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
 			} );
 
 			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
+
+			jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
 
 			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
 			await user.type( confirmInput, 'newusername' );
 
-			// Wait for debounced validation to complete
-			await waitFor(
-				() => {
-					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
-				},
-				{ timeout: 2000 }
+			await act( async () => {
+				jest.advanceTimersByTime( 600 );
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+			} );
+
+			if ( chooseAction ) {
+				await user.click( screen.getByRole( 'radio', { name: chooseAction } ) );
+			}
+
+			await user.click( screen.getByRole( 'button', { name: 'Change username' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Change your username?' } );
+
+			// Fake timers are only needed for the validation debounce; the mutation callbacks
+			// must run on real timers to finish within the test. Flush first: React's scheduler
+			// queues its work on a timer, and work left on a fake one never runs.
+			await act( async () => {
+				jest.runOnlyPendingTimers();
+			} );
+			jest.useRealTimers();
+
+			return { user: userEvent.setup(), recordTracksEvent, dialog };
+		}
+
+		test( 'shows username update form and submits username change', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_attempt',
+				{ action: 'none' }
 			);
 
 			const scope = nock( 'https://public-api.wordpress.com' )
@@ -175,14 +373,94 @@ describe( '<PersonalDetailsSection>', () => {
 				} )
 				.reply( 200, { success: true } );
 
-			await user.click( screen.getByRole( 'button', { name: 'Change username' } ) );
-
-			// Confirm in the modal
-			await user.click( await screen.findByRole( 'button', { name: 'OK' } ) );
+			expect( dialog ).toHaveTextContent(
+				'Your username will change from johndoe to newusername. This can’t be undone.'
+			);
+			expect( dialog ).toHaveTextContent(
+				'Links to your old author page and Reader profile stop working.'
+			);
+			expect( dialog ).not.toHaveTextContent( 'IntenseDebate' );
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change username' } ) );
 
 			await waitFor( () => {
 				expect( scope.isDone() ).toBe( true );
 			} );
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_me_username_change_success',
+					{ action: 'none' }
+				);
+			} );
+		} );
+
+		test( 'records the matching blog address choice', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog( {
+				allowedActions: {
+					none: 'Keep your current URL',
+					new: 'Create a matching blog address',
+				},
+				chooseAction: 'Create a matching blog address',
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_attempt',
+				{ action: 'new' }
+			);
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/username', ( body ) => {
+					expect( body ).toEqual( { username: 'newusername', action: 'new' } );
+					return true;
+				} )
+				.reply( 200, { success: true } );
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change username' } ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_me_username_change_success',
+					{ action: 'new' }
+				);
+			} );
+		} );
+
+		test( 'records a cancelled username change', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog();
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_cancel',
+				{ action: 'none' }
+			);
+		} );
+
+		test( 'records a failed username change', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog();
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/username' )
+				.reply( 400, { error: 'username_unavailable', message: 'Username is not available.' } );
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change username' } ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_me_username_change_error',
+					{ action: 'none', error: 'username_unavailable' }
+				);
+			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_success',
+				expect.anything()
+			);
 		} );
 	} );
 
@@ -201,6 +479,18 @@ describe( '<PersonalDetailsSection>', () => {
 				expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toBeDisabled();
 			} );
 			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
+		} );
+
+		test( 'shows the unverified notice when the account email is not verified', async () => {
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
+			expect( screen.getByText( 'Verify your email' ) ).toBeVisible();
 		} );
 
 		test( 'cancels pending email change', async () => {
@@ -234,6 +524,42 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 		} );
 
+		test( 'holds back the email field cancellation while the banner is resending', async () => {
+			const user = userEvent.setup();
+			const pending = {
+				...settings,
+				user_email_change_pending: true,
+				new_user_email: 'pending@example.com',
+			} as unknown as UserSettings;
+			mockUserSettings( pending );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			// Held open so the resend is still running while the cancellation is checked.
+			let deliverResend: () => void;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
+				.reply(
+					() =>
+						new Promise( ( resolve ) => {
+							deliverResend = () => resolve( [ 200, pending ] );
+						} )
+				);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Resend email' } ) );
+
+			// The banner and the email field each offer a cancellation and neither can see the
+			// other's state, so a resend re-saving the pending address has to lock both.
+			const cancelLink = screen.getByRole( 'button', {
+				name: 'Cancel the pending email change.',
+			} );
+			expect( cancelLink ).toBeDisabled();
+			deliverResend!();
+
+			await waitFor( () => expect( cancelLink ).toBeEnabled() );
+		} );
+
 		test( 'warns when the account email uses a custom domain and no recovery method is set', async () => {
 			mockUserSettings( {
 				...settings,
@@ -247,7 +573,7 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
 		} );
 
-		test( 'links to the account recovery settings page', async () => {
+		test( 'shows a CTA linking to the account recovery settings page', async () => {
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -258,7 +584,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			expect(
-				await screen.findByRole( 'link', { name: /set up a recovery email or phone number/i } )
+				await screen.findByRole( 'link', { name: /set up account recovery/i } )
 			).toHaveAttribute( 'href', '/me/security/account-recovery' );
 		} );
 
@@ -324,6 +650,106 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
 		} );
 
+		test( 'shows an email address error from the server on the field', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+					data: { 'form-field': 'email' },
+				} );
+
+			render(
+				<>
+					<PersonalDetailsSection />
+					<Snackbars />
+				</>
+			);
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			const refetch = mockUserSettings( settings );
+			await user.clear( emailInput );
+			await user.paste( 'taken@example.com' );
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			// The server cancels any pending email change when it rejects the address.
+			await waitFor( () => expect( refetch.isDone() ).toBe( true ) );
+			expect(
+				screen.queryByRole( 'button', { name: 'Dismiss this notice' } )
+			).not.toBeInTheDocument();
+			// Before `toBeInvalid()`, whose `invalid` event focuses the field.
+			expect( emailInput ).toHaveFocus();
+			expect( emailInput ).toBeInvalid();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+
+			await user.clear( emailInput );
+			await user.paste( 'free@example.com' );
+
+			expect(
+				screen.queryByText( 'That e-mail address is already being used.' )
+			).not.toBeInTheDocument();
+			expect( emailInput ).toBeValid();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
+		} );
+
+		test( 'shows an error that does not concern the email address in a snackbar', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 500, { error: 'server_error', message: 'Something went wrong.' } );
+
+			render(
+				<>
+					<PersonalDetailsSection />
+					<Snackbars />
+				</>
+			);
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.paste( 'new@example.com' );
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Dismiss this notice' } )
+			).toHaveTextContent( 'Something went wrong.' );
+			expect( emailInput ).toBeValid();
+		} );
+
+		test( 'shows an email address error on the field even if it was never left', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+					data: { 'form-field': 'email' },
+				} );
+
+			render( <PersonalDetailsSection /> );
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			mockUserSettings( settings );
+			await user.clear( emailInput );
+			await user.paste( 'taken@example.com' );
+			await user.keyboard( '{Enter}' );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			expect( emailInput ).toHaveFocus();
+		} );
+
 		test( 'disables save when email is invalid', async () => {
 			const user = userEvent.setup();
 			mockUserSettings( settings );
@@ -337,11 +763,85 @@ describe( '<PersonalDetailsSection>', () => {
 
 			const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
 			await user.clear( emailInput );
-			await user.type( emailInput, 'invalid-email' );
+			await user.paste( 'invalid-email' );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 			} );
+		} );
+	} );
+	describe( 'avatar', () => {
+		test( 'HTML entities get decoded before avatar URL is rendered', async () => {
+			mockUserSettings( {
+				...settings,
+				avatar_URL: 'https://gravatar.com/avatar/abc123?s=96&amp;d=mm&amp;r=G',
+			} as unknown as UserSettings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const avatarImg = screen.getByAltText( 'Gravatar' );
+			expect( avatarImg ).toBeVisible();
+			expect( avatarImg ).toHaveAttribute(
+				'src',
+				expect.stringContaining( 'https://gravatar.com/avatar/abc123?s=96&d=mm&r=G' )
+			);
+		} );
+
+		test( 'keeps the avatar src stable while typing in other fields', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const srcBefore = screen.getByAltText( 'Gravatar' ).getAttribute( 'src' );
+
+			await user.type( screen.getByRole( 'textbox', { name: 'Display name' } ), 'abc' );
+
+			expect( screen.getByAltText( 'Gravatar' ) ).toHaveAttribute( 'src', srcBefore );
+		} );
+	} );
+
+	describe( 'display name field', () => {
+		test( 'disables save when display name exceeds 250 characters', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
+			await user.clear( displayNameInput );
+			await user.paste( 'a'.repeat( 251 ) );
+			await user.tab();
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+				expect( screen.getByText( 'Display name must be 250 characters or less.' ) ).toBeVisible();
+			} );
+		} );
+	} );
+
+	describe( 'web address field', () => {
+		test( 'disables save when URL is invalid', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			const urlInput = screen.getByRole( 'textbox', { name: 'Web address' } );
+			await user.clear( urlInput );
+			await user.paste( 'not-a-url' );
+			await user.tab();
+
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+			expect( screen.getByText( 'Please enter a valid URL.' ) ).toBeVisible();
 		} );
 	} );
 } );

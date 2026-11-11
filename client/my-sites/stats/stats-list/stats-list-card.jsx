@@ -15,6 +15,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import OpenLink from './action-link';
 import StatsListActions from './stats-list-actions';
 import StatsListCountryFlag from './stats-list-country-flag';
+import StatsListVideoThumbnail from './stats-list-video-thumbnail';
 
 const StatsListCard = ( {
 	data,
@@ -55,13 +56,17 @@ const StatsListCard = ( {
 		if ( listItemData?.page ) {
 			gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } Summary Link in List` );
 			// `page` is usually an in-app path, but it can be a full URL when the
-			// destination lives outside the current app (e.g. linking from Odyssey
-			// Stats in wp-admin out to the wordpress.com subscriber details page).
-			// Use URL parsing to distinguish genuinely external destinations from
-			// same-origin absolute URLs, which can still use the in-app router.
+			// destination lives outside the current app (e.g. Odyssey Stats in
+			// wp-admin linking to the subscriber details page). Use a full page load
+			// for genuinely external origins and for same-origin wp-admin URLs, which
+			// are never in-app SPA routes. Other same-origin absolute URLs still use
+			// the router.
 			try {
 				const parsedUrl = new URL( listItemData.page );
-				if ( parsedUrl.origin !== window.location.origin ) {
+				if (
+					parsedUrl.origin !== window.location.origin ||
+					parsedUrl.pathname.includes( '/wp-admin/' )
+				) {
 					window.location.href = listItemData.page;
 				} else {
 					page( parsedUrl.pathname + parsedUrl.search + parsedUrl.hash );
@@ -118,9 +123,11 @@ const StatsListCard = ( {
 	const generateLeftItem = ( item ) => {
 		let leftSideItem; // undefined value avoids rendering an empty node if nothing generates the output
 
-		// left icon visible for avatars, contry flags or tags and categories.
+		// Left icon is shown for country flags, video thumbnails, avatars, and tag/category icons.
 		if ( item?.countryCode ) {
 			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+		} else if ( moduleType === 'videoplays' ) {
+			leftSideItem = <StatsListVideoThumbnail poster={ item?.poster } />;
 		} else if ( showLeftIcon && item?.icon ) {
 			leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 		} else if ( Array.isArray( item?.label ) ) {
@@ -151,7 +158,7 @@ const StatsListCard = ( {
 							url: showMore?.url,
 							label: showMore?.label,
 							onClick: onShowMoreClick || undefined,
-					  }
+						}
 					: undefined
 			}
 			emptyMessage={ emptyMessage }

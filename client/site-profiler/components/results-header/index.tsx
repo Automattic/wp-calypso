@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import nonWpComSiteIcon from 'calypso/assets/images/site-profiler/non-wpcom-site.svg';
 import wpComSiteIcon from 'calypso/assets/images/site-profiler/wpcom-site.svg';
@@ -11,7 +11,6 @@ type Props = {
 	performanceCategory: PerformanceCategories;
 	isWpCom: boolean;
 	isWordPress: boolean;
-	onGetReport: () => void;
 };
 
 function getIcon( isWordPress?: boolean ) {
@@ -44,13 +43,7 @@ function getTitleMessage( performanceCategory: PerformanceCategories ) {
 	return translate( 'Room for growth! Let’s optimize your site.' );
 }
 
-export const ResultsHeader = ( {
-	domain,
-	performanceCategory,
-	isWpCom,
-	isWordPress,
-	onGetReport,
-}: Props ) => {
+export const ResultsHeader = ( { domain, performanceCategory, isWpCom, isWordPress }: Props ) => {
 	return (
 		<div className="results-header--container">
 			<div className="results-header--domain-container">
@@ -60,9 +53,6 @@ export const ResultsHeader = ( {
 			</div>
 			<h1>{ getTitleMessage( performanceCategory ) }</h1>
 			<div className="results-header--button-container">
-				<Button onClick={ onGetReport }>
-					{ translate( 'Access full site report - It’s free' ) }
-				</Button>
 				<div className="link-component">
 					<a href="/site-profiler">{ translate( 'Check another site' ) }</a>
 					<Gridicon icon="chevron-right" size={ 18 } />

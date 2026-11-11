@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
 jest.mock( '@automattic/agenttic-ui', () => ( {
@@ -38,9 +38,18 @@ jest.mock( '@wordpress/components', () => ( {
 		isPressed,
 		showTooltip,
 		accessibleWhenDisabled,
+		disabled,
 		...props
 	}: any ) => (
-		<button { ...props } aria-label={ label } aria-pressed={ isPressed }>
+		// Mirrors @wordpress/components: accessibleWhenDisabled keeps the button
+		// focusable and clickable, marking it only with aria-disabled.
+		<button
+			{ ...props }
+			aria-label={ label }
+			aria-pressed={ isPressed }
+			disabled={ accessibleWhenDisabled ? undefined : disabled }
+			aria-disabled={ accessibleWhenDisabled && disabled ? true : undefined }
+		>
 			{ children || text }
 		</button>
 	),
@@ -78,6 +87,7 @@ jest.mock( '../../store', () => ( {
 		EditorSidebar: 'editor_sidebar',
 		JetpackExternalMediaBlock: 'jetpack_external_media_block',
 		JetpackExternalMediaFeaturedImage: 'jetpack_external_media_featured_image',
+		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
 		PostEditorFeatureClip: 'post_editor_feature_clip',
 	},
 } ) );
@@ -109,14 +119,12 @@ describe( 'Header', () => {
 	};
 
 	const mockSetAnnotationMode = jest.fn();
-	const mockAddNotice = jest.fn();
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 
 		mockUseDispatch.mockReturnValue( {
 			setAnnotationMode: mockSetAnnotationMode,
-			addNotice: mockAddNotice,
 		} as any );
 
 		mockUseSelect.mockImplementation( ( selector: any ) => {
@@ -125,6 +133,7 @@ describe( 'Header', () => {
 				getHasUpdatedMetadata: () => false,
 				getIsAnnotationMode: () => false,
 				getDraftIds: () => [],
+				getHasUnsavedChanges: () => false,
 				getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 			} ) );
 			return result;
@@ -206,6 +215,7 @@ describe( 'Header', () => {
 						getHasUpdatedMetadata: () => false,
 						getIsAnnotationMode: () => false,
 						getDraftIds: () => [],
+						getHasUnsavedChanges: () => false,
 						getEntryPoint: () => ImageStudioEntryPoint.PostEditorFeatureClip,
 					} ) );
 					return result;
@@ -249,7 +259,28 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.EditorBlock,
+				} ) );
+				return result;
+			} );
+
+			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } /> );
+
+			expect( screen.getByRole( 'button', { name: /Save and apply/i } ) ).toHaveTextContent(
+				'Save & Apply'
+			);
+		} );
+
+		it( 'renders save button with "Save & Apply" text for the JetpackAIFeaturedImage entry point', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => false,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
+					getEntryPoint: () => ImageStudioEntryPoint.JetpackAIFeaturedImage,
 				} ) );
 				return result;
 			} );
@@ -374,6 +405,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -407,6 +439,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => true,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -435,6 +468,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => true,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -461,6 +495,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => true,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -483,6 +518,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => true,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -509,6 +545,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => true,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -605,6 +642,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [ '123' ],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -626,6 +664,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => true,
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -647,6 +686,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => false,
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;
@@ -675,7 +715,9 @@ describe( 'Header', () => {
 			render( <Header { ...propsWithAttachmentId } mode={ ImageStudioMode.Edit } /> );
 
 			expect(
-				screen.getByLabelText( 'Edit this image in the WordPress Media Library' )
+				screen.getByLabelText(
+					'Edit this image in the WordPress Media Library (opens in a new tab)'
+				)
 			).toBeInTheDocument();
 		} );
 
@@ -688,7 +730,9 @@ describe( 'Header', () => {
 			render( <Header { ...propsWithoutAttachmentId } mode={ ImageStudioMode.Edit } /> );
 
 			expect(
-				screen.queryByLabelText( 'Edit this image in the WordPress Media Library' )
+				screen.queryByLabelText(
+					'Edit this image in the WordPress Media Library (opens in a new tab)'
+				)
 			).not.toBeInTheDocument();
 		} );
 
@@ -707,7 +751,11 @@ describe( 'Header', () => {
 
 			render( <Header { ...propsWithAttachmentId } mode={ ImageStudioMode.Edit } /> );
 
-			await user.click( screen.getByLabelText( 'Edit this image in the WordPress Media Library' ) );
+			await user.click(
+				screen.getByLabelText(
+					'Edit this image in the WordPress Media Library (opens in a new tab)'
+				)
+			);
 
 			expect( onClassicMediaEditorNavigation ).toHaveBeenCalledWith(
 				'post.php?post=123&action=edit'
@@ -715,30 +763,76 @@ describe( 'Header', () => {
 			expect( mockTrackImageStudioToolClick ).toHaveBeenCalledWith( 'media_library' );
 		} );
 
-		it( 'shows error notice when navigation fails', async () => {
-			const error = new Error( 'Navigation failed' );
-			const onClassicMediaEditorNavigation = jest.fn().mockRejectedValue( error );
-			const user = userEvent.setup();
-
-			const propsWithAttachmentId = {
-				...defaultProps,
-				config: {
-					...defaultProps.config,
-					attachmentId: 123,
-				},
-				onClassicMediaEditorNavigation,
-			};
-
-			render( <Header { ...propsWithAttachmentId } mode={ ImageStudioMode.Edit } /> );
-
-			await user.click( screen.getByLabelText( 'Edit this image in the WordPress Media Library' ) );
-
-			await waitFor( () => {
-				expect( mockAddNotice ).toHaveBeenCalledWith(
-					'Failed to save changes. Please try again or use the Save button.',
-					'error'
-				);
+		const mockStore = ( overrides: Record< string, unknown > ) => {
+			mockUseSelect.mockImplementation( ( selector: any ) => {
+				const result = selector( () => ( {
+					getImageStudioAiProcessing: () => false,
+					getHasUpdatedMetadata: () => false,
+					getIsAnnotationMode: () => false,
+					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
+					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
+					...overrides,
+				} ) );
+				return result;
 			} );
+		};
+
+		const propsWithAttachment = {
+			...defaultProps,
+			config: {
+				...defaultProps.config,
+				attachmentId: 123,
+			},
+			onClassicMediaEditorNavigation: jest.fn(),
+		};
+
+		const disabledLabel = 'Save or discard your changes to edit in the WordPress Media Library';
+
+		it( 'disables Media Library button while there are unsaved changes', () => {
+			mockStore( { getHasUnsavedChanges: () => true } );
+
+			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
+
+			expect( screen.getByLabelText( disabledLabel ) ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+
+		it( 'keeps Media Library button enabled when drafts exist but the current image is saved', () => {
+			mockStore( { getDraftIds: () => [ '123' ], getHasUnsavedChanges: () => false } );
+
+			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
+
+			expect(
+				screen.getByLabelText(
+					'Edit this image in the WordPress Media Library (opens in a new tab)'
+				)
+			).not.toHaveAttribute( 'aria-disabled' );
+		} );
+
+		it( 'disables Media Library button while saving', () => {
+			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } isSaving /> );
+
+			expect( screen.getByLabelText( disabledLabel ) ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+
+		it( 'disables Media Library button while AI is processing', () => {
+			mockStore( { getImageStudioAiProcessing: () => true } );
+
+			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
+
+			expect( screen.getByLabelText( disabledLabel ) ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+
+		it( 'does not navigate when the disabled Media Library button is activated', async () => {
+			const user = userEvent.setup();
+			mockStore( { getHasUnsavedChanges: () => true } );
+
+			render( <Header { ...propsWithAttachment } mode={ ImageStudioMode.Edit } /> );
+
+			await user.click( screen.getByLabelText( disabledLabel ) );
+
+			expect( propsWithAttachment.onClassicMediaEditorNavigation ).not.toHaveBeenCalled();
+			expect( mockTrackImageStudioToolClick ).not.toHaveBeenCalledWith( 'media_library' );
 		} );
 	} );
 
@@ -769,6 +863,7 @@ describe( 'Header', () => {
 					getHasUpdatedMetadata: () => true,
 					getIsAnnotationMode: () => false,
 					getDraftIds: () => [],
+					getHasUnsavedChanges: () => false,
 					getEntryPoint: () => ImageStudioEntryPoint.MediaLibrary,
 				} ) );
 				return result;

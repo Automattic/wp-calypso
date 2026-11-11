@@ -1,0 +1,28 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+#: test/examples/wordpress-i18n.js:2
+msgid "Simple string"
+msgstr ""
+
+#: test/examples/wordpress-i18n.js:4
+msgid "Singular"
+msgid_plural "Plural"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/examples/wordpress-i18n.js:11
+#: test/examples/wordpress-i18n.js:14
+#. String comment
+msgid "String with comment"
+msgid_plural "Plural with comment"
+msgstr[0] ""
+msgstr[1] ""
+
+#: test/examples/wordpress-i18n.js:6
+#: test/examples/wordpress-i18n.js:8
+msgctxt "simple context"
+msgid "String with context"
+msgid_plural "Plural with context"
+msgstr[0] ""
+msgstr[1] ""

@@ -64,10 +64,10 @@ const NoBackupsYet = () => {
 												target: '_blank',
 												rel: 'noopener noreferrer',
 												onClick: onContactSupportClick,
-										  }
+											}
 										: {
 												href: CALYPSO_CONTACT,
-										  } ) }
+											} ) }
 								/>
 							),
 						},

@@ -1,8 +1,7 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { isTitanMail, isGoogleWorkspace } from '@automattic/calypso-products';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useQuery } from '@tanstack/react-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
-import { useSelector } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { InfiniteData } from '@tanstack/react-query';
 
@@ -20,11 +19,13 @@ export function useEmailOwnerUserName(
 	selectedSite: SiteDetails | null | undefined,
 	domainName: string
 ): string {
-	useQuerySitePurchases( selectedSite?.ID ?? -1 );
+	const siteId = selectedSite?.ID;
+	const { data: purchases } = useQuery( {
+		...sitePurchasesQuery( siteId ?? 0 ),
+		enabled: Boolean( siteId ),
+	} );
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-
-	const emailSubscription = purchases.find(
+	const emailSubscription = purchases?.find(
 		( purchase ) =>
 			( isTitanMail( purchase ) || isGoogleWorkspace( purchase ) ) && purchase.meta === domainName
 	);
@@ -43,7 +44,7 @@ export function useEmailOwnerUserName(
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
 	const ownerUser = teams?.users?.find(
-		( user ) => ( user.linked_user_ID ?? user.ID ) === emailSubscription?.userId
+		( user ) => ( user.linked_user_ID ?? user.ID ) === emailSubscription.user_id
 	);
 
 	return ownerUser?.login ?? '';

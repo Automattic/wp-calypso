@@ -1,9 +1,10 @@
 import { SiteMediaStorage } from '@automattic/data-stores';
-import { ProgressBar } from '@wordpress/components';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
-import filesize from 'filesize';
-import { useTranslate } from 'i18n-calypso';
-import { FC, PropsWithChildren } from 'react';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { FC, PropsWithChildren, useId } from 'react';
+import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import { formatStorage } from 'calypso/dashboard/utils/site-storage';
 
 interface Props {
 	mediaStorage: SiteMediaStorage;
@@ -13,16 +14,18 @@ const ALERT_PERCENT = 80;
 
 const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStorage } ) => {
 	const translate = useTranslate();
+	const titleId = useId();
 	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 
-	let usagePercent = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
+	let usagePercent = ( storageUsedBytes / maxStorageBytes ) * 100;
 	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
 	usagePercent = Math.max( MINIMUM_DISPLAYED_USAGE, usagePercent );
 	// Make sure displayed usage never exceeds 100%
 	usagePercent = Math.min( usagePercent, 100 );
 
-	const used = filesize( storageUsedBytes, { round: 0 } );
-	const max = filesize( maxStorageBytes, { round: 0 } );
+	const locale = getIntlLocale( getLocaleSlug() );
+	const used = formatStorage( storageUsedBytes, locale );
+	const max = formatStorage( maxStorageBytes, locale );
 
 	const classes = clsx( 'plan-storage__bar', {
 		'is-alert': usagePercent > ALERT_PERCENT,
@@ -31,7 +34,9 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 	return (
 		<>
 			<div className="plan-storage-title-wrapper">
-				<div className="plan-storage-title">{ translate( 'Storage' ) }</div>
+				<div id={ titleId } className="plan-storage-title">
+					{ translate( 'Storage' ) }
+				</div>
 				<span className="plan-storage-value">
 					{ translate( 'Using %(usedStorage)s of %(maxStorage)s', {
 						args: {
@@ -44,7 +49,11 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 				</span>
 			</div>
 
-			<ProgressBar className={ classes } value={ usagePercent } />
+			<Progress.Root className={ classes } aria-labelledby={ titleId } value={ usagePercent }>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 
 			{ children }
 		</>

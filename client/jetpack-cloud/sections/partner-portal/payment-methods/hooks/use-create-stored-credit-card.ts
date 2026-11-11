@@ -26,7 +26,7 @@ export function useCreateStoredCreditCardMethod( {
 						stripe,
 						stripeConfiguration,
 						activePayButtonText,
-				  } )
+					} )
 				: null,
 		[ shouldLoadStripeMethod, stripe, stripeConfiguration, activePayButtonText ]
 	);

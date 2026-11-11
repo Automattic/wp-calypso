@@ -5,10 +5,8 @@ import earnings from './earnings/reducer';
 import productList from './product-list/reducer';
 import settings from './settings/reducer';
 import subscribers from './subscribers/reducer';
-import subscriptions from './subscriptions/reducer';
 
 export interface IMembershipsState {
-	subscriptions: any;
 	earnings: any;
 	subscribers: any;
 	settings: any;
@@ -17,7 +15,6 @@ export interface IMembershipsState {
 }
 
 const reducers = {
-	subscriptions,
 	earnings,
 	subscribers,
 	settings,

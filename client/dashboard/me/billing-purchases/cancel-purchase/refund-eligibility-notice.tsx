@@ -1,14 +1,12 @@
-import { Link } from '@tanstack/react-router';
 import { cancelPurchaseRoute } from '../../../app/router/me';
-import Notice from '../../../components/notice';
+import Notice, { RouterNoticeActionLink } from '../../../components/notice';
 import { hasAmountAvailableToRefund } from '../../../utils/purchase';
 import { getRefundEligibilityPromoCopy, getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
 import type { Purchase } from '@automattic/api-core';
 
 type RefundEligibilityNoticeProps =
-	| { mode?: 'confirmed'; purchase: Purchase }
-	| { mode: 'refund-eligibility'; purchase: Purchase };
+	{ mode?: 'confirmed'; purchase: Purchase } | { mode: 'refund-eligibility'; purchase: Purchase };
 
 export default function RefundEligibilityNotice( props: RefundEligibilityNoticeProps ) {
 	const { purchase } = props;
@@ -28,13 +26,13 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 			<Notice
 				variant="info"
 				actions={
-					<Link
+					<RouterNoticeActionLink
 						to={ cancelPurchaseRoute.fullPath }
 						params={ { purchaseId: String( purchase.ID ) } }
 						search={ { intent: 'remove' as const } }
 					>
 						{ linkLabel }
-					</Link>
+					</RouterNoticeActionLink>
 				}
 			>
 				{ prompt }

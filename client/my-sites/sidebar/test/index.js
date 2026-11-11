@@ -51,6 +51,11 @@ describe( 'MySitesSidebar', () => {
 	} );
 
 	describe( '#itemLinkMatches() edge cases', () => {
+		test( 'a site redesign page keeps the Themes menu selected', () => {
+			expect( itemLinkMatches( '/themes', '/site-redesign/example.wordpress.com' ) ).toBe( true );
+			expect( itemLinkMatches( '/plugins', '/site-redesign/example.wordpress.com' ) ).toBe( false );
+		} );
+
 		test( 'clicking a settings panel should not activate the posts menu', () => {
 			const isSelected = itemLinkMatches(
 				'/settings/general/example.wordpress.com',
@@ -60,9 +65,9 @@ describe( 'MySitesSidebar', () => {
 			expect( isSelected ).toBe( false );
 		} );
 
-		test( 'clicking a marketing panel should activate the marketing/tools menu', () => {
+		test( 'clicking a marketing panel should activate the marketing menu', () => {
 			const isSelected = itemLinkMatches(
-				'/marketing/tools/example.wordpress.com',
+				'/marketing/sharing-buttons/example.wordpress.com',
 				'/marketing/connections/cpapfree.wordpress.com'
 			);
 

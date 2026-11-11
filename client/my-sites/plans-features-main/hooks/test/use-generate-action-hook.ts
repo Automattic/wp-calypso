@@ -23,6 +23,10 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 jest.mock( '@wordpress/data' );
 jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
+jest.mock( '../../scheduled-term-change', () => ( {
+	...jest.requireActual( '../../scheduled-term-change' ),
+	isScheduledTermChangeEnabled: jest.fn(),
+} ) );
 
 import {
 	PLAN_BUSINESS,
@@ -34,10 +38,15 @@ import {
 	PLAN_FREE,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { isScheduledTermChangeEnabled } from '../../scheduled-term-change';
 import useGenerateActionHook from '../use-generate-action-hook';
 
 describe( 'useGenerateActionHook', () => {
@@ -469,5 +478,231 @@ describe( 'useGenerateActionHook', () => {
 
 		expect( action.primary.text ).toBe( 'Downgrade' );
 		expect( action.primary.variant ).toBe( 'secondary' );
+	} );
+	it( 'should offer a term upgrade on the current plan tier in the plans-upgrade intent', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_PERSONAL_MONTHLY,
+		} );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				plansIntent: 'plans-upgrade',
+			} )
+		);
+
+		const action = result.current( {
+			planSlug: PLAN_PERSONAL,
+			availableForPurchase: true,
+		} );
+
+		expect( action.primary.text ).toBe( 'Upgrade to Yearly' );
+		expect( action.primary.status ).toBe( 'enabled' );
+	} );
+
+	it( 'should show the current plan as owned in the plans-upgrade intent when the term matches', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_PERSONAL_MONTHLY,
+		} );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				plansIntent: 'plans-upgrade',
+			} )
+		);
+
+		const action = result.current( { planSlug: PLAN_PERSONAL_MONTHLY } );
+
+		expect( action.primary.text ).toBe( 'Your plan' );
+		expect( action.primary.status ).toBe( 'disabled' );
+	} );
+
+	it( 'should offer a higher tier at the same term in the plans-upgrade intent', () => {
+		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+			planSlug: PLAN_PERSONAL_MONTHLY,
+		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
+
+		const { result } = renderHook( () =>
+			useGenerateActionHook( {
+				isInSignup: false,
+				isLaunchPage: false,
+				siteId: mockSiteId,
+				plansIntent: 'plans-upgrade',
+			} )
+		);
+
+		const action = result.current( {
+			planSlug: PLAN_PREMIUM_MONTHLY,
+			availableForPurchase: true,
+		} );
+
+		expect( action.primary.text ).toBe( 'Upgrade' );
+		expect( action.primary.status ).toBe( 'enabled' );
+	} );
+
+	describe( 'scheduled term changes', () => {
+		const scheduledOnly = {
+			availableForDowngrade: true,
+			isDelayedDowngradeAvailable: true,
+			isInstantDowngradeAvailable: false,
+		};
+		const mockSitePlans = ( data ) =>
+			( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+				selector( {
+					ui: {},
+					sites: { items: [], plans: { [ mockSiteId ]: { data } } },
+					route: { query: { current: { get_domain: null } } },
+				} )
+			);
+
+		beforeEach( () => {
+			( isScheduledTermChangeEnabled as jest.Mock ).mockReturnValue( true );
+		} );
+
+		it( 'offers a shorter term as a change at renewal', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{ productSlug: PLAN_PREMIUM_MONTHLY, interval: 31, ...scheduledOnly },
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Switch at renewal' );
+			expect( action.primary.variant ).toBe( 'secondary' );
+		} );
+
+		it( 'labels the monthly plan as a downgrade inside the refund window', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{
+					productSlug: PLAN_PREMIUM_MONTHLY,
+					interval: 31,
+					...scheduledOnly,
+					isInstantDowngradeAvailable: true,
+				},
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
+		it( 'labels the monthly plan as a downgrade when the current plan has expired', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{
+					productSlug: PLAN_PREMIUM_MONTHLY,
+					interval: 31,
+					...scheduledOnly,
+					isDelayedDowngradeAvailable: false,
+				},
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
+		it( 'labels a lower tier plan on the same billing term as a downgrade', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_BUSINESS, interval: 365, currentPlan: true },
+				{ productSlug: PLAN_PREMIUM, interval: 365, ...scheduledOnly },
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( { planSlug: PLAN_PREMIUM, availableForPurchase: false } );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
+		it( 'keeps the downgrade label without the feature flag', () => {
+			( isScheduledTermChangeEnabled as jest.Mock ).mockReturnValue( false );
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{ productSlug: PLAN_PREMIUM_MONTHLY, interval: 31, ...scheduledOnly },
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
+		it( 'marks only the exact product a scheduled change lands on', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM_2_YEARS, interval: 730, currentPlan: true },
+				{ productSlug: PLAN_PREMIUM, interval: 365, ...scheduledOnly },
+				{ productSlug: PLAN_PREMIUM_MONTHLY, interval: 31, ...scheduledOnly },
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( {
+					siteId: mockSiteId,
+					isInSignup: false,
+					isLaunchPage: false,
+					isDelayedDowngradePending: true,
+					delayedDowngradeToProductSlug: PLAN_PREMIUM_MONTHLY,
+				} )
+			);
+
+			const target = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+			expect( target.primary.text ).toBe( 'Changing at renewal' );
+			expect( target.primary.status ).toBe( 'disabled' );
+
+			const otherTerm = result.current( { planSlug: PLAN_PREMIUM, availableForPurchase: false } );
+			expect( otherTerm.primary.text ).toBe( 'Switch at renewal' );
+		} );
+
+		it( 'replaces "Contact support" with a change at renewal for a scheduled-only target', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{ productSlug: PLAN_PREMIUM_MONTHLY, interval: 31, ...scheduledOnly },
+			] );
+			( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( { planSlug: PLAN_PREMIUM } );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: true,
+				currentPlanBillingPeriod: 365,
+				billingPeriod: 31,
+			} );
+
+			expect( action.primary.text ).toBe( 'Switch at renewal' );
+		} );
 	} );
 } );

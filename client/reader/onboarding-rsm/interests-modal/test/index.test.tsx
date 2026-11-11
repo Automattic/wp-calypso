@@ -185,6 +185,21 @@ describe( 'InterestsModal – verification nudge', () => {
 		expect( screen.getByTestId( 'interests-verification-nudge' ) ).toBeVisible();
 	} );
 
+	it( 'removes interest controls from keyboard access while verification is required', () => {
+		renderWithProvider(
+			<InterestsModal
+				onContinue={ jest.fn() }
+				promptVerification
+				hasFollowed={ false }
+				onFollowed={ jest.fn() }
+			/>
+		);
+
+		const content = document.querySelector( '.interests-modal__content' );
+		expect( content ).toHaveAttribute( 'inert' );
+		expect( content ).not.toContainElement( screen.getByRole( 'button', { name: 'Continue' } ) );
+	} );
+
 	it( 'disables the Continue button when promptVerification is true', () => {
 		renderWithProvider(
 			<InterestsModal

@@ -5,12 +5,11 @@ import {
 	DomainStatus,
 	DomainTypes,
 } from '@automattic/api-core';
+import { __ } from '@wordpress/i18n';
 import { isAfter, subMinutes, subDays } from 'date-fns';
-import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
-	Purchase,
 	Domain,
 	DomainSummary,
 	Site,
@@ -24,10 +23,6 @@ export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
 }
 
-export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
-	return getRenewalUrlFromPurchase( purchase, getDomainSiteSlug( domain ) );
-}
-
 export function isRegisteredDomain( domain: DomainSummary ) {
 	return domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION;
 }
@@ -37,6 +32,22 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 		!! registrationDate &&
 		isAfter( new Date( registrationDate ), subMinutes( new Date(), numberOfMinutes ) )
 	);
+}
+
+// The type shown under a domain's name. Anything else keeps the label from the API.
+export function getDomainTypeLabel( domain: Pick< DomainSummary, 'subtype' > ) {
+	switch ( domain.subtype.id ) {
+		case DomainSubtype.DOMAIN_REGISTRATION:
+			return __( 'Registered with us' );
+		case DomainSubtype.DOMAIN_CONNECTION:
+			return __( 'Connected domain name' );
+		case DomainSubtype.DOMAIN_TRANSFER:
+			return __( 'Domain name transfer' );
+		case DomainSubtype.DEFAULT_ADDRESS:
+			return __( 'Included site address' );
+		default:
+			return domain.subtype.label;
+	}
 }
 
 export function isDomainRenewable( domain: DomainSummary ): boolean {
@@ -155,6 +166,18 @@ export function canSetAsPrimary( {
 			user,
 		} )
 	);
+}
+
+export function canSetAsPrimaryIgnoringSsl( {
+	domain,
+	site,
+	user,
+}: {
+	domain: DomainSummary;
+	site: Site;
+	user: User;
+} ): boolean {
+	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
 }
 
 export function hasGSuiteWithUs( domain: Domain ) {
@@ -412,16 +435,30 @@ export function isTldInMaintenance( domain: Domain ) {
 	return domain.tld_maintenance_end_time > 0;
 }
 
-/**
- * Returns true if a domain is a registration that should become primary but
- * the background job hasn't completed yet. Used on CIAB dashboards to show
- * a "setting up" notice.
- */
-export function isPendingPrimaryDomain( domain: DomainSummary ): boolean {
+export function canUserSetPrimaryDomain( site: Site, user: User ): boolean {
+	const primaryWithPlanOnly = userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' );
 	return (
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
+		! ( primaryWithPlanOnly && site.plan?.is_free ) &&
+		hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
+	);
+}
+
+export function isPrimaryDomainCandidate( domain: DomainSummary ): boolean {
+	return (
+		( domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) &&
 		domain.can_set_as_primary &&
 		! domain.primary_domain &&
-		! domain.expired
+		domain.domain_status.id !== DomainStatus.CONNECTION_ERROR
 	);
+}
+
+/**
+ * Returns true while the backend's set-primary-domain job is still expected to
+ * make this domain the site's primary address. Used to show a "setting up" notice.
+ */
+export function isPendingPrimaryDomain( domain: DomainSummary ): boolean {
+	// A payload cached before the field existed must not show the notice.
+	return domain.set_primary_domain_pending === true;
 }

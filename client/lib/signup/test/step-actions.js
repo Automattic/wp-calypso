@@ -6,13 +6,18 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { DIFM_FLOW, DIFM_FLOW_STORE } from '@automattic/onboarding';
 import nock from 'nock';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import {
+	addPlanToCart,
+	createSiteAndAddDIFMToCart,
 	createSiteWithCart,
 	getPluginBillingPeriodForPlan,
-	isDomainFulfilled,
+	isMailboxFulfilled,
 	isPlanFulfilled,
 	pickMarketplacePluginVariant,
 } from '../step-actions';
@@ -22,6 +27,7 @@ jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/
 jest.mock( 'calypso/signup/config/flows-pure', () =>
 	require( './mocks/signup/config/flows-pure' )
 );
+jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
 
 // A Promise wrapper around the callback which resolves after the callback completes
 // to ensure jest waits for the test to finish.
@@ -52,7 +58,7 @@ describe( 'createSiteWithCart()', () => {
 			};
 		} );
 
-	test( 'should find available url if siteUrl is empty and enable auto generated blog name', async () => {
+	test( 'sends an empty blog_name and finds an available url when siteUrl is empty', async () => {
 		expect.assertions( 1 );
 		const fakeStore = {
 			getState: () => ( {
@@ -62,7 +68,10 @@ describe( 'createSiteWithCart()', () => {
 
 		await testCreateSite(
 			( response ) => {
-				expect( response.requestBody.find_available_url ).toBe( true );
+				expect( response.requestBody ).toMatchObject( {
+					blog_name: '',
+					find_available_url: true,
+				} );
 			},
 			[],
 			{ siteUrl: undefined },
@@ -85,125 +94,107 @@ describe( 'createSiteWithCart()', () => {
 			fakeStore
 		);
 	} );
-
-	test( 'use username for blog_name if user data available and enable auto generated blog name', async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				currentUser: {
-					user: {
-						username: 'alex',
-					},
-				},
-				signup: { dependencyStore: { shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
-
-	test( "use username from dependency store for blog_name if user data isn't available and enable auto generated blog name", async () => {
-		expect.assertions( 1 );
-		const fakeStore = {
-			getState: () => ( {
-				signup: { dependencyStore: { username: 'alex', shouldHideFreePlan: true } },
-			} ),
-		};
-
-		await testCreateSite(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'alex' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
 } );
 
-describe( 'isDomainFulfilled', () => {
+describe( 'createSiteAndAddDIFMToCart()', () => {
+	// New DIFM sites must be created as Coming Soon rather than relying on the
+	// server to hide them while a build is in progress (HAPD-4802).
+	test.each( [ DIFM_FLOW, DIFM_FLOW_STORE ] )(
+		'creates a new site as Coming Soon in the %s flow',
+		async ( flowName ) => {
+			expect.assertions( 3 );
+			const fakeStore = {
+				getState: () => ( {
+					signup: { dependencyStore: { newOrExistingSiteChoice: 'new-site' } },
+				} ),
+			};
+
+			// Relies on the persisted /sites/new nock above, which echoes the request body.
+			const error = await new Promise( ( resolve ) =>
+				createSiteAndAddDIFMToCart( resolve, {}, { lastKnownFlow: flowName }, fakeStore )
+			);
+
+			expect( error.requestBody.options.site_creation_flow ).toBe( flowName );
+			expect( error.requestBody.options.wpcom_public_coming_soon ).toBe( 1 );
+			expect( error.requestBody.public ).toBe( 0 );
+		}
+	);
+} );
+
+describe( 'isMailboxFulfilled()', () => {
 	const submitSignupStep = jest.fn();
-	const wpcomDomain = [ { domain: 'example.wordpress.com', isWPCOMDomain: true } ];
-	const customDomain = { domain: 'example.com', isWPCOMDomain: false };
-	const wpcomAndCustomDomains = [
-		{ domain: 'example.wordpress.com', isWPCOMDomain: true },
-		customDomain,
-	];
+	const domainItem = { meta: 'example.com', product_slug: 'dotcom_domain' };
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();
 		submitSignupStep.mockClear();
 	} );
 
-	test( 'should call `submitSignupStep` with empty domainItem when site has custom domains', () => {
-		const stepName = 'domains-launch';
-		const nextProps = { siteDomains: wpcomAndCustomDomains, submitSignupStep };
+	test( 'adds the selected tier to the cart and skips the step when the URL picked a tier', () => {
+		const nextProps = {
+			signupDependencies: { domainItem, tier: 'premium', billing: 'monthly' },
+			submitSignupStep,
+		};
 
-		expect( submitSignupStep ).not.toHaveBeenCalled();
+		isMailboxFulfilled( 'mailbox', undefined, nextProps );
 
-		isDomainFulfilled( stepName, undefined, nextProps );
-
+		const emailItem = expect.objectContaining( {
+			product_slug: 'wp_titan_mail_premium_monthly',
+			meta: 'example.com',
+		} );
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, domainItem: undefined, wasSkipped: true },
-			{ domainItem: undefined }
+			{ stepName: 'mailbox', emailItem, wasSkipped: true },
+			{ domainItem, emailItem }
 		);
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'mailbox' );
 	} );
 
-	test( 'should call `flows.excludeStep` with the stepName when site has custom domains', () => {
-		const stepName = 'domains-launch';
-		const nextProps = { siteDomains: wpcomAndCustomDomains, submitSignupStep };
+	test( 'keeps the step when the URL did not pick a tier', () => {
+		const nextProps = { signupDependencies: { domainItem }, submitSignupStep };
 
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isDomainFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
-	} );
-
-	test( 'should not remove step when site only has WordPress.com domains', () => {
-		const stepName = 'domains-launch';
-		const nextProps = { siteDomains: wpcomDomain, submitSignupStep };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-
-		isDomainFulfilled( stepName, undefined, nextProps );
+		isMailboxFulfilled( 'mailbox', undefined, nextProps );
 
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 	} );
 
-	test( 'should not remove step when domains are still loading (siteId exists but no siteDomains)', () => {
-		const stepName = 'domains-launch';
-		const nextProps = { siteId: 123, siteDomains: [], submitSignupStep };
+	test( 'keeps the step when the URL picked an unknown tier', () => {
+		const nextProps = { signupDependencies: { domainItem, tier: 'gold' }, submitSignupStep };
 
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-
-		isDomainFulfilled( stepName, undefined, nextProps );
+		isMailboxFulfilled( 'mailbox', undefined, nextProps );
 
 		expect( submitSignupStep ).not.toHaveBeenCalled();
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 	} );
+} );
 
-	test( 'should not remove step when domains are still loading (siteId exists but siteDomains is undefined)', () => {
-		const stepName = 'domains-launch';
-		const nextProps = { siteId: 123, siteDomains: undefined, submitSignupStep };
+describe( 'addPlanToCart()', () => {
+	test( 'adds the email item for the currently selected domain', async () => {
+		const addProductsToCart = jest.fn().mockResolvedValue( {} );
+		jest.spyOn( cartManagerClient, 'getCartKeyForSiteSlug' ).mockResolvedValue( 123 );
+		jest
+			.spyOn( cartManagerClient, 'forCartKey' )
+			.mockReturnValue( { actions: { addProductsToCart } } );
+		const reduxStore = {
+			getState: () => ( { currentUser: { id: null }, productsList: { items: {} } } ),
+			dispatch: jest.fn(),
+		};
+		const dependencies = {
+			siteSlug: 'example.wordpress.com',
+			domainItem: { meta: 'new-domain.com' },
+			emailItem: { product_slug: 'wp_titan_mail_premium_monthly', meta: 'old-domain.com' },
+		};
 
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
+		await new Promise( ( resolve ) =>
+			addPlanToCart( resolve, dependencies, { cartItems: [] }, reduxStore )
+		);
 
-		isDomainFulfilled( stepName, undefined, nextProps );
-
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( addProductsToCart ).toHaveBeenCalledWith( [
+			expect.objectContaining( {
+				product_slug: 'wp_titan_mail_premium_monthly',
+				meta: 'new-domain.com',
+			} ),
+		] );
 	} );
 } );
 
@@ -262,6 +253,23 @@ describe( 'isPlanFulfilled()', () => {
 		const nextProps = {
 			isPaidPlan: false,
 			sitePlanSlug: 'sitePlanSlug',
+			submitSignupStep,
+		};
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+
+		isPlanFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+		expect( submitSignupStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should not remove a step for a free trial plan', () => {
+		const stepName = 'plans';
+		const nextProps = {
+			isPaidPlan: true,
+			sitePlanSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			submitSignupStep,
 		};
 

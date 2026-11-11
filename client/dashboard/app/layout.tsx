@@ -1,16 +1,16 @@
 import { queryClient } from '@automattic/api-queries';
-// eslint-disable-next-line no-restricted-imports
 import {
 	initializeAnalytics,
-	recordTracksEvent,
-	recordTracksPageViewWithPageParams,
+	recordTracksEvent, // eslint-disable-line no-restricted-imports
+	recordTracksPageViewWithPageParams, // eslint-disable-line no-restricted-imports
 } from '@automattic/calypso-analytics';
 import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { useMemo, useEffect } from 'react';
-import { withColorScheme } from 'calypso/lib/color-scheme';
+import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
@@ -29,21 +29,13 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog } = useAppContext();
+	const { unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
 			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
 		}
 	}, [ user, router ] );
-
-	useEffect( () => {
-		if ( posthog ) {
-			import( '@automattic/posthog' ).then( ( { init } ) =>
-				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
-			);
-		}
-	}, [ user, posthog ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
@@ -67,6 +59,32 @@ function AnalyticsProviderWithClient( {
 		[ router ]
 	);
 
+	useEffect( () => {
+		if ( ! app ) {
+			return;
+		}
+
+		const recordUnifiedPageView = () => {
+			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
+				source: 'msd',
+				app,
+				path: router.history.location.pathname,
+				route: getNormalizedPath( router.state.matches, router.basepath ),
+			} );
+		};
+		const unsubscribe = router.subscribe( 'onResolved', ( { pathChanged } ) => {
+			if ( pathChanged ) {
+				recordUnifiedPageView();
+			}
+		} );
+
+		if ( router.state.status === 'idle' && router.state.matches.length ) {
+			recordUnifiedPageView();
+		}
+
+		return unsubscribe;
+	}, [ router, app, analyticsClient ] );
+
 	useSurvicate();
 	useSurvicateVisitTraits();
 
@@ -74,6 +92,7 @@ function AnalyticsProviderWithClient( {
 }
 
 function Layout( { config }: { config: AppConfig } ) {
+	useEnableWpCompatOverlaySlot();
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
 	return (

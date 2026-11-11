@@ -32,7 +32,6 @@ export function formatAmexCreditCard( cardNumber ) {
 }
 
 const fieldMasks = {};
-const unmask = ( value ) => value;
 
 fieldMasks[ 'expiration-date' ] = {
 	mask: function ( previousValue, nextValue ) {
@@ -60,17 +59,11 @@ fieldMasks[ 'expiration-date' ] = {
 
 		return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
 	},
-
-	unmask,
 };
 
 fieldMasks.number = {
 	mask: function ( previousValue, nextValue ) {
 		return formatCreditCard( nextValue );
-	},
-
-	unmask: function ( value ) {
-		return value.replace( / /g, '' );
 	},
 };
 
@@ -78,8 +71,6 @@ fieldMasks.cvv = {
 	mask: function ( previousValue, nextValue ) {
 		return nextValue.replace( /[^\d]/g, '' ).substring( 0, 4 );
 	},
-
-	unmask,
 };
 
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
@@ -116,8 +107,6 @@ fieldMasks.document = {
 
 		return string.replace( /^[\s.-]+|[\s.-]+$/g, '' );
 	},
-
-	unmask,
 };
 
 /**
@@ -134,20 +123,4 @@ export function maskField( fieldName, previousValue, nextValue ) {
 	}
 
 	return fieldMask.mask( previousValue, nextValue );
-}
-
-/**
- * Reverses masking formats of a field value
- * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
- * @param {string} previousValue the current value of the field before change
- * @param {string} nextValue the new, incoming value of the field on change
- * @returns {string} deformatted value
- */
-export function unmaskField( fieldName, previousValue, nextValue ) {
-	const fieldMask = fieldMasks[ fieldName ];
-	if ( ! fieldMask ) {
-		return nextValue;
-	}
-
-	return fieldMask.unmask( fieldMask.mask( previousValue, nextValue ) );
 }

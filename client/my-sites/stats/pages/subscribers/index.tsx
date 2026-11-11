@@ -166,7 +166,7 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 								<Followers
 									className={ clsx(
 										{
-											'stats__flexible-grid-item--half': supportsEmailStats,
+											'stats__flexible-grid-item--40--once-space': supportsEmailStats,
 											'stats__flexible-grid-item--full': ! supportsEmailStats,
 										},
 										'stats__flexible-grid-item--full--large'
@@ -179,7 +179,7 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 										query={ { period: period?.period, date: today } }
 										summaryUrl={ summaryUrl }
 										className={ clsx(
-											'stats__flexible-grid-item--half',
+											'stats__flexible-grid-item--60',
 											'stats__flexible-grid-item--full--large'
 										) }
 									/>

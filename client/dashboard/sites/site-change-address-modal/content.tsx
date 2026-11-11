@@ -1,8 +1,10 @@
-import { DomainSubtype, FreeSiteAddressType } from '@automattic/api-core';
+import { DomainSubtype, FreeSiteAddressType, isWpError } from '@automattic/api-core';
 import {
+	domainsQuery,
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
 } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
@@ -12,13 +14,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
-import { useAppContext } from '../../app/context';
+import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
+import { parseHtmlMessage } from '../../utils/html-message';
 import type { Site, DomainSummary } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -40,10 +43,12 @@ const SubdomainInputControlEdit = < Item, >( {
 	field,
 	data,
 	onChange,
+	validity,
 }: DataFormControlProps< Item > ) => {
 	const { id, getValue } = field;
 	return (
 		<SuffixInputControl
+			customValidity={ validity?.custom }
 			label={ field.label }
 			value={ getValue( { item: data } ) }
 			suffix={ DOMAIN_SUFFIX }
@@ -65,10 +70,10 @@ const NewSiteAddressForm = ( {
 	onSubmit: ( data: NewSiteAddressFormData ) => void;
 	onCancel: () => void;
 } ) => {
-	const { queries } = useAppContext();
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const hasEnTranslation = useHasEnTranslation();
 	const { data: siteDomains } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -77,6 +82,18 @@ const NewSiteAddressForm = ( {
 	const [ formData, setFormData ] = useState( {
 		subdomain: '',
 	} );
+	const [ addressError, setAddressError ] = useState< {
+		subdomain: string;
+		message: string;
+	} | null >( null );
+	const formRef = useRef< HTMLFormElement >( null );
+
+	const currentAddressError =
+		addressError?.subdomain === formData.subdomain ? addressError.message : null;
+
+	const validity = currentAddressError
+		? ( { subdomain: { custom: { type: 'invalid', message: currentAddressError } } } as const )
+		: undefined;
 
 	const fields: Field< NewSiteAddressFormData >[] = [
 		{
@@ -103,9 +120,10 @@ const NewSiteAddressForm = ( {
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
-	const isDisabled = ! formData.subdomain || formData.subdomain === currentSubdomain;
+	const isDisabled =
+		! formData.subdomain || formData.subdomain === currentSubdomain || !! currentAddressError;
 
-	const handleSubmit = ( event: React.FormEvent ) => {
+	const handleSubmit = ( event: React.SubmitEvent ) => {
 		event.preventDefault();
 
 		mutation.mutate(
@@ -120,9 +138,27 @@ const NewSiteAddressForm = ( {
 					onSubmit( formData );
 				},
 				onError: ( error ) => {
-					// TODO: Show the error via Data Form when the ValidatedInputControl is ready.
-					createErrorNotice( error.message ?? __( 'Sorry, that site address is unavailable.' ), {
+					const { text, link } = parseHtmlMessage( error.message ?? '' );
+
+					// `invalid` errors are about the address itself, so these errors are presented
+					// attached to the subdomain field.
+					if ( isWpError( error ) && error.code === 'invalid' ) {
+						// Commit synchronously so the input's custom validity is set before reporting it.
+						// DataForm hides a field's error until it's touched, which it isn't when the form
+						// is submitted with Enter.
+						flushSync( () =>
+							setAddressError( {
+								subdomain: formData.subdomain,
+								message: text || __( 'Sorry, that site address is unavailable.' ),
+							} )
+						);
+						formRef.current?.reportValidity();
+						return;
+					}
+
+					createErrorNotice( text || __( 'Failed to validate site address.' ), {
 						type: 'snackbar',
+						actions: link ? [ link ] : undefined,
 					} );
 				},
 			}
@@ -132,12 +168,18 @@ const NewSiteAddressForm = ( {
 	return (
 		<VStack spacing={ 4 }>
 			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="warning" density="medium">
+				<Notice variant="info">
 					<Text>
 						{ createInterpolateElement(
-							__(
-								'Before changing site address, consider <link>adding a custom domain</link> instead?'
-							),
+							hasEnTranslation(
+								'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+							)
+								? __(
+										'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+									)
+								: __(
+										'Before changing site address, consider <link>adding a custom domain</link> instead?'
+									),
 							{
 								link: <a href={ getAddSiteDomainUrl( site.slug ) } />,
 							}
@@ -146,18 +188,22 @@ const NewSiteAddressForm = ( {
 				</Notice>
 			) }
 			<Text as="p">
-				{ sprintf(
-					/* translators: %s: site domain */
-					__( 'Once you change your site address, %s will no longer be available.' ),
-					wpcomDomain?.domain ?? ''
+				{ createInterpolateElement(
+					sprintf(
+						/* translators: %s: site domain */
+						__( 'Once you change your site address, %s will no longer be available.' ),
+						`<strong>${ wpcomDomain?.domain ?? '' }</strong>`
+					),
+					{ strong: <strong /> }
 				) }
 			</Text>
-			<form onSubmit={ handleSubmit }>
+			<form ref={ formRef } onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
 					<DataForm< NewSiteAddressFormData >
 						data={ formData }
 						fields={ fields }
 						form={ form }
+						validity={ validity }
 						onChange={ ( edits: Partial< NewSiteAddressFormData > ) => {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
@@ -255,8 +301,10 @@ const ConfirmNewSiteAddressForm = ( {
 					);
 				},
 				onError: ( error: Error ) => {
-					createErrorNotice( error.message || __( 'Failed to change site address' ), {
+					const { text, link } = parseHtmlMessage( error.message ?? '' );
+					createErrorNotice( text || __( 'Failed to change site address.' ), {
 						type: 'snackbar',
+						actions: link ? [ link ] : undefined,
 					} );
 				},
 			}

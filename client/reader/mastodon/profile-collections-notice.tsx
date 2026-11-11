@@ -83,11 +83,11 @@ export function PartialCollectionsNotice( { profileUrl, mode }: PartialCollectio
 			? translate(
 					'Followers for this profile may be missing. See more on {{externalLink}}%(host)s{{/externalLink}}.',
 					options
-			  )
+				)
 			: translate(
 					'Accounts followed by this profile may be missing. See more on {{externalLink}}%(host)s{{/externalLink}}.',
 					options
-			  );
+				);
 
 	return <p className="mastodon-profile-collections-notice">{ message }</p>;
 }

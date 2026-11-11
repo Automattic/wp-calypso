@@ -1,10 +1,12 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
-import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { seen, pencil, notAllowed, globe } from '@wordpress/icons';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
+import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -20,7 +22,11 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
+import McpApprovalBypassControl from './approval-bypass';
 import { isWriteTool } from './categories';
+import McpConnectCard from './connect-card';
+
+import './style.scss';
 
 interface McpAbility {
 	title: string;
@@ -36,44 +42,44 @@ interface McpAbility {
 
 function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ) };
+		return { text: __( 'None enabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 	if ( tools.length === 0 ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	const enabledCount = tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 	if ( enabledCount === tools.length ) {
-		return { text: __( 'All enabled' ), intent: 'success' as const };
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ) };
+		return { text: __( 'Disabled' ), intent: 'draft' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
 		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, tools.length ),
-		intent: 'info' as const,
+		intent: 'informational' as const,
 	};
 }
 
 function McpComponent() {
 	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 	const availableTools = (
 		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
@@ -90,13 +96,27 @@ function McpComponent() {
 	const exceptionCount = disabledSiteIds.length;
 	const exceptionBadge =
 		exceptionCount > 0
-			? { text: `${ exceptionCount } exceptions`, intent: 'warning' as const }
-			: { text: __( 'No exceptions' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of site exceptions */
+						_n( '%s exception', '%s exceptions', exceptionCount ),
+						formatNumber( exceptionCount )
+					),
+					intent: 'low' as const,
+				}
+			: { text: __( 'No exceptions' ), intent: 'draft' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
-			? { text: `${ enabledSiteIds.length } sites`, intent: 'success' as const }
-			: { text: __( 'No sites added' ) };
+			? {
+					text: sprintf(
+						/* translators: %s is the formatted number of sites with MCP access */
+						_n( '%s site', '%s sites', enabledSiteIds.length ),
+						formatNumber( enabledSiteIds.length )
+					),
+					intent: 'stable' as const,
+				}
+			: { text: __( 'No sites added' ), intent: 'draft' as const };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
@@ -108,10 +128,9 @@ function McpComponent() {
 		} )
 	);
 
-	const handleMcpToggle = ( enabled: boolean ) => {
+	const handleMcpToggle = ( enabled: boolean, source: 'toggle' | 'connect_notice' = 'toggle' ) => {
 		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 
 		const groupIntents: Record< string, boolean > = { read: enabled, write: enabled };
 		if ( ! enabled ) {
@@ -130,7 +149,11 @@ function McpComponent() {
 			} as any,
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
+						...tracksAudienceProps,
+						enabled,
+						source,
+					} );
 				},
 			}
 		);
@@ -147,83 +170,84 @@ function McpComponent() {
 				<PageHeader
 					title={ __( 'AI and MCP' ) }
 					description={ __(
-						'Control how AI assistants interact with your WordPress.com account and sites.'
+						'Control how external AI agents interact with your WordPress.com account and sites.'
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
 			}
 		>
-			<ComponentViewTracker eventName="calypso_dashboard_mcp_view" />
-			<VStack spacing={ 4 }>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'External AI agent access' ) }
-								description={ __(
-									'Allow external AI agents to access your WordPress.com account and sites via MCP.'
-								) }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ mcpEnabled }
-								disabled={ mutation.isPending }
-								label={ __( 'Enable MCP access' ) }
-								onChange={ handleMcpToggle }
-							/>
-						</VStack>
-					</CardBody>
-
-					{ mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/read"
-								density="medium"
-								title={ __( 'Read' ) }
-								decoration={ <Icon icon={ seen } size={ 24 } /> }
-								badges={ [ readBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/write"
-								density="medium"
-								title={ __( 'Write' ) }
-								decoration={ <Icon icon={ pencil } size={ 24 } /> }
-								badges={ [ writeBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Site exceptions' ) }
-								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
-								badges={ [ exceptionBadge ] }
-							/>
-						</>
-					) }
-					{ ! mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Add to specific sites' ) }
-								decoration={ <Icon icon={ globe } size={ 24 } /> }
-								badges={ [ addSiteBadge ] }
-							/>
-						</>
-					) }
-				</Card>
+			<ComponentViewTracker
+				eventName="calypso_dashboard_mcp_view"
+				properties={ tracksAudienceProps }
+			/>
+			<McpConnectCard
+				mcpEnabled={ mcpEnabled }
+				addedSiteCount={ enabledSiteIds.length }
+				onTurnOn={ () => handleMcpToggle( true, 'connect_notice' ) }
+				isTurningOn={ mutation.isPending }
+			/>
+			<Card className="mcp-preferences__access-card">
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'External AI agent access' ) }
+							description={ __(
+								'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+							) }
+						/>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ mcpEnabled }
+							disabled={ mutation.isPending }
+							label={ __( 'Enable MCP access' ) }
+							onChange={ ( checked ) => handleMcpToggle( checked ) }
+						/>
+					</VStack>
+				</CardBody>
 
 				{ mcpEnabled && (
-					<RouterLinkSummaryButton
-						to="/me/preferences/mcp/setup"
-						title={ __( 'Connect external AI assistant' ) }
-						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-						decoration={ <Icon icon={ connection } size={ 24 } /> }
-					/>
+					<>
+						<CardDivider />
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/read"
+							density="medium"
+							title={ __( 'Read' ) }
+							decoration={ <Icon icon={ seen } size={ 24 } /> }
+							badges={ [ readBadge ] }
+						/>
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/write"
+							density="medium"
+							title={ __( 'Write' ) }
+							decoration={ <Icon icon={ pencil } size={ 24 } /> }
+							badges={ [ writeBadge ] }
+						/>
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/mcp-sites"
+							density="medium"
+							title={ __( 'Site exceptions' ) }
+							decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
+							badges={ [ exceptionBadge ] }
+						/>
+						{ userSettings?.mcp_approval_bypass && (
+							<McpApprovalBypassControl approvalBypass={ userSettings.mcp_approval_bypass } />
+						) }
+					</>
 				) }
-			</VStack>
+				{ ! mcpEnabled && (
+					<>
+						<CardDivider />
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/mcp-sites"
+							density="medium"
+							title={ __( 'Add to specific sites' ) }
+							decoration={ <Icon icon={ globe } size={ 24 } /> }
+							badges={ [ addSiteBadge ] }
+						/>
+					</>
+				) }
+			</Card>
 		</PageLayout>
 	);
 }

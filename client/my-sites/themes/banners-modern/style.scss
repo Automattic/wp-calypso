@@ -273,7 +273,7 @@
 .plan-upgrade-banner__check-icon {
 	background-color: var( --plan-banner-feature-check );
 	border-radius: 50%;
-	fill: var( --plan-banner-bg );
+	color: var( --plan-banner-bg );
 	flex-shrink: 0;
 	height: 18px;
 	width: 18px;
@@ -299,6 +299,12 @@
 	color: var( --plan-banner-price );
 	font-size: $font-body-small;
 	margin-bottom: 8px;
+}
+
+.plan-upgrade-banner__price-renewal {
+	color: var( --plan-banner-price );
+	font-size: $font-body-small;
+	margin: -8px 0 16px;
 }
 
 .plan-upgrade-banner__billing-toggle {

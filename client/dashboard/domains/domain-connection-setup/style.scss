@@ -12,13 +12,21 @@
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
+
+	// Match the @wordpress/components Button link variant underline.
+	.dashboard-domain-connection-verification__help-links a {
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		text-decoration-thickness: from-font;
+	}
 }
 
 .verification-in-progress-next-steps {
+	// Line the icons and titles up with the summary buttons above this card.
 	.icon-list-item {
-		padding: $grid-unit-10;
+		padding-block: $grid-unit-10;
 	}
-	.icon-list-item__decoration + span > span > span:last-child{
-		font-size: $font-size-small;
+	.icon-list-item__decoration {
+		margin-inline-end: $grid-unit-10;
 	}
 }

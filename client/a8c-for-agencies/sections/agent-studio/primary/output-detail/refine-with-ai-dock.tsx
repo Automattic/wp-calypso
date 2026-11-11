@@ -25,9 +25,11 @@ import { getAgentStudioVariantHtmlQueryKey } from '../../data/use-agent-studio-v
 import useRefineCollateralPage, {
 	getRefineClarificationMessage,
 } from '../../data/use-refine-collateral-page';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import type { ComponentProps } from 'react';
 
 import './refine-with-ai-dock.scss';
+
+type Message = ComponentProps< typeof AgentUI >[ 'messages' ][ number ];
 
 interface Props {
 	collateralPostId: number;

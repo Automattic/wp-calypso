@@ -1,6 +1,10 @@
 import { pick, set } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
+import {
+	STATS_CHART_COUNTS_REQUEST,
+	STATS_CHART_COUNTS_RECEIVE,
+	STATS_CHART_COUNTS_FAILURE,
+} from 'calypso/state/action-types';
 import {
 	combineReducers,
 	keyedReducer,
@@ -83,11 +87,35 @@ const isLoadingReducer = ( state = {}, action ) => {
 				{ ...state }
 			);
 		}
-		// TODO: Add failure handling
+		case STATS_CHART_COUNTS_FAILURE:
+			return action.statFields.reduce(
+				( nextState, statField ) => set( nextState, statField, false ),
+				{ ...state }
+			);
 	}
 	return state;
 };
 
 export const isLoading = keyedReducer( 'siteId', keyedReducer( 'requestKey', isLoadingReducer ) );
 
-export default combineReducers( { counts, isLoading } );
+const errorsReducer = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case STATS_CHART_COUNTS_REQUEST:
+		case STATS_CHART_COUNTS_FAILURE:
+			return action.statFields.reduce(
+				( nextState, statField ) =>
+					set( nextState, statField, action.type === STATS_CHART_COUNTS_FAILURE ),
+				{ ...state }
+			);
+		case STATS_CHART_COUNTS_RECEIVE:
+			return Object.keys( pick( action.data[ 0 ], QUERY_FIELDS ) ).reduce(
+				( nextState, statField ) => set( nextState, statField, false ),
+				{ ...state }
+			);
+	}
+	return state;
+};
+
+export const errors = keyedReducer( 'siteId', keyedReducer( 'requestKey', errorsReducer ) );
+
+export default combineReducers( { counts, isLoading, errors } );

@@ -58,7 +58,7 @@ If you have some experience with Webpack, the format of these [command line opti
 
 It was our conscious decision to stick to Webpack's interface rather than covering it up with our own abstraction, since the build tool doesn't really add any conceptually different functionality, and our previous SDK approach showed that we ended up replicating features readily provided by Webpack anyway.
 
-### `--env WP` option to automatically compute dependencies, and transpile JSX to `@wordpress/element`
+### `--env WP` option to automatically compute dependencies
 
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
 
@@ -70,11 +70,7 @@ That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "env
 }
 ```
 
-The impact of this option is twofold:
-
-1. It will make Webpack use `@wordpress/dependency-extraction-webpack-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.asset.php` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `@wordpress/dependency-extraction-webpack-plugin`'s [docs](https://developer.wordpress.org/block-editor/packages/packages-dependency-extraction-webpack-plugin/).
-
-2. It will transpile JSX to [`@wordpress/element`](https://www.npmjs.com/package/@wordpress/element) rather than React components. This is also required for Gutenberg blocks.
+It will make Webpack use `@wordpress/dependency-extraction-webpack-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.asset.php` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `@wordpress/dependency-extraction-webpack-plugin`'s [docs](https://developer.wordpress.org/block-editor/packages/packages-dependency-extraction-webpack-plugin/).
 
 ## Advanced Usage: Use own Webpack Config
 

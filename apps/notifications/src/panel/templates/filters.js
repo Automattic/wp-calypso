@@ -10,6 +10,7 @@ export const getFilters = () => ( {
 		emptyMessage: __( 'No notifications yet.' ),
 		emptyLinkMessage: __( 'Get active! Comment on posts from blogs you follow.' ),
 		emptyLink: 'https://wordpress.com/reader/',
+		query: null,
 		filter: () => true,
 	},
 	unread: {
@@ -19,6 +20,7 @@ export const getFilters = () => ( {
 		emptyMessage: __( "You're all caught up!" ),
 		emptyLinkMessage: __( 'Reignite the conversation: write a new post.' ),
 		emptyLink: 'https://wordpress.com/post/',
+		query: { unread: 1 },
 		filter: ( note ) => ! getNoteIsRead( store.getState(), note ),
 	},
 	comments: {
@@ -29,7 +31,8 @@ export const getFilters = () => ( {
 		emptyLinkMessage: __(
 			'Join a conversation: search for blogs that share your interests in the Reader.'
 		),
-		emptyLink: 'https://wordpress.com/reader/search/',
+		emptyLink: 'https://wordpress.com/discover/search/',
+		query: { type: 'comment' },
 		filter: ( { type } ) => 'comment' === type,
 	},
 	follows: {
@@ -39,6 +42,7 @@ export const getFilters = () => ( {
 		emptyMessage: __( 'No new subscribers to report yet.' ),
 		emptyLinkMessage: __( 'Get noticed: comment on posts you’ve read.' ),
 		emptyLink: 'https://wordpress.com/activities/likes/',
+		query: { type: 'follow' },
 		filter: ( { type } ) => 'follow' === type,
 	},
 	likes: {
@@ -48,6 +52,7 @@ export const getFilters = () => ( {
 		emptyMessage: __( 'No new likes to show yet.' ),
 		emptyLinkMessage: __( 'Get noticed: comment on posts you‘ve read.' ),
 		emptyLink: 'https://wordpress.com/activities/likes/',
+		query: { type: 'like,comment_like' },
 		filter: ( { type } ) => 'comment_like' === type || 'like' === type,
 	},
 } );

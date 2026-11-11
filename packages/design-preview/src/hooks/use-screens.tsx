@@ -8,7 +8,7 @@ import { color, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { COLOR_VARIATIONS_BLOCK_LIST } from '../constants';
-import type { StyleVariation } from '@automattic/design-picker/src/types';
+import type { StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
 

@@ -14,22 +14,21 @@ jest.mock( '../../utils/editor-entry-points', () => ( {
 	isAdminBarInEditor: () => mockIsAdminBarInEditor(),
 } ) );
 
+let mockHasMasterbarAiChatButton = false;
+
+jest.mock( '../../contexts', () => ( {
+	useAgentsManagerContext: () => ( { hasMasterbarAiChatButton: mockHasMasterbarAiChatButton } ),
+} ) );
+
 import useHasAiChatEntryButton, { hasAiChatEntryButton } from '../use-has-ai-chat-entry-button';
 
 const AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
-const MASTERBAR_BUTTON_CLASS = 'masterbar__item-agents-manager-ai-chat';
 
 const setUrl = ( path: string ) => window.history.replaceState( {}, '', path );
 
 const installAdminBarButton = () => {
 	const button = document.createElement( 'div' );
 	button.id = AI_CHAT_BUTTON_ID;
-	document.body.appendChild( button );
-};
-
-const installMasterbarButton = () => {
-	const button = document.createElement( 'div' );
-	button.className = MASTERBAR_BUTTON_CLASS;
 	document.body.appendChild( button );
 };
 
@@ -40,6 +39,7 @@ afterEach( () => {
 	document.body.innerHTML = '';
 	mockIsEditorAiEntryEnabled.mockReturnValue( false );
 	mockIsAdminBarInEditor.mockReturnValue( false );
+	mockHasMasterbarAiChatButton = false;
 } );
 
 describe( 'hasAiChatEntryButton', () => {
@@ -77,7 +77,7 @@ describe( 'hasAiChatEntryButton', () => {
 				installAdminBarButton();
 			}
 
-			expect( hasAiChatEntryButton() ).toBe( expected );
+			expect( hasAiChatEntryButton( false ) ).toBe( expected );
 		} );
 	} );
 
@@ -86,24 +86,18 @@ describe( 'hasAiChatEntryButton', () => {
 			setUrl( '/wp-admin/site-editor.php?canvas=edit' );
 			mockIsEditorAiEntryEnabled.mockReturnValue( true );
 
-			expect( hasAiChatEntryButton() ).toBe( true );
+			expect( hasAiChatEntryButton( false ) ).toBe( true );
 		} );
 
 		it( 'counts the wp-admin bar button', () => {
 			setUrl( '/wp-admin/index.php' );
 			installAdminBarButton();
 
-			expect( hasAiChatEntryButton() ).toBe( true );
-		} );
-
-		it( 'counts the Calypso masterbar button', () => {
-			installMasterbarButton();
-
-			expect( hasAiChatEntryButton() ).toBe( true );
+			expect( hasAiChatEntryButton( false ) ).toBe( true );
 		} );
 
 		it( 'is false without any entry button', () => {
-			expect( hasAiChatEntryButton() ).toBe( false );
+			expect( hasAiChatEntryButton( false ) ).toBe( false );
 		} );
 	} );
 } );
@@ -121,5 +115,15 @@ describe( 'useHasAiChatEntryButton', () => {
 
 		act( () => window.history.pushState( {}, '', '/wp-admin/site-editor.php?canvas=edit' ) );
 		expect( result.current ).toBe( true );
+	} );
+
+	it( 'follows the masterbar button its host declares before the button renders', () => {
+		mockHasMasterbarAiChatButton = true;
+		const { result, rerender } = renderHook( () => useHasAiChatEntryButton() );
+		expect( result.current ).toBe( true );
+
+		mockHasMasterbarAiChatButton = false;
+		rerender();
+		expect( result.current ).toBe( false );
 	} );
 } );

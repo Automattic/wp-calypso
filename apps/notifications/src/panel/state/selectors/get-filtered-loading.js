@@ -1,6 +1,6 @@
 import getUi from './get-ui';
 
-// The filter fragment whose fetch is currently loading (e.g. `{ unread: 1 }`),
+// The name of the tab whose filtered fetch is currently loading (e.g. `'unread'`),
 // or null. See the `filteredLoading` reducer.
 export const getFilteredLoading = ( uiState ) => uiState.filteredLoading;
 

@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
 import NoteActions from '../actions';
+import SimplifiedActions from '../simplified-actions';
 
 const noop = () => {};
 
@@ -41,5 +43,22 @@ describe( 'comment action placement', () => {
 		expect( screen.getByRole( 'button', { name: 'Edit comment' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Trash comment' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'collects the comment actions in the Actions menu in the simplified layout', async () => {
+		renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<SimplifiedActions note={ note } goBack={ noop } />
+			</AppProvider>
+		);
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Move to trash' } ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+
+		expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Move to trash' } ) ).toBeInTheDocument();
 	} );
 } );

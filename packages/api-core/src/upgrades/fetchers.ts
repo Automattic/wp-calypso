@@ -20,6 +20,7 @@ export function normalizePurchase( rawPurchase: RawPurchase ): Purchase {
 		user_id: parseInt( String( rawPurchase.user_id ), 10 ),
 		is_domain: Boolean( rawPurchase.is_domain ),
 		is_domain_registration: Boolean( rawPurchase.is_domain_registration ),
+		renew_date: rawPurchase.renew_date || undefined,
 	};
 }
 
@@ -56,10 +57,11 @@ export async function fetchPurchase( purchaseId: number ): Promise< Purchase > {
 }
 
 export async function hasExtendedPurchase( purchaseId: number ): Promise< boolean > {
-	return await wpcom.req.get( {
+	const response = await wpcom.req.get( {
 		path: `/upgrades/${ purchaseId }/has-extended`,
 		apiNamespace: 'wpcom/v2',
 	} );
+	return response.has_extended;
 }
 
 /**

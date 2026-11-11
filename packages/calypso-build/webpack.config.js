@@ -57,10 +57,7 @@ function getWebpackConfig(
 	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
 	let presets = [];
 	if ( ! fs.existsSync( babelConfig ) ) {
-		presets = [
-			require.resolve( '@automattic/calypso-babel-config/presets/default' ),
-			env.WP && require.resolve( '@automattic/calypso-babel-config/presets/wordpress-element' ),
-		].filter( Boolean );
+		presets = [ require.resolve( '@automattic/calypso-babel-config/presets/default' ) ];
 		babelConfig = undefined;
 	}
 

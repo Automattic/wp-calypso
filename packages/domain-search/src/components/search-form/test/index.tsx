@@ -42,9 +42,10 @@ describe( 'SearchForm', () => {
 		const user = userEvent.setup();
 
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch events={ { onQueryChange } }>
+			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
 				<SearchForm />
 			</TestDomainSearch>
 		);
@@ -53,15 +54,17 @@ describe( 'SearchForm', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'test', 'submit' );
 	} );
 
 	it( 'shows the search hint on empty search', async () => {
 		const user = userEvent.setup();
 
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch events={ { onQueryChange } }>
+			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
 				<SearchForm />
 			</TestDomainSearch>
 		);
@@ -69,19 +72,22 @@ describe( 'SearchForm', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
 
 		expect( screen.getByText( /Try searching for a word like/i ) ).toBeInTheDocument();
+		expect( onSearchStart ).not.toHaveBeenCalled();
 
 		await user.click( screen.getByRole( 'button', { name: 'studio' } ) );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'studio' );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'studio', 'hint_link' );
 	} );
 
 	it( 'submits via the Enter key', async () => {
 		const user = userEvent.setup();
 
 		const onQueryChange = jest.fn();
+		const onSearchStart = jest.fn();
 
 		render(
-			<TestDomainSearch events={ { onQueryChange } }>
+			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
 				<SearchForm />
 			</TestDomainSearch>
 		);
@@ -92,6 +98,7 @@ describe( 'SearchForm', () => {
 		await user.type( screen.getByRole( 'searchbox' ), '{enter}' );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
+		expect( onSearchStart ).toHaveBeenCalledWith( 'test', 'submit' );
 	} );
 
 	it( 'renders the icon-only submit inside a field wrapper on mobile', async () => {

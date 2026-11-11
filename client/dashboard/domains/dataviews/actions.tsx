@@ -1,13 +1,18 @@
 import { DomainSubtype, DomainStatus } from '@automattic/api-core';
-import { userPurchasesQuery, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
+import {
+	userPurchasesQuery,
+	siteSetPrimaryDomainMutation,
+	setWwwPrimaryDomainMutation,
+	sslDetailsQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueries } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { useMemo, Suspense, lazy } from 'react';
+import { useCallback, useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
@@ -18,15 +23,18 @@ import {
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
+import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { getCurrentDashboard } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
+import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
+import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
-import type { Action } from '@wordpress/dataviews';
+import type { Action, View } from '@wordpress/dataviews';
 
 const SiteChangeAddressContent = lazy(
 	() =>
@@ -37,14 +45,34 @@ const SiteChangeAddressContent = lazy(
 
 const noop = () => {};
 
-export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) => {
+export const useActions = ( {
+	user,
+	site,
+	sites,
+	domains,
+	layout,
+	onChangePrimaryDomain,
+}: {
+	user: User;
+	site?: Site;
+	sites?: Site[];
+	domains?: DomainSummary[];
+	layout: View[ 'type' ];
+	onChangePrimaryDomain?: () => void;
+} ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createInfoNotice, removeNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
 		withSnackbar( siteSetPrimaryDomainMutation(), {
+			error: { source: 'server' },
+		} )
+	);
+
+	const { mutate: setWwwPrimaryDomain, isPending: isSettingWwwPrimaryDomain } = useMutation(
+		withSnackbar( setWwwPrimaryDomainMutation(), {
 			error: { source: 'server' },
 		} )
 	);
@@ -61,6 +89,54 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			{} as Record< number, Site >
 		);
 	}, [ sites ] );
+	// A domain can only be made primary once its SSL certificate is provisioned.
+	// DomainSummary has no SSL field, so resolve it from the SSL details query,
+	// but only for domains that are otherwise eligible to avoid firing SSL
+	// requests for the whole list.
+	const primaryCandidateDomainNames = useMemo( () => {
+		return ( domains ?? [] )
+			.filter( ( item ) => {
+				const site = sitesByBlogId[ item.blog_id ];
+				return (
+					!! site &&
+					item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS &&
+					canSetAsPrimaryIgnoringSsl( { domain: item, site, user } )
+				);
+			} )
+			.map( ( item ) => item.domain );
+	}, [ domains, sitesByBlogId, user ] );
+
+	const sslQueries = useQueries( {
+		queries: primaryCandidateDomainNames.map( ( domainName ) => ( {
+			...sslDetailsQuery( domainName ),
+			staleTime: 60_000,
+		} ) ),
+	} );
+
+	// Serialize into a stable primitive so the memo below (and the actions memo)
+	// don't depend on the non-referentially-stable useQueries result.
+	const sslActiveKey = primaryCandidateDomainNames
+		.filter( ( _domainName, index ) => sslQueries[ index ]?.data?.certificate_provisioned )
+		.join( ',' );
+
+	const sslActiveByDomain = useMemo( () => {
+		const activeDomains = new Set( sslActiveKey ? sslActiveKey.split( ',' ) : [] );
+		const map: Record< string, boolean > = {};
+		primaryCandidateDomainNames.forEach( ( domainName ) => {
+			map[ domainName ] = activeDomains.has( domainName );
+		} );
+		return map;
+	}, [ primaryCandidateDomainNames, sslActiveKey ] );
+
+	const canToggleWwwPrimary = useCallback(
+		( item: DomainSummary ) =>
+			!! site?.is_wpcom_atomic &&
+			item.blog_id === site.ID &&
+			item.primary_domain &&
+			item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,
+		[ site ]
+	);
+
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -72,6 +148,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'renew',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -83,7 +160,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						return;
 					}
 
-					window.location.href = getDomainRenewalUrl( domain, purchase );
+					window.location.href = getRenewalUrlFromPurchase( purchase );
 				},
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
 			},
@@ -96,6 +173,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'setup',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -109,6 +187,21 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
+			},
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				/* translators: Row action on the primary site address that opens the dialog to pick another one. */
+				label: __( 'Change primary' ),
+				callback: ( items: DomainSummary[] ) => {
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'change-primary-domain',
+						layout,
+						domain: items[ 0 ].domain,
+					} );
+					onChangePrimaryDomain?.();
+				},
+				isEligible: ( item: DomainSummary ) => !! onChangePrimaryDomain && item.primary_domain,
 			},
 			{
 				id: 'manage-domain',
@@ -125,6 +218,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-domain',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -139,6 +233,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						params: {
 							domainName: domain.domain,
 						},
+						search: site ? { back_to: 'site-domains' } : undefined,
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
@@ -154,6 +249,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-dns-settings',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -161,6 +257,33 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						to: domainDnsRoute.fullPath,
 						params: {
 							domainName: domain.domain,
+						},
+					} );
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return (
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+					);
+				},
+			},
+			{
+				id: 'add-mailbox',
+				label: __( 'Add mailbox' ),
+				supportsBulk: false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'add-mailbox',
+						layout,
+						domain: domain.domain,
+					} );
+
+					router.navigate( {
+						to: chooseEmailSolutionRoute.fullPath,
+						params: {
+							domain: domain.domain,
 						},
 					} );
 				},
@@ -181,6 +304,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'set-primary-site-address',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -228,10 +352,79 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				},
 				isEligible: ( item: DomainSummary ) => {
 					const site = sitesByBlogId[ item.blog_id ];
-					const hasRedirect = site?.options?.is_redirect ?? false;
-					return !! site && canSetAsPrimary( { domain: item, site, user } ) && ! hasRedirect;
+					const isSslActive =
+						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS ||
+						( sslActiveByDomain[ item.domain ] ?? false );
+					return (
+						!! site && canSetAsPrimaryIgnoringSsl( { domain: item, site, user } ) && isSslActive
+					);
 				},
 				disabled: isSettingPrimaryDomain,
+			},
+			{
+				id: 'set-www-primary-site-address',
+				label: __( 'Set www as primary' ),
+				modalHeader: __( 'Use the “www” address as primary?' ),
+				supportsBulk: false,
+				callback: noop,
+				RenderModal: ( { items, closeModal = noop } ) => (
+					<>
+						<ComponentViewTracker
+							eventName="calypso_dashboard_domains_action_click"
+							properties={ {
+								action: 'set-www-primary-site-address',
+								layout,
+								domain: items[ 0 ].domain,
+							} }
+						/>
+						<WwwPrimaryDomainModal domain={ items[ 0 ] } onClose={ closeModal } />
+					</>
+				),
+				isEligible: ( item: DomainSummary ) => canToggleWwwPrimary( item ) && ! item.primary_is_www,
+			},
+			{
+				id: 'unset-www-primary-site-address',
+				label: __( 'Unset www as primary' ),
+				supportsBulk: false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'unset-www-primary-site-address',
+						layout,
+						domain: domain.domain,
+					} );
+
+					const processingNoticeId = `unset-www-primary-${ domain.domain }`;
+
+					createInfoNotice( __( 'Updating primary site address…' ), {
+						id: processingNoticeId,
+						type: 'snackbar',
+						isDismissible: false,
+					} );
+
+					setWwwPrimaryDomain(
+						{ siteId: domain.blog_id, domain: domain.domain, enabled: false },
+						{
+							onSettled: () => {
+								removeNotice( processingNoticeId );
+							},
+							onSuccess: () => {
+								createSuccessNotice(
+									sprintf(
+										/* translators: %s is the domain name */
+										__( '%s is now the primary site address.' ),
+										domain.domain
+									),
+									{ type: 'snackbar' }
+								);
+							},
+						}
+					);
+				},
+				isEligible: ( item: DomainSummary ) =>
+					canToggleWwwPrimary( item ) && !! item.primary_is_www,
+				disabled: isSettingWwwPrimaryDomain,
 			},
 			{
 				id: 'transfer-domain',
@@ -242,6 +435,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'transfer-domain',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -275,6 +469,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'connect-to-site',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -297,7 +492,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					return (
 						!! site &&
 						! site?.is_wpcom_atomic &&
-						! site?.is_garden &&
+						! item.is_suspended_site &&
 						item.subtype.id === DomainSubtype.DEFAULT_ADDRESS
 					);
 				},
@@ -307,7 +502,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 						<Suspense fallback={ null }>
 							<ComponentViewTracker
 								eventName="calypso_dashboard_domains_action_click"
-								properties={ { action: 'change-site-address', domain: items[ 0 ].domain } }
+								properties={ { action: 'change-site-address', layout, domain: items[ 0 ].domain } }
 							/>
 							<SiteChangeAddressContent
 								site={ site }
@@ -321,7 +516,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: ( domains ) => {
 					if ( domains.length === 0 ) {
 						return;
@@ -329,6 +524,7 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-contact-info',
+						layout,
 						domain: domains[ 0 ].domain,
 					} );
 
@@ -358,13 +554,13 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: () => {},
 				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
 					<>
 						<ComponentViewTracker
 							eventName="calypso_dashboard_domains_action_click"
-							properties={ { action: 'manage-auto-renew', domain: items[ 0 ].domain } }
+							properties={ { action: 'manage-auto-renew', layout, domain: items[ 0 ].domain } }
 						/>
 						<AutoRenewModal
 							items={ items }
@@ -384,9 +580,18 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 			purchases,
 			setPrimaryDomain,
 			isSettingPrimaryDomain,
+			setWwwPrimaryDomain,
+			isSettingWwwPrimaryDomain,
 			createSuccessNotice,
+			createInfoNotice,
+			removeNotice,
 			sitesByBlogId,
+			sslActiveByDomain,
+			canToggleWwwPrimary,
 			recordTracksEvent,
+			layout,
+			site,
+			onChangePrimaryDomain,
 		]
 	);
 

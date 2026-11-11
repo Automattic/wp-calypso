@@ -108,7 +108,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		const mobileItem = {
 			label: sprintf(
-				/* translators: Link to return to the settings management page of a specific domain (%s = domain, e.g. example.com) */
+				/* translators: Link to return to the settings management page of a specific domain. %s is the domain name, e.g. example.com */
 				__( 'Back to %s' ),
 				selectedDomainName
 			),
@@ -143,7 +143,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 				/>
 			);
 		} else if (
-			! [ 'uk', 'fr', 'ca', 'de', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) ) &&
+			! [ 'uk', 'fr', 'ca', 'jp' ].includes( getTopLevelOfTld( selectedDomainName ) ) &&
 			canTransferToOtherSite
 		) {
 			options.push(
@@ -283,8 +283,8 @@ const TransferPage = ( props: TransferPageProps ) => {
 
 		const disabled = Boolean(
 			! domain?.domainLockingAvailable ||
-				domain?.transferAwayEligibleAt ||
-				isLockingOrUnlockingDomain
+			domain?.transferAwayEligibleAt ||
+			isLockingOrUnlockingDomain
 		);
 
 		return (

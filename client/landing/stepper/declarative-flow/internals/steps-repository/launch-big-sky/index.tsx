@@ -114,9 +114,8 @@ const LaunchBigSky: StepType = function ( props ) {
 				return;
 			}
 
-			const pendingActions = [
-				resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
-			];
+			const siteRequest = resolveSelect( SITE_STORE ).getSite( selectedSiteId );
+			let pageRequest: Promise< { id: number } > | undefined;
 
 			// Set the Assembler theme on the site.
 			if ( ! assemblerThemeActive ) {
@@ -125,31 +124,39 @@ const LaunchBigSky: StepType = function ( props ) {
 
 			// Create a new home page if one is not set yet.
 			if ( ! hasStaticHomepage ) {
-				pendingActions.push(
-					wpcom.req.post(
-						{
-							path: '/sites/' + selectedSiteId + '/pages',
-							apiNamespace: 'wp/v2',
-						},
-						{},
-						{
-							title: 'Home',
-							status: 'publish',
-							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-						}
-					)
+				pageRequest = wpcom.req.post(
+					{
+						path: '/sites/' + selectedSiteId + '/pages',
+						apiNamespace: 'wp/v2',
+					},
+					{},
+					{
+						title: 'Home',
+						status: 'publish',
+						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+					}
 				);
 			}
 
 			// Delete the existing boilerplate about page, always has a page ID of 1
-			pendingActions.push( deletePage( selectedSiteId, 1 ) );
+			const deletePageRequest = deletePage( selectedSiteId, 1 );
 
 			try {
-				const results = await Promise.all( pendingActions );
-				const siteURL = results[ 0 ].URL;
+				const [ site, pageCreationResult ] = await Promise.all( [
+					siteRequest,
+					pageRequest,
+					deletePageRequest,
+				] );
+				if ( ! site ) {
+					throw new Error( 'Unable to load site details' );
+				}
+				const siteURL = site.URL;
 
-				if ( ! hasStaticHomepage ) {
-					const homePagePostId = results[ 1 ].id;
+				if ( pageRequest ) {
+					if ( ! pageCreationResult ) {
+						throw new Error( 'Unable to create home page' );
+					}
+					const homePagePostId = pageCreationResult.id;
 					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				}
 

@@ -13,8 +13,8 @@ A `productDisplayPrice` can be retrieved from the `/purchases` or `/plans` REST 
 
 ```jsx
 function MyComponent( { purchaseId } ) {
-	const { productDisplayPrice } = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
-	return <PlanPrice productDisplayPrice={ productDisplayPrice } />;
+	const purchase = useSelector( ( state ) => getRawByPurchaseId( state, purchaseId ) );
+	return <PlanPrice productDisplayPrice={ purchase?.product_display_price } />;
 }
 ```
 

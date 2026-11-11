@@ -1,5 +1,5 @@
-import { RequestCartProduct } from '@automattic/shopping-cart/src/types';
 import wpcom from 'calypso/lib/wp';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 export type GetBillingIntentResponse = {
 	id: number;

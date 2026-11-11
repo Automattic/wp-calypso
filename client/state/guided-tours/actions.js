@@ -1,8 +1,4 @@
-import {
-	GUIDED_TOUR_UPDATE,
-	GUIDED_TOUR_PAUSE,
-	GUIDED_TOUR_RESUME,
-} from 'calypso/state/action-types';
+import { GUIDED_TOUR_UPDATE } from 'calypso/state/action-types';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 
@@ -30,7 +26,6 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 		type: GUIDED_TOUR_UPDATE,
 		tour,
 		stepName,
-		isPaused: false,
 	};
 }
 
@@ -58,18 +53,4 @@ function addSeenGuidedTour( getState, tourName, finished = false ) {
 
 export function resetGuidedToursHistory() {
 	return savePreference( 'guided-tours-history', [] );
-}
-
-export function pauseGuidedTour() {
-	return {
-		type: GUIDED_TOUR_PAUSE,
-		isPaused: true,
-	};
-}
-
-export function resumeGuidedTour() {
-	return {
-		type: GUIDED_TOUR_RESUME,
-		isPaused: false,
-	};
 }

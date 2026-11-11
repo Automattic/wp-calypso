@@ -6,6 +6,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
+import { hasTailoredFeatureList } from '../../constants';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import usePlanFeaturesForGridPlans from './use-plan-features-for-grid-plans';
 import type {
@@ -22,9 +23,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	useVar42NoAiFeatures,
-	showPricingDifferentiationFeaturePills,
-	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -32,9 +30,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	useVar42NoAiFeatures?: boolean;
-	showPricingDifferentiationFeaturePills?: boolean;
-	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -45,9 +40,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		isExperimentVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -55,12 +47,11 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			useVar42NoAiFeatures,
-			showPricingDifferentiationFeaturePills,
-			isExperimentVariant,
 		} );
 
 		return useMemo( () => {
+			// An intent that curates its own comparison list keeps it; see TAILORED_FEATURE_LIST_INTENTS.
+			const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
 			let previousPlan = null;
 			const planFeatureMap: Record< string, PlanFeaturesForGridPlan > = {};
 
@@ -72,15 +63,15 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans differentiators (non-control): use experiment comparison override when present.
+				// Use the differentiation comparison override when present.
 				if (
-					isExperimentVariant &&
+					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment().slice(),
-						isExperimentVariant
+						true
 					);
 				} else if (
 					// Check if there's a specific override for comparison
@@ -117,19 +108,18 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					);
 				}
 
-				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
-				// when in an experiment variant for Jetpack features.
+				// For Jetpack features, use the dedicated differentiation override function.
 				// Note: We check if the function exists, not if it returns a non-empty array, because an empty array
 				// is a valid return value (meaning "show no Jetpack features").
 				let jetpackFeatures;
 				if (
-					isExperimentVariant &&
+					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
 				) {
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice(),
-						isExperimentVariant
+						true
 					);
 				} else if ( planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.().length ) {
 					jetpackFeatures = getPlanFeaturesObject(
@@ -155,7 +145,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 									availableOnlyForAnnualPlans,
 									availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 								};
-						  } )
+							} )
 						: null;
 
 				const jetpackFeaturesTransformed: TransformedFeatureObject[] | null | undefined =
@@ -170,18 +160,18 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 									availableOnlyForAnnualPlans,
 									availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 								};
-						  } )
+							} )
 						: null;
 
 				const featuresAvailable = isWooExpressPlan( planSlug )
 					? {
 							wpcomFeatures: wpcomFeaturesTransformed ?? [],
 							jetpackFeatures: [],
-					  }
+						}
 					: {
 							wpcomFeatures: wpcomFeaturesTransformed ?? [],
 							jetpackFeatures: jetpackFeaturesTransformed ?? [],
-					  };
+						};
 
 				const previousPlanFeatures = {
 					wpcomFeatures: previousPlan !== null ? planFeatureMap[ previousPlan ].wpcomFeatures : [],
@@ -209,8 +199,10 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 						...previousPlanFeatures.jetpackFeatures,
 					],
 					storageFeature: planFeaturesForGridPlans[ planSlug ].storageFeature,
+					// Labels follow the list: the experiment copy describes features the experiment
+					// override lists, so pairing it with a curated list mislabels the rows.
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
-						isExperimentVariant,
+						isExperimentVariant: useDifferentiationFeatures,
 					} ),
 				};
 
@@ -218,14 +210,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			}
 
 			return planFeatureMap;
-		}, [
-			gridPlans,
-			allFeaturesList,
-			planFeaturesForGridPlans,
-			intent,
-			hasRedeemedDomainCredit,
-			isExperimentVariant,
-		] );
+		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent, hasRedeemedDomainCredit ] );
 	};
 
 export default useRestructuredPlanFeaturesForComparisonGrid;

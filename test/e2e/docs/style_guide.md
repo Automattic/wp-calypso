@@ -1,10 +1,15 @@
-[← Library objects](./library_objects.md) | [Top](./../README.md) | [Patterns, Tricks, and Gotchas →](./patterns_tricks_gotchas.md)
+[← Documentation index](./overview.md)
 
 # Style Guide
 
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
+  - [Principles](#principles)
+  - [Specification structure](#specification-structure)
+    - [Test describe block](#test-describe-block)
+    - [Test block](#test-block)
+    - [Test step block](#test-step-block)
   - [Variable naming](#variable-naming)
   - [Use async/await](#use-asyncawait)
   - [Selectors](#selectors)
@@ -16,13 +21,66 @@
     - [Involve minimal selectors in methods](#involve-minimal-selectors-in-methods)
     - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
   - [Test steps](#test-steps)
-    - [Only one top-level describe block](#only-one-top-level-describe-block)
-    - [Do not use modal verbs](#do-not-use-modal-verbs)
+    - [Only one top-level test.describe block](#only-one-top-level-testdescribe-block)
+    - [Do not use modal verbs in step names](#do-not-use-modal-verbs-in-step-names)
     - [Prefer smaller steps](#prefer-smaller-steps)
   - [Single responsibility function](#single-responsibility-function)
   - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
+
+## Principles
+
+- YAGNI: You Ain’t Gunna Need It
+- KISS: Keep It Stupidly Simple
+
+## Specification structure
+
+A consistent structure means tests are not only easier to read and update, but the generated
+test reports read as system specifications:
+
+![Playwright Test Report Example](./files/example_test_report.webp 'Playwright Test Report Example')
+
+### Test describe block
+
+Details the feature.
+
+Example: `test.describe( 'Authentication: Apple', () => {`
+
+Contains feature name: Authentication, and optional sub-feature name: Apple
+
+### Test block
+
+Details the test scenario. Each test scenario within a feature should be independent from the
+others and be capable of running independently and in parallel with other test scenarios.
+
+Example: `test( 'As a WordPress.com user, I can use my Apple Id to authenticate ', async ( {`
+
+Uses the [user story format](https://en.wikipedia.org/wiki/User_story):
+`As a <role> I can <capability> (optional so that <receive benefit>)`
+
+### Test step block
+
+Details an individual test step as part of a test scenario.
+
+Examples:
+
+`await test.step( 'Given I am on the login page', async function () {`
+
+`await test.step( 'When I enter my Apple ID', async function () {`
+
+`await test.step( 'And I enter my Apple password', async function () {`
+
+`await test.step( 'Then I can see My Home on WordPress.com', async function () {`
+
+These typically start with the terms [Given/When/Then](https://en.wikipedia.org/wiki/Given-When-Then)
+to provide structure and readability, although this isn’t strictly enforced like other tools
+that parse plain text specifications. The term And can be used to join two steps of the same
+type.
+
+`Given <some precondition> When <some action> Then <some outcome>`
+
+---
 
 ## Variable naming
 
@@ -268,55 +326,54 @@ async funtion clickButton( text: string ) {
 
 ## Test steps
 
-### Only one top-level `describe` block
+### Only one top-level `test.describe` block
 
-Only place one top/root-level `describe` block.
+Only place one top/root-level `test.describe` block. The tags that select the spec on CI are
+declared on it.
 
-Multiple root-level `describe` blocks are a sign that the file needs to be split into smaller files or the flow re-examined.
+Multiple root-level `test.describe` blocks are a sign that the file needs to be split into smaller files or the flow re-examined.
 
 **Avoid**:
 
 ```typescript
-describe('Feature 1', function()) {}
+test.describe( 'Feature 1', { tag: [ tags.CALYPSO_PR ] }, () => {} );
 
-describe('Feature 2', function()) {}
+test.describe( 'Feature 2', { tag: [ tags.CALYPSO_PR ] }, () => {} );
 
-describe('Feature 3', function()) {}
+test.describe( 'Feature 3', { tag: [ tags.CALYPSO_PR ] }, () => {} );
 ```
 
 **Instead**:
 
 ```typescript
-// In spec1.ts
-describe( 'Feature: Use sub-feature 1', function () {
-	describe( 'Feature 1', function () {} );
-} );
+// In feature__sub-feature-1.spec.ts
+test.describe( 'Feature: Sub-feature 1', { tag: [ tags.CALYPSO_PR ] }, () => {} );
 
-// In spec2.ts
-describe( 'Feature: Use sub-feature 2', function () {
-	describe( 'Feature 2', function () {} );
-} );
+// In feature__sub-feature-2.spec.ts
+test.describe( 'Feature: Sub-feature 2', { tag: [ tags.CALYPSO_PR ] }, () => {} );
 ```
 
-### Do not use modal verbs
+### Do not use modal verbs in step names
 
-Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
-Instead state the action(s) the step is expected to perform, or the end result of what _should_ happen after this step.
+Avoid the use of modal verbs such as `can`, `should`, `could` or `must` in a `test.step` name.
+Instead state the action the step performs, or the end result of what _should_ happen after it.
+
+Test names are the exception: they use the user story format, so `can` belongs there.
 
 **Avoid**:
 
 ```typescript
-it( 'Can log in' );
+await test.step( 'Given I can be logged in', async function () {} );
 
-it( 'Should be able to start new post' );
+await test.step( 'When I should be able to start a new post', async function () {} );
 ```
 
 **Instead**:
 
 ```typescript
-it( 'Log In' );
+await test.step( 'Given I am logged in', async function () {} );
 
-it( 'Start new post' );
+await test.step( 'When I start a new post', async function () {} );
 ```
 
 ### Prefer smaller steps
@@ -326,7 +383,7 @@ Break large steps into smaller pieces for clarity and ease of debugging.
 **Avoid**:
 
 ```typescript
-it( 'Log in, select home page and start a search', async function () {
+await test.step( 'When I log in, select the home page and start a search', async function () {
 	// too many things done here.
 } );
 ```
@@ -334,11 +391,11 @@ it( 'Log in, select home page and start a search', async function () {
 **Instead**:
 
 ```typescript
-it( 'Log In', async function () {} );
+await test.step( 'Given I am logged in', async function () {} );
 
-it( 'Navigate to home page', async function () {} );
+await test.step( 'When I navigate to the home page', async function () {} );
 
-it( 'Search for ${string}', async function () {} );
+await test.step( `And I search for '${ query }'`, async function () {} );
 ```
 
 ---

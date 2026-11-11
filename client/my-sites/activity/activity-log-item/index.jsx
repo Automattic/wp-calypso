@@ -481,7 +481,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindBackup( siteId, rewindId, downloadArgs )
 			)
 		)
-	),
+	 ),
 	confirmRewind: ( rewindId, activityName, restoreArgs ) => (
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
@@ -494,7 +494,7 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 				rewindRestore( siteId, rewindId, restoreArgs )
 			)
 		)
-	),
+	 ),
 	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );

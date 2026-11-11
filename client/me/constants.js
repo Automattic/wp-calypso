@@ -6,4 +6,5 @@ export default {
 	eightDigitBackupCodePlaceholder: i18n.translate( 'E.g. %(example)s', {
 		args: { example: '12345678' },
 	} ),
+	nineDigit2faPlaceholder: i18n.translate( 'E.g. %(example)s', { args: { example: '123456789' } } ),
 };

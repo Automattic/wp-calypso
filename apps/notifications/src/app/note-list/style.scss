@@ -26,6 +26,42 @@
 		text-overflow: ellipsis;
 	}
 
+	.wpnc__subject {
+		flex: 1;
+		font-weight: var(--wpds-typography-font-weight-default, 400);
+
+		.wpnc__user,
+		.wpnc__site,
+		.wpnc__post,
+		.wpnc__comment,
+		.wpnc__strong,
+		.wpnc__a {
+			font-weight: 600;
+		}
+
+		.wpnc__gridicon {
+			margin-right: 2px;
+		}
+
+		// The reply glyph fills ~2/3 of its 24px viewBox, so trim the box's side
+		// padding and center it on the x-height instead of nudging it down.
+		.wpnc__gridicon .gridicons-reply {
+			width: 16px;
+			height: 16px;
+			margin-inline-start: -2px;
+			vertical-align: middle;
+			transform: translateY(-1px);
+			fill: var(--wpds-color-foreground-interactive-neutral-weak, #707070);
+		}
+	}
+
+	// Follow the row's text into the brand color on hover and keyboard focus.
+	div[role="article"]:where(:hover, .is-hovered, :has(.dataviews-view-list__item:focus-visible))
+		.wpnc__subject
+		.gridicons-reply {
+		fill: currentColor;
+	}
+
 	.wpnc__note-icon .wpnc__gridicon {
 		position: absolute;
 		bottom: -6px;
@@ -46,6 +82,11 @@
 		&.is-unread {
 			color: $white;
 			background: var(--wp-admin-theme-color);
+		}
+
+		&.is-unapproved {
+			color: var(--wpds-color-foreground-content-warning, #2e1900);
+			background: var(--wpds-color-background-surface-warning, #fde6be);
 		}
 	}
 }

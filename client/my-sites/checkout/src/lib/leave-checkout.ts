@@ -1,4 +1,8 @@
-import { isTailoredSignupFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import {
+	isTailoredSignupFlow,
+	SITE_MIGRATION_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
+} from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
@@ -71,7 +75,7 @@ export const leaveCheckout = ( {
 	if (
 		siteSlug &&
 		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
-		! [ SITE_MIGRATION_FLOW ].includes( signupFlowName )
+		! [ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW ].includes( signupFlowName )
 	) {
 		return;
 	}
@@ -131,7 +135,11 @@ export const leaveCheckout = ( {
 				window.location.href = cancelPath;
 				return;
 			}
-			if ( dashboardOrigins().some( ( origin ) => cancelPath.startsWith( origin ) ) ) {
+			if ( isDashboardUrl( cancelPath ) ) {
+				window.location.href = cancelPath;
+				return;
+			}
+			if ( isJetpackCloudUrl( cancelPath ) ) {
 				window.location.href = cancelPath;
 				return;
 			}
@@ -145,6 +153,32 @@ export const leaveCheckout = ( {
 
 	navigate( closeUrl );
 };
+
+function isDashboardUrl( url: string ) {
+	try {
+		const { origin } = new URL( url );
+		return dashboardOrigins().some( ( allowed ) => new URL( allowed ).origin === origin );
+	} catch {
+		return false;
+	}
+}
+
+const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];
+
+/**
+ * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and
+ * `cancel_to` points back at them.
+ */
+function isJetpackCloudUrl( url: string ) {
+	try {
+		const { protocol, hostname } = new URL( url );
+		return (
+			[ 'https:', 'http:' ].includes( protocol ) && JETPACK_CLOUD_HOSTNAMES.includes( hostname )
+		);
+	} catch {
+		return false;
+	}
+}
 
 export function isRelativeUrl( url: string ) {
 	try {

@@ -10,12 +10,13 @@ import {
 	type ReadSubscribedListsResponse,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
+import { seenCountQueryOptions } from './read-seen-posts';
 
 export const readSubscribedListsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'read', 'lists', 'subscribed' ],
-		staleTime: 1000 * 60 * 5, // 5 minutes — lists change infrequently
 		queryFn: () => fetchReadSubscribedLists(),
+		...seenCountQueryOptions,
 	} );
 
 export const readListQuery = ( owner: string, slug: string ) =>

@@ -4,13 +4,20 @@
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
+import { makeLogstashTransport } from './logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
 const SENTRY_CONFIG: SentryApi.BrowserOptions = {
-	dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
+	// The SDK stays disabled without a DSN, but events only go to logstash through
+	// the transport, so this one deliberately points nowhere.
+	dsn: 'https://public@sentry.invalid/1',
 	// Determine the sample of errors collected where 1.0 is 100% of errors.
 	sampleRate: 1.0, // We're disabling it for 90% of requests, so we should track 100% of errors for the remaining 10% of requests.
+	// The logstash transport drops sessions and client reports, so don't collect them.
+	autoSessionTracking: false,
+	sendClientReports: false,
 	// Don't track errors on these URLs.
 	denyUrls: [
 		// Matches browser extension URLs, like "moz-extension://..." or "safari-web-extension://..."
@@ -25,6 +32,7 @@ type SupportedMethods =
 	| 'captureMessage'
 	| 'configureScope'
 	| 'withScope'
+	| 'setTag'
 	| 'setUser';
 
 interface QueueDataMethod< Method extends SupportedMethods > {
@@ -51,7 +59,7 @@ type SentryState =
 	// Sentry will not be enabled
 	| { state: 'disabled'; params: SentryOptions }
 	// Fully loaded!
-	| { state: 'loaded'; params: SentryOptions; sentry: typeof import('@sentry/react') };
+	| { state: 'loaded'; params: SentryOptions; sentry: typeof import( '@sentry/react' ) };
 let state: SentryState = { state: 'initial' };
 
 function dispatchSentryMethodCall< Method extends SupportedMethods >(
@@ -81,11 +89,19 @@ export function captureException( ...args: Parameters< typeof SentryApi.captureE
 export function captureMessage( ...args: Parameters< typeof SentryApi.captureMessage > ) {
 	dispatchSentryMethodCall( 'captureMessage', args );
 }
+/**
+ * @deprecated Sentry deprecated `configureScope` (removed in @sentry/react v8).
+ * To set a tag use `setTag`; for anything else use the top-level scope helpers
+ * directly once the SDK is loaded.
+ */
 export function configureScope( ...args: Parameters< typeof SentryApi.configureScope > ) {
 	dispatchSentryMethodCall( 'configureScope', args );
 }
 export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
 	dispatchSentryMethodCall( 'withScope', args );
+}
+export function setTag( ...args: Parameters< typeof SentryApi.setTag > ) {
+	dispatchSentryMethodCall( 'setTag', args );
 }
 export function setUser( ...args: Parameters< typeof SentryApi.setUser > ) {
 	dispatchSentryMethodCall( 'setUser', args );
@@ -127,6 +143,11 @@ function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 	// This flag overrides the other settings, always enabling Sentry:
 	if ( config.isEnabled( 'always-enable-sentry' ) ) {
 		return true;
+	}
+
+	// calypso.live runs unreleased PR builds, whose errors shouldn't be reported.
+	if ( isCalypsoLiveHostname( window.location.hostname ) ) {
+		return false;
 	}
 
 	// By default, only load for 10% of requests when Sentry is enabled in the environment:
@@ -200,7 +221,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 			const Sentry = await import( '@sentry/react' );
 			// We don't set a release outside of production builds because we don't
 			// really "release" anything other than new deploys from trunk builds.
-			// wpcalypso (calypso.live) runs on PRs, which doesn't really map to a
+			// calypso.live runs on PRs, which doesn't really map to a
 			// release we need to track. Horizon is just a different flavor of trunk,
 			// so it can be mapped to a trunk release.
 			const environment = config< string >( 'env_id' );
@@ -222,6 +243,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 				release,
 				beforeBreadcrumb,
 				beforeSend,
+				transport: makeLogstashTransport,
 			} );
 			state = { state: 'loaded', params, sentry: Sentry };
 		} catch ( err ) {

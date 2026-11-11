@@ -1,6 +1,12 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import {
+	Card,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+	ScreenReaderText,
+} from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { capitalize } from '@automattic/js-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
@@ -63,6 +69,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import { getParamFromUrlOrOauth2Redirect } from 'calypso/state/selectors/get-param-from-url-or-oauth2-redirect';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
@@ -109,7 +116,10 @@ export class LoginForm extends Component {
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
 		isJetpack: PropTypes.bool,
+		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
+		lostPasswordLink: PropTypes.node,
+		isSocialAboveForm: PropTypes.bool,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
 	};
@@ -342,6 +352,10 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
+		if ( this.props.blackbox.isSubmitBlocked ) {
+			return;
+		}
+
 		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
@@ -448,7 +462,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		return translate( 'Log In' );
+		return translate( 'Log in' );
 	};
 
 	showJetpackConnectSiteOnly = () => {
@@ -482,18 +496,14 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your username' );
 		}
 
-		if ( this.isPasswordView() ) {
-			return this.renderChangeUsername();
-		}
-
 		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
-				<span className="screen-reader-text">
+				<ScreenReaderText>
 					{ this.props.translate( 'WordPress.com email address or username' ) }
-				</span>
+				</ScreenReaderText>
 				<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 			</>
 		);
@@ -703,6 +713,9 @@ export class LoginForm extends Component {
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 			isSocialFirst,
+			isUserAccountEmailUpdateRedirect,
+			lostPasswordLink,
+			isSocialAboveForm,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -733,7 +746,7 @@ export class LoginForm extends Component {
 					components: {
 						tosLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								href={ localizeUrl( 'https://automattic.com/tos/' ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
@@ -750,13 +763,22 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const renderUserAccountEmailUpdateNotice = () => {
+			return (
+				<Notice variant="info">
+					{ this.props.translate(
+						'Please log in using the original email address for your account, not the updated email address you are verifying.'
+					) }
+				</Notice>
+			);
+		};
+
 		const renderSocialLinkingNotice = () => {
 			return (
-				<Notice variant="error">
+				<Notice variant="info">
 					{ this.props.translate(
-						'We found a WordPress.com account with the email address "%(email)s". ' +
-							'Log in to this account to connect it to your %(service)s profile, ' +
-							'or choose a different %(service)s profile.',
+						'There’s already a WordPress.com account for "%(email)s" that isn’t connected to %(service)s yet. ' +
+							'Log in to it and you’ll be able to connect your %(service)s account.',
 						{
 							args: {
 								email: this.props.socialAccountLinkEmail,
@@ -768,27 +790,41 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const usernameLabel = (
+			<FormLabel
+				htmlFor="usernameOrEmail"
+				hasCoreStylesNoCaps
+				className={ clsx( {
+					'has-last-used-badge': isLastUsedPassword,
+				} ) }
+			>
+				{ this.renderUsernameorEmailLabel() }
+				{ isLastUsedPassword && (
+					<Badge intent="informational" className="login__form-last-used-badge">
+						{ this.props.translate( 'Last used' ) }
+					</Badge>
+				) }
+			</FormLabel>
+		);
+
 		return (
 			<Card className="login__form">
 				{ isWoo && <ErrorNotice /> }
 
 				<div className="login__form-userdata">
 					{ linkingSocialUser && renderSocialLinkingNotice() }
+					{ isUserAccountEmailUpdateRedirect && renderUserAccountEmailUpdateNotice() }
 
-					<FormLabel
-						htmlFor="usernameOrEmail"
-						hasCoreStylesNoCaps
-						className={ clsx( {
-							'has-last-used-badge': isLastUsedPassword,
-						} ) }
-					>
-						{ this.renderUsernameorEmailLabel() }
-						{ isLastUsedPassword && (
-							<Badge intent="informational" className="login__form-last-used-badge">
-								{ this.props.translate( 'Last used' ) }
-							</Badge>
-						) }
-					</FormLabel>
+					{ this.isPasswordView() && this.renderChangeUsername() }
+
+					{ isSocialAboveForm && lostPasswordLink ? (
+						<div className="login__form-username-label-row">
+							{ usernameLabel }
+							{ lostPasswordLink }
+						</div>
+					) : (
+						usernameLabel
+					) }
 
 					<FormTextInput
 						autoCapitalize="off"
@@ -875,9 +911,20 @@ export class LoginForm extends Component {
 						} ) }
 						aria-hidden={ isPasswordHidden }
 					>
-						<FormLabel htmlFor="password" hasCoreStylesNoCaps>
-							{ this.props.translate( 'Password' ) }
-						</FormLabel>
+						{ /* Only while the password is shown: `is-hidden` keeps the block in the DOM,
+						   and a link there would still take focus. */ }
+						{ lostPasswordLink && ! isPasswordHidden && ! isSocialAboveForm ? (
+							<div className="login__form-password-label-row">
+								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+									{ this.props.translate( 'Password' ) }
+								</FormLabel>
+								{ lostPasswordLink }
+							</div>
+						) : (
+							<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+								{ this.props.translate( 'Password' ) }
+							</FormLabel>
+						) }
 
 						<FormPasswordInput
 							autoCapitalize="off"
@@ -946,31 +993,45 @@ export class LoginForm extends Component {
 			! isCoreProfilerLostPasswordFlow &&
 			! isGravatarFixedAccountLogin;
 
+		const socialLoginForm = shouldShowSocialLoginForm && (
+			<SocialLoginForm
+				lastUsedAuthenticationMethod={
+					showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
+				}
+				handleLogin={ this.handleSocialLogin }
+				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
+				resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
+				socialServiceResponse={ this.props.socialServiceResponse }
+				isSocialFirst={ isSocialFirst }
+				magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
+				qrLoginLink={ this.props.isSocialAboveForm ? null : this.getQrLoginLink() }
+				isJetpack={ isJetpack }
+				allowedSocialServices={ this.props.allowedSocialServices }
+				oauth2Client={ this.props.oauth2Client }
+				isWoo={ this.props.isWoo }
+				currentRoute={ this.props.currentRoute }
+				from={ this.props.currentQuery?.from }
+			/>
+		);
+
+		if ( this.props.isSocialAboveForm && socialLoginForm ) {
+			return (
+				<>
+					{ socialLoginForm }
+					<FormDivider />
+					{ this.renderLoginCard() }
+				</>
+			);
+		}
+
 		return (
 			<>
 				{ this.renderLoginCard() }
 
-				{ shouldShowSocialLoginForm && (
+				{ socialLoginForm && (
 					<Fragment>
 						<FormDivider />
-						<SocialLoginForm
-							lastUsedAuthenticationMethod={
-								showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
-							}
-							handleLogin={ this.handleSocialLogin }
-							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							isSocialFirst={ isSocialFirst }
-							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
-							qrLoginLink={ this.getQrLoginLink() }
-							isJetpack={ isJetpack }
-							allowedSocialServices={ this.props.allowedSocialServices }
-							oauth2Client={ this.props.oauth2Client }
-							isWoo={ this.props.isWoo }
-							currentRoute={ this.props.currentRoute }
-							from={ this.props.currentQuery?.from }
-						/>
+						{ socialLoginForm }
 					</Fragment>
 				) }
 			</>
@@ -1047,7 +1108,7 @@ export default connect(
 			userEmail:
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
-				getCurrentQueryArguments( state )?.email_address,
+				getParamFromUrlOrOauth2Redirect( state, 'email_address' ),
 			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
@@ -1070,4 +1131,11 @@ export default connect(
 		createSocialUserFailed,
 		loginSocialUser,
 	}
-)( localize( withBlackboxProtection( LoginForm, { feature: 'blackbox-login' } ) ) );
+)(
+	localize(
+		withBlackboxProtection( LoginForm, {
+			feature: 'blackbox-login',
+			flow: 'login',
+		} )
+	)
+);

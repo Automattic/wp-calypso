@@ -12,24 +12,23 @@ export default function DefaultTemplate( {
 	onDismiss,
 } ) {
 	return (
-		<>
+		<UpsellNudge
+			callToAction={ CTA.message }
+			title={ message }
+			description={ description }
+			disableHref
+			dismissPreferenceName={ featureClass }
+			dismissTemporary
+			onDismissClick={ onDismiss }
+			onClick={ onClick }
+			event={ tracks?.click?.name || `jitm_nudge_click_${ id }` }
+			href={ CTA.link }
+			horizontal
+			target={ CTA.target }
+			showIcon
+			forceDisplay
+		>
 			{ trackImpression && trackImpression() }
-			<UpsellNudge
-				callToAction={ CTA.message }
-				title={ message }
-				description={ description }
-				disableHref
-				dismissPreferenceName={ featureClass }
-				dismissTemporary
-				onDismissClick={ onDismiss }
-				onClick={ onClick }
-				event={ tracks?.click?.name || `jitm_nudge_click_${ id }` }
-				href={ CTA.link }
-				horizontal
-				target={ CTA.target }
-				showIcon
-				forceDisplay
-			/>
-		</>
+		</UpsellNudge>
 	);
 }

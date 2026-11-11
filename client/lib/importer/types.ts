@@ -1,22 +1,9 @@
 // List of supported importer platforms (most important)
 export type ImporterMainPlatform =
-	| 'blogger'
-	| 'medium'
-	| 'squarespace'
-	| 'wordpress'
-	| 'wix'
-	| ImporterPlatformOther;
+	'blogger' | 'medium' | 'squarespace' | 'wordpress' | 'wix' | ImporterPlatformOther;
 // List of supported importer platforms (others)
 export type ImporterPlatformOther =
-	| 'ghost'
-	| 'livejournal'
-	| 'movabletype'
-	| 'tumblr'
-	| 'xanga'
-	| 'substack';
+	'ghost' | 'livejournal' | 'movabletype' | 'tumblr' | 'xanga' | 'substack';
 export type ImporterPlatformExtra = 'godaddy-central';
 export type ImporterPlatform =
-	| ImporterMainPlatform
-	| ImporterPlatformOther
-	| ImporterPlatformExtra
-	| 'unknown';
+	ImporterMainPlatform | ImporterPlatformOther | ImporterPlatformExtra | 'unknown';

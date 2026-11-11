@@ -1,0 +1,6 @@
+// The address is interpolated as one unbroken token, and the notice lays its
+// content out in a grid track that would otherwise refuse to shrink below it.
+.signup-existing-account-notice .components-notice__content {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}

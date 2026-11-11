@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PluginsBrowserListElement from '../';
 
@@ -11,6 +12,7 @@ jest.mock( 'calypso/state/plugins/installed/selectors' );
 jest.mock( 'calypso/state/products-list/selectors' );
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/selectors/site-has-feature' );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
@@ -74,5 +76,48 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		render( <PluginsBrowserListElement { ...props } /> );
 		const message = screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' );
 		expect( message ).not.toBeInTheDocument();
+	} );
+
+	test( 'should point Jetpack Backup to the plans that include backups instead of the generic message', () => {
+		isJetpackSite.mockImplementation( () => true );
+		isAtomicSite.mockImplementation( () => true );
+
+		const props = {
+			plugin: { name: 'Jetpack VaultPress Backup', slug: 'jetpack-backup' },
+		};
+
+		render( <PluginsBrowserListElement { ...props } /> );
+		expect(
+			screen.getByText( /^Jetpack VaultPress Backup is included with the WordPress.com/ )
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Your site plan already includes Jetpack VaultPress Backup.' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'should tell sites with self-serve backups that their plan includes Jetpack Backup', () => {
+		isJetpackSite.mockImplementation( () => true );
+		isAtomicSite.mockImplementation( () => true );
+		siteHasFeature.mockImplementation(
+			( state, siteId, feature ) => feature === 'backups-self-serve'
+		);
+
+		const props = {
+			site: 'example.wordpress.com',
+			plugin: { name: 'Jetpack VaultPress Backup', slug: 'jetpack-backup' },
+		};
+
+		render( <PluginsBrowserListElement { ...props } /> );
+		expect(
+			screen.getByRole( 'link', {
+				name: 'Your site plan already includes Jetpack VaultPress Backup.',
+			} )
+		).toBeInTheDocument();
+		expect(
+			screen.queryByText( /^Jetpack VaultPress Backup is included with the WordPress.com/ )
+		).not.toBeInTheDocument();
 	} );
 } );

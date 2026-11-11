@@ -104,9 +104,12 @@ test.describe(
 			} );
 
 			await test.step( 'Login via popup to like the post', async () => {
-				const loggedOutPostPage = new PublishedPostPage( newPage );
-				await loggedOutPostPage.likePost( {
-					handleLoginPopup: ( popup ) => otherUser.logInViaPopupPage( popup ),
+				// The like runs inside the lock: it is asserted against the session this login creates.
+				await otherUser.logInExclusively( async () => {
+					const loggedOutPostPage = new PublishedPostPage( newPage );
+					await loggedOutPostPage.likePost( {
+						handleLoginPopup: ( popup ) => otherUser.logInViaPopupPage( popup ),
+					} );
 				} );
 			} );
 

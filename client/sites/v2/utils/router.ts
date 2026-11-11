@@ -24,8 +24,14 @@ export function getRouterOptions( config: AppConfig ) {
 
 export function createBrowserHistoryAndMemoryRouterSync( {
 	compatibilityRoutes,
+	getExternalUrl,
 }: {
 	compatibilityRoutes?: AnyRoute[];
+	/**
+	 * Returns the URL to load instead when a path the memory router reaches is
+	 * served by another app, rather than handing the path to page.js.
+	 */
+	getExternalUrl?: ( url: string ) => string | undefined;
 } = {} ) {
 	let lastPath = '';
 
@@ -67,6 +73,12 @@ export function createBrowserHistoryAndMemoryRouterSync( {
 
 			// Avoid pushing redirect routes to the browser history.
 			if ( compatibilityRoutes && isCompatibilityRoute( router, newUrl ) ) {
+				return;
+			}
+
+			const externalUrl = getExternalUrl?.( newUrl );
+			if ( externalUrl ) {
+				window.location.assign( externalUrl );
 				return;
 			}
 

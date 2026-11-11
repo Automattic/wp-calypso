@@ -81,14 +81,14 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 										'Failed to update forwarder %(emailAddress)s with message “%(message)s”. Please try again or contact support.'
 									),
 									{ emailAddress: email.emailAddress, message: apiMessage }
-							  )
+								)
 							: sprintf(
 									/* translators: %(emailAddress)s is the email address. */
 									__(
 										'Failed to update forwarder %(emailAddress)s. Please try again or contact support.'
 									),
 									{ emailAddress: email.emailAddress }
-							  ),
+								),
 						{
 							actions: [ { label: __( 'Support' ), url: wpcomLink( CALYPSO_CONTACT ) } ],
 							type: 'snackbar',

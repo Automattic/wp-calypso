@@ -9,33 +9,33 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
  * Communicates submit-blocking state back to the parent via onSubmitBlockedChange.
  * @param {Object}   props
  * @param {boolean}  props.enabled Whether Blackbox is active for this surface.
+ * @param {string}   [props.apiKey] Public key for this surface.
+ * @param {'login'|'signup'} props.flow Collect flow for `X-Blackbox-Flow`.
  * @param {Function} props.onSubmitBlockedChange Called with true/false when Blackbox should block submit.
  */
-export default function BlackboxChallenge( { enabled, onSubmitBlockedChange } ) {
+export default function BlackboxChallenge( { enabled, apiKey, flow, onSubmitBlockedChange } ) {
 	const containerRef = useRef( null );
 	const { isChallengeActive, isLoading, hasChallengeContent } = useBlackbox( {
 		containerRef,
 		enabled,
+		apiKey,
+		flow,
 	} );
 
 	useIsomorphicLayoutEffect( () => {
-		onSubmitBlockedChange( isChallengeActive || isLoading || hasChallengeContent );
-	}, [ isChallengeActive, isLoading, hasChallengeContent, onSubmitBlockedChange ] );
+		onSubmitBlockedChange( isChallengeActive || isLoading );
+	}, [ isChallengeActive, isLoading, onSubmitBlockedChange ] );
 
 	if ( ! enabled ) {
 		return null;
 	}
 
-	// The container always renders while enabled so the challenge has a mount
-	// point, but it only takes up space once a challenge is actually showing.
-	// Flag that state so the stylesheet reserves spacing only then.
-	const isChallengeVisible = isChallengeActive || hasChallengeContent;
-
+	// The container is a permanent mount point; only a rendered widget takes space.
 	return (
 		<div
 			ref={ containerRef }
 			className={ clsx( 'login__form-blackbox-challenge', {
-				'has-visible-challenge': isChallengeVisible,
+				'has-visible-challenge': hasChallengeContent,
 			} ) }
 		/>
 	);

@@ -1,14 +1,15 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 
 import './help-center-third-party-cookies-notice.scss';
 
 const ThirdPartyCookiesNotice: React.FC = () => {
 	const { __ } = useI18n();
 	const { sectionName } = useHelpCenterContext();
+	const recordTracksEvent = useHelpCenterTracksEvent();
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_third_party_cookies_notice_open', {
@@ -16,7 +17,7 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 			location: 'help-center',
 			section: sectionName,
 		} );
-	}, [] ); // Dependencies do not include sectionName on purpose - we just care about reporting it once
+	}, [ recordTracksEvent, sectionName ] );
 
 	return (
 		<div className="help-center-third-party-cookies-notice">

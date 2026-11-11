@@ -1,25 +1,9 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
-
-.agency-site-tag.badge {
-	background: var(--studio-gray-5);
-	border-radius: 4px;
-	padding: 5px 14px 11px 11px;
-}
-
-.agency-site-tag__text,
-.agency-site-tag__close {
-	display: inline;
-	vertical-align: middle;
-}
-
-.agency-site-tag__text {
-	@include body-small;
+.agency-site-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
 }
 
 .agency-site-tag__close {
 	cursor: pointer;
-	position: relative;
-	left: 9px;
-	top: 1px;
 }

@@ -125,7 +125,7 @@ export function fetchModernShowcaseData( context, next ) {
 					vertical: vertical || '',
 					tabFilter: category || 'recommended',
 				} ),
-		  ];
+			];
 
 	return Promise.all(
 		queries.map( ( query ) =>

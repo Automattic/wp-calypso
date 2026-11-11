@@ -3,7 +3,7 @@ import {
 	validateTwoStepAuthCodeMutation,
 	resendTwoStepAuthSMSCodeMutation,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -18,6 +18,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { updateCurrentUser } from '../../../../app/auth';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Notice } from '../../../../components/notice';
 import type { Field } from '@wordpress/dataviews';
@@ -28,6 +29,7 @@ type TwoStepAuthAppFormData = {
 
 export default function DisableTwoStepDialog( { onClose }: { onClose: () => void } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const queryClient = useQueryClient();
 
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
@@ -101,6 +103,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 			},
 			{
 				onSuccess: () => {
+					updateCurrentUser( queryClient, { two_step_enabled: false } );
 					createSuccessNotice( __( 'Two-step authentication disabled.' ), {
 						type: 'snackbar',
 					} );

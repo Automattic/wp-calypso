@@ -56,11 +56,11 @@ export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} 
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
+		return <span>{ __( 'Processing…' ) }</span>;
 	}
 
 	if ( formStatus !== FormStatus.READY ) {
-		return <>{ __( 'Please wait…' ) }</>;
+		return <span>{ __( 'Please wait…' ) }</span>;
 	}
 
 	const payNowLabel = last4
@@ -69,7 +69,7 @@ export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} 
 				__( 'Pay with %s' ),
 				/* translators: %s is the last 4 digits of the credit card number */
 				sprintf( _x( '**** %s', 'Masked credit card number' ), last4 )
-		  )
+			)
 		: __( 'Pay now' );
 
 	if ( isMobileCheckoutStickySummary ) {

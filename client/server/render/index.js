@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
@@ -8,7 +9,6 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
@@ -27,6 +27,7 @@ import { dehydrateQueryClient } from 'calypso/state/query-client-ssr';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
+import { getCachedRuntimeStyles } from './runtime-styles';
 
 const debug = debugFactory( 'calypso:server-render' );
 
@@ -36,8 +37,15 @@ const IMAGE_REF_PATTERN = /^registry\.a8c\.com\/calypso\/app:build-\d+$/;
 // only by the `-a4a` suffix calypso.live gives its container.
 const A4A_HOSTNAME_SUFFIX = '-a4a.calypso.live';
 
+const CALYPSO_LIVE_DEV_HELPER_FEATURES = {
+	'dev/account-settings-helper': true,
+	'dev/auth-helper': true,
+	'dev/preferences-helper': true,
+	'dev/store-sandbox-helper': true,
+};
+
 function isCalypsoLiveDotcomHostname( hostname ) {
-	return !! hostname?.endsWith( '.calypso.live' ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
+	return isCalypsoLiveHostname( hostname ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
 }
 
 /**
@@ -79,12 +87,20 @@ export function customizeClientDataForRequest( req, baseClientData ) {
 		};
 	}
 
+	if ( isCalypsoLiveHostname( reqHostname ) ) {
+		clientData = {
+			...clientData,
+			features: { ...clientData.features, ...CALYPSO_LIVE_DEV_HELPER_FEATURES },
+		};
+	}
+
 	const liveImageRef = getLiveImageRef();
 	if (
 		liveImageRef &&
 		isCalypsoLiveDotcomHostname( reqHostname ) &&
-		// Flavours without a dotcom sibling (e.g. Jetpack Cloud) keep static values.
-		( config( 'env_id' ) === 'wpcalypso' || isDashboardEnv() )
+		// Only flavours that name the redirector envs of their sibling apps get the
+		// image, so that links between them stay inside the previewed build.
+		config( 'calypso_live_envs' )
 	) {
 		clientData = {
 			...clientData,
@@ -188,7 +204,7 @@ function render( element, key, req ) {
 							type: 'timing',
 							value: rtsTimeMs,
 						},
-				  ] ),
+					] ),
 		] );
 
 		if ( rtsTimeMs > 100 ) {
@@ -310,7 +326,12 @@ export function serverRender( req, res ) {
 		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
-		context.renderedLayout = render( context.layout, req.error?.message ?? cacheKey, req );
+		const key = req.error?.message ?? cacheKey;
+		context.renderedLayout = render( context.layout, key, req );
+		context.runtimeStyles = getCachedRuntimeStyles(
+			`layout:${ key }`,
+			() => context.renderedLayout
+		);
 	}
 
 	performanceMark( req.context, 'dehydrateQueryClient', true );
@@ -393,8 +414,8 @@ export function setShouldServerSideRender( context, next ) {
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
-			! context.user && // logged out only
-			( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
+		! context.user && // logged out only
+		( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
 	);
 }
 
@@ -408,7 +429,7 @@ function isServerSideRenderCompatible( context ) {
 export function shouldServerSideRender( context ) {
 	return Boolean(
 		config.isEnabled( 'server-side-rendering' ) &&
-			isServerSideRenderCompatible( context ) &&
-			context.serverSideRender === true
+		isServerSideRenderCompatible( context ) &&
+		context.serverSideRender === true
 	);
 }

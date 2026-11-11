@@ -370,13 +370,7 @@ export interface FediverseCreatePostResult {
  * label.
  */
 export type FediverseNotificationCanonicalType =
-	| 'like'
-	| 'repost'
-	| 'follow'
-	| 'mention'
-	| 'reply'
-	| 'quote'
-	| 'other';
+	'like' | 'repost' | 'follow' | 'mention' | 'reply' | 'quote' | 'other';
 
 export interface FediverseNotificationActor {
 	handle: string;

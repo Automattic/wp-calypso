@@ -1,6 +1,6 @@
 import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 
-const buildState = ( { clientId, redirectTo } ) => ( {
+const buildState = ( { clientId, redirectTo, initialRedirectTo } ) => ( {
 	oauth2Clients: {
 		ui: { currentClientId: clientId ?? null },
 		clients: clientId ? { [ clientId ]: { id: clientId } } : {},
@@ -11,6 +11,9 @@ const buildState = ( { clientId, redirectTo } ) => ( {
 				...( clientId ? { client_id: String( clientId ) } : {} ),
 				...( redirectTo ? { redirect_to: redirectTo } : {} ),
 			},
+			...( initialRedirectTo
+				? { initial: { client_id: String( clientId ), redirect_to: initialRedirectTo } }
+				: {} ),
 		},
 	},
 } );
@@ -62,6 +65,19 @@ describe( 'getIsJetpackApp', () => {
 
 	test( 'is false for a shared mobile client with no redirect', () => {
 		expect( getIsJetpackApp( buildState( { clientId: 11 } ) ) ).toBe( false );
+	} );
+
+	test( 'falls back to the initial redirect_uri when the 2FA route drops it from the current query', () => {
+		// 2FA sub-routes (e.g. /log-in/webauthn) navigate away from the launching URL,
+		// so the current query keeps the sticky client_id but loses the jetpack:// redirect.
+		const state = buildState( {
+			clientId: 11,
+			initialRedirectTo: authorizeUrl( {
+				clientId: 11,
+				redirectUri: 'jetpack%3A%2F%2Foauth2-callback',
+			} ),
+		} );
+		expect( getIsJetpackApp( state ) ).toBe( true );
 	} );
 
 	test( 'is false when there is no current OAuth2 client', () => {

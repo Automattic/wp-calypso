@@ -24,7 +24,7 @@ There are also three optional properties:
 Example:
 
 ```javascript
-const account = { steps: [ 'site', 'user' ], destination: '/' };
+const account = { steps: [ 'user-social' ], destination: '/' };
 ```
 
 Once you've added the flow to `flows-pure.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
@@ -44,7 +44,7 @@ You can add a new step to Modular Signup from `/client/signup/config/steps-pure.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
 - (optional) `props` is an object with some custom properties that may be specific to a certain step.
 
-You will also need to define which React component implements your step in `/client/signup/config/step-components.js`. Make sure to require the component as an internal dependency in `step-components.js`.
+You will also need to define which React component implements your step in `/client/signup/config/step-components.js`: map the step name to its module in `stepNameToModuleName`, and add a loader for a new module to `stepModuleLoaders`.
 
 ### Implementing a step
 
@@ -106,7 +106,7 @@ The above example includes an inline function definition, but we should keep the
 
 ```javascript
 const step = {
-	apiRequestFunction: stepActions.createSite,
+	apiRequestFunction: stepActions.createSiteWithCart,
 };
 ```
 
@@ -126,11 +126,19 @@ export default function HelloWorld() {
 }
 ```
 
-4 - add the new step to `/client/signup/config/step-components.js`. Include a reference to the component module:
+4 - add the new step to `/client/signup/config/step-components.js`. Map the step to its module, and add a loader for the module:
 
 ```javascript
 const stepNameToModuleName = {
-	'hello-world': 'hello-world-module-name', // Referencing signup/steps/hello-world-module-name/index.js
+	'hello-world': 'hello-world', // Referencing signup/steps/hello-world/index.jsx
+};
+
+const stepModuleLoaders = {
+	'hello-world': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-hello-world" */
+			'calypso/signup/steps/hello-world'
+		),
 };
 ```
 

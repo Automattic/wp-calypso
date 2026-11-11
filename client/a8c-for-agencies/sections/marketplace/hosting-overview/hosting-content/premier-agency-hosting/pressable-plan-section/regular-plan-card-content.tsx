@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL } from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/constants';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
@@ -38,7 +39,7 @@ export default function RegularPlanCardContent( {
 				actualCostFormatted: '',
 				showActualCost: false,
 				discountPercentage: 0,
-		  };
+			};
 
 	const ctaLabel = useMemo( () => {
 		if ( isReferralMode ) {
@@ -138,7 +139,7 @@ export default function RegularPlanCardContent( {
 									components: {
 										a: (
 											<ExternalLink
-												href="https://pressable.com/legal/hosting-promotion-terms/"
+												href={ PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL }
 												children={ null }
 											/>
 										),

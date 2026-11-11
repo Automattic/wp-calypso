@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Frame, Locator, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
@@ -20,6 +20,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: 'button.editor-post-schedule__dialog-toggle',
+	dataFormDropdownCloseButton:
+		'.dataforms-layouts-panel__field-dropdown .dataforms-layouts-panel__dropdown-header button[aria-label="Close"]',
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
@@ -31,7 +33,7 @@ const selectors = {
 
 	// Add tag.
 	// String was changed for WP 6.8, so we need both for a bit: https://core.trac.wordpress.org/changeset/59784
-	tagInput: `${ panel } .components-form-token-field:is(:has-text("Add New Tag"),:has-text("Add Tag")) input`,
+	tagLabel: /^add (new )?tag$/i,
 	addedTag: ( tag: string ) =>
 		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };
@@ -301,13 +303,25 @@ export class EditorSettingsSidebarComponent {
 	 * Opens the Schedule picker.
 	 */
 	async openSchedule(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.scheduleButton ) ) {
+		const toggle = await this.getScheduleToggle();
+		if ( ( await toggle.getAttribute( 'aria-expanded' ) ) === 'true' ) {
 			return;
 		}
 
+		await toggle.click();
+	}
+
+	/**
+	 * Returns the button that toggles the schedule picker.
+	 */
+	private async getScheduleToggle(): Promise< Locator > {
 		const editorParent = await this.editor.parent();
-		const buttonLocator = editorParent.locator( selectors.scheduleButton );
-		await buttonLocator.click();
+		// The label gains an " (has errors)" suffix when the date fails validation.
+		// TODO: Drop the legacy selector once the DataForm post summary ships in stable Gutenberg.
+		return editorParent
+			.getByRole( 'button', { name: /^Edit Date/ } )
+			.or( editorParent.locator( selectors.scheduleButton ) )
+			.first();
 	}
 
 	/**
@@ -319,11 +333,19 @@ export class EditorSettingsSidebarComponent {
 		// For instance, if the current time is in the 'am' and the article is
 		// scheduled for 'pm', the act of clicking on the 'pm' button dismisses the
 		// scheduler.
-		if ( ! ( await this.targetIsOpen( selectors.scheduleButton ) ) ) {
+		const toggle = await this.getScheduleToggle();
+		if ( ( await toggle.getAttribute( 'aria-expanded' ) ) !== 'true' ) {
 			return;
 		}
 
 		const editorParent = await this.editor.parent();
+
+		// The DataForm summary closes from its own header, not by re-clicking the toggle.
+		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
+		if ( await dataFormClose.count() ) {
+			await dataFormClose.click();
+			return;
+		}
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			const buttonLocator = editorParent.locator( selectors.schedulePopoverCloseButton );
@@ -341,6 +363,24 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
 		const editorParent = await this.editor.parent();
+
+		// The DataForm control is a single datetime-local input (YYYY-MM-DDTHH:mm).
+		// TODO: Drop the legacy inputs once the DataForm post summary ships in stable Gutenberg.
+		const dateTimeInput = editorParent.getByLabel( 'Date time', { exact: true } );
+		const legacyInput = editorParent.locator( selectors.scheduleInput( 'year' ) );
+		await dateTimeInput.or( legacyInput ).first().waitFor();
+
+		if ( await dateTimeInput.count() ) {
+			const pad = ( n: number ) => n.toString().padStart( 2, '0' );
+			const hours24 = ( date.hours % 12 ) + ( date.meridian === 'PM' ? 12 : 0 );
+			await dateTimeInput.fill(
+				`${ date.year }-${ pad( date.month + 1 ) }-${ pad( date.date ) }T${ pad(
+					hours24
+				) }:${ pad( date.minutes ) }`
+			);
+			return;
+		}
+
 		let key: keyof ArticlePublishSchedule;
 
 		for ( key in date ) {
@@ -411,12 +451,108 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterTag( name: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const inputLocator = editorParent.locator( selectors.tagInput );
+		const inputLocator = editorParent
+			.locator( panel )
+			.getByRole( 'combobox', { name: selectors.tagLabel } )
+			.first();
 		await inputLocator.fill( name );
-		await this.page.keyboard.press( 'Enter' );
 
-		const addedTagLocator = editorParent.locator( selectors.addedTag( name ) );
-		await addedTagLocator.waitFor();
+		// Gutenberg 24.1 replaced the FormTokenField with a chip combobox, where a term
+		// is only assigned by picking an option: the term itself, or "Create: <term>"
+		// for a new one. Enter alone assigns nothing there.
+		// See https://github.com/WordPress/gutenberg/pull/80967.
+		const isTokenField = await inputLocator.evaluate(
+			( element ) => !! element.closest( '.components-form-token-field' )
+		);
+
+		if ( isTokenField ) {
+			await this.page.keyboard.press( 'Enter' );
+			await editorParent.locator( selectors.addedTag( name ) ).waitFor();
+
+			return;
+		}
+
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
+		const tagIdsBefore = editorFrame ? await this.getEditedTagIds( editorFrame ) : [];
+
+		const existingTerm = editorParent.getByRole( 'option', { name, exact: true } );
+		const newTerm = editorParent.getByRole( 'option', {
+			name: `Create: ${ name }`,
+			exact: true,
+		} );
+		await existingTerm.or( newTerm ).first().click();
+
+		// Gutenberg < 24.2 names the chip's remove button "Remove <term>". From 24.2 it's
+		// just "Remove", rendered inside the chip, which is labelled by the term name.
+		const legacyRemoveButton = editorParent.getByRole( 'button', {
+			name: `Remove ${ name }`,
+			exact: true,
+		} );
+		const chipRemoveButton = editorParent
+			.locator( panel )
+			.getByLabel( name, { exact: true } )
+			.getByRole( 'button', { name: 'Remove', exact: true } );
+		await legacyRemoveButton.or( chipRemoveButton ).first().waitFor();
+
+		// The chip is not proof the tag is on the post: "Create: <term>" shows it
+		// right away and only assigns the term once its REST request resolves, so
+		// publishing in between saves the post without it.
+		if ( editorFrame ) {
+			await this.waitForTagAssigned( editorFrame, name, tagIdsBefore );
+		}
+	}
+
+	/**
+	 * Returns the IDs of the tags currently assigned to the post in the Editor.
+	 *
+	 * @param {Frame} editorFrame The frame the Editor runs in.
+	 */
+	private async getEditedTagIds( editorFrame: Frame ): Promise< number[] > {
+		return editorFrame.evaluate(
+			() =>
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				( window as any )?.wp?.data?.select( 'core/editor' )?.getEditedPostAttribute( 'tags' ) ?? []
+		);
+	}
+
+	/**
+	 * Waits until a tag that was not assigned before is assigned to the post.
+	 *
+	 * Compares tag IDs only: resolving the tag's name would take another REST
+	 * request, which can fail even though the assignment went through.
+	 *
+	 * @param {Frame} editorFrame The frame the Editor runs in.
+	 * @param {string} name Tag name, for the error message.
+	 * @param {number[]} tagIdsBefore Tag IDs assigned before the tag was picked.
+	 * @param {number} timeout Maximum time to wait, in milliseconds.
+	 */
+	private async waitForTagAssigned(
+		editorFrame: Frame,
+		name: string,
+		tagIdsBefore: number[],
+		timeout = 15 * 1000
+	): Promise< void > {
+		try {
+			await editorFrame.waitForFunction(
+				( before ) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const select = ( window as any )?.wp?.data?.select;
+
+					// Without the store there is nothing to check against.
+					if ( typeof select !== 'function' ) {
+						return true;
+					}
+
+					const tagIds: number[] = select( 'core/editor' ).getEditedPostAttribute( 'tags' ) ?? [];
+
+					return tagIds.some( ( id ) => ! before.includes( id ) );
+				},
+				tagIdsBefore,
+				{ timeout }
+			);
+		} catch {
+			throw new Error( `Tag "${ name }" was not assigned to the post within ${ timeout }ms.` );
+		}
 	}
 
 	/**
@@ -426,9 +562,18 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async enterUrlSlug( slug: string ) {
 		const editorParent = await this.editor.parent();
-		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the alternation.
-		await editorParent.getByRole( 'button', { name: /Change link:/ } ).click();
+		// TODO: Drop "Change link:" once the DataForm post summary ships in stable Gutenberg.
+		await editorParent
+			.getByRole( 'button', { name: /^(Change link:|Edit Slug)/ } )
+			.first()
+			.click();
 		await editorParent.getByRole( 'textbox', { name: /^(Link|Slug)$/ } ).fill( slug );
+
+		const dataFormClose = editorParent.locator( selectors.dataFormDropdownCloseButton );
+		if ( await dataFormClose.count() ) {
+			await dataFormClose.click();
+			return;
+		}
 		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }

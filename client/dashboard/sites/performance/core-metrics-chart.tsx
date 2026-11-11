@@ -101,7 +101,7 @@ const useLineChartData = ( metric: Metrics, history?: SitePerformanceHistory ) =
 						date.year,
 						date.month.toString().padStart( 2, '0' ),
 						date.day.toString().padStart( 2, '0' ),
-				  ].join( '-' );
+					].join( '-' );
 
 		const nextValuation = mapThresholdsToStatus( metric, value );
 		if ( nextValuation !== currentValuation ) {

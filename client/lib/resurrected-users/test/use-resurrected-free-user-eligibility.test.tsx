@@ -1,64 +1,47 @@
 /**
  * @jest-environment jsdom
  */
-import config from '@automattic/calypso-config';
+import { disable, enable } from '@automattic/calypso-config';
 import { waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { useExperiment } from 'calypso/lib/explat';
-import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	RESURRECTED_FREE_USERS_EXPERIMENT,
 	WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG,
+	WELCOME_BACK_MODAL_FORCE_FLAG,
 	WELCOME_BACK_VARIATION_MANUAL,
 	WELCOME_BACK_VARIATIONS,
 } from '../constants';
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
 import type { ExperimentAssignment } from '@automattic/explat-client';
 
-const selectorsState = {
-	purchases: null as Array< { type: string; status: string } > | null,
-	hasLoaded: false,
-	isFetching: false,
-};
-
-jest.mock( '@automattic/calypso-config', () => {
-	const mockConfig = jest.fn() as jest.Mock & {
-		isEnabled: jest.Mock;
-	};
-	mockConfig.isEnabled = jest.fn().mockReturnValue( true );
-	return {
-		__esModule: true,
-		default: mockConfig,
-	};
-} );
-
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	getUserPurchases: () => selectorsState.purchases,
-	hasLoadedUserPurchasesFromServer: () => selectorsState.hasLoaded,
-	isFetchingUserPurchases: () => selectorsState.isFetching,
-} ) );
-
-jest.mock( 'calypso/lib/purchases', () => ( {
-	isSubscription: ( purchase: { type: string } ) => purchase.type === 'subscription',
-	isRenewingBeforeExpiration: ( purchase: { status: string } ) => purchase.status === 'active',
-} ) );
-
-jest.mock( 'calypso/state/purchases/actions', () => ( {
-	fetchUserPurchases: jest.fn( () => () => Promise.resolve( [] ) ),
-} ) );
-
-const mockFetchUserPurchases = fetchUserPurchases as jest.MockedFunction<
-	typeof fetchUserPurchases
->;
-const mockIsFeatureEnabled = config.isEnabled as jest.MockedFunction< typeof config.isEnabled >;
 const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
 
 const DAY_IN_SECONDS = 24 * 60 * 60;
+
+const mockPurchases = ( purchases: object[] = [] ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/upgrades' )
+		.query( true )
+		.reply( 200, purchases );
+
+const activeSubscription = {
+	ID: 1,
+	ownership_id: 1,
+	product_id: 1,
+	product_slug: 'business-bundle',
+	blog_id: 1,
+	user_id: 1,
+	is_domain: false,
+	is_domain_registration: false,
+	expiry_status: 'auto-renewing',
+};
 
 const createExperimentAssignment = ( variationName: string ): ExperimentAssignment => ( {
 	experimentName: RESURRECTED_FREE_USERS_EXPERIMENT,
@@ -95,43 +78,42 @@ const createState = ( {
 	};
 };
 
+const renderEligibilityHook = ( initialState: object ) =>
+	renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
+		initialState,
+		reducers,
+	} );
+
 describe( 'useResurrectedFreeUserEligibility', () => {
 	beforeEach( () => {
-		selectorsState.purchases = null;
-		selectorsState.hasLoaded = false;
-		selectorsState.isFetching = false;
-		mockIsFeatureEnabled.mockReturnValue( false );
-		mockFetchUserPurchases.mockImplementation( () => () => Promise.resolve( [] ) );
-		mockFetchUserPurchases.mockClear();
+		disable( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG );
+		disable( WELCOME_BACK_MODAL_FORCE_FLAG );
 		mockUseExperiment.mockReturnValue( [ false, null ] );
 		mockUseExperiment.mockClear();
 	} );
 
-	it( 'requests user purchases when they have not loaded yet', async () => {
-		const initialState = createState( { lastSeenOffsetDays: 200 } );
-
-		renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState,
-			reducers,
-		} );
-
-		await waitFor( () =>
-			expect( fetchUserPurchases ).toHaveBeenCalledWith( initialState.currentUser.id )
-		);
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
-	it( 'does not mark the user as eligible when active subscriptions exist', () => {
-		selectorsState.purchases = [ { type: 'subscription', status: 'active' } ];
-		selectorsState.hasLoaded = true;
+	it( 'reports loading until the user purchases have been fetched', async () => {
+		mockPurchases();
 
-		const initialState = createState( { lastSeenOffsetDays: 400 } );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 200 } ) );
 
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState,
-			reducers,
-		} );
+		expect( result.current.isLoading ).toBe( true );
+		expect( result.current.hasActivePaidSubscription ).toBeNull();
 
-		expect( result.current.hasActivePaidSubscription ).toBe( true );
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( result.current.hasActivePaidSubscription ).toBe( false );
+	} );
+
+	it( 'does not mark the user as eligible when active subscriptions exist', async () => {
+		mockPurchases( [ activeSubscription ] );
+
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 400 } ) );
+
+		await waitFor( () => expect( result.current.hasActivePaidSubscription ).toBe( true ) );
 		expect( result.current.isEligible ).toBe( false );
 		expect( result.current.isForcedVariation ).toBe( false );
 		expect( mockUseExperiment ).toHaveBeenCalledWith( RESURRECTED_FREE_USERS_EXPERIMENT, {
@@ -139,21 +121,15 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		} );
 	} );
 
-	it( 'returns MANUAL variation when resurrected and free of active subscriptions', () => {
-		selectorsState.purchases = [];
-		selectorsState.hasLoaded = true;
+	it( 'returns MANUAL variation when resurrected and free of active subscriptions', async () => {
+		mockPurchases();
 
-		const initialState = createState( { lastSeenOffsetDays: 400 } );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 400 } ) );
 
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState,
-			reducers,
-		} );
-
+		await waitFor( () => expect( result.current.isEligible ).toBe( true ) );
 		expect( result.current.isResurrectedSixMonths ).toBe( true );
 		expect( result.current.isResurrectedThreeMonths ).toBe( true );
 		expect( result.current.hasActivePaidSubscription ).toBe( false );
-		expect( result.current.isEligible ).toBe( true );
 		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATION_MANUAL );
 		expect( result.current.isLoading ).toBe( false );
 		expect( result.current.isForcedVariation ).toBe( false );
@@ -162,82 +138,58 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 		} );
 	} );
 
-	it( 'uses the 180-day threshold when 90-day eligibility is disabled', () => {
-		selectorsState.purchases = [];
-		selectorsState.hasLoaded = true;
+	it( 'uses the 180-day threshold when 90-day eligibility is disabled', async () => {
+		mockPurchases();
 
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState: createState( { lastSeenOffsetDays: 100 } ),
-			reducers,
-		} );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 100 } ) );
 
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( result.current.isResurrectedSixMonths ).toBe( false );
 		expect( result.current.isResurrectedThreeMonths ).toBe( true );
 		expect( result.current.isEligible ).toBe( false );
 	} );
 
-	it( 'uses the 90-day threshold when 90-day eligibility is enabled', () => {
-		mockIsFeatureEnabled.mockImplementation(
-			( flagName ) => flagName === WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG
-		);
-		selectorsState.purchases = [];
-		selectorsState.hasLoaded = true;
+	it( 'uses the 90-day threshold when 90-day eligibility is enabled', async () => {
+		enable( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG );
+		mockPurchases();
 
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState: createState( { lastSeenOffsetDays: 100 } ),
-			reducers,
-		} );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 100 } ) );
 
+		await waitFor( () => expect( result.current.isEligible ).toBe( true ) );
 		expect( result.current.isResurrectedSixMonths ).toBe( false );
 		expect( result.current.isResurrectedThreeMonths ).toBe( true );
-		expect( result.current.isEligible ).toBe( true );
 	} );
 
-	it( 'returns the assigned experiment variation for an eligible user', () => {
-		selectorsState.purchases = [];
-		selectorsState.hasLoaded = true;
+	it( 'returns the assigned experiment variation for an eligible user', async () => {
+		mockPurchases();
 		mockUseExperiment.mockReturnValue( [
 			false,
 			createExperimentAssignment( WELCOME_BACK_VARIATIONS.content ),
 		] );
 
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState: createState( { lastSeenOffsetDays: 400 } ),
-			reducers,
-		} );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 400 } ) );
 
-		expect( result.current.isEligible ).toBe( true );
+		await waitFor( () => expect( result.current.isEligible ).toBe( true ) );
 		expect( result.current.variationName ).toBe( WELCOME_BACK_VARIATIONS.content );
 		expect( result.current.isLoading ).toBe( false );
 	} );
 
-	it( 'waits for the experiment assignment for an eligible user', () => {
-		selectorsState.purchases = [];
-		selectorsState.hasLoaded = true;
+	it( 'waits for the experiment assignment for an eligible user', async () => {
+		mockPurchases();
 		mockUseExperiment.mockReturnValue( [ true, null ] );
 
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState: createState( { lastSeenOffsetDays: 400 } ),
-			reducers,
-		} );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 400 } ) );
 
+		await waitFor( () => expect( result.current.hasActivePaidSubscription ).toBe( false ) );
 		expect( result.current.isEligible ).toBe( false );
 		expect( result.current.isLoading ).toBe( true );
 	} );
 
 	it( 'forces eligibility when welcome-back-modal-manual flag is enabled', () => {
-		mockIsFeatureEnabled.mockImplementation(
-			( flagName ) => flagName === 'welcome-back-modal-manual'
-		);
-		selectorsState.purchases = null;
-		selectorsState.hasLoaded = false;
+		enable( WELCOME_BACK_MODAL_FORCE_FLAG );
+		mockPurchases();
 
-		const initialState = createState( { lastSeenOffsetDays: 30 } );
-
-		const { result } = renderHookWithProvider( () => useResurrectedFreeUserEligibility(), {
-			initialState,
-			reducers,
-		} );
+		const { result } = renderEligibilityHook( createState( { lastSeenOffsetDays: 30 } ) );
 
 		expect( result.current.isEligible ).toBe( true );
 		expect( result.current.isLoading ).toBe( false );

@@ -23,6 +23,9 @@
 			width: 100%;
 			min-width: 0;
 			box-sizing: border-box;
+			// Reset browser defaults; the article view has no global button reset.
+			background: transparent;
+			border: none;
 			border-bottom: 1px solid var( --studio-gray-5 );
 
 			&:first-of-type {

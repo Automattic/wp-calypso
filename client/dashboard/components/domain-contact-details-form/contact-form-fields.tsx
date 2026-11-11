@@ -1,4 +1,5 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	CheckboxControl,
@@ -11,6 +12,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import InlineSupportLink from '../inline-support-link';
+import Notice from '../notice';
 import PhoneNumberInput from '../phone-number-input';
 import {
 	createFieldAsyncValidator,
@@ -117,6 +119,64 @@ function PhoneNumberField( {
 	);
 }
 
+/**
+ * Notice shown below the organization field.
+ *
+ * It is a separate read-only field because DataForm renders a field description
+ * inside a `<p>`, which can't hold a Notice.
+ */
+function OrganizationNotice() {
+	return (
+		<Notice variant="warning">
+			{ createInterpolateElement(
+				__(
+					'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using <link>privacy protection</link>.'
+				),
+				{
+					link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+				}
+			) }
+		</Notice>
+	);
+}
+
+function EmailNotice() {
+	const hasEnTranslation = useHasEnTranslation();
+	const icannLink = (
+		<a
+			href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			ICANN
+		</a>
+	);
+
+	return (
+		<Notice variant="warning">
+			{ hasEnTranslation(
+				'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
+			)
+				? createInterpolateElement(
+						__(
+							'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
+						),
+						{ icannLink }
+					)
+				: createInterpolateElement(
+						sprintf(
+							/* translators: %s: ICANN acronym */
+							__(
+								'<external>%s</external> requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.'
+							),
+							'ICANN'
+						),
+						{ external: icannLink }
+					) }
+		</Notice>
+	);
+}
+
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
@@ -151,6 +211,14 @@ export const getContactFormFields = (
 			},
 		},
 		{
+			id: 'organizationNotice',
+			label: __( 'Organization notice' ),
+			// DataForm skips a field without an Edit control, even a read-only one.
+			type: 'text',
+			readOnly: true,
+			render: OrganizationNotice,
+		},
+		{
 			id: 'email',
 			label: __( 'Email' ),
 			type: 'email',
@@ -158,6 +226,14 @@ export const getContactFormFields = (
 				required: true,
 				custom: createFieldAsyncValidator( 'email', asyncValidator ),
 			},
+		},
+		{
+			id: 'emailNotice',
+			label: __( 'Email notice' ),
+			// DataForm skips a field without an Edit control, even a read-only one.
+			type: 'text',
+			readOnly: true,
+			render: EmailNotice,
 		},
 		{
 			id: 'phone',

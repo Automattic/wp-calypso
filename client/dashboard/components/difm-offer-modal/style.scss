@@ -1,0 +1,198 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.difm-offer-modal {
+	// Clip the illustration to the modal's rounded corners.
+	overflow: hidden;
+	// The modal portals to <body>, which is 16px on classic Calypso pages such as Themes.
+	// Set the body copy size here so every host renders it the same.
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+	text-wrap: pretty;
+
+	@include break-medium {
+		&.components-modal__frame {
+			width: 840px;
+		}
+	}
+
+	// The illustration bleeds to the modal edges, so the main column sets its own padding.
+	.components-modal__content {
+		padding: 0;
+	}
+}
+
+.difm-offer-modal__layout {
+	display: flex;
+	align-items: stretch;
+	min-height: 100%;
+}
+
+.difm-offer-modal__illustration {
+	display: none;
+	flex: 0 0 260px;
+	width: 260px;
+	object-fit: cover;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+// The request step shows the reviews over the illustration's background, without the photo.
+.difm-offer-modal__panel {
+	position: relative;
+	display: none;
+	flex: 0 0 340px;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 340px;
+	padding: $grid-unit-30 46px;
+	// The decorative arcs reach past the panel. Clip, not hidden: a hidden overflow can
+	// still scroll, and focusing the pause button scrolled the card out of view.
+	overflow: clip;
+	background:
+		radial-gradient(circle, rgba($white, 0.45) 1px, transparent 1.5px) 0 0 / 16px 16px,
+		radial-gradient(circle at 100% 100%, $white 0, rgba($white, 0) 45%),
+		radial-gradient(circle at 100% 20%, #cecbfa 0, rgba(#cecbfa, 0) 60%),
+		linear-gradient(180deg, #a2acf2 0%, #b3b9f2 45%, #b4d8c2 85%, #d7ecdf 100%);
+
+	// The white arcs of the illustration.
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		border: 2px solid $white;
+		border-radius: 50%;
+		pointer-events: none;
+	}
+
+	&::before {
+		top: -260px;
+		inset-inline-start: -150px;
+		width: 340px;
+		height: 340px;
+	}
+
+	&::after {
+		inset-inline-end: -120px;
+		bottom: -300px;
+		width: 380px;
+		height: 380px;
+	}
+
+	> * {
+		position: relative;
+		z-index: 1;
+	}
+
+	@include break-medium {
+		display: flex;
+	}
+}
+
+.difm-offer-modal__main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: $grid-unit-20;
+	min-width: 0;
+	padding: $grid-unit-30;
+}
+
+.difm-offer-modal__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: $grid-unit-40;
+}
+
+.difm-offer-modal__progress {
+	width: 80px;
+	height: 4px;
+	overflow: hidden;
+	border-radius: $radius-full;
+	background: var(--wp-components-color-gray-200, $gray-200);
+}
+
+.difm-offer-modal__progress-bar {
+	height: 100%;
+	border-radius: $radius-full;
+	background: var(--wp-admin-theme-color);
+}
+
+.difm-offer-modal__body {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: $grid-unit-50;
+	justify-content: space-between;
+
+	&.is-request-step {
+		gap: $grid-unit-20;
+	}
+}
+
+.difm-offer-modal__features {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-05;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: $grid-unit-05;
+	}
+
+	// Centre the 24px icon on the first 20px line of text.
+	li > :not(svg) {
+		padding-block-start: 2px;
+	}
+
+	svg {
+		flex: 0 0 auto;
+		fill: currentColor;
+	}
+}
+
+.difm-offer-modal__site-summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $grid-unit-10 $grid-unit-30;
+	padding: $grid-unit-15 $grid-unit-15;
+	border-radius: $radius-medium;
+	background: var(--wp-components-color-gray-200, $gray-100);
+	background: var(--wp-components-color-gray-200, #f4f4f4);
+}
+
+.difm-offer-modal__footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $grid-unit-10;
+}
+
+// On small screens the offer step stacks a full-width button above the centred link.
+.difm-offer-modal__body.is-offer-step .difm-offer-modal__footer {
+	flex-direction: column-reverse;
+	align-items: stretch;
+	gap: $grid-unit-20;
+	text-align: center;
+
+	.components-button {
+		justify-content: center;
+	}
+
+	@include break-medium {
+		flex-direction: row;
+		align-items: center;
+		gap: $grid-unit-10;
+		text-align: start;
+	}
+}

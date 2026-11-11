@@ -5,9 +5,11 @@ import type { Domain, DomainDiagnostics } from '@automattic/api-core';
 export default function DomainDiagnosticsSettingsSummary( {
 	domain,
 	domainDiagnostics,
+	onClick,
 }: {
 	domain: Domain;
 	domainDiagnostics: DomainDiagnostics;
+	onClick?: () => void;
 } ) {
 	let badges = [];
 	const emailDnsDiagnostics = domainDiagnostics.email_dns_records;
@@ -24,8 +26,8 @@ export default function DomainDiagnosticsSettingsSummary( {
 		{
 			text: __( 'Issues with DNS email records' ),
 			intent: domainDiagnostics.email_dns_records.dismissed_email_dns_issues_notice
-				? undefined
-				: ( 'error' as const ),
+				? ( 'draft' as const )
+				: ( 'high' as const ),
 		},
 	];
 
@@ -34,6 +36,7 @@ export default function DomainDiagnosticsSettingsSummary( {
 			to={ `/domains/${ domain.domain }/diagnostics` }
 			title={ __( 'Diagnostics' ) }
 			badges={ badges }
+			onClick={ onClick }
 			density={ 'medium' as const }
 		/>
 	);

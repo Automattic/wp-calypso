@@ -1,6 +1,7 @@
 {
 	"extends": "@automattic/calypso-typescript-config/js-package.json",
 	"compilerOptions": {
-		"types": [ "node" ]
-	}
+		"types": [ "node", "vitest/globals" ]
+	},
+	"exclude": [ "node_modules", "vitest.config.mjs" ]
 }

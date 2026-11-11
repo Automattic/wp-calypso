@@ -4,7 +4,9 @@
 import { render, screen } from '@testing-library/react';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingLink from '../index';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
@@ -25,6 +27,9 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/domains', () => ( {
+	getCurrentUserCannotAddEmailReason: jest.fn( ( domain: ResponseDomain | undefined ) =>
+		domain && ! domain.currentUserCanAddEmail ? domain.currentUserCannotAddEmailReason : null
+	),
 	getSelectedDomain: jest.fn(),
 } ) );
 
@@ -38,6 +43,21 @@ jest.mock( 'calypso/my-sites/email/paths', () => ( {
 
 const promoMatcher = /Looking for a free email solution/i;
 
+const regularDomain = {
+	isGravatarDomain: false,
+	currentUserCanAddEmail: true,
+	currentUserCannotAddEmailReason: null,
+} as ResponseDomain;
+
+const domainStateRestrictedDomain = {
+	...regularDomain,
+	currentUserCanAddEmail: false,
+	currentUserCannotAddEmailReason: {
+		code: EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+		message: 'Email is unavailable for this domain.',
+	},
+} as ResponseDomain;
+
 describe( 'EmailForwardingLink', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -45,20 +65,19 @@ describe( 'EmailForwardingLink', () => {
 	} );
 
 	it( 'renders the email forwarding promo for a regular domain without forwards', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: false } );
+		( getSelectedDomain as jest.Mock ).mockReturnValue( regularDomain );
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
 		expect( screen.getByText( promoMatcher ) ).toBeVisible();
 	} );
 
-	// Regression: DOMENG-453 — Gravatar domains cannot use free email forwarding.
+	// Regression: DOMENG-453 - Gravatar domains cannot use free email forwarding.
 	it( 'renders nothing for a Gravatar domain', () => {
 		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: true } );
 
 		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
-		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
@@ -71,11 +90,19 @@ describe( 'EmailForwardingLink', () => {
 	} );
 
 	it( 'renders nothing when the domain already has email forwards', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: false } );
+		( getSelectedDomain as jest.Mock ).mockReturnValue( regularDomain );
 		( hasEmailForwards as jest.Mock ).mockReturnValue( true );
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
 		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders nothing when forwarding itself is restricted', () => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue( domainStateRestrictedDomain );
+
+		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
+
+		expect( container ).toBeEmptyDOMElement();
 	} );
 } );

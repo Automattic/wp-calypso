@@ -7,6 +7,8 @@ import { useRef, useState, useEffect } from '@wordpress/element';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { getDefaultTwoFactorAuthType } from 'calypso/blocks/login/two-factor-authentication/get-default-two-factor-auth-type';
+import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -22,6 +24,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -34,6 +37,7 @@ import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants
 import {
 	getLastCheckedUsernameOrEmail,
 	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	getRedirectToSanitized,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
@@ -69,7 +73,7 @@ const GravPoweredMagicLoginTos = () => {
 		components: {
 			tosLink: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					href={ localizeUrl( 'https://automattic.com/tos/' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				/>
@@ -97,11 +101,11 @@ const GravPoweredMagicLoginTos = () => {
 				? translate(
 						"By clicking “Continue“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.",
 						textOptions
-				  )
+					)
 				: translate(
 						"By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.",
 						textOptions
-				  ) }
+					) }
 		</div>
 	);
 };
@@ -567,7 +571,10 @@ interface GravPoweredEmailCodeVerificationProps {
 	isNewAccount: boolean;
 	verificationCodeInputValue: string;
 	handleGravPoweredCodeInputChange: ( e: React.ChangeEvent< HTMLInputElement > ) => void;
-	handleGravPoweredCodeSubmit: ( e: React.FormEvent< HTMLFormElement > ) => void;
+	handleGravPoweredCodeSubmit: (
+		e: React.FormEvent< HTMLFormElement >,
+		blackboxSessionId?: string
+	) => void;
 	handleGravPoweredEmailCodeSend: ( email: string ) => void;
 	resendEmailCountdown: number;
 	isRequestingEmail: boolean;
@@ -577,7 +584,7 @@ interface GravPoweredEmailCodeVerificationProps {
 	recordTracksEvent: ( eventName: string, properties?: Record< string, any > ) => void;
 }
 
-const GravPoweredEmailCodeVerification = ( {
+export const GravPoweredEmailCodeVerification = ( {
 	locale,
 	oauth2Client,
 	oauth2ClientId,
@@ -601,13 +608,48 @@ const GravPoweredEmailCodeVerification = ( {
 }: GravPoweredEmailCodeVerificationProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
+	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
+		feature: 'blackbox-signup',
+		flow: 'signup',
+		suspended: ! isNewAccount,
+		resetOnError: codeValidationError,
+	} );
+	const [ isCollectingSession, setIsCollectingSession ] = useState( false );
+	const isCollectingSessionRef = useRef( false );
+	const onSubmit = async ( event: React.FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+		if ( isSubmitBlocked || isCollectingSessionRef.current ) {
+			return;
+		}
+
+		const shouldCollect = isNewAccount;
+		if ( shouldCollect ) {
+			isCollectingSessionRef.current = true;
+			setIsCollectingSession( true );
+		}
+		try {
+			const blackboxSessionId = await getSessionId();
+			if ( blackboxSessionId === null ) {
+				return;
+			}
+			handleGravPoweredCodeSubmit( event, blackboxSessionId );
+		} finally {
+			if ( shouldCollect ) {
+				isCollectingSessionRef.current = false;
+				setIsCollectingSession( false );
+			}
+		}
+	};
 	const isValidatingCode = useSelector( isFetchingMagicLoginAuth );
 	const isCodeValidated = useSelector( getMagicLoginRequestedAuthSuccessfully );
-	const codeValidationError = useSelector( getMagicLoginRequestAuthError );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const twoFactorSupportedAuthTypes = useSelector( getTwoFactorSupportedAuthTypes );
 	const redirectToSanitized = useSelector( getRedirectToSanitized );
-	const isProcessingCode = isValidatingCode || isCodeValidated;
+	const isProcessingCode = isCollectingSession || isValidatingCode || isCodeValidated;
+	// A challenge raised by this submit's collect holds the request, so stop spinning while it is up.
+	const isButtonBusy = isProcessingCode && ! isSubmitBlocked;
 
 	useEffect( () => {
 		if ( ! isCodeValidated ) {
@@ -619,8 +661,11 @@ const GravPoweredEmailCodeVerification = ( {
 		} else {
 			page(
 				login( {
-					// If no notification is sent, the user is using the authenticator for 2FA by default.
-					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ) ?? '',
+					twoFactorAuthType: getDefaultTwoFactorAuthType( {
+						supportedAuthTypes: twoFactorSupportedAuthTypes,
+						notificationSent: twoFactorNotificationSent,
+						isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
+					} ),
 					redirectTo: redirectToSanitized ?? '',
 					oauth2ClientId: oauth2Client.id,
 					locale,
@@ -631,6 +676,7 @@ const GravPoweredEmailCodeVerification = ( {
 		isCodeValidated,
 		twoFactorEnabled,
 		twoFactorNotificationSent,
+		twoFactorSupportedAuthTypes,
 		redirectToSanitized,
 		oauth2Client,
 		locale,
@@ -684,10 +730,7 @@ const GravPoweredEmailCodeVerification = ( {
 				) }
 			</p>
 			{ isNewAccount && <GravPoweredMagicLoginTos /> }
-			<form
-				className="grav-powered-magic-login__verification-code-form"
-				onSubmit={ handleGravPoweredCodeSubmit }
-			>
+			<form className="grav-powered-magic-login__verification-code-form" onSubmit={ onSubmit }>
 				<FormLabel htmlFor="verification-code" hidden>
 					{ translate( 'Enter the verification code' ) }
 				</FormLabel>
@@ -700,6 +743,7 @@ const GravPoweredEmailCodeVerification = ( {
 					isError={ !! codeValidationError }
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				/>
+				{ challenge }
 				{ codeValidationError && (
 					<Notice
 						text={ errorText }
@@ -711,11 +755,12 @@ const GravPoweredEmailCodeVerification = ( {
 				<FormButton
 					primary
 					disabled={
+						isSubmitBlocked ||
+						isProcessingCode ||
 						! verificationCodeInputValue ||
-						verificationCodeInputValue.length < 6 ||
-						isProcessingCode
+						verificationCodeInputValue.length < 6
 					}
-					busy={ isProcessingCode }
+					busy={ isButtonBusy }
 				>
 					{ translate( 'Continue' ) }
 				</FormButton>
@@ -740,7 +785,7 @@ const GravPoweredEmailCodeVerification = ( {
 						? translate( 'Send again' )
 						: translate( 'Send again (%(countdown)d)', {
 								args: { countdown: resendEmailCountdown },
-						  } ) }
+							} ) }
 				</button>
 				{ shouldShowSwitchEmail && (
 					<button
@@ -796,7 +841,7 @@ const GravPoweredEmailLinkVerification = ( {
 								redirectTo: currentQueryArguments?.redirect_to ?? '',
 								requestLoginEmailFormFlow: true,
 								createAccount: true,
-								flow: oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) ?? '' : '',
+								flow: oauth2Client ? ( getGravatarOAuth2Flow( oauth2Client ) ?? '' ) : '',
 								showGlobalNotices: true,
 								tokenType: 'link',
 								source: false,
@@ -836,10 +881,10 @@ const GravPoweredEmailLinkVerification = ( {
 					? translate(
 							"We've sent an email with a verification link to {{strong}}%(emailAddress)s{{/strong}}",
 							{ components: { strong: <strong /> }, args: { emailAddress } }
-					  )
+						)
 					: translate(
 							'We just emailed you a link. Please check your inbox and click the link to log in.'
-					  ) }
+						) }
 			</p>
 			<hr className="grav-powered-magic-login__divider" />
 			<div className="grav-powered-magic-login__footer">
@@ -849,11 +894,11 @@ const GravPoweredEmailLinkVerification = ( {
 						? translate(
 								'{{sendEmailButton}}Resend the verification email{{/sendEmailButton}} or {{showMagicLoginButton}}use a different email address{{/showMagicLoginButton}}.',
 								emailTextOptions
-						  )
+							)
 						: translate(
 								'{{showMagicLoginButton}}Use a different email address{{/showMagicLoginButton}}.',
 								emailTextOptions
-						  ) }
+							) }
 				</div>
 			</div>
 		</div>
@@ -866,8 +911,7 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 	const locale = useSelector( getCurrentLocaleSlug );
 	const lastCheckedUsernameOrEmail = useSelector( getLastCheckedUsernameOrEmail ) as string | null;
 	const currentQueryArguments = useSelector( getCurrentQueryArguments ) as
-		| Record< string, string >
-		| undefined;
+		Record< string, string > | undefined;
 	const initialQueryArguments = useSelector( getInitialQueryArguments );
 	const userEmail =
 		lastCheckedUsernameOrEmail ||
@@ -1089,7 +1133,10 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 		} );
 	};
 
-	const handleGravPoweredCodeSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+	const handleGravPoweredCodeSubmit = (
+		e: React.FormEvent< HTMLFormElement >,
+		blackboxSessionId?: string
+	) => {
 		e.preventDefault();
 
 		dispatch(
@@ -1097,7 +1144,8 @@ const GravPoweredMagicLogin = ( { path }: { path: string } ) => {
 				`${ publicToken }:${ btoa( verificationCodeInputValue ) }`,
 				currentQueryArguments?.redirect_to ?? '',
 				oauth2Client ? getGravatarOAuth2Flow( oauth2Client ) : undefined,
-				true
+				true,
+				blackboxSessionId
 			)
 		);
 	};

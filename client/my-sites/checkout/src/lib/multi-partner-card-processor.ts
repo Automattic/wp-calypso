@@ -7,10 +7,11 @@ import {
 } from '@automattic/composite-checkout';
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { assignNewCardProcessor } from 'calypso/me/purchases/manage-purchase/payment-method-selector/assignment-processor-functions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { logStashEvent, recordTransactionBeginAnalytics } from '../lib/analytics';
 import { createEbanxTokenVgs } from './create-ebanx-token-vgs';
+import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import existingCardProcessor from './existing-card-processor';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
@@ -72,32 +73,22 @@ async function stripeCardProcessor(
 		throw new Error( 'Required purchase data is missing' );
 	}
 
-	const {
-		includeDomainDetails,
-		includeGSuiteDetails,
-		responseCart,
-		siteId,
-		contactDetails,
-		reduxDispatch,
-	} = transactionOptions;
-	reduxDispatch(
-		recordTransactionBeginAnalytics( {
-			paymentMethodId: 'stripe',
-			useForAllSubscriptions: submitData.useForAllSubscriptions,
-		} )
-	);
+	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
+		transactionOptions;
+	recordTransactionBeginAnalytics( {
+		paymentMethodId: 'stripe',
+		useForAllSubscriptions: submitData.useForAllSubscriptions,
+	} );
 
 	const cartCountry = responseCart.tax.location.country_code ?? '';
 	const formCountry = contactDetails?.countryCode?.value ?? '';
 	if ( cartCountry !== formCountry ) {
 		// Changes to the contact form data should always be sent to the cart, so
 		// this should not be possible.
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
-				form_country: formCountry,
-				cart_country: cartCountry,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
+			form_country: formCountry,
+			cart_country: cartCountry,
+		} );
 	}
 
 	let paymentMethodToken;
@@ -143,7 +134,6 @@ async function stripeCardProcessor(
 				debug( 'transaction requires authentication' );
 				paymentIntentId = stripeResponse.message.payment_intent_id;
 				await handle3DSChallenge(
-					reduxDispatch,
 					submitData.stripe,
 					stripeResponse.message.payment_intent_client_secret,
 					paymentIntentId
@@ -164,12 +154,10 @@ async function stripeCardProcessor(
 		} )
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
-					payment_intent_id: paymentIntentId ?? '',
-					error: error.message,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_card_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+				error: error.message,
+			} );
 			logStashEvent( 'calypso_checkout_card_transaction_failed', {
 				payment_intent_id: paymentIntentId ?? '',
 				tags: [ `payment_intent_id:${ paymentIntentId }` ],
@@ -191,14 +179,28 @@ async function ebanxCardProcessor(
 	if ( ! isValidEbanxCardTransactionData( submitData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const {
-		includeDomainDetails,
-		includeGSuiteDetails,
-		responseCart,
-		contactDetails,
-		reduxDispatch,
-	} = transactionOptions;
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
+	const { includeDomainDetails, includeGSuiteDetails, responseCart, contactDetails } =
+		transactionOptions;
+	recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } );
+
+	let cart = createTransactionEndpointCartFromResponseCart( {
+		siteId: transactionOptions.siteId,
+		contactDetails:
+			getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
+		responseCart: transactionOptions.responseCart,
+	} );
+
+	// EBANX tokenization requires a logged-in session, so for logged-out
+	// checkout the account must be created (which logs the user in) before we
+	// tokenize, rather than inside `submitWpcomTransaction` as other processors do.
+	if ( transactionOptions.createUserAndSiteBeforeTransaction ) {
+		try {
+			cart = await createWpcomAccountBeforeTransaction( cart, transactionOptions );
+		} catch ( error ) {
+			debug( 'account creation failed' );
+			return makeErrorResponse( ( error as Error ).message );
+		}
+	}
 
 	let paymentMethodToken;
 	let ebanxTokenResponse: EbanxTokenizeResponse;
@@ -229,16 +231,14 @@ async function ebanxCardProcessor(
 			includeGSuiteDetails,
 		} ),
 		paymentMethodToken: paymentMethodToken.token,
-		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId,
-			contactDetails:
-				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
-			responseCart: transactionOptions.responseCart,
-		} ),
+		cart,
 		paymentMethodType: 'WPCOM_Billing_Ebanx',
 	} );
 	debug( 'sending ebanx transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+	return submitWpcomTransaction( formattedTransactionData, {
+		...transactionOptions,
+		createUserAndSiteBeforeTransaction: false,
+	} )
 		.then( makeSuccessResponse )
 		.catch( ( error ) => {
 			debug( 'transaction failed' );
@@ -298,7 +298,7 @@ export default async function multiPartnerCardProcessor(
 						city: dataForProcessor.contactDetails?.city?.value,
 						organization: dataForProcessor.contactDetails?.organization?.value,
 						address: dataForProcessor.contactDetails?.address1?.value,
-				  };
+					};
 		const newCardResponse = await assignNewCardProcessor(
 			{
 				purchase: undefined,

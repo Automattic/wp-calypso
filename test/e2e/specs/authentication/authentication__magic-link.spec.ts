@@ -1,4 +1,4 @@
-import { DataHelper } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 import { Message } from 'mailosaur/lib/models';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
@@ -24,6 +24,7 @@ test.describe(
 			);
 			let magicLinkURL: URL;
 			let magicLinkEmail: Message;
+			const testAccount = new TestAccount( 'defaultUser' );
 
 			await test.step( 'Given I am on the login page', async function () {
 				await pageLogin.visit();
@@ -47,16 +48,18 @@ test.describe(
 				expect( magicLinkURL.href ).toBeDefined();
 			} );
 
-			await test.step( 'And I visit the magic link', async function () {
-				await page.goto( magicLinkURL.href );
-			} );
+			await testAccount.logInExclusively( async () => {
+				await test.step( 'And I visit the magic link', async function () {
+					await page.goto( magicLinkURL.href );
+				} );
 
-			await test.step( 'Then I am redirected to the WordPress.com homepage', async function () {
-				await page.waitForURL( /home/, { timeout: 15 * 1000 } );
-			} );
+				await test.step( 'Then I am redirected to the WordPress.com homepage', async function () {
+					await page.waitForURL( /home/, { timeout: 15 * 1000 } );
+				} );
 
-			await test.step( 'And I can see My Home on WordPress.com', async function () {
-				await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+				await test.step( 'And I can see My Home on WordPress.com', async function () {
+					await expect( page.getByRole( 'heading', { name: 'My Home' } ) ).toBeVisible();
+				} );
 			} );
 
 			await test.step( 'And I can delete the magic link email', async function () {

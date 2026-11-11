@@ -109,7 +109,7 @@ function choosePrimary( prefered, room ) {
 
 		// less chopped of than other sides
 		if ( space > best ) {
-			( best = space ), ( bestPos = prefered );
+			( ( best = space ), ( bestPos = prefered ) );
 		}
 	}
 
@@ -128,7 +128,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				isVertical
 					? `${ primary } ${ opposite[ prefered ] }`
 					: `${ opposite[ prefered ] } ${ primary }`,
-		  ]
+			]
 		: [
 				primary,
 				isVertical
@@ -137,7 +137,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				isVertical
 					? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
 					: `${ opposite[ adjacent[ primary ] ] } ${ primary }`,
-		  ];
+			];
 
 	let bestPos;
 	let best = 0;
@@ -167,7 +167,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 
 		// shows more of the tip than the other positions
 		if ( area > best ) {
-			( best = area ), ( bestPos = pos );
+			( ( best = area ), ( bestPos = pos ) );
 		}
 	}
 

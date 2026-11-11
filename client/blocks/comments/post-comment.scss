@@ -67,6 +67,7 @@
 }
 
 .comments__comment-author {
+	align-items: baseline;
 	color: var(--color-text);
 	display: flex;
 	flex-wrap: wrap;
@@ -82,7 +83,6 @@
 
 .comments__comment-username {
 	color: var(--color-text);
-	height: 21px;
 	margin-right: 7px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -92,7 +92,6 @@
 
 a.comments__comment-username {
 	color: var(--color-link);
-	height: 21px;
 
 	&:hover {
 		color: var(--color-link-light);
@@ -166,11 +165,14 @@ a.comments__comment-username {
 .comments__comment-respondee .comments__comment-respondee-link {
 	color: var(--color-text-subtle);
 	font-weight: 400;
-	margin-left: -2px;
 
 	&:hover {
 		color: var(--color-link-light);
 	}
+}
+
+.comments__comment-respondee .gridicon + .comments__comment-respondee-link {
+	margin-left: -2px;
 }
 
 .comments__comment-timestamp a {
@@ -181,6 +183,29 @@ a.comments__comment-username {
 	&:hover {
 		color: var(--color-link-dark);
 	}
+}
+
+.comments__comment-new-label {
+	color: var(--color-primary);
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	margin-inline-start: 8px;
+}
+
+.comments__comment-author .comments__comment-collapse-toggle {
+	align-self: center;
+	color: var(--color-text-subtle);
+	margin-inline-start: auto;
+
+	&:hover {
+		color: var(--color-text);
+	}
+}
+
+.comments__collapsed-replies {
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	margin-block: 4px 0;
 }
 
 .comments__comment-moderation {

@@ -113,10 +113,10 @@ class MediaSettingsPerformance extends Component {
 			0 === mediaStorageUsed
 				? translate(
 						'1 free video available. Upgrade now to unlock more videos and 1TB of storage.'
-				  )
+					)
 				: translate(
 						'You have used your free video. Upgrade now to unlock more videos and 1TB of storage.'
-				  );
+					);
 		return (
 			! hasVideoPress && (
 				<UpsellNudge

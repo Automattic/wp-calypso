@@ -5,14 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronRight, page } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAgentsManagerContext } from '../../contexts';
+import { FROM_CHAT } from '../../constants';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import './style.scss';
 
-interface Source {
+export interface Source {
 	title: string;
 	url: string;
-	content?: string;
 }
 
 interface Props {
@@ -22,16 +21,11 @@ interface Props {
 export default function SourcesDisplay( { sources }: Props ) {
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
-	const { getActiveSessionId } = useAgentsManagerContext();
 
 	const uniqueSources = useMemo(
 		() => [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ],
 		[ sources ]
 	);
-
-	if ( uniqueSources.length === 0 ) {
-		return null;
-	}
 
 	const handleSourceClick = ( e: React.MouseEvent, url: string ) => {
 		const isSupportArticle = isThisASupportArticleLink( url );
@@ -40,13 +34,13 @@ export default function SourcesDisplay( { sources }: Props ) {
 		if ( isSupportArticle ) {
 			e.preventDefault();
 			navigate( `/post?link=${ encodeURIComponent( url ) }`, {
-				state: isFromOrchestrator ? { ...state, sessionId: getActiveSessionId() } : state,
+				state: isFromOrchestrator ? { from: FROM_CHAT } : state,
 			} );
 		}
 
-		recordAgentsManagerTracksEvent( 'link_click', {
+		recordAgentsManagerTracksEvent( 'calypso_agents_manager_link_click', {
 			href: url,
-			type: isSupportArticle ? 'support_article' : 'external',
+			link_type: isSupportArticle ? 'support_article' : 'external',
 			source: isFromOrchestrator ? 'orchestrator' : 'zendesk',
 		} );
 	};
@@ -63,9 +57,9 @@ export default function SourcesDisplay( { sources }: Props ) {
 			smooth
 		>
 			<div className="agents-manager-sources-display__list">
-				{ uniqueSources.map( ( source, index ) => (
+				{ uniqueSources.map( ( source ) => (
 					<a
-						key={ index }
+						key={ source.url }
 						className="agents-manager-sources-display__link"
 						href={ source.url }
 						rel="noopener noreferrer"

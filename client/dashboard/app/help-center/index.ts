@@ -8,9 +8,9 @@ import type {
 } from '@automattic/data-stores';
 import type { HelpCenterShowOptions } from '@automattic/data-stores/src/help-center/types'; // eslint-disable-line no-restricted-imports
 
-type HelpCenterDispatch = HelpCenterDispatchObject[ 'dispatch' ];
+export type HelpCenterDispatch = HelpCenterDispatchObject[ 'dispatch' ];
 
-const HELP_CENTER_STORE = 'automattic/help-center';
+export const HELP_CENTER_STORE = 'automattic/help-center';
 
 export function useHelpCenter() {
 	const loadingPromiseRef = useRef< Promise< unknown > >( undefined );

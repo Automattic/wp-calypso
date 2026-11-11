@@ -1,7 +1,7 @@
 //TODO: Temporary export until we can replace all dependencies with ./types.ts Task;
 export type { Task } from '@automattic/launchpad';
-import { type ChecklistStatuses, type SiteDetails } from '@automattic/data-stores';
-import { type Task } from '@automattic/launchpad';
+import { type SiteDetails } from '@automattic/data-stores';
+import { type ChecklistStatuses, type Task } from '@automattic/launchpad';
 import { type MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { QueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction, type ReactNode } from 'react';
@@ -19,7 +19,6 @@ export interface TranslatedLaunchpadStrings {
 // TODO: Convert this type to enum, because union string doesnt protect from duplicates or typos;
 //
 export type TaskId =
-	| 'setup_free'
 	| 'setup_newsletter'
 	| 'setup_blog'
 	| 'blog_launched'

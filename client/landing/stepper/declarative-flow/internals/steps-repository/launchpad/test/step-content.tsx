@@ -8,7 +8,7 @@ import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
@@ -48,10 +48,11 @@ jest.mock( '@wordpress/data', () => {
 		createRegistrySelector: jest.fn(),
 		registerStore: jest.fn(),
 		combineReducers: jest.fn( () => ( { sites: { launch: { inProgress: jest.fn() } } } ) ),
-		createReduxStore: jest.fn(),
+		createReduxStore: jest.fn( ( name ) => ( { name } ) ),
 		register: jest.fn(),
 		useSelect: jest.fn().mockImplementation( ( selectFunc ) => {
-			const select = ( storeName ) => {
+			const select = ( store ) => {
+				const storeName = typeof store === 'string' ? store : store.name;
 				if ( storeName === 'automattic/onboard' ) {
 					return {
 						getPlanCartItem: () => [ { product_slug: 'value_bundle' } ],
@@ -104,8 +105,8 @@ jest.mock( 'react-router-dom', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...( jest.requireActual( '@automattic/data-stores' ) as object ),
+jest.mock( '@automattic/launchpad/src/use-launchpad', () => ( {
+	...( jest.requireActual( '@automattic/launchpad/src/use-launchpad' ) as object ),
 	useLaunchpad: ( siteSlug, siteIntentOption ): LaunchpadResponse => {
 		let checklist = [];
 

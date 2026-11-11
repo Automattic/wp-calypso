@@ -3,6 +3,7 @@ import {
 	FEATURE_WOOP,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
+	WPCOM_FEATURES_PARTNER_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_SENSEI_THEMES,
@@ -186,14 +187,24 @@ describe( 'canUseTheme', () => {
 			platform: 'atomic',
 		};
 
-		it( 'returns true if the site has the Atomic feature', () => {
+		it( 'returns true if the site has the Partner Themes feature', () => {
+			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
+				[ WPCOM_FEATURES_PARTNER_THEMES ].includes( feature )
+			);
+
+			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
+
+			expect( canUseTheme( state, siteId, 'organic-stax' ) ).toBe( true );
+		} );
+
+		it( 'returns false if the site only has the Atomic feature', () => {
 			mockedSiteHasFeature.mockImplementation( ( _state, _siteId, feature ) =>
 				[ WPCOM_FEATURES_ATOMIC ].includes( feature )
 			);
 
 			mockedThemeSelectors.getThemeTierForTheme.mockReturnValue( themeTier );
 
-			expect( canUseTheme( state, siteId, 'organic-stax' ) ).toBe( true );
+			expect( canUseTheme( state, siteId, 'organic-stax' ) ).toBe( false );
 		} );
 
 		it( 'returns false otherwise', () => {

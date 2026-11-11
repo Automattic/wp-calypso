@@ -54,6 +54,8 @@
 .woopayments-banner__heading {
 	@include heading-2x-large;
 	margin-block-end: 8px;
+	// A heading in everything but tag name, so the section-wide rule misses it.
+	text-wrap: balance;
 }
 
 .woopayments-banner__description {

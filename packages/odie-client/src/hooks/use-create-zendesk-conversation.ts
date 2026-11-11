@@ -19,16 +19,21 @@ import { useCurrentSupportInteraction } from '../data/use-current-support-intera
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
 
+// Zendesk routes and prioritizes the checkout support experiment's chats by this tag.
+const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
+
 export const useCreateZendeskConversation = () => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
 		userFieldMessage,
 		userFieldFlowName,
+		zendeskConversationTags,
 		setChat,
 		chat,
 		trackEvent,
 		isChatLoaded,
+		checkoutSupportVariation,
 	} = useOdieAssistantContext();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
@@ -41,7 +46,7 @@ export const useCreateZendeskConversation = () => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const getErrorMessage = ( error: unknown ) =>
-		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+		error instanceof Error ? error.message : ( error?.toString?.() ?? 'Unknown error' );
 
 	// The Smooch (Zendesk Web Messenger) SDK is initialized asynchronously elsewhere.
 	// When an escalation fires before init completes, `Smooch.createConversation` is
@@ -102,7 +107,7 @@ export const useCreateZendeskConversation = () => {
 			is_from_error: isFromError,
 			is_chat_loaded: isChatLoaded,
 			escalation_on_second_attempt: escalationOnSecondAttempt,
-			error_reason: isFromError ? errorReason ?? 'Unknown error' : '',
+			error_reason: isFromError ? ( errorReason ?? 'Unknown error' ) : '',
 		} );
 
 		// Store previous state to restore on error
@@ -185,6 +190,16 @@ export const useCreateZendeskConversation = () => {
 				: {} ),
 		};
 
+		// Chats in the checkout support experiment also get a tag for their variation, so Zendesk can
+		// tell the variations apart. A user sent back to an open chat gets no new conversation, so
+		// that chat keeps the tags it started with.
+		const conversationTags = [
+			...( zendeskConversationTags ?? [] ),
+			...( checkoutSupportVariation
+				? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
+				: [] ),
+		];
+
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
 		const SMOOCH_RETRY_INTERVAL_MS = 250;
 		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
@@ -195,6 +210,7 @@ export const useCreateZendeskConversation = () => {
 				conversation = await Smooch.createConversation( {
 					metadata: {
 						createdAt: Date.now(),
+						...( conversationTags.length ? { 'zen:ticket:tags': conversationTags.join() } : {} ),
 						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 						...( chatId ? { odieChatId: chatId } : {} ),
 						...ticketFieldMetadata,
@@ -262,7 +278,8 @@ export const useCreateZendeskConversation = () => {
 				conversationId: conversationId,
 				messages: [
 					...prevChat.messages,
-					...getOdieTransferMessages( currentSupportInteraction?.bot_slug, hasEnTranslation ),
+					// Without an Odie chat, the user went straight to a human.
+					...getOdieTransferMessages( hasEnTranslation, ! prevChat.odieId ),
 					getZendeskChatStartedMetaMessage(),
 				],
 				provider: 'zendesk',

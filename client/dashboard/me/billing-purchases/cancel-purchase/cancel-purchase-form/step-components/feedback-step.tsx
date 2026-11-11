@@ -157,6 +157,13 @@ function ImportQuestion( { onChange }: { onChange?: ChangeCallback } ) {
 	);
 }
 
+// Must stay in sync with the survey step routing in cancel-purchase/index.tsx.
+export function shouldShowCancellationReason( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan || purchase.is_google_workspace_product || purchase.is_domain_registration
+	);
+}
+
 type FeedbackStepProps = {
 	purchase: Purchase;
 	plans: PlanProduct[];
@@ -178,10 +185,7 @@ export default function FeedbackStep( {
 	onChangeCancellationReasonDetails,
 	onChangeImportFeedback,
 }: FeedbackStepProps ) {
-	const isPlanPurchase = purchase.is_plan;
-	const isGSuite = purchase.is_google_workspace_product;
-	const isDomain = purchase.is_domain_registration;
-	const showCancellationReason = isPlanPurchase || isGSuite || isDomain;
+	const showCancellationReason = shouldShowCancellationReason( purchase );
 
 	return (
 		<VStack spacing={ 6 }>

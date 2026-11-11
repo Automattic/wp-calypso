@@ -1,15 +1,15 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import { Text } from '../../components/text';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
-import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import { sortNullableStrings } from './sort-nullable-strings';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -24,8 +24,8 @@ export const useFields = ( {
 	showPrimaryDomainBadge?: boolean;
 	inOverview?: boolean;
 } = {} ) => {
-	const { queries } = useAppContext();
-	const { data: domains } = useQuery( queries.domainsQuery() );
+	const hasEnTranslation = useHasEnTranslation();
+	const { data: domains } = useQuery( domainsQuery() );
 
 	const siteElements = useMemo( () => {
 		if ( ! domains ) {
@@ -59,6 +59,7 @@ export const useFields = ( {
 						domain={ item }
 						site={ site }
 						value={ field.getValue( { item } ) }
+						showWwwPrefix={ !! site && item.primary_domain && !! item.primary_is_www }
 						showPrimaryDomainBadge={ showPrimaryDomainBadge }
 					/>
 				),
@@ -67,13 +68,16 @@ export const useFields = ( {
 				id: 'is_primary_domain',
 				label: __( 'Primary' ),
 				getValue: ( { item }: { item: DomainSummary } ) => item.primary_domain,
+				// DataViews passes `getValue()` results to `sort()`, not items, despite
+				// what the `Field` type says.
 				sort: ( a, b, direction ) => {
-					if ( a.primary_domain === b.primary_domain ) {
+					const isPrimaryA = Boolean( a );
+					if ( isPrimaryA === Boolean( b ) ) {
 						return 0;
 					}
 
 					const factor = direction === 'asc' ? 1 : -1;
-					return a.primary_domain ? -1 * factor : 1 * factor;
+					return isPrimaryA ? -1 * factor : 1 * factor;
 				},
 				render: ( { field, item } ) =>
 					field.getValue( { item } ) ? <Text>{ __( 'Primary' ) }</Text> : <IneligibleIndicator />,
@@ -84,9 +88,9 @@ export const useFields = ( {
 				enableHiding: false,
 				enableSorting: false,
 				elements: [
-					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Domain name registration' ) },
+					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Registered with us' ) },
 					{ value: DomainSubtype.DOMAIN_TRANSFER, label: __( 'Domain name transfer' ) },
-					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Domain name connection' ) },
+					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Connected domain name' ) },
 					{ value: DomainSubtype.DEFAULT_ADDRESS, label: __( 'Included site address' ) },
 				],
 				filterBy: {
@@ -128,15 +132,8 @@ export const useFields = ( {
 				render: ( { item } ) => <DomainSiteField domain={ item } value={ item.blog_name ?? '' } />,
 			},
 			{
-				id: 'ssl_status',
-				label: __( 'SSL' ),
-				enableHiding: true,
-				enableSorting: false,
-				render: ( { item } ) => <DomainSslField domain={ item } />,
-			},
-			{
 				id: 'expiry',
-				label: __( 'Paid until' ),
+				label: hasEnTranslation( 'Renews on' ) ? __( 'Renews on' ) : __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
 				sort: sortNullableStrings,
@@ -147,23 +144,7 @@ export const useFields = ( {
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
-				getValue: ( { item }: { item: DomainSummary } ) => {
-					if ( ! item.expiry ) {
-						return null;
-					}
-
-					const expiryDate = new Date( item.expiry );
-					const now = new Date();
-					const diffInMs = expiryDate.getTime() - now.getTime();
-					const diffInDays = Math.ceil( diffInMs / ( 1000 * 60 * 60 * 24 ) );
-
-					if ( item.expired ) {
-						return '1-expired';
-					} else if ( diffInDays <= 90 ) {
-						return '2-next-90-days';
-					}
-					return '3-more-than-90-days';
-				},
+				getValue: ( { item }: { item: DomainSummary } ) => item.expiry,
 				render: ( { item } ) => {
 					return (
 						<DomainExpiryField
@@ -202,7 +183,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
+		[ site, showPrimaryDomainBadge, siteElements, inOverview, hasEnTranslation ]
 	);
 
 	return fields;

@@ -16,11 +16,6 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/server/sanitize', () => jest.fn() );
 
-jest.mock( 'calypso/server/bundler/utils', () => ( {
-	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
-} ) );
-
 jest.mock( 'calypso/sections', () => {
 	// eslint-disable-next-line no-shadow
 	const sections = jest.requireActual( 'calypso/sections' );
@@ -61,13 +56,14 @@ jest.mock( 'calypso/server/render', () => ( {
 	attachHead: jest.fn(),
 	attachI18n: jest.fn(),
 	bumpStat: jest.fn(),
+	customizeClientDataForRequest: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/state-cache', () => new Map() );
 
 jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 
-jest.mock( 'calypso/state', () => ( {
+jest.mock( 'calypso/state/create-store', () => ( {
 	createReduxStore: jest.fn(),
 } ) );
 
@@ -108,6 +104,11 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
+const createMockStore = () => ( {
+	dispatch: jest.fn(),
+	getState: jest.fn( () => ( { documentHead: { meta: [] } } ) ),
+} );
+
 /**
  * Builds an app for an specific environment.
  *
@@ -141,12 +142,24 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
+			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
 		} = require( 'calypso/server/render' );
-		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
+		mocks = {
+			...mocks,
+			attachBuildTimestamp,
+			attachI18n,
+			attachHead,
+			bumpStat,
+			customizeClientDataForRequest,
+			renderJsx,
+			serverRender,
+		};
 		mocks.sanitize = require( 'calypso/server/sanitize' );
-		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
+		mocks.createReduxStore = require( 'calypso/state/create-store' ).createReduxStore;
+		mocks.createReduxStore.mockImplementation( createMockStore );
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
 		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
@@ -288,7 +301,7 @@ const buildApp = ( environment ) => {
 		},
 		withReduxStore( store ) {
 			mocks.createReduxStore.mockImplementation( () => store );
-			tearDown.push( () => mocks.createReduxStore.mockReset() );
+			tearDown.push( () => mocks.createReduxStore.mockImplementation( createMockStore ) );
 		},
 		withSetCurrentAction( action ) {
 			mocks.setCurrentUser.mockImplementation( () => action );
@@ -488,10 +501,10 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets dashboard according to the request hostname', async () => {
 		const { request } = await app.run( {
 			request: {
-				hostname: 'my.woo.localhost',
+				hostname: 'my.a4a.localhost',
 			},
 		} );
-		expect( request.context.dashboard ).toEqual( 'ciab' );
+		expect( request.context.dashboard ).toEqual( 'a4a' );
 	} );
 
 	it( 'sets the client ip', async () => {
@@ -553,19 +566,57 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
 		} );
+	} );
 
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
+	describe( 'on calypso.live', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'horizon' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
 		} );
 
 		it( 'sets the branch name', async () => {
 			const { request } = await customApp.run( {
-				request: { query: { branch: 'my-branch' } },
+				request: { hostname: 'hash-abcd1234.calypso.live', query: { branch: 'my-branch' } },
 			} );
 			expect( request.context.branchName ).toEqual( 'my-branch' );
+		} );
+
+		it( 'enables the dev helpers', async () => {
+			const { request } = await customApp.run( {
+				request: { hostname: 'hash-abcd1234.calypso.live' },
+			} );
+			expect( request.context ).toMatchObject( {
+				accountSettingsHelper: true,
+				authHelper: true,
+				preferencesHelper: true,
+				storeSandboxHelper: true,
+			} );
+		} );
+
+		it( 'does not enable the dev helpers outside calypso.live', async () => {
+			const { request } = await customApp.run();
+			expect( request.context.accountSettingsHelper ).toBeFalsy();
+			expect( request.context.authHelper ).toBeFalsy();
+			expect( request.context.preferencesHelper ).toBeFalsy();
+			expect( request.context.storeSandboxHelper ).toBeFalsy();
+		} );
+
+		it( 'does not set the branch name outside calypso.live', async () => {
+			const { request } = await customApp.run( {
+				request: { query: { branch: 'my-branch' } },
+			} );
+			expect( request.context.branchName ).toBeUndefined();
 		} );
 	} );
 
@@ -618,13 +669,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment development', () => {
@@ -651,13 +695,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
 		} );
 
 		it( 'sets the branch name', async () => {
@@ -692,13 +729,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment jetpack-cloud-development', () => {
@@ -727,13 +757,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-dev' );
 		} );
 
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
-
 		it( 'sets the branch name', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.branchName ).toEqual( 'my-branch' );
@@ -742,6 +765,65 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the commit checksum', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.commitChecksum ).toEqual( 'abcd0123' );
+		} );
+	} );
+
+	describe( 'with environment jetpack-cloud-production', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'jetpack-cloud-production' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
+
+		describe( 'Route /manage/signup', () => {
+			it( 'redirects logged-out visitors to A4A signup before login', async () => {
+				const { response } = await customApp.run( { request: { url: '/manage/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects logged-in visitors too', async () => {
+				const { response } = await customApp.run( {
+					request: { url: '/manage/signup', cookies: { wordpress_logged_in: true } },
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects the legacy /agency/signup path', async () => {
+				const { response } = await customApp.run( { request: { url: '/agency/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'forwards acquisition params and drops everything else', async () => {
+				const { response } = await customApp.run( {
+					request: {
+						url: '/manage/signup',
+						query: { ref: 'agencies-lp', utm_source: 'newsletter', foo: 'bar' },
+					},
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=agencies-lp&utm_source=newsletter'
+				);
+			} );
 		} );
 	} );
 };
@@ -810,9 +892,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		let theAction;
 
 		beforeEach( () => {
-			theStore = {
-				dispatch: jest.fn(),
-			};
+			theStore = createMockStore();
 			theAction = {};
 
 			// This method resets the existing enabled config, we need to re-enable 'use-translation-chunks'.
@@ -1048,7 +1128,7 @@ describe( 'main app', () => {
 		it( 'redirects authenticated Woo-origin requests to a URL without return_to', async () => {
 			app.withAuthenticatedUser();
 			app.withBootstrapUser( {} );
-			app.withReduxStore( { dispatch: jest.fn() } );
+			app.withReduxStore( createMockStore() );
 			app.withSetCurrentAction( {} );
 
 			const { response } = await app.run( {
@@ -1064,6 +1144,27 @@ describe( 'main app', () => {
 			expect( response.redirect ).toHaveBeenCalledWith(
 				'/me/security/qr-login?origin=woocommerce'
 			);
+		} );
+	} );
+
+	describe( 'Route /setup', () => {
+		it( 'flags the Playground step with the woocommerce intent for the Woo loader logo', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/setup/onboarding/playground?intent=woocommerce',
+					query: { intent: 'woocommerce' },
+				},
+			} );
+
+			expect( request.context.isPlaygroundWoo ).toBe( true );
+		} );
+
+		it( 'does not flag the Playground step without the woocommerce intent', async () => {
+			const { request } = await app.run( {
+				request: { url: '/setup/onboarding/playground' },
+			} );
+
+			expect( request.context.isPlaygroundWoo ).toBe( false );
 		} );
 	} );
 
@@ -1101,6 +1202,43 @@ describe( 'main app', () => {
 			} );
 			expect( response.redirect ).toHaveBeenCalledWith(
 				'https://wordpress.com/pricing/?ref=test&coupon=test'
+			);
+		} );
+	} );
+
+	describe( 'Route /tags and /tag', () => {
+		it( 'redirects logged-out visitors to the Discover tags tab', async () => {
+			const { response } = await app.run( { request: { url: '/tags' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/discover/tags?selectedTag=dailyprompt'
+			);
+		} );
+
+		it( 'carries the tag and locale prefix through the redirect', async () => {
+			const { response } = await app.run( { request: { url: '/fr/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/fr/discover/tags?selectedTag=travel'
+			);
+		} );
+
+		it( 'does not redirect logged-in users', async () => {
+			const { response } = await app.run( {
+				request: { url: '/tags', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'Route /speed-test-tool', () => {
+		it( 'redirects old report links to the localized site speed guide', async () => {
+			const { response } = await app.run( {
+				request: { url: '/es/speed-test-tool/weekly-report/unsubscribe?url=example.com' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				301,
+				'https://wordpress.com/es/support/site-speed/'
 			);
 		} );
 	} );
@@ -1216,9 +1354,7 @@ describe( 'main app', () => {
 					'use-translation-chunks': true,
 				} );
 				app.withBootstrapUser( {} );
-				app.withReduxStore( {
-					dispatch: jest.fn(),
-				} );
+				app.withReduxStore( createMockStore() );
 			} );
 
 			afterEach(
@@ -1251,7 +1387,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1266,7 +1402,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/reader/search?q=my%20search'
+					'https://wordpress.com/discover/search?q=my%20search'
 				);
 			} );
 
@@ -1318,6 +1454,184 @@ describe( 'main app', () => {
 		it( 'redirects to /setup/domain-transfer', async () => {
 			const { response } = await app.run( { request: { url: '/start/domain-transfer' } } );
 			expect( response.redirect ).toHaveBeenCalledWith( 301, '/setup/domain-transfer' );
+		} );
+	} );
+
+	describe( 'Route /start/launch-site', () => {
+		const query = { siteSlug: 'example.wordpress.com' };
+		const search = 'siteSlug=example.wordpress.com';
+
+		it( 'redirects to /setup/launch-site with the query', async () => {
+			const { response } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { siteSlug: 'example.wordpress.com', back_to: '/sites' },
+				},
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				302,
+				'/setup/launch-site?siteSlug=example.wordpress.com&back_to=%2Fsites'
+			);
+		} );
+
+		it( 'records the hit without the full query', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/plans-launch',
+					query: { siteSlug: 'example.wordpress.com', ref: 'admin-bar', coupon: 'SECRET' },
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				{
+					path: '/start/launch-site/plans-launch',
+					ref: 'admin-bar',
+					query_source: undefined,
+					referer: undefined,
+					site_slug: 'example.wordpress.com',
+					retry: undefined,
+					fetch_site: undefined,
+					fetch_mode: undefined,
+					fetch_user: undefined,
+				},
+				request
+			);
+		} );
+
+		it( 'records how the browser navigated to the hit', async () => {
+			const headers = {
+				Referer: 'https://example.wordpress.com/wp-admin/options-reading.php?settings-updated=1#x',
+				'Sec-Fetch-Site': 'cross-site',
+				'Sec-Fetch-Mode': 'navigate',
+				'Sec-Fetch-User': '?1',
+			};
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/domains-launch',
+					query: { ...query, retry: '1' },
+					get: jest.fn( ( header ) => headers[ header ] ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( {
+					referer: 'https://example.wordpress.com/wp-admin/options-reading.php',
+					site_slug: 'example.wordpress.com',
+					retry: '1',
+					fetch_site: 'cross-site',
+					fetch_mode: 'navigate',
+					fetch_user: '?1',
+				} ),
+				request
+			);
+		} );
+
+		it( 'drops a Referer that is not a URL', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query,
+					get: jest.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( { referer: undefined } ),
+				request
+			);
+		} );
+
+		it( 'still redirects when tracking throws', async () => {
+			app.getMocks().analytics.tracks.recordEvent.mockImplementationOnce( () => {
+				throw new Error( 'Fake error' );
+			} );
+			const { response } = await app.run( { request: { url: '/start/launch-site', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+		} );
+
+		it( 'only records string caller hints', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query: { ...query, ref: [ 'a', 'b' ], source: { a: 'b' } },
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( {
+					path: '/start/launch-site',
+					ref: undefined,
+					query_source: undefined,
+				} ),
+				request
+			);
+		} );
+
+		it( 'leaves requests without a siteSlug to the signup section, but still records them', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalled();
+		} );
+
+		it( 'does not record HEAD requests', async () => {
+			await app.run( { request: { url: '/start/launch-site', method: 'HEAD', query } } );
+			expect( app.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not record outside production', async () => {
+			const devApp = buildApp( 'development' );
+			devApp.withServerRender( '' );
+			devApp.withMockFilesystem();
+			devApp.withEvergreenBrowser();
+			const { response } = await devApp.run( { request: { url: '/start/launch-site', query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+			expect( devApp.getMocks().analytics.tracks.recordEvent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'drops legacy step and locale segments', async () => {
+			const { response } = await app.run( {
+				request: { url: '/start/launch-site/domains-launch/es/', query },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, `/setup/launch-site?${ search }` );
+		} );
+
+		it( 'leaves flows that only share the prefix alone', async () => {
+			const { response } = await app.run( { request: { url: '/start/launch-site-foo' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+		} );
+	} );
+
+	describe( 'Retired WooCommerce installer routes', () => {
+		it.each( [
+			[
+				'/start/woocommerce-install',
+				{ siteSlug: 'example.com' },
+				'/plugins/woocommerce/example.com',
+			],
+			[ '/start/woocommerce-install/store-address/fr', {}, '/plugins/woocommerce' ],
+			[
+				'/woocommerce-installation/example.com::shop',
+				{},
+				'/plugins/woocommerce/example.com::shop',
+			],
+			[ '/woocommerce-installation', {}, '/plugins/woocommerce' ],
+		] )( 'redirects %s to the WooCommerce plugin page', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
+	describe( 'Retired website-design-services flow', () => {
+		it.each( [
+			[
+				'/start/website-design-services',
+				{ siteSlug: 'example.com', back_to: '/home/example.com' },
+				'/start/do-it-for-me?siteSlug=example.com&back_to=%2Fhome%2Fexample.com',
+			],
+			[ '/start/website-design-services/difm-options/es/', {}, '/start/do-it-for-me/es' ],
+		] )( 'redirects %s to the DIFM flow', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
 		} );
 	} );
 
@@ -1600,6 +1914,21 @@ describe( 'dashboard app', () => {
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
 	} );
 
+	it( 'bumps dashboard-404 for unmatched paths', async () => {
+		await app.run( { request: { url: '/does-not-exist', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith( 'dashboard-404', '/does-not-exist' );
+	} );
+
+	it( 'bumps dashboard-404-probing for paths bots probe', async () => {
+		await app.run( { request: { url: '/sitemap.xml', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith(
+			'dashboard-404-probing',
+			'/sitemap.xml'
+		);
+	} );
+
 	it( 'serves known dashboard routes without a 404', async () => {
 		const { request, response } = await app.run( {
 			request: { url: '/sites', hostname: 'my.wordpress.com' },
@@ -1608,5 +1937,50 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	// Logged-out requests skip the dashboard `/start` route anyway, since signup is isomorphic.
+	it( 'redirects legacy /start/launch-site ahead of the dashboard signup route', async () => {
+		app.withAuthenticatedUser();
+
+		const { response } = await app.run( {
+			request: {
+				url: '/start/launch-site',
+				hostname: 'my.wordpress.com',
+				query: { siteSlug: 'example.wordpress.com' },
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			302,
+			'/setup/launch-site?siteSlug=example.wordpress.com'
+		);
+	} );
+
+	it( 'serves robots.txt that disallows all paths', async () => {
+		const { response } = await app.run( {
+			request: { url: '/robots.txt', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( response.setHeader ).toHaveBeenCalledWith( 'Content-Type', 'text/plain' );
+		expect( response.send ).toHaveBeenCalledWith( 'User-agent: *\nDisallow: /\n' );
+	} );
+
+	it( 'redirects /wp-login.php to the WordPress.com login, forwarding only redirect_to', async () => {
+		app.getMocks().customizeClientDataForRequest.mockReturnValue( {
+			wpcom_login_url: 'https://wordpress.com/log-in',
+		} );
+
+		const { response } = await app.run( {
+			request: {
+				url: '/wp-login.php?action=login&redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites',
+				hostname: 'my.wordpress.com',
+				query: { action: 'login', redirect_to: 'https://my.wordpress.com/sites' },
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fsites'
+		);
 	} );
 } );

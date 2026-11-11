@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -58,20 +59,14 @@ const getLinks = (
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
 				isExternalLink = true;
-			} else {
-				link = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/settings`;
-				isExternalLink = true;
 			}
 			break;
 		}
 		case 'plugin': {
 			link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
 			isExternalLink = true;
-			if ( ! isAtomicSite ) {
-				link =
-					status === 'warning'
-						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`
-						: `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
+			if ( ! isAtomicSite && ! isA8CForAgencies() ) {
+				link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
 				isExternalLink = false;
 			}
 			break;

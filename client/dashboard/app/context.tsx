@@ -1,28 +1,21 @@
-/* eslint-disable no-restricted-imports */
-import {
-	sitesQuery,
-	paginatedSitesQuery,
-	dashboardSiteFiltersQuery,
-	domainsQuery,
-} from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
-import type {
-	FetchSitesOptions,
-	FetchPaginatedSitesOptions,
-	FetchDashboardSiteFiltersParams,
-} from '@automattic/api-core';
-import type { PostHogOverrides } from '@automattic/posthog';
+import type { User } from '@automattic/api-core';
 
 export type AgencySupports = {
 	overview: boolean;
 	tiers: boolean;
+	partnerDirectory: boolean;
+	marketplace: boolean;
 	exclusiveOffers: boolean;
 	learn: boolean;
 	mcp: boolean;
+	amplify: boolean;
+	devTools: boolean;
 	sites: boolean;
+	plugins: boolean;
 	team: boolean;
 	earn: boolean;
+	billing: boolean;
 };
 
 export type AgencyClientSupports = {
@@ -43,12 +36,9 @@ export type MeSupports = {
 	apps: boolean;
 };
 
-export type SiteOverviewSupports = {
-	preview: boolean;
-};
-
 export type AppConfig = {
 	name: string;
+	unifiedAdminPageViewApp?: 'msd' | 'a4a';
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
@@ -60,7 +50,6 @@ export type AppConfig = {
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
-		themes: boolean;
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
@@ -68,32 +57,16 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
-		startStoreRoute?: boolean;
-		/** Paths with no dashboard page yet that should redirect to the main route. */
+		/** Prototype: paths with no dashboard page yet that should redirect to the main route. */
 		legacyPathRedirects?: string[];
-		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;
 	};
-	posthog?: {
-		apiKey: string;
-		overrides?: PostHogOverrides;
-	};
-	optIn: boolean;
 	components: {
-		sites?: () => Promise< { default: React.FC } >;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
-	};
-	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
-		paginatedSitesQuery: (
-			fetchSiteOptions?: FetchPaginatedSitesOptions
-		) => ReturnType< typeof paginatedSitesQuery >;
-		dashboardSiteFiltersQuery: (
-			field: FetchDashboardSiteFiltersParams[ 'fields' ]
-		) => ReturnType< typeof dashboardSiteFiltersQuery >;
-		domainsQuery: () => ReturnType< typeof domainsQuery >;
+		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */
+		omnibar?: React.FC< { user?: User } >;
+		/** Replaces the WordPress.com Help Center panel, which the omnibar's help node toggles. */
+		helpCenter?: React.FC;
 	};
 };
 
@@ -110,7 +83,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		plugins: false,
 		domains: false,
 		emails: false,
-		themes: false,
 		reader: false,
 		help: false,
 		notifications: false,
@@ -118,26 +90,10 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		startStoreRoute: false,
-		siteOverview: {
-			preview: false,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},
-	optIn: false,
-	components: {
-		sites: () => Promise.resolve( { default: () => null } ),
-		siteSwitcher: () => Promise.resolve( { default: () => null } ),
-	},
-	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
-			dashboardSiteFiltersQuery( 'all', fields ),
-		domainsQuery: () => domainsQuery(),
-	},
+	components: {},
 };
 
 const AppContext = createContext< AppConfig >( APP_CONTEXT_DEFAULT_CONFIG );

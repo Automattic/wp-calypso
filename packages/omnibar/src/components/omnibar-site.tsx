@@ -1,56 +1,20 @@
-import { useViewportMatch } from '@wordpress/compose';
-import { Stack } from '@wordpress/ui';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
-export function OmnibarSiteNode( {
-	node,
-	pluginNodes,
-	actionNodes,
-}: {
-	node: OmnibarNode;
-	pluginNodes?: OmnibarNode[];
-	actionNodes?: OmnibarNode[];
-} ) {
-	const isDesktop = useViewportMatch( 'medium' );
+// Core truncates the site title in `wp_admin_bar_site_menu()` with
+// `wp_html_excerpt( $blogname, 40, '&hellip;' )`.
+const SITE_TITLE_MAX_LENGTH = 40;
 
-	const siteNode = isDesktop
-		? node
-		: {
-				...node,
-				children: [ ...( node.children || [] ), ...( actionNodes || [] ) ],
-		  };
-
-	const siteActionNodes = isDesktop ? actionNodes : undefined;
-
-	return [
-		<OmnibarMenu key={ siteNode.id } node={ siteNode } style={ { minWidth: 0 } } />,
-		pluginNodes && <OmnibarSitePluginsNode key="plugins" nodes={ pluginNodes } />,
-		siteActionNodes && <OmnibarSiteActionsNode key="actions" nodes={ siteActionNodes } />,
-	].filter( Boolean );
+function truncateSiteTitle( title: string ) {
+	const characters = Array.from( title );
+	if ( characters.length <= SITE_TITLE_MAX_LENGTH ) {
+		return title;
+	}
+	return characters.slice( 0, SITE_TITLE_MAX_LENGTH ).join( '' ).trim() + '…';
 }
 
-export function OmnibarSitePluginsNode( { nodes }: { nodes: OmnibarNode[] } ) {
-	return nodes.map( ( node ) => <OmnibarMenu key={ node.id } node={ node } /> );
-}
+export function OmnibarSiteNode( { node }: { node: OmnibarNode } ) {
+	const siteNode = node.title ? { ...node, title: truncateSiteTitle( node.title ) } : node;
 
-export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
-	return nodes.map( ( node ) => (
-		<OmnibarMenu
-			key={ node.id }
-			node={ {
-				render: ( { title, meta } ) => (
-					<Stack direction="row" gap="xs" align="center">
-						<span>{ title }</span>
-						{ meta?.subtitle && (
-							<span style={ { opacity: meta.subtitle !== '0' ? undefined : '0.5' } }>
-								{ meta.subtitle }
-							</span>
-						) }
-					</Stack>
-				),
-				...node,
-			} }
-		/>
-	) );
+	return <OmnibarMenu node={ siteNode } className="omnibar__site" />;
 }

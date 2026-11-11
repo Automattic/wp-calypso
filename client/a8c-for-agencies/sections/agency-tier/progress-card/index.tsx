@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Card,
 	CardBody,
@@ -9,12 +8,13 @@ import {
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getCurrentAgencyTier from 'calypso/dashboard/agency/tiers/get-current-agency-tier';
+import InfluencedRevenue from 'calypso/dashboard/agency/tiers/influenced-revenue';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import InfluencedRevenue from '../overview-content/influenced-revenue';
 import type { AgencyTierType } from 'calypso/dashboard/agency/tiers/types';
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 
@@ -65,18 +65,14 @@ export default function AgencyTierProgressCard( {
 						</Heading>
 						<VStack spacing={ 1 }>
 							{ tierStatus === 'early_access' && (
-								<Badge
-									style={ { width: 'fit-content', marginBottom: '4px' } }
-									intent="default"
-									children={ __( 'Early access' ) }
-								/>
+								<Badge style={ { width: 'fit-content', marginBottom: '4px' } } intent="draft">
+									{ __( 'Early access' ) }
+								</Badge>
 							) }
 							{ tierStatus === 'tier_protected' && (
-								<Badge
-									style={ { width: 'fit-content', marginBottom: '4px' } }
-									intent="default"
-									children={ __( 'Tier-level protected' ) }
-								/>
+								<Badge style={ { width: 'fit-content', marginBottom: '4px' } } intent="draft">
+									{ __( 'Tier-level protected' ) }
+								</Badge>
 							) }
 							<Heading level={ 3 } weight={ 500 }>
 								{ currentTier.name }
@@ -87,13 +83,16 @@ export default function AgencyTierProgressCard( {
 											/* translators: %s is the tier name */
 											'You’ve been given early access to %s tier benefits. Keep up the great work!',
 											currentTier.name
-									  )
+										)
 									: currentTier.progressCardDescription }
 							</Text>
 						</VStack>
 						<InfluencedRevenue
 							currentAgencyTierId={ currentAgencyTierId }
 							totalInfluencedRevenue={ influencedRevenue }
+							recordTracksEvent={ ( eventName, properties ) =>
+								dispatch( recordTracksEvent( eventName, properties ) )
+							}
 						/>
 						<ButtonStack justify="flex-start">
 							<Button

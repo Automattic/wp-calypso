@@ -9,8 +9,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { getTransferFailureMessage } from '../../../../utils/atomic-transfer-outcome';
 import type { Step } from '../../types';
-import type { AtomicSoftwareStatus, OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { AtomicSoftwareStatus, OnboardSelect } from '@automattic/data-stores';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
@@ -25,7 +26,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
 	const { initiateSoftwareInstall, requestAtomicSoftwareStatus } = useDispatch( SITE_STORE );
 	const { getAtomicSoftwareInstallError, getAtomicSoftwareStatus, getAtomicSoftwareError } =
-		useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		useSelect( ( select ) => select( SITE_STORE ), [] );
 	const site = useSite();
 	const softwareSet = useSitePluginSlug();
 	const bundleSettings = useBundleSettings( softwareSet );
@@ -110,7 +111,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 						error: 'transfer took too long',
 						code: 'transfer_timeout',
 					} );
-					throw new Error( 'transfer timeout' );
+					throw new Error( getTransferFailureMessage( 'timeout' ) );
 				}
 
 				requestAtomicSoftwareStatus( site.ID, softwareSet );

@@ -5,8 +5,8 @@ describe( 'getProductTitle', () => {
 		expect( getProductTitle( 'Jetpack AI' ) ).toBe( 'AI' );
 	} );
 
-	it( 'returns "Stats" if the product name is "Jetpack Stats (Commercial license)"', () => {
-		expect( getProductTitle( 'Jetpack Stats (Commercial license)' ) ).toBe( 'Stats' );
+	it( 'returns "Stats" if the product name is "Jetpack Stats (Paid)"', () => {
+		expect( getProductTitle( 'Jetpack Stats (Paid)' ) ).toBe( 'Stats' );
 	} );
 
 	it.each( [

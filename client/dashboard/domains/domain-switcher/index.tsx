@@ -1,12 +1,11 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
-import { useAppContext } from '../../app/context';
 import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
 import Switcher from '../../components/switcher';
-import { Text } from '../../components/text';
 import type { SwitcherProps } from '../../components/switcher';
 import type { Domain, DomainSummary } from '@automattic/api-core';
 
@@ -27,9 +26,8 @@ export default function DomainSwitcher( {
 	domain: Domain;
 	renderToggle?: SwitcherProps< DomainSummary >[ 'renderToggle' ];
 } ) {
-	const { queries } = useAppContext();
 	const domains = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},
@@ -52,11 +50,7 @@ export default function DomainSwitcher( {
 							<Icon className="domain-icon" icon={ globe } size={ 24 } />
 						) : undefined
 					}
-					title={
-						<Text truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-							{ item.domain }
-						</Text>
-					}
+					title={ item.domain }
 				/>
 			) }
 		/>

@@ -156,7 +156,7 @@ export function OverviewPreviewPane( {
 								<SitePerformance />
 							</div>
 						),
-				  ]
+					]
 				: [] ),
 			createFeaturePreview(
 				JETPACK_ACTIVITY_ID,
@@ -176,7 +176,7 @@ export function OverviewPreviewPane( {
 							setSelectedSiteFeature,
 							<SiteDetails site={ site } />
 						),
-				  ]
+					]
 				: [] ),
 		],
 		[

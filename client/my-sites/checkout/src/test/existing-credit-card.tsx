@@ -18,7 +18,7 @@ import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { CheckoutSubmitButtonContent } from 'calypso/my-sites/checkout/src/components/checkout-submit-button-content';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 
 const mockResponseCart = {
 	...getEmptyResponseCart(),
@@ -93,12 +93,12 @@ function mockTaxLocationEndpoint( { isSet = false } = {} ) {
 						is_tax_info_set: true,
 						tax_country_code: 'US',
 						tax_postal_code: '10001',
-				  }
+					}
 				: {
 						is_tax_info_set: false,
 						tax_country_code: '',
 						tax_postal_code: '',
-				  }
+					}
 		);
 }
 

@@ -10,6 +10,7 @@ Signup flow for the WordPress.com Education Program: validates a student invite 
 4. Edge: enter an invalid code — an inline "Invitation code not found" error shows and the same code stays submittable.
 5. Edge: refresh on the processing screen — you're routed back into the flow, not to the error page.
 6. Edge: open `/setup/education/domains` directly in a fresh session — you're redirected back to the invite code step.
+7. Open `/setup/education?code=EDU123` — the invite code field is prefilled with `EDU123` and the button is enabled, but nothing is submitted until you press it. The prefill survives the login/signup redirect.
 
 ## Owned by
 

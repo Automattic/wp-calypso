@@ -5,8 +5,7 @@ interface Window {
 		action: string,
 		value: string,
 		handler?:
-			| ( ( callback: ( data: string | number ) => void ) => void )
-			| { id: number; value: string }[]
+			( ( callback: ( data: string | number ) => void ) => void ) | { id: number; value: string }[]
 	) => void;
 }
 

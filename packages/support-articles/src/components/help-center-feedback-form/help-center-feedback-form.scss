@@ -5,6 +5,19 @@
 		font-style: italic;
 		margin-bottom: 0.5rem;
 	}
+	.help-center-feedback-form__rated {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+
+		span {
+			display: flex;
+		}
+
+		svg {
+			fill: currentColor;
+		}
+	}
 	.help-center-feedback-form__buttons {
 		display: flex;
 		flex-direction: row;
@@ -16,7 +29,7 @@
 			align-items: center;
 			gap: 5px;
 			cursor: pointer;
-			color: var(--color-text);
+			color: var( --color-text );
 			// Atomic fix
 			background-color: transparent;
 			border: none;
@@ -27,5 +40,4 @@
 			}
 		}
 	}
-
 }

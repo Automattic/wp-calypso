@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
+import { isPeopleListNote } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
@@ -96,34 +97,61 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			),
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
+	const isListItem = isPeopleListNote( note );
+
 	return (
-		<HStack className="wpnc__user" justify="flex-start" alignment="flex-start" spacing={ 4 }>
-			<a
-				href={ readerProfileUrl }
-				target="_blank"
-				rel="noreferrer"
-				style={ {
-					display: 'flex',
-					flexShrink: 0,
-					borderRadius: '50%',
-					overflow: 'hidden',
-				} }
-			>
-				<NoteIcon icon={ media?.url } alt={ block.text } size={ 32 } />
+		<HStack
+			className="wpnc__user"
+			justify="flex-start"
+			alignment={ isListItem ? 'center' : 'flex-start' }
+			spacing={ 4 }
+		>
+			<a className="wpnc__user-icon" href={ readerProfileUrl } target="_blank" rel="noreferrer">
+				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
-			<VStack alignment="flex-start" spacing={ 0 }>
-				<a className="wpnc__user-title" href={ readerProfileUrl } target="_blank" rel="noreferrer">
-					<Text>{ block.text }</Text>
-				</a>
-				<HStack className="wpnc__user-description" spacing={ 1 }>
-					{ descriptionParts.map( ( part, index ) => (
-						<Fragment key={ part.key }>
-							{ index > 0 && <span className="wpnc__user-description-separator">•</span> }
-							{ part }
-						</Fragment>
-					) ) }
-				</HStack>
-			</VStack>
+			{ isListItem ? (
+				<>
+					<VStack spacing={ 0.5 } style={ { flex: 1, minWidth: 0 } }>
+						<a
+							className="wpnc__user-title"
+							href={ readerProfileUrl }
+							target="_blank"
+							rel="noreferrer"
+						>
+							<Text truncate numberOfLines={ 1 }>
+								{ block.text }
+							</Text>
+						</a>
+						{ homeTitle && (
+							<a href={ homeLink } target="_blank" rel="noopener noreferrer">
+								<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
+									{ homeTitle }
+								</Text>
+							</a>
+						) }
+					</VStack>
+					{ descriptionParts.find( ( { key } ) => key === 'follow' ) }
+				</>
+			) : (
+				<VStack alignment="flex-start" spacing={ 0 }>
+					<a
+						className="wpnc__user-title"
+						href={ readerProfileUrl }
+						target="_blank"
+						rel="noreferrer"
+					>
+						<Text>{ block.text }</Text>
+					</a>
+					<HStack className="wpnc__user-description" spacing={ 1 }>
+						{ descriptionParts.map( ( part, index ) => (
+							<Fragment key={ part.key }>
+								{ index > 0 && <span className="wpnc__user-description-separator">•</span> }
+								{ part }
+							</Fragment>
+						) ) }
+					</HStack>
+				</VStack>
+			) }
 		</HStack>
 	);
 }

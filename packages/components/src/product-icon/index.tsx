@@ -1,13 +1,12 @@
 import clsx from 'clsx';
 import * as React from 'react';
 import { iconToProductSlugMap, paths } from './config';
-import type { SupportedSlugs } from './config';
 
 import './style.scss';
 
 type Props = {
 	className?: string;
-	slug: SupportedSlugs;
+	slug: string;
 };
 
 const ProductIcon: React.FunctionComponent< Props > = ( { className, slug } ) => {
@@ -17,7 +16,9 @@ const ProductIcon: React.FunctionComponent< Props > = ( { className, slug } ) =>
 
 	const iconSlug = (
 		Object.keys( iconToProductSlugMap ) as ( keyof typeof iconToProductSlugMap )[]
-	 ).find( ( key ) => iconToProductSlugMap[ key ].includes( slug ) ) as keyof typeof paths;
+	 ).find( ( key ) =>
+		( iconToProductSlugMap[ key ] as readonly string[] ).includes( slug )
+	) as keyof typeof paths;
 
 	const iconPath = paths[ iconSlug ];
 

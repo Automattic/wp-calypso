@@ -54,7 +54,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 	 * Uses page.on('request') because wpcom-proxy-request sends through a cross-origin
 	 * iframe (public-api.wordpress.com), which page.route() cannot intercept.
 	 */
-	function observeLogstash( page: import('playwright').Page ): PerfNavEvent[] {
+	function observeLogstash( page: import( 'playwright' ).Page ): PerfNavEvent[] {
 		const events: PerfNavEvent[] = [];
 
 		page.on( 'request', ( request ) => {
@@ -82,7 +82,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 			await snoozeAccountRecoveryInterstitial( clientRestAPI );
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'When I navigate directly to the sites page', async function () {
@@ -114,7 +114,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 			await snoozeAccountRecoveryInterstitial( clientRestAPI );
-			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+			await accountGivenByEnvironment.authenticate( page );
 		} );
 
 		await test.step( 'And I am on the sites page', async function () {
@@ -133,10 +133,16 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 			const isOmnibarEnabled = ( await page.locator( '#wpcom-omnibar' ).count() ) > 0;
 
 			if ( isOmnibarEnabled ) {
+				// Omnibar menus open on hover, and the pointer starts at the top-left
+				// corner of the page, over the masterbar. Move it to the page content so
+				// an open dropdown doesn't cover the sidebar link.
+				await page.getByRole( 'main' ).hover();
+				await expect( page.locator( '#wpcom-omnibar' ).getByRole( 'menuitem' ) ).toHaveCount( 0 );
+
 				// With omnibar: click Domains in the responsive sidebar.
 				// On mobile, open the sidebar first via the masterbar menu button.
 				if ( viewportName === 'mobile' ) {
-					await page.getByTitle( 'Menu', { exact: true } ).click();
+					await page.getByRole( 'button', { name: 'Menu', exact: true } ).first().click();
 				}
 				await page.locator( '#wpcom' ).getByRole( 'link', { name: 'Domains' } ).click();
 			} else if ( viewportName === 'mobile' ) {

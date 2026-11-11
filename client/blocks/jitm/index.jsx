@@ -136,6 +136,7 @@ export function JITM( props ) {
 		isJetpack,
 		jitmPlaceholder,
 		template,
+		suppressedMessageIds,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -152,6 +153,8 @@ export function JITM( props ) {
 		jitm.content.icon = '';
 	}
 
+	const isSuppressed = !! jitm && !! suppressedMessageIds?.includes( jitm.id );
+
 	return (
 		<>
 			<QueryJITM
@@ -161,6 +164,7 @@ export function JITM( props ) {
 			/>
 			{ isFetching && jitmPlaceholder }
 			{ jitm &&
+				! isSuppressed &&
 				renderTemplate( jitm.template || template || 'default', {
 					...jitm,
 					...getEventHandlers( props, dispatch ),
@@ -176,6 +180,7 @@ JITM.propTypes = {
 	searchQuery: PropTypes.string,
 	jitmPlaceholder: PropTypes.node,
 	isFetching: PropTypes.bool,
+	suppressedMessageIds: PropTypes.arrayOf( PropTypes.string ),
 };
 
 const mapStateToProps = ( state, { messagePath } ) => {

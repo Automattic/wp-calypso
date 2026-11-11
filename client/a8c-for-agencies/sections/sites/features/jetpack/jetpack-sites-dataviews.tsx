@@ -1,23 +1,19 @@
 import config from '@automattic/calypso-config';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, starFilled } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
+import { useCallback, useEffect, useContext, useMemo, useRef, useState, ReactNode } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import {
-	DataViewsState,
-	ItemsDataViewsType,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
+import SitesEmptyState from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/sites-empty-state';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { SitesDataViewsProps } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import { DataViews } from 'calypso/components/dataviews';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
-import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
@@ -25,6 +21,9 @@ import { useSiteActionsDataViews } from '../../site-actions/use-site-actions';
 import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Action, Field } from '@wordpress/dataviews';
+
+const EMPTY_SELECTION: string[] = [];
+const DEFAULT_LAYOUTS = { table: {}, list: {} };
 
 const SitePreviewTourTarget = ( { children }: { children: ReactNode } ) => {
 	const [ context, setContext ] = useState< HTMLElement | null >();
@@ -48,7 +47,6 @@ export const JetpackSitesDataViews = ( {
 	setDataViewsState,
 	setSelectedSiteFeature,
 	dataViewsState,
-	forceTourExampleSite = false,
 	className,
 	onRefetchSite,
 }: SitesDataViewsProps ) => {
@@ -102,6 +100,26 @@ export const JetpackSitesDataViews = ( {
 			} ) );
 		},
 		[ isNotProduction, setDataViewsState ]
+	);
+
+	const selectedSiteId = dataViewsState.selectedItem?.blog_id;
+
+	const selection = useMemo(
+		() => ( selectedSiteId ? [ String( selectedSiteId ) ] : EMPTY_SELECTION ),
+		[ selectedSiteId ]
+	);
+
+	const sitesRef = useRef( sites );
+	sitesRef.current = sites;
+
+	const onSelectionChange = useCallback(
+		( items: string[] ) => {
+			const selectedItem = sitesRef.current.find( ( site ) => String( site.ref ) === items[ 0 ] );
+			if ( selectedItem ) {
+				openSitePreviewPane( selectedItem.site.value );
+			}
+		},
+		[ openSitePreviewPane ]
 	);
 
 	const renderField = useCallback(
@@ -196,19 +214,13 @@ export const JetpackSitesDataViews = ( {
 					const isSitePreviewTourTarget = site.blog_id === sitePreviewTourTargetId;
 
 					const siteField = (
-						<div
-							className={ clsx( {
-								'is-site-selected': site.blog_id === dataViewsState.selectedItem?.blog_id,
-							} ) }
-						>
-							<SiteDataField
-								site={ site }
-								isLoading={ isLoading }
-								isDevSite={ item.isDevSite }
-								onSiteTitleClick={ openSitePreviewPane }
-								errors={ getSiteErrors( item ) }
-							/>
-						</div>
+						<SiteDataField
+							site={ site }
+							isLoading={ isLoading }
+							isDevSite={ item.isDevSite }
+							onSiteTitleClick={ openSitePreviewPane }
+							errors={ getSiteErrors( item ) }
+						/>
 					);
 
 					return isSitePreviewTourTarget ? (
@@ -413,46 +425,17 @@ export const JetpackSitesDataViews = ( {
 			pluginsRef,
 			sitePreviewTourTargetId,
 			isLoading,
-			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
 			getSiteErrors,
 			renderField,
 		]
 	);
 
-	const urlParams = new URLSearchParams( window.location.search );
-	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
-	const useExampleDataForTour =
-		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
-
-	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteData > >( {
-		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
-		pagination: {
-			totalItems: totalSites,
-			totalPages: totalPages,
-		},
-		itemFieldId: 'ref',
-		searchLabel: translate( 'Search for sites' ),
-		fields: [],
-		actions: [],
-		setDataViewsState: setDataViewsState,
-		dataViewsState: dataViewsState,
-		onSelectionChange: ( items: string[] ) => {
-			const selectedItem = sites.find( ( site ) => site.ref === items[ 0 ] );
-			if ( selectedItem ) {
-				openSitePreviewPane( selectedItem.site.value );
-			}
-		},
-		defaultLayouts: { table: {}, list: {} },
-	} );
-
 	useEffect( () => {
-		// If the user clicks on a row, open the preview pane by triggering the View details button click.
+		// Only the table layout needs this; the list layout ships its own full-row button.
 		const handleRowClick = ( event: Event ) => {
 			const target = event.target as HTMLElement;
-			const row = target.closest(
-				'.dataviews-view-table__row, li:has(.dataviews-view-list__item)'
-			);
+			const row = target.closest( '.dataviews-view-table__row' );
 
 			if ( row ) {
 				const isButtonOrLink = target.closest( 'button, a' );
@@ -465,23 +448,10 @@ export const JetpackSitesDataViews = ( {
 			}
 		};
 
-		const rowsContainer = document.querySelector( '.dataviews-view-table, .dataviews-view-list' );
+		const rowsContainer = document.querySelector( '.dataviews-view-table' );
 
 		if ( rowsContainer ) {
 			rowsContainer.addEventListener( 'click', handleRowClick as EventListener );
-		}
-
-		// We need to trigger the click event on the View details button when the selected item changes to ensure highlighted row is correct.
-		if (
-			rowsContainer?.classList.contains( 'dataviews-view-list' ) &&
-			dataViewsState?.selectedItem?.client_id
-		) {
-			const trigger: HTMLButtonElement | null = rowsContainer.querySelector(
-				'li:not(.is-selected) .sites-dataviews__site'
-			);
-			if ( trigger ) {
-				trigger.click();
-			}
 		}
 
 		return () => {
@@ -499,25 +469,32 @@ export const JetpackSitesDataViews = ( {
 		setSelectedSiteFeature,
 	} );
 
-	// Update the data packet
-	useEffect( () => {
-		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
-			...prevState,
-			items: sites,
-			fields: fields,
-			actions: actions as Action< SiteData >[],
-			pagination: {
-				totalItems: totalSites,
-				totalPages: totalPages,
-			},
-			setDataViewsState: setDataViewsState,
-			dataViewsState: dataViewsState,
-			selectedItem: dataViewsState.selectedItem,
-		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data, actions ] );
-
 	return (
-		<ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className }>
+		<ItemsDataViews
+			data={ {
+				items: sites,
+				pagination: { totalItems: totalSites, totalPages },
+				itemFieldId: 'ref',
+				searchLabel: translate( 'Search for sites' ),
+				fields,
+				actions: actions as Action< SiteData >[],
+				setDataViewsState,
+				dataViewsState,
+				selection,
+				onSelectionChange,
+				defaultLayouts: DEFAULT_LAYOUTS,
+			} }
+			isLoading={ isLoading }
+			className={ className }
+			empty={
+				<SitesEmptyState
+					filters={ dataViewsState.filters }
+					search={ dataViewsState.search }
+					showOnlyFavorites={ showOnlyFavorites }
+					showOnlyDevelopmentSites={ showOnlyDevelopmentSites }
+				/>
+			}
+		>
 			<HStack
 				className="dataviews__view-actions"
 				alignment="top"

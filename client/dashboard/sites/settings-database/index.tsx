@@ -20,9 +20,11 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import ResetPasswordModal from './reset-password-modal';
+import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
@@ -79,7 +81,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				{
 					learnMoreLink: <InlineSupportLink supportContext="hosting-mysql" />,
 				}
-		  )
+			)
 		: undefined;
 
 	return (
@@ -98,7 +100,9 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				feature={ HostingFeatures.DATABASE }
 				upsellId="site-settings-database"
 				upsellIcon={ blockTable }
-				upsellImage={ upsellIllustrationUrl }
+				upsellImage={
+					<ThemedIllustration light={ upsellIllustrationUrl } dark={ upsellIllustrationDarkUrl } />
+				}
 				upsellTitle={ __( 'Fast, familiar database access' ) }
 				upsellDescription={ __(
 					'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
@@ -118,7 +122,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 								</Text>
 							</VStack>
 							<VStack>
-								<Notice density="medium">
+								<Notice>
 									{ __(
 										'Managing a database can be tricky and it’s not necessary for your site to function.'
 									) }

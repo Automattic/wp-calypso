@@ -18,7 +18,7 @@ export function currentPlan( context, next ) {
 	const isFreePlan = isFreePlanProduct( selectedSite.plan );
 	const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
+	const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.is_woo_express_trial;
 
 	if ( isFreePlan || isEntrepreneurTrial ) {
 		page.redirect( `/plans/${ selectedSite.slug }` );

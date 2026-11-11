@@ -26,7 +26,7 @@ const TitanBanner = () => {
 						months: trialMonths,
 					},
 					comment: '%(months)d is the number of free trial months',
-			  } )
+				} )
 			: translate( 'Get 3 months free Professional Email' );
 	return (
 		<>

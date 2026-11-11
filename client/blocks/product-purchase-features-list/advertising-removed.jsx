@@ -25,7 +25,7 @@ export default localize( ( { isEligiblePlan, selectedSite, translate } ) => {
 					isEligiblePlan
 						? translate(
 								'All WordPress.com advertising has been removed from your site so your brand can stand out without distractions.'
-						  )
+							)
 						: uneligiblePlanDescription
 				}
 				buttonText={ ! isEligiblePlan ? buttonText : null }

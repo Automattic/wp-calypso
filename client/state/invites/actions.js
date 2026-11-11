@@ -106,7 +106,7 @@ const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState
 				invitee.length > 20
 					? translate( 'An error occurred while deleting the invite for %s….', {
 							args: invitee.slice( 0, 20 ),
-					  } )
+						} )
 					: translate( 'An error occurred while deleting the invite for %s.', { args: invitee } )
 			)
 		);
@@ -355,6 +355,8 @@ export function sendInvites( siteId, invitees, role, message, isExternal ) {
 		} catch ( e ) {
 			dispatch( {
 				type: INVITES_SEND_FAILURE,
+				statusCode: e?.statusCode,
+				message: e?.message,
 			} );
 			recordTracksEvent( 'calypso_invite_send_failed' );
 		}

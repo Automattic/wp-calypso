@@ -6,17 +6,20 @@ import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import { getSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSite, isSimpleSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { postEmailStatsAvailabilityQueryOptions } from './hooks/use-post-email-stats-availability-query';
 import { rangeOfPeriod, getSiteFilters } from './pages/shared/helpers';
 import PageLoading from './pages/shared/page-loading';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
-import { appendQueryStringForRedirection } from './utils';
+import { appendQueryStringForRedirection, normalizeChartDateParam } from './utils';
 
 const loadOverview = () =>
 	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview' );
@@ -191,6 +194,18 @@ export function site( context, next ) {
 		store,
 	} = context;
 
+	// Normalize chartStart/chartEnd once, here at the route boundary, so every
+	// downstream consumer of context.query (StatsSite and its children, plus
+	// redirects that forward context.query as-is) only ever sees a canonical
+	// YYYY-MM-DD string instead of whatever a hand-edited or old-format URL
+	// (e.g. an unpadded '2026-7-28') supplied.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
 
@@ -287,6 +302,19 @@ export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
 	const queryOptions = context.query;
+
+	// See the matching comment in site() above: normalize chartStart/chartEnd
+	// once, here at the route boundary, before getSummaryDateRangeFromQuery's
+	// strict YYYY-MM-DD parsing ever sees them. An unpadded value otherwise
+	// fails that strict check, silently discarding the whole chartStart/
+	// chartEnd pair and falling back to the default range.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const contextModule = context.params.module;
 	const filters = [
 		{
@@ -389,6 +417,26 @@ export function post( context, next ) {
 	if ( 0 === siteId ) {
 		window.location = '/stats';
 		return next();
+	}
+
+	// Resolve email tab availability in parallel with the chunk download, so the
+	// tab strip doesn't pop in after the page renders.
+	const state = context.store.getState();
+	const { supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	// Module state is often not loaded yet at route time (QueryJetpackModules runs
+	// after mount, and /me/sites does not carry active_modules), so only a definite
+	// "inactive" skips the warm-up; the page's own `enabled` check stays strict.
+	// The module store is read directly first: the fallback variant discards a
+	// definite `false` and can fall through to an unknown site option.
+	const subscriptionsModuleActive = isJetpackModuleActive( state, siteId, 'subscriptions' );
+	const canHaveEmailStats =
+		!! supportsEmailStats &&
+		( isSimpleSite( state, siteId ) ||
+			( subscriptionsModuleActive !== null
+				? subscriptionsModuleActive
+				: isJetpackModuleActive( state, siteId, 'subscriptions', true ) !== false ) );
+	if ( canHaveEmailStats && postId > 0 ) {
+		context.queryClient.prefetchQuery( postEmailStatsAvailabilityQueryOptions( siteId, postId ) );
 	}
 
 	context.primary = (
@@ -578,3 +626,4 @@ export { default as insights } from './pages/insights/controller';
 export { default as realtime } from './pages/realtime/controller';
 export { default as subscribers } from './pages/subscribers/controller';
 export { default as purchase } from './pages/purchase/controller';
+export { default as settings } from './pages/settings/controller';

@@ -7,6 +7,9 @@ val yarn_install_cmd = """
 	# Do not type-check packages on postinstall, we already have a unit test for that
 	export SKIP_TSC=true
 
+	# Only the desktop app (built on Buildkite) needs the Electron binary.
+	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+
 	# Install modules. We save to the file while also outputting it for visibility.
 	yarn_out="/tmp/yarn-json-output.json"
 	yarn --json | tee -a "${'$'}yarn_out"

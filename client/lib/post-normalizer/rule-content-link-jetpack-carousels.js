@@ -1,3 +1,5 @@
+import { safeLinkRe } from './utils';
+
 /**
  * The linkJetpackCarousels rule modifies all of the WordPress galleries in the content
  * to link you to their host website's carousel instead of the permalink for that specific image.
@@ -28,6 +30,11 @@ export default function linkJetpackCarousels( post, dom ) {
 			permalink = JSON.parse( extra ).permalink;
 		} catch ( e ) {
 			// doesn't look like the extra was valid JSON. Maybe this isn't really a gallery? Bail.
+			return post;
+		}
+		// The gallery markup is author controlled, and this permalink becomes an href. Anything
+		// that isn't a web address would run as a URI scheme when the reader clicks the image.
+		if ( ! safeLinkRe.test( permalink ) ) {
 			return post;
 		}
 		// find all the links and rewrite them to point to the carousel instead of the permalink

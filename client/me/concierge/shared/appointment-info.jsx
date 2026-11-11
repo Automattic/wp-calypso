@@ -52,7 +52,7 @@ class AppointmentInfo extends Component {
 								? translate( 'Session link' )
 								: translate(
 										'A link to start the session will appear here a few minutes before the session'
-								  ) }
+									) }
 						</FormLabel>
 						<div className="shared__appointment-info-start-session">
 							<FormTextInput

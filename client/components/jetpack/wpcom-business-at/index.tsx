@@ -11,6 +11,7 @@ import EligibilityWarnings, {
 } from 'calypso/blocks/eligibility-warnings';
 import {
 	getBlockingMessages,
+	getValidBlockingHold,
 	HardBlockingNotice,
 	hasBlockingHold as hasBlockingHoldFunc,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
@@ -115,6 +116,10 @@ function BlockingHoldNotice( {
 	if ( ! holds || suppressInstallNotice ) {
 		return null;
 	}
+	const blockingHold = getValidBlockingHold( holds );
+	if ( ! blockingHold ) {
+		return null;
+	}
 
 	// Get messages and override for the Jetpack product name.
 	const blockingMessages = getBlockingMessages( translate );
@@ -128,14 +133,18 @@ function BlockingHoldNotice( {
 	return (
 		<HardBlockingNotice
 			translate={ translate }
-			holds={ holds }
+			blockingHold={ blockingHold }
 			blockingMessages={ blockingMessages }
 		/>
 	);
 }
 
 function TransferFailureNotice( { transferStatus, productName }: TransferFailureNoticeProps ) {
-	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
+	if (
+		transferStatus !== transferStates.FAILURE &&
+		transferStatus !== transferStates.ERROR &&
+		transferStatus !== transferStates.CLIENT_TIMEOUT
+	) {
 		return null;
 	}
 
@@ -390,7 +399,8 @@ export default function WPCOMBusinessAT( {
 					size="medium"
 				>
 					<EligibilityWarnings
-						currentContext="hosting-features"
+						context="hosting-features"
+						inModal
 						atomicTransferAction={ content.atomicTransferAction }
 						showDataCenterPicker
 						standaloneProceed

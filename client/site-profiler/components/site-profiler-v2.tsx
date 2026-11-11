@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	getBasicMetricsFromPerfReport,
@@ -24,7 +24,6 @@ import { normalizeWhoisField } from '../utils/normalize-whois-entry';
 import { BasicMetrics } from './basic-metrics';
 import { DomainSection } from './domain-section';
 import { FootNote } from './footnote';
-import { GetReportForm } from './get-report-form';
 import { HealthSection } from './health-section';
 import { HostingSection } from './hosting-section';
 import { LandingPageHeader } from './landing-page-header';
@@ -49,7 +48,6 @@ export default function SiteProfilerV2( props: Props ) {
 	const perfomanceMetricsRef = useRef< HTMLElement >( null );
 	const healthMetricsRef = useRef< HTMLElement >( null );
 	const securityMetricsRef = useRef< HTMLElement >( null );
-	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
 		domain,
@@ -91,8 +89,6 @@ export default function SiteProfilerV2( props: Props ) {
 	const url = useMemo( () => getValidUrl( routerDomain ), [ routerDomain ] );
 
 	const { data: basicMetrics } = useUrlBasicMetricsQuery( url, hash, true );
-
-	const showGetReportForm = !! url && isGetReportFormOpen;
 
 	const { data: performanceMetrics } = useUrlPerformanceMetricsQuery( routerDomain, hash );
 
@@ -164,7 +160,6 @@ export default function SiteProfilerV2( props: Props ) {
 							performanceCategory={ performanceCategory }
 							isWordPress={ isWordPress }
 							isWpCom={ isWpCom }
-							onGetReport={ () => setIsGetReportFormOpen( true ) }
 						/>
 					</LayoutBlock>
 					<LayoutBlock width="medium">
@@ -209,7 +204,6 @@ export default function SiteProfilerV2( props: Props ) {
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							performanceMetricsRef={ perfomanceMetricsRef }
-							setIsGetReportFormOpen={ setIsGetReportFormOpen }
 						/>
 
 						<HealthSection
@@ -217,7 +211,6 @@ export default function SiteProfilerV2( props: Props ) {
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							healthMetricsRef={ healthMetricsRef }
-							setIsGetReportFormOpen={ setIsGetReportFormOpen }
 						/>
 
 						<SecuritySection
@@ -225,19 +218,12 @@ export default function SiteProfilerV2( props: Props ) {
 							hash={ hash ?? basicMetrics?.token }
 							hostingProvider={ hostingProviderData?.hosting_provider }
 							securityMetricsRef={ securityMetricsRef }
-							setIsGetReportFormOpen={ setIsGetReportFormOpen }
 						/>
 					</LayoutBlock>
 					{ ! isWpCom && <MigrationBannerBig url={ basicMetrics?.final_url } /> }
 				</>
 			) }
 			<FootNote />
-			<GetReportForm
-				url={ url }
-				token={ hash }
-				isOpen={ showGetReportForm }
-				onClose={ () => setIsGetReportFormOpen( false ) }
-			/>
 		</div>
 	);
 }

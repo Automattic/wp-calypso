@@ -113,12 +113,13 @@ export default function FeedItem( props: {
 						)
 					);
 				},
-				onError: () => {
+				onError: ( error ) => {
 					dispatch(
 						errorNotice(
-							isRecommendedBlogsList
-								? translate( 'Unable to add recommendation.' )
-								: translate( 'Unable to add feed to list.' )
+							error.message ||
+								( isRecommendedBlogsList
+									? translate( 'Unable to add recommendation.' )
+									: translate( 'Unable to add feed to list.' ) )
 						)
 					);
 				},

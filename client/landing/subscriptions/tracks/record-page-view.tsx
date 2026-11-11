@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
+import type { ReactNode } from 'react';
 
 const useRoutePath = () => {
 	const { pathname } = useLocation();
@@ -44,12 +46,26 @@ const useRoutePath = () => {
 	return pathname;
 };
 
-export default () => {
+export default function RecordPageView( { children }: { children: ReactNode } ) {
 	const routePath = useRoutePath();
+	const { pathname } = useLocation();
 
 	useEffect( () => {
 		recordPageView( routePath, document.title );
 	}, [ routePath ] );
 
-	return <></>;
-};
+	useEffect( () => {
+		// Child redirect effects run first and update the browser location.
+		if ( pathname !== window.location.pathname ) {
+			return;
+		}
+		recordUnifiedAdminPageView( {
+			source: 'calypso',
+			app: 'subscriptions',
+			path: pathname,
+			route: routePath,
+		} );
+	}, [ pathname, routePath ] );
+
+	return <>{ children }</>;
+}

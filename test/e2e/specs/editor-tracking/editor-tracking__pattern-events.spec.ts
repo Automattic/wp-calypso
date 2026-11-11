@@ -33,16 +33,24 @@ test.describe(
 			} );
 
 			// Both inserters use the same a8c pattern; "pattern_name" in the
-			// Tracks event is the pattern slug. The inline inserter relies on the
-			// empty-canvas "Add block" appender, so it must run before the sidebar
-			// insert fills the canvas.
+			// Tracks event is the pattern slug.
 			const patternName = 'About: Profile';
 			const patternNameInEventProperty = 'a8c/about-profile';
 
-			// From the inline inserter
+			// From the inline inserter. It is only rendered while an empty default
+			// block is selected, so the canvas is clicked first, and it is rendered
+			// as a popover in the editor parent rather than inside the canvas.
 			await test.step( `When I add pattern "${ patternName }" from inline inserter`, async () => {
 				const editorCanvas = await pageEditor.getEditorCanvas();
-				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' );
+				await editorCanvas
+					.locator( 'p[data-title="Paragraph"][data-empty="true"]' )
+					.first()
+					.click();
+
+				const editorParent = await pageEditor.getEditorParent();
+				const inserterLocator = editorParent.locator(
+					'.block-editor-block-list__empty-block-inserter button[aria-label="Add block"]'
+				);
 				await pageEditor.addPatternInline( patternName, inserterLocator );
 			} );
 

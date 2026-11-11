@@ -127,7 +127,7 @@ describe( 'reader stats', () => {
 			const result = buildReaderTracksEventProps( { custom: 'prop' }, '/discover' );
 
 			expect( result ).toEqual( {
-				ui_algo: 'freshly-pressed',
+				ui_algo: 'discover_recommended',
 				custom: 'prop',
 			} );
 		} );
@@ -165,7 +165,7 @@ describe( 'reader stats', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'test_event',
 				expect.objectContaining( {
-					ui_algo: 'freshly-pressed',
+					ui_algo: 'discover_recommended',
 					prop: 'value',
 				} )
 			);
@@ -644,11 +644,6 @@ describe( 'reader stats', () => {
 					description: 'reader feed page with post',
 				},
 				{
-					url: '/reader/search',
-					expected: 'search',
-					description: 'reader search page',
-				},
-				{
 					url: '/reader/conversations',
 					expected: 'conversations',
 					description: 'reader conversations page',
@@ -657,6 +652,16 @@ describe( 'reader stats', () => {
 					url: '/reader/conversations/a8c',
 					expected: 'conversations_a8c',
 					description: 'reader conversations a8c page',
+				},
+				{
+					url: '/reader/conversations/inbox',
+					expected: 'conversations_inbox',
+					description: 'reader conversations inbox',
+				},
+				{
+					url: '/reader/conversations/inbox/10/100',
+					expected: 'conversations_inbox',
+					description: 'reader conversations inbox with a conversation open',
 				},
 				{
 					url: '/reader/users/matt/recommended-blogs',
@@ -736,6 +741,12 @@ describe( 'reader stats', () => {
 			const scenarios = [
 				{
 					url: '/discover',
+					expected: 'discover_recommended',
+					description: 'discover recommended page',
+					searchParams: {},
+				},
+				{
+					url: '/discover/freshly-pressed',
 					expected: 'freshly-pressed',
 					description: 'freshly pressed page',
 					searchParams: {},
@@ -744,12 +755,6 @@ describe( 'reader stats', () => {
 					url: '/discover/add-new',
 					expected: 'discover_addnew',
 					description: 'discover add new page',
-					searchParams: {},
-				},
-				{
-					url: '/discover/reddit',
-					expected: 'discover_reddit',
-					description: 'discover reddit page',
 					searchParams: {},
 				},
 				{
@@ -771,6 +776,12 @@ describe( 'reader stats', () => {
 					searchParams: { selectedTag: 'test', sort: 'relevance' },
 				},
 				{
+					url: '/discover/search?q=test',
+					expected: 'search',
+					description: 'discover search page',
+					searchParams: { q: 'test' },
+				},
+				{
 					url: '/discover/wrong-url',
 					expected: 'discover_unknown',
 					description: 'discover wrong url',
@@ -787,8 +798,8 @@ describe( 'reader stats', () => {
 				}
 			);
 
-			it( 'returns freshly-pressed when there is no subpath', () => {
-				expect( getLocation( '/discover' ) ).toBe( 'freshly-pressed' );
+			it( 'returns discover_recommended when there is no subpath', () => {
+				expect( getLocation( '/discover' ) ).toBe( 'discover_recommended' );
 			} );
 
 			it( 'supports the /discover/recommended subpath', () => {

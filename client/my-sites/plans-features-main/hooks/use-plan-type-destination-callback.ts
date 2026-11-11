@@ -16,11 +16,14 @@ const usePlanTypeDestinationCallback = () => {
 		( props: Partial< PlanTypeSelectorProps >, additionalArgs: PathArgs = {} ) => {
 			const { intervalType = '' } = additionalArgs;
 
-			// Preserve redirect_to and plugin from the current URL so they survive interval changes.
+			// Preserve redirect_to, plugin and the checkout attribution (source, ai_session_id)
+			// from the current URL so they survive interval changes.
 			const currentSearchParams =
 				typeof window !== 'undefined' ? new URLSearchParams( window.location.search ) : null;
 			const currentRedirectTo = currentSearchParams?.get( 'redirect_to' );
 			const currentPlugin = currentSearchParams?.get( 'plugin' );
+			const currentSource = currentSearchParams?.get( 'source' );
+			const currentAiSessionId = currentSearchParams?.get( 'ai_session_id' );
 
 			const defaultArgs = {
 				customerType: undefined,
@@ -29,6 +32,8 @@ const usePlanTypeDestinationCallback = () => {
 				plan: props.selectedPlan,
 				...( currentRedirectTo && { redirect_to: currentRedirectTo } ),
 				...( currentPlugin && { plugin: currentPlugin } ),
+				...( currentSource && { source: currentSource } ),
+				...( currentAiSessionId && { ai_session_id: currentAiSessionId } ),
 			};
 			// remove empty values from additionalArgs
 			const _additionalArgs = Object.keys( additionalArgs ).reduce( ( acc, key ) => {

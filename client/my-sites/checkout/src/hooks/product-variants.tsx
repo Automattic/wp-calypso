@@ -25,35 +25,13 @@ import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { convertErrorToString } from '../lib/analytics';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
+import type { SitePlanData } from 'calypso/state/sites/plans/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
 const isError = ( err: unknown ): err is Error => err instanceof Error;
 
-export interface SitePlanData {
-	autoRenew?: boolean;
-	autoRenewDate?: string;
-	availableForDowngrade?: boolean;
-	availableForUpgrade?: boolean;
-	currencyCode: string;
-	currentPlan?: boolean;
-	expired?: boolean;
-	expiry?: string;
-	expiryDate?: string;
-	freeTrial?: boolean;
-	hasDomainCredit?: boolean;
-	hasRedeemedDomainCredit?: boolean;
-	id: number;
-	interval: number;
-	productName: string;
-	productSlug: string;
-	rawDiscount: string;
-	rawDiscountInteger: number;
-	rawPrice: number;
-	rawPriceInteger: number;
-	subscribedDate?: string;
-	userIsOwner?: boolean;
-}
+export type { SitePlanData };
 
 export interface SitesPlansResult {
 	data: SitePlanData[] | null;

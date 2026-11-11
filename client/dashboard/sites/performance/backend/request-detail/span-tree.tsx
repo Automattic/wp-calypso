@@ -1,11 +1,12 @@
 import './span-tree.scss';
 
-import { Badge } from '@automattic/ui';
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { Text } from '../../../../components/text';
 import { formatMs } from '../utils';
@@ -14,16 +15,16 @@ import type {
 	ApmDetailSpan,
 	ApmDetailSpanPrunedChildren,
 } from '@automattic/api-core';
+import type { ComponentProps } from 'react';
 
-type BadgeIntent = 'success' | 'warning' | 'error' | 'info' | 'default';
-const CATEGORY_INTENT: Record< string, BadgeIntent > = {
-	plugins: 'error',
-	db: 'warning',
-	external: 'warning',
-	cache: 'success',
-	wp_core: 'default',
-	template: 'info',
-	transaction: 'info',
+const CATEGORY_INTENT: Record< string, ComponentProps< typeof Badge >[ 'intent' ] > = {
+	plugins: 'high',
+	db: 'medium',
+	external: 'medium',
+	cache: 'stable',
+	wp_core: 'draft',
+	template: 'informational',
+	transaction: 'informational',
 };
 
 // Per-transaction average wall-clock time spent in a span (sum across every
@@ -97,7 +98,7 @@ function SpanRowContent( { node, rootMaxMs }: { node: SpanNode; rootMaxMs: numbe
 	const totalMs = avgTotalMsPerTx( node );
 	const selfMs = avgSelfMsPerTx( node );
 	const fraction = rootMaxMs > 0 ? totalMs / rootMaxMs : 0;
-	const intent = CATEGORY_INTENT[ node.category ] ?? 'default';
+	const intent = CATEGORY_INTENT[ node.category ] ?? 'none';
 	const subtitleParts: string[] = [];
 	if ( node.plugins?.plugin ) {
 		subtitleParts.push( node.plugins.plugin );
@@ -150,7 +151,7 @@ function SpanRowContent( { node, rootMaxMs }: { node: SpanNode; rootMaxMs: numbe
 						{ sprintf(
 							/* translators: %s is a count, possibly fractional (an average across transactions in the bucket). */
 							__( '%s calls/tx' ),
-							callsPerTx >= 10 ? callsPerTx.toFixed( 0 ) : callsPerTx.toFixed( 1 )
+							formatNumber( callsPerTx, { decimals: callsPerTx >= 10 ? 0 : 1 } )
 						) }
 					</Text>
 				) }
@@ -164,8 +165,8 @@ function PrunedChildrenContent( { pruned }: { pruned: ApmDetailSpanPrunedChildre
 		<Text variant="muted" size={ 12 }>
 			{ sprintf(
 				/* translators: 1: number of child spans hidden, 2: total time those spans took. */
-				__( '+ %1$d more child spans (%2$s total)' ),
-				pruned.count,
+				__( '+ %1$s more child spans (%2$s total)' ),
+				formatNumber( pruned.count ),
 				formatMs( pruned.total_sum_ms )
 			) }
 		</Text>
@@ -224,8 +225,8 @@ export default function SpanTree( {
 					<Text variant="muted" size={ 12 }>
 						{ sprintf(
 							/* translators: 1: number of additional spans not shown, 2: total self time. */
-							__( '+ %1$d additional spans pruned from the tree (%2$s self time)' ),
-							pruned.node_count,
+							__( '+ %1$s additional spans pruned from the tree (%2$s self time)' ),
+							formatNumber( pruned.node_count ),
 							formatMs( pruned.self_sum_ms )
 						) }
 					</Text>

@@ -7,7 +7,7 @@ import { shouldSuppressJetpackAiSidebarPreview } from '../jetpack-ai-sidebar-pre
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
 const BIG_SKY_PROVIDER =
 	'https://example.com/wp-content/plugins/big-sky/build/calypso-agent-provider/index.js';
-const BLOCK_NOTES_PROVIDER = 'block-notes/headless-agent-provider';
+const OTHER_PROVIDER = 'https://example.com/custom-agent-provider.js';
 
 const setAgentsManagerData = ( data ) => {
 	globalThis.agentsManagerData = data;
@@ -46,15 +46,15 @@ describe( 'shouldSuppressJetpackAiSidebarPreview', () => {
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
 	} );
 
-	it( 'does not suppress non-Jetpack providers like Block Notes', () => {
+	it( 'does not suppress non-Jetpack providers', () => {
 		window._currentSiteType = 'atomic';
 		setAgentsManagerData( {
 			sectionName: 'gutenberg',
-			agentProviders: [ BLOCK_NOTES_PROVIDER ],
+			agentProviders: [ OTHER_PROVIDER ],
 		} );
 
 		expect( shouldSuppressJetpackAiSidebarPreview() ).toBe( false );
-		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ BLOCK_NOTES_PROVIDER ] );
+		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ OTHER_PROVIDER ] );
 	} );
 
 	it( 'suppresses on non-Simple sites when the legacy sidebar is the only provider', () => {

@@ -32,7 +32,8 @@ export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 			},
 			summary: {
 				type: 'string',
-				description: 'A brief user-friendly description of what was changed.',
+				description:
+					'A concise confirmation of the concrete completed edit, in the language of the current user message. For spelling or grammar changes, name the exact corrections when they fit in one sentence; if there are too many, state the count. For example: Changed "stuffs" to "stuff". Never merely restate the request, scope, or action category. If the text is unchanged, say that no changes were needed.',
 			},
 			currentText: {
 				type: 'string',

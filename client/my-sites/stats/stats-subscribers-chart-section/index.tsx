@@ -5,11 +5,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
@@ -144,8 +143,7 @@ export default function SubscribersChartSection( {
 } ) {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const subscribersUrl = useSelector( ( state ) => getSubscribersUrl( state, siteId ) );
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
 		day: 30,
@@ -238,11 +236,6 @@ export default function SubscribersChartSection( {
 
 	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
-
-	const subscribersUrl =
-		isAtomic || isJetpack
-			? `https://cloud.jetpack.com/subscribers/${ slug }`
-			: `https://wordpress.com/subscribers/${ slug }`;
 
 	return (
 		<div ref={ containerRef } className="subscribers-section">

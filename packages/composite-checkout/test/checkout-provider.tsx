@@ -155,6 +155,20 @@ describe( 'CheckoutProvider', () => {
 		expect( onPaymentComplete ).toHaveBeenCalled();
 	} );
 
+	it( 'passes the active payment method and processor to onPaymentComplete', async () => {
+		const user = userEvent.setup();
+		const onPaymentComplete = jest.fn();
+		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
+		user.click( screen.getByText( 'Complete' ) );
+		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
+		expect( onPaymentComplete ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				paymentMethodId: mockMethod.id,
+				paymentProcessorId: mockMethod.paymentProcessorId,
+			} )
+		);
+	} );
+
 	it( 'does not call onPaymentComplete twice when transaction status is complete even if callback changes', async () => {
 		const user = userEvent.setup();
 		const onPaymentComplete = jest.fn();
@@ -260,6 +274,20 @@ describe( 'CheckoutProvider', () => {
 		expect( onPaymentError ).toHaveBeenCalled();
 	} );
 
+	it( 'passes the active payment method and processor to onPaymentError', async () => {
+		const onPaymentError = jest.fn();
+		const user = userEvent.setup();
+		render( <MyCheckout onPaymentError={ onPaymentError } /> );
+		user.click( screen.getByText( 'Cause Error' ) );
+		expect( await screen.findByText( 'Showing Error' ) ).toBeInTheDocument();
+		expect( onPaymentError ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				paymentMethodId: mockMethod.id,
+				paymentProcessorId: mockMethod.paymentProcessorId,
+			} )
+		);
+	} );
+
 	it( 'renders form as submitting when isValidating changed from true to false and transaction is submitting', async () => {
 		const onPaymentError = jest.fn();
 		const user = userEvent.setup();
@@ -286,7 +314,7 @@ describe( 'CheckoutProvider', () => {
 function createMockMethod(): PaymentMethod {
 	return {
 		id: 'mock',
-		paymentProcessorId: 'mock',
+		paymentProcessorId: 'mock-processor',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
 		submitButton: <button>Pay Please</button>,

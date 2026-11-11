@@ -31,7 +31,7 @@ import {
 	useFileBrowserContext,
 } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
-import { useLocale } from '../../app/locale';
+import { useIntlLocale, useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
 import { CardDivider } from '../../components/card';
 import Environment, { EnvironmentType } from '../../components/environment';
@@ -65,7 +65,7 @@ const DirectionArrow = () => {
 		<Icon
 			icon={ isRTL() ? chevronLeft : chevronRight }
 			style={ {
-				fill: '#949494',
+				color: '#949494',
 			} }
 		/>
 	);
@@ -303,11 +303,11 @@ function StagingSiteSyncModalInner( {
 		[ updateFilesAndFoldersCheckState ]
 	);
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const displayBackupDate = lastKnownBackupAttempt
 		? new Intl.DateTimeFormat( locale, { dateStyle: 'medium', timeStyle: 'short' } ).format(
 				new Date( lastKnownBackupAttempt.activityTs )
-		  )
+			)
 		: null;
 
 	const shouldDisableGranularSync = ! lastKnownBackupAttempt && ! isLoadingBackupAttempt;
@@ -433,10 +433,7 @@ function StagingSiteSyncModalInner( {
 				{ /* File selection and database controls */ }
 				<VStack spacing={ 5 }>
 					{ shouldDisableGranularSync ? (
-						<Notice
-							density="medium"
-							title={ __( 'All files, folders, and database will be synced' ) }
-						>
+						<Notice title={ __( 'All files, folders, and database will be synced' ) }>
 							<VStack spacing={ 2 }>
 								<Text as="p">
 									{ __(
@@ -546,11 +543,7 @@ function StagingSiteSyncModalInner( {
 								/>
 							</HStack>
 							{ hasWarning && (
-								<Notice
-									density="medium"
-									variant="warning"
-									title={ __( 'Warning! Database will be overwritten' ) }
-								>
+								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
 									<VStack spacing={ 2 }>
 										<Text as="p">
 											{ __(

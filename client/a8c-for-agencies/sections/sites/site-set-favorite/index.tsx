@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
+import { Tooltip } from '@wordpress/components';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -85,12 +86,12 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 							args: {
 								siteUrl,
 							},
-					  } )
+						} )
 					: translate( '%(siteUrl)s has been removed from your favorites.', {
 							args: {
 								siteUrl,
 							},
-					  } ) }
+						} ) }
 				{ ! showOnlyFavorites && (
 					<Button
 						className="site-set-favorite__view-favorite"
@@ -187,19 +188,25 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	};
 
 	return (
-		<Button
-			borderless
-			compact
-			disabled={ isPending }
-			onClick={ handleFavoriteChange }
-			className={ clsx(
-				'site-set-favorite__favorite-icon',
-				'disable-card-expand',
-				isFavorite && 'site-set-favorite__favorite-icon-active'
+		<Tooltip
+			text={ translate(
+				'Star your sites to mark them as favorites and easily access them from the sidebar menu.'
 			) }
-			aria-label={ translate( 'Toggle favorite site' ) }
 		>
-			<Icon size={ 24 } icon={ isFavorite ? starFilled : starEmpty } />
-		</Button>
+			<Button
+				borderless
+				compact
+				disabled={ isPending }
+				onClick={ handleFavoriteChange }
+				className={ clsx(
+					'site-set-favorite__favorite-icon',
+					'disable-card-expand',
+					isFavorite && 'site-set-favorite__favorite-icon-active'
+				) }
+				aria-label={ translate( 'Toggle favorite site' ) }
+			>
+				<Icon size={ 24 } icon={ isFavorite ? starFilled : starEmpty } />
+			</Button>
+		</Tooltip>
 	);
 }

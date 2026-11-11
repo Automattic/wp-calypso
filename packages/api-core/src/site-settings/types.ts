@@ -28,3 +28,10 @@ export type SiteMcpAbilities = Record<
 		enabled: boolean;
 	}
 >;
+
+export interface SitePremiumAnalyticsSettings {
+	/**
+	 * Absent when the site does not register the setting, as on a Jetpack too old to ship it.
+	 */
+	jetpack_premium_analytics_enabled?: boolean;
+}

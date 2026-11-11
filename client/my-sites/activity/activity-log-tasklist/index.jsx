@@ -329,7 +329,7 @@ class ActivityLogTasklist extends Component {
 										count: numberOfUpdates,
 										args: { updates: numberOfUpdates },
 									}
-							  )
+								)
 							: translate( 'You have one update available' )
 					}
 					{ 1 < numberOfUpdates && (

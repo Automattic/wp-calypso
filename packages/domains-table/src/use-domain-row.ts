@@ -149,7 +149,7 @@ export const useDomainRow = (
 				isVipSite: site?.is_vip,
 				onPointToWpcomClick,
 				showBusyButton,
-		  } )
+			} )
 		: null;
 
 	const sslStatus = currentDomainData?.sslStatus ?? null;

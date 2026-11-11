@@ -68,12 +68,6 @@
 		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-gridicon-hover-fill: currentColor;
 		--color-sidebar-gridicon-selected-fill: var( --color-sidebar-menu-selected-text );
-
-		// The W-icon dropdown's second group hardcodes a light grey for the white
-		// menu; match the surrounding dark groups instead of that grey.
-		.masterbar__item-my-sites + .masterbar__item-subitems {
-			--color-masterbar-submenu-group-background: inherit;
-		}
 	}
 
 	.reader-onboarding-modal__footer {
@@ -111,6 +105,7 @@
 
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
+				color: var( --color-link );
 				fill: var( --color-link );
 			}
 		}
@@ -151,8 +146,8 @@
 		border-color: var( --color-neutral-20 );
 		color: var( --color-text );
 
-		svg,
-		svg * {
+		svg {
+			color: inherit;
 			fill: currentColor;
 		}
 	}
@@ -181,30 +176,24 @@
 
 	.interests-modal__topic-pill.is-selected,
 	.topic-group-card__subscribe.is-subscribed.components-button.is-primary,
-	.subscribe-modal__preview-stream-header .button.follow-button.has-button-style.is-following,
-	.subscribe-modal__preview-stream-header .button.follow-button.has-button-style.is-following:hover {
+	.subscribe-modal .button.follow-button.has-button-style.is-following,
+	.subscribe-modal .button.follow-button.has-button-style.is-following:hover {
 		background-color: var( --wp-components-color-foreground );
 		border-color: var( --wp-components-color-foreground );
 		color: var( --wp-components-color-foreground-inverted );
 	}
 
-	.subscribe-modal__preview-stream-header
-		.button.follow-button.has-button-style.is-following
-		svg.reader-following-feed,
-	.subscribe-modal__preview-stream-header
-		.button.follow-button.has-button-style.is-following
-		svg.reader-following-feed
-		* {
+	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed {
+		color: var( --wp-components-color-foreground-inverted );
 		fill: var( --wp-components-color-foreground-inverted );
 	}
 
-	.subscribe-modal__preview-stream-header
-		.button.follow-button.has-button-style.is-following
-		.follow-button__label {
+	.subscribe-modal .button.follow-button.has-button-style.is-following .follow-button__label {
 		color: var( --wp-components-color-foreground-inverted );
 	}
 
-	.subscribe-modal__site-list-column .reader-subscription-list-item.is-selected {
+	.subscribe-modal__site-list-column .reader-subscription-list-item.is-selected,
+	.subscribe-modal__site-list-column .subscribe-modal__site-card.is-selected {
 		background-color: color-mix(
 			in srgb,
 			var( --wp-admin-theme-color ) 12%,

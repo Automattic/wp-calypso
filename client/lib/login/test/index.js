@@ -273,4 +273,14 @@ describe( 'formatPluginNames', () => {
 		const result = formatPluginNames( 'jetpack-ai,woocommerce-payments', translate, 'fr' );
 		expect( result ).toBe( 'Jetpack et WooPayments' );
 	} );
+
+	it( 'should return an empty string for null input', () => {
+		expect( formatPluginNames( null, translate ) ).toBe( '' );
+	} );
+
+	it( 'should ignore names that only match Object.prototype keys', () => {
+		expect( formatPluginNames( 'constructor,woocommerce-payments', translate ) ).toBe(
+			'WooPayments'
+		);
+	} );
 } );

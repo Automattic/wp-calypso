@@ -11,7 +11,6 @@ export const A4A_SITES_LINK_FAVORITE = '/sites?is_favorite';
 export const A4A_SITES_LINK_DEVELOPMENT = '/sites?is_development';
 export const A4A_SITES_LINK_WALKTHROUGH_TOUR = `${ A4A_SITES_LINK }?tour=sites-walkthrough`;
 export const A4A_SITES_LINK_ADD_NEW_SITE_TOUR = '/sites?tour=add-new-site';
-export const A4A_SITES_CONNECT_URL_LINK = '/sites/connect-url';
 export const A4A_PLUGINS_LINK = '/plugins';
 export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
@@ -40,6 +39,7 @@ export const A4A_MIGRATIONS_LINK = '/migrations';
 export const A4A_MIGRATIONS_OVERVIEW_LINK = `${ A4A_MIGRATIONS_LINK }/overview`;
 export const A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-pressable`;
 export const A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-wpcom`;
+export const A4A_MIGRATIONS_IMPORT_SITE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/import-site`;
 export const A4A_MIGRATIONS_COMMISSIONS_LINK = `${ A4A_MIGRATIONS_LINK }/commissions`;
 export const A4A_MIGRATIONS_PAYMENT_SETTINGS = `${ A4A_MIGRATIONS_LINK }/payment-settings`;
 export const A4A_SETTINGS_LINK = '/settings';
@@ -56,15 +56,16 @@ export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/
 export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-setup`;
 export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 export const A4A_EXCLUSIVE_OFFERS_LINK = '/exclusive-offers';
-export const A4A_AMPLIFY_LINK = '/amplify';
-export const A4A_AMPLIFY_REPORTS_LINK = `${ A4A_AMPLIFY_LINK }/reports`;
+export const A4A_PROSPECT_REPORTS_LINK = '/prospect-reports';
 export const A4A_RESOURCES_LINK = '/resources-and-tools';
 export const A4A_LEARN_LINK = `${ A4A_RESOURCES_LINK }/learn`;
 export const A4A_AGENT_STUDIO_LINK = `${ A4A_RESOURCES_LINK }/agent-studio`;
 export const A4A_DEV_TOOLS_LINK = `${ A4A_RESOURCES_LINK }/dev-tools`;
 export const A4A_AI_MCP_LINK = `${ A4A_RESOURCES_LINK }/ai-mcp`;
-export const A4A_AI_MCP_AVAILABLE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/tools`;
+export const A4A_AI_MCP_READ_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/read`;
+export const A4A_AI_MCP_WRITE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/write`;
 export const A4A_AI_MCP_CONNECT_LINK = `${ A4A_AI_MCP_LINK }/connect`;
+export const A4A_AI_MCP_STARTER_PROMPTS_LINK = `${ A4A_AI_MCP_LINK }/prompts`;
 export const A4A_BENCHMARKS_LINK = `${ A4A_RESOURCES_LINK }/benchmarks`;
 
 // Client
@@ -85,3 +86,4 @@ export const EXTERNAL_WPCOM_BILLING_HISTORY_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL
 
 // Pressable External links
 export const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';
+export const EXTERNAL_PRESSABLE_USAGE_URL = 'https://my.pressable.com/usage';

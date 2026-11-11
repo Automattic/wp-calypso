@@ -1,5 +1,6 @@
 import { useSiteIntent, Onboard } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
+import isSiteOnECommerceTrial from 'calypso/state/sites/plans/selectors/trials/is-site-on-ecommerce-trial';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import type { PlansIntent } from '@automattic/plans-grid-next';
@@ -14,12 +15,26 @@ interface IntentFromSiteMeta {
 const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const isECommerceTrial = useSelector( ( state ) =>
+		isSiteOnECommerceTrial( state, selectedSiteId ?? null )
+	);
 	const siteIntentResponse = useSiteIntent( selectedSiteId );
 
 	if ( siteIntentResponse.isFetching ) {
 		return {
 			processing: true,
 			intent: undefined, // undefined -> we haven't observed any metadata yet
+		};
+	}
+
+	// A site on the eCommerce free trial has no `site_intent` (the trial is created
+	// without a plan in the cart), so scope its plans to the commerce-oriented grid.
+	// Only the eCommerce trial is handled here; the other trial types (personal,
+	// migration, hosting, woo-hosted) are intentionally left untouched in this change.
+	if ( isECommerceTrial ) {
+		return {
+			processing: false,
+			intent: 'plans-business-trial',
 		};
 	}
 

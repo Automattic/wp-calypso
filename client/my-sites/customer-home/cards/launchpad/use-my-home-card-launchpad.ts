@@ -1,9 +1,9 @@
 import {
-	TemporaryDismiss,
 	useLaunchpadDismisser,
 	useSortedLaunchpadTasks,
-} from '@automattic/data-stores';
-import { type Task } from '@automattic/launchpad';
+	type Task,
+	type TemporaryDismiss,
+} from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -30,7 +30,7 @@ export function useMyHomeCardLaunchpad( { checklistSlug, launchpadContext }: Use
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
 	const hasChecklist = checklist !== undefined && checklist !== null;
-	const launchpadTitle = hasChecklist ? title ?? translate( 'Next steps for your site' ) : ' ';
+	const launchpadTitle = hasChecklist ? ( title ?? translate( 'Next steps for your site' ) ) : ' ';
 
 	const temporaryDismiss = ( { dismissBy }: Pick< TemporaryDismiss, 'dismissBy' > ) => {
 		dismiss( {

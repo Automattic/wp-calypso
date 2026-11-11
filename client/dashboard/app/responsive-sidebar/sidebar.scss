@@ -26,8 +26,10 @@
 	bottom: 0;
 }
 
+// Without a logo, the first menu item lines up with the page title row
+// instead; the 2px offsets the menu's focus-ring padding.
 .dashboard-responsive-sidebar__sidebar:not( :has( > .dashboard-responsive-sidebar__logo ) ) {
-	padding-block-start: $grid-unit-30;
+	padding-block-start: $grid-unit-30 - 2px;
 }
 
 // Aligns the first menu item with the content area below the page title:

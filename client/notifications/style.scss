@@ -228,6 +228,7 @@ html.touch #wpnc-panel {
 			// `.wpnc-app` ancestor outranks the app's `.is-open` transform.
 			.wpnc-app .wpnc-app__detail-pane {
 				transform: none;
+				visibility: visible;
 			}
 		}
 
@@ -275,7 +276,7 @@ div.reader-notifications__panel {
 
 	--3pc-notice-external-height: 50px;
 	@media only screen and ( min-width: $breakpoint-flyout ) {
-		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
+		--3pc-notice-external-height: 0px;
 	}
 
 	#wpnc-panel.wpnc__main {

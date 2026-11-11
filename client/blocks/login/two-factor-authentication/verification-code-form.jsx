@@ -8,13 +8,20 @@ import { connect } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	formUpdate,
 	loginUserWithTwoFactorVerificationCode,
 	sendSmsCode,
 } from 'calypso/state/login/actions';
-import { getTwoFactorAuthNonce, getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
+import {
+	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
+	isTwoFactorEnhancedSecurityEnabled,
+} from 'calypso/state/login/selectors';
+import { getTwoFactorHelpText } from './get-two-factor-help-text';
+import { getVerificationCodeErrorMessage } from './get-verification-code-error-message';
 import TwoFactorActions from './two-factor-actions';
 
 import './verification-code-form.scss';
@@ -22,6 +29,8 @@ import './verification-code-form.scss';
 class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isEnhancedSecurityEnabled: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -83,7 +92,12 @@ class VerificationCodeForm extends Component {
 				onSuccess();
 			} )
 			.catch( ( error ) => {
-				this.setState( { isDisabled: false } );
+				// The two-step endpoint sends no fresh nonce with this error, so another
+				// submit would reuse the stale one and fail the same way. Leave the form
+				// disabled rather than offer a retry that cannot work. The message reaches
+				// the user through the page-level notice, because the error carries the
+				// `global` field, and the login footer already links back to /log-in.
+				this.setState( { isDisabled: error.code === 'invalid_two_step_nonce' } );
 
 				this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_failure', {
 					error_code: error.code,
@@ -98,31 +112,21 @@ class VerificationCodeForm extends Component {
 
 	render() {
 		const {
+			isEnhancedSecurityEnabled,
 			translate,
 			twoFactorAuthRequestError: requestError,
 			twoFactorAuthType,
 			switchTwoFactorAuthType,
 			twoFactorEmailNonce,
+			isGravPoweredClient,
 		} = this.props;
 
 		let buttonText = translate( 'Continue' );
-		let helpText = translate( 'Enter the code from your authenticator app.' );
-		let labelText = translate( '6-Digit code' );
+		let labelText = translate( 'Verification code' );
 		let smallPrint;
-
-		if ( twoFactorEmailNonce ) {
-			helpText = translate( 'Enter the code from the email we sent you.' );
-			labelText = translate( '9-Digit code' );
-		}
-
-		if ( twoFactorAuthType === 'sms' ) {
-			helpText = translate( 'Enter the code from the text message we sent you.' );
-		}
+		let enhancedSecurityNotice;
 
 		if ( twoFactorAuthType === 'backup' ) {
-			helpText = translate(
-				'Enter a backup code to continue. Use one of the 10 codes you received during setup.'
-			);
 			labelText = translate( 'Backup code' );
 			smallPrint = (
 				<div className="two-factor-authentication__small-print">
@@ -138,6 +142,20 @@ class VerificationCodeForm extends Component {
 				</div>
 			);
 			buttonText = translate( 'Continue with backup code' );
+
+			// Without passkey support, a backup code is the only way in for these accounts.
+			if ( isEnhancedSecurityEnabled && ! isWebAuthnSupported() ) {
+				enhancedSecurityNotice = (
+					<p className="verification-code-form__help-text">
+						{ translate(
+							'Enhanced account security is on, so you need a passkey or security key to log in.'
+						) }{ ' ' }
+						{ translate(
+							'This browser doesn’t support passkeys or security keys, so use a backup code instead.'
+						) }
+					</p>
+				);
+			}
 		}
 
 		return (
@@ -146,7 +164,13 @@ class VerificationCodeForm extends Component {
 				onSubmit={ this.onSubmitForm }
 			>
 				<Card className="two-factor-authentication__verification-code-form">
-					<p className="verification-code-form__help-text">{ helpText }</p>
+					{ enhancedSecurityNotice }
+					{ /* Every other client shows this as the subtitle of the account template. */ }
+					{ isGravPoweredClient && (
+						<p className="verification-code-form__help-text">
+							{ getTwoFactorHelpText( twoFactorAuthType, !! twoFactorEmailNonce, translate ) }
+						</p>
+					) }
 
 					<FormFieldset>
 						<FormLabel htmlFor="twoStepCode">{ labelText }</FormLabel>
@@ -158,13 +182,22 @@ class VerificationCodeForm extends Component {
 							isError={ requestError && requestError.field === 'twoStepCode' }
 							id="twoStepCode"
 							name="twoStepCode"
-							method={ twoFactorAuthType }
+							// An email nonce means the code was emailed, whatever the route says.
+							// Resolved the same way onSubmitForm does.
+							method={ twoFactorEmailNonce ? 'email' : twoFactorAuthType }
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
 							placeholder={ this.props.verificationCodeInputPlaceholder }
 						/>
 						{ requestError && requestError.field === 'twoStepCode' && (
-							<FormInputValidation isError text={ requestError.message } />
+							<FormInputValidation
+								isError
+								text={ getVerificationCodeErrorMessage(
+									requestError,
+									twoFactorAuthType,
+									translate
+								) }
+							/>
 						) }
 
 						{ smallPrint }
@@ -192,6 +225,7 @@ class VerificationCodeForm extends Component {
 
 export default connect(
 	( state ) => ( {
+		isEnhancedSecurityEnabled: isTwoFactorEnhancedSecurityEnabled( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		twoFactorEmailNonce: getTwoFactorAuthNonce( state, 'email' ),
 	} ),

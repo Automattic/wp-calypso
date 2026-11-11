@@ -25,7 +25,7 @@ const BusinessTrialIncluded: FunctionComponent< Props > = ( props ) => {
 	let whatsIncluded = displayAll
 		? allIncludedFeatures
 		: // Show only first 4 items
-		  allIncludedFeatures.slice( 0, 4 );
+			allIncludedFeatures.slice( 0, 4 );
 
 	if ( displayOnlyActionableItems ) {
 		whatsIncluded = whatsIncluded.filter( ( item ) => item.buttonClick );

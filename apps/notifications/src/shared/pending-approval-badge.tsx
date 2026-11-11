@@ -1,7 +1,7 @@
 import { Icon, pending } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type JSX } from 'react';
-import { getCommentsUrl, getReferenceId } from '../panel/helpers/notes';
+import { getModerateCommentsLink } from '../panel/helpers/notes';
 import type { Note } from '../app/types';
 
 import './pending-approval-badge.scss';
@@ -12,7 +12,7 @@ interface PendingApprovalBadgeProps {
 
 const PendingApprovalBadge = ( { note }: PendingApprovalBadgeProps ): JSX.Element => {
 	const translate = useTranslate();
-	const commentsUrl = getCommentsUrl( getReferenceId( note, 'site' ) );
+	const commentsUrl = getModerateCommentsLink( note );
 
 	return (
 		<div className="wpnc-pending-approval-badge">

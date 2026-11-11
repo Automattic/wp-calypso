@@ -91,7 +91,7 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 				hour: 'numeric',
 				minute: 'numeric',
 				hour12: true,
-		  } )
+			} )
 		: __( 'Unknown', __i18n_text_domain__ );
 
 	const authorName = author?.name || author?.display_name || __( 'Unknown', __i18n_text_domain__ );
@@ -112,7 +112,7 @@ export function FileDetails( { attachmentId }: FileDetailsProps ) {
 					__( '%1$d × %2$d', __i18n_text_domain__ ),
 					width,
 					height
-			  )
+				)
 			: __( 'Unknown', __i18n_text_domain__ );
 
 	// Extract filename from source_url

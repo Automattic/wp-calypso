@@ -1,17 +1,24 @@
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
+import { createBootProgressCallbacks } from './boot-progress';
 import { PLAYGROUND_HOST } from './constants';
+import { PlaygroundNotFoundError } from './playground-not-found-error';
+import type { PlaygroundBootProgress } from './boot-progress';
 import type { Blueprint, BlueprintV1, MountDescriptor, PlaygroundClient } from './types';
-
-const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
 	recommendedPhpVersion: string,
 	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void,
-	onPlaygroundClientLoaded?: () => void
-): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
+	onPlaygroundClientLoaded?: () => void,
+	onBootProgress?: ( progress: PlaygroundBootProgress ) => void
+): Promise< {
+	blueprint: Blueprint | null;
+	client: PlaygroundClient;
+	// True when no saved Playground was requested, so a blank one was created.
+	isNewPlayground: boolean;
+} > {
 	let isWordPressInstalled = false;
 	let needsUrlUpdate = false;
 
@@ -27,30 +34,74 @@ export async function initializeWordPressPlayground(
 	}
 
 	try {
+		// The Calypso Playground ID is also the saved-site slug used by the export API.
+		const playgroundSlug = playgroundId;
 		const mountDescriptor: MountDescriptor = {
 			device: {
 				type: 'opfs',
-				path: `${ OPFS_PATH_PREFIX }/${ playgroundId }/`,
+				path: `/sites/site-${ encodeURIComponent( playgroundSlug ) }`,
 			},
 			mountpoint: '/wordpress',
 			initialSyncDirection: isWordPressInstalled ? 'opfs-to-memfs' : 'memfs-to-opfs',
 		};
 
 		const blueprint = await getBlueprint( isWordPressInstalled, recommendedPhpVersion );
-		const { startPlaygroundWeb } = await import(
+		const { getBlueprintDeclaration, startPlaygroundWeb } = await import(
 			/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
 		);
 		onPlaygroundClientLoaded?.();
-		const client = await startPlaygroundWeb( {
-			iframe,
-			remoteUrl: PLAYGROUND_HOST + '/remote.html',
-			blueprint: blueprint as BlueprintV1,
-			shouldInstallWordPress: ! isWordPressInstalled,
-			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
-		} );
+		let client: PlaygroundClient;
+		try {
+			client = await startPlaygroundWeb( {
+				iframe,
+				remoteUrl: PLAYGROUND_HOST + '/remote.html',
+				scope: playgroundSlug,
+				blueprint: blueprint as BlueprintV1,
+				shouldInstallWordPress: ! isWordPressInstalled,
+				mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
+				...( onBootProgress && ! isWordPressInstalled
+					? createBootProgressCallbacks( onBootProgress )
+					: {} ),
+			} );
+		} catch ( error ) {
+			if ( isWordPressInstalled ) {
+				throw new PlaygroundNotFoundError( playgroundId, error );
+			}
+			throw error;
+		}
 
 		if ( ! isWordPressInstalled ) {
+			const blueprintDeclaration = await getBlueprintDeclaration( blueprint );
+			await client.writeFile(
+				'/wordpress/wp-runtime.json',
+				JSON.stringify(
+					{
+						id: playgroundSlug,
+						name: 'WordPress.com Playground',
+						originalBlueprint: blueprintDeclaration,
+						originalBlueprintSource: { type: 'none' },
+						persistence: 'explicit',
+						runtimeConfiguration: {
+							constants: blueprintDeclaration.constants ?? {},
+							extraLibraries: blueprintDeclaration.extraLibraries ?? [],
+							intl: blueprintDeclaration.features?.intl ?? false,
+							networking: blueprintDeclaration.features?.networking ?? true,
+							phpVersion: blueprintDeclaration.preferredVersions?.php ?? recommendedPhpVersion,
+							wpVersion: blueprintDeclaration.preferredVersions?.wp ?? 'latest',
+						},
+						slug: playgroundSlug,
+						storage: 'opfs',
+					},
+					null,
+					2
+				)
+			);
 			await client.mountOpfs( mountDescriptor );
+
+			// mountOpfs() starts the final journal flush without waiting for it, and each
+			// flush pass holds PHP's single-request semaphore. Wait for it here so the
+			// first request after the Playground becomes interactive isn't queued behind it.
+			await client.flushOpfs( mountDescriptor.mountpoint );
 		}
 
 		await client.isReady();
@@ -59,12 +110,10 @@ export async function initializeWordPressPlayground(
 			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
 		}
 
-		return { blueprint, client };
+		return { blueprint, client, isNewPlayground: needsUrlUpdate };
 	} catch ( error ) {
-		if ( needsUrlUpdate ) {
-			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
-		}
-
+		// Don't persist a freshly generated ID in the URL: nothing was written to OPFS,
+		// so a retry would otherwise try to restore a playground that never existed.
 		logToLogstash( {
 			feature: 'calypso_client',
 			tags: [ 'playground-setup' ],

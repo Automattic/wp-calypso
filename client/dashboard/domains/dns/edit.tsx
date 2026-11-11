@@ -58,7 +58,7 @@ export default function DomainEditDNS() {
 		const recordToAdd = config.transformData( formData, domainName, typeFormData.type );
 
 		const recordsToAdd: DnsRecord[] = [ recordToAdd ];
-		const recordsToRemove: DnsRecord[] = [ recordToEdit ];
+		const recordsToRemove: DnsRecord[] = [ record ];
 
 		mutation.mutate(
 			{ recordsToAdd, recordsToRemove },

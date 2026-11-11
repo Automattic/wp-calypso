@@ -32,12 +32,7 @@ export interface StatusRejected {
 }
 
 export type Status =
-	| StatusPending
-	| StatusScanned
-	| StatusApproved
-	| StatusConsumed
-	| StatusExpired
-	| StatusRejected;
+	StatusPending | StatusScanned | StatusApproved | StatusConsumed | StatusExpired | StatusRejected;
 
 export const KNOWN_STATUSES: ReadonlyArray< Status[ 'status' ] > = [
 	'pending',

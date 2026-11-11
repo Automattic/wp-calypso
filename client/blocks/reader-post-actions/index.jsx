@@ -8,6 +8,7 @@ import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import { canSavePost } from 'calypso/reader/data/saved-posts';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentsOpen,
@@ -15,8 +16,9 @@ import {
 	isRebloggable,
 	isLikeable,
 } from 'calypso/reader/post/capabilities';
-import { useSpacePicker } from 'calypso/reader/spaces/subscribe-with-space/use-space-picker';
+import { useShelfPicker } from 'calypso/reader/shelves/subscribe-with-shelf/use-shelf-picker';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import './style.scss';
 
@@ -35,18 +37,20 @@ const ReaderPostActions = ( {
 	split = false,
 } ) => {
 	const translate = useTranslate();
-	const showSpaces = isEnabled( 'reader/spaces' );
-	const { openSpacePicker, spacePickerModal } = useSpacePicker( {
+	const showShelves = isEnabled( 'reader/shelves' );
+	const { openShelfPicker, shelfPickerModal } = useShelfPicker( {
 		feedId: post.feed_ID,
 		blogId: post.site_ID,
 		feedUrl: post.feed_URL || post.site_URL,
 		source: 'post_actions',
 	} );
 	const hasSites = !! useSelector( getPrimarySiteId );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
+	const showSave = isEnabled( 'reader/saved-posts' ) && isLoggedIn && canSavePost( post );
 	const listClassnames = clsx( 'reader-post-actions', className, {
 		'is-discreet': variant === 'discreet',
 		'is-split': split,
@@ -55,14 +59,14 @@ const ReaderPostActions = ( {
 	return (
 		<>
 			<ul className={ listClassnames }>
-				{ showSpaces && (
+				{ showShelves && (
 					<li className="reader-post-actions__item">
 						<Button
-							className="reader-post-actions__space-button"
+							className="reader-post-actions__shelf-button"
 							icon={ category }
 							iconSize={ iconSize }
-							label={ translate( 'Move site to a space' ) }
-							onClick={ openSpacePicker }
+							label={ translate( 'Move site to a shelf' ) }
+							onClick={ openShelfPicker }
 						/>
 					</li>
 				) }
@@ -83,7 +87,7 @@ const ReaderPostActions = ( {
 						/>
 					</li>
 				) }
-				{ isEnabled( 'reader/saved-posts' ) && (
+				{ showSave && (
 					<li className="reader-post-actions__item">
 						<ReaderSaveButton post={ post } iconSize={ iconSize } />
 					</li>
@@ -121,7 +125,7 @@ const ReaderPostActions = ( {
 					</li>
 				) }
 			</ul>
-			{ showSpaces && spacePickerModal }
+			{ showShelves && shelfPickerModal }
 		</>
 	);
 };

@@ -59,8 +59,9 @@ export const SitesSortingDropdown = ( {
 		},
 	];
 
-	const currentSortingLabel = choices.find( ( { sortKey } ) => sortKey === sitesSorting.sortKey )
-		?.label;
+	const currentSortingLabel = choices.find(
+		( { sortKey } ) => sortKey === sitesSorting.sortKey
+	)?.label;
 
 	// Use ALPHABETICAL_SORTING as fallback if current value doesn't match any dropdown option
 	const validSorting = currentSortingLabel === undefined ? ALPHABETICAL_SORTING : sitesSorting;

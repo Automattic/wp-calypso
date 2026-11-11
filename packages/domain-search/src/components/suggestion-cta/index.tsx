@@ -1,6 +1,7 @@
+import { isDomainMoveInternal } from '@automattic/calypso-products';
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { envelope } from '@wordpress/icons';
+import { arrowRight, envelope, plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useSuggestion } from '../../hooks/use-suggestion';
@@ -17,7 +18,7 @@ export interface DomainSuggestionCTAProps {
 }
 
 export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) => {
-	const { cart, events, queries } = useDomainSearch();
+	const { cart, config, events, queries } = useDomainSearch();
 	const suggestion = useSuggestion( domainName );
 
 	const queryClient = useQueryClient();
@@ -91,6 +92,20 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 		return <DomainSuggestionContinueCTA disabled={ isMutating } onClick={ events.onContinue } />;
 	}
 
+	// Moving a domain the user already owns is a choice rather than a purchase.
+	const isDomainMove = isDomainMoveInternal( suggestion );
+
+	let selectIcon;
+	let selectLabel;
+
+	if ( config.showSelectCta ) {
+		selectIcon = plus;
+		selectLabel = __( 'Select' );
+	} else if ( isDomainMove ) {
+		selectIcon = arrowRight;
+		selectLabel = __( 'Move' );
+	}
+
 	const errorMessage = isCurrentMutation && error?.message;
 
 	if ( errorMessage ) {
@@ -98,6 +113,7 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 			<DomainSuggestionErrorCTA
 				errorMessage={ errorMessage }
 				callback={ () => addToCart( { acceptedTrademarkClaim: false } ) }
+				label={ selectLabel }
 			/>
 		);
 	}
@@ -111,7 +127,11 @@ export const DomainSuggestionCTA = ( { domainName }: DomainSuggestionCTAProps ) 
 					events.onSuggestionInteract( suggestion );
 					addToCart( { acceptedTrademarkClaim: false } );
 				} }
-			/>
+				icon={ selectIcon }
+				label={ selectLabel }
+			>
+				{ selectLabel }
+			</DomainSuggestionPrimaryCTA>
 			{ availability?.trademark_claims_notice_info && trademarkClaimModalOpen && (
 				<DomainSearchTrademarkClaimsModal
 					domainName={ domainName }

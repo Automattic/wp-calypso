@@ -40,11 +40,11 @@ const PremiumBadge = ( {
 		? __(
 				'Let your site stand out from the crowd with a modern and stylish Premium theme. Premium themes are included in your plan.',
 				__i18n_text_domain__
-		  )
+			)
 		: __(
 				'Let your site stand out from the crowd with a modern and stylish Premium theme.',
 				__i18n_text_domain__
-		  );
+			);
 
 	const divRef = useRef( null );
 	const labelRef = useRef< HTMLDivElement >( null );

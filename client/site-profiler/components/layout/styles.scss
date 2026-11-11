@@ -23,7 +23,7 @@
 
 	&.width-medium {
 		.l-block-wrapper {
-			max-width: 1056px; // matches the .lpc-footer-nav-wrapper max-width
+			max-width: 1056px; // sized to the pre-2026 footer width; kept to avoid reflowing this page
 		}
 	}
 }
@@ -31,7 +31,7 @@
 .l-block-wrapper {
 	max-width: 1224px;
 	margin: 0 auto;
-	padding: 0 20px; // matches .lpc-footer-nav padding
+	padding: 0 20px;
 
 	.l-block-col-2 {
 		gap: 5rem;
@@ -59,7 +59,7 @@
 	}
 
 	@media (max-width: $break-small) {
-		padding: 0 16px; // matches .lpc-footer-nav padding
+		padding: 0 16px;
 	}
 }
 

@@ -1,10 +1,10 @@
-import { Badge } from '@automattic/ui';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useLocale } from '../../../app/locale';
 import { getUtcOffsetDisplay } from '../../../utils/datetime';
-import { formatLogDateTimeForDisplay } from '../utils';
+import { formatLogDateTimeForDisplay, formatLogDetailValue, toRequestTypeIntent } from '../utils';
 import type { ServerLog, ServerData } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import './style.scss';
@@ -26,22 +26,22 @@ export default function DetailsModalServer( {
 		date: formatted,
 		request_type: item.request_type,
 		status: item.status,
-		request_url: item.request_url,
-		body_bytes_sent: String( item.body_bytes_sent ),
-		cached: item.cached,
-		http_host: item.http_host,
-		http_referer: item.http_referer,
-		http2: item.http2,
-		http_user_agent: item.http_user_agent,
-		http_version: item.http_version,
-		http_x_forwarded_for: item.http_x_forwarded_for,
-		renderer: item.renderer,
-		request_completion: item.request_completion,
-		request_time: item.request_time,
-		scheme: item.scheme,
-		timestamp: String( item.timestamp ),
-		type: item.type,
-		user_ip: item.user_ip,
+		request_url: formatLogDetailValue( item.request_url ),
+		body_bytes_sent: formatLogDetailValue( item.body_bytes_sent ),
+		cached: formatLogDetailValue( item.cached ),
+		http_host: formatLogDetailValue( item.http_host ),
+		http_referer: formatLogDetailValue( item.http_referer ),
+		http2: formatLogDetailValue( item.http2 ),
+		http_user_agent: formatLogDetailValue( item.http_user_agent ),
+		http_version: formatLogDetailValue( item.http_version ),
+		http_x_forwarded_for: formatLogDetailValue( item.http_x_forwarded_for ),
+		renderer: formatLogDetailValue( item.renderer ),
+		request_completion: formatLogDetailValue( item.request_completion ),
+		request_time: formatLogDetailValue( item.request_time ),
+		scheme: formatLogDetailValue( item.scheme ),
+		timestamp: formatLogDetailValue( item.timestamp ),
+		type: formatLogDetailValue( item.type ),
+		user_ip: formatLogDetailValue( item.user_ip ),
 	};
 
 	const fields: Field< ServerData >[] = [
@@ -60,9 +60,7 @@ export default function DetailsModalServer( {
 			label: __( 'Request Type' ),
 			type: 'text',
 			render: ( { item }: { item: ServerData } ) => (
-				<Badge intent="default" className={ `badge--${ item.request_type }` }>
-					{ item.request_type }
-				</Badge>
+				<Badge intent={ toRequestTypeIntent( item.request_type ) }>{ item.request_type }</Badge>
 			),
 			readOnly: true,
 		},

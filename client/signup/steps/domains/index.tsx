@@ -1,24 +1,23 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import {
-	isDomainForGravatarFlow,
-	isEcommerceFlow,
-	isFreeFlow,
-	isWithThemeFlow,
-} from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isFreeFlow, isWithThemeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import {
+	getSearchUiVersion,
+	withSearchUiVersion,
+} from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import {
 	domainMapping,
 	domainAddNew,
@@ -29,7 +28,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -71,9 +70,11 @@ const DomainSearchUI = (
 
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
+	const showNamePulseSearch = isDomainOnlyFlow;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
+	const dispatch = useDispatch();
 
 	const siteSlug = queryObject.siteSlug;
 	const siteId = queryObject.siteId;
@@ -87,15 +88,16 @@ const DomainSearchUI = (
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery, clearQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery, resetQuery } = useQueryHandler( {
 		initialQuery: queryObject.new,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const events = useMemo( () => {
 		return {
 			onQueryChange: setQuery,
-			onQueryClear: clearQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			beforeAddDomainToCart: ( product: MinimalRequestCartProduct ) => {
 				if ( isDomainForGravatarFlow( flowName ) ) {
 					return {
@@ -270,6 +272,8 @@ const DomainSearchUI = (
 		siteSlug,
 		setQuery,
 		clearQuery,
+		resetQuery,
+		showNamePulseSearch,
 		submitSignupStep,
 		goToNextStep,
 		goToStep,
@@ -287,7 +291,7 @@ const DomainSearchUI = (
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( allowedTldParam )
 			? allowedTldParam
-			: allowedTldParam?.split( ',' ) ?? [];
+			: ( allowedTldParam?.split( ',' ) ?? [] );
 
 		return {
 			vendor: getSuggestionsVendor( {
@@ -296,19 +300,24 @@ const DomainSearchUI = (
 				flowName: flowName,
 			} ),
 			allowedTlds,
-			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable:
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
 			allowsUsingOwnDomain: ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
+			showNamePulseSearch,
 		};
-	}, [ flowName, isDomainOnlyFlow, isOnboardingWithEmailFlow, allowedTldParam ] );
+	}, [
+		flowName,
+		isDomainOnlyFlow,
+		isOnboardingWithEmailFlow,
+		allowedTldParam,
+		showNamePulseSearch,
+	] );
 
 	const slots = useMemo( () => {
 		return {
 			BeforeResults: () => {
 				if (
-					isDomainOnlyFlow ||
 					isDomainForGravatarFlow( flowName ) ||
 					isFreeFlow( flowName ) ||
 					isOnboardingWithEmailFlow
@@ -380,19 +389,15 @@ const DomainSearchUI = (
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = __( 'Back to themes' );
-		} else if ( 'plans-first' === flowName ) {
-			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = defaultBackUrl;
 			backLabelText = sitesBackLabelText;
 
-			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
-			const isSafeBackTo =
-				isRelativeUrl( backTo ) ||
-				dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
+			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
+			const safeBackTo = getSafeUrl( backTo );
 
-			if ( isSafeBackTo ) {
-				backUrl = backTo;
+			if ( safeBackTo ) {
+				backUrl = safeBackTo;
 				backLabelText = __( 'Back' );
 			}
 		}
@@ -412,7 +417,17 @@ const DomainSearchUI = (
 		return (
 			<Button
 				className="step-wrapper__navigation-link forward"
-				onClick={ () => events.onExternalDomainClick( query ) }
+				onClick={ () => {
+					if ( isDomainOnlyFlow ) {
+						dispatch(
+							withSearchUiVersion(
+								recordUseYourDomainButtonClick( 'domain-first', 'header', flowName ),
+								getSearchUiVersion( showNamePulseSearch )
+							)
+						);
+					}
+					events.onExternalDomainClick( query );
+				} }
 				variant="link"
 			>
 				<span>{ __( 'Use a domain I already own' ) }</span>
@@ -421,12 +436,12 @@ const DomainSearchUI = (
 	};
 
 	// For /start flows, we want to show the free domain for a year discount for all flows
-	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
+	// except if we're in a site context, in the free flow or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
 		if (
 			siteSlug ||
 			siteId ||
-			isMonthlyOrFreeFlow( flowName ) ||
+			isFreeFlow( flowName ) ||
 			isDomainOnlyFlow ||
 			isDomainForGravatarFlow( flowName )
 		) {
@@ -447,7 +462,8 @@ const DomainSearchUI = (
 			hideBack={ hideBack }
 			backUrl={ backUrl }
 			backLabelText={ backLabelText }
-			isWideLayout
+			isWideLayout={ ! config.showNamePulseSearch }
+			isFullLayout={ config.showNamePulseSearch }
 			stepContent={
 				<WPCOMDomainSearch
 					className="domain-search--step-wrapper"

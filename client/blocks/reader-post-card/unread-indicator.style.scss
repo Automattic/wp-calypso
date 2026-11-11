@@ -1,0 +1,22 @@
+.reader-post-card__unread-indicator {
+	position: absolute;
+	inset-inline-start: -14px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--color-primary);
+}
+
+.reader-post-card.card.is-unread {
+	.reader-post-card__byline,
+	&.is-compact .reader-post-card__title {
+		position: relative;
+	}
+
+	// Compact cards have no avatar, so align the dot with the title's first line.
+	&.is-compact .reader-post-card__title .reader-post-card__unread-indicator {
+		top: 14px;
+	}
+}

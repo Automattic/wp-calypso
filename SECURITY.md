@@ -16,8 +16,6 @@ Only the latest version of WordPress desktop is supported. To receive security u
 
 Calypso is an open-source wp-admin replacement. Our HackerOne program covers the software.
 
-<!--eslint ignore no-emphasis-as-heading-->
-
 **For responsible disclosure of security issues and to be eligible for our bug bounty program, please submit your report via the [HackerOne](https://hackerone.com/automattic) portal.**
 
 Our most critical targets are:
@@ -26,8 +24,6 @@ Our most critical targets are:
 - cloud.jetpack.com
 
 For more targets, see the `In Scope` section on [HackerOne](https://hackerone.com/automattic).
-
-<!--eslint ignore no-emphasis-as-heading-->
 
 _Please note that the **WordPress software is a separate entity** from Automattic. Please report vulnerabilities for WordPress through [the WordPress Foundation's HackerOne page](https://hackerone.com/wordpress)._
 

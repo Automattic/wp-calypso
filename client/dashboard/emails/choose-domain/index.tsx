@@ -1,5 +1,6 @@
 import { Domain, DomainSubtype, DomainSummary } from '@automattic/api-core';
-import { useQuery } from '@tanstack/react-query';
+import { domainQuery, domainsQuery } from '@automattic/api-queries';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -14,22 +15,49 @@ import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
-import { chooseEmailSolutionRoute } from '../../app/router/emails';
+import {
+	addMailboxRoute,
+	chooseDomainRoute,
+	chooseEmailSolutionRoute,
+} from '../../app/router/emails';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import {
+	hasEmailForwards,
+	hasGSuiteWithUs,
+	hasTitanMailWithUs,
+	isGoogleWorkspaceSupportedDomain,
+} from '../../utils/domain';
 import AddNewDomain from '../components/add-new-domain';
+import { MailboxProvider } from '../types';
 
 import './styles.css';
 
-export default function ChooseDomain() {
-	const { queries } = useAppContext();
-	const router = useRouter();
+// When false, the user goes to the per-domain plans page instead.
+function canBuyPlanDirectly( domain: Domain, provider: MailboxProvider ) {
+	if ( provider === MailboxProvider.Google && ! isGoogleWorkspaceSupportedDomain( domain ) ) {
+		return false;
+	}
 
-	const { data: allDomains, isLoading: isLoading } = useQuery( queries.domainsQuery() );
+	return (
+		domain.current_user_can_add_email &&
+		! hasTitanMailWithUs( domain ) &&
+		! hasGSuiteWithUs( domain ) &&
+		! hasEmailForwards( domain )
+	);
+}
+
+export default function ChooseDomain() {
+	const router = useRouter();
+	const queryClient = useQueryClient();
+	const { provider, interval, tier } = chooseDomainRoute.useSearch();
+
+	const { data: allDomains, isLoading: isLoading } = useQuery( domainsQuery() );
+	// Non-owners are allowed through: the next step explains what they can't buy via
+	// EmailNonDomainOwnerNotice rather than hiding the domain outright.
 	const eligibleDomains = ( allDomains ?? [] ).filter(
-		( d ) => d.current_user_is_owner && d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
 	const { recordTracksEvent } = useAnalytics();
@@ -51,10 +79,30 @@ export default function ChooseDomain() {
 		return eligibleDomains.filter( ( d ) => d.domain.toLowerCase().includes( q ) );
 	}, [ eligibleDomains, search ] );
 
-	const handleDomainClick = ( d: DomainSummary ) => {
+	const fetchDomain = async ( domainName: string ) => {
+		try {
+			return await queryClient.ensureQueryData( domainQuery( domainName ) );
+		} catch {
+			return undefined;
+		}
+	};
+
+	const handleDomainClick = async ( d: DomainSummary ) => {
 		recordTracksEvent( 'calypso_dashboard_emails_choose_domain_domain_click', {
 			domain: d.domain,
 		} );
+
+		if ( provider && interval ) {
+			const domain = await fetchDomain( d.domain );
+			if ( domain && canBuyPlanDirectly( domain, provider ) ) {
+				router.navigate( {
+					to: addMailboxRoute.to,
+					params: { domain: d.domain, provider, interval },
+					search: { tier },
+				} );
+				return;
+			}
+		}
 
 		router.navigate( {
 			to: chooseEmailSolutionRoute.to,

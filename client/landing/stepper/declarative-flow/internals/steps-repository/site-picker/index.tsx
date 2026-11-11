@@ -5,7 +5,7 @@ import {
 } from '@automattic/sites';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -22,13 +22,14 @@ import type { SiteExcerptData } from '@automattic/sites';
 import './styles.scss';
 
 const SitePickerStep: Step< {
+	accepts: { skipConfirmation?: boolean };
 	submits: {
 		action: 'update-query' | 'create-site' | 'select-site';
 		queryParams?: Partial< SitesDashboardQueryParams >;
 		site?: SiteExcerptData;
 		host?: string;
 	};
-} > = function SitePickerStep( { navigation } ) {
+} > = function SitePickerStep( { navigation, skipConfirmation = false } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -40,6 +41,8 @@ const SitePickerStep: Step< {
 	const ref = urlQueryParams.get( 'ref' );
 	const [ destinationSite, setDestinationSite ] = useState< SiteExcerptData >();
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
+	// Some destinations leave via a full page load, which keeps the picker clickable until it unloads.
+	const hasSelectedSiteRef = useRef( false );
 	const siteCount = useSelector( getCurrentUserSiteCount );
 
 	// Fetch hosting provider when ref=move-lp and we have a from URL
@@ -66,7 +69,11 @@ const SitePickerStep: Step< {
 
 	const onQueryParamChange = ( params: Partial< SitesDashboardQueryParams > ) => {
 		recordTracksEvent( 'calypso_import_site_picker_query_param_change', params );
-		navigation.submit?.( { action: 'update-query', queryParams: params } );
+		navigation.submit?.( {
+			action: 'update-query',
+			queryParams: params,
+			shouldSkipSubmitTracking: true,
+		} );
 	};
 
 	const createNewSite = () => {
@@ -76,6 +83,11 @@ const SitePickerStep: Step< {
 	};
 
 	const selectSite = ( site: SiteExcerptData ) => {
+		if ( hasSelectedSiteRef.current ) {
+			return;
+		}
+		hasSelectedSiteRef.current = true;
+
 		recordTracksEvent( 'calypso_import_site_picker_select_site', {
 			id: site?.ID,
 			slug: site?.slug,
@@ -86,6 +98,9 @@ const SitePickerStep: Step< {
 	};
 
 	const onSelectSite = ( site: SiteExcerptData ) => {
+		if ( skipConfirmation ) {
+			return selectSite( site );
+		}
 		setDestinationSite( site );
 		setShowConfirmModal( true );
 	};
@@ -121,7 +136,7 @@ const SitePickerStep: Step< {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				goBack={ () => history.back() }
+				goBack={ navigation.goBack ?? ( () => history.back() ) }
 				stepContent={
 					<SitePicker
 						page={ page }

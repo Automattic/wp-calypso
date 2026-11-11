@@ -1,8 +1,9 @@
 import { Button, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, Tooltip } from '@wordpress/components';
 import { chevronRight, reusableBlock } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import {
@@ -73,6 +74,18 @@ export default function LayoutBodyContent( {
 	);
 
 	const accountStatus = getAccountStatus( tipaltiData );
+
+	const paymentStatusBadge = ( () => {
+		if ( ! accountStatus ) {
+			return undefined;
+		}
+		const badge = <Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>;
+		return accountStatus.statusReason ? (
+			<Tooltip text={ accountStatus.statusReason }>{ badge }</Tooltip>
+		) : (
+			badge
+		);
+	} )();
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	const bankAccountCTAText = hasPayeeAccount
@@ -150,7 +163,7 @@ export default function LayoutBodyContent( {
 												}
 											},
 										},
-								  ]
+									]
 								: []
 						}
 						renderClient={ ( item ) => (
@@ -244,15 +257,7 @@ export default function LayoutBodyContent( {
 									primary: ! hasPayeeAccount,
 									compact: true,
 								} }
-								statusProps={
-									accountStatus
-										? {
-												children: accountStatus?.status,
-												type: accountStatus?.statusType,
-												tooltip: accountStatus?.statusReason,
-										  }
-										: undefined
-								}
+								status={ paymentStatusBadge }
 							/>
 						</StepSection>
 						<StepSection

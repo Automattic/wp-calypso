@@ -282,6 +282,7 @@ export default function CampaignItemDetails( props: Props ) {
 	// todo uncomment this line when we check that clicks are tracked through smart
 	// const tspClicksFormatted =
 	// 	tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
+	const dailyBudgetFormatted = `$${ formatCents( ( budget_cents || 0 ) / 100, 2 ) }`;
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
 	const weeklySpend = weekly_budget_used || 0;
 
@@ -292,6 +293,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
+	const campaignStartFormatted = moment.utc( start_date ).format( 'MMMM DD, YYYY' );
 
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
 	const languagesListFormatted = languagesList
@@ -307,7 +309,7 @@ export default function CampaignItemDetails( props: Props ) {
 			? formatAmount(
 					conversion_value[ conversion_last_currency_found ],
 					conversion_last_currency_found
-			  )
+				)
 			: '-';
 	const conversionsRateFormatted = conversion_rate
 		? `${ ( conversion_rate * 100 ).toFixed( 2 ) }%`
@@ -336,7 +338,7 @@ export default function CampaignItemDetails( props: Props ) {
 				/* translators: %s is the duration in days */
 				_n( '%s day', '%s days', duration_days ),
 				formatNumber( duration_days, true )
-		  )
+			)
 		: '';
 
 	const initialRange =
@@ -551,7 +553,7 @@ export default function CampaignItemDetails( props: Props ) {
 			? __( 'If you continue, your campaign will immediately stop running.' )
 			: __(
 					"If you continue, an approval request for your ad will be canceled, and the campaign won't start."
-			  );
+				);
 
 	const shouldShowStats =
 		!! ui_status &&
@@ -953,6 +955,14 @@ export default function CampaignItemDetails( props: Props ) {
 									<div className="campaign-item__header-status-item">
 										{ translate( 'Created:' ) } { campaignCreatedFormatted }
 									</div>
+									{ ui_status === campaignStatus.SCHEDULED && start_date && (
+										<>
+											<span>&bull;</span>
+											<div className="campaign-item__header-status-item">
+												{ translate( 'Starts:' ) } { campaignStartFormatted }
+											</div>
+										</>
+									) }
 									<span>&bull;</span>
 									<div className="campaign-item__header-status-item">
 										{ translate( 'Author:' ) } { display_name }
@@ -980,7 +990,7 @@ export default function CampaignItemDetails( props: Props ) {
 									components: {
 										wpcomTos: (
 											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												href={ localizeUrl( 'https://automattic.com/tos/' ) }
 												target="_blank"
 												rel="noopener noreferrer"
 											/>
@@ -1180,14 +1190,12 @@ export default function CampaignItemDetails( props: Props ) {
 													<div>
 														<div className="campaign-item-page__graph">
 															<DropdownMenu
-																class="campaign-item-page__graph-selector"
 																controls={ chartControls }
 																icon={ chevronDown }
 																text={ ChartSourceDateRangeLabels[ selectedDateRange ] }
 																label={ ChartSourceDateRangeLabels[ selectedDateRange ] }
 															/>
 															<DropdownMenu
-																class="campaign-item-page__graph-selector"
 																controls={ [
 																	{
 																		onClick: () => setChartSource( ChartSourceOptions.Clicks ),
@@ -1258,7 +1266,28 @@ export default function CampaignItemDetails( props: Props ) {
 											</div>
 										) : (
 											<>
-												{ is_evergreen ? (
+												{ is_evergreen && ! shouldShowStats && (
+													<div>
+														<span className="campaign-item-details__label">
+															{ __( 'Weekly budget' ) }
+														</span>
+														<span className="campaign-item-details__text wp-brand-font">
+															{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+														</span>
+														<span className="campaign-item-details__details">
+															{ ! isLoading ? (
+																sprintf(
+																	/* translators: %s is the daily budget, e.g. $5.00 */
+																	__( '%s per day' ),
+																	dailyBudgetFormatted
+																)
+															) : (
+																<FlexibleSkeleton />
+															) }
+														</span>
+													</div>
+												) }
+												{ is_evergreen && shouldShowStats && (
 													<div>
 														<span className="campaign-item-details__label">
 															{ __( 'Weekly spend' ) }
@@ -1290,7 +1319,8 @@ export default function CampaignItemDetails( props: Props ) {
 															</span>
 														) }
 													</div>
-												) : (
+												) }
+												{ ! is_evergreen && (
 													<div>
 														<span className="campaign-item-details__label">
 															{ __( 'Total Budget' ) }
@@ -1497,7 +1527,7 @@ export default function CampaignItemDetails( props: Props ) {
 																</div>
 															</div>
 														);
-												  } )
+													} )
 												: [] }
 											{ orders && orders.length > 0 && (
 												<div className="campaign-item-details__weekly-orders-row">

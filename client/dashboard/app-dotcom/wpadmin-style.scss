@@ -26,11 +26,6 @@ html.is-wpadmin-style {
 		--page-layout-block-padding: 32px;
 	}
 
-	// This version drops the Discover page; the sidebar entry goes with it.
-	.dashboard-sidebar__menu-item[href='/discover'] {
-		display: none;
-	}
-
 	.dashboard-section-header.is-level-1 .dashboard-section-header__description {
 		font-size: 14px;
 		line-height: 20px;
@@ -67,10 +62,7 @@ html.is-wpadmin-style {
 
 	.site-trial-ended__title,
 	.site-trial-ended__price .plan-price__integer,
-	.email-provider-name,
-	.discover-hero-title,
-	.discover-community-title,
-	.discover-dev-duo-title {
+	.email-provider-name {
 		font-family: $default-font;
 	}
 

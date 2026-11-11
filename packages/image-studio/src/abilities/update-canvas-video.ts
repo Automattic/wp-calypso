@@ -1,9 +1,10 @@
 /**
  * Update Canvas Video Ability
  *
- * WordPress Ability for refreshing the Image Studio canvas after a new video
- * clip is generated. The agent calls this once the clip is ready, replacing the
- * previous behaviour of scraping the raw conversation history client-side.
+ * WordPress Ability for refreshing the Image Studio canvas after the backend
+ * generates a new video clip. The agent calls this once `wpcom/generate-video-for-studio`
+ * returns a successful result, replacing the previous behaviour of scraping the
+ * raw conversation history client-side.
  */
 
 import { registerAbility } from '@wordpress/abilities';
@@ -32,8 +33,7 @@ import { trackImageStudioImageGenerated } from '../utils/tracking';
  */
 async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 	const editor = select( 'core/editor' ) as unknown as
-		| { getCurrentPostId: () => number | null; getCurrentPostType: () => string | null }
-		| undefined;
+		{ getCurrentPostId: () => number | null; getCurrentPostType: () => string | null } | undefined;
 
 	const postId = editor?.getCurrentPostId?.() ?? null;
 	const postType = editor?.getCurrentPostType?.() ?? 'post';

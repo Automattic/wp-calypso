@@ -11,18 +11,22 @@ import {
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
+	setWwwPrimaryDomain,
 	type BundleMetadata,
-	type FetchDomainsOptions,
 	type JobStatus,
 	type DomainSuggestionQuery,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { withPrototypeOverride } from './prototype-overrides';
 import { queryClient } from './query-client';
+import { siteQueryFilter } from './site';
+import { siteDomainsQuery } from './site-domains';
+import { sitesQueryKey } from './sites';
 
-export const domainsQuery = ( options?: FetchDomainsOptions ) =>
+export const domainsQuery = () =>
 	queryOptions( {
-		queryKey: [ 'domains', options ],
-		queryFn: () => fetchDomains( options ),
+		queryKey: [ 'domains', 'all' ],
+		queryFn: withPrototypeOverride( 'domains', () => fetchDomains() ),
 	} );
 
 export const domainSuggestionsQuery = (
@@ -50,11 +54,16 @@ export const freeSuggestionQuery = (
 // `with_bundles=1` `/domains/suggestions` call, so they share a query key and
 // React Query dedupes them to a single network request even when both consumers
 // are enabled on the same query. The two exports below spread this query and add
-// a `select` picking their half of the response.
-export const bundleMetadataQuery = ( query: string ) =>
+// a `select` picking their half of the response. `params` mirror the plain
+// suggestions request so the two lists match (DOMAINS-2238); they are part of
+// the key because a different filter is a different list.
+export const bundleMetadataQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
 	queryOptions( {
-		queryKey: [ 'domain-bundle-metadata', query ],
-		queryFn: () => fetchBundleMetadata( query ),
+		queryKey: [ 'domain-bundle-metadata', query, params ],
+		queryFn: () => fetchBundleMetadata( query, params ),
 		meta: { persist: false },
 	} );
 
@@ -63,15 +72,23 @@ export const bundleMetadataQuery = ( query: string ) =>
 const selectBundleSuggestion = ( data: BundleMetadata ) => data.bundle_suggestion;
 const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
 
-export const bundleSuggestionQuery = ( query: string ) => ( {
-	...bundleMetadataQuery( query ),
-	select: selectBundleSuggestion,
-} );
+export const bundleSuggestionQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleSuggestion,
+	} );
 
-export const bundleTriggersQuery = ( query: string ) => ( {
-	...bundleMetadataQuery( query ),
-	select: selectBundleTriggers,
-} );
+export const bundleTriggersQuery = (
+	query: string,
+	params: Partial< DomainSuggestionQuery > = {}
+) =>
+	queryOptions( {
+		...bundleMetadataQuery( query, params ),
+		select: selectBundleTriggers,
+	} );
 
 export const bundleForDomainQuery = ( fqdn: string ) =>
 	queryOptions( {
@@ -153,4 +170,18 @@ export const bulkDomainsActionMutation = () =>
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );
 		},
+	} );
+
+export const setWwwPrimaryDomainMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'domain-www-primary-toggle' },
+		mutationFn: ( { domain, enabled }: { siteId: number; domain: string; enabled: boolean } ) =>
+			setWwwPrimaryDomain( domain, enabled ),
+		onSuccess: ( data, { siteId } ) =>
+			Promise.all( [
+				queryClient.invalidateQueries( siteQueryFilter( siteId ) ),
+				queryClient.invalidateQueries( { queryKey: sitesQueryKey } ),
+				queryClient.invalidateQueries( siteDomainsQuery( siteId ) ),
+				queryClient.invalidateQueries( { queryKey: [ 'domains' ] } ),
+			] ),
 	} );

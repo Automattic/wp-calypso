@@ -3,12 +3,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
 import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
-import { titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getTitanEmailItem, getTitanProductSlug } from './titan-email-item';
 import './style.scss';
 
 class EmailsStep extends Component {
@@ -18,16 +18,10 @@ class EmailsStep extends Component {
 
 	handleAddEmail = () => {
 		const { flowName, signupDependencies, stepName } = this.props;
-		const { domainItem } = signupDependencies;
+		const { domainItem, tier, billing } = signupDependencies;
 
 		const emailItem = domainItem?.meta
-			? titanMailYearly( {
-					domain: domainItem.meta,
-					quantity: 1,
-					extra: {
-						new_quantity: 1,
-					},
-			  } )
+			? getTitanEmailItem( domainItem.meta, tier, billing )
 			: undefined;
 
 		// It may be cleaner to call handleSkip() if emailItem is undefined.
@@ -90,6 +84,10 @@ class EmailsStep extends Component {
 			<div className="emails__register-email-step">
 				<CalypsoShoppingCartProvider>
 					<EmailSignupTitanCard
+						productSlug={ getTitanProductSlug(
+							signupDependencies.tier,
+							signupDependencies.billing
+						) }
 						siteUrl={ signupDependencies.domainItem?.meta }
 						addButtonTitle={ translate( 'Add' ) }
 						skipButtonTitle={ translate( 'Skip' ) }

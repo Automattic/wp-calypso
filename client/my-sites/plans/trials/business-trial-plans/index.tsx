@@ -30,7 +30,7 @@ export function BusinessTrialPlans( props: BusinessTrialPlansProps ) {
 						productSlug: upgradePlanSlug,
 						siteSlug,
 						addOn: cartItemForStorageAddOn,
-				  } )
+					} )
 				: `/checkout/${ siteSlug }/${ upgradePlanSlug }`;
 
 			page( checkoutUrl );

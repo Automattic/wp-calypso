@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
+import { isTwoFactorEnhancedSecurityEnabled } from 'calypso/state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
 import './security-key-form.scss';
@@ -14,6 +15,7 @@ import './security-key-form.scss';
 class SecurityKeyForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isEnhancedSecurityEnabled: PropTypes.bool,
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -29,6 +31,7 @@ class SecurityKeyForm extends Component {
 
 	state = {
 		isAuthenticating: false,
+		isDisabled: false,
 	};
 
 	componentDidMount() {
@@ -41,11 +44,28 @@ class SecurityKeyForm extends Component {
 		this.props
 			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
-			.catch( () => this.setState( { isAuthenticating: false } ) );
+			.catch( ( error ) =>
+				// Retrying would resend the same stale nonce and fail the same way. The
+				// page-level notice shows the server message and the login footer links
+				// back to /log-in, so stop offering a retry that cannot work.
+				this.setState( {
+					isAuthenticating: false,
+					isDisabled: error?.code === 'invalid_two_step_nonce',
+				} )
+			);
 	};
 
 	render() {
-		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
+		const { translate, isEnhancedSecurityEnabled, isWoo, switchTwoFactorAuthType } = this.props;
+
+		// Rendered inside whichever block is showing, so it takes that block's alignment.
+		const enhancedSecurityText = isEnhancedSecurityEnabled && (
+			<p>
+				{ translate(
+					'Enhanced account security is on, so you need a passkey or security key to log in.'
+				) }
+			</p>
+		);
 
 		return (
 			<form
@@ -72,6 +92,7 @@ class SecurityKeyForm extends Component {
 									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
+							{ enhancedSecurityText }
 						</div>
 					) }
 					{ this.state.isAuthenticating && (
@@ -85,13 +106,14 @@ class SecurityKeyForm extends Component {
 									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
 								) }
 							</p>
+							{ enhancedSecurityText }
 						</div>
 					) }
 					<Button
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
 						variant="primary"
-						disabled={ this.state.isAuthenticating }
+						disabled={ this.state.isAuthenticating || this.state.isDisabled }
 						type="submit"
 						accessibleWhenDisabled
 						__next40pxDefaultSize
@@ -109,8 +131,13 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, {
-	formUpdate,
-	loginUserWithSecurityKey,
-	recordTracksEvent,
-} )( localize( SecurityKeyForm ) );
+export default connect(
+	( state ) => ( {
+		isEnhancedSecurityEnabled: isTwoFactorEnhancedSecurityEnabled( state ),
+	} ),
+	{
+		formUpdate,
+		loginUserWithSecurityKey,
+		recordTracksEvent,
+	}
+)( localize( SecurityKeyForm ) );

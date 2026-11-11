@@ -1,3 +1,4 @@
+import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 import store from 'store';
 
 // Store token into local storage
@@ -22,6 +23,6 @@ export function storeToken( context ) {
 	const { next = '/' } = context.query;
 
 	// Validate that next is a safe relative path to prevent DOM XSS and open redirect.
-	const isSafe = next.startsWith( '/' ) && ! next.startsWith( '//' );
+	const isSafe = determineUrlType( next ) === URL_TYPE.PATH_ABSOLUTE;
 	document.location.replace( isSafe ? next : '/' );
 }

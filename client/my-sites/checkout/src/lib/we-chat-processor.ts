@@ -1,3 +1,4 @@
+import { fetchTransactionOrder } from '@automattic/api-core';
 import {
 	makeRedirectResponse,
 	makeErrorResponse,
@@ -7,7 +8,6 @@ import { createElement } from 'react';
 import { flushSync } from 'react-dom';
 import { Root, createRoot } from 'react-dom/client';
 import userAgent from 'calypso/lib/user-agent';
-import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import getPostalCode from '../lib/get-postal-code';
@@ -16,6 +16,7 @@ import { addUrlToPendingPageRedirect } from './pending-page';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import { WeChatConfirmation } from './we-chat-confirmation';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { TransactionOrder } from '@automattic/api-core';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
 	WPCOMTransactionEndpointResponse,
@@ -43,13 +44,12 @@ export default async function weChatProcessor(
 		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	const baseURL = new URL(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com'
@@ -135,11 +135,17 @@ export default async function weChatProcessor(
 			);
 
 			let orderStatus = 'processing';
+			let orderFailureMessage: string | undefined;
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
-				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+				const order = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
+				orderStatus = order.processing_status;
+				orderFailureMessage = order.error_message;
 			}
 			if ( orderStatus !== 'success' ) {
-				throw new Error( explicitClosureMessage ?? genericFailureMessage );
+				// Prefer the specific, backend-translated Stripe failure message
+				// (e.g. "Your card has insufficient funds.") over the generic
+				// fallback, matching what synchronous card failures show. See SHILL-1811.
+				throw new Error( explicitClosureMessage ?? orderFailureMessage ?? genericFailureMessage );
 			}
 
 			const responseData: Partial< WPCOMTransactionEndpointResponseSuccess > = {
@@ -158,18 +164,18 @@ async function pollForOrderStatus(
 	orderId: number,
 	pollInterval: number,
 	genericErrorMessage: string
-): Promise< PurchaseOrderStatus > {
-	const orderData = await fetchPurchaseOrder( orderId );
+): Promise< TransactionOrder > {
+	const orderData = await fetchTransactionOrder( orderId );
 	if ( ! orderData ) {
 		// eslint-disable-next-line no-console
 		console.error( 'Order was not found.' );
 		throw new Error( genericErrorMessage );
 	}
 	if ( orderData.processing_status === 'success' ) {
-		return orderData.processing_status;
+		return orderData;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );
-	return orderData.processing_status;
+	return orderData;
 }
 
 function createModalContainer(): HTMLElement {

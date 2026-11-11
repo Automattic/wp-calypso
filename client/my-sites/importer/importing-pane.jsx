@@ -1,10 +1,11 @@
 import { omit } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
-import { ProgressBar } from '@wordpress/components';
+import { Progress } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
@@ -195,7 +196,7 @@ export class ImportingPane extends PureComponent {
 			return (
 				<ImporterActionButtonContainer justifyContentCenter>
 					<ImporterActionButton
-						href={ `/subscribers/${ this.props.site.slug || '' }#add-subscribers` }
+						href={ this.props.addSubscribersUrl }
 						onClick={ () => this.onClickSubstackDone( 'add-subscribers' ) }
 						primary
 					>
@@ -270,19 +271,19 @@ export class ImportingPane extends PureComponent {
 						site={ site }
 					/>
 				) }
-				{ ( this.isImporting() || this.isProcessing() ) &&
-					( percentComplete >= 0 ? (
-						<div className="importer__importing-pane-progress-container">
-							<ProgressBar
-								className="importer__importing-pane-progress"
-								value={ percentComplete }
-							/>
-						</div>
-					) : (
-						<div className="importer__importing-pane-progress-container">
-							<ProgressBar className="importer__importing-pane-progress" isPulsing />
-						</div>
-					) ) }
+				{ ( this.isImporting() || this.isProcessing() ) && (
+					<div className="importer__importing-pane-progress-container">
+						<Progress.Root
+							className="importer__importing-pane-progress"
+							aria-label={ this.props.translate( 'Loading…' ) }
+							value={ percentComplete >= 0 ? percentComplete : null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
+					</div>
+				) }
 				{ blockingMessage && (
 					<div className="importer__import-progress-message">{ blockingMessage }</div>
 				) }
@@ -295,9 +296,17 @@ export class ImportingPane extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	mapAuthor,
-	recordTracksEvent,
-	resetImport,
-	startImporting,
-} )( localize( ImportingPane ) );
+export default connect(
+	( state, { site } ) => ( {
+		addSubscribersUrl: getSubscribersUrl( state, site?.ID ?? null, {
+			addSubscribers: true,
+			fallbackSiteUrl: site?.URL,
+		} ),
+	} ),
+	{
+		mapAuthor,
+		recordTracksEvent,
+		resetImport,
+		startImporting,
+	}
+)( localize( ImportingPane ) );

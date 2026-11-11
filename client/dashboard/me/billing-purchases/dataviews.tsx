@@ -9,7 +9,7 @@ import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
-import { purchaseSettingsRoute } from '../../app/router/me';
+import { paymentMethodsRoute, purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
@@ -74,7 +74,7 @@ export function BillingPurchaseInfoPopover( { children }: { children: ReactNode 
 }
 
 function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
-	const containerSize = 36;
+	const containerSize = 48;
 	const iconSize = 20;
 	return (
 		<span
@@ -97,7 +97,7 @@ function ProductIcon( { icon, label }: { icon: ReactElement; label: string } ) {
 }
 
 function PurchaseItemSiteIcon( { site, purchase }: { site?: Site; purchase: Purchase } ) {
-	const size = 36;
+	const size = 48;
 
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return (
@@ -168,7 +168,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <Link to="/me/billing/payment-methods" />,
+			link: <Link to={ paymentMethodsRoute.fullPath } />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
@@ -210,6 +210,32 @@ function OwnerInfo( {
 	return <BillingPurchaseInfoPopover>{ tooltipContent }</BillingPurchaseInfoPopover>;
 }
 
+// Only the purchaser can change how a purchase is paid for, and the backup
+// methods are the viewer's own, so show nothing for anyone else's purchase.
+function PurchasePaymentMethodCell( {
+	purchase,
+	isSiteMissing,
+	isBackupMethodAvailable,
+}: {
+	purchase: Purchase;
+	isSiteMissing: boolean;
+	isBackupMethodAvailable: boolean;
+} ) {
+	const { user } = useAuth();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+
+	return (
+		<HStack justify="flex-start" spacing={ 1 }>
+			<PurchasePaymentMethod purchase={ purchase } isSiteMissing={ isSiteMissing } />
+			{ isBackupMethodAvailable && mightStillAutoRenew( purchase ) && (
+				<BackupPaymentMethodNotice />
+			) }
+		</HStack>
+	);
+}
+
 function PurchaseSettingLink( {
 	purchase,
 	disabled,
@@ -239,19 +265,22 @@ export function getFields( {
 	transferredPurchases,
 	siteFilter,
 	visibleFields,
+	canFilterBySite = true,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
 	visibleFields?: string[];
+	canFilterBySite?: boolean;
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	// No point in having a filter if there's only one site.
-	const shouldAllowSiteFilter = sites.length > 1;
+	// No point in having a filter if there's only one site, or if the host has
+	// already scoped this screen to one site.
+	const shouldAllowSiteFilter = canFilterBySite && sites.length > 1;
 	return [
 		{
 			id: 'site',
@@ -266,7 +295,7 @@ export function getFields( {
 							return { value: String( site.ID ), label: `${ site.name } (${ site.slug })` };
 						} ),
 						filterBy: { operators: [ 'isAny' ], ...( siteFilter && { isPrimary: true } ) },
-				  }
+					}
 				: { filterBy: false } ),
 			getValue: ( { item }: { item: Purchase } ) => {
 				// getValue must return a string because the DataViews search feature calls `trim()` on it.
@@ -309,7 +338,7 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchaseSettingLink purchase={ item } disabled={ isTransferred }>
-							{ getTitleForListDisplay( item ) }
+							{ getTitleForListDisplay( item, false ) }
 						</PurchaseSettingLink>
 						<OwnerInfo purchase={ item } isTransferredOwnership={ isTransferred } />
 					</HStack>
@@ -458,10 +487,10 @@ export function getFields( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return ! mightStillAutoRenew( item )
 					? // Do not return the card number when the payment method isn't in
-					  // use, since it won't be displayed; sorting it alongside active
-					  // purchases that have the same card would look wrong.
-					  'expired'
-					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
+						// use, since it won't be displayed; sorting it alongside active
+						// purchases that have the same card would look wrong.
+						'expired'
+					: ( item.payment_details ?? item.payment_card_type ?? 'no-payment-method' );
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				let isBackupMethodAvailable = false;
@@ -474,12 +503,11 @@ export function getFields( {
 				}
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
 				return (
-					<HStack justify="flex-start" spacing={ 1 }>
-						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
-						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
-							<BackupPaymentMethodNotice />
-						) }
-					</HStack>
+					<PurchasePaymentMethodCell
+						purchase={ item }
+						isSiteMissing={ ! site }
+						isBackupMethodAvailable={ isBackupMethodAvailable }
+					/>
 				);
 			},
 		},

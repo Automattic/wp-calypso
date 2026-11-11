@@ -6,7 +6,7 @@ import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
 import { isLikeable } from 'calypso/reader/post/capabilities';
-import { SubscribeWithSpaceButton } from 'calypso/reader/spaces/subscribe-with-space';
+import { SubscribeWithShelfButton } from 'calypso/reader/shelves/subscribe-with-shelf';
 import { recordAction, recordPermalinkClick } from 'calypso/reader/stats';
 import { userCan } from 'calypso/state/posts/utils';
 
@@ -22,6 +22,7 @@ const ReaderFullPostActionBar = ( {
 	feedUrl,
 	siteUrl,
 	onFollowToggle,
+	onFollowSuccess,
 } ) => {
 	const translate = useTranslate();
 	const canEdit = site && userCan( 'edit_post', post );
@@ -88,11 +89,12 @@ const ReaderFullPostActionBar = ( {
 					<PostEditButton post={ post } site={ site } iconSize={ 24 } onClick={ onEditClick } />
 				) }
 				{ followUrl && (
-					<SubscribeWithSpaceButton
+					<SubscribeWithShelfButton
 						feedId={ feedId }
 						siteId={ siteId }
 						siteUrl={ followUrl }
 						onFollowToggle={ onFollowToggle }
+						onFollowSuccess={ onFollowSuccess }
 						railcar={ post?.railcar }
 					/>
 				) }
@@ -113,6 +115,7 @@ ReaderFullPostActionBar.propTypes = {
 	feedUrl: PropTypes.string,
 	siteUrl: PropTypes.string,
 	onFollowToggle: PropTypes.func,
+	onFollowSuccess: PropTypes.func,
 };
 
 export default ReaderFullPostActionBar;

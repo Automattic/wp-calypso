@@ -64,7 +64,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 						"Oops, something went wrong. We've been notified and are working on resolving this issue."
 					)
 				)
-		  )
+			)
 		: withAnalytics(
 				recordTracksEvent( 'calypso_rewind_to_unknown_error', error ),
 				errorNotice(
@@ -72,7 +72,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 						'Oops, something went wrong. Please try again soon or contact support for help.'
 					)
 				)
-		  );
+			);
 
 const requestStagingClone = ( action ) =>
 	http(
@@ -105,7 +105,7 @@ export const receiveStagingCloneError = ( { stagingBlogId, timestamp }, error ) 
 						"Oops, something went wrong. We've been notified and are working on resolving this issue."
 					)
 				)
-		  )
+			)
 		: withAnalytics(
 				recordTracksEvent( 'calypso_rewind_to_unknown_error', error ),
 				errorNotice(
@@ -113,7 +113,7 @@ export const receiveStagingCloneError = ( { stagingBlogId, timestamp }, error ) 
 						'Oops, something went wrong. Please try again soon or contact support for help.'
 					)
 				)
-		  );
+			);
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/to/index.js', {
 	[ REWIND_RESTORE ]: [

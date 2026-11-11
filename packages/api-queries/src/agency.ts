@@ -1,15 +1,38 @@
 import {
 	fetchAgency,
-	fetchAgencyResources,
+	fetchAgencyLeadMatching,
+	fetchAgencyProgramStats,
+	fetchAgencyEnablementResources,
+	recordAgencyResourceEvent,
 	fetchAgencyScheduleCallLink,
+	fetchAgencyApwdDiscountCode,
 	fetchAgencyMcpSettings,
+	preserveIgnoredAgencyContacts,
+	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
+	updateAgencyPartnerDirectoryApplication,
+	updateAgencyDashboardOptIn,
+	updateAgencyProfile,
+	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
+	submitAgencyPressablePremiumPlanReferral,
+	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import type { Agency, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
+import type {
+	Agency,
+	AgencyDashboardOptInChoice,
+	AgencyHostingReferral,
+	AgencyLeadMatchingProfile,
+	AgencyPartnerDirectoryApplicationUpdate,
+	AgencyProfileUpdate,
+	AgencyResourceEvent,
+	AgencyVipPartnerOpportunity,
+	McpSettings,
+	McpSettingsUpdate,
+} from '@automattic/api-core';
 
 // Mirror the server's response shape so the optimistic snapshot matches what
 // onSuccess later writes.
@@ -68,6 +91,9 @@ export const activeAgencyQuery = () =>
 			}
 			return null;
 		},
+		// Not persisted: tier, influenced revenue and approval status change server-side
+		// and are shown prominently on the overview, so a reload must revalidate them.
+		meta: { persist: false },
 		staleTime: 5 * 60 * 1000,
 		retry: false,
 	} );
@@ -85,11 +111,47 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		retry: false,
 	} );
 
-export const agencyResourcesQuery = () =>
+/**
+ * The agency's Advanced Professional WordPress Developer discount code, or null
+ * when it has no active coupon.
+ */
+export const agencyApwdDiscountCodeQuery = ( agencyId: number ) =>
 	queryOptions( {
-		queryKey: [ 'agency', 'resources' ] as const,
-		queryFn: fetchAgencyResources,
+		queryKey: [ 'agency', agencyId, 'apwd-discount-code' ] as const,
+		queryFn: () => fetchAgencyApwdDiscountCode( agencyId ),
+		// Matches the server's HubSpot cache.
+		staleTime: 15 * 60 * 1000,
+		retry: false,
+		// The code works as a coupon, so it stays out of localStorage.
+		meta: { persist: false },
+	} );
+
+export const agencyProgramStatsQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'program-stats' ] as const,
+		queryFn: fetchAgencyProgramStats,
+	} );
+
+/**
+ * Enablement resources with the v2 taxonomy.
+ */
+export const agencyEnablementResourcesQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'resources', 'v2' ] as const,
+		queryFn: fetchAgencyEnablementResources,
 		staleTime: 5 * 60 * 1000,
+	} );
+
+/**
+ * Records engagement with a resource so it can be correlated to the agency.
+ *
+ * There is nothing to invalidate: the endpoint writes to the engagement log,
+ * not to the resource list.
+ */
+export const agencyResourceEventMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-resource-record' },
+		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
@@ -104,6 +166,111 @@ export const tipaltiPayeeQuery = ( agencyId: number ) =>
 		queryKey: [ 'agency', agencyId, 'tipalti-payee' ] as const,
 		queryFn: () => fetchTipaltiPayee( agencyId ),
 		enabled: !! agencyId,
+	} );
+
+// Merge rather than replace: the PUT responses may omit fields the
+// GET provides (e.g. `user.capabilities`), which gate routes and menus.
+const mergeIntoActiveAgency = ( agency: Agency ) => {
+	queryClient.setQueryData( activeAgencyQuery().queryKey, ( previous ) =>
+		previous ? { ...previous, ...agency } : agency
+	);
+};
+
+export const agencyPartnerDirectoryApplicationMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-application-update' },
+		mutationFn: async ( update: AgencyPartnerDirectoryApplicationUpdate ) => {
+			const agency = await updateAgencyPartnerDirectoryApplication( agencyId, update );
+			// A 2xx without the saved application means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile?.partner_directory_application?.status ) {
+				throw new Error( 'The response did not include the saved application.' );
+			}
+			return agency;
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
+export const agencyProfileMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-profile-update' },
+		mutationFn: async ( update: AgencyProfileUpdate ) => {
+			const agency = await updateAgencyProfile( agencyId, update );
+			// A 2xx without the saved profile means the write didn't take;
+			// surface it as an error instead of reporting success.
+			if ( ! agency?.profile ) {
+				throw new Error( 'The response did not include the saved profile.' );
+			}
+			return agency;
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
+export const agencyDashboardOptInMutation = ( agencyId: number | undefined ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-dashboard-opt-in-update' },
+		mutationFn: ( value: AgencyDashboardOptInChoice ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return updateAgencyDashboardOptIn( agencyId, value );
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
+export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-pd-logo-upload' },
+		mutationFn: ( file: File ) => uploadAgencyPartnerDirectoryLogo( agencyId, file ),
+	} );
+
+export const agencyVipPartnerOpportunityMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-vip-opp-submit' },
+		mutationFn: ( referral: AgencyVipPartnerOpportunity ) =>
+			submitAgencyVipPartnerOpportunity( agencyId, referral ),
+	} );
+
+export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-press-prem-submit' },
+		mutationFn: ( referral: AgencyHostingReferral ) =>
+			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
+	} );
+
+export const agencyLeadMatchingQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'lead-matching' ] as const,
+		meta: { persist: false },
+		queryFn: () => fetchAgencyLeadMatching( agencyId ),
+		enabled: !! agencyId,
+	} );
+
+export const agencyLeadMatchingMutation = (
+	agencyId: number,
+	previousProfile?: AgencyLeadMatchingProfile | null
+) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-lead-matching-update' },
+		mutationFn: async ( profile: AgencyLeadMatchingProfile ) => {
+			const response = await updateAgencyLeadMatching( agencyId, profile );
+			// The preferences are saved but not passed on to lead matching when
+			// the sync fails, so a 2xx with a failed sync is an error too.
+			if ( ! response?.lead_matching_profile || response.sync?.status === 'failed' ) {
+				throw new Error( 'The lead matching preferences were not saved.' );
+			}
+			return {
+				...response,
+				lead_matching_profile: preserveIgnoredAgencyContacts(
+					response.lead_matching_profile,
+					previousProfile,
+					response.ignored_contact_fields
+				),
+			};
+		},
+		onSuccess: ( response ) => {
+			queryClient.setQueryData( agencyLeadMatchingQuery( agencyId ).queryKey, response );
+		},
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>

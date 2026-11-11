@@ -19,6 +19,7 @@ import {
 import { useMemo } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
+import { contactDetailsStore } from '../../lib/checkout-stores';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -30,6 +31,7 @@ import {
 	createPixPaymentMethod,
 	createPixAutomaticoPaymentMethod,
 } from '../../payment-methods/pix';
+import { createStripeWalletMethod } from '../../payment-methods/stripe-wallet';
 import { createWeChatMethod } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
@@ -109,7 +111,7 @@ export function useCreateCreditCard( {
 						submitButtonContent,
 						allowUseForAllSubscriptions,
 						hasExistingCardMethods,
-				  } )
+					} )
 				: null,
 		[
 			currency,
@@ -158,7 +160,7 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -177,7 +179,7 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -196,7 +198,7 @@ function useCreateBancontact( {
 			shouldLoad
 				? createBancontactMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -226,7 +228,7 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -248,7 +250,7 @@ function useCreateBlik( {
 			shouldLoad
 				? createBlikMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -267,7 +269,7 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -286,7 +288,7 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+					} )
 				: null,
 		[ shouldLoad ]
 	);
@@ -334,12 +336,7 @@ function useCreateGooglePay( {
 	stripe: Stripe | null;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
-	const isStripeReady =
-		! isStripeLoading &&
-		! stripeLoadingError &&
-		stripe &&
-		stripeConfiguration &&
-		isEnabled( 'checkout/google-pay' );
+	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
 	return useMemo( () => {
 		return isStripeReady && stripe && stripeConfiguration && cartKey
@@ -362,10 +359,38 @@ function useCreateStripeUpi( {
 			shouldLoad
 				? createStripeUpiMethod( {
 						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
+						contactDetails: contactDetailsStore,
+					} )
 				: null,
 		[ shouldLoad ]
 	);
+}
+
+function useCreateStripeWallet( {
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	responseCart,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+	stripeConfiguration: StripeConfiguration | null;
+	stripe: Stripe | null;
+	responseCart: ReturnType< typeof useShoppingCart >[ 'responseCart' ];
+} ): PaymentMethod | null {
+	const isReady =
+		! isStripeLoading &&
+		! stripeLoadingError &&
+		stripe &&
+		stripeConfiguration &&
+		isEnabled( 'checkout/stripe-wallet' );
+
+	return useMemo( () => {
+		return isReady && stripe && stripeConfiguration
+			? createStripeWalletMethod( { stripe, stripeConfiguration, responseCart } )
+			: null;
+	}, [ isReady, stripe, stripeConfiguration, responseCart ] );
 }
 
 /**
@@ -505,20 +530,35 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const stripeWalletMethod = useCreateStripeWallet( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		responseCart,
+	} );
+
+	// In Germany, PayPal is the preferred option, so we display it before
+	// credit cards. See https://wp.me/pxLjZ-9aA
+	const shouldPreferPayPal = currentTaxCountryCode?.toUpperCase() === 'DE';
+	const payPalMethods = [ paypalExpressMethod, paypalPPCPMethod ];
+	const cardAndPayPalMethods = shouldPreferPayPal
+		? [ ...payPalMethods, stripeMethod, freePaymentMethod ]
+		: [ stripeMethod, freePaymentMethod, ...payPalMethods ];
+
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
 	// cart which will be used to filter this list in
 	// `filterAppropriatePaymentMethods()`.
-	let paymentMethods = [
+	return [
 		...existingCardMethods,
 		...existingPayPalPPCPMethods,
+		stripeWalletMethod,
 		applePayMethod,
 		googlePayMethod,
-		stripeMethod,
-		freePaymentMethod,
-		paypalExpressMethod,
-		paypalPPCPMethod,
+		stripeUpiMethod,
+		...cardAndPayPalMethods,
 		idealMethod,
 		blikMethod,
 		sofortMethod,
@@ -529,33 +569,5 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-		stripeUpiMethod,
 	].filter( isValueTruthy );
-
-	// In Germany, PayPal is the preferred option, so we display it before
-	// credit cards. See https://wp.me/pxLjZ-9aA
-	if ( currentTaxCountryCode?.toUpperCase() === 'DE' ) {
-		paymentMethods = [
-			...existingCardMethods,
-			...existingPayPalPPCPMethods,
-			applePayMethod,
-			googlePayMethod,
-			paypalExpressMethod,
-			paypalPPCPMethod,
-			stripeMethod,
-			freePaymentMethod,
-			idealMethod,
-			sofortMethod,
-			pixMethod,
-			pixAutomaticoMethod,
-			alipayMethod,
-			p24Method,
-			epsMethod,
-			wechatMethod,
-			bancontactMethod,
-			stripeUpiMethod,
-		].filter( isValueTruthy );
-	}
-
-	return paymentMethods;
 }

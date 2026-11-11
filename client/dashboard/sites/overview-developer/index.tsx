@@ -6,9 +6,7 @@
  * Free/Premium. Color communicates urgency: healthy states are green or
  * neutral, anything that deserves attention is amber.
  */
-import { Badge } from '@automattic/ui';
 import {
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
@@ -29,6 +27,7 @@ import {
 	wordpress,
 } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Card, CardBody, CardHeader } from '../../components/card';
@@ -39,6 +38,7 @@ import { SectionHeader } from '../../components/section-header';
 import { Stat } from '../../components/stat';
 import { SummaryButtonCardFooter } from '../../components/summary-button-card-footer';
 import { Text } from '../../components/text';
+import Grid from '../overview-blogger/prototype-grid';
 import {
 	isAtomicTier,
 	useMockBloggerSite,
@@ -158,7 +158,7 @@ function EnvironmentCard( {
 }: {
 	title: string;
 	badge: string;
-	badgeIntent?: 'success' | 'warning';
+	badgeIntent?: 'stable' | 'low';
 	rows: EnvRow[];
 	footerTitle?: string;
 	footerHref?: string;
@@ -208,7 +208,7 @@ function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 									<Text size={ 12 } lineHeight="20px">
 										7.0.1
 									</Text>
-									<Badge intent="success">Up to date</Badge>
+									<Badge intent="stable">Up to date</Badge>
 								</HStack>
 							),
 						},
@@ -234,8 +234,8 @@ function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 						isBusiness
 							? {
 									label: 'Plugin updates',
-									value: <Badge intent="warning">2 available</Badge>,
-							  }
+									value: <Badge intent="low">2 available</Badge>,
+								}
 							: {
 									label: 'Plugins',
 									value: (
@@ -243,10 +243,10 @@ function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 											Available on Business
 										</Button>
 									),
-							  },
+								},
 						{
 							label: 'Vulnerabilities',
-							value: <Badge intent="success">None detected</Badge>,
+							value: <Badge intent="stable">None detected</Badge>,
 						},
 						{ label: 'Active theme', value: TIER_ACTIVE_THEME[ tier ] },
 						{
@@ -373,7 +373,7 @@ function ResourcesCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 					storageUsed: '716 MB',
 					storageMax: '1 GB',
 					storagePercent: 70,
-			  }
+				}
 			: TIER_PLAN_META[ tier ];
 
 	return (
@@ -439,7 +439,7 @@ function EnvironmentsSection( {
 				<EnvironmentCard
 					title="Production"
 					badge="Live"
-					badgeIntent="success"
+					badgeIntent="stable"
 					rows={
 						isBusiness
 							? [
@@ -448,13 +448,13 @@ function EnvironmentsSection( {
 									{ label: 'PHP', value: '8.3' },
 									{ label: 'Object cache', value: 'Enabled' },
 									{ label: 'CDN', value: 'Active' },
-							  ]
+								]
 							: [
 									{ label: 'URL', value: site.slug },
 									{ label: 'WordPress', value: '7.0.1' },
 									{ label: 'PHP', value: '8.3' },
 									{ label: 'CDN', value: 'Active' },
-							  ]
+								]
 					}
 					footerTitle={ isBusiness ? 'Server settings' : 'Site settings' }
 					footerHref={
@@ -467,7 +467,7 @@ function EnvironmentsSection( {
 					<EnvironmentCard
 						title="Staging"
 						badge="Synced"
-						badgeIntent="success"
+						badgeIntent="stable"
 						rows={ [
 							{ label: 'URL', value: `staging-4021.${ site.slug }` },
 							{ label: 'WordPress', value: '7.0.1' },
@@ -491,7 +491,7 @@ function EnvironmentsSection( {
 					<EnvironmentCard
 						title="Deployments"
 						badge="Passing"
-						badgeIntent="success"
+						badgeIntent="stable"
 						rows={ [
 							{ label: 'Repository', value: `lucasmdo/${ site.slug.split( '.' )[ 0 ] }-theme` },
 							{ label: 'Branch', value: 'main' },
@@ -721,7 +721,7 @@ function LogsCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 									{ visibleLines.map( ( line ) => (
 										<tr key={ line.date }>
 											<td>
-												<Badge intent="default" className={ `badge--${ line.severityClass }` }>
+												<Badge className={ `badge--${ line.severityClass }` }>
 													{ line.severity }
 												</Badge>
 											</td>

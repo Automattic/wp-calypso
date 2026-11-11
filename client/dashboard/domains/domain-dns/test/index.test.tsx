@@ -3,7 +3,8 @@
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainDns from '../index';
@@ -37,7 +38,7 @@ const getDefaultDomainData = ( customProps: Partial< Domain > = {} ): Domain =>
 
 const mockDomainApiRequest = ( domainData: Domain ) =>
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.get( `/rest/v1.2/domain-details/${ domainName }/` )
 		.reply( 200, domainData );
 
 const mockDnsApiRequest = ( records: DnsRecord[] ) =>
@@ -132,5 +133,120 @@ describe( 'DomainDns', () => {
 		render( <DomainDns /> );
 
 		expect( await screen.findByText( CNAME_WARNING ) ).toBeVisible();
+	} );
+
+	test( 'filters DNS records by type', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [
+			{ ...defaultCnameRecord, id: '1' },
+			{ id: '2', type: 'A', name: domainName, data: '192.0.2.1' },
+			{ id: '3', type: 'TXT', name: domainName, data: 'v=spf1 -all' },
+		] );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Type' } ) );
+		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
+
+		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
+		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows an empty state when no records match the selected filters', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [ { id: '2', type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Type' } ) );
+		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
+
+		expect( await screen.findByText( 'No DNS records match the selected filters.' ) ).toBeVisible();
+		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'searches DNS records by name and value', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [
+			{ ...defaultCnameRecord, id: '1' },
+			{ id: '2', type: 'A', name: domainName, data: '192.0.2.1' },
+			{ id: '3', type: 'TXT', name: domainName, data: 'v=spf1 -all' },
+		] );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+
+		const searchbox = screen.getByRole( 'searchbox', { name: 'Search' } );
+
+		await user.type( searchbox, 'spf' );
+
+		await waitFor( () => {
+			expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+		} );
+		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
+		expect( screen.queryByText( 'www' ) ).not.toBeInTheDocument();
+
+		await user.clear( searchbox );
+		await user.type( searchbox, 'www' );
+
+		expect( await screen.findByText( 'www' ) ).toBeVisible();
+		expect( screen.queryByText( 'v=spf1 -all' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
+
+		await user.clear( searchbox );
+		await user.type( searchbox, 'nomatch' );
+
+		expect( await screen.findByText( 'No DNS records match your search.' ) ).toBeVisible();
+	} );
+
+	test( 'shows the steps for pasting the verification value in email setup', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+
+		render( <DomainDns /> );
+
+		expect(
+			await screen.findByText(
+				'In Google Workspace, choose to verify your domain with a TXT record.'
+			)
+		).toBeVisible();
+		expect(
+			screen.getByText( 'Copy the value it shows. It starts with google-site-verification=.' )
+		).toBeVisible();
+	} );
+
+	test( 'asks for confirmation before deleting a DNS record', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [ { id: '3', type: 'TXT', name: 'mail', data: 'v=spf1 -all' } ] );
+		const deleteRequest = nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/domains/${ domainName }/dns` )
+			.reply( 200, {} );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Delete…' } ) );
+
+		expect(
+			await screen.findByText( 'The TXT record for mail will be removed. This cannot be undone.' )
+		).toBeVisible();
+		expect( deleteRequest.isDone() ).toBe( false );
+
+		await user.click( screen.getByRole( 'button', { name: 'Delete record' } ) );
+
+		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
 	} );
 } );

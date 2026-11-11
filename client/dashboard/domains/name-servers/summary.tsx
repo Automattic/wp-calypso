@@ -5,16 +5,20 @@ import type { Domain } from '@automattic/api-core';
 export default function NameServersSettingsSummary( {
 	domain,
 	isDisabled,
+	onClick,
 }: {
 	domain: Domain;
 	isDisabled?: boolean;
+	onClick?: () => void;
 } ) {
-	let badges = [];
-	if ( domain.has_wpcom_nameservers ) {
-		badges = [ { text: __( 'Using WordPress.com name servers' ), intent: 'success' as const } ];
-	} else {
-		badges = [ { text: __( 'Using custom name servers' ), intent: undefined } ];
-	}
+	const badges = [
+		{
+			text: domain.has_wpcom_nameservers
+				? __( 'Using WordPress.com name servers' )
+				: __( 'Using custom name servers' ),
+			intent: 'draft' as const,
+		},
+	];
 
 	return (
 		<RouterLinkSummaryButton
@@ -23,6 +27,7 @@ export default function NameServersSettingsSummary( {
 			badges={ badges }
 			density={ 'medium' as const }
 			disabled={ isDisabled }
+			onClick={ onClick }
 		/>
 	);
 }

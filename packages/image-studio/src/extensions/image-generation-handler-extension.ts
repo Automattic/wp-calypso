@@ -1,4 +1,5 @@
-import { dispatch } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { dispatch, select } from '@wordpress/data';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
@@ -52,6 +53,12 @@ export const addImageStudioHandler = (
 	}
 ): ( () => void ) | null => {
 	if ( ! context || typeof context.onImageSelect !== 'function' ) {
+		return _defaultHandler;
+	}
+	const { getSettings } = select( blockEditorStore ) as unknown as {
+		getSettings: () => { mediaUpload?: unknown };
+	};
+	if ( ! getSettings().mediaUpload ) {
 		return _defaultHandler;
 	}
 

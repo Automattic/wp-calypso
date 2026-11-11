@@ -9,6 +9,8 @@ import AutoDirection from 'calypso/components/auto-direction';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
+import { FreshlyPressedBadge } from './freshly-pressed-badge';
+import UnreadIndicator from './unread-indicator';
 
 /**
  * Rather than create complex logic to create context or pass props
@@ -34,6 +36,8 @@ const CompactPost = ( props ) => {
 		postByline,
 		teams,
 		openSuggestedFollows,
+		freshlyPressedOn,
+		isUnread,
 	} = props;
 
 	const translate = useTranslate();
@@ -48,7 +52,7 @@ const CompactPost = ( props ) => {
 					expandCard( { postKey, post, site } );
 					setHasExcerpt( false ); // Render compact post without excerpt
 					setShowExcerpt( false ); // Set showExcerpt to false to prevent excerpt from reappearing
-			  }
+				}
 			: null;
 
 	const postOptions = (
@@ -89,8 +93,11 @@ const CompactPost = ( props ) => {
 				<div className="reader-post-card__post-details">
 					<div className="reader-post-card__post-heading">
 						<div className="reader-post-card__post-title-meta">
+							{ freshlyPressedOn && <FreshlyPressedBadge displayedOn={ freshlyPressedOn } /> }
 							<AutoDirection>
 								<h2 className="reader-post-card__title">
+									{ /* Untitled posts get the dot on the byline; without this check they'd show two dots. */ }
+									{ isUnread && post.title && <UnreadIndicator /> }
 									<a className="reader-post-card__title-link" href={ post.URL }>
 										{ post.title }
 									</a>
@@ -132,6 +139,8 @@ CompactPost.propTypes = {
 	post: PropTypes.object.isRequired,
 	postByline: PropTypes.object,
 	openSuggestedFollows: PropTypes.func,
+	freshlyPressedOn: PropTypes.string,
+	isUnread: PropTypes.bool,
 };
 
 export default CompactPost;

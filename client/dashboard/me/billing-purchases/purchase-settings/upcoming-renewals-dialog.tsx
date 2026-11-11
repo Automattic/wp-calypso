@@ -19,7 +19,7 @@ import {
 } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
-interface Props {
+interface UpcomingRenewalsDialogProps {
 	siteDomain: string;
 	purchases: Purchase[];
 	onClose: () => void;
@@ -38,7 +38,7 @@ function getRenewalDescription(
 	} );
 
 	if ( isRenewingBeforeExpiration( item ) ) {
-		const date = formatDate( new Date( item.renew_date ), locale, { dateStyle: 'long' } );
+		const date = formatDate( new Date( item.renew_date ?? '' ), locale, { dateStyle: 'long' } );
 		if ( subtitleText && hasEnTranslation( '%1$s: Renews at %2$s on %3$s' ) ) {
 			return sprintf(
 				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted price, %3$s: formatted date
@@ -88,7 +88,7 @@ export function UpcomingRenewalsDialog( {
 	onClose,
 	onConfirm,
 	submitButtonText,
-}: Props ) {
+}: UpcomingRenewalsDialogProps ) {
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -97,7 +97,7 @@ export function UpcomingRenewalsDialog( {
 			[ ...purchases ].sort( ( a, b ) => {
 				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renew_date : a.expiry_date;
 				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renew_date : b.expiry_date;
-				return compareDateA?.localeCompare?.( compareDateB );
+				return ( compareDateA ?? '' ).localeCompare( compareDateB ?? '' );
 			} ),
 		[ purchases ]
 	);
@@ -118,7 +118,6 @@ export function UpcomingRenewalsDialog( {
 
 	return (
 		<ConfirmDialog
-			overlayClassName="upcoming-renewals-dialog"
 			size="medium"
 			confirmButtonText={ submitButtonText ?? __( 'Renew now' ) }
 			onConfirm={ handleConfirm }
@@ -142,7 +141,7 @@ export function UpcomingRenewalsDialog( {
 								<CardDivider />
 								<CheckboxControl
 									__nextHasNoMarginBottom
-									label={ item.is_domain ? item.meta ?? '' : item.product_name }
+									label={ item.is_domain ? ( item.meta ?? '' ) : item.product_name }
 									help={ getRenewalDescription( item, locale, hasEnTranslation ) }
 									checked={ selection.includes( id ) }
 									onChange={ () => {

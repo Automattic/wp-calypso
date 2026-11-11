@@ -14,7 +14,7 @@ export function mayWeLoadSurvicateScript() {
 	return config( 'survicate_enabled' );
 }
 
-export function addSurvicate( { email, registrationDate } ) {
+export function addSurvicate( { email, registrationDate, userId } ) {
 	if (
 		! shouldLoadSurvicate( {
 			locale: getLocaleSlug(),
@@ -30,6 +30,7 @@ export function addSurvicate( { email, registrationDate } ) {
 
 	const setTraits = () => {
 		setSurvicateVisitorTraits( {
+			...( userId ? { user_id: String( userId ) } : {} ),
 			email,
 			account_age_in_days: getAccountAgeInDays( registrationDate ),
 		} );

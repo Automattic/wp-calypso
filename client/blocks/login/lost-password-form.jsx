@@ -24,7 +24,10 @@ const LostPasswordForm = ( {
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
-	const blackbox = useBlackboxProtection( { feature: 'blackbox-lost-password' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-lost-password',
+		flow: 'login',
+	} );
 
 	const inputRef = useRef( null );
 	useEffect( () => {
@@ -67,6 +70,9 @@ const LostPasswordForm = ( {
 		formData.set( 'user_login', userLogin );
 
 		const blackboxSessionId = await blackbox.getSessionId();
+		if ( blackboxSessionId === null ) {
+			return null;
+		}
 		if ( blackboxSessionId ) {
 			formData.set( 'blackbox_session_id', blackboxSessionId );
 		}
@@ -87,6 +93,10 @@ const LostPasswordForm = ( {
 
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
+
+		if ( blackbox.isSubmitBlocked ) {
+			return;
+		}
 
 		if ( isWooJPC ) {
 			const accountType = await getAuthAccountTypeRequest( userLogin );
@@ -117,6 +127,9 @@ const LostPasswordForm = ( {
 			setBusy( true );
 			const result = await lostPasswordRequest();
 			setBusy( false );
+			if ( result === null ) {
+				return;
+			}
 			if ( result.includes( 'Unable to reset password' ) ) {
 				blackbox.reset();
 				return setError(
@@ -174,6 +187,9 @@ const LostPasswordForm = ( {
 	};
 
 	const showError = !! error;
+	// A challenge raised by the submit's own collect holds the request until it is
+	// solved, so stop spinning while it is up.
+	const isSendingReset = isBusy && ! blackbox.isSubmitBlocked;
 	return (
 		<form
 			name="lostpasswordform"
@@ -212,10 +228,10 @@ const LostPasswordForm = ( {
 					variant="primary"
 					type="submit"
 					disabled={ userLogin.length === 0 || showError || isBusy || blackbox.isSubmitBlocked }
-					isBusy={ isBusy }
+					isBusy={ isSendingReset }
 					__next40pxDefaultSize
 				>
-					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
+					{ isSendingReset && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
 				</Button>
 			</div>
 			<div className="login__form-help">

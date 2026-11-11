@@ -7,6 +7,7 @@ import { createRoot, useCallback, useEffect, useState } from '@wordpress/element
 import { __ } from '@wordpress/i18n';
 import ImageStudio from './components';
 import { registerBlockEditorFilters } from './extensions';
+import { useAttachToEditorPost } from './hooks/use-attach-to-editor-post';
 import { useDraftCleanup } from './hooks/use-draft-cleanup';
 import { useImageFileNavigation } from './hooks/use-image-file-navigation';
 import { type ImageStudioActions, ImageStudioEntryPoint, store as imageStudioStore } from './store';
@@ -25,12 +26,14 @@ import type { JSX } from 'react';
 
 interface ImageStudioData {
 	enabled?: boolean | string;
-	environment?: 'wp-admin' | 'ciab-admin';
+	environment?: 'wp-admin';
 	isDevMode?: boolean;
 	canGenerateVideoClips?: boolean;
 	blogId?: number | string;
 	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
 	isA11n?: boolean;
+	// Reported as `agent_version` on Tracks events.
+	version?: string;
 }
 
 declare global {
@@ -97,7 +100,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { invalidateResolution, saveEntityRecord } = useDispatch(
 		coreStore
-	) as unknown as import('./types/wordpress').CoreDataDispatch;
+	) as unknown as import( './types/wordpress' ).CoreDataDispatch;
 	const { isOpen, attachmentId, canvasMetadata, originalAttachmentId, onCloseCallback } = useSelect(
 		( selectStore ) => ( {
 			isOpen: selectStore( imageStudioStore ).getIsImageStudioOpen(),
@@ -295,6 +298,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 
 	// Import cleanup hook
 	const { cleanupOnExit } = useDraftCleanup();
+	const attachToEditorPost = useAttachToEditorPost();
 
 	// Handle save (checkpoint)
 	const handleSave = useCallback( async () => {
@@ -322,6 +326,8 @@ function ImageStudioIntegration(): JSX.Element | null {
 			}
 		}
 
+		await attachToEditorPost( attachmentId, originalAttachmentId );
+
 		// Mark this image as saved (checkpoint)
 		// Await these to ensure state is updated before save completes
 		// This prevents race conditions when user quickly clicks X after Save
@@ -336,11 +342,13 @@ function ImageStudioIntegration(): JSX.Element | null {
 		await setHasUpdatedMetadata( false );
 	}, [
 		attachmentId,
+		originalAttachmentId,
 		canvasMetadata,
 		setLastSavedAttachmentId,
 		addSavedAttachmentId,
 		setHasUpdatedMetadata,
 		saveEntityRecord,
+		attachToEditorPost,
 	] );
 
 	// Handle discard - restore original and clear checkpoint
@@ -379,7 +387,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 			const lastSavedAttachmentId = (
 				select(
 					imageStudioStore
-				) as unknown as import('./types/wordpress').CurriedImageStudioSelectors
+				) as unknown as import( './types/wordpress' ).CurriedImageStudioSelectors
 			 ).getLastSavedAttachmentId();
 
 			// Apply saved image to block/chat context (if not discarded)
@@ -418,46 +426,12 @@ function ImageStudioIntegration(): JSX.Element | null {
 		[ attachmentId, cleanupOnExit, closeImageStudio, invalidateResolution, onCloseCallback ]
 	);
 
-	// Handle navigation to Media Library classic editor
-	// Saves metadata, runs cleanup (keeps original + current), then navigates
-	const handleClassicMediaEditorNavigation = useCallback(
-		async ( url: string ) => {
-			// Save metadata and mark checkpoint (critical - must succeed)
-			try {
-				await handleSave();
-			} catch ( error ) {
-				window.console?.error?.(
-					'[Image Studio] Save failed during Media Library navigation:',
-					error
-				);
-				// Don't navigate if save failed - would lose unsaved changes
-				// Error notice will be shown by Header component, allowing user to retry
-				throw error;
-			}
-
-			// Save succeeded - try cleanup (non-critical, proceed even if it fails)
-			try {
-				await cleanupOnExit();
-			} catch ( cleanupError ) {
-				window.console?.error?.(
-					'[Image Studio] Cleanup failed during navigation (proceeding anyway):',
-					cleanupError
-				);
-			}
-
-			// Invalidate WordPress cache for fresh data
-			invalidateResolution( 'getEntityRecords', [ 'postType', 'attachment' ] );
-
-			if ( attachmentId ) {
-				invalidateResolution( 'getEntityRecord', [ 'postType', 'attachment', attachmentId ] );
-			}
-
-			// Navigate to classic editor
-			// Safe to navigate immediately because all async operations have completed
-			window.location.href = url;
-		},
-		[ handleSave, cleanupOnExit, invalidateResolution, attachmentId ]
-	);
+	// Open the Media Library classic editor in a new tab. Image Studio stays open so
+	// the flow that launched it (e.g. featured image) still completes. The header only
+	// enables this while there is nothing unsaved, so no save happens here.
+	const handleClassicMediaEditorNavigation = useCallback( ( url: string ) => {
+		window.open( url, '_blank', 'noopener,noreferrer' );
+	}, [] );
 
 	// Don't render modal until we have image data
 	if ( ! isOpen ) {

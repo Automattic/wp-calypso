@@ -6,9 +6,24 @@ import { DomainSubtype } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
+import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import SiteVisibilitySettings from '../index';
 import type { Site, SiteSettings } from '@automattic/api-core';
+
+jest.mock( '../../../utils/is-dashboard-backport', () => {
+	const actual = jest.requireActual( '../../../utils/is-dashboard-backport' );
+	return { isDashboardBackport: jest.fn( actual.isDashboardBackport ) };
+} );
+
+const { isDashboardBackport: actualIsDashboardBackport } = jest.requireActual(
+	'../../../utils/is-dashboard-backport'
+);
+
+afterEach( () => {
+	jest.mocked( isDashboardBackport ).mockImplementation( actualIsDashboardBackport );
+} );
 
 const site = {
 	ID: 1,
@@ -439,6 +454,39 @@ describe( '<SiteVisibilitySettings>', () => {
 			expect( domainButton ).toHaveAttribute(
 				'href',
 				expect.stringMatching( /^\/domains\/manage\/[^/]+.wpcomstaging.com/ )
+			);
+		} );
+
+		test( 'wpcomstaging warning links "Manage domains" to the WordPress.com dashboard when the app has no domains route', async () => {
+			jest.mocked( isDashboardBackport ).mockReturnValue( false );
+			mockSite( { ...site, slug: 'site.wpcomstaging.com' } as Site, {
+				domains: [ 'site.wpcomstaging.com', 'example.com' ],
+				primary_domain: 'site.wpcomstaging.com',
+			} );
+			mockSettings( {
+				blog_public: 1,
+				wpcom_public_coming_soon: 0,
+				wpcom_data_sharing_opt_out: false,
+			} );
+
+			render( <SiteVisibilitySettings siteSlug="site.wpcomstaging.com" />, {
+				config: {
+					...APP_CONTEXT_DEFAULT_CONFIG,
+					supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, domains: false },
+				},
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'radio', { name: 'Public' } ) ).toBeChecked();
+			} );
+			await expectWpcomstagingWarning();
+			const domainButton = screen.getByRole( 'link', {
+				name: 'Manage domains',
+			} );
+
+			expect( domainButton ).toHaveAttribute(
+				'href',
+				expect.stringMatching( /^https?:\/\/[^/]+\/sites\/site\.wpcomstaging\.com\/domains$/ )
 			);
 		} );
 

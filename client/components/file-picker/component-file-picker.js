@@ -1,10 +1,4 @@
 /**
- * Module Dependencies
- */
-
-import * as event from 'component-event';
-
-/**
  * Input template
  */
 
@@ -52,14 +46,14 @@ export default function FilePicker( opts, fn ) {
 
 	// listen to change event (unbind old one if already listening)
 	if ( bound ) {
-		event.unbind( input, 'change', bound );
+		input.removeEventListener( 'change', bound );
 	}
-	event.bind( input, 'change', onchange );
+	input.addEventListener( 'change', onchange );
 	bound = onchange;
 
 	function onchange( e ) {
 		fn( input.files, e, input );
-		event.unbind( input, 'change', onchange );
+		input.removeEventListener( 'change', onchange );
 		bound = false;
 	}
 

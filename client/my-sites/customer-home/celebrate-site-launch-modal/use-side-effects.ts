@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';

@@ -13,6 +13,8 @@ export interface StatsPageViewTrackerProps {
 	variant?: string;
 	is_upgrade?: string | number;
 	is_site_commercial?: string | number;
+	site_suffix?: string;
+	is_pre_connection?: number;
 }
 
 // This component will pass through all properties to PageViewTracker from the analytics library.

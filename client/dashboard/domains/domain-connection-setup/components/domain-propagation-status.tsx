@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
-	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
 import { useTimeSince } from '../../../components/time-since';
@@ -28,9 +28,17 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 export default function DomainPropagationStatus( { domainName }: { domainName: string } ) {
 	const { data, isLoading, isError } = useQuery( domainPropagationStatusQuery( domainName ) );
 	const lastChecked = useTimeSince( data?.last_updated ?? '' );
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	if ( isError || isLoading || ! data ) {
 		return null;
+	}
+
+	// Lay out each row on its own so every row has equal gaps and reaches both edges.
+	const columnCount = isSmallViewport ? 2 : 4;
+	const rows: ( typeof data.propagation_status )[] = [];
+	for ( let i = 0; i < data.propagation_status.length; i += columnCount ) {
+		rows.push( data.propagation_status.slice( i, i + columnCount ) );
 	}
 
 	return (
@@ -40,14 +48,23 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Text>
 			<Card>
 				<CardBody>
-					<Grid columns={ 4 } gap={ 4 }>
-						{ data.propagation_status.map( ( area ) => (
-							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start">
-								<PropagationStatusIndicator propagated={ area.propagated } />
-								<Text>{ area.area_name }</Text>
+					<VStack spacing={ 4 }>
+						{ rows.map( ( row ) => (
+							<HStack key={ row[ 0 ].area_code } spacing={ 4 } justify="space-between">
+								{ row.map( ( area ) => (
+									<HStack
+										key={ area.area_code }
+										spacing={ 2 }
+										justify="flex-start"
+										expanded={ false }
+									>
+										<PropagationStatusIndicator propagated={ area.propagated } />
+										<Text>{ area.area_name }</Text>
+									</HStack>
+								) ) }
 							</HStack>
 						) ) }
-					</Grid>
+					</VStack>
 				</CardBody>
 			</Card>
 			<Text variant="muted" size={ 12 }>

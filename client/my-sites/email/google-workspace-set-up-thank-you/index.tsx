@@ -11,7 +11,7 @@ import { ThankYouGoogleWorkspaceProduct } from 'calypso/my-sites/checkout/checko
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 type GoogleWorkspaceSetUpThankYouProps = {
 	purchase: ReceiptPurchase;

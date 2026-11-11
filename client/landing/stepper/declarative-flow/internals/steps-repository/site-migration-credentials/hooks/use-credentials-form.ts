@@ -3,6 +3,11 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
+import {
+	getErrorCode,
+	MIGRATION_TICKET_ERROR_CODES,
+	useMigrationTicketErrorMessage,
+} from 'calypso/landing/stepper/hooks/use-migration-ticket-error-message';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -11,7 +16,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
 import { isHostingSupportedForSSHMigration } from '../../site-migration-ssh-share-access/utils/hosting-provider-validation';
-import { CredentialsFormData, ApplicationPasswordsInfo, ApiError } from '../types';
+import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
@@ -51,10 +56,15 @@ export const getApplicationPasswordsInfo = async (
 			},
 		} );
 	} catch ( error ) {
-		if ( ( error as ApiError )?.code === 'failed_to_get_authorization_path' ) {
+		const code = getErrorCode( error );
+		if ( code === 'failed_to_get_authorization_path' ) {
 			return {
 				application_passwords_enabled: false,
 			};
+		}
+		// No ticket means our team never hears about the migration, so the customer must find out.
+		if ( code && MIGRATION_TICKET_ERROR_CODES.includes( code ) ) {
+			throw error;
 		}
 		return undefined;
 	}
@@ -97,6 +107,7 @@ export const useCredentialsForm = (
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const locale = useLocale();
 	const { sendTicketAsync, isPending: isSendingTicket } = useSubmitMigrationTicket();
+	const getTicketErrorMessage = useMigrationTicketErrorMessage();
 
 	const {
 		mutateAsync: requestAutomatedMigration,
@@ -113,6 +124,7 @@ export const useCredentialsForm = (
 		handleSubmit,
 		watch,
 		clearErrors,
+		setError,
 	} = useForm< CredentialsFormData >( {
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
@@ -162,33 +174,44 @@ export const useCredentialsForm = (
 
 	const submitWithApplicationPassword = useCallback(
 		async ( siteId: number, from: string, siteInfoResult: UrlData ) => {
-			if ( isWPCOM( siteInfoResult ) ) {
-				if ( ! siteSlug ) {
-					return;
+			let applicationPasswordsInfoResult: ApplicationPasswordsInfo | undefined;
+
+			// Only the ticket and setup requests go in the try, so a failure after the ticket was
+			// filed isn't reported as a ticket failure and doesn't invite a duplicate request.
+			try {
+				if ( isWPCOM( siteInfoResult ) ) {
+					if ( ! siteSlug ) {
+						return;
+					}
+					await sendTicketAsync( {
+						locale,
+						blog_url: siteSlug,
+						from_url: from,
+					} );
+				} else if ( isNotWordPress( siteInfoResult ) ) {
+					if ( ! siteSlug ) {
+						return;
+					}
+					await sendTicketAsync( {
+						locale,
+						blog_url: siteSlug,
+						from_url: from,
+						context: 'site_is_not_wordpress',
+					} );
+				} else {
+					applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );
 				}
-				await sendTicketAsync( {
-					locale,
-					blog_url: siteSlug,
-					from_url: from,
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_site_migration_ticket_error', {
+					error_code: getErrorCode( error ),
 				} );
-				onSubmit( siteInfoResult );
-			} else if ( isNotWordPress( siteInfoResult ) ) {
-				if ( ! siteSlug ) {
-					return;
-				}
-				await sendTicketAsync( {
-					locale,
-					blog_url: siteSlug,
-					from_url: from,
-					context: 'site_is_not_wordpress',
-				} );
-				onSubmit( siteInfoResult );
-			} else {
-				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );
-				onSubmit( siteInfoResult, applicationPasswordsInfoResult );
+				setError( 'root', { type: 'ticket', message: getTicketErrorMessage( error ) } );
+				return;
 			}
+
+			onSubmit( siteInfoResult, applicationPasswordsInfoResult );
 		},
-		[ locale, onSubmit, siteSlug, sendTicketAsync ]
+		[ locale, onSubmit, siteSlug, sendTicketAsync, setError, getTicketErrorMessage ]
 	);
 
 	const submitToSSHMigrationFlow = useCallback(

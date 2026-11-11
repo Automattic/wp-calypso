@@ -71,7 +71,7 @@ const HundredYearPlanFlow: Flow = {
 				}
 
 				const siteSlug: SiteSlug = providedDependencies.siteSlug as SiteSlug;
-				const siteId: SiteId = providedDependencies.siteSlug as SiteId;
+				const siteId: SiteId = providedDependencies.siteId as SiteId;
 
 				const productsToAdd = [
 					{

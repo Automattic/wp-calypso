@@ -16,12 +16,12 @@ const describeAnnotation = ( annotation: PageAnnotation, index: number ): string
 				__( 'the <%1$s> element containing “%2$s”' ),
 				annotation.tag,
 				nearbyText
-		  )
+			)
 		: sprintf(
 				/* translators: %s is an HTML tag name. */
 				__( 'the <%s> element' ),
 				annotation.tag
-		  );
+			);
 	return sprintf(
 		/* translators: %1$d is the note number, %2$s describes the annotated element, %3$s is its CSS selector, %4$s is the user's note. */
 		__( '%1$d. In %2$s (CSS selector: `%3$s`): %4$s' ),

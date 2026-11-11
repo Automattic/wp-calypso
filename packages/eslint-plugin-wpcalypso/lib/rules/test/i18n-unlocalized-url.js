@@ -9,8 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../i18n-unlocalized-url' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
+import rule from '../i18n-unlocalized-url';
+const { ERROR_MESSAGE } = rule;
 
 //------------------------------------------------------------------------------
 // Tests
@@ -21,7 +23,7 @@ const localizableUrls = [
 	'https://apps.wordpress.com/mobile',
 	'https://automattic.com/cookies',
 	'https://automattic.com/privacy',
-	'https://wordpress.com/tos',
+	'https://automattic.com/tos',
 	'https://wordpress.com/blog',
 	'https://wordpress.com/forums',
 	'https://wordpress.com/go',
@@ -44,18 +46,18 @@ const nonLocalizableUrls = [
 	'https://example.com',
 	'https://automattic.com/cookies/some-page/',
 	'https://automattic.com/privacy/some-page/',
-	'https://wordpress.com/tos/some-page/',
+	'https://automattic.com/tos/some-page/',
 	'https://wordpress.com/blog/some-post/',
 	'https://wordpress.com/forums/some-thread',
 ];
 
 new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
-		ecmaFeatures: { jsx: true },
 		ecmaVersion: 6,
+		parserOptions: { ecmaFeatures: { jsx: true } },
 	},
-} ).run( 'i18n-unlocalized-url', rule, {
+} ).run( 'i18n-unlocalized-url', plugin.rules[ 'i18n-unlocalized-url' ], {
 	valid: [].concat(
 		localizableUrls.reduce( ( cases, url ) => {
 			return cases.concat( [
@@ -82,15 +84,15 @@ new RuleTester( {
 		return cases.concat( [
 			{
 				code: `const url = '${ url }'`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 			{
 				code: `const link = <a href={ '${ url }' }></a>;`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 			{
 				code: `isLink ? '${ url }' : ''`,
-				errors: [ { message: rule.ERROR_MESSAGE } ],
+				errors: [ { message: ERROR_MESSAGE } ],
 			},
 		] );
 	}, [] ),

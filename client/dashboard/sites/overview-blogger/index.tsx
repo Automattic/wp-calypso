@@ -8,8 +8,6 @@
  */
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
-	__experimentalDivider as Divider,
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
@@ -45,6 +43,7 @@ import {
 import clsx from 'clsx';
 import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardHeader } from '../../components/card';
+import Divider from '../../components/divider';
 import OverviewCard from '../../components/overview-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -60,6 +59,7 @@ import {
 	siteWpAdminLandingUrl,
 	wpAdminPageUrl,
 } from './mock-sites';
+import Grid from './prototype-grid';
 import type { BloggerTier } from './mock-sites';
 import type { Site } from '@automattic/api-core';
 import type { ReactElement, ReactNode } from 'react';
@@ -359,7 +359,7 @@ function PerformanceCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 					description:
 						'Pages with many large images take 5.8 seconds to load. Compress them to speed things up.',
 					intent: 'warning' as const,
-			  }
+				}
 			: TIER_PERFORMANCE[ tier ];
 	return (
 		<OverviewCard
@@ -932,10 +932,7 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 					<SitePreviewColumn site={ site } />
 					<TierPrimaryCards site={ site } tier={ tier } spacing={ spacing } />
 				</Grid>
-				<Divider
-					orientation="horizontal"
-					style={ { color: 'var(--dashboard-overview__divider-color)' } }
-				/>
+				<Divider />
 				<HStack
 					className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
 						'is-large': isLargeViewport,

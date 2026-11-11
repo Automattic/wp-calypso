@@ -129,13 +129,13 @@ const GoogleWorkspacePrice = ( {
 									discount: product?.sale_coupon?.discount as number,
 								},
 								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
-						  } )
+							} )
 						: translate( 'Limited time: %(discount)d%% off', {
 								args: {
 									discount: product?.sale_coupon?.discount as number,
 								},
 								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
-						  } ) }
+							} ) }
 				</div>
 			) }
 

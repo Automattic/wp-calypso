@@ -1,13 +1,17 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HELP_CENTER_STORE, ODIE_NEW_INTERACTIONS_BOT_SLUG } from '../constants';
-import { useOdieBroadcastWithCallbacks } from '../data';
+import {
+	HELP_CENTER_STORE,
+	ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
+} from '../constants';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
 	Chat,
+	HumanSupportRequest,
 	Message,
 	OdieAllowedBots,
 	ChatStatus,
@@ -32,6 +36,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	addMessage: noop,
 	botName: 'Wapuu',
 	newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	newLoggedOutInteractionsBotSlug: ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
@@ -39,23 +44,23 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
 	hasUserEverEscalatedToHumanSupport: false,
+	isLoadingZendeskHistory: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
-	odieBroadcastClientId: '',
+	hasOpenZendeskChat: false,
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
+	pendingHumanSupportRequest: null,
+	setPendingHumanSupportRequest: noop,
 } );
 
 // Custom hook to access the OdieAssistantContext
 export const useOdieAssistantContext = () => useContext( OdieAssistantContext );
-
-// Generate random client id
-export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 15 );
 
 /**
  * Provider for the Odie Assistant context.
@@ -63,38 +68,46 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	newInteractionsBotSlug,
+	newLoggedOutInteractionsBotSlug,
 	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
+	hasOpenZendeskChat = false,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
 	selectedSiteURL,
 	userFieldMessage,
 	userFieldFlowName,
+	zendeskConversationTags,
+	zendeskIntegrationKey,
+	humanSupportRouting = null,
 	externalChatProvider,
 	externalChatId,
 	version = null,
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
+	launcherContext,
 	children,
 } ) => {
-	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded, checkoutSupportVariation } =
+		useSelect(
+			( select ) => {
+				const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? ( store.getOdieBotNameSlug() as OdieAllowedBots )
-				: newInteractionsBotSlug;
+				const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+					: newInteractionsBotSlug;
 
-			return {
-				dynamicNewInteractionsBotSlug: odieBotNameSlug,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[ newInteractionsBotSlug ]
-	);
+				return {
+					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					isMinimized: store.getIsMinimized(),
+					isChatLoaded: store.getIsChatLoaded(),
+					checkoutSupportVariation: store.getCheckoutSupportVariation(),
+				};
+			},
+			[ newInteractionsBotSlug ]
+		);
 
 	const navigate = useNavigate();
 
@@ -106,8 +119,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk,
+	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
+		( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
 
@@ -124,14 +137,41 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 */
 	const trackEvent = useCallback(
 		( eventName: string, properties: Record< string, unknown > = {} ) => {
-			recordTracksEvent( `calypso_odie_${ eventName }`, {
-				...properties,
-				chat_id: mainChatState?.odieId,
-				bot_name_slug: newInteractionsBotSlug,
-			} );
+			recordTracksEvent(
+				`calypso_odie_${ eventName }`,
+				withSiteContext(
+					{
+						...properties,
+						chat_id: mainChatState?.odieId,
+						// The bot in use, which the Help Center store can override.
+						bot_name_slug: dynamicNewInteractionsBotSlug,
+						// Only set when support was opened from checkout in the checkout support experiment.
+						...( checkoutSupportVariation && {
+							checkout_support_variation: checkoutSupportVariation,
+						} ),
+					},
+					'selected_site',
+					selectedSiteId
+				)
+			);
 		},
-		[ newInteractionsBotSlug, mainChatState ]
+		[ dynamicNewInteractionsBotSlug, checkoutSupportVariation, mainChatState, selectedSiteId ]
 	);
+
+	// A pending request for a human belongs to the chat it was made in.
+	const odieIdRef = useRef( mainChatState?.odieId );
+	odieIdRef.current = mainChatState?.odieId;
+	const [ pendingHumanSupport, setPendingHumanSupport ] = useState< {
+		request: HumanSupportRequest;
+		odieId: Chat[ 'odieId' ];
+	} | null >( null );
+	const pendingHumanSupportRequest =
+		pendingHumanSupport && pendingHumanSupport.odieId === mainChatState?.odieId
+			? pendingHumanSupport.request
+			: null;
+	const setPendingHumanSupportRequest = useCallback( ( request: HumanSupportRequest | null ) => {
+		setPendingHumanSupport( request ? { request, odieId: odieIdRef.current } : null );
+	}, [] );
 
 	const clearChat = useCallback( () => {
 		trackEvent( 'chat_cleared', {} );
@@ -155,8 +195,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
-
 	/**
 	 * Version for Odie API.
 	 * Set this query param to override the version in the request.
@@ -171,6 +209,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				addMessage,
 				botName,
 				newInteractionsBotSlug: dynamicNewInteractionsBotSlug,
+				newLoggedOutInteractionsBotSlug,
 				chat: mainChatState,
 				setChat: setMainChatState,
 				clearChat,
@@ -179,14 +218,20 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
+				hasOpenZendeskChat,
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
-				odieBroadcastClientId,
+				isLoadingZendeskHistory,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
 				userFieldFlowName,
+				zendeskConversationTags,
+				zendeskIntegrationKey,
+				humanSupportRouting,
+				pendingHumanSupportRequest,
+				setPendingHumanSupportRequest,
 				externalChatProvider,
 				externalChatId,
 				setChatStatus,
@@ -195,6 +240,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
+				launcherContext,
+				checkoutSupportVariation,
 			} }
 		>
 			{ children }

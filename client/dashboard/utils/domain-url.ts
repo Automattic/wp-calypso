@@ -5,12 +5,15 @@ import { isDashboardBackport } from './is-dashboard-backport';
 import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
 import type { Domain } from '@automattic/api-core';
 
-export function getDomainConnectionSetupTemplateUrl() {
-	const domainConnectionSetupTemplateUrl = domainConnectionSetupRoute.fullPath.replace(
-		'$domainName',
-		'%s'
-	);
-	return dashboardLink( domainConnectionSetupTemplateUrl );
+export function getDomainConnectionSetupTemplateUrl(): string | undefined {
+	// fullPath is only materialized once the domains route group is registered
+	// in the current dashboard's route tree; dashboards without the domains
+	// section (e.g. A4A) have no connection-setup page to link to.
+	const fullPath: string | undefined = domainConnectionSetupRoute.fullPath;
+	if ( ! fullPath ) {
+		return undefined;
+	}
+	return dashboardLink( fullPath.replace( '$domainName', '%s' ) );
 }
 
 export function getCreateSiteFromDomainOnlyUrl( domain: Domain ) {
@@ -27,9 +30,11 @@ export function getAddSiteDomainUrl( siteSlug: string ) {
 		return addQueryArgs( `/domains/add/${ siteSlug }`, { redirect_to: backUrl } );
 	}
 
+	const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+
 	return addQueryArgs( wpcomLink( '/setup/domain' ), {
 		siteSlug,
-		domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
+		...( domainConnectionSetupUrl && { domainConnectionSetupUrl } ),
 		back_to: backUrl,
 		redirect_to: backUrl,
 		dashboard: getCurrentDashboard(),

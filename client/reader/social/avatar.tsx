@@ -27,8 +27,10 @@
 import { useEffect, useState } from 'react';
 import type { ImgHTMLAttributes, ReactNode } from 'react';
 
-export interface SocialAvatarProps
-	extends Omit< ImgHTMLAttributes< HTMLImageElement >, 'onError' | 'src' > {
+export interface SocialAvatarProps extends Omit<
+	ImgHTMLAttributes< HTMLImageElement >,
+	'onError' | 'src'
+> {
 	src: string | null | undefined;
 	/**
 	 * Rendered when `src` is null/empty OR when the `<img>` fired its

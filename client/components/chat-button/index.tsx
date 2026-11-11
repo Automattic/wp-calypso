@@ -9,13 +9,15 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import type { FC } from 'react';
+import type { ComponentProps, FC } from 'react';
 
 type ChatIntent = 'SUPPORT' | 'PRECANCELLATION';
 
 type Props = {
 	chatIntent?: ChatIntent;
 	className?: string;
+	icon?: ComponentProps< typeof Button >[ 'icon' ];
+	iconSize?: number;
 	initialMessage: string;
 	onClick?: () => void;
 	onError?: () => void;
@@ -33,6 +35,8 @@ const ChatButton: FC< Props > = ( {
 	chatIntent = 'SUPPORT',
 	children,
 	className = '',
+	icon,
+	iconSize,
 	initialMessage,
 	onClick,
 	siteId = null,
@@ -49,7 +53,10 @@ const ChatButton: FC< Props > = ( {
 	);
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging(
+		true,
+		siteId ?? undefined
+	);
 
 	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats && canConnectToZendesk ) {
@@ -98,6 +105,8 @@ const ChatButton: FC< Props > = ( {
 		<Button
 			className={ classes }
 			variant={ primary ? 'primary' : 'link' }
+			icon={ icon }
+			iconSize={ iconSize }
 			onClick={ handleClick }
 			title={ __( 'Contact us' ) }
 			size="compact"

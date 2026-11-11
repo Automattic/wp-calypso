@@ -9,11 +9,14 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { STATS_SUMMARY_MAX_BARS } from '../constants';
 import StatsModuleUTM from '../features/modules/stats-utm';
+import { getMomentSiteZone } from '../hooks/use-moment-site-zone';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
+import { getPublishMonthKey } from './publish-month';
+import { clampRangeEnd, getRangeEndCeiling } from './range-end';
 
 import './style.scss';
 
@@ -37,6 +40,7 @@ class StatsPostSummary extends Component {
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 		supportsUTMStats: PropTypes.bool,
+		momentSiteZone: PropTypes.func,
 	};
 
 	state = {
@@ -71,7 +75,7 @@ class StatsPostSummary extends Component {
 	// read directly off stats.data rather than built into record objects.
 	getTotalRecordCount() {
 		return this.state.period === 'day'
-			? this.props.stats?.data?.length ?? 0
+			? ( this.props.stats?.data?.length ?? 0 )
 			: this.getAllRecordsForPeriod().length;
 	}
 
@@ -171,12 +175,28 @@ class StatsPostSummary extends Component {
 				}
 
 				// statsByMonth() expands every year in stats.years to a full
-				// 12 months, which for the current year includes months that
-				// haven't happened yet; drop those rather than paginating
-				// into fake future bars.
-				const today = moment();
-				return [ ...statsByMonth( stats, moment ) ].filter( ( record ) =>
-					moment( record.startDate ).isSameOrBefore( today, 'month' )
+				// 12 months: for the current year that includes months that
+				// haven't happened yet, and for the first year it includes
+				// months before the post was published. Drop both rather than
+				// paginating into fake empty bars; post-publish months with
+				// zero views are kept, consistent with Days/Weeks paging.
+				// Both boundaries are site-local month keys: the site's current
+				// month (floored at the newest month with views) and the publish month.
+				const records = [ ...statsByMonth( stats, moment ) ];
+				const newestMonthWithViews = records.reduce(
+					( newest, record ) => ( record.value > 0 ? record.startDate : newest ),
+					undefined
+				);
+				const lastMonth = getRangeEndCeiling(
+					this.props.momentSiteZone(),
+					newestMonthWithViews,
+					'YYYY-MM'
+				);
+				const publishMonth = getPublishMonthKey( stats.post, this.props.momentSiteZone );
+				return records.filter(
+					( record ) =>
+						record.startDate.slice( 0, 7 ) <= lastMonth &&
+						( ! publishMonth || record.startDate.slice( 0, 7 ) >= publishMonth )
 				);
 			}
 			default:
@@ -213,12 +233,15 @@ class StatsPostSummary extends Component {
 				break;
 		}
 
-		// Don't extend the range into the future when the last bar is still
-		// the current, in-progress period (e.g. this month before it ends).
-		const today = moment();
-		if ( end.isAfter( today, 'day' ) ) {
-			end = today;
-		}
+		// Don't extend an in-progress period past the site's today, floored at
+		// the newest bar charted. Callers only format() the result.
+		end = moment(
+			clampRangeEnd(
+				end.format( 'YYYY-MM-DD' ),
+				this.props.momentSiteZone(),
+				chartData[ chartData.length - 1 ].startDate
+			)
+		);
 
 		return { start, end };
 	}
@@ -276,7 +299,7 @@ class StatsPostSummary extends Component {
 										? {
 												chartStart: pageDateRange.start.format( 'YYYY-MM-DD' ),
 												chartEnd: pageDateRange.end.format( 'YYYY-MM-DD' ),
-										  }
+											}
 										: undefined
 								}
 								isShort
@@ -331,4 +354,5 @@ class StatsPostSummary extends Component {
 export default connect( ( state, { siteId, postId } ) => ( {
 	stats: getPostStats( state, siteId, postId ),
 	isRequesting: isRequestingPostStats( state, siteId, postId ),
+	momentSiteZone: getMomentSiteZone( state, siteId ),
 } ) )( localize( withLocalizedMoment( StatsPostSummary ) ) );

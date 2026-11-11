@@ -131,7 +131,11 @@ const UseMyDomain: StepType< {
 						domain,
 						...verificationData,
 					} );
+					clearQueryParams();
 					submit( { ownershipVerificationCompleted: true, domain } );
+
+					// Early return: the default handler below would re-submit a domainCartItem.
+					return;
 				} catch ( error ) {
 					// Validation failed - call onDone to display error and stay on current step
 					if ( onDone ) {
@@ -205,11 +209,13 @@ const UseMyDomain: StepType< {
 		if ( useMyDomainMode === 'domain-input' ) {
 			columnWidth = 4 as const;
 			headingText = __( 'Enter your domain' );
-			subText = __( 'Type the domain you already own, like yourdomain.com.' );
+			subText = __( 'Type the domain you already own, like yourgroovydomain.com.' );
 		} else {
 			columnWidth = 6 as const;
 			headingText = __( 'Set up your domain' );
-			subText = __( 'Transfer your domain, or connect it from your current provider.' );
+			subText = __(
+				'Transfer your domain name to WordPress.com, or keep it with your current registrar.'
+			);
 		}
 
 		const getTopBarLeftElement = () => {

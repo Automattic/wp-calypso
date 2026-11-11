@@ -18,8 +18,7 @@ const GravPoweredLoginBlockFooter = () => {
 	 * Create a selector that returns the current query arguments as a record, or pass the type to the selector.
 	 */
 	const currentQuery = useSelector( getCurrentQueryArguments ) as
-		| Record< string, string >
-		| undefined;
+		Record< string, string > | undefined;
 	const currentRoute = useSelector( getCurrentRoute );
 	const translate = useTranslate();
 

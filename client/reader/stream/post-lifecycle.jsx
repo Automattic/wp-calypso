@@ -7,6 +7,8 @@ import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import compareProps from 'calypso/lib/compare-props';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
+import { isSavedSnapshotPost } from 'calypso/reader/post-key';
+import { SavedSnapshotCard } from 'calypso/reader/saved-stream/snapshot-card';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
@@ -96,6 +98,12 @@ class PostLifecycle extends Component {
 					itemRef={ this.props.itemRef }
 				/>
 			);
+		} else if ( postKey.isCustomBlock ) {
+			return (
+				<div ref={ this.props.itemRef } className="reader-stream__custom-block">
+					{ this.props.inStreamBlock }
+				</div>
+			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
 				<div
@@ -125,6 +133,15 @@ class PostLifecycle extends Component {
 			return <PostPlaceholder itemRef={ this.props.itemRef } />;
 		} else if ( post.is_error ) {
 			return <PostUnavailable post={ post } itemRef={ this.props.itemRef } />;
+		} else if ( isSavedSnapshotPost( post ) ) {
+			return (
+				<SavedSnapshotCard
+					post={ post }
+					isSelected={ this.props.isSelected }
+					itemRef={ this.props.itemRef }
+					handleClick={ this.props.handleClick }
+				/>
+			);
 		} else if (
 			( ! post.is_external || post.is_jetpack ) &&
 			this.props.blockedSites.includes( +post.site_ID )
@@ -162,6 +179,8 @@ const ConnectedPostLifecycle = connect(
 	}
 )( PostLifecycle );
 
+// The inner name labels the component in React DevTools.
+// eslint-disable-next-line no-shadow
 const PostLifecycleWithPost = forwardRef( function PostLifecycleWithPost( props, ref ) {
 	const post = useCachedPost( props.postKey );
 	return <ConnectedPostLifecycle { ...props } post={ post } ref={ ref } />;

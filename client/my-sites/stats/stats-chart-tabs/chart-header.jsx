@@ -40,7 +40,9 @@ const ChartHeader = ( {
 			return;
 		}
 
-		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+		events.forEach( ( event ) =>
+			recordTracksEvent( event.name, { blog_id: siteId, ...event.params } )
+		);
 		dispatch( toggleUpsellModal( siteId, statType ) );
 	};
 

@@ -1,6 +1,8 @@
+import { referralsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { FormLabel, Tooltip } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -25,8 +27,8 @@ import {
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
+import { useUploadLogo } from 'calypso/a8c-for-agencies/data/partner-directory/use-upload-logo';
 import { getLogoUrlForPreview } from 'calypso/a8c-for-agencies/lib/logo-url-utils';
-import { useUploadLogo } from 'calypso/a8c-for-agencies/sections/partner-directory/agency-details/hooks/use-upload-logo';
 import { ReferralOrderFlowType } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -38,7 +40,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import useFetchReferrals from '../../referrals/hooks/use-fetch-referrals';
 import withMarketplaceProviders from '../hoc/with-marketplace-providers';
 import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
@@ -100,7 +101,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const { onClearCart } = useShoppingCart();
 
 	const onEmailChange = ( value: string ) => {
-		setEmail( value );
+		setEmail( value.trim() );
 		if ( validationError.email ) {
 			setValidationError( { email: undefined } );
 		}
@@ -121,7 +122,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 	const uploadLogo = useUploadLogo();
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
-	const { data: referrals, refetch: refetchReferrals } = useFetchReferrals();
+	const { data: referrals, refetch: refetchReferrals } = useQuery( {
+		...referralsQuery( agencyId ?? 0 ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded
@@ -311,11 +315,11 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 										[ NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY ]: email,
 										[ NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY ]: referral.checkout_url,
 										[ NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY ]: flowType,
-								  } )
+									} )
 								: addQueryArgs( A4A_FEEDBACK_LINK, {
 										args: { email },
 										type: FeedbackType.ReferralCompleted,
-								  } )
+									} )
 						);
 						setEmail( '' );
 						setMessage( '' );
@@ -337,7 +341,7 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 													),
 												},
 											}
-									  )
+										)
 									: error.message
 							)
 						);

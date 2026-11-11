@@ -8,12 +8,16 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 	chat: {
 		enabled: true,
 		filterByBotSlug: false,
-		flowName: null,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: true,
+	},
+	contextualCta: {
+		enabled: true,
 	},
 	moreResources: {
 		visible: true,
@@ -35,12 +39,16 @@ const a4aPreset: HelpCenterFeatureConfig = {
 	chat: {
 		enabled: false,
 		filterByBotSlug: false,
-		flowName: null,
 		hasPremiumSupport: false,
 		skipSupportStatus: false,
+		zendeskIntegrationKey: null,
+		zendeskConversationTags: [],
 	},
 	home: {
 		recentConversations: false,
+	},
+	contextualCta: {
+		enabled: false,
 	},
 	moreResources: {
 		visible: false,
@@ -54,27 +62,33 @@ const a4aPreset: HelpCenterFeatureConfig = {
 	},
 };
 
-/** Commerce Garden: chat enabled with filtered history, no dotcom-specific links. */
-const commerceGardenPreset: HelpCenterFeatureConfig = {
+/** WooCommerce.com: chat enabled with filtered history, Woo docs instead of dotcom-specific links. */
+const wooPreset: HelpCenterFeatureConfig = {
 	header: {
 		ellipsisMenu: true,
 	},
 	chat: {
 		enabled: true,
 		filterByBotSlug: true,
-		flowName: 'messaging_flow_commerce_in_a_box',
+		// Testing: open to all in sandbox. Production will gate on WordPress.com connection.
 		hasPremiumSupport: true,
 		skipSupportStatus: true,
+		zendeskIntegrationKey: 'woo',
+		// Routes the conversation to the Woo queue (Zendesk trigger, WOOPUBR-2382).
+		zendeskConversationTags: [ 'woo_support_flow_help_center' ],
 	},
 	home: {
 		recentConversations: true,
+	},
+	contextualCta: {
+		enabled: false,
 	},
 	moreResources: {
 		visible: true,
 		supportHistory: true,
 		courses: false,
 		productUpdates: false,
-		supportGuidesUrl: 'https://ciabattasupportguides.wpcomstaging.com/',
+		supportGuidesUrl: 'https://woocommerce.com/docs/',
 	},
 	contactForm: {
 		variant: 'standard',
@@ -84,5 +98,5 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 export const PRODUCT_PRESETS: Record< HelpCenterProduct, HelpCenterFeatureConfig > = {
 	wpcom: wpcomPreset,
 	a4a: a4aPreset,
-	'commerce-garden': commerceGardenPreset,
+	woo: wooPreset,
 };

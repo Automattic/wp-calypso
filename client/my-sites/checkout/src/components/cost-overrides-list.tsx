@@ -16,11 +16,13 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
+	A4ATitanInboxMeta,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
 	getLabel,
 	groupBundleLineItems,
+	isA4ATitanInboxProduct,
 	isOverrideCodeIntroductoryOffer,
 	LoadingCopy,
 } from '@automattic/wpcom-checkout';
@@ -544,6 +546,7 @@ function SingleProductAndCostOverridesList( {
 					/>
 				) }
 			</ProductTitleAreaForCostOverridesList>
+			{ isA4ATitanInboxProduct( product ) && <A4ATitanInboxMeta product={ product } compact /> }
 			{ ! isCartUpdating && (
 				<LineItemCostOverrides
 					product={ product }

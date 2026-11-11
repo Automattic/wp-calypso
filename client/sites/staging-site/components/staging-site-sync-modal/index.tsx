@@ -73,7 +73,7 @@ const DirectionArrow = () => {
 			<Icon
 				icon={ isRTL() ? chevronLeft : chevronRight }
 				style={ {
-					fill: '#949494',
+					color: '#949494',
 				} }
 			/>
 		</div>
@@ -479,7 +479,7 @@ function SyncModal( {
 											'Selecting individual items to sync will be enabled automatically once your first backup is complete.<br/>Wait a few minutes or run a full sync in the meantime.'
 										),
 										{ br: <br /> }
-								  ) as unknown as string )
+									) as unknown as string )
 								: '' ) as string
 						}
 						placement="top-start"

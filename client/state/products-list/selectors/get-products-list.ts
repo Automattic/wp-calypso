@@ -11,6 +11,7 @@ export interface ProductIntroductoryOffer {
 	should_prorate_when_offer_ends: boolean;
 	transition_after_renewal_count: number;
 	usage_limit: number | null;
+	first_renewal_price_integer?: number;
 }
 
 export interface ProductListItem {

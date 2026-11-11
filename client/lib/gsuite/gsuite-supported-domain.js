@@ -45,7 +45,7 @@ export function getGSuiteSupportedDomains( domains ) {
 
 /**
  * Given a list of domains does one of them support G Suite
- * @param {ResponseDomain?[]} domains - list of domain objects
+ * @param {(ResponseDomain | null | undefined)[]} domains - list of domain objects
  * @returns {boolean} - Does list of domains contain a G Suited supported domain
  */
 export function hasGSuiteSupportedDomain( domains ) {

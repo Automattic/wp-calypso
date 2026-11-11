@@ -47,7 +47,7 @@ const PressablePlanDetails = ( { productId }: { productId: number } ) => {
 							translate( 'Custom visits per month' ),
 							translate( 'Custom storage per month' ),
 							translate( 'Unmetered bandwidth' ),
-					  ]
+						]
 					: [
 							translate( '%(count)d WordPress install', '%(count)d WordPress installs', {
 								args: {
@@ -76,7 +76,7 @@ const PressablePlanDetails = ( { productId }: { productId: number } ) => {
 								comment: '%(storageSize)d is the size of storage in GB.',
 							} ),
 							translate( 'Unmetered bandwidth' ),
-					  ]
+						]
 			}
 		/>
 	);

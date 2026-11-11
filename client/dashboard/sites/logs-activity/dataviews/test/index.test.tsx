@@ -41,6 +41,7 @@ jest.mock( '@tanstack/react-router', () => ( {
 	...jest.requireActual( '@tanstack/react-router' ),
 	useRouter: () => ( {
 		navigate: mockNavigate,
+		getMatchedRoutes: () => [ [] ],
 		state: {
 			location: {
 				pathname: '/',
@@ -54,9 +55,6 @@ jest.mock( '@tanstack/react-router', () => ( {
 } ) );
 
 jest.mock( '../../../../app/router/sites', () => ( {
-	siteBackupDetailRoute: {
-		fullPath: '/sites/$siteSlug/backups/$rewindId',
-	},
 	siteLogsActivityRoute: {
 		useSearch: () => ( {} ),
 	},
@@ -188,11 +186,7 @@ test( 'clicking backup action navigates to backup detail page', async () => {
 	await user.click( backupButton );
 
 	expect( mockNavigate ).toHaveBeenCalledWith( {
-		to: '/sites/$siteSlug/backups/$rewindId',
-		params: {
-			siteSlug: 'test-site',
-			rewindId: 'rewind-123',
-		},
+		to: '/sites/test-site/backups/rewind-123',
 	} );
 } );
 

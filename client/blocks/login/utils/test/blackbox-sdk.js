@@ -5,7 +5,10 @@
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn( ( key ) => {
 		if ( key === 'blackbox_api_key' ) {
-			return 'test-api-key';
+			return 'login-key';
+		}
+		if ( key === 'blackbox_signup_api_key' ) {
+			return 'signup-key';
 		}
 		if ( key === 'blackbox_url' ) {
 			return 'https://blackbox-api.wp.com/v.js';
@@ -31,16 +34,25 @@ describe( 'blackbox-sdk', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'loadBlackboxSdk calls loadScript with the configured URL and data-apikey', async () => {
+	test( 'getBlackboxApiKey uses the login key', () => {
+		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
+
+		expect( getBlackboxApiKey() ).toBe( 'login-key' );
+	} );
+
+	test( 'loadBlackboxSdk injects the api key and collect flow', async () => {
 		const { loadScript } = require( '@automattic/load-script' );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'signup-key', 'signup' );
 
 		expect( loadScript ).toHaveBeenCalledWith(
 			'https://blackbox-api.wp.com/v.js',
 			expect.any( Function ),
-			expect.objectContaining( { 'data-apikey': 'test-api-key' } )
+			expect.objectContaining( {
+				'data-apikey': 'signup-key',
+				'data-flow': 'signup',
+			} )
 		);
 	} );
 
@@ -48,17 +60,33 @@ describe( 'blackbox-sdk', () => {
 		const { loadScript } = require( '@automattic/load-script' );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'login-key', 'login' );
+		await loadBlackboxSdk( 'login-key', 'login' );
 
 		expect( loadScript ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'rotates the initial session when the active key changes during script loading', async () => {
+		const { loadScript } = require( '@automattic/load-script' );
+		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { configureBlackbox } = require( '../blackbox-surface' );
+		let finishLoad;
+		loadScript.mockImplementationOnce( ( _url, callback ) => {
+			finishLoad = callback;
+		} );
+		const loading = loadBlackboxSdk( 'login-key' );
+		window.Blackbox = { configure: jest.fn(), reset: jest.fn() };
+		finishLoad( null );
+		await loading;
+		configureBlackbox( window.Blackbox, { apiKey: 'signup-key' } );
+		expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'loadBlackboxSdk does not call configure after load', async () => {
 		window.Blackbox = { configure: jest.fn(), getSessionId: jest.fn() };
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'login-key', 'login' );
 
 		expect( window.Blackbox.configure ).not.toHaveBeenCalled();
 	} );
@@ -68,7 +96,7 @@ describe( 'blackbox-sdk', () => {
 		loadScript.mockImplementationOnce( ( _url, callback ) => callback( new Error( 'fail' ) ) );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await expect( loadBlackboxSdk() ).resolves.toBeUndefined();
+		await expect( loadBlackboxSdk( 'login-key', 'login' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'loadBlackboxSdk retries on the next call after the script fails to load', async () => {
@@ -78,8 +106,8 @@ describe( 'blackbox-sdk', () => {
 			.mockImplementationOnce( ( _url, callback ) => callback( null ) );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await loadBlackboxSdk();
-		await loadBlackboxSdk();
+		await loadBlackboxSdk( 'login-key', 'login' );
+		await loadBlackboxSdk( 'login-key', 'login' );
 
 		expect( loadScript ).toHaveBeenCalledTimes( 2 );
 	} );
@@ -90,7 +118,7 @@ describe( 'blackbox-sdk', () => {
 		const { loadScript } = require( '@automattic/load-script' );
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
-		await expect( loadBlackboxSdk() ).resolves.toBeUndefined();
+		await expect( loadBlackboxSdk( 'login-key', 'login' ) ).resolves.toBeUndefined();
 		expect( loadScript ).not.toHaveBeenCalled();
 	} );
 } );

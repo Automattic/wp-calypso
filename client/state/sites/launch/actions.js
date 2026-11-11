@@ -70,7 +70,7 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		// TODO: consider using the `page` library instead of calling using `location.href` here
 		window.location.href = addQueryArgs(
-			{ siteSlug, source, hide_initial_query: 'yes', new: siteTitle, search },
-			'/start/launch-site'
+			{ siteSlug, source, new: siteTitle, search },
+			'/setup/launch-site'
 		);
 	};

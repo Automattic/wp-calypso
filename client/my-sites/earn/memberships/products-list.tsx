@@ -5,11 +5,11 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -18,7 +18,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -91,13 +91,10 @@ function ProductsList() {
 		window.location.hash === ADD_TIER_PLAN_HASH;
 	const default_product_type = defaultToTierPanel ? TYPE_TIER : null;
 
-	const trackUpgrade = () =>
-		dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) );
-
-	function renderEllipsisMenu( productId: number ) {
+	function renderEllipsisMenu( productId: number, canEdit: boolean ) {
 		return (
 			<EllipsisMenu position="bottom left">
-				{ hasStripeFeature && (
+				{ hasStripeFeature && canEdit && (
 					<PopoverMenuItem onClick={ () => openAddEditDialog( productId ) }>
 						<Gridicon size={ 18 } icon="pencil" />
 						{ translate( 'Edit' ) }
@@ -116,10 +113,21 @@ function ProductsList() {
 		openAddEditDialog();
 	}
 
+	function getProductPair( productId: number ) {
+		const currentProduct = products.find( ( prod ) => prod.ID === productId );
+		const currentAnnualProduct = products.find( ( prod ) => prod.tier === productId );
+		return {
+			currentProduct,
+			currentAnnualProduct,
+		};
+	}
+
 	function openAddEditDialog( productId?: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
+			const { currentProduct, currentAnnualProduct } = getProductPair( productId );
+			if ( ! currentProduct ) {
+				return;
+			}
 			setShowAddEditDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -132,8 +140,10 @@ function ProductsList() {
 
 	function openDeleteDialog( productId: number ) {
 		if ( productId ) {
-			const currentProduct = products.find( ( prod: Product ) => prod.ID === productId );
-			const currentAnnualProduct = products.find( ( prod: Product ) => prod.tier === productId );
+			const { currentProduct, currentAnnualProduct } = getProductPair( productId );
+			if ( ! currentProduct ) {
+				return;
+			}
 			setShowDeleteDialog( true );
 			setProduct( currentProduct ?? null );
 			setAnnualProduct( currentAnnualProduct ?? null );
@@ -182,22 +192,6 @@ function ProductsList() {
 			     only appears when a newsletter tier exists — avoid the extra
 			     request on donation-only / non-newsletter sites. */ }
 			{ hasNewsletterTier && site?.ID && <QuerySiteSettings siteId={ site.ID } /> }
-			{ hasLoadedFeatures && ! hasStripeFeature && (
-				// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
-				// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
-				<UpsellNudge
-					title={ translate( 'Upgrade to modify payment plans or add new plans' ) }
-					href={ '/plans/' + site?.slug }
-					showIcon
-					onClick={ () => trackUpgrade() }
-					// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
-					// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
-					feature={ FEATURE_RECURRING_PAYMENTS }
-					event="calypso_earn_page_payment_plans_upgrade_nudge"
-					tracksClickName="calypso_earn_page_payment_plans_upgrade_button_click"
-					tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
-				/>
-			) }
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>
@@ -216,10 +210,17 @@ function ProductsList() {
 			) }
 			{ hasLoadedFeatures &&
 				products
-					.filter( ( currentProduct: Product ) => ! currentProduct.tier ) // We remove the "tiers" (the annual products with "tier" type)
+					.filter(
+						( currentProduct: Product ) =>
+							! currentProduct.tier ||
+							! products.some( ( parentProduct ) => parentProduct.ID === currentProduct.tier )
+					)
 					.map( function ( currentProduct: Product ) {
 						const currentAnnualProduct = products.find(
 							( _prod: Product ) => _prod.tier === currentProduct.ID
+						);
+						const isReadOnly = Boolean(
+							currentProduct.is_read_only || currentAnnualProduct?.is_read_only
 						);
 						const price = formatCurrency(
 							currentProduct?.price || 0,
@@ -282,7 +283,21 @@ function ProductsList() {
 										</div>
 									) }
 								</div>
-								{ currentProduct && currentProduct.ID && renderEllipsisMenu( currentProduct.ID ) }
+								{ isReadOnly && (
+									<Tooltip text={ __( 'Managed on the owning site.' ) }>
+										<Badge
+											type="info"
+											className="memberships__products-product-read-only"
+											tabIndex={ 0 }
+										>
+											{ __( 'Read-only' ) }
+										</Badge>
+									</Tooltip>
+								) }
+								{ ! isReadOnly &&
+									currentProduct &&
+									currentProduct.ID &&
+									renderEllipsisMenu( currentProduct.ID, ! currentProduct.tier ) }
 							</CompactCard>
 						);
 					} ) }

@@ -108,13 +108,20 @@ export function requestSiteStats( siteId, statType, query ) {
 						apiNamespace,
 					},
 					options
-			  )
-			: wpcom
-					.site( siteId )
-					[ statType ](
-						options,
-						'statsVideo' === statType ? { statType: query.statType, period: query.period } : {}
-					);
+				)
+			: wpcom.site( siteId )[ statType ](
+					options,
+					// stats/video/:id takes its window and series selection from
+					// these params; only forward the ones the query actually sets
+					// so legacy queries keep their historical request shape.
+					'statsVideo' === statType
+						? Object.fromEntries(
+								[ 'statType', 'period', 'num', 'date', 'start_date' ]
+									.filter( ( param ) => query[ param ] !== undefined )
+									.map( ( param ) => [ param, query[ param ] ] )
+							)
+						: {}
+				);
 
 		return requestStats
 			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )

@@ -66,14 +66,18 @@ function Content( { image, ...props }: ContentProps ) {
 	);
 }
 
-type StepProps = {
+type EducationalContentStepProps = {
 	type: string;
 	siteSlug: string;
 	onDecline?: () => void;
 	cancellationReason?: string;
 };
 
-export default function EducationalContentStep( { type, siteSlug, ...props }: StepProps ) {
+export default function EducationalContentStep( {
+	type,
+	siteSlug,
+	...props
+}: EducationalContentStepProps ) {
 	const { setShowHelpCenter, setSubject } = useHelpCenter();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -207,7 +211,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 											),
 											chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 										}
-								  )
+									)
 								: createInterpolateElement(
 										__(
 											'Read more about domain connection <link>here</link> or <chat>chat with a real person</chat> right now.'
@@ -223,7 +227,7 @@ export default function EducationalContentStep( { type, siteSlug, ...props }: St
 											),
 											chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 										}
-								  ) }
+									) }
 						</li>
 					</ul>
 				</Content>

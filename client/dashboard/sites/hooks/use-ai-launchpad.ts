@@ -1,4 +1,4 @@
-import { getAiLaunchpadStatus } from '@automattic/api-core';
+import { getAiLaunchpadStatus, isLaunchpadNoGuidance } from '@automattic/api-core';
 import { siteAiLaunchpadQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 
@@ -28,6 +28,7 @@ export function useAiLaunchpad(
 	return {
 		isActive,
 		isCompleted: status === 'completed',
+		isNoGuidance: site ? isLaunchpadNoGuidance( site ) : false,
 		setupUrl: isActive && adminUrl ? `${ adminUrl }admin.php?page=site-setup-wp-admin` : null,
 		tasks: aiLaunchpad?.tasks,
 	};

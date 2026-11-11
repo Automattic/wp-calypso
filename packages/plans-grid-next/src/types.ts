@@ -233,13 +233,6 @@ export type GridContextProps = {
 	enterpriseFeaturesList?: string[];
 
 	/**
-	 * India Automattic for Agencies test: when true, the Enterprise plan card is presented as A4A.
-	 * This affects Enterprise branding (logo/copy) and layout (e.g. hides Enterprise client logos
-	 * in the price cell and shows A4A-specific billing text instead).
-	 */
-	isEnterpriseA4AIndia?: boolean;
-
-	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
 	 * It is only used for showing "Everything in [previous] plus".
 	 */
@@ -286,12 +279,6 @@ export type GridContextProps = {
 	 * If, and how to present increased renewal pricing (null or the assigned variant name)
 	 */
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
-
-	/**
-	 * When true, the user is in the rolled-out pricing differentiation cohort.
-	 * Used to display cohort-specific feature titles in the comparison grid.
-	 */
-	isExperimentVariant?: boolean;
 
 	/**
 	 * Display availability checkmarks next to features in the features grid.

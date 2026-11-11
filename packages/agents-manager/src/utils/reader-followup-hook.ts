@@ -15,8 +15,8 @@
  */
 
 import { useState, useEffect } from '@wordpress/element';
-import type { Suggestion } from '../types';
 import type { UseSuggestionsHook } from './load-external-providers';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 type FollowupWindow = Window & { __jetpackReaderFollowupChips?: Suggestion[] };
 

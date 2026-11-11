@@ -1,7 +1,29 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { rememberBlackboxKey } from 'calypso/blocks/login/utils/blackbox-surface';
 
 let loadPromise = null;
+
+// Sent with a signup session so wpcom verifies it with `blackbox_api_key`.
+// A signup that sends no version is verified with `blackbox_signup_api_key`.
+export const BLACKBOX_KEY_VERSION = 2;
+
+/**
+ * Public key for Blackbox collects.
+ * @returns {string|undefined} Configured public key.
+ */
+export function getBlackboxApiKey() {
+	const configApiKey = config( 'blackbox_api_key' );
+
+	if ( process.env.NODE_ENV === 'development' ) {
+		// Guarded require so the dev-only override module is dead-code
+		// eliminated from production bundles.
+		const { resolveBlackboxApiKey } = require( 'calypso/lib/blackbox-helper/api-key' );
+		return resolveBlackboxApiKey( configApiKey );
+	}
+
+	return configApiKey;
+}
 
 /**
  * Inject the Blackbox SDK script once.
@@ -9,14 +31,16 @@ let loadPromise = null;
  * Subsequent calls return the same Promise — the script is only injected once.
  *
  * Callers are responsible for calling window.Blackbox.configure() after this resolves.
+ * The script loads once, and this key is what auto-init collects with.
+ * @param {string} apiKey Public key stamped on the script tag.
+ * @param {'login'|'signup'} flow Collect flow for `data-flow` on the script tag.
  * @returns {Promise<void>}
  */
-export function loadBlackboxSdk() {
+export function loadBlackboxSdk( apiKey, flow ) {
 	if ( typeof document === 'undefined' ) {
 		return Promise.resolve();
 	}
 
-	const apiKey = config( 'blackbox_api_key' );
 	if ( ! config.isEnabled( 'blackbox' ) || ! apiKey ) {
 		return Promise.resolve();
 	}
@@ -38,10 +62,15 @@ export function loadBlackboxSdk() {
 				if ( error ) {
 					didFailSynchronously = true;
 					loadPromise = null;
+				} else {
+					rememberBlackboxKey( window.Blackbox, apiKey );
 				}
 				resolve();
 			},
-			{ 'data-apikey': apiKey }
+			{
+				'data-apikey': apiKey,
+				'data-flow': flow,
+			}
 		);
 	} );
 

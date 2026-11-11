@@ -131,17 +131,20 @@ const splitConversationsByRecency = (
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
-	const { newInteractionsBotSlug } = useHelpCenterContext();
+	const { newInteractionsBotSlug, newLoggedOutInteractionsBotSlug } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 
-	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { isChatLoaded, loggedOutSession } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-		return {
-			isChatLoaded: store.getIsChatLoaded(),
-			loggedOutSession: store.getLoggedOutOdieChat(),
-		};
-	}, [] );
+			return {
+				isChatLoaded: store.getIsChatLoaded(),
+				loggedOutSession: store.getLoggedOutOdieChat( newLoggedOutInteractionsBotSlug ),
+			};
+		},
+		[ newLoggedOutInteractionsBotSlug ]
+	);
 
 	const loggedOutChat = useOdieChat(
 		loggedOutSession ? loggedOutSession.odieId : null,
@@ -156,7 +159,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
 		useGetSupportInteractions( 'odie', chatEnabled );
 
-	// When filtering by bot slug is enabled (e.g. CIAB context), only show
+	// When filtering by bot slug is enabled (e.g. on WooCommerce.com), only show
 	// conversations matching the current bot slug.
 	const filteredOdieSupportInteractions = useMemo( () => {
 		if ( ! featureConfig.chat.filterByBotSlug ) {
@@ -213,7 +216,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 							loggedOutSession?.sessionId || '',
 							loggedOutSession?.botSlug || ''
 						),
-				  ]
+					]
 				: [] ),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )

@@ -6,9 +6,9 @@ module.exports = {
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
 	testEnvironment: 'jsdom',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\]|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
+		'node_modules[\\/\\\\](?!@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\]|(?:.*[\\/\\\\])?marked[\\/\\\\]|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
-	setupFiles: [ 'jest-canvas-mock' ],
+	setupFiles: [ ...base.setupFiles, 'jest-canvas-mock' ],
 	// This includes a lot of globals that don't exist, like fetch, matchMedia, etc.
 	// Keep the base calypso-jest setup (CSS mock, MessageChannel polyfill for
 	// react-dom/server under React 19) by spreading `base.setupFilesAfterEnv`.

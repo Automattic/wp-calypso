@@ -51,6 +51,7 @@ function createListenerMiddleware(): Middleware {
 					const listenersForType = listeners.get( type )!;
 					handlers.forEach( ( handler ) => listenersForType.delete( handler ) );
 				}
+				return;
 			}
 			case 'LISTENER-MIDDLEWARE/CLEAR_LISTENERS': {
 				listeners.clear();

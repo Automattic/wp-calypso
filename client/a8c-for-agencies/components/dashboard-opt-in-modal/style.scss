@@ -1,0 +1,20 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+// Our own content sets the modal's width, so the core modal needs no size override.
+.a4a-dashboard-opt-in-modal-content {
+	inline-size: 480px;
+	max-inline-size: 100%;
+}
+
+// The drawing runs edge to edge across the top, pulled into the modal's own padding.
+.a4a-dashboard-opt-in-modal-drawing {
+	display: block;
+	inline-size: calc( 100% + #{$grid-unit-30 * 2} );
+	// The global `img { max-width: 100% }` reset would cap it at the content width.
+	max-inline-size: none;
+	block-size: 240px;
+	margin: ( -$grid-unit-30 ) ( -$grid-unit-30 ) 0;
+	object-fit: contain;
+	background-color: var( --color-primary-0 );
+}

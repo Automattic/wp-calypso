@@ -1,11 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-import { resolveSelect, useDispatch } from '@wordpress/data';
+import config from '@automattic/calypso-config';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import wpcom from 'calypso/lib/wp';
+import { persistSignupDestination } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
+
+let mockQueryParams = new URLSearchParams();
+
+jest.mock( '@automattic/calypso-products', () => ( {
+	isPersonalPlan: ( slug: string ) => slug.startsWith( 'personal-bundle' ),
+	isPremiumPlan: ( slug: string ) => slug.startsWith( 'value_bundle' ),
+	isBusinessPlan: ( slug: string ) => slug.startsWith( 'business-bundle' ),
+	isEcommercePlan: ( slug: string ) => slug.startsWith( 'ecommerce-bundle' ),
+} ) );
 
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_ONBOARDING_FLOW: 'ai-site-builder-onboarding',
@@ -23,11 +34,12 @@ jest.mock( 'calypso/lib/wp', () => ( {
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: () => ( { resetOnboardStore: jest.fn() } ),
 	useDispatch: jest.fn(),
+	useSelect: jest.fn(),
 	resolveSelect: jest.fn(),
 } ) );
 
 jest.mock( '../../../../hooks/use-query', () => ( {
-	useQuery: () => ( { get: () => null } ),
+	useQuery: () => mockQueryParams,
 } ) );
 
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
@@ -44,6 +56,8 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	clearSignupCompleteFlowName: jest.fn(),
 	clearSignupCompleteSlug: jest.fn(),
 	clearSignupCompleteSiteID: jest.fn(),
+	getSignupCompleteSiteID: jest.fn(),
+	getSignupCompleteSlug: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/ui/actions', () => ( {
@@ -55,6 +69,8 @@ jest.mock( '../../../../utils/steps-with-required-login', () => ( {
 } ) );
 
 describe( 'ai-site-builder-onboarding flow', () => {
+	const isEnabled = jest.spyOn( config, 'isEnabled' );
+
 	it( 'initializes domain → plans → create-site → processing → error', async () => {
 		const reduxStore = { dispatch: jest.fn(), getState: jest.fn() } as never;
 		const steps = await aiSiteBuilderOnboarding.initialize( reduxStore );
@@ -68,7 +84,7 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		] );
 	} );
 
-	describe( 'processing → checkout site preparation', () => {
+	describe( 'processing → checkout', () => {
 		const setStaticHomepageOnSite = jest.fn();
 		const setIntentOnSite = jest.fn();
 
@@ -90,8 +106,23 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			} as never );
 		};
 
+		const getCheckoutParams = () =>
+			new URL(
+				( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ],
+				'https://wordpress.com'
+			).searchParams;
+
+		const getRedirectTo = () => getCheckoutParams().get( 'redirect_to' ) as string;
+
+		const setPlan = ( productSlug: string ) =>
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: productSlug } );
+
 		beforeEach( () => {
 			jest.clearAllMocks();
+			mockQueryParams = new URLSearchParams();
+			isEnabled.mockReturnValue( true );
+			setPlan( 'business-bundle' );
+			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
 
 			( useDispatch as jest.Mock ).mockReturnValue( {
 				setStaticHomepageOnSite,
@@ -102,63 +133,279 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			} );
 
 			Object.defineProperty( window, 'location', {
-				value: { assign: jest.fn() },
+				value: { assign: jest.fn(), replace: jest.fn() },
 				writable: true,
 			} );
 		} );
 
-		it( 'creates and sets a Home page when the site has none yet', async () => {
-			( wpcom.req.get as jest.Mock ).mockResolvedValue( [] );
-			( wpcom.req.post as jest.Mock ).mockResolvedValue( { id: 42 } );
+		describe( 'legacy site editor destination', () => {
+			beforeEach( () => {
+				setPlan( 'pro-plan' );
+			} );
 
-			await runProcessingSubmit();
+			it( 'creates and sets a Home page when the site has none yet', async () => {
+				( wpcom.req.get as jest.Mock ).mockResolvedValue( [] );
+				( wpcom.req.post as jest.Mock ).mockResolvedValue( { id: 42 } );
 
-			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
-			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 42 );
-			expect( setIntentOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', 'ai-assembler' );
+				await runProcessingSubmit();
+
+				expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 42 );
+				expect( setIntentOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', 'ai-assembler' );
+			} );
+
+			it( 'reuses the existing Home page instead of creating a duplicate on re-entry', async () => {
+				await runProcessingSubmit();
+
+				expect( wpcom.req.post ).not.toHaveBeenCalled();
+				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+			} );
+
+			it( 'routes checkout exit back into the flow instead of Big Sky', async () => {
+				window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery website' );
+
+				await runProcessingSubmit();
+
+				const checkoutParams = getCheckoutParams();
+				const redirectTo = new URL( checkoutParams.get( 'redirect_to' ) as string );
+				const checkoutBackUrl = new URL( checkoutParams.get( 'checkoutBackUrl' ) as string );
+				const checkoutBackUrlDomains = new URL(
+					checkoutParams.get( 'checkoutBackUrlDomains' ) as string
+				);
+
+				// Success still lands in Big Sky.
+				expect( redirectTo.origin ).toBe( 'https://example.wordpress.com' );
+				expect( redirectTo.pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( redirectTo.searchParams.get( 'ai-step' ) ).toBe( 'spec' );
+				expect( redirectTo.searchParams.get( 'checkout' ) ).toBe( 'success' );
+				expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+
+				// Keeping the cart returns to the plan step; emptying it returns to
+				// the domain step. Neither must point at Big Sky's site editor.
+				expect( checkoutBackUrl.pathname ).toBe(
+					`/setup/ai-site-builder-onboarding/${ STEPS.UNIFIED_PLANS.slug }`
+				);
+				expect( checkoutBackUrl.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+				expect( checkoutBackUrlDomains.pathname ).toBe(
+					`/setup/ai-site-builder-onboarding/${ STEPS.DOMAIN_SEARCH.slug }`
+				);
+				expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+			} );
+
+			it( 'stays on the legacy site editor for a plan without Atomic', async () => {
+				await runProcessingSubmit();
+
+				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+			} );
 		} );
 
-		it( 'reuses the existing Home page instead of creating a duplicate on re-entry', async () => {
-			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
+		describe( 'build-wow destination', () => {
+			it( 'sends checkout to the build-wow site spec with source and ref carried over', async () => {
+				mockQueryParams = new URLSearchParams( {
+					source: 'sites-dashboard',
+					ref: 'new-site-popover',
+				} );
 
-			await runProcessingSubmit();
+				await runProcessingSubmit();
 
-			expect( wpcom.req.post ).not.toHaveBeenCalled();
-			expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+				const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+				expect( redirectTo.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+				expect( Object.fromEntries( redirectTo.searchParams ) ).toEqual( {
+					build_wow: '1',
+					siteSlug: 'example.wordpress.com',
+					siteId: '123',
+					ref: 'new-site-popover',
+					source: 'sites-dashboard',
+					graph: 'dsl',
+				} );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
+
+				const checkoutBackUrl = new URL( getCheckoutParams().get( 'checkoutBackUrl' ) as string );
+				expect( checkoutBackUrl.searchParams.get( 'ref' ) ).toBe( 'new-site-popover' );
+			} );
+
+			it( 'skips the Big Sky editor preparation', async () => {
+				await runProcessingSubmit();
+
+				expect( wpcom.req.get ).not.toHaveBeenCalled();
+				expect( wpcom.req.post ).not.toHaveBeenCalled();
+				expect( setStaticHomepageOnSite ).not.toHaveBeenCalled();
+				expect( setIntentOnSite ).not.toHaveBeenCalled();
+			} );
+
+			it( 'forwards the entry prompt', async () => {
+				window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery website' );
+
+				await runProcessingSubmit();
+
+				const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+				expect( redirectTo.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+				expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+				expect( window.sessionStorage.getItem( 'stored_ai_prompt' ) ).toBeNull();
+			} );
+
+			it( 'confirms a spec carried from entry', async () => {
+				mockQueryParams = new URLSearchParams( { spec_id: 'spec-42' } );
+
+				await runProcessingSubmit();
+
+				const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+				expect( redirectTo.searchParams.get( 'build_wow' ) ).toBe( '1' );
+				expect( redirectTo.searchParams.get( 'spec_id' ) ).toBe( 'spec-42' );
+			} );
+
+			it.each( [
+				'personal-bundle',
+				'value_bundle',
+				'business-bundle-monthly',
+				'ecommerce-bundle-2y',
+			] )( 'is used for the %s plan', async ( productSlug ) => {
+				setPlan( productSlug );
+
+				await runProcessingSubmit();
+
+				expect( new URL( getRedirectTo(), 'https://wordpress.com' ).pathname ).toBe(
+					'/setup/ai-site-builder-spec/site-spec'
+				);
+			} );
+
+			it( 'sends a Commerce checkout to the build-wow site spec with ref, source, prompt and spec carried over', async () => {
+				setPlan( 'ecommerce-bundle' );
+				mockQueryParams = new URLSearchParams( {
+					source: 'sites-dashboard',
+					ref: 'new-site-popover',
+					spec_id: 'spec-42',
+				} );
+				window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery store' );
+
+				await runProcessingSubmit();
+
+				const redirectTo = new URL( getRedirectTo(), 'https://wordpress.com' );
+				expect( redirectTo.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+				expect( Object.fromEntries( redirectTo.searchParams ) ).toEqual( {
+					build_wow: '1',
+					siteSlug: 'example.wordpress.com',
+					siteId: '123',
+					ref: 'new-site-popover',
+					source: 'sites-dashboard',
+					prompt: 'a bakery store',
+					graph: 'dsl',
+					spec_id: 'spec-42',
+				} );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
+				expect( wpcom.req.get ).not.toHaveBeenCalled();
+				expect( setIntentOnSite ).not.toHaveBeenCalled();
+			} );
+
+			it( 'is not used when the site-spec feature is off', async () => {
+				isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
+
+				await runProcessingSubmit();
+
+				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( setStaticHomepageOnSite ).toHaveBeenCalledWith( 123, 7 );
+			} );
+
+			it( 'sends a Commerce checkout straight to the legacy editor when the site-spec feature is off', async () => {
+				isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
+				setPlan( 'ecommerce-bundle' );
+
+				await runProcessingSubmit();
+
+				expect( new URL( getRedirectTo() ).pathname ).toBe( '/wp-admin/site-editor.php' );
+				expect( persistSignupDestination ).toHaveBeenCalledWith( getRedirectTo() );
+			} );
+		} );
+	} );
+
+	describe( 'error reasons', () => {
+		const originalLocation = window.location;
+
+		const submitFrom = async ( slug: string, providedDependencies: Record< string, unknown > ) => {
+			const navigate = jest.fn();
+			const { submit } = aiSiteBuilderOnboarding.useStepNavigation( slug as never, navigate );
+			await submit?.( { slug, providedDependencies } as never );
+			return navigate;
+		};
+
+		beforeEach( () => {
+			jest.clearAllMocks();
+			mockQueryParams = new URLSearchParams();
+			isEnabled.mockReturnValue( true );
+			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'business-bundle' } );
+			( useDispatch as jest.Mock ).mockReturnValue( {
+				setStaticHomepageOnSite: jest.fn(),
+				setIntentOnSite: jest.fn(),
+			} );
+			Object.defineProperty( window, 'location', {
+				value: { assign: jest.fn(), replace: jest.fn() },
+				writable: true,
+			} );
 		} );
 
-		it( 'routes checkout exit back into the flow instead of Big Sky', async () => {
-			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
-			window.sessionStorage.setItem( 'stored_ai_prompt', 'a bakery website' );
+		afterEach( () => {
+			( resolveSelect as jest.Mock ).mockReset();
+			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+		} );
 
-			await runProcessingSubmit();
+		it( 'names the cause when processing fails', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.FAILURE,
+			} );
 
-			const checkoutUrl = ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
-			const checkoutParams = new URL( checkoutUrl, 'https://wordpress.com' ).searchParams;
-
-			const redirectTo = new URL( checkoutParams.get( 'redirect_to' ) as string );
-			const checkoutBackUrl = new URL( checkoutParams.get( 'checkoutBackUrl' ) as string );
-			const checkoutBackUrlDomains = new URL(
-				checkoutParams.get( 'checkoutBackUrlDomains' ) as string
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_failed' },
+				true
 			);
+		} );
 
-			// Success still lands in Big Sky.
-			expect( redirectTo.searchParams.get( 'checkout' ) ).toBe( 'success' );
-			expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
+		it( 'replaces processing with the plans step when a reload drops the pending action', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.NO_ACTION,
+			} );
 
-			// Keeping the cart returns to the plan step; emptying it returns to
-			// the domain step. Neither must point at Big Sky's site editor.
-			expect( checkoutBackUrl.pathname ).toBe(
-				`/setup/ai-site-builder-onboarding/${ STEPS.UNIFIED_PLANS.slug }`
+			expect( navigate ).toHaveBeenCalledTimes( 1 );
+			expect( navigate ).toHaveBeenCalledWith( STEPS.UNIFIED_PLANS.slug, undefined, true );
+		} );
+
+		it( 'replaces create-site with processing so Back cannot create another site', async () => {
+			const navigate = await submitFrom( STEPS.SITE_CREATION_STEP.slug, {} );
+
+			expect( navigate ).toHaveBeenCalledWith( STEPS.PROCESSING.slug, undefined, true );
+		} );
+
+		it( 'names the cause when processing succeeds without a site', async () => {
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.SUCCESS,
+				goToCheckout: true,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'processing_missing_site' },
+				true
 			);
-			expect( checkoutBackUrl.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
-			expect( checkoutBackUrl.pathname ).not.toContain( 'site-editor.php' );
+		} );
 
-			expect( checkoutBackUrlDomains.pathname ).toBe(
-				`/setup/ai-site-builder-onboarding/${ STEPS.DOMAIN_SEARCH.slug }`
+		it( 'names the cause when the created site cannot be loaded', async () => {
+			( resolveSelect as jest.Mock ).mockReturnValue( {
+				getSite: jest.fn().mockResolvedValue( undefined ),
+			} );
+
+			const navigate = await submitFrom( STEPS.PROCESSING.slug, {
+				processingResult: ProcessingResult.SUCCESS,
+				goToCheckout: true,
+				siteId: 123,
+				siteSlug: 'example.wordpress.com',
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.ERROR.slug,
+				{ errorReason: 'site_lookup_failed' },
+				true
 			);
-			expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
-			expect( checkoutBackUrlDomains.pathname ).not.toContain( 'site-editor.php' );
 		} );
 	} );
 } );

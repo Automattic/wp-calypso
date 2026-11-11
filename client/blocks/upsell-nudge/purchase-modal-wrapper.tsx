@@ -1,9 +1,9 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -27,7 +27,7 @@ export default function PurchaseModalWrapper( {
 	return product ? (
 		<CalypsoShoppingCartProvider>
 			<StripeHookProvider
-				fetchStripeConfiguration={ getStripeConfiguration }
+				fetchStripeConfiguration={ fetchStripeConfiguration }
 				locale={ translate.localeSlug }
 			>
 				<PurchaseModal

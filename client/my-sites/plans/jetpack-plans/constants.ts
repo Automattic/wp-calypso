@@ -1,13 +1,9 @@
 import {
-	FEATURE_ACTIVITY_LOG,
-	FEATURE_ADVANCED_SEO,
 	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
-	FEATURE_GOOGLE_ANALYTICS,
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -42,6 +38,8 @@ import {
 	JETPACK_SECURITY_T2_PLANS,
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
+	JETPACK_PRO_PLANS,
+	PLAN_JETPACK_PRO_YEARLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_FREE,
 	PLAN_JETPACK_GROWTH_YEARLY,
@@ -50,7 +48,7 @@ import {
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import type { SelectorProduct } from './types';
-import type { JetpackPlanSlug, JetpackPurchasableItemSlug } from '@automattic/calypso-products';
+import type { JetpackPurchasableItemSlug } from '@automattic/calypso-products';
 
 export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 50;
 export const GUARANTEE_DAYS = 14;
@@ -177,10 +175,8 @@ export const INDIRECT_CHECKOUT_PRODUCT_STATS_PWYW_YEARLY = (): SelectorProduct =
 	},
 	hidePrice: true,
 
-	// The Stats PWYW product in the Plans grid is shown as `Stats` but also referred to `Stats (Personal)`,
-	// which aligns with the naming in packages/calypso-products/src/translations.tsx.
-	displayName: translate( 'Stats (Personal)' ),
-	shortName: translate( 'Stats (Personal)' ),
+	displayName: translate( 'Stats (Name your price)' ),
+	shortName: translate( 'Stats (Name your price)' ),
 	productSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	costProductSlug: PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	term: TERM_ANNUALLY,
@@ -225,6 +221,7 @@ export const SELECTOR_PLANS = [
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_GROWTH_YEARLY,
 	PLAN_JETPACK_GROWTH_MONTHLY,
+	PLAN_JETPACK_PRO_YEARLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
@@ -239,16 +236,6 @@ export const UPSELL_PRODUCT_MATRIX: Record< string, string > = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_SCAN_MONTHLY,
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_SCAN,
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_SCAN_MONTHLY,
-};
-
-/**
- * Matrix of products upsold by specific features.
- */
-export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlug > = {
-	[ FEATURE_GOOGLE_ANALYTICS ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	[ FEATURE_ADVANCED_SEO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	[ FEATURE_ACTIVITY_LOG ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 };
 
 /**
@@ -314,6 +301,7 @@ export const MOST_POPULAR_BUNDLES = [
 	...JETPACK_SECURITY_T1_PLANS,
 	...JETPACK_SECURITY_T2_PLANS,
 	...JETPACK_COMPLETE_PLANS,
+	...JETPACK_PRO_PLANS,
 	...JETPACK_GROWTH_PLANS,
 ];
 

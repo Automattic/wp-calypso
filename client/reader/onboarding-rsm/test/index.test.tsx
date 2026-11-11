@@ -54,7 +54,7 @@ jest.mock( '@automattic/launchpad', () => ( {
 // outside-click dismiss path that the real <Modal> wires up.
 jest.mock( '@wordpress/components', () => {
 	const { Button } =
-		jest.requireActual< typeof import('@wordpress/components') >( '@wordpress/components' );
+		jest.requireActual< typeof import( '@wordpress/components' ) >( '@wordpress/components' );
 	return {
 		Button,
 		Modal: ( {

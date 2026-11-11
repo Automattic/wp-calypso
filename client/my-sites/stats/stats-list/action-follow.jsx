@@ -71,10 +71,10 @@ class StatsActionFollow extends Component {
 		const label = isFollowing
 			? this.props.translate( 'Subscribed', {
 					context: 'Stats: Subscribe action / Subscription status',
-			  } )
+				} )
 			: this.props.translate( 'Subscribe', {
 					context: 'Stats: Subscribe action / Subscription status',
-			  } );
+				} );
 		const gridiconType = isFollowing ? 'reader-following' : 'reader-follow';
 		const wrapperClassSet = clsx( wrapperClass );
 

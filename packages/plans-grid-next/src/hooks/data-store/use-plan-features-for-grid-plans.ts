@@ -1,16 +1,13 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_ADVANCED_SEO_TOOLS,
-	FEATURE_AI_ASSISTANT,
-	FEATURE_AI_WEBSITE_BUILDER,
-	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_BLAZE_AD_CREDITS,
-	FEATURE_BUILT_IN_SITE_ASSISTANT,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_DEV_TOOLS,
 	FEATURE_EARLY_ONBOARDING_CALLS,
 	FEATURE_EMAIL_MARKETING,
-	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_SIMPLE_PAYMENTS,
@@ -25,6 +22,7 @@ import {
 	isPremiumPlan,
 	FEATURE_PREMIUM_STORE_THEMES,
 	FEATURE_SELL_60_COUNTRIES,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_UNLIMITED_ENTITIES,
 	FEATURE_UPLOAD_PLUGINS,
@@ -35,6 +33,7 @@ import {
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { hasTailoredFeatureList } from '../../constants';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
 import useHighlightedFeatures from './use-highlighted-features';
 import type {
@@ -46,58 +45,36 @@ import type {
 import type { Feature, FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
-function isPremiumWebsiteBuilderPillFeature( featureSlug: string ): boolean {
-	return (
-		featureSlug === FEATURE_AI_WEBSITE_BUILDER ||
-		featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ||
-		featureSlug === FEATURE_AI_WRITER_DESIGNER
-	);
-}
-
-function isBusinessAssistantPillFeature( featureSlug: string ): boolean {
-	return (
-		featureSlug === FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ||
-		featureSlug === FEATURE_AI_ASSISTANT ||
-		featureSlug === FEATURE_BUILT_IN_SITE_ASSISTANT ||
-		featureSlug === FEATURE_AI_WRITER_DESIGNER
-	);
-}
-
 function getPricingDifferentiationFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
-	translate: ( text: string ) => TranslateResult,
-	options?: { suppressAiPills?: boolean }
+	translate: ( text: string ) => TranslateResult
 ): TranslateResult | undefined {
-	const suppressAiPills = options?.suppressAiPills ?? false;
-
 	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
 		return translate( 'Free' );
-	}
-	if (
-		! suppressAiPills &&
-		isPremiumPlan( planSlug ) &&
-		isPremiumWebsiteBuilderPillFeature( featureSlug )
-	) {
-		return translate( 'AI' );
 	}
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
 	}
 	if (
-		! suppressAiPills &&
 		isBusinessPlan( planSlug ) &&
-		isBusinessAssistantPillFeature( featureSlug )
+		! isMonthly( planSlug ) &&
+		featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR
 	) {
-		return translate( 'AI' );
-	}
-	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ) {
 		return translate( 'Email' );
 	}
 	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_EMAIL_MARKETING ) {
 		return translate( 'New' );
 	}
 	return undefined;
+}
+
+// Dev tools no longer set Business apart once they're on every paid plan, so lead with the
+// staging site instead.
+function getDevToolsPromoFeature(): Feature {
+	return isEnabled( 'hosting/dev-tools-all-paid-plans' )
+		? FEATURE_SITE_STAGING_SITES
+		: FEATURE_DEV_TOOLS;
 }
 
 function getPlansGridRedesignFeatureSlugsForPlan(
@@ -137,7 +114,7 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 			FEATURE_EMAIL_MARKETING,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_DEV_TOOLS,
+			getDevToolsPromoFeature(),
 			FEATURE_EARLY_ONBOARDING_CALLS,
 		];
 	}
@@ -159,7 +136,7 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 			FEATURE_EMAIL_MARKETING,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_REALTIME_BACKUPS_JP,
-			FEATURE_DEV_TOOLS,
+			getDevToolsPromoFeature(),
 			FEATURE_EARLY_ONBOARDING_CALLS,
 			FEATURE_WOOCOMMERCE_HOSTING,
 			FEATURE_SELL_60_COUNTRIES,
@@ -167,6 +144,15 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 	}
 
 	return defaultFeatureSlugs;
+}
+
+function replacePremiumThemesWithAiAgents( featureSlugs: Feature[] ): Feature[] {
+	return featureSlugs.map( ( featureSlug ) =>
+		featureSlug === WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ||
+		featureSlug === FEATURE_PREMIUM_STORE_THEMES
+			? FEATURE_CONNECT_AI_AGENTS
+			: featureSlug
+	);
 }
 
 function isBusinessOrEcommercePlan( planSlug: string ): boolean {
@@ -205,6 +191,9 @@ function getPlansGridRedesignFeatureTitleOverride(
 	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_BLAZE_AD_CREDITS ) {
 		return translate( '$200 in ad credits' );
 	}
+	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_SITE_STAGING_SITES ) {
+		return translate( 'Staging site' );
+	}
 	return undefined;
 }
 
@@ -242,10 +231,8 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	useVar42NoAiFeatures,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
-	isExperimentVariant,
+	useMcpFeature,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -254,10 +241,8 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	useVar42NoAiFeatures?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
-	showPricingDifferentiationFeaturePills?: boolean;
-	isExperimentVariant?: boolean;
+	useMcpFeature?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -273,14 +258,19 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	useVar42NoAiFeatures,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
-	isExperimentVariant,
+	useMcpFeature,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
 	return useMemo( () => {
+		/*
+		 * The pricing-differentiation lists are the default presentation, not an override: an intent
+		 * that curates its own list keeps it. Checked here rather than by reordering the branches
+		 * below, so the relative order of the intent branches themselves is untouched.
+		 */
+		const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
+
 		return gridPlans.reduce(
 			( acc, gridPlan ) => {
 				const planSlug = gridPlan.planSlug;
@@ -290,15 +280,21 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let wpcomFeatures: FeatureObject[] = [];
 				let jetpackFeatures: FeatureObject[] = [];
 
-				if ( usePlansGridRedesignFeatures ) {
+				if ( usePlansGridRedesignFeatures && useDifferentiationFeatures ) {
 					const featureSlugs =
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 						[];
+					const redesignFeatureSlugs = getPlansGridRedesignFeatureSlugsForPlan(
+						planSlug,
+						featureSlugs
+					);
 
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						getPlansGridRedesignFeatureSlugsForPlan( planSlug, featureSlugs ),
+						useMcpFeature
+							? replacePremiumThemesWithAiAgents( redesignFeatureSlugs )
+							: redesignFeatureSlugs,
 						true
 					);
 
@@ -307,19 +303,19 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
 						true
 					);
-				} else if ( useVar42NoAiFeatures ) {
+				} else if ( useDifferentiationFeatures ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
-						isExperimentVariant ?? true
+						true
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true
+						true
 					);
 				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -402,7 +398,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					);
 				}
 
-				if ( usePlansGridRedesignFeatures ) {
+				if ( usePlansGridRedesignFeatures && useDifferentiationFeatures ) {
 					wpcomFeatures = applyPlansGridRedesignFeatureTitleOverrides(
 						wpcomFeatures,
 						planSlug,
@@ -476,11 +472,11 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 						const featureSlug = feature.getSlug();
 
-						const badgeText = showPricingDifferentiationFeaturePills
-							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
-									suppressAiPills: useVar42NoAiFeatures,
-							  } )
-							: undefined;
+						const badgeText = getPricingDifferentiationFeatureBadgeText(
+							planSlug,
+							featureSlug,
+							translate
+						);
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
@@ -492,7 +488,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 					if (
 						wpcomFeaturesTransformed.length > 0 &&
-						( isExperimentVariant || usePlansGridRedesignFeatures )
+						useDifferentiationFeatures &&
+						usePlansGridRedesignFeatures
 					) {
 						const lastIndex = wpcomFeaturesTransformed.length - 1;
 						wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
@@ -525,10 +522,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
-		isExperimentVariant,
+		useMcpFeature,
 		translate,
 	] );
 };

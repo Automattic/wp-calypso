@@ -6,7 +6,10 @@
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint } from '../store';
+import { ImageStudioMode } from '../types';
+import { contextProvider } from './client-context';
 import {
+	getImageStudioRequestErrorType,
 	trackImageStudioClosed,
 	trackImageStudioOpened,
 	trackImageStudioReelShareClicked,
@@ -22,6 +25,9 @@ import {
 	trackImageStudioGenericShareFailed,
 	trackImageStudioFeatureClipAddedToPost,
 	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioCreditsMeterOpened,
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
 } from './tracking';
 
 // Mock session
@@ -29,8 +35,44 @@ jest.mock( '../utils/session', () => ( {
 	getSessionId: jest.fn( () => 'test-session-id' ),
 } ) );
 
+// The package root loads the whole chat; the credits helpers are all this file uses.
+jest.mock( '@automattic/agents-manager', () =>
+	jest.requireActual( '@automattic/agents-manager/src/utils/credits' )
+);
+
+jest.mock( './client-context', () => ( { contextProvider: { getClientContext: jest.fn() } } ) );
+
 const recordTracksEventMock = recordTracksEventBase as jest.Mock;
 const selectMock = select as jest.Mock;
+const getClientContextMock = jest.mocked( contextProvider.getClientContext );
+/** The client context Image Studio's agent receives while its modal is open. */
+const IMAGE_STUDIO_CONTEXT = {
+	url: 'https://example.com/wp-admin/post.php',
+	pathname: '/wp-admin/post.php',
+	search: '',
+	environment: 'image-studio',
+} as const;
+
+describe( 'getImageStudioRequestErrorType', () => {
+	it( 'identifies the streamed free-credit exhaustion error as quota exceeded', () => {
+		const error = new Error(
+			'Streaming error: Congratulations on exploring Image Studio and reaching the free requests limit! Upgrade now to keep using it. https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+		);
+
+		expect( getImageStudioRequestErrorType( error, ImageStudioMode.Generate ) ).toBe(
+			'quota_exceeded'
+		);
+	} );
+
+	it.each( [
+		[ ImageStudioMode.Generate, 'generation_failed' ],
+		[ ImageStudioMode.Edit, 'edit_failed' ],
+	] as const )( 'preserves the generic %s failure type for other errors', ( mode, errorType ) => {
+		expect( getImageStudioRequestErrorType( new Error( 'Provider failed' ), mode ) ).toBe(
+			errorType
+		);
+	} );
+} );
 
 describe( 'trackImageStudioOpened', () => {
 	beforeEach( () => {
@@ -258,6 +300,68 @@ describe( 'recordImageStudioEvent — is_test property', () => {
 	} );
 } );
 
+describe( 'recordImageStudioEvent — unified AI property standards', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		delete ( window as any ).imageStudioData;
+	} );
+
+	afterEach( () => {
+		delete ( window as any ).imageStudioData;
+	} );
+
+	it( 'should identify the product with agent_name', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { agent_name: 'image_studio' } )
+		);
+	} );
+
+	it( 'should send the session under both ai_session_id and sessionid', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( {
+				ai_session_id: 'test-session-id',
+				sessionid: 'test-session-id',
+			} )
+		);
+	} );
+
+	it( 'should include agent_version from imageStudioData', () => {
+		( window as any ).imageStudioData = { version: '15.9' };
+
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { agent_version: '15.9' } )
+		);
+	} );
+
+	it( 'should send agent_version as none rather than omitting it when unavailable', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_closed',
+			expect.objectContaining( { agent_version: 'none' } )
+		);
+	} );
+
+	it( 'should let a caller-supplied property win over the defaults', () => {
+		trackImageStudioClosed( { mode: 'edit' } );
+
+		const call = recordTracksEventMock.mock.calls[ 0 ];
+		expect( call[ 1 ] ).toMatchObject( { mode: 'edit' } );
+	} );
+} );
+
 describe( 'reel share tracking helpers', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -440,5 +544,341 @@ describe( 'feature clip tracking helpers', () => {
 			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
 			expect.objectContaining( { sessionid: 'test-session-id' } )
 		);
+	} );
+
+	it( 'sends placement on feature_clip_panel_viewed when the store has no entry point', () => {
+		// The panel mounts with the editor sidebar, before anything has opened
+		// Image Studio, so the store cannot supply the placement here.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioFeatureClipPanelViewed();
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'keeps its own placement on feature_clip_panel_viewed when the store holds another entry point', () => {
+		// Opening Image Studio elsewhere in the page load leaves that entry point
+		// in the store. The panel event still came from the panel, so its own
+		// placement has to win over the fallback.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => ImageStudioEntryPoint.EditorBlock ),
+		} );
+
+		trackImageStudioFeatureClipPanelViewed();
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'sends the Feature Clip placement on sidebar share events, where the store is empty', () => {
+		// Sharing straight from the panel never opens Image Studio, so the store
+		// has no entry point — the case that left these events unfilterable.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( { surface: 'sidebar', method: 'web-share' } );
+		trackImageStudioReelShareCancelled( { surface: 'sidebar' } );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId: 12 } );
+
+		[
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_share_cancelled',
+			'jetpack_big_sky_image_studio_feature_clip_added_to_post',
+		].forEach( ( eventName ) => {
+			expect( recordTracksEventMock ).toHaveBeenCalledWith(
+				eventName,
+				expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+			);
+		} );
+	} );
+
+	it( 'pins the Feature Clip placement even against a caller-supplied one', () => {
+		// The wrapper's guarantee is that these events are always attributable to
+		// the Feature Clip flow, so a placement passed by a call site must not be
+		// able to weaken it.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( {
+			surface: 'sidebar',
+			method: 'web-share',
+			placement: ImageStudioEntryPoint.MediaLibrary,
+		} as Parameters< typeof trackImageStudioGenericShareClicked >[ 0 ] );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'keeps surface distinct from placement on Feature Clip events', () => {
+		// `surface` says where inside the feature ('sidebar' / 'modal'); `placement`
+		// says which entry point the flow came from. They are different properties
+		// and both have to survive.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( { surface: 'modal', method: 'web-share' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			expect.objectContaining( {
+				surface: 'modal',
+				placement: 'post_editor_feature_clip',
+			} )
+		);
+	} );
+} );
+
+describe( 'upgrade notice tracking', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
+	} );
+
+	const siteCredits = {
+		meter: 'site_credits',
+		state: 'low',
+		planTier: 'premium',
+		creditsLeft: 8500,
+		topUpCreditsLeft: 'none',
+		ctaType: 'upgrade',
+		ref: 'wp_ai_credits',
+	} as const;
+
+	const jetpackAiQuota = {
+		meter: 'jetpack_ai',
+		state: 'zero',
+		planTier: 'none',
+		creditsLeft: 'none',
+		topUpCreditsLeft: 'none',
+		ctaType: 'upgrade',
+		ref: 'none',
+	} as const;
+
+	it( 'records the trigger and credit details with the shown event, to join the Agent’s credits events', () => {
+		trackImageStudioUpgradeNoticeShown( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'open',
+			...siteCredits,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_shown',
+			expect.objectContaining( {
+				mode: 'generate',
+				trigger: 'open',
+				meter: 'site_credits',
+				state: 'low',
+				plan_tier: 'premium',
+				credits_left: 8500,
+				cta_type: 'upgrade',
+				ref: 'wp_ai_credits',
+			} )
+		);
+	} );
+
+	it( 'records the Jetpack AI quota click and keeps the product-wide upgrade button event', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'error',
+			...jetpackAiQuota,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( {
+				mode: 'edit',
+				trigger: 'error',
+				meter: 'jetpack_ai',
+				state: 'zero',
+				plan_tier: 'none',
+				credits_left: 'none',
+				top_up_credits_left: 'none',
+				agent_environment: 'image-studio',
+				cta_type: 'upgrade',
+				ref: 'none',
+			} )
+		);
+		expect( recordTracksEventMock ).toHaveBeenCalledWith( 'jetpack_ai_upgrade_button', {
+			placement: 'image-studio-limit-notice',
+		} );
+	} );
+
+	it( 'records a popover click with the popover as its trigger', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'popover',
+			...siteCredits,
+			state: 'ok',
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { trigger: 'popover', state: 'ok' } )
+		);
+	} );
+
+	it( 'keeps site credits upgrades out of the Jetpack AI upgrade button funnel', () => {
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'refresh',
+			...siteCredits,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_upgrade_notice_click',
+			expect.objectContaining( { meter: 'site_credits', ref: 'wp_ai_credits' } )
+		);
+		expect( recordTracksEventMock ).not.toHaveBeenCalledWith(
+			'jetpack_ai_upgrade_button',
+			expect.anything()
+		);
+	} );
+} );
+
+describe( 'credits popover tracking', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
+	} );
+
+	it( 'records what opened the popover, with the balance details', () => {
+		trackImageStudioCreditsMeterOpened( {
+			mode: ImageStudioMode.Edit,
+			trigger: 'submit_blocked',
+			meter: 'site_credits',
+			state: 'zero',
+			planTier: 'business',
+			creditsLeft: 0,
+			topUpCreditsLeft: 0,
+		} );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_credits_meter_opened',
+			expect.objectContaining( {
+				mode: 'edit',
+				trigger: 'submit_blocked',
+				meter: 'site_credits',
+				state: 'zero',
+				plan_tier: 'business',
+				credits_left: 0,
+				top_up_credits_left: 0,
+				agent_environment: 'image-studio',
+			} )
+		);
+	} );
+} );
+
+describe( 'credits event details', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
+	} );
+
+	const balance = {
+		meter: 'site_credits',
+		state: 'low',
+		planTier: 'business',
+		creditsLeft: 4000,
+	} as const;
+	const addCredits = { ctaType: 'top_up', ref: 'wp_ai_credits' } as const;
+
+	/** Records each of the three credits events with the given top-ups balance. */
+	const recordCreditsEvents = ( topUpCreditsLeft: number | 'none' ) => {
+		const details = { ...balance, topUpCreditsLeft };
+		trackImageStudioUpgradeNoticeShown( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'open',
+			...details,
+			...addCredits,
+		} );
+		trackImageStudioUpgradeNoticeClick( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'popover',
+			...details,
+			...addCredits,
+		} );
+		trackImageStudioCreditsMeterOpened( {
+			mode: ImageStudioMode.Generate,
+			trigger: 'click',
+			...details,
+		} );
+	};
+	const sent = ( property: string ) =>
+		recordTracksEventMock.mock.calls.map( ( [ name, properties ] ) => [
+			name,
+			properties[ property ],
+		] );
+
+	it.each( [ 3000, 0, 'none' ] as const )(
+		'sends the top-ups balance %p on each credits event',
+		( topUpCreditsLeft ) => {
+			recordCreditsEvents( topUpCreditsLeft );
+
+			expect( sent( 'top_up_credits_left' ) ).toEqual( [
+				[ 'jetpack_big_sky_image_studio_upgrade_notice_shown', topUpCreditsLeft ],
+				[ 'jetpack_big_sky_image_studio_upgrade_notice_click', topUpCreditsLeft ],
+				[ 'jetpack_big_sky_image_studio_credits_meter_opened', topUpCreditsLeft ],
+			] );
+		}
+	);
+
+	it( 'sends the client context’s environment unchanged on each credits event', () => {
+		getClientContextMock.mockReturnValue( {
+			...IMAGE_STUDIO_CONTEXT,
+			environment: 'video-studio',
+		} );
+		recordCreditsEvents( 'none' );
+
+		expect( sent( 'agent_environment' ) ).toEqual( [
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_shown', 'video-studio' ],
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_click', 'video-studio' ],
+			[ 'jetpack_big_sky_image_studio_credits_meter_opened', 'video-studio' ],
+		] );
+	} );
+
+	it.each( [
+		[
+			'has no environment',
+			() =>
+				( { ...IMAGE_STUDIO_CONTEXT, environment: undefined } ) as unknown as ReturnType<
+					typeof contextProvider.getClientContext
+				>,
+		],
+		[
+			'throws',
+			() => {
+				throw new Error( 'The block editor store is missing' );
+			},
+		],
+	] )( 'sends agent_environment as none when the client context %s', ( _case, context ) => {
+		getClientContextMock.mockImplementation( context );
+		recordCreditsEvents( 'none' );
+
+		expect( sent( 'agent_environment' ) ).toEqual( [
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_shown', 'none' ],
+			[ 'jetpack_big_sky_image_studio_upgrade_notice_click', 'none' ],
+			[ 'jetpack_big_sky_image_studio_credits_meter_opened', 'none' ],
+		] );
 	} );
 } );

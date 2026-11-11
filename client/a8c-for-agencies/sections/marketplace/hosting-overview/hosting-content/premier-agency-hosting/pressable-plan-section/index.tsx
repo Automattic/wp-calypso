@@ -174,8 +174,8 @@ export default function PressablePlanSection( {
 		}
 
 		const defaultPlan = isReferralMode
-			? pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null
-			: pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ];
+			? ( pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? null )
+			: ( pressablePlans.find( ( plan ) => plan.slug === defaultSlug ) ?? pressablePlans[ 0 ] );
 		setSelectedPlan( defaultPlan );
 	}, [
 		pressablePlans,
@@ -316,10 +316,10 @@ export default function PressablePlanSection( {
 						{ areSignaturePlans || isStandardPlan
 							? translate(
 									'With Signature plans, your traffic & storage limits are shared amongst your total sites.'
-							  )
+								)
 							: translate(
 									'With Enterprise plans, your traffic & storage limits are shared amongst your total sites.'
-							  ) }
+								) }
 					</p>
 				) }
 

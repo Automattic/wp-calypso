@@ -1,8 +1,21 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
-import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+import fs from 'fs';
+import path from 'path';
+import {
+	MIXED_RUN_WORKERS,
+	createAtomicSiteProjects,
+	envVariables,
+	validateThrottleActions,
+} from '@automattic/calypso-e2e';
+import { defineConfig, devices, type Project, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
+
+// Reads every supported variable so an unsupported value fails here, before the suite starts,
+// instead of mid-spec on its first read.
+envVariables.validate();
+validateThrottleActions();
 
 /**
  * Creates a use config object with custom options.
@@ -41,9 +54,63 @@ const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
 
 const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
 
+const loginBrowserUse = {
+	...devices[ 'Desktop Chrome HiDPI' ],
+	bypassCSP: true,
+	launchOptions: {
+		args: [
+			'--disable-blink-features=AutomationControlled',
+			'--disable-features=IsolateOrigins,site-per-process',
+		],
+		slowMo: 1000,
+		env: {},
+		// Google OAuth rejects the headless shell as an insecure browser.
+		channel: 'chromium',
+	},
+	// Google OAuth also rejects stale user agents: don't pin `userAgent` here,
+	// let the device descriptor track the bundled Chromium.
+};
+
+const chromeProject: Project = {
+	name: 'chrome',
+	dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
+	use: withCustomOptions( {
+		...devices[ 'Desktop Chrome HiDPI' ],
+		userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
+		viewportName: 'desktop',
+	} ),
+};
+
+// The mixed run's specs, found by their source: the config loads before Playwright collects
+// any test, so the tag is all it has to go on. A spec it misses doesn't run.
+const MIXED_RUN_SPEC_MARKER = /JETPACK_WPCOM_INTEGRATION|@jetpack-wpcom-integration/;
+const SPECS_DIR = path.join( __dirname, 'specs' );
+
+/**
+ * `chrome`, or in a mixed Atomic run one capped copy per site. A mixed run has no `chrome`:
+ * it would load every spec file, and the ones with no site would stop the run.
+ */
+function getChromeProjects(): Project[] {
+	if ( process.env.ATOMIC_VARIATION !== 'mixed' ) {
+		return [ chromeProject ];
+	}
+
+	const specFiles = fs
+		.readdirSync( SPECS_DIR, { recursive: true, encoding: 'utf8' } )
+		.filter( ( file ) => file.endsWith( '.spec.ts' ) )
+		.filter( ( file ) =>
+			MIXED_RUN_SPEC_MARKER.test( fs.readFileSync( path.join( SPECS_DIR, file ), 'utf8' ) )
+		);
+
+	return createAtomicSiteProjects( chromeProject, specFiles );
+}
+
 function getWorkers(): number | string {
 	if ( process.env.PW_WORKERS ) {
 		return parseInt( process.env.PW_WORKERS, 10 );
+	}
+	if ( process.env.ATOMIC_VARIATION === 'mixed' ) {
+		return MIXED_RUN_WORKERS;
 	}
 	return process.env.CI ? '50%' : '100%';
 }
@@ -67,6 +134,10 @@ export default defineConfig( {
 	},
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
+	/* Runs once before the suite, before any worker starts */
+	globalSetup: require.resolve( './lib/global-setup' ),
+	/* Runs once after the suite, when every worker has finished */
+	globalTeardown: require.resolve( './lib/global-teardown' ),
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	outputDir: `${ outputPath }/test-results`,
 	use: {
@@ -81,7 +152,7 @@ export default defineConfig( {
 		video: 'retain-on-failure',
 	},
 
-	/* Configure projects for major browsers */
+	/* Configure projects per device */
 	// See https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json */
 	projects: [
 		{
@@ -90,35 +161,14 @@ export default defineConfig( {
 			testDir: './setup',
 		},
 		{
-			name: 'chrome',
-			dependencies: [ 'mailosaur-usage-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
+			name: 'throttle-check',
+			testMatch: /throttle-check\.setup\.ts/,
+			testDir: './setup',
 		},
+		...getChromeProjects(),
 		{
-			name: 'firefox',
-			dependencies: [ 'mailosaur-usage-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Firefox' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Firefox' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
-		{
-			name: 'webkit',
-			dependencies: [ 'mailosaur-usage-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Safari' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Safari' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
-		{
-			name: 'pixel',
-			dependencies: [ 'mailosaur-usage-check' ],
+			name: 'mobile',
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
@@ -127,45 +177,11 @@ export default defineConfig( {
 			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
 		},
 		{
-			name: 'galaxy',
-			dependencies: [ 'mailosaur-usage-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Galaxy S24' ],
-				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
-			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-		},
-		{
-			name: 'iphone',
-			dependencies: [ 'mailosaur-usage-check' ],
-			use: withCustomOptions( {
-				...devices[ 'iPhone 15 Pro' ],
-				userAgent: appendE2EUserAgent( devices[ 'iPhone 15 Pro' ].userAgent ),
-				viewportName: 'mobile',
-			} ),
-			grepInvert: new RegExp( tags.DESKTOP_ONLY ),
-		},
-		{
 			name: 'authentication',
-			dependencies: [ 'mailosaur-usage-check' ],
+			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
-			use: {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				bypassCSP: true,
-				launchOptions: {
-					args: [
-						'--disable-blink-features=AutomationControlled',
-						'--disable-features=IsolateOrigins,site-per-process',
-					],
-					slowMo: 1000,
-					env: {},
-					channel: '',
-				},
-				userAgent:
-					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/94.0.4606.61 Safari/537.36',
-			},
+			use: loginBrowserUse,
 		},
 	],
 } );

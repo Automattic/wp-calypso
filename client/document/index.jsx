@@ -4,8 +4,8 @@ import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
-import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';
 import { useMemo, Component } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
 	Branch,
@@ -16,19 +16,21 @@ import EnvironmentBadge, {
 	ReactQueryDevtoolsHelper,
 	RtlCssDisabledHelper,
 	StoreSandboxHelper,
+	BlackboxHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
-import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
+import { A4AOmnibarHomeIcon } from 'calypso/dashboard/app-a4a/omnibar-home-icon';
+import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getCachedRuntimeStyles } from 'calypso/server/render/runtime-styles';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
@@ -67,14 +69,18 @@ class Document extends Component {
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
+			runtimeStyles,
 			dashboard,
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
+			blackboxHelper,
+			subscriptionManagementSubkey,
 			target,
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
+			isPlaygroundWoo,
 		} = this.props;
 
 		const theme = config( 'theme' );
@@ -93,6 +99,11 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( subscriptionManagementSubkey
+				? `var subscriptionManagementSubkey = ${ jsonStringifyForHtml(
+						subscriptionManagementSubkey
+					) };\n`
+				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -113,13 +124,18 @@ class Document extends Component {
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
 
+		const isDashboardSection =
+			sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+			sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name;
+
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name );
+				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
-		let headTitle = head.title;
-		let headFaviconUrl;
+		// Hostname overrides only reach the request's client data, not the base config.
+		let headTitle = isDashboardSection ? ( clientData?.site_name ?? head.title ) : head.title;
+		let headFaviconUrl = clientData?.favicon_url;
 		let isWCCOM = false;
 
 		// To customize the page title and favicon for Gravatar-related login pages.
@@ -146,6 +162,30 @@ class Document extends Component {
 			}
 		}
 
+		const loadingPlaceholderProps = {
+			app,
+			dashboard,
+			sectionName,
+			isWCCOM,
+			isOneTapAuth: !! query?.oneTapAuth,
+			isWooCommerceQrLoginAuthCheck:
+				path === '/me/security/qr-login' && query?.origin === 'woocommerce',
+			showStepContainerV2Loader,
+			isPlaygroundWoo,
+		};
+		// Without a server-rendered layout, the loading placeholder is the only markup, and it
+		// renders the same for the same props. Of `app`, it only reads the mobile-app flags; the
+		// rest varies per visitor.
+		const placeholderKey = JSON.stringify( {
+			...loadingPlaceholderProps,
+			app: { isWpMobileApp: app?.isWpMobileApp, isWcMobileApp: app?.isWcMobileApp },
+		} );
+		const headRuntimeStyles = renderedLayout
+			? runtimeStyles
+			: getCachedRuntimeStyles( `placeholder:${ placeholderKey }`, () =>
+					renderToStaticMarkup( <LoadingPlaceholder { ...loadingPlaceholderProps } /> )
+				);
+
 		return (
 			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
@@ -153,6 +193,8 @@ class Document extends Component {
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 					faviconUrl={ headFaviconUrl }
+					faviconBrand={ clientData?.favicon_brand }
+					allowZoom={ isDashboardSection }
 					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
@@ -167,6 +209,15 @@ class Document extends Component {
 					{ chunkFiles.js.map( ( chunk ) => (
 						<link key={ chunk } rel="preload" as="script" href={ chunk } />
 					) ) }
+					{ /* Last, where the client would inject them; it skips hashes already present. */ }
+					{ headRuntimeStyles?.map( ( [ hash, css ] ) => (
+						<style
+							key={ hash }
+							data-wp-hash={ hash }
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ { __html: css.replace( /<\/style/gi, '<\\/style' ) } }
+						/>
+					) ) }
 				</Head>
 				<body
 					className={ clsx( {
@@ -179,20 +230,12 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ isDashboardOmnibarPage && config.isEnabled( 'dashboard/omnibar-radical' ) && (
+					{ isDashboardOmnibarPage && (
 						<div id="wpcom-omnibar">
-							<InitialOmnibar user={ user } />
-						</div>
-					) }
-					{ isDashboardOmnibarPage && ! config.isEnabled( 'dashboard/omnibar-radical' ) && (
-						<div id="wpcom-omnibar">
-							<I18NContext.Provider value={ this.props.i18nCalypso || defaultCalypsoI18n }>
-								<InterimOmnibar
-									user={ user || null }
-									site={ null }
-									currentRoute={ this.props.path ?? '/' }
-								/>
-							</I18NContext.Provider>
+							<InitialOmnibar
+								user={ user }
+								homeIcon={ dashboard === 'a4a' ? <A4AOmnibarHomeIcon /> : undefined }
+							/>
 						</div>
 					) }
 					{ renderedLayout ? (
@@ -213,17 +256,7 @@ class Document extends Component {
 								} ) }
 							>
 								<div className="layout__content">
-									<LoadingPlaceholder
-										app={ app }
-										dashboard={ dashboard }
-										sectionName={ sectionName }
-										isWCCOM={ isWCCOM }
-										isOneTapAuth={ !! query?.oneTapAuth }
-										isWooCommerceQrLoginAuthCheck={
-											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
-										}
-										showStepContainerV2Loader={ showStepContainerV2Loader }
-									/>
+									<LoadingPlaceholder { ...loadingPlaceholderProps } />
 								</div>
 							</div>
 						</div>
@@ -236,6 +269,7 @@ class Document extends Component {
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
 							{ storeSandboxHelper && <StoreSandboxHelper /> }
+							{ blackboxHelper && <BlackboxHelper /> }
 							{ isRtlCssDisabled && <RtlCssDisabledHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
@@ -348,6 +382,7 @@ function LoadingPlaceholder( {
 	isOneTapAuth,
 	isWooCommerceQrLoginAuthCheck,
 	showStepContainerV2Loader,
+	isPlaygroundWoo,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
@@ -361,9 +396,9 @@ function LoadingPlaceholder( {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent: () => {},
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: isPlaygroundWoo ? <WooTopBarLogo /> : null,
 		} ),
-		[ dashboard ]
+		[ isPlaygroundWoo ]
 	);
 
 	if ( shouldNotShowLoadingLogo ) {

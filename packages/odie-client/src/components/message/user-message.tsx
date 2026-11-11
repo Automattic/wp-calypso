@@ -16,6 +16,7 @@ import {
 	getIsRequestingHumanSupport,
 	getIsLastBotMessage,
 	getIsErrorMessage,
+	isStaleOdieChat,
 } from '../../utils';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
@@ -86,7 +87,10 @@ export const UserMessage = ( {
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
 
-	const showGetSupport = isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage );
+	// A stale chat can't be replied to, so escalating out of it would open a live conversation
+	// hanging off an abandoned interaction. The closed footer is the only way forward.
+	const showGetSupport =
+		isLastBotMessage && ( isRequestingHumanSupport || isErrorMessage ) && ! isStaleOdieChat( chat );
 	const showActionButtons = ! isRequestingHumanSupport && ! isErrorMessage;
 
 	const messageContent = () => {
@@ -98,7 +102,9 @@ export const UserMessage = ( {
 			return '';
 		}
 
-		if ( hasReachedLimit ) {
+		// Only when GetSupport offers the open conversations: when support is email-only or the
+		// chat client hasn't loaded, it offers email, and without paid support, the forums.
+		if ( hasReachedLimit && isUserEligibleForPaidSupport && ! forceEmailSupport && isChatLoaded ) {
 			return getConversationLimitReachedMessage().content;
 		}
 

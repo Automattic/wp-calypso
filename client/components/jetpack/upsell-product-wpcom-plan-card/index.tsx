@@ -102,7 +102,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 									? formatCurrency( originalPrice ?? 0, currencyCode ?? '', {
 											stripZeros: true,
 											isSmallestUnit: true,
-									  } )
+										} )
 									: '',
 							},
 							comment: 'Excl. Taxes is short for excluding taxes',

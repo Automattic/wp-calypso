@@ -6,8 +6,7 @@ import {
 } from '@wordpress/components';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
-import type { Note, Subject } from '../types';
-import type { CSSProperties } from 'react';
+import type { Subject } from '../types';
 
 // Resolve the link used to wrap the header avatar / subject text. A user range
 // whose id differs from the site id links to the Reader profile (some site
@@ -24,15 +23,13 @@ const getHeaderLink = ( block: Subject ): string | undefined => {
 	return range.url;
 };
 
-const iconWrapStyle: CSSProperties = { display: 'flex', flexShrink: 0 };
-
 const NoteSummaryIcon = ( { iconUrl, link }: { iconUrl?: string; link?: string } ) => {
-	const content = <NoteIcon icon={ iconUrl } size={ 32 } />;
+	const content = <NoteIcon icon={ iconUrl } size={ 36 } />;
 	if ( ! link ) {
-		return <div style={ iconWrapStyle }>{ content }</div>;
+		return <div className="wpnc__user-icon">{ content }</div>;
 	}
 	return (
-		<a href={ link } style={ iconWrapStyle } target="_blank" rel="noopener noreferrer">
+		<a className="wpnc__user-icon" href={ link } target="_blank" rel="noopener noreferrer">
 			{ content }
 		</a>
 	);
@@ -72,21 +69,11 @@ const NoteSummaryTitle = ( { block, link }: { block: Subject; link?: string } ) 
 };
 
 // Detail-view header: built from `note.header` so the first row anchors the
-// panel with the post owner / author + post title (matching the legacy
-// `SummaryInSingle`). Falls back to rendering `note.subject` when a note has
-// no `header` block (some system notes).
-const NoteSummary = ( { note }: { note: Note } ) => {
-	const header = note.header;
-
-	if ( ! header || header.length === 0 ) {
-		return (
-			<HStack justify="flex-start" spacing={ 4 } alignment="center">
-				<NoteSummaryIcon iconUrl={ note.icon } />
-				<VStack className="wpnc__text-summary" spacing={ 0 }>
-					<ExternalLink href={ note.url }>{ note.subject[ 0 ].text }</ExternalLink>
-				</VStack>
-			</HStack>
-		);
+// panel with the post owner / author + post title, like the generic path of
+// the legacy `SummaryInSingle`.
+const NoteSummary = ( { header, url }: { header?: Subject[]; url: string } ) => {
+	if ( ! header?.length ) {
+		return null;
 	}
 
 	const subject = header[ 0 ];
@@ -107,7 +94,7 @@ const NoteSummary = ( { note }: { note: Note } ) => {
 			<NoteSummaryIcon iconUrl={ avatarUrl } link={ subjectLink } />
 			<VStack className="wpnc__text-summary" spacing={ 0 }>
 				<NoteSummaryTitle block={ subject } link={ subjectLink } />
-				{ hasSnippet && <ExternalLink href={ note.url }>{ snippet.text }</ExternalLink> }
+				{ hasSnippet && <ExternalLink href={ url }>{ snippet.text }</ExternalLink> }
 			</VStack>
 		</HStack>
 	);

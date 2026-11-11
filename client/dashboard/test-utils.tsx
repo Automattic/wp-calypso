@@ -5,19 +5,21 @@ import { Suspense } from 'react';
 import { type AnalyticsClient, AnalyticsProvider } from './app/analytics';
 import { AuthContext } from './app/auth';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from './app/context';
+import type { AppConfig } from './app/context';
 import type { User } from '@automattic/api-core';
 
 const defaultUser = {
 	ID: 1,
 	username: 'testuser',
 	email: 'test@example.com',
+	email_verified: true,
 	language: 'en',
 } as User;
 
 function createTestRouter( ui: React.ReactElement ) {
 	const Component = () => ui;
 
-	return createRouter( {
+	const router = createRouter( {
 		routeTree: createRootRoute( {
 			pendingMs: 0,
 			component: () => (
@@ -27,6 +29,16 @@ function createTestRouter( ui: React.ReactElement ) {
 			),
 		} ),
 	} );
+
+	// The router resolves its first matches after mounting. Seed them so the UI
+	// renders synchronously, as tests query it right after `render()`.
+	router.stores.setMatches(
+		router
+			.matchRoutes( router.latestLocation )
+			.map( ( match ) => ( { ...match, status: 'success' as const } ) )
+	);
+
+	return router;
 }
 
 type RenderResult = ReturnType< typeof testingLibraryRender > &
@@ -38,10 +50,15 @@ type RenderResult = ReturnType< typeof testingLibraryRender > &
 interface RenderOptions {
 	user?: User;
 	queryClient?: QueryClient;
+	config?: AppConfig;
 }
 
 export function render( ui: React.ReactElement, options: RenderOptions = {} ): RenderResult {
-	const { user = defaultUser, queryClient: providedClient } = options;
+	const {
+		user = defaultUser,
+		queryClient: providedClient,
+		config = APP_CONTEXT_DEFAULT_CONFIG,
+	} = options;
 	const queryClient =
 		providedClient ??
 		new QueryClient( {
@@ -56,7 +73,7 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 
 	const testingLibraryResult = testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
-			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
+			<AppProvider config={ config }>
 				<AnalyticsProvider client={ { recordTracksEvent, recordPageView } }>
 					<AuthContext.Provider value={ { user, logout: jest.fn() } }>
 						<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />

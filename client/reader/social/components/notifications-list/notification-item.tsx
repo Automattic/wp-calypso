@@ -25,9 +25,7 @@ import type {
 // Keep all arms in the union so a future per-protocol widening surfaces as
 // a switch-exhaustiveness error instead of being silently funneled to 'other'.
 export type SocialNotification =
-	| AtmosphereNotification
-	| MastodonNotification
-	| FediverseNotification;
+	AtmosphereNotification | MastodonNotification | FediverseNotification;
 type SocialNotificationCanonicalType =
 	| AtmosphereNotificationCanonicalType
 	| MastodonNotificationCanonicalType

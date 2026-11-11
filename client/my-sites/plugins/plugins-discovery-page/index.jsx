@@ -8,7 +8,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WPBEGINNER_PLUGINS } from '../constants';
 import EducationFooter from '../education-footer';
 import BusinessPlanBanner from '../plugins-banners/business-plan-banner';
-import TelexBanner from '../plugins-banners/telex-banner';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
@@ -138,15 +137,6 @@ const PluginsDiscoveryPage = ( props ) => {
 			</FullWidthSection>
 
 			{ ! isLoggedIn && ! isMarketplaceRedesignEnabled && <InPageCTASection /> }
-
-			{ isMarketplaceRedesignEnabled && (
-				<FullWidthSection
-					className="plugins-discovery-page__telex-banner full-width-section--double-padding"
-					enabled={ isMarketplaceRedesignEnabled }
-				>
-					<TelexBanner />
-				</FullWidthSection>
-			) }
 
 			<FullWidthSection
 				className="plugins-discovery-page__favorites full-width-section--double-padding full-width-section--gray"

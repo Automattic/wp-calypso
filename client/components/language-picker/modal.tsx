@@ -99,7 +99,7 @@ const LanguagePickerModal: React.FC< Props > = ( {
 			? recordTracksEvent( 'calypso_translator_invitation', {
 					language: localizedLanguageNames[ selectedLanguage.langSlug ].en,
 					location: '/me/account',
-			  } )
+				} )
 			: null;
 
 	const selectedLanguageSlug = selectedLanguage && selectedLanguage.langSlug;

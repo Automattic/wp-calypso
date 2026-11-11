@@ -1,10 +1,12 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { EXTERNAL_PRESSABLE_AUTH_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';
+import CancelSubscriptionAction, {
+	canCancelSubscription,
+} from '../../cancel-subscription-confirmation-dialog';
 import { getSubscriptionStatus } from '../../lib/get-subscription-status';
 import { Subscription } from '../../types';
 
@@ -57,13 +59,13 @@ export function SubscriptionPrice( {
 
 	return interval === 'year'
 		? /* translators: %(total)s is the price of the subscription per year */
-		  translate( '%(total)s/yr', {
+			translate( '%(total)s/yr', {
 				args: { total: formatted },
-		  } )
+			} )
 		: /* translators: %(total)s is the price of the subscription per month */
-		  translate( '%(total)s/mo', {
+			translate( '%(total)s/mo', {
 				args: { total: formatted },
-		  } );
+			} );
 }
 
 export function SubscriptionStatus( {
@@ -74,7 +76,13 @@ export function SubscriptionStatus( {
 	translate: ( key: string ) => string;
 } ) {
 	const { children, type } = getSubscriptionStatus( status, translate );
-	return children ? <StatusBadge statusProps={ { children, type } } /> : '-';
+	return children ? (
+		<Badge className="step-section-item__status" intent={ type }>
+			{ children }
+		</Badge>
+	) : (
+		'-'
+	);
 }
 
 export function SubscriptionAction( {
@@ -84,10 +92,8 @@ export function SubscriptionAction( {
 	subscription: Subscription;
 	onCancelSubscription: () => void;
 } ) {
-	const status = subscription.status;
-	const isActive = status === 'active';
 	return (
-		isActive && (
+		canCancelSubscription( subscription ) && (
 			<span className="action-button">
 				<CancelSubscriptionAction
 					subscription={ subscription }

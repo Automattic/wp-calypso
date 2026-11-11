@@ -1,21 +1,39 @@
-import {
-	Card,
-	CardBody,
-	Button,
-	__experimentalVStack as VStack,
-	__experimentalDivider as Divider,
-} from '@wordpress/components';
+import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
+import {
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PURCHASES_LINK,
+	A4A_REFERRALS_DASHBOARD,
+	A4A_SITES_LINK,
+	A4A_WOOPAYMENTS_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
+import CertificationTierPageCard from 'calypso/dashboard/agency/certification/tier-page-card';
+import InfluencedRevenue from 'calypso/dashboard/agency/tiers/influenced-revenue';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
+import Divider from 'calypso/dashboard/components/divider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
 import DownloadBadges from '../download-badges';
-import InfluencedRevenue from './influenced-revenue';
-import type { AgencyTierType } from 'calypso/dashboard/agency/tiers/types';
+import type { AgencyTierType, TierBenefitLinks } from 'calypso/dashboard/agency/tiers/types';
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 import type { ComponentProps } from 'react';
+
+const CONTACT_SUPPORT_URL = '#contact-support';
+
+const BENEFIT_LINKS: TierBenefitLinks = {
+	'manage-sites': A4A_SITES_LINK,
+	'create-client-reports': A4A_REPORTS_LINK,
+	'manage-purchases': A4A_PURCHASES_LINK,
+	'make-client-referral': A4A_REFERRALS_DASHBOARD,
+	'add-woopayments-to-store': A4A_WOOPAYMENTS_LINK,
+	'contact-support': CONTACT_SUPPORT_URL,
+	'manage-profile': A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+};
 
 export default function AgencyTierOverviewContent( {
 	currentAgencyTierId,
@@ -36,6 +54,14 @@ export default function AgencyTierOverviewContent( {
 		[ dispatch ]
 	);
 
+	const onCodeCopy = useCallback( () => {
+		dispatch( successNotice( __( 'Discount code copied to clipboard.' ) ) );
+	}, [ dispatch ] );
+
+	const onShareCopy = useCallback( () => {
+		dispatch( successNotice( __( 'Message copied. Paste it into a chat or email.' ) ) );
+	}, [ dispatch ] );
+
 	return (
 		<VStack spacing={ 6 }>
 			<Card>
@@ -43,6 +69,7 @@ export default function AgencyTierOverviewContent( {
 					<InfluencedRevenue
 						currentAgencyTierId={ currentAgencyTierId }
 						totalInfluencedRevenue={ totalInfluencedRevenue }
+						recordTracksEvent={ recordTracks }
 					/>
 				</CardBody>
 			</Card>
@@ -51,12 +78,19 @@ export default function AgencyTierOverviewContent( {
 				tierStatus={ tierStatus }
 				recordTracksEvent={ recordTracks }
 			/>
-			<Divider orientation="horizontal" margin={ 4 } style={ { color: 'var(--color-gray-100)' } } />
+			<Divider style={ { color: 'var(--color-gray-100)', marginBlock: '16px' } } />
+			<CertificationTierPageCard
+				onCodeCopy={ onCodeCopy }
+				onShareCopy={ onShareCopy }
+				recordTracksEvent={ recordTracks }
+			/>
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isLoading }
+				links={ BENEFIT_LINKS }
+				shouldUseRouterLink={ false }
 				renderDownloadBadges={ ( buttonProps: ComponentProps< typeof Button > ) => (
 					<DownloadBadges buttonProps={ { ...buttonProps, icon: null } } />
 				) }

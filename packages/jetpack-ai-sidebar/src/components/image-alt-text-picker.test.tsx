@@ -55,7 +55,8 @@ describe( 'ImageAltTextPicker', () => {
 	} );
 
 	it( 'applies alt text to every image in one click and confirms', () => {
-		render( <ImageAltTextPicker images={ images } /> );
+		const onResponseAction = jest.fn();
+		render( <ImageAltTextPicker images={ images } onResponseAction={ onResponseAction } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
 
 		expect( mockUpdateBlockAttributes ).toHaveBeenCalledTimes( 2 );
@@ -71,6 +72,12 @@ describe( 'ImageAltTextPicker', () => {
 		// The button is replaced by the confirmation, and the images stay visible.
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'bulk_accept',
+			target: 'image',
+			outcome: 'success',
+			itemCount: 2,
+		} );
 	} );
 
 	it( 'calls onComplete after applying', () => {
@@ -78,6 +85,36 @@ describe( 'ImageAltTextPicker', () => {
 		render( <ImageAltTextPicker images={ images } onComplete={ onComplete } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports a partial failure when a later image update throws', () => {
+		const onComplete = jest.fn();
+		const onResponseAction = jest.fn();
+		mockUpdateBlockAttributes
+			.mockImplementationOnce( () => undefined )
+			.mockImplementationOnce( () => {
+				throw new Error( 'Could not update image' );
+			} );
+		render(
+			<ImageAltTextPicker
+				images={ images }
+				onComplete={ onComplete }
+				onResponseAction={ onResponseAction }
+			/>
+		);
+
+		const preventUnhandledError = ( event: ErrorEvent ) => event.preventDefault();
+		window.addEventListener( 'error', preventUnhandledError );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
+		window.removeEventListener( 'error', preventUnhandledError );
+		expect( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) ).toBeInTheDocument();
+		expect( onComplete ).not.toHaveBeenCalled();
+		expect( onResponseAction ).toHaveBeenCalledWith( {
+			action: 'bulk_accept',
+			target: 'image',
+			outcome: 'partial_failed',
+			itemCount: 2,
+		} );
 	} );
 
 	it( 'uses singular copy for a single image', () => {
@@ -91,6 +128,42 @@ describe( 'ImageAltTextPicker', () => {
 
 	it( 'renders nothing when there are no images', () => {
 		const { container } = render( <ImageAltTextPicker images={ [] } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'filters invalid image suggestions before rendering and applying', () => {
+		const mixedImages = [
+			images[ 0 ],
+			null,
+			{},
+			{ clientId: '', alt: 'Missing a block id' },
+			{ clientId: 'block-c', alt: '   ' },
+		] as any;
+
+		render( <ImageAltTextPicker images={ mixedImages } /> );
+
+		expect( screen.getByText( 'A cat on a sofa' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Missing a block id' ) ).not.toBeInTheDocument();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to 1 image' } ) );
+		expect( mockUpdateBlockAttributes ).toHaveBeenCalledTimes( 1 );
+		expect( mockUpdateBlockAttributes ).toHaveBeenCalledWith( 'block-a', {
+			alt: 'A cat on a sofa',
+		} );
+	} );
+
+	it( 'renders nothing when every image suggestion is invalid', () => {
+		const invalidImages = [ null, {}, { clientId: 'block-a', alt: '' } ] as any;
+		const { container } = render( <ImageAltTextPicker images={ invalidImages } /> );
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it.each( [
+		[ 'omitted', undefined ],
+		[ 'not an array', 'text' as any ],
+	] )( 'renders nothing when the options are %s, instead of throwing', ( _label, images ) => {
+		// History strips the picker options to save tokens, so a restored row can
+		// reach this component with nothing to show. Mirrors usePickerVariations.
+		const { container } = render( <ImageAltTextPicker images={ images } /> );
 		expect( container ).toBeEmptyDOMElement();
 	} );
 } );

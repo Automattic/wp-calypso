@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { isJetpackPlanSlug, isJetpackProductSlug } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import {
@@ -8,6 +7,7 @@ import {
 	removeLocaleFromPathLocaleInFront,
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -20,16 +20,13 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
+import { getSiteFragment } from 'calypso/lib/route';
 import { getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
-import {
-	getProductSlugFromContext,
-	isContextSourceMyJetpack,
-} from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors';
 import {
@@ -38,7 +35,6 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.jsx';
 import { hydrate, render } from './web-util.js';
@@ -65,6 +61,7 @@ export const ProviderWrappedLayout = ( {
 	renderHeaderSection,
 	redirectUri,
 } ) => {
+	useEnableWpCompatOverlaySlot();
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
@@ -85,6 +82,7 @@ export const ProviderWrappedLayout = ( {
 				currentSection={ currentSection }
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
+				onRouteCommit={ recordUnifiedAdminPageView }
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
@@ -236,11 +234,18 @@ function buildLoginParameters( context, state ) {
 	// original URL, to ensure the login form is pre-filled with the
 	// correct email address and built with the correct language (when
 	// either of those are requested).
-	const login_email = getImmediateLoginEmail( state );
+	//
+	// Read the query before the state. `setupRoutes()` registers this
+	// middleware ahead of the `ROUTE_SET` catch-all that copies these
+	// values into the store, so on the request that arrives from an
+	// immediate login link the store is still empty. The state is the
+	// fallback for later navigations, where the immediate login
+	// parameters have already been stripped from the URL.
+	const login_email = context.query?.login_email || getImmediateLoginEmail( state );
 	if ( login_email ) {
 		loginParameters.emailAddress = login_email;
 	}
-	const login_locale = getImmediateLoginLocale( state );
+	const login_locale = context.query?.login_locale || getImmediateLoginLocale( state );
 	if ( login_locale ) {
 		loginParameters.locale = login_locale;
 	}
@@ -361,37 +366,6 @@ export function redirectLoggedOutToSignup( context, next ) {
 	}
 
 	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
-}
-
-/**
- * Middleware to redirect users coming from My Jetpack when necessary
- * @see pbNhbs-ag3-p2
- * @param   {Object}   context Context object
- * @param   {Function} next    Calls next middleware
- * @returns {void}
- */
-export function redirectMyJetpack( context, next ) {
-	const state = context.store.getState();
-	const productSlug = getProductSlugFromContext( context );
-	// Strip the slug's quantity suffix, for upgradable quantity based products.
-	const product = productSlug.replace( /:-q-\d+/, '' );
-	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
-
-	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
-		// Redirect to the siteless checkout page
-		const redirectUrl = addQueryArgs(
-			{
-				connect_after_checkout: true,
-				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
-			},
-			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
-		);
-		page( redirectUrl );
-		return;
-	}
-
-	next();
 }
 
 /**
@@ -543,12 +517,10 @@ export const notFound = ( context, next ) => {
 };
 
 /**
- * Middleware to set the selected site ID based on the `origin_site_id` query parameter.
+ * Middleware to remove the `origin_site_id` query parameter.
  */
 export const setSelectedSiteIdByOrigin = ( context, next ) => {
-	const originSiteId = ( context.query.origin_site_id ?? '' ).trim();
-	if ( originSiteId ) {
-		context.store.dispatch( setSelectedSiteId( originSiteId ) );
+	if ( context.query.origin_site_id !== undefined ) {
 		context.page.replace( removeQueryArgs( context.canonicalPath, 'origin_site_id' ) );
 	}
 	next();
@@ -588,7 +560,8 @@ export const maybeRedirectToMultiSiteDashboard =
 		if ( isForcedOptIn || shouldForceRedirect?.( context ) ) {
 			const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
 			bumpStat( 'dashboard-redirect', isForcedOptIn ? 'forced-opt-in' : 'feature-flag' );
-			return navigate( dashboardLink( redirectUrl ?? context.path ) );
+			window.location.replace( dashboardLink( redirectUrl ?? context.path ) );
+			return;
 		}
 
 		next();

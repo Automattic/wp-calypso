@@ -65,7 +65,7 @@ export function getStepUrl(
 	const url =
 		flowName === defaultFlowName && framework === '/start'
 			? // we don't include the default flow name in the route in /start
-			  framework + step + section + locale
+				framework + step + section + locale
 			: framework + flow + step + section + locale;
 	return addQueryArgs( params, url );
 }
@@ -172,7 +172,12 @@ export function getCompletedSteps( flowName, progress, options = {}, isUserLogge
 }
 
 export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
+	// Persisted signup state can name a flow that no longer exists.
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	if ( ! flow ) {
+		return false;
+	}
+
 	const flowStepsInProgressStore = getCompletedSteps(
 		flowName,
 		progress,
@@ -191,7 +196,7 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 
 /**
  * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
- * i.e. Check "launch-site" flow while having a purchased paid plan
+ * i.e. the plans step can be skipped when the site already has a paid plan
  * @param  {Object} flowSteps steps in the current flow
  * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
  */

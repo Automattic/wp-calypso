@@ -2,9 +2,10 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSiteFragment } from 'calypso/lib/route';
+import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditTeamMember from './edit-team-member-form';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
@@ -58,11 +59,11 @@ export default {
 	},
 
 	subscribers( context ) {
-		// Redirect to the new Subscribers page
+		// Subscribers are managed outside Calypso, so this leaves the app rather than routing.
+		// `replace` keeps this out of the history: a pushed entry would send Back here, and
+		// straight out again.
 		const state = context.store.getState();
-		const siteSlug = getSelectedSiteSlug( state );
-		const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
-		page.redirect( redirectURL );
+		window.location.replace( getSubscribersUrl( state, getSelectedSiteId( state ) ) );
 	},
 
 	subscriberDetails( context, next ) {
@@ -70,11 +71,10 @@ export default {
 	},
 
 	peopleAddSubscribers( context ) {
-		// Redirect to the new Subscribers page
 		const state = context.store.getState();
-		const siteSlug = getSelectedSiteSlug( state );
-		const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
-		page.redirect( redirectURL );
+		window.location.replace(
+			getSubscribersUrl( state, getSelectedSiteId( state ), { addSubscribers: true } )
+		);
 	},
 };
 

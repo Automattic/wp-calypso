@@ -1,0 +1,14 @@
+.woopayments-add-site-modal {
+	// The sticky footer supplies the content's bottom padding instead.
+	.components-modal__content {
+		padding-bottom: 0;
+	}
+}
+
+.woopayments-add-site-modal__footer {
+	position: sticky;
+	bottom: 0;
+	z-index: 1;
+	padding-block: 16px 24px;
+	background: var( --color-surface );
+}

@@ -1,0 +1,7 @@
+// The widget fills this box — it has no height of its own. `dvh`, not `vh`: on a
+// mobile browser `vh` is the larger viewport the collapsing toolbars hide, which
+// would leave the chat input below the fold. `vh` first, as the fallback.
+.site-spec-step__container {
+	height: 100vh;
+	height: 100dvh;
+}

@@ -1,0 +1,50 @@
+@import './tokens.css';
+
+@layer base {
+	/*
+	 * Skips embedded UIs in a `data-agenttic-isolated` wrapper, which style themselves. This layer
+	 * outranks one a page declares earlier, such as `@wordpress/ui`'s before a lazy chunk loads ours.
+	 */
+	.agenttic :where( :not( [data-agenttic-isolated] * ) ) {
+		outline-color: var( --color-ring );
+
+		&,
+		&::before,
+		&::after,
+		&::backdrop,
+		&::file-selector-button {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			border: 0 solid;
+		}
+
+		&:is( button, input, select, optgroup, textarea ),
+		&::file-selector-button {
+			font: inherit;
+			font-feature-settings: inherit;
+			font-variation-settings: inherit;
+			letter-spacing: inherit;
+			background-color: transparent;
+			opacity: 1;
+		}
+
+		&:is( input, select, optgroup, textarea ),
+		&::file-selector-button {
+			color: inherit;
+			border-radius: 0;
+		}
+	}
+
+	.agenttic {
+		/* Should reflect the constant NON_DRAGGABLE_SELECTORS */
+		[data-slot='messages'],
+		[data-slot='chat-input'],
+		[data-slot='chat-footer'],
+		[data-slot='chat-compliance-disclosure'],
+		[data-slot='chat-header'] [data-slot='button'],
+		[data-slot='chat-dialog'] {
+			cursor: default;
+		}
+	}
+}

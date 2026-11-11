@@ -1,52 +1,127 @@
 import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import {
+	getEmailAddressError,
+	getEmailDomain,
+	isValidEmailAddress,
+} from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, privateApis } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { Icon, info, check } from '@wordpress/icons';
-import emailValidator from 'email-validator';
-import { useState, useEffect, useCallback } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { createContext, useMemo, useEffect, useCallback, useContext, useRef } from 'react';
+import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import Notice, { RouterNoticeActionLinkButton } from '../../components/notice';
+import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
+import { useIsEmailWritePending } from './use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
-import './style.scss';
+import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
 
 interface EmailSectionProps {
 	value: string;
 	onChange: ( value: string ) => void;
 	disabled?: boolean;
-	userData: UserSettings;
+	userSettings: UserSettings;
+	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
+	/**
+	 * An error from saving the email address, shown on the field until the address is changed.
+	 */
+	serverError?: string;
 }
 
-type EmailValidationState = 'valid' | 'invalid' | null;
+type EmailFormData = { user_email: string };
 
-function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void ) {
-	const [ emailValidationState, setEmailValidationStateValue ] =
-		useState< EmailValidationState >( null );
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { ValidatedInputControl } = unlock( privateApis );
 
-	const setEmailValidationState = useCallback(
-		( state: EmailValidationState ) => {
-			setEmailValidationStateValue( state );
-			onValidationChange?.( state !== 'invalid' );
-		},
-		[ onValidationChange ]
+const HasEmailSaveErrorContext = createContext( false );
+
+/**
+ * A validity message only shows once the field has been blurred. An error that appears without the
+ * user typing, like a bouncing email, needs to show straight away, so mark the field blurred then.
+ * A synthetic `focusout` does that without moving focus, unlike an `invalid` event. A save error
+ * moves focus to the field, since disabling the input during the save drops focus in browsers.
+ */
+function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< EmailFormData > ) {
+	const hasSaveError = useContext( HasEmailSaveErrorContext );
+	const inputRef = useRef< HTMLInputElement >( null );
+	const isInvalid = validity?.custom?.type === 'invalid';
+
+	useEffect( () => {
+		const input = inputRef.current;
+		if ( ! isInvalid || ! input ) {
+			return;
+		}
+		if ( hasSaveError ) {
+			input.focus();
+		} else if ( input.ownerDocument.activeElement === input ) {
+			return;
+		}
+		input.dispatchEvent( new FocusEvent( 'focusout', { bubbles: true } ) );
+	}, [ isInvalid, hasSaveError ] );
+
+	return (
+		<ValidatedInputControl
+			__next40pxDefaultSize
+			id="email-input"
+			type="text"
+			autoComplete="email"
+			ref={ inputRef }
+			customValidity={ validity?.custom }
+			label={ field.label }
+			help={ field.description }
+			value={ field.getValue( { item: data } ) ?? '' }
+			onChange={ ( value?: string ) =>
+				onChange( field.setValue( { item: data, value: value ?? '' } ) )
+			}
+			disabled={ field.isDisabled( { item: data, field } ) }
+		/>
 	);
+}
 
-	return [ emailValidationState, setEmailValidationState ] as const;
+const emailForm: Form = {
+	layout: { type: 'regular' },
+	fields: [ 'user_email' ],
+};
+
+type EmailValidationState = 'valid' | 'invalid' | 'unknown_tld' | null;
+
+function getEmailValidationState( email: string, currentEmail: string ): EmailValidationState {
+	if ( ! email || email === currentEmail ) {
+		return null;
+	}
+
+	try {
+		const emailError = getEmailAddressError( email );
+		if ( emailError === 'unknown_tld' ) {
+			return 'unknown_tld';
+		}
+		return emailError ? 'invalid' : 'valid';
+	} catch ( error ) {
+		return 'invalid';
+	}
 }
 
 export default function EmailSection( {
 	value,
 	onChange,
 	disabled = false,
-	userData,
+	userSettings,
+	isEmailVerified,
 	onValidationChange,
+	serverError,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
+	const isEmailWritePending = useIsEmailWritePending();
 
-	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation( {
+	const { mutate: cancelPendingEmail } = useMutation( {
 		...withSnackbar( mutation, {
 			success: __( 'Pending email change canceled.' ),
 			error: __( 'Failed to cancel pending email change.' ),
@@ -61,72 +136,111 @@ export default function EmailSection( {
 		},
 	} );
 
-	const isEmailPending = userData.user_email_change_pending;
-	const pendingEmail = userData.new_user_email;
-	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userData.user_email;
-
-	const [ emailValidationState, setEmailValidationState ] =
-		useEmailValidation( onValidationChange );
+	const isEmailPending = userSettings.user_email_change_pending;
+	const pendingEmail = userSettings.new_user_email;
+	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userSettings.user_email;
 
 	const handleCancelPendingEmail = useCallback( () => {
 		cancelPendingEmail();
 	}, [ cancelPendingEmail ] );
 
-	const validateEmail = useCallback(
-		( email: string ) => {
-			if ( ! email || email === currentEmail ) {
-				setEmailValidationState( null );
-				return;
-			}
-
-			try {
-				if ( ! emailValidator.validate( email ) ) {
-					setEmailValidationState( 'invalid' );
-				} else {
-					setEmailValidationState( 'valid' );
-				}
-			} catch ( error ) {
-				setEmailValidationState( 'invalid' );
-			}
-		},
-		[ currentEmail, setEmailValidationState ]
-	);
+	const emailValidationState = getEmailValidationState( value, currentEmail );
+	const isEmailValid =
+		! serverError && ( emailValidationState === 'valid' || emailValidationState === null );
 
 	useEffect( () => {
-		validateEmail( value );
-	}, [ value, validateEmail ] );
+		onValidationChange?.( isEmailValid );
+	}, [ isEmailValid, onValidationChange ] );
 
+	const { user } = useAuth();
 	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
 	const isAccountRecoveryReady = accountRecovery !== undefined;
-	const hasRecoveryMethod = !! accountRecovery?.email || !! accountRecovery?.phone;
+	const hasUsableRecoveryEmail =
+		!! accountRecovery?.email &&
+		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
+	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
+
+	const showBouncingEmailError =
+		! isEmailPending && !! user.email_bouncing && value === userSettings.user_email;
 
 	const showCustomDomainWarning =
 		! isEmailPending &&
 		!! value &&
-		emailValidator.validate( value ) &&
+		isValidEmailAddress( value ) &&
 		isCustomDomainEmail( value ) &&
 		isAccountRecoveryReady &&
 		! hasRecoveryMethod;
 
-	const getValidationClass = () => {
+	const validity = useMemo( (): FormValidity => {
 		if ( isEmailPending ) {
-			return '';
+			return undefined;
 		}
-		if ( showCustomDomainWarning ) {
-			return 'has-warning';
-		}
-		if ( emailValidationState === 'valid' ) {
-			return 'has-success';
-		}
-		if ( emailValidationState === 'invalid' ) {
-			return 'has-error';
-		}
-		return '';
-	};
 
-	// Inline helper messages
-	const getHelpText = useCallback( () => {
-		// Pending state static message
+		if ( serverError ) {
+			return { user_email: { custom: { type: 'invalid', message: serverError } } };
+		}
+
+		if ( showBouncingEmailError ) {
+			return {
+				user_email: {
+					custom: {
+						type: 'invalid',
+						message: __(
+							'Messages we send to this address are bouncing back. Please update your email.'
+						),
+					},
+				},
+			};
+		}
+
+		if ( ! value || value === currentEmail ) {
+			return undefined;
+		}
+
+		if ( emailValidationState === 'valid' ) {
+			return {
+				user_email: {
+					custom: { type: 'valid', message: __( 'Email address looks good!' ) },
+				},
+			};
+		}
+
+		if ( emailValidationState === 'unknown_tld' ) {
+			return {
+				user_email: {
+					custom: {
+						type: 'invalid',
+						message: sprintf(
+							/* translators: %s: the domain part of the email address the user typed */
+							__( '“%s” doesn’t look like a real domain. Check the address for typos.' ),
+							getEmailDomain( value )
+						),
+					},
+				},
+			};
+		}
+
+		if ( emailValidationState === 'invalid' ) {
+			return {
+				user_email: {
+					custom: { type: 'invalid', message: __( 'Please enter a valid email address.' ) },
+				},
+			};
+		}
+
+		return undefined;
+	}, [
+		isEmailPending,
+		serverError,
+		showBouncingEmailError,
+		value,
+		currentEmail,
+		emailValidationState,
+	] );
+
+	const hasEmailError = validity?.user_email?.custom?.type === 'invalid';
+
+	const description = useMemo( () => {
 		if ( isEmailPending ) {
 			return (
 				<>
@@ -136,7 +250,7 @@ export default function EmailSection( {
 					<Button
 						variant="link"
 						onClick={ handleCancelPendingEmail }
-						disabled={ isCancelPending }
+						disabled={ isEmailWritePending }
 						style={ {
 							padding: 0,
 							height: 'auto',
@@ -152,69 +266,67 @@ export default function EmailSection( {
 			);
 		}
 
-		if ( showCustomDomainWarning ) {
-			return (
-				<>
-					<Icon icon={ info } size={ 16 } />
-					<span>
-						{ createInterpolateElement(
-							__(
-								'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
-							),
-							{
-								a: <Link to="/me/security/account-recovery" />,
-							}
-						) }
-					</span>
-				</>
-			);
+		// The saved email address has never been verified (and no change is pending).
+		if ( ! isEmailVerified && ! hasEmailError ) {
+			return __( 'Your email has not been verified yet.' );
 		}
 
-		// Input validation messages
-		if ( value && value !== currentEmail ) {
-			if ( emailValidationState === 'valid' ) {
-				return (
-					<>
-						<Icon icon={ check } size={ 16 } />
-						{ __( 'Email address looks good!' ) }
-					</>
-				);
-			}
-
-			if ( emailValidationState === 'invalid' ) {
-				return (
-					<>
-						<Icon icon={ info } size={ 16 } />
-						{ __( 'Please enter a valid email address.' ) }
-					</>
-				);
-			}
+		if ( validity?.user_email?.custom ) {
+			return undefined;
 		}
 
-		return null;
+		return __( 'Sign-in and account emails. Not shown publicly.' );
 	}, [
 		isEmailPending,
-		showCustomDomainWarning,
-		value,
-		currentEmail,
-		emailValidationState,
+		isEmailVerified,
+		hasEmailError,
+		validity,
 		handleCancelPendingEmail,
-		isCancelPending,
+		isEmailWritePending,
 	] );
 
+	const fields = useMemo(
+		(): Field< EmailFormData >[] => [
+			{
+				id: 'user_email',
+				label: __( 'Email address' ),
+				type: 'text',
+				description,
+				isDisabled: disabled || !! isEmailPending,
+				Edit: EmailEdit,
+			},
+		],
+		[ description, disabled, isEmailPending ]
+	);
+
+	const formData = useMemo( () => ( { user_email: value } ), [ value ] );
+
 	return (
-		<InputControl
-			__next40pxDefaultSize
-			id="email-input"
-			type="text"
-			label={ __( 'Email address' ) }
-			value={ value }
-			onChange={ ( newValue ) => onChange( newValue ?? '' ) }
-			autoComplete="email"
-			disabled={ disabled || isEmailPending }
-			className={ getValidationClass() }
-			help={ getHelpText() }
-			aria-describedby={ getHelpText() ? 'email-help' : undefined }
-		/>
+		<VStack spacing={ 4 }>
+			<HasEmailSaveErrorContext.Provider value={ !! serverError }>
+				<DataForm< EmailFormData >
+					data={ formData }
+					fields={ fields }
+					form={ emailForm }
+					validity={ validity }
+					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
+				/>
+			</HasEmailSaveErrorContext.Provider>
+			{ showCustomDomainWarning && (
+				<Notice
+					variant="warning"
+					title={ __( 'Protect access to your account' ) }
+					actions={
+						<RouterNoticeActionLinkButton variant="outline" to="/me/security/account-recovery">
+							{ __( 'Set up account recovery' ) }
+						</RouterNoticeActionLinkButton>
+					}
+				>
+					{ __(
+						'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Add a recovery email or phone number to keep access to your account.'
+					) }
+				</Notice>
+			) }
+		</VStack>
 	);
 }

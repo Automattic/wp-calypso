@@ -1,10 +1,14 @@
+import { TZDate } from '@date-fns/tz';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
-import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
+import { startOfDay, endOfDay } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
+import { getIntlLocale } from '../../utils/locale';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
+import type { Badge } from '@wordpress/ui';
+import type { ComponentProps } from 'react';
 
-type DateRange = { start: Date; end: Date };
+type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 
 const HOUR_MS = 3_600_000;
 const SECONDS_PER_DAY = 86_400;
@@ -26,8 +30,8 @@ const toUtcSecForSiteClock = (
 	);
 
 /**
- * Convert a local date range to inclusive epoch-second boundaries (UTC).
- * Covers the full start and end calendar days.
+ * Serialize site calendar days, held as browser-local Dates, to inclusive UTC seconds.
+ * The Dates are day carriers, not instants to format in the site timezone again.
  */
 export function buildTimeRangeInSeconds(
 	start: Date,
@@ -36,10 +40,28 @@ export function buildTimeRangeInSeconds(
 	gmtOffset?: number
 ): { startSec: number; endSec: number } {
 	if ( timezoneString ) {
-		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
-		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString ) );
-		const endSec = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString ) );
+		const startSec = Math.floor(
+			new TZDate(
+				start.getFullYear(),
+				start.getMonth(),
+				start.getDate(),
+				0,
+				0,
+				0,
+				timezoneString
+			).getTime() / 1000
+		);
+		const endSec = Math.floor(
+			new TZDate(
+				end.getFullYear(),
+				end.getMonth(),
+				end.getDate(),
+				23,
+				59,
+				59,
+				timezoneString
+			).getTime() / 1000
+		);
 		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
 			return { startSec, endSec };
 		}
@@ -55,11 +77,32 @@ export function buildTimeRangeInSeconds(
 	return { startSec, endSec };
 }
 
-/**
- * Convert a PHP log severity string to lowercase (to be used in a CSS class name).
- */
-export const toSeverityClass = ( severity: PHPLog[ 'severity' ] ) =>
-	severity.split( ' ' )[ 0 ].toLowerCase();
+export const toSeverityIntent = ( severity: PHPLog[ 'severity' ] ): BadgeIntent => {
+	switch ( severity ) {
+		case 'Fatal error':
+			return 'high';
+		case 'Warning':
+			return 'medium';
+		case 'Deprecated':
+			return 'informational';
+		case 'User':
+		default:
+			return 'none';
+	}
+};
+
+export const toRequestTypeIntent = ( requestType: ServerLog[ 'request_type' ] ): BadgeIntent => {
+	switch ( requestType ) {
+		case 'DELETE':
+			return 'high';
+		case 'GET':
+			return 'stable';
+		case 'POST':
+			return 'informational';
+		default:
+			return 'none';
+	}
+};
 
 /**
  * Format a log date/time string for display.
@@ -73,7 +116,7 @@ export function formatLogDateTimeForDisplay(
 	if ( timezoneString ) {
 		const date = new Date( dateTime );
 
-		return new Intl.DateTimeFormat( locale, {
+		return new Intl.DateTimeFormat( getIntlLocale( locale ), {
 			dateStyle: 'long',
 			timeStyle: 'short',
 			timeZone: timezoneString,
@@ -84,26 +127,6 @@ export function formatLogDateTimeForDisplay(
 		dateStyle: 'long',
 		timeStyle: 'short',
 	} );
-}
-
-/**
- * Get the initial date range from the URL search parameters.
- */
-export function getInitialDateRangeFromSearch( search: string ): DateRange | null {
-	const params = new URLSearchParams( search );
-	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
-	const toDate = ( dateString?: string | null ) => {
-		const num = valueAsNumber( dateString );
-		if ( ! Number.isFinite( num ) ) {
-			return undefined;
-		}
-		const date = fromUnixTime( num );
-		return isValidDate( date ) ? date : undefined;
-	};
-
-	const start = toDate( params.get( 'from' ) );
-	const end = toDate( params.get( 'to' ) );
-	return start && end && start <= end ? { start, end } : null;
 }
 
 export function formatDateCell( {
@@ -133,7 +156,7 @@ export function formatDateCell( {
 		: formatDateWithOffset( date, gmtOffset as number, locale, {
 				dateStyle: 'medium',
 				timeStyle: 'short',
-		  } );
+			} );
 }
 
 export function getDateTimeLabel( {
@@ -156,6 +179,9 @@ export function getDateTimeLabel( {
 	}
 	return dateTimeLabel;
 }
+
+export const formatLogDetailValue = ( value: string | number | null | undefined ): string =>
+	value === null || value === undefined || String( value ).trim() === '' ? '-' : String( value );
 
 // Logs helpers
 

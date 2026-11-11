@@ -83,20 +83,12 @@ button {
 .anchor-fm,
 .subscribers,
 .copy-site,
-.intro,
-.free-setup,
-.free-post-setup,
-.free,
-.setup-blog,
-.celebration-step,
 .use-my-domain:not( :has( .step-container-v2 ) ),
-.domain-transfer,
+.hundred-year-domain-transfer,
 .update-design,
-.update-options,
 .hundred-year-plan,
 .hundred-year-domain,
 .entrepreneur,
-.generate-content,
 .playground:not( :has( .step-container-v2 ) ),
 .processing:not( :has( .step-container-v2 ) ),
 .create-site:not( :has( .step-container-v2 ) ) {
@@ -120,7 +112,7 @@ button {
 			&.new-or-existing-site,
 			&.domains:not( .copy-site ):not( .ai-site-builder ):not( .domain-and-plan ):not(
 					.onboarding
-				):not( .newsletter ):not( .readymade-template ):not( .reblogging ) {
+				):not( .newsletter ) {
 				margin-top: -60px;
 			}
 		}
@@ -364,8 +356,6 @@ button {
 	}
 }
 
-.free,
-.free-post-setup,
 .update-design {
 	.signup-header h1 {
 		display: none;

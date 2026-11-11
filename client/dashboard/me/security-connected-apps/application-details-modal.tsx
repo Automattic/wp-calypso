@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/ui';
 import {
 	Modal,
 	ExternalLink,
@@ -7,10 +6,11 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useLocale } from '../../app/locale';
+import { Badge } from '@wordpress/ui';
+import { useIntlLocale } from '../../app/locale';
 import type { ConnectedApplication } from '@automattic/api-core';
 
-interface Props {
+interface ApplicationDetailsModalProps {
 	application: ConnectedApplication;
 	onClose: () => void;
 }
@@ -40,11 +40,11 @@ const getAccessScopeDetails = ( scope: string, site?: { site_name: string; site_
 								siteLink: <ExternalLink href={ site.site_URL }>{ site.site_name }</ExternalLink>,
 							}
 						),
-				  }
+					}
 				: {
 						label: '',
 						value: '',
-				  };
+					};
 	}
 };
 
@@ -61,8 +61,11 @@ const DetailItem = ( { label, value }: { label: string; value: React.ReactNode }
 	);
 };
 
-export default function ApplicationDetailsModal( { application, onClose }: Props ) {
-	const userLocale = useLocale();
+export default function ApplicationDetailsModal( {
+	application,
+	onClose,
+}: ApplicationDetailsModalProps ) {
+	const userLocale = useIntlLocale();
 
 	const siteObj =
 		application.site && typeof application.site === 'object' ? application.site : undefined;
@@ -89,7 +92,7 @@ export default function ApplicationDetailsModal( { application, onClose }: Props
 						value={
 							<VStack spacing={ 2 }>
 								<Badge
-									intent="default"
+									intent="draft"
 									style={ {
 										maxWidth: 'fit-content',
 									} }

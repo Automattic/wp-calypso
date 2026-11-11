@@ -85,7 +85,7 @@ class AccountCloseConfirmDialog extends Component {
 							supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
 							supportPostId: 14411,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				englishText: 'Start a new site',

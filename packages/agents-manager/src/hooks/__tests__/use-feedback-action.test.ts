@@ -5,8 +5,8 @@ import { createFeedbackActions } from '@automattic/agenttic-ui';
 import { renderHook, act } from '@testing-library/react';
 import { useAgentsManagerContext } from '../../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
-import useFeedbackAction from '../use-feedback-action';
-import type { Message } from '@automattic/agenttic-ui/dist/types';
+import useFeedbackAction, { submitFeedback } from '../use-feedback-action';
+import type { UIMessage as Message } from '@automattic/agenttic-client';
 
 // Capture the onFeedback callback passed to createFeedbackActions
 let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
@@ -45,14 +45,13 @@ const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
 const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
-const mockRegisterMessageActions = jest.fn();
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
 >;
 const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
 	typeof recordAgentsManagerTracksEvent
 >;
-const mockGetActiveSessionId = jest.fn();
+const mockGetTabSessionId = jest.fn();
 
 const mockAuthProvider = jest.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
 
@@ -89,16 +88,15 @@ describe( 'useFeedbackAction', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockFetch.mockResolvedValue( { ok: true } );
-		mockGetActiveSessionId.mockReturnValue( 'session-abc' );
+		mockGetTabSessionId.mockReturnValue( 'session-abc' );
 		mockUseAgentsManagerContext.mockReturnValue( {
 			agentConfig: defaultAgentConfig,
 			isLoggedIn: true,
-			getActiveSessionId: mockGetActiveSessionId,
+			getTabSessionId: mockGetTabSessionId,
 		} as unknown as ReturnType< typeof useAgentsManagerContext > );
 	} );
 
 	const defaultConfig = {
-		registerMessageActions: mockRegisterMessageActions,
 		messages: [] as Message[],
 	};
 
@@ -118,7 +116,7 @@ describe( 'useFeedbackAction', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: defaultAgentConfig,
 				isLoggedIn: false,
-				getActiveSessionId: mockGetActiveSessionId,
+				getTabSessionId: mockGetTabSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			renderHook( () => useFeedbackAction( defaultConfig ) );
@@ -138,13 +136,12 @@ describe( 'useFeedbackAction', () => {
 				initialProps: defaultConfig,
 			} );
 
-			// Provide a new getActiveSessionId reference to simulate the real
-			// useCallback behavior where agentConfig change creates a new callback.
-			const newGetActiveSessionId = jest.fn().mockReturnValue( 'new-session' );
+			// The hook must react to a new `getTabSessionId` reference from the provider.
+			const newGetTabSessionId = jest.fn().mockReturnValue( 'new-session' );
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
 				isLoggedIn: true,
-				getActiveSessionId: newGetActiveSessionId,
+				getTabSessionId: newGetTabSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			rerender( defaultConfig );
@@ -157,6 +154,14 @@ describe( 'useFeedbackAction', () => {
 
 			expect( capturedCondition?.( createMessage( '1', 'agent', 'hi' ) ) ).toBe( true );
 			expect( capturedCondition?.( createMessage( '2', 'user', 'hi' ) ) ).toBe( false );
+		} );
+
+		it( 'leaves out the browser’s own answer to /credits', () => {
+			renderHook( () => useFeedbackAction( defaultConfig ) );
+
+			expect( capturedCondition?.( createMessage( 'credits-command-1', 'agent', 'hi' ) ) ).toBe(
+				false
+			);
 		} );
 	} );
 
@@ -211,9 +216,12 @@ describe( 'useFeedbackAction', () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
 
-			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_up', {
-				message_id: 'msg-1',
-			} );
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_response_action_thumbs_up',
+				{
+					message_id: 'msg-1',
+				}
+			);
 		} );
 
 		it( 'does not show feedback input', async () => {
@@ -248,9 +256,12 @@ describe( 'useFeedbackAction', () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'down' );
 
-			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'response_action_thumbs_down', {
-				message_id: 'msg-1',
-			} );
+			expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_big_sky_response_action_thumbs_down',
+				{
+					message_id: 'msg-1',
+				}
+			);
 		} );
 
 		it( 'shows feedback input', async () => {
@@ -316,6 +327,35 @@ describe( 'useFeedbackAction', () => {
 			expect( body.trace_id ).toBe( 'trace-123' );
 		} );
 
+		it( 'does not send `metadata` with the feedback text', async () => {
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
+			await triggerFeedback( 'msg-1', 'down' );
+
+			await act( async () => {
+				await result.current.submitFeedbackText( 'Not helpful' );
+			} );
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body ).not.toHaveProperty( 'metadata' );
+		} );
+
+		it( 'sends `metadata` with the feedback text when given', async () => {
+			const metadata = { image_url: 'https://example.com/image.png', mode: 'edit' };
+
+			await submitFeedback(
+				mockAuthProvider,
+				'session-abc',
+				'msg-1',
+				'Too dark',
+				undefined,
+				undefined,
+				metadata
+			);
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body.metadata ).toEqual( metadata );
+		} );
+
 		it( 'limits conversation context to last 4 messages', async () => {
 			const messages = [
 				createMessage( 'msg-1', 'user', 'Message 1' ),
@@ -347,7 +387,7 @@ describe( 'useFeedbackAction', () => {
 			} );
 
 			expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
-				'response_feedback_submitted',
+				'calypso_agents_manager_response_feedback_submitted',
 				{
 					message_id: 'msg-1',
 				}
@@ -355,11 +395,11 @@ describe( 'useFeedbackAction', () => {
 		} );
 
 		it( 'uses stored session ID when `sessionId` is empty', async () => {
-			mockGetActiveSessionId.mockReturnValue( 'stored-session-123' );
+			mockGetTabSessionId.mockReturnValue( 'stored-session-123' );
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: '' },
 				isLoggedIn: true,
-				getActiveSessionId: mockGetActiveSessionId,
+				getTabSessionId: mockGetTabSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
@@ -407,7 +447,7 @@ describe( 'useFeedbackAction', () => {
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, authProvider: undefined },
 				isLoggedIn: true,
-				getActiveSessionId: mockGetActiveSessionId,
+				getTabSessionId: mockGetTabSessionId,
 			} as unknown as ReturnType< typeof useAgentsManagerContext > );
 
 			renderHook( () => useFeedbackAction( defaultConfig ) );

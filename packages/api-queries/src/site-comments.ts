@@ -128,6 +128,9 @@ export const siteCommentsInfiniteQuery = ( {
 				offset: pageParam?.offset,
 			} ),
 		initialPageParam: undefined,
+		// Most threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
+		staleTime: 60 * 1000,
+		refetchOnWindowFocus: false,
 		getNextPageParam: ( lastPage, allPages ) => {
 			const pageSize = number ?? DEFAULT_NUMBER;
 			if (
@@ -142,7 +145,7 @@ export const siteCommentsInfiniteQuery = ( {
 				? {
 						direction: 'before' as const,
 						before: oldest.toISOString(),
-				  }
+					}
 				: undefined;
 		},
 		getPreviousPageParam: ( firstPage, allPages ) => {
@@ -155,7 +158,7 @@ export const siteCommentsInfiniteQuery = ( {
 							allPages.flatMap( ( page ) => page.comments ),
 							newest
 						),
-				  }
+					}
 				: undefined;
 		},
 		enabled: Boolean( siteId && postId ),

@@ -9,18 +9,13 @@ import { ADD_SUBSCRIPTION_CONFIGS } from 'calypso/reader/new-subscription/compon
 import Stream from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getDiscoverStreamTags,
-	RECOMMENDED_TAB,
-	buildDiscoverStreamKey,
-	FRESHLY_PRESSED_TAB,
-} from './helper';
+import { getDiscoverStreamTags, RECOMMENDED_TAB, buildDiscoverStreamKey } from './helper';
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
 	const { data: followedTags } = useFollowedTags();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const selectedTab = props.selectedTab || FRESHLY_PRESSED_TAB;
+	const selectedTab = props.selectedTab || RECOMMENDED_TAB;
 	const selectedTag = props.query?.selectedTag ?? 'dailyprompt';
 
 	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;

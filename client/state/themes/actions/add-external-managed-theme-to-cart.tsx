@@ -1,10 +1,3 @@
-import {
-	PLAN_BUSINESS,
-	TERM_ANNUALLY,
-	findFirstSimilarPlanKey,
-	getPlan,
-	isFreePlan,
-} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import 'calypso/state/themes/init';
@@ -22,7 +15,10 @@ import {
 import { CalypsoDispatch } from 'calypso/state/types';
 import { AppState } from 'calypso/types';
 import { THEMES_LOADING_CART } from '../action-types';
-import { getPreferredBillingCycleProductSlug } from '../theme-utils';
+import {
+	getExternallyManagedThemeRequiredPlanSlug,
+	getPreferredBillingCycleProductSlug,
+} from '../theme-utils';
 
 const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) => {
 	dispatch( {
@@ -32,7 +28,7 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
 };
 
 /**
- * Add the business plan and/or the external theme to the cart and redirect to checkout.
+ * Add the required plan and/or the external theme to the cart and redirect to checkout.
  * This action also manages the loading state of the cart. We'll use it to lock the CTA
  * button while the cart is being updated.
  * @param themeId Theme ID to add to cart
@@ -69,13 +65,9 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			throw new Error( 'No products available' );
 		}
 
-		const currentPlanSlug = getSitePlanSlug( state, siteId );
-		let requiredTerm = TERM_ANNUALLY;
-		if ( currentPlanSlug && ! isFreePlan( currentPlanSlug ) ) {
-			requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
-		}
-		const requiredPlanSlug =
-			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } ) || PLAN_BUSINESS;
+		const requiredPlanSlug = getExternallyManagedThemeRequiredPlanSlug(
+			getSitePlanSlug( state, siteId ) ?? undefined
+		);
 
 		const productSlug = getPreferredBillingCycleProductSlug( products, requiredPlanSlug );
 
@@ -83,13 +75,13 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		/**
 		 * This holds the products that will be added to the cart. We always want to add the
-		 * theme product, but we only want to add the business plan if the site is not eligible
+		 * theme product, but we only want to add the required plan if the site is not eligible
 		 */
 		const cartItems: Array< MinimalRequestCartProduct > = [ externalManagedThemeProduct ];
 
 		/**
-		 * If the site is not eligible for the external themes, means that it doesn't have a business plan.
-		 * We need to add the business plan to the cart.
+		 * If the site is not eligible for the external themes, means that its plan doesn't include them.
+		 * We need to add the required plan to the cart.
 		 */
 		const isSiteEligibleForManagedExternalThemes = getIsSiteEligibleForManagedExternalThemes(
 			state,

@@ -118,7 +118,7 @@ $woocommerce-purple-50: #720eec;
 }
 
 .product-card__select-button {
-	display: block;
+	display: flex;
 	justify-content: center;
 	text-align: center;
 	@include body-large;

@@ -14,7 +14,9 @@ import './style.scss';
 export function A4AFeedback( { type }: { type: FeedbackType } ) {
 	const translate = useTranslate();
 	const [ experience, setExperience ] =
-		useState< React.ComponentProps< typeof ExperienceControl >[ 'value' ] >( 'good' );
+		useState< NonNullable< React.ComponentProps< typeof ExperienceControl >[ 'value' ] > >(
+			'good'
+		);
 	const [ comments, setComments ] = useState< string >( '' );
 	const [ suggestions, setSuggestions ] = useState< FeedbackSuggestion[] >( [] );
 

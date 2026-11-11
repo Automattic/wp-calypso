@@ -11,22 +11,19 @@ type CoreWebVitalsDisplayProps = Record< Metrics, number > & {
 	history: PerformanceMetricsHistory;
 	audits: Record< string, PerformanceMetricAudit >;
 	recommendationsRef: React.RefObject< HTMLDivElement | null > | null;
-	overallScoreIsTab?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
 export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
-	const defaultTab = props.overallScoreIsTab ? 'overall' : 'fcp';
-	const [ activeTab, setActiveTab ] = useState< Metrics | null >( defaultTab );
+	const [ activeTab, setActiveTab ] = useState< Metrics | null >( 'overall' );
 	const isDesktop = useDesktopBreakpoint();
 
 	if ( isDesktop ) {
 		return (
 			<div className="core-web-vitals-display is-desktop">
 				<MetricTabBar
-					activeTab={ activeTab ?? defaultTab }
+					activeTab={ activeTab ?? 'overall' }
 					setActiveTab={ setActiveTab }
-					showOverall={ props.overallScoreIsTab }
 					{ ...props }
 				/>
 				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
@@ -36,12 +33,7 @@ export const CoreWebVitalsDisplay = ( props: CoreWebVitalsDisplayProps ) => {
 
 	return (
 		<div className="core-web-vitals-display">
-			<CoreWebVitalsAccordion
-				activeTab={ activeTab }
-				setActiveTab={ setActiveTab }
-				showOverall={ props.overallScoreIsTab }
-				{ ...props }
-			>
+			<CoreWebVitalsAccordion activeTab={ activeTab } setActiveTab={ setActiveTab } { ...props }>
 				<CoreWebVitalsDetails activeTab={ activeTab } { ...props } />
 			</CoreWebVitalsAccordion>
 		</div>

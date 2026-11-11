@@ -197,14 +197,12 @@ export const CompactWrapper: Story = {
 	),
 	args: {
 		children: (
-			<>
-				<EmptyState.Header>
-					<EmptyState.Title>Site blocked</EmptyState.Title>
-					<EmptyState.Description>
-						This site has been blocked and is no longer accessible.
-					</EmptyState.Description>
-				</EmptyState.Header>
-			</>
+			<EmptyState.Header>
+				<EmptyState.Title>Site blocked</EmptyState.Title>
+				<EmptyState.Description>
+					This site has been blocked and is no longer accessible.
+				</EmptyState.Description>
+			</EmptyState.Header>
 		),
 	},
 };
@@ -225,8 +223,8 @@ export const WithContainerAndCallout: Story = {
 					description={
 						<>
 							<Text variant="muted">
-								Get under the hood—control caching, choose your PHP version, control security, and
-								test out upcoming WordPress releases.
+								Get under the hood—choose your PHP version, control security, and test out upcoming
+								WordPress releases.
 							</Text>
 							<Text variant="muted">
 								Available on the WordPress.com Business and Commerce plans.

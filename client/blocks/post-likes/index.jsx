@@ -91,7 +91,7 @@ class PostLikes extends PureComponent {
 						return 1;
 					}
 					return 0;
-			  } )
+				} )
 			: [];
 
 		let noLikesLabel;

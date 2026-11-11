@@ -13,8 +13,7 @@ test.describe(
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 				await snoozeAccountRecoveryInterstitial( clientRestAPI );
-				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+				await accountGivenByEnvironment.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {
@@ -35,8 +34,7 @@ test.describe(
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
 				await snoozeAccountRecoveryInterstitial( clientRestAPI );
-				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
-				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
+				await accountGivenByEnvironment.authenticate( page );
 			} );
 
 			await test.step( 'When I visit the dashboard page', async function () {

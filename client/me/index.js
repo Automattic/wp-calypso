@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	makeLayout,
@@ -7,6 +8,7 @@ import {
 } from 'calypso/controller';
 import { setupPreferences } from 'calypso/controller/preferences';
 import { TELEGRAM_CONNECT_PATH, telegramConnect } from 'calypso/telegram-connect/controller';
+import { WORDPRESS_AGENT_PATH, wordpressAgent } from 'calypso/wordpress-agent/controller';
 import * as controller from './controller';
 
 import './style.scss';
@@ -33,30 +35,32 @@ export default function () {
 	page( '/me/find-friends', controller.profileRedirect, makeLayout, clientRender );
 
 	page( TELEGRAM_CONNECT_PATH, setupPreferences, telegramConnect, makeLayout, clientRender );
+	if ( config.isEnabled( 'wordpress-agent-slack' ) ) {
+		page(
+			WORDPRESS_AGENT_PATH,
+			setupPreferences,
+			controller.sidebar,
+			wordpressAgent,
+			makeLayout,
+			clientRender
+		);
+	}
 
-	page(
-		'/me/get-apps',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/apps' ),
-		controller.sidebar,
-		controller.apps,
-		makeLayout,
-		clientRender
-	);
+	page( '/me/get-apps', controller.appsRedirect );
 
+	// Old setup URLs; manual setup now lives in the dashboard.
 	page(
 		'/me/mcp/setup',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
-		controller.sidebar,
-		controller.mcpSetup,
-		makeLayout,
-		clientRender
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/setup', () => true )
+	);
+	page(
+		'/me/mcp-setup',
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/setup', () => true )
 	);
 	page(
 		'/me/mcp/read',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/read' ),
 		controller.sidebar,
 		controller.mcpRead,
 		makeLayout,
@@ -65,7 +69,7 @@ export default function () {
 	page(
 		'/me/mcp/write',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/write' ),
 		controller.sidebar,
 		controller.mcpWrite,
 		makeLayout,
@@ -74,7 +78,7 @@ export default function () {
 	page(
 		'/me/mcp/mcp-sites',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/mcp-sites' ),
 		controller.sidebar,
 		controller.mcpMcpSites,
 		makeLayout,
@@ -83,7 +87,7 @@ export default function () {
 	page(
 		'/me/mcp/add-site',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/mcp-sites' ),
 		controller.sidebar,
 		controller.mcpAddSite,
 		makeLayout,
@@ -98,5 +102,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/me/mcp-setup', controller.mcpSetupLegacyRedirect, makeLayout, clientRender );
 }

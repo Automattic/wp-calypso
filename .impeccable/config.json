@@ -1,0 +1,17 @@
+{
+	"detector": {
+		"ignoreRules": [],
+		"ignoreFiles": [],
+		"ignoreValues": [
+			{
+				"rule": "overused-font",
+				"value": "inter",
+				"files": [
+					"client/landing/stepper/declarative-flow/internals/steps-repository/site-generation/test/html-preview-runtime.ts"
+				],
+				"createdAt": "2026-10-16T14:35:25.631Z",
+				"reason": "Agent: Inter is an intentional font-isolation test fixture that verifies namespacing and font metadata preservation, not a product typography choice."
+			}
+		]
+	}
+}

@@ -166,7 +166,7 @@ const JetpackComFooter: React.FC = () => {
 				items: [
 					{
 						label: translate( 'Terms of Service' ),
-						href: addQueryArgs( utmParams, localizeUrl( 'https://wordpress.com/tos/' ) ),
+						href: addQueryArgs( utmParams, localizeUrl( 'https://automattic.com/tos/' ) ),
 						trackId: 'terms_of_service',
 					},
 					{
@@ -192,12 +192,12 @@ const JetpackComFooter: React.FC = () => {
 									'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
 								),
 								trackId: 'privacy_policy_california',
-						  },
+							},
 					shouldSeeDoNotSell
 						? {
 								label: translate( 'Do Not Sell or Share My Data' ),
 								onClick: openDialog,
-						  }
+							}
 						: null,
 				],
 			},

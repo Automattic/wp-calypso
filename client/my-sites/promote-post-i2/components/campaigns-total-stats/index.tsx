@@ -1,5 +1,5 @@
 import { formatNumberCompact } from '@automattic/number-formatters';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 type Props = {
@@ -13,11 +13,12 @@ export default function CampaignsTotalStats( {
 	totalClicks,
 	outerContainerClass,
 }: Props ) {
+	const translate = useTranslate();
 	return (
 		<div className={ outerContainerClass }>
 			<div className="campaigns-total-stats__container">
 				<div className="campaigns-total-stats__header">
-					<div className="campaigns-total-stats__title">Performance</div>
+					<div className="campaigns-total-stats__title">{ translate( 'Performance' ) }</div>
 				</div>
 				<div className="campaigns-total-stats__items">
 					<div className="campaigns-total-stats__item">

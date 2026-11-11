@@ -37,7 +37,7 @@ const GlobalStylesVariationContainer = ( {
 								css: inlineCss,
 								isGlobalStyles: true,
 							},
-					  ]
+						]
 					: [] ),
 				{
 					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',

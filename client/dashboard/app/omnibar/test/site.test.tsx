@@ -1,22 +1,41 @@
 /**
  * @jest-environment jsdom
  */
-import { omnibarSiteIdQuery, queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
-import { act, waitFor } from '@testing-library/react';
-import nock from 'nock';
-import { render } from '../../../test-utils';
-import { AUTH_QUERY_KEY } from '../../auth';
+import { omnibarCurrentUrlQuery, omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
+import {
+	Outlet,
+	RouterProvider,
+	createRootRoute,
+	createRoute,
+	createRouter,
+} from '@tanstack/react-router';
+import { render, screen, waitFor } from '@testing-library/react';
 import { useSyncOmnibarSite } from '../site';
-import type { User, UserPreferences } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
-function OmnibarProbe() {
-	useSyncOmnibarSite();
-	return null;
-}
+function renderRouterWithSiteRoute( site: Site ) {
+	function RootComponent() {
+		useSyncOmnibarSite();
+		return <Outlet />;
+	}
 
-// Flush pending microtasks/effects so a hypothetical re-triggered write would fire.
-function flush() {
-	return act( async () => {} );
+	const rootRoute = createRootRoute( { component: RootComponent } );
+	const indexRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/',
+		component: () => <div>home</div>,
+	} );
+	const siteRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/sites/$slug',
+		loader: () => ( { site } ),
+		component: () => <div>site</div>,
+	} );
+	const router = createRouter( { routeTree: rootRoute.addChildren( [ indexRoute, siteRoute ] ) } );
+
+	render( <RouterProvider router={ router } /> );
+
+	return router;
 }
 
 describe( 'useSyncOmnibarSite', () => {
@@ -24,88 +43,42 @@ describe( 'useSyncOmnibarSite', () => {
 		queryClient.clear();
 	} );
 
-	test( 'records the recent site only once when the preference write keeps failing', async () => {
-		queryClient.setQueryData( AUTH_QUERY_KEY, { ID: 1, primary_blog: 123 } as User );
+	test( 'publishes the route site, and clears it on pages that are not site-specific', async () => {
+		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
+		await screen.findByText( 'home' );
 
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( '/rest/v1.1/me/preferences' )
-			.reply( 200, { calypso_preferences: { recentSites: [ 999 ] } } );
+		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull();
 
-		// Sites are returned without `capabilities`, so they aren't treated as
-		// member sites and the omnibar falls back to the user's primary blog.
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( /\/rest\/v1\.1\/sites\/\d+/ )
-			.query( true )
-			.reply( 200, ( uri ) => ( { ID: Number( uri.match( /sites\/(\d+)/ )?.[ 1 ] ) } ) );
+		router.navigate( { to: '/sites/$slug', params: { slug: 'foo' } } );
+		await screen.findByText( 'site' );
 
-		// The failure path logs to logstash.
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.post( '/rest/v1.1/logstash' )
-			.reply( 200, {} );
-
-		// The recent-sites write always fails. Before the fix, the optimistic
-		// mutation's rollback changed `recentSites`, re-triggering the effect that
-		// fired the write, so it retried forever.
-		let postCount = 0;
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.post( '/rest/v1.1/me/preferences' )
-			.reply( () => {
-				postCount += 1;
-				return [ 405, { error: 'not_allowed' } ];
-			} );
-
-		render( <OmnibarProbe /> );
-
-		// The write is attempted (optimistically setting `recentSites` to `[ 123, 999 ]`)…
-		await waitFor( () => expect( postCount ).toBe( 1 ) );
-		// …then fails and rolls `recentSites` back to `[ 999 ]`. That rollback is the
-		// exact event the old bug re-fired the write from; once it settles, no retry.
 		await waitFor( () =>
-			expect(
-				queryClient.getQueryData< UserPreferences >( rawUserPreferencesQuery().queryKey )
-					?.recentSites
-			).toEqual( [ 999 ] )
+			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 456 )
 		);
-		await flush();
 
-		expect( postCount ).toBe( 1 );
+		router.navigate( { to: '/' } );
+		await screen.findByText( 'home' );
 
-		// The omnibar still resolves to the primary blog and publishes it as shared state.
-		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 123 );
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()
+		);
 	} );
 
-	test( 'does not attempt a write when reading preferences fails', async () => {
-		queryClient.setQueryData( AUTH_QUERY_KEY, { ID: 1, primary_blog: 123 } as User );
+	test( 'publishes a link back to the current page', async () => {
+		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
+		await screen.findByText( 'home' );
 
-		// Reading preferences fails, so a write would likely fail too — we bail out.
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( '/rest/v1.1/me/preferences' )
-			.reply( 403, { error: 'unauthorized' } );
+		router.navigate( {
+			to: '/sites/$slug',
+			params: { slug: 'foo' },
+			search: { purchased_plan: 'value_bundle' },
+		} );
+		await screen.findByText( 'site' );
 
-		let postCount = 0;
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.post( '/rest/v1.1/me/preferences' )
-			.reply( () => {
-				postCount += 1;
-				return [ 200, {} ];
-			} );
-
-		render( <OmnibarProbe /> );
-
-		// Wait for the preferences read to fail, then confirm no write followed.
 		await waitFor( () =>
-			expect( queryClient.getQueryState( rawUserPreferencesQuery().queryKey )?.status ).toBe(
-				'error'
+			expect( queryClient.getQueryData( omnibarCurrentUrlQuery().queryKey ) ).toBe(
+				'/sites/foo?purchased_plan=value_bundle'
 			)
 		);
-		await flush();
-
-		expect( postCount ).toBe( 0 );
 	} );
 } );

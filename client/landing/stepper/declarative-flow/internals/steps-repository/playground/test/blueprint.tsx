@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { getBlueprint, getBlueprintID, getBlueprintLabelForTracking } from '../lib/blueprint';
+import {
+	getBlueprint,
+	getBlueprintArchiveIdentifier,
+	getBlueprintID,
+	getBlueprintLabelForTracking,
+	getBlueprintUrlHost,
+} from '../lib/blueprint';
 
 const DEFAULT_BLUEPRINT = {
 	preferredVersions: {
@@ -292,6 +298,44 @@ describe( 'getBlueprintID', () => {
 	} );
 } );
 
+describe( 'getBlueprintArchiveIdentifier', () => {
+	it( 'returns a numeric blueprint id', () => {
+		const params = new URLSearchParams( 'blueprint=12345' );
+		expect( getBlueprintArchiveIdentifier( params ) ).toBe( '12345' );
+	} );
+
+	it( 'returns a dotcomblueprints post slug', () => {
+		const params = new URLSearchParams( 'blueprint=coachava' );
+		expect( getBlueprintArchiveIdentifier( params ) ).toBe( 'coachava' );
+	} );
+
+	it( 'returns a hyphenated slug', () => {
+		const params = new URLSearchParams( 'blueprint=my-cool-blueprint' );
+		expect( getBlueprintArchiveIdentifier( params ) ).toBe( 'my-cool-blueprint' );
+	} );
+
+	it( 'trims surrounding whitespace', () => {
+		const params = new URLSearchParams();
+		params.set( 'blueprint', '  coachava  ' );
+		expect( getBlueprintArchiveIdentifier( params ) ).toBe( 'coachava' );
+	} );
+
+	it( 'returns null for an empty blueprint parameter', () => {
+		const params = new URLSearchParams( 'blueprint=' );
+		expect( getBlueprintArchiveIdentifier( params ) ).toBeNull();
+	} );
+
+	it( 'returns null when no blueprint parameter is present', () => {
+		expect( getBlueprintArchiveIdentifier( new URLSearchParams() ) ).toBeNull();
+	} );
+
+	it( 'returns null for a value with invalid slug characters', () => {
+		const params = new URLSearchParams();
+		params.set( 'blueprint', 'has spaces/and-slashes' );
+		expect( getBlueprintArchiveIdentifier( params ) ).toBeNull();
+	} );
+} );
+
 describe( 'getBlueprintLabelForTracking', () => {
 	beforeEach( () => {
 		jest.restoreAllMocks();
@@ -377,5 +421,24 @@ describe( 'getBlueprintLabelForTracking', () => {
 		params.set( 'blueprint', '55555' );
 		const label = getBlueprintLabelForTracking( params );
 		expect( label ).toBe( 'bpl-55555' );
+	} );
+} );
+
+describe( 'getBlueprintUrlHost', () => {
+	it( 'returns the host of the blueprint-url', () => {
+		const params = new URLSearchParams();
+		params.set(
+			'blueprint-url',
+			'https://woocommerce.com/wp-admin/admin-ajax.php?action=wccom_start_playground_blueprint'
+		);
+		expect( getBlueprintUrlHost( params ) ).toBe( 'woocommerce.com' );
+	} );
+
+	it( 'returns null without a blueprint-url', () => {
+		expect( getBlueprintUrlHost( new URLSearchParams( 'blueprint=woocommerce' ) ) ).toBeNull();
+	} );
+
+	it( 'returns null for a blueprint-url that is not a URL', () => {
+		expect( getBlueprintUrlHost( new URLSearchParams( 'blueprint-url=not-a-url' ) ) ).toBeNull();
 	} );
 } );

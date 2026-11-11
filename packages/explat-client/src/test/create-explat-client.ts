@@ -1,3 +1,4 @@
+import { vi, type Mock } from 'vitest';
 import { createExPlatClient } from '../create-explat-client';
 import localStorage from '../internal/local-storage';
 import {
@@ -11,14 +12,12 @@ import {
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
 
-type MockedFunction = ReturnType< typeof jest.fn >;
-
-const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
+const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
 const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
-	logError: jest.fn(),
-	fetchExperimentAssignment: jest.fn(),
-	getAnonId: jest.fn(),
+	logError: vi.fn(),
+	fetchExperimentAssignment: vi.fn(),
+	getAnonId: vi.fn(),
 	isDevelopmentMode: false,
 	...override,
 } );
@@ -28,7 +27,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 	experimentAssignment: ExperimentAssignment
 ) {
 	spiedMonotonicNow.mockImplementationOnce( () => experimentAssignment.retrievedTimestamp );
-	( config.fetchExperimentAssignment as MockedFunction ).mockImplementationOnce( () =>
+	( config.fetchExperimentAssignment as Mock ).mockImplementationOnce( () =>
 		delayedValue(
 			{
 				ttl: experimentAssignment.ttl,
@@ -42,7 +41,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 }
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 	setBrowserContext();
 	localStorage.clear();
 } );
@@ -51,7 +50,7 @@ describe( 'createExPlatClient', () => {
 	it( 'should throw if initialized outside of a browser context', () => {
 		setSsrContext();
 		expect( () => createExPlatClient( createMockedConfig() ) ).toThrowErrorMatchingInlineSnapshot(
-			'"Running outside of a browser context."'
+			'[Error: Running outside of a browser context.]'
 		);
 	} );
 
@@ -81,9 +80,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( 'should return a fallback for a disabled Experiment', async () => {
 		const mockedConfig = createMockedConfig();
@@ -91,7 +88,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		const timestamp1 = 1;
 		spiedMonotonicNow.mockImplementationOnce( () => timestamp0 );
 		spiedMonotonicNow.mockImplementationOnce( () => timestamp1 );
-		( mockedConfig.fetchExperimentAssignment as MockedFunction ).mockImplementationOnce( () =>
+		( mockedConfig.fetchExperimentAssignment as Mock ).mockImplementationOnce( () =>
 			delayedValue(
 				{
 					ttl: 60,
@@ -109,13 +106,11 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			retrievedTimestamp: timestamp1,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( '[anonId] should successfully load an ExperimentAssignment', async () => {
 		const mockedConfig = createMockedConfig();
-		( mockedConfig.getAnonId as MockedFunction ).mockImplementationOnce( () =>
+		( mockedConfig.getAnonId as Mock ).mockImplementationOnce( () =>
 			delayedValue( 'the-anon-id-123', ZERO_DELAY )
 		);
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(
@@ -132,15 +127,11 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls.length ).toBe(
-			1
+		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls.length ).toBe( 1 );
+		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls[ 0 ][ 0 ].anonId ).toBe(
+			'the-anon-id-123'
 		);
-		expect(
-			( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls[ 0 ][ 0 ].anonId
-		).toBe( 'the-anon-id-123' );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( 'Invalid experimentName: should return fallback and log', async () => {
 		const mockedConfig = createMockedConfig();
@@ -159,28 +150,28 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: \\"\\"",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-fallbackError",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: """,
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-fallbackError",
+			    },
+			  ],
+			]
+		` );
 	} );
 	it( 'Could not fetch ExperimentAssignment: should store and return fallback, and log', async () => {
 		const mockedConfig = createMockedConfig();
-		( mockedConfig.fetchExperimentAssignment as MockedFunction ).mockImplementationOnce(
+		( mockedConfig.fetchExperimentAssignment as Mock ).mockImplementationOnce(
 			() => new Promise( ( _res, rej ) => rej( new Error( 'some-error-123' ) ) )
 		);
 		const client = createExPlatClient( mockedConfig );
@@ -197,24 +188,24 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "some-error-123",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "some-error-123",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( 'Timed-out fetch: should return fallback and log', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		const mockedConfig = createMockedConfig();
-		( mockedConfig.fetchExperimentAssignment as MockedFunction ).mockImplementationOnce(
+		( mockedConfig.fetchExperimentAssignment as Mock ).mockImplementationOnce(
 			() => new Promise( () => undefined )
 		);
 		const client = createExPlatClient( mockedConfig );
@@ -231,10 +222,10 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		jest.advanceTimersByTime( 10 * 1000 );
+		vi.advanceTimersByTime( 10 * 1000 );
 		await expectationPromise;
 		// Temporary hack for the A/B experiment, see https://github.com/Automattic/wp-calypso/pull/54507
-		const error = ( mockedConfig.logError as MockedFunction ).mock.calls[ 0 ][ 0 ];
+		const error = ( mockedConfig.logError as Mock ).mock.calls[ 0 ][ 0 ];
 		expect( error ).toEqual(
 			expect.objectContaining( {
 				experimentName: 'experiment_name_a',
@@ -242,7 +233,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			} )
 		);
 		expect( error.message ).toMatch( /Promise has timed-out after [0-9]+ms\./ );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 	it( 'logError throws/secondary error: should attempt to log secondary error and return fallback', async () => {
 		// Using invalid name as the initial error
@@ -251,7 +242,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			mockedConfig,
 			validExperimentAssignment
 		);
-		( mockedConfig.logError as MockedFunction ).mockImplementation( () => {
+		( mockedConfig.logError as Mock ).mockImplementation( () => {
 			throw new Error( 'Error logging.' );
 		} );
 		spiedMonotonicNow.mockImplementationOnce(
@@ -265,24 +256,24 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: \\"\\"",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-fallbackError",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: """,
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-fallbackError",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );
 
@@ -315,12 +306,8 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
 			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
 			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
-			expect(
-				( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls
-			).toHaveLength( 1 );
-			expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-				'Array []'
-			);
+			expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 1 );
+			expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
 
 			const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 1;
 			const refreshedValidExperimentAssignment = {
@@ -348,15 +335,11 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentF );
 			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentG );
 			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentH );
-			expect(
-				( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls
-			).toHaveLength( 2 );
+			expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 2 );
 			expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
 				( await experimentAssignmentE ).retrievedTimestamp
 			);
-			expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-				'Array []'
-			);
+			expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
 		} );
 
 		await runTest();
@@ -393,45 +376,43 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
 		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
 		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			1
-		);
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Invalid ExperimentAssignment",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 1 );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Invalid ExperimentAssignment",
+			      "source": "loadExperimentAssignment-initialError",
+			    },
+			  ],
+			]
+		` );
 
 		await delayedValue( undefined, 1000 );
 
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 10;
 		const refreshedValidExperimentAssignment = {
 			...validExperimentAssignment,
@@ -462,12 +443,8 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
 			( await experimentAssignmentE ).retrievedTimestamp
 		);
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			1
-		);
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			'Array []'
-		);
+		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 1 );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 } );
 
@@ -484,17 +461,17 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: ",
-		      "source": "dangerouslyGetExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: ",
+			      "source": "dangerouslyGetExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( "should log and return fallback when the matching experiment hasn't loaded yet", () => {
@@ -509,21 +486,21 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
-		      "source": "dangerouslyGetExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
+			      "source": "dangerouslyGetExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( "should log and return fallback when the matching experiment hasn't loaded yet but is currently loading", async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
@@ -538,20 +515,20 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
-		      "source": "dangerouslyGetExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
-		jest.runAllTimers();
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Trying to dangerously get an ExperimentAssignment that hasn't loaded.",
+			      "source": "dangerouslyGetExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
+		vi.runAllTimers();
 		await promise;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'should return a loaded ExperimentAssignment', async () => {
@@ -585,17 +562,17 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		);
 		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
 		client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.",
-		      "source": "dangerouslyGetExperimentAssignment",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name_a",
+			      "message": "Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.",
+			      "source": "dangerouslyGetExperimentAssignment",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );
 
@@ -612,17 +589,17 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "",
-		      "message": "Invalid experimentName: ",
-		      "source": "dangerouslyGetMaybeLoadedExperimentAssignment-error",
-		    },
-		  ],
-		]
-	` );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "",
+			      "message": "Invalid experimentName: ",
+			      "source": "dangerouslyGetMaybeLoadedExperimentAssignment-error",
+			    },
+			  ],
+			]
+		` );
 	} );
 
 	it( "return null when the matching experiment hasn't loaded yet", () => {
@@ -633,11 +610,11 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 		expect(
 			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
 		).toBeNull();
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls.length ).toEqual( 0 );
+		expect( ( mockedConfig.logError as Mock ).mock.calls.length ).toEqual( 0 );
 	} );
 
 	it( "return null when the matching experiment hasn't loaded yet but is currently loading", async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
@@ -648,10 +625,10 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 		expect(
 			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
 		).toBeNull();
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls.length ).toEqual( 0 );
-		jest.runAllTimers();
+		expect( ( mockedConfig.logError as Mock ).mock.calls.length ).toEqual( 0 );
+		vi.runAllTimers();
 		await promise;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'should return a loaded ExperimentAssignment', async () => {

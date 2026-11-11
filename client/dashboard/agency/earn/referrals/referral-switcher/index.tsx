@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import useBuildCurrentRouteLink from '../../../../app/hooks/use-build-current-route-link';
 import Switcher from '../../../../components/switcher';
-import { Text } from '../../../../components/text';
 import type { SwitcherProps } from '../../../../components/switcher';
 import type { Referral } from '@automattic/api-core';
 
@@ -33,6 +32,7 @@ export default function ReferralSwitcher( {
 	return (
 		<Switcher< Referral >
 			items={ referrals }
+			loading={ { itemCount: 3, hasMedia: false, hasDescription: false } }
 			value={ referral }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch referral' ) }
@@ -40,15 +40,7 @@ export default function ReferralSwitcher( {
 				buildCurrentRouteLink( { params: { referralId: String( item.id ) } } )
 			}
 			renderToggle={ renderToggle }
-			renderItem={ ( { item } ) => (
-				<Switcher.Item
-					title={
-						<Text truncate numberOfLines={ 1 } style={ { color: 'inherit' } }>
-							{ item.client.email }
-						</Text>
-					}
-				/>
-			) }
+			renderItem={ ( { item } ) => <Switcher.Item title={ item.client.email } /> }
 			open={ isOpen }
 			onToggle={ setIsOpen }
 		/>

@@ -1,24 +1,23 @@
 import { odieAssistantPerformanceProfilerQuery } from '@automattic/api-queries';
-import { Badge } from '@automattic/ui';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
 	Button,
-	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import { ButtonStack } from '../../components/button-stack';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLink } from '../../components/notice';
 import { Text } from '../../components/text';
 import { VIEWPORT_BREAKPOINTS } from './constants';
 import LLMNotice from './llm-notice';
@@ -72,7 +71,7 @@ export const PerformanceInsightTitle = ( {
 				</HStack>
 			</HStack>
 			{ isHightImpact && (
-				<Badge intent="error" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
+				<Badge intent="high" style={ { flexShrink: 0, marginInlineStart: '16px' } }>
 					{ __( 'High impact' ) }
 				</Badge>
 			) }
@@ -99,9 +98,13 @@ const PerformanceInsightTip = () => {
 			<Notice
 				title={ __( 'Did you know' ) }
 				actions={
-					<ExternalLink href="https://wordpress.com/plugins/jetpack-boost">
+					<NoticeActionLink
+						href="https://wordpress.com/plugins/jetpack-boost"
+						openInNewTab
+						rel="noopener noreferrer"
+					>
 						{ __( 'Get Jetpack Boost' ) }
-					</ExternalLink>
+					</NoticeActionLink>
 				}
 			>
 				{ __(
@@ -284,16 +287,17 @@ export const PerformanceInsight = ( {
 						spacing={ 4 }
 						style={ { flexWrap: isDesktop ? 'nowrap' : 'wrap-reverse' } }
 					>
-						<Markdown
-							className="performance-insight__markdown"
-							components={ {
-								a( props ) {
-									return <a target="_blank" { ...props } />;
-								},
-							} }
-						>
-							{ llmAnswer.messages }
-						</Markdown>
+						<div className="performance-insight__markdown">
+							<Markdown
+								components={ {
+									a( props ) {
+										return <a target="_blank" { ...props } />;
+									},
+								} }
+							>
+								{ llmAnswer.messages }
+							</Markdown>
+						</div>
 						{ showTip && <PerformanceInsightTip /> }
 					</HStack>
 					<PerformanceInsightFeedback chatId={ llmAnswer.chatId } hash={ hash } />

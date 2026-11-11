@@ -150,7 +150,7 @@ export function useProductDescription(
 							},
 							comment: '%(siteDomain)s is the target site/domain for the add-on.',
 						}
-				  )
+					)
 				: translate(
 						'Add %(phpMemory)s of PHP memory for each PHP worker/process on one Pressable site/domain.',
 						{
@@ -158,7 +158,7 @@ export function useProductDescription(
 								phpMemory,
 							},
 						}
-				  );
+					);
 		}
 
 		switch ( productSlug ) {

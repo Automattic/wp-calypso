@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { restoreAccount } from 'calypso/state/account/actions';
 import { getIsRestoring, getRestoreToken } from 'calypso/state/account/selectors';
 import isAccountDeleting from 'calypso/state/selectors/is-account-deleting';
@@ -34,7 +35,7 @@ function AccountDeletedPage() {
 	}, [ storedToken, urlToken ] );
 
 	const onCancelClick = () => {
-		window.location.href = '/';
+		dispatch( navigateToLandingPage() );
 	};
 
 	const onRestoreClick = () => {

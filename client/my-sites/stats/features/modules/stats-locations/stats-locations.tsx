@@ -196,6 +196,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
 			stat_type: optionLabels[ selectedOption ].feature,
 			country: value,
+			blog_id: siteId,
 		} );
 
 		setCountryFilter( value );
@@ -205,6 +206,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		const filter = selection.value;
 		trackStatsAnalyticsEvent( 'stats_locations_module_menu_clicked', {
 			stat_type: optionLabels[ filter ].feature,
+			blog_id: siteId,
 		} );
 
 		if ( summary ) {
@@ -217,6 +219,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const onShowMoreClick = () => {
 		trackStatsAnalyticsEvent( 'stats_locations_module_show_more_clicked', {
 			stat_type: optionLabels[ selectedOption ].feature,
+			blog_id: siteId,
 		} );
 	};
 
@@ -387,11 +390,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 											Array.isArray( locationData ) && locationData.length >= 10
 												? translate( 'View all', {
 														context: 'Stats: Button link to show more detailed stats information',
-												  } )
+													} )
 												: translate( 'View details', {
 														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
+													} ),
+									}
 								: undefined
 						}
 						onShowMoreClick={ onShowMoreClick }
@@ -411,7 +414,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 							? {
 									url: getFinalSummaryUrl(),
 									label: translate( 'View more' ),
-							  }
+								}
 							: undefined
 					}
 				/>

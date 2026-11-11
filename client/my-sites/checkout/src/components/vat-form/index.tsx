@@ -1,12 +1,12 @@
 import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
-import { CHECKOUT_STORE } from '../../lib/wpcom-store';
+import { vatDetailsInFormStore } from '../../lib/checkout-stores';
+import { useValueStore } from '../../lib/value-store';
 import { useGetVatFormString } from './use-get-string';
 
 import './style.scss';
@@ -28,9 +28,8 @@ export function VatForm( {
 	const countries = useCountryList();
 	const translate = useTranslate();
 	const getVatFormString = useGetVatFormString( countryCode );
-	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
-	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
-	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
+	const vatDetailsInForm = useValueStore( vatDetailsInFormStore );
+	const setVatDetailsInForm = vatDetailsInFormStore.set;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
 
@@ -46,13 +45,7 @@ export function VatForm( {
 	// actions.
 	const previousCountryCode = useRef< string >( '' );
 	useEffect( () => {
-		if (
-			! vatDetailsInForm ||
-			! setVatDetailsInForm ||
-			! countryCode ||
-			isLoadingVatDetails ||
-			countryCode === previousCountryCode.current
-		) {
+		if ( ! countryCode || isLoadingVatDetails || countryCode === previousCountryCode.current ) {
 			return;
 		}
 
@@ -107,12 +100,7 @@ export function VatForm( {
 		isLoadingVatDetails,
 	] );
 
-	if (
-		! setVatDetailsInForm ||
-		! countryCode ||
-		isLoadingVatDetails ||
-		! isVatSupportedFor( countryCode )
-	) {
+	if ( ! countryCode || isLoadingVatDetails || ! isVatSupportedFor( countryCode ) ) {
 		return null;
 	}
 

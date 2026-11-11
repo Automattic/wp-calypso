@@ -30,11 +30,11 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 							? translate( '%(count)d pattern', '%(count)d patterns', {
 									count: category.regularPatternCount,
 									args: { count: category.regularPatternCount },
-							  } )
+								} )
 							: translate( '%(count)d layout', '%(count)d layouts', {
 									count: category.pagePatternCount,
 									args: { count: category.pagePatternCount },
-							  } );
+								} );
 					return (
 						<LocalizedLink
 							className="patterns-category-gallery__item"

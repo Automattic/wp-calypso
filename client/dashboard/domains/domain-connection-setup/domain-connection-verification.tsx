@@ -1,5 +1,4 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
-import { Badge } from '@automattic/ui';
 import {
 	ExternalLink,
 	Icon,
@@ -11,13 +10,13 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import DnsPropagationProgressBar from './components/dns-propagation-progress-bar';
 import DnsRecordsTable from './components/dns-records-table';
 import DomainPropagationStatus from './components/domain-propagation-status';
 import { isMappingVerificationSuccess } from './utils';
@@ -56,7 +55,10 @@ export default function DomainConnectionVerification( {
 	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
 
 	const connectedAndCanBeSetAsPrimary =
-		status === 'connected' && ! domainData.primary_domain && domainData.can_set_as_primary;
+		status === 'connected' &&
+		! domainData.primary_domain &&
+		domainData.can_set_as_primary &&
+		domainData.ssl_status === 'active';
 
 	return (
 		<Card
@@ -69,18 +71,13 @@ export default function DomainConnectionVerification( {
 							className="dashboard-domain-connection-verification__icon"
 							icon={ status === 'verifying' ? swatch : published }
 						/>
-						<Text className="dashboard-domain-connection-verification__title" size={ 10 }>
+						<Text className="dashboard-domain-connection-verification__title" size={ 15 }>
 							{ domainName }
 						</Text>
-						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>
+						<Badge intent={ status === 'connected' ? 'stable' : 'low' }>
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>
-
-					<DnsPropagationProgressBar
-						domainMappingStatus={ domainMappingStatus }
-						domainConnectionSetupInfo={ domainConnectionSetupInfo }
-					/>
 
 					{ status === 'verifying' && (
 						<Notice variant="info">
@@ -96,53 +93,49 @@ export default function DomainConnectionVerification( {
 												<ExternalLink href="https://www.cloudflare.com/">Cloudflare</ExternalLink>
 											),
 										}
-								  )
+									)
 								: __(
 										'We’re checking your DNS records. Most updates happen quickly, but some providers cache old settings for up to 72 hours.'
-								  ) }
+									) }
 						</Notice>
 					) }
 
-					<VStack spacing={ 4 }>
-						{ ! hasCloudflareIpAddresses && (
-							<Text size="medium" weight={ 500 }>
-								{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
-									? __( 'Name server verification' )
-									: __( 'DNS record verification' ) }
-							</Text>
-						) }
+					{ ( ! hasCloudflareIpAddresses || domainMappingStatus.resolves_to_wpcom ) && (
+						<VStack spacing={ 4 }>
+							{ ! hasCloudflareIpAddresses && (
+								<Text size="medium" weight={ 500 }>
+									{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+										? __( 'Name server verification' )
+										: __( 'DNS record verification' ) }
+								</Text>
+							) }
 
-						{ ! hasCloudflareIpAddresses && (
-							<DnsRecordsTable
-								domainName={ domainName }
-								domainConnectionStatus={ domainMappingStatus }
-								domainConnectionSetupInfo={ domainConnectionSetupInfo }
-							/>
-						) }
-						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
-							<Notice variant="info">
-								{ createInterpolateElement(
-									__(
-										'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
-									),
-									{
-										domainName: <>{ domainName }</>,
-										appName: <>{ appName }</>,
-									}
-								) }
-							</Notice>
-						) }
-					</VStack>
+							{ ! hasCloudflareIpAddresses && (
+								<DnsRecordsTable
+									domainName={ domainName }
+									domainConnectionStatus={ domainMappingStatus }
+									domainConnectionSetupInfo={ domainConnectionSetupInfo }
+								/>
+							) }
+							{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
+								<Notice variant="info">
+									{ createInterpolateElement(
+										__(
+											'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
+										),
+										{
+											domainName: <>{ domainName }</>,
+											appName: <>{ appName }</>,
+										}
+									) }
+								</Notice>
+							) }
+						</VStack>
+					) }
 
 					<DomainPropagationStatus domainName={ domainName } />
 
 					<VStack spacing={ 4 }>
-						{ status === 'verifying' && (
-							<Text size="medium" weight={ 500 }>
-								{ __( 'While you wait' ) }
-							</Text>
-						) }
-
 						{ connectedAndCanBeSetAsPrimary && (
 							<>
 								<Text size="medium" weight={ 500 }>
@@ -174,7 +167,7 @@ export default function DomainConnectionVerification( {
 						<Text size="medium" weight={ 500 }>
 							{ __( 'Need help?' ) }
 						</Text>
-						<VStack spacing={ 2 }>
+						<VStack className="dashboard-domain-connection-verification__help-links" spacing={ 2 }>
 							<HStack>
 								<Button
 									variant="link"

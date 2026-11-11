@@ -6,6 +6,8 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getTransferCostText } from './get-transfer-cost-text';
 import {
+	getConnectedDomainTransferRestrictionMessage,
+	getConnectSupportedTopText,
 	getMappingFreeText,
 	getTransferFreeText,
 	getTransferRestrictionMessage,
@@ -48,6 +50,7 @@ export function getOptionInfo( {
 	cart,
 	currencyCode,
 	domain,
+	domainInboundTransferStatusInfo,
 	dashboard,
 	isSignupStep,
 	onConnect,
@@ -102,6 +105,12 @@ export function getOptionInfo( {
 		text: mappingFreeText,
 	};
 
+	// The availability status doesn't report transfer locks for a domain already connected to this site.
+	const isConnectedDomainTransferRestricted =
+		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE === availability.status &&
+		!! domainInboundTransferStatusInfo?.transferRestrictionStatus &&
+		'not_restricted' !== domainInboundTransferStatusInfo.transferRestrictionStatus;
+
 	let transferContent;
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
@@ -113,6 +122,15 @@ export function getOptionInfo( {
 					topText: __(
 						"We're sorry but we can't transfer your domain as it is a high tier premium name that we don't support."
 					),
+				};
+			} else if ( isConnectedDomainTransferRestricted ) {
+				transferContent = {
+					...optionInfo.transferNotSupported,
+					topText:
+						getConnectedDomainTransferRestrictionMessage(
+							domain,
+							domainInboundTransferStatusInfo
+						) ?? optionInfo.transferNotSupported.topText,
 				};
 			} else {
 				transferContent = {
@@ -202,6 +220,7 @@ export function getOptionInfo( {
 	if ( domainAvailability.MAPPABLE === availability.mappable ) {
 		connectContent = {
 			...optionInfo.connectSupported,
+			topText: getConnectSupportedTopText( domainInboundTransferStatusInfo?.losingRegistrar ),
 			onSelect: onConnect,
 			pricing: mappingPricing,
 		};
@@ -242,18 +261,14 @@ export function getOptionInfo( {
 			case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 				connectContent = {
 					...optionInfo.connectNotSupported,
-					topText: __(
-						'This domain is already connected to your site, but you can still transfer it.'
-					),
+					topText: isConnectedDomainTransferRestricted
+						? __( 'This domain is already connected to your site.' )
+						: __( 'This domain is already connected to your site, but you can still transfer it.' ),
 				};
 				break;
 			default:
 				connectContent = optionInfo.connectNotSupported;
 		}
-	}
-
-	if ( transferContent.onSelect && connectContent.onSelect ) {
-		transferContent.recommended = true;
 	}
 
 	connectContent.primary = ! transferContent?.primary;

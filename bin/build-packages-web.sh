@@ -12,9 +12,16 @@ set -e
 #   server config at runtime, not bundled by webpack.
 # - languages (conditional): pre-builds translation chunk manifests when
 #   BUILD_TRANSLATION_CHUNKS or use-translation-chunks is enabled.
+# - agenttic-client / agenttic-ui: consumed via dist/ (no `calypso:src` —
+#   their source relies on vite-only features like import.meta.glob that
+#   webpack can't parse). The ui build downloads translation files from
+#   translate.wordpress.com.
 #
 yarn workspace @automattic/calypso-color-schemes run prepare
 yarn workspace @automattic/create-calypso-config run prepare
+# Webpack only bundles their JavaScript, so skip emitting type declarations.
+yarn workspace @automattic/agenttic-client run build:js
+yarn workspace @automattic/agenttic-ui run build:js
 
 if [ "${BUILD_TRANSLATION_CHUNKS:-}" = "true" ] || [ "${ENABLE_FEATURES:-}" = "use-translation-chunks" ]; then
 	yarn workspace @automattic/languages run prepare

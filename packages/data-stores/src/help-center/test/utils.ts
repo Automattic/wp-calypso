@@ -20,7 +20,7 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 } ) );
 
 describe( 'help-center utils — localStorage persistence (logged out)', () => {
-	let utils: typeof import('../utils');
+	let utils: typeof import( '../utils' );
 
 	beforeEach( async () => {
 		jest.resetModules();
@@ -61,12 +61,22 @@ describe( 'help-center utils — localStorage persistence (logged out)', () => {
 
 		expect( utils.retrieveValueSafely( 'help_center_open' ) ).toBe( true );
 	} );
+
+	it( 'deletes the shared values along with the scoped ones', () => {
+		window.localStorage.setItem( PREFERENCES_KEY + 'help_center_open', 'true' );
+		window.localStorage.setItem( PREFERENCES_KEY + 'help_center_open_a4a', 'true' );
+		utils.setHelpCenterAppId( 'a4a' );
+
+		utils.deleteValuesSafely();
+
+		expect( utils.retrieveValueSafely( 'help_center_open' ) ).toBeUndefined();
+	} );
 } );
 
 describe( 'getPersistedPreference — server preferences (logged in)', () => {
 	async function setup(
 		preferences: Record< string, unknown >
-	): Promise< typeof import('../utils') > {
+	): Promise< typeof import( '../utils' ) > {
 		jest.resetModules();
 
 		const { select } = await import( '@wordpress/data' );

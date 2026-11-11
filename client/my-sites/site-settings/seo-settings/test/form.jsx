@@ -12,8 +12,6 @@ import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
@@ -21,7 +19,6 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -147,67 +144,14 @@ describe( 'SeoForm basic tests', () => {
 } );
 
 describe( 'UpsellNudge should get appropriate plan constant', () => {
-	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ] )(
-		`Business 1 year for (%s)`,
+	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL ] )(
+		`Premium 1 year for (%s)`,
 		( product_slug ) => {
 			render(
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			const nudge = screen.getByTestId( 'UpsellNudge' );
 			expect( nudge ).toBeVisible();
-			expect( UpsellNudge ).toHaveBeenCalled();
-			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
-				expect.objectContaining( { plan: PLAN_BUSINESS } )
-			);
-		}
-	);
-
-	test.each( [ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ] )(
-		`Business 2 year for (%s)`,
-		( product_slug ) => {
-			render(
-				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
-			);
-			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
-			expect( UpsellNudge ).toHaveBeenCalled();
-			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
-				expect.objectContaining( { plan: PLAN_BUSINESS_2_YEARS } )
-			);
-		}
-	);
-
-	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
-		`Jetpack Security Daily for (%s)`,
-		( product_slug ) => {
-			render( <SeoForm { ...props } siteIsJetpack selectedSite={ { plan: { product_slug } } } /> );
-			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
-			expect( UpsellNudge ).toHaveBeenCalled();
-			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
-				expect.objectContaining( {
-					href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ),
-				} )
-			);
-		}
-	);
-} );
-
-describe( 'UpsellNudge with gating flag should get Premium plan constant', () => {
-	afterEach( () => {
-		UpsellNudge.mockClear();
-	} );
-
-	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL ] )(
-		`Premium 1 year for (%s)`,
-		( product_slug ) => {
-			render(
-				<SeoForm
-					{ ...props }
-					siteIsJetpack={ false }
-					selectedSite={ { plan: { product_slug } } }
-					hasGatingFlag
-				/>
-			);
-			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalled();
 			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
 				expect.objectContaining( { plan: PLAN_PREMIUM } )
@@ -219,17 +163,26 @@ describe( 'UpsellNudge with gating flag should get Premium plan constant', () =>
 		`Premium 2 year for (%s)`,
 		( product_slug ) => {
 			render(
-				<SeoForm
-					{ ...props }
-					siteIsJetpack={ false }
-					selectedSite={ { plan: { product_slug } } }
-					hasGatingFlag
-				/>
+				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalled();
 			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
 				expect.objectContaining( { plan: PLAN_PREMIUM_2_YEARS } )
+			);
+		}
+	);
+
+	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
+		`Jetpack plans page for (%s)`,
+		( product_slug ) => {
+			render( <SeoForm { ...props } siteIsJetpack selectedSite={ { plan: { product_slug } } } /> );
+			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
+			expect( UpsellNudge ).toHaveBeenCalled();
+			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
+				expect.objectContaining( {
+					href: expect.stringMatching( /^\/plans\// ),
+				} )
 			);
 		}
 	);

@@ -1,8 +1,3 @@
-/**
- * Global polyfills
- */
-import '@automattic/calypso-polyfills';
-
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { setupLocale } from 'calypso/boot/locale';

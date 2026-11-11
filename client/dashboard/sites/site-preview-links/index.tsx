@@ -18,13 +18,13 @@ import { hasPlanFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-interface SitePreviewLinkProps {
+interface SitePreviewLinksProps {
 	site: Site;
 	title?: string;
 	description?: string;
 }
 
-export default function SitePreviewLinks( { site, title, description }: SitePreviewLinkProps ) {
+export default function SitePreviewLinks( { site, title, description }: SitePreviewLinksProps ) {
 	const linksPermitted = hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS );
 
 	const { data: links = [] } = useQuery( {
@@ -95,27 +95,25 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		const data = { enabled: links.length > 0 };
 
 		return (
-			<>
-				<VStack spacing={ 4 }>
-					<DataForm< { enabled: boolean } >
-						data={ data }
-						fields={ fields }
-						form={ form }
-						onChange={ handleChange }
+			<VStack spacing={ 4 }>
+				<DataForm< { enabled: boolean } >
+					data={ data }
+					fields={ fields }
+					form={ form }
+					onChange={ handleChange }
+				/>
+				{ links.map( ( link ) => (
+					<SitePreviewLink
+						key={ link.code }
+						label={ __( 'Preview link' ) }
+						hideLabelFromVision
+						{ ...link }
+						siteUrl={ site.URL }
+						disabled={ isMutationPending }
+						onCopy={ handleCopy }
 					/>
-					{ links.map( ( link ) => (
-						<SitePreviewLink
-							key={ link.code }
-							label={ __( 'Preview link' ) }
-							hideLabelFromVision
-							{ ...link }
-							siteUrl={ site.URL }
-							disabled={ isMutationPending }
-							onCopy={ handleCopy }
-						/>
-					) ) }
-				</VStack>
-			</>
+				) ) }
+			</VStack>
 		);
 	};
 

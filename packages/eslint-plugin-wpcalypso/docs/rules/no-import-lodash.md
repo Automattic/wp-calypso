@@ -13,7 +13,7 @@ TypeScript `import x = require()`, and a TypeScript import-type query
 `require.resolve( 'lodash' )` is intentionally allowed: it resolves a module
 path (build tooling relies on this) without importing or executing lodash.
 
-This rule is not part of `plugin:wpcalypso/recommended`; it encodes a
+This rule is not part of the `recommended` preset; it encodes a
 wp-calypso-specific policy and is enabled in the repository's root config.
 
 ## Rule Details

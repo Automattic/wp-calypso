@@ -1,11 +1,11 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { getDeploymentTypeFromPath } from 'calypso/dashboard/sites/settings-repositories/deployment-tracks';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { GitHubConnectionForm } from '../components/github-connection-form';
-import { getDeploymentTypeFromPath } from '../deployment-creation/deployment-creation-form';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
 import { useUpdateCodeDeployment } from './use-update-code-deployment';
 
@@ -56,7 +56,7 @@ export const GitHubDeploymentManagementForm = ( {
 			);
 			dispatch(
 				errorNotice(
-					// translators: "reason" is why connecting the branch failed.
+					// translators: %(reason)s is why connecting the branch failed.
 					sprintf( __( 'Failed to create deployment: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,

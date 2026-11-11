@@ -25,7 +25,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], isLargeScreen );
 
-	const { blog_id: siteId, url: siteUrl, is_atomic, url_with_scheme } = site;
+	const { blog_id: siteId, url: siteUrl } = site;
 
 	const { installBoost, status } = useInstallBoost( siteId, siteUrl );
 
@@ -66,13 +66,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			onClose={ onClose }
 			siteId={ siteId }
 			onCtaClick={ handlePurchaseBoost }
-			isCTAExternalLink={ is_atomic }
-			ctaHref={
-				is_atomic
-					? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard`
-					: productPurchaseLink
-			}
-			showPaymentPlan={ ! is_atomic }
+			ctaHref={ productPurchaseLink }
 			extraAsideContent={
 				<>
 					{ ! upgradeOnly && (

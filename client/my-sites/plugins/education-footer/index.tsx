@@ -11,7 +11,7 @@ import howToInstallPluginsImage from 'calypso/assets/images/plugins/how-to-insta
 import whatArePluginsImage from 'calypso/assets/images/plugins/what-are-plugins.webp';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
-import Section, { SectionContainer } from 'calypso/components/section';
+import Section from 'calypso/components/section';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
@@ -122,7 +122,7 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 		.marketplace-cta {
 			font-weight: 500;
 		}
-		${ SectionContainer }::before {
+		.section-container::before {
 			display: none;
 		}
 	}
@@ -139,19 +139,20 @@ const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
 
 	${ ( { isloggedIn } ) =>
 		! isloggedIn &&
-		`${ SectionContainer } {
+		`.section-container {
 		padding-bottom: 32px;
 	}` }
 
-	${ SectionContainer }::before {
+	.section-container::before {
 		background-color: #f6f7f7;
 	}
 `;
 
 const CardText = styled.span< { color: string } >`
 	color: ${ ( { color } ) => color };
-	font-family: 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family:
+		'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+		'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 20px;
@@ -175,6 +176,7 @@ const FeatureIcon = styled.div`
 	margin-bottom: 16px;
 
 	svg {
+		color: var( --color-text-inverted );
 		fill: var( --color-text-inverted );
 	}
 `;
@@ -220,7 +222,7 @@ export const MarketplaceFooter = () => {
 	const headerTitle = isMarketplaceRedesignEnabled
 		? translate( "You pick the plugin,{{br}}{{/br}}we'll take care of the rest", {
 				components: { br: <br /> },
-		  } )
+			} )
 		: __( "You pick the plugin. We'll take care of the rest." );
 
 	const ctaButton = showCta ? (
@@ -249,10 +251,10 @@ export const MarketplaceFooter = () => {
 						{ isMarketplaceRedesignEnabled
 							? __(
 									'Plugins authored by WordPress.com are fully managed by our team. No security patches. No update nags. It just works.'
-							  )
+								)
 							: __(
 									'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-							  ) }
+								) }
 					</FeatureItem>
 					<FeatureItem
 						header={
@@ -279,10 +281,10 @@ export const MarketplaceFooter = () => {
 						{ isMarketplaceRedesignEnabled
 							? __(
 									'Pay yearly and save. Or keep it flexible with monthly plugin pricing. It’s entirely up to you.'
-							  )
+								)
 							: __(
 									'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-							  ) }
+								) }
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>

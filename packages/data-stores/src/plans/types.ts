@@ -236,8 +236,10 @@ export interface PricedAPIPlanPricing {
 	currency_code: string;
 }
 
-export interface PricedAPISitePlanPricing
-	extends Omit< PricedAPIPlanPricing, 'orig_cost_integer' | 'bill_period' > {
+export interface PricedAPISitePlanPricing extends Omit<
+	PricedAPIPlanPricing,
+	'orig_cost_integer' | 'bill_period'
+> {
 	raw_discount_integer: number;
 
 	cost_overrides?: PricedAPISitePlanCostOverride[];
@@ -274,8 +276,7 @@ export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntrod
  * Note: These, unlike the PricedAPIPlan, are returned indexed by product_id (and do not inlcude that in the plan's payload)
  */
 export interface PricedAPISitePlan
-	extends PricedAPISitePlanPricing,
-		PricedAPIPlanIntroductoryOffer {
+	extends PricedAPISitePlanPricing, PricedAPIPlanIntroductoryOffer {
 	has_sale_coupon?: boolean;
 	/* product_id: number; // not included in the plan's payload */
 	product_slug: StorePlanSlug;

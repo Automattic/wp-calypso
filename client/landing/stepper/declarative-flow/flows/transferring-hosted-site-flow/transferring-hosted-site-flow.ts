@@ -64,6 +64,12 @@ const transferringHostedSite: Flow = {
 						return navigate( 'error' );
 					}
 
+					// A reload lands here with the pending action gone, so nothing has run and nothing
+					// is watching the transfer. Go back to the wait, which picks the transfer back up.
+					if ( processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( 'waitForAtomic', { siteId, siteSlug } );
+					}
+
 					dispatch( requestAdminMenu( siteId ) );
 
 					return exitFlow( getRedirectTo( providedDependencies ) );

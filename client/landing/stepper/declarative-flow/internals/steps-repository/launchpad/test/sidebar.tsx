@@ -10,7 +10,7 @@ import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
@@ -25,8 +25,8 @@ jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+jest.mock( '@automattic/launchpad/src/use-launchpad', () => ( {
+	...jest.requireActual( '@automattic/launchpad/src/use-launchpad' ),
 	useLaunchpad: ( siteSlug, siteIntentOption ) => {
 		let checklist = [
 			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },

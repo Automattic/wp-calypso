@@ -81,7 +81,6 @@ test.describe(
 
 		test( 'As a site owner, I can revoke a pending invite so that the invitation link becomes invalid', async ( {
 			page,
-			componentSidebar,
 			clientEmail,
 			pageIncognito,
 			pagePeople,
@@ -117,8 +116,15 @@ test.describe(
 				await accountDefaultUser.authenticate( page );
 			} );
 
-			await test.step( 'When I navigate to Users > All Users', async function () {
-				await componentSidebar.navigate( 'Users', 'All Users' );
+			// Navigate by URL, not through the sidebar: the sidebar follows the
+			// account's selected site, which has drifted from testSites.primary, so
+			// the invite created above would not be listed. Same fix as TESTOPS-193.
+			await test.step( 'When I navigate to the pending invites', async function () {
+				await page.goto(
+					DataHelper.getCalypsoURL(
+						`/people/pending-invites/${ credentials.testSites?.primary?.url }`
+					)
+				);
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {

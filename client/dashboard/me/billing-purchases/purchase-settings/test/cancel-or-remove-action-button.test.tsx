@@ -80,6 +80,68 @@ describe( '<CancelOrRemoveActionButton />', () => {
 		expect( screen.queryByRole( 'button', { name: 'Remove' } ) ).toBeNull();
 	} );
 
+	test( 'shows only Remove for a domain connection bundled with a plan', () => {
+		render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( {
+					product_name: 'Domain Connection',
+					product_slug: 'domain_map',
+					is_plan: false,
+					expiry_status: 'included',
+				} ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Remove' } ) ).toBeVisible();
+		expect( screen.getByText( 'Remove Domain Connection' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Cancel' } ) ).toBeNull();
+	} );
+
+	test( 'renders nothing for a non-domain-connection purchase bundled with a plan', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( {
+					product_name: 'Professional Email',
+					product_slug: 'wp_titan_mail_yearly',
+					is_plan: false,
+					expiry_status: 'included',
+				} ) }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'hides Remove when is_manageable_by_user is false and auto-renew is off', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( {
+					is_manageable_by_user: false,
+					is_auto_renew_enabled: false,
+				} ) }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'hides Cancel when is_manageable_by_user is false and auto-renew is on', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton purchase={ makePurchase( { is_manageable_by_user: false } ) } />
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'shows Cancel when is_manageable_by_user is true', () => {
+		render(
+			<CancelOrRemoveActionButton purchase={ makePurchase( { is_manageable_by_user: true } ) } />
+		);
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+	} );
+
+	test( 'shows Cancel when the purchase has no is_manageable_by_user field', () => {
+		render( <CancelOrRemoveActionButton purchase={ makePurchase() } /> );
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
+	} );
+
 	test( 'renders nothing for a non-refundable domain transfer with auto-renew on', () => {
 		const { container } = render(
 			<CancelOrRemoveActionButton
@@ -91,5 +153,23 @@ describe( '<CancelOrRemoveActionButton />', () => {
 			/>
 		);
 		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'renders nothing for a host-managed plan', () => {
+		const { container } = render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( { is_partner_managed: true, is_host_managed: true } ) }
+			/>
+		);
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'still offers Cancel for an agency-managed plan', () => {
+		render(
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( { is_partner_managed: true, is_host_managed: false } ) }
+			/>
+		);
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 	} );
 } );

@@ -1,3 +1,5 @@
+import './email-me-new-posts-toggle.scss';
+
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';

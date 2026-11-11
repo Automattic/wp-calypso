@@ -26,10 +26,14 @@ export class TracksEventManager {
 
 	/**
 	 * Initialize the Tracks event manager
+	 *
+	 * Must be awaited before navigating: until the init script has landed,
+	 * `_tkAllowE2ETests` is unset and w.js drops every Tracks pixel because the
+	 * e2e user agent matches its bot filter.
 	 */
 	async init() {
-		this.maybeInterceptRequest();
-		this.allowTestsToFireEvents();
+		await this.maybeInterceptRequest();
+		await this.allowTestsToFireEvents();
 	}
 
 	/**
@@ -93,7 +97,7 @@ export class TracksEventManager {
 	/**
 	 * Intercept and modify some network requests
 	 */
-	maybeInterceptRequest() {
+	async maybeInterceptRequest() {
 		// Only allow specific requests needed for tests
 		// We're explicitly not allowing t.gif requests. We only need the request URL.
 		const urlContainsAllowList = [
@@ -108,7 +112,7 @@ export class TracksEventManager {
 			'.min.css',
 		];
 
-		this.page.route( '**/*', ( route, request ) => {
+		await this.page.route( '**/*', ( route, request ) => {
 			if (
 				urlContainsAllowList.some( ( allowedString ) => request.url().includes( allowedString ) )
 			) {

@@ -1,15 +1,28 @@
+import { siteAgencyBlogQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Callout } from '../../components/callout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wpcomLink } from '../../utils/link';
+import illustrationDarkUrl from './upsell-illustration-dark.svg';
 import illustrationUrl from './upsell-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
 const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
 
 export default function DIFMUpsellCard( { site }: { site: Site } ) {
+	const { data: agencyBlog, isLoading: isAgencyLoading } = useQuery( {
+		...siteAgencyBlogQuery( site.ID ),
+		enabled: site.is_wpcom_atomic,
+	} );
+
 	if ( site.launch_status !== 'unlaunched' ) {
+		return null;
+	}
+
+	if ( isAgencyLoading || agencyBlog || site.is_a4a_dev_site ) {
 		return null;
 	}
 
@@ -33,8 +46,13 @@ export default function DIFMUpsellCard( { site }: { site: Site } ) {
 					) }
 				</Text>
 			}
-			image={ illustrationUrl }
-			imageAlt={ __( 'Responsive website design' ) }
+			image={
+				<ThemedIllustration
+					light={ illustrationUrl }
+					dark={ illustrationDarkUrl }
+					alt={ __( 'Responsive website design' ) }
+				/>
+			}
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton

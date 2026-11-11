@@ -43,7 +43,7 @@ export default function ProductActionPanel( {
 			onSearchQueryChange( searchQuery );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_input_search', {
-					searchQuery,
+					search_query: searchQuery,
 				} )
 			);
 		},

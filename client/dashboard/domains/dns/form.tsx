@@ -1,22 +1,20 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { DataForm, Field } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import RecordTypePicker from './record-type-picker';
 import { DNS_RECORD_CONFIGS } from './records/dns-record-configs';
+import { getRRsetTtl } from './utils';
 import type { DnsRecordTypeFormData, DnsRecordFormData } from './records/dns-record-configs';
 import type { DnsRecord, DnsRecordType } from '@automattic/api-core';
-
-const typeForm = {
-	layout: { type: 'regular' as const },
-	fields: [ 'type' ],
-};
 
 interface DNSRecordFormProps {
 	domainName: string;
 	isBusy: boolean;
 	recordToEdit?: DnsRecord;
+	existingRecords?: DnsRecord[];
 	submitButtonText: string;
 	onSubmit: ( typeFormData: DnsRecordTypeFormData, formData: DnsRecordFormData ) => void;
 	navigateToDNSOverviewPage: () => void;
@@ -26,6 +24,7 @@ export default function DNSRecordForm( {
 	domainName,
 	isBusy,
 	recordToEdit,
+	existingRecords,
 	submitButtonText,
 	onSubmit,
 	navigateToDNSOverviewPage,
@@ -45,6 +44,21 @@ export default function DNSRecordForm( {
 		weight: 10, // SRV
 		target: '', // SRV
 		port: 5060, // SRV
+	};
+
+	const [ isTtlEdited, setIsTtlEdited ] = useState( false );
+
+	// Records with the same name and type share one TTL, so default to the TTL they already have.
+	const withRRsetTtl = ( data: DnsRecordFormData, type: DnsRecordType ): DnsRecordFormData => {
+		if ( ! existingRecords ) {
+			return data;
+		}
+
+		const record = DNS_RECORD_CONFIGS[ type ].transformData( data, domainName, type );
+		return {
+			...data,
+			ttl: getRRsetTtl( existingRecords, record ) ?? defaultFormData.ttl,
+		};
 	};
 
 	const [ typeFormData, setTypeFormData ] = useState< DnsRecordTypeFormData >( () => {
@@ -72,30 +86,11 @@ export default function DNSRecordForm( {
 				port: recordToEdit.port || 0,
 			};
 		}
-		return defaultFormData;
+		return withRRsetTtl( defaultFormData, 'A' );
 	} );
 
 	const config = DNS_RECORD_CONFIGS[ typeFormData.type ];
-
-	const typeFields: Field< DnsRecordTypeFormData >[] = [
-		{
-			id: 'type',
-			label: __( 'Type' ),
-			Edit: 'select',
-			elements: [
-				{ label: 'A', value: 'A' },
-				{ label: 'AAAA', value: 'AAAA' },
-				{ label: 'ALIAS', value: 'ALIAS' },
-				{ label: 'CAA', value: 'CAA' },
-				{ label: 'CNAME', value: 'CNAME' },
-				{ label: 'MX', value: 'MX' },
-				{ label: 'NS', value: 'NS' },
-				{ label: 'SRV', value: 'SRV' },
-				{ label: 'TXT', value: 'TXT' },
-			],
-			description: config.description,
-		},
-	];
+	const { validity } = useFormValidity( formData, config.fields, config.form );
 
 	const handleCancel = ( e: React.MouseEvent< HTMLButtonElement > ) => {
 		e.preventDefault();
@@ -112,14 +107,14 @@ export default function DNSRecordForm( {
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 4 }>
-						<DataForm< DnsRecordTypeFormData >
-							data={ typeFormData }
-							fields={ typeFields }
-							form={ typeForm }
-							onChange={ ( edits: Partial< DnsRecordTypeFormData > ) => {
-								setTypeFormData( ( data ) => ( { ...data, ...edits } ) );
+						<RecordTypePicker
+							value={ typeFormData.type }
+							disabled={ isBusy }
+							onChange={ ( type ) => {
+								setTypeFormData( ( data ) => ( { ...data, type } ) );
 								// Reset form data when changing record type
-								setFormData( defaultFormData );
+								setIsTtlEdited( false );
+								setFormData( withRRsetTtl( { ...defaultFormData, type }, type ) );
 							} }
 						/>
 						<DataForm< DnsRecordFormData >
@@ -129,8 +124,14 @@ export default function DNSRecordForm( {
 							data={ formData }
 							fields={ config.fields }
 							form={ config.form }
+							validity={ validity }
 							onChange={ ( edits: Partial< DnsRecordFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
+								const ttlEdited = isTtlEdited || 'ttl' in edits;
+								setIsTtlEdited( ttlEdited );
+								setFormData( ( data ) => {
+									const newData = { ...data, ...edits };
+									return ttlEdited ? newData : withRRsetTtl( newData, typeFormData.type );
+								} );
 							} }
 						/>
 						<ButtonStack justify="flex-start">

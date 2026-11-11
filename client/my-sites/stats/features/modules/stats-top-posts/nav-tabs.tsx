@@ -48,6 +48,7 @@ function NavTabs( { query }: StatsModulePostsProps ) {
 				if ( tab?.path ) {
 					trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
 						stat_type: tab.analyticsId,
+						blog_id: siteId,
 					} );
 
 					page( tab.path );

@@ -4,14 +4,7 @@ import type { SortDirection } from '@wordpress/dataviews';
 
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes =
-	| 'site'
-	| 'stats'
-	| 'boost'
-	| 'backup'
-	| 'scan'
-	| 'monitor'
-	| 'plugin'
-	| 'error';
+	'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin' | 'error';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
@@ -24,14 +17,7 @@ export type SiteColumns = Array< {
 } >;
 
 export type AllowedStatusTypes =
-	| 'active'
-	| 'inactive'
-	| 'progress'
-	| 'failed'
-	| 'warning'
-	| 'success'
-	| 'disabled'
-	| 'critical';
+	'active' | 'inactive' | 'progress' | 'failed' | 'warning' | 'success' | 'disabled' | 'critical';
 
 interface MonitorContactEmail {
 	name: string;

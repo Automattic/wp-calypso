@@ -5,6 +5,7 @@ import {
 	FEATURE_INSTALL_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_COMMUNITY_THEMES,
+	WPCOM_FEATURES_PARTNER_THEMES,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -52,7 +53,7 @@ const getThemeTierFeatureChecks = ( state, siteId, themeId ) => {
 		}
 
 		case 'partner': {
-			return [ WPCOM_FEATURES_ATOMIC ];
+			return [ WPCOM_FEATURES_PARTNER_THEMES ];
 		}
 
 		default: {

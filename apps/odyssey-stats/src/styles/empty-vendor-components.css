@@ -1,0 +1,10 @@
+/*
+ * Deliberately empty. Odyssey relies on wp-admin's own `wp-components` stylesheet (declared as a
+ * dependency by jetpack-stats-admin) instead of bundling a second, independently-versioned copy of
+ * @wordpress/components' base CSS -- two copies on one page collide, since wp-admin's own instances
+ * of these components carry the same unnamespaced class names.
+ *
+ * `client/assets/stylesheets/style.scss` imports that vendor CSS for Calypso, Blaze, Stepper et al,
+ * which are standalone SPAs with no wp-admin to inherit it from. This file replaces it for Odyssey's
+ * build only, via `resolve.alias` in webpack.config.js.
+ */

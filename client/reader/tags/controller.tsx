@@ -1,13 +1,10 @@
-import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
-import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import TagsPage from './main';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
-
-const debug = debugFactory( 'calypso:reader:tags' );
 
 export interface TagData {
 	tags: TagResult[];
@@ -44,10 +41,6 @@ const TagsPageDocumentHead = () => {
 };
 
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
-	if ( ! isUserLoggedIn( context.store.getState() ) ) {
-		context.renderHeaderSection = renderHeaderSection;
-	}
-
 	context.primary = (
 		<>
 			<TagsPageDocumentHead />
@@ -60,31 +53,7 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	next();
 };
 
-const TagsPageHeaderSection = () => {
-	const translate = useTranslate();
-
-	return (
-		<>
-			<h1>
-				{
-					// translators: The title of the reader trending tags page
-					translate( 'Popular Tags' )
-				}
-			</h1>
-			<p>{ translate( "For every one of your interests, there's a tag on WordPress.com." ) }</p>
-		</>
-	);
-};
-
-function renderHeaderSection() {
-	return <TagsPageHeaderSection />;
-}
-
 export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) => void ) => {
-	if ( context.cachedMarkup ) {
-		debug( 'Skipping trending tags data fetch' );
-		return next();
-	}
 	performanceMark( context as PartialContext, 'fetchTrendingTags' );
 
 	const localeSlug = getCurrentUserLocale( context.store.getState() ) || context.lang;
@@ -111,10 +80,6 @@ export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) =
 };
 
 export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error ) => void ) => {
-	if ( context.cachedMarkup ) {
-		debug( 'Skipping alphabetic tags data fetch' );
-		return next();
-	}
 	performanceMark( context as PartialContext, 'fetchAlphabeticTags' );
 
 	const currentUserLocale = getCurrentUserLocale( context.store.getState() ) || context.lang;

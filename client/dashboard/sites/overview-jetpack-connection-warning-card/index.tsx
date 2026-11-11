@@ -18,7 +18,7 @@ export default function JetpackConnectionWarningCard( {
 			externalLink={ localizeUrl(
 				'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/'
 			) }
-			intent="warning"
+			intent="error"
 		/>
 	);
 }

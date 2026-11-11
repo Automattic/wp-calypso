@@ -57,7 +57,7 @@ export const addCommentToNewestPage = (
 				? {
 						...page,
 						comments: [ comment, ...page.comments ],
-				  }
+					}
 				: page
 		),
 	} ) );
@@ -113,7 +113,7 @@ export const updateCommentLikeInCache = (
 					...comment,
 					i_like: iLike,
 					like_count: likeCount,
-			  }
+				}
 			: comment;
 
 	if ( postId ) {

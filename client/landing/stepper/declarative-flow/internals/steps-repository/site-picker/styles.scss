@@ -1,7 +1,8 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 .site-picker--container {
-	padding-bottom: rem(28px);
+	padding-inline: rem( 24px );
+	padding-bottom: rem( 28px );
 
 	.onboarding-subtitle button {
 		display: inline-block;
@@ -13,5 +14,5 @@
 
 .site-picker--title {
 	text-align: center;
-	margin-bottom: rem(68px);
+	margin-bottom: rem( 68px );
 }

@@ -8,12 +8,12 @@ export interface Email {
 	providerDisplayName: string;
 	domainName: string;
 	subscriptionId?: string;
+	productSlug?: string;
 	siteId?: string;
 	siteName?: string;
 	forwardingTo?: string;
 	storageUsed?: number;
 	storageLimit?: number;
-	canUserManage: boolean;
 	status:
 		| 'active'
 		| 'pending'

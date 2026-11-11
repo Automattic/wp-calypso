@@ -3,8 +3,11 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { login } from 'calypso/lib/paths';
 import InviteAcceptLoggedOut from '../invite-accept-logged-out';
 
 const mockGetCiabConfigFromGarden = jest.fn();
@@ -25,7 +28,7 @@ jest.mock( 'calypso/components/forms/form-button', () => ( {
 
 jest.mock( 'calypso/components/logged-out-form/link-item', () => ( {
 	__esModule: true,
-	default: ( { children } ) => <div>{ children }</div>,
+	default: ( { children, onClick } ) => <button onClick={ onClick }>{ children }</button>,
 } ) );
 
 jest.mock( 'calypso/components/logged-out-form/links', () => ( {
@@ -51,7 +54,7 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/paths', () => ( {
-	login: () => '/log-in',
+	login: jest.fn( () => '/log-in' ),
 } ) );
 
 jest.mock( 'calypso/lib/route', () => ( {
@@ -62,8 +65,6 @@ jest.mock( 'calypso/my-sites/invites/invite-form-header-logged-out', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="invite-form-header-logged-out" />,
 } ) );
-
-jest.mock( 'calypso/my-sites/invites/p2/invite-accept-logged-out', () => jest.fn() );
 
 jest.mock( 'calypso/signup/wpcom-login-form', () => ( {
 	__esModule: true,
@@ -164,5 +165,116 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 		} );
 		expect( screen.queryByRole( 'img', { name: 'Woo' } ) ).not.toBeInTheDocument();
 		expect( document.querySelector( '.logged-out-wp-logo' )?.tagName.toLowerCase() ).toBe( 'svg' );
+	} );
+} );
+
+describe( 'InviteAcceptLoggedOut footer links', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockGetCiabConfigFromGarden.mockReturnValue( null );
+	} );
+
+	test( 'renders the log-in link for users who already have an account', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut invite={ buildInvite() } />
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Already have a WordPress.com account?' ) ).toBeVisible();
+		expect( screen.queryByText( 'Follow by email subscription only.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the email-only subscription link for follower invites with an activation key', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut
+					invite={ { ...buildInvite(), role: 'follower', activationKey: 'abc123' } }
+				/>
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Already have a WordPress.com account?' ) ).toBeVisible();
+		expect( screen.getByText( 'Follow by email subscription only.' ) ).toBeVisible();
+	} );
+
+	test( 'does not render the email-only subscription link for follower invites without an activation key', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut invite={ { ...buildInvite(), role: 'follower' } } />
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Already have a WordPress.com account?' ) ).toBeVisible();
+		expect( screen.queryByText( 'Follow by email subscription only.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the log-in link on P2 invites', () => {
+		const store = mockStore( {} );
+
+		render(
+			<Provider store={ store }>
+				<InviteAcceptLoggedOut invite={ buildInvite( { is_wpforteams_site: true } ) } />
+			</Provider>
+		);
+
+		expect( screen.getByText( 'Log in instead' ) ).toBeVisible();
+	} );
+
+	describe( 'when the log-in link is clicked', () => {
+		const originalLocation = window.location;
+
+		beforeEach( () => {
+			delete window.location;
+			window.location = { href: 'https://wordpress.com/accept-invite/abc123' };
+		} );
+
+		afterEach( () => {
+			window.location = originalLocation;
+		} );
+
+		test( 'records the click and sends the user to log in', async () => {
+			const store = mockStore( {} );
+
+			render(
+				<Provider store={ store }>
+					<InviteAcceptLoggedOut invite={ buildInvite() } />
+				</Provider>
+			);
+
+			await userEvent.click( screen.getByText( 'Already have a WordPress.com account?' ) );
+
+			expect( login ).toHaveBeenCalledWith( {
+				redirectTo: 'https://wordpress.com/accept-invite/abc123',
+			} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_invite_accept_logged_out_sign_in_link_click'
+			);
+			expect( window.location ).toBe( '/log-in' );
+		} );
+
+		test( 'sends P2 users to the P2 log-in', async () => {
+			const store = mockStore( {} );
+
+			render(
+				<Provider store={ store }>
+					<InviteAcceptLoggedOut invite={ buildInvite( { is_wpforteams_site: true } ) } />
+				</Provider>
+			);
+
+			await userEvent.click( screen.getByText( 'Log in instead' ) );
+
+			expect( login ).toHaveBeenCalledWith( {
+				redirectTo: 'https://wordpress.com/accept-invite/abc123',
+				from: 'p2',
+			} );
+			expect( window.location ).toBe( '/log-in' );
+		} );
 	} );
 } );

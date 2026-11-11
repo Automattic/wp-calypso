@@ -30,7 +30,8 @@ export function useSubscriptionDetails( subscription: Subscription ) {
 	const productName = useMemo( () => {
 		return isBillingTypeBD && storeSubscription?.product_name
 			? storeSubscription.product_name
-			: products?.find( ( product ) => product.product_id === subscription.product_id )?.name ?? '';
+			: ( products?.find( ( product ) => product.product_id === subscription.product_id )?.name ??
+					'' );
 	}, [ isBillingTypeBD, storeSubscription?.product_name, products, subscription.product_id ] );
 
 	const expiryDate = useMemo( () => {
@@ -49,11 +50,46 @@ export function useSubscriptionDetails( subscription: Subscription ) {
 	};
 }
 
+// If subscription.subscription is null, fallback to old behavior (allow canceling)
+// If subscription.subscription exists but is_auto_renew_enabled is null/undefined, default to true (allow canceling)
+// TODO: Later we might show added details and the ability to actually remove a cancelled subscription that has auto-renew disabled, like on the WPCOM side.
+export function canCancelSubscription( subscription: Subscription ) {
+	const isAutoRenewEnabled = subscription.subscription
+		? ( subscription.subscription.is_auto_renew_enabled ?? true )
+		: true;
+
+	return subscription.status === 'active' && isAutoRenewEnabled;
+}
+
 export default function CancelSubscriptionAction( { subscription, onCancelSubscription }: Props ) {
+	const translate = useTranslate();
+	const [ isVisible, setIsVisible ] = useState( false );
+
+	return (
+		<>
+			<Button compact onClick={ () => setIsVisible( true ) }>
+				{ translate( 'Cancel subscription' ) }
+			</Button>
+
+			{ isVisible && (
+				<CancelSubscriptionDialog
+					subscription={ subscription }
+					onCancelSubscription={ onCancelSubscription }
+					onClose={ () => setIsVisible( false ) }
+				/>
+			) }
+		</>
+	);
+}
+
+export function CancelSubscriptionDialog( {
+	subscription,
+	onCancelSubscription,
+	onClose,
+}: Props & { onClose: () => void } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ isVisible, setIsVisible ] = useState( false );
 	const { storeSubscription, productName, expiryDate } = useSubscriptionDetails( subscription );
 
 	const { mutate: cancelSubscription, isPending } = useCancelClientSubscription( {
@@ -102,11 +138,11 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 				} )
 			);
 			onCancelSubscription?.( subscription );
-			setIsVisible( false );
+			onClose();
 		},
 		onError: ( error ) => {
 			dispatch( errorNotice( error.message ) );
-			setIsVisible( false );
+			onClose();
 		},
 	} );
 
@@ -119,39 +155,21 @@ export default function CancelSubscriptionAction( { subscription, onCancelSubscr
 
 	const handleClose = () => {
 		dispatch( recordTracksEvent( 'calypso_a8c_client_subscription_cancel_dismiss' ) );
-		setIsVisible( false );
+		onClose();
 	};
 
-	// Check if auto-renew is enabled to determine if the cancel button should be shown
-	// If subscription.subscription is null, fallback to old behavior (show the button)
-	// If subscription.subscription exists but is_auto_renew_enabled is null/undefined, default to true (show the button)
-	// TODO: Later we might show added details and the ability to actually remove a cancelled subscription that has auto-renew disabled, like on the WPCOM side.
-	const isAutoRenewEnabled = subscription.subscription
-		? subscription.subscription.is_auto_renew_enabled ?? true
-		: true;
-
 	return (
-		<>
-			{ isAutoRenewEnabled && (
-				<Button compact onClick={ () => setIsVisible( true ) }>
-					{ translate( 'Cancel the subscription' ) }
-				</Button>
-			) }
-
-			{ isVisible && (
-				<A4AConfirmationDialog
-					title={ translate( 'Are you sure you want to cancel this subscription?' ) }
-					onClose={ handleClose }
-					onConfirm={ onConfirm }
-					ctaLabel={ translate( 'Cancel subscription' ) }
-					closeLabel={ translate( 'Keep the subscription' ) }
-					isLoading={ isPending }
-					isDestructive
-				>
-					<A4ACancelSubscriptionContent subscription={ subscription } />
-				</A4AConfirmationDialog>
-			) }
-		</>
+		<A4AConfirmationDialog
+			title={ translate( 'Are you sure you want to cancel this subscription?' ) }
+			onClose={ handleClose }
+			onConfirm={ onConfirm }
+			ctaLabel={ translate( 'Cancel subscription' ) }
+			closeLabel={ translate( 'Keep the subscription' ) }
+			isLoading={ isPending }
+			isDestructive
+		>
+			<A4ACancelSubscriptionContent subscription={ subscription } />
+		</A4AConfirmationDialog>
 	);
 }
 
@@ -181,7 +199,7 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 									comment:
 										'%(productName)s is the name of the product that the user is about to cancel.',
 								}
-						  )
+							)
 						: translate(
 								'{{b}}%(productName)s{{/b}} will be canceled, but it will remain active until {{b}}%(expiryDate)s{{/b}}. After that, it will not renew',
 								{
@@ -195,7 +213,7 @@ function A4ACancelSubscriptionContent( { subscription }: { subscription: Subscri
 									comment:
 										'%(productName)s is the name of the product that the user is about to cancel.',
 								}
-						  ) }
+							) }
 				</div>
 				<p>{ translate( 'Are you sure you want to cancel?' ) }</p>
 				<p>

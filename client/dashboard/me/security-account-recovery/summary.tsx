@@ -1,9 +1,10 @@
-import { accountRecoveryQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { accountRecoveryQuery, userSettingsQuery } from '@automattic/api-queries';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lifesaver } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { recoveryEmailMatchesAccountEmail } from './utils';
 import type {
 	Density,
 	SummaryButtonBadgeProps,
@@ -11,32 +12,40 @@ import type {
 
 export default function SecurityAccountRecoverySummary( { density }: { density?: Density } ) {
 	const { data: accountRecovery } = useSuspenseQuery( accountRecoveryQuery() );
+	const { data: userSettings } = useQuery( userSettingsQuery() );
 
 	const { email, email_validated, phone, phone_validated } = accountRecovery;
 
+	const emailIsAccountEmail = recoveryEmailMatchesAccountEmail( email, userSettings?.user_email );
+
 	const badges: SummaryButtonBadgeProps[] = [];
 
-	if ( email ) {
+	if ( email && emailIsAccountEmail ) {
+		badges.push( {
+			text: __( 'Recovery email matches account email' ),
+			intent: 'medium',
+		} );
+	} else if ( email ) {
 		badges.push( {
 			text: email_validated ? __( 'Email added' ) : __( 'Email not validated' ),
-			intent: email_validated ? 'success' : 'warning',
+			intent: email_validated ? 'stable' : 'low',
 		} );
 	} else {
 		badges.push( {
 			text: __( 'No recovery email' ),
-			intent: 'warning',
+			intent: 'medium',
 		} );
 	}
 
 	if ( phone ) {
 		badges.push( {
 			text: phone_validated ? __( 'SMS number added' ) : __( 'SMS number not validated' ),
-			intent: phone_validated ? 'success' : 'warning',
+			intent: phone_validated ? 'stable' : 'low',
 		} );
 	} else {
 		badges.push( {
 			text: __( 'No recovery SMS number' ),
-			intent: 'warning',
+			intent: 'medium',
 		} );
 	}
 

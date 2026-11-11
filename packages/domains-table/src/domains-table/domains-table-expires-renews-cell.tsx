@@ -65,7 +65,7 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 		domain.has_registration && ! isInvalidDate
 			? new Intl.DateTimeFormat( localeSlug, { dateStyle: 'medium' } ).format(
 					new Date( domain.expiry )
-			  )
+				)
 			: null;
 
 	const isAutoRenewing = Boolean( domain.auto_renewing );

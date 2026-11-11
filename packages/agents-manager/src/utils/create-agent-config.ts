@@ -2,36 +2,51 @@
  * Agent Configuration Utilities
  *
  * Shared utilities for creating agent configurations and reading
- * agent overrides from URL parameters. Used by both the full
- * Agents Manager UI and headless mode.
+ * agent overrides from URL parameters.
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
-import { getSessionStorageKey } from './agent-session';
+import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
+import { getShownInteractiveUiDataModel } from '../interactive-ui/session';
+import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { getClientConstructorArguments, getSiteEditorActions } from './site-editor-context';
+import { getAgentsManagerSurface, getIsA11n, getIsTest } from './tracks';
+import { getTurnId } from './turn-id';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
+import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
+
+export interface AgentConfig extends UseAgentChatConfig {
+	/** Scope captured by the authentication provider during initialization. */
+	authenticationScope?: { siteId?: number; userId?: number };
+}
 
 export interface CreateAgentConfigOptions {
 	sessionId: string;
+	/** Site scope for session writes, captured at creation for async callbacks. */
+	sessionSiteKey: string;
+	/** User scope for session writes, captured alongside the site scope. */
+	sessionUserId?: number;
 	siteId?: number;
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	providerIds?: string[];
+	/** The providers' interactive UI catalogs, which each message lists with the chat's own. */
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
 	/**
-	 * Streamed task-update callback (from a provider). Forwarded to useAgentChat's
-	 * `onTaskUpdate` so streamed tool-argument deltas reach the provider — e.g. to
-	 * paint streamed page-design markup into the editor as it arrives.
+	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate` —
+	 * paints streamed page-design markup into the editor as it arrives.
 	 */
 	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 }
@@ -90,7 +105,7 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 									( [ , value ] ) => value !== null
 								)
 							),
-					  }
+						}
 					: ability.meta,
 			} ) ) as AgenticAbility[];
 		},
@@ -110,8 +125,34 @@ function normalizeSiteId( siteId: unknown ): number | undefined {
 	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
 }
 
-function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: string[] } {
+/** The client context's provider IDs. */
+function getProviderContext( providerIds?: string[] ) {
 	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
+}
+
+type ProviderContext = ReturnType< typeof getProviderContext >;
+
+/**
+ * Only the host's explicit opt-in is sent: the server records nothing without it.
+ * `surface` is the browser events' value, so the server's events carry the same one.
+ */
+function getTrackingContext(): {
+	isTrackingAllowed?: boolean;
+	turnId?: string;
+	isTest: boolean;
+	isA11n?: boolean;
+	surface: string;
+} {
+	const isTrackingAllowed = getAgentsManagerInlineData()?.isTrackingAllowed;
+	const turnId = getTurnId();
+	const isA11n = getIsA11n();
+	return {
+		...( typeof isTrackingAllowed === 'boolean' && { isTrackingAllowed } ),
+		...( turnId && { turnId } ),
+		isTest: getIsTest(),
+		...( isA11n !== undefined && { isA11n } ),
+		surface: getAgentsManagerSurface(),
+	};
 }
 
 /**
@@ -124,8 +165,8 @@ async function createWrappedContextProvider(
 	version?: string,
 	environment?: string,
 	currentRoute?: string,
-	providerIds?: string[]
-): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	providerContext?: ProviderContext
+): Promise< NonNullable< UseAgentChatConfig[ 'contextProvider' ] > > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
@@ -136,7 +177,7 @@ async function createWrappedContextProvider(
 				? {
 						...pluginContext,
 						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
-				  }
+					}
 				: pluginContext;
 
 			const externalEntries = getExternalContextEntries();
@@ -166,7 +207,8 @@ async function createWrappedContextProvider(
 				...( Object.keys( mergedSiteEditorActions ).length > 0 && {
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
-				...getProviderIdsContext( providerIds ),
+				...providerContext,
+				...getTrackingContext(),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),
@@ -186,8 +228,8 @@ async function createDefaultContextProvider(
 	siteId?: number,
 	agentId?: string,
 	version?: string,
-	providerIds?: string[]
-): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	providerContext?: ProviderContext
+): Promise< NonNullable< UseAgentChatConfig[ 'contextProvider' ] > > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
@@ -197,8 +239,8 @@ async function createDefaultContextProvider(
 			// and `siteUrl` here so the orchestrator knows which post the
 			// reader is viewing without every host wiring its own provider.
 			const hostData = isReaderChatAgent( agentId )
-				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
-						.agentsManagerData ?? {}
+				? ( ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {} )
 				: {};
 			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
 			const siteEditorActions = getSiteEditorActions();
@@ -226,7 +268,8 @@ async function createDefaultContextProvider(
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
-				...getProviderIdsContext( providerIds ),
+				...providerContext,
+				...getTrackingContext(),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};
@@ -236,33 +279,39 @@ async function createDefaultContextProvider(
 
 /**
  * Create a complete agent configuration.
- *
- * Used by both the full Agents Manager UI and headless mode to ensure
- * consistent configuration.
  */
 export async function createAgentConfig(
 	options: CreateAgentConfigOptions
-): Promise< UseAgentChatConfig > {
+): Promise< AgentConfig > {
 	const {
 		sessionId,
+		// The callback below can fire while a response is still streaming, after
+		// the tab has switched scope — it writes under this captured scope.
+		sessionSiteKey,
+		sessionUserId,
 		siteId,
 		currentRoute,
 		toolProvider,
 		contextProvider,
 		providerIds,
+		interactiveUiCatalogs,
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
 		onTaskUpdate,
 	} = options;
 
-	const config: UseAgentChatConfig = {
+	const config: AgentConfig = {
+		authenticationScope: { siteId, userId: sessionUserId },
 		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
-		sessionIdStorageKey: getSessionStorageKey( agentId ),
+		// Persist server-assigned session IDs as this tab's session.
+		onSessionIdChange: ( newSessionId ) =>
+			saveSessionId( newSessionId, agentId, sessionSiteKey, sessionUserId ),
 		authProvider: createCalypsoAuthProvider( siteId, {
 			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
+			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
 	};
@@ -275,26 +324,41 @@ export async function createAgentConfig(
 		config.toolProvider = wrapToolProvider( toolProvider );
 	}
 
-	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider(
-			contextProvider,
-			siteId,
-			agentId,
-			version,
-			environment,
-			currentRoute,
-			providerIds
-		);
-	} else {
-		config.contextProvider = await createDefaultContextProvider(
-			currentRoute,
-			environment,
-			siteId,
-			agentId,
-			version,
-			providerIds
-		);
-	}
+	const providerContext = getProviderContext( providerIds );
+	const clientContextProvider = contextProvider
+		? await createWrappedContextProvider(
+				contextProvider,
+				siteId,
+				agentId,
+				version,
+				environment,
+				currentRoute,
+				providerContext
+			)
+		: await createDefaultContextProvider(
+				currentRoute,
+				environment,
+				siteId,
+				agentId,
+				version,
+				providerContext
+			);
+
+	// A2UI's A2A binding: the agent reads the renderer's capabilities from each message, and the data
+	// of the surfaces that ask for it.
+	const a2uiRendererCapabilities = getInteractiveUiCapabilities( interactiveUiCatalogs );
+
+	config.contextProvider = {
+		...clientContextProvider,
+		getMessageMetadata: () => {
+			const a2uiRendererDataModel = getShownInteractiveUiDataModel();
+
+			return {
+				a2uiRendererCapabilities,
+				...( a2uiRendererDataModel && { a2uiRendererDataModel } ),
+			};
+		},
+	};
 
 	return config;
 }

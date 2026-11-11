@@ -1,5 +1,3 @@
-@import "calypso/assets/stylesheets/shared/functions/z-index";
-
 @import "../styles/typography";
 
 .ribbon {
@@ -7,7 +5,7 @@
 	position: absolute;
 	right: -5px;
 	top: -5px;
-	z-index: z-index("root", ".ribbon");
+	z-index: 1;
 	overflow: hidden;
 	width: 75px;
 	height: 75px;
@@ -34,7 +32,7 @@
 	position: absolute;
 	left: 0;
 	top: 100%;
-	z-index: z-index(".ribbon", ".ribbon__title::before");
+	z-index: -1;
 	border-left: 3px solid var(--color-accent-dark);
 	border-right: 3px solid transparent;
 	border-bottom: 3px solid transparent;
@@ -45,7 +43,7 @@
 	position: absolute;
 	right: 0;
 	top: 100%;
-	z-index: z-index(".ribbon", ".ribbon__title::after");
+	z-index: -1;
 	border-left: 3px solid transparent;
 	border-right: 3px solid var(--color-accent-dark);
 	border-bottom: 3px solid transparent;

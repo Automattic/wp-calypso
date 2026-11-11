@@ -1,5 +1,4 @@
 /* Utilities */
-export * from './validate-translations';
 export * from './get-test-account-by-feature';
 export * from './translate';
 export * from './social-connections-manager';

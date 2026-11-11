@@ -2,7 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
@@ -25,12 +24,11 @@ object WebApp : Project({
 	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(PlaywrightTestPRMatrix)
-	buildType(PlaywrightTestPreReleaseMatrix)
+	buildType(PreReleaseE2ETests)
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
-	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
-	buildType(QuarantinedE2ETests)
+	buildType(LoggedOutSignupContentBlockerE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -45,93 +43,48 @@ object BuildDockerImage : BuildType({
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
-    data class EnvGroup(
-        val label: String,
-        val environments: List<EnvConfig>,
-    )
-
     val imageBase = "registry.a8c.com/calypso/app"
 	val commitImageExistsParam = "dockerImage.commitImageExists"
 
-    val environmentGroups = listOf(
-        EnvGroup(
-            label = "WordPress.com",
-            environments = listOf(
-                EnvConfig(
-                    label = "Dashboard Live",
-                    envQuery = "&env=dashboard",
-                    qrEnv = "env=dashboard&flags=oauth",
-                ),
-                EnvConfig(
-                    label = "Calypso Live (/home)",
-                    baseUrl = "https://calypso.live/home",
-                    envQuery = "",
-                    qrEnv = "flags=oauth",
-                ),
-            ),
+    val environments = listOf(
+        EnvConfig(
+            label = "WordPress.com Dashboard",
+            envQuery = "&env=dashboard",
+            qrEnv = "env=dashboard&flags=oauth",
         ),
-        EnvGroup(
+        EnvConfig(
+            label = "WordPress.com (/reader)",
+            baseUrl = "https://calypso.live/reader",
+            envQuery = "",
+            qrEnv = "flags=oauth",
+        ),
+        EnvConfig(
+            label = "Automattic for Agencies Dashboard",
+            envQuery = "&env=dashboard-a4a",
+            qrEnv = "env=dashboard-a4a&flags=oauth",
+        ),
+        EnvConfig(
             label = "Automattic for Agencies",
-            environments = listOf(
-                EnvConfig(
-                    label = "Dashboard Live",
-                    envQuery = "&env=dashboard-a4a",
-                    qrEnv = "env=dashboard-a4a&flags=oauth",
-                ),
-                EnvConfig(
-                    label = "Automattic for Agencies Live",
-                    envQuery = "&env=a8c-for-agencies",
-                    qrEnv = "env=a8c-for-agencies&flags=oauth",
-                ),
-            ),
+            envQuery = "&env=a8c-for-agencies",
+            qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
-        EnvGroup(
+        EnvConfig(
             label = "Jetpack Cloud",
-            environments = listOf(
-                EnvConfig(
-                    label = "Jetpack Cloud Live",
-                    envQuery = "&env=jetpack",
-                    qrEnv = "env=jetpack&flags=oauth",
-                ),
-            ),
-        )
+            envQuery = "&env=jetpack",
+            qrEnv = "env=jetpack&flags=oauth",
+        ),
     )
 
-    fun renderEnv(env: EnvConfig): String {
-        val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
-        return """
-            <details>
-              <summary>${env.label} <a href="$url">(direct link)</a></summary>
-              <table>
-                <tr>
-                  <td>
-                    <a href="$url">$url</a>
-                  </td>
-                </tr>
-              </table>
-            </details>
-            """.trimIndent()
-    }
-
-    val htmlBlock = buildString {
-        environmentGroups.forEachIndexed { index, group ->
-            if (index > 0) {
-                appendLine("<hr>")
-            }
-            // A group holding a single environment renders as a bare item, without a heading.
-            if (group.environments.size == 1) {
-                appendLine(renderEnv(group.environments.single()))
-            } else {
-                appendLine("<p>${group.label}</p>")
-                appendLine("<ul>")
-                group.environments.forEach { env ->
-                    appendLine("<li>")
-                    appendLine(renderEnv(env))
-                    appendLine("</li>")
-                }
-                appendLine("</ul>")
-            }
-            appendLine()
+    // Emoji are written as HTML character references because TeamCity mangles non-ASCII
+    // characters in build scripts.
+    val linksBlock = buildString {
+        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x26C5;</h2>")
+        appendLine()
+        appendLine("| Environment | &#x1F517; |")
+        appendLine("| - | - |")
+        environments.forEach { env ->
+            val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
+            appendLine("| ${env.label} | [live link]($url) |")
         }
     }
 
@@ -140,14 +93,6 @@ object BuildDockerImage : BuildType({
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
 		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
-		checkbox(
-			name = "MANUAL_SENTRY_RELEASE",
-			value = "false",
-			label = "Create a sentry release.",
-			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
-			checked = "true",
-			unchecked = "false"
-		)
 		checkbox(
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
@@ -249,7 +194,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to live branch is being generated...
+				Calypso Live links are being generated...
 				Please wait a few minutes and refresh this page.
 				EOF
 			"""
@@ -286,9 +231,7 @@ object BuildDockerImage : BuildType({
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
-			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
-			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 
@@ -362,7 +305,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				$htmlBlock
+				$linksBlock
 				EOF
 			""".trimIndent()
 		}
@@ -507,6 +450,10 @@ object RunAllUnitTests : BuildType({
 				echo -n "Yarn version: " && yarn --version
 				echo -n "NPM version: " && npm --version
 
+				# Jest and tsc read workspace packages from source, so skip the full
+				# postinstall build; the packages that still need theirs are built below.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 
@@ -542,6 +489,8 @@ object RunAllUnitTests : BuildType({
 					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
 					exit 1
 				fi
+
+				yarn build-packages:unit-tests
 			"""
 		}
 		bashNodeScript {
@@ -698,6 +647,9 @@ object CheckCodeStyleBranch : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
+				# Linters read workspace packages from source, so skip building them.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -712,7 +664,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Find lintable files touched in this branch, except those deleted
 				function _find_files_to_lint() {
 					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
-						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' \
+						| grep -E '(\.[cm]?[jt]sx?|\.json|\.md)${'$'}' \
 						|| true
 				}
 
@@ -876,6 +828,11 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
+				# String extraction only reads source files, so skip building workspace packages
+				# and downloading the Playwright browsers this image would otherwise fetch.
+				export SKIP_CALYPSO_POSTINSTALL=true
+				export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -1025,12 +982,12 @@ object PlaywrightTestPRMatrix : BuildType({
 
 })
 
-object PlaywrightTestPreReleaseMatrix : BuildType({
+object PreReleaseE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_WebApp_Calypso_E2E_Playwright_Pre_Release_Matrix")
-	uuid = "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
-	name = "Pre-Release E2E Tests (Playwright Test)"
-	description = "Runs Calypso pre-release e2e tests using Playwright Test runner with build matrix"
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
 
 	params {
 		text("TEST_GROUP", "@calypso-release")
@@ -1055,7 +1012,8 @@ object PlaywrightTestPreReleaseMatrix : BuildType({
 			}
 			branchFilter = "+:<default>"
 			buildFailedToStart = true
-			buildFailed = true
+			// Glorybot posts failures here, but only for the run that gates the currently staged commit.
+			buildFailed = false
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
@@ -1168,53 +1126,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	}
 })
 
-object PreReleaseE2ETests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Aggregator build that runs pre-release suites of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
-
-	vcs {
-		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
-		cleanCheckout = true
-	}
-
-	dependencies {
-		snapshot(PlaywrightTestPreReleaseMatrix) {
-			onDependencyFailure = FailureAction.ADD_PROBLEM
-		}
-	}
-
-	features {
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-})
-
 object AuthenticationE2ETests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Calypso_E2E_Authentication")
@@ -1257,31 +1168,72 @@ object AuthenticationE2ETests : BuildType({
 	}
 })
 
-object QuarantinedE2ETests: E2EBuildType(
-	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
-	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
-	buildName = "Quarantined E2E Tests",
-	buildDescription = "E2E tests quarantined due to intermittent failures.",
-	concurrentBuilds = 1,
-	testGroup = "quarantined",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	},
-	buildFeatures = {
+object LoggedOutSignupContentBlockerE2ETests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Calypso_E2E_Logged_Out_Signup_Content_Blocker")
+	uuid = "a845946a-7e81-44ed-88f5-1aae87662d25"
+	name = "Logged-out signup content-blocker E2E Tests"
+	description = "Opens the logged-out wordpress.com homepage in a browser that runs common content-blocker lists and checks that Get started still reaches a usable signup step (DOTOBRD-569)."
+	// Failures come from production or the filter lists, not the trunk commit a scheduled run is pinned to.
+	disableSettings("calypso_e2e_commit_status_publisher")
+
+	params {
+		param("TEST_GROUP", "@content-blocker")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Add the run summary to the build status"
+			id = "add_run_summary"
+			// The spec writes which Calypso commit production served and which filter list
+			// versions it used, so a failure shows what changed since the last pass.
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				SUMMARY_FILE=test/e2e/output/content-blocker-run-summary.txt
+				[[ -f "${'$'}SUMMARY_FILE" ]] || exit 0
+				echo "Filter lists:"
+				tail -n +2 "${'$'}SUMMARY_FILE"
+				# Escape the characters TeamCity service messages reserve.
+				COMMIT=${'$'}(head -n 1 "${'$'}SUMMARY_FILE" | sed -e "s/|/||/g" -e "s/'/|'/g" -e "s/\[/|[/g" -e "s/\]/|]/g")
+				echo "##teamcity[buildStatus text='{build.status.text} · ${'$'}COMMIT']"
+			"""
+		}
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
+				sendTo = "#dotcom-quake"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
 			}
+			branchFilter = "+:<default>"
 			buildFailedToStart = true
 			buildFailed = true
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
-	},
-	buildTriggers = {
 	}
-)
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/6"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			// The check targets what production serves, which changes without a trunk commit.
+			withPendingChangesOnly = false
+		}
+	}
+})

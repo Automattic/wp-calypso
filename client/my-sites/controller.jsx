@@ -19,9 +19,10 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
-import { onboardingUrl } from 'calypso/lib/paths';
+import { login, onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import { withoutHttp } from 'calypso/lib/url';
+import { isPathAllowedForDIFMPreSubmitContentCollection } from 'calypso/my-sites/difm-route-utils';
 import {
 	domainManagementDns,
 	domainManagementEdit,
@@ -54,8 +55,10 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
+	getCurrentUserId,
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
@@ -63,6 +66,7 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -127,8 +131,10 @@ export function renderRebloggingEmptySites( context ) {
 	const actionURL = addQueryArgs(
 		{
 			blog_post: context.query?.url,
+			// Keeps reblog signups separable from the rest of onboarding in its Tracks events.
+			flow: 'reblogging',
 		},
-		'/setup/reblogging'
+		'/setup/onboarding'
 	);
 
 	context.primary = createElement( () =>
@@ -195,15 +201,35 @@ export function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteNotFound( context ) {
+	const { getState, dispatch } = getStore( context );
+	// Support staff see this page on every route, and logging out ends their session.
+	const showCheckoutAccessHelp =
+		context.pathname.startsWith( '/checkout/' ) && ! isSupportSession( getState() );
+	// Non-admins can renew, so renewals show the "might not have permission" line.
+	const showAdminOnlyLine = showCheckoutAccessHelp && ! context.pathname.includes( '/renew/' );
+
 	setSectionMiddleware( { group: 'sites' } )( context );
+
+	recordTracksEvent( 'calypso_site_selection_no_access', {
+		path: sectionify( context.path ),
+	} );
 
 	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate( "You don't have access to that site" ),
-		line: i18n.translate(
-			'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
-		),
+		line: showAdminOnlyLine
+			? i18n.translate( 'Only administrators on this site can make new purchases.' )
+			: i18n.translate(
+					'You might not have permission to view this site, or it may not exist. Select a different site to continue.'
+				),
 		action: i18n.translate( 'Select a different site' ),
 		actionURL: '/sites',
+		...( showCheckoutAccessHelp && {
+			secondaryAction: i18n.translate( 'Log in with a different account' ),
+			secondaryActionCallback: () => {
+				recordTracksEvent( 'calypso_site_selection_no_access_login_click' );
+				dispatch( redirectToLogout( login( { redirectTo: window.location.href } ) ) );
+			},
+		} ),
 	} );
 
 	makeLayout( context, noop );
@@ -307,13 +333,23 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 /**
  * The paths allowed for domain-only sites and DIFM in-progress sites are the same
  * with one exception - /domains/add should be allowed for DIFM in-progress sites.
+ * Before the customer submits DIFM content, the content-gathering sections are
+ * also allowed so customers can reference existing site content while filling
+ * out the form.
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
  * @param {Array} domains The list of site domains
  * @param {Object} contextParams Context parameters
+ * @param {boolean} isWebsiteContentSubmitted Whether the DIFM content form has been submitted
  * @returns {boolean} true if the path is allowed, false otherwise
  */
-function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
+function isPathAllowedForDIFMInProgressSite(
+	path,
+	slug,
+	domains,
+	contextParams,
+	isWebsiteContentSubmitted = true
+) {
 	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), getEmailManagementPath( slug ) ];
 
 	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
@@ -322,6 +358,7 @@ function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams 
 
 	return (
 		isAllowedForDomainOnlySites ||
+		isPathAllowedForDIFMPreSubmitContentCollection( path, isWebsiteContentSubmitted ) ||
 		DIFMLiteInProgressAllowedPaths.some( ( DIFMLiteInProgressAllowedPath ) =>
 			path.startsWith( DIFMLiteInProgressAllowedPath )
 		)
@@ -399,6 +436,8 @@ function onSelectedSiteAvailable( context ) {
 	 * Ignore this check if we are inside a support session.
 	 */
 	const domains = getDomainsBySiteId( state, selectedSite.ID );
+	const isDIFMWebsiteContentSubmitted =
+		selectedSite.options?.difm_lite_site_options?.is_website_content_submitted !== false;
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
 		! isSupportSession( state ) &&
@@ -406,7 +445,8 @@ function onSelectedSiteAvailable( context ) {
 			context.pathname,
 			selectedSite.slug,
 			domains,
-			context.params
+			context.params,
+			isDIFMWebsiteContentSubmitted
 		)
 	) {
 		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
@@ -523,6 +563,7 @@ export function noSite( context, next ) {
 	);
 
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
+	const isWpcomCheckoutFlow = context.pathname.includes( '/checkout/wpcom' );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -533,6 +574,7 @@ export function noSite( context, next ) {
 		! isAkismetCheckoutFlow &&
 		! isMarketplaceSitelessCheckoutFlow &&
 		! isUnifiedCheckoutFlow &&
+		! isWpcomCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		! is100YearCheckoutFlow &&
@@ -554,6 +596,32 @@ const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [
 	'/plugins/manage',
 	'/themes',
 ];
+
+/*
+ * `requestSite` keeps a site we can't manage out of the state, so the API can hand us back a site
+ * that we then fail to select. Capabilities take a moment to propagate after a site is created or
+ * transferred to Atomic, so wait for them rather than sending a just-paid-for site to the
+ * "You don't have access to that site" page.
+ */
+const UNMANAGEABLE_SITE_RETRY_LIMIT = 3;
+const UNMANAGEABLE_SITE_RETRY_DELAY = 1000;
+
+// A wait can outlast the route that asked for it, so anything resuming after an await must bail
+// out rather than select a site or redirect out of the page the user moved on to.
+function hasNavigatedAwayFrom( context ) {
+	return page.current !== context.path;
+}
+
+// Missing capabilities are propagation lag rather than a lack of access when something that
+// doesn't depend on them says otherwise: the user owns the site, or `/me/sites` saw them as
+// an admin of it.
+function capabilitiesArePropagating( state, site ) {
+	if ( site.site_owner && site.site_owner === getCurrentUserId( state ) ) {
+		return true;
+	}
+
+	return canCurrentUser( state, site.ID, 'manage_options' ) === true;
+}
 
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
@@ -656,7 +724,7 @@ export function siteSelection( context, next ) {
 		const promise = shouldUpdateStateAfterUpgrade
 			? dispatch( requestSite( siteId ) ).catch( () => {
 					return null;
-			  } )
+				} )
 			: Promise.resolve();
 		promise.then( () => {
 			if ( onSelectedSiteAvailable( context ) ) {
@@ -664,57 +732,115 @@ export function siteSelection( context, next ) {
 			}
 		} );
 	} else {
-		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) )
-			.catch( () => null )
-			.then( ( site ) => {
-				let freshSiteId;
+		requestAndSelectSite( context, next, {
+			siteFragment,
+			isUnlinkedCheckout,
+			attempt: 0,
+		} );
+	}
+}
+
+// Fetch the site by siteFragment and then try to select it again
+function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout, attempt } ) {
+	const { getState, dispatch } = getStore( context );
+
+	return dispatch( requestSite( siteFragment ) )
+		.catch( () => null )
+		.then( ( site ) => {
+			if ( hasNavigatedAwayFrom( context ) ) {
+				return;
+			}
+
+			let freshSiteId;
+
+			if ( site && site.ID ) {
+				// An unlinked checkout ignores the site it finds below, so waiting on its
+				// capabilities would only delay the Jetpack authorization.
+				if (
+					! isUnlinkedCheckout &&
+					! getSite( getState(), site.ID ) &&
+					attempt < UNMANAGEABLE_SITE_RETRY_LIMIT &&
+					capabilitiesArePropagating( getState(), site )
+				) {
+					const retryDelay = UNMANAGEABLE_SITE_RETRY_DELAY * 2 ** attempt;
+
+					return new Promise( ( resolve ) =>
+						setTimeout( () => {
+							if ( hasNavigatedAwayFrom( context ) ) {
+								resolve();
+								return;
+							}
+
+							resolve(
+								requestAndSelectSite( context, next, {
+									siteFragment,
+									isUnlinkedCheckout,
+									attempt: attempt + 1,
+								} )
+							);
+						}, retryDelay )
+					);
+				}
 
 				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
 				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
-				if ( site && site.ID ) {
-					const siteSlug = getSiteSlug( getState(), site.ID );
-					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+				const siteSlug = getSiteSlug( getState(), site.ID );
+				const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
-					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						const hash = context.hashstring ? `#${ context.hashstring }` : '';
-						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
-					}
-
-					freshSiteId = site.ID;
+				if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
+					const hash = context.hashstring ? `#${ context.hashstring }` : '';
+					return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 				}
 
-				freshSiteId ??= getSiteId( getState(), siteFragment );
+				freshSiteId = site.ID;
+			}
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment
-						.toString()
-						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-				}
+			freshSiteId ??= getSiteId( getState(), siteFragment );
 
-				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
-				// Details: p9dueE-6Hf-p2
-				if ( freshSiteId && ! isUnlinkedCheckout ) {
-					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-					// to wp-admin. In that case, don't continue handling the route.
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context ) ) {
-						next();
-					}
-				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					navigate( getJetpackAuthorizeURL( context, site ) );
-				} else {
-					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					let allSitesPath = context.path.substring( 0, siteFragmentOffset );
-					if ( context.querystring ) {
-						allSitesPath += `?${ context.querystring }`;
-					}
-					page.redirect( allSitesPath );
+			if ( ! freshSiteId ) {
+				const wpcomStagingFragment = siteFragment
+					.toString()
+					.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+			}
+
+			// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
+			// Details: p9dueE-6Hf-p2
+			if ( freshSiteId && ! isUnlinkedCheckout ) {
+				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+				// to wp-admin. In that case, don't continue handling the route.
+				dispatch( setSelectedSiteId( freshSiteId ) );
+				if ( onSelectedSiteAvailable( context ) ) {
+					next();
 				}
-			} );
-	}
+			} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
+				navigate( getJetpackAuthorizeURL( context, site ) );
+			} else if (
+				context.pathname.includes( '/checkout/' ) &&
+				context.pathname.includes( '/renew/' )
+			) {
+				// On a checkout renewal URL that carries an explicit site slug, an
+				// intermittently failed/unresolvable site fetch must not strip the slug:
+				// the all-sites redirect below would drop the user onto the slug-less
+				// no-site renewal route. Let checkout render with the slug intact and
+				// handle its own missing-site state instead. See CHE-512.
+				//
+				// Clear any stale selection first: unlike the redirect branch below
+				// (which re-enters siteSelection with no fragment and clears it there),
+				// this path calls next() directly, so a selectedSiteId left over from a
+				// prior SPA navigation would otherwise leak into checkout.
+				dispatch( setAllSitesSelected() );
+				next();
+			} else {
+				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+				const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
+				let allSitesPath = context.path.substring( 0, siteFragmentOffset );
+				if ( context.querystring ) {
+					allSitesPath += `?${ context.querystring }`;
+				}
+				page.redirect( allSitesPath );
+			}
+		} );
 }
 
 export function loggedInSiteSelection( context, next ) {

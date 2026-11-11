@@ -1,25 +1,32 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
-import { localizeUrl } from '@automattic/i18n-utils';
 import {
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-	keepPreviousData,
-} from '@tanstack/react-query';
+	dashboardSiteFiltersQuery,
+	isAutomatticianQuery,
+	paginatedSitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
 import deepmerge from 'deepmerge';
 import { useState, useEffect } from 'react';
 import { Experiment } from 'calypso/lib/explat';
+import AccountEmailBouncingNotice, {
+	useShouldShowAccountEmailBouncingNotice,
+} from '../app/account-email-bouncing-notice';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
 import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../app/recovery-email-matches-account-email-notice';
 import { sitesRoute } from '../app/router/sites';
+import SecurityKeyReregisterNotice, {
+	useShouldShowSecurityKeyReregisterNotice,
+} from '../app/security-key-reregister-notice';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
-import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -31,11 +38,16 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
+	STAGING_FILTER_FIELD,
 } from './dataviews';
-import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
+import { useHasOnlyDeletedSites } from './deleted-sites';
+import {
+	EmptyDeletedSitesStateContent,
+	EmptySitesStateContent,
+	EmptySitesSearchStateContent,
+} from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
 import { SitesNoticeArbiter } from './notice-arbiter';
-import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -49,6 +61,11 @@ function isDeletedFilterActive( filters: Filter[] ): boolean {
 	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
 }
 
+function getIncludeStaging( filters: Filter[] ): boolean {
+	const stagingFilter = filters.find( ( filter ) => filter.field === STAGING_FILTER_FIELD );
+	return stagingFilter ? stagingFilter.value === true : false;
+}
+
 const getFetchPaginatedSitesOptions = (
 	view: View,
 	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
@@ -56,21 +73,27 @@ const getFetchPaginatedSitesOptions = (
 ): FetchPaginatedSitesOptions => {
 	const filters = view.filters ?? [];
 
-	// Include A8C sites unless explicitly excluded from the filter.
-	const shouldIncludeA8COwned =
-		isAutomattician &&
-		! filters.some( ( item: Filter ) => item.field === 'is_a8c' && item.value === false );
+	const isA8COwnedIncludedByFilter = ! filters.some(
+		( item: Filter ) => item.field === 'is_a8c' && item.value === false
+	);
+
+	// Non-Automatticians can be members of a8c-owned sites but have no filter to
+	// control their visibility, so always include them.
+	const shouldIncludeA8COwned = ! isAutomattician || isA8COwnedIncludedByFilter;
+
+	// Hidden sites are only returned under 'all', which we opt into when the user
+	// searches, is restoring their account, or is an Automattician who wants a8c-owned
+	// sites — some P2s are not retrievable otherwise.
+	// See: https://github.com/Automattic/wp-calypso/pull/104220.
+	const shouldRequestAllVisibility =
+		!! view.search || isRestoringAccount || ( isAutomattician && isA8COwnedIncludedByFilter );
 
 	const options: FetchPaginatedSitesOptions = {
 		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
 
-		// Some P2 sites are not retrievable unless site_visibility is set to 'all'.
-		// See: https://github.com/Automattic/wp-calypso/pull/104220.
-		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
+		site_visibility: shouldRequestAllVisibility ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
-		// Exclude staging sites from the standalone dashboard list; the classic
-		// Calypso backport keeps them (the API includes them by default).
-		...( ! isDashboardBackport() && { include_staging: false } ),
+		include_staging: getIncludeStaging( filters ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -79,7 +102,7 @@ const getFetchPaginatedSitesOptions = (
 	};
 
 	if ( isDeletedFilterActive( filters ) ) {
-		options.site_visibility = 'deleted';
+		options.site_visibility = 'all';
 	}
 
 	view.filters?.forEach( ( filter ) => {
@@ -106,17 +129,14 @@ const getFetchPaginatedSitesOptions = (
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const queryClient = useQueryClient();
 
-	const { queries } = useAppContext();
-
 	const { data: siteFilters } = useQuery( {
-		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+		...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 		enabled: !! view.filters?.find( ( filter ) => filter.field === 'plan' ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
-		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
-		placeholderData: keepPreviousData,
+		...paginatedSitesQuery( 'all', getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
 		meta: {
 			fullPageLoader: true,
 		},
@@ -124,9 +144,7 @@ export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 
 	const result = {
 		sites: paginatedSitesQueryResult.data?.sites,
-		hasNoData: paginatedSitesQueryResult.data?.sites.length === 0,
 		isLoadingSites: paginatedSitesQueryResult.isLoading,
-		isPlaceholderData: paginatedSitesQueryResult.isPlaceholderData,
 		totalItems: paginatedSitesQueryResult.data?.total,
 	};
 
@@ -159,7 +177,19 @@ export default function Sites() {
 	const isRestoringAccount = !! currentSearchParams.restored;
 
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+
+	const isSecurityKeyReregisterRequired = useShouldShowSecurityKeyReregisterNotice();
+	const showSecurityKeyReregisterNotice = supports.me && isSecurityKeyReregisterRequired;
+	const hasOnlyDeletedSites = useHasOnlyDeletedSites();
+
+	const isAccountEmailBouncing = useShouldShowAccountEmailBouncingNotice();
+	const showAccountEmailBouncingNotice = supports.me && isAccountEmailBouncing;
+
+	const isRecoveryEmailMatchingAccountEmail = useShouldShowRecoveryEmailMatchesAccountEmailNotice();
+	const showRecoveryEmailMatchesAccountEmailNotice =
+		supports.me && isRecoveryEmailMatchingAccountEmail;
 
 	const defaultView = getDefaultView( {
 		siteCount: user.site_count,
@@ -175,14 +205,11 @@ export default function Sites() {
 		sanitizeFields,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData, hasNoData, totalItems } = useSiteListQuery(
-		view,
-		{
-			isDefaultView: ! resetView && ! view.search && view.page === 1,
-			isRestoringAccount,
-			isAutomattician,
-		}
-	);
+	const { sites, isLoadingSites, totalItems } = useSiteListQuery( view, {
+		isDefaultView: ! resetView && ! view.search && view.page === 1,
+		isRestoringAccount,
+		isAutomattician,
+	} );
 
 	const fields = useFields( { isAutomattician, viewType: view.type } );
 	const actions = useActions();
@@ -202,23 +229,39 @@ export default function Sites() {
 		totalItems ?? 0
 	);
 
+	let emptySitesState = null;
+	if ( hasOnlyDeletedSites === true ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any active sites' ) }
+				description={ __( 'Restore a deleted site, or start a new one.' ) }
+			>
+				<EmptyDeletedSitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	} else if ( hasOnlyDeletedSites === false ) {
+		emptySitesState = (
+			<DataViewsEmptyStateLayout
+				title={ __( 'You don’t have any sites yet' ) }
+				description={ __(
+					'Start a site and begin creating, coding, or exploring what WordPress can do.'
+				) }
+			>
+				<EmptySitesStateContent />
+			</DataViewsEmptyStateLayout>
+		);
+	}
+
 	const filters = view.filters ?? [];
 	const hasActiveSearch = !! view.search;
 	const hasActiveQuery = hasActiveSearch || filters.length > 0;
-	const isFilteringOnlyDeletedSites =
-		isDeletedFilterActive( filters ) &&
-		! hasActiveSearch &&
-		filters.every( ( filter ) => filter.field === 'is_deleted' );
 
 	return (
 		<>
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite
-						context="sites-dashboard"
-						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
-					/>
+					<AddNewSite context="sites-dashboard" />
 				</Modal>
 			) }
 			<PageLayout
@@ -243,7 +286,11 @@ export default function Sites() {
 				}
 				notices={
 					<SitesNoticeArbiter>
-						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
+						{ showSecurityKeyReregisterNotice && <SecurityKeyReregisterNotice /> }
+						{ showAccountEmailBouncingNotice && <AccountEmailBouncingNotice /> }
+						{ showRecoveryEmailMatchesAccountEmailNotice && (
+							<RecoveryEmailMatchesAccountEmailNotice />
+						) }
 					</SitesNoticeArbiter>
 				}
 			>
@@ -253,52 +300,22 @@ export default function Sites() {
 						sites={ filteredData }
 						fields={ fields }
 						actions={ actions }
-						isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-						isPlaceholderData={ isPlaceholderData }
+						isLoading={ isLoadingSites }
 						empty={
-							isFilteringOnlyDeletedSites ? (
-								<DataViewsEmptyStateLayout
-									title={ __( 'You have no deleted sites' ) }
-									description={ createInterpolateElement(
-										__(
-											'Sites that are deleted can be restored within the first 30 days of deletion. <learnLink>Learn how to restore a deleted site</learnLink>.'
-										),
-										{
-											learnLink: (
-												<InlineSupportLink
-													supportLink={ localizeUrl(
-														'https://wordpress.com/support/delete-site/#restore-a-deleted-site'
-													) }
-													supportPostId={ 14411 }
-												/>
-											),
-										}
-									) }
-									isBorderless
-								/>
-							) : (
-								<DataViewsEmptyStateLayout
-									title={ __( 'No sites match your search' ) }
-									description={ __( 'Try again, or start a new site with the options below.' ) }
-									isBorderless
-								>
-									<EmptySitesSearchStateContent />
-								</DataViewsEmptyStateLayout>
-							)
+							<DataViewsEmptyStateLayout
+								title={ __( 'No sites match your search' ) }
+								description={ __( 'Try again, or start a new site with the options below.' ) }
+								isBorderless
+							>
+								<EmptySitesSearchStateContent />
+							</DataViewsEmptyStateLayout>
 						}
 						paginationInfo={ paginationInfo }
 						onChangeView={ handleViewChange }
 						onReset={ resetView }
 					/>
 				) : (
-					<DataViewsEmptyStateLayout
-						title={ __( 'You don’t have any sites yet' ) }
-						description={ __(
-							'Start a site and begin creating, coding, or exploring what WordPress can do.'
-						) }
-					>
-						<EmptySitesStateContent />
-					</DataViewsEmptyStateLayout>
+					emptySitesState
 				) }
 			</PageLayout>
 			{ /* ExPlat's Evergreen A/A Test Experiment:

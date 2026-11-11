@@ -5,19 +5,15 @@ const frozenDeprecatedV1Flows = [
 	'copy-site',
 	'newsletter',
 	'entrepreneur',
-	'readymade-template',
 	'update-design',
-	'update-options',
 	'domain-and-plan',
 	'build',
 	'write',
-	'connect-domain',
 	'transferring-hosted-site',
 	'domain-transfer',
 	'plugin-bundle',
 	'hundred-year-plan',
 	'domain-user-transfer',
-	'reblogging',
 ];
 
 describe( 'Deprecated Flows', () => {

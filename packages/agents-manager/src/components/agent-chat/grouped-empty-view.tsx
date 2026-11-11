@@ -6,18 +6,20 @@ import { Icon, chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import {
 	DESIGN_SUGGESTION_IDS,
 	formatWritingSuggestionLabels,
+	hideTopLevelDescriptions,
 	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
+import { getSuggestionClickPayload } from '../../utils/get-suggestion-click-payload';
 import { isEditorPage } from '../../utils/is-editor-page';
-import getSuggestionClickPayload from './get-suggestion-click-payload';
-import type { ReactNode } from 'react';
 import './grouped-empty-view.scss';
+import type { ReactNode } from 'react';
 
 interface Props {
 	heading: string;
 	help?: string;
-	icon: ReactNode;
+	/** Takes the place of the suggestion chips, under the heading. */
+	content?: ReactNode;
 	suggestions: Suggestion[];
 	groupWritingSuggestions: boolean;
 	onSuggestionClick?: (
@@ -29,7 +31,7 @@ interface Props {
 export default function GroupedEmptyView( {
 	heading,
 	help,
-	icon,
+	content,
 	suggestions,
 	groupWritingSuggestions,
 	onSuggestionClick,
@@ -61,6 +63,14 @@ export default function GroupedEmptyView( {
 		);
 	};
 
+	if ( content ) {
+		return (
+			<EmptyView heading={ heading } help={ help }>
+				{ content }
+			</EmptyView>
+		);
+	}
+
 	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
 		return (
 			<EmptyView
@@ -68,15 +78,16 @@ export default function GroupedEmptyView( {
 				help={ help }
 				suggestions={ displaySuggestions }
 				onSuggestionClick={ handleSuggestionClick }
-				icon={ icon }
 			/>
 		);
 	}
 
-	const topLevelSuggestions = displaySuggestions.filter(
-		( suggestion ) =>
-			! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
-			suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+	const topLevelSuggestions = hideTopLevelDescriptions(
+		displaySuggestions.filter(
+			( suggestion ) =>
+				! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
+				suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+		)
 	);
 	const collapsedIcon = isRTL() ? chevronLeft : chevronRight;
 
@@ -90,7 +101,6 @@ export default function GroupedEmptyView( {
 				heading={ heading }
 				suggestions={ topLevelSuggestions }
 				onSuggestionClick={ handleSuggestionClick }
-				icon={ icon }
 			/>
 			<section className="agents-manager-writing-suggestions">
 				<button
@@ -118,11 +128,13 @@ export default function GroupedEmptyView( {
 					/>
 				</button>
 				<div id={ writingSuggestionListId } hidden={ ! isWritingExpanded }>
+					{ /* `visible` keeps the collapsed chips out of what Agenttic reports as rendered. */ }
 					<Suggestions
 						className="agents-manager-writing-suggestions__list"
 						layout="vertical"
 						translateY={ 0 }
 						suggestions={ writingSuggestions }
+						visible={ isWritingExpanded }
 						onSubmit={ handleSuggestionClick }
 					/>
 				</div>

@@ -49,6 +49,8 @@ function buildConfig( env, { entry, outputPath, publicPath, withStats } ) {
 		...webpackConfig,
 		optimization: {
 			concatenateModules: ! shouldEmitStats,
+			// Minify only JavaScript, as webpack did before it minified HTML and CSS by default.
+			minimizeOptions: { html: false, css: false },
 		},
 		plugins: [
 			...webpackConfig.plugins,

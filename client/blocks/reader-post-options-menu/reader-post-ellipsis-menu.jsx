@@ -8,11 +8,9 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
+import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
-import { isEligibleForUnseen, canBeMarkedAsSeen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
@@ -20,8 +18,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 const noop = () => {};
@@ -39,6 +35,7 @@ class ReaderPostEllipsisMenu extends Component {
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		teams: PropTypes.array,
+		canMarkSeen: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -221,17 +218,7 @@ class ReaderPostEllipsisMenu extends Component {
 	stopPropagation = ( event ) => event.stopPropagation();
 
 	render() {
-		const {
-			post,
-			site,
-			teams,
-			translate,
-			isWPForTeamsItem,
-			currentRoute,
-			hasOrganization,
-			isLoggedIn,
-			followSource,
-		} = this.props;
+		const { post, site, teams, translate, isLoggedIn, followSource, canMarkSeen } = this.props;
 
 		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
@@ -250,10 +237,6 @@ class ReaderPostEllipsisMenu extends Component {
 
 		const isSeen = post?.is_seen;
 		const isAutomattician = isAutomatticTeamMember( teams );
-		const isSeenEnabled =
-			isAutomattician ||
-			( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
-				canBeMarkedAsSeen( { post } ) );
 		const showConversationFollowButton =
 			this.props.showConversationFollow && isConversationFollowable( post );
 
@@ -291,7 +274,7 @@ class ReaderPostEllipsisMenu extends Component {
 					/>
 				) }
 
-				{ isSeenEnabled && (
+				{ canMarkSeen && (
 					<PopoverMenuItem
 						onClick={ isSeen ? this.markAsUnSeen : this.markAsSeen }
 						icon={ isSeen ? unseen : seen }
@@ -303,12 +286,12 @@ class ReaderPostEllipsisMenu extends Component {
 									text: 'Mark as unread',
 									newCopy: translate( 'Mark as unread' ),
 									oldCopy: translate( 'Mark as unseen' ),
-							  } )
+								} )
 							: fixMe( {
 									text: 'Mark as read',
 									newCopy: translate( 'Mark as read' ),
 									oldCopy: translate( 'Mark as seen' ),
-							  } ) }
+								} ) }
 					</PopoverMenuItem>
 				) }
 
@@ -359,19 +342,7 @@ class ReaderPostEllipsisMenu extends Component {
 }
 
 const ConnectedPostEllipsisMenu = connect(
-	( state, { feed, post: { is_external, site_ID } = {} } ) => {
-		const siteId = is_external ? null : site_ID;
-
-		return Object.assign(
-			{ currentRoute: getCurrentRoute( state ) },
-			{
-				isWPForTeamsItem:
-					isSiteWPForTeams( state, siteId ) ||
-					( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
-			},
-			{ isLoggedIn: isUserLoggedIn( state ) }
-		);
-	},
+	( state ) => ( { isLoggedIn: isUserLoggedIn( state ) } ),
 	{
 		blockSite,
 		recordReaderTracksEvent,
@@ -380,7 +351,8 @@ const ConnectedPostEllipsisMenu = connect(
 
 export default function PostEllipsisMenuContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, isExternal ? null : siteId );
+	const blogId = isExternal ? null : siteId;
+	const canMarkSeen = useCanMarkSeen( { feedId, blogId, post: props.post } );
 
-	return <ConnectedPostEllipsisMenu { ...props } hasOrganization={ hasOrganization } />;
+	return <ConnectedPostEllipsisMenu { ...props } canMarkSeen={ canMarkSeen } />;
 }

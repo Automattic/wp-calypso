@@ -6,12 +6,6 @@ const AZURE_ENV = {
 	SIGNTOOL_PATH: 'C:\\sdk\\signtool.exe',
 };
 
-const PFX_ENV = {
-	WIN_CSC_LINK: 'C:\\certs\\certificate.pfx',
-	WIN_CSC_KEY_PASSWORD: 'hunter2',
-	SIGNTOOL_PATH: 'C:\\sdk\\signtool.exe',
-};
-
 describe( 'resolveSigner', () => {
 	it( 'selects Azure when its env is present', () => {
 		expect( resolveSigner( AZURE_ENV ) ).toMatchObject( {
@@ -20,26 +14,13 @@ describe( 'resolveSigner', () => {
 		} );
 	} );
 
-	it( 'falls back to PFX when only PFX env is present', () => {
-		expect( resolveSigner( PFX_ENV ) ).toMatchObject( { kind: 'pfx', pfx: PFX_ENV.WIN_CSC_LINK } );
-	} );
-
-	it( 'prefers Azure over PFX when both are present', () => {
-		expect( resolveSigner( { ...AZURE_ENV, ...PFX_ENV } ).kind ).toBe( 'azure' );
-	} );
-
 	it( 'throws naming the missing var for a partial Azure config', () => {
 		const { SIGNTOOL_PATH, ...partial } = AZURE_ENV;
 		expect( () => resolveSigner( partial ) ).toThrow( /SIGNTOOL_PATH/ );
 	} );
 
-	it( 'throws naming the missing var for a partial PFX config', () => {
-		const { WIN_CSC_KEY_PASSWORD, ...partial } = PFX_ENV;
-		expect( () => resolveSigner( partial ) ).toThrow( /WIN_CSC_KEY_PASSWORD/ );
-	} );
-
 	it( 'throws when no signing config is present', () => {
-		expect( () => resolveSigner( {} ) ).toThrow( /No Windows signing configuration/ );
+		expect( () => resolveSigner( {} ) ).toThrow( /Azure Artifact Signing missing/ );
 	} );
 } );
 
@@ -58,28 +39,53 @@ describe( 'buildSignToolArgs', () => {
 		expect( args[ args.length - 1 ] ).toBe( 'app.exe' );
 		expect( args ).toEqual( expect.arrayContaining( [ '/fd', 'SHA256' ] ) );
 	} );
-
-	it( 'builds a PFX invocation with cert + password, file last', () => {
-		const args = buildSignToolArgs( resolveSigner( PFX_ENV ), 'app.exe' );
-		expect( args ).toEqual(
-			expect.arrayContaining( [ '/f', PFX_ENV.WIN_CSC_LINK, '/p', PFX_ENV.WIN_CSC_KEY_PASSWORD ] )
-		);
-		expect( args ).not.toContain( '/dlib' );
-		expect( args[ args.length - 1 ] ).toBe( 'app.exe' );
-	} );
 } );
 
 describe( 'win.sign callback', () => {
-	it( 'skips the SHA1 pass without signing', async () => {
+	const originalCI = process.env.CI;
+	afterEach( () => {
+		if ( originalCI === undefined ) {
+			delete process.env.CI;
+		} else {
+			process.env.CI = originalCI;
+		}
+		jest.dontMock( '../../bin/windows-signing-core' );
+	} );
+
+	const mockSigner = { kind: 'azure' };
+
+	function loadSignWithMockedCore() {
 		jest.resetModules();
 		jest.doMock( '../../bin/windows-signing-core', () => ( {
-			resolveSigner: jest.fn(),
+			resolveSigner: jest.fn( () => mockSigner ),
 			signFile: jest.fn(),
 		} ) );
-		const core = require( '../../bin/windows-signing-core' );
-		const sign = require( '../../bin/windows-sign' );
+		return {
+			core: require( '../../bin/windows-signing-core' ),
+			sign: require( '../../bin/windows-sign' ),
+		};
+	}
+
+	it( 'skips the SHA1 pass without signing', async () => {
+		process.env.CI = 'true';
+		const { core, sign } = loadSignWithMockedCore();
 		await sign( { path: 'app.exe', hash: 'sha1' } );
 		expect( core.signFile ).not.toHaveBeenCalled();
-		jest.dontMock( '../../bin/windows-signing-core' );
+	} );
+
+	it( 'skips signing off CI, without resolving a signer', async () => {
+		delete process.env.CI;
+		const { core, sign } = loadSignWithMockedCore();
+		await sign( { path: 'app.exe', hash: 'sha256' } );
+		expect( core.resolveSigner ).not.toHaveBeenCalled();
+		expect( core.signFile ).not.toHaveBeenCalled();
+	} );
+
+	it( 'signs the SHA256 pass on CI with the resolved signer', async () => {
+		process.env.CI = 'true';
+		const { core, sign } = loadSignWithMockedCore();
+		await sign( { path: 'app.exe', hash: 'sha256' } );
+		expect( core.resolveSigner ).toHaveBeenCalled();
+		expect( core.signFile ).toHaveBeenCalledWith( mockSigner, 'app.exe' );
 	} );
 } );

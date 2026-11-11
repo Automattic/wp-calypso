@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
+import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import type { Callback } from '@automattic/calypso-router';
 import type { FunctionComponent } from 'react';
@@ -18,6 +19,10 @@ interface ProviderWrappedLayoutProps {
 	redirectUri: string;
 }
 
+const recordJetpackAppPageView: typeof recordUnifiedAdminPageView = ( view ) => {
+	recordUnifiedAdminPageView( { ...view, app: 'jetpack-app' } );
+};
+
 export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProps > = ( {
 	store,
 	queryClient,
@@ -27,10 +32,14 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 } ) => {
 	return (
 		<CalypsoI18nProvider>
-			{ /* TS incorrectly infers RouteProvider types; ignore errors here. */ }
-			{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
-			{ /* @ts-ignore */ }
-			<RouteProvider currentRoute={ currentRoute } currentQuery={ currentQuery }>
+			<RouteProvider
+				currentRoute={ currentRoute }
+				// TS incorrectly infers RouteProvider types; ignore errors here.
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				currentQuery={ currentQuery }
+				onRouteCommit={ recordJetpackAppPageView }
+			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>{ primary }</ReduxProvider>
 					<CalypsoReactQueryDevtools />

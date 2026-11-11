@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import Debug from 'debug';
 import { localize, default as i18n } from 'i18n-calypso';
@@ -9,11 +8,12 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import LoggedIn from 'calypso/my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { getRedirectAfterAccept, isSameEmail } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -127,7 +127,13 @@ class InviteAccept extends Component {
 
 	isMatchEmailError = () => {
 		const { invite } = this.state;
-		return invite && invite.forceMatchingEmail && this.props.user.email !== invite.sentTo;
+		const { user } = this.props;
+		return !! (
+			invite &&
+			invite.forceMatchingEmail &&
+			user &&
+			! isSameEmail( user.email, invite.sentTo )
+		);
 	};
 
 	isInvalidInvite = () => {
@@ -142,7 +148,7 @@ class InviteAccept extends Component {
 		this.props.infoNotice( this.props.translate( 'You declined to join.' ), {
 			displayOnNextPage: true,
 		} );
-		page( '/' );
+		this.props.navigateToLandingPage();
 	};
 
 	signInLink = () => {
@@ -183,7 +189,11 @@ class InviteAccept extends Component {
 			redirectTo: getRedirectAfterAccept( invite, this.props.hasDashboardOptIn ),
 			decline: this.decline,
 			signInLink: this.signInLink(),
-			forceMatchingEmail: this.isMatchEmailError(),
+			// Logged in, this means the signed-in address differs from the invited one, so the
+			// mismatch notice applies. Logged out, there is no address to compare, and the flag
+			// simply means the invite is bound to a single address, which is what the logged-out
+			// form needs in order to pin the email field and offer signing in instead.
+			forceMatchingEmail: this.props.user ? this.isMatchEmailError() : !! invite.forceMatchingEmail,
 		};
 
 		return this.props.user ? (
@@ -324,5 +334,6 @@ export default connect(
 		infoNotice,
 		hideMasterbar,
 		redirectToLogout,
+		navigateToLandingPage,
 	}
 )( localize( InviteAccept ) );

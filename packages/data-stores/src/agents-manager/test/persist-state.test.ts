@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from '../../wpcom-request';
-import { persistAgentsManagerState } from '../persist-state';
+import { persistAgentsManagerState, setShouldPersistState } from '../persist-state';
 
 jest.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
@@ -23,9 +23,20 @@ const tick = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 describe( 'persistAgentsManagerState', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		setShouldPersistState( () => true );
 		mockCanAccess.mockReturnValue( true );
 		mockRequest.mockResolvedValue( undefined );
 		mockApiFetch.mockResolvedValue( undefined );
+	} );
+
+	it( 'skips save requests when the host opts out of persisted state', () => {
+		setShouldPersistState( () => false );
+
+		persistAgentsManagerState( { agents_manager_docked: true } );
+
+		expect( mockCanAccess ).not.toHaveBeenCalled();
+		expect( mockRequest ).not.toHaveBeenCalled();
+		expect( mockApiFetch ).not.toHaveBeenCalled();
 	} );
 
 	it( 'sends a single save as one wpcom request', async () => {
@@ -45,10 +56,10 @@ describe( 'persistAgentsManagerState', () => {
 		);
 
 		// First save goes out immediately and stays in flight.
-		persistAgentsManagerState( { agents_manager_router_history: 'a' } );
+		persistAgentsManagerState( { agents_manager_docked: true } );
 		// These arrive while it's in flight — they must not race; they merge.
 		persistAgentsManagerState( { agents_manager_minimized: false } );
-		persistAgentsManagerState( { agents_manager_router_history: 'b' } );
+		persistAgentsManagerState( { agents_manager_docked: false } );
 
 		expect( mockRequest ).toHaveBeenCalledTimes( 1 );
 
@@ -59,7 +70,7 @@ describe( 'persistAgentsManagerState', () => {
 		expect( mockRequest ).toHaveBeenCalledTimes( 2 );
 		expect( mockRequest ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
-				body: { state: { agents_manager_minimized: false, agents_manager_router_history: 'b' } },
+				body: { state: { agents_manager_minimized: false, agents_manager_docked: false } },
 			} )
 		);
 	} );

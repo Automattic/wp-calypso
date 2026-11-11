@@ -19,24 +19,27 @@ export default function AgencySiteBackupsListPage() {
 	const searchParams = agencySiteBackupsRoute.useSearch();
 
 	const routeParams = useParams( { strict: false, shouldThrow: false } ) as
-		| { rewindId?: string }
-		| undefined;
+		{ rewindId?: string } | undefined;
 	const rewindId = routeParams?.rewindId;
 
-	const navigation = useMemo< BackupsNavigation >(
-		() => ( {
+	const navigation = useMemo< BackupsNavigation >( () => {
+		const listRoute = {
+			to: agencySiteBackupsIndexRoute.fullPath,
+			params: { siteSlug },
+		} as const;
+		return {
+			listPath: router.buildLocation( listRoute ).pathname,
 			selectBackup: ( id ) =>
 				id
 					? router.navigate( {
 							to: agencySiteBackupDetailRoute.fullPath,
 							params: { siteSlug, rewindId: id },
 							search: ( query: Record< string, string > ) => query,
-					  } )
+						} )
 					: router.navigate( {
-							to: agencySiteBackupsIndexRoute.fullPath,
-							params: { siteSlug },
+							...listRoute,
 							search: ( query: Record< string, string > ) => query,
-					  } ),
+						} ),
 			requestRestore: ( id ) =>
 				router.navigate( {
 					to: agencySiteBackupRestoreRoute.fullPath,
@@ -48,14 +51,13 @@ export default function AgencySiteBackupsListPage() {
 							to: agencySiteBackupDownloadRoute.fullPath,
 							params: { siteSlug, rewindId: id },
 							search: { downloadId },
-					  } )
+						} )
 					: router.navigate( {
 							to: agencySiteBackupDownloadRoute.fullPath,
 							params: { siteSlug, rewindId: id },
-					  } ),
-		} ),
-		[ router, siteSlug ]
-	);
+						} ),
+		};
+	}, [ router, siteSlug ] );
 
 	return (
 		<BackupsPage

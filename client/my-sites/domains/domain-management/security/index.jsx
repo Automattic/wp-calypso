@@ -1,13 +1,14 @@
+import { purchaseQuery } from '@automattic/api-queries';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { CompactCard, MaterialIcon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ECOMMERCE, FORMS } from '@automattic/urls';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import SupportButton from 'calypso/components/support-button';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -19,11 +20,6 @@ import Header from 'calypso/my-sites/domains/domain-management/components/header
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import {
-	getByPurchaseId,
-	isFetchingSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
@@ -103,7 +99,6 @@ class Security extends Component {
 							'We have disabled HTTPS encryption because your domain has expired and is no longer active. Renew your domain to reactivate it and turn on HTTPS encryption.'
 						) }
 					</p>
-					{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 					<RenewButton
 						primary
 						purchase={ purchase }
@@ -196,21 +191,27 @@ class Security extends Component {
 	}
 }
 
+const SecurityWithPurchase = ( props ) => {
+	const subscriptionId = props.domain?.subscriptionId
+		? parseInt( props.domain.subscriptionId, 10 )
+		: undefined;
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( subscriptionId ),
+		enabled: Boolean( subscriptionId ),
+	} );
+
+	return <Security { ...props } purchase={ purchase ?? null } />;
+};
+
 export default connect(
 	( state, ownProps ) => {
-		const domain = ownProps.domains && getSelectedDomain( ownProps );
-		const { subscriptionId } = domain || {};
-
 		return {
 			currentRoute: getCurrentRoute( state ),
-			domain,
-			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+			domain: ownProps.domains && getSelectedDomain( ownProps ),
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( localize( Security ) );
+)( localize( SecurityWithPurchase ) );

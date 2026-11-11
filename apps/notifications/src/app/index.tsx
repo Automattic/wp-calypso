@@ -1,41 +1,55 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useConstrainedTabbing } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useState, type TransitionEvent } from 'react';
+import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
-import RestClient from '../panel/rest-client';
-import { init as initAPI } from '../panel/rest-client/wpcom';
-import { init as initStore } from '../panel/state';
+import { store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { interceptLinks } from '../panel/utils/link-interceptor';
+import { getClient, initClient } from './client';
 import { AppProvider } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
-import type { FilterName } from './types';
+import type { FilterName, LayoutStyle } from './types';
 
 import './style.scss';
 
-let client: any;
-
-let store = initStore();
-
 repliesCache.cleanup();
+
+export type NotificationPreferences = {
+	layoutStyle?: LayoutStyle | null;
+	viewSettingsSeen?: boolean | null;
+};
+
+let hasResolvedPreferences = false;
+
+const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
+	// Unset means never chosen, and those people get the simplified rows. Where the picker
+	// is missing the note list renders the detailed ones whatever this says, so there is
+	// nothing here to ask about the flag.
+	store.dispatch( actions.ui.setLayoutStyle( layoutStyle ?? 'simplified' ) );
+
+	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
+};
 
 /**
  * Force a manual refresh of the notes data
  */
-export const refreshNotes = () => client && client.refreshNotes.call( client );
+export const refreshNotes = () => getClient()?.refreshNotes();
 
 const defaultHandlers = {
 	APP_REFRESH_NOTES: [
 		( _store: any, action: any ) => {
+			const client = getClient();
 			if ( ! client ) {
 				return;
 			}
@@ -55,7 +69,13 @@ const defaultHandlers = {
 	],
 };
 
-const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) => {
+const NotificationContent = ( {
+	isDismissible,
+	constrainTabbing,
+}: {
+	isDismissible: boolean;
+	constrainTabbing: boolean;
+} ) => {
 	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 	const isDetailOpen = selectedNoteId !== undefined;
@@ -83,9 +103,18 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 	};
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
+	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
-		<HStack className="wpnc-app" spacing={ 0 } alignment="stretch">
+		<HStack
+			ref={ constrainTabbing ? constrainedTabbingRef : undefined }
+			className="wpnc-app"
+			spacing={ 0 }
+			alignment="stretch"
+			onClick={ ( event: MouseEvent< HTMLDivElement > ) =>
+				store.dispatch( interceptLinks( event ) )
+			}
+		>
 			<div
 				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
 				onTransitionEnd={ handleDetailPaneTransitionEnd }
@@ -123,50 +152,53 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
-	customEnhancer,
+	constrainTabbing = false,
+	isViewSettingsEnabled = false,
+	isSimplifiedNoteEnabled = false,
+	preferences,
+	onPreferenceChange,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
-	customEnhancer?: any;
+	constrainTabbing?: boolean;
+	isViewSettingsEnabled?: boolean;
+	isSimplifiedNoteEnabled?: boolean;
+	preferences?: NotificationPreferences;
+	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
-	const [ isReady, setIsReady ] = useState( !! client );
+	const [ isReady, setIsReady ] = useState( !! getClient() );
 
 	useEffect( () => {
+		initClient( wpcom, { includeNoteContext: isSimplifiedNoteEnabled && isViewSettingsEnabled } );
+		setIsReady( true );
+
 		store.dispatch( { type: 'APP_IS_READY' } );
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
-		client?.setVisibility( { isShowing: true, isVisible: true } );
+		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
-			client?.setVisibility( { isShowing: false, isVisible: false } );
+			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [] );
+	}, [ wpcom, isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
+
+	// Seeded once, whenever the host resolves them. A later value would overwrite
+	// whatever the picker has since saved.
+	useEffect( () => {
+		if ( ! preferences || hasResolvedPreferences ) {
+			return;
+		}
+
+		hasResolvedPreferences = true;
+		applyPreferences( preferences );
+	}, [ preferences ] );
 
 	useEffect( () => {
-		initAPI( wpcom );
-
-		if ( ! client ) {
-			client = new RestClient();
-			client.locale = locale;
-			client?.setVisibility( { isShowing: true, isVisible: true } );
-			setIsReady( true );
-		}
-	}, [ wpcom ] );
-
-	useEffect( () => {
-		if ( customEnhancer ) {
-			store = initStore( { customEnhancer } );
-		}
-	}, [ customEnhancer ] );
-
-	useEffect( () => {
-		if ( client ) {
-			client.locale = locale;
-		}
+		getClient()?.setLocale( locale );
 	}, [ locale ] );
 
 	useEffect( () => {
@@ -237,8 +269,17 @@ const NotificationApp = ( {
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				<AppProvider client={ client } locale={ locale }>
-					<NotificationContent isDismissible={ isDismissible } />
+				<AppProvider
+					client={ getClient() }
+					locale={ locale }
+					isViewSettingsEnabled={ isViewSettingsEnabled }
+					isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
+					onPreferenceChange={ onPreferenceChange }
+				>
+					<NotificationContent
+						isDismissible={ isDismissible }
+						constrainTabbing={ constrainTabbing }
+					/>
 				</AppProvider>
 			</Provider>
 		</ErrorBoundary>

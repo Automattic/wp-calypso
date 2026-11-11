@@ -95,8 +95,12 @@ describe( 'useSurvicate', () => {
 		// Flush microtasks so the loadSurvicateScript promise resolves
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-		expect( mockedLoadScript ).toHaveBeenCalledWith( SURVICATE_WORKSPACE_ID );
+		expect( mockedLoadScript ).toHaveBeenCalledWith(
+			SURVICATE_WORKSPACE_ID,
+			expect.any( AbortSignal )
+		);
 		expect( mockedSetTraits ).toHaveBeenCalledWith( {
+			user_id: '1',
 			email: 'test@example.com',
 			account_age_in_days: 42,
 		} );

@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CurrentUser, User, UserActions } from '@automattic/data-stores';
@@ -21,7 +20,7 @@ import {
 import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';
@@ -65,20 +64,21 @@ async function main() {
 					<MomentProvider>
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
-							<RecordPageView />
-							<Routes>
-								<Route
-									path="/subscriptions/site/:blogId/*"
-									element={
-										<SubscriptionManagerContextProvider
-											portal={ SubscriptionsPortal.Subscriptions }
-										>
-											<SiteSubscriptionPage />
-										</SubscriptionManagerContextProvider>
-									}
-								/>
-								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
-							</Routes>
+							<RecordPageView>
+								<Routes>
+									<Route
+										path="/subscriptions/site/:blogId/*"
+										element={
+											<SubscriptionManagerContextProvider
+												portal={ SubscriptionsPortal.Subscriptions }
+											>
+												<SiteSubscriptionPage />
+											</SubscriptionManagerContextProvider>
+										}
+									/>
+									<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
+								</Routes>
+							</RecordPageView>
 						</BrowserRouter>
 					</MomentProvider>
 				</QueryClientProvider>

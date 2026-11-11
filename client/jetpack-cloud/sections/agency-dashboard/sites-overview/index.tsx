@@ -16,6 +16,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import ProgramSunsetBanner from 'calypso/jetpack-cloud/components/program-sunset-banner';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -269,14 +270,14 @@ export default function SitesOverview() {
 								args: {
 									numLicenses: selectedLicensesCount,
 								},
-						  } )
+							} )
 						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 								context: 'button label',
 								count: selectedLicensesCount,
 								args: {
 									numLicenses: selectedLicensesCount,
 								},
-						  } ) }
+							} ) }
 				</Button>
 			</div>
 		);
@@ -312,6 +313,7 @@ export default function SitesOverview() {
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
+						<ProgramSunsetBanner />
 						<DashboardBanners />
 
 						{ isProvisioningSite && ! hasDismissedProvisioningNotice && (

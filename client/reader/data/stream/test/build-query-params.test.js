@@ -1,10 +1,15 @@
 /**
  * @jest-environment node
  */
-import { buildStreamQueryParams } from '../build-query-params';
+import {
+	SAVED_OLDEST_PUBLISHED_STREAM_KEY,
+	SAVED_OLDEST_STREAM_KEY,
+	SAVED_PUBLISHED_STREAM_KEY,
+	buildStreamQueryParams,
+} from '../build-query-params';
 
 const baseArgs = {
-	streamKey: 'space:6',
+	streamKey: 'shelf:6',
 	feedId: null,
 	isPoll: false,
 	gap: null,
@@ -13,11 +18,11 @@ const baseArgs = {
 	perPage: undefined,
 };
 
-describe( 'buildStreamQueryParams — space stream', () => {
+describe( 'buildStreamQueryParams — shelf stream', () => {
 	it( 'sends `count` (not `number`) and omits `page_handle` on the first page', () => {
 		const params = buildStreamQueryParams( { ...baseArgs, pageHandle: null } );
 
-		// Pinned SPACE_PER_PAGE (10) on the first page, locale as `_locale`, no cursor yet.
+		// Pinned SHELF_PER_PAGE (10) on the first page, locale as `_locale`, no cursor yet.
 		expect( params ).toEqual( { count: 10, _locale: 'en' } );
 	} );
 
@@ -38,8 +43,8 @@ describe( 'buildStreamQueryParams — space stream', () => {
 	} );
 
 	it( 'pins its own page size, ignoring the larger shared gap-fetch size', () => {
-		// A gap fetch would ask for PER_GAP (40) posts on other streams; the space
-		// ignores that and pins SPACE_PER_PAGE (10), which is already under the
+		// A gap fetch would ask for PER_GAP (40) posts on other streams; the shelf
+		// ignores that and pins SHELF_PER_PAGE (10), which is already under the
 		// 15-post server cap (the endpoint rejects a larger Elasticsearch query size).
 		const params = buildStreamQueryParams( {
 			...baseArgs,
@@ -51,8 +56,8 @@ describe( 'buildStreamQueryParams — space stream', () => {
 	} );
 } );
 
-describe( 'buildStreamQueryParams — space_discover stream', () => {
-	const discoverArgs = { ...baseArgs, streamKey: 'space_discover:6' };
+describe( 'buildStreamQueryParams — shelf_discover stream', () => {
+	const discoverArgs = { ...baseArgs, streamKey: 'shelf_discover:6' };
 
 	it( 'sends `count` and omits `page_handle` on the first page', () => {
 		const params = buildStreamQueryParams( { ...discoverArgs, pageHandle: null } );
@@ -81,5 +86,49 @@ describe( 'buildStreamQueryParams — space_discover stream', () => {
 		} );
 
 		expect( params.count ).toBe( 7 );
+	} );
+} );
+
+describe( 'buildStreamQueryParams — saved stream', () => {
+	it( 'leaves the order to the API, newest save first', () => {
+		const params = buildStreamQueryParams( { ...baseArgs, streamKey: 'saved', pageHandle: null } );
+
+		expect( params ).not.toHaveProperty( 'order' );
+		expect( params.orderBy ).toBe( 'date' );
+	} );
+
+	it( 'asks for the oldest save first', () => {
+		const params = buildStreamQueryParams( {
+			...baseArgs,
+			streamKey: SAVED_OLDEST_STREAM_KEY,
+			pageHandle: { page_handle: 'NEXT' },
+		} );
+
+		expect( params ).toMatchObject( { order: 'ASC', page_handle: 'NEXT' } );
+	} );
+
+	it( 'asks for the most recently published post first', () => {
+		const params = buildStreamQueryParams( {
+			...baseArgs,
+			streamKey: SAVED_PUBLISHED_STREAM_KEY,
+			pageHandle: { page_handle: 'NEXT' },
+		} );
+
+		expect( params ).toMatchObject( { orderBy: 'date_published', page_handle: 'NEXT' } );
+		expect( params ).not.toHaveProperty( 'order' );
+	} );
+
+	it( 'asks for the oldest published post first', () => {
+		const params = buildStreamQueryParams( {
+			...baseArgs,
+			streamKey: SAVED_OLDEST_PUBLISHED_STREAM_KEY,
+			pageHandle: { page_handle: 'NEXT' },
+		} );
+
+		expect( params ).toMatchObject( {
+			orderBy: 'date_published',
+			order: 'ASC',
+			page_handle: 'NEXT',
+		} );
 	} );
 } );

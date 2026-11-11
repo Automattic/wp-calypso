@@ -6,16 +6,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { bell, buttons, commentAuthorAvatar, lock, payment, settings } from '@wordpress/icons';
+import { bell, comment, commentAuthorAvatar, lock, payment, settings } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
-import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
-import type { AppConfig, MeSupports } from '../../app/context';
+import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 
 import './style.scss';
-
-const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof MeSupports ) => {
-	return supports.me && supports.me[ feature ];
-};
 
 export default function MeSidebar() {
 	const { data: userSettings } = useQuery( userSettingsQuery() );
@@ -25,23 +20,26 @@ export default function MeSidebar() {
 	}
 
 	return (
-		<VStack spacing={ 4 }>
-			<HStack justify="flex-start" alignment="center" spacing={ 3 }>
-				<div className="me-sidebar__avatar-wrapper">
-					<div className="me-sidebar__avatar">
-						<img src={ userSettings.avatar_URL } alt={ __( 'Profile photo' ) } />
+		<VStack spacing={ 2 }>
+			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
+			<VStack spacing={ 4 }>
+				<HStack justify="flex-start" alignment="center" spacing={ 3 }>
+					<div className="me-sidebar__avatar-wrapper">
+						<div className="me-sidebar__avatar">
+							<img src={ userSettings.avatar_URL } alt={ __( 'Profile photo' ) } />
+						</div>
 					</div>
-				</div>
-				<VStack spacing={ 0 } style={ { minWidth: 0 } }>
-					<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
-						{ userSettings.display_name }
-					</Text>
-					<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
-						{ `@${ userSettings.user_login }` }
-					</Text>
-				</VStack>
-			</HStack>
-			<MeMenuSidebar />
+					<VStack spacing={ 0 } style={ { minWidth: 0 } }>
+						<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
+							{ userSettings.display_name }
+						</Text>
+						<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
+							{ `@${ userSettings.user_login }` }
+						</Text>
+					</VStack>
+				</HStack>
+				<MeMenuSidebar />
+			</VStack>
 		</VStack>
 	);
 }
@@ -68,11 +66,9 @@ function MeMenuSidebar() {
 					{ __( 'Notifications' ) }
 				</SidebarMenuItem>
 			) }
-			{ hasAppSupport( supports, 'apps' ) && (
-				<SidebarMenuItem icon={ buttons } to="/me/apps">
-					{ __( 'Apps' ) }
-				</SidebarMenuItem>
-			) }
+			<SidebarMenuItem icon={ comment } to="/me/agent">
+				{ __( 'WordPress Agent' ) }
+			</SidebarMenuItem>
 		</SidebarMenu>
 	);
 }

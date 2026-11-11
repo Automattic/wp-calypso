@@ -5,6 +5,11 @@ import { EditorComponent } from './editor-component';
 import type { EditorPreviewOptions, EditorToolbarSettingsButton } from './types';
 
 const panel = '[aria-label="Editor top bar"]';
+
+// Toggling the inserter next to a block insertion can find the renderer still
+// busy with it. See editor-sidebar-block-inserter-component.ts.
+const INSERTER_TOGGLE_TIMEOUT = 20 * 1000;
+
 const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
@@ -20,8 +25,6 @@ const selectors = {
 	// Post status
 	postStatusButton: '.editor-post-status > button',
 
-	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
-		`button[role*="menuitem"] span:text-is("${ target }")`,
 	previewPane: '.edit-post-visual-editor',
 
 	// Publish
@@ -35,11 +38,6 @@ const selectors = {
 
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
-
-	// Document Actions dropdown
-	documentActionsDropdown: `${ panel } button[aria-label="Show template details"]`,
-	documentActionsDropdownItem: ( itemSelector: string ) => `.popover-slot ${ itemSelector }`,
-	documentActionsDropdownShowAll: '.popover-slot .edit-site-template-details__show-all-button',
 
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
@@ -121,7 +119,7 @@ export class EditorToolbarComponent {
 		if ( ! ( await this.targetIsOpen( blockInserterButton ) ) ) {
 			const editorParent = await this.editor.parent();
 			const locator = editorParent.locator( selectors.blockInserterButton );
-			await locator.click();
+			await locator.click( { timeout: INSERTER_TOGGLE_TIMEOUT } );
 		}
 	}
 
@@ -145,7 +143,7 @@ export class EditorToolbarComponent {
 			( await blockInserterButton.count() ) > 0 &&
 			( await this.targetIsOpen( blockInserterButton ) )
 		) {
-			await blockInserterButton.click();
+			await blockInserterButton.click( { timeout: INSERTER_TOGGLE_TIMEOUT } );
 		}
 	}
 
@@ -196,10 +194,7 @@ export class EditorToolbarComponent {
 
 		// Locate and click on the intended preview target.
 		const editorParent = await this.editor.parent();
-		const desktopPreviewMenuItemLocator = editorParent.locator(
-			selectors.desktopPreviewMenuItem( target )
-		);
-		await desktopPreviewMenuItemLocator.click();
+		await editorParent.getByRole( 'menuitemradio', { name: target } ).click();
 
 		// Verify the editor panel is resized and stable.
 		const desktopPreviewPaneLocator = editorParent.locator( selectors.previewPane );
@@ -287,7 +282,12 @@ export class EditorToolbarComponent {
 		await Promise.race( [
 			( async () => {
 				// Works with Gutenberg >=v18.2.0
-				await editorParent.locator( selectors.postStatusButton ).click();
+				// TODO: Drop the legacy selector once the DataForm post summary ships in stable Gutenberg.
+				await editorParent
+					.getByRole( 'button', { name: /^Edit Status/ } )
+					.or( editorParent.locator( selectors.postStatusButton ) )
+					.first()
+					.click();
 				await editorParent.getByRole( 'radio', { name: 'Draft' } ).click();
 			} )(),
 			( async () => {
@@ -343,9 +343,21 @@ export class EditorToolbarComponent {
 			'[role="menuitemcheckbox"][aria-controls="jetpack-sidebar:jetpack"]'
 		);
 
+		// Gutenberg 24.2 moved plugin sidebar items from the top level of the
+		// Options menu into a "Panels" submenu.
+		const panelsSubmenu = editorParent.getByRole( 'menuitem', {
+			name: await this.translateFromPage( 'Panels' ),
+			exact: true,
+		} );
+
 		const maxAttempts = 3;
 		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
 			await this.openMoreOptionsMenu();
+
+			await menuItem.or( panelsSubmenu ).first().waitFor();
+			if ( await panelsSubmenu.isVisible() ) {
+				await panelsSubmenu.click();
+			}
 
 			if ( await this.targetIsOpen( menuItem ) ) {
 				// The Jetpack entry is already selected; close the menu and let
@@ -679,24 +691,6 @@ export class EditorToolbarComponent {
 	async saveSiteEditor(): Promise< void > {
 		const editorParent = await this.editor.parent();
 		const locator = editorParent.locator( selectors.saveSiteEditorButton );
-		await locator.click();
-	}
-
-	/**
-	 * Click the document actions icon for the full site editor.
-	 */
-	async clickDocumentActionsIcon(): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.documentActionsDropdown );
-		await locator.click();
-	}
-
-	/**
-	 * Click the document actions icon for the full site editor.
-	 */
-	async clickDocumentActionsDropdownItem( itemName: string ): Promise< void > {
-		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.documentActionsDropdownItem( itemName ) );
 		await locator.click();
 	}
 }

@@ -76,7 +76,7 @@ class MeSidebar extends Component {
 			const { redirect_to } = await this.props.logoutUser( redirectTo );
 			disablePersistence();
 			await clearStore();
-			window.location.href = redirect_to || '/';
+			window.location.href = redirect_to || '/log-in';
 		} catch {
 			// The logout endpoint might fail if the nonce has expired.
 			// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
@@ -225,14 +225,6 @@ class MeSidebar extends Component {
 						icon={ notAllowed }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="site-blocks"
-					/>
-
-					<SidebarItem
-						selected={ itemLinkMatches( '/get-apps', path ) }
-						link="/me/get-apps"
-						label={ translate( 'Apps' ) }
-						icon="plans"
-						onNavigate={ this.onNavigate }
 					/>
 				</SidebarMenu>
 			</>

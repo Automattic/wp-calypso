@@ -31,6 +31,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
+import { A4ATitanInboxMeta, isA4ATitanInboxProduct } from './a4a-titan-inbox';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { type CartBundleLineItem } from './group-bundle-line-items';
 import {
@@ -78,6 +79,8 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 `;
 
@@ -97,6 +100,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+		white-space: nowrap;
+		flex-shrink: 0;
 
 		${ ( { shouldShowComparison } ) =>
 			shouldShowComparison &&
@@ -194,6 +199,7 @@ const LineItemPriceWrapper = styled.span`
 	gap: 4px;
 	margin-left: 12px;
 	font-size: inherit;
+	white-space: nowrap;
 
 	.rtl & {
 		margin-right: 12px;
@@ -252,6 +258,13 @@ const BundleTermPrice = styled.span`
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+`;
+
+const BundleRenewalNote = styled.div< { theme?: Theme } >`
+	width: 100%;
+	margin: 8px 0;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
@@ -581,6 +594,14 @@ export function BundleLineItem( {
 				</BundleTermPrice>
 			</BundleTermRow>
 
+			{ /* Bundle members renew at full price, so the renewal amount is the
+			     pre-discount group total. */ }
+			<BundleRenewalNote>
+				{ translate( 'Auto-renews at %(price)s/year.', {
+					args: { price: bundleOriginalDisplay },
+				} ) }
+			</BundleRenewalNote>
+
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
@@ -772,7 +793,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your plan will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your plan will be removed from the cart and your site will continue to run with its current plan.'
-						  )
+							)
 				),
 			};
 		case 'domain':
@@ -828,7 +849,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your product will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
-						  )
+							)
 				),
 			};
 	}
@@ -1120,7 +1141,7 @@ export function LineItemSublabelAndPrice( {
 						{ isRenewalPricingExperiment
 							? translate( 'Auto-renews at %(price)s/month. Billed every month.', {
 									args: { price: actualMonthlyPrice },
-							  } )
+								} )
 							: translate( 'Billed every month' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
@@ -1224,7 +1245,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per month', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per month', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1234,7 +1257,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per year', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per year', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1244,7 +1269,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per two years', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per two years', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1254,7 +1281,9 @@ export function LineItemSublabelAndPrice( {
 		return (
 			<>
 				<DefaultLineItemSublabel product={ product } />:{ ' ' }
-				{ translate( '%(price)s per three years', { args: { price } } ) }
+				{ product.is_gift_purchase
+					? translate( '%(price)s (one time payment)', { args: { price } } )
+					: translate( '%(price)s per three years', { args: { price } } ) }
 				<LineItemExpiryDates product={ product } />
 			</>
 		);
@@ -1441,17 +1470,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isMonthlyProduct( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1460,17 +1491,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1479,17 +1512,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							discount: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1514,7 +1549,12 @@ function IntroductoryOfferCallout( {
 	);
 
 	const planSlug = product.product_slug;
-	if ( isRenewalPricingExperiment && isWpComPlan( planSlug ) ) {
+	// Titan inbox line items show only the domain and inbox count; the totals
+	// and terms of service carry the trial and renewal terms.
+	if (
+		( isRenewalPricingExperiment && isWpComPlan( planSlug ) ) ||
+		isA4ATitanInboxProduct( product )
+	) {
 		return null;
 	}
 
@@ -1599,7 +1639,7 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 
 	if (
 		isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug ) &&
-		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
+		product.item_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
@@ -1817,7 +1857,7 @@ function CheckoutLineItem( {
 			? formatCurrency( compareToPrice, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
-			  } )
+				} )
 			: undefined;
 
 	// For products with stacked cost overrides (e.g. premium domains with a
@@ -1832,7 +1872,7 @@ function CheckoutLineItem( {
 		? formatCurrency( priceBeforeDiscountsInteger, product.currency, {
 				isSmallestUnit: true,
 				stripZeros: true,
-		  } )
+			} )
 		: undefined;
 
 	const isEmail =
@@ -1943,7 +1983,11 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span className="checkout-line-item__price">
+			{ /* Keyed so a cart update replaces this container rather than removing its bare text nodes, which browser page-translation detaches. */ }
+			<span
+				key={ isCartUpdating ? 'price-loading' : 'price' }
+				className="checkout-line-item__price"
+			>
 				<LineItemPriceContent
 					isCartUpdating={ isCartUpdating }
 					shouldShowComparison={ shouldShowComparison }
@@ -1967,7 +2011,10 @@ function CheckoutLineItem( {
 						<UpgradeCreditInformationLineItem>
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
-						<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+						<LineItemMeta
+							key={ isCartUpdating ? 'sublabel-loading' : 'sublabel' }
+							isRenewalPricingExperiment={ isRenewalPricingExperiment }
+						>
 							<LineItemSublabelAndPrice
 								product={ product }
 								shouldShowComparison={ shouldShowComparison }
@@ -1989,7 +2036,10 @@ function CheckoutLineItem( {
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+				<LineItemMeta
+					key={ isCartUpdating ? 'sublabel-loading' : 'sublabel' }
+					isRenewalPricingExperiment={ isRenewalPricingExperiment }
+				>
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
@@ -2002,6 +2052,8 @@ function CheckoutLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+
+			{ isA4ATitanInboxProduct( product ) && <A4ATitanInboxMeta product={ product } /> }
 
 			{ children }
 

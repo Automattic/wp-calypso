@@ -3,12 +3,6 @@ import './wpadmin-sidebar.scss';
 import './wpadmin-style.scss';
 import './hybrid-sidebar.scss';
 
-import {
-	isLocalWpAdminOrigin,
-	isRemoteMsd,
-	siteWpAdminLandingUrl,
-} from '../sites/overview-blogger/mock-sites';
-
 /**
  * MSD-side Prototype controls: a fab/panel matching the one injected on every
  * wp-admin screen by the untangling mu-plugin. wp-admin and the MSD are
@@ -96,28 +90,14 @@ function activate( seg: HTMLElement, button: HTMLButtonElement ) {
  * the site-type toggle) at /wp-json/untangling/v1/upsell.
  */
 
-interface OmnibarOffer {
-	active: boolean;
-	pill: string;
-	text: string;
-	gem: boolean;
-	href: string;
-}
-
-const GEM_SVG =
-	'<svg class="untangling-nudge-gem" viewBox="4 5 16 14" aria-hidden="true"><path d="M18.9397 9.87999L15.4197 6.06999L15.3597 6.00999C15.2897 5.93999 15.1997 5.89999 15.0997 5.89999H8.87973C8.77973 5.89999 8.68973 5.93999 8.61973 6.00999L5.05973 9.87999C4.93973 10.01 4.93973 10.21 5.05973 10.34L11.5397 17.86C11.6497 17.99 11.8197 18.07 11.9997 18.07C12.1797 18.07 12.3397 17.99 12.4597 17.86L18.9397 10.34C19.0597 10.21 19.0497 10.01 18.9397 9.87999ZM15.4097 7.53999L17.3297 9.63999H15.1697L15.4097 7.53999ZM14.4297 6.83999L14.1097 9.63999H10.2897L9.64973 6.83999H14.4297ZM8.68973 7.42999L9.19973 9.63999H6.66973L8.68973 7.42999ZM6.61973 10.6H9.42973L10.8397 15.49L6.61973 10.6ZM12.0397 15.87L10.5297 10.6H13.8597L12.0397 15.87ZM14.9697 10.6H17.3797L13.3697 15.24L14.9697 10.6Z"/></svg>';
-
-const offerCache = new Map< string, Promise< OmnibarOffer | null > >();
-
-// The offer's return params are computed on the wp-admin side (the REST
-// endpoint spoofs REQUEST_URI to the My Site page). Clicked from the MSD,
-// every return leg must lead back here instead — to the page the user is on
-// at click time, since the offer is cached while the SPA navigates. Absolute
-// URL on purpose: a relative back_to would resolve against the stepper's
-// origin, not this app's.
+// The omnibar upsell pill is production's own `free-domain-upsell` node, fed
+// by the mock site admin bar (see mock-sites.ts). Two prototype fixes ride on
+// its click: the return legs must lead back to the MSD page the user is on,
+// and the dashboard SPA must not swallow the link (its router has no /setup
+// route), so force the full page load the stepper needs.
 function withMsdReturn( href: string ): string {
 	try {
-		const url = new URL( href );
+		const url = new URL( href, window.location.href );
 		const msdUrl = window.location.href;
 		if ( url.searchParams.has( 'back_to' ) ) {
 			url.searchParams.set( 'back_to', msdUrl );
@@ -137,138 +117,25 @@ function withMsdReturn( href: string ): string {
 	}
 }
 
-function fetchOffer( origin: string ): Promise< OmnibarOffer | null > {
-	let cached = offerCache.get( origin );
-	if ( ! cached ) {
-		cached = fetch( `${ origin }/wp-json/untangling/v1/upsell` )
-			.then( ( response ) => ( response.ok ? response.json() : null ) )
-			.catch( () => null );
-		offerCache.set( origin, cached );
-	}
-	return cached;
-}
-
-// wp-admin renders the pill after the action icons (updates, comments,
-// + New), not after the site name — mirror that order. Falls back to the
-// site link while the actions have not mounted yet. Returns the element the
-// pill should sit directly after (the item wrapper, so the pill takes its
-// own slot in the bar).
-function omnibarNudgeSlot( bar: HTMLElement | null, siteLink: HTMLElement ): HTMLElement | null {
-	const actionsItem = bar?.querySelector< HTMLElement >( '.masterbar__item-my-site-actions' );
-	const anchor = actionsItem ?? siteLink;
-	return ( anchor.closest( '.masterbar__item-wrapper' ) as HTMLElement | null ) ?? anchor;
-}
-
-function ensureOmnibarNudge() {
-	const bar = document.getElementById( 'wpcom-omnibar' );
-	const existing = bar?.querySelector< HTMLElement >( '.untangling-omnibar-nudge' ) ?? null;
-	const siteLink = bar?.querySelector< HTMLAnchorElement >( 'a.masterbar__item-my-site' ) ?? null;
-	let origin = '';
-	try {
-		origin = siteLink ? new URL( siteLink.href ).origin : '';
-	} catch {
-		origin = '';
-	}
-	if ( ! siteLink || ! isLocalWpAdminOrigin( origin ) ) {
-		existing?.remove();
-		return;
-	}
-	if ( existing?.dataset.origin === origin ) {
-		// The masterbar mounts progressively; if the action icons appeared
-		// after the pill was placed, move the pill back behind them.
-		const slot = omnibarNudgeSlot( bar, siteLink );
-		if ( slot && slot.nextElementSibling !== existing ) {
-			slot.insertAdjacentElement( 'afterend', existing );
-		}
-		return;
-	}
-	existing?.remove();
-	fetchOffer( origin ).then( ( offer ) => {
-		if ( ! offer?.active ) {
-			return;
-		}
-		const currentBar = document.getElementById( 'wpcom-omnibar' );
-		const currentSiteLink = currentBar?.querySelector< HTMLAnchorElement >(
-			'a.masterbar__item-my-site'
-		);
-		if ( ! currentSiteLink || currentBar?.querySelector( '.untangling-omnibar-nudge' ) ) {
-			return;
-		}
-		const item = document.createElement( 'a' );
-		// --always-show-content opts out of the masterbar's 46px mobile squeeze,
-		// so the full pill keeps its width at every viewport.
-		item.className =
-			'masterbar__item masterbar__item--always-show-content untangling-omnibar-nudge';
-		item.href = offer.href;
-		item.dataset.origin = origin;
-		const pill = document.createElement( 'span' );
-		pill.className = 'untangling-nudge-pill';
-		pill.setAttribute( 'data-tip', offer.text );
-		if ( offer.gem ) {
-			pill.innerHTML = GEM_SVG;
-		}
-		pill.appendChild( document.createTextNode( offer.pill ) );
-		item.appendChild( pill );
-		// The dashboard SPA intercepts same-origin anchors and its router has no
-		// /setup route, so it 404s; force the full load the stepper needs.
-		item.addEventListener( 'click', ( event ) => {
+function watchOmnibar() {
+	document.addEventListener(
+		'click',
+		( event ) => {
+			const target = event.target instanceof Element ? event.target : null;
+			const pill = target?.closest< HTMLElement >( '#wpcom-omnibar .omnibar__free-domain-upsell' );
+			const anchor = pill?.matches( 'a' )
+				? pill
+				: ( pill?.querySelector( 'a' ) ?? target?.closest( 'a' ) );
+			const href = anchor instanceof HTMLAnchorElement ? anchor.href : '';
+			if ( ! pill || ! href || ! href.includes( 'untangling' ) ) {
+				return;
+			}
 			event.preventDefault();
 			event.stopPropagation();
-			window.location.assign( withMsdReturn( offer.href ) );
-		} );
-		const slot = omnibarNudgeSlot( currentBar, currentSiteLink );
-		slot?.insertAdjacentElement( 'afterend', item );
-	} );
-}
-
-// On a remote MSD the omnibar's Studio-backed links (updates, comments,
-// Dashboard rows fed by the mock admin_url) point at unreachable localhost
-// origins — collapse them onto the site's Playground stand-in.
-function rewriteLocalAdminLinks() {
-	if ( ! isRemoteMsd() ) {
-		return;
-	}
-	const bar = document.getElementById( 'wpcom-omnibar' );
-	bar
-		?.querySelectorAll< HTMLAnchorElement >( 'a[href^="http://localhost:"]' )
-		.forEach( ( anchor ) => {
-			try {
-				const origin = new URL( anchor.href ).origin;
-				if ( isLocalWpAdminOrigin( origin ) ) {
-					anchor.href = siteWpAdminLandingUrl( `${ origin }/wp-admin/` ) ?? anchor.href;
-				}
-			} catch {
-				// Not a URL; leave it alone.
-			}
-		} );
-}
-
-function watchOmnibar() {
-	// The masterbar mounts and re-renders per route; keep the pill in step.
-	const sync = () => {
-		ensureOmnibarNudge();
-		rewriteLocalAdminLinks();
-	};
-	const observer = new MutationObserver( sync );
-	observer.observe( document.body, { childList: true, subtree: true } );
-	sync();
-	// Same tooltip behaviour as the wp-admin pill: --untangling-tip-x centres
-	// the bubble where the cursor enters the pill, then freezes until the next
-	// entry. Crossing the pill's children re-fires mouseover; those are ignored
-	// or the bubble jumps. Clamped half a bubble (130px) plus an 8px gutter
-	// from the viewport edges.
-	document.addEventListener( 'mouseover', ( event ) => {
-		const target = event.target instanceof Element ? event.target : null;
-		const pill = target?.closest< HTMLElement >( '.untangling-nudge-pill' );
-		if ( ! pill ) {
-			return;
-		}
-		if ( event.relatedTarget instanceof Node && pill.contains( event.relatedTarget ) ) {
-			return;
-		}
-		const x = Math.max( 138, Math.min( event.clientX, window.innerWidth - 138 ) );
-		pill.style.setProperty( '--untangling-tip-x', `${ x - pill.getBoundingClientRect().left }px` );
-	} );
+			window.location.assign( withMsdReturn( href ) );
+		},
+		true
+	);
 }
 
 function mount() {

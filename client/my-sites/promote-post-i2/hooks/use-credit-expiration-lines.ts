@@ -46,10 +46,10 @@ export const useCreditExpirationLines = (
 			return shortText
 				? translate( '%(amount)s expiring on %(date)s', {
 						args: { amount, date },
-				  } )
+					} )
 				: translate( '%(amount)s in credits expiring on %(date)s', {
 						args: { amount, date },
-				  } );
+					} );
 		} );
 
 		return [ header, ...items ];

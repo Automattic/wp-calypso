@@ -1,14 +1,13 @@
-/* eslint-disable no-restricted-imports */
-
-import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useShouldUseWapuu } from './use-should-use-wapuu';
 
 export function useStillNeedHelpURL() {
 	const shouldUseWapuu = useShouldUseWapuu();
+	const { product } = useHelpCenterContext();
 
 	let url = '/contact-form';
 
-	if ( shouldUseWapuu && ! isA8CForAgencies() ) {
+	if ( shouldUseWapuu && product !== 'a4a' ) {
 		url = '/odie';
 	}
 

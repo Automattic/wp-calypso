@@ -1,17 +1,21 @@
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
-import { ProgressBar } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
-import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import {
+	getImporterTypeForEngine,
+	isPlanUpgradeRequiredForImport,
+} from 'calypso/blocks/importer/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -30,9 +34,6 @@ import {
 } from 'calypso/state/imports/selectors';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { requestSites } from 'calypso/state/sites/actions';
-import { isRequestingSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -70,23 +71,16 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		const currentUser = useSelector( getCurrentUser );
 		const { site, siteId, siteSlug } = useSiteData();
+		const { isLoading: isSiteLoading, isError: isSiteError } = useSiteQuery();
 		const runImportInitially = useInitialQueryRun( siteId );
-		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, site, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
-		const hasAllSitesFetched = useSelector( hasAllSitesList );
 
-		const isRequestingCurrentSite = useSelector( ( state ) =>
-			siteId ? isRequestingSite( state, siteId ) : false
-		);
-
-		const isLoading = useMemo( () => {
-			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
-		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
+		const isLoading = ! isSiteError && ( isSiteLoading || ! isImporterStatusHydrated );
 
 		const skipToDashboardAction = useCallback( () => {
 			recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
@@ -100,11 +94,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 		 */
-		useEffect( () => {
-			dispatch( requestSites() );
-		}, [ dispatch ] );
-
-		useAtomicTransferQueryParamUpdate( siteId );
+		useAtomicTransferQueryParamUpdate( site );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
@@ -169,7 +159,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			if ( site?.site_owner === currentUser?.ID ) {
 				return true;
 			}
-			return canImport;
+			return !! site?.capabilities?.manage_options;
 		}
 
 		function checkFromSiteData(): void {
@@ -195,7 +185,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			if ( isLoading ) {
 				return (
 					<div className="step-container-v2--loading import-layout__center">
-						<ProgressBar className="step-container-v2--loading__progress-bar" />
+						<Progress.Root
+							className="step-container-v2--loading__progress-bar"
+							aria-label={ __( 'Loading…' ) }
+							value={ null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
 					</div>
 				);
 			}
@@ -237,41 +235,56 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const showHeading = statesToShowHeading.includes( importJob?.importerState ?? '' );
 		const showBackButton = importJob?.importerState !== appStates.IMPORT_SUCCESS;
 		const showSkipButton = importJob?.importerState === appStates.IMPORT_SUCCESS;
-		const title =
-			importJob?.importerState === appStates.IMPORTING ? __( 'Importing' ) : importerData.title;
+		const showPlansGrid = isPlanUpgradeRequiredForImport( site ?? undefined, importJob );
+		const getHeading = () => {
+			if ( showPlansGrid ) {
+				return {
+					text: __( 'Pick a plan to continue your import' ),
+					subText: __(
+						'Importing a backup file requires a paid plan. Choose the plan that best fits your needs.'
+					),
+				};
+			}
+			return {
+				text:
+					importJob?.importerState === appStates.IMPORTING ? __( 'Importing' ) : importerData.title,
+				subText: importerData.description,
+			};
+		};
+		const layoutProps = {
+			className: clsx(
+				'import__onboarding-page',
+				'importer-wrapper',
+				'import__onboarding-page--redesign',
+				{
+					[ `importer-wrapper__${ importer }` ]: !! importer,
+				}
+			),
+			topBar: (
+				<Step.TopBar
+					leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
+					rightElement={
+						showSkipButton ? (
+							<Step.SkipButton onClick={ skipToDashboardAction }>
+								{ __( 'Skip to dashboard' ) }
+							</Step.SkipButton>
+						) : null
+					}
+				/>
+			),
+			heading: showHeading && <Step.Heading { ...getHeading() } />,
+			children: renderStepContent(),
+		};
 		return (
 			<>
 				<QuerySites siteId={ siteId } />
 				<DocumentHead title={ __( 'Import your site content' ) } />
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
-				<Step.CenteredColumnLayout
-					className={ clsx(
-						'import__onboarding-page',
-						'importer-wrapper',
-						'import__onboarding-page--redesign',
-						{
-							[ `importer-wrapper__${ importer }` ]: !! importer,
-						}
-					) }
-					columnWidth={ 6 }
-					topBar={
-						<Step.TopBar
-							leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
-							rightElement={
-								showSkipButton ? (
-									<Step.SkipButton onClick={ skipToDashboardAction }>
-										{ __( 'Skip to dashboard' ) }
-									</Step.SkipButton>
-								) : null
-							}
-						/>
-					}
-					heading={
-						showHeading && <Step.Heading text={ title } subText={ importerData.description } />
-					}
-				>
-					{ renderStepContent() }
-				</Step.CenteredColumnLayout>
+				{ showPlansGrid ? (
+					<Step.WideLayout { ...layoutProps } />
+				) : (
+					<Step.CenteredColumnLayout { ...layoutProps } columnWidth={ 6 } />
+				) }
 			</>
 		);
 	};

@@ -9,19 +9,19 @@ import {
 } from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { isCreditsCommandMessageId } from '../utils/credits-command';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
-import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { Message, MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { AuthProvider, UIMessage as Message } from '@automattic/agenttic-client';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
-export interface UseFeedbackActionConfig {
-	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
+interface UseFeedbackActionConfig {
 	messages: Message[];
 	getTraceIdForMessage?: ( messageId: string ) => string | undefined;
 }
 
-export interface UseFeedbackActionReturn {
+interface UseFeedbackActionReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;
@@ -78,15 +78,19 @@ export async function submitFeedback(
 	messageId: string,
 	feedback: string,
 	previousMessages?: PreviousMessage[],
-	traceId?: string
+	traceId?: string,
+	metadata?: Record< string, string >
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
 
-	const data: Record< string, string | PreviousMessage[] > = {
+	const data: Record< string, string | PreviousMessage[] | Record< string, string > > = {
 		message_id: messageId,
 		feedback,
 	};
+	if ( metadata ) {
+		data.metadata = metadata;
+	}
 	if ( traceId ) {
 		data.trace_id = traceId;
 	}
@@ -181,7 +185,7 @@ export default function useFeedbackAction( {
 	messages,
 	getTraceIdForMessage,
 }: UseFeedbackActionConfig ): UseFeedbackActionReturn {
-	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
+	const { agentConfig, isLoggedIn, getTabSessionId } = useAgentsManagerContext();
 	const { sessionId, authProvider } = agentConfig!;
 	const [ showFeedbackInput, setShowFeedbackInput ] = useState( false );
 	const [ feedbackMessageId, setFeedbackMessageId ] = useState< string | null >( null );
@@ -197,14 +201,16 @@ export default function useFeedbackAction( {
 	const handleFeedback = useCallback(
 		( messageId: string, feedback: 'up' | 'down' ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = getActiveSessionId();
+			const currentSessionId = getTabSessionId();
 
 			if ( ! currentSessionId || ! currentAuthProvider ) {
 				return;
 			}
 
 			recordBigSkyTracksEvent(
-				feedback === 'up' ? 'response_action_thumbs_up' : 'response_action_thumbs_down',
+				feedback === 'up'
+					? 'jetpack_big_sky_response_action_thumbs_up'
+					: 'jetpack_big_sky_response_action_thumbs_down',
 				{ message_id: messageId }
 			);
 
@@ -230,7 +236,7 @@ export default function useFeedbackAction( {
 				setFeedbackMessageId( null );
 			}
 		},
-		[ getActiveSessionId ]
+		[ getTabSessionId ]
 	);
 
 	const feedbackManager = useMemo( () => {
@@ -241,7 +247,9 @@ export default function useFeedbackAction( {
 
 		return createFeedbackActions( {
 			onFeedback: handleFeedback,
-			condition: ( message: Message ) => message.role === 'agent',
+			// The server has no record of the browser's own `/credits` answer to rate.
+			condition: ( message: Message ) =>
+				message.role === 'agent' && ! isCreditsCommandMessageId( message.id ),
 			icons: {
 				up: createElement( ThumbsUpIcon, { className: 'agents-manager-message-action-icon' } ),
 				down: createElement( ThumbsDownIcon, { className: 'agents-manager-message-action-icon' } ),
@@ -293,7 +301,7 @@ export default function useFeedbackAction( {
 	const handleSubmitFeedbackText = useCallback(
 		async ( feedbackText: string ) => {
 			const currentAuthProvider = authProviderRef.current;
-			const currentSessionId = getActiveSessionId();
+			const currentSessionId = getTabSessionId();
 			const currentMessageId = feedbackMessageId;
 
 			if (
@@ -317,11 +325,11 @@ export default function useFeedbackAction( {
 				traceId
 			);
 
-			recordAgentsManagerTracksEvent( 'response_feedback_submitted', {
+			recordAgentsManagerTracksEvent( 'calypso_agents_manager_response_feedback_submitted', {
 				message_id: currentMessageId,
 			} );
 		},
-		[ feedbackMessageId, getActiveSessionId ]
+		[ feedbackMessageId, getTabSessionId ]
 	);
 
 	return {

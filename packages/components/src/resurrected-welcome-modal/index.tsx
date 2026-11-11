@@ -172,7 +172,7 @@ export default function ResurrectedWelcomeModal( {
 						label: getDraftCtaLabel( truncatedDraftTitle ),
 						href: `/post/${ lastDraft.siteId }/${ lastDraft.id }`,
 						variant: 'primary',
-				  }
+					}
 				: cta
 		);
 	}

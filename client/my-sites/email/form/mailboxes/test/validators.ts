@@ -101,7 +101,7 @@ const createTestDataForTitan = ( overrides: TitanTestDataType = {} ): TitanTestD
 		...{
 			[ FIELD_NAME ]: 'Name',
 			[ FIELD_MAILBOX ]: 'info',
-			[ FIELD_PASSWORD ]: '--password',
+			[ FIELD_PASSWORD ]: '--password1',
 			[ FIELD_PASSWORD_RESET_EMAIL ]: 'email.000@gmail.com',
 		},
 		...overrides,
@@ -296,6 +296,45 @@ const finalTestDataForAllCases = [
 		{
 			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordContainsForbiddenCharacterError( '₧' ),
 		}
+	),
+	provideTitanTestData(
+		'Passwords must follow the approved pattern or fail validation (6). Missing number.',
+		createTestDataForTitan( {
+			[ FIELD_PASSWORD ]: 'abcdefghij',
+		} ),
+		{
+			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordMissingNumberError(),
+		}
+	),
+	provideTitanTestData(
+		'Passwords must follow the approved pattern or fail validation (7). Missing special character.',
+		createTestDataForTitan( {
+			[ FIELD_PASSWORD ]: 'abcdefghi1',
+		} ),
+		{
+			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordMissingSpecialCharacterError(),
+		}
+	),
+	provideTitanTestData(
+		'Passwords must follow the approved pattern or fail validation (8). Too short with number and special character.',
+		createTestDataForTitan( {
+			[ FIELD_PASSWORD ]: 'abcdef1!',
+		} ),
+		{
+			[ FIELD_PASSWORD ]: PasswordValidator.getPasswordTooShortError( 10 ),
+		}
+	),
+	provideTitanTestData(
+		'Passwords with a number and a special character should pass',
+		createTestDataForTitan( {
+			[ FIELD_PASSWORD ]: 'abcdefgh1!',
+		} )
+	),
+	provideGoogleTestData(
+		'Passwords without a number or a special character should pass',
+		createTestDataForGoogle( {
+			[ FIELD_PASSWORD ]: 'abcdefghijkl',
+		} )
 	),
 ];
 

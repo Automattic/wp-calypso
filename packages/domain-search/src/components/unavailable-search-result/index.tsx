@@ -1,7 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { getRootDomain, isSubdomain } from '../../helpers';
+import { getRootDomain, isSubdomain, isSubdomainWithUnavailableRootDomain } from '../../helpers';
 import { useDomainSearch } from '../../page/context';
 import { DomainSuggestion } from '../../ui';
 import type { UnavailableProps } from '../../ui/domain-suggestion/unavailable';
@@ -29,6 +29,12 @@ export const UnavailableSearchResult = () => {
 
 	const props: UnavailableProps | null = useMemo( () => {
 		if ( ! availability || ! STATUSES_WITH_MESSAGES.includes( availability.status ) ) {
+			return null;
+		}
+
+		// A mapped-root subdomain can't be transferred; the SearchNotice explains why.
+		// (REGISTERED never reaches here: not in STATUSES_WITH_MESSAGES.)
+		if ( isSubdomainWithUnavailableRootDomain( availability, query ) ) {
 			return null;
 		}
 
@@ -64,7 +70,7 @@ export const UnavailableSearchResult = () => {
 			reason: 'already-registered',
 			onTransferClick,
 		};
-	}, [ availability, onExternalDomainClick, allowsUsingOwnDomain ] );
+	}, [ availability, query, onExternalDomainClick, allowsUsingOwnDomain ] );
 
 	if ( ! props ) {
 		return null;

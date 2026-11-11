@@ -6,6 +6,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import type { CheckoutAttribution } from 'calypso/my-sites/plans-features-main/hooks/use-generate-action-callback';
 
 import './style.scss';
 
@@ -23,6 +24,7 @@ interface StudentPlansPageProps {
 	coupon?: string;
 	redirectTo?: string;
 	pluginSlug?: string;
+	checkoutAttribution?: CheckoutAttribution;
 	discountEndDate?: Date;
 }
 
@@ -34,6 +36,7 @@ const StudentPlansPage = ( {
 	coupon,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 	discountEndDate,
 }: StudentPlansPageProps ) => {
 	const translate = useTranslate();
@@ -79,7 +82,7 @@ const StudentPlansPage = ( {
 							priceDescription,
 						},
 					}
-			  )
+				)
 			: null;
 
 	return (
@@ -115,6 +118,7 @@ const StudentPlansPage = ( {
 					coupon={ coupon }
 					redirectTo={ redirectTo }
 					pluginSlug={ pluginSlug }
+					checkoutAttribution={ checkoutAttribution }
 					discountEndDate={ discountEndDate }
 				/>
 			</div>

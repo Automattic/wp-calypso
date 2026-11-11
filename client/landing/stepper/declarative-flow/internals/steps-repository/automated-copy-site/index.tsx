@@ -1,53 +1,44 @@
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import {
+	createRevertedTransferWatcher,
+	getTransferFailureMessage,
+	transferStates,
+} from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
 
 const TIME_CHECK_TRANSFER_STATUS = 3000;
-
-export const transferStates = {
-	PENDING: 'pending',
-	ACTIVE: 'active',
-	PROVISIONED: 'provisioned',
-	COMPLETED: 'completed',
-	ERROR: 'error',
-	REVERTED: 'reverted',
-	RELOCATING_REVERT: 'relocating_revert',
-	RELOCATING_SWITCHEROO: 'relocating_switcheroo',
-	REVERTING: 'reverting',
-	RENAMING: 'renaming',
-	EXPORTING: 'exporting',
-	IMPORTING: 'importing',
-	CLEANUP: 'cleanup',
-} as const;
+const TRANSFER_TIMEOUT = 1000 * 300;
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
-	const { submit } = navigation;
-	const site = useSite();
+	const { submit, exitFlow } = navigation;
+	const { data: site, isError: isDestinationError } = useSiteQuery();
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceSite = useSelect(
-		( select ) =>
-			sourceSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ) : undefined,
-		[ sourceSlug ]
-	);
+	const { data: sourceSite } = useSiteQuery( sourceSlug ?? undefined, { enabled: !! sourceSlug } );
 	const sourceSiteId = sourceSite?.ID;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
-		( select ) => select( SITE_STORE ) as SiteSelect,
+		( select ) => select( SITE_STORE ),
 		[]
 	);
 	const instanceRef = useRef< { siteId?: number; sourceSiteId?: number } >( {} );
 
 	useEffect( () => {
+		if ( isDestinationError ) {
+			exitFlow?.( '/sites' );
+			return;
+		}
 		if ( ! site?.ID || ! sourceSiteId ) {
 			return;
 		}
@@ -69,13 +60,28 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 					},
 				} );
 			} catch ( _error ) {
-				throw new Error( 'Error copying site' );
+				throw new Error( __( 'Error copying site' ) );
 			}
 		}
 		initCopySite();
 		setPendingAction( async () => {
 			setProgress( 0 );
 			let stopPollingTransfer = false;
+			const maxFinishTime = new Date().getTime() + TRANSFER_TIMEOUT;
+			const isRevertOfThisTransfer = createRevertedTransferWatcher();
+
+			const recordTransferFailure = ( failureInfo: {
+				type: string;
+				error: string;
+				code: string;
+			} ) => {
+				recordTracksEvent( 'calypso_copy_site_transfer_failure', {
+					type: failureInfo.type,
+					error: failureInfo.error,
+					code: failureInfo.code,
+					site: site.URL,
+				} );
+			};
 
 			while ( ! stopPollingTransfer ) {
 				await wait( TIME_CHECK_TRANSFER_STATUS );
@@ -101,7 +107,30 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 				}
 
 				if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
-					throw new Error( 'Error copying site' );
+					recordTransferFailure( {
+						type: 'transfer_error',
+						error: transferError?.message || '',
+						code: String( transferError?.code || '' ),
+					} );
+					throw new Error( getTransferFailureMessage( 'error' ) );
+				}
+
+				if ( isRevertOfThisTransfer( transfer ) ) {
+					recordTransferFailure( {
+						type: 'transfer_reverted',
+						error: `transfer reverted (status: ${ transferStatus })`,
+						code: 'transfer_reverted',
+					} );
+					throw new Error( getTransferFailureMessage( 'reverted' ) );
+				}
+
+				if ( maxFinishTime < new Date().getTime() ) {
+					recordTransferFailure( {
+						type: 'transfer_timeout',
+						error: 'transfer took too long',
+						code: 'transfer_timeout',
+					} );
+					throw new Error( getTransferFailureMessage( 'timeout' ) );
 				}
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
@@ -114,12 +143,15 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 
 		submit?.();
 	}, [
+		exitFlow,
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,
+		isDestinationError,
 		requestLatestAtomicTransfer,
 		setPendingAction,
 		setProgress,
 		site?.ID,
+		site?.URL,
 		siteSlug,
 		sourceSiteId,
 		submit,

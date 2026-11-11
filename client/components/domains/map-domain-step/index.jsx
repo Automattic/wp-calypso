@@ -76,11 +76,11 @@ class MapDomainStep extends Component {
 
 	render() {
 		const suggestion =
-			this.props?.products?.domain_map ?? false
+			( this.props?.products?.domain_map ?? false )
 				? {
 						cost: this.props.products.domain_map.cost_display,
 						product_slug: this.props.products.domain_map.product_slug,
-				  }
+					}
 				: { cost: null, product_slug: '' };
 		const { searchQuery } = this.state;
 		const { translate } = this.props;

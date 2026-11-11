@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SignupFormSocialFirst, {
 	MobileCompactTosNotice,
 } from 'calypso/blocks/signup-form/signup-form-social-first';
@@ -109,6 +110,84 @@ describe( 'SignupFormSocialFirst', () => {
 		} );
 	} );
 
+	describe( 'showEnvelopeIcon', () => {
+		const emailButton = () => screen.getByText( /Continue with email/i ).closest( 'button' );
+
+		test( 'swaps the WordPress logo for an envelope, so email reads as a peer of the social options', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } showEnvelopeIcon /> );
+
+			expect( emailButton() ).toBeVisible();
+			expect( emailButton()?.querySelector( '.social-icons__envelope' ) ).toBeVisible();
+			// The logo renders with the bare `social-icons` class, so count the icons to catch a
+			// regression that leaves both in the button.
+			expect( emailButton()?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		} );
+
+		test( 'carries the enabled-state class the disabled styling keys off', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } showEnvelopeIcon /> );
+
+			const icon = emailButton()?.querySelector( '.social-icons__envelope' );
+			expect( icon ).toHaveClass( 'social-icons', 'social-icons--enabled' );
+			expect( icon ).not.toHaveClass( 'social-icons--disabled' );
+		} );
+
+		test( 'keeps the WordPress logo when unset', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			expect( emailButton()?.querySelector( '.social-icons__envelope' ) ).toBeNull();
+			expect( emailButton()?.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'showLoginLink', () => {
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+
+		test( 'renders the "Have an account? Log in" paragraph when set', () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
+
+			const loginLink = container.querySelector( loginLinkSelector );
+			expect( loginLink ).toBeVisible();
+			expect( within( loginLink as HTMLElement ).getByRole( 'link' ) ).toHaveAttribute(
+				'href',
+				'/log-in'
+			);
+		} );
+
+		test( 'keeps the paragraph on screen after "Continue with email"', async () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } showLoginLink /> );
+
+			await userEvent.click( screen.getByRole( 'button', { name: /Continue with email/i } ) );
+
+			const visibleScreen = container.querySelector( '.signup-form-social-first-screen.visible' );
+			expect( visibleScreen?.querySelector( 'input[type="email"]' ) ).toBeVisible();
+			const loginLink = container.querySelector( loginLinkSelector );
+			expect( loginLink ).toBeVisible();
+			expect( loginLink?.closest( '.signup-form-social-first-screen' ) ).toBeNull();
+		} );
+
+		test( 'omits the paragraph when unset', () => {
+			const { container } = render( <SignupFormSocialFirst { ...defaultProps } /> );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'email-first variants keep their own paragraph without it', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant />
+			);
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
+		} );
+
+		test( 'renders one paragraph, not two, when both conditions hold', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isEmailFirstVariant showLoginLink />
+			);
+
+			expect( container.querySelectorAll( loginLinkSelector ) ).toHaveLength( 1 );
+		} );
+	} );
+
 	describe( 'isMobileCompactVariant', () => {
 		test( 'renders the mobile-compact wrapper class', () => {
 			const { container } = render(
@@ -192,6 +271,25 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.queryByText( /Continue with GitHub/i ) ).not.toBeInTheDocument();
 		} );
 	} );
+
+	it.each( [
+		[ true, 'Back', 'See all options' ],
+		[ false, 'See all options', 'Back' ],
+	] )(
+		'leaves an ordinary signup its own way back, footer: %s',
+		( backButtonInFooter, shown, hidden ) => {
+			render(
+				<SignupFormSocialFirst
+					{ ...defaultProps }
+					userEmail="new@example.com"
+					backButtonInFooter={ backButtonInFooter }
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: shown } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: hidden } ) ).not.toBeInTheDocument();
+		}
+	);
 
 	describe( 'MobileCompactTosNotice', () => {
 		test( 'renders the "options above" copy', () => {

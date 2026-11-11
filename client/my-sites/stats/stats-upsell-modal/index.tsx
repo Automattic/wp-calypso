@@ -50,6 +50,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 		closeModal();
 		recordTracksEvent( `${ eventPrefix }_stats_upsell_modal_submit`, {
 			stat_type: statType,
+			blog_id: siteId,
 		} );
 		const checkoutProductUrl = new URL(
 			`https://wordpress.com/checkout/${ siteSlug }/${ planSlug }`
@@ -64,6 +65,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 				eventName={ `${ eventPrefix }_stats_upsell_modal_view` }
 				eventProperties={ {
 					stat_type: statType,
+					blog_id: siteId,
 				} }
 			/>
 			<Button
@@ -92,7 +94,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 							? translate( 'Upgrade plan' )
 							: translate( 'Upgrade to %(planName)s', {
 									args: { planName: plan.productNameShort },
-							  } ) }
+								} ) }
 					</Button>
 				</div>
 				<div className="stats-upsell-modal__right">
@@ -127,7 +129,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 											}
 										),
 									},
-							  } ) }
+								} ) }
 					</div>
 					{ plan?.planSlug === PLAN_PREMIUM ? (
 						<PremiumFeatures plan={ plan } />

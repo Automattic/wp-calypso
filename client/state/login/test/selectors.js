@@ -1,6 +1,7 @@
 import deepFreeze from 'deep-freeze';
 import reducer from '../reducer';
 import {
+	getConsumedBlackboxSessionId,
 	getRequestError,
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
@@ -10,6 +11,7 @@ import {
 	isRequesting,
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
+	isTwoFactorEnhancedSecurityEnabled,
 	isFormDisabled,
 	getSocialAccountLinkAuthInfo,
 	getCreateSocialAccountError,
@@ -24,6 +26,22 @@ const EMPTY_STATE = {
 };
 
 describe( 'selectors', () => {
+	describe( 'getConsumedBlackboxSessionId()', () => {
+		test( 'should return null if the password step captured no session', () => {
+			expect( getConsumedBlackboxSessionId( EMPTY_STATE ) ).toBeNull();
+		} );
+
+		test( 'should return the session id captured on the password step', () => {
+			const state = deepFreeze( {
+				login: {
+					consumedBlackboxSessionId: 'ABCDEFGHIJKLMNOPQRSTuv',
+				},
+			} );
+
+			expect( getConsumedBlackboxSessionId( state ) ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		} );
+	} );
+
 	describe( 'getTwoFactorUserId()', () => {
 		test( 'should return null if there is no information yet', () => {
 			const id = getTwoFactorUserId( EMPTY_STATE );
@@ -214,6 +232,50 @@ describe( 'selectors', () => {
 
 		test( 'should return true when the supported auth type exists in the state', () => {
 			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isTwoFactorEnhancedSecurityEnabled()', () => {
+		const stateWithAuthTypes = ( supportedAuthTypes ) =>
+			deepFreeze( {
+				login: {
+					twoFactorAuth: {
+						two_step_supported_auth_types: supportedAuthTypes,
+					},
+				},
+			} );
+
+		test( 'should return false when the state is not there yet', () => {
+			expect( isTwoFactorEnhancedSecurityEnabled( EMPTY_STATE ) ).toBe( false );
+		} );
+
+		test( 'should return true when only a passkey and backup codes are allowed', () => {
+			expect(
+				isTwoFactorEnhancedSecurityEnabled( stateWithAuthTypes( [ 'webauthn', 'backup' ] ) )
+			).toBe( true );
+		} );
+
+		test( 'should return true when only a passkey is allowed', () => {
+			expect( isTwoFactorEnhancedSecurityEnabled( stateWithAuthTypes( [ 'webauthn' ] ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( 'should return false when a code method is also allowed', () => {
+			expect(
+				isTwoFactorEnhancedSecurityEnabled(
+					stateWithAuthTypes( [ 'backup', 'authenticator', 'webauthn' ] )
+				)
+			).toBe( false );
+			expect(
+				isTwoFactorEnhancedSecurityEnabled( stateWithAuthTypes( [ 'backup', 'sms', 'webauthn' ] ) )
+			).toBe( false );
+		} );
+
+		test( 'should return false when no passkey is allowed', () => {
+			expect( isTwoFactorEnhancedSecurityEnabled( stateWithAuthTypes( [ 'backup' ] ) ) ).toBe(
+				false
+			);
 		} );
 	} );
 

@@ -10,10 +10,6 @@ export interface HeaderProps {
 	variant?: 'default' | 'minimal';
 	startUrl?: string;
 	loginUrl?: string;
-	/** Opt into the 2026 Global Nav redesign (logged-out surfaces). */
-	nav2026?: boolean;
-	/** Which 2026 taxonomy to render: 1 (Websites/Hosting/Domains/…) or 2 (Products/…). Defaults to 1. */
-	nav2026Variant?: 1 | 2;
 	/** Current user's avatar URL, used by the 2026 mobile menu footer when logged in. */
 	userAvatar?: string;
 	/** Current user's display name, used by the 2026 mobile menu footer when logged in. */
@@ -23,17 +19,21 @@ export interface HeaderProps {
 }
 
 export interface FooterProps {
-	onLanguageChange?: React.ChangeEventHandler< HTMLSelectElement >;
 	isLoggedIn?: boolean;
 	currentRoute?: string;
+	/** Enables the 2026 footer preview in the requested colorway. */
+	colorway?: 'dark' | 'white';
+	/** Whether geolocation identifies a visitor in California. */
+	showCaliforniaNotice?: boolean;
+	/** Opt-out link: legacy Company column or the redesigned legal row. */
 	additionalCompanyLinks?: React.ReactNode;
 }
 export interface PureFooterProps extends FooterProps {
 	localizeUrl?: ReturnType< typeof useLocalizeUrl >;
 	locale?: string;
-	isEnglishLocale?: boolean;
 	automatticBranding?: ReturnType< typeof getAutomatticBrandingNoun >;
-	languageOptions?: LanguageOptions;
+	/** Render the link columns as collapsed tap-to-expand stacks (small screens). */
+	collapseStacks?: boolean;
 }
 
 export interface MenuItemProps {
@@ -60,5 +60,3 @@ export interface ClickableItemProps extends MenuItemProps {
 	/** Fires when the item's link gains keyboard focus (2026 nav dropdown dismissal parity). */
 	onItemFocus?: () => void;
 }
-
-export type LanguageOptions = Record< string, string >;

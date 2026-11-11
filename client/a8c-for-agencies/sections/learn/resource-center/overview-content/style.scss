@@ -1,3 +1,10 @@
 // The shared dashboard ResourceCenter renders DataViews. The dashboard loads
 // DataViews styles globally, but a8c-for-agencies loads them per-page.
 @import '@wordpress/dataviews/build-style/style.css';
+
+// The A4A theme colors every tertiary button's text, which would leave the
+// Library modal's pressed read toggle with that color on its dark fill. Can be
+// removed once the Multi-site Dashboard's Library replaces this classic page.
+.theme-a8c-for-agencies .dashboard-resources-learn__modal .components-button.is-tertiary.is-pressed {
+	color: var( --color-text-inverted );
+}

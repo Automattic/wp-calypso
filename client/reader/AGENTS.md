@@ -27,7 +27,7 @@ File Reader issues under the **Reader** Linear team (key `READ`, e.g. `READ-532`
 - Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Prefer adding or reusing values there when the style belongs to shared components outside Reader or affects multiple areas.
 - When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
 - Keep Reader-only dark-mode exceptions close to the Reader stylesheet that owns the surface, and prefer overriding existing CSS custom properties over hardcoded colors.
-- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme`; see `packages/ui/AGENTS.md`.
+- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme` (defined in `client/assets/stylesheets/shared/mixins/_dark-theme.scss`).
 
 ### Data fetching migration
 
@@ -84,7 +84,7 @@ export function useReadFoo( id: string | null | undefined, options?: ReadFooQuer
 }
 ```
 
-Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useSpaceBySlug` in `client/reader/data/spaces/index.ts`.
+Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useShelfBySlug` in `client/reader/data/shelves/index.ts`.
 
 ### Mutation factories must accept the consumer's `QueryClient`
 
@@ -131,11 +131,10 @@ patches React Query caches, walk this list:
   cross-pollute. Filter the walk by `connectionId` (or whichever slot
   scopes the cache key for your protocol). The same applies to
   `cancelQueries` — pass a `predicate` rather than the broad root key.
-- **Wrap `cancelQueries` in `try`/`catch` inside `onMutate`.** TanStack
-  docs flag it as best-effort; if it rejects (rare — route-change
-  teardown races), `onMutate` resolves to `undefined` and the actual
-  mutationFn never runs. The optimistic patch + mutationFn must still
-  fire if the cancel fails.
+- **Await `cancelQueries` in `onMutate` without a `try`/`catch`.** In
+  this repo's TanStack Query (5.83), `cancelQueries` ends in
+  `.catch( noop )` and can't reject, so a `try`/`catch` around it is
+  dead code.
 - **Add a `default:` arm to error-message switches.** TypeScript
   exhaustiveness keeps `MastodonError['kind']` / `AtmosphereError['kind']`
   switches complete today, but a future widening returns `undefined` →
@@ -163,7 +162,7 @@ patches React Query caches, walk this list:
 
 ### Stream keys
 
-Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `space:{spaceId}` (a Reader Space's posts feed, served by `/wpcom/v2/reader/spaces/{id}/posts`), `space_discover:{spaceId}` (a Reader Space's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/spaces/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `shelf:{shelfId}` (a Reader Shelf's posts feed, served by `/wpcom/v2/reader/shelves/{id}/posts`), `shelf_discover:{shelfId}` (a Reader Shelf's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/shelves/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 
@@ -175,55 +174,56 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 
 ### Page entrypoints
 
-| Route                                             | Entrypoint                                                                |
-| ------------------------------------------------- | ------------------------------------------------------------------------- |
-| `/reader`                                         | `client/reader/following/main.tsx`                                        |
-| `/reader/feeds/:feed_id`                          | `client/reader/feed-stream/`                                              |
-| `/reader/blogs/:blog_id`                          | `client/reader/site-stream/`                                              |
-| `/reader/feeds/:feed/posts/:post`                 | `client/reader/full-post/`                                                |
-| `/reader/blogs/:blog/posts/:post`                 | `client/reader/full-post/`                                                |
-| `/reader/a8c`                                     | `client/reader/a8c/main.jsx`                                              |
-| `/reader/p2`                                      | `client/reader/p2/main.jsx`                                               |
-| `/reader/search`                                  | `client/reader/search/`                                                   |
-| `/reader/notifications`                           | `client/reader/notifications/`                                            |
-| `/reader/new`                                     | `client/reader/new-subscription/`                                         |
-| `/reader/subscriptions`                           | `client/reader/site-subscriptions-manager/`                               |
-| `/reader/subscriptions/comments`                  | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
-| `/reader/subscriptions/pending`                   | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
-| `/reader/subscriptions/:id`                       | `client/reader/site-subscription/`                                        |
-| `/reader/site/subscription/:blog_id`              | `client/reader/site-subscription/`                                        |
-| `/reader/conversations`                           | `client/reader/conversations/`                                            |
-| `/reader/list/*`                                  | `client/reader/list/`                                                     |
-| `/discover/*`                                     | `client/reader/discover/`                                                 |
-| `/tag/:tag`                                       | `client/reader/tag-stream/`                                               |
-| `/tags`                                           | `client/reader/tags/`                                                     |
-| `/activities/likes`                               | `client/reader/liked-stream/`                                             |
-| `/reader/users/*`                                 | `client/reader/user-profile/`                                             |
-| `/reader/connections`                             | `client/reader/connections/social-overview-view.tsx`                      |
-| `/reader/connections/new`                         | `client/reader/connections/connections-new-view.tsx` (unified chooser)    |
-| `/reader/atmosphere`                              | redirects to `/reader/connections`                                        |
-| `/reader/atmosphere/connect`                      | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
-| `/reader/atmosphere/:id`                          | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
-| `/reader/atmosphere/:id/:tab`                     | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
-| `/reader/atmosphere/:id/thread/:did/:rkey`        | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
-| `/reader/atmosphere/:id/profile/:actor`           | `client/reader/atmosphere/author-profile-view.tsx`                        |
-| `/reader/atmosphere/:id/profile/:actor/followers` | `client/reader/atmosphere/followers-view.tsx`                             |
-| `/reader/atmosphere/:id/profile/:actor/following` | `client/reader/atmosphere/following-view.tsx`                             |
-| `/reader/mastodon`                                | redirects to `/reader/connections`                                        |
-| `/reader/mastodon/connect`                        | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
-| `/reader/mastodon/oauth-callback`                 | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
-| `/reader/mastodon/:id`                            | `client/reader/mastodon/controller.tsx` (redirect handler)                |
-| `/reader/mastodon/:id/:tab`                       | `client/reader/mastodon/mastodon-account-view.tsx`                        |
-| `/reader/mastodon/:id/thread/:status_id`          | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
-| `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                          |
-| `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                               |
-| `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                               |
-| `/reader/fediverse`                               | redirects to `/reader/connections`                                        |
-| `/reader/fediverse/:id`                           | `client/reader/fediverse/controller.tsx` (redirect handler)               |
-| `/reader/fediverse/:id/:tab`                      | `client/reader/fediverse/fediverse-account-view.tsx`                      |
-| `/reader/fediverse/:id/profile/:actor`            | `client/reader/fediverse/author-profile-view.tsx`                         |
-| `/reader/fediverse/:id/profile/:actor/followers`  | `client/reader/fediverse/followers-view.tsx`                              |
-| `/reader/fediverse/:id/profile/:actor/following`  | `client/reader/fediverse/following-view.tsx`                              |
+| Route                                             | Entrypoint                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `/reader`                                         | `client/reader/following/main.tsx`                                             |
+| `/reader/feeds/:feed_id`                          | `client/reader/feed-stream/`                                                   |
+| `/reader/blogs/:blog_id`                          | `client/reader/site-stream/`                                                   |
+| `/reader/feeds/:feed/posts/:post`                 | `client/reader/full-post/`                                                     |
+| `/reader/blogs/:blog/posts/:post`                 | `client/reader/full-post/`                                                     |
+| `/reader/a8c`                                     | `client/reader/a8c/main.jsx`                                                   |
+| `/reader/p2`                                      | `client/reader/p2/main.jsx`                                                    |
+| `/discover/search`                                | `client/reader/discover/search-controller.jsx`, `client/reader/search-stream/` |
+| `/reader/notifications`                           | `client/reader/notifications/`                                                 |
+| `/reader/four-for-four`                           | `client/reader/four-for-four/`                                                 |
+| `/reader/new`                                     | `client/reader/new-subscription/`                                              |
+| `/reader/subscriptions`                           | `client/reader/site-subscriptions-manager/`                                    |
+| `/reader/subscriptions/comments`                  | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/`      |
+| `/reader/subscriptions/pending`                   | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/`      |
+| `/reader/subscriptions/:id`                       | `client/reader/site-subscription/`                                             |
+| `/reader/site/subscription/:blog_id`              | `client/reader/site-subscription/`                                             |
+| `/reader/conversations`                           | `client/reader/conversations/`                                                 |
+| `/reader/list/*`                                  | `client/reader/list/`                                                          |
+| `/discover/*`                                     | `client/reader/discover/`                                                      |
+| `/tag/:tag`                                       | `client/reader/tag-stream/`                                                    |
+| `/tags`                                           | `client/reader/tags/`                                                          |
+| `/activities/likes`                               | `client/reader/liked-stream/`                                                  |
+| `/reader/users/*`                                 | `client/reader/user-profile/`                                                  |
+| `/reader/connections`                             | `client/reader/connections/social-overview-view.tsx`                           |
+| `/reader/connections/new`                         | `client/reader/connections/connections-new-view.tsx` (unified chooser)         |
+| `/reader/atmosphere`                              | redirects to `/reader/connections`                                             |
+| `/reader/atmosphere/connect`                      | `client/reader/atmosphere/atmosphere-connect-view.tsx`                         |
+| `/reader/atmosphere/:id`                          | `client/reader/atmosphere/controller.tsx` (redirect handler)                   |
+| `/reader/atmosphere/:id/:tab`                     | `client/reader/atmosphere/atmosphere-account-view.tsx`                         |
+| `/reader/atmosphere/:id/thread/:did/:rkey`        | `client/reader/atmosphere/atmosphere-thread-view.tsx`                          |
+| `/reader/atmosphere/:id/profile/:actor`           | `client/reader/atmosphere/author-profile-view.tsx`                             |
+| `/reader/atmosphere/:id/profile/:actor/followers` | `client/reader/atmosphere/followers-view.tsx`                                  |
+| `/reader/atmosphere/:id/profile/:actor/following` | `client/reader/atmosphere/following-view.tsx`                                  |
+| `/reader/mastodon`                                | redirects to `/reader/connections`                                             |
+| `/reader/mastodon/connect`                        | `client/reader/mastodon/mastodon-connect-view.tsx`                             |
+| `/reader/mastodon/oauth-callback`                 | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                      |
+| `/reader/mastodon/:id`                            | `client/reader/mastodon/controller.tsx` (redirect handler)                     |
+| `/reader/mastodon/:id/:tab`                       | `client/reader/mastodon/mastodon-account-view.tsx`                             |
+| `/reader/mastodon/:id/thread/:status_id`          | `client/reader/mastodon/mastodon-thread-view.tsx`                              |
+| `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                               |
+| `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                                    |
+| `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                                    |
+| `/reader/fediverse`                               | redirects to `/reader/connections`                                             |
+| `/reader/fediverse/:id`                           | `client/reader/fediverse/controller.tsx` (redirect handler)                    |
+| `/reader/fediverse/:id/:tab`                      | `client/reader/fediverse/fediverse-account-view.tsx`                           |
+| `/reader/fediverse/:id/profile/:actor`            | `client/reader/fediverse/author-profile-view.tsx`                              |
+| `/reader/fediverse/:id/profile/:actor/followers`  | `client/reader/fediverse/followers-view.tsx`                                   |
+| `/reader/fediverse/:id/profile/:actor/following`  | `client/reader/fediverse/following-view.tsx`                                   |
 
 The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
@@ -271,7 +271,7 @@ contract.
 
 ### SSR file variants
 
-Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.
+Some routes have both `.node` (server) and `.web` (client) file variants for isomorphic rendering. Example: `discover/index.node.jsx` / `discover/index.web.jsx`. The `.node` variant renders placeholder components for SSR, while `.web` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required, along with a `package.json` shim mapping `main` to the node variant and `browser` to the web variant.
 
 ### Analytics
 

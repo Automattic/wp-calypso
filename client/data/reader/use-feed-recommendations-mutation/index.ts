@@ -39,7 +39,7 @@ export const useFeedRecommendationsMutation = (
 	const recommendedBlogsList = currentUserName
 		? subscribedListsData?.lists.find(
 				( list ) => list.owner === currentUserName && list.slug === RECOMMENDED_BLOGS_SLUG
-		  )
+			)
 		: undefined;
 
 	const { data: itemsData } = useQuery( {

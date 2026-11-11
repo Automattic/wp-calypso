@@ -29,11 +29,6 @@ html.is-hybrid-sidebar {
 		transform: translateX( $hybrid-sidebar-width );
 	}
 
-	// The 170px wordmark does not fit the 160px column; no logo in hybrid.
-	.dashboard-responsive-sidebar__logo {
-		display: none;
-	}
-
 	// The 160px column leaves less room; tighten paddings so labels fit.
 	.dashboard-sidebar-navigator__screen {
 		padding: 0 $grid-unit-10;

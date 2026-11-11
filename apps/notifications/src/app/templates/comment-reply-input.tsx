@@ -58,6 +58,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	);
 
 	const replyInputRef = useRef< HTMLTextAreaElement | null >( null );
+	const submitButtonRef = useRef< HTMLButtonElement | null >( null );
 	const savedReplyKey = `reply_${ note.id }`;
 	const savedReply = repliesCache.getItem( savedReplyKey );
 	const [ value, setValue ] = useState( savedReply ? savedReply[ 0 ] : '' );
@@ -124,7 +125,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 				// remove focus from textarea so we can resume using keyboard
 				// shortcuts without typing in the field
-				replyInputRef.current?.blur();
+				submitButtonRef.current?.focus();
 
 				setValue( '' );
 				setIsSubmitting( false );
@@ -213,7 +214,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	}, [ keyboardShortcutsAreEnabled, handleSubmit ] );
 
 	return (
-		<VStack>
+		<VStack style={ { width: '100%' } }>
 			<form onSubmit={ handleSubmit }>
 				<HStack spacing={ 2 } alignment="flex-start">
 					<TextareaControl
@@ -228,6 +229,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						onChange={ handleChange }
 					/>
 					<Button
+						ref={ submitButtonRef }
 						type="submit"
 						variant="primary"
 						title={
@@ -236,6 +238,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						icon={ send }
 						isBusy={ isSubmitting }
 						disabled={ ! value.length }
+						accessibleWhenDisabled
 						__next40pxDefaultSize
 					/>
 				</HStack>

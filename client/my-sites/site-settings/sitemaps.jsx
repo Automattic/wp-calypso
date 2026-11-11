@@ -198,7 +198,7 @@ class Sitemaps extends Component {
 						: this.renderInfoLink(
 								localizeUrl( 'https://wordpress.com/support/sitemaps/' ),
 								false
-						  ) }
+							) }
 				</PanelCardHeading>
 
 				{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }

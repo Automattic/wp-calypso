@@ -7,7 +7,7 @@ import useGetProductCardData from './use-get-product-card-data';
 const usePurchasedStorageUpgradeProducts = ( siteId: number ): SelectorProduct[] => {
 	const purchasedStorageSlugs = useSelector( ( state ) =>
 		getPurchasedStorageSubscriptions( state, siteId )
-	).map( ( { productSlug } ) => productSlug );
+	).map( ( purchase ) => purchase.product_slug );
 	const getProductCardData = useGetProductCardData();
 
 	return useMemo(

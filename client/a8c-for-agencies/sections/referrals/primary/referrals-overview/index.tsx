@@ -1,5 +1,8 @@
+import { referralCommissionPayoutQuery, referralsQuery } from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { addQueryArgs, getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState, useMemo } from 'react';
@@ -11,6 +14,7 @@ import {
 	NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
+	REFERRAL_ID_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
@@ -25,11 +29,12 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgencyId,
+	hasApprovedAgencyStatus,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
-import useFetchReferrals from '../../hooks/use-fetch-referrals';
-import useGetReferralCommissionPayout from '../../hooks/use-get-referral-commission-payout';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import { ReferralOrderFlowType } from '../../types';
@@ -44,9 +49,25 @@ export default function ReferralsOverview() {
 	const dispatch = useDispatch();
 
 	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
+	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const [ selectedReferralId, setSelectedReferralId ] = useState< number | null >( null );
+	const [ selectedReferralId, setSelectedReferralId ] = useState< number | null >( () => {
+		const referralId = Number( getQueryArg( window.location.href, REFERRAL_ID_QUERY_PARAM_KEY ) );
+		return referralId > 0 ? referralId : null;
+	} );
+
+	// Mirrored to the URL so pages like assign-license can link back to the open referral.
+	const selectReferral = useCallback( ( referralId: number | null ) => {
+		setSelectedReferralId( referralId );
+		window.history.replaceState(
+			null,
+			'',
+			referralId
+				? addQueryArgs( window.location.href, { [ REFERRAL_ID_QUERY_PARAM_KEY ]: referralId } )
+				: removeQueryArgs( window.location.href, REFERRAL_ID_QUERY_PARAM_KEY )
+		);
+	}, [] );
 
 	const { value: newReferralOrderEmail, setValue: setNewReferralOrderEmail } = useUrlQueryParam(
 		NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY
@@ -62,12 +83,17 @@ export default function ReferralsOverview() {
 	const isDesktop = useDesktopBreakpoint();
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	// The page renders its loading state from isFetching, so a refetch on window
+	// focus would flash it. MSD renders from isLoading and keeps the default.
 	const { data: referralCommissionPayout, isFetching: isFetchingReferralCommissionPayout } =
-		useGetReferralCommissionPayout();
+		useQuery( { ...referralCommissionPayoutQuery( agencyId ), refetchOnWindowFocus: false } );
 
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
-	const { data: referrals, isFetching: isFetchingReferrals } = useFetchReferrals();
+	const { data: referrals, isFetching: isFetchingReferrals } = useQuery( {
+		...referralsQuery( agencyId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasReferrals = !! referrals?.length;
 
@@ -97,7 +123,7 @@ export default function ReferralsOverview() {
 							type: prevView.type,
 							titleField: prevView.titleField,
 							fields: prevView.fields,
-					  }
+						}
 					: nextView
 			);
 		},
@@ -172,7 +198,7 @@ export default function ReferralsOverview() {
 						view={ listView }
 						onChangeView={ handleChangeView }
 						selectedReferral={ selectedItem ?? undefined }
-						onSelectReferral={ setSelectedReferralId }
+						onSelectReferral={ selectReferral }
 					/>
 				</LayoutBody>
 			</LayoutColumn>
@@ -181,7 +207,7 @@ export default function ReferralsOverview() {
 					<ReferralDetails
 						referral={ selectedItem }
 						referralCommissionPayout={ referralCommissionPayout }
-						closeSitePreviewPane={ () => setSelectedReferralId( null ) }
+						closeSitePreviewPane={ () => selectReferral( null ) }
 					/>
 				</LayoutColumn>
 			) }

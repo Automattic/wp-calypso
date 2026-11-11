@@ -47,10 +47,7 @@ export type MetricsParams = {
 };
 
 export type MetricsType =
-	| 'requests_persec'
-	| 'response_bytes_persec'
-	| 'response_bytes_average'
-	| 'response_time_average';
+	'requests_persec' | 'response_bytes_persec' | 'response_bytes_average' | 'response_time_average';
 
 export function useSiteMetricsQuery(
 	siteId: number | null | undefined,

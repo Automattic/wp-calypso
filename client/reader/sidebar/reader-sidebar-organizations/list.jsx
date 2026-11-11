@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { useSeenPostsPreferenceEnabled } from 'calypso/reader/data/seen-posts';
 import {
 	useOrganizationFeedsInfo,
 	useOrganizationSiteSubscriptions,
@@ -11,7 +13,7 @@ import {
 import { AUTOMATTIC_ORG_ID, P2_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { MoreMenuActions } from '../more-menu-actions';
+import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarOrganizationsListItem from './list-item';
 
 export class ReaderSidebarOrganizationsList extends Component {
@@ -25,6 +27,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 			feedIds: PropTypes.array,
 			feedUrls: PropTypes.array,
 		} ),
+		showUnseenCounts: PropTypes.bool,
 	};
 
 	toggleMenu = () => {
@@ -40,10 +43,20 @@ export class ReaderSidebarOrganizationsList extends Component {
 	};
 
 	renderSites() {
-		const { sites, path } = this.props;
+		const { sites, path, organization, showUnseenCounts } = this.props;
+		const fallbackPath = organization.slug ? `/reader/${ organization.slug }` : '/reader';
+
 		return sites.map(
 			( site ) =>
-				site && <ReaderSidebarOrganizationsListItem key={ site.ID } path={ path } site={ site } />
+				site && (
+					<ReaderSidebarOrganizationsListItem
+						key={ site.ID }
+						path={ path }
+						site={ site }
+						fallbackPath={ fallbackPath }
+						showUnseenCounts={ showUnseenCounts }
+					/>
+				)
 		);
 	}
 
@@ -60,7 +73,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 
 	render() {
-		const { organization, path, sites, feedsInfo } = this.props;
+		const { organization, path, sites, feedsInfo, showUnseenCounts } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
@@ -72,7 +85,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
-				count={ feedsInfo.unseenCount }
+				customCount={
+					showUnseenCounts ? <ReaderUnreadCount count={ feedsInfo.unseenCount } /> : undefined
+				}
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
 				disableFlyout
@@ -87,6 +102,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 						isSingleFeed={ false }
 						feedIds={ feedsInfo.feedIds }
 						feedUrls={ feedsInfo.feedUrls }
+						source="reader-organization-header"
 						unseenCount={ feedsInfo.unseenCount }
 					/>
 				}
@@ -100,8 +116,16 @@ export class ReaderSidebarOrganizationsList extends Component {
 function OrganizationsListWithFollows( props ) {
 	const sites = useOrganizationSiteSubscriptions( props.organization.id );
 	const feedsInfo = useOrganizationFeedsInfo( props.organization.id );
+	const showUnseenCounts = useSeenPostsPreferenceEnabled();
 
-	return <ReaderSidebarOrganizationsList { ...props } sites={ sites } feedsInfo={ feedsInfo } />;
+	return (
+		<ReaderSidebarOrganizationsList
+			{ ...props }
+			sites={ sites }
+			feedsInfo={ feedsInfo }
+			showUnseenCounts={ showUnseenCounts }
+		/>
+	);
 }
 
 export default connect(

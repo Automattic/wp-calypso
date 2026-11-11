@@ -15,9 +15,7 @@ import { DomainSuggestionsList } from '../domain-suggestions-list';
 import './unavailable.scss';
 
 type UnavailabilityReason =
-	| 'tld-not-supported'
-	| 'tld-not-supported-temporarily'
-	| 'already-registered';
+	'tld-not-supported' | 'tld-not-supported-temporarily' | 'already-registered';
 
 export interface UnavailableProps {
 	domain?: string;

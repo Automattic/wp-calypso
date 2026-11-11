@@ -11,6 +11,7 @@ const domainName = 'example.com';
 
 interface TestFormProps {
 	forceSubdomain?: boolean;
+	defaultSourceType?: FormData[ 'sourceType' ];
 	initialData?: any;
 	onSubmit?: ( data: FormData ) => void;
 	isSubmitting?: boolean;
@@ -34,7 +35,7 @@ test( 'renders domain forwarding form with correct fields', async () => {
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	expect( screen.getByText( /Type/ ) ).toBeInTheDocument();
@@ -46,23 +47,64 @@ test( 'hides source URL selector when forceSubdomain is true', async () => {
 	renderForm( { forceSubdomain: true } );
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Should not show the source type selector when forceSubdomain is true
 	expect( screen.queryByText( /Type/ ) ).not.toBeInTheDocument();
-	expect( screen.getByText( /Source URL/ ) ).toBeInTheDocument();
+	expect( screen.getByRole( 'textbox', { name: /subdomain/i } ) ).toBeVisible();
 } );
 
 test( 'shows both root domain and subdomain options when forceSubdomain is false', async () => {
 	renderForm( { forceSubdomain: false } );
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Should show the source type selector when forceSubdomain is false
 	expect( screen.getByText( /Type/ ) ).toBeInTheDocument();
+} );
+
+test( 'selects the root domain as source when defaultSourceType is root', async () => {
+	const user = userEvent.setup();
+	const mockOnSubmit = jest.fn();
+
+	renderForm( { defaultSourceType: 'root', onSubmit: mockOnSubmit } );
+
+	await waitFor( () => {
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
+	} );
+
+	// The source URL field shows the root domain and is not editable
+	const sourceInput = screen.getByRole( 'textbox', { name: /source url/i } );
+	expect( sourceInput ).toBeDisabled();
+	expect( sourceInput ).toHaveValue( domainName );
+
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
+	await user.type( targetUrlInput, 'https://newsite.com' );
+
+	const submitButton = screen.getByRole( 'button', { name: 'Add' } );
+	await user.click( submitButton );
+
+	expect( mockOnSubmit ).toHaveBeenCalledWith( {
+		sourceType: 'root',
+		subdomain: '',
+		targetUrl: 'https://newsite.com',
+		isPermanent: false,
+		forwardPaths: false,
+	} );
+} );
+
+test( 'ignores defaultSourceType and keeps subdomain mode when forceSubdomain is true', async () => {
+	renderForm( { defaultSourceType: 'root', forceSubdomain: true } );
+
+	await waitFor( () => {
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
+	} );
+
+	expect( screen.queryByText( /Type/ ) ).not.toBeInTheDocument();
+	expect( screen.getByRole( 'textbox', { name: /subdomain/i } ) ).toBeEnabled();
 } );
 
 test( 'calls onSubmit with correct data when form is submitted', async () => {
@@ -72,7 +114,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 	renderForm( { onSubmit: mockOnSubmit } );
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in the subdomain field (default sourceType is empty '' meaning subdomain)
@@ -80,7 +122,7 @@ test( 'calls onSubmit with correct data when form is submitted', async () => {
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in the target URL
-	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.type( targetUrlInput, 'https://newsite.com' );
 
 	// Submit the form
@@ -101,32 +143,62 @@ test( 'disables submit button when isSubmitting is true', async () => {
 	renderForm( { isSubmitting: true } );
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	const submitButton = screen.getByRole( 'button', { name: 'Add' } );
 	expect( submitButton ).toBeDisabled();
 } );
 
-test( 'shows advanced settings panel', async () => {
+test( 'shows redirect options panel', async () => {
 	const user = userEvent.setup();
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
-	// Advanced settings panel should be present
-	expect( screen.getByText( 'Advanced settings' ) ).toBeInTheDocument();
+	// The redirect options panel is titled with a summary of the current choice
+	expect(
+		screen.getByText( 'Temporary forward. Everyone lands on the same address.' )
+	).toBeInTheDocument();
 
 	// Click to expand if needed
-	const advancedPanel = screen.getByText( 'Advanced settings' );
+	const advancedPanel = screen.getByText(
+		'Temporary forward. Everyone lands on the same address.'
+	);
 	await user.click( advancedPanel );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Path forwarding' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'How permanent is this forward?' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Where visitors land' ) ).toBeInTheDocument();
 	} );
+} );
+
+test( 'updates the redirect summary and examples as the options change', async () => {
+	const user = userEvent.setup();
+	renderForm();
+
+	await user.type( await screen.findByRole( 'textbox', { name: /source url/i } ), 'shop' );
+	await user.type( screen.getByRole( 'textbox', { name: /forward to/i } ), 'newsite.com/' );
+	await user.click(
+		screen.getByRole( 'button', {
+			name: 'Temporary forward. Everyone lands on the same address.',
+		} )
+	);
+
+	expect(
+		screen.getByText( 'shop.example.com/prices goes to https://newsite.com/prices.' )
+	).toBeVisible();
+
+	await user.click( screen.getByRole( 'radio', { name: /permanent \(301\)/i } ) );
+	await user.click( screen.getByRole( 'radio', { name: /the matching page/i } ) );
+
+	expect(
+		screen.getByRole( 'button', {
+			name: 'Permanent forward. Visitors land on the matching page.',
+		} )
+	).toBeVisible();
 } );
 
 test( 'shows validation error when subdomain starts with dash and is blurred', async () => {
@@ -135,7 +207,7 @@ test( 'shows validation error when subdomain starts with dash and is blurred', a
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in an invalid subdomain starting with dash and blur
@@ -155,7 +227,7 @@ test( 'shows validation error when target URL is empty and blurred', async () =>
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -163,7 +235,7 @@ test( 'shows validation error when target URL is empty and blurred', async () =>
 	await user.type( subdomainInput, 'blog' );
 
 	// Focus on target URL field but leave it empty, then blur
-	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.click( targetUrlInput );
 	await user.tab(); // This will blur the field
 
@@ -180,7 +252,7 @@ test( 'shows validation error when target URL is invalid and blurred', async () 
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -188,7 +260,7 @@ test( 'shows validation error when target URL is invalid and blurred', async () 
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in an invalid target URL and blur
-	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.type( targetUrlInput, 'not a valid url' );
 	await user.tab(); // This will blur the field
 
@@ -204,7 +276,7 @@ test( 'shows validation error when target URL redirects to same domain without p
 	renderForm();
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -212,7 +284,7 @@ test( 'shows validation error when target URL redirects to same domain without p
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in target URL that points to same domain (which is not allowed) and blur
-	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.type( targetUrlInput, 'https://blog.example.com' );
 	await user.tab(); // This will blur the field
 
@@ -231,7 +303,7 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	renderForm( { onSubmit: mockOnSubmit } );
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -239,7 +311,7 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in target URL that points to same domain with path (which is allowed)
-	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.type( targetUrlInput, 'https://example.com/blog' );
 
 	// Submit the form
@@ -258,6 +330,21 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	} );
 } );
 
+test( 'submits a root domain forward to its www subdomain', async () => {
+	const user = userEvent.setup();
+	const mockOnSubmit = jest.fn();
+
+	renderForm( { defaultSourceType: 'root', onSubmit: mockOnSubmit } );
+
+	const targetUrlInput = await screen.findByRole( 'textbox', { name: /forward to/i } );
+	await user.type( targetUrlInput, 'https://www.example.com' );
+	await user.click( screen.getByRole( 'button', { name: 'Add' } ) );
+
+	expect( mockOnSubmit ).toHaveBeenCalledWith(
+		expect.objectContaining( { sourceType: 'root', targetUrl: 'https://www.example.com' } )
+	);
+} );
+
 test( 'allows target URL without protocol (normalizes input)', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();
@@ -265,7 +352,7 @@ test( 'allows target URL without protocol (normalizes input)', async () => {
 	renderForm( { onSubmit: mockOnSubmit } );
 
 	await waitFor( () => {
-		expect( screen.getByText( /Target URL/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Forward to/ ) ).toBeInTheDocument();
 	} );
 
 	// Fill in a valid subdomain
@@ -273,7 +360,7 @@ test( 'allows target URL without protocol (normalizes input)', async () => {
 	await user.type( subdomainInput, 'blog' );
 
 	// Fill in target URL without protocol
-	const targetUrlInput = screen.getByRole( 'textbox', { name: /target url/i } );
+	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.type( targetUrlInput, 'newsite.com' );
 
 	// Submit the form

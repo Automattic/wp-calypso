@@ -65,13 +65,13 @@ const formatScanStateRawResponse = ( {
 			? {
 					...omit( mostRecent, [ 'is_initial' ] ),
 					isInitial: mostRecent.is_initial,
-			  }
+				}
 			: undefined,
 		current: current
 			? {
 					...omit( current, [ 'is_initial' ] ),
 					isInitial: current.is_initial,
-			  }
+				}
 			: undefined,
 		...rest,
 	};

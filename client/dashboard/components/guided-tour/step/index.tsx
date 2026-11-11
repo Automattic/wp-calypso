@@ -10,6 +10,7 @@ import { closeSmall } from '@wordpress/icons';
 import { useState, useContext, useEffect } from 'react';
 import { CardBody } from '../../card';
 import { SectionHeader } from '../../section-header';
+import { SilentErrorBoundary } from '../../silent-error-boundary';
 import { GuidedTourContext } from '../context';
 import type { ComponentProps, CSSProperties } from 'react';
 
@@ -46,24 +47,34 @@ const useAsyncElement = (
 	return asyncElement;
 };
 
-/**
- * Renders a single step in a guided tour.
- */
-export function GuidedTourStep( {
-	id,
-	target,
-	selector,
-	placement,
-	inline,
-	popoverStyle,
-}: {
+interface GuidedTourStepProps {
 	id: string;
 	target?: HTMLElement | null;
 	selector?: string;
 	placement?: ComponentProps< typeof Popover >[ 'placement' ];
 	inline?: boolean;
 	popoverStyle?: CSSProperties;
-} ) {
+}
+
+/**
+ * Renders a single step in a guided tour.
+ */
+export function GuidedTourStep( props: GuidedTourStepProps ) {
+	return (
+		<SilentErrorBoundary sentryTags={ { feature: 'guided-tour' } }>
+			<GuidedTourStepContents { ...props } />
+		</SilentErrorBoundary>
+	);
+}
+
+function GuidedTourStepContents( {
+	id,
+	target,
+	selector,
+	placement,
+	inline,
+	popoverStyle,
+}: GuidedTourStepProps ) {
 	const {
 		guidedTours,
 		currentStep,
@@ -103,7 +114,6 @@ export function GuidedTourStep( {
 
 	return (
 		<Popover
-			isVisible={ isActive }
 			placement={ placement }
 			anchor={ anchor }
 			offset={ 10 }
@@ -120,7 +130,12 @@ export function GuidedTourStep( {
 						<HStack justify="space-between">
 							<SectionHeader title={ currentTour.title } level={ 3 } />
 							{ totalSteps > 1 && currentStep + 1 < totalSteps && isSkippable && (
-								<Button icon={ closeSmall } iconSize={ 24 } onClick={ endTour } />
+								<Button
+									icon={ closeSmall }
+									iconSize={ 24 }
+									label={ __( 'Close tour' ) }
+									onClick={ () => endTour( false ) }
+								/>
 							) }
 						</HStack>
 						<Text as="p" lineHeight="20px">

@@ -89,14 +89,14 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 						'We support: WordPress export files in XML & ZIP and Playground ZIP files. ' +
 							'{{supportLinkAlt/}}',
 						options
-				  )
+					)
 				: translate(
 						'A %(importerName)s export is ' +
 							'an XML file with your page and post content, or a zip archive ' +
 							'containing several XML files. ' +
 							'{{supportLink/}}',
 						options
-				  ),
+					),
 		},
 	};
 	const importerData = importerConfig( {} )[ importer ];

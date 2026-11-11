@@ -40,11 +40,6 @@ html.is-wpadmin-sidebar {
 		transform: translateX( $wpadmin-sidebar-width );
 	}
 
-	// wp-admin carries the logo in the admin bar, not the menu column.
-	.dashboard-responsive-sidebar__logo {
-		display: none;
-	}
-
 	// Menu items run edge to edge, like #adminmenu.
 	.dashboard-sidebar-navigator__screen {
 		padding: 0;

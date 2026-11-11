@@ -72,7 +72,7 @@ class PluginItem extends Component {
 							'Updating on %(count)s site',
 							'Updating on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case ACTIVATE_PLUGIN:
@@ -82,7 +82,7 @@ class PluginItem extends Component {
 							'Activating on %(count)s site',
 							'Activating on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case DEACTIVATE_PLUGIN:
@@ -92,7 +92,7 @@ class PluginItem extends Component {
 							'Deactivating on %(count)s site',
 							'Deactivating on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case ENABLE_AUTOUPDATE_PLUGIN:
@@ -102,7 +102,7 @@ class PluginItem extends Component {
 							'Enabling autoupdates on %(count)s site',
 							'Enabling autoupdates on %(count)s sites',
 							translationArgs
-					  );
+						);
 				break;
 
 			case DISABLE_AUTOUPDATE_PLUGIN:
@@ -112,7 +112,7 @@ class PluginItem extends Component {
 							'Disabling autoupdates on %(count)s site',
 							'Disabling autoupdates on %(count)s sites',
 							translationArgs
-					  );
+						);
 
 				break;
 			case REMOVE_PLUGIN:
@@ -122,7 +122,7 @@ class PluginItem extends Component {
 							'Removing from %(count)s site',
 							'Removing from %(count)s sites',
 							translationArgs
-					  );
+						);
 		}
 		return message;
 	}

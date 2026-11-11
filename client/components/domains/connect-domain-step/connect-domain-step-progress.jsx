@@ -57,7 +57,7 @@ export default function ConnectDomainStepProgress( { baseClassName, steps, pageS
 									size={ 20 } /* eslint-disable-line */
 								/>,
 								element,
-						  ];
+							];
 				}, null ) }
 		</div>
 	);

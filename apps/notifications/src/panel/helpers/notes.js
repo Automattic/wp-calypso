@@ -1,19 +1,4 @@
 /**
- * Returns the URL to the pending comments management page for the given site.
- * @param {number|null} siteId Site ID whose pending comments management page URL should be returned.
- * @returns {string|null}
- */
-export function getCommentsUrl( siteId ) {
-	if ( ! siteId ) {
-		return null;
-	}
-	// Notifications are hosted on widgets.wp.com on WordPress.com
-	const host =
-		document.location.host === 'widgets.wp.com' ? 'wordpress.com' : document.location.host;
-	return `${ document.location.protocol }//${ host }/comments/pending/${ siteId }`;
-}
-
-/**
  * Returns last block in list of blocks with 'actions' property
  */
 function getActionBlock( blocks ) {
@@ -56,10 +41,30 @@ export function getEditCommentLink( note ) {
 }
 
 /**
+ * Returns the pending comments moderation link for the note site.
+ * @param note
+ * @returns {string|undefined}
+ */
+export function getModerateCommentsLink( note ) {
+	return getActionBlock( note.body ).moderate_comments_link;
+}
+
+/**
  * Returns the new post link for the note post.
  * @param note
  * @returns {string}
  */
 export function getNewPostLink( note ) {
 	return getActionBlock( note.body ).new_post_link;
+}
+
+/**
+ * Whether a note's body is a list of the people who liked, subscribed or reblogged
+ * @param note
+ * @returns {boolean}
+ */
+export function isPeopleListNote( note ) {
+	return [ 'like', 'comment_like', 'follow', 'blogger_follow_reco', 'reblog' ].includes(
+		note.type
+	);
 }

@@ -1,5 +1,4 @@
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -7,56 +6,18 @@ import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import type { Duration, DurationChangeCallback } from '../types';
 
 import './style.scss';
 
 interface FilterBarProps {
-	showDiscountMessage?: boolean;
 	showDurations?: boolean;
 	duration?: Duration;
 	onDurationChange?: DurationChangeCallback;
 }
 
-type DiscountMessageProps = {
-	toggleChecked?: boolean;
-};
-
-const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) => {
-	const translate = useTranslate();
-	const isMobile: boolean = useMobileBreakpoint();
-
-	return toggleChecked ? (
-		<div
-			className={ clsx( 'plans-filter-bar__discount-message', {
-				toggleChecked,
-			} ) }
-		>
-			<div>
-				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
-				<span className="plans-filter-bar__discount-message-text">
-					{ isMobile
-						? translate( 'Get %(discount)s%% off by billing yearly', {
-								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-								comment: 'Discount is a percentage',
-						  } )
-						: translate( 'Get %(discount)s%% off', {
-								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
-						  } ) }
-				</span>
-			</div>
-		</div>
-	) : null;
-};
-
-const PlansFilterBar: React.FC< FilterBarProps > = ( {
-	showDiscountMessage,
-	duration,
-	onDurationChange,
-} ) => {
+const PlansFilterBar: React.FC< FilterBarProps > = ( { duration, onDurationChange } ) => {
 	const translate = useTranslate();
 
 	const CALYPSO_MASTERBAR_HEIGHT = 47;
@@ -106,7 +67,6 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 							{ translate( 'Bill yearly' ) }
 						</span>
 					</div>
-					{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 				</div>
 			</div>
 		</>

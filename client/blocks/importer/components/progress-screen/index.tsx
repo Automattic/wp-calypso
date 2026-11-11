@@ -8,10 +8,14 @@ import type { ImportJob } from '../../types';
 interface Props {
 	job?: ImportJob;
 	showHeading?: boolean;
+	subtitle?: string;
 }
 const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { job, showHeading } = props;
+	const subtitle =
+		props.subtitle ??
+		__( 'Feel free to close this window. We’ll email you when your new site is ready.' );
 	const { customData } = job || {};
 	const progressValue = useProgressValue( job?.progress );
 
@@ -47,11 +51,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 					<div className="import__heading import__heading-center">
 						<Title>{ title }...</Title>
 						<ProgressBar compact value={ progressValue } />
-						<SubTitle>
-							{ __(
-								'Feel free to close this window. We’ll email you when your new site is ready.'
-							) }
-						</SubTitle>
+						<SubTitle>{ subtitle }</SubTitle>
 					</div>
 				</Progress>
 			</div>
@@ -62,9 +62,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 		<Progress>
 			<div className="import__heading import__heading-center">
 				<ProgressBar compact value={ progressValue } />
-				<SubTitle>
-					{ __( 'Feel free to close this window. We’ll email you when your new site is ready.' ) }
-				</SubTitle>
+				<SubTitle>{ subtitle }</SubTitle>
 			</div>
 		</Progress>
 	);

@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useState } from 'react';
-import { TabType } from 'calypso/performance-profiler/components/header';
+
+export type TabType = 'mobile' | 'desktop';
 
 interface DeviceTabContextType {
 	activeTab: TabType;

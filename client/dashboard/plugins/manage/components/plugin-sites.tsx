@@ -1,5 +1,6 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../components/card';
 import { Notice } from '../../../components/notice';
@@ -40,15 +41,18 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 	};
 
 	const title = () => {
-		if ( ! isLoadingPlugin && ! plugin ) {
-			return __( 'Plugin not found' );
-		}
+		const text = () => {
+			if ( plugin ) {
+				return decodeEntities( plugin.name );
+			}
 
-		return plugin ? (
-			// @ts-expect-error: Can only set one of `children` or `props.dangerouslySetInnerHTML`.
-			<Text dangerouslySetInnerHTML={ { __html: plugin.name } } />
-		) : (
-			<TextBlur>{ selectedPluginSlug }</TextBlur>
+			return isLoadingPlugin ? selectedPluginSlug : __( 'Plugin not found' );
+		};
+
+		return (
+			<TextBlur isBlurred={ ! plugin && isLoadingPlugin }>
+				<Text>{ text() }</Text>
+			</TextBlur>
 		);
 	};
 
@@ -67,12 +71,12 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					{
 						link: <ExternalLink href={ plugin.authorUrl } children={ null } />,
 					}
-			  )
+				)
 			: sprintf(
 					// translators: author is the plugin author.
 					__( 'By %(author)s' ),
 					{ author: plugin.author }
-			  );
+				);
 	};
 
 	return (
@@ -86,22 +90,23 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					inlineStart: 'medium',
 					inlineEnd: 'medium',
 				} }
+				direction="column"
+				expanded={ false }
+				gap={ 4 }
 			>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						decoration={ decoration() }
-						level={ 2 }
-						title={ title() }
-						description={ description() }
-					/>
-					{ isCoreManagedPlugin && (
-						<Notice variant="info">
-							{ __(
-								'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
-							) }
-						</Notice>
-					) }
-				</VStack>
+				<SectionHeader
+					decoration={ decoration() }
+					level={ 2 }
+					title={ title() }
+					description={ description() }
+				/>
+				{ isCoreManagedPlugin && (
+					<Notice variant="info">
+						{ __(
+							'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
+						) }
+					</Notice>
+				) }
 			</CardHeader>
 			<CardBody className="plugin-sites-card-body" size="none">
 				<PluginTabs

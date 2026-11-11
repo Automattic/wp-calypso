@@ -150,7 +150,7 @@ export default function useOnboardingTourSections() {
 					title: translate( 'Buy at a discount or earn commission—your choice!' ),
 					descriptions: [
 						translate(
-							'Our marketplace is a one-stop shop for all of your client hosting and product needs. Enjoy up to 80% off with volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission without the billing headaches.'
+							'Our marketplace is a one-stop shop for all of your client hosting and product needs. Enjoy up to 77% off with volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission without the billing headaches.'
 						),
 						translate( 'Did we mention this is a recurring commission?' ),
 					],
@@ -348,7 +348,35 @@ export default function useOnboardingTourSections() {
 					title: translate( 'Get leads from multiple agency directories' ),
 					descriptions: [
 						translate(
-							"By partnering with us, you're eligible to be listed on up to four agency directories across our Woo, Pressable, WordPress.com, and Jetpack sites."
+							"By partnering with us, you're eligible to be listed on up to four agency directories across our {{woo}}Woo{{/woo}}, {{pressable}}Pressable{{/pressable}}, {{wpcom}}WordPress.com{{/wpcom}}, and {{jetpack}}Jetpack{{/jetpack}} sites.",
+							{
+								components: {
+									woo: (
+										<ExternalLink
+											href="https://woocommerce.com/development-services/"
+											children={ null }
+										/>
+									),
+									pressable: (
+										<ExternalLink
+											href="https://pressable.com/development-services/"
+											children={ null }
+										/>
+									),
+									wpcom: (
+										<ExternalLink
+											href="https://wordpress.com/development-services/"
+											children={ null }
+										/>
+									),
+									jetpack: (
+										<ExternalLink
+											href="https://jetpack.com/development-services/"
+											children={ null }
+										/>
+									),
+								},
+							}
 						),
 						translate(
 							'To get listed on these directories, you have to qualify for our Agency Partner tier and demonstrate expertise with each of the brands that you would like to be listed with.'

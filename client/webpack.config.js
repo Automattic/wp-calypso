@@ -12,9 +12,7 @@ const {
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
-const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -26,6 +24,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const OrderDependentRedirectPlugin = require( '../build-tools/webpack/order-dependent-redirect-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
@@ -38,10 +37,8 @@ const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
-const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForDuplicatePackages = process.env.CHECK_DUPLICATE_PACKAGES === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
@@ -68,13 +65,8 @@ const shouldUseReadonlyCache = ! (
 
 const shouldProfile = process.env.PROFILE === 'true';
 
-const shouldCreateSentryRelease =
-	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
-	process.env.SENTRY_AUTH_TOKEN?.length > 1;
 let sourceMapType = process.env.SOURCEMAP;
-if ( ! sourceMapType && shouldCreateSentryRelease ) {
-	sourceMapType = 'hidden-source-map';
-} else if ( ! sourceMapType && isDevelopment ) {
+if ( ! sourceMapType && isDevelopment ) {
 	sourceMapType = 'eval';
 }
 
@@ -118,16 +110,9 @@ const webpackCacheVersion = JSON.stringify( {
 	entryLimit: process.env.ENTRY_LIMIT || null,
 	sectionLimit: process.env.SECTION_LIMIT || null,
 	emitStats: shouldEmitStats,
-	concatenateModules: shouldConcatenateModules,
 	hotReload: shouldHotReload,
 	profile: shouldProfile,
 } );
-
-if ( shouldCreateSentryRelease ) {
-	console.log(
-		"A sentry release is being created because the auth token exists and we're either on the trunk branch or the manual checkbox has been toggled."
-	);
-}
 
 function filterEntrypoints( entrypoints ) {
 	if ( ! process.env.ENTRY_LIMIT ) {
@@ -211,12 +196,12 @@ const fileLoader = FileConfig.loader(
 		? {
 				publicPath: `/calypso/${ extraPath }/`,
 				outputPath: 'images/',
-		  }
+			}
 		: {
 				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
 				outputPath: '../images/',
-		  }
+			}
 );
 
 const filePaths = {
@@ -236,7 +221,6 @@ const webpackConfig = {
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
 		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'app-a4a' ) ],
-		'entry-dashboard-ciab': [ path.join( __dirname, 'dashboard', 'app-ciab' ) ],
 		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
@@ -249,7 +233,7 @@ const webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
-		concatenateModules: ! isDevelopment && shouldConcatenateModules,
+		concatenateModules: ! isDevelopment,
 		removeAvailableModules: true,
 		removeEmptyChunks: true,
 		splitChunks: {
@@ -262,7 +246,7 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify(),
+		minimizer: Minify( { parallel: workerCount } ),
 	},
 	module: {
 		strictExportPresence: true,
@@ -345,8 +329,6 @@ const webpackConfig = {
 			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
-			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
-			'process.env.COMPONENT_SYSTEM_PHASE': JSON.stringify( 0 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
@@ -383,7 +365,7 @@ const webpackConfig = {
 				statsFilename: path.join( __dirname, 'stats.json' ),
 				statsOptions: {
 					source: false,
-					reasons: shouldEmitStatsWithReasons,
+					reasons: false,
 					optimizationBailout: false,
 					chunkOrigins: false,
 					chunkGroups: true,
@@ -394,12 +376,12 @@ const webpackConfig = {
 			endYear: 2030,
 			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( './public/chunks-map.json' ),
 			} ),
 		new RequireChunkCallbackPlugin(),
+		new OrderDependentRedirectPlugin(),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
 		 */
@@ -424,22 +406,6 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
-		// NOTE: Sentry should be the last webpack plugin in the array.
-		shouldCreateSentryRelease &&
-			new SentryCliPlugin( {
-				org: 'a8c',
-				project: 'calypso',
-				authToken: process.env.SENTRY_AUTH_TOKEN,
-				release: `calypso_${ process.env.COMMIT_SHA }`,
-				include: filePaths.path,
-				urlPrefix: `~${ filePaths.publicPath }`,
-				errorHandler: ( err, invokeErr, compilation ) => {
-					// Sentry should _never_ fail the webpack build, so only emit warnings here:
-					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
-					console.error( 'Sentry CLI Plugin Error:', err.message );
-					console.error( 'Sentry Full error:', err );
-				},
-			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
@@ -468,7 +434,7 @@ const webpackConfig = {
 							infrastructureLogging: {
 								debug: /webpack\.cache/,
 							},
-					  }
+						}
 					: {} ),
 				snapshot: {
 					managedPaths: [
@@ -476,7 +442,7 @@ const webpackConfig = {
 						path.resolve( __dirname, 'node_modules' ),
 					],
 				},
-		  }
+			}
 		: {} ),
 
 	experiments: {

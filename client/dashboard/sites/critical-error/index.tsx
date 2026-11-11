@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, envelope, formatListBullets, help, wordpress } from '@wordpress/icons';
+import { Icon, envelope, file, formatListBullets, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -78,6 +78,8 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 		isAdmin &&
 		siteTypeSupportsFeature( site, 'logs' ) &&
 		hasHostingFeature( site, HostingFeatures.LOGS );
+	// Deliberately ignores the plan: the SFTP/SSH settings page upsells sites that lack the feature.
+	const canViewSftpSshSettingsRoute = isAdmin && siteTypeSupportsFeature( site, 'settingsServer' );
 	const hasRecovered = ! isInJetpackCriticalErrorState( site );
 
 	useEffect( () => {
@@ -133,6 +135,29 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 					phpLogsLink: (
 						<Link to={ `/sites/${ siteSlug }/logs/php` } search={ { severity: 'Fatal error' } }>
 							{ __( 'Review the PHP logs' ) }
+						</Link>
+					),
+				}
+			),
+		} );
+	}
+	if ( canViewSftpSshSettingsRoute ) {
+		items.push( {
+			icon: file,
+			text: createInterpolateElement(
+				// translators: <sftpLink/> is a link to the SFTP/SSH settings page with the text "Connect over SFTP/SSH"
+				__( '<sftpLink/> to edit the files responsible for the error.' ),
+				{
+					sftpLink: (
+						<Link
+							to={ `/sites/${ siteSlug }/settings/sftp-ssh` }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click', {
+									has_sftp_feature: hasHostingFeature( site, HostingFeatures.SFTP ),
+								} )
+							}
+						>
+							{ __( 'Connect over SFTP/SSH' ) }
 						</Link>
 					),
 				}

@@ -1,10 +1,10 @@
 import { is100Year } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
-import { Badge } from '@automattic/ui';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
+import { getSubtitleForDisplay, isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import { getMyPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
@@ -28,7 +28,9 @@ export default function CurrentPlanPanel() {
 	const isA4APlan = planPurchase && isPartnerPurchase( planPurchase );
 	const is100YearPlan = planPurchase && is100Year( planPurchase );
 
-	const planName = isA4APlan ? purchaseType( planPurchase ) : planDetails?.product_name_short ?? '';
+	const planName = isA4APlan
+		? getSubtitleForDisplay( planPurchase )
+		: ( planDetails?.product_name_short ?? '' );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 
 	const isOwner = planDetails?.user_is_owner;
@@ -86,7 +88,9 @@ export default function CurrentPlanPanel() {
 						) : (
 							<>
 								<h3>{ planName }</h3>
-								{ ! isA4APlan && ! is100YearPlan && <Badge>{ translate( 'Current plan' ) }</Badge> }
+								{ ! isA4APlan && ! is100YearPlan && (
+									<Badge intent="draft">{ translate( 'Current plan' ) }</Badge>
+								) }
 							</>
 						) }
 					</div>

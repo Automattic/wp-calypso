@@ -1,3 +1,4 @@
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import createConfig from '@automattic/create-calypso-config';
 import cookie from 'cookie';
 import desktopOverride from './desktop';
@@ -46,16 +47,6 @@ if ( isDesktop ) {
 	configData = window.configData;
 }
 
-// calypso.live matches
-// hash-abcd1234.calypso.live matches
-// calypso.live.com doesn't match
-const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9-]+\.)?calypso\.live$/;
-
-// check if the current browser location is *.calypso.live
-export function isCalypsoLive(): boolean {
-	return typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host );
-}
-
 function applyFlags( flagsString: string, modificationMethod: string ) {
 	const flags = flagsString.split( ',' );
 	flags.forEach( ( flagRaw ) => {
@@ -78,6 +69,9 @@ function applyFlags( flagsString: string, modificationMethod: string ) {
 const flagEnvironments = [
 	'wpcalypso',
 	'horizon',
+	'dashboard-horizon',
+	'jetpack-cloud-horizon',
+	'a8c-for-agencies-horizon',
 	'stage',
 	'jetpack-cloud-stage',
 	'a8c-for-agencies-stage',
@@ -87,7 +81,7 @@ const flagEnvironments = [
 if (
 	process.env.NODE_ENV === 'development' ||
 	flagEnvironments.includes( configData.env_id ) ||
-	isCalypsoLive()
+	isCalypsoLiveHostname( window.location.hostname )
 ) {
 	const cookies = cookie.parse( document.cookie );
 	if ( cookies.flags ) {
@@ -111,6 +105,15 @@ if (
 }
 const configApi = createConfig( configData );
 export default configApi;
+
+/**
+ * Reads a key that may be absent, without the `ReferenceError` that `config()` raises for an unknown key in development or the console error it logs in the browser.
+ * Odyssey Stats replaces this module with its own config API, which exports the same function.
+ */
+export function optionalConfig< T >( key: string ): T | undefined {
+	return key in configData ? configApi< T >( key ) : undefined;
+}
+
 export const isEnabled = configApi.isEnabled;
 export const enabledFeatures = configApi.enabledFeatures;
 export const enable = configApi.enable;

@@ -2,8 +2,8 @@ import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
 import { blaze } from '@automattic/components/src/icons';
-import { useLaunchpad } from '@automattic/data-stores';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
+import { useLaunchpad } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -67,11 +67,10 @@ export const QuickLinks = ( {
 	adminInterface,
 } ) => {
 	const translate = useTranslate();
-	const [
-		debouncedUpdateHomeQuickLinksToggleStatus,
-		,
-		flushDebouncedUpdateHomeQuickLinksToggleStatus,
-	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const debouncedUpdateHomeQuickLinksToggleStatus = useDebouncedCallback(
+		updateHomeQuickLinksToggleStatus,
+		1000
+	);
 	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 	const siteId = useSelector( getSelectedSiteId );
 	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
@@ -281,9 +280,9 @@ export const QuickLinks = ( {
 
 	useEffect( () => {
 		return () => {
-			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+			debouncedUpdateHomeQuickLinksToggleStatus.flush();
 		};
-	}, [] );
+	}, [ debouncedUpdateHomeQuickLinksToggleStatus ] );
 
 	return (
 		<FoldableCard

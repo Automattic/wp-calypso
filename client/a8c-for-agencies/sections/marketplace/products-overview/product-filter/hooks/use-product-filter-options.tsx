@@ -82,7 +82,7 @@ export default function useProductFilterOptions() {
 							label: translate( 'Pressable' ) as string,
 							image: <img width={ 140 } src={ PressableLogo } alt="Pressable" />,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				key: PRODUCT_CATEGORY_PAYMENTS,

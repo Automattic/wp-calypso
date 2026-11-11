@@ -15,12 +15,11 @@ import './style.scss';
 type Props = Record< Metrics, number > & {
 	activeTab: Metrics;
 	setActiveTab: ( tab: Metrics ) => void;
-	showOverall?: boolean;
 };
 
 const MetricTabBar = ( props: Props ) => {
 	const translate = useTranslate();
-	const { activeTab, setActiveTab, showOverall } = props;
+	const { activeTab, setActiveTab } = props;
 
 	const handleTabClick = ( tab: Metrics ) => {
 		setActiveTab( tab );
@@ -34,21 +33,19 @@ const MetricTabBar = ( props: Props ) => {
 
 	return (
 		<div className="metric-tab-bar">
-			{ showOverall && (
-				<button
-					className={ clsx( 'metric-tab-bar__tab metric-tab-bar__performance', {
-						active: activeTab === 'overall',
-					} ) }
-					onClick={ () => handleTabClick( 'overall' ) }
-				>
-					<div className="metric-tab-bar__tab-text">
-						<div className="metric-tab-bar__tab-header">{ translate( 'Performance Score' ) }</div>
-						<div className="metric-tab-bar__tab-metric">
-							<CircularPerformanceScore score={ props.overall } size={ 48 } />
-						</div>
+			<button
+				className={ clsx( 'metric-tab-bar__tab metric-tab-bar__performance', {
+					active: activeTab === 'overall',
+				} ) }
+				onClick={ () => handleTabClick( 'overall' ) }
+			>
+				<div className="metric-tab-bar__tab-text">
+					<div className="metric-tab-bar__tab-header">{ translate( 'Performance Score' ) }</div>
+					<div className="metric-tab-bar__tab-metric">
+						<CircularPerformanceScore score={ props.overall } size={ 48 } />
 					</div>
-				</button>
-			) }
+				</div>
+			</button>
 			<div className="metric-tab-bar__tab-container">
 				{ Object.entries( metricsNames ).map( ( [ key, { name: displayName } ] ) => {
 					if ( props[ key as Metrics ] === undefined || props[ key as Metrics ] === null ) {

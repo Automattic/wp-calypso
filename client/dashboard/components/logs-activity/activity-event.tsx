@@ -11,7 +11,7 @@ export function ActivityEvent( { activity }: { activity: Activity } ) {
 		: null;
 
 	return (
-		<HStack spacing="2" alignment="left" className="site-activity-logs__event">
+		<HStack spacing="2" alignment="topLeft" className="site-activity-logs__event">
 			{ activityIcon && (
 				<Icon
 					className="site-activity-logs__event-icon"

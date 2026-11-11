@@ -11,6 +11,8 @@ import {
 import { getCountryPostalCodeSupport } from './custom-form-fieldsets/get-country-postal-code-support';
 import { type CountryListItem } from './custom-form-fieldsets/types';
 
+const ADDRESS_LINE_MIN_LENGTH = 2;
+
 const getPostalCodeLabel = ( countryCode: string ): string => {
 	switch ( countryCode ) {
 		case 'US':
@@ -64,12 +66,13 @@ const createStateFieldEdit = ( statesList: StatesListItem[] | undefined, country
 				__nextHasNoMarginBottom
 				label={ hideLabelFromVision ? '' : stateLabel }
 				value={ currentValue }
-				options={
-					statesList.map( ( state ) => ( {
+				options={ [
+					{ label: stateLabel, value: '' },
+					...statesList.map( ( state ) => ( {
 						label: state.name,
 						value: state.code,
-					} ) ) ?? []
-				}
+					} ) ),
+				] }
 				onChange={ ( value ) => onChange( { [ id ]: value } ) }
 			/>
 		);
@@ -92,6 +95,7 @@ export function RegionAddressFieldsets(
 			type: 'text',
 			isValid: {
 				required: true,
+				minLength: ADDRESS_LINE_MIN_LENGTH,
 				custom: createFieldAsyncValidator( 'address1', asyncValidator ),
 			},
 		},
@@ -100,6 +104,7 @@ export function RegionAddressFieldsets(
 			label: __( 'Address line 2' ),
 			type: 'text',
 			isValid: {
+				minLength: ADDRESS_LINE_MIN_LENGTH,
 				custom: createFieldAsyncValidator( 'address2', asyncValidator ),
 			},
 		},
@@ -133,6 +138,13 @@ export function RegionAddressFieldsets(
 	];
 
 	return fields;
+}
+
+export function isEuOrUkAddressFormat( countryCode: string ): boolean {
+	return (
+		CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ||
+		CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode )
+	);
 }
 
 export function RegionAddressFieldsLayout( {

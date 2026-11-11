@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -26,6 +27,7 @@ import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
 import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
+import { useMcpTracksAudienceProps } from './tracks';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
@@ -40,6 +42,7 @@ function McpComponent( { path } ) {
 	const { documentTitle, navigationHeaderProps } = useMcpPageChrome();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const {
 		data: userSettings,
 		isLoading: isLoadingUserSettings,
@@ -119,7 +122,11 @@ function McpComponent( { path } ) {
 			},
 			{
 				onSuccess: () => {
-					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', { enabled } );
+					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
+						...tracksAudienceProps,
+						path,
+						enabled,
+					} );
 				},
 			}
 		);
@@ -192,7 +199,7 @@ function McpComponent( { path } ) {
 									decoration={
 										<Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } />
 									}
-									badges={ [ { text: mcpAddSiteBadgeText } ] }
+									badges={ [ { text: mcpAddSiteBadgeText, intent: 'draft' } ] }
 									density="medium"
 								/>
 							) }
@@ -224,8 +231,8 @@ function McpComponent( { path } ) {
 							}
 							badges={
 								disabledSiteCount > 0
-									? [ { text: mcpSiteExceptionsBadgeText, intent: 'warning' } ]
-									: [ { text: translate( 'No exceptions' ) } ]
+									? [ { text: mcpSiteExceptionsBadgeText, intent: 'low' } ]
+									: [ { text: translate( 'No exceptions' ), intent: 'draft' } ]
 							}
 							density="medium"
 						/>
@@ -236,9 +243,9 @@ function McpComponent( { path } ) {
 			{ hasTools && anyToolsEnabled && (
 				<SummaryButton
 					className="mcp-hub__panel"
-					href="/me/mcp/setup"
+					href={ dashboardLink( '/me/preferences/mcp' ) }
 					title={ translate( 'Connect external AI assistant' ) }
-					description={ translate( 'Get instructions for connecting your external AI assistant.' ) }
+					description={ translate( 'Add WordPress.com to ChatGPT, Claude and other agents.' ) }
 					decoration={ <Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } /> }
 					density="low"
 				/>

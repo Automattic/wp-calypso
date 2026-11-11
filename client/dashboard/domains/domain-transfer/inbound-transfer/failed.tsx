@@ -16,9 +16,10 @@ export const InboundTransferFailed = ( { domain }: { domain: Domain } ) => {
 	const { data: domainInboundTransferStatus } = useQuery(
 		domainInboundTransferStatusQuery( domain.domain )
 	);
-	const { data: purchase } = useQuery(
-		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
-	);
+	const { data: purchase } = useQuery( {
+		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
+		enabled: !! domain.subscription_id,
+	} );
 
 	return (
 		<InboundTransferStep
@@ -26,7 +27,7 @@ export const InboundTransferFailed = ( { domain }: { domain: Domain } ) => {
 				<Icon
 					size={ 24 }
 					icon={ cancelCircleFilled }
-					fill="var(--dashboard__foreground-color-error)"
+					style={ { color: 'var(--dashboard__foreground-color-error)' } }
 				/>
 			}
 			title={ domain.domain }

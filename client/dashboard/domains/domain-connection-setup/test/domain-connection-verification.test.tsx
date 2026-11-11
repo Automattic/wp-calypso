@@ -54,6 +54,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	expired: false,
 	primary_domain: false,
 	can_set_as_primary: true,
+	set_primary_domain_pending: false,
 	domain_status: {
 		id: DomainStatus.ACTIVE,
 		label: 'Active',
@@ -77,8 +78,10 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	current_user_can_manage: true,
 	contact_info_disclosure_available: false,
 	contact_info_disclosed: false,
+	contact_verification_deadline: null,
 	current_user_cannot_add_email_reason: null,
 	domain_locking_available: false,
+	domain_registrant_email: null,
 	has_wpcom_nameservers: false,
 	is_dnssec_enabled: false,
 	is_dnssec_supported: false,
@@ -91,6 +94,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	is_redeemable: false,
 	is_mapped_to_atomic_site: false,
 	is_hundred_year_domain: false,
+	is_icann_verification_suspended: false,
 	is_subdomain: false,
 	is_pending_icann_verification: false,
 	is_wpcom_staging_domain: false,
@@ -207,6 +211,23 @@ describe( 'DomainConnectionVerification', () => {
 			expect( badgeElements.length ).toBeGreaterThan( 0 );
 			expect( badgeElements[ 0 ] ).toBeVisible();
 		} );
+
+		test.each( [
+			[ 'connected', true ],
+			[ 'verifying', false ],
+		] )( 'does not show a progress bar when the domain is %s', ( _status, isConnected ) => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainMappingStatus={ createMockDomainMappingStatus( {
+						has_wpcom_ip_addresses: isConnected,
+						resolves_to_wpcom: isConnected,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'Help Section', () => {
@@ -264,16 +285,14 @@ describe( 'DomainConnectionVerification', () => {
 				resolves_to_wpcom: false,
 			} );
 
-			const { container } = render(
+			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
 					domainMappingStatus={ domainMappingStatus }
 				/>
 			);
 
-			const noticeElement = container.querySelector( '.dashboard-notice.is-info' );
-			expect( noticeElement ).toBeInTheDocument();
-			expect( noticeElement?.textContent ).toContain( 'checking your DNS records' );
+			expect( screen.getByText( /checking your DNS records/ ) ).toBeVisible();
 		} );
 
 		test( 'does not display info notice when domain is connected', () => {
@@ -333,6 +352,7 @@ describe( 'DomainConnectionVerification', () => {
 					domainData={ createMockDomain( {
 						primary_domain: false,
 						can_set_as_primary: true,
+						ssl_status: 'active',
 					} ) }
 				/>
 			);
@@ -341,6 +361,24 @@ describe( 'DomainConnectionVerification', () => {
 
 			expect( screen.getByText( 'Set example.com as your primary site address' ) ).toBeVisible();
 		} );
+
+		test.each( [ 'pending', 'newly_registered', 'inactive' ] as const )(
+			'does not display "Recommended" section when SSL is not active (ssl_status: %s)',
+			( sslStatus ) => {
+				render(
+					<DomainConnectionVerification
+						{ ...defaultProps }
+						domainData={ createMockDomain( {
+							primary_domain: false,
+							can_set_as_primary: true,
+							ssl_status: sslStatus,
+						} ) }
+					/>
+				);
+
+				expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
+			}
+		);
 
 		test( 'does not display "Recommended" section when domain is not primary and cannot be set as primary', () => {
 			render(
@@ -372,7 +410,7 @@ describe( 'DomainConnectionVerification', () => {
 	} );
 
 	describe( 'While You Wait Section', () => {
-		test( 'displays "While you wait" section when domain is verifying', () => {
+		test( 'shows "Customize your site" without a "While you wait" heading when domain is verifying', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				has_wpcom_ip_addresses: false,
 				resolves_to_wpcom: false,
@@ -385,23 +423,7 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.getByText( 'While you wait' ) ).toBeVisible();
 			expect( screen.getByText( 'Customize your site' ) ).toBeVisible();
-		} );
-
-		test( 'does not display "While you wait" heading when domain is connected', () => {
-			const domainMappingStatus = createMockDomainMappingStatus( {
-				has_wpcom_ip_addresses: true,
-				resolves_to_wpcom: true,
-			} );
-
-			render(
-				<DomainConnectionVerification
-					{ ...defaultProps }
-					domainMappingStatus={ domainMappingStatus }
-				/>
-			);
-
 			expect( screen.queryByText( 'While you wait' ) ).not.toBeInTheDocument();
 		} );
 

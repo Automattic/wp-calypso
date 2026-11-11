@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .videopress-stats-module__grid {
 	display: grid;
@@ -62,14 +63,14 @@
 			height: 100%;
 			display: flex;
 			align-items: center;
-			padding-left: 10px;
-			
+			padding-inline-start: 10px;
+
 			a {
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				display: block;
+				display: flex;
+				align-items: center;
+				gap: 8px;
 				width: 100%;
+				min-width: 0;
 				cursor: pointer;
 				position: relative;
 				z-index: 1;
@@ -81,6 +82,12 @@
 				&:visited {
 					color: var(--color-text);
 				}
+			}
+
+			.videopress-stats-module__title {
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
 			}
 
 			&::before {
@@ -132,6 +139,11 @@
 	padding: 0;
 	border-radius: 4px;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	// Go square-cornered at mobile, matching the other stats modules there.
+	@media (max-width: $break-small) {
+		border-radius: 0;
+	}
 	
 	.videopress-stats-module__grid {
 		margin: 0;

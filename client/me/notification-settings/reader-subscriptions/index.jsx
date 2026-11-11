@@ -1,4 +1,4 @@
-import { Card, FormLabel } from '@automattic/components';
+import { Card, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import {
 	applyDeliveryWindowEdit,
 	getDeliveryHourPickerHours,
@@ -35,9 +35,10 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
-class NotificationSubscriptions extends Component {
+export class NotificationSubscriptions extends Component {
 	state = {
 		showConfirmModal: false,
 	};
@@ -210,6 +211,7 @@ class NotificationSubscriptions extends Component {
 		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
 		const displayWindow = this.getDisplayDeliveryWindow();
+		const defaultEmailDelivery = this.props.getSetting( 'subscription_delivery_email_default' );
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
@@ -257,21 +259,28 @@ class NotificationSubscriptions extends Component {
 							<FormLabel htmlFor="subscription_delivery_email_default">
 								{ this.props.translate( 'Default email delivery' ) }
 							</FormLabel>
-							<FormSelect
-								disabled={ this.props.getDisabledState() }
-								id="subscription_delivery_email_default"
-								name="subscription_delivery_email_default"
-								onChange={ this.props.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
-								value={ this.props.getSetting( 'subscription_delivery_email_default' ) }
-							>
-								<option value="never">{ this.props.translate( 'Never send email' ) }</option>
-								<option value="instantly">
-									{ this.props.translate( 'Send email instantly' ) }
-								</option>
-								<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
-								<option value="weekly">{ this.props.translate( 'Send email every week' ) }</option>
-							</FormSelect>
+							{ defaultEmailDelivery === '' && this.props.isFetchingUserSettings ? (
+								<LoadingPlaceholder height="calc(1.4rem + 18px)" />
+							) : (
+								<FormSelect
+									disabled={ this.props.getDisabledState() }
+									id="subscription_delivery_email_default"
+									name="subscription_delivery_email_default"
+									onChange={ this.props.updateSetting }
+									onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
+									value={ defaultEmailDelivery }
+								>
+									{ defaultEmailDelivery === '' && <option value="" disabled hidden /> }
+									<option value="never">{ this.props.translate( 'Never send email' ) }</option>
+									<option value="instantly">
+										{ this.props.translate( 'Send email instantly' ) }
+									</option>
+									<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
+									<option value="weekly">
+										{ this.props.translate( 'Send email every week' ) }
+									</option>
+								</FormSelect>
+							) }
 						</FormFieldset>
 
 						<FormFieldset>
@@ -332,13 +341,13 @@ class NotificationSubscriptions extends Component {
 								{ this.props.deliveryWindowIsUtcFallback || ! this.props.deliveryWindowTimezone
 									? this.props.translate(
 											"We couldn't detect your time zone, so these times are shown in UTC."
-									  )
+										)
 									: this.props.translate(
 											'Times are shown in your local time zone (%(timezone)s).',
 											{
 												args: { timezone: this.props.deliveryWindowTimezone },
 											}
-									  ) }
+										) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
@@ -427,6 +436,10 @@ class NotificationSubscriptions extends Component {
 	}
 }
 
+const mapStateToProps = ( state ) => ( {
+	isFetchingUserSettings: isFetchingUserSettings( state ),
+} );
+
 const mapDispatchToProps = {
 	recordGoogleEvent,
 };
@@ -447,7 +460,7 @@ const NotificationSubscriptionsWithHooks = ( props ) => {
 
 export default compose(
 	withReaderTeams,
-	connect( null, mapDispatchToProps ),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocale,

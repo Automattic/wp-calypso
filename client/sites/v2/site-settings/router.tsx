@@ -2,7 +2,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { Router, createLazyRoute, createRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { APP_CONTEXT_DEFAULT_CONFIG } from 'calypso/dashboard/app/context';
-import { handleOnCatch } from 'calypso/dashboard/app/logger';
+import { handleOnCatch, initLogger } from 'calypso/dashboard/app/logger';
 import * as appRouterSites from 'calypso/dashboard/app/router/sites';
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
@@ -285,13 +285,15 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = new Router( {
 		...getRouterOptions( config ),
 		routeTree,
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+		defaultOnCatch: ( error: unknown, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
 				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
 				dashboard_backport: true,
 			} );
 		},
 	} );
+
+	initLogger( router );
 
 	return router;
 };

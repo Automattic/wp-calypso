@@ -1,0 +1,588 @@
+/**
+ * @jest-environment jsdom
+ */
+import page from '@automattic/calypso-router';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { useFollowSite } from 'calypso/reader/data/site-subscriptions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { FourForFour } from '../index';
+
+const mockRecordReaderTracksEvent = jest.fn();
+
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
+
+let mockHasPreview = true;
+jest.mock( '@wordpress/compose', () => {
+	const actual = jest.requireActual( '@wordpress/compose' );
+	const { FOUR_FOR_FOUR_PREVIEW_QUERY } = jest.requireActual( '../constants' );
+	return {
+		...actual,
+		useMediaQuery: ( query?: string ) =>
+			query === FOUR_FOR_FOUR_PREVIEW_QUERY ? mockHasPreview : actual.useMediaQuery( query ),
+	};
+} );
+
+jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
+} ) );
+
+jest.mock( 'calypso/reader/stream/typed', () => ( {
+	TypedStream: ( { streamKey }: { streamKey: string } ) => (
+		<div data-testid="preview-stream">{ streamKey }</div>
+	),
+} ) );
+
+// A follow button that runs the real follow mutation, so the page's
+// "report progress once the follow succeeds" path is exercised end to end.
+function MockFollowButton( {
+	siteUrl,
+	followApiSource,
+}: {
+	siteUrl: string;
+	followApiSource: string;
+} ) {
+	const { mutate } = useFollowSite();
+	return (
+		<button type="button" onClick={ () => mutate( { feedUrl: siteUrl, source: followApiSource } ) }>
+			Subscribe
+		</button>
+	);
+}
+
+jest.mock( 'calypso/reader/follow-button', () => ( {
+	__esModule: true,
+	default: ( props: { siteUrl: string; followApiSource: string } ) => (
+		<MockFollowButton { ...props } />
+	),
+} ) );
+
+jest.mock( 'calypso/blocks/site-icon', () => ( {
+	SiteIcon: () => null,
+} ) );
+
+jest.mock( 'calypso/reader/controller-helper', () => ( {
+	trackScrollPage: jest.fn(),
+} ) );
+
+const API = 'https://public-api.wordpress.com';
+
+const candidate = (
+	blogId: number,
+	name: string,
+	{ isParticipant = false, description = '' } = {}
+) => ( {
+	blog_id: blogId,
+	feed_id: blogId * 10,
+	name,
+	url: `https://site${ blogId }.wordpress.com`,
+	feed_url: `https://site${ blogId }.wordpress.com/feed/`,
+	description,
+	icon: null,
+	is_participant: isParticipant,
+} );
+
+function mockCandidates( candidates: ReturnType< typeof candidate >[] ) {
+	nock( API ).get( '/wpcom/v2/read/four-for-four/candidates' ).reply( 200, { candidates } );
+}
+
+function mockStatus(
+	status: string | null,
+	followedBlogIds: number[] = [],
+	review: { verdict: string } | null = { verdict: 'pass' }
+) {
+	nock( API )
+		.get( '/wpcom/v2/read/four-for-four/status' )
+		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds, review } );
+}
+
+function mockReview( verdict: string, delayMs = 0 ) {
+	return nock( API )
+		.post( '/wpcom/v2/read/four-for-four/review' )
+		.delay( delayMs )
+		.reply( 200, {
+			verdict,
+			language: verdict === 'not_english' ? 'es' : 'en',
+			category: verdict === 'not_personal_blog' ? 'commercial' : 'personal',
+			is_cached: false,
+		} );
+}
+
+function mockBlockedFollow() {
+	return nock( API )
+		.post( '/rest/v1.1/read/following/mine/new' )
+		.reply( 200, { subscribed: false, info: 'blocked' } );
+}
+
+function mockFollow( blogId: number, delayMs = 0 ) {
+	return nock( API )
+		.post(
+			'/rest/v1.1/read/following/mine/new',
+			( body ) => body.url === `https://site${ blogId }.wordpress.com/feed/`
+		)
+		.delay( delayMs )
+		.reply( 200, {
+			subscribed: true,
+			subscription: {
+				ID: 500 + blogId,
+				blog_ID: blogId,
+				feed_ID: blogId * 10,
+				URL: `https://site${ blogId }.wordpress.com/feed/`,
+			},
+		} );
+}
+
+const initialState = {
+	currentUser: { id: 1, user: { ID: 1, email_verified: true } },
+};
+
+// No backoff between the progress mutation's own retries, and no retries for
+// queries, so failure paths resolve quickly.
+const createQueryClient = () =>
+	new QueryClient( {
+		defaultOptions: { queries: { retry: false }, mutations: { retryDelay: 0 } },
+	} );
+
+describe( 'FourForFour', () => {
+	beforeEach( () => {
+		nock.cleanAll();
+		nock( API ).persist().get( '/rest/v1.2/read/following/mine' ).query( true ).reply( 200, {
+			number: 0,
+			page: 1,
+			total_subscriptions: 0,
+			subscriptions: [],
+		} );
+		mockRecordReaderTracksEvent.mockClear();
+		jest.mocked( page ).mockClear();
+		mockHasPreview = true;
+	} );
+
+	it( 'lists candidates and previews the first one', async () => {
+		mockStatus( 'opted_in' );
+		mockCandidates( [
+			candidate( 2, 'Second Site', { isParticipant: true, description: 'Poems about the sea.' } ),
+			candidate( 3, 'Third Site' ),
+		] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		const second = await screen.findByRole( 'button', {
+			name: 'Second Site Poems about the sea.',
+		} );
+		expect( second ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Third Site' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+		// Each site in the list is a single control; subscribing happens in the preview.
+		expect( screen.getAllByRole( 'button', { name: 'Subscribe' } ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:20' );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '0' );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_site_previewed',
+			{ blog_id: 2, is_participant: 1 }
+		);
+	} );
+
+	it( 'previews the clicked site and records the preview event', async () => {
+		const user = userEvent.setup();
+		mockStatus( 'opted_in' );
+		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Third Site' } ) );
+
+		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:30' );
+		expect( screen.getByRole( 'button', { name: 'Third Site' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_site_previewed',
+			{ blog_id: 3, is_participant: 0 }
+		);
+	} );
+
+	it( 'gives each site its own subscribe button when there is no room for the preview', async () => {
+		const user = userEvent.setup();
+		mockHasPreview = false;
+		mockStatus( 'opted_in' );
+		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+		const follow = mockFollow( 3 );
+		const progress = nock( API )
+			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 3 ] } )
+			.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3 ] } );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		expect( await screen.findByText( 'Third Site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Third Site' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'preview-stream' ) ).not.toBeInTheDocument();
+		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_site_previewed',
+			expect.anything()
+		);
+
+		const subscribeButtons = screen.getAllByRole( 'button', { name: 'Subscribe' } );
+		expect( subscribeButtons ).toHaveLength( 2 );
+		await user.click( subscribeButtons[ 1 ] );
+
+		await waitFor( () => expect( follow.isDone() ).toBe( true ) );
+		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '1' );
+	} );
+
+	it( 'shows server-recorded progress', async () => {
+		mockStatus( 'opted_in', [ 4, 5, 6 ] );
+		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		await waitFor( () =>
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '3' )
+		);
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'reports a follow only after it succeeds, then shows completion from the server', async () => {
+		const user = userEvent.setup();
+		mockStatus( 'opted_in', [ 3, 4, 5 ] );
+		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+		const follow = mockFollow( 2, 300 );
+		const progress = nock( API )
+			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+			.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+		// The meter moves on the click, before the follow request has returned.
+		await waitFor( () =>
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '4' )
+		);
+		expect( progress.isDone() ).toBe( false );
+
+		await waitFor( () => expect( follow.isDone() ).toBe( true ) );
+		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
+		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '4' );
+		expect( screen.getByRole( 'button', { name: 'Back to Reader' } ) ).toBeVisible();
+	} );
+
+	it( 'shows completion for a user who arrives already complete', async () => {
+		mockStatus( 'completed', [ 2, 3, 4, 5 ] );
+		mockCandidates( [] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
+	} );
+
+	it( 'shows a retryable empty state when the pool is empty', async () => {
+		const user = userEvent.setup();
+		mockStatus( 'opted_in' );
+		mockCandidates( [] );
+		const refetch = nock( API )
+			.get( '/wpcom/v2/read/four-for-four/candidates' )
+			.reply( 200, { candidates: [ candidate( 2, 'Second Site' ) ] } );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
+		await user.click( screen.getByRole( 'button', { name: 'Check again' } ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+		expect( refetch.isDone() ).toBe( true );
+	} );
+
+	it( 'returns to the Reader when closed', async () => {
+		const user = userEvent.setup();
+		mockStatus( 'opted_in' );
+		mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Do this later' } ) );
+
+		expect( page ).toHaveBeenCalledWith( '/reader' );
+		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_closed',
+			{ followed_count: 0, is_complete: 0 }
+		);
+	} );
+
+	describe( "reviewing the writer's site", () => {
+		const previewEvents = () =>
+			mockRecordReaderTracksEvent.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_reader_four_for_four_site_previewed'
+			);
+
+		it( 'checks a site with no verdict before showing the list', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			const review = mockReview( 'pass', 300 );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent(
+				'Checking your site to see if it qualifies…'
+			);
+			expect( screen.queryByRole( 'button', { name: 'Second Site' } ) ).not.toBeInTheDocument();
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_started'
+			);
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( review.isDone() ).toBe( true );
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_completed',
+				{
+					verdict: 'pass',
+					language: 'en',
+					category: 'personal',
+					duration_ms: expect.any( Number ),
+					is_cached: 0,
+				}
+			);
+			// The candidates loaded during the check, but the preview only counts
+			// once the writer can see it.
+			expect( previewEvents() ).toHaveLength( 1 );
+		} );
+
+		it( 'waits for a review still running from an earlier visit instead of starting another', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			let reviewRequests = 0;
+			nock( API )
+				.persist()
+				.post( '/wpcom/v2/read/four-for-four/review' )
+				.delay( 300 )
+				.reply( 200, () => {
+					reviewRequests++;
+					return { verdict: 'pass', language: 'en', category: 'personal', is_cached: false };
+				} );
+			const queryClient = createQueryClient();
+
+			const { unmount } = renderWithProvider( <FourForFour />, { initialState, queryClient } );
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent(
+				'Checking your site to see if it qualifies…'
+			);
+			unmount();
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient } );
+
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent(
+				'Checking your site to see if it qualifies…'
+			);
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( reviewRequests ).toBe( 1 );
+		} );
+
+		it.each( [
+			[ 'not_personal_blog', '4 for 4 is for personal blogs' ],
+			[ 'not_english', '4 for 4 is English-only for now' ],
+		] )( 'explains a %s verdict instead of showing the list', async ( verdict, title ) => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockReview( verdict );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'dialog', { name: title } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Second Site' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+			expect( previewEvents() ).toHaveLength( 0 );
+
+			await user.click( screen.getByRole( 'button', { name: 'Back to Reader' } ) );
+
+			expect( page ).toHaveBeenCalledWith( '/reader' );
+		} );
+
+		it( 'shows the list when the review is unchecked', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockReview( 'unchecked' );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+		} );
+
+		it( 'shows the list when the review request fails', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			nock( API ).post( '/wpcom/v2/read/four-for-four/review' ).reply( 500, { code: 'error' } );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_completed',
+				expect.anything()
+			);
+		} );
+
+		it( 'uses a stored verdict without reviewing the site again', async () => {
+			mockStatus( 'opted_in', [], { verdict: 'not_english' } );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			const review = mockReview( 'pass' );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect(
+				await screen.findByRole( 'dialog', { name: '4 for 4 is English-only for now' } )
+			).toBeVisible();
+			expect( review.isDone() ).toBe( false );
+			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_started'
+			);
+		} );
+
+		it( "doesn't review a site for a writer who hasn't joined", async () => {
+			mockStatus( null, [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			const review = mockReview( 'pass' );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( review.isDone() ).toBe( false );
+		} );
+	} );
+
+	describe( 'saving progress', () => {
+		it( 'shows an error when a save fails and saves again on retry', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3, 4, 5 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockFollow( 2 );
+			const failures = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.times( 3 )
+				.reply( 500, { code: 'error' } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				"We couldn't save your progress."
+			);
+			expect( failures.isDone() ).toBe( true );
+			expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
+
+			const retry = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'completed', blog_id: 1, followed_blog_ids: [ 3, 4, 5, 2 ] } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent( "You're in!" );
+			expect( retry.isDone() ).toBe( true );
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows an error when the status fails to load and reloads it on retry', async () => {
+			const user = userEvent.setup();
+			nock( API ).get( '/wpcom/v2/read/four-for-four/status' ).reply( 500, { code: 'error' } );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				"We couldn't save your progress."
+			);
+
+			mockStatus( 'opted_in', [ 3, 4 ] );
+			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' )
+			);
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'sends one save at a time, carrying follows that finished meanwhile', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in' );
+			mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+			mockFollow( 2 );
+			mockFollow( 3 );
+			const first = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.delay( 300 )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 2 ] } );
+			const second = nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 3 ] } )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 2, 3 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Third Site' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+			// The second save waits for the first to finish.
+			expect( second.isDone() ).toBe( false );
+			await waitFor( () => expect( first.isDone() ).toBe( true ) );
+			await waitFor( () => expect( second.isDone() ).toBe( true ) );
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
+		} );
+	} );
+
+	describe( 'a follow the server refuses', () => {
+		it( 'names the site without counting it, and clears once a retry succeeds', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockBlockedFollow();
+			mockFollow( 2 );
+			nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3, 2 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			const subscribe = await screen.findByRole( 'button', { name: 'Subscribe' } );
+			await user.click( subscribe );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'We were unable to subscribe you to Second Site.'
+			);
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '1' );
+
+			await user.click( subscribe );
+
+			await waitFor( () => expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument() );
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
+		} );
+
+		it( 'uses a general message when more than one site is refused', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in' );
+			mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+			mockBlockedFollow();
+			mockBlockedFollow();
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+			await screen.findByRole( 'alert' );
+			await user.click( screen.getByRole( 'button', { name: 'Third Site' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+					'We were unable to subscribe you to some of these sites.'
+				)
+			);
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '0' );
+		} );
+	} );
+} );

@@ -1,12 +1,12 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
-	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
+import Grid from '../../../components/grid';
 import InlineSupportLink from '../../../components/inline-support-link';
 import useConsolidatedPayoutData from './hooks/use-consolidated-payout-data';
 import { downloadCommissionsCsv } from './lib/download-commissions-csv';
@@ -83,7 +83,7 @@ export default function ConsolidatedViews( {
 		<Grid
 			className="referrals-consolidated-views"
 			templateColumns="repeat(auto-fit, minmax(240px, 1fr))"
-			gap={ 4 }
+			gap="lg"
 		>
 			<ConsolidatedStatCard
 				value={ formatCurrency( totalPayouts ?? 0, 'USD' ) }

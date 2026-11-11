@@ -197,7 +197,7 @@ const StatsDateControl = ( {
 		let period = bestPeriodForDays( rangeInDays );
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
+		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ], { blog_id: siteId } );
 
 		const appliedShortcut = findShortcutForRange( shortcutList, {
 			chartStart: startDate,
@@ -241,7 +241,9 @@ const StatsDateControl = ( {
 				);
 			}
 		} else {
-			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
+			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ], {
+				blog_id: siteId,
+			} );
 			if ( shortcut.id === 'all_time' ) {
 				closePopover();
 				setTimeout( () => page( generateAllTimeLink() ), 250 );
@@ -265,7 +267,7 @@ const StatsDateControl = ( {
 			onShortcutClick={ onShortcutClickHandler }
 			onDateControlClick={ () => {
 				const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-				recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+				recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ], { blog_id: siteId } );
 			} }
 			tooltip={ translate( 'Filter all data by date' ) }
 			overlay={ overlay }

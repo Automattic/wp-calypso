@@ -1,10 +1,5 @@
 import { DEVICE_TYPES } from '@automattic/components';
-import {
-	NEWSLETTER_FLOW,
-	BUILD_FLOW,
-	WRITE_FLOW,
-	READYMADE_TEMPLATE_FLOW,
-} from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, BUILD_FLOW } from '@automattic/onboarding';
 import SitePreview from '../../components/site-preview';
 
 interface Props {
@@ -17,8 +12,6 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
 			case BUILD_FLOW:
-			case WRITE_FLOW:
-			case READYMADE_TEMPLATE_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			default:
 				return DEVICE_TYPES.PHONE;

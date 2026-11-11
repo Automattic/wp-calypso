@@ -41,10 +41,10 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 				href: button.action.url,
 				onClick: button.action.onClick,
 				selfTarget: button.action.selfTarget,
-		  }
+			}
 		: {
 				[ typeof button.action === 'string' ? 'href' : 'onClick' ]: button.action,
-		  };
+			};
 
 	if ( undefined !== actionProps.href && ! actionProps.selfTarget ) {
 		actionProps.target = '_blank';
@@ -73,11 +73,11 @@ const PromoCardCta: FunctionComponent< Props > = ( { cta, learnMoreLink, isPrima
 					href: localizeUrl( learnMoreLink.url ),
 					target: '_blank',
 					onClick: learnMoreLink.onClick,
-			  }
+				}
 			: {
 					target: '_blank',
 					href: localizeUrl( learnMoreLink ),
-			  };
+				};
 	}
 
 	return (

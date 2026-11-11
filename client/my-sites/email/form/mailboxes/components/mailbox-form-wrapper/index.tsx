@@ -1,4 +1,4 @@
-import { TranslateResult, useRtl } from 'i18n-calypso';
+import { TranslateResult, useRtl, useTranslate } from 'i18n-calypso';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import {
@@ -72,8 +72,10 @@ const renderUserFormFields = ( {
 	isRtl,
 	mailbox,
 	onFieldValueChanged = () => undefined,
+	passwordExplanationText,
 }: MailboxFormWrapperWithCommonProps & {
 	isRtl: boolean;
+	passwordExplanationText?: TranslateResult;
 } ) => {
 	const domainAffix = {
 		[ isRtl ? 'textInputPrefix' : 'textInputSuffix' ]: `\u200e@${ formFields.domain.value }\u202c`,
@@ -89,6 +91,7 @@ const renderUserFormFields = ( {
 
 			<MailboxField
 				isPasswordField
+				explanationText={ passwordExplanationText }
 				{ ...getCommonFieldProps( formFields.password, onFieldValueChanged, mailbox ) }
 			/>
 		</>
@@ -131,6 +134,7 @@ const GoogleFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 
 const TitanFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 	const isRtl = useRtl();
+	const translate = useTranslate();
 	const { formFields, getCommonFieldProps, mailbox, onFieldValueChanged = () => undefined } = props;
 	const titanFormFields = formFields as TitanMailboxFormFields;
 
@@ -142,7 +146,13 @@ const TitanFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 				/>
 			) }
 
-			{ renderUserFormFields( { ...props, isRtl } ) }
+			{ renderUserFormFields( {
+				...props,
+				isRtl,
+				passwordExplanationText: translate(
+					'Use at least 10 characters, including a number and a special character.'
+				),
+			} ) }
 
 			{ titanFormFields.passwordResetEmail && (
 				<MailboxField

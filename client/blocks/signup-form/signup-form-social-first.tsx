@@ -30,6 +30,7 @@ interface SignupFormSocialFirst {
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
+	onLogInClick?: () => void;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -52,6 +53,15 @@ interface SignupFormSocialFirst {
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
+	/**
+	 * Renders the "Have an account? Log in" line below the buttons. The email-first variants
+	 * always render it.
+	 */
+	showLoginLink?: boolean;
+	/**
+	 * Shows an envelope instead of the WordPress.com logo on the email button.
+	 */
+	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -59,7 +69,7 @@ interface SignupFormSocialFirst {
 const options = {
 	tosLink: (
 		<a
-			href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+			href={ localizeUrl( 'https://automattic.com/tos/' ) }
 			onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
 			target="_blank"
 			rel="noopener noreferrer"
@@ -97,6 +107,7 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
+	onLogInClick,
 	socialServiceResponse,
 	handleSocialResponse,
 	onCreateAccountSuccess,
@@ -110,6 +121,8 @@ const SignupFormSocialFirst = ( {
 	isEmailFirstVariant,
 	isEmailAtBottom,
 	isMobileCompactVariant,
+	showLoginLink,
+	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -180,8 +193,8 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
-	// Shared by the email-first (Woo or experiment) branch and the mobile-compact
-	// branch so the conversion-critical existing-account redirect lives in one place.
+	// Shared by every branch that renders the email form, so the conversion-critical
+	// existing-account redirect lives in one place.
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
@@ -211,18 +224,51 @@ const SignupFormSocialFirst = ( {
 		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
 	};
 
+	// Both screens stay mounted (stacked, toggled via CSS visibility) and share the
+	// global Blackbox singleton, so at most one PasswordlessSignupForm may be
+	// unsuspended at a time — each instance gates on its own screen being active.
 	const emailLoginBlock = isEmailFirstVariant ? (
 		<div className="signup-form-social-first-email">
-			<PasswordlessSignupForm { ...passwordlessFormProps } />
+			<PasswordlessSignupForm
+				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'initial' }
+			/>
 		</div>
 	) : null;
 
 	const loginLinkParagraph = (
 		<p className="signup-form-social-first__login-link">
 			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-				link: <Step.LinkButton href={ logInUrl } />,
+				link: <Step.LinkButton href={ logInUrl } onClick={ onLogInClick } />,
 			} ) }
 		</p>
+	);
+
+	const emailScreen = (
+		<div className="signup-form-social-first-email">
+			<PasswordlessSignupForm
+				{ ...passwordlessFormProps }
+				blackboxSuspended={ currentStep !== 'email' }
+				renderTerms={ renderEmailStepTermsOfService }
+				termsAfterActions
+				secondaryFooterButton={
+					backButtonInFooter ? undefined : (
+						<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+							{ __( 'See all options' ) }
+						</Button>
+					)
+				}
+			/>
+			{ backButtonInFooter ? (
+				<Button
+					onClick={ () => setCurrentStep( 'initial' ) }
+					className="back-button"
+					variant="link"
+				>
+					<span>{ __( 'Back' ) }</span>
+				</Button>
+			) : null }
+		</div>
 	);
 
 	if ( isMobileCompactVariant ) {
@@ -274,6 +320,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailFirstVariant }
+					showEnvelopeIcon={ showEnvelopeIcon }
 					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ emailLoginBlock && isEmailAtBottom && (
@@ -284,55 +331,9 @@ const SignupFormSocialFirst = ( {
 				) }
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
-			<div className={ getVisibilityClassName( 'email' ) }>
-				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
-						renderTerms={ renderEmailStepTermsOfService }
-						secondaryFooterButton={
-							backButtonInFooter ? undefined : (
-								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
-									{ __( 'See all options' ) }
-								</Button>
-							)
-						}
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-					/>
-					{ backButtonInFooter ? (
-						<Button
-							onClick={ () => setCurrentStep( 'initial' ) }
-							className="back-button"
-							variant="link"
-						>
-							<span>{ __( 'Back' ) }</span>
-						</Button>
-					) : null }
-				</div>
-			</div>
+			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
+			{ /* Below both screens, so it stays on screen after "Continue with email". */ }
+			{ showLoginLink && ! isEmailFirstVariant && loginLinkParagraph }
 		</div>
 	);
 };

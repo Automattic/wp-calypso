@@ -1,0 +1,143 @@
+import { wpcom } from '../wpcom-fetcher';
+import type {
+	Agency,
+	AgencyDashboardOptInChoice,
+	AgencyHostingReferral,
+	AgencyHostingReferralResponse,
+	AgencyLeadMatchingProfile,
+	AgencyLeadMatchingResponse,
+	AgencyMediaUpload,
+	AgencyPartnerDirectoryApplicationUpdate,
+	AgencyProfileUpdate,
+	AgencyResourceEvent,
+	AgencyResourceEventResponse,
+	AgencyVipPartnerOpportunity,
+} from './types';
+
+/**
+ * Updates the agency's partner directory application and returns the updated agency.
+ */
+export async function updateAgencyPartnerDirectoryApplication(
+	agencyId: number,
+	update: AgencyPartnerDirectoryApplicationUpdate
+): Promise< Agency > {
+	return wpcom.req.put(
+		{
+			path: `/agency/${ agencyId }/profile/application`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+		},
+		update
+	);
+}
+
+/**
+ * Replaces the agency's lead matching preferences with the given profile.
+ */
+export async function updateAgencyLeadMatching(
+	agencyId: number,
+	profile: AgencyLeadMatchingProfile
+): Promise< AgencyLeadMatchingResponse > {
+	return wpcom.req.put(
+		{
+			path: `/agency/${ agencyId }/lead-matching`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+		},
+		profile
+	);
+}
+
+/**
+ * Updates the agency's public profile and returns the updated agency.
+ */
+export async function updateAgencyProfile(
+	agencyId: number,
+	update: AgencyProfileUpdate
+): Promise< Agency > {
+	return wpcom.req.put(
+		{
+			path: `/agency/${ agencyId }/profile`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+		},
+		update
+	);
+}
+
+/**
+ * Uploads the agency's partner directory logo and returns the stored media.
+ */
+export async function uploadAgencyPartnerDirectoryLogo(
+	agencyId: number,
+	file: File
+): Promise< AgencyMediaUpload > {
+	const formData = new FormData();
+	formData.append( 'media', file );
+	formData.append( 'asset_type', 'partner_directory_logo' );
+
+	return wpcom.req.post( {
+		path: `/agency/${ agencyId }/media`,
+		apiNamespace: 'wpcom/v2',
+		body: formData,
+	} );
+}
+
+/**
+ * Refers a client to WordPress VIP hosting on behalf of the agency.
+ */
+export async function submitAgencyVipPartnerOpportunity(
+	agencyId: number,
+	referral: AgencyVipPartnerOpportunity
+): Promise< AgencyHostingReferralResponse > {
+	return wpcom.req.post( {
+		path: '/agency/vip/partner-opportunity',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...referral },
+	} );
+}
+
+/**
+ * Refers a client to a Pressable Premium plan on behalf of the agency.
+ */
+export async function submitAgencyPressablePremiumPlanReferral(
+	agencyId: number,
+	referral: AgencyHostingReferral
+): Promise< AgencyHostingReferralResponse > {
+	return wpcom.req.post( {
+		path: '/agency/pressable/premium-plan-referral',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...referral },
+	} );
+}
+
+/**
+ * Records an agency's engagement with a resource.
+ *
+ * Fire-and-forget: callers should not block opening the resource on the
+ * response.
+ */
+export async function recordAgencyResourceEvent(
+	agencyId: number,
+	event: AgencyResourceEvent
+): Promise< AgencyResourceEventResponse > {
+	return wpcom.req.post( {
+		path: '/agency/resources/record-event',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...event },
+	} );
+}
+
+/**
+ * Moves the agency to the Multi-site Dashboard, or back, and returns the updated agency.
+ */
+export async function updateAgencyDashboardOptIn(
+	agencyId: number,
+	value: AgencyDashboardOptInChoice
+): Promise< Agency > {
+	return wpcom.req.post( {
+		path: `/agency/${ agencyId }/dashboard-opt-in`,
+		apiNamespace: 'wpcom/v2',
+		body: { value },
+	} );
+}

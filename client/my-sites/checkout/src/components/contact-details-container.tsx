@@ -7,14 +7,18 @@ import {
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field, styled } from '@automattic/wpcom-checkout';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import {
+	contactDetailsActions,
+	useContactDetails,
+	vatDetailsInFormStore,
+} from '../lib/checkout-stores';
+import { validateLoggedOutEmailOnBlur } from '../lib/contact-validation';
+import { useValueStore } from '../lib/value-store';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
@@ -57,7 +61,6 @@ export default function ContactDetailsContainer( {
 	isLoggedOutCart: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const domainNames: string[] = responseCart.products
@@ -65,24 +68,24 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
 
-	const vatDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
-	const checkoutActions = useDispatch( CHECKOUT_STORE );
-	const { email } = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
-
-	if ( ! checkoutActions ) {
-		return null;
-	}
-
-	const setVatDetails = checkoutActions?.setVatDetails;
+	const vatDetails = useValueStore( vatDetailsInFormStore );
+	const { email } = useContactDetails();
 
 	const handleIsForBusinessChange = ( newValue: boolean ): void => {
-		setVatDetails( {
+		vatDetailsInFormStore.set( {
 			...vatDetails,
 			isForBusiness: newValue,
 		} );
 	};
 
-	const { updateDomainContactFields, updateTaxFields, updateEmail } = checkoutActions;
+	const {
+		updateDomainContactFields,
+		updateTaxFields,
+		updateEmail,
+		applyDomainContactValidationResults,
+	} = contactDetailsActions;
+	const latestEmailRef = useRef( email?.value ?? '' );
+	latestEmailRef.current = email?.value ?? '';
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
@@ -151,6 +154,13 @@ export default function ContactDetailsContainer( {
 							onChange={ ( value ) => {
 								updateEmail( value );
 							} }
+							onBlur={ async ( value ) => {
+								await validateLoggedOutEmailOnBlur( value, translate, ( errors ) => {
+									if ( latestEmailRef.current === value ) {
+										applyDomainContactValidationResults( errors );
+									}
+								} );
+							} }
 							autoComplete="email"
 							isError={ email?.isTouched && ! isValid( email ) }
 							errorMessage={ email?.errors[ 0 ] || '' }
@@ -170,7 +180,6 @@ export default function ContactDetailsContainer( {
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
 						allowVat
-						fullWidthCountryField={ isCheckoutUiRedesignV1 }
 					/>
 					{ /* For Jetpack and Akismet - we want to inform users that by continuing checkout process they create WordPress.com account */ }
 					{ ( isJetpackCheckout() || isAkismetCheckout() ) && isLoggedOutCart && (
@@ -181,7 +190,7 @@ export default function ContactDetailsContainer( {
 									components: {
 										tosLink: (
 											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												href={ localizeUrl( 'https://automattic.com/tos/' ) }
 												target="_blank"
 												rel="noreferrer"
 											/>

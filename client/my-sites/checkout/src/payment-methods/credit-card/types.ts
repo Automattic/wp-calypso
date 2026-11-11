@@ -1,6 +1,3 @@
-import type { StoreDescriptor } from '@wordpress/data';
-import type { AnyAction as Action } from 'redux';
-
 export interface StoreStateValue {
 	value: string;
 	isTouched: boolean;
@@ -8,17 +5,6 @@ export interface StoreStateValue {
 }
 
 export type StoreState< N extends string > = Record< N, StoreStateValue >;
-
-export type CardSubscriber = (
-	callback: () => void,
-	storeNameOrDescriptor?: string | StoreDescriptor
-) => () => void;
-
-export interface CardStore< S, A extends Action = Action > {
-	getState(): S;
-	subscribe: CardSubscriber;
-	dispatch( action: A ): A;
-}
 
 export type CardFieldState = Record< string, StoreStateValue >;
 
@@ -34,24 +20,24 @@ export interface CardStoreState {
 	formSubmitAttempted: boolean;
 }
 
-export type CardStoreType = CardStore< CardStoreState, CardStoreAction >;
+export interface CardStoreType {
+	getState(): CardStoreState;
+	subscribe( callback: () => void ): () => void;
+	changeBrand( brand: string ): void;
+	setCardDataError( type: CardElementType, message: string | null ): void;
+	setCardDataComplete( type: CardElementType, complete: boolean ): void;
+	setFieldValue( key: string, value: string ): void;
+	setFieldError( key: string, message: string ): void;
+	setUseForAllSubscriptions( useForAllSubscriptions: boolean ): void;
+	setForBusinessUse( useForBusiness: boolean ): void;
+	touchAllFields(): void;
+	setFormSubmitAttempted( formSubmitAttempted: boolean ): void;
+}
 
 export type CardNumberElementType = 'cardNumber';
 export type CardExpiryElementType = 'cardExpiry';
 export type CardCvcElementType = 'cardCvc';
 export type CardElementType = CardNumberElementType | CardExpiryElementType | CardCvcElementType;
-
-export type CardStoreAction =
-	| { type: 'BRAND_SET'; payload: string }
-	| { type: 'CARD_DATA_ERROR_SET'; payload: { type: CardElementType; message: string | null } }
-	| { type: 'CARD_DATA_COMPLETE_SET'; payload: { type: CardElementType; complete: boolean } }
-	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }
-	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
-	| { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET'; payload: boolean }
-	| { type: 'USE_FOR_BUSINESS_SET'; payload: boolean }
-	| { type: 'TOUCH_ALL_FIELDS' }
-	| { type: 'FORM_SUBMIT_ATTEMPTED_SET'; payload: boolean }
-	| { type: 'RESET_FIELDS' };
 
 export type StripeFieldChangeInput =
 	| {

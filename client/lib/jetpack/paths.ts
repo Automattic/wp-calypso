@@ -16,12 +16,6 @@ const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/jet
 export const settingsPath = ( siteSlug: string | null, section?: string ): string =>
 	`${ settingsBasePath() }${ section ? '/' + section : '' }${ siteSlug ? '/' + siteSlug : '' }`;
 
-export const settingsHostSelectionPath = ( siteSlug: string | null ): string =>
-	settingsPath( siteSlug, 'host-selection' );
-
-export const settingsCredentialsPath = ( siteSlug: string, host: string ): string =>
-	settingsPath( siteSlug, `credentials/${ host }` );
-
 export const disconnectPath = ( siteSlug: string ): string =>
 	settingsPath( siteSlug, 'disconnect-site' );
 
@@ -38,9 +32,6 @@ export const socialPath = ( siteSlug?: string ): string =>
 
 export const partnerPortalBasePath = ( path = '' ) => `/partner-portal${ path }`;
 
-export const agencySignupBasePath = () => '/manage/signup';
-export const agencySignupLegacyPath = () => '/agency/signup';
-
 export const overviewPath = () => '/overview';
 
 const pluginsBasePath = '/plugins/manage';
@@ -51,4 +42,3 @@ export const pluginsPath = ( siteSlug?: string | null, query = {} ): string => {
 };
 
 export const dashboardPath = () => '/dashboard';
-export const sitesPath = () => '/sites';

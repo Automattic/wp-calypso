@@ -1,10 +1,7 @@
+import { normalizeAgencyBookingLink } from '@automattic/api-core';
+import { normalizePhoneNumber } from '@automattic/js-utils';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
-import {
-	AgencyDetails,
-	AgencyDirectoryApplication,
-	AgencyLeadMatchingProfile,
-	LeadMatchingDetails,
-} from '../types';
+import { AgencyDetails, AgencyLeadMatchingProfile, LeadMatchingDetails } from '../types';
 
 const ALLOWED_BUSINESS_TYPES = new Set( [
 	'local_service',
@@ -74,10 +71,13 @@ const normalizeValues = ( values: string[] | undefined, allowedValues: Set< stri
 	Array.from( new Set( ( values ?? [] ).filter( ( value ) => allowedValues.has( value ) ) ) );
 
 const normalizeOptionalValue = ( value: string | undefined, allowedValues: Set< string > ) =>
-	allowedValues.has( value ?? '' ) ? value ?? '' : '';
+	allowedValues.has( value ?? '' ) ? ( value ?? '' ) : '';
 
 export function createDefaultLeadMatchingDetails(): LeadMatchingDetails {
 	return {
+		phoneNumber: '',
+		phoneCountryCode: '',
+		bookingLink: '',
 		regions: [],
 		supportsGlobal: false,
 		languages: [],
@@ -153,29 +153,6 @@ export function createDefaultLeadMatchingProfile(): AgencyLeadMatchingProfile {
 	};
 }
 
-export function mapApplicationFormData( agency: Agency | null ): AgencyDirectoryApplication | null {
-	if ( ! agency?.profile?.partner_directory_application ) {
-		return null;
-	}
-
-	return {
-		status: agency.profile.partner_directory_application.status,
-		products: agency.profile.listing_details.products ?? [],
-		services: agency.profile.listing_details.services ?? [],
-		directories: agency.profile.partner_directory_application.directories.map(
-			( { status, directory, is_published, urls, note } ) => ( {
-				status: status,
-				directory: directory,
-				isPublished: is_published,
-				urls: urls,
-				note: note,
-			} )
-		),
-		feedbackUrl: agency.profile.partner_directory_application.feedback_url,
-		isPublished: !! agency.profile.partner_directory_application.is_published,
-	};
-}
-
 export function mapAgencyDetailsFormData( agency: Agency | null ): AgencyDetails | null {
 	if ( ! agency?.profile ) {
 		return null;
@@ -211,6 +188,9 @@ export function mapLeadMatchingProfileToFormData(
 	}
 
 	return {
+		phoneNumber: profile.contact?.phone ?? '',
+		phoneCountryCode: '',
+		bookingLink: profile.contact?.booking_link ?? '',
 		regions: profile.geography_and_language?.supported_regions ?? [],
 		supportsGlobal: !! profile.geography_and_language?.global_remote,
 		languages: profile.geography_and_language?.supported_languages ?? [],
@@ -274,10 +254,35 @@ export function mapLeadMatchingProfileToFormData(
 	};
 }
 
+export function hasLeadMatchingAnswerChanges(
+	formData: LeadMatchingDetails,
+	profile?: AgencyLeadMatchingProfile | null
+): boolean {
+	const answers = ( data: LeadMatchingDetails ) =>
+		JSON.stringify(
+			Object.entries( data )
+				.filter(
+					( [ key ] ) => ! [ 'phoneNumber', 'phoneCountryCode', 'bookingLink' ].includes( key )
+				)
+				.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+				.map( ( [ key, value ] ) => [ key, Array.isArray( value ) ? [ ...value ].sort() : value ] )
+		);
+	return (
+		answers( formData ) !==
+		answers( mapLeadMatchingProfileToFormData( profile ) ?? createDefaultLeadMatchingDetails() )
+	);
+}
+
 export function mapLeadMatchingDetailsToProfile(
 	formData: LeadMatchingDetails,
 	previousProfile?: AgencyLeadMatchingProfile | null
 ): AgencyLeadMatchingProfile {
+	const contact = {
+		phone:
+			normalizePhoneNumber( formData.phoneNumber, formData.phoneCountryCode ) ??
+			formData.phoneNumber,
+		booking_link: normalizeAgencyBookingLink( formData.bookingLink ),
+	};
 	const serviceLevel = formData.serviceLevels[ 0 ] ?? '';
 	const supportsEcommerceProjects =
 		formData.projectTypes.includes( 'new_woocommerce' ) || formData.storeComplexities.length > 0;
@@ -299,6 +304,7 @@ export function mapLeadMatchingDetailsToProfile(
 	}
 
 	return {
+		contact,
 		availability: {
 			accepting_work: previousProfile?.availability?.accepting_work ?? true,
 			lead_eligibility: leadEligibility,

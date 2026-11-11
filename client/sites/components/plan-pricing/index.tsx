@@ -62,7 +62,7 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 			? translate( 'Your plan has expired.' )
 			: translate( 'Expires on %s.', {
 					args: moment( planData?.expiryDate ).format( 'LL' ),
-			  } );
+				} );
 	};
 
 	const renderPrice = () => {

@@ -77,6 +77,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 	const onStatTypeChange = ( option: StatTypeOptionType ) => {
 		trackStatsAnalyticsEvent( 'stats_posts_module_menu_clicked', {
 			stat_type: option.analyticsId,
+			blog_id: siteId,
 		} );
 
 		setLocalStatType( option.value );
@@ -209,7 +210,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 											context:
 												'Stats: Link in a popover for the Posts & Pages when the module has data',
 										}
-								  )
+									)
 								: translate(
 										'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
 										{
@@ -226,7 +227,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 											context:
 												'Stats: Link in a popover for the Posts & Pages when the module has data',
 										}
-								  ) }
+									) }
 						</StatsInfoArea>
 					}
 					moduleStrings={ moduleStrings }
@@ -294,7 +295,7 @@ const StatsTopPosts: React.FC< StatsModulePostsProps > = ( {
 							? {
 									url: summaryUrl,
 									label: translate( 'View more' ),
-							  }
+								}
 							: undefined
 					}
 				/>

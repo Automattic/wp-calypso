@@ -7,6 +7,7 @@ import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore } from '../stores/video-studio';
+import { getDefaultAspectRatio } from './default-aspect-ratio';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 const POST_TITLE_MAX_LENGTH = 200;
@@ -229,10 +230,11 @@ function detectImageEntity(): DetectedEntity | null {
 		const imageAttachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
 		const imageSelectedStyle = storeSelect.getSelectedStyle?.() || null;
-		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
-
 		// Entrypoint for image studio context
 		const entryPoint = storeSelect.getEntryPoint?.() || null;
+
+		const selectedAspectRatio =
+			storeSelect.getSelectedAspectRatio?.() || getDefaultAspectRatio( entryPoint, select );
 
 		const blockType = storeSelect.getBlockType?.() || null;
 
@@ -264,7 +266,7 @@ function detectImageEntity(): DetectedEntity | null {
 					width: attachment.media_details?.width,
 					height: attachment.media_details?.height,
 					description: getRenderedText( attachment.description ),
-			  }
+				}
 			: {};
 
 		if ( isVideo ) {

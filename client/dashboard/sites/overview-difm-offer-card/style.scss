@@ -1,0 +1,20 @@
+@import "@wordpress/base-styles/variables";
+
+.dashboard-difm-offer-card {
+	position: relative;
+}
+
+.dashboard-difm-offer-card__dismiss {
+	position: absolute;
+	inset-block-start: $grid-unit-10;
+	inset-inline-end: $grid-unit-10;
+}
+
+.dashboard-difm-offer-card__description {
+	text-wrap: pretty;
+}
+
+// The illustration is portrait and the image slot is landscape, so keep the face in the crop.
+.dashboard-difm-offer-card .dashboard-callout__image img {
+	object-position: center 30%;
+}

@@ -1,6 +1,5 @@
 import './post-navigation.scss';
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -128,7 +127,7 @@ const ReaderFullPostNavigation = ( {
 
 	return (
 		<VStack spacing={ 6 } className="reader-full-post-navigation">
-			<Divider />
+			<hr />
 			<HStack spacing={ 6 } justify="space-between">
 				<NavigationButton
 					direction="previous"

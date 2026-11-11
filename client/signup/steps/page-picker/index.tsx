@@ -1,3 +1,4 @@
+import { fetchStripeConfiguration } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -12,7 +13,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
 import { useIsEligibleForOneClickCheckout } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
@@ -542,7 +542,7 @@ function OneClickPurchaseModal( {
 	return (
 		<CalypsoShoppingCartProvider>
 			<StripeHookProvider
-				fetchStripeConfiguration={ getStripeConfiguration }
+				fetchStripeConfiguration={ fetchStripeConfiguration }
 				locale={ translate.localeSlug }
 			>
 				<PurchaseModal
@@ -690,7 +690,7 @@ function DIFMPagePicker( props: StepProps ) {
 						),
 					},
 				}
-		  )
+			)
 		: translate(
 				'Click on the thumbnails to select or deselect pages. Your site build includes up to %(freePageCount)s pages, and you can add more for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each. After checkout, you will have the opportunity to submit your content.',
 				{
@@ -710,7 +710,7 @@ function DIFMPagePicker( props: StepProps ) {
 						),
 					},
 				}
-		  );
+			);
 
 	const renderRefundText = () => {
 		return (

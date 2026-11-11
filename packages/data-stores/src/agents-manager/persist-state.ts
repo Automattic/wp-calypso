@@ -6,7 +6,7 @@ import type { APIFetchOptions } from '../shared-types';
  * The Agents Manager stores all its preferences in a single blob that the
  * server read-modify-writes on every save. Two concurrent requests race on that
  * blob (last writer wins), so one partial save can revert another — e.g. a
- * trailing `router_history` write reverting `minimized`.
+ * trailing `docked` write reverting `minimized`.
  *
  * To prevent that, we keep at most one request in flight and merge any saves
  * that arrive meanwhile into a single follow-up request. Saves are
@@ -14,6 +14,11 @@ import type { APIFetchOptions } from '../shared-types';
  */
 let pending: Record< string, unknown > = {};
 let inFlight = false;
+let shouldPersistState = () => true;
+
+export function setShouldPersistState( predicate: () => boolean ): void {
+	shouldPersistState = predicate;
+}
 
 function send( state: Record< string, unknown > ): Promise< unknown > {
 	if ( canAccessWpcomApis() ) {
@@ -55,6 +60,10 @@ function flush(): void {
  * @param state - Object with the prefs to save (e.g. `{ agents_manager_minimized: false }`).
  */
 export function persistAgentsManagerState( state: Record< string, unknown > ): void {
+	if ( ! shouldPersistState() ) {
+		return;
+	}
+
 	Object.assign( pending, state );
 	flush();
 }

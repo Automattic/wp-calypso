@@ -1,0 +1,82 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '../../mixins';
+
+.components-modal__frame.playground-confirm-modal {
+	// Read by ConfirmDialog's `max-width`.
+	--max-width: 100%;
+	border-radius: 16px 16px 0 0;
+
+	@include break-small {
+		--max-width: calc( 100% - 2rem );
+		width: var( --playground-confirm-modal-width, 436px );
+		border-radius: 16px;
+	}
+
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-top: 0;
+		padding: 1.5rem;
+	}
+
+	.components-modal__header {
+		position: static;
+		height: auto;
+		// Keeps the header height when the × is hidden while confirming.
+		min-height: 2rem;
+		padding: 0;
+		align-items: flex-start;
+	}
+
+	.components-modal__header-heading {
+		font-size: $font-title-medium;
+		font-weight: 700;
+		line-height: 1.25;
+		letter-spacing: -0.02em;
+	}
+
+	.components-modal__children-container {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+}
+
+.playground-confirm-modal .playground-confirm-modal__body {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin: 0;
+	font-size: inherit;
+
+	> p {
+		margin: 0;
+		color: var( --studio-gray-60 );
+		font-size: $font-body-large;
+		line-height: 1.5;
+	}
+}
+
+.playground-confirm-modal .playground-confirm-modal__actions {
+	flex-direction: column;
+	gap: 0.5rem;
+
+	@include break-small {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 2rem;
+	}
+
+	.components-button {
+		@include playground-woo-button;
+		justify-content: center;
+	}
+
+	.components-button.playground-confirm-modal__cancel {
+		padding-inline: 0.5rem;
+	}
+}

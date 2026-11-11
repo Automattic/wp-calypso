@@ -142,7 +142,7 @@ export default function AnnotationCanvas( { imageUrl, imageElement }: Annotation
 			avgScale: Number.isFinite( scaleX + scaleY )
 				? ( ( Number.isFinite( scaleX ) ? scaleX : 1 ) +
 						( Number.isFinite( scaleY ) ? scaleY : 1 ) ) /
-				  2
+					2
 				: 1,
 		};
 	}, [ displayDimensions, originalDimensions ] );

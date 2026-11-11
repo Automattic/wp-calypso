@@ -10,6 +10,7 @@ import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordPermalinkClick } from 'calypso/reader/stats';
+import UnreadIndicator from './unread-indicator';
 
 class PostByline extends Component {
 	static propTypes = {
@@ -23,6 +24,7 @@ class PostByline extends Component {
 		compact: PropTypes.bool,
 		openSuggestedFollows: PropTypes.func,
 		showBylineSecondarySiteLink: PropTypes.bool,
+		isUnread: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -109,9 +111,10 @@ class PostByline extends Component {
 			compact,
 			openSuggestedFollows,
 			showBylineSecondarySiteLink,
+			isUnread,
 		} = this.props;
 		const feedId = feed ? feed.feed_ID : post?.feed_ID;
-		const feedIcon = feed ? feed.site_icon ?? feed.image : null;
+		const feedIcon = feed ? ( feed.site_icon ?? feed.image ) : null;
 		const siteId = site?.ID;
 		const siteSlug = site?.slug;
 		const siteUrl = site?.URL;
@@ -129,6 +132,7 @@ class PostByline extends Component {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="reader-post-card__byline ignore-click">
+				{ isUnread && <UnreadIndicator /> }
 				{ showAvatar && (
 					<SiteIcon iconUrl={ feedIcon || siteIcon } href={ streamUrl } size={ 40 } />
 				) }

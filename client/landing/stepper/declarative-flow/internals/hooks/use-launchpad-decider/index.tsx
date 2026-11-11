@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { addQueryArgs } from '@wordpress/url';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
 import type { Navigate } from '../../types';
@@ -56,7 +56,12 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 				return;
 			}
 
-			navigate( `launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }` );
+			navigate(
+				addQueryArgs( 'launchpad', {
+					siteSlug: siteSlug || undefined,
+					siteId: siteId || undefined,
+				} )
+			);
 		},
 		initializeLaunchpadState: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {

@@ -7,7 +7,7 @@ import './style.scss';
 
 interface DomainSuggestionBadgeProps {
 	children: ReactNode;
-	variation?: 'warning' | 'success';
+	variation?: 'warning' | 'success' | 'premium';
 	popover?: ReactNode;
 }
 

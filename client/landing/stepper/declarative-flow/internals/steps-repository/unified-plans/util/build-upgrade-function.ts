@@ -1,9 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	FEATURE_UPLOAD_THEMES_PLUGINS,
-	isEcommerce,
-	planHasFeature,
-} from '@automattic/calypso-products';
+import { isEcommerce } from '@automattic/calypso-products';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { UnifiedPlansStepProps } from '../unified-plans-step';
@@ -40,18 +36,6 @@ export const buildUpgradeFunction = (
 			product_slug: planCartItem.product_slug,
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
-
-		// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
-		// set a flag on it. It will trigger Automated Transfer when the product is being
-		// activated at the end of the checkout process.
-		if (
-			flowName === 'ecommerce' &&
-			planHasFeature( planCartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
-		) {
-			planCartItem.extra = Object.assign( planCartItem.extra || {}, {
-				is_store_signup: true,
-			} );
-		}
 	} else {
 		recordTracksEvent( 'calypso_signup_free_plan_select', {
 			from_section: stepSectionName ? stepSectionName : 'default',

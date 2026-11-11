@@ -12,7 +12,8 @@ import type { TimeoutMS } from 'calypso/types';
 /**
  * Invoke a function on an interval.
  * @param callback Function to invoke
- * @param delay    Interval timout in MS. `null` or `false` to stop the interval.
+ * @param delay    Interval timeout in MS. `null`, `false`, or a value that is not a positive
+ *                 finite number to stop the interval.
  */
 export function useInterval( callback: () => void, delay: TimeoutMS | null | false ) {
 	const savedCallback = useRef( callback );
@@ -24,7 +25,7 @@ export function useInterval( callback: () => void, delay: TimeoutMS | null | fal
 
 	// Set up the interval.
 	useEffect( () => {
-		if ( delay === null || delay === false ) {
+		if ( delay === null || delay === false || ! Number.isFinite( delay ) || delay <= 0 ) {
 			return;
 		}
 		const tick = () => void savedCallback.current();

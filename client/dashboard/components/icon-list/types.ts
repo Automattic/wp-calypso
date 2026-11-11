@@ -45,6 +45,12 @@ export interface IconListItemProps {
 	 * @default 'inline'
 	 */
 	layout?: ItemLayout;
+
+	/**
+	 * Vertical alignment of an inline suffix relative to the content.
+	 * @default 'center'
+	 */
+	suffixAlignment?: 'center' | 'top';
 }
 
 export interface IconListProps {

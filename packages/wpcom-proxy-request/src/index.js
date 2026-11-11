@@ -211,25 +211,6 @@ export function requestAllBlogsAccess() {
 }
 
 /**
- * Set localStorage item in the proxy iframe.
- * @param {string} key - The key to set.
- * @param {string} value - The value to set.
- * @returns {Promise} - A promise that resolves when the item is set.
- */
-export function setCrossOriginStorageItem( key, value ) {
-	return request( { metaAPI: { setCrossOriginStorageItem: { key, value } } } );
-}
-
-/**
- * Get localStorage item in the proxy iframe.
- * @param {string} key - The key to get.
- * @returns {Promise} - A promise that resolves when the item is set.
- */
-export function getCrossOriginStorageItem( key ) {
-	return request( { metaAPI: { getCrossOriginStorageItem: { key } } } );
-}
-
-/**
  * Calls the `postMessage()` function on the <iframe>.
  * @param {Object} params
  */
@@ -551,6 +532,7 @@ const wpcomAllowedOrigins = [
 	'https://cloud.jetpack.com',
 	'https://jetpack.com',
 	'https://agencies.automattic.com',
+	'https://agencies-beta.automattic.com',
 	'https://my.wordpress.com',
 	'https://my.woo.ai',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances

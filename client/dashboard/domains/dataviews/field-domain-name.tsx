@@ -1,4 +1,4 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Link, useMatches } from '@tanstack/react-router';
 import { Tooltip, __experimentalVStack as VStack } from '@wordpress/components';
@@ -7,52 +7,86 @@ import { useAnalytics } from '../../app/analytics';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
+import { getDomainTypeLabel } from '../../utils/domain';
+import { useIsDomainActivating } from './use-domain-activation';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
+
+export function PrimaryDomainBadge() {
+	return (
+		<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
+			<span
+				style={ {
+					...textOverflowStyles,
+					color: 'var(--dashboard__foreground-color-success)',
+					fontWeight: 'normal',
+					textDecoration: 'underline',
+					textDecorationStyle: 'dotted',
+				} }
+			>
+				{ __( 'Primary site address' ) }
+			</span>
+		</Tooltip>
+	);
+}
+
+export function useDomainNameNote( domain: DomainSummary, isPrimaryBadgeShown?: boolean ) {
+	const isActivating = useIsDomainActivating( domain );
+
+	if ( isActivating ) {
+		return __( 'Preparing your new domain name' );
+	}
+	// Being the primary address matters more here than how the domain came to the site.
+	if (
+		isPrimaryBadgeShown &&
+		( domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION )
+	) {
+		return null;
+	}
+	return getDomainTypeLabel( domain );
+}
 
 export const DomainNameField = ( {
 	domain,
 	site,
 	value,
 	showPrimaryDomainBadge,
+	showWwwPrefix,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
 	showPrimaryDomainBadge?: boolean;
+	showWwwPrefix?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
+	const isPrimaryBadgeShown = !! showPrimaryDomainBadge && domain.primary_domain;
+	const note = useDomainNameNote( domain, isPrimaryBadgeShown );
 
 	const siteSlug = site?.slug ?? domain.site_slug;
 
 	const href =
 		domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
+		domain.domain_status.id !== DomainStatus.TRANSFER_ERROR &&
 		config.isEnabled( 'domain-transfer-redesign' )
 			? domainTransferRoute.fullPath
 			: domainOverviewRoute.fullPath;
 
 	const content = (
 		<VStack spacing={ 1 }>
-			<span style={ textOverflowStyles }>{ value }</span>
-			{ showPrimaryDomainBadge && domain.primary_domain && (
-				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
-					<span
-						style={ {
-							...textOverflowStyles,
-							color: 'var(--dashboard__foreground-color-success)',
-							fontWeight: 'normal',
-							textDecoration: 'underline',
-							textDecorationStyle: 'dotted',
-						} }
-					>
-						{ __( 'Primary site address' ) }
-					</span>
-				</Tooltip>
-			) }
-			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+			<span style={ textOverflowStyles }>
+				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
+				<Text variant="muted" weight="inherit">
+					{ showWwwPrefix ? 'www.' : '' }
+				</Text>
+				{ value }
+			</span>
+			{ isPrimaryBadgeShown && <PrimaryDomainBadge /> }
+			{ note && (
 				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-					{ domain.subtype.label }
+					{ note }
 				</Text>
 			) }
 		</VStack>

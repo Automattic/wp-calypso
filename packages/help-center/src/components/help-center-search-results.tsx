@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
@@ -31,6 +30,7 @@ import React, { Fragment, useEffect, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
+import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
 import PlaceholderLines from './placeholder-lines';
@@ -208,6 +208,7 @@ function HelpSearchResults( {
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site, product = 'wpcom' } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const recordTracksEvent = useHelpCenterTracksEvent();
 	const contextTerm = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
 		[]
@@ -311,7 +312,8 @@ function HelpSearchResults( {
 		const eventData = {
 			link,
 			post_id,
-			blog_id,
+			// Article blog, not the site the user needs help with.
+			article_blog_id: blog_id,
 			source,
 			search_term: searchQuery,
 			location,

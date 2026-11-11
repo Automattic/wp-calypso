@@ -6,6 +6,7 @@ import {
 	DirectoryApplicationType,
 	LeadMatchingDetails,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
+import type { AgencyDashboardOptIn, AgencyPartnerManager } from '@automattic/api-core';
 import type { AgencyTier } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 export interface APIError {
@@ -126,7 +127,6 @@ export interface Agency {
 		allowed: boolean;
 	};
 	lead_matching?: {
-		allowed?: boolean;
 		draft?: LeadMatchingDetails | null;
 		profile?: AgencyLeadMatchingProfile | null;
 		sync?: AgencyLeadMatchingSyncState;
@@ -159,6 +159,8 @@ export interface Agency {
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	payment_notice?: PaymentNotice | null;
+	partner_manager?: AgencyPartnerManager | null;
+	dashboard_opt_in?: AgencyDashboardOptIn;
 }
 
 export type UserBillingType = 'legacy' | 'billingdragon';

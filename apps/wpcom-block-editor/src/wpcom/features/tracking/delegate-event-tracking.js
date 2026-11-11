@@ -1,10 +1,8 @@
 import debugFactory from 'debug';
 import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
 import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
-import wpcomBlockEditorClassicBlockDeprecationActionClick from './wpcom-block-editor-classic-block-deprecation-action-click';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
-import wpcomBlockEditorGlobalStylesMenuSelected from './wpcom-block-editor-global-styles-menu-selected';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
 import wpcomBlockEditorMissingBlockActionClick from './wpcom-block-editor-missing-block-action-click';
 import wpcomBlockEditorPostPublishAddNewClick from './wpcom-block-editor-post-publish-add-new-click';
@@ -17,12 +15,6 @@ import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
 import wpcomPreviewDropdownSelected from './wpcom-preview-dropdown-selected';
-import {
-	wpcomSiteEditorDocumentActionsDropdownOpen,
-	wpcomSiteEditorDocumentActionsTemplateAreaClick,
-	wpcomSiteEditorDocumentActionsRevertClick,
-	wpcomSiteEditorDocumentActionsShowAllClick,
-} from './wpcom-site-editor-document-actions-dropdown-click';
 import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
 import {
 	wpcomSiteEditorSidebarNavigationClick,
@@ -64,7 +56,6 @@ export const registerSubscriber = ( id, type, handler ) => {
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomBlockEditorDetailsOpen(),
-	wpcomBlockEditorGlobalStylesMenuSelected(),
 	wpcomInserterInlineSearchTerm(),
 	wpcomInserterTabPanelSelected(),
 	wpcomBlockDonationsPlanUpgrade(),
@@ -73,17 +64,12 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartChooseCapture(),
 	wpcomTemplatePartChooseBubble(),
 	wpcomTemplatePartReplaceBubble(),
-	wpcomBlockEditorClassicBlockDeprecationActionClick(),
 	wpcomBlockEditorListViewSelect(),
 	wpcomBlockEditorMissingBlockActionClick(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
 	wpcomBlockEditorPostPublishAddNewClick(),
 	wpcomBlockEditorSaveClick(),
 	wpcomBlockEditorSaveDraftClick(),
-	wpcomSiteEditorDocumentActionsDropdownOpen(),
-	wpcomSiteEditorDocumentActionsRevertClick(),
-	wpcomSiteEditorDocumentActionsShowAllClick(),
-	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
 	wpcomSiteEditorExitClick(),
 	wpcomSiteEditorSidebarNavigationClick(),
 	wpcomSiteEditorSidebarPagesClick(),
