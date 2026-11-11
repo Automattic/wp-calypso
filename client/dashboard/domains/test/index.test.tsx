@@ -28,6 +28,14 @@ jest.mock( '../../app/router/sites', () => {
 	return { ...actual, siteRoute: { fullPath: '/sites/$siteSlug' } };
 } );
 
+jest.mock( '../../app/router/me', () => {
+	const actual = jest.requireActual( '../../app/router/me' );
+	return {
+		...actual,
+		purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },
+	};
+} );
+
 const site = {
 	ID: 1,
 	name: 'Test Site',
@@ -364,6 +372,25 @@ describe( '<Domains>', () => {
 			'calypso_dashboard_domains_view_type_changed',
 			{ type: 'table' }
 		);
+	} );
+
+	test( 'opens the purchase settings to manage auto-renew', async () => {
+		const user = userEvent.setup();
+		mockApis( [ mockDomain( 1, { auto_renewing: false } ) ] );
+		const { recordTracksEvent, router } = render( <Domains /> );
+
+		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
+		await user.click( within( card ).getByRole( 'button', { name: 'Actions' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Manage auto-renew' } ) );
+
+		await waitFor( () =>
+			expect( router.state.location.pathname ).toBe( '/me/billing/purchases/1' )
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_domains_action_click', {
+			action: 'manage-auto-renew',
+			layout: 'grid',
+			domain: 'domain01.com',
+		} );
 	} );
 
 	test( 'records the layout an action was used from', async () => {

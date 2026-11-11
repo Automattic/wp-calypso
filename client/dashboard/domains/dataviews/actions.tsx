@@ -23,6 +23,7 @@ import {
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { chooseEmailSolutionRoute } from '../../app/router/emails';
+import { purchaseSettingsRoute } from '../../app/router/me';
 import { getCurrentDashboard } from '../../app/routing';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
@@ -30,7 +31,6 @@ import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
-import { AutoRenewModal } from './auto-renew-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action, View } from '@wordpress/dataviews';
 
@@ -475,22 +475,25 @@ export const useActions = ( {
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
 				supportsBulk: false,
-				callback: () => {},
-				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
-					<>
-						<ComponentViewTracker
-							eventName="calypso_dashboard_domains_action_click"
-							properties={ { action: 'manage-auto-renew', layout, domain: items[ 0 ].domain } }
-						/>
-						<AutoRenewModal
-							items={ items }
-							onSuccess={ () => {
-								onActionPerformed( items );
-								closeModal();
-							} }
-						/>
-					</>
-				),
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'manage-auto-renew',
+						layout,
+						domain: domain.domain,
+					} );
+
+					if ( ! domain.subscription_id ) {
+						return;
+					}
+
+					// Purchase settings asks for a payment method before auto-renew can be enabled.
+					router.navigate( {
+						to: purchaseSettingsRoute.fullPath,
+						params: { purchaseId: domain.subscription_id },
+					} );
+				},
 				isEligible: ( item ) => isDomainRenewable( item ),
 			},
 		],
