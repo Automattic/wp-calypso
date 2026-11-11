@@ -138,11 +138,8 @@ describe( '<AmplifyReportsList>', () => {
 		const user = userEvent.setup();
 
 		renderList( [ completedReport ] );
-		await user.click(
-			await screen.findByRole( 'button', {
-				name: 'Archive report for oliveandember.example',
-			} )
-		);
+		await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Archive' } ) );
 		const dialog = await screen.findByRole( 'dialog', { name: 'Archive report?' } );
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Archive' } ) );
 
