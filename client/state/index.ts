@@ -4,14 +4,25 @@ import {
 	useDispatch as reduxUseDispatch,
 	useStore as reduxUseStore,
 } from 'react-redux';
-import { AnyAction, createStore, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
+import {
+	AnyAction,
+	createStore,
+	applyMiddleware,
+	compose,
+	Middleware,
+	Store,
+	StoreEnhancer,
+} from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { WithAddReducer } from 'calypso/state/add-reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 import actionLogger from './action-log';
+import { analyticsMiddleware } from './analytics/middleware.js';
 import consoleDispatcher from './console-dispatch';
+import desktopMiddleware from './desktop/middleware.js';
+import libraryMiddleware from './lib/middleware.js';
 import initialReducer from './reducer';
 import { IAppState, CalypsoDispatch } from './types';
 
@@ -36,10 +47,10 @@ export function createReduxStore(
 		// as early as possible into the middleware chain.
 		wpcomApiMiddleware,
 		dynamicMiddlewares,
-		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
-		isBrowser && require( './lib/middleware.js' ).default,
-		isDesktop && require( './desktop/middleware.js' ).default,
-	].filter( Boolean );
+		isBrowser && analyticsMiddleware,
+		isBrowser && libraryMiddleware,
+		isDesktop && desktopMiddleware,
+	].filter( ( middleware ): middleware is Middleware => Boolean( middleware ) );
 
 	const enhancers = [
 		addReducerEnhancer,
