@@ -38,7 +38,6 @@ export type HumanRoutingCustomer = {
 	/** Null when WooCommerce.com couldn't work out the tier. */
 	supportTier: SupportTier | null;
 	isPaying: boolean;
-	isTargetCustomer: boolean;
 	isWooEnterpriseCustomer: boolean;
 };
 
@@ -46,7 +45,9 @@ export type HumanRoutingCustomer = {
 export type HumanRoutingFlags = {
 	isEmergency: boolean;
 	emergencyType: string | null;
+	/** Account recovery. */
 	routeToEmail: boolean;
+	isUnknownCharge: boolean;
 };
 
 export type HumanRoutingInput = {

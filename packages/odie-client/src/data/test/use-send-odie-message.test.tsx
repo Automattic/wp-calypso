@@ -187,7 +187,12 @@ describe( 'useSendOdieMessage – asking for a human', () => {
 		expect( mockRequestHumanSupport ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				createdFrom: 'automatic_escalation',
-				flags: { isEmergency: true, emergencyType: 'checkout_broken', routeToEmail: false },
+				flags: {
+					isEmergency: true,
+					emergencyType: 'checkout_broken',
+					routeToEmail: false,
+					isUnknownCharge: false,
+				},
 			} )
 		);
 	} );

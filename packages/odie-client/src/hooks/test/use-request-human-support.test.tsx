@@ -21,7 +21,12 @@ const request: HumanSupportRequest = {
 	createdFrom: 'automatic_escalation',
 	isFromError: false,
 	escalationOnSecondAttempt: true,
-	flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+	flags: {
+		isEmergency: true,
+		emergencyType: 'site_down',
+		routeToEmail: false,
+		isUnknownCharge: false,
+	},
 };
 
 const mockContext = ( humanSupportRouting: unknown ) =>
@@ -67,6 +72,7 @@ describe( 'useRequestHumanSupport', () => {
 			created_from: 'automatic_escalation',
 			is_emergency: true,
 			route_to_email: false,
+			is_unknown_charge: false,
 		} );
 	} );
 } );

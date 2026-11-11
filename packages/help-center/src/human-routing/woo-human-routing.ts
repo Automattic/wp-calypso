@@ -11,11 +11,15 @@ import type { HumanRoutingDecision, HumanRoutingInput, HumanRoutingRow } from '.
 export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 	{
 		id: 1,
-		// Row 2 sends unknown charges to a ticket, but the bot flags them the same way as account
-		// recovery, so they land here until it sends them separately.
-		description: 'Account recovery or unknown charge',
+		description: 'Account recovery',
 		when: ( { flags } ) => flags.routeToEmail,
 		route: 'email-form',
+	},
+	{
+		id: 2,
+		description: 'Unknown charge',
+		when: ( { flags } ) => flags.isUnknownCharge,
+		route: 'ticket',
 	},
 	{
 		id: 3,

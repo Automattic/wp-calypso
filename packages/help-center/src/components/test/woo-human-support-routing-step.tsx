@@ -4,15 +4,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { WooHumanSupportRoutingStep } from '../woo-human-support-routing-step';
+import type { WooHandoff } from '../../data/use-woo-handoff';
 import type { WooHandoffData } from '../../human-routing/woo-handoff';
 import type { HumanSupportRequest } from '@automattic/odie-client';
 
-let mockWooHandoff: WooHandoffData | null = null;
+let mockHandoff: { data?: WooHandoff; isPending: boolean };
 const mockRecordTracksEvent = jest.fn();
 
-jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useHelpCenterContext: () => ( { wooHandoff: mockWooHandoff } ),
+jest.mock( '../../data/use-woo-handoff', () => ( {
+	useWooHandoff: () => mockHandoff,
 } ) );
+
+const loaded = ( data: WooHandoffData | null, isSupportBlocked = false ) => ( {
+	data: { merchant: data, isSupportBlocked },
+	isPending: false,
+} );
 
 jest.mock( '../../hooks/use-help-center-tracks-event', () => ( {
 	useHelpCenterTracksEvent: () => mockRecordTracksEvent,
@@ -23,7 +29,6 @@ const store = ( domain: string ) => ( { url: `https://${ domain }`, domain } );
 const merchant = ( overrides: Partial< WooHandoffData > = {} ): WooHandoffData => ( {
 	supportTier: 'tier_2',
 	isPaying: true,
-	isTargetCustomer: false,
 	isWooEnterpriseCustomer: false,
 	connectedStores: [ store( 'one.example' ), store( 'two.example' ) ],
 	supportedProducts: [
@@ -47,7 +52,7 @@ const merchant = ( overrides: Partial< WooHandoffData > = {} ): WooHandoffData =
 
 const request: HumanSupportRequest = {
 	createdFrom: 'automatic_escalation',
-	flags: { isEmergency: false, emergencyType: null, routeToEmail: false },
+	flags: { isEmergency: false, emergencyType: null, routeToEmail: false, isUnknownCharge: false },
 };
 
 const startChat = jest.fn();
@@ -72,10 +77,33 @@ const lastDecision = () =>
 
 beforeEach( () => {
 	jest.clearAllMocks();
-	mockWooHandoff = merchant();
+	mockHandoff = loaded( merchant() );
 } );
 
 describe( 'WooHumanSupportRoutingStep', () => {
+	it( "waits for the merchant's details", () => {
+		mockHandoff = { isPending: true };
+		renderStep();
+
+		expect( screen.queryByLabelText( 'What do you need help with?' ) ).not.toBeInTheDocument();
+		expect( continueButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'turns away a merchant the support form blocks', async () => {
+		mockHandoff = loaded( null, true );
+		renderStep();
+
+		expect(
+			screen.getByText( /You no longer have access to our direct support channels/ )
+		).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Done' } ) );
+
+		expect( dismiss ).toHaveBeenCalled();
+		expect( startChat ).not.toHaveBeenCalled();
+	} );
+
 	it( 'waits for the type of question', async () => {
 		renderStep();
 
@@ -169,7 +197,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 	} );
 
 	it( "doesn't ask for the store when there is only one", async () => {
-		mockWooHandoff = merchant( { connectedStores: [ store( 'one.example' ) ] } );
+		mockHandoff = loaded( merchant( { connectedStores: [ store( 'one.example' ) ] } ) );
 		renderStep();
 
 		await userEvent.selectOptions( question(), 'technical-support' );
@@ -184,7 +212,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 	} );
 
 	it( 'asks for the store address when no store is connected', async () => {
-		mockWooHandoff = merchant( { connectedStores: [] } );
+		mockHandoff = loaded( merchant( { connectedStores: [] } ) );
 		renderStep();
 
 		await userEvent.selectOptions( question(), 'technical-support' );
@@ -208,6 +236,23 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		expect( lastDecision() ).toMatchObject( { route: 'link-out', row_id: 7 } );
 	} );
 
+	it( 'asks only for the store for presales, and lets the merchant skip it', async () => {
+		renderStep();
+
+		await userEvent.selectOptions( question(), 'pre-sales' );
+
+		expect( screen.queryByLabelText( 'Product' ) ).not.toBeInTheDocument();
+		expect( screen.getByLabelText( 'Store' ) ).toBeInTheDocument();
+		await userEvent.click( continueButton() );
+		expect( lastDecision() ).toMatchObject( {
+			route: 'ticket',
+			row_id: 13,
+			question: 'pre-sales',
+			product: null,
+			has_store: false,
+		} );
+	} );
+
 	it( 'offers vendor questions to vendors only', () => {
 		const { unmount } = renderStep();
 		expect(
@@ -215,13 +260,13 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		).not.toBeInTheDocument();
 		unmount();
 
-		mockWooHandoff = merchant( { isVendor: true } );
+		mockHandoff = loaded( merchant( { isVendor: true } ) );
 		renderStep();
 		expect( screen.getByRole( 'option', { name: 'Marketplace Vendors' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'sends the request to a ticket without merchant data', async () => {
-		mockWooHandoff = null;
+		mockHandoff = loaded( null );
 		renderStep();
 
 		await userEvent.selectOptions( question(), 'technical-support' );
@@ -238,16 +283,34 @@ describe( 'WooHumanSupportRoutingStep', () => {
 	} );
 
 	it( "uses the bot's emergency flag", async () => {
-		mockWooHandoff = merchant( { isPaying: false } );
+		mockHandoff = loaded( merchant( { isPaying: false } ) );
 		renderStep( {
 			...request,
-			flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+			flags: {
+				isEmergency: true,
+				emergencyType: 'site_down',
+				routeToEmail: false,
+				isUnknownCharge: false,
+			},
 		} );
 
 		await userEvent.selectOptions( question(), 'account' );
 		await userEvent.click( continueButton() );
 
 		expect( lastDecision() ).toMatchObject( { route: 'ticket', row_id: 4, is_emergency: true } );
+	} );
+
+	it( "sends the bot's unknown charges to a ticket", async () => {
+		renderStep( { ...request, flags: { ...request.flags, isUnknownCharge: true } } );
+
+		await userEvent.selectOptions( question(), 'account' );
+		await userEvent.click( continueButton() );
+
+		expect( lastDecision() ).toMatchObject( {
+			route: 'ticket',
+			row_id: 2,
+			is_unknown_charge: true,
+		} );
 	} );
 
 	it( 'drops the request on cancel', async () => {

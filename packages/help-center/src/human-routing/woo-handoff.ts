@@ -24,14 +24,13 @@ export type WooHandoffProduct = {
 };
 
 /**
- * What WooCommerce.com tells the Help Center about the signed-in merchant, as
- * `helpCenterData.wooHandoff`, so it can ask the right questions and route the request.
+ * What WooCommerce.com tells the Help Center about the signed-in merchant, from
+ * `GET /wccom/help-center/v1/handoff`, so it can ask the right questions and route the request.
  */
 export type WooHandoffData = {
-	/** Null when WooCommerce.com couldn't work out the tier. */
+	/** Null when WooCommerce.com couldn't work out the tier. Target customers come back as Tier 1. */
 	supportTier: SupportTier | null;
 	isPaying: boolean;
-	isTargetCustomer: boolean;
 	isWooEnterpriseCustomer: boolean;
 	connectedStores: WooHandoffStore[];
 	supportedProducts: WooHandoffProduct[];
@@ -46,18 +45,20 @@ export type WooHandoffAnswers = {
 	storeUrl: string | null;
 };
 
-/** Questions that ask for a product. Technical support needs one; pre-sales may skip it. */
+/**
+ * Only technical support asks for a product, and needs one. Pre-sales doesn't ask in milestone 1,
+ * since the merchant can only pick products they already have.
+ */
 export const isProductAsked = ( question: HumanSupportQuestionType | null ) =>
-	question === 'technical-support' || question === 'pre-sales';
-
-export const isProductRequired = ( question: HumanSupportQuestionType | null ) =>
 	question === 'technical-support';
 
 /** Externally supported products have their own support, so there's no store to ask about. */
 export const isStoreAsked = (
 	question: HumanSupportQuestionType | null,
 	product: WooHandoffProduct | null
-) => isProductAsked( question ) && product?.supportType !== 'external';
+) =>
+	( question === 'technical-support' || question === 'pre-sales' ) &&
+	product?.supportType !== 'external';
 
 export const isStoreRequired = ( question: HumanSupportQuestionType | null ) =>
 	question === 'technical-support';
@@ -67,7 +68,7 @@ export function getWooRoutingInput( {
 	answers,
 	flags,
 }: {
-	/** Null when WooCommerce.com sent nothing. */
+	/** Null when WooCommerce.com couldn't send it. */
 	data: WooHandoffData | null;
 	answers: WooHandoffAnswers;
 	flags: HumanRoutingFlags;
@@ -82,7 +83,6 @@ export function getWooRoutingInput( {
 			? {
 					supportTier: data.supportTier,
 					isPaying: data.isPaying,
-					isTargetCustomer: data.isTargetCustomer,
 					isWooEnterpriseCustomer: data.isWooEnterpriseCustomer,
 				}
 			: null,
