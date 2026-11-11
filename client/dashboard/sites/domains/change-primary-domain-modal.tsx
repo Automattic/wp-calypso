@@ -15,6 +15,7 @@ import { useId, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
+import { Notice } from '../../components/notice';
 import { Text } from '../../components/text';
 import { isSubdomain } from '../../utils/domain';
 import PrimaryAddressIllustration from './primary-address-illustration';
@@ -56,6 +57,11 @@ export default function ChangePrimaryDomainModal( {
 		)?.address ?? primaryAddress;
 	const [ selectedDomain, setSelectedDomain ] = useState( currentAddress );
 	const selected = addresses.find( ( { address } ) => address === selectedDomain );
+	const [ wwwError, setWwwError ] = useState< {
+		domain: string;
+		address: string;
+		message: string;
+	} | null >( null );
 	const errorSnackbar = { error: { source: 'server' as const } };
 	const snackbar = {
 		...errorSnackbar,
@@ -73,7 +79,14 @@ export default function ChangePrimaryDomainModal( {
 		)
 	);
 	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
-	const isPending = setPrimaryDomainMutation.isPending || setWwwMutation.isPending;
+	// The modal explains a failure here, because the primary site address has already changed.
+	const setWwwAfterPrimaryMutation = useMutation(
+		withSnackbar( setWwwPrimaryDomainMutation(), { success: snackbar.success } )
+	);
+	const isPending =
+		setPrimaryDomainMutation.isPending ||
+		setWwwMutation.isPending ||
+		setWwwAfterPrimaryMutation.isPending;
 
 	const options = addresses.map( ( { address } ) => ( { label: address, value: address } ) );
 
@@ -86,27 +99,37 @@ export default function ChangePrimaryDomainModal( {
 			return;
 		}
 
+		const domain = selected.domain.domain;
+
 		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
 			site: site.slug,
-			domain: selectedDomain,
+			domain,
 			www: selected.www,
 		} );
 
-		const domain = selected.domain.domain;
-		const setWww = () =>
+		setWwwError( null );
+
+		if ( domain === primaryAddress ) {
 			setWwwMutation.mutate(
 				{ siteId: site.ID, domain, enabled: selected.www },
 				{ onSuccess: onClose }
 			);
-
-		if ( domain === primaryAddress ) {
-			setWww();
 			return;
 		}
 
+		const setWwwAfterPrimary = () =>
+			setWwwAfterPrimaryMutation.mutate(
+				{ siteId: site.ID, domain, enabled: true },
+				{
+					onSuccess: onClose,
+					onError: ( error ) =>
+						setWwwError( { domain, address: selected.address, message: error.message } ),
+				}
+			);
+
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain },
-			{ onSuccess: selected.www ? setWww : onClose }
+			{ onSuccess: selected.www ? setWwwAfterPrimary : onClose }
 		);
 	};
 
@@ -144,13 +167,35 @@ export default function ChangePrimaryDomainModal( {
 							</Text>
 						) }
 					</VStack>
+					{ wwwError && (
+						<Notice variant="warning">
+							<VStack spacing={ 2 }>
+								<Text as="p">
+									{ createInterpolateElement(
+										/* translators: <domain /> is the new primary site address, e.g. example.com. <wwwDomain /> is its www address, e.g. www.example.com */
+										__(
+											'<domain /> is now the primary site address, but it could not be changed to <wwwDomain />.'
+										),
+										{
+											domain: <strong>{ wwwError.domain }</strong>,
+											wwwDomain: <strong>{ wwwError.address }</strong>,
+										}
+									) }
+								</Text>
+								<Text as="p">{ wwwError.message }</Text>
+							</VStack>
+						</Notice>
+					) }
 					<SelectControl
 						__next40pxDefaultSize
 						label={ __( 'Primary site address' ) }
 						value={ selectedDomain }
 						options={ options }
 						disabled={ isPending }
-						onChange={ setSelectedDomain }
+						onChange={ ( value: string ) => {
+							setWwwError( null );
+							setSelectedDomain( value );
+						} }
 					/>
 					<ButtonStack justify="flex-end">
 						<Button

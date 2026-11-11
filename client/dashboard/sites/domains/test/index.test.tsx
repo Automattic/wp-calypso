@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { sslDetailsQuery } from '@automattic/api-queries';
+import { domainsQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -677,7 +677,7 @@ describe( '<SiteDomains>', () => {
 			nock.cleanAll();
 			mockApis( { domains, siteResponse } );
 			const user = userEvent.setup();
-			const { recordTracksEvent } = render( <SiteDomains />, { user: ownerUser } );
+			const { recordTracksEvent, queryClient } = render( <SiteDomains />, { user: ownerUser } );
 			await user.click(
 				await screen.findByRole( 'button', { name: 'Change primary site address' } )
 			);
@@ -687,7 +687,7 @@ describe( '<SiteDomains>', () => {
 				await user.selectOptions( select, value );
 				await user.click( within( dialog ).getByRole( 'button', { name: 'Change address' } ) );
 			};
-			return { dialog, select, submit, recordTracksEvent };
+			return { dialog, select, submit, user, recordTracksEvent, queryClient };
 		}
 
 		function optionValues( select: HTMLElement ) {
@@ -776,7 +776,7 @@ describe( '<SiteDomains>', () => {
 				await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 				expect( recordTracksEvent ).toHaveBeenCalledWith(
 					'calypso_dashboard_site_domains_primary_domain_selector_submit',
-					{ site: site.slug, domain: value, www: enabled }
+					{ site: site.slug, domain: 'test-site.com', www: enabled }
 				);
 			}
 		);
@@ -813,21 +813,56 @@ describe( '<SiteDomains>', () => {
 			expect( requests ).toEqual( [ 'primary', 'www' ] );
 		} );
 
-		test( 'keeps the modal open when turning www on fails', async () => {
-			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
-			nock( 'https://public-api.wordpress.com' )
-				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary` )
-				.reply( 200, {} );
-			const wwwRequest = nock( 'https://public-api.wordpress.com' )
-				.post( '/wpcom/v2/domains/www-primary/candidate.com' )
-				.reply( 500, {} );
+		test( 'explains that the primary changed when turning www on fails, and retries only www', async () => {
+			const { dialog, submit, user, queryClient } = await openModal( [
+				primaryCandidateDomain,
+				domain,
+			] );
+			const api = nock( 'https://public-api.wordpress.com' );
+			api
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, {} )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 400, { code: 'www_dns_record_missing', message: 'Add a CNAME record for www.' } );
 
 			await submit( 'www.candidate.com' );
 
-			await waitFor( () => expect( wwwRequest.isDone() ).toBe( true ) );
 			await waitFor( () =>
-				expect( within( screen.getByRole( 'dialog' ) ).getByRole( 'combobox' ) ).toBeEnabled()
+				expect( dialog ).toHaveTextContent(
+					'candidate.com is now the primary site address, but it could not be changed to www.candidate.com.'
+				)
 			);
+			expect( dialog ).toHaveTextContent( 'Add a CNAME record for www.' );
+
+			// The mutations refresh the app's own query client, so the test refreshes its client here.
+			api
+				.get( '/rest/v1.2/all-domains' )
+				.query( true )
+				.reply( 200, {
+					domains: [
+						{ ...primaryCandidateDomain, primary_domain: true },
+						{ ...domain, primary_domain: false, can_set_as_primary: true },
+					],
+				} );
+			await queryClient.invalidateQueries( domainsQuery() );
+			await waitFor( () =>
+				expect( dialog ).toHaveTextContent(
+					'The current primary site address for this site is candidate.com.'
+				)
+			);
+
+			const retryPrimaryRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary` )
+				.reply( 200, {} );
+			const retryWwwRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 200, { enabled: true, primary_domain: 'www.candidate.com' } );
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change address' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( retryWwwRequest.isDone() ).toBe( true );
+			expect( retryPrimaryRequest.isDone() ).toBe( false );
 		} );
 
 		test( 'offers www from "Change primary" on the primary domain row', async () => {
