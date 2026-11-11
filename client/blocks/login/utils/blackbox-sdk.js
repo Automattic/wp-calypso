@@ -4,9 +4,6 @@ import { rememberBlackboxKey } from 'calypso/blocks/login/utils/blackbox-surface
 
 let loadPromise = null;
 
-// Sent with a signup session so signup verify uses the unified production key.
-export const BLACKBOX_KEY_VERSION = 2;
-
 /**
  * Public key for Blackbox collects.
  * @returns {string|undefined} Configured public key.
