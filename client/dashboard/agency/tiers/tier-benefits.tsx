@@ -13,8 +13,9 @@ import { Fragment } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { getReportAllowance } from '../amplify/constants';
 import { getUsageStatus } from '../amplify/usage';
-import { ALL_TIERS, getReportAllowance } from './constants';
+import { ALL_TIERS } from './constants';
 import getCurrentAgencyTier from './get-current-agency-tier';
 import type {
 	AgencyTierType,

@@ -30,16 +30,43 @@ const getTierName = ( tierId: AgencyTierId ) =>
  * explainer so agencies can see what the next tier unlocks.
  */
 export const getTierAllowances = (): { label: string; scans: number; tiers: AgencyTierId[] }[] => [
-	{ label: getTierName( 'emerging-partner' ), scans: 5, tiers: [ 'emerging-partner' ] },
-	{ label: getTierName( 'agency-partner' ), scans: 15, tiers: [ 'agency-partner' ] },
-	{ label: getTierName( 'pro-agency-partner' ), scans: 30, tiers: [ 'pro-agency-partner' ] },
+	{
+		label: getTierName( 'emerging-partner' ),
+		scans: getReportAllowance( 'emerging-partner' ),
+		tiers: [ 'emerging-partner' ],
+	},
+	{
+		label: getTierName( 'agency-partner' ),
+		scans: getReportAllowance( 'agency-partner' ),
+		tiers: [ 'agency-partner' ],
+	},
+	{
+		label: getTierName( 'pro-agency-partner' ),
+		scans: getReportAllowance( 'pro-agency-partner' ),
+		tiers: [ 'pro-agency-partner' ],
+	},
 	{
 		// One row for two tiers, so it has its own shorter name.
 		label: __( 'VIP Pro & Premier' ),
-		scans: 60,
+		scans: getReportAllowance( 'vip-pro-agency-partner' ),
 		tiers: [ 'vip-pro-agency-partner', 'premier-partner' ],
 	},
 ];
+
+/**
+ * The tier's monthly Prospect reports allowance. The Tiers constants call this
+ * while building `ALL_TIERS`, so it can't depend on `ALL_TIERS` itself.
+ */
+export function getReportAllowance( tierId: AgencyTierId ) {
+	const allowances: Record< AgencyTierId, number > = {
+		'emerging-partner': 5,
+		'agency-partner': 15,
+		'pro-agency-partner': 30,
+		'vip-pro-agency-partner': 60,
+		'premier-partner': 60,
+	};
+	return allowances[ tierId ] ?? 0;
+}
 
 /** Agency Partner and above get "Need more? Contact us" at the cap. */
 const CONTACT_TIERS: AgencyTierId[] = [

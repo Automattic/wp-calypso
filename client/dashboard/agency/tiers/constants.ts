@@ -14,14 +14,9 @@ import {
 	trendingUp,
 	megaphone,
 } from '@wordpress/icons';
-import { getTierAllowances } from '../amplify/constants';
+import { getReportAllowance } from '../amplify/constants';
 import type { Benefit, TierItem } from './types';
 import type { AgencyTierId } from '@automattic/api-core';
-
-/** The tier's monthly Prospect reports allowance. */
-export function getReportAllowance( tierId: AgencyTierId ) {
-	return getTierAllowances().find( ( { tiers } ) => tiers.includes( tierId ) )?.scans ?? 0;
-}
 
 /**
  * Upgrade incentive on higher tiers' cards: the bigger monthly allowance.
