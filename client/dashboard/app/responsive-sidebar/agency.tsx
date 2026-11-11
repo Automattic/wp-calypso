@@ -48,9 +48,7 @@ export default function AgencySidebar() {
 		!! supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' );
 	const canAccessDevTools = !! supports.agency.devTools && canAccess( devToolsRoute );
 	const canAccessMigrations = !! supports.agency.earn && canAccess( earnMigrationsRoute );
-	const canAccessAmplify =
-		!! ( supports.agency.amplify && activeAgency?.amplify?.allowed ) &&
-		canAccess( agencyAmplifyRoute );
+	const canAccessAmplify = !! supports.agency.amplify && canAccess( agencyAmplifyRoute );
 	const accessibleMarketplaceSections = marketplaceSections.filter( ( section ) =>
 		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
 	);
