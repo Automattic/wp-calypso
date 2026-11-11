@@ -238,16 +238,18 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			[ launchParams.siteSlug ]
 		);
 		// A preview is kept by buying a plan, so it is offered only paid ones; hidden while asked, so
-		// Free never shows on a preview.
+		// Free never shows on a preview. The step ignores `hideFreePlan` when Free is de-emphasized,
+		// and offers it as a link in the subheader instead.
 		const { isLoading: isPreviewLoading, isPreview } = useIsPreviewSite( site );
+		const hideFreePlan = isPreviewLoading || isPreview;
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				isInSignup: true,
 				isLaunchPage: true,
 				isCustomDomainAllowedOnFreePlan: true,
-				deemphasizeFreePlan: true,
-				...( ( isPreviewLoading || isPreview ) && { hideFreePlan: true } ),
+				deemphasizeFreePlan: ! hideFreePlan,
+				...( hideFreePlan && { hideFreePlan } ),
 				...( isPlansFirstStep && {
 					wrapperProps: {
 						goBack: () => window.location.assign( getLaunchReturnUrl( launchParams ) ),

@@ -449,6 +449,7 @@ describe( 'launch-site flow', () => {
 			mockPending = listingPreview;
 
 			expect( launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+				deemphasizeFreePlan: false,
 				hideFreePlan: true,
 			} );
 		} );
