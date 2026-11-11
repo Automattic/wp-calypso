@@ -205,8 +205,8 @@ describe( '<TierBenefits>', () => {
 				currentAgencyTierId="emerging-partner"
 				onScheduleCall={ jest.fn() }
 				links={ {
-					'generate-prospect-report': '/amplify?new-report=1',
-					'view-prospect-reports': '/amplify',
+					'generate-prospect-report': '/prospect-reports?new-report=1',
+					'view-prospect-reports': '/prospect-reports',
 				} }
 				shouldUseRouterLink={ false }
 				prospectReports={ {
