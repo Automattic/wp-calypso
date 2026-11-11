@@ -5,7 +5,6 @@ import type { Config } from '../types';
 
 const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
-type MockedFunction = Mock;
 const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
 	logError: vi.fn(),
 	fetchExperimentAssignment: vi.fn(),
@@ -32,11 +31,9 @@ describe( 'loadExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			0
-		);
-		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 0 );
+		expect( ( mockedConfig.getAnonId as Mock ).mock.calls ).toHaveLength( 0 );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -62,11 +59,9 @@ describe( 'dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			0
-		);
-		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 0 );
+		expect( ( mockedConfig.getAnonId as Mock ).mock.calls ).toHaveLength( 0 );
+		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
