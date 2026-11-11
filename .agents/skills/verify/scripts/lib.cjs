@@ -68,9 +68,10 @@ async function saveState( context, account ) {
 function e2eSetupError( reason ) {
 	return new UserActionRequired(
 		`The E2E test accounts aren't set up on this machine: ${ reason }\n` +
-			'Ask the user to run this in their own terminal, not through the agent, so the key stays out of the conversation. ' +
-			'It asks for the key and says where to get it:\n' +
+			'In a git worktree, run this yourself first: it asks for no key when another checkout has current secrets to copy.\n' +
 			`  ${ SETUP_COMMAND }\n` +
+			'Otherwise ask the user to run it in their own terminal, not through the agent, so the key stays out of the conversation. ' +
+			'It asks for the key and says where to get it.\n' +
 			`Or they can use their own login instead: ${ AUTH_COMMAND }`
 	);
 }
