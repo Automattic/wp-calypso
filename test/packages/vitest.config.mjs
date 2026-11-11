@@ -24,5 +24,7 @@ export default defineConfig( {
 		exclude: [ ...configDefaults.exclude, '**/dist/**' ],
 		// Vitest otherwise cuts `$name` test titles at 40 characters.
 		taskTitleValueFormatTruncate: 0,
+		// Vitest otherwise clears mocks before each test, dropping calls made in a `beforeAll`.
+		clearMocks: false,
 	},
 } );
