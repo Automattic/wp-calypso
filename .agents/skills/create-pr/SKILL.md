@@ -40,7 +40,7 @@ The description then reuses the commit body's two paragraphs in reverse order, e
 
 For a change users can see (UI, or new or changed translatable strings), add before/after screenshots under `## What`, after its paragraph. Take and upload them as in [verify/screenshots.md](../verify/screenshots.md).
 
-Then add a `## Details` heading listing what What and Why leave out: which components, hooks, selectors, endpoints or feature flags change and how, trade-offs and alternatives rejected, and work left for a follow-up. Put the list in a collapsed `<details>` block whose `<summary>` is `Click to view details`, with a blank line after `<summary>` and before `</details>` so that GitHub renders the Markdown inside. When changes must ship in a particular sequence, state the rollout order under Details, before the `<details>` block. Leave out Details only when What already names everything the diff does.
+Then add a `## Details` heading listing what What and Why leave out: which components, hooks, selectors, endpoints or feature flags change and how, trade-offs and alternatives rejected, and work left for a follow-up. Put the list in a collapsed `<details>` block whose `<summary>` is `Details`, with a blank line after `<summary>` and before `</details>` so that GitHub renders the Markdown inside. When changes must ship in a particular sequence, state the rollout order under Details, before the `<details>` block. Leave out Details only when What already names everything the diff does.
 
 Next, add a `## How to Test` heading with numbered steps a reviewer can follow on Calypso Live or a local dev server: the URL path to open, what to do, and what to expect. Keep each step to one action and its result, starting with any setup it needs (site, account, flag); for a fix, also say what happens without it. If the change runs in more than one app (for example Dashboard and A4A, or Calypso and Jetpack Cloud), include steps for each. Don't list tests or CI runs; the checks already show them.
 
@@ -49,6 +49,8 @@ List any companion patches above step 1 and say which steps or environments need
 Start a step with `🤖☑️` only when you ran it on the commit you're pushing and saw its expected result; reading the code or a passing test doesn't count. Leave a step you couldn't run unmarked. A step that fails is a bug: fix it or ask the user, and don't reword the step to match.
 
 After How to Test, add a `## Agent Report` heading with "🤖☑️ Tested by the agent on <where> at commit <hash>." and, if any step is unmarked, "⚠️ The agent didn't run testing <steps>: <why>.", with <steps> such as `step 3` or `steps 2 and 3`. Leave out the first line when you ran no step.
+
+Then add a collapsed `<details>` block whose `<summary>` is `Pattern consistency report`, formatted like the one under Details. In it, list places where the code you touched showed more than one way to do the same thing, used a deprecated pattern, or disagreed with the docs: at most the two that cost you the most time or would most likely mislead the next change. Name the files, and say which way you followed and why. When you found none, write "No conflicting patterns found." instead of the list. Leave out the block only when you wrote no code that could follow a pattern, such as a dependency bump, a docs-only change, a config value or feature flag toggle, a revert, or regenerated files.
 
 Example:
 
@@ -71,7 +73,7 @@ The Sites list and site overview showed `-` for the PHP version of Simple sites,
 ## Details
 
 <details>
-<summary>Click to view details</summary>
+<summary>Details</summary>
 
 - `canViewPHPVersion` in `client/dashboard/sites/features.ts` allows sites with the PHP hosting feature, and Simple sites whose user has `manage_options`. The Sites list field and the site overview both use it.
 - `fetchSiteEnvironmentInfo` in `@automattic/api-core` runs the ability, and `siteEnvironmentPHPVersionQuery` in `@automattic/api-queries` trims its version to major.minor, e.g. `8.3`.
@@ -90,6 +92,13 @@ The Sites list and site overview showed `-` for the PHP version of Simple sites,
 🤖☑️ Tested by the agent on a local dev server at commit 4c0c0bb.
 
 ⚠️ The agent didn't run testing step 3: it needs an Atomic site, and none was available.
+
+<details>
+<summary>Pattern consistency report</summary>
+
+- Some Sites list fields check access through helpers in `client/dashboard/sites/features.ts`, while others check it inline in their field definitions. Followed `features.ts`, which the site overview also uses.
+
+</details>
 ```
 
 ## 4. Open the PR
