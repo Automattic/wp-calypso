@@ -44,7 +44,7 @@ _Check also how to write [unit tests](unit-tests.md) and [component tests](compo
 
 ## Package tests
 
-This test configuration contains unit tests for the packages in the `packages` top level folder. Packages are moving from Jest to Vitest one batch at a time: a package with a `vitest.config.mjs` runs on Vitest, and one with a `jest.config.js` runs on Jest. Test files go in a `test` subfolder, as in `client`.
+This test configuration contains unit tests for the packages in the `packages` top level folder. Packages are moving from Jest to Vitest one batch at a time: a package with a `vitest.config.*` runs on Vitest, and one with a `jest.config.js` runs on Jest. Test files go in a `test` subfolder, as in `client`.
 
 ```bash
 > # run every package's tests, on Jest and then on Vitest
