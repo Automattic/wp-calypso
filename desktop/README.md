@@ -27,6 +27,7 @@ For a quicker and more efficient development experience, the application can be 
 - First, create your config file with `yarn run build:config`
 - Use `yarn run dev` to run development mode and load production WordPress.com, _OR_
 - Boot Calpyso from the root of the Calypso repository with `yarn start`. Once Calypso is ready, the desktop app can be booted with `yarn run dev:localhost` to load the local instance of Calypso.
+- The launcher uses the checkout's default port or `PORT` from the environment or repo-root `.env`. If you pass `PORT` only on the `yarn start` command, pass the same value when launching Desktop.
 
 ## Development
 
