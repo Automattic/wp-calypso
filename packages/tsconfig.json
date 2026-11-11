@@ -60,7 +60,6 @@
 		{ "path": "./request-external-access" },
 		{ "path": "./search" },
 		{ "path": "./shopping-cart" },
-		{ "path": "./site-admin" },
 		{ "path": "./site-launch-modals" },
 		{ "path": "./sites" },
 		{ "path": "./state-utils" },

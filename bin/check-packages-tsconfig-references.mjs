@@ -22,16 +22,22 @@ function readTsconfig( file ) {
 }
 
 function collectReferencedPackages( file, seen = new Set() ) {
-	if ( seen.has( file ) || ! fs.existsSync( file ) ) {
+	if ( seen.has( file ) ) {
 		return seen;
 	}
 	seen.add( file );
 	for ( const { path: reference } of readTsconfig( file ).references ?? [] ) {
 		const target = path.resolve( path.dirname( file ), reference );
-		collectReferencedPackages(
-			target.endsWith( '.json' ) ? target : path.join( target, 'tsconfig.json' ),
-			seen
-		);
+		const referenced = target.endsWith( '.json' ) ? target : path.join( target, 'tsconfig.json' );
+		if ( ! fs.existsSync( referenced ) ) {
+			// `tsc --build` fails on this too, so `yarn install` would stop here.
+			console.error(
+				`${ path.relative( process.cwd(), file ) } references "${ reference }", which has no tsconfig.json. ` +
+					'Remove the reference or restore the package.'
+			);
+			process.exit( 1 );
+		}
+		collectReferencedPackages( referenced, seen );
 	}
 	return seen;
 }
