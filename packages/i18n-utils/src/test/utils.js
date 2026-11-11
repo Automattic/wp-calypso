@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	getMappedLanguageSlug,
 	getNumericFirstDayOfWeek,
@@ -7,11 +8,11 @@ import {
 	filterLanguageRevisions,
 } from '../';
 
-jest.mock( '@automattic/calypso-config', () => ( key ) => {
+vi.mock( '@automattic/calypso-config', () => ( { default: ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'en';
 	}
-} );
+} } ) );
 
 describe( '#getMappedLanguageSlug', () => {
 	test( 'should Norwegian `no` locale slug to `nb`.', () => {

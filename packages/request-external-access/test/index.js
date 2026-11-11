@@ -1,20 +1,21 @@
 import PopupMonitor from '@automattic/popup-monitor';
+import { vi } from 'vitest';
 import requestExternalAccess from '../src';
 
-jest.mock( '@automattic/popup-monitor' );
+vi.mock( '@automattic/popup-monitor' );
 
 const popupMonitorMocks = {
-	open: jest.fn(),
-	once: jest.fn(),
-	on: jest.fn(),
-	getScreenCenterSpecs: jest.fn( () => '<screenSpecs>' ),
+	open: vi.fn(),
+	once: vi.fn(),
+	on: vi.fn(),
+	getScreenCenterSpecs: vi.fn( () => '<screenSpecs>' ),
 };
 
 PopupMonitor.mockImplementation( () => ( { ...popupMonitorMocks } ) );
 
 describe( 'requestExternalAccess', () => {
 	const serviceURL = 'http://example.com';
-	const callback = jest.fn();
+	const callback = vi.fn();
 
 	beforeEach( () => {
 		requestExternalAccess( serviceURL, callback );

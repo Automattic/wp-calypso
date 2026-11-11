@@ -3,6 +3,7 @@
  */
 import { render, fireEvent } from '@testing-library/react';
 import Modal from 'react-modal';
+import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { DoNotSellDialog } from '..';
 
@@ -40,8 +41,8 @@ describe( 'DoNotSellDialog', () => {
 		const { baseElement, getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
-				onToggleActive={ jest.fn() }
-				onClose={ jest.fn() }
+				onToggleActive={ vi.fn() }
+				onClose={ vi.fn() }
 				isOpen
 			/>
 		);
@@ -55,11 +56,11 @@ describe( 'DoNotSellDialog', () => {
 		expect( baseElement ).toMatchSnapshot();
 	} );
 	test( 'fires onClose() on text button click', () => {
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
-				onToggleActive={ jest.fn() }
+				onToggleActive={ vi.fn() }
 				onClose={ onClose }
 				isOpen
 			/>
@@ -69,11 +70,11 @@ describe( 'DoNotSellDialog', () => {
 		expect( onClose ).toHaveBeenCalled();
 	} );
 	test( 'fires onClose() on "x" button click', () => {
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		const { baseElement: container } = render(
 			<DoNotSellDialog
 				content={ genericContent }
-				onToggleActive={ jest.fn() }
+				onToggleActive={ vi.fn() }
 				onClose={ onClose }
 				isOpen
 			/>
@@ -86,13 +87,13 @@ describe( 'DoNotSellDialog', () => {
 		expect( onClose ).toHaveBeenCalled();
 	} );
 	test( 'fires onToggleActive(true) on toggle click when isActive=false', () => {
-		const onToggleActive = jest.fn();
+		const onToggleActive = vi.fn();
 		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				isActive={ false }
 				onToggleActive={ onToggleActive }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				isOpen
 			/>
 		);
@@ -101,13 +102,13 @@ describe( 'DoNotSellDialog', () => {
 		expect( onToggleActive ).toHaveBeenCalledWith( true );
 	} );
 	test( 'fires onToggleActive(false) on toggle click when isActive=true', () => {
-		const onToggleActive = jest.fn();
+		const onToggleActive = vi.fn();
 		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				isActive
 				onToggleActive={ onToggleActive }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				isOpen
 			/>
 		);

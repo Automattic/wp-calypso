@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../src';
 import {
 	executeCallbacks,
@@ -10,9 +11,9 @@ import {
 } from '../src/callback-handler';
 import { attachToHead, createScriptElement } from '../src/dom-operations';
 
-jest.mock( '../src/dom-operations', () => ( {
-	attachToHead: jest.fn(),
-	createScriptElement: jest.fn(),
+vi.mock( '../src/dom-operations', () => ( {
+	attachToHead: vi.fn(),
+	createScriptElement: vi.fn(),
 } ) );
 
 describe( 'loadScript', () => {
@@ -20,7 +21,7 @@ describe( 'loadScript', () => {
 		const url = '/';
 		const args = { id: 'scriptId' };
 
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		beforeAll( function () {
 			removeAllScriptCallbacks();
@@ -63,7 +64,7 @@ describe( 'loadScript', () => {
 		test( 'should use window.jQuery if available', () => {
 			window.jQuery = {};
 
-			const callback = jest.fn();
+			const callback = vi.fn();
 			loadjQueryDependentScript( url, callback, args );
 
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
@@ -82,7 +83,7 @@ describe( 'loadScript', () => {
 				const jQueryBackup = global.window.jQuery;
 				global.window.jQuery = false;
 
-				const callback = jest.fn();
+				const callback = vi.fn();
 				loadjQueryDependentScript( url ).then( callback );
 
 				expect( createScriptElement ).toHaveBeenCalledTimes( 1 );

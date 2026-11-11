@@ -2,28 +2,29 @@
  * @jest-environment jsdom
  */
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	subscribe: jest.fn( () => jest.fn() ),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	subscribe: vi.fn( () => vi.fn() ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
 
-const mockSelect = select as jest.Mock;
-const mockSubscribe = subscribe as unknown as jest.Mock;
-const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
-const mockIsSupportSession = isSupportSession as jest.Mock;
+const mockSelect = select as Mock;
+const mockSubscribe = subscribe as unknown as Mock;
+const mockRecordTracksEvent = recordTracksEvent as Mock;
+const mockIsSupportSession = isSupportSession as Mock;
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -43,7 +44,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should call invokeEvent immediately when SDK is ready', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 		window._sva = { invokeEvent };
 
 		invokeSurvicateEvent( 'testEvent' );
@@ -57,7 +58,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should defer invocation until SurvicateReady when SDK is not ready', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 
 		invokeSurvicateEvent( 'testEvent' );
 		expect( invokeEvent ).not.toHaveBeenCalled();
@@ -68,7 +69,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should not invoke event when cleanup is called before SurvicateReady', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 		const cleanup = invokeSurvicateEvent( 'testEvent' );
 
 		cleanup();
@@ -79,7 +80,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should only invoke once even if SurvicateReady fires multiple times', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 
 		invokeSurvicateEvent( 'testEvent' );
 
@@ -90,8 +91,8 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should suppress event and close survey when Help Center is open', () => {
-		const invokeEvent = jest.fn();
-		const closeSurvey = jest.fn();
+		const invokeEvent = vi.fn();
+		const closeSurvey = vi.fn();
 		window._sva = { invokeEvent, closeSurvey };
 
 		setHelpCenterOpen( true );
@@ -102,7 +103,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should suppress deferred event when Help Center opens before SurvicateReady', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 
 		invokeSurvicateEvent( 'testEvent' );
 		setHelpCenterOpen( true );
@@ -113,8 +114,8 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should suppress the event and close the survey when a modal is open', () => {
-		const invokeEvent = jest.fn();
-		const closeSurvey = jest.fn();
+		const invokeEvent = vi.fn();
+		const closeSurvey = vi.fn();
 		window._sva = { invokeEvent, closeSurvey };
 
 		const modal = document.createElement( 'div' );
@@ -137,7 +138,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should suppress a deferred event when a modal is open at SurvicateReady time', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 
 		invokeSurvicateEvent( 'testEvent' );
 
@@ -156,8 +157,8 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should suppress the event and close the survey during a support session', () => {
-		const invokeEvent = jest.fn();
-		const closeSurvey = jest.fn();
+		const invokeEvent = vi.fn();
+		const closeSurvey = vi.fn();
 		window._sva = { invokeEvent, closeSurvey };
 
 		mockIsSupportSession.mockReturnValue( true );
@@ -173,7 +174,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should suppress a deferred event when in a support session at SurvicateReady time', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 
 		invokeSurvicateEvent( 'testEvent' );
 		mockIsSupportSession.mockReturnValue( true );
@@ -185,8 +186,8 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should report support_session ahead of the Help Center and modals', () => {
-		const invokeEvent = jest.fn();
-		const closeSurvey = jest.fn();
+		const invokeEvent = vi.fn();
+		const closeSurvey = vi.fn();
 		window._sva = { invokeEvent, closeSurvey };
 
 		mockIsSupportSession.mockReturnValue( true );
@@ -200,7 +201,7 @@ describe( 'invokeSurvicateEvent', () => {
 	} );
 
 	test( 'should fall back gracefully when Help Center store is unavailable', () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 		window._sva = { invokeEvent };
 
 		mockSelect.mockImplementation( () => {
@@ -227,8 +228,8 @@ describe( 'observeHelpCenter', () => {
 
 	test( 'should fire onOpen when the Help Center opens', () => {
 		setHelpCenterShown( false );
-		const onOpen = jest.fn();
-		const onClose = jest.fn();
+		const onOpen = vi.fn();
+		const onClose = vi.fn();
 		observeHelpCenter( onOpen, onClose );
 
 		setHelpCenterShown( true );
@@ -240,8 +241,8 @@ describe( 'observeHelpCenter', () => {
 
 	test( 'should fire onClose when the Help Center closes', () => {
 		setHelpCenterShown( true );
-		const onOpen = jest.fn();
-		const onClose = jest.fn();
+		const onOpen = vi.fn();
+		const onClose = vi.fn();
 		observeHelpCenter( onOpen, onClose );
 
 		setHelpCenterShown( false );
@@ -253,8 +254,8 @@ describe( 'observeHelpCenter', () => {
 
 	test( 'should not fire when the state has not changed', () => {
 		setHelpCenterShown( false );
-		const onOpen = jest.fn();
-		const onClose = jest.fn();
+		const onOpen = vi.fn();
+		const onClose = vi.fn();
 		observeHelpCenter( onOpen, onClose );
 
 		notifyStore();
@@ -266,8 +267,8 @@ describe( 'observeHelpCenter', () => {
 
 	test( 'should fire each transition only once until the state flips again', () => {
 		setHelpCenterShown( false );
-		const onOpen = jest.fn();
-		observeHelpCenter( onOpen, jest.fn() );
+		const onOpen = vi.fn();
+		observeHelpCenter( onOpen, vi.fn() );
 
 		setHelpCenterShown( true );
 		notifyStore();

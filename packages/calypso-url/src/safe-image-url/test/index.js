@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 describe( 'safeImageUrl()', () => {
 	let safeImageUrl;
 
@@ -151,7 +152,7 @@ describe( 'safeImageUrl()', () => {
 					origin: 'https://wordpress.com',
 				},
 			} );
-			jest.resetModules();
+			vi.resetModules();
 			safeImageUrl = require( '../' ).safeImageUrl;
 		} );
 

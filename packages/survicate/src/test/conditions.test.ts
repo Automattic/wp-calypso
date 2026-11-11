@@ -1,11 +1,12 @@
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 import { isSupportSession } from '@automattic/calypso-support-session';
+import { type Mock, vi } from 'vitest';
 import { shouldLoadSurvicate, SURVICATE_WORKSPACE_ID } from '../conditions';
 
-const mockIsSupportSession = isSupportSession as jest.Mock;
+const mockIsSupportSession = isSupportSession as Mock;
 
 beforeEach( () => {
 	mockIsSupportSession.mockReturnValue( false );

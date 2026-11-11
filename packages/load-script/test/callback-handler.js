@@ -1,6 +1,7 @@
 /**
  */
 
+import { vi } from 'vitest';
 import {
 	addScriptCallback,
 	executeCallbacks,
@@ -167,10 +168,10 @@ describe( 'loadScript/callback-handler', () => {
 		test( 'should execute all callbacks associated with the URL', () => {
 			const url1 = '/';
 			const url2 = '/information';
-			const callback1a = jest.fn();
-			const callback1b = jest.fn();
-			const callback2a = jest.fn();
-			const callback2b = jest.fn();
+			const callback1a = vi.fn();
+			const callback1b = vi.fn();
+			const callback2a = vi.fn();
+			const callback2b = vi.fn();
 
 			addScriptCallback( url1, callback1a );
 			addScriptCallback( url1, callback1b );
@@ -196,7 +197,7 @@ describe( 'loadScript/callback-handler', () => {
 		const url = '/';
 		const elementObject = { getAttribute: () => url };
 		const eventObject = { target: elementObject };
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		beforeAll( function () {
 			addScriptCallback( url, callback );
@@ -217,7 +218,7 @@ describe( 'loadScript/callback-handler', () => {
 		const url = '/';
 		const elementObject = { getAttribute: () => url };
 		const eventObject = { target: elementObject };
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		beforeAll( function () {
 			addScriptCallback( url, callback );
