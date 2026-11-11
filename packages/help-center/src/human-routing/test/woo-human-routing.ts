@@ -9,7 +9,6 @@ import type {
 const tier2Customer: HumanRoutingCustomer = {
 	supportTier: 'tier_2',
 	isPaying: false,
-	isTargetCustomer: false,
 	isWooEnterpriseCustomer: false,
 };
 
@@ -22,8 +21,15 @@ const wooProduct: HumanRoutingProduct = {
 
 const coreProduct: HumanRoutingProduct = { ...wooProduct, slug: 'wc-core', isCore: true };
 
+const noFlags = {
+	isEmergency: false,
+	emergencyType: null,
+	routeToEmail: false,
+	isUnknownCharge: false,
+};
+
 const input = ( overrides: Partial< HumanRoutingInput > = {} ): HumanRoutingInput => ( {
-	flags: { isEmergency: false, emergencyType: null, routeToEmail: false },
+	flags: noFlags,
 	customer: tier2Customer,
 	question: 'technical-support',
 	product: wooProduct,
@@ -40,16 +46,17 @@ const product = ( overrides: Partial< HumanRoutingProduct > ) => ( {
 	...overrides,
 } );
 
-const emergency = { isEmergency: true, emergencyType: 'checkout_broken', routeToEmail: false };
+const emergency = { ...noFlags, isEmergency: true, emergencyType: 'checkout_broken' };
 
 describe( 'getWooHumanSupportRoute', () => {
 	it.each< [ string, HumanRoutingInput, number, HumanSupportRouteType ] >( [
 		[
-			'account recovery or unknown charge',
-			input( { flags: { isEmergency: true, emergencyType: null, routeToEmail: true } } ),
+			'account recovery',
+			input( { flags: { ...emergency, routeToEmail: true } } ),
 			1,
 			'email-form',
 		],
+		[ 'unknown charge', input( { flags: { ...emergency, isUnknownCharge: true } } ), 2, 'ticket' ],
 		[
 			'emergency, paying',
 			input( { flags: emergency, customer: customer( { isPaying: true } ) } ),
@@ -153,6 +160,14 @@ describe( 'getWooHumanSupportRoute', () => {
 	} );
 
 	describe( 'row order', () => {
+		it( 'puts account recovery before an unknown charge', () => {
+			expect(
+				getWooHumanSupportRoute(
+					input( { flags: { ...noFlags, routeToEmail: true, isUnknownCharge: true } } )
+				)
+			).toEqual( { route: 'email-form', rowId: 1 } );
+		} );
+
 		it( 'puts emergencies before the product rows', () => {
 			expect(
 				getWooHumanSupportRoute(
@@ -187,26 +202,6 @@ describe( 'getWooHumanSupportRoute', () => {
 					input( { flags: emergency, product: product( { isRevShare: true } ) } )
 				)
 			).toEqual( { route: 'chat', rowId: 3 } );
-		} );
-
-		it( 'treats a target customer as Tier 1', () => {
-			expect(
-				getWooHumanSupportRoute(
-					input( { customer: customer( { isTargetCustomer: true } ), product: coreProduct } )
-				)
-			).toEqual( { route: 'ticket', rowId: 9 } );
-		} );
-
-		it( 'knows the tier of a target customer without one', () => {
-			expect(
-				getWooHumanSupportRoute(
-					input( {
-						customer: customer( { supportTier: null, isTargetCustomer: true } ),
-						question: 'account',
-						product: null,
-					} )
-				)
-			).toEqual( { route: 'chat', rowId: 10 } );
 		} );
 
 		it( 'sends a merchant without data to a ticket', () => {

@@ -1,7 +1,6 @@
 import {
 	getWooRoutingInput,
 	isProductAsked,
-	isProductRequired,
 	isStoreAsked,
 	isStoreRequired,
 	WOO_CORE_PRODUCT_SLUG,
@@ -33,14 +32,18 @@ const external: WooHandoffProduct = {
 const data: WooHandoffData = {
 	supportTier: 'tier_2',
 	isPaying: true,
-	isTargetCustomer: false,
 	isWooEnterpriseCustomer: false,
 	connectedStores: [ { url: 'https://store.example', domain: 'store.example' } ],
 	supportedProducts: [ subscriptions, core, external ],
 	isVendor: false,
 };
 
-const flags = { isEmergency: false, emergencyType: null, routeToEmail: false };
+const flags = {
+	isEmergency: false,
+	emergencyType: null,
+	routeToEmail: false,
+	isUnknownCharge: false,
+};
 
 describe( 'getWooRoutingInput', () => {
 	it( 'maps the merchant and the chosen product', () => {
@@ -60,7 +63,6 @@ describe( 'getWooRoutingInput', () => {
 			customer: {
 				supportTier: 'tier_2',
 				isPaying: true,
-				isTargetCustomer: false,
 				isWooEnterpriseCustomer: false,
 			},
 			product: {
@@ -100,7 +102,6 @@ describe( 'getWooRoutingInput', () => {
 		).toEqual( {
 			supportTier: null,
 			isPaying: true,
-			isTargetCustomer: false,
 			isWooEnterpriseCustomer: false,
 		} );
 	} );
@@ -119,18 +120,17 @@ describe( 'getWooRoutingInput', () => {
 } );
 
 describe( 'which questions are asked', () => {
-	it( 'asks for a product for technical support and pre-sales', () => {
+	it( 'asks for a product for technical support only', () => {
 		expect( isProductAsked( 'technical-support' ) ).toBe( true );
-		expect( isProductAsked( 'pre-sales' ) ).toBe( true );
+		expect( isProductAsked( 'pre-sales' ) ).toBe( false );
 		expect( isProductAsked( 'account' ) ).toBe( false );
-		expect( isProductRequired( 'technical-support' ) ).toBe( true );
-		expect( isProductRequired( 'pre-sales' ) ).toBe( false );
 	} );
 
 	it( 'asks for a store unless the product is supported externally', () => {
 		expect( isStoreAsked( 'technical-support', subscriptions ) ).toBe( true );
 		expect( isStoreAsked( 'technical-support', null ) ).toBe( true );
 		expect( isStoreAsked( 'technical-support', external ) ).toBe( false );
+		expect( isStoreAsked( 'pre-sales', null ) ).toBe( true );
 		expect( isStoreAsked( 'start-scale-store', null ) ).toBe( false );
 		expect( isStoreRequired( 'technical-support' ) ).toBe( true );
 		expect( isStoreRequired( 'pre-sales' ) ).toBe( false );

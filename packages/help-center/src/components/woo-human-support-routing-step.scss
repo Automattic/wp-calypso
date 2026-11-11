@@ -20,6 +20,15 @@
 		color: var( --studio-gray-60 );
 	}
 
+	.help-center-woo-routing-step__message {
+		margin: 0;
+	}
+
+	.help-center-woo-routing-step__spinner {
+		align-self: center;
+		margin: 0;
+	}
+
 	.help-center-woo-routing-step__actions {
 		display: flex;
 		justify-content: flex-end;

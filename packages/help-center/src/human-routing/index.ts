@@ -4,7 +4,6 @@ export type * from './types';
 export {
 	getWooRoutingInput,
 	isProductAsked,
-	isProductRequired,
 	isStoreAsked,
 	isStoreRequired,
 	WOO_CORE_PRODUCT_SLUG,

@@ -1,12 +1,12 @@
-import { Button, SelectControl, TextControl } from '@wordpress/components';
+import { Button, ExternalLink, SelectControl, Spinner, TextControl } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useWooHandoff } from '../data/use-woo-handoff';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import {
 	getWooRoutingInput,
 	isProductAsked,
-	isProductRequired,
 	isStoreAsked,
 	isStoreRequired,
 } from '../human-routing/woo-handoff';
@@ -16,6 +16,7 @@ import type { HumanSupportRouting, HumanSupportRoutingStepProps } from '@automat
 import './woo-human-support-routing-step.scss';
 
 const ANOTHER_SITE = 'another-site';
+const WOO_DOCS_URL = 'https://woocommerce.com/documentation/';
 
 const getQuestionOptions = ( isVendor: boolean ) => [
 	{ value: 'technical-support', label: __( 'Technical support', __i18n_text_domain__ ) },
@@ -36,7 +37,8 @@ export function WooHumanSupportRoutingStep( {
 	startChat,
 	dismiss,
 }: HumanSupportRoutingStepProps ) {
-	const { wooHandoff = null } = useHelpCenterContext();
+	const { data: handoff, isPending } = useWooHandoff();
+	const wooHandoff = handoff?.merchant ?? null;
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const [ question, setQuestion ] = useState< HumanSupportQuestionType | null >( null );
 	const [ productSlug, setProductSlug ] = useState< string | null >( null );
@@ -64,10 +66,10 @@ export function WooHumanSupportRoutingStep( {
 	const showOtherStore =
 		storeIsAsked && ! onlyStore && ( stores.length === 0 || storeChoice === ANOTHER_SITE );
 
-	// New questions push Continue down, out of the chat's view, so bring it back.
+	// The questions, and new ones, push Continue down, out of the chat's view, so bring it back.
 	useEffect( () => {
 		actionsRef.current?.scrollIntoView?.( { behavior: 'smooth', block: 'nearest' } );
-	}, [ showProduct, showStorePicker, showOtherStore ] );
+	}, [ isPending, showProduct, showStorePicker, showOtherStore ] );
 
 	let storeUrl: string | null = null;
 	if ( onlyStore && storeIsAsked ) {
@@ -79,12 +81,13 @@ export function WooHumanSupportRoutingStep( {
 	}
 
 	const canContinue =
+		! isPending &&
 		!! question &&
-		( ! isProductRequired( question ) || ! showProduct || !! productSlug ) &&
+		( ! showProduct || !! productSlug ) &&
 		( ! storeIsAsked || ! isStoreRequired( question ) || !! storeUrl );
 
 	const onContinue = () => {
-		if ( ! question || hasContinuedRef.current ) {
+		if ( ! canContinue || hasContinuedRef.current ) {
 			return;
 		}
 		hasContinuedRef.current = true;
@@ -105,12 +108,38 @@ export function WooHumanSupportRoutingStep( {
 			has_store: !! storeUrl,
 			has_merchant_data: !! wooHandoff,
 			is_emergency: request.flags.isEmergency,
+			is_unknown_charge: request.flags.isUnknownCharge,
 			created_from: request.createdFrom,
 		} );
 
 		// Until the other routes are built (WOOPUBR-2404), they start a chat, as every request does today.
 		startChat();
 	};
+
+	// The support form turns these merchants away too, with the same message.
+	if ( handoff?.isSupportBlocked ) {
+		return (
+			<div className="help-center-woo-routing-step" ref={ stepRef }>
+				<p className="help-center-woo-routing-step__message">
+					{ createInterpolateElement(
+						__(
+							'You no longer have access to our direct support channels. You can still review our <docs>documentation</docs> for details about how to use WooCommerce and its extensions on your site.',
+							__i18n_text_domain__
+						),
+						{
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
+							docs: <ExternalLink href={ WOO_DOCS_URL } />,
+						}
+					) }
+				</p>
+				<div className="help-center-woo-routing-step__actions">
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ dismiss }>
+						{ __( 'Done', __i18n_text_domain__ ) }
+					</Button>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="help-center-woo-routing-step" ref={ stepRef }>
@@ -123,63 +152,66 @@ export function WooHumanSupportRoutingStep( {
 					__i18n_text_domain__
 				) }
 			</p>
-			<SelectControl
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				label={ __( 'What do you need help with?', __i18n_text_domain__ ) }
-				value={ question ?? '' }
-				options={ [
-					{ value: '', label: __( 'Select an option', __i18n_text_domain__ ), disabled: true },
-					...getQuestionOptions( !! wooHandoff?.isVendor ),
-				] }
-				onChange={ ( value ) => {
-					setQuestion( ( value || null ) as HumanSupportQuestionType | null );
-					setProductSlug( null );
-				} }
-			/>
-			{ showProduct && (
-				<SelectControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Product', __i18n_text_domain__ ) }
-					help={
-						isProductRequired( question ) ? undefined : __( 'Optional', __i18n_text_domain__ )
-					}
-					value={ productSlug ?? '' }
-					options={ [
-						{
-							value: '',
-							label: __( 'Select a product', __i18n_text_domain__ ),
-							disabled: isProductRequired( question ),
-						},
-						...products.map( ( { slug, name } ) => ( { value: slug, label: name } ) ),
-					] }
-					onChange={ ( value ) => setProductSlug( value || null ) }
-				/>
-			) }
-			{ showStorePicker && (
-				<SelectControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Store', __i18n_text_domain__ ) }
-					value={ storeChoice ?? '' }
-					options={ [
-						{ value: '', label: __( 'Select a store', __i18n_text_domain__ ), disabled: true },
-						...stores.map( ( { url, domain } ) => ( { value: url, label: domain } ) ),
-						{ value: ANOTHER_SITE, label: __( 'Another site', __i18n_text_domain__ ) },
-					] }
-					onChange={ ( value ) => setStoreChoice( value || null ) }
-				/>
-			) }
-			{ showOtherStore && (
-				<TextControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					label={ __( 'Store address', __i18n_text_domain__ ) }
-					placeholder="https://"
-					value={ otherStoreUrl }
-					onChange={ setOtherStoreUrl }
-				/>
+			{ isPending ? (
+				<Spinner className="help-center-woo-routing-step__spinner" />
+			) : (
+				<>
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label={ __( 'What do you need help with?', __i18n_text_domain__ ) }
+						value={ question ?? '' }
+						options={ [
+							{ value: '', label: __( 'Select an option', __i18n_text_domain__ ), disabled: true },
+							...getQuestionOptions( !! wooHandoff?.isVendor ),
+						] }
+						onChange={ ( value ) => {
+							setQuestion( ( value || null ) as HumanSupportQuestionType | null );
+							setProductSlug( null );
+						} }
+					/>
+					{ showProduct && (
+						<SelectControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ __( 'Product', __i18n_text_domain__ ) }
+							value={ productSlug ?? '' }
+							options={ [
+								{
+									value: '',
+									label: __( 'Select a product', __i18n_text_domain__ ),
+									disabled: true,
+								},
+								...products.map( ( { slug, name } ) => ( { value: slug, label: name } ) ),
+							] }
+							onChange={ ( value ) => setProductSlug( value || null ) }
+						/>
+					) }
+					{ showStorePicker && (
+						<SelectControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ __( 'Store', __i18n_text_domain__ ) }
+							value={ storeChoice ?? '' }
+							options={ [
+								{ value: '', label: __( 'Select a store', __i18n_text_domain__ ), disabled: true },
+								...stores.map( ( { url, domain } ) => ( { value: url, label: domain } ) ),
+								{ value: ANOTHER_SITE, label: __( 'Another site', __i18n_text_domain__ ) },
+							] }
+							onChange={ ( value ) => setStoreChoice( value || null ) }
+						/>
+					) }
+					{ showOtherStore && (
+						<TextControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ __( 'Store address', __i18n_text_domain__ ) }
+							placeholder="https://"
+							value={ otherStoreUrl }
+							onChange={ setOtherStoreUrl }
+						/>
+					) }
+				</>
 			) }
 			<div className="help-center-woo-routing-step__actions" ref={ actionsRef }>
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ dismiss }>

@@ -198,7 +198,7 @@ describe( 'OdieAssistantProvider – loading human chats from Zendesk', () => {
 describe( 'OdieAssistantProvider – pending request for a human', () => {
 	const request = {
 		createdFrom: 'automatic_escalation',
-		flags: { isEmergency: false, emergencyType: null, routeToEmail: false },
+		flags: { isEmergency: false, emergencyType: null, routeToEmail: false, isUnknownCharge: false },
 	};
 
 	let setPending: ( value: typeof request | null ) => void = () => {};
