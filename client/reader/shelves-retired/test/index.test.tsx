@@ -27,7 +27,7 @@ describe( 'ShelvesRetiredModal', () => {
 	it( 'explains that Shelves has been retired after a redirect from an old shelf link', () => {
 		window.history.replaceState( null, '', SHELVES_RETIRED_PATH );
 		render( <ShelvesRetiredModal /> );
-		expect( screen.getByRole( 'dialog', { name: 'Shelves have been retired' } ) ).toBeVisible();
+		expect( screen.getByRole( 'dialog', { name: 'Shelves has been retired' } ) ).toBeVisible();
 	} );
 
 	it( 'closes and drops the query arg without re-dispatching the route', async () => {

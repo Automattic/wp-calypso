@@ -12,9 +12,6 @@ import { useState } from 'react';
 import { SHELVES_RETIRED_QUERY_ARG, SHELVES_RETIRED_QUERY_VALUE } from './constants';
 
 function arrivedFromShelvesLink(): boolean {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
 	return (
 		getQueryArg( window.location.href, SHELVES_RETIRED_QUERY_ARG ) === SHELVES_RETIRED_QUERY_VALUE
 	);
@@ -44,14 +41,14 @@ export function ShelvesRetiredModal() {
 
 	return (
 		<Modal
-			title={ translate( 'Shelves have been retired' ) as string }
+			title={ translate( 'Shelves has been retired' ) as string }
 			onRequestClose={ close }
 			size="small"
 		>
 			<VStack spacing={ 6 }>
 				<Text>
 					{ translate(
-						'We’ve removed Shelves from the Reader. You still follow all the same sites and tags.'
+						'Thanks for trying Shelves! We’ve retired it to focus on parts of the Reader that people use most often. Don’t worry, you still follow all the same sites and tags.'
 					) }
 				</Text>
 				<HStack justify="flex-end">
