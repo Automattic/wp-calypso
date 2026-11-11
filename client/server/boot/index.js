@@ -3,7 +3,6 @@ import chalk from 'chalk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { express as userAgentMiddleware } from 'express-useragent';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import api from 'calypso/server/api';
 import config from 'calypso/server/config';
 import analytics from 'calypso/server/lib/analytics';
@@ -51,6 +50,7 @@ export default function setup() {
 		// redirect traffic to de.wordpress.com to hit the real backend and prevent a loop.
 		// `de.wordpress.com` accepts POST requests to `/wp-login.php` exactly like `wordpress.com`.
 		if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
+			const { createProxyMiddleware } = require( 'http-proxy-middleware' );
 			app.use(
 				'/wp-login.php',
 				createProxyMiddleware( { target: 'https://de.wordpress.com/wp-login.php' } )
