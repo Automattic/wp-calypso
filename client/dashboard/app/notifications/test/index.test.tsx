@@ -34,7 +34,6 @@ let mockAlertCallbacks: {
 };
 const mockRecordTracksEvent = jest.fn();
 const mockCreateNotice = jest.fn();
-const mockRemoveNotice = jest.fn();
 const mockSavePreference = jest.fn();
 
 jest.mock( '@automattic/calypso-config', () => ( {
@@ -63,7 +62,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 	sitesQuery: ( ...args: unknown[] ) => mockSitesQuery( ...args ),
 } ) );
 jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( { createNotice: mockCreateNotice, removeNotice: mockRemoveNotice } ),
+	useDispatch: () => ( { createNotice: mockCreateNotice } ),
 } ) );
 jest.mock( '@wordpress/notices', () => ( { store: 'core/notices' } ) );
 jest.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
@@ -224,7 +223,6 @@ describe( 'Notifications subscriber alerts', () => {
 
 		act( () => options.actions[ 0 ].onClick() );
 
-		expect( mockRemoveNotice ).toHaveBeenCalledWith( 'dashboard-subscriber-alert-sound' );
 		expect( mockSavePreference ).toHaveBeenCalledWith( false, expect.any( Object ) );
 		expect( mockRecordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',

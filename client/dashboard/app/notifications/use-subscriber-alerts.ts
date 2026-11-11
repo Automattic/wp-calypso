@@ -66,7 +66,7 @@ export default function useSubscriberAlerts(
 	useEffect( () => {
 		recordTracksEventRef.current = recordTracksEvent;
 	}, [ recordTracksEvent ] );
-	const { createNotice, removeNotice } = useDispatch( noticesStore );
+	const { createNotice } = useDispatch( noticesStore );
 	const { mutate: savePreference } = useMutation(
 		withSnackbar( userPreferenceMutation( preference ), {
 			success: __( 'Subscriber alerts turned off. Turn them back on in Notifications settings.' ),
@@ -84,7 +84,6 @@ export default function useSubscriberAlerts(
 					{
 						label: __( 'Turn off alerts' ),
 						onClick: () => {
-							removeNotice( soundSnackbarId );
 							savePreference( false, {
 								onSuccess: () =>
 									recordTracksEventRef.current(
@@ -96,7 +95,7 @@ export default function useSubscriberAlerts(
 					},
 				],
 			} );
-	}, [ createNotice, removeNotice, savePreference ] );
+	}, [ createNotice, savePreference ] );
 	const isSubscriberAlertsFeatureEnabled = config.isEnabled( 'notifications/subscriber-alerts' );
 	const subscriberAlerts = useQuery( {
 		...userPreferenceQuery(
@@ -139,7 +138,11 @@ export default function useSubscriberAlerts(
 							{
 								includeNoteContext,
 								onSound: ( result ) => {
-									if ( isCurrent() && ! untrackedSoundResults.has( result ) ) {
+									if ( ! isCurrent() ) {
+										return;
+									}
+
+									if ( ! untrackedSoundResults.has( result ) ) {
 										recordTracksEventRef.current(
 											'calypso_dashboard_notifications_subscriber_alert',
 											{
@@ -147,8 +150,7 @@ export default function useSubscriberAlerts(
 											}
 										);
 									}
-									// The off switch shows up where the sound happened, not only in Settings.
-									if ( isCurrent() && result === 'played' ) {
+									if ( result === 'played' ) {
 										showSoundSnackbarRef.current();
 									}
 								},
