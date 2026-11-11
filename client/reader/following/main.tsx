@@ -10,6 +10,7 @@ import NewBlogsExperimentSlot from 'calypso/reader/new-blogs/experiment-slot';
 import { useNewBlogs } from 'calypso/reader/new-blogs/use-new-blogs';
 import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
+import { ShelvesRetiredModal } from 'calypso/reader/shelves-retired';
 import ReaderStream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
@@ -119,6 +120,7 @@ function FollowingStream( {
 				</ReaderStream>
 			) }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
+			<ShelvesRetiredModal />
 			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</>
 	);

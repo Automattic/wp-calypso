@@ -413,6 +413,7 @@ export function ConversationDetail( {
 								initialSize={ commentCount || 10 }
 								pageSize={ 25 }
 								startingCommentId={ startingComment.id }
+								latestCommentId={ conversation?.latestCommentId }
 								commentCount={ commentCount }
 								maxDepth={ 1 }
 								commentsFilterDisplay={ COMMENTS_FILTER_ALL }

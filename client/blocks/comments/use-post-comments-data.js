@@ -176,6 +176,7 @@ export const usePostCommentsData = ( props ) => {
 		currentUserId,
 		canUserModerateComments,
 		comments: commentsForDisplay,
+		loadedComments,
 		commentsTree: visibleCommentsTree,
 		commentsFetchingStatus,
 		initialComment,

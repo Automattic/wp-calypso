@@ -41,7 +41,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 
 ## Development
 
-> **Note**: The Calypso dev server listens on the `PORT` set in the repo-root `.env`, or `3000`. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
+> **Note**: The Calypso dev server listens on the `PORT` set in the environment or the repo-root `.env`. Without one it uses `3000` in the main checkout and, in a linked git worktree, a port derived from the worktree's path (`client/server/config/default-port.js`), which it prints when it starts. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
 
 > **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
 

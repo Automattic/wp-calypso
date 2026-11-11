@@ -55,7 +55,10 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
+import {
+	getFeatureName as getAmplifyFeatureName,
+	NEW_REPORT_ACTION as AMPLIFY_NEW_REPORT_ACTION,
+} from '../../agency/amplify/constants';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
 	canSwitchAgencyDashboard,
@@ -244,15 +247,10 @@ export const agencyAmplifyRoute = createRoute( {
 	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'prospect-reports',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.amplify?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
+	// `?action=new-report` opens the New report modal, e.g. from the Tiers page.
+	validateSearch: ( search ): { action?: typeof AMPLIFY_NEW_REPORT_ACTION } => ( {
+		action: search.action === AMPLIFY_NEW_REPORT_ACTION ? AMPLIFY_NEW_REPORT_ACTION : undefined,
+	} ),
 } );
 
 const agencyAmplifyOverviewRoute = createRoute( {
