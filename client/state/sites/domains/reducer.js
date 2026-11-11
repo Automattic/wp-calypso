@@ -20,6 +20,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 	DOMAIN_MARK_AS_PENDING_MOVE,
+	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE,
 	DOMAIN_DETAILS_RECEIVE,
@@ -171,6 +172,7 @@ export const updatingPrimaryDomain = ( state = {}, action ) => {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: true,
 			} );
+		case DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_FAILURE:
 		case DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: false,

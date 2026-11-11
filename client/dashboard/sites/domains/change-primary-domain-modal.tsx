@@ -7,14 +7,17 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Text } from '../../components/text';
+import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
 import PrimaryAddressIllustration from './primary-address-illustration';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import './change-primary-domain-modal.scss';
@@ -33,6 +36,7 @@ export default function ChangePrimaryDomainModal( {
 	onClose,
 }: ChangePrimaryDomainModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const titleId = useId();
 	const [ selectedDomain, setSelectedDomain ] = useState( currentPrimaryDomain ?? '' );
 	const setPrimaryDomainMutation = useMutation(
@@ -42,7 +46,6 @@ export default function ChangePrimaryDomainModal( {
 				__( 'Primary site address changed: all domains will redirect to %s.' ),
 				selectedDomain
 			),
-			error: { source: 'server' },
 		} )
 	);
 
@@ -72,7 +75,12 @@ export default function ChangePrimaryDomainModal( {
 
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: selectedDomain },
-			{ onSuccess: onClose }
+			{
+				onSuccess: onClose,
+				onError: ( error ) => {
+					createErrorNotice( getPrimaryDomainErrorMessage( error ), { type: 'snackbar' } );
+				},
+			}
 		);
 	};
 
