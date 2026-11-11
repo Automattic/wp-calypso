@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
@@ -126,6 +126,54 @@ describe( 'PostComments', () => {
 			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
 		} finally {
 			releaseResponse();
+		}
+	} );
+
+	it( 'clears the placeholder after an error without repeatedly remounting the comments list', async () => {
+		let notifyRetryStarted;
+		const retryStarted = new Promise( ( resolve ) => {
+			notifyRetryStarted = resolve;
+		} );
+		let releaseRetry;
+		const retryResponse = new Promise( ( resolve ) => {
+			releaseRetry = resolve;
+		} );
+		const onRequest = jest.fn();
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( true )
+			.reply( 500, { error: 'server_error', message: 'Failed to load comments' } )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( true )
+			.reply( 500, async () => {
+				notifyRetryStarted();
+				await retryResponse;
+				return { error: 'server_error', message: 'Failed to load comments' };
+			} )
+			.on( 'request', onRequest );
+
+		const { container } = renderComments( {
+			startingCommentId: 2,
+			loadingPlaceholder: <ConversationCommentsPlaceholder />,
+		} );
+
+		try {
+			await act( async () => {
+				await retryStarted;
+			} );
+
+			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
+
+			await act( async () => {
+				releaseRetry();
+			} );
+
+			await waitFor( () => expect( screen.getByText( 'No comments' ) ).toBeVisible() );
+			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+			expect( onRequest ).toHaveBeenCalledTimes( 2 );
+		} finally {
+			releaseRetry();
 		}
 	} );
 
