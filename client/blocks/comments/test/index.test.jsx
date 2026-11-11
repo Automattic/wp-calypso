@@ -53,6 +53,7 @@ const renderComments = ( props = {} ) => {
 
 	return {
 		...result,
+		queryClient,
 		rerenderComments: ( nextProps ) => result.rerender( renderElement( nextProps ) ),
 	};
 };
@@ -126,11 +127,7 @@ describe( 'PostComments', () => {
 		}
 	} );
 
-	it( 'clears the placeholder after an error without repeatedly remounting the comments list', async () => {
-		let notifyRetryStarted;
-		const retryStarted = new Promise( ( resolve ) => {
-			notifyRetryStarted = resolve;
-		} );
+	it( 'keeps the comments list mounted while a failed first page refetches', async () => {
 		let releaseRetry;
 		const retryResponse = new Promise( ( resolve ) => {
 			releaseRetry = resolve;
@@ -143,29 +140,24 @@ describe( 'PostComments', () => {
 			.get( '/rest/v1.1/sites/123/posts/456/replies' )
 			.query( true )
 			.reply( 500, async () => {
-				notifyRetryStarted();
 				await retryResponse;
 				return { error: 'server_error', message: 'Failed to load comments' };
 			} )
 			.on( 'request', onRequest );
 
-		renderComments( { startingCommentId: 2, loadingPlaceholder } );
+		const { queryClient } = renderComments( { loadingPlaceholder } );
 
 		try {
-			await act( async () => {
-				await retryStarted;
-			} );
-
-			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
-
-			await act( async () => {
-				releaseRetry();
-			} );
-
 			await waitFor( () => expect( screen.getByText( 'No comments' ) ).toBeVisible() );
+			const editor = screen.getByRole( 'textbox', { name: 'Add a comment' } );
+
+			act( () => {
+				queryClient.refetchQueries();
+			} );
+			await waitFor( () => expect( onRequest ).toHaveBeenCalledTimes( 2 ) );
+
 			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
-			expect( onRequest ).toHaveBeenCalledTimes( 2 );
+			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBe( editor );
 		} finally {
 			releaseRetry();
 		}
