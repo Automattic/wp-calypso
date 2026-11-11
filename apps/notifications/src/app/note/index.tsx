@@ -10,7 +10,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
@@ -70,9 +70,16 @@ type NoteProps = {
 	noteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	noteNavigation: NoteNavigation;
+	renderActions?: ( note: NoteObject, goBack: () => void ) => ReactNode;
 };
 
-const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: NoteProps ) => {
+const Note = ( {
+	isDismissible,
+	noteId,
+	setSelectedNoteId,
+	noteNavigation,
+	renderActions,
+}: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
 	const goBack = () => setSelectedNoteId( undefined );
@@ -169,11 +176,16 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							<NoteBody note={ note } />
 						</div>
 					) }
-					{ isSimplifiedNote && <SimplifiedActionBlock note={ note } goBack={ goBack } /> }
+					{ isSimplifiedNote &&
+						( renderActions ? (
+							renderActions( note, goBack )
+						) : (
+							<SimplifiedActionBlock note={ note } goBack={ goBack } />
+						) ) }
 				</VStack>
 			</CardBody>
 			{ isSimplifiedNote ? (
-				<ReplyFooter note={ note } />
+				! renderActions && <ReplyFooter note={ note } />
 			) : (
 				<ActionBlock note={ note } goBack={ goBack } />
 			) }

@@ -157,6 +157,7 @@ const NotificationApp = ( {
 	isSimplifiedNoteEnabled = false,
 	preferences,
 	onPreferenceChange,
+	onOpenFullView,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -167,6 +168,7 @@ const NotificationApp = ( {
 	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
+	onOpenFullView?: () => void;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -275,6 +277,7 @@ const NotificationApp = ( {
 					isViewSettingsEnabled={ isViewSettingsEnabled }
 					isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 					onPreferenceChange={ onPreferenceChange }
+					onOpenFullView={ onOpenFullView }
 				>
 					<NotificationContent
 						isDismissible={ isDismissible }

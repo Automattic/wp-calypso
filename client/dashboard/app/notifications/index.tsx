@@ -40,10 +40,14 @@ const bellAnchor = { getBoundingClientRect: getBellRect };
 export default function Notifications( {
 	className,
 	anchor,
+	isInboxShown = false,
+	onOpenInbox,
 }: {
 	className?: string;
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
+	isInboxShown?: boolean;
+	onOpenInbox?: () => void;
 } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
@@ -83,6 +87,9 @@ export default function Notifications( {
 	);
 
 	const handleToggle = ( willOpen: boolean ) => {
+		if ( willOpen && isInboxShown ) {
+			return;
+		}
 		if ( willOpen ) {
 			setShowHelpCenter( false, undefined, true );
 		}
@@ -95,6 +102,12 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	useEffect( () => {
+		if ( isInboxShown ) {
+			setIsOpen( false );
+		}
+	}, [ isInboxShown ] );
 
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
@@ -132,13 +145,16 @@ export default function Notifications( {
 	};
 
 	const handleOmnibarToggle = useCallback( () => {
+		if ( isInboxShown ) {
+			return;
+		}
 		setIsOpen( ( prev ) => {
 			if ( ! prev ) {
 				setShowHelpCenter( false, undefined, true );
 			}
 			return ! prev;
 		} );
-	}, [ setShowHelpCenter ] );
+	}, [ isInboxShown, setShowHelpCenter ] );
 
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 
@@ -220,6 +236,7 @@ export default function Notifications( {
 						isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 						preferences={ notificationPreferences }
 						onPreferenceChange={ handlePreferenceChange }
+						onOpenFullView={ onOpenInbox }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

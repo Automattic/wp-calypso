@@ -107,6 +107,14 @@ function Root() {
 		} ),
 	} );
 
+	const isNotificationsInboxShown = useRouterState( {
+		select: ( state ) => state.matches.some( ( match ) => match.routeId === '/notifications' ),
+	} );
+	const openNotificationsInbox = useCallback(
+		() => router.navigate( { to: '/notifications' } ),
+		[ router ]
+	);
+
 	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
 	const isSlowNavigation = isNavigating && navigationTime === 'slow';
 	const isVerySlowNavigation = isNavigating && navigationTime === 'veryslow';
@@ -189,7 +197,15 @@ function Root() {
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
-			{ supports.notifications && <Notifications anchor /> }
+			{ supports.notifications && (
+				<Notifications
+					anchor
+					isInboxShown={ isNotificationsInboxShown }
+					onOpenInbox={
+						isEnabled( 'dashboard/notifications-inbox' ) ? openNotificationsInbox : undefined
+					}
+				/>
+			) }
 			{ supports.help && <HelpCenter /> }
 			<AgentsManagerLoader pathname={ pathname } />
 			<Snackbars />

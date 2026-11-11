@@ -1,0 +1,66 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+$pane-height: calc(
+	100vh - var( --masterbar-height ) - 2 *
+		var( --page-layout-block-padding ) - var( --dashboard-page-header__row-height ) - var(
+			--dashboard-page-header__content-gap
+		)
+);
+
+.dashboard-notifications {
+	height: $pane-height;
+	overflow: hidden;
+
+	> div {
+		height: 100%;
+	}
+}
+
+.dashboard-notifications__panes {
+	display: grid;
+	grid-template-columns: minmax( 360px, 480px ) minmax( 0, 1fr );
+	height: 100%;
+}
+
+.dashboard-notifications__list,
+.dashboard-notifications__detail {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+}
+
+.dashboard-notifications__panes .dashboard-notifications__list {
+	border-inline-end: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
+}
+
+.dashboard-notifications__detail {
+	overflow-y: auto;
+
+	.components-card__body {
+		padding-block: $grid-unit-30;
+	}
+
+	.components-card__body > * {
+		max-width: 640px;
+		margin-inline: auto;
+	}
+}
+
+.dashboard-notifications__tabs,
+.dashboard-notifications__tab-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.dashboard-notifications__tab-list {
+	padding: 0 $grid-unit-20 $grid-unit-15;
+}
+
+.dashboard-notifications__list-actions {
+	padding: $grid-unit-15 $grid-unit-20;
+	border-block-end: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
+}
