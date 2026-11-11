@@ -5,7 +5,8 @@
 		width: 28px;
 		height: 28px;
 
-		path {
+		path,
+		rect {
 			color: var( --color-muted-foreground );
 		}
 	}
@@ -13,7 +14,8 @@
 	&:hover:not( :disabled ) {
 		background-color: var( --color-muted );
 
-		svg path {
+		svg path,
+		svg rect {
 			color: var( --color-foreground );
 		}
 	}
