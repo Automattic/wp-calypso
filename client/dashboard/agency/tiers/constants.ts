@@ -300,11 +300,7 @@ export const ALL_TIERS: TierItem[] = [
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( '2 premium benefits' ),
-		subheading: sprintf(
-			/* translators: %d is the number of Prospect Reports an agency can create each month */
-			__( 'Parse.ly trial, marketing funds, and %d Prospect Reports per month' ),
-			getReportAllowance( 'premier-partner' )
-		),
+		subheading: __( 'Parse.ly trial, marketing funds' ),
 		progressCardDescription: __(
 			"You've reached the highest tier! Enjoy all Premier Partner benefits including annual credits, Parse.ly trial, and marketing development funds."
 		),
