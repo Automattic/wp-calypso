@@ -213,7 +213,7 @@ function SiteDomains() {
 			{ isChangePrimaryDomainOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }
-					currentPrimaryDomain={ siteDomains.find( ( domain ) => domain.primary_domain )?.domain }
+					currentPrimaryDomain={ siteDomains.find( ( domain ) => domain.primary_domain ) }
 					eligibleDomains={ siteDomains.filter( isPrimaryDomainCandidate ) }
 					onClose={ () => setIsChangePrimaryDomainOpen( false ) }
 				/>

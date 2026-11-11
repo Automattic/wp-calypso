@@ -12,6 +12,7 @@ import ChangePrimaryDomainModal from '../change-primary-domain-modal';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;
+const currentPrimaryDomain = { domain: 'primary-domain-test.wordpress.com' } as DomainSummary;
 const domains = [ { domain: 'example.com' } ] as DomainSummary[];
 
 beforeEach( () => {
@@ -31,7 +32,7 @@ async function submitChange( onClose = jest.fn() ) {
 		<>
 			<ChangePrimaryDomainModal
 				site={ site }
-				currentPrimaryDomain="primary-domain-test.wordpress.com"
+				currentPrimaryDomain={ currentPrimaryDomain }
 				eligibleDomains={ domains }
 				onClose={ onClose }
 			/>
