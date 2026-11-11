@@ -259,7 +259,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
 		const amplify = screen.getByRole( 'link', { name: getFeatureName() } );
 		expect( amplify ).toBeVisible();
-		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/amplify$/ ) );
+		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/prospect-reports$/ ) );
 		expect( amplify ).not.toHaveAttribute( 'target', '_blank' );
 	} );
 

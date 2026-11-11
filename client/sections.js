@@ -1008,7 +1008,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-amplify',
-		paths: [ '/amplify' ],
+		paths: [ '/prospect-reports', '/amplify' ],
 		module: 'calypso/a8c-for-agencies/sections/amplify',
 		group: 'a8c-for-agencies',
 	},

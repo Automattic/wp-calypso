@@ -6,7 +6,7 @@ import {
 	A4A_AI_MCP_READ_TOOLS_LINK,
 	A4A_AI_MCP_STARTER_PROMPTS_LINK,
 	A4A_AI_MCP_WRITE_TOOLS_LINK,
-	A4A_AMPLIFY_LINK,
+	A4A_PROSPECT_REPORTS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
 	A4A_LEARN_LINK,
@@ -61,7 +61,8 @@ const DASHBOARD_PATHS: [ string, Target ][] = [
 	// The Multi-site Dashboard has no home for this yet.
 	[ A4A_REPORTS_LINK, null ],
 
-	[ A4A_AMPLIFY_LINK, '/amplify' ],
+	[ A4A_PROSPECT_REPORTS_LINK, '/prospect-reports' ],
+	[ '/amplify', '/prospect-reports' ],
 
 	[ A4A_OVERVIEW_LINK, '/overview' ],
 	[ A4A_EXCLUSIVE_OFFERS_LINK, '/exclusive-offers' ],
