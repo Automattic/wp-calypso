@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { TestAccountName } from '../../../secrets';
 import { getTestAccountByFeature, envToFeatureKey } from '../get-test-account-by-feature';
 import type {

@@ -60,7 +60,8 @@
 		"@wordpress/react-i18n": "^5.1.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.4.0",
-		"react-intersection-observer": "^9.4.3"
+		"react-intersection-observer": "^9.4.3",
+		"use-debounce": "^10.0.6"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",

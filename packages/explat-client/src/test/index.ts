@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	createExPlatClient as createBrowserExPlatClient,
 	createSsrSafeDummyExPlatClient,
@@ -5,21 +6,21 @@ import {
 import { setBrowserContext, setSsrContext } from '../internal/test-common';
 
 beforeEach( () => {
-	jest.resetModules();
+	vi.resetModules();
 } );
 
 describe( 'index.ts', () => {
-	it( 'should return the real client when run in a browser context', () => {
+	it( 'should return the real client when run in a browser context', async () => {
 		setBrowserContext();
-		const exPlatIndex = require( '../index' );
+		const exPlatIndex = await import( '../index' );
 		expect( exPlatIndex.createExPlatClient.toString() ).toBe(
 			createBrowserExPlatClient.toString()
 		);
 	} );
 
-	it( 'should return the mock client when run outside of a browser context', () => {
+	it( 'should return the mock client when run outside of a browser context', async () => {
 		setSsrContext();
-		const exPlatIndex = require( '../index' );
+		const exPlatIndex = await import( '../index' );
 		expect( exPlatIndex.createExPlatClient.toString() ).toBe(
 			createSsrSafeDummyExPlatClient.toString()
 		);

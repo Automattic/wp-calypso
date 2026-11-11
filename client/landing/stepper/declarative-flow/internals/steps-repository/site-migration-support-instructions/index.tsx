@@ -1,10 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
-import { useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import Notice from 'calypso/components/notice';
+import {
+	getErrorCode,
+	MIGRATION_TICKET_REFUSED_CODES,
+	useMigrationTicketErrorMessage,
+} from 'calypso/landing/stepper/hooks/use-migration-ticket-error-message';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { UserData } from 'calypso/lib/user/user';
@@ -79,7 +86,16 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 	const subHeaderText =
 		subHeaderOptions[ variation as keyof typeof subHeaderOptions ] ?? subHeaderOptions.default;
 
-	const { sendTicket } = useSubmitMigrationTicket();
+	const { sendTicket, error: ticketError } = useSubmitMigrationTicket();
+	const getTicketErrorMessage = useMigrationTicketErrorMessage();
+
+	const requestMigration = useCallback( () => {
+		sendTicket( {
+			locale,
+			blog_url: siteSlug,
+			from_url: fromUrl,
+		} );
+	}, [ sendTicket, locale, siteSlug, fromUrl ] );
 
 	useEffect( () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
@@ -87,12 +103,13 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 			automated_migration: true,
 		} );
 
-		sendTicket( {
-			locale,
-			blog_url: siteSlug,
-			from_url: fromUrl,
-		} );
-	}, [ sendTicket, locale, siteSlug, fromUrl ] );
+		requestMigration();
+	}, [ requestMigration ] );
+
+	// When wpcom refused the request, our team already knows and will reach out, as this page says.
+	const ticketErrorCode = getErrorCode( ticketError );
+	const canRetry =
+		!! ticketError && ! MIGRATION_TICKET_REFUSED_CODES.includes( ticketErrorCode ?? '' );
 
 	const headerText = translate( 'We’ll take it from here!' );
 
@@ -104,6 +121,15 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 				topBar={ <Step.TopBar leftElement={ null } /> }
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
+				{ canRetry && (
+					// Inside the notice text, so the button takes the notice's link colors.
+					<Notice status="is-warning" showDismiss={ false }>
+						{ getTicketErrorMessage( ticketError ) }{ ' ' }
+						<Button variant="link" onClick={ requestMigration }>
+							{ translate( 'Try again' ) }
+						</Button>
+					</Notice>
+				) }
 				<StepContent />
 			</Step.CenteredColumnLayout>
 		</>

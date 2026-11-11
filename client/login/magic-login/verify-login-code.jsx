@@ -52,6 +52,7 @@ const VerifyLoginCode = ( {
 } ) => {
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature: 'blackbox-signup',
+		flow: 'signup',
 		suspended: ! isNewAccount,
 		resetOnError: authError,
 	} );
@@ -240,6 +241,9 @@ const VerifyLoginCode = ( {
 		}
 		try {
 			const blackboxSessionId = await getSessionId();
+			if ( blackboxSessionId === null ) {
+				return;
+			}
 			authenticate( loginToken, redirectTo, null, true, blackboxSessionId );
 		} finally {
 			if ( shouldCollect ) {

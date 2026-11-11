@@ -374,7 +374,7 @@ describe( '<SiteDomains>', () => {
 		);
 	} );
 
-	test( 'keeps a saved table view, with bulk selection', async () => {
+	test( 'keeps a saved table view, without bulk selection', async () => {
 		nock.cleanAll();
 		mockApis( {
 			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
@@ -386,7 +386,7 @@ describe( '<SiteDomains>', () => {
 		expect(
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {

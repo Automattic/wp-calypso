@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 let viewport;
 
-const matchesMock = jest.fn( () => 'foo' );
-const addListenerMock = jest.fn();
-const removeListenerMock = jest.fn();
+const matchesMock = vi.fn( () => 'foo' );
+const addListenerMock = vi.fn();
+const removeListenerMock = vi.fn();
 
-const matchMediaMock = jest.fn( ( query ) => {
+const matchMediaMock = vi.fn( ( query ) => {
 	const mediaListObjectMock = {
 		addListener: ( listener ) => addListenerMock( query, listener ),
 		removeListener: ( listener ) => removeListenerMock( query, listener ),
@@ -25,7 +26,7 @@ describe( 'viewport', () => {
 		window.matchMedia = matchMediaMock;
 		viewport = await import( '../src' );
 		// Disable console warnings.
-		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );
 
 	beforeEach( () => {
@@ -35,7 +36,7 @@ describe( 'viewport', () => {
 	} );
 
 	afterAll( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	describe( 'isWithinBreakpoint', () => {
@@ -94,7 +95,7 @@ describe( 'viewport', () => {
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should add a listener for a valid breakpoint', () => {
-			const listener = jest.fn();
+			const listener = vi.fn();
 			const event = { matches: 'bar' };
 			let unsubscribe;
 			expect(
@@ -124,7 +125,7 @@ describe( 'viewport', () => {
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should add a listener', () => {
-			const listener = jest.fn();
+			const listener = vi.fn();
 			const event = { matches: 'bar' };
 			let unsubscribe;
 			expect( () => ( unsubscribe = viewport.subscribeIsMobile( listener ) ) ).not.toThrow();
@@ -152,7 +153,7 @@ describe( 'viewport', () => {
 			expect( addListenerMock ).not.toHaveBeenCalled();
 		} );
 		test( 'should add a listener', () => {
-			const listener = jest.fn();
+			const listener = vi.fn();
 			const event = { matches: 'bar' };
 			let unsubscribe;
 			expect( () => ( unsubscribe = viewport.subscribeIsDesktop( listener ) ) ).not.toThrow();

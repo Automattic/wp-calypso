@@ -233,7 +233,7 @@ describe( 'SiteSpec Utils', () => {
 		it( 'shows the design picker only when asked', () => {
 			expect(
 				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } ).features?.designPicker
-			).toBeUndefined();
+			).toBe( false );
 			const config = getBuildWowSiteSpecConfig( {
 				siteSlug: 'example.wordpress.com',
 				designPicker: true,

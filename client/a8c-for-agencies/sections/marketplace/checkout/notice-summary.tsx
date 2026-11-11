@@ -40,7 +40,7 @@ export default function NoticeSummary( { type }: Props ) {
 								a: (
 									<Button
 										variant="link"
-										href={ localizeUrl( 'https://wordpress.com/tos' ) }
+										href={ localizeUrl( 'https://automattic.com/tos' ) }
 										onClick={ () => {
 											dispatch(
 												recordTracksEvent( 'calypso_a4a_client_checkout_client_terms_click' )

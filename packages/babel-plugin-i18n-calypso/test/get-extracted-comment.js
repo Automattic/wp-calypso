@@ -1,4 +1,4 @@
-const { getExtractedComment } = require( '../src' );
+import { getExtractedComment } from '../src';
 
 // Minimal AST-path builders mirroring the shape getExtractedComment reads.
 const comment = ( endLine, value ) => ( { loc: { end: { line: endLine } }, value } );

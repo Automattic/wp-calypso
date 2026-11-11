@@ -516,7 +516,7 @@ export const useActions = ( {
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: ( domains ) => {
 					if ( domains.length === 0 ) {
 						return;
@@ -554,7 +554,7 @@ export const useActions = ( {
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: () => {},
 				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
 					<>
