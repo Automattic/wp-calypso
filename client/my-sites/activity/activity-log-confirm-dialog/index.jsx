@@ -1,5 +1,8 @@
 import { Button, Card, FormLabel, Gridicon, ExternalLink } from '@automattic/components';
+import { VisuallyHidden } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
+import { useId } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import ActivityIcon from '../activity-log-item/activity-icon';
 
@@ -8,6 +11,8 @@ import './style.scss';
 const ActivityLogConfirmDialog = ( {
 	children,
 	confirmTitle,
+	confirmDescription,
+	confirmPending,
 	disableButton,
 	icon = 'history',
 	notice,
@@ -18,6 +23,7 @@ const ActivityLogConfirmDialog = ( {
 	title,
 } ) => {
 	const { __ } = useI18n();
+	const confirmDescriptionId = useId();
 
 	return (
 		<div className="activity-log-item activity-log-item__restore-confirm">
@@ -71,9 +77,21 @@ const ActivityLogConfirmDialog = ( {
 				<div className="activity-log-confirm-dialog__button-wrap">
 					<div className="activity-log-confirm-dialog__primary-actions">
 						<Button onClick={ onClose }>{ __( 'Cancel' ) }</Button>
-						<Button primary disabled={ disableButton } onClick={ onConfirm }>
+						{ /* While pending, stay focusable (aria-disabled) so the description can say why. */ }
+						<Button
+							primary
+							className={ clsx( { disabled: confirmPending } ) }
+							busy={ confirmPending }
+							disabled={ disableButton }
+							aria-disabled={ confirmPending || undefined }
+							aria-describedby={ confirmDescription ? confirmDescriptionId : undefined }
+							onClick={ onConfirm }
+						>
 							{ confirmTitle }
 						</Button>
+						{ confirmDescription && (
+							<VisuallyHidden id={ confirmDescriptionId }>{ confirmDescription }</VisuallyHidden>
+						) }
 					</div>
 					<div className="activity-log-confirm-dialog__secondary-actions">
 						<ExternalLink icon href={ supportLink }>

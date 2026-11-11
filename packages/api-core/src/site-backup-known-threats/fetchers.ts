@@ -12,6 +12,27 @@ export const getBackupPeriod = ( rewindId: string | number ): number =>
 export const isFlagged = ( knownThreats?: BackupKnownThreats | null ): boolean =>
 	!! knownThreats && knownThreats.flagged > 0;
 
+const NO_KNOWN_THREATS: BackupKnownThreats = {
+	malware: 0,
+	database: 0,
+	vulnerable: 0,
+	ignored: 0,
+	flagged: 0,
+	fixed: 0,
+};
+
+/**
+ * The counts a `threats_not_acknowledged` refusal carries in `data.known_threats`. Without usable
+ * counts it returns zeros, since the backup was refused all the same and the user must still be
+ * asked to acknowledge it.
+ */
+export function getRefusedKnownThreats( value: unknown ): BackupKnownThreats {
+	const flagged = ( value as Partial< BackupKnownThreats > | null )?.flagged;
+	return typeof flagged === 'number' && flagged > 0
+		? { ...NO_KNOWN_THREATS, ...( value as Partial< BackupKnownThreats > ) }
+		: NO_KNOWN_THREATS;
+}
+
 export function getContainingBackupPeriod(
 	pages: BackupsKnownThreatsPage[] | BackupsKnownThreatsPage,
 	rewindId: string | number

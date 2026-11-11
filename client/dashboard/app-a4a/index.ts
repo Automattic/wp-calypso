@@ -42,6 +42,7 @@ boot( {
 		domainOnlySites: false,
 		colorScheme: false,
 		darkMode: false,
+		backupDetailsLinks: false,
 	},
 	components: {
 		omnibar: A4AOmnibar,
