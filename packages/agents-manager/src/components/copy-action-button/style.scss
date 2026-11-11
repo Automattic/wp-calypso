@@ -6,7 +6,7 @@
 		height: 28px;
 
 		path {
-			fill: var( --color-muted-foreground );
+			color: var( --color-muted-foreground );
 		}
 	}
 
@@ -14,7 +14,7 @@
 		background-color: var( --color-muted );
 
 		svg path {
-			fill: var( --color-foreground );
+			color: var( --color-foreground );
 		}
 	}
 

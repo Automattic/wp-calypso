@@ -93,7 +93,7 @@ body.js.is-image-studio-open {
 	// P2 and other themes apply global CSS fill properties on SVG elements,
 	// which override the fill/stroke inheritance used by @wordpress/icons
 	// and agenttic-ui icons.
-	svg:not([fill]) {
+	svg:not([fill]):not([stroke]) {
 		fill: currentColor !important;
 	}
 

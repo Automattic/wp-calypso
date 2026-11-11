@@ -50,6 +50,10 @@
 	&:focus {
 		svg:not( .reader-follow-feed, .reader-following-feed, .reader-following-conversation ) {
 			path {
+				color: var(--color-text-inverted);
+			}
+
+			&:not([stroke]) path {
 				fill: var(--color-text-inverted);
 			}
 		}
