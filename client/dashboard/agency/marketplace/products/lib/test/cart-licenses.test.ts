@@ -1,7 +1,8 @@
 import { canHoldLicenses } from '../cart-licenses';
 
 const backup = { slug: 'jetpack-backup-t1', family_slug: 'jetpack-backup' };
-const memoryAddon = { slug: 'pressable-addon-php-memory-512', family_slug: 'pressable-addons' };
+const storageAddon = { slug: 'pressable-addon-storage-1gb', family_slug: 'pressable-addons' };
+const memoryAddon = { slug: 'pressable-addon-php-memory-512mb', family_slug: 'pressable-addons' };
 const pressablePlan = { slug: 'pressable-build', family_slug: 'pressable-hosting' };
 const wpcomPlan = { slug: 'wpcom-hosting-business', family_slug: 'wpcom-hosting' };
 
@@ -19,8 +20,9 @@ describe( 'canHoldLicenses', () => {
 		expect( canHoldLicenses( backup, { ...referral, isLegacyBilling: true } ) ).toBe( false );
 	} );
 
-	it( 'holds a count of a Pressable add-on, but one Pressable plan', () => {
-		expect( canHoldLicenses( memoryAddon, agencyPurchase ) ).toBe( true );
+	it( 'holds a count of a Pressable add-on, but one PHP memory add-on or Pressable plan', () => {
+		expect( canHoldLicenses( storageAddon, agencyPurchase ) ).toBe( true );
+		expect( canHoldLicenses( memoryAddon, agencyPurchase ) ).toBe( false );
 		expect( canHoldLicenses( pressablePlan, agencyPurchase ) ).toBe( false );
 	} );
 
