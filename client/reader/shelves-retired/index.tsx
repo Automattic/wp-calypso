@@ -6,27 +6,30 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'calypso/state';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { SHELVES_RETIRED_QUERY_ARG, SHELVES_RETIRED_QUERY_VALUE } from './constants';
-
-function arrivedFromShelvesLink(): boolean {
-	return (
-		getQueryArg( window.location.href, SHELVES_RETIRED_QUERY_ARG ) === SHELVES_RETIRED_QUERY_VALUE
-	);
-}
 
 export function ShelvesRetiredModal() {
 	const translate = useTranslate();
-	const [ isOpen, setIsOpen ] = useState( arrivedFromShelvesLink );
+	// Read the route state rather than the URL: a redirect to the Following page
+	// from within the app keeps this component mounted.
+	const query = useSelector( getCurrentQueryArguments );
+	// Every navigation sets a new query object, so a dismissal lasts until the next one.
+	const [ dismissedQuery, setDismissedQuery ] = useState< typeof query >( null );
 
-	if ( ! isOpen ) {
+	if (
+		query?.[ SHELVES_RETIRED_QUERY_ARG ] !== SHELVES_RETIRED_QUERY_VALUE ||
+		query === dismissedQuery
+	) {
 		return null;
 	}
 
 	const close = () => {
-		setIsOpen( false );
+		setDismissedQuery( query );
 		// Drop the query arg without dispatching, so the page isn't rendered or tracked again.
 		page.replace(
 			removeQueryArgs(
