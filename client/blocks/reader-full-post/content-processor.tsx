@@ -107,7 +107,7 @@ function isUrlInHtmlTag( content: string, position: number ): boolean {
  */
 export default function ContentProcessor( { content }: ContentProcessorProps ): JSX.Element | null {
 	// React 19 rewrites innerHTML whenever this prop is a new object, which reloads embeds.
-	const innerHtml = useMemo( () => ( { __html: content } ), [ content ] );
+	const innerHtml = useMemo( () => ( { __html: content ?? '' } ), [ content ] );
 
 	// If no content, return null
 	if ( ! content ) {
