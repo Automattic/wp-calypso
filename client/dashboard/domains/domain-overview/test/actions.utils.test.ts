@@ -18,7 +18,7 @@ const createDomain = ( overrides: Partial< Domain > = {} ): Domain =>
 	} ) as Domain;
 
 describe( 'shouldShowTransferAction', () => {
-	it( 'returns false when a domain connection cannot be transferred to any user or another site', () => {
+	test( 'returns false when a domain connection cannot be transferred to any user or another site', () => {
 		const domain = createDomain( {
 			can_transfer_to_any_user: false,
 			can_transfer_to_other_site: false,
@@ -28,7 +28,7 @@ describe( 'shouldShowTransferAction', () => {
 		expect( shouldShowTransferAction( domain ) ).toBe( false );
 	} );
 
-	it( 'returns true when a registration cannot be transferred to any user or another site', () => {
+	test( 'returns true when a registration cannot be transferred to any user or another site', () => {
 		const domain = createDomain( {
 			can_transfer_to_any_user: false,
 			can_transfer_to_other_site: false,
@@ -38,7 +38,7 @@ describe( 'shouldShowTransferAction', () => {
 		expect( shouldShowTransferAction( domain ) ).toBe( true );
 	} );
 
-	it( 'returns true when domain can be transferred to any user', () => {
+	test( 'returns true when domain can be transferred to any user', () => {
 		const domain = createDomain( {
 			can_transfer_to_any_user: true,
 			can_transfer_to_other_site: false,
@@ -47,7 +47,7 @@ describe( 'shouldShowTransferAction', () => {
 		expect( shouldShowTransferAction( domain ) ).toBe( true );
 	} );
 
-	it( 'returns true when domain can be transferred to another site', () => {
+	test( 'returns true when domain can be transferred to another site', () => {
 		const domain = createDomain( {
 			can_transfer_to_any_user: false,
 			can_transfer_to_other_site: true,

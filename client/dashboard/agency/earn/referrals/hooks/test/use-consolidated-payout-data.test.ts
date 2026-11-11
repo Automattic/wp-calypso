@@ -38,7 +38,7 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		mockGetEstimatedCommission.mockReturnValue( 50 );
 	} );
 
-	it( 'calls getEstimatedCommission once for each quarter flag', () => {
+	test( 'calls getEstimatedCommission once for each quarter flag', () => {
 		renderHook( () => useGetConsolidatedPayoutData( mockReferrals ) );
 
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledTimes( 2 );
@@ -46,7 +46,7 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith( mockReferrals, false );
 	} );
 
-	it( 'returns the previous-quarter and current-quarter commissions from getEstimatedCommission', () => {
+	test( 'returns the previous-quarter and current-quarter commissions from getEstimatedCommission', () => {
 		mockGetEstimatedCommission.mockImplementation( ( _referrals, usePreviousQuarter ) =>
 			usePreviousQuarter ? 75 : 50
 		);
@@ -57,13 +57,13 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( result.current.currentQuarterExpectedCommission ).toBe( 50 );
 	} );
 
-	it( 'counts pending referral statuses as pendingOrders', () => {
+	test( 'counts pending referral statuses as pendingOrders', () => {
 		const { result } = renderHook( () => useGetConsolidatedPayoutData( mockReferrals ) );
 
 		expect( result.current.pendingOrders ).toBe( 1 );
 	} );
 
-	it( 'sums pendingOrders across multiple referrals', () => {
+	test( 'sums pendingOrders across multiple referrals', () => {
 		const multipleReferrals: Referral[] = [
 			{
 				referralStatuses: [ 'active', 'pending' ],

@@ -83,7 +83,7 @@ function renderCart(
 }
 
 describe( 'CartMenu', () => {
-	it( 'links a referral cart to the referral checkout, with the page to come back to', async () => {
+	test( 'links a referral cart to the referral checkout, with the page to come back to', async () => {
 		renderCart( true );
 
 		const url = new URL(
@@ -94,7 +94,7 @@ describe( 'CartMenu', () => {
 		expect( url.searchParams.get( 'from' ) ).toBe( '/products?category=jetpack' );
 	} );
 
-	it( 'links a regular cart to the agency checkout', async () => {
+	test( 'links a regular cart to the agency checkout', async () => {
 		renderCart( false );
 
 		const url = new URL(
@@ -103,7 +103,7 @@ describe( 'CartMenu', () => {
 		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
 	} );
 
-	it.each( [ false, true ] )(
+	test.each( [ false, true ] )(
 		'opens the approval gate instead of a checkout while the agency is in review (referral mode: %s)',
 		async ( isReferralMode ) => {
 			const { onToggle, recordTracksEvent } = renderCart( isReferralMode, {
@@ -128,14 +128,14 @@ describe( 'CartMenu', () => {
 		}
 	);
 
-	it( 'names a backup storage add-on, not just its size', async () => {
+	test( 'names a backup storage add-on, not just its size', async () => {
 		renderCart( false, { product: mockStorage } );
 
 		const name = await screen.findByText( 'VaultPress Backup Add-on Storage 10GB' );
 		await waitFor( () => expect( name ).toBeVisible() );
 	} );
 
-	it( 'keeps the vendor in a WooCommerce product name', async () => {
+	test( 'keeps the vendor in a WooCommerce product name', async () => {
 		renderCart( false, { product: mockWooProduct } );
 
 		const name = await screen.findByText( 'WooCommerce Bookings' );

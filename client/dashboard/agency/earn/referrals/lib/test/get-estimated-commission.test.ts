@@ -2,11 +2,11 @@ import { getEstimatedCommission } from '../get-estimated-commission';
 import type { Referral } from '@automattic/api-core';
 
 describe( 'getEstimatedCommission', () => {
-	it( 'returns 0 for empty referrals', () => {
+	test( 'returns 0 for empty referrals', () => {
 		expect( getEstimatedCommission( [] ) ).toBe( 0 );
 	} );
 
-	it( 'sums current-quarter commissions across purchases', () => {
+	test( 'sums current-quarter commissions across purchases', () => {
 		const referrals: Referral[] = [
 			{
 				purchaseStatuses: [ 'active' ],
@@ -37,7 +37,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals ) ).toBe( 350 );
 	} );
 
-	it( 'sums previous-quarter commissions when usePreviousQuarter is true', () => {
+	test( 'sums previous-quarter commissions when usePreviousQuarter is true', () => {
 		const referrals: Referral[] = [
 			{
 				purchaseStatuses: [ 'active' ],
@@ -68,7 +68,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals, true ) ).toBe( 175 );
 	} );
 
-	it( 'sums commissions across multiple referrals', () => {
+	test( 'sums commissions across multiple referrals', () => {
 		const referrals: Referral[] = [
 			{
 				purchaseStatuses: [ 'active' ],
@@ -105,7 +105,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals ) ).toBe( 350 );
 	} );
 
-	it( 'includes cancelled purchases', () => {
+	test( 'includes cancelled purchases', () => {
 		// Cancelled purchases still contribute commissions for the days they
 		// were active (the server-side compute already accounts for the
 		// revoked window).
@@ -130,7 +130,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals ) ).toBe( 50 );
 	} );
 
-	it( 'skips pending purchases', () => {
+	test( 'skips pending purchases', () => {
 		const referrals: Referral[] = [
 			{
 				purchaseStatuses: [ 'pending' ],
@@ -152,7 +152,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals ) ).toBe( 0 );
 	} );
 
-	it( 'skips error purchases', () => {
+	test( 'skips error purchases', () => {
 		const referrals: Referral[] = [
 			{
 				purchaseStatuses: [ 'error' ],
@@ -174,7 +174,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals ) ).toBe( 0 );
 	} );
 
-	it( 'contributes 0 for purchases without a commissions block', () => {
+	test( 'contributes 0 for purchases without a commissions block', () => {
 		// In production every purchase carries server-supplied commissions.
 		// Defensive coverage for the rare case where the field is missing —
 		// must contribute 0 rather than fall back to the (now-removed) JS
@@ -196,7 +196,7 @@ describe( 'getEstimatedCommission', () => {
 		expect( getEstimatedCommission( referrals ) ).toBe( 0 );
 	} );
 
-	it( 'rounds the total to 2 decimal places', () => {
+	test( 'rounds the total to 2 decimal places', () => {
 		const referrals: Referral[] = [
 			{
 				purchaseStatuses: [ 'active' ],

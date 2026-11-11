@@ -89,7 +89,7 @@ describe( 'NotificationsExtras', () => {
 		window.scrollTo = jest.fn();
 	} );
 
-	it( 'renders the page header and sections correctly', async () => {
+	test( 'renders the page header and sections correctly', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -118,7 +118,7 @@ describe( 'NotificationsExtras', () => {
 		).toBeVisible();
 	} );
 
-	it( 'displays all WordPress.com notification options', async () => {
+	test( 'displays all WordPress.com notification options', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -153,7 +153,7 @@ describe( 'NotificationsExtras', () => {
 		expect( wpcomSectionQueries.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
 	} );
 
-	it( 'displays all Jetpack notification options', async () => {
+	test( 'displays all Jetpack notification options', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -183,7 +183,7 @@ describe( 'NotificationsExtras', () => {
 		expect( jetpackSectionQueries.getByLabelText( 'Reports' ) ).toBeVisible();
 	} );
 
-	it( 'shows current settings correctly', async () => {
+	test( 'shows current settings correctly', async () => {
 		const customSettings: UserNotificationSettings = {
 			...defaultUserSettings,
 			wpcom: {
@@ -239,7 +239,7 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getAllByLabelText( 'Reports' )[ 1 ] ).not.toBeChecked();
 	} );
 
-	it( 'renders the On this day and Achievements toggles', async () => {
+	test( 'renders the On this day and Achievements toggles', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -262,7 +262,7 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getByRole( 'link', { name: 'site-level settings' } ) ).toBeVisible();
 	} );
 
-	it( 'saves the On this day setting when toggled', async () => {
+	test( 'saves the On this day setting when toggled', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
@@ -290,7 +290,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows the Achievements toggle as unchecked when notifications are disabled', async () => {
+	test( 'shows the Achievements toggle as unchecked when notifications are disabled', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi( { 'achievements-global-notifications': 'disabled' } );
 
@@ -305,7 +305,7 @@ describe( 'NotificationsExtras', () => {
 		expect( achievementsToggle ).not.toBeChecked();
 	} );
 
-	it( 'saves the Achievements setting when toggled', async () => {
+	test( 'saves the Achievements setting when toggled', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
@@ -335,7 +335,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows snackbar notification on single setting change', async () => {
+	test( 'shows snackbar notification on single setting change', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		mockSaveNotificationSettingsApi( { marketing: true } );
@@ -363,7 +363,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows snackbar notification when all settings are saved', async () => {
+	test( 'shows snackbar notification when all settings are saved', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		mockSaveNotificationSettingsApi( {
@@ -399,7 +399,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'disables controls while saving', async () => {
+	test( 'disables controls while saving', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		// Don't mock the save API to simulate a pending request
@@ -431,7 +431,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows error message when save fails', async () => {
+	test( 'shows error message when save fails', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
@@ -467,7 +467,7 @@ describe( 'NotificationsExtras', () => {
 			wpcom: { ...defaultWpcomSettings, email_tracking: true },
 		};
 
-		it( 'hides the toggle when the API does not return the setting', async () => {
+		test( 'hides the toggle when the API does not return the setting', async () => {
 			mockGetNotificationSettingsApi();
 			mockGetPreferencesApi();
 
@@ -477,7 +477,7 @@ describe( 'NotificationsExtras', () => {
 			expect( screen.queryByLabelText( 'Track email opens and clicks' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'saves the setting when turned off', async () => {
+		test( 'saves the setting when turned off', async () => {
 			mockGetNotificationSettingsApi( settingsWithEmailTracking );
 			mockGetPreferencesApi();
 			mockSaveNotificationSettingsApi( { email_tracking: false } );
@@ -503,7 +503,7 @@ describe( 'NotificationsExtras', () => {
 			);
 		} );
 
-		it( 'does not record the change when saving fails', async () => {
+		test( 'does not record the change when saving fails', async () => {
 			mockGetNotificationSettingsApi( settingsWithEmailTracking );
 			mockGetPreferencesApi();
 			nock( 'https://public-api.wordpress.com:443' )
@@ -530,7 +530,7 @@ describe( 'NotificationsExtras', () => {
 			);
 		} );
 
-		it( 'is not changed by "Unsubscribe from all"', async () => {
+		test( 'is not changed by "Unsubscribe from all"', async () => {
 			mockGetNotificationSettingsApi( {
 				...settingsWithEmailTracking,
 				wpcom: { ...settingsWithEmailTracking.wpcom, marketing: true },

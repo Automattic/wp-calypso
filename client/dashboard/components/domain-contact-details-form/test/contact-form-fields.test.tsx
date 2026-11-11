@@ -35,12 +35,12 @@ describe( 'getContactFormFields country field', () => {
 		return field;
 	};
 
-	it( 'excludes the empty-code separator entry', () => {
+	test( 'excludes the empty-code separator entry', () => {
 		const values = ( getCountryField().elements ?? [] ).map( ( e ) => e.value );
 		expect( values ).not.toContain( '' );
 	} );
 
-	it( 'lists each country code only once', () => {
+	test( 'lists each country code only once', () => {
 		const values = ( getCountryField().elements ?? [] ).map( ( e ) => e.value );
 		expect( values ).toEqual( [ ...new Set( values ) ] );
 		expect( values ).toEqual( [ 'US', 'FR', 'AF' ] );

@@ -5,7 +5,7 @@ import { getLocaleVariantOrLanguage, shouldDisplayCommunityTranslator } from '..
 
 describe( 'languages utilities', () => {
 	describe( 'getLocaleVariantOrLanguage', () => {
-		it( 'should return parent language when locale is a variant (es-cl)', () => {
+		test( 'should return parent language when locale is a variant (es-cl)', () => {
 			// es-cl is a real locale variant in the languages package
 			const result = getLocaleVariantOrLanguage( 'es-cl' );
 
@@ -14,7 +14,7 @@ describe( 'languages utilities', () => {
 			expect( result?.langSlug ).toBe( 'es' );
 		} );
 
-		it( 'should return the language itself when not a variant', () => {
+		test( 'should return the language itself when not a variant', () => {
 			const result = getLocaleVariantOrLanguage( 'en' );
 
 			// English is not a variant, should return itself
@@ -24,7 +24,7 @@ describe( 'languages utilities', () => {
 	} );
 
 	describe( 'shouldDisplayCommunityTranslator', () => {
-		it( 'should return appropriate result for translatable locales using real data', () => {
+		test( 'should return appropriate result for translatable locales using real data', () => {
 			// Test with Spanish - commonly translatable
 			const resultEs = shouldDisplayCommunityTranslator( 'es' );
 			expect( resultEs ).toBe( true );
@@ -37,17 +37,17 @@ describe( 'languages utilities', () => {
 			expect( resultEsCl ).toBe( true );
 		} );
 
-		it( 'should return false when locale is empty', () => {
+		test( 'should return false when locale is empty', () => {
 			const result = shouldDisplayCommunityTranslator( '' );
 			expect( result ).toBe( false );
 		} );
 
-		it( 'should return false when language is undefined', () => {
+		test( 'should return false when language is undefined', () => {
 			const result = shouldDisplayCommunityTranslator( undefined );
 			expect( result ).toBe( false );
 		} );
 
-		it( 'should return true for an unknown locale (canBeTranslated defaults to true)', () => {
+		test( 'should return true for an unknown locale (canBeTranslated defaults to true)', () => {
 			const result = shouldDisplayCommunityTranslator( 'xyz-unknown' );
 			expect( result ).toBe( true );
 		} );
