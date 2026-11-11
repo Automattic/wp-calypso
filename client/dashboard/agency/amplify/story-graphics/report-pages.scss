@@ -10,6 +10,7 @@
 	// The sample report's own blues, so the pages match the PDF they open.
 	--amplify-report-blue: #0240e4;
 	--amplify-report-blue-light: #0387ff;
+	--amplify-report-orange: #e68b28;
 
 	position: absolute;
 	inset: 0;
@@ -38,9 +39,10 @@
 	/* On the page itself, --page-u measures the fan, which is 100 / 58 times wider. */
 	padding: calc( 5 * 0.58 * var( --page-u ) ) calc( 6 * 0.58 * var( --page-u ) );
 	border-radius: 2px;
-	background: var( --color-surface );
-	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 14%, transparent );
-	color: var( --color-text );
+	background: var( --wpds-color-background-surface-neutral-strong );
+	box-shadow: 0 12px 32px
+		color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 14%, transparent );
+	color: var( --wpds-color-foreground-content-neutral );
 	font-size: calc( 1.8 * 0.58 * var( --page-u ) );
 	line-height: 1.3;
 	text-align: start;
@@ -90,7 +92,7 @@
 }
 
 .dashboard-amplify-story__page-header span:last-child {
-	color: var( --color-text-subtle );
+	color: var( --wpds-color-foreground-content-neutral-weak );
 	letter-spacing: 0;
 }
 
@@ -125,7 +127,7 @@
 	padding: calc( 5 * var( --page-u ) ) calc( 6 * var( --page-u ) );
 	box-sizing: border-box;
 	background: var( --amplify-report-blue );
-	color: var( --color-text-inverted );
+	color: var( --wpds-color-foreground-interactive-brand-strong );
 }
 
 .dashboard-amplify-story__page-site {
@@ -153,7 +155,7 @@
 
 .dashboard-amplify-story__page-art path,
 .dashboard-amplify-story__page-art rect:nth-of-type( n + 2 ) {
-	fill: var( --color-text-inverted );
+	fill: var( --wpds-color-foreground-interactive-brand-strong );
 }
 
 .dashboard-amplify-story__page-art circle,
@@ -163,7 +165,7 @@
 
 .dashboard-amplify-story__page-art rect:nth-of-type( n + 2 ) {
 	fill: none;
-	stroke: var( --color-text-inverted );
+	stroke: var( --wpds-color-foreground-interactive-brand-strong );
 	stroke-width: 4;
 }
 
@@ -183,7 +185,7 @@
 }
 
 .dashboard-amplify-story__page-perspective i {
-	color: var( --studio-orange-30 );
+	color: var( --amplify-report-orange );
 	font-size: calc( 1.6 * var( --page-u ) );
 	font-style: normal;
 	font-weight: 700;
@@ -198,17 +200,17 @@
 
 .dashboard-amplify-story__page-ring circle {
 	fill: none;
-	stroke: var( --color-border-subtle );
+	stroke: var( --wpds-color-stroke-surface-neutral );
 	stroke-width: 3;
 }
 
 .dashboard-amplify-story__page-ring circle + circle {
-	stroke: var( --studio-orange-30 );
+	stroke: var( --amplify-report-orange );
 	stroke-linecap: round;
 }
 
 .dashboard-amplify-story__page-ring text {
-	fill: var( --studio-orange-30 );
+	fill: var( --amplify-report-orange );
 	font-size: 10px;
 	font-weight: 700;
 	transform: rotate( 90deg ) scaleX( -1 );
@@ -229,10 +231,10 @@
 	height: calc( 4 * var( --page-u ) );
 	margin-block-start: calc( 1.2 * var( --page-u ) );
 	background:
-		linear-gradient( var( --color-border-subtle ) 0 0 ) 0 0 / 92% calc( 1.2 * var( --page-u ) )
-			no-repeat,
-		linear-gradient( var( --color-border-subtle ) 0 0 ) 0 100% / 60% calc( 1.2 * var( --page-u ) )
-			no-repeat;
+		linear-gradient( var( --wpds-color-stroke-surface-neutral ) 0 0 ) 0 0 / 92%
+			calc( 1.2 * var( --page-u ) ) no-repeat,
+		linear-gradient( var( --wpds-color-stroke-surface-neutral ) 0 0 ) 0 100% / 60%
+			calc( 1.2 * var( --page-u ) ) no-repeat;
 }
 
 .dashboard-amplify-story__page-scores {
@@ -247,19 +249,19 @@
 	justify-content: space-between;
 	margin-block-end: calc( 2.6 * var( --page-u ) );
 	font-size: calc( 1.8 * var( --page-u ) );
-	color: var( --studio-orange-30 );
+	color: var( --amplify-report-orange );
 }
 
 .dashboard-amplify-story__page-score[data-severity='good'] {
-	color: var( --color-success );
+	color: var( --wpds-color-foreground-content-success-weak );
 }
 
 .dashboard-amplify-story__page-score[data-severity='danger'] {
-	color: var( --color-error );
+	color: var( --wpds-color-foreground-content-error-weak );
 }
 
 .dashboard-amplify-story__page-score span {
-	color: var( --color-text );
+	color: var( --wpds-color-foreground-content-neutral );
 }
 
 .dashboard-amplify-story__page-score em {
@@ -267,7 +269,7 @@
 	flex-basis: 100%;
 	height: calc( 0.4 * var( --page-u ) );
 	margin-block-start: calc( 0.8 * var( --page-u ) );
-	background: var( --color-border-subtle );
+	background: var( --wpds-color-stroke-surface-neutral );
 }
 
 .dashboard-amplify-story__page-score i {
@@ -277,7 +279,7 @@
 }
 
 .dashboard-amplify-story__pages:focus-visible {
-	outline: 2px solid var( --color-primary );
+	outline: 2px solid var( --wpds-color-stroke-focus );
 	outline-offset: -4px;
 	border-radius: 8px;
 }

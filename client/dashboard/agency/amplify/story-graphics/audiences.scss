@@ -1,7 +1,11 @@
 .dashboard-amplify-story__graphic:has( .dashboard-amplify-story__audiences ) {
 	overflow: hidden;
 	min-height: 300px;
-	background: color-mix( in srgb, var( --color-primary ) 7%, var( --color-surface ) );
+	background: color-mix(
+		in srgb,
+		var( --wpds-color-background-interactive-brand-strong ) 7%,
+		var( --wpds-color-background-surface-neutral-strong )
+	);
 }
 
 /* Three homepages the same report works for: a prospect, a client and the agency itself. */
@@ -15,10 +19,11 @@
 	box-sizing: border-box;
 	width: 60%;
 	overflow: hidden;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 8px;
-	background: var( --color-surface );
-	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 10%, transparent );
+	background: var( --wpds-color-background-surface-neutral-strong );
+	box-shadow: 0 12px 32px
+		color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 10%, transparent );
 	transition: transform 0.35s cubic-bezier( 0.2, 0.7, 0.2, 1 );
 }
 
@@ -56,8 +61,8 @@
 	align-items: center;
 	gap: 4px;
 	padding: 8px 10px;
-	border-block-end: 1px solid var( --color-border-subtle );
-	color: var( --color-text-subtle );
+	border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral );
+	color: var( --wpds-color-foreground-content-neutral-weak );
 	font-size: 11px;
 }
 
@@ -65,7 +70,7 @@
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background: var( --color-border-subtle );
+	background: var( --wpds-color-stroke-surface-neutral );
 }
 
 .dashboard-amplify-story__audience-bar span {
@@ -94,7 +99,7 @@
 	display: block;
 	height: 6px;
 	border-radius: 3px;
-	background: var( --color-border-subtle );
+	background: var( --wpds-color-stroke-surface-neutral );
 }
 
 .dashboard-amplify-story__audience-lines i:nth-child( 2 ) {

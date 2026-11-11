@@ -10,10 +10,11 @@
 	width: min( 100%, 420px );
 	min-height: 164px;
 	padding: 16px;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 16px;
-	background: var( --color-surface );
-	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 8%, transparent );
+	background: var( --wpds-color-background-surface-neutral-strong );
+	box-shadow: 0 12px 32px
+		color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 8%, transparent );
 }
 
 .dashboard-amplify-story__prompt-attachment {
@@ -21,9 +22,9 @@
 	align-items: center;
 	gap: 6px;
 	padding: 4px 8px 4px 4px;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 8px;
-	color: var( --color-text );
+	color: var( --wpds-color-foreground-content-neutral );
 	font-size: 12px;
 	line-height: 1;
 }
@@ -34,8 +35,8 @@
 	width: 22px;
 	height: 22px;
 	border-radius: 4px;
-	background: var( --color-error );
-	color: var( --color-surface );
+	background: var( --wpds-color-background-interactive-error-strong );
+	color: var( --wpds-color-foreground-interactive-error-strong );
 	font-size: 8px;
 	font-weight: 700;
 }
@@ -51,7 +52,7 @@
 	width: 2px;
 	height: 1em;
 	margin-inline-start: 2px;
-	background: var( --color-text );
+	background: var( --wpds-color-foreground-content-neutral );
 	vertical-align: -0.15em;
 	animation: amplify-prompt-caret 1s step-end infinite;
 }
@@ -61,7 +62,7 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-block-start: 18px;
-	color: var( --color-text-subtle );
+	color: var( --wpds-color-foreground-content-neutral-weak );
 	font-size: 20px;
 	line-height: 1;
 }
@@ -72,8 +73,8 @@
 	width: 26px;
 	height: 26px;
 	border-radius: 8px;
-	background: var( --color-text );
-	color: var( --color-surface );
+	background: var( --wpds-color-background-interactive-neutral-strong );
+	color: var( --wpds-color-foreground-interactive-neutral-strong );
 }
 
 @media ( prefers-reduced-motion: reduce ) {
