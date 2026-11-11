@@ -32890,10 +32890,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wemoji@npm:^0.1.9":
+"wemoji@npm:0.1.9":
   version: 0.1.9
   resolution: "wemoji@npm:0.1.9"
   checksum: 114256e3099ce34d446e2b0efaaa528dbc3c86cd04379beee8bc80783e7dc1fbc095914397f2a12b2639706a4f8d7e5a0437949017e1c914c181b7d6a52dad66
+  languageName: node
+  linkType: hard
+
+"wemoji@patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch":
+  version: 0.1.9
+  resolution: "wemoji@patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch::version=0.1.9&hash=181f5a"
+  checksum: 17c4744d7bc9050dda716ca8416cdbc4cf043cc4d5dbe5ab27714d5d25629bdd3ab698a5b01ac33cc2827769e001de26b04d7ef4d9addbb72f3fb9217019fe27
   languageName: node
   linkType: hard
 
