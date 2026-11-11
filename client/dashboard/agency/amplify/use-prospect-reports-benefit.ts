@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 /**
  * Prospect reports data for the Tiers page benefit row. Only fetches when the
- * agency has access, so agencies without it make no extra request.
+ * user can open Prospect reports, so team members who can't make no extra request.
  */
 export function useProspectReportsBenefit( {
 	agencyId,

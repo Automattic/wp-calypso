@@ -2,6 +2,7 @@ import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { hasAnyCapability } from '../../app/router/agency';
 import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
@@ -48,7 +49,10 @@ export default function AgencyTiers() {
 	const { recordTracksEvent } = useAnalytics();
 	const { openContactForm } = useContactSupport();
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
-	const hasProspectReports = !! agency?.amplify?.allowed;
+	const hasProspectReports = hasAnyCapability(
+		agency?.user?.capabilities ?? [],
+		'a4a_read_amplify'
+	);
 	const prospectReports = useProspectReportsBenefit( {
 		agencyId: agency?.id,
 		allowed: hasProspectReports,

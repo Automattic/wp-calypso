@@ -9,6 +9,7 @@ import {
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import { NEW_REPORT_ACTION } from 'calypso/dashboard/agency/amplify/constants';
 import { useProspectReportsBenefit } from 'calypso/dashboard/agency/amplify/use-prospect-reports-benefit';
@@ -67,7 +68,7 @@ export default function AgencyTierOverviewContent( {
 } ) {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
-	const hasProspectReports = !! agency?.amplify?.allowed;
+	const hasProspectReports = isPathAllowed( A4A_PROSPECT_REPORTS_LINK, agency );
 	const prospectReports = useProspectReportsBenefit( {
 		agencyId: agency?.id,
 		allowed: hasProspectReports,
