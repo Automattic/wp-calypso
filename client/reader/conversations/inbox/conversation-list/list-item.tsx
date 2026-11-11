@@ -9,6 +9,7 @@ import {
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import { usePrefetchPostComments } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { formatCompactTime } from './format-compact-time';
 import type { Density } from './toolbar';
@@ -89,6 +90,8 @@ export function ConversationListItem( {
 	const isMountedRef = useRef( false );
 	const openedOnFocusRef = useRef( false );
 	const pointerDownRef = useRef( false );
+	const prefetchPostComments = usePrefetchPostComments();
+	const prefetchComments = () => prefetchPostComments( { siteId, postId } );
 
 	useEffect( () => {
 		const isFirstRun = ! isMountedRef.current;
@@ -133,6 +136,7 @@ export function ConversationListItem( {
 					}
 					onSelect( item, 'click' );
 				} }
+				onPointerEnter={ prefetchComments }
 				onPointerDown={ () => {
 					pointerDownRef.current = true;
 				} }
@@ -146,6 +150,7 @@ export function ConversationListItem( {
 				onFocus={ () => {
 					const source = pointerDownRef.current ? 'click' : 'tab_key';
 					pointerDownRef.current = false;
+					prefetchComments();
 					if ( openOnFocus && ! isSelected ) {
 						openedOnFocusRef.current = true;
 						onSelect( item, source );
