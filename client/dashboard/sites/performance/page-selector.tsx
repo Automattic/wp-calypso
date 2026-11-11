@@ -41,6 +41,7 @@ export default function PageSelector( {
 		() => pages.map( ( page ) => mapPageToItem( page, siteUrl ) ),
 		[ pages, siteUrl ]
 	);
+	const selectedPageId = currentPage ? currentPage.id.toString() : null;
 
 	return (
 		<Field.Root
@@ -50,8 +51,12 @@ export default function PageSelector( {
 			<Field.Label hideFromVision={ ! isDesktop }>{ __( 'Page' ) }</Field.Label>
 			<Select.Root< string >
 				items={ pageItems }
-				value={ currentPage ? currentPage.id.toString() : null }
-				onValueChange={ onChange }
+				value={ selectedPageId }
+				onValueChange={ ( pageId ) => {
+					if ( pageId !== selectedPageId ) {
+						onChange( pageId );
+					}
+				} }
 				disabled={ isLoading || ! pageItems.length }
 			>
 				<Select.Trigger
