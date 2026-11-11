@@ -131,7 +131,7 @@ describe( 'LineItemSublabelAndPrice', () => {
 		};
 		// compareToPrice is the monthly-cycle price used for the "vs monthly"
 		// comparison; differing from the item's own per-month price is what makes
-		// control render a strikethrough.
+		// the sublabel render a strikethrough.
 		const compareToPrice = 1000;
 
 		test( 'renders the plain "Billed every year" sublabel', () => {
