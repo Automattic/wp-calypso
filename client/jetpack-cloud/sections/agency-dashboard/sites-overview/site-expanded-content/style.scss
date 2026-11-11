@@ -78,7 +78,7 @@ $color-yellow: var(--studio-yellow-50);
 			inset-block-start: 0.125rem;
 			inset-inline-start: 0.125rem;
 
-			path {
+			&:not([stroke]) path {
 				stroke-width: 0.5px;
 			}
 		}
@@ -160,7 +160,7 @@ $color-yellow: var(--studio-yellow-50);
 	inset-block-start: 0.25rem;
 	inset-inline-start: 0.5rem;
 
-	path {
+	svg:not([stroke]) path {
 		stroke-width: 0.5px;
 		stroke: var(--studio-gray-10);
 	}
