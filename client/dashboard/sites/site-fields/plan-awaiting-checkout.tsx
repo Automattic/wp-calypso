@@ -109,6 +109,15 @@ export function getPreviewLaunchUrl( site: Site ): string {
 }
 
 /**
+ * Where the owner of a preview site buys it: any plan that includes Atomic keeps the site.
+ * @param site The preview.
+ * @returns The URL to send the owner to.
+ */
+export function getPreviewPlansUrl( site: Site ): string {
+	return wpcomLink( `/plans/${ site.slug }` );
+}
+
+/**
  * Where the owner of a held site finishes buying it.
  *
  * The funnel's own entry URL, with the run's identity: entering it again resumes that run, at
