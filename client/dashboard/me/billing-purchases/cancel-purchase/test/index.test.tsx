@@ -311,7 +311,7 @@ describe( '<CancelPurchase />', () => {
 					message: 'Purchase management is not available. Please check back shortly.',
 					data: { status: 500 },
 				} );
-			const { queryClient } = renderRemoveFlow( {
+			const { queryClient, router } = renderRemoveFlow( {
 				purchase: monthlyPurchase,
 				seedHasExtended: false,
 			} );
@@ -324,6 +324,7 @@ describe( '<CancelPurchase />', () => {
 			await waitFor( () =>
 				expect( screen.getByRole( 'button', { name: 'Continue removal' } ) ).toBeEnabled()
 			);
+			expect( router.state.location.pathname ).toBe( '/' );
 			await user.click( button );
 
 			await waitFor( () => expect( extend.isDone() ).toBe( true ) );
