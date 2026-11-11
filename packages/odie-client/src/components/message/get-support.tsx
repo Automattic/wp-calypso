@@ -2,7 +2,7 @@ import { localizeUrl, translationExists } from '@automattic/i18n-utils';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronRight } from '@wordpress/icons';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
@@ -14,6 +14,8 @@ import './get-support.scss';
 
 interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string, props?: Record< string, unknown > ) => void;
+	// Called once, when the options are first shown, with where each one leads.
+	onShow?: ( destinations: string[] ) => void;
 	isUserEligibleForPaidSupport?: boolean;
 	canConnectToZendesk?: boolean;
 	forceEmailSupport?: boolean;
@@ -22,6 +24,7 @@ interface GetSupportProps {
 
 interface ButtonConfig {
 	className?: string;
+	destination: string;
 	disabled?: boolean;
 	text: string | React.ReactNode;
 	action: () => Promise< void >;
@@ -31,6 +34,7 @@ interface ButtonConfig {
 
 export const GetSupport: React.FC< GetSupportProps > = ( {
 	onClickAdditionalEvent,
+	onShow,
 	isUserEligibleForPaidSupport,
 	canConnectToZendesk = false,
 	forceEmailSupport = false,
@@ -54,9 +58,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const { mostRecentSupportInteractionId, hasReachedLimit: isConversationLimitReached } =
 		useOpenLiveInteractions();
 
-	const { data: supportInteraction } = useGetSupportInteractionById(
-		mostRecentSupportInteractionId || null
-	);
+	const { data: supportInteraction, isLoading: isLoadingSupportInteraction } =
+		useGetSupportInteractionById( mostRecentSupportInteractionId || null );
 
 	// With a routing step, the host decides who gets a human.
 	const isPaidUser =
@@ -64,10 +67,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const isEmailForced = forceEmailSupport || contextForceEmailSupport;
 	const hasZendeskAccess = canConnectToZendesk || contextCanConnectToZendesk;
 
-	// Early return if user is already talking to a human or transferring to Zendesk
-	if ( chat.provider !== 'odie' || chat.status === 'transfer' ) {
-		return null;
-	}
+	// Hidden when the user is already talking to a human or transferring to Zendesk.
+	const isHidden = chat.provider !== 'odie' || chat.status === 'transfer';
 
 	const getButtonConfig = (): ButtonConfig[] => {
 		const buttons: ButtonConfig[] = [];
@@ -75,6 +76,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		if ( isPaidUser ) {
 			if ( isEmailForced || ( ! isChatLoaded && ! forceAIConversation ) ) {
 				buttons.push( {
+					destination: 'email',
 					text: __( 'Send an email', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
@@ -84,6 +86,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				} );
 			} else if ( isConversationLimitReached ) {
 				buttons.push( {
+					destination: 'chat-history',
 					text: (
 						<>
 							{ __( 'View my conversations', __i18n_text_domain__ ) }
@@ -104,6 +107,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						: __( 'Yes, please take me to that chat', __i18n_text_domain__ );
 
 					buttons.push( {
+						destination: 'previous-conversation',
 						text: (
 							<>
 								{ existingConversationCtaText }
@@ -121,6 +125,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 
 				if ( forceAIConversation ) {
 					buttons.push( {
+						destination: 'chat-ai',
 						text: __( 'Get support', __i18n_text_domain__ ),
 						action: async () => {
 							const params = new URLSearchParams( search );
@@ -130,6 +135,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					} );
 				} else if ( hasZendeskAccess ) {
 					buttons.push( {
+						destination: 'chat',
 						text: supportInteraction
 							? __( 'No, connect me with someone new', __i18n_text_domain__ )
 							: __( 'Get support', __i18n_text_domain__ ),
@@ -151,6 +157,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 
 		return [
 			{
+				destination: 'forum',
 				text: __( 'Ask in our forums', __i18n_text_domain__ ),
 				action: async () => {
 					onClickAdditionalEvent?.( 'forum' );
@@ -160,7 +167,24 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		];
 	};
 
-	const buttonConfig = getButtonConfig();
+	const buttonConfig = isHidden ? [] : getButtonConfig();
+	// The open conversation adds an option, so wait for it before reporting what's shown.
+	const shownDestinations = isLoadingSupportInteraction
+		? ''
+		: buttonConfig.map( ( { destination } ) => destination ).join( ',' );
+
+	const hasReportedShowRef = useRef( false );
+	useEffect( () => {
+		if ( ! shownDestinations || hasReportedShowRef.current ) {
+			return;
+		}
+		hasReportedShowRef.current = true;
+		onShow?.( shownDestinations.split( ',' ) );
+	}, [ shownDestinations, onShow ] );
+
+	if ( isHidden ) {
+		return null;
+	}
 
 	const handleClick = async (
 		event: React.MouseEvent< HTMLButtonElement >,
