@@ -7,9 +7,10 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { ConversationCommentsPlaceholder } from 'calypso/reader/conversations/inbox/conversation-detail/placeholder';
 import PostComments from '..';
 
-jest.mock( '../form-root', () => () => null );
+jest.mock( '../form-root', () => () => <textarea aria-label="Add a comment" /> );
 
 jest.mock( '../post-comment', () => ( props ) => (
 	<li data-testid="post-comment">{ props.commentId }</li>
@@ -62,6 +63,70 @@ describe( 'PostComments', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
+	} );
+
+	it( 'shows the loading placeholder until the first comments page resolves', async () => {
+		let releaseResponse;
+		const responseReady = new Promise( ( resolve ) => {
+			releaseResponse = resolve;
+		} );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+				force: 'wpcom',
+			} )
+			.reply( 200, async () => {
+				await responseReady;
+				return {
+					comments: [
+						{
+							ID: 2,
+							content: 'Second',
+							date: '2026-05-02T00:00:00.000Z',
+							parent: false,
+							author: { ID: 10, name: 'Second Author' },
+							status: 'approved',
+						},
+						{
+							ID: 1,
+							content: 'First',
+							date: '2026-05-01T00:00:00.000Z',
+							parent: false,
+							author: { ID: 10, name: 'First Author' },
+							status: 'approved',
+						},
+					],
+					found: 2,
+				};
+			} );
+
+		const { container } = renderComments( {
+			loadingPlaceholder: <ConversationCommentsPlaceholder />,
+		} );
+
+		try {
+			const skeletons = container.querySelectorAll( '.skeleton--circle' );
+			expect( skeletons ).toHaveLength( 3 );
+			skeletons.forEach( ( skeleton ) => expect( skeleton ).toBeVisible() );
+			expect( screen.queryByText( 'No comments' ) ).not.toBeInTheDocument();
+			expect( screen.queryAllByTestId( 'post-comment' ) ).toHaveLength( 0 );
+			expect( screen.queryByRole( 'textbox', { name: 'Add a comment' } ) ).not.toBeInTheDocument();
+
+			releaseResponse();
+
+			const comments = await screen.findAllByTestId( 'post-comment' );
+			expect( comments.map( ( comment ) => comment.textContent ) ).toEqual( [ '2', '1' ] );
+			comments.forEach( ( comment ) => expect( comment ).toBeVisible() );
+			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( '2 comments' ) ).toBeVisible();
+			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
+		} finally {
+			releaseResponse();
+		}
 	} );
 
 	it( 'renders comments from React Query without requiring Redux comment state', async () => {

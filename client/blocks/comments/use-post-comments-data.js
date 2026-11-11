@@ -70,6 +70,7 @@ export const usePostCommentsData = ( props ) => {
 
 	const {
 		comments: loadedComments,
+		isLoading: isCommentsLoading,
 		commentsFetchingStatus,
 		fetchEarlierComments,
 		fetchLaterComments,
@@ -177,6 +178,7 @@ export const usePostCommentsData = ( props ) => {
 		canUserModerateComments,
 		comments: commentsForDisplay,
 		commentsTree: visibleCommentsTree,
+		isCommentsLoading,
 		commentsFetchingStatus,
 		initialComment,
 		isInitialCommentLoading: shouldFetchStartingComment && startingComment.isLoading,
