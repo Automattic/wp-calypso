@@ -62,7 +62,10 @@ async function saveState( context, account ) {
 		}
 	}
 	fs.mkdirSync( STATE_DIR, { recursive: true, mode: 0o700 } );
-	fs.writeFileSync( statePath( account ), JSON.stringify( state ), { mode: 0o600 } );
+	// Other runs read this file, so it is replaced in one step: none may see it half-written.
+	const temporaryPath = `${ statePath( account ) }.${ process.pid }.tmp`;
+	fs.writeFileSync( temporaryPath, JSON.stringify( state ), { mode: 0o600 } );
+	fs.renameSync( temporaryPath, statePath( account ) );
 }
 
 function e2eSetupError( reason ) {
@@ -83,8 +86,6 @@ async function logInTestAccount( account ) {
 	// Logging in on calypso.localhost can't set the wordpress.com session cookie (it would
 	// be a cross-site cookie), so log in on wordpress.com itself.
 	process.env.CALYPSO_BASE_URL = 'https://wordpress.com';
-	process.env.COOKIES_PATH = path.join( STATE_DIR, 'e2e-cookies' );
-	fs.mkdirSync( process.env.COOKIES_PATH, { recursive: true, mode: 0o700 } );
 
 	let TestAccount;
 	try {
@@ -109,7 +110,14 @@ async function logInTestAccount( account ) {
 	try {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		await testAccount.authenticate( page );
+		// Not authenticate(): it locks the account with a directory that a killed login leaves
+		// behind, and every later login then waits on it. A rejected password navigates too,
+		// so wait to leave the login page before saving the session.
+		await testAccount.logInViaLoginPage( page );
+		await page.waitForURL( ( url ) => ! isLoginUrl( url.toString() ), {
+			waitUntil: 'commit',
+			timeout: 60 * 1000,
+		} );
 		await saveState( context, account );
 	} finally {
 		await browser.close();
