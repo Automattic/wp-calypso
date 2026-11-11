@@ -2282,41 +2282,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/site-admin@workspace:packages/site-admin":
-  version: 0.0.0-use.local
-  resolution: "@automattic/site-admin@workspace:packages/site-admin"
-  dependencies:
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/commands": "npm:^1.48.0"
-    "@wordpress/components": "npm:^37.0.0"
-    "@wordpress/compose": "npm:^8.2.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/dom": "npm:^4.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/html-entities": "npm:^4.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^15.5.0"
-    "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/url": "npm:^4.48.0"
-    clsx: "npm:^2.1.1"
-    copyfiles: "npm:^2.4.1"
-    history: "npm:^5.3.0"
-    postcss: "npm:^8.5.32"
-    route-recognizer: "npm:^0.3.4"
-    storybook: "npm:^10.6.5"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
-    webpack: "npm:^5.111.1"
-  peerDependencies:
-    "@wordpress/data": ^10.48.0 || ^11.0.0
-    react: ^18.3.1 || ^19.0.0
-    react-dom: ^18.3.1 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
 "@automattic/site-launch-modals@workspace:^, @automattic/site-launch-modals@workspace:packages/site-launch-modals":
   version: 0.0.0-use.local
   resolution: "@automattic/site-launch-modals@workspace:packages/site-launch-modals"
