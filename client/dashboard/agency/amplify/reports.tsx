@@ -303,17 +303,6 @@ export default function AmplifyReportsList( {
 				render: ( { item } ) => <Text>{ getStatusLabels()[ item.status ] }</Text>,
 			},
 			{
-				id: 'mode',
-				label: __( 'Report type' ),
-				getValue: ( { item } ) => item.mode,
-				elements: [
-					{ value: 'full', label: __( 'Full report' ) },
-					{ value: 'human', label: __( 'People' ) },
-					{ value: 'ai', label: __( 'AI agents' ) },
-				],
-				filterBy: { operators: [ 'isAny' ] },
-			},
-			{
 				id: 'humanScore',
 				label: __( 'People' ),
 				type: 'integer',
