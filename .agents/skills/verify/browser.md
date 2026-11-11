@@ -5,7 +5,7 @@
 ## Choosing where to test
 
 - When a PR is open or you were asked to open one, prefer [Calypso Live](#calypso-live) for final signed-in checks. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built. Draft PRs opened from branches in this repository get preview links, so you can run those checks before marking the PR ready. Each preview lets you verify the intended commit without sharing a local dev server across worktrees.
-- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. Each git worktree's dev server has its own default port (the main checkout keeps 3000), and the script targets the port of the checkout it runs from, so run both from the checkout you're verifying.
+- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. Each git worktree's dev server has its own default port (the main checkout keeps 3000), and the script targets the port of the checkout it runs from, so run both from the checkout you're verifying. The script accepts whatever server answers on that port, so when you set `PORT` by hand, make sure it is this checkout's server.
 
 ## Accounts
 
