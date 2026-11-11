@@ -76,6 +76,10 @@ There are two different modes of operation:
 
 2. production - in production mode, the files are written to the public directory by running the `yarn run build` command. The command runs `webpack`, generates a `assets.json` file, and then minifies each file. The `assets.json` file is used in the server to map the chunk name to the current asset.
 
+## Other bundlers
+
+The server doesn't depend on webpack outside this module. A bundler running in development can replace how the server finds the assets of each entry and section with `app.set( 'assets provider', provider )`, where `provider` returns (a promise of) an object shaped like `assets.json`; see `client/server/middleware/assets.js`. It can also listen for the `http-server` event on the app to receive the `http.Server` once it's created, for example to serve hot updates on the same port.
+
 ## Caching
 
 In most of the environments that Calypso is deployed to, the static assets are served and cached by nginx. Each filename includes a hash that is calculated by Webpack, which means that we can cache assets for all the various versions of Calypso that may be in active use. The hash also busts the cache on the client-side.
