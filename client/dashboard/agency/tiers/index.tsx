@@ -6,7 +6,7 @@ import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { NEW_REPORT_PARAM } from '../amplify/constants';
+import { NEW_REPORT_ACTION } from '../amplify/constants';
 import { useProspectReportsBenefit } from '../amplify/use-prospect-reports-benefit';
 import CertificationTierPageCard from '../certification/tier-page-card';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
@@ -28,7 +28,7 @@ const BENEFIT_LINKS: TierBenefitLinks = {
 
 const BENEFIT_LINKS_WITH_AMPLIFY: TierBenefitLinks = {
 	...BENEFIT_LINKS,
-	'generate-prospect-report': `/prospect-reports?${ NEW_REPORT_PARAM }=1`,
+	'generate-prospect-report': `/prospect-reports?action=${ NEW_REPORT_ACTION }`,
 };
 
 const BENEFIT_LINKS_WITH_AMPLIFY_REPORTS: TierBenefitLinks = {

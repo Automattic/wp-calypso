@@ -2,38 +2,29 @@ import { Button, Tooltip, __experimentalHStack as HStack } from '@wordpress/comp
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { NEW_REPORT_PARAM } from './constants';
 import AmplifyLearnMoreModal from './learn-more-modal';
 import AmplifyNewReportModal from './new-report-modal';
-import type { AmplifyTiersLink } from './types';
+import type { AmplifyNewReportRequest, AmplifyTiersLink } from './types';
 import type { AmplifyPage } from './use-amplify-page';
-
-// Read from `window.location` rather than a router, since the classic A4A
-// dashboard renders this page without TanStack Router.
-function hasNewReportParam() {
-	return new URLSearchParams( window.location.search ).has( NEW_REPORT_PARAM );
-}
-
-function clearNewReportParam() {
-	const url = new URL( window.location.href );
-	if ( url.searchParams.has( NEW_REPORT_PARAM ) ) {
-		url.searchParams.delete( NEW_REPORT_PARAM );
-		window.history.replaceState( window.history.state, '', url );
-	}
-}
 
 /** "Learn more" and "New report" for the page header, with the modals they open. */
 export default function AmplifyHeaderActions( {
 	page,
 	tiersLink,
+	newReportRequest,
 }: {
 	page: AmplifyPage;
 	tiersLink?: AmplifyTiersLink;
+	newReportRequest?: AmplifyNewReportRequest;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const [ isNewReportOpen, setIsNewReportOpen ] = useState( hasNewReportParam );
+	const [ isNewReportOpen, setIsNewReportOpen ] = useState(
+		newReportRequest?.isRequested ?? false
+	);
 	const closeNewReport = () => {
-		clearNewReportParam();
+		if ( newReportRequest?.isRequested ) {
+			newReportRequest.onClear();
+		}
 		setIsNewReportOpen( false );
 	};
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
@@ -41,10 +32,9 @@ export default function AmplifyHeaderActions( {
 	// With no reports yet, the page body already shows the URL form.
 	useEffect( () => {
 		if ( page.state === 'empty' && isNewReportOpen ) {
-			clearNewReportParam();
-			setIsNewReportOpen( false );
+			closeNewReport();
 		}
-	}, [ page.state, isNewReportOpen ] );
+	} );
 
 	if ( page.state === 'empty' || page.state === 'loading' ) {
 		return null;

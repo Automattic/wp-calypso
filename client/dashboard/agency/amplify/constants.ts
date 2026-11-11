@@ -15,8 +15,8 @@ export const getFeatureDescription = () =>
 		'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fixes.'
 	);
 
-/** Query param that opens the New report modal when the page loads, e.g. `/prospect-reports?new-report=1`. */
-export const NEW_REPORT_PARAM = 'new-report';
+/** The `action` that opens the New report modal when the page loads: `/prospect-reports?action=new-report`. */
+export const NEW_REPORT_ACTION = 'new-report';
 
 /** Timing copy used everywhere, per the v1 PRD. */
 export const getReportTiming = () => __( '10 to 20 minutes' );

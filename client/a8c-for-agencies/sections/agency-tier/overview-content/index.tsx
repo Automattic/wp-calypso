@@ -10,7 +10,7 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
-import { NEW_REPORT_PARAM } from 'calypso/dashboard/agency/amplify/constants';
+import { NEW_REPORT_ACTION } from 'calypso/dashboard/agency/amplify/constants';
 import { useProspectReportsBenefit } from 'calypso/dashboard/agency/amplify/use-prospect-reports-benefit';
 import CertificationTierPageCard from 'calypso/dashboard/agency/certification/tier-page-card';
 import InfluencedRevenue from 'calypso/dashboard/agency/tiers/influenced-revenue';
@@ -41,7 +41,7 @@ const BENEFIT_LINKS: TierBenefitLinks = {
 
 const BENEFIT_LINKS_WITH_AMPLIFY: TierBenefitLinks = {
 	...BENEFIT_LINKS,
-	'generate-prospect-report': `${ A4A_PROSPECT_REPORTS_LINK }?${ NEW_REPORT_PARAM }=1`,
+	'generate-prospect-report': `${ A4A_PROSPECT_REPORTS_LINK }?action=${ NEW_REPORT_ACTION }`,
 };
 
 const BENEFIT_LINKS_WITH_AMPLIFY_REPORTS: TierBenefitLinks = {

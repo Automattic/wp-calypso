@@ -164,7 +164,7 @@ describe( '<TierBenefits>', () => {
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
 				onScheduleCall={ jest.fn() }
-				links={ { 'generate-prospect-report': '/prospect-reports?new-report=1' } }
+				links={ { 'generate-prospect-report': '/prospect-reports?action=new-report' } }
 				shouldUseRouterLink={ false }
 			/>
 		);
@@ -172,7 +172,7 @@ describe( '<TierBenefits>', () => {
 		expect( card.getByText( 'Prospect Reports' ) ).toBeVisible();
 		expect( card.getByRole( 'link', { name: 'Generate a report' } ) ).toHaveAttribute(
 			'href',
-			'/prospect-reports?new-report=1'
+			'/prospect-reports?action=new-report'
 		);
 	} );
 
@@ -182,7 +182,7 @@ describe( '<TierBenefits>', () => {
 				currentAgencyTierId="emerging-partner"
 				onScheduleCall={ jest.fn() }
 				links={ {
-					'generate-prospect-report': '/prospect-reports?new-report=1',
+					'generate-prospect-report': '/prospect-reports?action=new-report',
 					'view-prospect-reports': '/prospect-reports',
 				} }
 				shouldUseRouterLink={ false }
@@ -205,7 +205,7 @@ describe( '<TierBenefits>', () => {
 				currentAgencyTierId="emerging-partner"
 				onScheduleCall={ jest.fn() }
 				links={ {
-					'generate-prospect-report': '/prospect-reports?new-report=1',
+					'generate-prospect-report': '/prospect-reports?action=new-report',
 					'view-prospect-reports': '/prospect-reports',
 				} }
 				shouldUseRouterLink={ false }
@@ -234,7 +234,7 @@ describe( '<TierBenefits>', () => {
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
 				onScheduleCall={ jest.fn() }
-				links={ { 'generate-prospect-report': '/prospect-reports?new-report=1' } }
+				links={ { 'generate-prospect-report': '/prospect-reports?action=new-report' } }
 				shouldUseRouterLink={ false }
 			/>
 		);
@@ -248,7 +248,7 @@ describe( '<TierBenefits>', () => {
 			<TierBenefits
 				currentAgencyTierId="pro-agency-partner"
 				onScheduleCall={ jest.fn() }
-				links={ { 'generate-prospect-report': '/prospect-reports?new-report=1' } }
+				links={ { 'generate-prospect-report': '/prospect-reports?action=new-report' } }
 				shouldUseRouterLink={ false }
 			/>
 		);
