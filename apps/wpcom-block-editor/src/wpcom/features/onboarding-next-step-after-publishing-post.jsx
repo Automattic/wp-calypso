@@ -57,7 +57,7 @@ export function OnboardingNextStepAfterPublishingPost() {
 									type: 'snackbar',
 									isDismissible: true,
 									explicitDismiss: true,
-									icon: <Icon icon={ pending } style={ { color: 'white' } } size={ 24 } />,
+									icon: <Icon icon={ pending } size={ 24 } />,
 									id: 'NEXT_STEPS_NOTICE_ID',
 								}
 							);
