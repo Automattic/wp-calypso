@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	isDomainMapping,
+	isDomainMoveInternal,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
@@ -327,6 +331,18 @@ async function goToOwnPreviewSiteLaunch( reduxStore: Store ): Promise< boolean >
 	return true;
 }
 
+// The domain search marks this move on the cart item. The server refuses it without a paid plan.
+function isConnectedDomainMove( item: MinimalRequestCartProduct | null | undefined ): boolean {
+	const extra = item?.extra;
+	return (
+		!! item &&
+		isDomainMoveInternal( item ) &&
+		!! extra &&
+		'is_connected_domain_move' in extra &&
+		!! extra.is_connected_domain_move
+	);
+}
+
 async function initialize( reduxStore: Store ) {
 	if ( await goToOwnPreviewSiteLaunch( reduxStore ) ) {
 		return false as const;
@@ -416,15 +432,17 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem, domainCartItem, blueprint } = useSelect(
-			( select ) => ( {
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
-			} ),
-			[]
-		);
+		const { signupDomainOrigin, planCartItem, domainCartItem, domainCartItems, blueprint } =
+			useSelect(
+				( select ) => ( {
+					signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+					planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+					domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+					domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
+					blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
+				} ),
+				[]
+			);
 		const queryParams = useQuery();
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
@@ -694,6 +712,16 @@ const onboarding: FlowV2< typeof initialize > = {
 						} else {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
+
+						// Without a plan the server rejects the move, so it must not reach the cart.
+						if ( isConnectedDomainMove( domainCartItem ) ) {
+							setDomainCartItem( undefined );
+						}
+						if ( domainCartItems?.some( isConnectedDomainMove ) ) {
+							setDomainCartItems(
+								domainCartItems.filter( ( item ) => ! isConnectedDomainMove( item ) )
+							);
+						}
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
@@ -866,7 +894,9 @@ const onboarding: FlowV2< typeof initialize > = {
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
 							const redirectTo: string =
 								playgroundId &&
-								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
+								// A domain move goes to checkout without a plan, as a Free plan run.
+								!! planCartItem &&
+								! isPlanProductFree( {} as unknown as State, planCartItem.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 											siteSlug,
 											siteId: providedDependencies.siteId,

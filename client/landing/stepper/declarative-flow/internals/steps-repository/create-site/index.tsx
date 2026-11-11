@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isEcommerce } from '@automattic/calypso-products';
+import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -229,7 +229,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const isImport = urlQueryParams.get( 'flow' ) === 'import';
 	const useThemeHeadstart =
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow ) && ! isImport;
-	const shouldGoToCheckout = Boolean( planCartItem );
+	// A domain move completes at checkout, even at $0 on the Free plan.
+	const shouldGoToCheckout =
+		Boolean( planCartItem ) || mergedDomainCartItems.some( isDomainMoveInternal );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
 	async function createSiteAction() {

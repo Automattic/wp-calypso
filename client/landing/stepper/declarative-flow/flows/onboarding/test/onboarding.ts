@@ -20,6 +20,8 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 const mockResetOnboardStore = jest.fn();
 const mockSetPlanCartItem = jest.fn();
 const mockSetProductCartItems = jest.fn();
+const mockSetDomainCartItem = jest.fn();
+const mockSetDomainCartItems = jest.fn();
 
 // The product catalog's feature list pulls @wordpress/components in through this, and that
 // chain needs a real @wordpress/data, which this file mocks. Only JSX uses these.
@@ -32,8 +34,8 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		resetOnboardStore: mockResetOnboardStore,
 		setDomain: jest.fn(),
-		setDomainCartItem: jest.fn(),
-		setDomainCartItems: jest.fn(),
+		setDomainCartItem: mockSetDomainCartItem,
+		setDomainCartItems: mockSetDomainCartItems,
 		setHideFreePlan: jest.fn(),
 		setPlanCartItem: mockSetPlanCartItem,
 		setProductCartItems: mockSetProductCartItems,
@@ -398,6 +400,61 @@ describe( 'onboarding flow domains navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( null );
 		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
+	} );
+} );
+
+describe( 'onboarding flow plans navigation', () => {
+	const registeredMove = { product_slug: 'domain_move_internal', meta: 'owned.com' };
+	const connectedMove = {
+		product_slug: 'domain_move_internal',
+		meta: 'connected.com',
+		extra: { is_connected_domain_move: true },
+	};
+	const registration = { product_slug: 'dotcom_domain', meta: 'new.com' };
+
+	const submitFreePlan = ( domainCartItems: Record< string, unknown >[] ) => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( '' ) );
+		( useSelect as jest.Mock ).mockReturnValue( {
+			domainCartItem: domainCartItems[ 0 ],
+			domainCartItems,
+		} );
+
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'plans' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		result.current.submit?.( {
+			slug: 'plans',
+			providedDependencies: { cartItems: null },
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return navigate;
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	// The server refuses a connected-domain move without a plan.
+	it( 'drops a connected domain move from the cart on the Free plan', () => {
+		const navigate = submitFreePlan( [ connectedMove, registration ] );
+
+		expect( mockSetDomainCartItem ).toHaveBeenCalledWith( undefined );
+		expect( mockSetDomainCartItems ).toHaveBeenCalledWith( [ registration ] );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+	} );
+
+	it( 'keeps a registered domain move in the cart on the Free plan', () => {
+		submitFreePlan( [ registeredMove ] );
+
+		expect( mockSetDomainCartItem ).not.toHaveBeenCalled();
+		expect( mockSetDomainCartItems ).not.toHaveBeenCalled();
 	} );
 } );
 

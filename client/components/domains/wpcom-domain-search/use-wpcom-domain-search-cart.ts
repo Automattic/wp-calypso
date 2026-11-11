@@ -1,3 +1,4 @@
+import { DomainAvailabilityStatus } from '@automattic/api-core';
 import {
 	isDomainProduct,
 	isDomainTransfer,
@@ -191,7 +192,14 @@ export const useWPCOMDomainSearchCart = ( {
 			} ),
 			total,
 			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
-			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
+			onAddItem: async ( item ) => {
+				const { domain_name, product_slug, supports_privacy } = item;
+				// A domain connected to another site can only move with a paid plan. The plans step
+				// reads this marker, because the availability status does not reach the cart item.
+				const isConnectedDomainMove =
+					isDomainMoveInternal( { product_slug } ) &&
+					'status' in item &&
+					item.status === DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER;
 				const product = beforeAddDomainToCart( {
 					product_slug,
 					meta: domain_name,
@@ -201,6 +209,7 @@ export const useWPCOMDomainSearchCart = ( {
 							privacy: supports_privacy,
 						} ),
 						...( flowName && { flow_name: flowName } ),
+						...( isConnectedDomainMove && { is_connected_domain_move: true } ),
 					},
 				} );
 

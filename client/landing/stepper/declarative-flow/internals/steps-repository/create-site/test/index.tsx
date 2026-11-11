@@ -16,11 +16,16 @@ let mockBlueprint: string | null = null;
 let mockSiteUrl = 'my-site.wordpress.com';
 let mockQueryParams = new URLSearchParams( '' );
 let mockIsSimplifiedOnboarding = false;
+let mockDomainCartItems: { product_slug: string; meta: string }[] = [];
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
 const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
 
-jest.mock( '@automattic/calypso-products', () => ( { isEcommerce: () => false } ) );
+jest.mock( '@automattic/calypso-products', () => ( {
+	isEcommerce: () => false,
+	isDomainMoveInternal: ( { product_slug }: { product_slug: string } ) =>
+		product_slug === 'domain_move_internal',
+} ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
 	Site: { Visibility: { PublicIndexed: 1, PublicNotIndexed: 0 } },
@@ -64,7 +69,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: () => ( {
 		domainItem: undefined,
 		domainCartItem: undefined,
-		domainCartItems: [],
+		domainCartItems: mockDomainCartItems,
 		planCartItem: null,
 		productCartItems: [],
 		selectedSiteTitle: 'My site',
@@ -142,6 +147,7 @@ describe( 'create-site', () => {
 		mockSiteUrl = 'my-site.wordpress.com';
 		mockQueryParams = new URLSearchParams( '' );
 		mockIsSimplifiedOnboarding = false;
+		mockDomainCartItems = [];
 		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
@@ -277,6 +283,19 @@ describe( 'create-site', () => {
 			siteSlug: 'brand-new.wordpress.com',
 		} );
 		expect( createSite ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	// A move completes only at checkout, so a Free plan run with one still has to go there.
+	it( 'goes to checkout with a domain move and no plan', async () => {
+		mockDomainCartItems = [ { product_slug: 'domain_move_internal', meta: 'owned-domain.com' } ];
+
+		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
+	} );
+
+	it( 'does not go to checkout with a domain registration and no plan', async () => {
+		mockDomainCartItems = [ { product_slug: 'dotcom_domain', meta: 'new-domain.com' } ];
+
+		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: false } );
 	} );
 
 	it( 'rejects with "Failed to create site" when /sites/new returns nothing', async () => {

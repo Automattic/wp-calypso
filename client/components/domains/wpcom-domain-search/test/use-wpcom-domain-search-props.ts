@@ -896,6 +896,31 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 		} );
 
+		it( 'marks a move of a domain connected to another site', async () => {
+			const onContinue = jest.fn();
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( {
+				...ownedDomain,
+				status: 'mapped_to_other_site_same_user',
+			} );
+
+			expect( onContinue ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+					extra: { flow_name: 'flow-name', is_connected_domain_move: true },
+				},
+			] );
+		} );
+
 		it( 'carries the domains already in the siteless cart along, after the moved domain', async () => {
 			const onContinue = jest.fn();
 			const existingDomain = buildProduct( {
