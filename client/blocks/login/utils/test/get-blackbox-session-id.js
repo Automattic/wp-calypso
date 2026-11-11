@@ -35,6 +35,19 @@ describe( 'getBlackboxSessionId', () => {
 		expect( sdk.listeners.size ).toBe( 0 );
 	} );
 
+	test.each( [
+		[ 'login-key', 'login' ],
+		[ 'signup-key', 'signup' ],
+	] )(
+		'passes collect flow through configureBlackbox before flush (%s, %s)',
+		async ( apiKey, flow ) => {
+			await getBlackboxSessionId( apiKey, undefined, flow );
+			expect( sdk.api.configure ).toHaveBeenCalledWith(
+				expect.objectContaining( { apiKey, flow } )
+			);
+		}
+	);
+
 	test.each( [ 'timeout', 'error' ] )( 'retains a valid ID after %s', async ( outcome ) => {
 		sdk.api.flush.mockResolvedValue( { sessionId: 'sid', challengePending: false, outcome } );
 		await expect( getBlackboxSessionId( 'login-key', undefined, 'login' ) ).resolves.toBe( 'sid' );
