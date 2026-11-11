@@ -15,24 +15,31 @@ import { Text } from '../../components/text';
 
 import './titan-dns-records.scss';
 
-interface DnsRecordProps {
-	type: string;
-	note: string;
+interface DnsRecordFieldsProps {
 	name: string;
 	value: string;
 	help?: string;
 }
 
-export const DnsRecord = ( { type, note, name, value, help }: DnsRecordProps ) => (
+export const DnsRecordFields = ( { name, value, help }: DnsRecordFieldsProps ) => (
+	<div className="titan-dns-records__fields">
+		<ClipboardInputControl label={ __( 'Name' ) } value={ name } readOnly />
+		<ClipboardInputControl label={ __( 'Value' ) } value={ value } help={ help } readOnly />
+	</div>
+);
+
+interface DnsRecordProps extends DnsRecordFieldsProps {
+	type: string;
+	note: string;
+}
+
+const DnsRecord = ( { type, note, ...fields }: DnsRecordProps ) => (
 	<VStack spacing={ 2 }>
 		<HStack spacing={ 2 } justify="flex-start">
 			<Text weight={ 500 }>{ type }</Text>
 			<Text variant="muted">{ note }</Text>
 		</HStack>
-		<div className="titan-dns-records__fields">
-			<ClipboardInputControl label={ __( 'Name' ) } value={ name } readOnly />
-			<ClipboardInputControl label={ __( 'Value' ) } value={ value } help={ help } readOnly />
-		</div>
+		<DnsRecordFields { ...fields } />
 	</VStack>
 );
 

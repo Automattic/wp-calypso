@@ -79,7 +79,6 @@ describe( '<DkimMissingNotice>', () => {
 		await screen.findByText( TITLE );
 		expect( fieldValues( 'Name' ) ).toEqual( [ record( DOMAIN ).name ] );
 		expect( fieldValues( 'Value' ) ).toEqual( [ record( DOMAIN ).data ] );
-		expect( screen.getByText( 'TXT' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Copy Value' } ) ).toBeVisible();
 	} );
 
@@ -92,7 +91,7 @@ describe( '<DkimMissingNotice>', () => {
 			record( DOMAIN ).name,
 			record( 'other.com' ).name,
 		] );
-		expect( screen.getAllByRole( 'button', { name: 'Check again' } ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'button', { name: 'Check again' } ) ).toHaveLength( 1 );
 	} );
 
 	test( 'shows nothing when the request fails', async () => {
@@ -169,6 +168,39 @@ describe( '<DkimMissingNotice>', () => {
 			expect( await screen.findByText( TRY_LATER ) ).toBeVisible();
 			expect( screen.getByText( TITLE ) ).toBeVisible();
 			expect( checkAgainButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+
+		test( 'waits for every missing domain to get a new result', async () => {
+			const other = 'other.com';
+			mockStatus( [ entry(), entry( { domain: other } ) ] );
+			render( <DkimNotice /> );
+
+			const force = mockForce( [ entry(), entry( { domain: other } ) ] );
+			const firstDone = mockStatus( [
+				entry( { status: 'found', checked_at: NEW_CHECKED_AT } ),
+				entry( { domain: other } ),
+			] );
+			const bothDone = mockStatus( [
+				entry( { status: 'found', checked_at: NEW_CHECKED_AT } ),
+				entry( { domain: other, checked_at: NEW_CHECKED_AT } ),
+			] );
+			await clickCheckAgain();
+			await waitFor( () => expect( force.isDone() ).toBe( true ) );
+
+			await advance( DKIM_POLL_INTERVAL );
+			expect( firstDone.isDone() ).toBe( true );
+			expect( await screen.findByText( `Add the DKIM record for ${ other }` ) ).toBeVisible();
+			expect( checkAgainButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			await advance( DKIM_POLL_INTERVAL );
+			expect( bothDone.isDone() ).toBe( true );
+			expect( await screen.findByText( TRY_LATER ) ).toBeVisible();
+			expect( checkAgainButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+			expect( select( noticesStore ).getNotices() ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( { content: `We found the DKIM record for ${ DOMAIN }.` } ),
+				] )
+			);
 		} );
 
 		test( 'stops polling and asks to try later when the time runs out', async () => {
