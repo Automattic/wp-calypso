@@ -3,8 +3,8 @@
  */
 import { render, fireEvent } from '@testing-library/react';
 import Modal from 'react-modal';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { DoNotSellDialog } from '..';
 
 const genericContent = {

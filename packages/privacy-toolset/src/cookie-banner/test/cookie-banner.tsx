@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, fireEvent, getByText, getByTestId, queryByText } from '@testing-library/react';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { describe, expect, test, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { CookieBanner } from '..';
 import type { CookieBannerProps } from '..';
 
