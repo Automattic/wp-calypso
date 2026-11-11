@@ -65,7 +65,7 @@ export const JumpToRecent = ( {
 		<div className={ className }>
 			<button className="odie-jump-to-recent-message-button" onClick={ jumpToRecent }>
 				{ __( 'Jump to recent', __i18n_text_domain__ ) }
-				<Icon icon={ chevronDown } fill="white" />
+				<Icon icon={ chevronDown } style={ { color: 'white' } } />
 			</button>
 		</div>
 	);
