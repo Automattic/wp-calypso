@@ -1,25 +1,24 @@
+import flagUrls from './flag-urls';
+
 /**
  * Given a country code, return a flag SVG file path
  * @param   {string} countryCode  A two-letter ISO_3166-1_country code
  * @returns {string}              Flag SVG file path
  */
 export function flagUrl( countryCode ) {
-	try {
-		const x = require( `flag-icons/flags/4x3/${ countryCode }.svg` );
-		if ( x.default ) {
-			return x.default;
-		}
-		return x;
-	} catch ( e ) {
-		// As a fallback, return a 'globe' SVG.
-		// Unfortunately, we're not shipping SVGs with the `gridicons` npm --
-		// instead, they're inlined inside React components.
-		// The below SVG string was produced by running
-		// `renderToStaticMarkup( <GridiconGlobe size={ 24 } /> )`
-		// and changing the viewbox to fit with the 4x3 aspect ratio of flags.
-		// TODO: Ship SVGs with the `gridicons` npm, load the globe SVG directly.
+	if ( Object.hasOwn( flagUrls, countryCode ) ) {
+		return flagUrls[ countryCode ];
+	}
 
-		const svg = `
+	// As a fallback, return a 'globe' SVG.
+	// Unfortunately, we're not shipping SVGs with the `gridicons` npm --
+	// instead, they're inlined inside React components.
+	// The below SVG string was produced by running
+	// `renderToStaticMarkup( <GridiconGlobe size={ 24 } /> )`
+	// and changing the viewbox to fit with the 4x3 aspect ratio of flags.
+	// TODO: Ship SVGs with the `gridicons` npm, load the globe SVG directly.
+
+	const svg = `
 			<svg
 				class="gridicon gridicons-globe"
 				height="24"
@@ -32,7 +31,6 @@ export function flagUrl( countryCode ) {
 				</g>
 			</svg>`;
 
-		// Ensure that we URI-encode the SVG content
-		return 'data:image/svg+xml;utf8,' + encodeURIComponent( svg );
-	}
+	// Ensure that we URI-encode the SVG content
+	return 'data:image/svg+xml;utf8,' + encodeURIComponent( svg );
 }

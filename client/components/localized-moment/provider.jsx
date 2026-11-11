@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import MomentContext from './context';
+import momentLocaleLoaders from './moment-locale-loaders';
 
 const debug = debugFactory( 'calypso:localized-moment' );
 
@@ -22,12 +23,16 @@ class MomentProvider extends Component {
 			// always pre-loaded, expose a promise that resolves immediately
 			this.loadingLocalePromise = Promise.resolve();
 		} else {
+			if ( ! Object.hasOwn( momentLocaleLoaders, currentLocale ) ) {
+				debug( 'No moment locale for %s', currentLocale );
+				this.loadingLocalePromise = Promise.resolve();
+				return;
+			}
+
 			debug( 'Loading moment locale for %s', currentLocale );
 			try {
 				// expose the import load promise as instance property. Useful for tests that wait for it
-				this.loadingLocalePromise = import(
-					/* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ currentLocale }`
-				);
+				this.loadingLocalePromise = momentLocaleLoaders[ currentLocale ]();
 				await this.loadingLocalePromise;
 			} catch ( error ) {
 				debug( 'Failed to load moment locale for %s', currentLocale, error );
