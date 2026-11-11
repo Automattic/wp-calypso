@@ -26,6 +26,8 @@ import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
+import './reports.scss';
+
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
@@ -101,6 +103,12 @@ function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: bo
 			) }
 		</Badge>
 	);
+}
+
+/** The failure reason without the error code the API puts in front of it. */
+function getFailureMessage( reason: string | null ) {
+	const message = reason?.replace( /^[a-z0-9]+(?:_[a-z0-9]+)+(?::\s*|$)/, '' ).trim();
+	return message || __( 'The report didn’t finish.' );
 }
 
 function titleFor( report: AmplifyReport ) {
@@ -276,7 +284,7 @@ export default function AmplifyReportsList( {
 						</ExternalLink>
 						{ item.status === 'failed' && (
 							<Text intent="error" size={ 12 }>
-								{ item.failure_reason || __( 'The report didn’t finish.' ) }
+								{ getFailureMessage( item.failure_reason ) }
 							</Text>
 						) }
 					</VStack>
