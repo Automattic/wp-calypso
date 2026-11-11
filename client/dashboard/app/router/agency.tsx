@@ -55,6 +55,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
 	canSwitchAgencyDashboard,
@@ -91,6 +92,11 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { a4aLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
@@ -231,6 +237,40 @@ export const agencyTiersRoute = createRoute( {
 		} )
 	)
 );
+
+// `/amplify` – prospect-site analyses and reports.
+export const agencyAmplifyRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
+	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'amplify',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.amplify?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} );
+
+const agencyAmplifyOverviewRoute = createRoute( {
+	getParentRoute: () => agencyAmplifyRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/amplify' ).then( ( d ) =>
+		createLazyRoute( 'agency-amplify' )( { component: d.default } )
+	)
+);
+
+const agencyAmplifyReportsRoute = createRoute( {
+	getParentRoute: () => agencyAmplifyRoute,
+	path: 'reports',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/amplify' } );
+	},
+} );
 
 // `/partner-directory` – layout that shows the tier upsell to agencies
 // below Agency Partner
@@ -1470,6 +1510,7 @@ const agencySitePerformanceRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'performance',
+	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
 	import( '../../agency/sites/site/performance' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance' )( {
@@ -1500,10 +1541,25 @@ export const agencySitePerformanceFrontendRoute = createRoute( {
 export const agencySitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'backend',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: agencySitePerformanceFrontendRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } );
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	// The page shows an upsell instead of APM data on these plans.
+	if ( ! hasBackendAccess( site.plan?.product_slug ) ) {
+		return;
+	}
 	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
 		await import( '../../sites/performance/backend/timeframe' );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
@@ -1687,6 +1743,7 @@ export const agencySiteSettingsRoute = createRoute( {
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
 				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+			prefetchApmAccess(),
 		] );
 	},
 } );
@@ -2216,6 +2273,17 @@ const agencySiteSettingsApmRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Application Performance Monitoring' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'apm',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: agencySiteSettingsRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-apm' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-apm' )( {
@@ -2317,6 +2385,7 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute, agencyAmplifyReportsRoute ] ),
 		agencyPartnerDirectoryRoute.addChildren( [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,

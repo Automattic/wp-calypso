@@ -96,4 +96,27 @@ describe( 'useAgentChat — send lock', () => {
 
 		expect( sendMessageStream ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'keeps accepting messages after a send that throws while building its message', async () => {
+		let onSubmit: UseAgentChatReturn[ 'onSubmit' ] | undefined;
+		await act( async () => {
+			root.render(
+				React.createElement( HookHarness, {
+					onReady: ( submit ) => {
+						onSubmit = submit;
+					},
+				} )
+			);
+		} );
+
+		await expect(
+			onSubmit?.( 'hello', { imageUrls: [ null ] as unknown as string[] } )
+		).rejects.toThrow();
+
+		await act( async () => {
+			await onSubmit?.( 'hello' );
+		} );
+
+		expect( sendMessageStream ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

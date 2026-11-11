@@ -2,12 +2,16 @@
  * @jest-environment jsdom
  */
 
+import { captureException } from '@automattic/calypso-sentry';
 import { render, act, waitFor } from '@testing-library/react';
 import globalMoment from 'moment';
 import { PureComponent } from 'react';
 import { createStore } from 'redux';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
+import momentLocaleLoaders from '../moment-locale-loaders';
 import MomentProvider from '../provider';
+
+jest.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
 
 // helper to create state object with specified `languageSlug`
 const createState = ( localeSlug ) => ( { ui: { language: { localeSlug } } } );
@@ -125,5 +129,47 @@ describe.each( [
 		wrappers.forEach( ( { container } ) =>
 			expect( container.firstChild ).toHaveTextContent( enLabel )
 		);
+	} );
+} );
+
+describe( 'MomentProvider', () => {
+	beforeEach( () => globalMoment.locale( 'en' ) );
+	afterEach( () => {
+		globalMoment.locale( 'en' );
+		jest.restoreAllMocks();
+		captureException.mockClear();
+	} );
+
+	it( 'reports a moment locale that fails to load and keeps English dates', async () => {
+		const error = new Error( 'Loading chunk moment-locale-fr failed.' );
+		jest.spyOn( momentLocaleLoaders, 'fr' ).mockRejectedValue( error );
+		const store = createStore( reducer, createState( 'fr' ) );
+
+		const { container } = render(
+			<MomentProvider store={ store }>
+				<LabelWithMomentHook date="2018-11-01" />
+			</MomentProvider>
+		);
+
+		await waitFor( () =>
+			expect( captureException ).toHaveBeenCalledWith( error, {
+				tags: { moment_locale: 'fr' },
+			} )
+		);
+		expect( container.firstChild ).toHaveTextContent( enLabel );
+	} );
+
+	it( 'keeps English dates without reporting a locale moment has no file for', async () => {
+		const store = createStore( reducer, createState( 'kab' ) );
+
+		const { container } = render(
+			<MomentProvider store={ store }>
+				<LabelWithMomentHook date="2018-11-01" />
+			</MomentProvider>
+		);
+
+		await act( () => Promise.resolve() );
+		expect( container.firstChild ).toHaveTextContent( enLabel );
+		expect( captureException ).not.toHaveBeenCalled();
 	} );
 } );

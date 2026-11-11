@@ -22,6 +22,7 @@ let mockSelectorState: {
 // Mock dispatch functions
 const mockUpdateImageStudioCanvas = jest.fn();
 const mockResetCanvasHistory = jest.fn();
+const mockSetCanvasMetadata = jest.fn();
 const mockAddNotice = jest.fn();
 const mockDeleteDraftsExcept = jest.fn();
 const mockResolveSelect = jest.fn();
@@ -38,6 +39,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: jest.fn( () => ( {
 		updateImageStudioCanvas: mockUpdateImageStudioCanvas,
 		resetCanvasHistory: mockResetCanvasHistory,
+		setCanvasMetadata: mockSetCanvasMetadata,
 		addNotice: mockAddNotice,
 	} ) ),
 	resolveSelect: jest.fn( () => ( {
@@ -70,6 +72,13 @@ jest.mock( '@wordpress/i18n', () => ( {
 jest.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
+
+const originalAttachment = {
+	id: 1,
+	source_url: 'https://example.com/original.jpg',
+	link: 'https://example.com/original/',
+	mime_type: 'image/jpeg',
+};
 
 describe( 'useRevertToOriginal', () => {
 	beforeEach( () => {
@@ -174,9 +183,7 @@ describe( 'useRevertToOriginal', () => {
 
 	describe( 'handleRevertToOriginal', () => {
 		it( 'calls all store actions on successful revert', async () => {
-			mockResolveSelect.mockResolvedValue( {
-				source_url: 'https://example.com/original.jpg',
-			} );
+			mockResolveSelect.mockResolvedValue( originalAttachment );
 
 			const { result } = renderHook( () =>
 				useRevertToOriginal( {
@@ -197,6 +204,57 @@ describe( 'useRevertToOriginal', () => {
 				);
 				expect( mockResetCanvasHistory ).toHaveBeenCalled();
 				expect( mockAddNotice ).toHaveBeenCalledWith( 'Reverted to original', 'success' );
+			} );
+		} );
+
+		it( 'restores the original metadata after resetting canvas history', async () => {
+			mockResolveSelect.mockResolvedValue( {
+				...originalAttachment,
+				title: { raw: 'Original title', rendered: 'Original title' },
+				caption: { raw: 'Original caption', rendered: '<p>Original caption</p>' },
+				description: { raw: 'Original description', rendered: '<p>Original description</p>' },
+				alt_text: 'Original alt text',
+			} );
+
+			const { result } = renderHook( () =>
+				useRevertToOriginal( {
+					deleteDraftsExcept: mockDeleteDraftsExcept,
+				} )
+			);
+
+			await act( async () => {
+				await result.current.handleRevertToOriginal();
+			} );
+
+			expect( mockSetCanvasMetadata ).toHaveBeenCalledWith( {
+				title: 'Original title',
+				caption: 'Original caption',
+				description: 'Original description',
+				alt_text: 'Original alt text',
+			} );
+			expect( mockSetCanvasMetadata.mock.invocationCallOrder[ 0 ] ).toBeGreaterThan(
+				mockResetCanvasHistory.mock.invocationCallOrder[ 0 ]
+			);
+		} );
+
+		it( 'restores empty strings when the original has no metadata', async () => {
+			mockResolveSelect.mockResolvedValue( originalAttachment );
+
+			const { result } = renderHook( () =>
+				useRevertToOriginal( {
+					deleteDraftsExcept: mockDeleteDraftsExcept,
+				} )
+			);
+
+			await act( async () => {
+				await result.current.handleRevertToOriginal();
+			} );
+
+			expect( mockSetCanvasMetadata ).toHaveBeenCalledWith( {
+				title: '',
+				caption: '',
+				description: '',
+				alt_text: '',
 			} );
 		} );
 
@@ -231,6 +289,7 @@ describe( 'useRevertToOriginal', () => {
 
 		it( 'shows error notice when attachment fetch returns no URL', async () => {
 			mockResolveSelect.mockResolvedValue( {
+				...originalAttachment,
 				source_url: undefined,
 			} );
 
@@ -251,8 +310,31 @@ describe( 'useRevertToOriginal', () => {
 				'error'
 			);
 			expect( mockUpdateImageStudioCanvas ).not.toHaveBeenCalled();
+			expect( mockSetCanvasMetadata ).not.toHaveBeenCalled();
 
 			consoleWarnSpy.mockRestore();
+		} );
+
+		it( 'shows error notice when the attachment record is malformed', async () => {
+			mockResolveSelect.mockResolvedValue( {
+				source_url: 'https://example.com/original.jpg',
+			} );
+
+			const { result } = renderHook( () =>
+				useRevertToOriginal( {
+					deleteDraftsExcept: mockDeleteDraftsExcept,
+				} )
+			);
+
+			await act( async () => {
+				await result.current.handleRevertToOriginal();
+			} );
+
+			expect( mockAddNotice ).toHaveBeenCalledWith(
+				'Cannot revert - failed to load original image',
+				'error'
+			);
+			expect( mockDeleteDraftsExcept ).not.toHaveBeenCalled();
 		} );
 
 		it( 'shows error notice when attachment fetch fails', async () => {
@@ -281,9 +363,7 @@ describe( 'useRevertToOriginal', () => {
 		} );
 
 		it( 'handles deleteDraftsExcept failure gracefully', async () => {
-			mockResolveSelect.mockResolvedValue( {
-				source_url: 'https://example.com/original.jpg',
-			} );
+			mockResolveSelect.mockResolvedValue( originalAttachment );
 			mockDeleteDraftsExcept.mockRejectedValue( new Error( 'Delete failed' ) );
 
 			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();

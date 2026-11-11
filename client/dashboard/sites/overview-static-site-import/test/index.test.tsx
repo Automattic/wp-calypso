@@ -132,11 +132,10 @@ describe( 'StaticSiteImportCard', () => {
 			'href',
 			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
 		);
-		expect( connect ).toHaveClass( 'is-primary' );
 
 		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
 		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
-		expect( preview ).toHaveClass( 'is-secondary' );
+		expect( preview ).toHaveAttribute( 'target', '_blank' );
 
 		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
@@ -153,7 +152,6 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
 		const getDomain = screen.getByRole( 'link', { name: 'Get a domain' } );
-		expect( getDomain ).toHaveClass( 'is-primary' );
 		// Domain search: /setup/domain, or /domains/add/<site> in the backported dashboard.
 		expect( getDomain ).toHaveAttribute(
 			'href',
@@ -281,6 +279,7 @@ describe( 'StaticSiteImportCard', () => {
 				from_url: 'busybearscleaning.com',
 				locale: 'en',
 				context: 'site_is_not_wordpress',
+				import_session_id: 'abc123',
 			} )
 			.reply( 200, { success: true } );
 
@@ -419,6 +418,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 				from_url: 'busybearscleaning.com',
 				locale: 'en',
 				context: 'site_is_not_wordpress',
+				import_session_id: 'abc123',
 			} )
 			.reply( 200, { success: true } );
 		const { recordTracksEvent } = render(
@@ -438,6 +438,30 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 			'calypso_dashboard_static_site_import_ready_notice_click',
 			{ site_id: 42, source_platform: 'wix', action: 'request_handoff' }
 		);
+	} );
+
+	it( 'stops offering help once wpcom refused the handoff', async () => {
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 429, { code: 'too_many_requests', message: 'Server message' } );
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished' } }
+				search={ search }
+			/>
+		);
+
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		);
+
+		expect(
+			await screen.findByText( /You’ve already sent us several migration requests today/ )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the note wpcom wrote about what the move found', () => {
@@ -493,6 +517,41 @@ describe( 'StaticSiteImportFailed', () => {
 				'href',
 				expect.stringContaining( '/me/purchases/paid.wordpress.com/991/cancel' )
 			)
+		);
+	} );
+
+	it.each( [
+		[
+			'tells the customer our team will reach out when wpcom refused the handoff',
+			'migration_request_not_submitted',
+			'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.',
+			false,
+		],
+		[
+			'tells the customer they reached today’s limit',
+			'too_many_requests',
+			'You’ve already sent us several migration requests today. Our team will follow up by email on the ones we’ve received. If you need to add details, just reply to that email.',
+			false,
+		],
+		[
+			'asks the customer to try again when our team couldn’t be reached',
+			'internal_error',
+			'We couldn’t reach our team. Please try again.',
+			true,
+		],
+	] )( '%s', async ( _, code, message, canRetry ) => {
+		mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 422, { code, message: 'Server message', data: { status: 422 } } );
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Let our team move it' } ) );
+
+		expect( await screen.findByText( message ) ).toBeVisible();
+		// A refused handoff would only be refused again, so it isn't offered.
+		expect( screen.queryAllByRole( 'button', { name: 'Let our team move it' } ) ).toHaveLength(
+			canRetry ? 1 : 0
 		);
 	} );
 

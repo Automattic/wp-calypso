@@ -82,7 +82,7 @@
 		"colord": "2.9.4",
 		"debug": "^4.4.3",
 		"fast-deep-equal": "^3.1.3",
-		"gridicons": "^3.4.2",
+		"gridicons": "^3.4.3",
 		"i18n-calypso": "workspace:^",
 		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.3",
@@ -90,7 +90,7 @@
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.48.0",
+		"@wordpress/data": "^10.48.0 || ^11.0.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
@@ -100,15 +100,15 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/react": "^10.6.3",
+		"@storybook/react": "^10.6.5",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@testing-library/user-event": "^14.6.8",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.12.2",
-		"postcss": "^8.5.31",
-		"storybook": "^10.6.3",
+		"postcss": "^8.5.32",
+		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
 	},

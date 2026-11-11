@@ -150,7 +150,7 @@ describe( 'DomainDns', () => {
 		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
-		await user.click( screen.getByRole( 'menuitem', { name: 'Type' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Type' } ) );
 		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
 
 		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
@@ -167,7 +167,7 @@ describe( 'DomainDns', () => {
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
-		await user.click( screen.getByRole( 'menuitem', { name: 'Type' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Type' } ) );
 		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
 
 		expect( await screen.findByText( 'No DNS records match the selected filters.' ) ).toBeVisible();
@@ -238,7 +238,7 @@ describe( 'DomainDns', () => {
 		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
-		await user.click( await screen.findByRole( 'menuitem', { name: 'Delete' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Delete…' } ) );
 
 		expect(
 			await screen.findByText( 'The TXT record for mail will be removed. This cannot be undone.' )

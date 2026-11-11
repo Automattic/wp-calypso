@@ -1,12 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
+
+jest.mock( 'calypso/state/notices/actions', () => {
+	const actual = jest.requireActual( 'calypso/state/notices/actions' );
+	return {
+		...actual,
+		errorNotice: jest.fn( actual.errorNotice ),
+		successNotice: jest.fn( actual.successNotice ),
+	};
+} );
 jest.mock( 'calypso/reader/data/post', () => ( {
 	usePost: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/reader/data/comments', () => ( {
-	useComments: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/blocks/comments', () => ( {
@@ -19,22 +25,23 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 	) ),
 } ) );
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useComments } from 'calypso/reader/data/comments';
+import { speak } from '@wordpress/a11y';
+import nock from 'nock';
+import { adaptReadConversation } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import preferences from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
-import { groupNotesByPost } from '../../group-notes';
-import { makeNote } from '../../test/helpers';
+import { makeConversation } from '../../test/helpers';
 
 const mockedUsePost = jest.mocked( usePost );
-const mockedUseComments = jest.mocked( useComments );
 
-const [ conversation ] = groupNotesByPost( [
-	makeNote( { id: 1, siteId: 10, postId: 100, title: 'A post title', commenter: 'Ana' } ),
-] );
+const conversation = adaptReadConversation(
+	makeConversation( { blogId: 10, postId: 100, title: 'A post title' } )
+);
 
 const post = {
 	ID: 100,
@@ -51,36 +58,35 @@ const post = {
 
 const CURRENT_USER_ID = 42;
 
-const renderDetail = (
-	props: Partial< React.ComponentProps< typeof ConversationDetail > > = {},
-	comments: { author: { ID: number } }[] = []
-) => {
-	mockedUseComments.mockReturnValue( { comments } as never );
-	return renderWithProvider(
+const renderDetail = ( props: Partial< React.ComponentProps< typeof ConversationDetail > > = {} ) =>
+	renderWithProvider(
 		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } { ...props } />,
 		{ reducers: { preferences }, initialState: { currentUser: { id: CURRENT_USER_ID } } }
 	);
-};
 
 beforeEach( () => {
 	mockedUsePost.mockReset();
+	jest.mocked( errorNotice ).mockClear();
+	jest.mocked( successNotice ).mockClear();
 } );
 
 describe( 'ConversationDetail', () => {
-	it( 'shows a spinner while the post is loading', () => {
+	it( 'shows a placeholder while the post is loading', () => {
 		mockedUsePost.mockReturnValue( { data: undefined, isLoading: true } as never );
 
-		const { container } = renderDetail();
+		renderDetail();
 
-		expect( container.querySelector( '.components-spinner' ) ).toBeVisible();
+		expect( speak ).toHaveBeenCalledWith( 'Loading conversation…' );
 	} );
 
 	it( 'shows the post card once the post has loaded', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		const { container } = renderDetail();
+		jest.mocked( speak ).mockClear();
 
-		expect( container.querySelector( '.components-spinner' ) ).not.toBeInTheDocument();
+		renderDetail();
+
+		expect( speak ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'heading', { name: 'A post title' } ) ).toBeVisible();
 		expect( screen.getByText( 'Ana’s blog' ) ).toBeVisible();
 		expect( screen.getByText( 'Ana' ) ).toBeVisible();
@@ -89,6 +95,73 @@ describe( 'ConversationDetail', () => {
 			'href',
 			'/reader/blogs/10/posts/100'
 		);
+	} );
+
+	it( 'links the post author to their Reader profile', () => {
+		mockedUsePost.mockReturnValue( {
+			data: { ...post, author: { name: 'Ana', wpcom_login: 'ana' } },
+			isLoading: false,
+		} as never );
+
+		renderDetail();
+
+		expect( screen.getByRole( 'link', { name: 'Ana' } ) ).toHaveAttribute(
+			'href',
+			'/reader/users/ana'
+		);
+	} );
+
+	it( 'keeps the title for screen readers only next to the back button', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		renderDetail( { onBack: jest.fn() } );
+
+		expect( screen.getByRole( 'button', { name: 'Conversations' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveClass(
+			'components-visually-hidden'
+		);
+	} );
+
+	it( 'draws the post from the list without requesting it', () => {
+		mockedUsePost.mockReturnValue( { data: undefined, isLoading: false } as never );
+		const withDetails = adaptReadConversation( {
+			...makeConversation( { blogId: 10, postId: 100, title: 'A post title' } ),
+			site: {
+				name: 'Ana’s blog',
+				icon: 'https://example.com/icon.png',
+				url: 'https://example.com',
+			},
+			post: {
+				title: 'A post title',
+				url: 'https://example.com/100',
+				date: '2024-01-01T00:00:00Z',
+				author: {
+					ID: 7,
+					login: 'ana',
+					name: 'Ana',
+					URL: 'https://ana.example.com',
+					avatar_URL: '',
+				},
+				excerpt: '<p>An excerpt &amp; more [&hellip;]</p>\n',
+				featured_image: 'https://example.com/image.jpg',
+				discussion: {
+					comments_open: true,
+					comment_status: 'open',
+					pings_open: false,
+					ping_status: 'closed',
+					comment_count: 4,
+				},
+			},
+		} );
+
+		renderDetail( { conversation: withDetails } );
+
+		expect( mockedUsePost ).toHaveBeenLastCalledWith( null );
+		expect( screen.getByRole( 'heading', { name: 'A post title' } ) ).toBeVisible();
+		expect( screen.getByText( 'Ana’s blog' ) ).toBeVisible();
+		expect( screen.getByText( 'Ana' ) ).toBeVisible();
+		expect( screen.getByText( 'An excerpt & more […]' ) ).toBeVisible();
+		expect( screen.getByRole( 'feed', { name: /^4 comments/ } ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the comment thread with the starting comment and count from the post', () => {
@@ -145,15 +218,97 @@ describe( 'ConversationDetail', () => {
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it.each( [
-		[ 'You follow this', post, [] ],
-		[ 'Your post', { ...post, author: { ID: CURRENT_USER_ID } }, [] ],
-		[ 'You commented', post, [ { author: { ID: CURRENT_USER_ID } } ] ],
-	] )( 'titles the header “%s”', ( title, data, comments ) => {
-		mockedUsePost.mockReturnValue( { data, isLoading: false } as never );
+	it( 'starts the thread at the given comment instead of the latest one', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		renderDetail( {}, comments );
+		renderDetail( { startingCommentId: 77 } );
+
+		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 77' } ) ).toBeVisible();
+	} );
+
+	it.each( [
+		[ 'reply', 'Replied to you' ],
+		[ 'mention', 'You were mentioned' ],
+		[ 'own_post', 'Your post' ],
+		[ 'commented', 'You commented' ],
+		[ 'following', 'You follow this' ],
+	] as const )( 'titles the header for the “%s” reason “%s”', ( reason, title ) => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		renderDetail( { conversation: { ...conversation, reason } } );
 
 		expect( screen.getByRole( 'heading', { level: 2, name: title } ) ).toBeVisible();
+	} );
+
+	it( 'titles the header from the post author when the conversation isn’t loaded', () => {
+		mockedUsePost.mockReturnValue( {
+			data: { ...post, author: { ID: CURRENT_USER_ID } },
+			isLoading: false,
+		} as never );
+
+		renderDetail( { conversation: undefined } );
+
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Your post' } ) ).toBeVisible();
+	} );
+
+	it( 'offers to follow a conversation the user doesn’t follow', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+
+		renderDetail();
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+
+		expect( screen.getByRole( 'menuitem', { name: 'Follow conversation' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'unfollows a conversation the user follows', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/read/sites/10/posts/100/unfollow' )
+			.reply( 200, { success: true } );
+
+		renderDetail( { conversation: { ...conversation, isFollowing: true } } );
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Unfollow conversation' } ) );
+
+		await waitFor( () =>
+			expect( successNotice ).toHaveBeenCalledWith(
+				'The conversation has been successfully unfollowed.',
+				expect.anything()
+			)
+		);
+	} );
+
+	it( 'shows an error when the unfollow does not go through', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/read/sites/10/posts/100/unfollow' )
+			.reply( 200, { success: false } );
+
+		renderDetail( { conversation: { ...conversation, isFollowing: true } } );
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Unfollow conversation' } ) );
+
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				'Sorry, we had a problem unfollowing that conversation. Please try again.'
+			)
+		);
+		expect( successNotice ).not.toHaveBeenCalled();
+	} );
+
+	it( 'doesn’t offer to follow a conversation the user follows', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+
+		renderDetail( { conversation: { ...conversation, isFollowing: true } } );
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+
+		expect(
+			screen.queryByRole( 'menuitem', { name: 'Follow conversation' } )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Mute conversation' } ) ).toBeInTheDocument();
 	} );
 } );

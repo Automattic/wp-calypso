@@ -8,8 +8,9 @@ import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { useMemo, useEffect } from 'react';
-import { withColorScheme } from 'calypso/lib/color-scheme';
+import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
@@ -28,21 +29,13 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
+	const { unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
 			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
 		}
 	}, [ user, router ] );
-
-	useEffect( () => {
-		if ( posthog ) {
-			import( '@automattic/posthog' ).then( ( { init } ) =>
-				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
-			);
-		}
-	}, [ user, posthog ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
@@ -72,14 +65,10 @@ function AnalyticsProviderWithClient( {
 		}
 
 		const recordUnifiedPageView = () => {
-			if ( router.state.matches.some( ( match ) => match.status === 'redirected' ) ) {
-				return;
-			}
-
 			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
 				source: 'msd',
 				app,
-				path: router.state.location.pathname,
+				path: router.history.location.pathname,
 				route: getNormalizedPath( router.state.matches, router.basepath ),
 			} );
 		};
@@ -103,6 +92,7 @@ function AnalyticsProviderWithClient( {
 }
 
 function Layout( { config }: { config: AppConfig } ) {
+	useEnableWpCompatOverlaySlot();
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
 	return (

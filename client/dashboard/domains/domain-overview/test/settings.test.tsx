@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
@@ -15,310 +16,167 @@ afterEach( () => {
 	( isSupportSession as jest.Mock ).mockReturnValue( false );
 } );
 
-const domainName = 'example.com';
+const connected = { subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' } };
 
-const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
-	return {
-		domain: domainName,
-		aftermarket_auction: false,
-		auto_renewing: false,
+const NAME_SERVERS = 'Name servers';
+const DNS = 'DNS records';
+const FORWARDING = 'Domain forwarding';
+const SECURITY = 'DNSSEC';
+const CONNECTED_SECURITY = 'Domain security';
+const GLUE = 'Glue records';
+const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, CONNECTED_SECURITY, GLUE ];
+const SHOW_ADVANCED = { name: 'Show advanced settings' };
+
+function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled = false ) {
+	const domain = {
+		domain: 'example.com',
 		blog_id: 123,
-		blog_name: 'Test Blog',
+		site_slug: 'example.wordpress.com',
 		can_manage_dns_records: true,
-		can_update_contact_info: true,
-		can_set_as_primary: true,
-		current_user_can_create_site_from_domain_only: false,
 		current_user_can_manage: true,
-		current_user_is_owner: true,
-		domain_status: { status: 'active' },
-		expired: false,
-		expiry: null,
-		is_dnssec_enabled: false,
-		is_dnssec_supported: true,
-		is_eligible_for_inbound_transfer: false,
-		is_hundred_year_domain: false,
-		is_gravatar_domain: false,
-		is_gravatar_restricted_domain: false,
-		move_to_new_site_pending: false,
-		can_manage_name_servers: true,
-		cannot_manage_name_servers_reason: null,
-		is_redeemable: false,
-		is_renewable: true,
-		is_wpcom_staging_domain: false,
-		pending_registration: false,
-		pending_registration_at_registry: false,
-		pending_registration_at_registry_url: '',
-		pending_renewal: false,
-		pending_transfer: false,
-		points_to_wpcom: false,
-		registration_date: '2023-01-01',
-		subscription_id: 'sub123',
-		transfer_status: null,
-		wpcom_domain: true,
-		subtype: {
-			id: DomainSubtype.DOMAIN_REGISTRATION,
-			label: 'Domain Registration',
-		},
-		ssl_status: 'disabled',
-		private_domain: false,
+		subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
 		...customProps,
 	} as Domain;
-};
 
-function renderDomainSettings( domainProps: Partial< Domain > = {} ) {
-	const mockDomain = getMockedDomainData( domainProps );
-	return render( <DomainOverviewSettings domain={ mockDomain } domainDiagnostics={ undefined } /> );
+	return render(
+		<DomainOverviewSettings
+			domain={ domain }
+			domainDiagnostics={ undefined }
+			isDisabled={ isDisabled }
+		/>
+	);
+}
+
+async function showAdvanced() {
+	await userEvent.click( await screen.findByRole( 'button', SHOW_ADVANCED ) );
+}
+
+async function getOptionalRows() {
+	await showAdvanced();
+	await screen.findByText( 'Site' );
+	expect( screen.getByText( 'Professional email' ) ).toBeVisible();
+
+	return OPTIONAL_ROWS.filter( ( row ) => screen.queryByText( row ) );
 }
 
 describe( 'DomainOverviewSettings', () => {
-	describe( 'Registered Domain Tests', () => {
-		test( 'shows all settings for fully manageable registered domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-				transfer_status: null,
-			} );
+	test.each< [ string, Partial< Domain >, string[] ] >( [
+		[
+			'a fully manageable registered domain',
+			{},
+			[ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ],
+		],
+		[
+			'a gravatar restricted domain',
+			{ is_gravatar_restricted_domain: true },
+			[ DNS, FORWARDING, SECURITY, GLUE ],
+		],
+		[
+			'a domain whose DNS cannot be managed',
+			{ can_manage_dns_records: false },
+			[ NAME_SERVERS, SECURITY ],
+		],
+		[
+			'a user who cannot manage the domain',
+			{ current_user_can_manage: false },
+			[ NAME_SERVERS, DNS, FORWARDING, SECURITY ],
+		],
+		[ 'a connected domain', connected, [ DNS, FORWARDING, CONNECTED_SECURITY ] ],
+		[
+			'a connected domain whose DNS cannot be managed',
+			{ ...connected, can_manage_dns_records: false },
+			[ CONNECTED_SECURITY ],
+		],
+	] )( 'shows the right rows for %s', async ( _, customProps, expected ) => {
+		renderDomainSettings( customProps );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+		expect( await getOptionalRows() ).toEqual( expected );
+	} );
 
-			// Should show all 5 settings buttons
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
+	test( 'shows glue records in a support session even when the user cannot manage', async () => {
+		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		renderDomainSettings( { current_user_can_manage: false } );
+		await showAdvanced();
+
+		expect( await screen.findByText( GLUE ) ).toBeVisible();
+	} );
+
+	describe( 'when eligible for inbound transfer', () => {
+		const eligible = { ...connected, is_eligible_for_inbound_transfer: true };
+		const name = 'Bring your domain to WordPress.com Manage your site and domain all in one place.';
+
+		test( 'links to the transfer flow and tracks the click', async () => {
+			const { recordTracksEvent } = renderDomainSettings( eligible );
+
+			const row = await screen.findByRole( 'link', { name } );
+			const { pathname, searchParams } = new URL( row.getAttribute( 'href' )! );
+			expect( pathname ).toBe( '/setup/domain/use-my-domain' );
+			expect( searchParams.get( 'initialQuery' ) ).toBe( 'example.com' );
+			expect( searchParams.get( 'initialMode' ) ).toBe( 'transfer-domain' );
+			expect( searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+			expect( searchParams.get( 'dashboard' ) ).toBeTruthy();
+			expect( searchParams.get( 'back_to' ) ).toBeTruthy();
+
+			await userEvent.click( row );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domain_overview_item_click',
+				{ item: 'transfer-in', subtype: DomainSubtype.DOMAIN_CONNECTION, domain: 'example.com' }
+			);
 		} );
 
-		test( 'hides name servers setting for gravatar restricted domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				is_gravatar_restricted_domain: true,
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-			} );
+		test( 'is disabled when the overview is disabled', async () => {
+			renderDomainSettings( eligible, true );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should not show name servers
-			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-
-			// Should show other settings
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
-		} );
-
-		test( 'hides DNS-related settings when cannot manage DNS records', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				can_manage_dns_records: false,
-				current_user_can_manage: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show name servers (not affected by can_manage_dns_records)
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-
-			// Should not show DNS records, email forwarding, or glue records
-			expect( screen.queryByText( 'DNS records' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Domain forwarding' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
-
-			// Should show contact information and security
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-		} );
-
-		test( 'hides contact details when user cannot manage', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: false,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show DNS-related settings
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show contact details or glue records
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
-		} );
-
-		test( 'shows contact details and glue records in a support session even when user cannot manage', async () => {
-			( isSupportSession as jest.Mock ).mockReturnValue( true );
-
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: false,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeVisible();
-			expect( screen.getByText( 'Glue records' ) ).toBeVisible();
-		} );
-
-		test( 'hides contact details for expired domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: true,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show other settings
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
-
-			// Should not show contact details for expired domain
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-		} );
-
-		test( 'hides contact details for pending transfer domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: true,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show other settings
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
-
-			// Should not show contact details for pending transfer
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
+			expect( await screen.findByRole( 'button', { name } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
 		} );
 	} );
 
-	describe( 'Connected Domain Tests', () => {
-		test( 'shows limited settings for basic connected domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				transfer_status: null,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show DNS records, email forwarding, and security
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show name servers, contact details, or glue records
-			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
+	test( 'keeps only Site, Professional email and DNSSEC for a partially restricted domain', async () => {
+		renderDomainSettings( {
+			current_user_can_manage: false,
+			can_manage_dns_records: false,
+			is_gravatar_restricted_domain: true,
 		} );
 
-		test( 'hides DNS settings when connected domain cannot manage DNS', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
-				can_manage_dns_records: false,
-				transfer_status: null,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show only security
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show DNS records or email forwarding
-			expect( screen.queryByText( 'DNS records' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Domain forwarding' ) ).not.toBeInTheDocument();
-
-			// Should not show registration-only settings
-			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
-		} );
+		expect( await getOptionalRows() ).toEqual( [ SECURITY ] );
+		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 2 );
 	} );
 
-	describe( 'Edge Cases', () => {
-		test( 'shows correct number of settings for partially restricted registered domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: false, // Restricts contact details and glue records
-				can_manage_dns_records: false, // Restricts DNS records, email forwarding, and glue records
-				is_gravatar_restricted_domain: true, // Restricts name servers
-			} );
+	test( 'keeps security and glue records behind a tracked toggle, after the default rows', async () => {
+		const { recordTracksEvent } = renderDomainSettings();
+		const trackedToggle = ( expanded: boolean ) =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domain_overview_item_click',
+				expect.objectContaining( { item: 'advanced-toggle', expanded } )
+			);
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+		const visibleRows = () =>
+			screen
+				.getAllByText( new RegExp( `^(${ OPTIONAL_ROWS.join( '|' ) })$` ) )
+				.map( ( row ) => row.textContent );
+		const defaultRows = [ FORWARDING, NAME_SERVERS, DNS ];
 
-			// Should only show security setting
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
+		await screen.findByText( DNS );
+		expect( visibleRows() ).toEqual( defaultRows );
 
-			// Should not show any other settings
-			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'DNS records' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Domain forwarding' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
+		await showAdvanced();
+		await screen.findByText( SECURITY );
+		expect( visibleRows() ).toEqual( [ ...defaultRows, SECURITY, GLUE ] );
+		trackedToggle( true );
 
-			// Verify only 1 setting button exists
-			const settingsButtons = screen.getAllByRole( 'link' );
-			expect( settingsButtons ).toHaveLength( 1 );
-		} );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Hide advanced settings' } ) );
+		expect( visibleRows() ).toEqual( defaultRows );
+		trackedToggle( false );
+	} );
+
+	test( 'hides the toggle when there are no advanced rows', async () => {
+		renderDomainSettings( { ...connected, transfer_status: DomainTransferStatus.PENDING_ASYNC } );
+
+		await screen.findByText( 'Site' );
+		expect( screen.queryByRole( 'button', SHOW_ADVANCED ) ).not.toBeInTheDocument();
 	} );
 } );

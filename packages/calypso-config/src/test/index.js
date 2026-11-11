@@ -2,18 +2,17 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 describe( 'optionalConfig', () => {
 	let optionalConfig;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		window.configData = { name: 'Ada', greeting: 'Hi {{name}}' };
-		jest.isolateModules( () => {
-			( { optionalConfig } = require( '../' ) );
-		} );
+		( { optionalConfig } = await import( '../' ) );
 	} );
 
 	test( 'returns undefined for a key the page did not print, without the console error config() logs', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		expect( optionalConfig( 'jetpack_version' ) ).toBeUndefined();
 		expect( consoleError ).not.toHaveBeenCalled();

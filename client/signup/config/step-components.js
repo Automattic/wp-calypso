@@ -1,18 +1,17 @@
+import { captureMessage } from '@automattic/calypso-sentry';
+
 const stepNameToModuleName = {
 	'creds-confirm': 'creds-confirm',
 	'creds-permission': 'creds-permission',
 	domains: 'domains',
 	'domain-only': 'domains',
-	'domains-launch': 'domains',
 	'hosting-decider': 'hosting-decider',
 	'domains-theme-preselected': 'domains',
 	'mailbox-domain': 'domains',
 	mailbox: 'emails',
-	launch: 'launch-site',
 	'mailbox-plan': 'plans',
 	plans: 'plans',
 	'plans-with-plugin': 'plans',
-	'plans-launch': 'plans',
 	'plans-site-selected': 'plans',
 	'plans-site-selected-legacy': 'plans',
 	'plans-affiliate': 'plans',
@@ -35,11 +34,112 @@ const stepNameToModuleName = {
 	'social-profiles': 'social-profiles',
 };
 
+const stepModuleLoaders = {
+	'creds-confirm': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-creds-confirm" */
+			'calypso/signup/steps/creds-confirm'
+		),
+	'creds-permission': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-creds-permission" */
+			'calypso/signup/steps/creds-permission'
+		),
+	'design-picker': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-design-picker" */
+			'calypso/signup/steps/design-picker'
+		),
+	'difm-site-picker': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-difm-site-picker" */
+			'calypso/signup/steps/difm-site-picker'
+		),
+	domains: () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-domains" */
+			'calypso/signup/steps/domains'
+		),
+	emails: () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-emails" */
+			'calypso/signup/steps/emails'
+		),
+	'hosting-decider': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-hosting-decider" */
+			'calypso/signup/steps/hosting-decider'
+		),
+	'new-or-existing-site': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-new-or-existing-site" */
+			'calypso/signup/steps/new-or-existing-site'
+		),
+	'page-picker': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-page-picker" */
+			'calypso/signup/steps/page-picker'
+		),
+	plans: () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-plans" */
+			'calypso/signup/steps/plans'
+		),
+	'plans-theme-preselected': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-plans-theme-preselected" */
+			'calypso/signup/steps/plans-theme-preselected'
+		),
+	'rewind-form-creds': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-rewind-form-creds" */
+			'calypso/signup/steps/rewind-form-creds'
+		),
+	'rewind-were-backing': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-rewind-were-backing" */
+			'calypso/signup/steps/rewind-were-backing'
+		),
+	'site-options': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-site-options" */
+			'calypso/signup/steps/site-options'
+		),
+	'site-or-domain': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-site-or-domain" */
+			'calypso/signup/steps/site-or-domain'
+		),
+	'site-picker': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-site-picker" */
+			'calypso/signup/steps/site-picker'
+		),
+	'social-profiles': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-social-profiles" */
+			'calypso/signup/steps/social-profiles'
+		),
+	user: () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-user" */
+			'calypso/signup/steps/user'
+		),
+	'website-content': () =>
+		import(
+			/* webpackChunkName: "async-load-signup-steps-website-content" */
+			'calypso/signup/steps/website-content'
+		),
+};
+
 export function getStepModuleName( stepName ) {
 	return stepNameToModuleName[ stepName ] || '';
 }
 export function getStepModuleMap() {
 	return stepNameToModuleName;
+}
+export function getStepModuleLoaders() {
+	return stepModuleLoaders;
 }
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
@@ -48,11 +148,16 @@ export async function getStepComponent( stepName ) {
 		console.error( 'Error: unknown `stepName` to retrieve the component for.' );
 		return;
 	}
-	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]" */
-		/* webpackInclude: /signup\/steps\/[0-9a-z/-]+\/index\.[j|t]sx$/ */
-		/* webpackExclude: /signup\/steps\/[0-9a-z/-]+\/test\/index\.[j|t]sx$/ */
-		`calypso/signup/steps/${ moduleName }`
-	);
+	const loadStepModule = stepModuleLoaders[ moduleName ];
+	if ( ! loadStepModule ) {
+		const message = `Signup: no loader for step module \`${ moduleName }\`.`;
+		if ( process.env.NODE_ENV !== 'production' ) {
+			// eslint-disable-next-line no-console
+			console.error( message );
+		}
+		captureMessage( message, { level: 'error', tags: { stepName, moduleName } } );
+		return;
+	}
+	const module = await loadStepModule();
 	return module.default;
 }

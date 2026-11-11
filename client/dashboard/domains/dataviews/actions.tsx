@@ -34,7 +34,7 @@ import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
 import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
-import type { Action } from '@wordpress/dataviews';
+import type { Action, View } from '@wordpress/dataviews';
 
 const SiteChangeAddressContent = lazy(
 	() =>
@@ -50,11 +50,15 @@ export const useActions = ( {
 	site,
 	sites,
 	domains,
+	layout,
+	onChangePrimaryDomain,
 }: {
 	user: User;
 	site?: Site;
 	sites?: Site[];
 	domains?: DomainSummary[];
+	layout: View[ 'type' ];
+	onChangePrimaryDomain?: () => void;
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
@@ -86,9 +90,9 @@ export const useActions = ( {
 		);
 	}, [ sites ] );
 	// A domain can only be made primary once its SSL certificate is provisioned.
-	// DomainSummary has no SSL field, so resolve it from the same query the SSL
-	// column uses, but only for domains that are otherwise eligible to avoid
-	// firing SSL requests for the whole list.
+	// DomainSummary has no SSL field, so resolve it from the SSL details query,
+	// but only for domains that are otherwise eligible to avoid firing SSL
+	// requests for the whole list.
 	const primaryCandidateDomainNames = useMemo( () => {
 		return ( domains ?? [] )
 			.filter( ( item ) => {
@@ -144,6 +148,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'renew',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -168,6 +173,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'setup',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -181,6 +187,21 @@ export const useActions = ( {
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
+			},
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				/* translators: Row action on the primary site address that opens the dialog to pick another one. */
+				label: __( 'Change primary' ),
+				callback: ( items: DomainSummary[] ) => {
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'change-primary-domain',
+						layout,
+						domain: items[ 0 ].domain,
+					} );
+					onChangePrimaryDomain?.();
+				},
+				isEligible: ( item: DomainSummary ) => !! onChangePrimaryDomain && item.primary_domain,
 			},
 			{
 				id: 'manage-domain',
@@ -197,6 +218,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-domain',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -211,6 +233,7 @@ export const useActions = ( {
 						params: {
 							domainName: domain.domain,
 						},
+						search: site ? { back_to: 'site-domains' } : undefined,
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
@@ -226,6 +249,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-dns-settings',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -252,6 +276,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'add-mailbox',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -279,6 +304,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'set-primary-site-address',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -345,7 +371,11 @@ export const useActions = ( {
 					<>
 						<ComponentViewTracker
 							eventName="calypso_dashboard_domains_action_click"
-							properties={ { action: 'set-www-primary-site-address', domain: items[ 0 ].domain } }
+							properties={ {
+								action: 'set-www-primary-site-address',
+								layout,
+								domain: items[ 0 ].domain,
+							} }
 						/>
 						<WwwPrimaryDomainModal domain={ items[ 0 ] } onClose={ closeModal } />
 					</>
@@ -361,6 +391,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'unset-www-primary-site-address',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -404,6 +435,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'transfer-domain',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -437,6 +469,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'connect-to-site',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -469,7 +502,7 @@ export const useActions = ( {
 						<Suspense fallback={ null }>
 							<ComponentViewTracker
 								eventName="calypso_dashboard_domains_action_click"
-								properties={ { action: 'change-site-address', domain: items[ 0 ].domain } }
+								properties={ { action: 'change-site-address', layout, domain: items[ 0 ].domain } }
 							/>
 							<SiteChangeAddressContent
 								site={ site }
@@ -483,7 +516,7 @@ export const useActions = ( {
 			{
 				id: 'manage-contact-info',
 				label: __( 'Manage contact information' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: ( domains ) => {
 					if ( domains.length === 0 ) {
 						return;
@@ -491,6 +524,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-contact-info',
+						layout,
 						domain: domains[ 0 ].domain,
 					} );
 
@@ -520,13 +554,13 @@ export const useActions = ( {
 			{
 				id: 'manage-auto-renew',
 				label: __( 'Manage auto-renew' ),
-				supportsBulk: true,
+				supportsBulk: false,
 				callback: () => {},
 				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
 					<>
 						<ComponentViewTracker
 							eventName="calypso_dashboard_domains_action_click"
-							properties={ { action: 'manage-auto-renew', domain: items[ 0 ].domain } }
+							properties={ { action: 'manage-auto-renew', layout, domain: items[ 0 ].domain } }
 						/>
 						<AutoRenewModal
 							items={ items }
@@ -555,6 +589,9 @@ export const useActions = ( {
 			sslActiveByDomain,
 			canToggleWwwPrimary,
 			recordTracksEvent,
+			layout,
+			site,
+			onChangePrimaryDomain,
 		]
 	);
 

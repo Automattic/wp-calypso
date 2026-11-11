@@ -28,6 +28,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { AGENCY_CHECKOUT_PATH } from '../../agency-checkout/lib/agency-checkout-params';
 import { loadCheckoutSupportAssignment } from '../lib/checkout-support-routing';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -211,7 +212,10 @@ export const useCheckoutHelpCenter = (): {
 			...helpCenterOptions,
 			checkoutSupportVariation,
 		} );
-		if ( hasPremiumSupport ) {
+		// Agencies have no support chat, only the agency contact form.
+		if ( pathname.startsWith( AGENCY_CHECKOUT_PATH ) ) {
+			setNavigateToRoute( '/contact-form' );
+		} else if ( hasPremiumSupport ) {
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,
 				userFieldFlowName,

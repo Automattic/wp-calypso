@@ -43,93 +43,48 @@ object BuildDockerImage : BuildType({
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
-    data class EnvGroup(
-        val label: String,
-        val environments: List<EnvConfig>,
-    )
-
     val imageBase = "registry.a8c.com/calypso/app"
 	val commitImageExistsParam = "dockerImage.commitImageExists"
 
-    val environmentGroups = listOf(
-        EnvGroup(
-            label = "WordPress.com",
-            environments = listOf(
-                EnvConfig(
-                    label = "Dashboard Live",
-                    envQuery = "&env=dashboard",
-                    qrEnv = "env=dashboard&flags=oauth",
-                ),
-                EnvConfig(
-                    label = "Calypso Live (/home)",
-                    baseUrl = "https://calypso.live/home",
-                    envQuery = "",
-                    qrEnv = "flags=oauth",
-                ),
-            ),
+    val environments = listOf(
+        EnvConfig(
+            label = "WordPress.com Dashboard",
+            envQuery = "&env=dashboard",
+            qrEnv = "env=dashboard&flags=oauth",
         ),
-        EnvGroup(
+        EnvConfig(
+            label = "WordPress.com (/reader)",
+            baseUrl = "https://calypso.live/reader",
+            envQuery = "",
+            qrEnv = "flags=oauth",
+        ),
+        EnvConfig(
+            label = "Automattic for Agencies Dashboard",
+            envQuery = "&env=dashboard-a4a",
+            qrEnv = "env=dashboard-a4a&flags=oauth",
+        ),
+        EnvConfig(
             label = "Automattic for Agencies",
-            environments = listOf(
-                EnvConfig(
-                    label = "Dashboard Live",
-                    envQuery = "&env=dashboard-a4a",
-                    qrEnv = "env=dashboard-a4a&flags=oauth",
-                ),
-                EnvConfig(
-                    label = "Automattic for Agencies Live",
-                    envQuery = "&env=a8c-for-agencies",
-                    qrEnv = "env=a8c-for-agencies&flags=oauth",
-                ),
-            ),
+            envQuery = "&env=a8c-for-agencies",
+            qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
-        EnvGroup(
+        EnvConfig(
             label = "Jetpack Cloud",
-            environments = listOf(
-                EnvConfig(
-                    label = "Jetpack Cloud Live",
-                    envQuery = "&env=jetpack",
-                    qrEnv = "env=jetpack&flags=oauth",
-                ),
-            ),
-        )
+            envQuery = "&env=jetpack",
+            qrEnv = "env=jetpack&flags=oauth",
+        ),
     )
 
-    fun renderEnv(env: EnvConfig): String {
-        val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
-        return """
-            <details>
-              <summary>${env.label} <a href="$url">(direct link)</a></summary>
-              <table>
-                <tr>
-                  <td>
-                    <a href="$url">$url</a>
-                  </td>
-                </tr>
-              </table>
-            </details>
-            """.trimIndent()
-    }
-
-    val htmlBlock = buildString {
-        environmentGroups.forEachIndexed { index, group ->
-            if (index > 0) {
-                appendLine("<hr>")
-            }
-            // A group holding a single environment renders as a bare item, without a heading.
-            if (group.environments.size == 1) {
-                appendLine(renderEnv(group.environments.single()))
-            } else {
-                appendLine("<p>${group.label}</p>")
-                appendLine("<ul>")
-                group.environments.forEach { env ->
-                    appendLine("<li>")
-                    appendLine(renderEnv(env))
-                    appendLine("</li>")
-                }
-                appendLine("</ul>")
-            }
-            appendLine()
+    // Emoji are written as HTML character references because TeamCity mangles non-ASCII
+    // characters in build scripts.
+    val linksBlock = buildString {
+        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x26C5;</h2>")
+        appendLine()
+        appendLine("| Environment | &#x1F517; |")
+        appendLine("| - | - |")
+        environments.forEach { env ->
+            val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
+            appendLine("| ${env.label} | [live link]($url) |")
         }
     }
 
@@ -138,14 +93,6 @@ object BuildDockerImage : BuildType({
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
 		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
-		checkbox(
-			name = "MANUAL_SENTRY_RELEASE",
-			value = "false",
-			label = "Create a sentry release.",
-			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
-			checked = "true",
-			unchecked = "false"
-		)
 		checkbox(
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
@@ -247,7 +194,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to live branch is being generated...
+				Calypso Live links are being generated...
 				Please wait a few minutes and refresh this page.
 				EOF
 			"""
@@ -284,9 +231,7 @@ object BuildDockerImage : BuildType({
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
-			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
-			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 
@@ -360,7 +305,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				$htmlBlock
+				$linksBlock
 				EOF
 			""".trimIndent()
 		}

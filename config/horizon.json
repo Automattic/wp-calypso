@@ -61,6 +61,7 @@
 		"help/gpt-response": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
+		"hosting/dev-tools-all-paid-plans": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/site-backups": true,
@@ -111,6 +112,7 @@
 		"migration/reprint-flow": true,
 		"notifications/redesign": true,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": false,
 		"notifications/view-settings": true,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,
@@ -159,7 +161,6 @@
 		"site-spec": true,
 		"site-spec/build-wow-blocks-first": true,
 		"site-spec/build-wow-streaming": true,
-		"ssh-multiple-keys": true,
 		"ssr/prefetch-timebox": true,
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
@@ -191,7 +192,6 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "horizon",
-	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
 	"survicate_enabled": true
 }

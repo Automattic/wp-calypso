@@ -106,16 +106,22 @@ describe( '<WelcomeBand>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'Welcome to Automattic for Agencies' } )
 		).toBeVisible();
-		const lockedLabels = screen.getAllByText( 'Unlocks when your account is activated' );
+		const lockedLabels = screen.getAllByText( 'Unlocks when your account is approved' );
 		expect( lockedLabels ).toHaveLength( 2 );
 		lockedLabels.forEach( ( label ) => expect( label ).toBeVisible() );
 		expect( screen.queryByRole( 'link', { name: 'Explore referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'Set up WooPayments' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows for an agency at Emerging Partner that joined recently', async () => {
+	test.each( [
+		[ 'an agency at Emerging Partner that joined recently', NEW_EMERGING_PARTNER ],
+		[
+			'an approved agency that joined recently and has no tier yet',
+			{ ...NEW_EMERGING_PARTNER, tierId: undefined },
+		],
+	] )( 'shows for %s', async ( _, props ) => {
 		mockPreferences();
-		renderBand();
+		renderBand( props );
 
 		expect( await screen.findByRole( 'heading', { name: 'Your account is ready' } ) ).toBeVisible();
 	} );

@@ -5,7 +5,7 @@
  * See LICENSE.md file in root directory for full license.
  */
 
-const formatMessage = require( '../format-message.js' );
+import formatMessage from '../format-message.js';
 
 describe( 'test utils', function () {
 	describe( 'formatMessage', function () {

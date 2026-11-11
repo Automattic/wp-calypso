@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Set `color` alongside `fill` on completed and hovered checklist checkmarks and chevrons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) keep their green and accent colors.
+
 ## 1.3.1
 
 - Update `social-logos` to 3.4.0, which supports React 19 (#114732).

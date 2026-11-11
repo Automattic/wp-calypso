@@ -275,12 +275,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 
 							if ( triggerBackendBuild ) {
-								const ph = queryParams.get( '_ph' );
-								window.location.replace(
-									addQueryArgs( `${ siteURL }/wp-admin/`, {
-										...( ph && { _ph: ph } ),
-									} )
-								);
+								window.location.replace( `${ siteURL }/wp-admin/` );
 							} else {
 								const siteEditorUrl = isEarlyWpcomAtomicProvisioning
 									? addQueryArgs( `${ siteURL }/wp-admin/admin.php`, {

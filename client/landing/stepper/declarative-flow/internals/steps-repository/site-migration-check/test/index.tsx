@@ -110,7 +110,7 @@ describe( 'SiteMigrationCheck', () => {
 		expect(
 			screen.queryByRole( 'img', { name: 'Source site to be copied' } )
 		).not.toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'Migrate example.com' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Migrate your site' } ) ).toBeVisible();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 		expect( retry ).toHaveBeenCalledTimes( 1 );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
@@ -165,6 +165,38 @@ describe( 'SiteMigrationCheck', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it.each( [ false, true ] )(
+		'blocks a source that resolves to the destination (needs upgrade: %s)',
+		async ( needsUpgrade ) => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationCheck
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					destinationSiteSlug="destination.wordpress.com"
+					destinationSiteUrls={ [ 'destination.wordpress.com', 'https://www.example.com' ] }
+					needsUpgrade={ needsUpgrade }
+				/>,
+				{ initialEntry: '/site-migration-check?from=https://example.com/&platform=wordpress' }
+			);
+			expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+				'example.com is the destination site, so it can’t also be the source.'
+			);
+			for ( const name of [ 'Continue', 'Upgrade and continue', 'Replace and continue' ] ) {
+				expect( screen.queryByRole( 'button', { name } ) ).not.toBeInTheDocument();
+			}
+			expect( screen.queryByText( /will be (copied|replaced)/ ) ).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'select-existing-site',
+				from: 'https://example.com/',
+				platform: 'wordpress',
+				host: undefined,
+			} );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Enter a different source' } ) );
+			expect( submit ).toHaveBeenLastCalledWith( { action: 'back' } );
+		}
+	);
+
 	it( 'shows the supplied site and waits for Continue, with the expert link disabled', async () => {
 		const submit = jest.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
@@ -212,7 +244,7 @@ describe( 'SiteMigrationCheck', () => {
 	} );
 
 	it.each( [ 'ineligible', 'eligible' ] as const )(
-		'shows the WordPress.com actions with copy eligibility %s',
+		'shows WordPress.com actions despite a failed destination with copy eligibility %s',
 		async ( copySiteEligibility ) => {
 			const canCopySite = copySiteEligibility === 'eligible';
 			const submit = jest.fn();
@@ -220,14 +252,23 @@ describe( 'SiteMigrationCheck', () => {
 				<SiteMigrationCheck
 					{ ...mockStepProps( { navigation: { submit } } ) }
 					copySiteEligibility={ copySiteEligibility }
+					canUseAsDestination
+					destinationFailed
 				/>,
 				{
 					initialEntry:
 						'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
 				}
 			);
+			const choices = screen.getAllByRole( 'button', {
+				name: /Move your external site here|Transfer your domain|Get access to your site/,
+			} );
+			expect( choices[ 0 ] ).toHaveTextContent( 'Move your external site here' );
 			expect(
-				screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
+				screen.queryByText( /We couldn’t load the destination site/ )
+			).not.toBeInTheDocument();
+			expect(
+				screen.getByRole( 'heading', { name: 'This site is already on WordPress.com' } )
 			).toBeVisible();
 			expect( screen.getByText( 'cotrim.dev' ) ).toBeVisible();
 			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
@@ -242,6 +283,7 @@ describe( 'SiteMigrationCheck', () => {
 				canCopySite ? 0 : 1
 			);
 			for ( const [ name, action ] of [
+				[ /Move your external site here/, 'use-as-destination' ],
 				...( canCopySite ? [ [ /Make a copy of your site/, 'copy-site' ] as const ] : [] ),
 				[ /Transfer your domain/, 'transfer-domain' ],
 				[ /Get access to your site/, 'get-access' ],
@@ -262,6 +304,16 @@ describe( 'SiteMigrationCheck', () => {
 			}
 		}
 	);
+
+	it( 'does not offer migration into a site that has not been validated as a destination', () => {
+		renderStep( <SiteMigrationCheck { ...mockStepProps() } />, {
+			initialEntry:
+				'/site-migration-check?from=https://example.com&platform=wordpress&isWpcom=true',
+		} );
+		expect(
+			screen.queryByRole( 'button', { name: /Move your external site here/ } )
+		).not.toBeInTheDocument();
+	} );
 
 	it( 'explains why an ineligible site can’t be copied', () => {
 		renderStep( <SiteMigrationCheck { ...mockStepProps() } copySiteEligibility="ineligible" />, {

@@ -12,6 +12,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useMemo, useRef, useState, useCallback } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { reloadWithFlashMessage } from '../../components/flash-message';
 import UsernameUpdateForm from './update-username';
@@ -73,6 +74,11 @@ const usernameForm: Form = {
 	fields: [ 'user_login' ],
 };
 
+// v1.x endpoints put the error code in `error`.
+function getErrorCode( error: Error ): string {
+	return 'error' in error && typeof error.error === 'string' ? error.error : 'unknown';
+}
+
 /*
 	Username section:
 	- Username input field
@@ -98,13 +104,21 @@ export default function UsernameSection( {
 	// The username most recently sent for validation, so a slow response for an older value
 	// can't overwrite the result for the current one.
 	const latestValidatedUsername = useRef< string | null >( null );
+	const { recordTracksEvent } = useAnalytics();
 
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...withSnackbar( updateUsernameMutation(), {
 			error: { source: 'server' },
 		} ),
-		onSuccess: () => {
+		onSuccess: ( _data, { action } ) => {
+			recordTracksEvent( 'calypso_dashboard_me_username_change_success', { action } );
 			reloadWithFlashMessage( 'username' );
+		},
+		onError: ( error, { action } ) => {
+			recordTracksEvent( 'calypso_dashboard_me_username_change_error', {
+				action,
+				error: getErrorCode( error ),
+			} );
 		},
 	} );
 
@@ -207,6 +221,20 @@ export default function UsernameSection( {
 		updateUsername( { username: value, action } );
 	};
 
+	const showConfirmUsernameChange = () => {
+		recordTracksEvent( 'calypso_dashboard_me_username_change_attempt', {
+			action: usernameAction || 'none',
+		} );
+		setShowConfirmModal( true );
+	};
+
+	const cancelConfirmUsernameChange = () => {
+		recordTracksEvent( 'calypso_dashboard_me_username_change_cancel', {
+			action: usernameAction || 'none',
+		} );
+		setShowConfirmModal( false );
+	};
+
 	const formData = useMemo( () => ( { user_login: value || '' } ), [ value ] );
 
 	const usernameInput = (
@@ -228,7 +256,7 @@ export default function UsernameSection( {
 			usernameAction={ usernameAction }
 			onConfirmChange={ setUserLoginConfirm }
 			onActionChange={ setUsernameAction }
-			onShowConfirmModal={ () => setShowConfirmModal( true ) }
+			onShowConfirmModal={ showConfirmUsernameChange }
 			onCancel={ cancelUsernameChange }
 			onValidationChange={ setValidationResult }
 		/>
@@ -276,7 +304,7 @@ export default function UsernameSection( {
 				currentUsername={ currentUsername }
 				newUsername={ value }
 				onConfirm={ submitUpdateUsername }
-				onCancel={ () => setShowConfirmModal( false ) }
+				onCancel={ cancelConfirmUsernameChange }
 				isBusy={ isPending }
 			/>
 		</>

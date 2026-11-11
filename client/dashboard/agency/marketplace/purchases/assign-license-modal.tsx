@@ -3,7 +3,7 @@ import {
 	jetpackAgencyLicenseAssignMutation,
 	paginatedAgencySitesQuery,
 } from '@automattic/api-queries';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { speak } from '@wordpress/a11y';
 import {
@@ -25,7 +25,7 @@ import { useLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import InlineSupportLink from '../../../components/inline-support-link';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../../components/notice';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import { openWooDownload } from './woo-download/store';
 import type { AgencySite } from '@automattic/api-core';
@@ -109,7 +109,7 @@ export default function AssignLicenseModal( {
 	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( licenseKey );
 	const isWooExtension = licenseKey.startsWith( 'woocommerce' );
 
-	const { data, isLoading, isPlaceholderData } = useQuery( {
+	const { data, isLoading } = useQuery( {
 		...paginatedAgencySitesQuery(
 			{
 				search: view.search,
@@ -120,7 +120,6 @@ export default function AssignLicenseModal( {
 			agencyId
 		),
 		enabled: !! agencyId,
-		placeholderData: keepPreviousData,
 	} );
 	const assign = useMutation( jetpackAgencyLicenseAssignMutation( agencyId ) );
 
@@ -256,18 +255,17 @@ export default function AssignLicenseModal( {
 					variant="error"
 					title={ getAssignErrorTitle( 'woocommerce-not-installed' ) }
 					actions={
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
+						<NoticeActionLinkButton
+							variant="outline"
 							href={ errorSiteUrl + WOOCOMMERCE_INSTALL_PATH }
-							target="_blank"
+							openInNewTab
 							rel="noopener noreferrer"
 							onClick={ () =>
 								recordTracksEvent( 'calypso_a4a_license_assign_woocommerce_install_click' )
 							}
 						>
 							{ __( 'Install WooCommerce' ) }
-						</Button>
+						</NoticeActionLinkButton>
 					}
 				>
 					{ sprintf(
@@ -314,18 +312,17 @@ export default function AssignLicenseModal( {
 					variant="error"
 					title={ getAssignErrorTitle( 'woocommerce-not-connected' ) }
 					actions={
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
+						<NoticeActionLinkButton
+							variant="outline"
 							href={ errorSiteUrl + WOOCOMMERCE_CONNECT_PATH }
-							target="_blank"
+							openInNewTab
 							rel="noopener noreferrer"
 							onClick={ () =>
 								recordTracksEvent( 'calypso_a4a_license_assign_woocommerce_connect_click' )
 							}
 						>
 							{ __( 'Connect to WooCommerce.com' ) }
-						</Button>
+						</NoticeActionLinkButton>
 					}
 				>
 					{ sprintf(
@@ -363,7 +360,6 @@ export default function AssignLicenseModal( {
 							isItemClickable={ () => true }
 							onClickItem={ selectSite }
 							isLoading={ isLoading }
-							isPlaceholderData={ isPlaceholderData }
 							paginationInfo={ {
 								totalItems,
 								totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),

@@ -4,14 +4,14 @@
 .dashboard-stat__strapline {
 	font-size: $font-size-x-small;
 	line-height: $font-line-height-medium;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	color: var(--dashboard-menu-item__color);
 	text-transform: uppercase;
 }
 
 .dashboard-stat__metric {
 	color: var(--dashboard__text-color);
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 }
 
 .dashboard-stat__description {
@@ -21,9 +21,13 @@
 }
 
 .dashboard-stat__progress-bar {
-	width: 100% !important;
+	width: 100%;
 	margin-block: 0.25 * $grid-unit;
 	--wp-components-color-foreground: var(--wp-admin-theme-color);
+	// Progress paints its indicator and track with these tokens; mix them from the
+	// foreground color, as ProgressBar did before.
+	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }
 
 .dashboard-stat__progress-bar--alert-yellow {
@@ -38,7 +42,7 @@
 	--wp-components-color-foreground: var(--dashboard__background-color-success);
 }
 
-.dashboard-stat--is-loading .dashboard-stat__progress-bar > * {
+.dashboard-stat--is-loading .dashboard-stat__progress-bar > * > * {
 	display: none;
 }
 
@@ -48,8 +52,8 @@
 		line-height: $font-line-height-2x-large;
 	}
 
-	.dashboard-stat__progress-bar {
-		height: $grid-unit-05 !important;
+	.dashboard-stat__progress-bar > * {
+		height: $grid-unit-05;
 	}
 }
 

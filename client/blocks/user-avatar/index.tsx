@@ -1,8 +1,6 @@
 import './style.scss';
 
 import { UserResponse } from '@automattic/api-core';
-import { userQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -55,8 +53,6 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
-	// Prefetching so that we can display WPCOM users Hovercards instantly, Gravatar lookups will be triggered on hover.
-	useQuery( userQuery( user?.wpcom_login, user?.wpcom_id, ! hideHovercard ) );
 
 	// Compute the placement of the hovercard based on available space in the viewport.
 	// This is done after we load the user data, so that we can take into account the height

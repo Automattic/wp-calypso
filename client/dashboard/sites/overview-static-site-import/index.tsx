@@ -11,14 +11,14 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, caution, external, published } from '@wordpress/icons';
+import { Icon, border, caution, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
@@ -76,7 +76,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							<Icon
 								icon={ published }
 								size={ 32 }
-								style={ { fill: 'var(--dashboard__foreground-color-success)' } }
+								style={ { color: 'var(--dashboard__foreground-color-success)' } }
 							/>
 						) }
 						{ isCurrent && <Spinner className="static-site-import-card__spinner" /> }
@@ -84,7 +84,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							<Icon
 								icon={ border }
 								size={ 32 }
-								style={ { fill: 'var(--dashboard__text-muted-color)' } }
+								style={ { color: 'var(--dashboard__text-muted-color)' } }
 							/>
 						) }
 						<Text variant={ isDone || isCurrent ? undefined : 'muted' }>{ item.label }</Text>
@@ -101,6 +101,33 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 }
 
 /**
+ * The errors wpcom returns when it refused the handoff. Our team already knows and will email the
+ * customer, so asking them to try again would only be refused again.
+ */
+const HANDOFF_REFUSED_CODES = [ 'migration_request_not_submitted', 'too_many_requests' ];
+
+function getHandoffErrorCode( error: unknown ) {
+	const code = ( error as { code?: unknown } | null | undefined )?.code;
+	return typeof code === 'string' ? code : undefined;
+}
+
+/** Why the handoff didn't reach our team. */
+function getHandoffErrorMessage( error: unknown ) {
+	switch ( getHandoffErrorCode( error ) ) {
+		case 'migration_request_not_submitted':
+			return __(
+				'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
+			);
+		case 'too_many_requests':
+			return __(
+				'You’ve already sent us several migration requests today. Our team will follow up by email on the ones we’ve received. If you need to add details, just reply to that email.'
+			);
+		default:
+			return __( 'We couldn’t reach our team. Please try again.' );
+	}
+}
+
+/**
  * Hands the move to our migrations team: files a ticket for the Non-WP Migrations queue, which
  * emails the customer to finish the move.
  */
@@ -108,8 +135,17 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	const locale = useLocale();
 	const handoff = useMutation( staticSiteImportHandoffMutation() );
 	const requestHandoff = () =>
-		handoff.mutate( { blogUrl: site.slug, fromUrl: search.from ?? '', locale } );
-	return { handoff, requestHandoff };
+		handoff.mutate( {
+			blogUrl: site.slug,
+			fromUrl: search.from ?? '',
+			locale,
+			importSessionId: search.importSessionId,
+		} );
+	// Offer the handoff only while it can still reach our team.
+	const canRequestHandoff =
+		! handoff.isSuccess &&
+		! HANDOFF_REFUSED_CODES.includes( getHandoffErrorCode( handoff.error ) ?? '' );
+	return { handoff, requestHandoff, canRequestHandoff };
 }
 
 /** Takes the place of the progress card when a move fails. */
@@ -120,7 +156,7 @@ export function StaticSiteImportFailed( {
 	site: Site;
 	search: StaticSiteImportSearch;
 } ) {
-	const { handoff, requestHandoff } = useMoveHandoff( site, search );
+	const { handoff, requestHandoff, canRequestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( search.from );
 	const { data: planPurchase } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
@@ -140,7 +176,7 @@ export function StaticSiteImportFailed( {
 						<Icon
 							icon={ caution }
 							size={ 24 }
-							style={ { fill: 'var(--dashboard__foreground-color-error)' } }
+							style={ { color: 'var(--dashboard__foreground-color-error)' } }
 						/>
 						<Heading level={ 2 } size={ 20 } weight={ 600 }>
 							{ __( 'Your move stopped' ) }
@@ -156,9 +192,7 @@ export function StaticSiteImportFailed( {
 							: __( 'Nothing is lost, and your current site is still online.' ) }
 					</Text>
 					{ handoff.isError && (
-						<Notice variant="error">
-							{ __( 'We couldn’t reach our team. Please try again.' ) }
-						</Notice>
+						<Notice variant="error">{ getHandoffErrorMessage( handoff.error ) }</Notice>
 					) }
 					{ handoff.isSuccess ? (
 						<Notice variant="success" title={ __( 'Our team has your move' ) }>
@@ -166,15 +200,17 @@ export function StaticSiteImportFailed( {
 						</Notice>
 					) : (
 						<HStack justify="flex-start" spacing={ 4 } wrap>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								isBusy={ handoff.isPending }
-								disabled={ handoff.isPending }
-								onClick={ requestHandoff }
-							>
-								{ __( 'Let our team move it' ) }
-							</Button>
+							{ canRequestHandoff && (
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									isBusy={ handoff.isPending }
+									disabled={ handoff.isPending }
+									onClick={ requestHandoff }
+								>
+									{ __( 'Let our team move it' ) }
+								</Button>
+							) }
 							{ refundUrl && (
 								<Button variant="link" href={ refundUrl }>
 									{ __( 'Get a refund' ) }
@@ -240,7 +276,7 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
-	const { handoff, requestHandoff } = useMoveHandoff( site, search );
+	const { handoff, requestHandoff, canRequestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
 	// What the move found that may need our team, already in the reader's language.
 	const reviewNote = siteImport.session?.review_note;
@@ -282,9 +318,9 @@ export function StaticSiteImportNotice( {
 				variant="error"
 				title={ __( 'We can’t import this site' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
+					<NoticeActionButton variant="minimal" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Get help' ) }
-					</Button>
+					</NoticeActionButton>
 				}
 			>
 				{ __( 'Its content isn’t allowed on WordPress.com.' ) }
@@ -304,16 +340,12 @@ export function StaticSiteImportNotice( {
 				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
 					<>
-						<Button __next40pxDefaultSize variant="primary" onClick={ siteImport.retry }>
+						<NoticeActionButton variant="solid" onClick={ siteImport.retry }>
 							{ __( 'Try again' ) }
-						</Button>
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							onClick={ () => setShowHelpCenter( true ) }
-						>
+						</NoticeActionButton>
+						<NoticeActionButton variant="outline" onClick={ () => setShowHelpCenter( true ) }>
 							{ __( 'Contact us' ) }
-						</Button>
+						</NoticeActionButton>
 					</>
 				}
 			>
@@ -365,31 +397,26 @@ export function StaticSiteImportNotice( {
 					} }
 					actions={
 						<>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
+							<NoticeActionLinkButton
+								variant="solid"
 								href={ domainUrl }
 								onClick={ () => recordClick( ownedDomain ? 'connect_domain' : 'get_domain' ) }
 							>
 								{ domainLabel }
-							</Button>
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
+							</NoticeActionLinkButton>
+							<NoticeActionLinkButton
+								variant="outline"
 								href={ previewUrl }
-								target="_blank"
+								openInNewTab
 								rel="noopener noreferrer"
-								icon={ external }
-								iconPosition="right"
 								onClick={ () => recordClick( 'preview_site' ) }
 							>
 								{ __( 'Preview site' ) }
-							</Button>
-							{ ! handoff.isSuccess && (
-								<Button
-									__next40pxDefaultSize
-									variant="link"
-									isBusy={ handoff.isPending }
+							</NoticeActionLinkButton>
+							{ canRequestHandoff && (
+								<NoticeActionButton
+									variant="minimal"
+									loading={ handoff.isPending }
 									disabled={ handoff.isPending }
 									onClick={ () => {
 										recordClick( 'request_handoff' );
@@ -397,7 +424,7 @@ export function StaticSiteImportNotice( {
 									} }
 								>
 									{ __( 'Something not right? Let our team fix it' ) }
-								</Button>
+								</NoticeActionButton>
 							) }
 						</>
 					}
@@ -417,9 +444,7 @@ export function StaticSiteImportNotice( {
 									) }
 						</span>
 						{ reviewNote && <span>{ reviewNote }</span> }
-						{ handoff.isError && (
-							<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
-						) }
+						{ handoff.isError && <span>{ getHandoffErrorMessage( handoff.error ) }</span> }
 						{ handoff.isSuccess && (
 							<span>
 								{ __( 'Our team has your move. We’ll email you to finish moving your site.' ) }

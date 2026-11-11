@@ -139,6 +139,14 @@ To run one package's tests:
 
 `yarn run test-packages [ test file pattern ]`
 
+Arguments go to Jest only. To run or filter the packages that use Vitest (those with a `vitest.config.*`):
+
+`yarn run test-packages:vitest [ path ]`
+
+To test one package with whichever runner it uses, run its own `test` script, if it has one:
+
+`yarn workspace @automattic/<name> test`
+
 ## Building packages & apps
 
 Packages will have their `prepare` scripts run automatically on `yarn`.

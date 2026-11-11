@@ -9,9 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
-const { ERROR_MESSAGE } = require( '../../../lib/rules/jsx-gridicon-size' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
+import rule from '../../../lib/rules/jsx-gridicon-size';
+const { ERROR_MESSAGE } = rule;
 
 //------------------------------------------------------------------------------
 // Tests

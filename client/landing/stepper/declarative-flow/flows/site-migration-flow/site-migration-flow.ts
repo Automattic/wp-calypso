@@ -1,7 +1,7 @@
 import { configureWordPressMigration } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { getUrlParts, isAllowedRedirectUrl } from '@automattic/calypso-url';
-import { Onboard, type OnboardActions } from '@automattic/data-stores';
+import { Onboard, type OnboardActions, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { canInstallPlugins, type SiteExcerptData } from '@automattic/sites';
@@ -35,6 +35,7 @@ import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { getSiteAddresses, isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -146,6 +147,15 @@ const hasSite = ( siteId: number, siteSlug: string ) => {
 	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
 };
 
+const canUseAsMigrationDestination = ( site?: SiteDetails | null ) =>
+	!! site?.ID &&
+	site.capabilities?.manage_options === true &&
+	( site.jetpack === false ||
+		site.is_wpcom_atomic === true ||
+		site.options?.is_wpcom_atomic === true ) &&
+	! site.is_wpcom_staging_site &&
+	! site.is_deleted;
+
 // The authorization URL is fully query-controlled. Only allow navigating to an
 // http(s) URL on the source site the user is migrating from — this rejects
 // `javascript:`, `data:`, scheme-relative, and off-source destinations.
@@ -234,8 +244,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
+		const destinationSiteUrls = getSiteAddresses( siteSlug, site );
 		return {
+			importList: {
+				allowAutomaticDetection: config.isEnabled( 'migration/reprint-flow' ),
+			},
 			'site-migration-identify': {
+				destinationSiteUrls,
 				// A landing page hands over an address the user already submitted, so check it once on arrival.
 				checkOnArrival:
 					config.isEnabled( 'migration/reprint-flow' ) &&
@@ -264,8 +279,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 			},
 			'site-migration-check': {
 				copySiteEligibility,
+				canUseAsDestination: ! isLoadingSource && canUseAsMigrationDestination( sourceSite ),
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
+				destinationSiteUrls,
 				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
 				needsUpgrade: hasDestination && !! site?.plan && ! canInstallPlugins( site ),
 				isLoadingDestination: hasDestination && ! site?.plan && ! hasSiteError,
@@ -438,7 +455,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					} )
 				);
 			}
-			if ( ! site?.plan ) {
+			if ( ! site?.plan || isSiteAddress( from, getSiteAddresses( destinationSlug, site ) ) ) {
 				return;
 			}
 			if ( ! siteCanInstallPlugins ) {
@@ -503,7 +520,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 								| 'select-existing-site'
 								| 'copy-site'
 								| 'transfer-domain'
-								| 'get-access';
+								| 'get-access'
+								| 'use-as-destination';
 							host?: string;
 							isWpcom?: boolean;
 							staticSiteImportable?: boolean;
@@ -523,6 +541,26 @@ const siteMigration: FlowV2< typeof initialize > = {
 						hostname &&
 						( protocol === 'http:' || protocol === 'https:' )
 					) {
+						if ( action === 'use-as-destination' ) {
+							if ( ! copySourceSite || ! canUseAsMigrationDestination( copySourceSite ) ) {
+								return;
+							}
+							return navigate(
+								paths.identifyPath( {
+									siteId: copySourceSite.ID,
+									siteSlug: copySourceSite.slug || hostname,
+									from: '',
+									platform: 'unknown',
+									manualPlatform: '',
+									host: '',
+									isWpcom: '',
+									ssh: '',
+									action: '',
+									how: '',
+									start: '',
+								} )
+							);
+						}
 						if ( action === 'copy-site' ) {
 							startSiteCopy();
 							return exitFlow( addQueryArgs( { sourceSlug: hostname }, '/setup/copy-site' ) );
@@ -535,6 +573,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 								localizeUrl( 'https://wordpress.com/support/account-recovery/' )
 							);
 						}
+					}
+					if (
+						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
+						action === 'back' &&
+						isSiteAddress( fromQueryParam || '', getSiteAddresses( siteSlug, site ) )
+					) {
+						return replace( paths.identifyPath( { from: '', host: '' } ) );
 					}
 					if (
 						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
@@ -552,13 +597,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 						config.isEnabled( 'migration/reprint-flow' ) &&
 						action === 'skip_platform_identification'
 					) {
-						if ( from ) {
-							replace( paths.identifyPath( { from } ) );
+						if ( from || urlQueryParams.get( 'manualPlatform' ) === 'wordpress' ) {
+							replace( paths.identifyPath( { from: from || '' } ) );
 						}
 						return navigate(
 							paths.importListPath( {
 								from: from || '',
 								platform: 'unknown',
+								manualPlatform: '',
 								host: '',
 								isWpcom: '',
 								ssh: '',
@@ -679,19 +725,36 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! config.isEnabled( 'migration/reprint-flow' ) ) {
 						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
-					const { platform } = providedDependencies;
 					const from = fromQueryParam || '';
-					const isAssistedMigration = platform === 'wordpress';
+					if ( providedDependencies.action === 'use_automatic_detection' ) {
+						return replace(
+							paths.identifyPath( { from, manualPlatform: '', start: '', action: '' } )
+						);
+					}
+					const { platform } = providedDependencies;
+					if ( platform === 'wordpress' ) {
+						return navigate(
+							paths.identifyPath( {
+								from,
+								platform: 'unknown',
+								manualPlatform: 'wordpress',
+								host: '',
+								isWpcom: '',
+								ssh: '',
+								action: '',
+								how: '',
+								start: '',
+							} )
+						);
+					}
 					const context = {
 						from,
 						platform,
-						action: isAssistedMigration ? 'migrate' : 'import',
-						how: isAssistedMigration ? HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME : '',
+						action: 'import',
+						how: '',
 					};
 					if ( hasSite( siteId, siteSlug ) ) {
-						return isAssistedMigration
-							? navigate( paths.howToMigratePath( { ...context, siteId, siteSlug } ) )
-							: exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+						return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
 					}
 					return navigate(
 						userHasOtherWPComSites

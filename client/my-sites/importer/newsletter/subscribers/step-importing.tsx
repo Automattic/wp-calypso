@@ -1,7 +1,8 @@
 import { Card } from '@automattic/components';
-import { ProgressBar } from '@wordpress/components';
 import { Icon, atSymbol } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
+import { useId } from 'react';
 import { SubscribersStepProps } from '../types';
 
 interface StepImportingProps extends SubscribersStepProps {
@@ -10,11 +11,13 @@ interface StepImportingProps extends SubscribersStepProps {
 
 export default function StepImporting( { actionButton }: StepImportingProps ) {
 	const { __ } = useI18n();
+	const titleId = useId();
 	return (
 		<Card>
 			<div className="summary__content">
 				<p>
-					<Icon icon={ atSymbol } /> <strong>{ __( "We're importing your subscribers" ) }</strong>
+					<Icon icon={ atSymbol } />{ ' ' }
+					<strong id={ titleId }>{ __( "We're importing your subscribers" ) }</strong>
 				</p>
 			</div>
 			<p>
@@ -23,7 +26,15 @@ export default function StepImporting( { actionButton }: StepImportingProps ) {
 				) }
 			</p>
 			<p>
-				<ProgressBar className="is-larger-progress-bar" />
+				<Progress.Root
+					className="is-larger-progress-bar"
+					aria-labelledby={ titleId }
+					value={ null }
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			</p>
 			{ actionButton }
 		</Card>

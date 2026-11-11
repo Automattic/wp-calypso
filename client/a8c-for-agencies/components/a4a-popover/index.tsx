@@ -42,7 +42,6 @@ export default function A4APopover( {
 }: Props ) {
 	return (
 		<Popover
-			isVisible
 			noArrow={ noArrow }
 			offset={ offset }
 			className={ clsx( 'a4a-popover', className ) }

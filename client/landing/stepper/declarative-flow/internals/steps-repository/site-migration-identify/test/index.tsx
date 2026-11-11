@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { setImmediate as realSetImmediate } from 'timers';
+import { setTimeout as realSetTimeout } from 'timers';
 import config from '@automattic/calypso-config';
 import { act, configure, getConfig, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -60,7 +60,7 @@ const originalIsEnabled = config.isEnabled;
 describe( 'SiteMigrationIdentify', () => {
 	let user: ReturnType< typeof userEvent.setup >;
 
-	const realTick = () => new Promise( ( resolve ) => realSetImmediate( resolve ) );
+	const realTick = () => new Promise( ( resolve ) => realSetTimeout( resolve, 1 ) );
 	const { asyncUtilTimeout, unstable_advanceTimersWrapper: advanceTimers } = getConfig();
 
 	beforeAll( () => {
@@ -79,7 +79,7 @@ describe( 'SiteMigrationIdentify', () => {
 	afterAll( () => configure( { asyncUtilTimeout, unstable_advanceTimersWrapper: advanceTimers } ) );
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.useFakeTimers();
+		jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
 		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		jest
 			.spyOn( config, 'isEnabled' )
@@ -88,6 +88,7 @@ describe( 'SiteMigrationIdentify', () => {
 			);
 	} );
 	afterEach( () => {
+		nock.cleanAll();
 		jest.useRealTimers();
 		jest.restoreAllMocks();
 	} );
@@ -282,6 +283,68 @@ describe( 'SiteMigrationIdentify', () => {
 				);
 		} );
 
+		it( 'rejects known destination addresses and lets the user correct the source', async () => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationIdentify
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					destinationSiteUrls={ [
+						'destination.wordpress.com',
+						'https://custom.example.com',
+						'https://default.wpcomstaging.com',
+					] }
+				/>,
+				{ initialEntry: '/some-path?manualPlatform=wordpress' }
+			);
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( true )
+				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
+			mockHost();
+			for ( const url of [
+				'http://WWW.DESTINATION.WORDPRESS.COM/a-page?example=1',
+				'custom.example.com/',
+				'https://default.wpcomstaging.com/',
+			] ) {
+				await user.clear( getInput() );
+				await checkSite( url );
+				expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+					'This is your destination site. Enter the address of the site you want to migrate from.'
+				);
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			}
+			await act( async () => {
+				jest.advanceTimersByTime( 2000 );
+				await realTick();
+			} );
+			expect( analysis.isDone() ).toBe( false );
+			expect( submit ).not.toHaveBeenCalled();
+			await user.clear( getInput() );
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+			await checkSite();
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { action: 'continue', from: 'https://example.com' } )
+				)
+			);
+		} );
+
+		it( 'blocks the destination when checking on arrival or opening the platform list', async () => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationIdentify
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					checkOnArrival
+					destinationSiteUrls={ [ 'example.com' ] }
+				/>,
+				{ initialEntry: '/some-path?from=https://example.com&start=true' }
+			);
+			expect( screen.getByRole( 'alert' ) ).toBeVisible();
+			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
 		it( 'changes the address during a check without leaving the step', async () => {
 			const goBack = jest.fn();
 			const submit = jest.fn();
@@ -312,6 +375,136 @@ describe( 'SiteMigrationIdentify', () => {
 			).not.toBeInTheDocument();
 			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
+		} );
+
+		it.each( [ '', 'https://example.com' ] )(
+			'leaves the address "%s" editable without analyzing until Continue',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+				const host = mockHost();
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&start=&platform=unknown`,
+					}
+				);
+				await act( async () => {
+					jest.advanceTimersByTime( 3000 );
+					await realTick();
+				} );
+				expect( getInput() ).toHaveValue( from );
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				expect( analysis.isDone() ).toBe( false );
+				expect( host.isDone() ).toBe( false );
+				expect( submit ).not.toHaveBeenCalled();
+				await user.clear( getInput() );
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( { action: 'continue', platform: 'wordpress' } )
+					)
+				);
+			}
+		);
+
+		it.each( [
+			[ '', false ],
+			[ 'https://manual.example.com', true ],
+		] as const )(
+			'checks hosting without overriding manual WordPress selection (prefill: "%s", WordPress.com: %s)',
+			async ( from, isWpcom ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis(
+					{
+						...API_RESPONSE_WORDPRESS_PLATFORM,
+						url: 'https://manual.example.com',
+						platform: 'squarespace',
+						static_site_importable: true,
+						platform_data: { is_wpcom: isWpcom },
+					},
+					200,
+					from || 'manual.example.com'
+				);
+				mockApi()
+					.get( '/wpcom/v2/site-profiler/hosting-provider/manual.example.com' )
+					.reply( 200, { hosting_provider: { slug: 'bluehost' } } );
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&manualPlatform=wordpress`,
+					}
+				);
+
+				expect(
+					screen.getByRole( 'heading', { name: "Let's find your WordPress site" } )
+				).toBeVisible();
+				expect(
+					screen.getByRole( 'button', { name: 'select another platform from the list' } )
+				).toBeVisible();
+				expect( getInput() ).toHaveValue( from );
+				expect( submit ).not.toHaveBeenCalled();
+				if ( ! from ) {
+					await user.type( getInput(), 'manual.example.com' );
+				}
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith( {
+						action: 'continue',
+						platform: 'wordpress',
+						from: 'https://manual.example.com',
+						host: 'bluehost',
+						...( isWpcom ? { isWpcom: true } : {} ),
+					} )
+				);
+				expect( analysis.isDone() ).toBe( true );
+			}
+		);
+
+		it.each( [
+			[ 200, { ...API_RESPONSE_WORDPRESS_PLATFORM, site_health: 'unreachable' } ],
+			[ 500, { code: 'http_request_failed', data: { site_health: 'unreachable' } } ],
+		] )(
+			'preserves manual WordPress selection when checking fails (%s)',
+			async ( status, response ) => {
+				const submit = jest.fn();
+				render(
+					{ navigation: { submit } },
+					{ initialEntry: '/some-path?manualPlatform=wordpress' }
+				);
+				mockAnalysis( response, status );
+				if ( status === 200 ) {
+					mockHost();
+				}
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( {
+							action: 'continue',
+							platform: 'wordpress',
+							from: 'https://example.com',
+						} )
+					)
+				);
+			}
+		);
+
+		it( 'lets users change their selected platform while keeping the address', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://example.com&manualPlatform=wordpress' }
+			);
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'select another platform from the list' } )
+			);
+
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
 		} );
 
 		it( 'preserves the current address when opening the platform list before checking', async () => {

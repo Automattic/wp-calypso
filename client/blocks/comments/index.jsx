@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { CommentEditorContext } from './comment-editor-context';
+import { CommentLabelsContext } from './comment-labels-context';
 import NewCommentsPill from './new-comments-pill';
 import PostCommentsList from './post-comment-list';
 import { usePostCommentsData } from './use-post-comments-data';
@@ -11,6 +12,7 @@ class PostComments extends Component {
 	static propTypes = {
 		deferNewComments: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
+		spellOutLabels: PropTypes.bool,
 		useBlockEditor: PropTypes.bool,
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -22,6 +24,7 @@ class PostComments extends Component {
 		deferNewComments: false,
 		shouldHighlightNew: false,
 		shouldPollForNewComments: false,
+		spellOutLabels: false,
 		useBlockEditor: false,
 	};
 
@@ -37,6 +40,7 @@ class PostComments extends Component {
 			pendingCommentIds,
 			revealPendingComments,
 			shouldPollForNewComments,
+			spellOutLabels,
 			useBlockEditor,
 		} = this.props;
 
@@ -50,7 +54,9 @@ class PostComments extends Component {
 					<Interval onTick={ this.pollForNewComments } period={ EVERY_MINUTE } />
 				) }
 				<CommentEditorContext.Provider value={ useBlockEditor }>
-					<PostCommentsList { ...this.props } />
+					<CommentLabelsContext.Provider value={ spellOutLabels }>
+						<PostCommentsList { ...this.props } />
+					</CommentLabelsContext.Provider>
 				</CommentEditorContext.Provider>
 				{ deferNewComments && (
 					<NewCommentsPill commentIds={ pendingCommentIds } onReveal={ revealPendingComments } />

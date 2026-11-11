@@ -7,7 +7,15 @@ import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import nock from 'nock';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import { APP_CONTEXT_DEFAULT_CONFIG, type AppConfig } from '../../context';
-import { createMeRoutes, meRoute, purchaseSettingsIndexRoute } from '../me';
+import {
+	appsRedirectRoute,
+	createMeRoutes,
+	getAppsRedirectRoute,
+	mcpLegacyRedirectRoute,
+	mcpLegacySubpageRedirectRoute,
+	meRoute,
+	purchaseSettingsIndexRoute,
+} from '../me';
 import { rootRoute } from '../root';
 
 jest.mock( '../../../utils/is-dashboard-backport', () => ( {
@@ -217,8 +225,55 @@ test( 'redirects to reauthorize when the two-step session has expired', async ()
 	const beforeLoad = meRoute.options.beforeLoad as any;
 
 	await expect( beforeLoad( { cause: 'enter' } ) ).rejects.toMatchObject( {
-		isRedirect: true,
-		href: expect.stringContaining( '/me/reauth-required' ),
-		reloadDocument: true,
+		options: {
+			href: expect.stringContaining( '/me/reauth-required' ),
+			reloadDocument: true,
+		},
 	} );
+} );
+
+test.each( [ appsRedirectRoute, getAppsRedirectRoute ] )(
+	'redirects $options.path to the apps landing page',
+	( route ) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const beforeLoad = route.options.beforeLoad as any;
+
+		expect( () => beforeLoad() ).toThrow(
+			expect.objectContaining( {
+				options: expect.objectContaining( {
+					href: 'https://apps.wordpress.com/',
+					reloadDocument: true,
+				} ),
+			} )
+		);
+	}
+);
+
+function getRedirectTarget( beforeLoad: unknown, args: unknown ) {
+	try {
+		( beforeLoad as ( args: unknown ) => void )( args );
+	} catch ( error ) {
+		return ( error as { options?: { to?: string } } ).options?.to;
+	}
+}
+
+test( 'redirects the legacy /me/mcp path to the AI and MCP screen', () => {
+	expect( getRedirectTarget( mcpLegacyRedirectRoute.options.beforeLoad, {} ) ).toBe(
+		'/me/preferences/mcp'
+	);
+} );
+
+test.each( [
+	[ 'read', '/me/preferences/mcp/read' ],
+	[ 'write', '/me/preferences/mcp/write' ],
+	[ 'mcp-sites', '/me/preferences/mcp/mcp-sites' ],
+	[ 'add-site', '/me/preferences/mcp/mcp-sites' ],
+	[ 'setup', '/me/preferences/mcp/setup' ],
+	[ 'unknown', '/me/preferences/mcp' ],
+] )( 'redirects the legacy /me/mcp/%s path to %s', ( splat, to ) => {
+	expect(
+		getRedirectTarget( mcpLegacySubpageRedirectRoute.options.beforeLoad, {
+			params: { _splat: splat },
+		} )
+	).toBe( to );
 } );

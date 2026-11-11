@@ -75,6 +75,6 @@ test( 'renders actions when the actions menu is clicked', async () => {
 	const actions = await screen.findAllByLabelText( 'Actions' );
 	await user.click( actions[ 0 ] );
 
-	expect( screen.getByText( 'Edit' ) ).toBeInTheDocument();
-	expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
+	expect( await screen.findByText( 'Edit' ) ).toBeInTheDocument();
+	expect( screen.getByText( 'Delete…' ) ).toBeInTheDocument();
 } );

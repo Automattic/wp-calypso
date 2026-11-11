@@ -56,11 +56,11 @@ export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} 
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
+		return <span>{ __( 'Processing…' ) }</span>;
 	}
 
 	if ( formStatus !== FormStatus.READY ) {
-		return <>{ __( 'Please wait…' ) }</>;
+		return <span>{ __( 'Please wait…' ) }</span>;
 	}
 
 	const payNowLabel = last4

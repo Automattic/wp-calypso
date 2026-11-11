@@ -9,6 +9,7 @@ interface ReaderPost {
 		comments_open?: boolean;
 		comment_count?: number;
 		comments_require_registration?: boolean;
+		comments_allow_blocks?: boolean;
 	};
 }
 
@@ -18,6 +19,11 @@ export function isCommentsOpen( post: ReaderPost ): boolean {
 
 export function isLoginRequiredToComment( post: ReaderPost ): boolean {
 	return !! post.discussion?.comments_require_registration;
+}
+
+// A post without the field takes blocks, as the Reader always assumed.
+export function isCommentHtmlOnly( post: ReaderPost ): boolean {
+	return post.discussion?.comments_allow_blocks === false;
 }
 
 export function isSharable( post: ReaderPost ): boolean {

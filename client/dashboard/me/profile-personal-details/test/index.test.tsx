@@ -40,10 +40,13 @@ function mockUserSettings( data: UserSettings ) {
 		.reply( 200, data );
 }
 
-function mockValidateUsername( username: string ) {
+function mockValidateUsername(
+	username: string,
+	allowedActions: Record< string, string > = { none: 'Keep your current URL' }
+) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/me/username/validate/${ username }` )
-		.reply( 200, { success: true, allowed_actions: { none: 'Keep your current URL' } } );
+		.reply( 200, { success: true, allowed_actions: allowedActions } );
 }
 
 function mockIsAutomattician( isAutomattician: boolean ) {
@@ -304,12 +307,15 @@ describe( '<PersonalDetailsSection>', () => {
 			);
 		} );
 
-		test( 'shows username update form and submits username change', async () => {
+		async function openConfirmationDialog( {
+			allowedActions,
+			chooseAction,
+		}: { allowedActions?: Record< string, string >; chooseAction?: string } = {} ) {
 			mockUserSettings( settings );
 			mockIsAutomattician( false );
-			mockValidateUsername( 'newusername' );
+			mockValidateUsername( 'newusername', allowedActions );
 
-			render( <PersonalDetailsSection /> );
+			const { recordTracksEvent } = render( <PersonalDetailsSection /> );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
@@ -334,6 +340,32 @@ describe( '<PersonalDetailsSection>', () => {
 				expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
 			} );
 
+			if ( chooseAction ) {
+				await user.click( screen.getByRole( 'radio', { name: chooseAction } ) );
+			}
+
+			await user.click( screen.getByRole( 'button', { name: 'Change username' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Change your username?' } );
+
+			// Fake timers are only needed for the validation debounce; the mutation callbacks
+			// must run on real timers to finish within the test. Flush first: React's scheduler
+			// queues its work on a timer, and work left on a fake one never runs.
+			await act( async () => {
+				jest.runOnlyPendingTimers();
+			} );
+			jest.useRealTimers();
+
+			return { user: userEvent.setup(), recordTracksEvent, dialog };
+		}
+
+		test( 'shows username update form and submits username change', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_attempt',
+				{ action: 'none' }
+			);
+
 			const scope = nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/me/username', ( body ) => {
 					expect( body ).toEqual( { username: 'newusername', action: 'none' } );
@@ -341,9 +373,6 @@ describe( '<PersonalDetailsSection>', () => {
 				} )
 				.reply( 200, { success: true } );
 
-			await user.click( screen.getByRole( 'button', { name: 'Change username' } ) );
-
-			const dialog = await screen.findByRole( 'dialog', { name: 'Change your username?' } );
 			expect( dialog ).toHaveTextContent(
 				'Your username will change from johndoe to newusername. This can’t be undone.'
 			);
@@ -356,6 +385,82 @@ describe( '<PersonalDetailsSection>', () => {
 			await waitFor( () => {
 				expect( scope.isDone() ).toBe( true );
 			} );
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_me_username_change_success',
+					{ action: 'none' }
+				);
+			} );
+		} );
+
+		test( 'records the matching blog address choice', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog( {
+				allowedActions: {
+					none: 'Keep your current URL',
+					new: 'Create a matching blog address',
+				},
+				chooseAction: 'Create a matching blog address',
+			} );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_attempt',
+				{ action: 'new' }
+			);
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/username', ( body ) => {
+					expect( body ).toEqual( { username: 'newusername', action: 'new' } );
+					return true;
+				} )
+				.reply( 200, { success: true } );
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change username' } ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_me_username_change_success',
+					{ action: 'new' }
+				);
+			} );
+		} );
+
+		test( 'records a cancelled username change', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog();
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_cancel',
+				{ action: 'none' }
+			);
+		} );
+
+		test( 'records a failed username change', async () => {
+			const { user, recordTracksEvent, dialog } = await openConfirmationDialog();
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/username' )
+				.reply( 400, { error: 'username_unavailable', message: 'Username is not available.' } );
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change username' } ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_me_username_change_error',
+					{ action: 'none', error: 'username_unavailable' }
+				);
+			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_me_username_change_success',
+				expect.anything()
+			);
 		} );
 	} );
 

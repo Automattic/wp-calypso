@@ -1,5 +1,6 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +10,6 @@ import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
-import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import { sortNullableStrings } from './sort-nullable-strings';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -24,6 +24,7 @@ export const useFields = ( {
 	showPrimaryDomainBadge?: boolean;
 	inOverview?: boolean;
 } = {} ) => {
+	const hasEnTranslation = useHasEnTranslation();
 	const { data: domains } = useQuery( domainsQuery() );
 
 	const siteElements = useMemo( () => {
@@ -87,9 +88,9 @@ export const useFields = ( {
 				enableHiding: false,
 				enableSorting: false,
 				elements: [
-					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Domain name registration' ) },
+					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Registered with us' ) },
 					{ value: DomainSubtype.DOMAIN_TRANSFER, label: __( 'Domain name transfer' ) },
-					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Domain name connection' ) },
+					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Connected domain name' ) },
 					{ value: DomainSubtype.DEFAULT_ADDRESS, label: __( 'Included site address' ) },
 				],
 				filterBy: {
@@ -131,15 +132,8 @@ export const useFields = ( {
 				render: ( { item } ) => <DomainSiteField domain={ item } value={ item.blog_name ?? '' } />,
 			},
 			{
-				id: 'ssl_status',
-				label: __( 'SSL' ),
-				enableHiding: true,
-				enableSorting: false,
-				render: ( { item } ) => <DomainSslField domain={ item } />,
-			},
-			{
 				id: 'expiry',
-				label: __( 'Paid until' ),
+				label: hasEnTranslation( 'Renews on' ) ? __( 'Renews on' ) : __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
 				sort: sortNullableStrings,
@@ -189,7 +183,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
+		[ site, showPrimaryDomainBadge, siteElements, inOverview, hasEnTranslation ]
 	);
 
 	return fields;
