@@ -244,15 +244,6 @@ export const agencyAmplifyRoute = createRoute( {
 	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'prospect-reports',
-	beforeLoad: async ( { cause } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
-		if ( ! agency?.amplify?.allowed ) {
-			throw redirectAsNotAllowed( { to: '/overview' } );
-		}
-	},
 } );
 
 const agencyAmplifyOverviewRoute = createRoute( {
