@@ -9,6 +9,7 @@ import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-se
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
+	BLACKBOX_KEY_VERSION: 2,
 	getBlackboxApiKey: jest.fn( () => 'signup-key' ),
 } ) );
 
@@ -46,15 +47,24 @@ describe( 'createAccount', () => {
 		nock.cleanAll();
 	} );
 
+	it( 'cancels account creation when checkout becomes inactive', async () => {
+		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( null );
+		const getRequestBody = interceptUsersNew();
+		await expect( createAccount( createAccountArgs ) ).rejects.toMatchObject( {
+			name: 'AbortError',
+		} );
+		expect( getRequestBody() ).toBeUndefined();
+	} );
+
 	it( 'attaches blackbox_session_id when available', async () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
 
 		await createAccount( createAccountArgs );
 
-		expect( getBlackboxApiKey ).toHaveBeenCalledWith( 'blackbox-userless-checkout' );
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key' );
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key', undefined, 'signup' );
 		expect( getRequestBody()?.blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		expect( getRequestBody()?.blackbox_key_version ).toBe( 2 );
 	} );
 
 	it( 'omits blackbox_session_id when the signup api key is missing', async () => {
@@ -93,6 +103,9 @@ describe( 'createAccount', () => {
 			configure: jest.fn(),
 			collect: jest.fn(),
 			getSessionId: jest.fn(),
+			flush: jest.fn(),
+			getSnapshot: jest.fn(),
+			subscribe: jest.fn(),
 			reset,
 		};
 		interceptUsersNew( 500, { error: 'internal_server_error', message: 'fail' } );

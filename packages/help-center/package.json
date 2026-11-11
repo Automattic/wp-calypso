@@ -64,6 +64,7 @@
 		"@wordpress/icons": "^15.5.0",
 		"@wordpress/primitives": "^5.1.0",
 		"clsx": "^2.1.1",
+		"prop-types": "^15.8.1",
 		"react-draggable": "^4.4.6",
 		"smooch": "^5.7.17",
 		"use-debounce": "^10.0.6",
@@ -72,6 +73,7 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@types/prop-types": "^15.7.15",
 		"@types/smooch": "^5.6.0",
 		"postcss": "^8.5.32",
 		"react": "^18.3.1",

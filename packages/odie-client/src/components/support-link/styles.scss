@@ -32,6 +32,7 @@ $gray-700: #646970;
 				cursor: pointer;
 
 				svg {
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
 					fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
 				}
 			}
@@ -51,6 +52,7 @@ $gray-700: #646970;
 			box-sizing: border-box;
 
 			svg {
+				color: $gray-700;
 				fill: $gray-700;
 				flex-shrink: 0;
 			}

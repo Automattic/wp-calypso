@@ -10,7 +10,8 @@ $conversations-inbox-easing: var( --wpds-motion-easing-balanced, cubic-bezier( 0
 	min-width: 0;
 }
 
-.conversations-inbox__detail-header {
+// Through the pane, so VStack's `> * { min-height: 0 }` doesn't win.
+.conversations-inbox__detail-pane > .conversations-inbox__detail-header {
 	box-sizing: border-box;
 	min-height: 64px;
 	padding: 0 24px;

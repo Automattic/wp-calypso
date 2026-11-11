@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setStore } from 'calypso/state/redux-store';
 import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
 import ThemeSheetComponent from '../main';

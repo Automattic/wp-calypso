@@ -9,9 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
-const { ERROR_MESSAGE } = require( '../i18n-unlocalized-url' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
+import rule from '../i18n-unlocalized-url';
+const { ERROR_MESSAGE } = rule;
 
 //------------------------------------------------------------------------------
 // Tests
