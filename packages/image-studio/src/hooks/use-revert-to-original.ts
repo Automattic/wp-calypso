@@ -3,8 +3,8 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
+import { isMediaAttachment } from '../types';
 import { getAttachmentMetadata } from '../utils/get-image-data';
-import type { MediaAttachment } from '../types';
 
 /**
  * Hook parameters for useRevertToOriginal
@@ -104,12 +104,12 @@ export function useRevertToOriginal( {
 		try {
 			// Fetch URL from WordPress attachment record (not the store's originalImageUrl
 			// which gets updated after annotations)
-			const attachment = ( await resolveSelect( coreStore ).getEntityRecord(
+			const attachment: unknown = await resolveSelect( coreStore ).getEntityRecord(
 				'postType',
 				'attachment',
 				targetAttachmentId
-			) ) as MediaAttachment | undefined;
-			if ( ! attachment?.source_url ) {
+			);
+			if ( ! isMediaAttachment( attachment ) || ! attachment.source_url ) {
 				addNoticeRef.current(
 					__( 'Cannot revert - failed to load original image', __i18n_text_domain__ ),
 					'error'
