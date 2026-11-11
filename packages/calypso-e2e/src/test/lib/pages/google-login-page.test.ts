@@ -1,5 +1,4 @@
-import { describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import {
 	GoogleLoginPage,
 	GoogleSessionError,

@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
-import { type Mock, vi } from 'vitest';
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	test,
+	type Mock,
+	vi,
+	type MockInstance,
+} from 'vitest';
 import * as teamcity from '../lib/teamcity';
 import {
 	flushThrottleWrites,
@@ -204,9 +212,9 @@ describe( 'RestAPIClient: createSite', function () {
 		} );
 	} );
 
-	let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
-	let appendOwnBuildLog: jest.SpiedFunction< typeof teamcity.appendOwnBuildLog >;
-	let warn: jest.SpiedFunction< typeof console.warn >;
+	let tagOwnBuild: MockInstance< typeof teamcity.tagOwnBuild >;
+	let appendOwnBuildLog: MockInstance< typeof teamcity.appendOwnBuildLog >;
+	let warn: MockInstance< typeof console.warn >;
 	let throttleActionHandler: Mock;
 	let unregisterThrottleActionHandler: () => void;
 

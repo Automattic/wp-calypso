@@ -1,6 +1,5 @@
-import { describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { Roles } from '../lib';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';

@@ -1,5 +1,4 @@
-import { describe, expect, test, jest } from '@jest/globals';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import {
 	getRandomInteger,
 	getAccountCredential,
@@ -33,16 +32,19 @@ vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecre
 describe( 'DataHelper Tests', function () {
 	describe( 'Test: getRandomInteger', function () {
 		type TestCase = { min: number; max: number; expected: number[] };
-		test.each< TestCase >`
+		test.each`
 			min    | max      | expected
 			${ 0 } | ${ 0 }   | ${ [ 0 ] }
 			${ 0 } | ${ 1 }   | ${ [ 0, 1 ] }
 			${ 0 } | ${ 200 } | ${ [ ...Array( 200 ).keys() ] }
-		`( 'Generated integer is within $min and $max ranges', function ( { min, max, expected } ) {
-			const generated = getRandomInteger( min, max );
-			expect( generated ).toBeGreaterThanOrEqual( min );
-			expect( expected.includes( generated ) );
-		} );
+		`(
+			'Generated integer is within $min and $max ranges',
+			function ( { min, max, expected }: TestCase ) {
+				const generated = getRandomInteger( min, max );
+				expect( generated ).toBeGreaterThanOrEqual( min );
+				expect( expected.includes( generated ) );
+			}
+		);
 	} );
 
 	describe( 'Test: getNewTestUser', function () {
@@ -102,7 +104,7 @@ describe( 'DataHelper Tests', function () {
 
 	describe( 'Test: getCalypsoURL', function () {
 		type Params = Parameters< typeof getCalypsoURL >;
-		test.each< { route: Params[ 0 ]; queryStrings: Params[ 1 ]; expected: string } >`
+		test.each`
 			route           | queryStrings                               | expected
 			${ '/' }        | ${ undefined }                             | ${ 'http://calypso.localhost:3000/' }
 			${ 'log-in' }   | ${ undefined }                             | ${ 'http://calypso.localhost:3000/log-in' }
@@ -111,7 +113,15 @@ describe( 'DataHelper Tests', function () {
 			${ 'post/new' } | ${ { param: 'ASCIIではありません' } }      | ${ 'http://calypso.localhost:3000/post/new?param=ASCII%E3%81%A7%E3%81%AF%E3%81%82%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93' }
 		`(
 			'Returns $expected if getCalypsoURL is called with $route and $queryStrings',
-			function ( { route, queryStrings, expected } ) {
+			function ( {
+				route,
+				queryStrings,
+				expected,
+			}: {
+				route: Params[ 0 ];
+				queryStrings: Params[ 1 ];
+				expected: string;
+			} ) {
 				expect( getCalypsoURL( route, queryStrings ) ).toBe( expected );
 			}
 		);
@@ -131,23 +141,23 @@ describe( 'DataHelper Tests', function () {
 
 	describe( 'Test: getAccountCredential', function () {
 		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
-		test.each< { accountType: AccountType; expected: string } >`
+		test.each`
 			accountType      | expected
 			${ 'basicUser' } | ${ { username: 'wpcomuser2', password: 'hunter2', totpKey: undefined } }
 			${ 'noUrlUser' } | ${ { username: 'nourluser', password: 'password1234', totpKey: undefined } }
 		`(
 			'Returns $expected if getAccountCredential is called with $accountType',
-			function ( { accountType, expected } ) {
+			function ( { accountType, expected }: { accountType: AccountType; expected: string } ) {
 				expect( getAccountCredential( accountType ) ).toStrictEqual( expected );
 			}
 		);
 
-		test.each< { accountType: AccountType } >`
+		test.each`
 			accountType
 			${ 'nonexistent_user' }
 		`(
 			'Throws error if getAccountCredential is called with $accountType',
-			function ( { accountType } ) {
+			function ( { accountType }: { accountType: AccountType } ) {
 				expect( () => getAccountCredential( accountType ) ).toThrow();
 			}
 		);
@@ -156,30 +166,30 @@ describe( 'DataHelper Tests', function () {
 	describe( 'Test: getAccountSiteURL', function () {
 		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
 		type TestCase = { accountType: AccountType; expected: string };
-		test.each< TestCase >`
+		test.each`
 			accountType      | expected
 			${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
 		`(
 			'Returns $expected if getAccountSiteURL is called with $accountType',
-			function ( { accountType, expected } ) {
+			function ( { accountType, expected }: TestCase ) {
 				expect( getAccountSiteURL( accountType ) ).toStrictEqual( expected );
 			}
 		);
 
-		test.each< TestCase >`
+		test.each`
 			accountType             | expected
 			${ 'nonexistent_user' } | ${ Error }
 			${ 'noUrlUser' }        | ${ ReferenceError }
 		`(
 			'Throws error if getAccountSiteURL is called with $accountType',
-			function ( { accountType, expected } ) {
+			function ( { accountType, expected }: TestCase ) {
 				expect( () => getAccountSiteURL( accountType ) ).toThrow( expected );
 			}
 		);
 	} );
 
 	describe( 'Test: toTitleCase', function () {
-		test.each< { words: string; expected: string } >`
+		test.each`
 			words                        | expected
 			${ 'test' }                  | ${ 'Test' }
 			${ 'test words' }            | ${ 'Test Words' }
@@ -187,9 +197,12 @@ describe( 'DataHelper Tests', function () {
 			${ 'Test Words Third' }      | ${ 'Test Words Third' }
 			${ '11 Words Third' }        | ${ '11 Words Third' }
 			${ [ '12', '33', 'ABCDE' ] } | ${ '12 33 ABCDE' }
-		`( 'Returns $expected if toTitleCase is called with $words', function ( { words, expected } ) {
-			expect( toTitleCase( words ) ).toStrictEqual( expected );
-		} );
+		`(
+			'Returns $expected if toTitleCase is called with $words',
+			function ( { words, expected }: { words: string; expected: string } ) {
+				expect( toTitleCase( words ) ).toStrictEqual( expected );
+			}
+		);
 	} );
 
 	describe( 'Test: createSuiteTitle', function () {

@@ -1,5 +1,4 @@
-import { afterEach, describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
 	assertSuccessfulNewUserResponse,
 	UserSignupPage,
@@ -233,9 +232,9 @@ describe( 'UserSignupPage', () => {
 		const waitForTimeout = vi.fn( async () => undefined );
 		const reload = vi.fn( async () => null );
 		Object.assign( page, { waitForTimeout, reload } );
-		vi
-			.mocked( page.locator( 'input[name="email"]' ).fill )
-			.mockRejectedValue( new Error( 'Form broke.' ) );
+		vi.mocked( page.locator( 'input[name="email"]' ).fill ).mockRejectedValue(
+			new Error( 'Form broke.' )
+		);
 
 		await expect(
 			new UserSignupPage( page ).signupWithEmail( 'test@example.com' )

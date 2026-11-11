@@ -1,5 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { type Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, type Mock, vi } from 'vitest';
 import { SignupPickPlanPage } from '../../../lib/pages/signup/signup-pick-plan-page';
 import * as teamcity from '../../../lib/teamcity';
 import {

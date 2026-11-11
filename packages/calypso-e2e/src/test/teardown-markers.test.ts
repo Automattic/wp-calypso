@@ -9,9 +9,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { describe, expect, test, beforeEach, afterEach, vi } from 'vitest';
 import { SecretsManager } from '../secrets';
 import {
 	clearAccountLeak,

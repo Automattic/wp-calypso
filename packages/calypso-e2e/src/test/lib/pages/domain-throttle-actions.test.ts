@@ -1,5 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { type Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, type Mock, vi } from 'vitest';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import { UseADomainIOwnPage } from '../../../lib/pages/use-a-domain-i-own-page';
 import * as teamcity from '../../../lib/teamcity';

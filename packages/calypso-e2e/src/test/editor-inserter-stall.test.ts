@@ -1,5 +1,4 @@
-import { describe, expect, jest, test } from '@jest/globals';
-import { type Mock, vi } from 'vitest';
+import { describe, expect, test, type Mock, vi } from 'vitest';
 import { EditorSidebarBlockInserterComponent } from '../lib/components/editor-sidebar-block-inserter-component';
 import { EditorToolbarComponent } from '../lib/components/editor-toolbar-component';
 import type { EditorComponent } from '../lib/components/editor-component';

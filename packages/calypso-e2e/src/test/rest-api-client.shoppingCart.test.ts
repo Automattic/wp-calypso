@@ -3,9 +3,8 @@
  * products they add to a shared site cart: getShoppingCart reads the cart, and
  * removeCartProducts posts it back without the products matching a keyword.
  */
-import { describe, expect, test, jest, beforeEach, afterAll } from '@jest/globals';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { describe, expect, test, beforeEach, afterAll, vi } from 'vitest';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';

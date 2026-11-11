@@ -7,9 +7,8 @@
  * the fixed `.some()` behavior: delete only when the target is among the user's
  * own domains.
  */
-import { describe, expect, test, jest, beforeEach } from '@jest/globals';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { describe, expect, test, beforeEach, vi } from 'vitest';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';

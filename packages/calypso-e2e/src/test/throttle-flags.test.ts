@@ -1,5 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi, type MockInstance } from 'vitest';
 import * as teamcity from '../lib/teamcity';
 import {
 	activeThrottleForUrl,
@@ -27,11 +26,11 @@ import {
 } from '../lib/throttle-flags';
 import type { ThrottleId } from '../lib/throttle-flags';
 
-let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
-let appendOwnBuildLog: jest.SpiedFunction< typeof teamcity.appendOwnBuildLog >;
-let fetchBuildLog: jest.SpiedFunction< typeof teamcity.fetchBuildLog >;
-let fetchBuildsByTag: jest.SpiedFunction< typeof teamcity.fetchBuildsByTag >;
-let warn: jest.SpiedFunction< typeof console.warn >;
+let tagOwnBuild: MockInstance< typeof teamcity.tagOwnBuild >;
+let appendOwnBuildLog: MockInstance< typeof teamcity.appendOwnBuildLog >;
+let fetchBuildLog: MockInstance< typeof teamcity.fetchBuildLog >;
+let fetchBuildsByTag: MockInstance< typeof teamcity.fetchBuildsByTag >;
+let warn: MockInstance< typeof console.warn >;
 
 const NOW = 1_000_000;
 

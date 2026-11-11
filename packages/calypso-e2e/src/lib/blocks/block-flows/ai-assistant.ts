@@ -26,6 +26,9 @@ const TIMEOUT = envVariables.TEST_ON_ATOMIC ? 30 * 1000 : 15 * 1000;
 /**it com
  * Represents the flow of using the AI Assistant block.
  */
+/**
+ *
+ */
 export class AIAssistantFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 	private validationData: ValidationData;

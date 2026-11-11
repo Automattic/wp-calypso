@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import vm from 'vm';
-import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import envVariables, {
 	ATOMIC_VARIATIONS,
 	MIXED_RUN_WORKERS,

@@ -1,5 +1,4 @@
-import { afterEach, describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { LoginPage } from '../../../lib/pages/login-page';
 import type { Page, Response } from 'playwright';
 

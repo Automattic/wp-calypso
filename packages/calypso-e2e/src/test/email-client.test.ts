@@ -1,6 +1,5 @@
-import { describe, expect, test, jest } from '@jest/globals';
 import { Message } from 'mailosaur/lib/models';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { EmailClient } from '../email-client';
 import { SecretsManager, Secrets } from '../secrets';
 

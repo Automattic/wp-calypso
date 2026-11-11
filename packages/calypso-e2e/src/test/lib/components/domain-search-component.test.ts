@@ -1,5 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import * as teamcity from '../../../lib/teamcity';
 import {

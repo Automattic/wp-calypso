@@ -1,8 +1,7 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
 	appendOwnBuildLog,
 	fetchBuildLog,
@@ -126,9 +125,9 @@ describe( 'fetchBuildsByTag', () => {
 
 	test( 'a refused lookup is reported, not read as no throttle', async () => {
 		writeProperties( completeProperties() );
-		vi
-			.spyOn( globalThis, 'fetch' )
-			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
+		vi.spyOn( globalThis, 'fetch' ).mockResolvedValue(
+			new Response( 'Access denied', { status: 403 } )
+		);
 
 		// A credential that may not query other builds must not look like a quiet day.
 		await expect( fetchBuildsByTag( 'throttle-signup', { sinceMs: 0 } ) ).rejects.toThrow( '403' );
@@ -140,9 +139,9 @@ describe( 'fetchBuildsByTag', () => {
 
 	test( 'a refused log read is reported, not read as an empty log', async () => {
 		writeProperties( completeProperties() );
-		vi
-			.spyOn( globalThis, 'fetch' )
-			.mockResolvedValue( new Response( 'Access denied', { status: 401 } ) );
+		vi.spyOn( globalThis, 'fetch' ).mockResolvedValue(
+			new Response( 'Access denied', { status: 401 } )
+		);
 
 		await expect( fetchBuildLog( 11 ) ).rejects.toThrow( '401' );
 	} );
@@ -179,9 +178,9 @@ describe( 'tagOwnBuild', () => {
 		const encoded = Buffer.from( `TeamCityBuildId=18847887:${ PASSWORD }` ).toString( 'base64' );
 		// A rejection carrying both the raw and the derived credential: TeamCity
 		// masks neither in a log line written by us.
-		vi
-			.spyOn( globalThis, 'fetch' )
-			.mockRejectedValue( new Error( `connect ECONNREFUSED (basic ${ encoded }, ${ PASSWORD })` ) );
+		vi.spyOn( globalThis, 'fetch' ).mockRejectedValue(
+			new Error( `connect ECONNREFUSED (basic ${ encoded }, ${ PASSWORD })` )
+		);
 
 		const consoleSpies = ( [ 'log', 'warn', 'error', 'info', 'debug' ] as const ).map( ( method ) =>
 			vi.spyOn( console, method ).mockImplementation( () => undefined )
@@ -212,9 +211,9 @@ describe( 'tagOwnBuild', () => {
 
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
 		writeProperties( completeProperties() );
-		vi
-			.spyOn( globalThis, 'fetch' )
-			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
+		vi.spyOn( globalThis, 'fetch' ).mockResolvedValue(
+			new Response( 'Access denied', { status: 403 } )
+		);
 
 		await expect( tagOwnBuild( 'throttle-signup-123' ) ).resolves.toBe( 403 );
 	} );
@@ -248,9 +247,9 @@ describe( 'appendOwnBuildLog', () => {
 	test( 'a failing request logs nothing, so no derived credential can leak', async () => {
 		writeProperties( completeProperties() );
 		const encoded = Buffer.from( `TeamCityBuildId=18847887:${ PASSWORD }` ).toString( 'base64' );
-		vi
-			.spyOn( globalThis, 'fetch' )
-			.mockRejectedValue( new Error( `connect ECONNREFUSED (basic ${ encoded }, ${ PASSWORD })` ) );
+		vi.spyOn( globalThis, 'fetch' ).mockRejectedValue(
+			new Error( `connect ECONNREFUSED (basic ${ encoded }, ${ PASSWORD })` )
+		);
 
 		const consoleSpies = ( [ 'log', 'warn', 'error', 'info', 'debug' ] as const ).map( ( method ) =>
 			vi.spyOn( console, method ).mockImplementation( () => undefined )
@@ -267,9 +266,9 @@ describe( 'appendOwnBuildLog', () => {
 
 	test( 'a non-200 response is reported as a status, not thrown', async () => {
 		writeProperties( completeProperties() );
-		vi
-			.spyOn( globalThis, 'fetch' )
-			.mockResolvedValue( new Response( 'Access denied', { status: 403 } ) );
+		vi.spyOn( globalThis, 'fetch' ).mockResolvedValue(
+			new Response( 'Access denied', { status: 403 } )
+		);
 
 		await expect( appendOwnBuildLog( 'a line' ) ).resolves.toBe( 403 );
 	} );
