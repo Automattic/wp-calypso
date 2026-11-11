@@ -80,8 +80,7 @@ ENV COMMIT_SHA=$commit_sha
 COPY --link . /calypso/
 
 RUN BUILD_TRANSLATION_CHUNKS=false yarn run build-packages:web \
-	&& NODE_ENV=production yarn build-client \
-	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
+	&& NODE_ENV=production yarn build-client
 
 ###################
 # Publish only the cache data. The main app build should copy these directories

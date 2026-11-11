@@ -23,6 +23,7 @@ import usePaymentRiskNotice from 'calypso/a8c-for-agencies/components/payment-ri
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
+import { getFeatureName } from 'calypso/dashboard/agency/amplify/constants';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -233,12 +234,10 @@ const useMainMenuItems = ( path: string ) => {
 							icon: megaphone,
 							path: A4A_AMPLIFY_LINK,
 							link: A4A_AMPLIFY_LINK,
-							title: translate( 'Amplify' ),
-							badge: translate( 'Beta' ),
+							title: getFeatureName(),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
 							},
-							withChevron: true,
 						},
 					]
 				: [] ),

@@ -5,7 +5,7 @@ import { monetizeSubscriptionsQuery, userPurchasesQuery } from '@automattic/api-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import AccountSettingsClose from '../main';
 
 describe( 'AccountSettingsClose', () => {

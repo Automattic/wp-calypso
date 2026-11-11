@@ -31,6 +31,7 @@ jest.mock( '../conversation-list', () => ( {
 		items: { key: string }[];
 		unreadCount: number;
 		selectedKey?: string;
+		followFocus: boolean;
 		onSelect: ( item: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
 		onSortChange: ( sort: string ) => void;
@@ -41,6 +42,7 @@ jest.mock( '../conversation-list', () => ( {
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
+			<p>Follows focus: { props.followFocus ? 'yes' : 'no' }</p>
 			{ props.markAllCount > 0 && (
 				<button onClick={ props.onMarkAllRead }>Mark { props.markAllCount } as read</button>
 			) }
@@ -118,10 +120,12 @@ let replyConversations: ( uri: string ) => object;
 let markReadStatus: number;
 let markReadBodies: { counts: Record< string, number > }[];
 
-const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
-	renderWithProvider( <ConversationsInbox { ...props } />, {
-		queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ),
-	} );
+let queryClient: QueryClient | undefined;
+
+const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) => {
+	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return renderWithProvider( <ConversationsInbox { ...props } />, { queryClient } );
+};
 
 // The list loads asynchronously, so wait for a row before acting on it.
 const findRow = ( key: string ) => screen.findByRole( 'button', { name: key } );
@@ -166,7 +170,19 @@ beforeEach( () => {
 		} );
 } );
 
-afterEach( () => nock.cleanAll() );
+afterEach( async () => {
+	// A refetch still in flight would otherwise land in the next test's requests.
+	const client = queryClient;
+	queryClient = undefined;
+	if ( client ) {
+		await waitFor( () => {
+			if ( client.isFetching() ) {
+				throw new Error( 'Still fetching' );
+			}
+		} );
+	}
+	nock.cleanAll();
+} );
 
 const markedNoteIds = () =>
 	markReadBodies.map( ( { counts } ) => Object.keys( counts ).map( Number ) );
@@ -178,6 +194,19 @@ describe( 'ConversationsInbox', () => {
 		await waitFor( () =>
 			expect( page.replace ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' )
 		);
+	} );
+
+	it( 'moves the focus with the selection only once the reader opens a conversation', async () => {
+		const user = userEvent.setup();
+		renderInbox();
+
+		await findRow( '10-p-100' );
+		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
+		expect( screen.getByText( 'Follows focus: no' ) ).toBeVisible();
+
+		await user.keyboard( 'j' );
+
+		expect( screen.getByText( 'Follows focus: yes' ) ).toBeVisible();
 	} );
 
 	it( 'selects the conversation from the URL without replacing it', async () => {

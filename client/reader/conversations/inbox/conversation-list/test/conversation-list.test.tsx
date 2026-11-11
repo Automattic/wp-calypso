@@ -1,8 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
+
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
 import { useState } from 'react';
 import {
 	adaptReadConversation,
@@ -55,6 +58,7 @@ function ControlledList( {
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
 			openOnFocus
+			followFocus
 			markAllCount={ 2 }
 			onMarkAllRead={ jest.fn() }
 			onSelect={ jest.fn() }
@@ -116,6 +120,7 @@ describe( 'ConversationList', () => {
 		expect( rows[ 0 ] ).not.toHaveTextContent( 'You commented' );
 		expect( rows[ 0 ] ).toHaveTextContent( 'My comment' );
 		expect( rows[ 0 ] ).toHaveTextContent( '3 new' );
+		expect( rows[ 0 ] ).not.toHaveClass( 'is-unread' );
 		expect( rows[ 1 ] ).not.toHaveTextContent( 'new' );
 
 		await user.click( rows[ 1 ] );
@@ -133,6 +138,13 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
 		expect( screen.getByText( 'You haven’t commented anywhere yet' ) ).toBeVisible();
+	} );
+
+	it( 'shows placeholder rows while the first page loads', () => {
+		renderList( { items: [], isLoading: true } );
+
+		expect( speak ).toHaveBeenCalledWith( 'Loading conversations…' );
+		expect( screen.queryByText( 'Conversations will appear here' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'waits for the next page instead of showing an empty state', () => {
@@ -220,6 +232,34 @@ describe( 'ConversationList', () => {
 		rerender( { selectedKey: conversations[ 1 ].key } );
 
 		expect( screen.getByRole( 'searchbox' ) ).toHaveFocus();
+	} );
+
+	it( 'does not take the focus when the inbox selects a conversation itself', () => {
+		const { rerender } = renderList( { selectedKey: conversations[ 0 ].key, followFocus: false } );
+
+		rerender( { selectedKey: conversations[ 1 ].key, followFocus: false } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveFocus();
+	} );
+
+	it( 'keeps the focus in the list when a tab switch remounts it', () => {
+		const { rerender } = renderList( { tab: 'all' } );
+
+		screen.getByRole( 'button', { name: /^Read post/ } ).focus();
+		rerender( { tab: 'unread' } );
+
+		expect( document.querySelector( '.conversations-inbox__list' ) ).toHaveFocus();
+	} );
+
+	it( 'leaves the focus alone on a tab switch when the list no longer had it', () => {
+		const { rerender } = renderList( { tab: 'all' } );
+
+		const row = screen.getByRole( 'button', { name: /^Read post/ } );
+		row.focus();
+		row.blur();
+		rerender( { tab: 'unread' } );
+
+		expect( document.body ).toHaveFocus();
 	} );
 
 	it( 'does not take the focus on the first render', () => {

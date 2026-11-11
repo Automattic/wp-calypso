@@ -1,27 +1,15 @@
 import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
-import AmplifySidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/amplify';
-import AmplifyOverview from './primary/overview';
-import AmplifyReports from './primary/reports';
+import MainSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/main';
+import ProspectReports from './primary/prospect-reports';
 
-export const amplifyOverviewContext: Callback = ( context, next ) => {
+export const amplifyContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
-			<PageViewTracker title="Amplify > Overview" path={ context.path } />
-			<AmplifyOverview />
+			<PageViewTracker title="Prospect reports" path={ context.path } />
+			<ProspectReports />
 		</>
 	);
-	context.secondary = <AmplifySidebar path={ context.path } />;
-	next();
-};
-
-export const amplifyReportsContext: Callback = ( context, next ) => {
-	context.primary = (
-		<>
-			<PageViewTracker title="Amplify > Reports" path={ context.path } />
-			<AmplifyReports />
-		</>
-	);
-	context.secondary = <AmplifySidebar path={ context.path } />;
+	context.secondary = <MainSidebar path={ context.path } />;
 	next();
 };
