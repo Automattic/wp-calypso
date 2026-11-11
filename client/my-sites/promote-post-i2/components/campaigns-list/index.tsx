@@ -65,6 +65,7 @@ export default function CampaignsList( props: Props ) {
 				status="is-error"
 				icon="mention"
 				showDismiss={ false }
+				theme="light"
 			>
 				{ fetchErrorListMessage }
 			</Notice>

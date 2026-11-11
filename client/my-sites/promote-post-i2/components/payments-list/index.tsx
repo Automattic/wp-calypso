@@ -97,6 +97,7 @@ export default function PaymentsList( props: Props ) {
 				status="is-error"
 				icon="mention"
 				showDismiss={ false }
+				theme="light"
 			>
 				{ fetchErrorListMessage }
 			</Notice>
