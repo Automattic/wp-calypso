@@ -4,11 +4,7 @@ import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch, initLogger } from '../logger';
-import {
-	getLeafRouteId,
-	normalizeRouteId,
-	startPerformanceTracking,
-} from '../performance-tracking';
+import { normalizeRouteId, startPerformanceTracking } from '../performance-tracking';
 import { createAgencyRoutes } from './agency';
 import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
@@ -143,7 +139,7 @@ export const getRouter = ( config: AppConfig ) => {
 	// absent entirely on a cold load of the crashing URL.
 	let previousRouteId: string | undefined;
 	router.subscribe( 'onBeforeLoad', ( { toLocation } ) => {
-		const routeId = getLeafRouteId( router, toLocation.pathname );
+		const routeId = router.getMatchedRoutes( toLocation.pathname )[ 0 ].at( -1 )?.id;
 		if ( ! routeId ) {
 			return;
 		}

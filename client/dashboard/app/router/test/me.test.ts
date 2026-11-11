@@ -240,9 +240,10 @@ test.each( [ appsRedirectRoute, getAppsRedirectRoute ] )(
 
 		expect( () => beforeLoad() ).toThrow(
 			expect.objectContaining( {
-				isRedirect: true,
-				href: 'https://apps.wordpress.com/',
-				reloadDocument: true,
+				options: expect.objectContaining( {
+					href: 'https://apps.wordpress.com/',
+					reloadDocument: true,
+				} ),
 			} )
 		);
 	}
@@ -252,7 +253,7 @@ function getRedirectTarget( beforeLoad: unknown, args: unknown ) {
 	try {
 		( beforeLoad as ( args: unknown ) => void )( args );
 	} catch ( error ) {
-		return ( error as { to?: string } ).to;
+		return ( error as { options?: { to?: string } } ).options?.to;
 	}
 }
 

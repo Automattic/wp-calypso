@@ -29,7 +29,6 @@ import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
 import { useSyncOmnibarSite } from '../omnibar/site';
-import { getLeafRouteId } from '../performance-tracking';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
@@ -118,7 +117,9 @@ function Root() {
 		if ( isNavigating ) {
 			slowTimeout = setTimeout( () => setNavigationTime( 'slow' ), SLOW_THRESHOLD_MS );
 			verySlowTimeout = setTimeout( () => {
-				const leafRouteId = getLeafRouteId( router, router.state.location.pathname );
+				const leafRouteId = router
+					.getMatchedRoutes( router.state.location.pathname )[ 0 ]
+					.at( -1 )?.id;
 				if ( leafRouteId ) {
 					bumpStat(
 						'hd-very-slow-nav',
