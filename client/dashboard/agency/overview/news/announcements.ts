@@ -1,10 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
+import JetpackLogo from 'calypso/assets/images/a8c-for-agencies/events/jetpack-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import VipLogo from 'calypso/assets/images/a8c-for-agencies/events/vip-logo.svg';
 import WooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
 import WordPressLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
-import JetpackLogo from 'calypso/assets/images/icons/jetpack-app-logo.svg';
 import type {
 	AgencyAnnouncement,
 	AgencyAnnouncementCta,
