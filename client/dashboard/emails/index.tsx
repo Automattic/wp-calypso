@@ -1,4 +1,4 @@
-import { DomainSubtype } from '@automattic/api-core';
+import { DomainSubtype, EmailProvider } from '@automattic/api-core';
 import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -14,6 +14,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../componen
 import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import DkimMissingNotices from './components/dkim-missing-notices';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
 import EmptyDomainsState from './empty-domains-state';
@@ -76,6 +77,10 @@ function Emails() {
 				unusedCount: unusedMailboxesByDomain.get( d.domain ) ?? 0,
 			} ) );
 	}, [ domainsWithEmails, allEmailAccounts ] );
+
+	const hasTitanAccount = ( allEmailAccounts ?? [] ).some(
+		( account ) => account.account_type === EmailProvider.Titan
+	);
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
@@ -188,6 +193,7 @@ function Emails() {
 				/>
 			}
 		>
+			<DkimMissingNotices enabled={ hasTitanAccount } />
 			<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
 			{ renderContent() }
 		</PageLayout>

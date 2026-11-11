@@ -5,6 +5,7 @@ import {
 	fetchMailboxes,
 	fetchTitanControlPanelAutoLoginUrl,
 	fetchTitanDkimRecord,
+	fetchTitanDkimStatus,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { userMailboxesQuery } from './me-mailboxes';
@@ -35,6 +36,31 @@ export const titanDkimRecordQuery = ( domain: string ) =>
 		staleTime: Infinity,
 		refetchOnWindowFocus: false,
 		retry: false,
+	} );
+
+/**
+ * Reads the server's cached DKIM checks. A domain without a cached result comes back as
+ * `unknown` while the server checks it in the background.
+ */
+export const titanDkimStatusQuery = () =>
+	queryOptions( {
+		queryKey: [ 'titan-dkim-status' ],
+		queryFn: () => fetchTitanDkimStatus(),
+		refetchOnWindowFocus: false,
+		retry: false,
+	} );
+
+/**
+ * Queues a new check for every domain whose DKIM record is missing. The response is the
+ * cached list, so the new results only show up in a later `titanDkimStatusQuery` fetch.
+ */
+export const titanDkimStatusRecheckMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'titan-dkim-status-recheck' },
+		mutationFn: () => fetchTitanDkimStatus( { force: true } ),
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( titanDkimStatusQuery().queryKey, data );
+		},
 	} );
 
 export const createTitanMailboxMutation = () => {

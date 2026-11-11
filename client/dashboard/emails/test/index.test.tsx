@@ -77,6 +77,17 @@ function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: E
 		.get( '/rest/v1/me/mailboxes' )
 		.query( ( q ) => q.include_all_managed_domains === 'true' )
 		.reply( 200, accounts );
+
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/emails/titan/dkim-status' )
+		.reply( 200, [
+			{
+				domain: DOMAIN,
+				status: 'missing',
+				checked_at: '2026-11-10T21:00:00+00:00',
+				record: { name: `titan1._domainkey.${ DOMAIN }`, type: 'TXT', data: 'v=DKIM1; k=rsa' },
+			},
+		] );
 }
 
 describe( '<Emails>', () => {
@@ -138,6 +149,30 @@ describe( '<Emails>', () => {
 		expect(
 			await screen.findByText( 'You have 2 free mailboxes waiting to be set up.' )
 		).toBeVisible();
+	} );
+
+	test( 'shows the missing DKIM record notice for a Professional Email domain', async () => {
+		const titanAccount = {
+			account_type: EmailProvider.Titan,
+			maximum_mailboxes: 1,
+			warnings: [],
+			domains: [ { domain: DOMAIN, is_primary: true } ],
+			emails: [
+				{ mailbox: 'hello', domain: DOMAIN, email_type: 'email', role: 'standard', warnings: [] },
+			],
+		} as unknown as EmailAccount;
+		mockApi( { domains: [ nonOwnedDomain ], accounts: [ titanAccount ] } );
+		render( <Emails /> );
+
+		expect( await screen.findByText( `Add the DKIM record for ${ DOMAIN }` ) ).toBeVisible();
+	} );
+
+	test( 'does not check DKIM records without a Professional Email domain', async () => {
+		const dkimStatus = mockApi( { domains: [ nonOwnedDomain ], accounts: [ forwardingAccount ] } );
+		render( <Emails /> );
+
+		expect( await screen.findByText( `yea@${ DOMAIN }` ) ).toBeVisible();
+		expect( dkimStatus.isDone() ).toBe( false );
 	} );
 
 	test( 'opens the DNS records from a Titan mailbox row action', async () => {
