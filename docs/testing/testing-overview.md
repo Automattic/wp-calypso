@@ -53,11 +53,13 @@ This test configuration contains unit tests for the packages in the `packages` t
 > yarn run test-packages:jest [ path ]
 > # run the packages on Vitest; arguments are Vitest's, for example a path
 > yarn run test-packages:vitest [ path ]
+> # watch the packages on Vitest
+> yarn run test-packages:vitest --watch [ path ]
 > # run one package's tests on whichever runner it uses, if it has a `test` script
 > yarn workspace <package name> test
 ```
 
-`yarn run test-packages` passes any arguments to Jest only.
+`yarn run test-packages` passes any arguments to Jest only, so `yarn run test-packages:watch` watches only the Jest packages.
 
 ## Integration tests
 
