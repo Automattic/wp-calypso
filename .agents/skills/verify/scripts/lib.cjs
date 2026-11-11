@@ -62,7 +62,7 @@ async function saveState( context, account ) {
 		}
 	}
 	fs.mkdirSync( STATE_DIR, { recursive: true, mode: 0o700 } );
-	// Other runs read this file, so it is replaced in one step: none may see it half-written.
+	// Renamed into place, so a run reading the file at the same moment never sees it half-written.
 	const temporaryPath = `${ statePath( account ) }.${ process.pid }.tmp`;
 	fs.writeFileSync( temporaryPath, JSON.stringify( state ), { mode: 0o600 } );
 	fs.renameSync( temporaryPath, statePath( account ) );
@@ -110,9 +110,10 @@ async function logInTestAccount( account ) {
 	try {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		// Not authenticate(): it locks the account with a directory that a killed login leaves
-		// behind, and every later login then waits on it. A rejected password navigates too,
-		// so wait to leave the login page before saving the session.
+		// The same steps as TestAccount.authenticate() on a first login, without its login lock:
+		// a killed login leaves that lock behind, and every later login waits on it forever.
+		// logInViaLoginPage() also returns when the password is rejected, so wait to leave the
+		// login page, as its confirmLoggedIn() does, before saving the session.
 		await testAccount.logInViaLoginPage( page );
 		await page.waitForURL( ( url ) => ! isLoginUrl( url.toString() ), {
 			waitUntil: 'commit',
