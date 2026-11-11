@@ -34,29 +34,6 @@ Use the `render()` function from `client/dashboard/test-utils.tsx`, which will r
 - It only reads a param or search value: pass the value in as a prop and test the component with `render()`.
 - It reads or writes route search, or builds links from route objects: build the real route tree and a test router, as `domains/dataviews/test/field-domain-name.test.tsx` does. Prefer this over mocking `app/router/*` modules, whose mocks break whenever the code reads a route object they don't define.
 
-### Browser History and List Paging
-
-To test where Back lands, or whether a change adds a history entry or replaces one, give a test router a history with more than one entry and go back through the router. The last entry is the current location:
-
-```tsx
-const router = createRouter( {
-	routeTree: rootRoute.addChildren( [ homeRoute, listRoute ] ),
-	history: createMemoryHistory( { initialEntries: [ '/', '/list?page=2' ] } ),
-} );
-
-render( <RouterProvider router={ router } /> );
-
-// …act on the list…
-
-act( () => router.history.back() );
-
-expect( await screen.findByRole( 'heading', { name: 'Home' } ) ).toBeVisible();
-```
-
-Assert on what the previous entry renders, and on `router.state.location` when the URL itself is the behavior. `components/dataviews/test/dataviews.test.tsx` does both for a list that keeps its page in the URL.
-
-When the test builds a DataViews `view` by hand, include `search: ''`. Without it, the search control calls `onChangeView` once on mount to add it, which shows up as a view change the user never made, and can add a history entry when `onChangeView` navigates.
-
 ### Mocking Network Requests
 
 Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.
