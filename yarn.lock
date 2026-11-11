@@ -733,6 +733,8 @@ __metadata:
     terser-webpack-plugin: "npm:^5.6.1"
     thread-loader: "npm:^4.0.4"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack-cli: "npm:^7.2.3"
     yargs: "npm:^17.7.2"
   peerDependencies:
