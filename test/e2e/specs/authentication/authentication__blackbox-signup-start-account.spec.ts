@@ -1,5 +1,9 @@
 import { DataHelper, RestAPIClient, UserSignupPage } from '@automattic/calypso-e2e';
-import { useBlackboxTestKeyForCollect, waitForCollectData } from '../../lib/blackbox-test-key';
+import {
+	trackBlackboxCollectPosts,
+	useBlackboxTestKeyForCollect,
+	waitForCollectData,
+} from '../../lib/blackbox-test-key';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 import type { NewUserResponse } from '@automattic/calypso-e2e';
@@ -90,6 +94,63 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 		await test.step( 'Then the account is created', async function () {
 			expect( newUserDetails.body.user_id ).toBeTruthy();
 			expect( newUserDetails.body.bearer_token ).toBeTruthy();
+		} );
+	} );
+
+	test( 'As a new user, Blackbox does not collect until the email surface is active', async ( {
+		page,
+	}, workerInfo ) => {
+		test.skip(
+			workerInfo.project.name !== 'authentication',
+			'The authentication project is the only one that has the right browser settings for authentication tests'
+		);
+
+		await test.step( 'Given Blackbox collect uses the public allow test key', async function () {
+			await useBlackboxTestKeyForCollect( page, 'allow' );
+		} );
+
+		const collects = trackBlackboxCollectPosts( page );
+
+		await test.step( 'When I visit signup and stay on the social-first initial screen', async function () {
+			await new UserSignupPage( page ).visit( { path: 'account' } );
+
+			const continueWithEmailButton = page.getByRole( 'button', {
+				name: /continue with email/i,
+			} );
+			try {
+				await continueWithEmailButton.waitFor( { state: 'visible', timeout: 30 * 1000 } );
+			} catch {
+				test.skip(
+					true,
+					'Continue with email was not shown; email-first signup may collect on the initial screen.'
+				);
+			}
+
+			await expect.poll( () => collects.getCount(), { timeout: 5 * 1000 } ).toBe( 0 );
+		} );
+
+		await test.step( 'And I reveal the email form', async function () {
+			const collectResponse = page.waitForResponse(
+				( response ) =>
+					response.request().method() === 'POST' &&
+					response.url().includes( 'blackbox-api.wp.com/v1/collect' ),
+				{ timeout: 60 * 1000 }
+			);
+
+			const continueWithEmailButton = page.getByRole( 'button', {
+				name: /continue with email/i,
+			} );
+			await continueWithEmailButton.click();
+			await page
+				.locator( 'input[name="email"]:visible' )
+				.first()
+				.waitFor( { state: 'visible', timeout: 30 * 1000 } );
+
+			await collectResponse;
+		} );
+
+		await test.step( 'Then the first collect happens on the active email surface', async function () {
+			expect( collects.getCount() ).toBe( 1 );
 		} );
 	} );
 
