@@ -163,7 +163,7 @@ export const ALL_TIERS: TierItem[] = [
 		subheading: sprintf(
 			/* translators: %d is the number of Prospect Reports an agency can create each month */
 			__(
-				'Directory inclusion, %d Prospect Reports per month, and early access to product & feature improvements'
+				'Directory inclusion, %d Prospect Reports a month, and early access to product & feature improvements'
 			),
 			getReportAllowance( 'agency-partner' )
 		),
@@ -213,7 +213,7 @@ export const ALL_TIERS: TierItem[] = [
 		heading: __( '3 additional benefits unlocked' ),
 		subheading: sprintf(
 			/* translators: %d is the number of Prospect Reports an agency can create each month */
-			__( 'Co-Marketing, qualified leads, partner manager, %d Prospect Reports per month & more' ),
+			__( 'Co-Marketing, qualified leads, partner manager, %d Prospect Reports a month & more' ),
 			getReportAllowance( 'pro-agency-partner' )
 		),
 		progressCardDescription: __(
@@ -265,7 +265,7 @@ export const ALL_TIERS: TierItem[] = [
 		heading: __( '2 additional benefits unlocked' ),
 		subheading: sprintf(
 			/* translators: %d is the number of Prospect Reports an agency can create each month */
-			__( 'Higher VIP referral commissions, annual credits, and %d Prospect Reports per month' ),
+			__( 'Higher VIP referral commissions, annual credits, and %d Prospect Reports a month' ),
 			getReportAllowance( 'vip-pro-agency-partner' )
 		),
 		progressCardDescription: __(
