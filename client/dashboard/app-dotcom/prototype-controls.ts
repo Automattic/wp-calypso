@@ -105,7 +105,7 @@ interface OmnibarOffer {
 }
 
 const GEM_SVG =
-	'<svg class="untangling-nudge-gem" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9397 9.87999L15.4197 6.06999L15.3597 6.00999C15.2897 5.93999 15.1997 5.89999 15.0997 5.89999H8.87973C8.77973 5.89999 8.68973 5.93999 8.61973 6.00999L5.05973 9.87999C4.93973 10.01 4.93973 10.21 5.05973 10.34L11.5397 17.86C11.6497 17.99 11.8197 18.07 11.9997 18.07C12.1797 18.07 12.3397 17.99 12.4597 17.86L18.9397 10.34C19.0597 10.21 19.0497 10.01 18.9397 9.87999ZM15.4097 7.53999L17.3297 9.63999H15.1697L15.4097 7.53999ZM14.4297 6.83999L14.1097 9.63999H10.2897L9.64973 6.83999H14.4297ZM8.68973 7.42999L9.19973 9.63999H6.66973L8.68973 7.42999ZM6.61973 10.6H9.42973L10.8397 15.49L6.61973 10.6ZM12.0397 15.87L10.5297 10.6H13.8597L12.0397 15.87ZM14.9697 10.6H17.3797L13.3697 15.24L14.9697 10.6Z"/></svg>';
+	'<svg class="untangling-nudge-gem" viewBox="4 5 16 14" aria-hidden="true"><path d="M18.9397 9.87999L15.4197 6.06999L15.3597 6.00999C15.2897 5.93999 15.1997 5.89999 15.0997 5.89999H8.87973C8.77973 5.89999 8.68973 5.93999 8.61973 6.00999L5.05973 9.87999C4.93973 10.01 4.93973 10.21 5.05973 10.34L11.5397 17.86C11.6497 17.99 11.8197 18.07 11.9997 18.07C12.1797 18.07 12.3397 17.99 12.4597 17.86L18.9397 10.34C19.0597 10.21 19.0497 10.01 18.9397 9.87999ZM15.4097 7.53999L17.3297 9.63999H15.1697L15.4097 7.53999ZM14.4297 6.83999L14.1097 9.63999H10.2897L9.64973 6.83999H14.4297ZM8.68973 7.42999L9.19973 9.63999H6.66973L8.68973 7.42999ZM6.61973 10.6H9.42973L10.8397 15.49L6.61973 10.6ZM12.0397 15.87L10.5297 10.6H13.8597L12.0397 15.87ZM14.9697 10.6H17.3797L13.3697 15.24L14.9697 10.6Z"/></svg>';
 
 const offerCache = new Map< string, Promise< OmnibarOffer | null > >();
 
@@ -221,53 +221,6 @@ function ensureOmnibarNudge() {
 	} );
 }
 
-/**
- * wp-admin's site-name dropdown reads Visit Site / Dashboard / My Site /
- * Stats / Plan; the masterbar's stops at Dashboard. Clone the Dashboard row
- * into a My Site row pointing at the untangled My Site page so both dropdowns
- * match.
- */
-function ensureMySiteMenuItem() {
-	const bar = document.getElementById( 'wpcom-omnibar' );
-	const siteLink = bar?.querySelector< HTMLAnchorElement >( 'a.masterbar__item-my-site' ) ?? null;
-	if ( ! siteLink ) {
-		return;
-	}
-	let origin = '';
-	try {
-		origin = new URL( siteLink.href ).origin;
-	} catch {
-		return;
-	}
-	if ( ! isLocalWpAdminOrigin( origin ) ) {
-		return;
-	}
-	const wrapper = siteLink.closest( '.masterbar__item-wrapper' ) ?? siteLink.parentElement;
-	if ( ! wrapper || wrapper.querySelector( '.untangling-my-site-subitem' ) ) {
-		return;
-	}
-	const dashboardItem = Array.from( wrapper.querySelectorAll< HTMLAnchorElement >( 'a' ) ).find(
-		( anchor ) => anchor !== siteLink && anchor.textContent?.trim() === 'Dashboard'
-	);
-	if ( ! dashboardItem ) {
-		return;
-	}
-	const row = dashboardItem.closest( 'li' ) ?? dashboardItem;
-	const clone = row.cloneNode( true ) as HTMLElement;
-	clone.classList.add( 'untangling-my-site-subitem' );
-	const cloneLink = clone.matches( 'a' )
-		? ( clone as HTMLAnchorElement )
-		: ( clone.querySelector( 'a' ) as HTMLAnchorElement | null );
-	if ( ! cloneLink ) {
-		return;
-	}
-	cloneLink.textContent = 'My Site';
-	cloneLink.href =
-		siteWpAdminLandingUrl( `${ origin }/wp-admin/` ) ??
-		`${ origin }/wp-admin/admin.php?page=untangling-mysite`;
-	row.insertAdjacentElement( 'afterend', clone );
-}
-
 // On a remote MSD the omnibar's Studio-backed links (updates, comments,
 // Dashboard rows fed by the mock admin_url) point at unreachable localhost
 // origins — collapse them onto the site's Playground stand-in.
@@ -294,7 +247,6 @@ function watchOmnibar() {
 	// The masterbar mounts and re-renders per route; keep the pill in step.
 	const sync = () => {
 		ensureOmnibarNudge();
-		ensureMySiteMenuItem();
 		rewriteLocalAdminLinks();
 	};
 	const observer = new MutationObserver( sync );

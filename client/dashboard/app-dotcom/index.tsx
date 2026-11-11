@@ -91,19 +91,27 @@ const paginatedSitesQueryWithMocks = ( fetchSiteOptions?: FetchPaginatedSitesOpt
 	};
 };
 
-// The mock sites each own their free wpcom subdomain; blogger persona shows
-// only those, developer prepends them to the account's real domains.
+// Each mock site owns its free wpcom subdomain, paid ones add their custom
+// domain; the rows are built after hydration so they follow each Studio
+// site's live plan. Blogger persona shows only those, developer prepends
+// them to the account's real domains.
 const domainsQueryWithMocks = () => {
 	const query = domainsQuery();
 	const baseQueryFn = query.queryFn as () => Promise< DomainSummary[] >;
-	const mockDomains = getMockDomains().filter( ( domain ) =>
-		mockSites.some( ( site ) => site.ID === domain.blog_id )
-	);
+	const mockDomains = async () => {
+		await hydrateMockBloggerSites();
+		return getMockDomains().filter( ( domain ) =>
+			mockSites.some( ( site ) => site.ID === domain.blog_id )
+		);
+	};
 	return {
 		...query,
 		queryFn: mocksOnly
-			? async () => mockDomains
-			: async () => [ ...mockDomains, ...( await baseQueryFn() ) ],
+			? mockDomains
+			: async () => {
+					const [ mocks, real ] = await Promise.all( [ mockDomains(), baseQueryFn() ] );
+					return [ ...mocks, ...real ];
+			  },
 	};
 };
 

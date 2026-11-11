@@ -18,12 +18,14 @@ import {
 import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import {
 	backup,
+	brush,
 	chartBar,
 	check,
 	chevronRight,
 	comment,
 	envelope,
 	external,
+	globe,
 	help,
 	image,
 	lockOutline,
@@ -36,6 +38,7 @@ import {
 	rss,
 	shield,
 	starFilled,
+	styles,
 	video,
 	wordpress,
 } from '@wordpress/icons';
@@ -51,7 +54,8 @@ import { SummaryButtonCardFooter } from '../../components/summary-button-card-fo
 import { Text } from '../../components/text';
 import SitePreview from '../site-preview';
 import {
-	getMockBloggerSite,
+	isAtomicTier,
+	useMockBloggerSite,
 	SOLO_BLOGGER_SITE_SLUG,
 	siteWpAdminLandingUrl,
 	wpAdminPageUrl,
@@ -269,7 +273,7 @@ function ActivityCard( {
 }
 
 function BackupCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	if ( tier === 'business' || tier === 'commerce' ) {
+	if ( isAtomicTier( tier ) ) {
 		return (
 			<OverviewCard
 				title="Last backup"
@@ -293,7 +297,7 @@ function BackupCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 }
 
 function ScanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	if ( tier === 'business' || tier === 'commerce' ) {
+	if ( isAtomicTier( tier ) ) {
 		return (
 			<OverviewCard
 				title="Last scan"
@@ -324,6 +328,11 @@ const TIER_PERFORMANCE: Record<
 		heading: 'Could be faster',
 		description: 'Your homepage takes 4.6 seconds to load on phones. See what to fix.',
 		intent: 'warning',
+	},
+	personal: {
+		heading: 'Looking good',
+		description: 'Your site loads quickly for most visitors.',
+		intent: 'success',
 	},
 	premium: {
 		heading: 'Looking good',
@@ -379,7 +388,7 @@ function PlanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 							<VStack spacing={ 4 }>
 								<StorageStat used="716 MB" max="1 GB" percent={ 70 } progressColor="alert-yellow" />
 								<Text variant="muted" lineHeight="16px" size={ 12 }>
-									Your photos are filling this fast. Paid plans start at 13 GB.
+									Your photos are filling this fast. Paid plans start at 6 GB.
 								</Text>
 							</VStack>
 						}
@@ -397,7 +406,25 @@ function PlanCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 						<VStack spacing={ 4 }>
 							<StorageStat used="118 MB" max="1 GB" percent={ 12 } />
 							<Text variant="muted" lineHeight="16px" size={ 12 }>
-								Photos and videos fill this fast. Paid plans start at 13 GB.
+								Photos and videos fill this fast. Paid plans start at 6 GB.
+							</Text>
+						</VStack>
+					}
+				/>
+			);
+		case 'personal':
+			return (
+				<OverviewCard
+					title="Plan"
+					icon={ wordpress }
+					heading="Personal"
+					description="Renews on March 14, 2027."
+					link={ `https://wordpress.com/plans/my-plan/${ site.slug }` }
+					bottom={
+						<VStack spacing={ 4 }>
+							<StorageStat used="1.4 GB" max="6 GB" percent={ 23 } />
+							<Text variant="muted" lineHeight="16px" size={ 12 }>
+								Premium includes 13 GB and all premium themes.
 							</Text>
 						</VStack>
 					}
@@ -534,6 +561,50 @@ function GrowPromoBanner( { site }: { site: Site } ) {
 	);
 }
 
+// Personal → Premium: the pitch is design and room, not reach — a Personal
+// site already has its domain and no ads; what it lacks is every premium
+// theme, the advanced design tools, and storage for the photos.
+function PremiumPromoBanner( { site }: { site: Site } ) {
+	const perks = [
+		{ icon: brush, label: 'All premium themes' },
+		{ icon: styles, label: 'Advanced design tools' },
+		{ icon: image, label: '13 GB of storage' },
+		{ icon: video, label: 'Upload 4K video' },
+	];
+
+	return (
+		<div className="blogger-overview-promo is-grow">
+			<HStack spacing={ 8 } justify="space-between" alignment="center" wrap>
+				<VStack spacing={ 4 } alignment="flex-start">
+					<h2 className="blogger-overview-promo__title">Make it look exactly how you imagined</h2>
+					<p className="blogger-overview-promo__description">
+						Premium gives you every premium theme, advanced design tools, and 13 GB of storage for
+						the photos that tell your story.
+					</p>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						href={ wpAdminPageUrl(
+							site.options?.admin_url,
+							'admin.php?page=untangling-mysite&ms=plan'
+						) }
+					>
+						Upgrade to Premium
+					</Button>
+				</VStack>
+				<div className="blogger-overview-promo__perks">
+					{ perks.map( ( perk ) => (
+						<span key={ perk.label } className="blogger-overview-promo__perk">
+							<Icon icon={ perk.icon } size={ 20 } />
+							{ perk.label }
+						</span>
+					) ) }
+				</div>
+			</HStack>
+		</div>
+	);
+}
+
 function MonetizePromoBanner( { site }: { site: Site } ) {
 	return (
 		<div className="blogger-overview-promo is-monetize">
@@ -572,6 +643,8 @@ function PromoBanner( { site, tier }: { site: Site; tier: BloggerTier } ) {
 	switch ( tier ) {
 		case 'free':
 			return <DomainPromoBanner site={ site } />;
+		case 'personal':
+			return <PremiumPromoBanner site={ site } />;
 		case 'premium':
 			return <GrowPromoBanner site={ site } />;
 		case 'business':
@@ -631,6 +704,23 @@ const TIER_ACTIVITY: Record< BloggerTier, ActivityItem[] > = {
 			icon: wordpress,
 			text: 'Created your site',
 			meta: '3 weeks ago',
+		},
+	],
+	personal: [
+		{
+			icon: pencil,
+			text: 'Published “Notes from the kitchen table”',
+			meta: 'Yesterday',
+		},
+		{
+			icon: globe,
+			text: 'Your domain is now connected',
+			meta: '3 days ago',
+		},
+		{
+			icon: image,
+			text: 'Uploaded 5 new photos',
+			meta: '5 days ago',
 		},
 	],
 	premium: [
@@ -805,7 +895,7 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const { setShowHelpCenter } = useHelpCenter();
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
-	const mock = getMockBloggerSite( siteSlug );
+	const mock = useMockBloggerSite( siteSlug );
 
 	if ( ! mock ) {
 		return null;
@@ -813,10 +903,9 @@ export default function BloggerSiteOverview( { siteSlug }: { siteSlug: string } 
 
 	const { site, tier } = mock;
 	const gridLayout = getGridLayout( { count: 4, isLargeViewport, isSmallViewport } );
-	const headerFields =
-		tier === 'business' || tier === 'commerce'
-			? 'WordPress 7.0.1 · PHP 8.3 · Hosted on WordPress.com'
-			: 'WordPress 7.0.1 · Hosted on WordPress.com';
+	const headerFields = isAtomicTier( tier )
+		? 'WordPress 7.0.1 · PHP 8.3 · Hosted on WordPress.com'
+		: 'WordPress 7.0.1 · Hosted on WordPress.com';
 
 	return (
 		<PageLayout

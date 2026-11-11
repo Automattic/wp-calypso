@@ -147,12 +147,13 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	/* The upsell glyph carries ~3px of intrinsic whitespace at 16px, so the
-	   icon-side padding and gap are smaller to read as visually even. */
+	/* The gem viewBox is cropped to the glyph (+1 unit), so the 16px box
+	   renders a ~14×12px diamond; icon-side padding is a touch smaller than
+	   the text side to read as visually even. */
 	gap: 4px;
 	height: 24px;
 	padding-block: 0;
-	padding-inline: 4px 8px;
+	padding-inline: 6px 8px;
 	border-radius: 4px;
 	background: var( --nudge-pill-bg );
 	box-shadow: inset 0 0 0 1px var( --nudge-pill-ring );

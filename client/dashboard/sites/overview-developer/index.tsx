@@ -40,7 +40,8 @@ import { Stat } from '../../components/stat';
 import { SummaryButtonCardFooter } from '../../components/summary-button-card-footer';
 import { Text } from '../../components/text';
 import {
-	getMockBloggerSite,
+	isAtomicTier,
+	useMockBloggerSite,
 	SOLO_BLOGGER_SITE_SLUG,
 	siteWpAdminLandingUrl,
 	wpAdminPageUrl,
@@ -85,6 +86,13 @@ const TIER_VITALS: Record< BloggerTier, Vital[] > = {
 		{ strapline: 'Cache hit rate', metric: '88%', description: 'edge cache' },
 		{ strapline: 'Visitors (7d)', metric: '214', description: '+3% week over week' },
 		{ strapline: 'Requests (7d)', metric: '3.1k', description: '+2% week over week' },
+	],
+	personal: [
+		{ strapline: 'Uptime (30d)', metric: '99.98%', description: 'No incidents' },
+		{ strapline: 'Response time', metric: '352 ms', description: 'avg, 24h' },
+		{ strapline: 'Cache hit rate', metric: '90%', description: 'edge cache' },
+		{ strapline: 'Visitors (7d)', metric: '640', description: '+8% week over week' },
+		{ strapline: 'Requests (7d)', metric: '5.6k', description: '+5% week over week' },
 	],
 	premium: [
 		{ strapline: 'Uptime (30d)', metric: '99.99%', description: 'No incidents' },
@@ -176,13 +184,14 @@ function EnvironmentCard( {
 
 const TIER_ACTIVE_THEME: Record< BloggerTier, string > = {
 	free: 'Stewart',
+	personal: 'Fewer',
 	premium: 'Dorna',
 	business: 'Lente',
 	commerce: 'Tsubaki',
 };
 
 function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	const isBusiness = tier === 'business' || tier === 'commerce';
+	const isBusiness = isAtomicTier( tier );
 
 	return (
 		<Card role="article" className="dev-overview-fill">
@@ -213,10 +222,7 @@ function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 									<Button
 										variant="link"
 										size="small"
-										href={ wpAdminPageUrl(
-											site.options?.admin_url,
-											'admin.php?page=untangling-mysite&ms=hosting'
-										) }
+										href={ wpAdminPageUrl( site.options?.admin_url, 'index.php' ) }
 									>
 										Change
 									</Button>
@@ -269,6 +275,7 @@ function SoftwareCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 
 const TIER_SCORES: Record< BloggerTier, { desktop: number; mobile: number; lastRun: string } > = {
 	free: { desktop: 88, mobile: 71, lastRun: '1 day ago' },
+	personal: { desktop: 90, mobile: 75, lastRun: '2 days ago' },
 	premium: { desktop: 91, mobile: 78, lastRun: '3 days ago' },
 	business: { desktop: 82, mobile: 74, lastRun: '2 hours ago' },
 	commerce: { desktop: 85, mobile: 69, lastRun: '4 hours ago' },
@@ -331,6 +338,12 @@ const TIER_PLAN_META: Record<
 	{ planName: string; storageUsed: string; storageMax: string; storagePercent: number }
 > = {
 	free: { planName: 'Free plan', storageUsed: '0.6 GB', storageMax: '1 GB', storagePercent: 60 },
+	personal: {
+		planName: 'Personal plan',
+		storageUsed: '1.4 GB',
+		storageMax: '6 GB',
+		storagePercent: 23,
+	},
 	premium: {
 		planName: 'Premium plan',
 		storageUsed: '3.2 GB',
@@ -352,7 +365,7 @@ const TIER_PLAN_META: Record<
 };
 
 function ResourcesCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	const isBusiness = tier === 'business' || tier === 'commerce';
+	const isBusiness = isAtomicTier( tier );
 	const meta =
 		site.slug === SOLO_BLOGGER_SITE_SLUG
 			? {
@@ -417,7 +430,7 @@ function EnvironmentsSection( {
 	columns: number;
 	gap: number;
 } ) {
-	const isBusiness = tier === 'business' || tier === 'commerce';
+	const isBusiness = isAtomicTier( tier );
 
 	return (
 		<VStack spacing={ 4 }>
@@ -514,7 +527,7 @@ function AccessSection( {
 	columns: number;
 	gap: number;
 } ) {
-	const isBusiness = tier === 'business' || tier === 'commerce';
+	const isBusiness = isAtomicTier( tier );
 
 	return (
 		<VStack spacing={ 4 }>
@@ -642,7 +655,7 @@ const LOG_LINES: {
 
 function LogsCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 	const [ filter, setFilter ] = useState< LogKind | 'all' >( 'all' );
-	const isBusiness = tier === 'business' || tier === 'commerce';
+	const isBusiness = isAtomicTier( tier );
 	const visibleLines =
 		filter === 'all' ? LOG_LINES : LOG_LINES.filter( ( line ) => line.kind === filter );
 
@@ -730,7 +743,7 @@ function LogsCard( { site, tier }: { site: Site; tier: BloggerTier } ) {
 // keeps showing as locked — SSH/WP-CLI, plugins, staging, deployments, logs.
 // Business sites get no banner; there is nothing left to sell.
 const DEV_PROMO_CONTENT: Record<
-	'free' | 'premium',
+	Exclude< BloggerTier, 'business' | 'commerce' >,
 	{ title: string; body: string; terminal: { command: string; comment?: string }[] }
 > = {
 	free: {
@@ -739,6 +752,14 @@ const DEV_PROMO_CONTENT: Record<
 		terminal: [
 			{ command: 'wp plugin install wp-graphql --activate' },
 			{ command: 'git push origin main', comment: '# deploys in ~40s' },
+		],
+	},
+	personal: {
+		title: 'Your site, your toolchain',
+		body: 'Business adds the developer platform this page keeps pointing at: SSH and WP-CLI, custom plugins and themes, a staging site, GitHub deployments, and live logs.',
+		terminal: [
+			{ command: 'wp plugin install jetpack-boost --activate' },
+			{ command: 'wp staging create', comment: '# ready in ~1 min' },
 		],
 	},
 	premium: {
@@ -752,7 +773,7 @@ const DEV_PROMO_CONTENT: Record<
 };
 
 function DevPromoBanner( { site, tier }: { site: Site; tier: BloggerTier } ) {
-	if ( tier === 'business' || tier === 'commerce' ) {
+	if ( isAtomicTier( tier ) ) {
 		return null;
 	}
 	const content = DEV_PROMO_CONTENT[ tier ];
@@ -819,14 +840,14 @@ function QuickActionsMenu( { site }: { site: Site } ) {
 
 export default function DeveloperSiteOverview( { siteSlug }: { siteSlug: string } ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const mock = getMockBloggerSite( siteSlug );
+	const mock = useMockBloggerSite( siteSlug );
 
 	if ( ! mock ) {
 		return null;
 	}
 
 	const { site, tier } = mock;
-	const isBusiness = tier === 'business' || tier === 'commerce';
+	const isBusiness = isAtomicTier( tier );
 	const spacing = isSmallViewport ? 4 : 6;
 	const envColumns = isSmallViewport ? 1 : 3;
 

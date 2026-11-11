@@ -3,7 +3,9 @@
  * to a running Studio site (localhost port) carrying the untangling-prototype
  * mu-plugin; name and icon are hydrated live from its REST API, with the
  * static values below as fallback when a site isn't running. WP.com-level
- * data (plan, storage) stays mocked — Studio sites can't provide it.
+ * data (plan, storage, domains) is read from the mu-plugin's
+ * `untangling/v1/site` route, so the wp-admin Plan segment drives both
+ * surfaces; the static values below stand in while a site is offline.
  */
 import {
 	getPersistQueryClientPromise,
@@ -16,7 +18,9 @@ import {
 	sitePreviewLinksQuery,
 	siteRedirectQuery,
 	siteSettingsQuery,
+	sslDetailsQuery,
 } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import apertureDiariesPreview from 'calypso/assets/images/untangling-previews/aperture-diaries.jpg';
 import castIronSupplyPreview from 'calypso/assets/images/untangling-previews/castironsupply.jpg';
 import coreCoworkingPreview from 'calypso/assets/images/untangling-previews/corecoworking.jpg';
@@ -31,7 +35,7 @@ import type {
 	SiteContextualPlan,
 } from '@automattic/api-core';
 
-export type BloggerTier = 'free' | 'premium' | 'business' | 'commerce';
+export type BloggerTier = 'free' | 'personal' | 'premium' | 'business' | 'commerce';
 
 const MB = 1024 * 1024;
 const GB = 1024 * MB;
@@ -46,12 +50,19 @@ interface MockSiteInput {
 	playgroundUrl: string;
 	/** Static homepage screenshot shown instead of the live iframe on a remote MSD. */
 	previewImage: string;
+	/** Static fallback; overwritten by the Studio site's live plan on hydration. */
 	tier: BloggerTier;
-	plan: NonNullable< Site[ 'plan' ] >;
-	isAtomic?: boolean;
 	subscribersCount: number;
 	storageUsedBytes: number;
 	maxStorageBytes: number;
+	/** The address the site answers at: the custom domain on paid plans. */
+	primaryDomain: string;
+	/** The free wordpress.com address every site keeps. */
+	wpcomDomain: string;
+	/** The custom domain offered to a Free site. */
+	upsellDomain: string;
+	/** ISO date the plan (and its domain) renews; null on Free. */
+	renewalDate: string | null;
 	/** Only shown in the solo-blogger persona (?persona=blogger). */
 	solo?: boolean;
 }
@@ -63,12 +74,12 @@ function localAdminUrl( localUrl: string ): string {
 }
 
 /**
- * Where the primary "WP Admin" CTAs land for a Studio-backed site: the My Site
- * page of the untangled wp-admin, not the stock Dashboard. Non-local admin
- * URLs pass through untouched.
+ * Where the primary "WP Admin" CTAs land for a Studio-backed site: the
+ * untangled all-in Dashboard (index.php). On a remote MSD this resolves to
+ * the site's Playground stand-in; non-local admin URLs pass through untouched.
  */
 export function siteWpAdminLandingUrl( adminUrl: string | undefined ): string | undefined {
-	return wpAdminPageUrl( adminUrl, 'admin.php?page=untangling-mysite' ) ?? adminUrl;
+	return wpAdminPageUrl( adminUrl, 'index.php' ) ?? adminUrl;
 }
 
 /**
@@ -127,58 +138,6 @@ export function mockSitePreviewImage( url: string ): string | undefined {
 	}
 }
 
-function makeMockSite( input: MockSiteInput ): Site {
-	return {
-		ID: input.ID,
-		slug: input.slug,
-		name: input.name,
-		URL: input.localUrl,
-		plan: input.plan,
-		capabilities: {
-			manage_options: true,
-			update_plugins: true,
-		},
-		feed_ID: input.ID,
-		feed_URL: `${ input.localUrl }/feed/`,
-		subscribers_count: input.subscribersCount,
-		options: {
-			admin_url: localAdminUrl( input.localUrl ),
-			created_at: '2025-09-14T10:00:00+00:00',
-			updated_at: '2026-07-14T15:43:00+00:00',
-			software_version: '7.0.1',
-			site_intent: 'write',
-			unmapped_url: input.localUrl,
-		},
-		is_a4a_dev_site: false,
-		is_a8c: false,
-		is_deleted: false,
-		is_coming_soon: false,
-		is_private: false,
-		is_wpcom_atomic: input.isAtomic ?? false,
-		is_wpcom_flex: false,
-		is_wpcom_staging_site: false,
-		is_vip: false,
-		lang: 'en',
-		launch_status: 'launched',
-		site_migration: {
-			in_progress: false,
-			is_complete: false,
-		},
-		site_owner: 0,
-		jetpack: false,
-		jetpack_connection: false,
-		jetpack_modules: null,
-		was_ecommerce_trial: false,
-		was_migration_trial: false,
-		was_hosting_trial: false,
-		was_upgraded_from_trial: false,
-		is_garden: false,
-		garden_name: null,
-		garden_partner: null,
-		garden_is_provisioned: null,
-	};
-}
-
 const FREE_PLAN: NonNullable< Site[ 'plan' ] > = {
 	product_id: 1,
 	product_slug: 'free_plan',
@@ -187,6 +146,18 @@ const FREE_PLAN: NonNullable< Site[ 'plan' ] > = {
 	product_name_en: 'Free',
 	expired: false,
 	is_free: true,
+	features: { active: [] },
+};
+
+const PERSONAL_PLAN: NonNullable< Site[ 'plan' ] > = {
+	product_id: 1009,
+	product_slug: 'personal-bundle',
+	product_name: 'WordPress.com Personal',
+	product_name_short: 'Personal',
+	product_name_en: 'Personal',
+	expired: false,
+	is_free: false,
+	billing_period: 'Yearly',
 	features: { active: [] },
 };
 
@@ -226,11 +197,89 @@ const COMMERCE_PLAN: NonNullable< Site[ 'plan' ] > = {
 	features: { active: [] },
 };
 
+export const PLAN_BY_TIER: Record< BloggerTier, NonNullable< Site[ 'plan' ] > > = {
+	free: FREE_PLAN,
+	personal: PERSONAL_PLAN,
+	premium: PREMIUM_PLAN,
+	business: BUSINESS_PLAN,
+	commerce: COMMERCE_PLAN,
+};
+
+const TIER_BY_PRODUCT_SLUG = new Map< string, BloggerTier >(
+	( Object.keys( PLAN_BY_TIER ) as BloggerTier[] ).map( ( tier ) => [
+		PLAN_BY_TIER[ tier ].product_slug,
+		tier,
+	] )
+);
+
+function isBloggerTier( value: unknown ): value is BloggerTier {
+	return typeof value === 'string' && value in PLAN_BY_TIER;
+}
+
+/** Only Business and Commerce run on Atomic; every lower plan is Simple-hosted. */
+export function isAtomicTier( tier: BloggerTier ): tier is 'business' | 'commerce' {
+	return tier === 'business' || tier === 'commerce';
+}
+
+function makeMockSite( input: MockSiteInput ): Site {
+	return {
+		ID: input.ID,
+		slug: input.slug,
+		name: input.name,
+		URL: input.localUrl,
+		plan: PLAN_BY_TIER[ input.tier ],
+		capabilities: {
+			manage_options: true,
+			update_plugins: true,
+			view_stats: true,
+		},
+		feed_ID: input.ID,
+		feed_URL: `${ input.localUrl }/feed/`,
+		subscribers_count: input.subscribersCount,
+		options: {
+			admin_url: localAdminUrl( input.localUrl ),
+			created_at: '2025-09-14T10:00:00+00:00',
+			updated_at: '2026-07-14T15:43:00+00:00',
+			software_version: '7.0.1',
+			site_intent: 'write',
+			unmapped_url: input.localUrl,
+		},
+		is_a4a_dev_site: false,
+		is_a8c: false,
+		is_deleted: false,
+		is_coming_soon: false,
+		is_private: false,
+		is_wpcom_atomic: isAtomicTier( input.tier ),
+		is_wpcom_flex: false,
+		is_wpcom_staging_site: false,
+		is_vip: false,
+		lang: 'en',
+		launch_status: 'launched',
+		site_migration: {
+			in_progress: false,
+			is_complete: false,
+		},
+		site_owner: 0,
+		jetpack: false,
+		jetpack_connection: false,
+		jetpack_modules: null,
+		was_ecommerce_trial: false,
+		was_migration_trial: false,
+		was_hosting_trial: false,
+		was_upgraded_from_trial: false,
+		is_garden: false,
+		garden_name: null,
+		garden_partner: null,
+		garden_is_provisioned: null,
+	};
+}
+
 const PLAYGROUND_BLUEPRINT_BASE =
 	'https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/lucasmendes-design/untangling-playground/main';
 
-// Ports assigned by the Studio app; storage/plan mirror each site's
-// 0-untangling-config.php so both surfaces tell the same story.
+// Ports assigned by the Studio app; tier, storage and domains mirror each
+// site's 0-untangling-config.php so both surfaces tell the same story even
+// before hydration (and on a remote MSD, where hydration is skipped).
 const MOCK_SITE_INPUTS: MockSiteInput[] = [
 	{
 		ID: 900000004,
@@ -240,10 +289,13 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-aperture.json`,
 		previewImage: apertureDiariesPreview,
 		tier: 'free',
-		plan: FREE_PLAN,
 		subscribersCount: 214,
 		storageUsedBytes: 0.7 * GB,
 		maxStorageBytes: 1 * GB,
+		primaryDomain: 'aperture-diaries.wordpress.com',
+		wpcomDomain: 'aperture-diaries.wordpress.com',
+		upsellDomain: 'aperture-diaries.com',
+		renewalDate: null,
 		solo: true,
 	},
 	{
@@ -254,11 +306,13 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-castiron.json`,
 		previewImage: castIronSupplyPreview,
 		tier: 'commerce',
-		plan: COMMERCE_PLAN,
-		isAtomic: true,
 		subscribersCount: 45,
 		storageUsedBytes: 22.4 * GB,
 		maxStorageBytes: 50 * GB,
+		primaryDomain: 'castironsupply.com',
+		wpcomDomain: 'castironsupply.wordpress.com',
+		upsellDomain: 'castiron.shop',
+		renewalDate: '2027-03-14',
 	},
 	{
 		ID: 900000006,
@@ -268,11 +322,13 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-coworking.json`,
 		previewImage: coreCoworkingPreview,
 		tier: 'business',
-		plan: BUSINESS_PLAN,
-		isAtomic: true,
 		subscribersCount: 12,
 		storageUsedBytes: 41.8 * GB,
 		maxStorageBytes: 50 * GB,
+		primaryDomain: 'corecoworking.com',
+		wpcomDomain: 'corecoworking.wordpress.com',
+		upsellDomain: 'corecoworking.space',
+		renewalDate: '2027-03-14',
 	},
 	{
 		ID: 900000007,
@@ -282,10 +338,13 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-openocean.json`,
 		previewImage: openOceanPreview,
 		tier: 'free',
-		plan: FREE_PLAN,
 		subscribersCount: 31,
 		storageUsedBytes: 118 * MB,
 		maxStorageBytes: 1 * GB,
+		primaryDomain: 'open-ocean.wordpress.com',
+		wpcomDomain: 'open-ocean.wordpress.com',
+		upsellDomain: 'openocean.blog',
+		renewalDate: null,
 	},
 	{
 		ID: 900000008,
@@ -295,11 +354,13 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-paperfox.json`,
 		previewImage: paperFoxPrintsPreview,
 		tier: 'business',
-		plan: BUSINESS_PLAN,
-		isAtomic: true,
 		subscribersCount: 87,
 		storageUsedBytes: 41.8 * GB,
 		maxStorageBytes: 50 * GB,
+		primaryDomain: 'paperfoxprints.com',
+		wpcomDomain: 'paperfoxprints.wordpress.com',
+		upsellDomain: 'paperfox.art',
+		renewalDate: '2027-03-14',
 	},
 	{
 		ID: 900000009,
@@ -309,10 +370,13 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-slowmornings.json`,
 		previewImage: slowMorningsPreview,
 		tier: 'premium',
-		plan: PREMIUM_PLAN,
 		subscribersCount: 156,
 		storageUsedBytes: 4.2 * GB,
 		maxStorageBytes: 13 * GB,
+		primaryDomain: 'slow-mornings.com',
+		wpcomDomain: 'slow-mornings.wordpress.com',
+		upsellDomain: 'slowmornings.blog',
+		renewalDate: '2027-03-14',
 	},
 ];
 
@@ -367,13 +431,33 @@ export function isMockBloggerSiteSlug( slug: string ): boolean {
 	return MOCK_SITE_BY_SLUG.has( slug );
 }
 
+/** The tier a mock Site is on, read from its plan so static and hydrated state agree. */
+function tierOfSite( site: Site ): BloggerTier {
+	return TIER_BY_PRODUCT_SLUG.get( site.plan?.product_slug ?? '' ) ?? 'free';
+}
+
 export function getMockBloggerSite( slug: string ): { site: Site; tier: BloggerTier } | undefined {
 	const site = MOCK_SITE_BY_SLUG.get( slug );
-	const input = MOCK_INPUT_BY_SLUG.get( slug );
-	if ( ! site || ! input ) {
+	if ( ! site ) {
 		return undefined;
 	}
-	return { site, tier: input.tier };
+	return { site, tier: tierOfSite( site ) };
+}
+
+/**
+ * React-aware twin of getMockBloggerSite(): subscribes to the seeded
+ * siteBySlugQuery entry, so a view that painted with the static tier
+ * re-renders once hydration writes the Studio site's live plan.
+ */
+export function useMockBloggerSite( slug: string ): { site: Site; tier: BloggerTier } | undefined {
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( slug ),
+		enabled: isMockBloggerSiteSlug( slug ),
+	} );
+	if ( ! site || ! isMockBloggerSiteSlug( slug ) ) {
+		return undefined;
+	}
+	return { site, tier: tierOfSite( site ) };
 }
 
 export function getMockBloggerStorage( slug: string ) {
@@ -385,8 +469,52 @@ export function getMockBloggerStorage( slug: string ) {
 }
 
 /**
- * Hydrates the mock sites with live data (title, tagline, icon) from their
- * Studio sites' REST APIs. Mutates the shared Site objects in place, then
+ * What the mu-plugin's `untangling/v1/site` route returns: the plan the
+ * wp-admin Prototype controls persisted, with everything that follows from it.
+ */
+interface StudioSiteSnapshot {
+	plan: string;
+	tier: string;
+	product_slug: string;
+	plan_rank: number;
+	site_type: 'atomic' | 'simple';
+	storage: { used_bytes: number; max_bytes: number };
+	domains: { primary: string; wpcom: string; upsell: string };
+	renewal_date: string | null;
+	site_name?: string;
+	site_url?: string;
+}
+
+/**
+ * Applies a Studio site's live plan to the shared mock input and Site. The
+ * slug, URL and admin_url never change: routes, live previews, omnibar origin
+ * matching and the Playground maps are keyed on them.
+ */
+function applyStudioSnapshot( input: MockSiteInput, site: Site, snapshot: StudioSiteSnapshot ) {
+	if ( ! isBloggerTier( snapshot.tier ) ) {
+		return;
+	}
+	input.tier = snapshot.tier;
+	if ( snapshot.storage ) {
+		input.storageUsedBytes = Number( snapshot.storage.used_bytes ) || input.storageUsedBytes;
+		input.maxStorageBytes = Number( snapshot.storage.max_bytes ) || input.maxStorageBytes;
+	}
+	if ( snapshot.domains ) {
+		input.primaryDomain = snapshot.domains.primary || input.primaryDomain;
+		input.wpcomDomain = snapshot.domains.wpcom || input.wpcomDomain;
+		input.upsellDomain = snapshot.domains.upsell || input.upsellDomain;
+	}
+	input.renewalDate = snapshot.renewal_date ?? null;
+	site.plan = PLAN_BY_TIER[ snapshot.tier ];
+	site.is_wpcom_atomic = snapshot.site_type
+		? snapshot.site_type === 'atomic'
+		: isAtomicTier( snapshot.tier );
+}
+
+/**
+ * Hydrates the mock sites with live data from their Studio sites: title and
+ * icon from the REST index, plan / storage / domains from the mu-plugin's
+ * `untangling/v1/site` route. Mutates the shared Site objects in place, then
  * refreshes the seeded query-cache entries so open views re-render. A site
  * that isn't running keeps its static fallback values — the demo never breaks.
  */
@@ -405,19 +533,25 @@ export function hydrateMockBloggerSites(): Promise< void > {
 				try {
 					const controller = new AbortController();
 					const timer = setTimeout( () => controller.abort(), 2500 );
-					const response = await fetch( `${ input.localUrl }/wp-json/`, {
-						signal: controller.signal,
-					} );
+					const [ response, snapshotResponse ] = await Promise.all( [
+						fetch( `${ input.localUrl }/wp-json/`, { signal: controller.signal } ),
+						fetch( `${ input.localUrl }/wp-json/untangling/v1/site`, {
+							signal: controller.signal,
+						} ).catch( () => undefined ),
+					] );
 					clearTimeout( timer );
-					if ( ! response.ok ) {
-						return;
+					if ( response.ok ) {
+						const data: { name?: string; site_icon_url?: string } = await response.json();
+						if ( data.name ) {
+							site.name = data.name;
+						}
+						if ( data.site_icon_url ) {
+							site.icon = { img: data.site_icon_url, ico: data.site_icon_url };
+						}
 					}
-					const data: { name?: string; site_icon_url?: string } = await response.json();
-					if ( data.name ) {
-						site.name = data.name;
-					}
-					if ( data.site_icon_url ) {
-						site.icon = { img: data.site_icon_url, ico: data.site_icon_url };
+					if ( snapshotResponse?.ok ) {
+						const snapshot: StudioSiteSnapshot = await snapshotResponse.json();
+						applyStudioSnapshot( input, site, snapshot );
 					}
 				} catch {
 					// Studio site not running; the static mock stands in.
@@ -430,6 +564,7 @@ export function hydrateMockBloggerSites(): Promise< void > {
 
 const TIER_YEARLY_PRICE: Record< BloggerTier, number > = {
 	free: 0,
+	personal: 48,
 	premium: 96,
 	business: 300,
 	commerce: 540,
@@ -437,6 +572,7 @@ const TIER_YEARLY_PRICE: Record< BloggerTier, number > = {
 
 function makeMockCurrentPlan( input: MockSiteInput ): SiteContextualPlan {
 	const price = TIER_YEARLY_PRICE[ input.tier ];
+	const plan = PLAN_BY_TIER[ input.tier ];
 	return {
 		formatted_original_price: `$${ price }`,
 		original_price: { amount: price, currency: 'USD' },
@@ -447,9 +583,10 @@ function makeMockCurrentPlan( input: MockSiteInput ): SiteContextualPlan {
 		raw_discount_integer: 0,
 		formatted_discount: '$0',
 		currency_code: 'USD',
-		product_id: input.plan.product_id,
-		product_slug: input.plan.product_slug,
-		product_name: input.plan.product_name ?? input.plan.product_name_short,
+		product_id: plan.product_id,
+		product_slug: plan.product_slug,
+		product_name: plan.product_name ?? plan.product_name_short,
+		expiry: input.renewalDate ?? undefined,
 		discount_reason: null,
 		cost_overrides: [],
 		is_domain_upgrade: false,
@@ -486,6 +623,22 @@ const TIER_ACTIVITY_LOG: Record< BloggerTier, MockActivityInput[] > = {
 			daysAgo: 7,
 			system: true,
 		},
+	],
+	personal: [
+		{
+			text: 'Notes from the kitchen table',
+			summary: 'Post published',
+			gridicon: 'posts',
+			daysAgo: 1,
+		},
+		{
+			text: 'Your domain is now connected',
+			summary: 'Domain active',
+			gridicon: 'domains',
+			daysAgo: 3,
+			system: true,
+		},
+		{ text: 'Uploaded 5 new photos', summary: 'Media uploaded', gridicon: 'image', daysAgo: 5 },
 	],
 	premium: [
 		{ text: 'Slow mornings in Lisbon', summary: 'Post published', gridicon: 'posts', daysAgo: 1 },
@@ -570,35 +723,69 @@ function getMockQueryKeys( input: MockSiteInput ) {
 	];
 }
 
+function defaultAddressDomain( input: MockSiteInput, primary: boolean ): DomainSummary {
+	return {
+		domain: input.wpcomDomain,
+		subtype: { id: 'default_address', label: 'Default site address' },
+		blog_id: input.ID,
+		blog_name: input.name,
+		site_slug: input.slug,
+		auto_renewing: false,
+		current_user_is_owner: true,
+		is_domain_only_site: false,
+		expiry: null,
+		expired: false,
+		primary_domain: primary,
+		can_set_as_primary: false,
+		domain_status: { id: 'active', label: 'Active', type: 'success' },
+		subscription_id: null,
+		tags: [],
+		wpcom_domain: true,
+		type: 'wpcom',
+		current_user_can_manage: true,
+		has_registration: false,
+	} as unknown as DomainSummary;
+}
+
+// subscription_id stays null on purpose: with one set, the name links to the
+// domain overview, whose loaders hit real APIs for a domain that doesn't exist.
+function registrationDomain( input: MockSiteInput ): DomainSummary {
+	return {
+		domain: input.primaryDomain,
+		subtype: { id: 'domain_registration', label: 'Domain registration' },
+		blog_id: input.ID,
+		blog_name: input.name,
+		site_slug: input.slug,
+		auto_renewing: true,
+		current_user_is_owner: true,
+		is_domain_only_site: false,
+		expiry: input.renewalDate ? `${ input.renewalDate }T00:00:00+00:00` : null,
+		expired: false,
+		primary_domain: true,
+		can_set_as_primary: false,
+		domain_status: { id: 'active', label: 'Active', type: 'success' },
+		subscription_id: null,
+		tags: [],
+		wpcom_domain: false,
+		type: 'mapping',
+		current_user_can_manage: true,
+		has_registration: true,
+	} as unknown as DomainSummary;
+}
+
 /**
- * Each mock site owns its free wpcom subdomain, like a real site would — this
- * feeds the /domains list and each site's Domains page (which filters the
- * account-level list by blog_id).
+ * Every mock site keeps its free wpcom address; paid plans add the custom
+ * domain as the primary (free for a year, renews with the plan). Feeds the
+ * /domains list, each site's Domains page and the overview Domains card
+ * (all filter the account-level list by blog_id). Read lazily — after
+ * hydration — so the rows follow the Studio site's live plan.
  */
 export function getMockDomains(): DomainSummary[] {
-	return MOCK_SITE_INPUTS.map( ( input ) => {
-		return {
-			domain: input.slug,
-			subtype: { id: 'default_address', label: 'Default site address' },
-			blog_id: input.ID,
-			blog_name: input.name,
-			site_slug: input.slug,
-			auto_renewing: false,
-			current_user_is_owner: true,
-			is_domain_only_site: false,
-			expiry: null,
-			expired: false,
-			primary_domain: true,
-			can_set_as_primary: false,
-			domain_status: { id: 'active', label: 'Active', type: 'success' },
-			subscription_id: null,
-			tags: [],
-			wpcom_domain: true,
-			type: 'wpcom',
-			current_user_can_manage: true,
-			has_registration: false,
-		} as unknown as DomainSummary;
-	} );
+	return MOCK_SITE_INPUTS.flatMap( ( input ) =>
+		input.tier === 'free'
+			? [ defaultAddressDomain( input, true ) ]
+			: [ registrationDomain( input ), defaultAddressDomain( input, false ) ]
+	);
 }
 
 function writeMockSiteCaches() {
@@ -632,6 +819,21 @@ function writeMockSiteCaches() {
 		} );
 		queryClient.setQueryData( siteRedirectQuery( input.ID ).queryKey, {} );
 		queryClient.setQueryData( sitePreviewLinksQuery( input.ID ).queryKey, [] );
+		// The custom domain's SSL column reads a per-domain query that would hit
+		// the real API (and read "SSL pending"); a registered mock domain is secure.
+		if ( input.tier !== 'free' ) {
+			const sslKey = sslDetailsQuery( input.primaryDomain ).queryKey;
+			queryClient.setQueryDefaults( sslKey, {
+				staleTime: Infinity,
+				gcTime: Infinity,
+				retry: false,
+			} );
+			queryClient.setQueryData( sslKey, {
+				certificate_provisioned: true,
+				is_newly_registered: false,
+				is_expired: false,
+			} );
+		}
 	}
 }
 
@@ -655,6 +857,15 @@ export function seedMockBloggerSiteCaches() {
 
 	getPersistQueryClientPromise().then( () => {
 		writeMockSiteCaches();
-		hydrateMockBloggerSites().then( writeMockSiteCaches );
+		hydrateMockBloggerSites().then( () => {
+			writeMockSiteCaches();
+			// A domains result fetched (or restored from the persisted cache)
+			// before hydration landed still carries the static tiers.
+			// Only the domains list itself: the seeded per-domain SSL entries
+			// (`[ 'domains', name, 'ssl' ]`) must not refetch against the real API.
+			queryClient.invalidateQueries( {
+				predicate: ( query ) => query.queryKey[ 0 ] === 'domains' && query.queryKey.length === 2,
+			} );
+		} );
 	} );
 }
