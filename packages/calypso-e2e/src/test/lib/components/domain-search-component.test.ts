@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import * as teamcity from '../../../lib/teamcity';
 import {
@@ -43,17 +43,17 @@ function searchPage( {
 	namePulseLists?: string[][];
 } ) {
 	const searchbox = {
-		inputValue: jest.fn( async () => prefill ),
-		fill: jest.fn< ( value: string ) => Promise< void > >( async () => undefined ),
-		press: jest.fn( async () => undefined ),
+		inputValue: vi.fn( async () => prefill ),
+		fill: vi.fn< ( value: string ) => Promise< void > >( async () => undefined ),
+		press: vi.fn( async () => undefined ),
 	};
 	const remainingTitles = [ ...titles ];
 	const listitem = {
-		waitFor: jest.fn( async () => undefined ),
-		getAttribute: jest.fn( async () =>
+		waitFor: vi.fn( async () => undefined ),
+		getAttribute: vi.fn( async () =>
 			remainingTitles.length > 1 ? ( remainingTitles.shift() as string ) : remainingTitles[ 0 ]
 		),
-		first: jest.fn(),
+		first: vi.fn(),
 	};
 	listitem.first.mockReturnValue( listitem );
 	const remainingNamePulseLists = [ ...namePulseLists ];
@@ -69,7 +69,7 @@ function searchPage( {
 	const clock = { elapsed: 0 };
 
 	const page = {
-		getByRole: jest.fn( ( role: string ) => {
+		getByRole: vi.fn( ( role: string ) => {
 			if ( role === 'listitem' ) {
 				return listitem;
 			}
@@ -77,11 +77,11 @@ function searchPage( {
 			return role === 'searchbox' ? searchbox : {};
 		} ),
 		locator: () => namePulseRows,
-		reload: jest.fn( async () => null ),
-		waitForTimeout: jest.fn( async ( timeout: number ) => {
+		reload: vi.fn( async () => null ),
+		waitForTimeout: vi.fn( async ( timeout: number ) => {
 			clock.elapsed += timeout;
 		} ),
-		waitForResponse: jest.fn(
+		waitForResponse: vi.fn(
 			async ( predicate: ( response: Response ) => boolean, options?: { timeout?: number } ) => {
 				const match = responses.find( predicate );
 
@@ -100,13 +100,13 @@ function searchPage( {
 
 beforeEach( () => {
 	// Left alone, a recorded throttle would tag the build running the unit tests.
-	jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-	jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+	vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
 	delete process.env.THROTTLE_DOMAIN_SUGGESTIONS_EXPIRATION;
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 	resetThrottleState();
 } );
 
@@ -184,7 +184,7 @@ describe( 'DomainSearchComponent.search', () => {
 		// throttle the error stands for.
 		const { page, clock, reload } = searchPage( { responses: [] } );
 		const start = Date.now();
-		jest.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
 
 		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(
 			`Search for "${ KEYWORD }" exceeded its 60s budget`
@@ -197,12 +197,12 @@ describe( 'DomainSearchComponent.search', () => {
 		// is over by the time the budget is spent.
 		const { page, searchbox, clock } = searchPage( { responses: [] } );
 		const start = Date.now();
-		jest.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => start + clock.elapsed );
 		searchbox.inputValue.mockImplementationOnce( async () => {
 			void raiseFlag( 'domain-suggestions' );
 			return '';
 		} );
-		const handler = jest.fn< ThrottleActionHandler >();
+		const handler = vi.fn< ThrottleActionHandler >();
 		registerThrottleActionHandler( handler );
 
 		await expect( new DomainSearchComponent( page ).search( KEYWORD ) ).rejects.toThrow(

@@ -1,4 +1,4 @@
-import { describe, expect, jest, test } from '@jest/globals';
+import { describe, expect, test, vi } from 'vitest';
 import {
 	GoogleLoginPage,
 	GoogleSessionError,
@@ -8,25 +8,25 @@ import type { Page } from 'playwright';
 
 const buildPage = ( challengeText = '' ) => {
 	const timeout = new Error( 'Password locator timed out' );
-	const type = jest.fn();
+	const type = vi.fn();
 	const stableElement = {
-		waitForElementState: jest.fn< () => Promise< void > >().mockResolvedValue(),
+		waitForElementState: vi.fn< () => Promise< void > >().mockResolvedValue(),
 	};
-	const elementHandle = jest
+	const elementHandle = vi
 		.fn< () => Promise< typeof stableElement > >()
 		.mockRejectedValue( timeout );
-	const waitFor = jest.fn< () => Promise< void > >().mockResolvedValue();
+	const waitFor = vi.fn< () => Promise< void > >().mockResolvedValue();
 	let challengeMatcher: RegExp;
-	const isVisible = jest.fn( async () => challengeMatcher.test( challengeText ) );
+	const isVisible = vi.fn( async () => challengeMatcher.test( challengeText ) );
 	const challengeLocator = {
 		first: () => ( { isVisible } ),
-		isVisible: jest
+		isVisible: vi
 			.fn< () => Promise< boolean > >()
 			.mockRejectedValue( new Error( 'strict mode violation: multiple matching elements' ) ),
 	};
 	const page = {
-		getByRole: jest.fn( () => ( { elementHandle, first: () => ( { waitFor } ), type } ) ),
-		getByText: jest.fn( ( matcher: RegExp ) => {
+		getByRole: vi.fn( () => ( { elementHandle, first: () => ( { waitFor } ), type } ) ),
+		getByText: vi.fn( ( matcher: RegExp ) => {
 			challengeMatcher = matcher;
 			return challengeLocator;
 		} ),
@@ -42,10 +42,10 @@ const buildReturningPage = ( {
 	challengeText = '',
 	closed = false,
 } = {} ) => {
-	const consentClick = jest.fn< () => Promise< void > >().mockResolvedValue();
-	const accountClick = jest.fn< () => Promise< void > >().mockResolvedValue();
+	const consentClick = vi.fn< () => Promise< void > >().mockResolvedValue();
+	const accountClick = vi.fn< () => Promise< void > >().mockResolvedValue();
 	let consentMatcher: RegExp;
-	const consentVisible = jest.fn( async () => consentMatcher.test( buttonText ) );
+	const consentVisible = vi.fn( async () => consentMatcher.test( buttonText ) );
 	const locator = ( visible: () => Promise< boolean >, click = consentClick ) => {
 		const result = { first: () => result, isVisible: visible, click };
 		return result;
