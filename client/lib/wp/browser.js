@@ -8,12 +8,16 @@ import wpcomXhrWrapper, { jetpack_site_xhr_wrapper } from 'calypso/lib/wpcom-xhr
 import { injectFingerprint } from './handlers/fingerprint';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
 import { injectLocalization } from './localization';
+import prototypeStaticHandler, { isStaticPrototype } from './prototype-static-handler';
 
 const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
-if ( config.isEnabled( 'oauth' ) ) {
+if ( isStaticPrototype() ) {
+	// Untangling prototype on static hosting: no session, answer from fixtures.
+	wpcom = new WPCOM( prototypeStaticHandler );
+} else if ( config.isEnabled( 'oauth' ) ) {
 	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
 } else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 	wpcom = new WPCOM( jetpack_site_xhr_wrapper );

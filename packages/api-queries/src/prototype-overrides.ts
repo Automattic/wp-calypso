@@ -10,7 +10,7 @@ type QueryFnWrapper< T > = ( base: () => Promise< T > ) => Promise< T >;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const wrappers = new Map< string, QueryFnWrapper< any > >();
 
-export type PrototypeOverrideName = 'sites' | 'paginatedSites' | 'domains';
+export type PrototypeOverrideName = 'sites' | 'paginatedSites' | 'domains' | 'plugins';
 
 export function setPrototypeQueryFnOverride< T >(
 	name: PrototypeOverrideName,

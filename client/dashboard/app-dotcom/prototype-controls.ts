@@ -189,7 +189,7 @@ function mount() {
 	);
 
 	const persona =
-		window.localStorage.getItem( PERSONA_STORAGE_KEY ) === 'blogger' ? 'blogger' : 'developer';
+		window.localStorage.getItem( PERSONA_STORAGE_KEY ) === 'developer' ? 'developer' : 'blogger';
 	body.append(
 		...buildSegment(
 			'Persona',

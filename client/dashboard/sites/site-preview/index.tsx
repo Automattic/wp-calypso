@@ -24,6 +24,11 @@ export default function SitePreview( {
 				alt={ __( 'Site Preview' ) }
 				style={ {
 					display: 'block',
+					// Global `img { max-width: 100% }` would shrink the image to the
+					// card before the scale is applied, leaving a tiny thumbnail.
+					maxWidth: 'none',
+					width,
+					height,
 					objectFit: 'cover',
 					objectPosition: 'top left',
 					transform: `scale(${ scale })`,

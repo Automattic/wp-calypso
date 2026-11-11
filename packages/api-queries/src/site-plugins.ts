@@ -14,12 +14,13 @@ import {
 	activateSiteCorePlugin,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
+import { withPrototypeOverride } from './prototype-overrides';
 import { queryClient } from './query-client';
 
 export const pluginsQuery = () =>
 	queryOptions( {
 		queryKey: [ 'me', 'sites-plugins' ],
-		queryFn: () => fetchUserSitesPlugins(),
+		queryFn: withPrototypeOverride( 'plugins', () => fetchUserSitesPlugins() ),
 	} );
 
 export const sitePluginQuery = ( siteId: number, pluginSlug: string ) =>

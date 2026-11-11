@@ -13,6 +13,14 @@ export function isAllowedDotcomDashboardHostname( hostname?: string ): boolean {
 }
 
 export function buildDotcomDashboardLink( path: string = '' ) {
+	// Untangling prototype on static hosting (Spacefast): the dashboard lives
+	// on whatever origin serves the page.
+	if (
+		typeof window !== 'undefined' &&
+		( window as { __UNTANGLING_STATIC__?: unknown } ).__UNTANGLING_STATIC__
+	) {
+		return new URL( path, window.location.origin ).href;
+	}
 	const liveLink = calypsoLiveRedirectorLink( path, 'dashboard' );
 	if ( liveLink ) {
 		return liveLink;

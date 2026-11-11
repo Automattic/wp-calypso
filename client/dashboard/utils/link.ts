@@ -65,7 +65,7 @@ export function dashboardOrigins(): string[] {
 	// development only; localhost never resolves in production.
 	if ( process.env.NODE_ENV !== 'production' ) {
 		origins.push(
-			...[ 8882, 8883, 8885, 8886, 8887, 8888 ].map(
+			...[ 8882, 8883, 8885, 8886, 8887, 8888, 8891 ].map(
 				( studioPort ) => `http://localhost:${ studioPort }`
 			)
 		);

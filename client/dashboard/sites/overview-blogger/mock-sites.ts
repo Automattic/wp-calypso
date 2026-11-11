@@ -27,6 +27,7 @@ import { useQuery } from '@tanstack/react-query';
 import apertureDiariesPreview from 'calypso/assets/images/untangling-previews/aperture-diaries.jpg';
 import castIronSupplyPreview from 'calypso/assets/images/untangling-previews/castironsupply.jpg';
 import coreCoworkingPreview from 'calypso/assets/images/untangling-previews/corecoworking.jpg';
+import northlightStudioPreview from 'calypso/assets/images/untangling-previews/northlightstudio.jpg';
 import openOceanPreview from 'calypso/assets/images/untangling-previews/open-ocean.jpg';
 import paperFoxPrintsPreview from 'calypso/assets/images/untangling-previews/paperfoxprints.jpg';
 import slowMorningsPreview from 'calypso/assets/images/untangling-previews/slow-mornings.jpg';
@@ -35,6 +36,7 @@ import type {
 	ActivityLogEntry,
 	AdminBarNode,
 	DomainSummary,
+	PluginItem,
 	Site,
 	SiteContextualPlan,
 } from '@automattic/api-core';
@@ -67,11 +69,89 @@ interface MockSiteInput {
 	upsellDomain: string;
 	/** ISO date the plan (and its domain) renews; null on Free. */
 	renewalDate: string | null;
-	/** Only shown in the solo-blogger persona (?persona=blogger). */
+	/** Belongs to the blogger persona (?persona=blogger): one Free site, one Business site. */
 	solo?: boolean;
 	/** Live omnibar offer from the Studio site (`untangling/v1/upsell`), when one is active. */
 	offer?: MockOmnibarOffer | null;
+	/** Static fallback; overwritten by the Studio site's installed plugins on hydration. */
+	plugins?: MockPlugin[];
 }
+
+/** One installed plugin, as the Studio site's `untangling/v1/site` route lists it. */
+interface MockPlugin {
+	/** Plugin file without `.php`, e.g. `wordpress-seo/wp-seo`. */
+	id: string;
+	slug: string;
+	name: string;
+	version: string;
+	description: string;
+	author: string;
+	author_url: string;
+	plugin_url: string;
+	active: boolean;
+	/** Platform plugin on a Simple site: no deactivate, delete or update. */
+	is_managed: boolean;
+}
+
+const AKISMET_PLUGIN: MockPlugin = {
+	id: 'akismet/akismet',
+	slug: 'akismet',
+	name: 'Akismet Anti-spam: Spam Protection',
+	version: '5.7',
+	description:
+		'Used by millions, Akismet is quite possibly the best way in the world to protect your blog from spam.',
+	author: 'Automattic - Anti-spam Team',
+	author_url: 'https://automattic.com/wordpress-plugins/',
+	plugin_url: 'https://akismet.com/',
+	active: true,
+	is_managed: true,
+};
+
+const JETPACK_PLUGIN: MockPlugin = {
+	id: 'jetpack/jetpack',
+	slug: 'jetpack',
+	name: 'Jetpack',
+	version: '15.2',
+	description:
+		'Security, performance, and marketing tools made by WordPress experts. Jetpack keeps your site protected so you can focus on more important things.',
+	author: 'Automattic',
+	author_url: 'https://jetpack.com',
+	plugin_url: 'https://jetpack.com',
+	active: true,
+	is_managed: true,
+};
+
+// A Simple site cannot install plugins, but WordPress.com runs these two on it.
+const SIMPLE_SITE_PLUGINS: MockPlugin[] = [ AKISMET_PLUGIN, JETPACK_PLUGIN ];
+
+// A photo studio: search visibility and booking enquiries.
+const NORTHLIGHT_PLUGINS: MockPlugin[] = [
+	{
+		id: 'contact-form-7/wp-contact-form-7',
+		slug: 'contact-form-7',
+		name: 'Contact Form 7',
+		version: '6.2.5',
+		description: 'Just another contact form plugin. Simple but flexible.',
+		author: 'Rock Lobster Inc.',
+		author_url: 'https://github.com/rocklobster-in/',
+		plugin_url: 'https://contactform7.com/',
+		active: true,
+		is_managed: false,
+	},
+	{
+		id: 'wordpress-seo/wp-seo',
+		slug: 'wordpress-seo',
+		name: 'Yoast SEO',
+		version: '28.8',
+		description:
+			'The first true all-in-one SEO solution for WordPress, including on-page content analysis, XML sitemaps and much more.',
+		author: 'Team Yoast',
+		author_url: 'https://yoa.st/1uk',
+		plugin_url: 'https://yoa.st/1uj',
+		active: true,
+		is_managed: false,
+	},
+];
 
 interface MockOmnibarOffer {
 	active: boolean;
@@ -102,7 +182,30 @@ export function siteWpAdminLandingUrl( adminUrl: string | undefined ): string | 
  * open per-site Playground blueprints and previews use static screenshots.
  */
 export function isRemoteMsd(): boolean {
-	return typeof window !== 'undefined' && ! window.location.hostname.endsWith( '.localhost' );
+	return (
+		typeof window !== 'undefined' &&
+		( isStaticPrototypeHost() || ! window.location.hostname.endsWith( '.localhost' ) )
+	);
+}
+
+/**
+ * The static copy of the prototype (Spacefast). Its HTML shell sets
+ * `window.__UNTANGLING_STATIC__`; `wpAdminBase` there is the page of the same
+ * Space that runs the wp-admin half in Playground.
+ */
+function isStaticPrototypeHost(): boolean {
+	return (
+		typeof window !== 'undefined' &&
+		!! ( window as { __UNTANGLING_STATIC__?: unknown } ).__UNTANGLING_STATIC__
+	);
+}
+
+function staticWpAdminBase(): string | undefined {
+	if ( typeof window === 'undefined' ) {
+		return undefined;
+	}
+	return ( window as { __UNTANGLING_STATIC__?: { wpAdminBase?: string } } ).__UNTANGLING_STATIC__
+		?.wpAdminBase;
 }
 
 /**
@@ -235,12 +338,20 @@ export function isAtomicTier( tier: BloggerTier ): tier is 'business' | 'commerc
 	return tier === 'business' || tier === 'commerce';
 }
 
+/**
+ * The address a mock site shows. On the static copy the Studio ports mean
+ * nothing to the viewer, so the site shows its own domain instead.
+ */
+function mockSitePublicUrl( input: MockSiteInput ): string {
+	return isStaticPrototypeHost() ? `https://${ input.slug }` : input.localUrl;
+}
+
 function makeMockSite( input: MockSiteInput ): Site {
 	return {
 		ID: input.ID,
 		slug: input.slug,
 		name: input.name,
-		URL: input.localUrl,
+		URL: mockSitePublicUrl( input ),
 		plan: PLAN_BY_TIER[ input.tier ],
 		capabilities: {
 			manage_options: true,
@@ -306,6 +417,27 @@ const MOCK_SITE_INPUTS: MockSiteInput[] = [
 		upsellDomain: 'aperture-diaries.com',
 		renewalDate: null,
 		solo: true,
+		plugins: SIMPLE_SITE_PLUGINS,
+	},
+	// The blogger's second site: the paid side of the same person. Business
+	// plan, so the hosting features are reachable, on its own domain.
+	{
+		ID: 900000010,
+		slug: 'northlightstudio.com',
+		name: 'Northlight Studio',
+		localUrl: 'http://localhost:8891',
+		playgroundUrl: `${ PLAYGROUND_BLUEPRINT_BASE }/blueprint-northlight.json`,
+		previewImage: northlightStudioPreview,
+		tier: 'business',
+		subscribersCount: 63,
+		storageUsedBytes: 23.6 * GB,
+		maxStorageBytes: 50 * GB,
+		primaryDomain: 'northlightstudio.com',
+		wpcomDomain: 'northlightstudio.wordpress.com',
+		upsellDomain: 'northlight.photo',
+		renewalDate: '2027-03-14',
+		solo: true,
+		plugins: NORTHLIGHT_PLUGINS,
 	},
 	{
 		ID: 900000005,
@@ -409,16 +541,33 @@ const LOCAL_WP_ADMIN_ORIGINS = new Set(
 	MOCK_SITE_INPUTS.map( ( input ) => new URL( input.localUrl ).origin )
 );
 
+// Keyed by the Studio origin and by the site's public origin, which is what
+// `site.URL` carries on the static copy (see `mockSitePublicUrl`).
 const PLAYGROUND_URL_BY_ORIGIN = new Map(
-	MOCK_SITE_INPUTS.map( ( input ) => [ new URL( input.localUrl ).origin, input.playgroundUrl ] )
+	MOCK_SITE_INPUTS.flatMap( ( input ) => [
+		[ new URL( input.localUrl ).origin, input.playgroundUrl ],
+		[ `https://${ input.slug }`, input.playgroundUrl ],
+	] )
 );
 
 const PREVIEW_IMAGE_BY_ORIGIN = new Map(
-	MOCK_SITE_INPUTS.map( ( input ) => [ new URL( input.localUrl ).origin, input.previewImage ] )
+	MOCK_SITE_INPUTS.flatMap( ( input ) => [
+		[ new URL( input.localUrl ).origin, input.previewImage ],
+		[ `https://${ input.slug }`, input.previewImage ],
+	] )
 );
 
 function playgroundUrlForOrigin( origin: string ): string | undefined {
-	return PLAYGROUND_URL_BY_ORIGIN.get( origin );
+	const playgroundUrl = PLAYGROUND_URL_BY_ORIGIN.get( origin );
+	const base = staticWpAdminBase();
+	// `…/blueprint-aperture.json` → `<base>?site=aperture` on the static copy.
+	const site = playgroundUrl?.match( /blueprint-([a-z]+)\.json$/ )?.[ 1 ];
+	if ( base && site ) {
+		// Absolute, because the omnibar resolves node links against the site's
+		// own admin URL.
+		return new URL( `${ base }?site=${ site }`, window.location.origin ).href;
+	}
+	return playgroundUrl;
 }
 
 function previewImageForOrigin( origin: string ): string | undefined {
@@ -486,6 +635,7 @@ interface StudioSiteSnapshot {
 	renewal_date: string | null;
 	site_name?: string;
 	site_url?: string;
+	plugins?: MockPlugin[];
 }
 
 /**
@@ -508,6 +658,9 @@ function applyStudioSnapshot( input: MockSiteInput, site: Site, snapshot: Studio
 		input.upsellDomain = snapshot.domains.upsell || input.upsellDomain;
 	}
 	input.renewalDate = snapshot.renewal_date ?? null;
+	if ( Array.isArray( snapshot.plugins ) ) {
+		input.plugins = snapshot.plugins;
+	}
 	site.plan = PLAN_BY_TIER[ snapshot.tier ];
 	site.is_wpcom_atomic = snapshot.site_type
 		? snapshot.site_type === 'atomic'
@@ -755,6 +908,39 @@ function defaultAddressDomain( input: MockSiteInput, primary: boolean ): DomainS
 		current_user_can_manage: true,
 		has_registration: false,
 	} as unknown as DomainSummary;
+}
+
+function toPluginItem( plugin: MockPlugin ): PluginItem {
+	return {
+		id: plugin.id,
+		slug: plugin.slug,
+		name: plugin.name,
+		version: plugin.version,
+		description: plugin.description,
+		author: plugin.author,
+		author_url: plugin.author_url,
+		plugin_url: plugin.plugin_url,
+		active: plugin.active,
+		network: false,
+		autoupdate: plugin.is_managed,
+		is_managed: plugin.is_managed,
+		uninstallable: ! plugin.is_managed,
+		// No pending update: an empty object is how the API says "up to date".
+		update: {} as PluginItem[ 'update' ],
+	};
+}
+
+/**
+ * The mock sites' installed plugins, keyed by site ID like `/me/sites/plugins`.
+ * Built at call time so it follows the Studio sites after hydration.
+ */
+export function getMockSitesPlugins( siteIds: number[] ): Record< string, PluginItem[] > {
+	return Object.fromEntries(
+		MOCK_SITE_INPUTS.filter( ( input ) => siteIds.includes( input.ID ) ).map( ( input ) => [
+			String( input.ID ),
+			( input.plugins ?? [] ).map( toPluginItem ),
+		] )
+	);
 }
 
 // subscription_id stays null on purpose: with one set, the name links to the
