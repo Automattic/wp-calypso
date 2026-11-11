@@ -14,7 +14,7 @@ Prove the change works with evidence, not by reading the code. Pick the checks t
 
 ## 2. Unit tests
 
-Run the tests next to the code you changed (commands in AGENTS.md), and add or update tests when behavior changed.
+Run the tests next to the code you changed (commands in AGENTS.md). Update the tests the change breaks. Add a test only when it proves behavior a user or a caller can observe, such as what a screen shows or what a public function, hook or endpoint returns, and you can name the regression it would catch. Don't test implementation details, such as internal helpers, test IDs, CSS classes, config shapes, call order or mocks being called. For Dashboard tests, follow [dashboard-testing.md](../../../.claude/rules/dashboard-testing.md).
 
 ## 3. Browser check
 
