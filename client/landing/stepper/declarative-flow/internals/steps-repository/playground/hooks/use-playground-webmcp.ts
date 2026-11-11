@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { PlaygroundClient } from '../lib/types';
 
 export function usePlaygroundWebMcp( {
@@ -45,6 +46,9 @@ export function usePlaygroundWebMcp( {
 					inputSchema: { type: 'object', properties: {}, additionalProperties: false },
 					annotations: { readOnlyHint: false },
 					execute: async () => {
+						recordTracksEvent( 'calypso_playground_webmcp_tool_call', {
+							tool_name: 'wpcom_launch_site',
+						} );
 						if ( controller.signal.aborted || ! launchRef.current() ) {
 							throw new Error( 'The Playground launch action is not available.' );
 						}
