@@ -88,8 +88,15 @@ export async function createAccount( {
 	const blackboxApiKey = getBlackboxApiKey();
 	const blackboxSessionId =
 		blackboxApiKey && isBlackboxUserlessCheckoutEnabled()
-			? await getBlackboxSessionId( blackboxApiKey, 'signup' )
+			? await getBlackboxSessionId( blackboxApiKey, undefined, 'signup' )
 			: undefined;
+
+	if ( blackboxSessionId === null ) {
+		throw new DOMException(
+			String( i18n.translate( 'Checkout is no longer active. Please try again.' ) ),
+			'AbortError'
+		);
+	}
 
 	try {
 		const response = await createUser( {

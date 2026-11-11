@@ -113,6 +113,10 @@ class PasswordlessSignupForm extends Component {
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( flowName === '' && this.props.submitForm ) {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			if ( blackboxSessionId === null ) {
+				this.submitLock = false;
+				return;
+			}
 
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
@@ -139,11 +143,6 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			form,
-		} );
-
 		const { oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
@@ -153,6 +152,16 @@ class PasswordlessSignupForm extends Component {
 
 		try {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			if ( blackboxSessionId === null ) {
+				this.submitLock = false;
+				this.setState( { isSubmitting: false } );
+				return;
+			}
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				form,
+			} );
 
 			const body = {
 				email: this.getTrimmedEmail(),

@@ -638,8 +638,8 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			"'report-sample'",
 			// Allow eval only in development for webpack's eval-based source maps (devtool: 'eval')
-			// which enable fast rebuilds and hot module reloading. Production uses 'hidden-source-map'
-			// which doesn't require eval, maintaining strict CSP in production environments.
+			// which enable fast rebuilds and hot module reloading. Production builds don't need eval,
+			// maintaining strict CSP in production environments.
 			...( req.context.app.isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'stats.wp.com',

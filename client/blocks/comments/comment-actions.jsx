@@ -1,10 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, close, keyboardReturn } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import ShareButton from 'calypso/blocks/reader-share';
 import { isCommentsOpen, isRebloggable } from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { CommentLabelsContext } from './comment-labels-context';
 import CommentLikeButtonContainer from './comment-likes';
 
 import './comment-actions.scss';
@@ -21,11 +24,25 @@ const CommentActions = ( {
 	onLikeToggle,
 } ) => {
 	const translate = useTranslate();
+	const spellOutLabels = useContext( CommentLabelsContext );
 	const commentId = comment.ID;
 	const showReplyButton = isCommentsOpen( post );
 	const showCancelReplyButton = activeReplyCommentId === commentId;
+	// Spelled out, Cancel takes over Reply's button while the editor is open, so focus stays on it.
+	const swapReplyForCancel = spellOutLabels && showReplyButton && showCancelReplyButton;
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showReblogButton = isRebloggable( post, hasSites );
+
+	let replyIcon = <Gridicon icon="reply" size={ 18 } />;
+	if ( swapReplyForCancel ) {
+		replyIcon = (
+			<Icon icon={ close } size={ 18 } className="comments__comment-actions-cancel-icon" />
+		);
+	} else if ( spellOutLabels ) {
+		replyIcon = (
+			<Icon icon={ keyboardReturn } size={ 18 } className="comments__comment-actions-reply-icon" />
+		);
+	}
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {
@@ -45,9 +62,17 @@ const CommentActions = ( {
 				</Button>
 			) }
 			{ showReplyButton && (
-				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
-					<Gridicon icon="reply" size={ 18 } />
-					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
+				<Button
+					className="comments__comment-actions-reply"
+					aria-label={ swapReplyForCancel ? translate( 'Cancel reply' ) : undefined }
+					onClick={ swapReplyForCancel ? onReplyCancel : handleReply }
+				>
+					{ replyIcon }
+					<span className="comments__comment-actions-reply-label">
+						{ swapReplyForCancel
+							? translate( 'Cancel', { context: 'verb' } )
+							: translate( 'Reply' ) }
+					</span>
 				</Button>
 			) }
 			{ showReblogButton && (
@@ -61,7 +86,7 @@ const CommentActions = ( {
 					showReblogLabel
 				/>
 			) }
-			{ showCancelReplyButton && (
+			{ showCancelReplyButton && ! swapReplyForCancel && (
 				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
 				</Button>

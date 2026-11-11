@@ -833,17 +833,12 @@ export const securitySshKeyRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'ssh-multiple-keys' ) ? __( 'SSH keys' ) : __( 'SSH key' ),
+				title: __( 'SSH keys' ),
 			},
 		],
 	} ),
 	getParentRoute: () => securityRoute,
-	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( sshKeysQuery() ),
-			queryClient.ensureQueryData( userSettingsQuery() ),
-		] );
-	},
+	loader: () => queryClient.ensureQueryData( sshKeysQuery() ),
 	path: '/ssh-key',
 	validateSearch: ( search ): { back_to?: 'site-settings-sftp-ssh' } => {
 		return {
