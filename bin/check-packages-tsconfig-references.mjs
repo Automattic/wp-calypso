@@ -32,7 +32,7 @@ function collectReferencedPackages( file, seen = new Set() ) {
 		if ( ! fs.existsSync( referenced ) ) {
 			// `tsc --build` fails on this too, so `yarn install` would stop here.
 			console.error(
-				`${ path.relative( process.cwd(), file ) } references "${ reference }", which has no tsconfig.json. ` +
+				`${ path.relative( process.cwd(), file ) } references "${ reference }", which does not exist. ` +
 					'Remove the reference or restore the package.'
 			);
 			process.exit( 1 );
@@ -71,7 +71,7 @@ const missing = fs.readdirSync( PACKAGES_DIR ).filter( ( name ) => {
 if ( missing.length ) {
 	console.error(
 		'These packages publish their types from dist/ but packages/tsconfig.json does not reference them, ' +
-			'so `yarn install` never builds them and a fresh checkout cannot type-check code that imports them:\n'
+			'so the `tsc --build` that `yarn install` runs skips them and a fresh checkout can fail to type-check code that imports them:\n'
 	);
 	for ( const name of missing ) {
 		console.error( `  { "path": "./${ name }" },` );
