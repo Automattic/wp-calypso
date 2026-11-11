@@ -3,7 +3,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import { usePrefillCheckoutContactForm } from '../hooks/use-prefill-checkout-contact-form';
 import { useContactDetails } from '../lib/checkout-stores';
 import ContactDetailsContainer from './contact-details-container';
@@ -95,12 +94,10 @@ export default function WPContactForm( {
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	const hasCompleted = usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors,
 		isLoggedOut: isLoggedOutCart,
-		suppressScrollOnAutoComplete: isMobileCheckoutStickySummary,
 	} );
 
 	useEffect( () => {
