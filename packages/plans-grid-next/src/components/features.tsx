@@ -2,6 +2,7 @@ import {
 	getPlanClass,
 	FEATURE_AI_WEBSITE_BUILDER,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_UNLIMITED_ENTITIES,
 	isFreePlan,
 } from '@automattic/calypso-products';
 import { Gridicon, LoadingPlaceholder } from '@automattic/components';
@@ -105,7 +106,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, gridPlans, showFeatureCheckmarks } = usePlansGridContext();
+	const { enableFeatureTooltips, gridPlans, intent, showFeatureCheckmarks } = usePlansGridContext();
 
 	return (
 		<>
@@ -242,6 +243,18 @@ const PlanFeatures2023GridFeatures: React.FC< {
 								</span>
 							</span>
 						</PlanFeaturesItem>
+						{ intent === 'plans-playground' &&
+							isFreePlan( planSlug ) &&
+							featureSlug === FEATURE_UNLIMITED_ENTITIES && (
+								<PlanFeaturesItem>
+									<span className="plan-features-2023-grid__item-info is-available">
+										<span className="plan-features-2023-grid__item-title plan-features-2023-grid__playground-warning">
+											<Gridicon icon="cross" size={ 16 } aria-hidden="true" focusable="false" />
+											{ translate( 'Your Playground site won’t be imported with the Free plan.' ) }
+										</span>
+									</span>
+								</PlanFeaturesItem>
+							) }
 					</div>
 				);
 			} ) }

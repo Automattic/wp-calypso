@@ -506,6 +506,17 @@ $redesign-table-cell-max-width: 280px;
 	visibility: hidden;
 }
 
+.plan-features-2023-grid__playground-warning {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+
+	.gridicon {
+		fill: var( --studio-red-50 );
+		flex: 0 0 16px;
+	}
+}
+
 .plan-features-2023-grid__feature-badge.is-placeholder {
 	visibility: hidden;
 }
