@@ -92,7 +92,7 @@ export class LoginPage {
 		await this.clickSubmit();
 		await this.fillPassword( password );
 		await Promise.all( [
-			this.page.waitForNavigation( { timeout: 20 * 1000 } ),
+			this.page.waitForNavigation( { waitUntil: 'commit', timeout: 20 * 1000 } ),
 			this.clickSubmit(),
 		] );
 	}
