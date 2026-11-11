@@ -9,11 +9,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { hasHostingFeature } from '../../../utils/site-features';
-import { getKnownThreatsWarning, KnownThreatsToggle } from './known-threats-badge';
+import { getKnownThreatsWarning } from './known-threats-badge';
 import { KnownThreatsList } from './known-threats-list';
 import { RestoreThatOneInsteadLink } from './restore-that-one-instead-link';
 import type { BackupKnownThreats, Site } from '@automattic/api-core';
@@ -50,7 +50,6 @@ export default function KnownThreatsNotice( {
 	refusedKnownThreats,
 }: KnownThreatsNoticeProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const threatsRegionId = useId();
 	// CheckboxControl doesn't forward a ref to its input.
 	const acknowledgementWrapperRef = useCallback(
 		( wrapper: HTMLDivElement | null ) => {
@@ -99,27 +98,27 @@ export default function KnownThreatsNotice( {
 	return (
 		<Notice variant="warning">
 			<VStack spacing={ 3 }>
-				<Text>{ warning }</Text>
+				{ /* One paragraph: the warning, then where to go instead. */ }
+				<Text>
+					{ warning }{ ' ' }
+					<RestoreThatOneInsteadLink
+						siteId={ site.ID }
+						siteSlug={ site.slug }
+						restoreLinkTo={ restoreLinkTo }
+						latestWithoutKnownThreats={ counts?.latestWithoutKnownThreats }
+						currentBackupPeriod={ counts?.backupPeriod }
+					/>
+				</Text>
 				{ hasScan && flagged > 0 && counts?.backupPeriod != null && (
-					<div>
-						<KnownThreatsToggle
-							isOpen={ isOpen }
-							onToggle={ () => setIsOpen( ( open ) => ! open ) }
-							controlsId={ threatsRegionId }
-						/>
+					// Native disclosure: the list loads the first time it's opened.
+					<details
+						className="known-threats-notice__threats"
+						onToggle={ ( event ) => setIsOpen( event.currentTarget.open ) }
+					>
+						<summary>{ __( 'Threat details' ) }</summary>
 						{ isOpen && (
-							<div id={ threatsRegionId }>
-								{ threats && (
-									<KnownThreatsList
-										siteId={ site.ID }
-										siteSlug={ site.slug }
-										restoreLinkTo={ restoreLinkTo }
-										threats={ threats }
-										latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-										currentBackupPeriod={ counts.backupPeriod }
-										showRestoreLink={ false }
-									/>
-								) }
+							<div className="known-threats-notice__threats-content">
+								{ threats && <KnownThreatsList threats={ threats } /> }
 								{ ! threats && isThreatsError && (
 									<Text>{ __( "Couldn't load the threats. Try again later." ) }</Text>
 								) }
@@ -131,15 +130,8 @@ export default function KnownThreatsNotice( {
 								) }
 							</div>
 						) }
-					</div>
+					</details>
 				) }
-				<RestoreThatOneInsteadLink
-					siteId={ site.ID }
-					siteSlug={ site.slug }
-					restoreLinkTo={ restoreLinkTo }
-					latestWithoutKnownThreats={ counts?.latestWithoutKnownThreats }
-					currentBackupPeriod={ counts?.backupPeriod }
-				/>
 				{ requireAcknowledgement && (
 					<div className="known-threats-notice__acknowledgement" ref={ acknowledgementWrapperRef }>
 						<CheckboxControl

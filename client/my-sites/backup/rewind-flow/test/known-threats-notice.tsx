@@ -90,7 +90,7 @@ const LIST_PATH = `/wpcom/v3/sites/${ SITE_ID }/rewind/backups`;
 const ACTIVITY_PATH = `/wpcom/v2/sites/${ SITE_ID }/activity/rewindable`;
 const THREATS_PATH = `/wpcom/v2/sites/${ SITE_ID }/rewind/backups/200/threats`;
 const NOTICE =
-	'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+	'This backup contains 3 known security threats and may restore malware on your site.';
 const CHECKBOX = 'I understand this backup contains known threats and want to restore it anyway.';
 
 const expectInOrder = ( ...elements: HTMLElement[] ) =>
@@ -199,7 +199,7 @@ describe( 'KnownThreatsNotice', () => {
 
 		expect(
 			await screen.findByText(
-				'This backup is known to contain 1 security threat. Restoring it may bring malware back to your site.'
+				'This backup contains 1 known security threat and may restore malware on your site.'
 			)
 		).toBeVisible();
 	} );
@@ -260,53 +260,52 @@ describe( 'KnownThreatsNotice', () => {
 			} );
 		nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
-		expect( toggle ).toHaveClass( 'is-next-40px-default-size' );
-		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
-		// Not the badge: no warning icon, only the chevron.
-		expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
-		expect( toggle.closest( '.rewind-flow-known-threats__details' ) ).toBeInTheDocument();
+		const summary = await screen.findByText( 'Threat details' );
+		expect( summary.tagName ).toBe( 'SUMMARY' );
+		const details = summary.closest( 'details' ) as HTMLElement;
+		expect( details ).toHaveClass( 'rewind-flow-known-threats__details' );
+		expect( details ).not.toHaveAttribute( 'open' );
 		// The banner already says how many threats there are, so no badge repeats it.
 		expect( screen.queryByText( 'Known threats (3)' ) ).not.toBeInTheDocument();
 		const banner = screen.getByText( NOTICE ).closest( '.rewind-flow-notice' );
 		expect( banner ).toBeInTheDocument();
-		expect( banner ).toContainElement( toggle );
+		expect( banner ).toContainElement( details );
 		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
-		expect( toggle ).not.toHaveAccessibleDescription( 'Show threats' );
-		await userEvent.unhover( toggle );
-		await userEvent.click( toggle );
-		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
-		const expanded = screen.getByRole( 'button', { name: 'Hide threats' } );
-		expect( expanded ).toHaveAttribute( 'aria-expanded', 'true' );
-		await userEvent.unhover( expanded );
-		expect( expanded ).not.toHaveAccessibleDescription( 'Hide threats' );
-		const link = await screen.findByRole( 'link', { name: /^Restore .+ backup instead$/ } );
+		// Right under the warning: where to go instead, as one sentence.
+		const link = await screen.findByRole( 'link', {
+			name: /^restore the latest backup without known threats, from .+ at .+$/,
+		} );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
+		expect( link.parentElement ).toHaveTextContent(
+			/^Instead, restore the latest backup without known threats, from .+ at .+\.$/
+		);
 		expect( banner ).toContainElement( link );
-		expect( banner ).toContainElement( screen.getByText( 'Evil.Sig' ) );
-		expectInOrder( expanded, screen.getByText( 'Evil.Sig' ), link );
-		expect( screen.getAllByRole( 'link', { name: /^Restore .+ backup instead$/ } ) ).toHaveLength(
+		expectInOrder( screen.getByText( NOTICE ), link, summary );
+		await userEvent.click( summary );
+		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
+		expect( details ).toHaveAttribute( 'open' );
+		expect( details ).toContainElement( screen.getByText( 'Evil.Sig' ) );
+		expect( screen.getAllByRole( 'link', { name: /^restore the latest backup/ } ) ).toHaveLength(
 			1
 		);
 	} );
 
-	it( 'points the toggle at a loading, then failed, threats region while open', async () => {
+	it( 'shows a loading, then failed, state inside the open threat details', async () => {
 		mockList( counts( 3 ) );
 		nock( BASE ).get( THREATS_PATH ).query( true ).delay( 300 ).reply( 500, {} );
 		renderWithProvider( <Harness /> );
 
-		const toggle = await screen.findByRole( 'button', { name: 'Show threats' } );
-		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
-		await userEvent.click( toggle );
+		const summary = await screen.findByText( 'Threat details' );
+		const details = summary.closest( 'details' ) as HTMLElement;
+		await userEvent.click( summary );
 
-		const region = () => document.getElementById( toggle.getAttribute( 'aria-controls' ) ?? '' );
-		expect( region() ).toContainElement( await screen.findByText( 'Loading threats…' ) );
-		expect( region() ).toContainElement(
+		expect( details ).toContainElement( await screen.findByText( 'Loading threats…' ) );
+		expect( details ).toContainElement(
 			await screen.findByText( "Couldn't load the threats. Try again later." )
 		);
 
-		await userEvent.click( toggle );
-		expect( toggle ).not.toHaveAttribute( 'aria-controls' );
+		await userEvent.click( summary );
+		expect( details ).not.toHaveAttribute( 'open' );
 	} );
 
 	it( 'has no expander and no details request without Scan, but keeps the checkbox', async () => {
@@ -315,7 +314,7 @@ describe( 'KnownThreatsNotice', () => {
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
 		expect( await screen.findByText( NOTICE ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /threats/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Threat details' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'checkbox', { name: CHECKBOX } ) ).toBeVisible();
 		expect( details.isDone() ).toBe( false );
 	} );

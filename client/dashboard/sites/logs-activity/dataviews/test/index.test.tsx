@@ -282,7 +282,7 @@ test( 'marks a backup known to contain threats', async () => {
 	expect( badges ).toHaveLength( 1 );
 	// `sprintf` is mocked, so the count stays a placeholder.
 	const warning =
-		/This backup is known to contain .+ security threats\. Restoring it may bring malware back to your site\./;
+		/This backup contains .+ known security threats and may restore malware on your site\./;
 	expect( badges[ 0 ].parentElement ).toHaveTextContent( warning );
 	expect( badges[ 0 ] ).not.toHaveAttribute( 'title' );
 	// A badge isn't interactive, so no tooltip: screen readers get the warning as hidden text.

@@ -156,7 +156,7 @@ describe( 'BackupDelta known threats', () => {
 		expect( within( cards[ 1 ] ).queryByText( /Known threats/ ) ).toBeNull();
 
 		const warning =
-			'This backup is known to contain 3 security threats. Restoring it may bring malware back to your site.';
+			'This backup contains 3 known security threats and may restore malware on your site.';
 		expect( button ).toHaveAccessibleDescription( warning );
 		expect( button ).not.toHaveAttribute( 'title' );
 		expect( button ).not.toHaveAccessibleDescription( 'Show threats' );

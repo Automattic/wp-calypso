@@ -1,14 +1,14 @@
-import { Button, Icon, VisuallyHidden } from '@wordpress/components';
+import { Icon, VisuallyHidden } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { caution, chevronDown, chevronUp } from '@wordpress/icons';
+import { caution } from '@wordpress/icons';
 import './known-threats-badge.scss';
 
 export function getKnownThreatsWarning( count: number ) {
 	return sprintf(
 		// translators: %d is the number of known security threats in the backup
 		_n(
-			'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-			'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+			'This backup contains %d known security threat and may restore malware on your site.',
+			'This backup contains %d known security threats and may restore malware on your site.',
 			count
 		),
 		count
@@ -44,34 +44,5 @@ export function KnownThreatsBadge( { count, showWarning = false }: KnownThreatsB
 			{ badge }
 			<VisuallyHidden as="span">{ getKnownThreatsWarning( count ) }</VisuallyHidden>
 		</>
-	);
-}
-
-interface KnownThreatsToggleProps {
-	isOpen: boolean;
-	onToggle: () => void;
-	/** The id of the region the toggle shows; referenced only while it is open. */
-	controlsId?: string;
-}
-
-export function KnownThreatsToggle( { isOpen, onToggle, controlsId }: KnownThreatsToggleProps ) {
-	// The warning beside it already gives the count, so no badge: just the button.
-	return (
-		<Button
-			__next40pxDefaultSize
-			variant="secondary"
-			size="compact"
-			icon={ isOpen ? chevronUp : chevronDown }
-			iconPosition="right"
-			aria-expanded={ isOpen }
-			aria-controls={ isOpen ? controlsId : undefined }
-			onClick={ onToggle }
-		>
-			{ isOpen
-				? /* translators: Hides the list of known security threats in a backup. */
-					__( 'Hide threats' )
-				: /* translators: Shows the list of known security threats in a backup. */
-					__( 'Show threats' ) }
-		</Button>
 	);
 }
