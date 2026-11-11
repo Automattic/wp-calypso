@@ -2,7 +2,7 @@ import * as flagUrls from './flag-urls';
 
 /**
  * Given a country code, return a flag SVG file path
- * @param   {string} countryCode  A two-letter ISO_3166-1_country code
+ * @param   {string} countryCode  A lowercase flag-icons code: an ISO 3166-1 alpha-2 country code such as `fr`, or a subdivision or region code such as `gb-eng` or `eu`
  * @returns {string}              Flag SVG file path
  */
 export function flagUrl( countryCode ) {
