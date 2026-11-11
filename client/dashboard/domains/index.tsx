@@ -109,7 +109,7 @@ function Domains() {
 							} }
 							onReset={ resetView }
 							view={ view }
-							// The cards render their own actions, and DataViews would add a bulk selection footer.
+							// The cards render their own actions.
 							actions={ isCardsLayout ? undefined : actions }
 							search
 							paginationInfo={ paginationInfo }
