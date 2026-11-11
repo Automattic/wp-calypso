@@ -195,6 +195,7 @@
 .stats-pricing-grid__item-icon {
 	margin: 0 var(--spacing-base);
 	fill: var(--studio-gray-5);
+	color: var(--studio-gray-5);
 	flex-shrink: 0;
 
 	&--check {
@@ -203,6 +204,7 @@
 
 	&--cross {
 		fill: var(--studio-red-50);
+		color: var(--studio-red-50);
 	}
 }
 

@@ -61,6 +61,7 @@
 	.shelf-color-picker__check {
 		position: relative;
 		fill: var( --color-text );
+		color: var( --color-text );
 	}
 }
 
@@ -70,6 +71,7 @@
 	// invisible on the coloured swatch) in dark mode; `--color-text-inverted`
 	// stays white in both themes.
 	fill: var( --color-text-inverted );
+	color: var( --color-text-inverted );
 	pointer-events: none;
 }
 

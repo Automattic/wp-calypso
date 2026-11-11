@@ -74,6 +74,11 @@ $actions-row-height: 32px;
 
 		svg.gridicon {
 			fill: var(--color-muted-foreground);
+
+			// Agenttic sets `color` on every message descendant, so the stroke's color goes on the path.
+			path {
+				color: var(--color-muted-foreground);
+			}
 		}
 	}
 

@@ -30,6 +30,7 @@ const StickyPayButtonWrapper = styled.span`
 
 const StyledLockIcon = styled( Icon )`
 	fill: ${ ( { theme } ) => theme.colors.surface };
+	color: ${ ( { theme } ) => theme.colors.surface };
 	margin-inline-end: 0.5em;
 
 	/* The composite-checkout button nudges every svg down 2px to baseline-align

@@ -132,6 +132,7 @@ $conversations-inbox-post-card-shadow:
 .conversations-inbox__post-arrow {
 	flex-shrink: 0;
 	fill: var( --color-text );
+	color: var( --color-text );
 	opacity: 0;
 	transition: opacity $conversations-inbox-duration $conversations-inbox-easing;
 

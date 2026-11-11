@@ -311,7 +311,7 @@ body.is-mobile-app-view {
 	&:hover,
 	&.is-open,
 	&:has(+ .masterbar__item-subitems:hover) {
-		svg path,
+		svg:not([stroke]) path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
 		}

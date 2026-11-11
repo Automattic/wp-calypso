@@ -245,6 +245,7 @@ button.dns__breadcrumb-button {
 	}
 	.add-record__icon{
 		fill: var(--studio-gray-80);
+		color: var(--studio-gray-80);
 
 		@include break-large {
 			fill: var(--studio-white);

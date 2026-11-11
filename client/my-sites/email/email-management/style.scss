@@ -112,6 +112,7 @@
 
 		>svg {
 			fill: var(--color-error);
+			color: var(--color-error);
 		}
 	}
 
@@ -122,6 +123,7 @@
 
 		>svg {
 			fill: var(--color-warning);
+			color: var(--color-warning);
 		}
 	}
 }
@@ -582,6 +584,7 @@
 	.icon {
 		svg {
 			fill: #fff;
+			color: #fff;
 			padding: 4px;
 			border-radius: 100%;
 			background: var(--color-accent-60);
