@@ -4,6 +4,7 @@
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
 import { type Mock, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { LocaleProvider, useLocale, withLocale } from '../locale-context';
 
 vi.mock( '@wordpress/i18n', () => ( {
