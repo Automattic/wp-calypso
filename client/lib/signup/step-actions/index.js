@@ -187,6 +187,8 @@ export const getNewSiteParams = ( {
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: launchAsComingSoon,
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
+			// Every /start flow that creates a site gets the wp-admin AI Launchpad (Site Setup).
+			wpcom_ai_launchpad_enabled: true,
 		},
 		validate: false,
 	};
