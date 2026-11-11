@@ -108,7 +108,6 @@
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
 		"postinstall": "bash ./bin/postinstall.sh",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .prettierignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
-		"site-admin:storybook:start": "yarn workspace @automattic/site-admin run storybook:start",
 		"start": "check-node-version --package && node bin/welcome.js && node packages/calypso-doctor/cli.js --once && yarn run build-start && yarn run start-build",
 		"start:debug": "NODE_OPTIONS='--max-old-space-size=8192' SOURCEMAP='eval-source-map' yarn start",
 		"start-mock-wordpress-com": "MOCK_WORDPRESSDOTCOM=1 yarn run start",
