@@ -7,8 +7,8 @@ import { type Mock, vi } from 'vitest';
 import { LocaleProvider, useLocale, withLocale } from '../locale-context';
 
 vi.mock( '@wordpress/i18n', () => ( {
-	getLocaleData: vi.fn( () => ( {} ) ),
-	subscribe: vi.fn( () => () => undefined ),
+	getLocaleData: vi.fn(),
+	subscribe: vi.fn(),
 } ) );
 
 beforeEach( () => {

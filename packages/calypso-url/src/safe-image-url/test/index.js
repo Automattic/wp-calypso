@@ -171,8 +171,13 @@ describe( 'safeImageUrl()', () => {
 
 	describe( 'node', () => {
 		beforeAll( async () => {
+			vi.stubGlobal( 'location', undefined );
 			vi.resetModules();
 			safeImageUrl = ( await import( '../' ) ).safeImageUrl;
+		} );
+
+		afterAll( () => {
+			vi.unstubAllGlobals();
 		} );
 
 		test( 'should make a blob url safe', () => {
