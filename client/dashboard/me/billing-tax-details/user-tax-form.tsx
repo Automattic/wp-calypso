@@ -27,7 +27,12 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';
 import { wpcomLink } from '../../utils/link';
-import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
+import {
+	getTaxName,
+	getDataFormCountryCodes,
+	isManualTaxVerificationCountry,
+	stripCountryCodeFromVatId,
+} from '../../utils/tax';
 import type { UserTaxDetails, UserTaxFormData } from '@automattic/api-core';
 
 const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
@@ -307,27 +312,45 @@ export default function UserTaxForm() {
 						form={ form }
 						onChange={ ( edits ) => setLocalData( ( current ) => ( { ...current, ...edits } ) ) }
 					/>
-					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected && selectedCountry && (
-						<Text variant="muted">
-							{ createInterpolateElement(
-								/* translators: This tells the customer that they will need to contact support to add their tax details, <nameOfTax></nameOfTax> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName></countryName> is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
-								__(
-									'Unfortunately <nameOfTax></nameOfTax> details for <countryName></countryName> cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink>. Include your <nameOfTax></nameOfTax> number and country code when you contact us.'
-								),
-								{
-									nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
-									countryName: <span>{ selectedCountry.name }</span>,
-									contactSupportLink: (
-										<a
-											href={ wpcomLink( '/help' ) }
-											title={ contactSupportLinkTitle }
-											onClick={ handleOpenCenterChat }
-										/>
+					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected &&
+						selectedCountry &&
+						! isManualTaxVerificationCountry( selectedCountry.code ) && (
+							<Text variant="muted">
+								{ createInterpolateElement(
+									/* translators: <nameOfTax></nameOfTax> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName></countryName> is the name of the country. */
+									__(
+										'We do not collect <nameOfTax></nameOfTax> for <countryName></countryName>, so you do not need to add a tax ID.'
 									),
-								}
-							) }
-						</Text>
-					) }
+									{
+										nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
+										countryName: <span>{ selectedCountry.name }</span>,
+									}
+								) }
+							</Text>
+						) }
+					{ ! selectedCountryIsVatSupportedOrNoCountryIsSelected &&
+						selectedCountry &&
+						isManualTaxVerificationCountry( selectedCountry.code ) && (
+							<Text variant="muted">
+								{ createInterpolateElement(
+									/* translators: This tells the customer that they will need to contact support to add their tax details, <nameOfTax></nameOfTax> is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names, <countryName></countryName> is the name of the country, contactSupportLink links to a document asking the customer to contact support. */
+									__(
+										'<nameOfTax></nameOfTax> details for <countryName></countryName> are verified manually, so they cannot be added via this form. Please <contactSupportLink>contact our Happiness Engineers</contactSupportLink> with your <nameOfTax></nameOfTax> number and business details. We will validate them before applying any exemption.'
+									),
+									{
+										nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
+										countryName: <span>{ selectedCountry.name }</span>,
+										contactSupportLink: (
+											<a
+												href={ wpcomLink( '/help' ) }
+												title={ contactSupportLinkTitle }
+												onClick={ handleOpenCenterChat }
+											/>
+										),
+									}
+								) }
+							</Text>
+						) }
 				</UserTaxFieldContext.Provider>
 				{ selectedCountryIsVatSupportedOrNoCountryIsSelected && (
 					<Text variant="muted">
