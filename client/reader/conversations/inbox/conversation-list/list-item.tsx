@@ -92,6 +92,9 @@ export function ConversationListItem( {
 	const pointerDownRef = useRef( false );
 	const prefetchPostComments = usePrefetchPostComments();
 	const prefetchComments = () => prefetchPostComments( { siteId, postId } );
+	const hoverTimerRef = useRef< ReturnType< typeof setTimeout > >( undefined );
+
+	useEffect( () => () => clearTimeout( hoverTimerRef.current ), [] );
 
 	useEffect( () => {
 		const isFirstRun = ! isMountedRef.current;
@@ -136,7 +139,11 @@ export function ConversationListItem( {
 					}
 					onSelect( item, 'click' );
 				} }
-				onPointerEnter={ prefetchComments }
+				// The delay skips rows the cursor only passes over.
+				onPointerEnter={ () => {
+					hoverTimerRef.current = setTimeout( prefetchComments, 100 );
+				} }
+				onPointerLeave={ () => clearTimeout( hoverTimerRef.current ) }
 				onPointerDown={ () => {
 					pointerDownRef.current = true;
 				} }
