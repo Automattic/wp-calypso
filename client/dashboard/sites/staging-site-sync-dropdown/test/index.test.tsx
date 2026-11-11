@@ -1,5 +1,6 @@
 /**
  * @jest-environment jsdom
+ * @jest-environment-options {"url":"https://my.wordpress.com"}
  */
 
 import { QueryClient } from '@tanstack/react-query';
@@ -126,6 +127,29 @@ describe( 'StagingSiteSyncDropdown', () => {
 				await screen.findByRole( 'menuitem', { name: 'Pull from Production' } )
 			).toBeVisible();
 			expect( await screen.findByRole( 'menuitem', { name: 'Push to Production' } ) ).toBeVisible();
+		} );
+
+		test( 'opens the pull dialog in the Dashboard without a Redux store', async () => {
+			const stagingSite = createMockStagingSite();
+			mockSiteBySlug( stagingSite );
+			mockSyncState();
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/sites/1' )
+				.query( true )
+				.reply( 200, createMockSite() )
+				.get( '/rest/v1.1/sites/2' )
+				.query( true )
+				.reply( 200, stagingSite )
+				.get( '/wpcom/v2/sites/1/activity/rewindable' )
+				.query( true )
+				.reply( 200, { current: { orderedItems: [] } } );
+			render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
+
+			const user = userEvent.setup();
+			await user.click( await screen.findByRole( 'button', { name: 'Sync' } ) );
+			await user.click( await screen.findByRole( 'menuitem', { name: 'Pull from Production' } ) );
+
+			expect( await screen.findByRole( 'dialog', { name: 'Pull from Production' } ) ).toBeVisible();
 		} );
 	} );
 } );

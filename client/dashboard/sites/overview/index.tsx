@@ -168,9 +168,11 @@ function SiteOverviewSecondaryCards( {
 function SiteOverview( {
 	siteSlug,
 	breakpoints,
+	useLegacySyncModal,
 }: {
 	siteSlug: string;
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
+	useLegacySyncModal?: boolean;
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { supports } = useAppContext();
@@ -209,7 +211,7 @@ function SiteOverview( {
 
 		return (
 			<>
-				<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+				<StagingSiteSyncDropdown siteSlug={ siteSlug } useLegacySyncModal={ useLegacySyncModal } />
 				<Button
 					ref={ wpAdminButtonRef }
 					__next40pxDefaultSize

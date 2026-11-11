@@ -8,7 +8,6 @@ import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { useState, lazy, Suspense } from 'react';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
@@ -30,12 +29,14 @@ interface StagingSiteSyncDropdownProps {
 	siteSlug: string;
 	className?: string;
 	onSyncStart?: () => void;
+	useLegacySyncModal?: boolean;
 }
 
 export default function StagingSiteSyncDropdown( {
 	siteSlug,
 	className,
 	onSyncStart = () => {},
+	useLegacySyncModal = false,
 }: StagingSiteSyncDropdownProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState< boolean >( false );
 	const [ syncDirection, setSyncDirection ] = useState< StagingSiteSyncDirection >( 'pull' );
@@ -88,7 +89,7 @@ export default function StagingSiteSyncDropdown( {
 	}
 
 	const renderModal = () => {
-		if ( isDashboardBackport() ) {
+		if ( useLegacySyncModal ) {
 			return (
 				<Suspense fallback={ null }>
 					<StagingSiteSyncModalV1

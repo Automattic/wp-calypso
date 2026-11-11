@@ -2,6 +2,7 @@ import { queryClient } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import { AnalyticsProvider, type AnalyticsClient } from 'calypso/dashboard/app/analytics';
 import { AuthProvider } from 'calypso/dashboard/app/auth';
 import router, {
@@ -9,6 +10,7 @@ import router, {
 	syncBrowserHistoryToRouter,
 	syncMemoryRouterToBrowserHistory,
 } from './router';
+import type { Store } from 'redux';
 
 function RouterProviderWithConfig( { siteSlug }: { siteSlug?: string } ) {
 	useEffect( () => {
@@ -33,9 +35,11 @@ function RouterProviderWithConfig( { siteSlug }: { siteSlug?: string } ) {
 }
 
 function Layout( {
+	store,
 	analyticsClient,
 	siteSlug,
 }: {
+	store: Store;
 	analyticsClient: AnalyticsClient;
 	siteSlug?: string;
 } ) {
@@ -43,7 +47,9 @@ function Layout( {
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>
 				<AnalyticsProvider client={ analyticsClient }>
-					<RouterProviderWithConfig siteSlug={ siteSlug } />
+					<ReduxProvider store={ store }>
+						<RouterProviderWithConfig siteSlug={ siteSlug } />
+					</ReduxProvider>
 				</AnalyticsProvider>
 			</AuthProvider>
 		</QueryClientProvider>
