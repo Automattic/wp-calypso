@@ -299,6 +299,19 @@ export default function AmplifyReportsList( {
 				enableHiding: false,
 			},
 			{
+				id: 'mode',
+				label: __( 'Report type' ),
+				getValue: ( { item } ) => item.mode,
+				elements: [
+					{ value: 'full', label: __( 'Full report' ) },
+					{ value: 'human', label: __( 'People' ) },
+					{ value: 'ai', label: __( 'AI agents' ) },
+				],
+				filterBy: { operators: [ 'isAny' ] },
+				// The score columns show the report type, so this field is only a filter.
+				enableHiding: false,
+			},
+			{
 				id: 'humanScore',
 				label: __( 'People' ),
 				type: 'integer',
