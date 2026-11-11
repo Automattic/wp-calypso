@@ -329,5 +329,26 @@ describe( '<CancelPurchase />', () => {
 
 			await waitFor( () => expect( extend.isDone() ).toBe( true ) );
 		} );
+
+		test( 'takes the customer to the purchase page after a free month', async () => {
+			const user = userEvent.setup();
+			const check = mockHasExtended( 200, { has_extended: false } );
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/upgrades/${ purchase.ID }/extend` )
+				.reply( 200, { status: 'completed' } );
+			const { queryClient, router } = renderRemoveFlow( {
+				purchase: monthlyPurchase,
+				seedHasExtended: false,
+			} );
+			await waitForCheck( check, queryClient );
+
+			await pickFoundBetterValue( user );
+			await user.click( await screen.findByRole( 'button', { name: 'Get a free month' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( `/me/billing/purchases/${ purchase.ID }` )
+			);
+			expect( router.state.location.search ).toEqual( { free_month: true } );
+		} );
 	} );
 } );

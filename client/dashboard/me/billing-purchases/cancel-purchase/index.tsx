@@ -212,7 +212,7 @@ export default function CancelPurchase() {
 
 function CancelPurchaseInner() {
 	const queryClient = useQueryClient();
-	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
@@ -614,10 +614,11 @@ function CancelPurchaseInner() {
 			extendWithFreeMonthMutation.mutate( purchase.ID, {
 				onSuccess: ( response ) => {
 					if ( response.status === 'completed' ) {
-						// refreshSitePlans( purchase.blog_id );
-						// clearPurchases();
-						createSuccessNotice( response.message, { type: 'snackbar' } );
-						navigate( { to: purchasesRoute.to } );
+						navigate( {
+							to: purchaseSettingsRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+							search: { free_month: true },
+						} );
 					}
 					setState( ( state ) => ( { ...state, isLoading: false } ) );
 				},
