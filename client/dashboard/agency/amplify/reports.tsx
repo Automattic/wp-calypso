@@ -4,7 +4,6 @@ import {
 	Button,
 	ExternalLink,
 	Modal,
-	VisuallyHidden,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -103,12 +102,6 @@ function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: bo
 			) }
 		</Badge>
 	);
-}
-
-/** The failure reason without the error code the API puts in front of it. */
-function getFailureMessage( reason: string | null ) {
-	const message = reason?.replace( /^[a-z0-9]+(?:_[a-z0-9]+)+(?::\s*|$)/, '' ).trim();
-	return message || __( 'The report didn’t finish.' );
 }
 
 function titleFor( report: AmplifyReport ) {
@@ -284,7 +277,9 @@ export default function AmplifyReportsList( {
 						</ExternalLink>
 						{ item.status === 'failed' && (
 							<Text intent="error" size={ 12 }>
-								{ getFailureMessage( item.failure_reason ) }
+								{ __(
+									'We couldn’t finish this report. If the site loads, retry it. If the URL is wrong, archive it and start a new report.'
+								) }
 							</Text>
 						) }
 					</VStack>
@@ -300,7 +295,8 @@ export default function AmplifyReportsList( {
 					label,
 				} ) ),
 				filterBy: { operators: [ 'isAny' ] },
-				render: ( { item } ) => <Text>{ getStatusLabels()[ item.status ] }</Text>,
+				// The actions column shows the status, so this field is only a filter.
+				enableHiding: false,
 			},
 			{
 				id: 'mode',
@@ -312,6 +308,8 @@ export default function AmplifyReportsList( {
 					{ value: 'ai', label: __( 'AI agents' ) },
 				],
 				filterBy: { operators: [ 'isAny' ] },
+				// The score columns show the report type, so this field is only a filter.
+				enableHiding: false,
 			},
 			{
 				id: 'humanScore',
@@ -362,8 +360,7 @@ export default function AmplifyReportsList( {
 			},
 			{
 				id: 'actions',
-				label: __( 'Actions' ),
-				header: <VisuallyHidden>{ __( 'Actions' ) }</VisuallyHidden>,
+				label: __( 'Status' ),
 				render: ( { item } ) => (
 					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
 						{ item.status === 'completed' && (
