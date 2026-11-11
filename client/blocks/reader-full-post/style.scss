@@ -379,6 +379,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button:hover {
 		svg {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		.post-edit-button__label {
@@ -889,6 +890,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	&:active {
 		.gridicon {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		.post-edit-button__label {

@@ -29,6 +29,7 @@
 
 		@include ui-mixins.when-dark-theme {
 			fill: var(--dashboard__foreground-color-warning, #f5c15c);
+			color: var(--dashboard__foreground-color-warning, #f5c15c);
 		}
 	}
 

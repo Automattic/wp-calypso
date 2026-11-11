@@ -643,6 +643,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 			svg {
 				fill: var(--studio-gray-50);
+				color: var(--studio-gray-50);
 				min-width: 20px;
 			}
 		}
@@ -1126,6 +1127,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		svg {
 			fill: var(--color-surface);
+			color: var(--color-surface);
 		}
 	}
 
@@ -1403,7 +1405,8 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 			svg {
 				margin-right: 5px;
-				fill: var( --color-link )
+				fill: var( --color-link );
+				color: var( --color-link )
 			}
 		}
 	}

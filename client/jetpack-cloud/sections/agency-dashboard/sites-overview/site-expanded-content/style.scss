@@ -96,6 +96,7 @@ $color-yellow: var(--studio-yellow-50);
 
 	span svg {
 		fill: $fill;
+		color: $fill;
 
 		path {
 			stroke: $stroke;
@@ -127,6 +128,7 @@ $color-yellow: var(--studio-yellow-50);
 
 		.gridicon {
 			fill: var(--studio-white);
+			color: var(--studio-white);
 		}
 	}
 

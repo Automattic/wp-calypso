@@ -171,6 +171,7 @@ body.dns__body-white {
 		&__icon.gridicon {
 			min-width: 18px;
 			fill: var(--studio-orange-40);
+			color: var(--studio-orange-40);
 		}
 
 		&__message {
@@ -193,6 +194,7 @@ body.dns__body-white {
 
 		svg {
 			fill: var(--studio-gray-90);
+			color: var(--studio-gray-90);
 		}
 
 		&:disabled,
@@ -202,6 +204,7 @@ body.dns__body-white {
 			color: var(--studio-gray-20);
 			svg {
 				fill: var(--color-neutral-20);
+				color: var(--color-neutral-20);
 			}
 		}
 	}
@@ -213,6 +216,7 @@ body.dns__body-white {
 		background-color: var(--color-primary);
 		svg {
 			fill: var(--studio-white);
+			color: var(--studio-white);
 		}
 	}
 }
@@ -249,6 +253,7 @@ button.dns__breadcrumb-button {
 
 		@include break-large {
 			fill: var(--studio-white);
+			color: var(--studio-white);
 		}
 	}
 }
@@ -261,6 +266,7 @@ button.dns__breadcrumb-button {
 	.popover__menu-item[disabled] {
 		svg.gridicon {
 			fill: var(--color-neutral-20);
+			color: var(--color-neutral-20);
 		}
 	}
 
@@ -271,6 +277,7 @@ button.dns__breadcrumb-button {
 			top: 0;
 			margin-top: 0;
 			fill: var(--color-neutral-80);
+			color: var(--color-neutral-80);
 		}
 	}
 }
