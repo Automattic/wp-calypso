@@ -22,12 +22,12 @@ const AMBIENT_VALUES = URL_ENV_VARS.map( ( name ) => process.env[ name ] );
 
 describe( 'EnvVariables Tests', function () {
 	// Each case starts from the unset state so the assertions never depend on the
-	// shell that launched Jest, or on the order the cases run in.
+	// shell that launched the tests, or on the order the cases run in.
 	beforeEach( function () {
 		URL_ENV_VARS.forEach( ( name ) => delete process.env[ name ] );
 	} );
 
-	// Jest workers are reused across test files, so hand the environment back.
+	// A worker can be reused for the next test file, so hand the environment back.
 	afterAll( function () {
 		URL_ENV_VARS.forEach( ( name, index ) => {
 			const ambient = AMBIENT_VALUES[ index ];
@@ -100,7 +100,7 @@ describe( 'EnvVariables Tests', function () {
 		}
 
 		/**
-		 * Restores an environment variable, which Jest workers carry into the next test file.
+		 * Restores an environment variable, which a reused worker carries into the next test file.
 		 */
 		function restore( name: string, ambient: string | undefined ) {
 			if ( ambient === undefined ) {
