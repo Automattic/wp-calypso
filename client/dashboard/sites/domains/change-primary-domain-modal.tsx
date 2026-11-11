@@ -44,7 +44,6 @@ export default function ChangePrimaryDomainModal( {
 		const plainAddress = { address: domain.domain, domain, www: false };
 		const offersWww =
 			site.is_wpcom_atomic &&
-			domain === currentPrimaryDomain &&
 			domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS &&
 			( !! domain.primary_is_www || ! isSubdomain( domain.domain ) );
 		return offersWww
@@ -57,8 +56,9 @@ export default function ChangePrimaryDomainModal( {
 		)?.address ?? primaryAddress;
 	const [ selectedDomain, setSelectedDomain ] = useState( currentAddress );
 	const selected = addresses.find( ( { address } ) => address === selectedDomain );
+	const errorSnackbar = { error: { source: 'server' as const } };
 	const snackbar = {
-		error: { source: 'server' as const },
+		...errorSnackbar,
 		success: sprintf(
 			/* translators: %s is domain */
 			__( 'Primary site address changed: all domains will redirect to %s.' ),
@@ -66,7 +66,11 @@ export default function ChangePrimaryDomainModal( {
 		),
 	};
 	const setPrimaryDomainMutation = useMutation(
-		withSnackbar( siteSetPrimaryDomainMutation(), snackbar )
+		withSnackbar(
+			siteSetPrimaryDomainMutation(),
+			// The www request that follows shows the success message.
+			selected?.www ? errorSnackbar : snackbar
+		)
 	);
 	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
 	const isPending = setPrimaryDomainMutation.isPending || setWwwMutation.isPending;
@@ -89,16 +93,21 @@ export default function ChangePrimaryDomainModal( {
 		} );
 
 		const domain = selected.domain.domain;
-
-		if ( domain === primaryAddress ) {
+		const setWww = () =>
 			setWwwMutation.mutate(
 				{ siteId: site.ID, domain, enabled: selected.www },
 				{ onSuccess: onClose }
 			);
+
+		if ( domain === primaryAddress ) {
+			setWww();
 			return;
 		}
 
-		setPrimaryDomainMutation.mutate( { siteId: site.ID, domain }, { onSuccess: onClose } );
+		setPrimaryDomainMutation.mutate(
+			{ siteId: site.ID, domain },
+			{ onSuccess: selected.www ? setWww : onClose }
+		);
 	};
 
 	return (

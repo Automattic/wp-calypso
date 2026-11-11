@@ -696,13 +696,14 @@ describe( '<SiteDomains>', () => {
 				.map( ( option ) => ( option as HTMLOptionElement ).value );
 		}
 
-		test( 'offers www only for the primary domain on an Atomic site', async () => {
+		test( 'offers www right after each custom domain on an Atomic site', async () => {
 			const { select } = await openModal( [ primaryCandidateDomain, domain ] );
 
 			expect( optionValues( select ) ).toEqual( [
 				'test-site.com',
 				'www.test-site.com',
 				'candidate.com',
+				'www.candidate.com',
 			] );
 			expect( select ).toHaveValue( 'test-site.com' );
 		} );
@@ -722,16 +723,24 @@ describe( '<SiteDomains>', () => {
 				{ ...defaultAddressDomain, primary_domain: true },
 			] );
 
-			expect( optionValues( select ) ).toEqual( [ 'test-site.wordpress.com', 'candidate.com' ] );
+			expect( optionValues( select ) ).toEqual( [
+				'test-site.wordpress.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
 		} );
 
-		test( 'does not offer www for a primary subdomain', async () => {
+		test( 'does not offer www for a subdomain', async () => {
 			const { select } = await openModal( [
 				primaryCandidateDomain,
 				{ ...domain, domain: 'blog.test-site.com' },
 			] );
 
-			expect( optionValues( select ) ).toEqual( [ 'blog.test-site.com', 'candidate.com' ] );
+			expect( optionValues( select ) ).toEqual( [
+				'blog.test-site.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
 		} );
 
 		test( 'shows www as the current address when www is on', async () => {
@@ -783,13 +792,37 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( primaryRequest.isDone() ).toBe( true ) );
 		} );
 
+		test( 'sets another domain as primary, then turns www on, for its www address', async () => {
+			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			const requests: string[] = [];
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, () => {
+					requests.push( 'primary' );
+					return {};
+				} )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 200, () => {
+					requests.push( 'www' );
+					return { success: true };
+				} );
+
+			await submit( 'www.candidate.com' );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( requests ).toEqual( [ 'primary', 'www' ] );
+		} );
+
 		test( 'keeps the modal open when turning www on fails', async () => {
 			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary` )
+				.reply( 200, {} );
 			const wwwRequest = nock( 'https://public-api.wordpress.com' )
-				.post( '/wpcom/v2/domains/www-primary/test-site.com' )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com' )
 				.reply( 500, {} );
 
-			await submit( 'www.test-site.com' );
+			await submit( 'www.candidate.com' );
 
 			await waitFor( () => expect( wwwRequest.isDone() ).toBe( true ) );
 			await waitFor( () =>
@@ -811,7 +844,7 @@ describe( '<SiteDomains>', () => {
 			const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
 			expect(
 				optionValues( within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } ) )
-			).toEqual( [ 'test-site.com', 'www.test-site.com', 'candidate.com' ] );
+			).toEqual( [ 'test-site.com', 'www.test-site.com', 'candidate.com', 'www.candidate.com' ] );
 		} );
 	} );
 
