@@ -67,6 +67,18 @@ export const SITE_CONTEXT_VIEW: View = {
 	fields: [ 'expiry', 'domain_status' ],
 };
 
+export const DOMAINS_LIST_CARDS_ONLY_MAX = 8;
+const DOMAINS_LIST_CARDS_DEFAULT_MAX = 16;
+
+// Cards suit a small portfolio, but a table is easier to scan when there are many domains.
+export function withDomainsListDefaultLayout( view: View, domainCount: number ): View {
+	if ( domainCount <= DOMAINS_LIST_CARDS_DEFAULT_MAX ) {
+		return view;
+	}
+
+	return { ...view, type: 'table' } as View;
+}
+
 // Saved views can still list the removed SSL field, which the table would render as a blank column.
 export function sanitizeDomainFields( fields: View[ 'fields' ] ) {
 	return fields?.filter( ( field ) => field !== 'ssl_status' );
