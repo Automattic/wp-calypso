@@ -1,48 +1,15 @@
 import './prototype-controls.scss';
-import './wpadmin-sidebar.scss';
-import './wpadmin-style.scss';
-import './hybrid-sidebar.scss';
 
 /**
  * MSD-side Prototype controls: a fab/panel matching the one injected on every
  * wp-admin screen by the untangling mu-plugin. wp-admin and the MSD are
  * different origins, so its panel cannot reach this app's localStorage — the
- * MSD carries its own copy with the toggles that live on this side:
- * the sidebar variant and the demo persona.
+ * MSD carries its own copy with the one toggle that lives on this side:
+ * the demo persona. (The MSD style variants, Default / Hybrid / WP Admin,
+ * were retired on 2026-11-11; `?sidebar=` is ignored.)
  */
 
-const SIDEBAR_STORAGE_KEY = 'dashboard-demo-sidebar';
 const PERSONA_STORAGE_KEY = 'dashboard-demo-persona';
-
-type SidebarVariant = 'default' | 'hybrid' | 'wpadmin';
-
-function isSidebarVariant( value: string | null ): value is SidebarVariant {
-	return value === 'default' || value === 'hybrid' || value === 'wpadmin';
-}
-
-function resolveSidebarVariant(): SidebarVariant {
-	if ( typeof window === 'undefined' ) {
-		return 'default';
-	}
-	const requested = new URLSearchParams( window.location.search ).get( 'sidebar' );
-	if ( isSidebarVariant( requested ) ) {
-		window.localStorage.setItem( SIDEBAR_STORAGE_KEY, requested );
-	}
-	const stored = window.localStorage.getItem( SIDEBAR_STORAGE_KEY );
-	return isSidebarVariant( stored ) ? stored : 'default';
-}
-
-function applySidebarVariant( variant: SidebarVariant ) {
-	document.documentElement.classList.toggle( 'is-wpadmin-sidebar', variant === 'wpadmin' );
-	document.documentElement.classList.toggle( 'is-wpadmin-style', variant === 'wpadmin' );
-	document.documentElement.classList.toggle( 'is-hybrid-sidebar', variant === 'hybrid' );
-}
-
-function setUrlParam( key: string, value: string ) {
-	const url = new URL( window.location.href );
-	url.searchParams.set( key, value );
-	window.history.replaceState( null, '', url.toString() );
-}
 
 const WP_LOGO_PATH =
 	'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3.5 12c0-1.23.26-2.4.73-3.46L8.25 19.6C5.44 18.23 3.5 15.34 3.5 12zm8.5 8.5c-.83 0-1.64-.12-2.4-.35l2.55-7.4 2.61 7.15c.02.04.04.08.06.12-.9.31-1.85.48-2.82.48zm1.17-12.49c.51-.03.97-.08.97-.08.46-.05.4-.73-.05-.7 0 0-1.38.11-2.27.11-.84 0-2.24-.11-2.24-.11-.46-.03-.51.68-.06.7 0 0 .43.05.89.08l1.32 3.62-1.86 5.57-3.09-9.19c.51-.03.97-.08.97-.08.46-.05.4-.73-.05-.7 0 0-1.38.11-2.27.11-.16 0-.35 0-.55-.01C6.42 5.09 9.04 3.5 12 3.5c2.21 0 4.22.84 5.73 2.23-.04 0-.07-.01-.11-.01-.84 0-1.43.73-1.43 1.51 0 .7.4 1.29.84 1.99.33.57.71 1.3.71 2.35 0 .73-.28 1.58-.65 2.76l-.85 2.84-3.07-9.16zm3.1 11.36l2.6-7.51c.49-1.21.65-2.19.65-3.05 0-.31-.02-.6-.06-.87.66 1.21 1.04 2.6 1.04 4.06 0 3.13-1.7 5.86-4.23 7.37z';
@@ -76,11 +43,6 @@ function buildSegment(
 	} );
 
 	return [ heading, seg ];
-}
-
-function activate( seg: HTMLElement, button: HTMLButtonElement ) {
-	seg.querySelectorAll( 'button' ).forEach( ( b ) => b.classList.remove( 'is-active' ) );
-	button.classList.add( 'is-active' );
 }
 
 /**
@@ -170,24 +132,6 @@ function mount() {
 	const body = document.createElement( 'div' );
 	body.className = 'untangling-mproto-body';
 
-	body.append(
-		...buildSegment(
-			'MSD style',
-			[
-				{ value: 'default', text: 'Default' },
-				{ value: 'hybrid', text: 'Hybrid' },
-				{ value: 'wpadmin', text: 'WP Admin' },
-			],
-			resolveSidebarVariant(),
-			( value, button ) => {
-				window.localStorage.setItem( SIDEBAR_STORAGE_KEY, value );
-				applySidebarVariant( value as SidebarVariant );
-				setUrlParam( 'sidebar', value );
-				activate( button.parentElement as HTMLElement, button );
-			}
-		)
-	);
-
 	const persona =
 		window.localStorage.getItem( PERSONA_STORAGE_KEY ) === 'developer' ? 'developer' : 'blogger';
 	body.append(
@@ -200,7 +144,7 @@ function mount() {
 			persona,
 			( value ) => {
 				// Mock sites are computed at boot, so switching persona reloads.
-				window.location.href = `/sites?persona=${ value }&sidebar=${ resolveSidebarVariant() }`;
+				window.location.href = `/sites?persona=${ value }`;
 			}
 		)
 	);
@@ -211,7 +155,7 @@ function mount() {
 	copy.textContent = 'Copy link to this view';
 	copy.addEventListener( 'click', () => {
 		const url = new URL( window.location.href );
-		url.searchParams.set( 'sidebar', resolveSidebarVariant() );
+		url.searchParams.set( 'persona', persona );
 		navigator.clipboard.writeText( url.toString() ).then( () => {
 			copy.textContent = 'Copied ✓';
 			window.setTimeout( () => {
@@ -237,7 +181,6 @@ export function initPrototypeControls() {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
-	applySidebarVariant( resolveSidebarVariant() );
 	const start = () => {
 		mount();
 		watchOmnibar();
