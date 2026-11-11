@@ -36,6 +36,8 @@ interface RestoreThatOneInsteadLinkProps {
 	latestWithoutKnownThreats?: number | null;
 	/** The backup period containing the backup being viewed, if known. */
 	currentBackupPeriod?: number | null;
+	/** A sentence to follow the warning ("Instead, restore …"), rather than a link with its reason. */
+	inline?: boolean;
 }
 
 export function RestoreThatOneInsteadLink( {
@@ -43,6 +45,7 @@ export function RestoreThatOneInsteadLink( {
 	siteSlug,
 	latestWithoutKnownThreats,
 	currentBackupPeriod,
+	inline = false,
 }: RestoreThatOneInsteadLinkProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -103,6 +106,24 @@ export function RestoreThatOneInsteadLink( {
 	const completedAt = moment( Number( resolvedRewindId ) * 1000 );
 	const siteCompletedAt = applySiteOffset ? applySiteOffset( completedAt ) : completedAt;
 
+	const href = backupRestorePath( siteSlug, resolvedRewindId );
+
+	if ( inline ) {
+		return (
+			<>
+				{ translate(
+					'Instead, {{link}}restore the latest backup without known threats, from %(date)s at %(time)s{{/link}}.',
+					{
+						args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+						components: { link: <a href={ href } /> },
+						comment:
+							'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Follows the warning that the backup being viewed has known threats.',
+					}
+				) }
+			</>
+		);
+	}
+
 	const reason = translate( "It's the most recent backup with no known security threats." );
 
 	// The reason shows under the link, which also takes it as its description.
@@ -113,7 +134,7 @@ export function RestoreThatOneInsteadLink( {
 				variant="link"
 				className="backup-known-threats__restore-link"
 				aria-describedby={ descriptionId }
-				href={ backupRestorePath( siteSlug, resolvedRewindId ) }
+				href={ href }
 			>
 				{ translate( 'Restore %(date)s at %(time)s backup instead', {
 					args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
@@ -331,8 +352,8 @@ export function getKnownThreatsWarning(
 	count: number
 ) {
 	return translate(
-		'This backup is known to contain %d security threat. Restoring it may bring malware back to your site.',
-		'This backup is known to contain %d security threats. Restoring it may bring malware back to your site.',
+		'This backup contains %d known security threat and may restore malware on your site.',
+		'This backup contains %d known security threats and may restore malware on your site.',
 		{
 			count,
 			args: count,

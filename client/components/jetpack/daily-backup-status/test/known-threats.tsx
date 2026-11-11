@@ -404,7 +404,7 @@ describe( 'BackupKnownThreats', () => {
 		// No tooltip: a badge isn't interactive.
 		expect(
 			screen.getByText(
-				'This backup is known to contain 1 security threat. Restoring it may bring malware back to your site.'
+				'This backup contains 1 known security threat and may restore malware on your site.'
 			)
 		).toBeInTheDocument();
 		await userEvent.hover( badge );

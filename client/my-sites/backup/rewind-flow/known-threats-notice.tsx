@@ -11,7 +11,6 @@ import {
 	BackupKnownThreatsList,
 	getKnownThreatsWarning,
 	KnownThreatsRegion,
-	KnownThreatsToggleButton,
 	RestoreThatOneInsteadLink,
 } from 'calypso/components/jetpack/daily-backup-status/known-threats';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -83,14 +82,24 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 			type={ RewindFlowNoticeLevel.WARNING }
 		>
 			<div className="rewind-flow-known-threats">
-				{ hasScan && (
-					<div className="rewind-flow-known-threats__details">
-						<KnownThreatsToggleButton
-							flagged={ knownThreats.flagged }
-							isOpen={ isOpen }
-							onToggle={ () => setIsOpen( ( open ) => ! open ) }
-							controlsId={ threatsRegionId }
+				{ siteSlug && (
+					<p className="rewind-flow-known-threats__instead">
+						<RestoreThatOneInsteadLink
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+							currentBackupPeriod={ counts.backupPeriod }
+							inline
 						/>
+					</p>
+				) }
+				{ hasScan && (
+					// Native disclosure: the list loads the first time it's opened.
+					<details
+						className="rewind-flow-known-threats__details"
+						onToggle={ ( event ) => setIsOpen( event.currentTarget.open ) }
+					>
+						<summary>{ translate( 'Threat details' ) }</summary>
 						{ isOpen && (
 							<KnownThreatsRegion id={ threatsRegionId } isError={ isThreatsError || ! siteSlug }>
 								{ threats && siteSlug && (
@@ -98,22 +107,12 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 										siteId={ siteId }
 										siteSlug={ siteSlug }
 										threats={ threats }
-										latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-										currentBackupPeriod={ counts.backupPeriod }
 										showRestoreLink={ false }
 									/>
 								) }
 							</KnownThreatsRegion>
 						) }
-					</div>
-				) }
-				{ siteSlug && (
-					<RestoreThatOneInsteadLink
-						siteId={ siteId }
-						siteSlug={ siteSlug }
-						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-						currentBackupPeriod={ counts.backupPeriod }
-					/>
+					</details>
 				) }
 				{ requireAcknowledgement && (
 					<div className="rewind-flow-known-threats__acknowledgement">
