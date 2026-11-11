@@ -25,9 +25,7 @@ import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites
 import { AgencyNotices } from '../components/agency-notices';
 import DesignPreviewControls, { useDesignPreview } from '../design-preview';
 import useSiteSimulation from '../design-preview/use-site-simulation';
-import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
-import ConnectSiteModal from './add-new-site/connect-site-modal';
-import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
+import AddSiteModal from './add-new-site/add-site-modal';
 import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
@@ -35,7 +33,7 @@ import SiteWizard from './site-wizard';
 import WelcomeModal from './site-wizard/welcome-modal';
 import './style.scss';
 import { useWizardHistory } from './site-wizard/wizard-history';
-import type { AddNewSiteAction } from './add-new-site/types';
+import type { AddSiteView } from './add-new-site/add-site-modal';
 import type { SiteWelcome } from './site-wizard/welcome-modal';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
@@ -133,7 +131,7 @@ function AgencySitesContent() {
 	const liveLicensesReadyToSetUp = useLicensesReadyToSetUp();
 	const licensesReadyToSetUp = preview.sitesActive ? 0 : liveLicensesReadyToSetUp;
 	const currentSearchParams = agencySitesRoute.useSearch();
-	const [ activeModal, setActiveModal ] = useState< AddNewSiteAction | null >( null );
+	const [ activeModal, setActiveModal ] = useState< AddSiteView | null >( null );
 	const [ wizardOpen, setWizardOpen ] = useState( false );
 	const [ createRequest, setCreateRequest ] = useState( 0 );
 	const [ wizardRevision, setWizardRevision ] = useState( 0 );
@@ -244,11 +242,11 @@ function AgencySitesContent() {
 									variant="primary"
 									onClick={ () => {
 										recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
-										setWizardOpen( true );
+										setActiveModal( 'menu' );
 									} }
 									__next40pxDefaultSize
 								>
-									{ __( 'Add new site' ) }
+									{ __( 'Add site' ) }
 								</Button>
 							)
 						)
@@ -265,18 +263,12 @@ function AgencySitesContent() {
 			}
 		>
 			<DesignPreviewControls surface="sites" />
-			{ activeModal === 'dev-site-configurations' && (
-				<DevSiteConfigurationModal closeModal={ closeModal } preview={ simulation?.development } />
-			) }
-			{ ( activeModal === 'a4a-connection' || activeModal === 'jetpack-connection' ) && (
-				<ConnectSiteModal
-					action={ activeModal }
+			{ activeModal && (
+				<AddSiteModal
+					initialView={ activeModal }
 					onClose={ closeModal }
-					onPreviewConnect={ simulation?.onConnect }
+					simulation={ simulation }
 				/>
-			) }
-			{ activeModal === 'import-from-wpcom' && (
-				<ImportFromWPCOMModal onClose={ closeModal } preview={ simulation?.import } />
 			) }
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			{ welcome && <WelcomeModal welcome={ welcome } onClose={ () => setWelcome( null ) } /> }

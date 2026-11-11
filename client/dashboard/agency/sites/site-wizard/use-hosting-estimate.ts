@@ -23,6 +23,25 @@ export interface HostingEstimate {
 	capacity?: number;
 }
 
+/**
+ * Why Pressable can be the better buy for a batch that leaves room on its plan:
+ * filled up, each site costs less than it would on WordPress.com.
+ */
+export interface PressablePitch {
+	/** How many more sites the plan holds. */
+	room: number;
+	capacity: number;
+	plan: string;
+	/** Pressable's price per site once the plan is full, formatted. */
+	perSiteWhenFull: string;
+	/** What the same number of sites would cost each month on WordPress.com, formatted. */
+	wpcomWhenFull: string;
+	/** Set when a full plan beats WordPress.com: the monthly difference, formatted. */
+	savings?: string;
+	/** Set when Pressable costs more today: the extra per month over WordPress.com, formatted. */
+	extra?: string;
+}
+
 const money = ( amount: number, currency: string ) =>
 	formatCurrency( amount, currency, { stripZeros: true } );
 
@@ -35,6 +54,7 @@ const money = ( amount: number, currency: string ) =>
 export function useHostingEstimates( count: number ): {
 	isLoading: boolean;
 	estimates: Partial< Record< Host, HostingEstimate > >;
+	pitch?: PressablePitch;
 } {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { data: products, isLoading } = useQuery( {
@@ -77,5 +97,22 @@ export function useHostingEstimates( count: number ): {
 			capacity: pressablePlan.capacity,
 		};
 	}
-	return { isLoading, estimates };
+
+	let pitch: PressablePitch | undefined;
+	if ( pressablePlan && wpcomPlan?.monthly_price && pressablePlan.capacity > sites ) {
+		const { capacity, monthly, product } = pressablePlan;
+		const wpcomWhenFull = getWpcomTieredPrice( wpcomPlan, capacity, 'monthly' ).discountedCost;
+		const wpcomNow = getWpcomTieredPrice( wpcomPlan, sites, 'monthly' ).discountedCost;
+		pitch = {
+			room: capacity - sites,
+			capacity,
+			plan: product.name.replace( /^Pressable\s+/i, '' ),
+			perSiteWhenFull: money( monthly / capacity, product.currency ),
+			wpcomWhenFull: money( wpcomWhenFull, wpcomPlan.currency ),
+			savings:
+				wpcomWhenFull > monthly ? money( wpcomWhenFull - monthly, product.currency ) : undefined,
+			extra: monthly > wpcomNow ? money( monthly - wpcomNow, product.currency ) : undefined,
+		};
+	}
+	return { isLoading, estimates, pitch };
 }

@@ -1,37 +1,60 @@
+import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { __ } from '@wordpress/i18n';
+import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import SiteTypeIcon, { DevSiteMark } from '../add-new-site/site-type-icon';
 import { Choice } from './choices';
 
+/** The same three ways to create a site as the Add site menu, with the same marks. */
 export default function CreateChoices( {
 	onDevelopment,
-	onProduction,
+	onHosted,
 }: {
 	onDevelopment: () => void;
-	onProduction: () => void;
+	onHosted: ( host: 'wpcom' | 'pressable' ) => void;
 } ) {
 	const options = [
 		{
 			kind: 'development' as const,
+			icon: (
+				<SiteTypeIcon tone="dev">
+					<DevSiteMark />
+				</SiteTypeIcon>
+			),
 			title: __( 'Development site' ),
-			badge: __( 'Free' ),
-			description: __( 'Build and share a preview. Free until you launch.' ),
+			description: __( 'Free on WordPress.com until you launch.' ),
 			onClick: onDevelopment,
 		},
 		{
-			kind: 'production' as const,
-			title: __( 'Production site' ),
-			badge: __( 'Paid' ),
-			description: __( 'A live client site with paid hosting from day one.' ),
-			onClick: onProduction,
+			kind: 'wpcom' as const,
+			icon: (
+				<SiteTypeIcon tone="wpcom">
+					<WordPressLogo size={ 28 } />
+				</SiteTypeIcon>
+			),
+			title: 'WordPress.com',
+			description: __( 'A hosting plan for each site.' ),
+			onClick: () => onHosted( 'wpcom' ),
+		},
+		{
+			kind: 'pressable' as const,
+			icon: (
+				<SiteTypeIcon tone="pressable">
+					<img src={ pressableIcon } alt="" width={ 26 } height={ 26 } />
+				</SiteTypeIcon>
+			),
+			title: 'Pressable',
+			description: __( 'One hosting plan for all your sites.' ),
+			onClick: () => onHosted( 'pressable' ),
 		},
 	];
 
 	return (
-		<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
+		<div className="agency-site-wizard__choices agency-site-wizard__entry-options agency-site-wizard__create-options">
 			{ options.map( ( option ) => (
 				<Choice
 					key={ option.kind }
+					illustration={ option.icon }
 					title={ option.title }
-					badge={ option.badge }
 					description={ option.description }
 					onClick={ option.onClick }
 				/>

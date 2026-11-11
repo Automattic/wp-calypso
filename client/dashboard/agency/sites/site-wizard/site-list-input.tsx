@@ -43,6 +43,7 @@ export default function SiteListInput( {
 	error,
 	managed,
 	simulate,
+	onContinue,
 }: {
 	value: string;
 	onChange: ( value: string ) => void;
@@ -52,6 +53,8 @@ export default function SiteListInput( {
 	error: string;
 	managed: string[];
 	simulate?: boolean;
+	/** Cmd/Ctrl+Return in the field moves on, like the step's primary button. */
+	onContinue?: () => void;
 } ) {
 	const fileInput = useRef< HTMLInputElement >( null );
 	const [ reading, setReading ] = useState( false );
@@ -111,8 +114,13 @@ export default function SiteListInput( {
 							aria-invalid={ !! error }
 							aria-describedby={ error ? errorId : undefined }
 							onKeyDown={ ( event ) => {
-								if ( event.key === 'Enter' && ! event.nativeEvent.isComposing ) {
-									event.preventDefault();
+								if ( event.key !== 'Enter' || event.nativeEvent.isComposing ) {
+									return;
+								}
+								event.preventDefault();
+								if ( ( event.metaKey || event.ctrlKey ) && onContinue ) {
+									onContinue();
+								} else {
 									add( draft );
 								}
 							} }
@@ -137,7 +145,7 @@ export default function SiteListInput( {
 						disabled={ reading }
 						__next40pxDefaultSize
 					>
-						{ __( 'Add to list' ) }
+						{ sites.length ? __( 'Add another' ) : __( 'Add site' ) }
 					</Button>
 				</HStack>
 				{ error && (

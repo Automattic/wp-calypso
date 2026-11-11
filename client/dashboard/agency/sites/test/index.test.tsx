@@ -191,10 +191,14 @@ describe( '<AgencySites>', () => {
 			expect( await screen.findByRole( 'row', { name: /Automattic/ } ) ).toBeVisible();
 			expect( screen.getByRole( 'row', { name: /Jetpack/ } ) ).toBeVisible();
 			await click( 'Add new site' );
-			await openConnection();
-			await click( /^Choose from WordPress.com/ );
-			expect( screen.queryByRole( 'checkbox', { name: 'Automattic' } ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'checkbox', { name: 'WooCommerce' } ) ).toBeVisible();
+			await click( /^From your WordPress.com account/ );
+			const picker = await screen.findByRole( 'dialog', {
+				name: 'Add new site',
+			} );
+			expect(
+				within( picker ).queryByRole( 'option', { name: /Automattic/ } )
+			).not.toBeInTheDocument();
+			expect( within( picker ).getByRole( 'option', { name: /WooCommerce/ } ) ).toBeVisible();
 		} );
 
 		test( 'connects another site with either plugin', async () => {
@@ -555,13 +559,18 @@ describe( '<AgencySites>', () => {
 		expect( screen.queryByPlaceholderText( 'Search' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'opens the wizard in the page for a populated agency', async () => {
+	test( 'opens the add-site menu for a populated agency', async () => {
 		mockEndpoints();
 		const { recordTracksEvent } = render( <AgencySites /> );
 		await userEvent.click( await addNewSiteButton() );
-		expect( screen.getByRole( 'heading', { name: 'Sites', level: 1 } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /^Connect a site/ } ) ).toBeVisible();
-		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		const menu = screen.getByRole( 'dialog', { name: 'Add new site' } );
+		expect(
+			within( menu ).getByRole( 'button', { name: /^Automattic for Agencies plugin/ } )
+		).toBeVisible();
+		expect( within( menu ).getByRole( 'button', { name: /^Jetpack plugin/ } ) ).toBeVisible();
+		expect(
+			within( menu ).getByRole( 'link', { name: 'Add a new production site on Pressable' } )
+		).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_sites_add_new_site_clicked' );
 	} );
 
@@ -581,11 +590,9 @@ describe( '<AgencySites>', () => {
 		mockEndpoints();
 		render( <AgencySites /> );
 		await userEvent.click( await addNewSiteButton() );
-		await userEvent.click( screen.getByRole( 'button', { name: /^Create a site/ } ) );
 		await userEvent.click( screen.getByRole( 'button', { name: /^Development site/ } ) );
-		expect(
-			await screen.findByRole( 'dialog', { name: 'Configure your new site' } )
-		).toBeVisible();
+		expect( await screen.findByRole( 'heading', { name: 'Development site' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeVisible();
 	} );
 
 	test( 'points licenses waiting to be set up at the unassigned Purchases filter', async () => {

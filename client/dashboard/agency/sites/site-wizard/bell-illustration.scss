@@ -1,19 +1,36 @@
-.agency-bell__body {
-	transform-box: view-box;
-	transform-origin: 40px 46px;
+.agency-bell__plunger,
+.agency-bell__dome,
+.agency-bell__ring {
+	transform-box: fill-box;
+}
+
+// The dome shivers from its base, where it sits on the plate.
+.agency-bell__dome {
+	transform-origin: 50% 100%;
 }
 
 .agency-bell__ring {
+	transform-origin: center;
 	opacity: 0;
 }
 
 @media ( prefers-reduced-motion: no-preference ) {
-	.agency-site-wizard__choice:is( :hover, :focus-visible ) .agency-bell__body {
-		animation: agency-bell-ding 0.6s ease-out;
-	}
+	.agency-site-wizard__choice:is( :hover, :focus-visible ) {
+		.agency-bell__plunger {
+			animation: agency-bell-press 0.9s;
+		}
 
-	.agency-site-wizard__choice:is( :hover, :focus-visible ) .agency-bell__ring {
-		animation: agency-bell-ring 0.6s ease-out forwards;
+		.agency-bell__dome {
+			animation: agency-bell-shiver 0.9s ease-out;
+		}
+
+		.agency-bell__ring.is-near {
+			animation: agency-bell-ding 0.9s ease-out;
+		}
+
+		.agency-bell__ring.is-far {
+			animation: agency-bell-ding 0.9s ease-out 0.08s;
+		}
 	}
 }
 
@@ -23,30 +40,55 @@
 	}
 }
 
-@keyframes agency-bell-ding {
-	0%,
-	100% {
-		transform: rotate( 0deg );
-	}
-	25% {
-		transform: rotate( -6deg );
-	}
-	55% {
-		transform: rotate( 4deg );
-	}
-	80% {
-		transform: rotate( -2deg );
-	}
-}
-
-@keyframes agency-bell-ring {
+// Down fast, a beat held against the dome, then back up to rest. No overshoot:
+// the plunger never rises above where it started.
+@keyframes agency-bell-press {
 	0% {
-		opacity: 0;
-		transform: translateY( 2px );
+		transform: translateY( 0 );
+		animation-timing-function: cubic-bezier( 0.5, 0, 1, 1 );
+	}
+	12%,
+	20% {
+		transform: translateY( 2.5px );
+		animation-timing-function: cubic-bezier( 0, 0, 0.3, 1 );
 	}
 	40%,
 	100% {
-		opacity: 1;
 		transform: translateY( 0 );
+	}
+}
+
+@keyframes agency-bell-shiver {
+	0%,
+	12%,
+	40%,
+	100% {
+		transform: scale( 1 );
+	}
+	16% {
+		transform: scale( 1.02, 0.985 );
+	}
+	22% {
+		transform: scale( 0.99, 1.008 );
+	}
+	28% {
+		transform: scale( 1.006, 0.996 );
+	}
+}
+
+// Starts at the strike, swells outward and fades.
+@keyframes agency-bell-ding {
+	0%,
+	12% {
+		opacity: 0;
+		transform: scale( 0.85 );
+	}
+	20% {
+		opacity: 1;
+	}
+	70%,
+	100% {
+		opacity: 0;
+		transform: scale( 1.15 );
 	}
 }

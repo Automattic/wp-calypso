@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { DragEventHandler, ReactNode } from 'react';
 
@@ -6,6 +7,7 @@ export function Choice( {
 	title,
 	description,
 	onClick,
+	features,
 	badge,
 	illustration,
 	cta,
@@ -16,6 +18,8 @@ export function Choice( {
 	title: string;
 	description: string;
 	onClick: () => void;
+	/** What the choice includes, listed with checks like the hosting cards. */
+	features?: string[];
 	badge?: string;
 	illustration?: ReactNode;
 	/** Puts a small illustration beside the title instead of above it. */
@@ -34,6 +38,16 @@ export function Choice( {
 				{ badge && <span className="agency-site-wizard__badge">{ badge }</span> }
 			</span>
 			<span className="agency-site-wizard__choice-description">{ description }</span>
+			{ features && (
+				<span className="agency-site-wizard__hosting-features agency-site-wizard__choice-features">
+					{ features.map( ( feature ) => (
+						<span key={ feature } className="agency-site-wizard__hosting-feature">
+							<Icon icon={ check } size={ 20 } />
+							{ feature }
+						</span>
+					) ) }
+				</span>
+			) }
 		</>
 	);
 	return (

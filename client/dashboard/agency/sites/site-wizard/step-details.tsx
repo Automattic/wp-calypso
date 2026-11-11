@@ -45,7 +45,7 @@ export function CallHelp( { title, description }: { title: string; description: 
 export function MoveQuestions() {
 	return (
 		<Questions
-			title={ __( 'Questions about moving' ) }
+			title={ __( 'FAQ' ) }
 			items={ [
 				{
 					question: __( 'Does moving cost anything?' ),
@@ -85,7 +85,7 @@ export function MoveQuestions() {
 export function CreateQuestions() {
 	return (
 		<Questions
-			title={ __( 'Questions about new sites' ) }
+			title={ __( 'FAQ' ) }
 			items={ [
 				{
 					question: __( 'What’s a development site?' ),

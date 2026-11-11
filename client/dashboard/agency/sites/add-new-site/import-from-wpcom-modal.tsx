@@ -16,7 +16,7 @@ import { useDispatch } from '@wordpress/data';
 import { DataViewsPicker, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAppContext } from '../../../app/context';
 import { useIntlLocale } from '../../../app/locale';
@@ -96,11 +96,38 @@ interface ImportFromWPCOMModalProps {
 	preview?: { sites: Site[]; onImport: ( ids: number[] ) => void };
 }
 
+interface ImportFromWPCOMProps extends ImportFromWPCOMModalProps {
+	/** Lets a surrounding modal hold itself open while sites are being added. */
+	onImportingChange?: ( isImporting: boolean ) => void;
+}
+
+export function getImportFromWPCOMTitle() {
+	return __( 'Add sites from your WordPress.com account' );
+}
+
+export default function ImportFromWPCOMModal( props: ImportFromWPCOMModalProps ) {
+	const [ isImporting, setIsImporting ] = useState( false );
+	// Closing mid-import drops the mutation's callbacks with it, so the list
+	// would never refresh and nobody would hear how it went.
+	return (
+		<Modal
+			title={ getImportFromWPCOMTitle() }
+			onRequestClose={ props.onClose }
+			size="large"
+			isDismissible={ ! isImporting }
+			shouldCloseOnEsc={ ! isImporting }
+			shouldCloseOnClickOutside={ ! isImporting }
+		>
+			<ImportFromWPCOM { ...props } onImportingChange={ setIsImporting } />
+		</Modal>
+	);
+}
+
 /**
  * Brings sites the user already owns on WordPress.com, or has connected with
  * Jetpack or the A4A plugin, under the agency's management.
  */
-export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWPCOMModalProps ) {
+export function ImportFromWPCOM( { onClose, onImportingChange, preview }: ImportFromWPCOMProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { queries } = useAppContext();
 	const queryClient = useQueryClient();
@@ -236,98 +263,90 @@ export default function ImportFromWPCOMModal( { onClose, preview }: ImportFromWP
 		} );
 	};
 
-	// Closing mid-import drops the mutation's callbacks with it, so the list
-	// would never refresh and nobody would hear how it went.
 	const isImporting = importSites.isPending;
+	useEffect( () => {
+		onImportingChange?.( isImporting );
+	}, [ isImporting, onImportingChange ] );
 
 	return (
-		<Modal
-			title={ __( 'Add sites from your WordPress.com account' ) }
-			onRequestClose={ onClose }
-			size="large"
-			isDismissible={ ! isImporting }
-			shouldCloseOnEsc={ ! isImporting }
-			shouldCloseOnClickOutside={ ! isImporting }
-		>
-			<VStack spacing={ 4 }>
-				<Text variant="muted" as="p">
-					{ __(
-						'These sites are linked to your WordPress.com account but aren’t in your agency dashboard yet. Choose which ones to add. Their hosting stays the same.'
-					) }
-				</Text>
-				{ hasLoadError && (
-					<Notice variant="error">
-						{ __( 'We couldn’t load your sites. Please refresh the page and try again.' ) }
-					</Notice>
+		<VStack spacing={ 4 }>
+			<Text variant="muted" as="p">
+				{ __(
+					'These sites are linked to your WordPress.com account but aren’t in your agency dashboard yet. Choose which ones to add. Their hosting stays the same.'
 				) }
-				<DataViewsCard>
-					<DataViewsPicker< Site >
-						data={ shownSites }
-						fields={ fields }
-						view={ view }
-						onChangeView={ setView }
-						selection={ selection }
-						onChangeSelection={ setSelection }
-						getItemId={ ( item ) => String( item.ID ) }
-						isLoading={ isLoading }
-						paginationInfo={ paginationInfo }
-						defaultLayouts={ { pickerTable: {} } }
-						// The picker only offers multi-selection when every action it is
-						// given supports bulk, so this action is what turns the row
-						// checkboxes and select-all on.
-						actions={ [
-							{
-								id: 'add-sites',
-								label: __( 'Add sites' ),
-								supportsBulk: true,
-								callback: handleAddSites,
-							},
-						] }
-						empty={
-							<DataViewsEmptyStateLayout
-								title={ __( 'No sites to add' ) }
-								description={ __( 'Every site you can add is already managed by your agency.' ) }
-								isBorderless
-							/>
-						}
-					>
-						{ /* Composed by hand to leave out the picker's own footer, which
+			</Text>
+			{ hasLoadError && (
+				<Notice variant="error">
+					{ __( 'We couldn’t load your sites. Please refresh the page and try again.' ) }
+				</Notice>
+			) }
+			<DataViewsCard>
+				<DataViewsPicker< Site >
+					data={ shownSites }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					selection={ selection }
+					onChangeSelection={ setSelection }
+					getItemId={ ( item ) => String( item.ID ) }
+					isLoading={ isLoading }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { pickerTable: {} } }
+					// The picker only offers multi-selection when every action it is
+					// given supports bulk, so this action is what turns the row
+					// checkboxes and select-all on.
+					actions={ [
+						{
+							id: 'add-sites',
+							label: __( 'Add sites' ),
+							supportsBulk: true,
+							callback: handleAddSites,
+						},
+					] }
+					empty={
+						<DataViewsEmptyStateLayout
+							title={ __( 'No sites to add' ) }
+							description={ __( 'Every site you can add is already managed by your agency.' ) }
+							isBorderless
+						/>
+					}
+				>
+					{ /* Composed by hand to leave out the picker's own footer, which
 						     would repeat the modal's Add button below. */ }
-						<HStack className="dataviews__view-actions" alignment="top" justify="space-between">
-							<HStack className="dataviews__search" justify="flex-start">
-								<DataViewsPicker.Search />
-							</HStack>
+					<HStack className="dataviews__view-actions" alignment="top" justify="space-between">
+						<HStack className="dataviews__search" justify="flex-start">
+							<DataViewsPicker.Search />
 						</HStack>
-						<DataViewsPicker.Layout />
-						<DataViewsPicker.Pagination />
-					</DataViewsPicker>
-				</DataViewsCard>
-				<ButtonStack justify="flex-end">
-					<Button
-						variant="tertiary"
-						__next40pxDefaultSize
-						onClick={ onClose }
-						disabled={ isImporting }
-					>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						variant="primary"
-						__next40pxDefaultSize
-						disabled={ selection.length === 0 || isImporting || hasLoadError }
-						isBusy={ isImporting }
-						onClick={ handleAddSites }
-					>
-						{ selection.length > 0
-							? sprintf(
-									/* translators: %d is the number of sites selected. */
-									_n( 'Add %d site', 'Add %d sites', selection.length ),
-									selection.length
-								)
-							: __( 'Add sites' ) }
-					</Button>
-				</ButtonStack>
-			</VStack>
-		</Modal>
+					</HStack>
+					<DataViewsPicker.Layout />
+					<DataViewsPicker.Pagination />
+				</DataViewsPicker>
+			</DataViewsCard>
+			<ButtonStack justify="flex-end" className="agency-add-site-modal__actions">
+				<Button
+					variant="tertiary"
+					__next40pxDefaultSize
+					onClick={ onClose }
+					disabled={ isImporting }
+				>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					variant="primary"
+					__next40pxDefaultSize
+					disabled={ selection.length === 0 || isImporting || hasLoadError }
+					isBusy={ isImporting }
+					onClick={ handleAddSites }
+				>
+					{ selection.length > 0
+						? sprintf(
+								/* translators: %d is the number of sites selected. */
+								_n( 'Add %d site', 'Add %d sites', selection.length ),
+								selection.length
+							)
+						: __( 'Add sites' ) }
+				</Button>
+			</ButtonStack>
+		</VStack>
 	);
 }

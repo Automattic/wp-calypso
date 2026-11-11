@@ -68,7 +68,7 @@ export function NumberedSteps( { items }: { items: { title: string; description:
 	);
 }
 
-/** Questions a step raises, each closed until it's opened. */
+/** A step's FAQ, built and styled exactly like the one under the first-site story. */
 export function Questions( {
 	title,
 	items,
@@ -76,16 +76,21 @@ export function Questions( {
 	title: string;
 	items: { question: string; answer: string }[];
 } ) {
+	const id = useId();
 	return (
-		<Section title={ title }>
-			<div className="agency-site-wizard__questions">
+		<section className="agency-sites-story__faq" aria-labelledby={ id }>
+			<Heading id={ id } level={ 2 }>
+				{ title }
+			</Heading>
+			<div className="agency-sites-story__faq-list">
 				{ items.map( ( item ) => (
-					<Disclosure key={ item.question } title={ item.question }>
-						<Text variant="muted">{ item.answer }</Text>
-					</Disclosure>
+					<div key={ item.question }>
+						<Heading level={ 3 }>{ item.question }</Heading>
+						<p>{ item.answer }</p>
+					</div>
 				) ) }
 			</div>
-		</Section>
+		</section>
 	);
 }
 

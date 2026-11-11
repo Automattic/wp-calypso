@@ -1,0 +1,320 @@
+@use '@automattic/color-studio/dist/color-variables' as brand;
+@use '@wordpress/base-styles/variables' as *;
+
+$pressable-red: #dd3a03;
+
+.agency-add-site-menu {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+	padding-block-end: 32px;
+}
+
+.agency-add-site-menu__group {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.agency-add-site-menu__tiles {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	gap: 12px;
+}
+
+.agency-add-site-menu__tile {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	gap: 4px;
+	padding: 16px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background: var( --color-surface );
+	color: var( --color-text );
+	text-align: start;
+	text-decoration: none;
+	font: inherit;
+	cursor: pointer;
+	transition: border-color 0.15s ease;
+
+	&:hover:not( [aria-disabled='true'] ) {
+		border-color: var( --color-primary );
+		color: var( --color-text );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --color-primary );
+		outline-offset: -1px;
+	}
+
+	&[aria-disabled='true'] {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+}
+
+.agency-add-site-menu__tile-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+	margin-block-end: 12px;
+}
+
+.agency-add-site-menu__icon {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 48px;
+	block-size: 48px;
+	border-radius: 8px;
+	background: brand.$studio-gray-0;
+
+	svg,
+	img {
+		display: block;
+		margin: 0;
+	}
+
+	// Brand color as the fill, with each logo reversed out in white.
+	&.is-wpcom {
+		background: brand.$studio-wordpress-blue-50;
+
+		> svg {
+			fill: brand.$studio-white;
+		}
+	}
+
+	&.is-a4a {
+		background: brand.$studio-automattic-blue-40;
+
+		> svg path {
+			fill: brand.$studio-white;
+		}
+	}
+
+	&.is-jetpack {
+		background: brand.$studio-jetpack-green-40;
+
+		.jetpack-logo__icon-circle {
+			fill: brand.$studio-white;
+		}
+
+		.jetpack-logo__icon-triangle {
+			fill: brand.$studio-jetpack-green-40;
+		}
+	}
+
+	// Pressable's brand red, from its color logo. The P is a cutout, so a white
+	// silhouette keeps it.
+	&.is-pressable {
+		background: $pressable-red;
+
+		img {
+			filter: brightness( 0 ) invert( 1 );
+		}
+	}
+
+	&.is-dev {
+		background: brand.$studio-gray-90;
+	}
+}
+
+.agency-add-site-menu__dev-mark {
+	.is-dot-red {
+		fill: brand.$studio-red-40;
+	}
+
+	.is-dot-yellow {
+		fill: brand.$studio-yellow-30;
+	}
+
+	.is-dot-green {
+		fill: brand.$studio-green-30;
+	}
+
+	.is-purple {
+		fill: brand.$studio-purple-30;
+	}
+
+	.is-blue {
+		fill: brand.$studio-blue-30;
+	}
+
+	.is-green {
+		fill: brand.$studio-green-20;
+	}
+
+	.is-orange {
+		fill: brand.$studio-orange-20;
+	}
+
+	.is-cursor {
+		fill: brand.$studio-white;
+		animation: agency-add-site-cursor 1.1s steps( 1 ) infinite;
+	}
+}
+
+@keyframes agency-add-site-cursor {
+	50% {
+		opacity: 0;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.agency-add-site-menu__dev-mark .is-cursor {
+		animation: none;
+	}
+}
+
+.agency-add-site-menu__meta {
+	font-size: $font-size-small;
+	font-weight: 500;
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: var( --color-surface-backdrop );
+	color: var( --color-text-subtle );
+	white-space: nowrap;
+}
+
+.agency-add-site-menu__external {
+	fill: currentColor;
+	color: var( --color-text-subtle );
+}
+
+.agency-add-site-menu__title {
+	font-size: $font-size-large;
+	font-weight: 500;
+}
+
+.agency-add-site-menu__description {
+	font-size: $font-size-medium;
+	line-height: 1.5;
+	color: var( --color-text-subtle );
+}
+
+@media ( max-width: 600px ) {
+	.agency-add-site-menu__tiles {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+}
+
+// One size for every screen, so the modal doesn't jump as you move through it.
+.agency-add-site-modal-frame {
+	inline-size: min( 680px, calc( 100vw - 32px ) );
+	block-size: min( 600px, calc( 100vh - 64px ) );
+
+	.components-modal__content {
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.components-modal__children-container {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.agency-add-site-modal {
+	flex: 1 0 auto;
+}
+
+// Screens scroll on their own by default; let the modal scroll instead so the
+// header and actions can pin to it.
+.agency-add-site-modal .agency-add-site-modal__screen {
+	overflow: visible;
+	align-self: stretch;
+}
+
+.agency-add-site-modal__screen {
+	display: flex;
+	flex-direction: column;
+	padding-inline: 32px;
+}
+
+.agency-add-site-modal__header {
+	position: sticky;
+	inset-block-start: 0;
+	z-index: 10;
+	border-block-end: 1px solid transparent;
+	transition: border-color 0.15s ease;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-block: 24px 16px;
+	background: var( --color-surface );
+
+	h1 {
+		flex: 1;
+	}
+}
+
+.agency-add-site-modal__body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+
+	> *,
+	> form > * {
+		flex: 1;
+	}
+
+	> form {
+		display: flex;
+		flex-direction: column;
+	}
+
+	// Forms read best narrow, so they sit in a centered column.
+	&.is-form {
+		inline-size: 100%;
+		max-inline-size: 480px;
+		margin-inline: auto;
+	}
+}
+
+// Pinned to the bottom when the screen scrolls, and pushed there when it doesn't.
+.agency-add-site-modal__actions {
+	position: sticky;
+	inset-block-end: 0;
+	// Above the picker's card, which stacks its own border and content.
+	z-index: 10;
+	border-block-start: 1px solid transparent;
+	transition: border-color 0.15s ease;
+	margin-block-start: auto;
+	padding-block: 16px 24px;
+	background: var( --color-surface );
+}
+
+// Dividers show only while content is hidden under the header or the actions.
+.agency-add-site-modal[data-scrolled='true'] .agency-add-site-modal__header {
+	border-block-end-color: var( --color-border-subtle );
+}
+
+.agency-add-site-modal[data-more-below='true'] .agency-add-site-modal__actions {
+	border-block-start-color: var( --color-border-subtle );
+}
+
+.agency-add-site-menu__new {
+	position: absolute;
+	inset-block-end: 4px;
+	inset-inline-end: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 16px;
+	block-size: 16px;
+	border-radius: 50%;
+	// A white disc over the W's corner, cut out of it by a ring of the square's blue.
+	background: brand.$studio-white;
+	box-shadow: 0 0 0 2px brand.$studio-wordpress-blue-50;
+	color: brand.$studio-wordpress-blue-50;
+
+	svg {
+		fill: currentColor;
+	}
+}

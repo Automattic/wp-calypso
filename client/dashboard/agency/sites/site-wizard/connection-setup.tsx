@@ -293,19 +293,10 @@ export function ConnectionInstall( {
 	const plugins = getPlugins();
 	return (
 		<VStack spacing={ 8 }>
-			<Section
-				title={ __( 'Pick a plugin' ) }
-				description={
-					sites.length > 1
-						? __( 'Each site can use either one. Already using Jetpack? Use that.' )
-						: __( 'Already using Jetpack? Use that.' )
-				}
-			>
-				<div className="agency-site-wizard__plugin-grid">
-					<PluginCard plugin={ plugins.a4a } />
-					<PluginCard plugin={ plugins.jetpack } />
-				</div>
-			</Section>
+			<div className="agency-site-wizard__plugin-grid">
+				<PluginCard plugin={ plugins.a4a } />
+				<PluginCard plugin={ plugins.jetpack } />
+			</div>
 			<ConnectionSiteList sites={ sites } simulate={ simulate } showInstallers />
 			{ sites.length > 1 && <BulkInstall sites={ sites } /> }
 		</VStack>

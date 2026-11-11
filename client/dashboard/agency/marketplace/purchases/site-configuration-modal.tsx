@@ -347,7 +347,7 @@ function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
 					}
 				/>
 				{ isDevSite && <DevSiteClientAccess /> }
-				<ButtonStack justify="flex-end">
+				<ButtonStack justify="flex-end" className="agency-add-site-modal__actions">
 					<Button
 						__next40pxDefaultSize
 						variant="tertiary"
@@ -435,39 +435,26 @@ export default function SiteConfigurationModal( {
 }
 
 /**
- * Creating a free development site. It is opened straight from a CTA rather
- * than a DataViews action, so unlike the license modal above it brings its own
- * `<Modal>`, and there is no pending site to look up first.
+ * Creating a free development site, with no pending site to look up first.
  */
-export function DevSiteConfigurationModal( {
+export function DevSiteConfiguration( {
 	closeModal,
+	onCreatingChange,
 	preview,
 }: {
 	closeModal: () => void;
+	onCreatingChange?: ( isCreating: boolean ) => void;
 	preview?: BaseConfigurationFormProps[ 'preview' ];
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency, isLoading } = useQuery( activeAgencyQuery() );
-	const [ isCreating, setIsCreating ] = useState( false );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_a4a_create_site_config' );
 	}, [ recordTracksEvent ] );
 
 	return (
-		<Modal
-			title={ __( 'Configure your new site' ) }
-			size="medium"
-			onRequestClose={ () => {
-				recordTracksEvent( 'calypso_a4a_create_site_config_close' );
-				closeModal();
-			} }
-			// Closing mid-creation unmounts the observer, so the site lands
-			// server-side and nothing redirects, tracks it or says how it went.
-			isDismissible={ ! isCreating }
-			shouldCloseOnEsc={ ! isCreating }
-			shouldCloseOnClickOutside={ ! isCreating }
-		>
+		<>
 			{ ! preview && isLoading && (
 				<VStack spacing={ 4 } alignment="center">
 					<Spinner />
@@ -484,9 +471,47 @@ export function DevSiteConfigurationModal( {
 					preview={ preview }
 					isDevSite
 					closeModal={ closeModal }
-					onCreatingChange={ setIsCreating }
+					onCreatingChange={ onCreatingChange }
 				/>
 			) }
+		</>
+	);
+}
+
+/**
+ * The development site form on its own. It is opened straight from a CTA rather
+ * than a DataViews action, so unlike the license modal above it brings its own
+ * `<Modal>`.
+ */
+export function DevSiteConfigurationModal( {
+	closeModal,
+	preview,
+}: {
+	closeModal: () => void;
+	preview?: BaseConfigurationFormProps[ 'preview' ];
+} ) {
+	const { recordTracksEvent } = useAnalytics();
+	const [ isCreating, setIsCreating ] = useState( false );
+
+	return (
+		<Modal
+			title={ __( 'Configure your new site' ) }
+			size="medium"
+			onRequestClose={ () => {
+				recordTracksEvent( 'calypso_a4a_create_site_config_close' );
+				closeModal();
+			} }
+			// Closing mid-creation unmounts the observer, so the site lands
+			// server-side and nothing redirects, tracks it or says how it went.
+			isDismissible={ ! isCreating }
+			shouldCloseOnEsc={ ! isCreating }
+			shouldCloseOnClickOutside={ ! isCreating }
+		>
+			<DevSiteConfiguration
+				closeModal={ closeModal }
+				onCreatingChange={ setIsCreating }
+				preview={ preview }
+			/>
 		</Modal>
 	);
 }

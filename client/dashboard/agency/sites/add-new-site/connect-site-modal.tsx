@@ -44,6 +44,10 @@ function getConnection( action: ConnectSiteAction ): Connection {
 	};
 }
 
+export function getConnectSiteTitle( action: ConnectSiteAction ) {
+	return getConnection( action ).title;
+}
+
 interface ConnectSiteModalProps {
 	action: ConnectSiteAction;
 	onClose: () => void;
@@ -55,16 +59,24 @@ interface ConnectSiteModalProps {
  * or to Jetpack connect, in a new tab. Nothing is connected from here; the site
  * shows up in the dashboard once the remote install completes.
  */
-export default function ConnectSiteModal( {
-	action,
-	onClose,
-	onPreviewConnect,
-}: ConnectSiteModalProps ) {
+export default function ConnectSiteModal( props: ConnectSiteModalProps ) {
+	return (
+		<Modal
+			title={ getConnectSiteTitle( props.action ) }
+			onRequestClose={ props.onClose }
+			size="medium"
+		>
+			<ConnectSiteForm { ...props } />
+		</Modal>
+	);
+}
+
+export function ConnectSiteForm( { action, onClose, onPreviewConnect }: ConnectSiteModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ site, setSite ] = useState( '' );
 	const submitRef = useRef< HTMLAnchorElement >( null );
 
-	const { title, description, submitLabel, trackEventName, getUrl } = getConnection( action );
+	const { description, submitLabel, trackEventName, getUrl } = getConnection( action );
 	const url = getUrl( site );
 
 	// The submit control is a link, so pressing Enter in the field has to go
@@ -87,39 +99,37 @@ export default function ConnectSiteModal( {
 	};
 
 	return (
-		<Modal title={ title } onRequestClose={ onClose } size="medium">
-			<form onSubmit={ onSubmit }>
-				<VStack spacing={ 4 }>
-					<Text variant="muted" as="p">
-						{ description }
-					</Text>
-					<TextControl
+		<form onSubmit={ onSubmit }>
+			<VStack spacing={ 4 }>
+				<Text variant="muted" as="p">
+					{ description }
+				</Text>
+				<TextControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					label={ __( 'What site do you want to connect?' ) }
+					placeholder={ __( 'Site URL' ) }
+					value={ site }
+					onChange={ setSite }
+				/>
+				<ButtonStack justify="flex-end" className="agency-add-site-modal__actions">
+					<Button variant="tertiary" __next40pxDefaultSize onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						ref={ submitRef }
+						variant="primary"
 						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ __( 'What site do you want to connect?' ) }
-						placeholder={ __( 'Site URL' ) }
-						value={ site }
-						onChange={ setSite }
-					/>
-					<ButtonStack justify="flex-end">
-						<Button variant="tertiary" __next40pxDefaultSize onClick={ onClose }>
-							{ __( 'Cancel' ) }
-						</Button>
-						<Button
-							ref={ submitRef }
-							variant="primary"
-							__next40pxDefaultSize
-							disabled={ ! url }
-							href={ url ?? undefined }
-							target="_blank"
-							rel="noreferrer noopener"
-							onClick={ onOpenInstaller }
-						>
-							{ submitLabel }
-						</Button>
-					</ButtonStack>
-				</VStack>
-			</form>
-		</Modal>
+						disabled={ ! url }
+						href={ url ?? undefined }
+						target="_blank"
+						rel="noreferrer noopener"
+						onClick={ onOpenInstaller }
+					>
+						{ submitLabel }
+					</Button>
+				</ButtonStack>
+			</VStack>
+		</form>
 	);
 }

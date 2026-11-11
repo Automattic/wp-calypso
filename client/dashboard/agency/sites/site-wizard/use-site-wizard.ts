@@ -17,6 +17,7 @@ export type Step =
 	| 'host'
 	| 'method'
 	| 'setup'
+	| 'referral'
 	| 'referral-sent'
 	| 'requested'
 	| 'verify'
@@ -80,7 +81,7 @@ export function jumpHistory( target: WizardJump ): Step[] {
 			'host',
 			'method',
 			'setup',
-			...( target.billing === 'client' ? [ 'referral-sent' as const ] : [] ),
+			...( target.billing === 'client' ? [ 'referral' as const, 'referral-sent' as const ] : [] ),
 			...( target.method !== 'self' ? [ 'requested' as const ] : [] ),
 			'verify',
 			'success',
@@ -89,9 +90,8 @@ export function jumpHistory( target: WizardJump ): Step[] {
 		path = [
 			'start',
 			'new',
-			...( target.journey === 'hosted' ? [ 'host' as const ] : [] ),
 			'setup',
-			...( target.billing === 'client' ? [ 'referral-sent' as const ] : [] ),
+			...( target.billing === 'client' ? [ 'referral' as const, 'referral-sent' as const ] : [] ),
 			'success',
 		];
 	}

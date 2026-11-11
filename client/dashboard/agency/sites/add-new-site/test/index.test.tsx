@@ -55,29 +55,33 @@ function mockAgencyEndpoints( {
 async function renderMenu( options: Options = {} ) {
 	const { onSelectAction, availableDevLicenses } = mockAgencyEndpoints( options );
 
-	await screen.findByText( `${ availableDevLicenses } of 5 free licenses available` );
+	await screen.findByText( `${ availableDevLicenses } of 5 left` );
 
 	return { onSelectAction };
 }
 
-const devSiteButton = () => screen.getByRole( 'button', { name: 'Create a site now' } );
+const devSiteButton = () => screen.getByRole( 'button', { name: /Development site/ } );
 
 describe( 'agency AddNewSite', () => {
 	test( 'renders every way to add a site', async () => {
 		await renderMenu();
 
-		expect( screen.getByRole( 'button', { name: /Via WordPress.com connection/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /Via the Automattic plugin/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /Via the Jetpack plugin/ } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: /From your WordPress.com account/ } )
+		).toBeVisible();
+		expect(
+			screen.getByRole( 'button', { name: /Automattic for Agencies plugin/ } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /^Jetpack plugin/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Pressable/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toBeVisible();
-		expect( screen.getByText( 'Start building for free' ) ).toBeVisible();
+		expect( devSiteButton() ).toBeVisible();
 	} );
 
 	test( 'reports the action chosen for the entries that open a modal', async () => {
 		const { onSelectAction } = await renderMenu();
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Via the Jetpack plugin/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /^Jetpack plugin/ } ) );
 
 		expect( onSelectAction ).toHaveBeenCalledWith( 'jetpack-connection' );
 	} );
@@ -85,7 +89,7 @@ describe( 'agency AddNewSite', () => {
 	test( 'sends the WordPress.com entry to the waiting licenses once sites are waiting', async () => {
 		await renderMenu( { pendingSiteCount: 2 } );
 
-		expect( screen.getByText( '2 sites available' ) ).toBeVisible();
+		expect( screen.getByText( '2 ready' ) ).toBeVisible();
 
 		const href = screen.getByRole( 'link', { name: /on WordPress.com/ } ).getAttribute( 'href' );
 		expect( href ).toContain( '/purchases' );
@@ -96,7 +100,7 @@ describe( 'agency AddNewSite', () => {
 	test( 'sends the WordPress.com entry to the marketplace when nothing is waiting', async () => {
 		await renderMenu();
 
-		expect( screen.queryByText( /sites? available/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^\d+ ready$/ ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: /on WordPress.com/ } ) ).toHaveAttribute(
 			'href',
 			expect.stringContaining( '/hosting/wpcom' )
@@ -181,14 +185,14 @@ describe( 'agency AddNewSite', () => {
 	test( 'ignores a pending site the backend has not licensed yet', async () => {
 		await renderMenu( { pendingSites: [ { id: 1, features: {} } ] } );
 
-		expect( screen.queryByText( /sites? available/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^\d+ ready$/ ) ).not.toBeInTheDocument();
 	} );
 
 	// Nothing has resolved on the first paint, so this asserts the pre-settle state.
 	test( 'holds the free development site back until the count arrives', () => {
 		mockAgencyEndpoints();
 
-		expect( screen.queryByText( /free licenses available/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /of 5 left/ ) ).not.toBeInTheDocument();
 		expect( devSiteButton() ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 } );

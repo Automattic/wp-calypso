@@ -41,8 +41,9 @@ import {
 import CreateChoices from './create-choices';
 import EntryChoices from './entry-choices';
 import EntryIllustration from './entry-illustration';
-import HostingChoice from './hosting-choice';
+import HostingChoice, { PressablePitchNote } from './hosting-choice';
 import SitesOverviewStory from './overview-story';
+import ReferralPreview from './referral-preview';
 import { parseSiteList, SITE_REVIEW_BULK_THRESHOLD } from './site-intake';
 import SiteIntake, { selectedSiteLabel } from './site-intake-form';
 import SiteListInput, { SiteListSummary, SiteSummary } from './site-list-input';
@@ -392,11 +393,7 @@ export default function SiteWizard( {
 			}
 		}
 		if ( ! isDevelopment && data.billing === 'client' ) {
-			if ( ! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test( data.email.trim() ) ) {
-				setError( __( 'Enter your client’s email address.' ) );
-				return;
-			}
-			go( 'referral-sent' );
+			go( 'referral' );
 		} else {
 			completeSetup();
 		}
@@ -485,6 +482,7 @@ export default function SiteWizard( {
 							error={ error }
 							managed={ managedSites }
 							simulate={ !! simulation }
+							onContinue={ continueWithSites }
 						/>
 					</div>
 				);
@@ -492,10 +490,10 @@ export default function SiteWizard( {
 					label: listed
 						? sprintf(
 								/* translators: %d is the number of sites. */
-								_n( 'Choose hosting for %d site', 'Choose hosting for %d sites', listed ),
+								_n( 'Continue with %d site', 'Continue with %d sites', listed ),
 								listed
 							)
-						: __( 'Choose hosting' ),
+						: __( 'Continue' ),
 					onClick: continueWithSites,
 				};
 			}
@@ -556,7 +554,10 @@ export default function SiteWizard( {
 				<VStack spacing={ 12 }>
 					<CreateChoices
 						onDevelopment={ startDevelopment }
-						onProduction={ () => chooseJourney( 'hosted', 'host' ) }
+						onHosted={ ( host ) => {
+							change( { journey: 'hosted', undecided: false, host } );
+							go( 'setup' );
+						} }
 					/>
 					<CreateQuestions />
 				</VStack>
@@ -686,8 +687,8 @@ export default function SiteWizard( {
 				batchSize
 			);
 			description = _n(
-				'A small plugin connects your site to this dashboard. Your hosting stays the same.',
-				'A small plugin on each site connects it to this dashboard. Your hosting stays the same.',
+				'Pick either plugin to connect your site. Already using Jetpack? Use that.',
+				'Each site can use either plugin. Already using Jetpack? Use that.',
 				batchSize
 			);
 			content = <ConnectionInstall sites={ batch } simulate={ !! simulation } />;
@@ -777,7 +778,7 @@ export default function SiteWizard( {
 			};
 			break;
 		}
-		case 'host':
+		case 'host': {
 			title = __( 'Choose your hosting' );
 			description = isMigration
 				? _n(
@@ -795,6 +796,7 @@ export default function SiteWizard( {
 								host={ host }
 								sites={ hostingCount }
 								estimate={ hosting.estimates[ host ] }
+								room={ host === 'pressable' ? hosting.pitch?.room : undefined }
 								isLoading={ hosting.isLoading }
 								onClick={ () => {
 									change( { host } );
@@ -804,9 +806,11 @@ export default function SiteWizard( {
 						) ) }
 					</div>
 					{ isMigration && batch.length > 0 && <SiteSummary sites={ batch } /> }
+					{ hosting.pitch && <PressablePitchNote pitch={ hosting.pitch } /> }
 				</VStack>
 			);
 			break;
+		}
 		case 'method':
 			title = _n( 'How do you want to move it?', 'How do you want to move them?', batchSize );
 			description = __( 'Moving is free either way. Your sites stay live until you switch them.' );
@@ -817,6 +821,11 @@ export default function SiteWizard( {
 							illustration={ <BellIllustration /> }
 							title={ __( 'Request a migration' ) }
 							description={ __( 'Our team moves them for you, usually within a week.' ) }
+							features={ [
+								__( 'Concierge, start to finish' ),
+								__( 'We review each site first' ),
+								__( 'You approve before switching' ),
+							] }
 							onClick={ () => {
 								change( { method: 'concierge' } );
 								go( 'setup' );
@@ -826,6 +835,11 @@ export default function SiteWizard( {
 							illustration={ <EntryIllustration kind="move" /> }
 							title={ __( 'Move them myself' ) }
 							description={ __( 'Use our tools and guide, on your own schedule.' ) }
+							features={ [
+								__( 'Step-by-step guide' ),
+								__( 'A plugin copies everything' ),
+								__( 'Help if you get stuck' ),
+							] }
 							onClick={ () => {
 								change( { method: 'self' } );
 								go( 'setup' );
@@ -1007,23 +1021,6 @@ export default function SiteWizard( {
 									onChange={ () => change( { billing: 'client' } ) }
 								/>
 							</VStack>
-							{ data.billing === 'client' && (
-								<TextControl
-									label={ __( 'Client email' ) }
-									type="email"
-									autoComplete="email"
-									dir="ltr"
-									value={ data.email }
-									onChange={ ( email ) => change( { email } ) }
-									help={
-										isMigration && batchSize > 1
-											? __( 'This client pays for every site in this batch.' )
-											: undefined
-									}
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-								/>
-							) }
 						</Section>
 					) }
 					{ isConcierge && (
@@ -1060,10 +1057,60 @@ export default function SiteWizard( {
 				primary.label = isConcierge ? __( 'Send migration request' ) : __( 'Start moving' );
 			}
 			if ( ! isDevelopment && data.billing === 'client' ) {
-				primary.label = __( 'Send referral' );
+				primary.label = __( 'Continue' );
 			}
 			break;
 		}
+		case 'referral':
+			title = __( 'Send your client the bill' );
+			description = __(
+				'We’ll email them a link to buy hosting. Here’s exactly what they’ll get.'
+			);
+			content = (
+				<VStack spacing={ 8 }>
+					<TextControl
+						label={ __( 'Client email' ) }
+						type="email"
+						autoComplete="email"
+						dir="ltr"
+						value={ data.email }
+						onChange={ ( email ) => {
+							change( { email } );
+							setError( '' );
+						} }
+						help={
+							isMigration && batchSize > 1
+								? __( 'This client pays for every site in this batch.' )
+								: undefined
+						}
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+					<ReferralPreview
+						email={ data.email }
+						agencyName={ agency?.name }
+						hostName={ hostName }
+						total={ hosting.estimates[ data.host ]?.total }
+						sites={
+							isMigration
+								? batch.map( ( site ) => site.url.replace( /^https?:\/\//, '' ) )
+								: [ siteAddress ]
+						}
+						isMigration={ isMigration }
+					/>
+				</VStack>
+			);
+			primary = {
+				label: __( 'Send referral' ),
+				onClick: () => {
+					if ( ! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test( data.email.trim() ) ) {
+						setError( __( 'Enter your client’s email address.' ) );
+						return;
+					}
+					go( 'referral-sent' );
+				},
+			};
+			break;
 		case 'referral-sent':
 			title = __( 'Your referral is on its way' );
 			description = sprintf(

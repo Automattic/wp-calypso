@@ -177,7 +177,7 @@ export default function SitesOverviewStory() {
 			) ) }
 			<section className="agency-sites-story__faq" aria-labelledby={ `${ id }-faq` }>
 				<Heading id={ `${ id }-faq` } level={ 2 }>
-					{ __( 'Adding sites FAQ' ) }
+					{ __( 'FAQ' ) }
 				</Heading>
 				<div className="agency-sites-story__faq-list">
 					{ faqs.map( ( faq ) => (
