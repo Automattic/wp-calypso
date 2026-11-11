@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { ConversationCommentsPlaceholder } from 'calypso/reader/conversations/inbox/conversation-detail/placeholder';
 import PostComments from '..';
 
 jest.mock( '../form-root', () => () => <textarea aria-label="Add a comment" /> );
@@ -17,6 +16,8 @@ jest.mock( '../post-comment', () => ( props ) => (
 ) );
 
 const BASE = 'https://public-api.wordpress.com';
+
+const loadingPlaceholder = <p>Loading comments</p>;
 
 const post = {
 	ID: 456,
@@ -104,14 +105,10 @@ describe( 'PostComments', () => {
 				};
 			} );
 
-		const { container } = renderComments( {
-			loadingPlaceholder: <ConversationCommentsPlaceholder />,
-		} );
+		renderComments( { loadingPlaceholder } );
 
 		try {
-			const skeletons = container.querySelectorAll( '.skeleton--circle' );
-			expect( skeletons ).toHaveLength( 3 );
-			skeletons.forEach( ( skeleton ) => expect( skeleton ).toBeVisible() );
+			expect( screen.getByText( 'Loading comments' ) ).toBeVisible();
 			expect( screen.queryByText( 'No comments' ) ).not.toBeInTheDocument();
 			expect( screen.queryAllByTestId( 'post-comment' ) ).toHaveLength( 0 );
 			expect( screen.queryByRole( 'textbox', { name: 'Add a comment' } ) ).not.toBeInTheDocument();
@@ -121,7 +118,7 @@ describe( 'PostComments', () => {
 			const comments = await screen.findAllByTestId( 'post-comment' );
 			expect( comments.map( ( comment ) => comment.textContent ) ).toEqual( [ '2', '1' ] );
 			comments.forEach( ( comment ) => expect( comment ).toBeVisible() );
-			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
 			expect( screen.getByText( '2 comments' ) ).toBeVisible();
 			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
 		} finally {
@@ -152,17 +149,14 @@ describe( 'PostComments', () => {
 			} )
 			.on( 'request', onRequest );
 
-		const { container } = renderComments( {
-			startingCommentId: 2,
-			loadingPlaceholder: <ConversationCommentsPlaceholder />,
-		} );
+		renderComments( { startingCommentId: 2, loadingPlaceholder } );
 
 		try {
 			await act( async () => {
 				await retryStarted;
 			} );
 
-			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
 
 			await act( async () => {
@@ -170,7 +164,7 @@ describe( 'PostComments', () => {
 			} );
 
 			await waitFor( () => expect( screen.getByText( 'No comments' ) ).toBeVisible() );
-			expect( container.querySelector( '.skeleton' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
 			expect( onRequest ).toHaveBeenCalledTimes( 2 );
 		} finally {
 			releaseRetry();
