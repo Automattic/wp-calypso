@@ -10,9 +10,11 @@ const mockAddMessage = vi.fn();
 const mockAttachFileToConversation = vi.fn().mockResolvedValue( undefined );
 const mockTrackEvent = vi.fn();
 // Arguments: whether the token may be fetched, and the token type.
-const mockUseAuthenticateZendeskMessaging = vi.fn< object, [ boolean, string ] >( () => ( {
-	data: { token: 'token' },
-} ) );
+const mockUseAuthenticateZendeskMessaging = vi.fn< ( ...args: [ boolean, string ] ) => object >(
+	() => ( {
+		data: { token: 'token' },
+	} )
+);
 
 vi.mock( '@wordpress/i18n', () => {
 	Object.assign( globalThis, { __i18n_text_domain__: 'default' } );
@@ -30,21 +32,18 @@ vi.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-vi.mock(
-	'@automattic/zendesk-client',
-	() => ( {
-		useAttachFileToConversation: () => ( {
-			isPending: false,
-			mutateAsync: mockAttachFileToConversation,
-		} ),
-		useAuthenticateZendeskMessaging: ( enabled: boolean, type: string ) =>
-			mockUseAuthenticateZendeskMessaging( enabled, type ),
-		zendeskMessageConverter: vi.fn( ( message ) => ( {
-			...message,
-			content: message.type === 'file-placeholder' ? `📎 ${ message.altText }` : '',
-		} ) ),
-	} )
-);
+vi.mock( '@automattic/zendesk-client', () => ( {
+	useAttachFileToConversation: () => ( {
+		isPending: false,
+		mutateAsync: mockAttachFileToConversation,
+	} ),
+	useAuthenticateZendeskMessaging: ( enabled: boolean, type: string ) =>
+		mockUseAuthenticateZendeskMessaging( enabled, type ),
+	zendeskMessageConverter: vi.fn( ( message ) => ( {
+		...message,
+		content: message.type === 'file-placeholder' ? `📎 ${ message.altText }` : '',
+	} ) ),
+} ) );
 
 vi.mock( '../../../context', () => ( {
 	useOdieAssistantContext: vi.fn(),

@@ -1,10 +1,3 @@
-// `logToLogstash` fires a real HTTPS request to the wpcom logstash
-// endpoint. Mute it so the optimistic-mutation onError tests don't
-// trigger an unmocked nock request.
-vi.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: vi.fn(),
-} ) );
-
 import {
 	readerMastodonKeys,
 	type MastodonAuthorProfile,
@@ -44,6 +37,13 @@ import {
 	useMastodonTagFeedInfiniteQuery,
 	useMastodonTimelineInfiniteQuery,
 } from '../reader-mastodon';
+
+// `logToLogstash` fires a real HTTPS request to the wpcom logstash
+// endpoint. Mute it so the optimistic-mutation onError tests don't
+// trigger an unmocked nock request.
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 function makeWrapper( c: QueryClient ) {

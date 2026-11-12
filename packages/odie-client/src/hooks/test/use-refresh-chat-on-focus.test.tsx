@@ -14,8 +14,8 @@ let mockChatStatus: Chat[ 'status' ] = 'loaded';
 let mockInteraction: { uuid: string } | undefined = { uuid: 'int-1' };
 let mockLoggedOutOdieChatId: number | null = null;
 const mockSetChat = vi.fn();
-const mockInvalidateQueries = vi.fn< Promise< void >, [ { queryKey: unknown[] } ] >( () =>
-	Promise.resolve()
+const mockInvalidateQueries = vi.fn< ( ...args: [ { queryKey: unknown[] } ] ) => Promise< void > >(
+	() => Promise.resolve()
 );
 
 vi.mock( '../../context', () => ( {

@@ -190,7 +190,7 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 			ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 			ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
 			ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
-		} = jest.requireMock( '@automattic/zendesk-client' );
+		} = await import( '@automattic/zendesk-client' );
 
 		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
 			metadata: expect.objectContaining( {

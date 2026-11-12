@@ -6,16 +6,16 @@ import { render, screen } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { OdieSendMessageButton } from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { useSendChatMessage } from '../../../hooks';
 import type { Chat, Message } from '../../../types';
 
 vi.mock( '@automattic/agenttic-ui/index.css', () => ( {} ) );
-vi.mock(
-	'@automattic/agenttic-ui',
-	() => ( { useInput: () => ( { textareaRef: { current: null } } ) } )
-);
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	useInput: () => ( { textareaRef: { current: null } } ),
+} ) );
 vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 	useConnectionStatusNotice: () => undefined,

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { MessagesClusterizer } from '../messages-cluster/messages-cluster';
 import type { Message } from '../../../types';
 
@@ -22,22 +23,26 @@ vi.mock( '../../../utils/csat', () => ( {
 // an unstable message-cluster key wiped CSATForm's local rating state on every unrelated re-render.
 const mockMountSpy = vi.fn();
 
-vi.mock( '..', () => ( {
-	__esModule: true,
-	default: ( { message, header }: { message: Message; header?: React.ReactNode } ) => {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		jest.requireActual( 'react' ).useEffect( () => {
-			mockMountSpy( message.content );
-		}, [] );
+vi.mock( '..', async () => {
+	const { useEffect } = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	return {
+		default: ( { message, header }: { message: Message; header?: React.ReactNode } ) => {
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			useEffect( () => {
+				mockMountSpy( message.content );
+				// Mount only: the spy counts mounts, not content changes.
+				// eslint-disable-next-line react-hooks/exhaustive-deps
+			}, [] );
 
-		return (
-			<div>
-				{ header }
-				<div>{ message.content }</div>
-			</div>
-		);
-	},
-} ) );
+			return (
+				<div>
+					{ header }
+					<div>{ message.content }</div>
+				</div>
+			);
+		},
+	};
+} );
 
 vi.mock( '../../chat-with-support', () => ( { default: () => null } ) );
 
@@ -77,11 +82,9 @@ const createCSATMessage = ( {
 describe( 'MessagesClusterizer', () => {
 	beforeEach( () => {
 		let nextId = 0;
-		vi
-			.spyOn( crypto, 'randomUUID' )
-			.mockImplementation(
-				() => `00000000-0000-0000-0000-${ String( ++nextId ).padStart( 12, '0' ) }`
-			);
+		vi.spyOn( crypto, 'randomUUID' ).mockImplementation(
+			() => `00000000-0000-0000-0000-${ String( ++nextId ).padStart( 12, '0' ) }`
+		);
 	} );
 
 	afterEach( () => {

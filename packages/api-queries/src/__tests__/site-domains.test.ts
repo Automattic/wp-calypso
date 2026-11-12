@@ -5,7 +5,8 @@ import { queryClient } from '../query-client';
 import { siteSetPrimaryDomainMutation } from '../site-domains';
 
 vi.mock( '../query-client', async () => {
-	const { QueryClient: QC } = ( await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' ) );
+	const { QueryClient: QC } =
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
 	return { queryClient: new QC() };
 } );
 

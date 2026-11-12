@@ -6,9 +6,10 @@ import { startSiteCollisionListener } from '../site-collision-listener';
 import { sitesQuery, paginatedSitesQuery } from '../sites';
 import type { Site } from '@automattic/api-core';
 
-// Mock with Jest so that the same client is used in siteBySlugQuery/siteByIdQuery
-vi.mock( '../query-client', () => {
-	const { QueryClient: QC } = require( '@tanstack/react-query' );
+// Mock so that the same client is used in siteBySlugQuery/siteByIdQuery
+vi.mock( '../query-client', async () => {
+	const { QueryClient: QC } =
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
 	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
 	return { queryClient: qc };
 } );

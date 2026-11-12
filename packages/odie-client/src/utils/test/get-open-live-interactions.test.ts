@@ -11,11 +11,10 @@ import {
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 
 vi.mock( 'smooch', () => ( {
-	getConversations: vi.fn(),
+	default: { getConversations: vi.fn() },
 } ) );
 
-const mockGetConversations = ( Smooch as unknown as { getConversations: Mock } )
-	.getConversations;
+const mockGetConversations = ( Smooch as unknown as { getConversations: Mock } ).getConversations;
 
 const now = () => Math.floor( Date.now() / 1000 );
 

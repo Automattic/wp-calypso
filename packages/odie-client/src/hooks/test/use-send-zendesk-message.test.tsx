@@ -84,9 +84,9 @@ describe( 'useSendZendeskMessage', () => {
 		vi.clearAllMocks();
 		store = [];
 		sentListeners = new Set();
-		vi
-			.mocked( Smooch.getConversationById )
-			.mockImplementation( async () => ( { messages: store } ) as never );
+		vi.mocked( Smooch.getConversationById ).mockImplementation(
+			async () => ( { messages: store } ) as never
+		);
 		vi.mocked( Smooch.on ).mockImplementation( ( ( _event: string, listener: never ) => {
 			sentListeners.add( listener );
 		} ) as never );

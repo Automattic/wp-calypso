@@ -4,6 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type Mock, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { useOdieAssistantContext } from '../../../context';
 import { GetSupport } from '../get-support';
 

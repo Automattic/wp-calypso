@@ -15,14 +15,13 @@ interface SuggestionsProps {
 	onSubmit: ( suggestion: Suggestion ) => void;
 }
 
-vi.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		Suggestions: ( { suggestions, onSubmit }: SuggestionsProps ) => (
-			<button onClick={ () => onSubmit( suggestions[ 0 ] ) }>Send prompt</button>
-		),
-	} )
-);
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	Suggestions: ( { suggestions, onSubmit }: SuggestionsProps ) => (
+		<button onClick={ () => onSubmit( suggestions[ 0 ] ) }>Send prompt</button>
+	),
+} ) );
+// The Smooch SDK needs `matchMedia` as it loads, which jsdom lacks; nothing here uses it.
+vi.mock( 'smooch', () => ( { default: {} } ) );
 vi.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => () => true,
 } ) );

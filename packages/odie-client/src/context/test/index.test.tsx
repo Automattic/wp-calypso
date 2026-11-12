@@ -39,7 +39,7 @@ vi.mock( 'react-router-dom', () => ( {
 } ) );
 
 // Arguments: whether Zendesk chats can be loaded, and whether that is still being checked.
-const mockUseGetCombinedChat = vi.fn< object, [ boolean, boolean ] >( () => ( {
+const mockUseGetCombinedChat = vi.fn< ( ...args: [ boolean, boolean ] ) => object >( () => ( {
 	mainChatState: { messages: [] },
 	setMainChatState: vi.fn(),
 	isLoadingZendeskHistory: false,

@@ -6,7 +6,8 @@ import type { Site } from '@automattic/api-core';
 
 // Same-instance query client so site.ts and the test share state.
 vi.mock( '../query-client', async () => {
-	const { QueryClient: QC } = ( await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' ) );
+	const { QueryClient: QC } =
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
 	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
 	return { queryClient: qc };
 } );

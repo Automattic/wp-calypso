@@ -3,8 +3,8 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { type Mock, vi } from 'vitest';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../../context';
 import { useSendOdieMessage } from '../use-send-odie-message';
 import type { Message } from '../../types';
