@@ -97,7 +97,8 @@ body.js.is-image-studio-open {
 		fill: currentColor !important;
 	}
 
-	svg[fill="none"] {
+	svg[fill="none"],
+	svg[stroke]:not([fill]) {
 		fill: none !important;
 	}
 
