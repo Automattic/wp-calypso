@@ -115,6 +115,7 @@
 
 	&:hover .wpnc-simplified__card-arrow {
 		fill: var(--wp-components-color-foreground, #{$gray-900});
+		color: var(--wp-components-color-foreground, #{$gray-900});
 	}
 }
 
@@ -125,6 +126,7 @@
 .wpnc-simplified__card-arrow {
 	flex-shrink: 0;
 	fill: var(--wp-components-color-gray-400, #{$gray-400});
+	color: var(--wp-components-color-gray-400, #{$gray-400});
 	transition: fill var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 }
 
@@ -145,6 +147,7 @@
 		padding: $grid-unit-05;
 		background: var(--wp-components-color-gray-100, #{$gray-100});
 		fill: var(--wp-components-color-gray-700, #{$gray-700});
+		color: var(--wp-components-color-gray-700, #{$gray-700});
 	}
 }
 
