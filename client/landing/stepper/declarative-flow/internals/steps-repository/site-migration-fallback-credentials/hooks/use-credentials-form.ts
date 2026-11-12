@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useRequestAutomatedMigration } from '../../site-migration-credentials/hooks/use-request-automated-migration';
 import { CredentialsFormData } from '../../site-migration-credentials/types';
 import { useFormErrorMapping } from './use-form-error-mapping';
-import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
 export const useFallbackCredentialsForm = ( onSubmit: ( from?: string ) => void ) => {
 	const siteSlug = useSiteSlugParam();
@@ -35,6 +35,7 @@ export const useFallbackCredentialsForm = ( onSubmit: ( from?: string ) => void 
 			from_url: importSiteQueryParam,
 			username: '',
 			password: '',
+			migrationType: 'credentials',
 			notes: '',
 		},
 		errors: serverSideError,
