@@ -39,6 +39,12 @@ describe( 'getTypeIcon', () => {
 		expect( lock ).not.toBe( getTypeIcon( note( { noticon: '\uf455' } ) ) );
 	} );
 
+	it( 'marks warnings with a class rather than an inline fill, so a pending note can recolor them', () => {
+		const warning = getTypeIcon( note( { type: 'automattcher', noticon: '\uf414' } ) );
+
+		expect( warning.props.className ).toBe( 'is-warning' );
+	} );
+
 	it( 'falls back to the info icon for other notes', () => {
 		const info = getTypeIcon( note( { noticon: '\uf455' } ) );
 

@@ -1,9 +1,9 @@
 import type { Note } from '../types';
 import type { JSX, ReactNode } from 'react';
 
-// An inline `fill` keeps a badge's color in every row state, over the unread blue.
-const badge = ( children: ReactNode, fill?: string ): JSX.Element => (
+const badge = ( children: ReactNode, className?: string ): JSX.Element => (
 	<svg
+		className={ className }
 		width="18"
 		height="18"
 		viewBox="0 0 18 18"
@@ -12,7 +12,7 @@ const badge = ( children: ReactNode, fill?: string ): JSX.Element => (
 		aria-hidden="true"
 		focusable="false"
 	>
-		<circle cx="50%" cy="50%" r="50%" fill="#949494" style={ fill ? { fill } : undefined } />
+		<circle cx="50%" cy="50%" r="50%" fill="#949494" />
 		{ children }
 	</svg>
 );
@@ -47,7 +47,7 @@ const warning = badge(
 		strokeLinejoin="round"
 		stroke="white"
 	/>,
-	'var(--wpds-color-background-interactive-error-strong, #cc1818)'
+	'is-warning'
 );
 
 const like = badge(

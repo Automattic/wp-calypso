@@ -118,8 +118,13 @@
 		z-index: 1;
 	}
 
-	div[role="article"]:has(.wpnc__subject.is-unread):not(:has(.wpnc__pending-badge)) .wpnc__note-type-badge circle {
+	div[role="article"]:has(.wpnc__subject.is-unread):not(:has(.wpnc__pending-badge)) .wpnc__note-type-badge svg:not(.is-warning) circle {
 		fill: var(--wp-admin-theme-color);
+	}
+
+	// Warnings stay red, read or unread, unless the comment is pending (below).
+	.wpnc__note-type-badge .is-warning circle {
+		fill: var(--wpds-color-background-interactive-error-strong, #cc1818);
 	}
 
 	// Badge has no size prop, so step it down a size to sit within the title's 20px line.
