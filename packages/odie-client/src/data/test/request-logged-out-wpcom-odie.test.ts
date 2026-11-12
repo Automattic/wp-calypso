@@ -2,22 +2,13 @@ import { vi } from 'vitest';
 import { requestLoggedOutWpcomOdie } from '../request-logged-out-wpcom-odie';
 
 describe( 'requestLoggedOutWpcomOdie', () => {
-	const originalFetch = globalThis.fetch;
-
 	beforeEach( () => {
-		globalThis.fetch = vi.fn();
+		vi.stubGlobal( 'fetch', vi.fn() );
 	} );
 
 	afterEach( () => {
 		vi.restoreAllMocks();
-	} );
-
-	afterAll( () => {
-		if ( originalFetch ) {
-			globalThis.fetch = originalFetch;
-		} else {
-			delete ( globalThis as { fetch?: typeof fetch } ).fetch;
-		}
+		vi.unstubAllGlobals();
 	} );
 
 	it( 'omits credentials when fetching a logged-out chat', async () => {

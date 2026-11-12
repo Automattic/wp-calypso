@@ -88,7 +88,7 @@ describe( '@automattic/viewport-react', () => {
 	}
 
 	beforeAll( async () => {
-		window.matchMedia = matchMediaMock;
+		vi.stubGlobal( 'matchMedia', matchMediaMock );
 		helpers = await import( '../src' );
 		// Disable console warnings.
 		vi.spyOn( console, 'warn' ).mockImplementation( () => '' );
@@ -115,6 +115,7 @@ describe( '@automattic/viewport-react', () => {
 
 	afterAll( () => {
 		vi.restoreAllMocks();
+		vi.unstubAllGlobals();
 	} );
 
 	describe( 'useBreakpoint', () => {

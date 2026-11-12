@@ -60,7 +60,7 @@ describe( 'loadScript', () => {
 		} );
 
 		test( 'should use window.jQuery if available', () => {
-			window.jQuery = {};
+			vi.stubGlobal( 'jQuery', {} );
 
 			const callback = vi.fn();
 			loadjQueryDependentScript( url, callback, args );
@@ -71,15 +71,14 @@ describe( 'loadScript', () => {
 			executeCallbacks( url );
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 
-			delete window.jQuery;
+			vi.unstubAllGlobals();
 		} );
 
 		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', () => {
 			return new Promise( ( done ) => {
 				// NOTE: jsdom has jQuery attached to the window. We temporarily replace this
 				// jQuery instance fir this test.
-				const jQueryBackup = global.window.jQuery;
-				global.window.jQuery = false;
+				vi.stubGlobal( 'jQuery', false );
 
 				const callback = vi.fn();
 				loadjQueryDependentScript( url ).then( callback );
@@ -100,7 +99,7 @@ describe( 'loadScript', () => {
 					setTimeout( () => {
 						expect( callback ).toHaveBeenCalledTimes( 1 );
 
-						global.window.jQuery = jQueryBackup;
+						vi.unstubAllGlobals();
 						done();
 					}, 0 );
 				}, 0 );
