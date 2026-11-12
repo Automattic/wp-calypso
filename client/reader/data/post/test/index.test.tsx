@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
@@ -217,6 +217,75 @@ describe( 'usePost', () => {
 			global_ID: 'error-1-2',
 			is_error: true,
 		} );
+	} );
+
+	it( 'syncs each error once while allowing navigation and later failures', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 403, { message: 'First failure' } )
+			.get( '/rest/v1.1/read/sites/1/posts/3' )
+			.query( true )
+			.reply( 404, { message: 'Another post failure' } );
+
+		const queryClient = buildQueryClient();
+		const store = buildStore( queryClient );
+		const wrapper = ( { children }: { children: ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
+		const { result, rerender } = renderHook( ( { postId } ) => usePost( { blogId: 1, postId } ), {
+			initialProps: { postId: 2 },
+			wrapper,
+		} );
+		await waitFor( () =>
+			expect( result.current.data?.error ).toMatchObject( { message: 'First failure' } )
+		);
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+		const cacheUpdates = jest.fn();
+		const unsubscribe = queryClient.getQueryCache().subscribe( ( event ) => {
+			if ( event.type === 'updated' && event.query.queryKey[ 2 ] === 'cache' ) {
+				cacheUpdates();
+			}
+		} );
+		try {
+			rerender( { postId: 2 } );
+			rerender( { postId: 2 } );
+			await act( async () => {
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+			} );
+			expect( cacheUpdates ).not.toHaveBeenCalled();
+
+			rerender( { postId: 3 } );
+			await waitFor( () =>
+				expect( result.current.data ).toMatchObject( {
+					ID: 3,
+					is_error: true,
+					error: { message: 'Another post failure' },
+				} )
+			);
+			rerender( { postId: 2 } );
+			await waitFor( () => expect( result.current.data?.ID ).toBe( 2 ) );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/read/sites/1/posts/2' )
+				.query( true )
+				.reply( 500, { message: 'Later failure' } );
+			await act( async () => {
+				await result.current.refetch();
+			} );
+			await waitFor( () =>
+				expect( result.current.data ).toMatchObject( {
+					ID: 2,
+					is_error: true,
+					error: { message: 'Later failure' },
+				} )
+			);
+		} finally {
+			unsubscribe();
+		}
 	} );
 
 	it( 'does not fetch when postKey is incomplete', () => {
