@@ -13,20 +13,7 @@ TEST_PATHS='(\.test\.|\.spec\.|/test/|__tests__/)'
 
 PR_JSON=$(gh pr view "$PR" --repo "$REPO" --json number,title,body,headRefOid,additions,deletions,changedFiles,files,statusCheckRollup)
 
-OWNER="${REPO%%/*}"
-NAME="${REPO##*/}"
-FIX_HERE=$(gh api graphql -F owner="$OWNER" -F name="$NAME" -F pr="$PR" -f query='
-	query($owner: String!, $name: String!, $pr: Int!) {
-		repository(owner: $owner, name: $name) {
-			pullRequest(number: $pr) {
-				reviewThreads(first: 100) {
-					nodes { isResolved comments(first: 1) { nodes { body } } }
-				}
-			}
-		}
-	}' --jq '[.data.repository.pullRequest.reviewThreads.nodes[]
-		| select(.isResolved | not)
-		| select(.comments.nodes[0].body | contains("[fix here]"))] | length')
+FIX_HERE="${FIX_HERE:-$("$DIR/fix-here-count.sh" "$PR" "$REPO")}"
 
 SIGNALS=$(jq -c \
 	--arg low "$LOW_CAP_PATHS" \
@@ -47,8 +34,8 @@ SIGNALS=$(jq -c \
 	}' <<<"$PR_JSON")
 
 DIFF=$(gh pr diff "$PR" --repo "$REPO" \
-	| awk '/^diff --git/ { skip = ($0 ~ /yarn\.lock|package-lock\.json|\.snap$/) } !skip' \
-	| head -c "$MAX_DIFF_CHARS")
+	| awk '/^diff --git/ { skip = ($0 ~ /yarn\.lock|package-lock\.json|\.snap$/) } !skip')
+DIFF="${DIFF:0:MAX_DIFF_CHARS}"
 
 INPUT=$(cat <<EOF
 Signals computed from the PR (trusted):
@@ -85,7 +72,7 @@ jq -c \
 	def rank: {"Low": 0, "Medium": 1, "High": 2}[.];
 	.structured_output as $out
 	| [
-		(if $signals.unresolved_fix_here_comments > 0 then {level: "Low", reason: "unresolved [fix here] review comment"} else empty end),
+		(if $signals.unresolved_fix_here_comments > 0 then {level: "Low", reason: "unresolved [fix here] review comment", always: true} else empty end),
 		(if ($signals.sensitive_paths | length) > 0 then {level: "Medium", reason: "touches sensitive paths (\($signals.sensitive_paths[0]))"} else empty end),
 		(if ($signals.shared_paths | length) > 0 then {level: "Medium", reason: "touches shared code (\($signals.shared_paths[0]))"} else empty end),
 		(if $signals.lines_changed > 1000 then {level: "Medium", reason: "large diff (\($signals.lines_changed) lines)"} else empty end)
@@ -96,7 +83,7 @@ jq -c \
 		sha: $sha,
 		level: $level,
 		model_level: $out.level,
-		reasons: ([$caps[] | select((.level | rank) < ($out.level | rank)) | .reason] + $out.reasons | .[0:3]),
+		reasons: ([$caps[] | select(.always or ((.level | rank) < ($out.level | rank))) | .reason] + $out.reasons | .[0:3]),
 		signals: $signals,
 		cost_usd: (.total_cost_usd // 0)
 	}' <<<"$RESULT"

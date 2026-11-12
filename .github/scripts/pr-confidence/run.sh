@@ -21,7 +21,7 @@ list_prs() {
 
 # Prints a skip reason for a PR, or nothing when it should be scored.
 skip_reason() {
-	local pr="$1" meta perm last_sha
+	local pr="$1" meta perm last_marker
 	meta=$(gh pr view "$pr" --repo "$REPO" --json isDraft,author,headRefOid,headRepositoryOwner,headRepository,reviewDecision)
 	if [ "$(jq -r .isDraft <<<"$meta")" = "true" ]; then echo "draft"; return; fi
 	if [ "$(jq -r .author.is_bot <<<"$meta")" = "true" ]; then echo "bot author"; return; fi
@@ -29,9 +29,11 @@ skip_reason() {
 	if [ "$(jq -r .reviewDecision <<<"$meta")" = "APPROVED" ]; then echo "already approved"; return; fi
 	perm=$(gh api "repos/$REPO/collaborators/$(jq -r .author.login <<<"$meta")/permission" --jq .permission 2>/dev/null || echo none)
 	case "$perm" in admin | write) ;; *) echo "author permission $perm"; return ;; esac
-	last_sha=$(gh api "repos/$REPO/issues/$pr/comments" --paginate --jq ".[] | select(.body | startswith(\"$MARKER\")) | .body" \
-		| sed -n 's/.*sha=\([0-9a-f]*\).*/\1/p' | tail -1)
-	if [ "$last_sha" = "$(jq -r .headRefOid <<<"$meta")" ]; then echo "already scored at this commit"; return; fi
+	last_marker=$(gh api "repos/$REPO/issues/$pr/comments" --paginate --jq ".[] | select(.body | startswith(\"$MARKER\")) | .body | split(\"\n\")[0]" | tail -1)
+	if [ "$last_marker" = "$MARKER sha=$(jq -r .headRefOid <<<"$meta") fix_here=$("$DIR/fix-here-count.sh" "$pr" "$REPO") -->" ]; then
+		echo "already scored at this commit"
+		return
+	fi
 }
 
 # Writes the confidence label and the PR comment for one scored result.
@@ -40,7 +42,7 @@ apply_result() {
 	pr=$(jq -r .pr <<<"$result")
 	level=$(jq -r .level <<<"$result")
 	body=$(jq -r --arg marker "$MARKER" '
-		"\($marker) sha=\(.sha) -->\n**AI confidence: \(.level)** — " + ([.reasons[] | gsub("@"; "@​")] | join("; ")) + ".\n\n<sub>Helps reviewers prioritise; not a substitute for review. Re-scored when new commits land.</sub>"' <<<"$result")
+		"\($marker) sha=\(.sha) fix_here=\(.signals.unresolved_fix_here_comments) -->\n**AI confidence: \(.level)** — " + ([.reasons[] | gsub("@"; "@​")] | join("; ")) + ".\n\n<sub>Helps reviewers prioritise; not a substitute for review. Re-scored when new commits land.</sub>"' <<<"$result")
 	for other in Low Medium High; do
 		if [ "$other" != "$level" ]; then
 			gh pr edit "$pr" --repo "$REPO" --remove-label "$LABEL_PREFIX $other" >/dev/null 2>&1 || true

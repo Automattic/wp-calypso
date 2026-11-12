@@ -12,7 +12,7 @@ on:
         required: false
         default: ''
       dry_run:
-        description: 'Only write results to the job summary'
+        description: 'Only write results to the job summary (always on when no PR numbers are given)'
         type: boolean
         default: true
 
@@ -51,7 +51,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           REPO: ${{ github.repository }}
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.dry_run) || format('{0}', vars.PR_CONFIDENCE_ENABLED != 'true') }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.dry_run || inputs.pr_numbers == '') || format('{0}', vars.PR_CONFIDENCE_ENABLED != 'true') }}
           PR_NUMBERS: ${{ github.event.pull_request.number || inputs.pr_numbers }}
         run: |
           read -ra PRS <<<"$PR_NUMBERS"
