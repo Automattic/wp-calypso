@@ -4,6 +4,7 @@ import { RestorableProductsProvider } from '@automattic/wpcom-checkout';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { MiniCartLineItems } from '../src/mini-cart-line-items';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 

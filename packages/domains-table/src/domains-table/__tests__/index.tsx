@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { DomainsTable } from '..';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { transferStatus } from '../../utils/constants';
@@ -560,9 +561,9 @@ describe( 'column sorting', () => {
 
 	beforeAll( () => {
 		dateTimeFormatSpy = vi.spyOn( global.Intl, 'DateTimeFormat' );
-		dateTimeFormatSpy.mockImplementation(
-			( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
-		);
+		dateTimeFormatSpy.mockImplementation( function ( locale, options ) {
+			return new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } );
+		} );
 	} );
 
 	afterAll( () => {

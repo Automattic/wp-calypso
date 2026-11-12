@@ -16,7 +16,7 @@ import {
 import { ar } from 'date-fns/locale';
 import { useState, default as React } from 'react';
 import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { usePreviewRange } from '../';
 import { DateRangeCalendar, TZDate } from '../..';
 import { getDateButton, getDateCell, monthNameFormatter } from '../../utils/test-utils';
@@ -65,9 +65,7 @@ const ControlledDateRangeCalendar = (
 };
 
 function setupUserEvent() {
-	// The `advanceTimersByTime` is needed since we're using jest
-	// fake timers to simulate a fixed date for tests.
-	return userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
+	return userEvent.setup();
 }
 
 describe( 'DateRangeCalendar', () => {
@@ -81,7 +79,8 @@ describe( 'DateRangeCalendar', () => {
 	let prevPrevMonth: Date;
 
 	beforeAll( () => {
-		vi.useFakeTimers();
+		// Only `Date` is faked: Testing Library can't see Vitest's fake timers, so its waits would stall.
+		vi.useFakeTimers( { toFake: [ 'Date' ] } );
 		// For consistent tests, set the system time to a fixed date:
 		// Thursday, May 15, 2025, 20:00 UTC
 		vi.setSystemTime( 1747339200000 );

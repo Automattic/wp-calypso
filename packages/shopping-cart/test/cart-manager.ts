@@ -203,7 +203,7 @@ describe( 'ShoppingCartManager', () => {
 		// updateLocation with the same data should be a noop.
 		const p1 = manager.actions.updateLocation( { countryCode } );
 		const completeCart = await p1;
-		expect( p1 ).resolves.toEqual( completeCart );
+		await expect( p1 ).resolves.toEqual( completeCart );
 	} );
 
 	it( 'noop actions taken when the cart has a loading error are not rejected', async () => {
@@ -228,7 +228,7 @@ describe( 'ShoppingCartManager', () => {
 		// updateLocation with the same data should be a noop.
 		const p1 = manager.actions.updateLocation( { countryCode } );
 		const completeCart = await p1;
-		expect( p1 ).resolves.toEqual( completeCart );
+		await expect( p1 ).resolves.toEqual( completeCart );
 	} );
 
 	it( 'multiple actions triggered sequentially all modify the cart', async () => {

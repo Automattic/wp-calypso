@@ -6,6 +6,7 @@ import React from 'react';
 import { createSitesListComponent } from '../src';
 import { MinimumSite } from '../src/site-type';
 import { createMockSite } from './create-mock-site';
+import '@testing-library/jest-dom/vitest';
 
 const publicSite1 = createMockSite( { name: 'Publiccc' } );
 const publicSite2 = createMockSite( { name: 'Publicccor' } );

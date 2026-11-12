@@ -6,6 +6,7 @@ import {
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import { useShoppingCart } from '../src/index';
 import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';

@@ -4,6 +4,7 @@
 import languages from '@automattic/languages';
 import { render, screen } from '@testing-library/react';
 import { languageEntries, PureUniversalNavbarFooter } from '../index';
+import '@testing-library/jest-dom/vitest';
 
 describe( 'PureUniversalNavbarFooter', () => {
 	test( 'renders the five link columns', () => {

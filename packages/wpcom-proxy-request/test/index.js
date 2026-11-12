@@ -20,12 +20,11 @@ describe( 'wpcom-proxy-request', () => {
 		postMessage = vi.spyOn( getProxyWindow(), 'postMessage' ).mockImplementation( () => {} );
 	};
 
-	beforeEach( () => {
+	beforeEach( async () => {
 		// The module keeps its iframe, buffered requests and cookie flag in module state,
 		// so each test loads a fresh copy.
-		vi.isolateModules( () => {
-			proxy = require( '../src' );
-		} );
+		vi.resetModules();
+		proxy = await import( '../src' );
 
 		let uuid = 0;
 		vi.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `uuid-${ ++uuid }` );

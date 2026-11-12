@@ -6,6 +6,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { transferStatus } from '../../utils/constants';
 import {
@@ -370,8 +371,8 @@ describe( 'selected domain', () => {
 } );
 
 describe( 'site linking ctas', () => {
-	beforeAll( () => {
-		global.ResizeObserver = require( 'resize-observer-polyfill' );
+	beforeAll( async () => {
+		global.ResizeObserver = ( await import( 'resize-observer-polyfill' ) ).default;
 	} );
 
 	test( 'when a site is not associated with a domain and the user has no connectable sites, display the site linking ctas targeting site creation', async () => {
@@ -484,9 +485,9 @@ describe( 'expires or renew on cell', () => {
 	beforeAll( () => {
 		const OriginalTimeFormat = Intl.DateTimeFormat;
 		dateTimeFormatSpy = vi.spyOn( global.Intl, 'DateTimeFormat' );
-		dateTimeFormatSpy.mockImplementation(
-			( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
-		);
+		dateTimeFormatSpy.mockImplementation( function ( locale, options ) {
+			return new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } );
+		} );
 	} );
 
 	afterAll( () => {
@@ -630,9 +631,9 @@ describe( 'domain status cell', () => {
 
 		beforeAll( () => {
 			dateTimeFormatSpy = vi.spyOn( global.Intl, 'DateTimeFormat' );
-			dateTimeFormatSpy.mockImplementation(
-				( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
-			);
+			dateTimeFormatSpy.mockImplementation( function ( locale, options ) {
+				return new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } );
+			} );
 		} );
 
 		afterAll( () => {

@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { expect } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
+import { expect } from 'vitest';
 import { useFilterDeletedSites, SitesFilterDeletedOptions } from '../src/use-filter-deleted-sites';
 
 // Mock the MinimumSite type for testing

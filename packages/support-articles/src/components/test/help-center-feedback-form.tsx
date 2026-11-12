@@ -5,6 +5,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import HelpCenterFeedbackForm from '../help-center-feedback-form';
 
 const mockRateArticle = vi.fn();

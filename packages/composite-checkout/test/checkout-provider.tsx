@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import {
 	CheckoutProvider,
 	FormStatus,

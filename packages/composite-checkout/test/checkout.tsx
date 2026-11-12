@@ -9,6 +9,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { createContext, useState, useContext } from 'react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import {
 	CheckoutProvider,
 	CheckoutStep,
@@ -957,16 +958,16 @@ describe( 'Checkout', () => {
 		const byTagName = ( tagName ) => ( el ) => el.tagName === tagName;
 		const positionElements = ( positions ) => {
 			const original = window.HTMLElement.prototype.getBoundingClientRect;
-			vi
-				.spyOn( window.HTMLElement.prototype, 'getBoundingClientRect' )
-				.mockImplementation( function () {
+			vi.spyOn( window.HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation(
+				function () {
 					const position = positions.find( ( [ matches ] ) => matches( this ) );
 					if ( ! position ) {
 						return original.call( this );
 					}
 					const top = position[ 1 ];
 					return { top, bottom: top + 400, left: 0, right: 400, width: 400, height: 400 };
-				} );
+				}
+			);
 		};
 		const putStepAt = ( stepId, top ) => positionElements( [ [ byId( stepId ), top ] ] );
 

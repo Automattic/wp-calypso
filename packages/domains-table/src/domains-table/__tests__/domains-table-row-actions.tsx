@@ -4,6 +4,7 @@
 import page from '@automattic/calypso-router';
 import { screen, act, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { renderWithProvider } from '../../test-utils';
 import { ResponseDomain } from '../../utils/types';
 import { DomainsTableStateContext } from '../domains-table';

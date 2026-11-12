@@ -3,6 +3,7 @@
  */
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { CSATForm } from '../src/components/csat-form';
 
 // jsdom doesn't implement scrollIntoView; CSATForm calls it when the feedback step mounts.
@@ -129,9 +130,7 @@ describe( 'CSATForm', () => {
 
 	it( 'hides the form without submitting anything when Send is clicked with no comment or reason', async () => {
 		const onFormHidden = vi.fn();
-		render(
-			<CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } />
-		);
+		render( <CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } /> );
 
 		const { thumbsUp } = getThumbsButtons();
 		await act( async () => {
@@ -149,9 +148,7 @@ describe( 'CSATForm', () => {
 
 	it( 'calls onFormHidden when No thanks is clicked', async () => {
 		const onFormHidden = vi.fn();
-		render(
-			<CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } />
-		);
+		render( <CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } /> );
 
 		const { thumbsUp } = getThumbsButtons();
 		await act( async () => {
