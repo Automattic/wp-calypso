@@ -131,6 +131,17 @@ export function Connect( {
 					{ __( 'We couldn’t load your site’s details.' ) }
 				</Notice>
 			) }
+			{ connectionOption?.installed_on_destination && ! isConnected && (
+				<Notice variant="warning" title={ __( 'The plugin is installed on the wrong site' ) }>
+					{ withDomain(
+						/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+						__(
+							'Migrate to WordPress.com is installed on your WordPress.com site. Install it on <domain />, the site you’re migrating from.'
+						),
+						sourceHost
+					) }
+				</Notice>
+			) }
 			{ connected === 'notice' && (
 				<Notice variant="success" title={ __( 'Plugin installed and connected' ) }>
 					{ __( 'Your site is connected to WordPress.com.' ) }

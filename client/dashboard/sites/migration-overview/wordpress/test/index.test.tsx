@@ -218,6 +218,37 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
 	} );
 
+	test( 'warns when the plugin is installed on the WordPress.com site, until the source is connected', async () => {
+		const onDestination = ( connected: boolean ) => ( {
+			...configuration,
+			available_source_connections: [
+				{
+					...configuration.available_source_connections[ 0 ],
+					connected,
+					installed_on_destination: true,
+				},
+			],
+		} );
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, onDestination( false ) );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( 'The plugin is installed on the wrong site' ) ).toBeVisible();
+		expect( screen.getByText( /installed on your WordPress.com site/ ) ).toHaveTextContent(
+			'Install it on example.com, the site you’re migrating from.'
+		);
+
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, onDestination( true ) );
+		act( () => focusManager.setFocused( true ) );
+
+		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
+		expect(
+			screen.queryByText( 'The plugin is installed on the wrong site' )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'keeps an unreachable plugin up on its own until the next run, but offers to start once connected', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, unreachable() );
 		mockApi().get( configurePath ).query( true ).reply( 200, configuration );

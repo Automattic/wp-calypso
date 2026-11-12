@@ -31,6 +31,7 @@ export type WordPressMigrationSourceConnectionOption = WordPressMigrationSourceC
 	connect_url?: string;
 	manual_url?: string;
 	connected?: boolean;
+	installed_on_destination?: boolean;
 };
 
 export type WordPressMigrationConfiguration = {
