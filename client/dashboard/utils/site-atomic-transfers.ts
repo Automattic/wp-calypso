@@ -44,14 +44,3 @@ export function isAwaitingAtomicTransfer(
 		( transfer.status === 'completed' && !! site.is_wpcom_atomic )
 	);
 }
-
-/**
- * Thrown instead of `notFound()` when the owner can't manage their site yet only because it is
- * turning Atomic, so the site's error component can show that it is being set up.
- */
-export class AtomicTransferInProgressError extends Error {
-	constructor() {
-		super( 'The site is turning Atomic.' );
-		this.name = 'AtomicTransferInProgressError';
-	}
-}

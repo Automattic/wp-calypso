@@ -1,13 +1,11 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -15,20 +13,16 @@ import { canManageSite } from '../features';
 
 const SITE_POLL_INTERVAL = 3000;
 
+/**
+ * Shown in place of a site's pages while it turns Atomic. It checks the site again until its owner
+ * can manage it, and the site's pages then replace it.
+ */
 export default function SiteBeingSetUp( { siteSlug }: { siteSlug: string } ) {
-	const router = useRouter();
-	const { data: site } = useQuery( {
+	useQuery( {
 		...siteBySlugQuery( siteSlug ),
 		refetchInterval: ( query ) =>
 			query.state.data && canManageSite( query.state.data ) ? false : SITE_POLL_INTERVAL,
 	} );
-	const isReady = !! site && canManageSite( site );
-
-	useEffect( () => {
-		if ( isReady ) {
-			router.invalidate();
-		}
-	}, [ isReady, router ] );
 
 	return (
 		<PageLayout header={ <PageHeader title={ siteSlug } /> }>

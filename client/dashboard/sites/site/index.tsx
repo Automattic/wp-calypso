@@ -8,13 +8,13 @@ import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import FlashMessage from '../../components/flash-message';
 import {
-	AtomicTransferInProgressError,
 	isAwaitingAtomicTransfer,
 	mayBeAwaitingAtomicTransfer,
 } from '../../utils/site-atomic-transfers';
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite } from '../features';
 import SiteLaunchCelebrationModal from '../site-launch-modal/celebration-modal';
+import SiteBeingSetUp from './site-being-set-up';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
@@ -37,7 +37,7 @@ function Site() {
 			return null;
 		}
 		if ( isAwaitingAtomicTransfer( site, user.ID, transfer ) ) {
-			throw new AtomicTransferInProgressError();
+			return <SiteBeingSetUp siteSlug={ siteSlug } />;
 		}
 		throw notFound();
 	}

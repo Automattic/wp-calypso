@@ -5,7 +5,6 @@
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
 import { defaultParseSearch } from '@tanstack/react-router';
 import nock from 'nock';
-import { AtomicTransferInProgressError } from '../../../utils/site-atomic-transfers';
 import { AUTH_QUERY_KEY } from '../../auth';
 import { siteBackupsRoute, siteLogsRoute, siteOverviewRoute, siteRoute } from '../sites';
 import type { Site, User } from '@automattic/api-core';
@@ -139,6 +138,7 @@ describe( 'siteRoute while the site turns Atomic', () => {
 		site_owner: owner.ID,
 		is_wpcom_atomic: true,
 		capabilities: {},
+		site_migration: {},
 	} as unknown as Site;
 
 	const runSiteGuard = ( user: User ) => {
@@ -167,16 +167,16 @@ describe( 'siteRoute while the site turns Atomic', () => {
 
 	afterEach( () => nock.cleanAll() );
 
-	test( 'tells the owner their site is being set up while its transfer runs', async () => {
+	test( 'lets the owner in while the site’s transfer runs', async () => {
 		mockLatestTransfer().query( true ).reply( 200, { status: 'active' } );
 
-		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( AtomicTransferInProgressError );
+		await expect( runSiteGuard( owner ) ).resolves.toBeUndefined();
 	} );
 
-	test( 'tells the owner their site is being set up until their capabilities reach it', async () => {
+	test( 'lets the owner in until their capabilities reach the transferred site', async () => {
 		mockLatestTransfer().query( true ).reply( 200, { status: 'completed' } );
 
-		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( AtomicTransferInProgressError );
+		await expect( runSiteGuard( owner ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'shows not found to the owner when the site isn’t turning Atomic', async () => {

@@ -5,15 +5,10 @@ import { siteRoute } from '../../app/router/sites';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { AtomicTransferInProgressError } from '../../utils/site-atomic-transfers';
 import { toError } from '../../utils/to-error';
 import { InaccessibleJetpackNotice } from './notices';
-import SiteBeingSetUp from './site-being-set-up';
 
 export default function Error( { error: thrown }: { error: unknown } ) {
-	if ( thrown instanceof AtomicTransferInProgressError ) {
-		return <AtomicTransferInProgress />;
-	}
 	const error = toError( thrown );
 	if ( isInaccessibleJetpackError( error ) ) {
 		return <InaccessibleJetpackError error={ error } />;
@@ -39,9 +34,4 @@ function InaccessibleJetpackError( { error }: { error: Error } ) {
 			notices={ <InaccessibleJetpackNotice error={ error } /> }
 		></PageLayout>
 	);
-}
-
-function AtomicTransferInProgress() {
-	const { siteSlug } = siteRoute.useParams();
-	return <SiteBeingSetUp siteSlug={ siteSlug } />;
 }

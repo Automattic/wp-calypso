@@ -68,7 +68,6 @@ import {
 } from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
-	AtomicTransferInProgressError,
 	isAwaitingAtomicTransfer,
 	mayBeAwaitingAtomicTransfer,
 } from '../../utils/site-atomic-transfers';
@@ -163,10 +162,8 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		if ( ! canManageSite( site ) ) {
-			if ( await isOwnerAwaitingAtomicTransfer( site ) ) {
-				throw new AtomicTransferInProgressError();
-			}
+		// The site shows that it is being set up until its owner can manage it.
+		if ( ! canManageSite( site ) && ! ( await isOwnerAwaitingAtomicTransfer( site ) ) ) {
 			throw notFound();
 		}
 
