@@ -34,11 +34,18 @@
 	list-style: none;
 	overflow-wrap: anywhere;
 
-	// The comment a reply answers sits above it as a smaller quote, so the reply
-	// itself leads.
+	// The comment a reply answers sits above it as a smaller quote on a gray panel,
+	// so the reply itself leads and its own quotes can't be mistaken for it.
 	&.is-reply .wpnc-simplified__thread-parent {
-		padding-inline-start: $grid-unit-15;
-		border-inline-start: 2px solid var(--wp-components-color-gray-300, #{$gray-300});
+		padding: $grid-unit-15 $grid-unit-20;
+		border-radius: $radius-large;
+		background: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
+
+		// The token isn't remapped for the dark theme, so recess the panel into the
+		// page's darker background, as the light theme does.
+		@include ui-mixins.when-dark-theme {
+			background: var(--dashboard__background-color);
+		}
 
 		.wpnc-simplified__author,
 		.wpnc-simplified__parent-text {
@@ -74,15 +81,16 @@
 	}
 }
 
-// Quoted text in the comment takes the same thin bar as the comment a reply
-// answers, upright so longer quotes stay easy to read.
+// Quoted text in the comment takes a thin bar, upright so longer quotes stay easy
+// to read.
 .wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content blockquote {
-	padding-inline: $grid-unit-15 0;
-	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-300, #{$gray-300});
+	padding-inline: $grid-unit-20 0;
+	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-200, #{$gray-200});
+	color: var(--wp-components-color-gray-700, #{$gray-700});
 	font-style: normal;
 }
 
-// The quote above a reply already has a bar, so text quoted inside it keeps
+// The quote above a reply already sits on a panel, so text quoted inside it keeps
 // only its gray.
 .wpnc-simplified__thread.is-reply .wpnc-simplified__parent-text blockquote {
 	padding-inline: 0;
