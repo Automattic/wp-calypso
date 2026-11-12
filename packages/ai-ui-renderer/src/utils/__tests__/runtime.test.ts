@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { BASIC_CATALOG_ID } from '../../capabilities';
 import { createInteractiveUiCatalog } from '../catalog';
 import { createInteractiveUiRuntime } from '../runtime';
@@ -18,7 +19,7 @@ function createSurfaceMessages( surfaceId: string, catalogId = BASIC_CATALOG_ID 
 	];
 }
 
-const onError = jest.fn();
+const onError = vi.fn();
 
 function createRuntime() {
 	return createInteractiveUiRuntime( {
@@ -26,7 +27,7 @@ function createRuntime() {
 			createInteractiveUiCatalog(),
 			createInteractiveUiCatalog( { catalog: { catalogId: HOST_CATALOG_ID } } ),
 		],
-		onAction: jest.fn(),
+		onAction: vi.fn(),
 		onError,
 	} );
 }

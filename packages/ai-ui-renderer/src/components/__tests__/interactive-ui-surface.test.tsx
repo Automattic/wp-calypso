@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { BASIC_CATALOG_ID } from '../../capabilities';
 import { createInteractiveUiCatalog } from '../../utils/catalog';
 import { createInteractiveUiRuntime } from '../../utils/runtime';
@@ -17,8 +18,8 @@ const crashingCatalog = createInteractiveUiCatalog( {
 } );
 
 let runtime: InteractiveUiRuntime;
-let onAction: jest.Mock;
-let onError: jest.Mock;
+let onAction: Mock;
+let onError: Mock;
 
 // JSDOM lacks PointerEvent, which UI uses when activating choice controls.
 beforeAll( () => {
@@ -26,8 +27,8 @@ beforeAll( () => {
 } );
 
 beforeEach( () => {
-	onAction = jest.fn();
-	onError = jest.fn();
+	onAction = vi.fn();
+	onError = vi.fn();
 
 	runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog(), crashingCatalog ],
@@ -294,7 +295,7 @@ it( 'shows the fallback instead of a surface with a component its catalog lacks'
 } );
 
 it( 'shows the fallback when a surface fails to render, and reports it', async () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	const surface = createSurface( [ { id: 'root', component: 'Crashing' } ], CRASHING_CATALOG_ID );
 
 	render( <InteractiveUiSurface surface={ surface } fallback="Couldn’t show this." /> );

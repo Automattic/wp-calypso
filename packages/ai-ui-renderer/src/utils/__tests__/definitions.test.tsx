@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { lazy } from '@wordpress/element';
+import { type Mock, vi } from 'vitest';
 import { InteractiveUiSurface } from '../../components/interactive-ui-surface';
 import { createInteractiveUiCatalog } from '../catalog';
 import { createInteractiveUiRuntime } from '../runtime';
@@ -34,11 +35,11 @@ function HostGreeting( { name, onGreet, surfaceId, disabled, isShowingErrors }: 
 }
 
 function createHostCatalog( {
-	runHost = jest.fn(),
+	runHost = vi.fn(),
 	hostRunDocument = {},
 	greeting = HostGreeting,
 }: {
-	runHost?: jest.Mock;
+	runHost?: Mock;
 	hostRunDocument?: object;
 	greeting?: ComponentType< GreetingProps >;
 } ): InteractiveUiCatalogDefinition {
@@ -79,15 +80,15 @@ function renderSurface(
 		hostProps,
 		disabled,
 	}: {
-		runHost?: jest.Mock;
+		runHost?: Mock;
 		hostRunDocument?: object;
 		greeting?: ComponentType< GreetingProps >;
 		hostProps?: Record< string, unknown >;
 		disabled?: boolean;
 	} = {}
 ) {
-	const onAction = jest.fn();
-	const onError = jest.fn();
+	const onAction = vi.fn();
+	const onError = vi.fn();
 	const runtime = createInteractiveUiRuntime( {
 		catalogs: [
 			createInteractiveUiCatalog( createHostCatalog( { runHost, hostRunDocument, greeting } ) ),
@@ -253,7 +254,7 @@ describe( 'host functions', () => {
 	);
 
 	it( 'runs when a Button calls it, instead of sending an action', async () => {
-		const runHost = jest.fn();
+		const runHost = vi.fn();
 		const { onAction } = renderSurface( [ button ], { runHost } );
 
 		fireEvent.click( await screen.findByRole( 'button', { name: 'Run' } ) );
@@ -271,7 +272,7 @@ describe( 'host functions', () => {
 		],
 		[ 'rejects', () => Promise.reject( new Error( 'Failed' ) ) ],
 	] )( 'reports a failure when it %s', async ( _description, execute ) => {
-		const { onError } = renderSurface( [ button ], { runHost: jest.fn( execute ) } );
+		const { onError } = renderSurface( [ button ], { runHost: vi.fn( execute ) } );
 
 		fireEvent.click( await screen.findByRole( 'button', { name: 'Run' } ) );
 
@@ -284,7 +285,7 @@ describe( 'host functions', () => {
 	} );
 
 	it( 'never runs from a component’s value by default, only from a click', async () => {
-		const runHost = jest.fn();
+		const runHost = vi.fn();
 		const { onError } = renderSurface(
 			[
 				updateComponents( {
@@ -316,7 +317,7 @@ describe( 'host functions', () => {
 				} ),
 			],
 			{
-				runHost: jest.fn( () => 'Ada' ),
+				runHost: vi.fn( () => 'Ada' ),
 				hostRunDocument: { returnType: 'string', requiresUserActivation: false },
 			}
 		);
