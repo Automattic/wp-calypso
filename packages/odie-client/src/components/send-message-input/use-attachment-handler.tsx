@@ -7,7 +7,7 @@ import {
 import { DropZone } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { error, image, Icon } from '@wordpress/icons';
 import { HELP_CENTER_STORE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
@@ -22,6 +22,18 @@ const NOTICE_BAD_FORMAT = {
 	dismissible: true,
 	onDismiss: () => {},
 };
+
+const getUploadFailedNotice = ( fileCount: number, onDismiss: () => void ) => ( {
+	icon: <Icon size={ 24 } icon={ error } />,
+	message: _n(
+		"We couldn't send this file. Please try again.",
+		"We couldn't send these files. Please try again.",
+		fileCount,
+		__i18n_text_domain__
+	),
+	dismissible: true,
+	onDismiss,
+} );
 
 const SUPPORTED_ATTACHMENT_MIME_TYPES = [
 	'image/png',
@@ -91,6 +103,8 @@ export const useAttachmentHandler = () => {
 	} = useOdieAssistantContext();
 	const [ attachmentPreviewFiles, setAttachmentPreviewFiles ] = useState< File[] >( [] );
 	const [ badFormatNotice, setBadFormatNotice ] = useState< typeof NOTICE_BAD_FORMAT >();
+	const [ uploadErrorNotice, setUploadErrorNotice ] =
+		useState< ReturnType< typeof getUploadFailedNotice > >();
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport || hasOpenZendeskChat,
@@ -141,24 +155,44 @@ export const useAttachmentHandler = () => {
 
 	const sendAttachments = useCallback( async () => {
 		setBadFormatNotice( undefined );
+		setUploadErrorNotice( undefined );
 		if ( attachmentPreviewFiles.length > 0 ) {
 			if ( authData && chat.conversationId && inferredClientId ) {
-				Promise.all(
-					attachmentPreviewFiles.map( ( file ) =>
-						attachFileToConversation( {
-							authData,
-							file,
-							conversationId: chat.conversationId as string,
-							clientId: inferredClientId,
-							integrationKey: zendeskIntegrationKey,
-						} ).then( () => {
-							addMessage( getPlaceholderAttachmentMessage( file ) );
-							trackEvent( 'send_message_attachment', { type: file.type } );
-						} )
-					)
-				).then( () => {
-					setAttachmentPreviewFiles( [] );
-				} );
+				// Resolves to whether Zendesk accepted the file, and shows the file in the chat
+				// if it did.
+				const uploadFile = async ( file: File ) => {
+					const response = await attachFileToConversation( {
+						authData,
+						file,
+						conversationId: chat.conversationId as string,
+						clientId: inferredClientId,
+						integrationKey: zendeskIntegrationKey,
+					} ).catch( () => undefined );
+					// `fetch` resolves on HTTP errors too, so without this check a file Zendesk
+					// turned down would show as sent.
+					if ( ! response?.ok ) {
+						trackEvent( 'send_message_attachment_failed', {
+							type: file.type,
+							...( response && { status: response.status } ),
+						} );
+						return false;
+					}
+					addMessage( getPlaceholderAttachmentMessage( file ) );
+					trackEvent( 'send_message_attachment', { type: file.type } );
+					return true;
+				};
+				const accepted = await Promise.all( attachmentPreviewFiles.map( uploadFile ) );
+				const sentFiles = attachmentPreviewFiles.filter( ( _file, index ) => accepted[ index ] );
+				// Files that didn't go through stay in the previews for the user to send again.
+				setAttachmentPreviewFiles( ( files ) =>
+					files.filter( ( file ) => ! sentFiles.includes( file ) )
+				);
+				const failedCount = attachmentPreviewFiles.length - sentFiles.length;
+				if ( failedCount > 0 ) {
+					setUploadErrorNotice(
+						getUploadFailedNotice( failedCount, () => setUploadErrorNotice( undefined ) )
+					);
+				}
 			}
 		}
 	}, [
@@ -171,6 +205,7 @@ export const useAttachmentHandler = () => {
 		addMessage,
 		trackEvent,
 		setBadFormatNotice,
+		setUploadErrorNotice,
 	] );
 
 	const onFilesDrop = ( files: File[] ) => {
@@ -267,6 +302,7 @@ export const useAttachmentHandler = () => {
 			/>
 		) : null,
 		badFormatNotice,
+		uploadErrorNotice,
 		handleImagePaste,
 		attachmentAction,
 		isAttachingFile,
