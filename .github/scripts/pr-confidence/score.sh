@@ -70,7 +70,7 @@ jq -c \
 	--arg sha "$(jq -r .headRefOid <<<"$PR_JSON")" \
 	--argjson signals "$SIGNALS" '
 	def rank: {"Low": 0, "Medium": 1, "High": 2}[.];
-	def clean: gsub("[<>\\[\\]()!`*_~|#\\\\]"; "") | gsub("@"; "@\u200b") | gsub("://"; ":\u200b//") | gsub("(?<w>www)\\."; "\(.w)\u200b.");
+	def clean: gsub("[<>\\[\\]()!|\\\\]"; "") | gsub("@"; "@\u200b") | gsub("://"; ":\u200b//") | gsub("(?<w>www)\\."; "\(.w)\u200b.");
 	.structured_output as $out
 	| [
 		(if $signals.unresolved_fix_here_comments > 0 then {level: "Low", reason: "unresolved [fix here] review comment", always: true} else empty end),
