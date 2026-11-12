@@ -1,6 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { AddOns } from '@automattic/data-stores';
+import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
+import { type Mock, vi } from 'vitest';
+import { usePlansGridContext } from '../../grid-context';
+import PlanStorage from '../shared/storage/components/plan-storage';
+
 /**
  * Default mock implementations
  */
@@ -33,14 +41,6 @@ vi.mock( '../shared/storage/components/storage-feature-label', async () => {
 				: ReactActual.createElement( 'div', { 'data-testid': 'storage-label' } ),
 	};
 } );
-
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
-import { AddOns } from '@automattic/data-stores';
-import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
-import { type Mock, vi } from 'vitest';
-import { usePlansGridContext } from '../../grid-context';
-import PlanStorage from '../shared/storage/components/plan-storage';
 
 describe( 'PlanStorage', () => {
 	const mockPlansGridContext = ( showFeatureCheckmarks: boolean ) => {

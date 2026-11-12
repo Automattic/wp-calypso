@@ -1,6 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { AddOns, Purchases } from '@automattic/data-stores';
+import { render } from '@testing-library/react';
+import { useSelect } from '@wordpress/data';
+import React from 'react';
+import { type Mock, vi } from 'vitest';
+import { usePlansGridContext } from '../../grid-context';
+import StorageDropdown from '../shared/storage/components/storage-dropdown';
 
 const mockComboboxClick = vi.fn();
 const mockSetSelectedStorageOptionForPlan = vi.fn();
@@ -54,15 +62,6 @@ vi.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
-
-import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { AddOns, Purchases } from '@automattic/data-stores';
-import { render } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
-import React from 'react';
-import { type Mock, vi } from 'vitest';
-import { usePlansGridContext } from '../../grid-context';
-import StorageDropdown from '../shared/storage/components/storage-dropdown';
 
 describe( 'StorageDropdown', () => {
 	beforeEach( () => {

@@ -1,8 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-
 import { vi } from 'vitest';
+import useTitleBadges from '../use-title-badges';
+import type { PlanSlug } from '@automattic/calypso-products';
+
 vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
@@ -13,9 +15,6 @@ vi.mock( 'i18n-calypso', () => ( {
 vi.mock( '@automattic/calypso-products', () => ( {
 	isWooHostedBasicPlan: ( planSlug: string ) => planSlug === 'business-bundle',
 } ) );
-
-import useTitleBadges from '../use-title-badges';
-import type { PlanSlug } from '@automattic/calypso-products';
 
 const BUSINESS = 'business-bundle' as PlanSlug;
 const PREMIUM = 'value_bundle' as PlanSlug;

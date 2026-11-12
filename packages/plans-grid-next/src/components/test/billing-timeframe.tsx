@@ -1,6 +1,25 @@
 /**
  * @jest-environment jsdom
  */
+import {
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_FREE,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
+} from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
+import { render } from '@testing-library/react';
+import React from 'react';
+import { vi } from 'vitest';
+import { usePlansGridContext } from '../../grid-context';
+import BillingTimeframe from '../shared/billing-timeframe';
+
 /**
  * Default mock implementations
  */
@@ -25,25 +44,6 @@ vi.mock( '@automattic/data-stores', async () => ( {
 		useStorageAddOns: vi.fn(),
 	},
 } ) );
-
-import {
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_BUSINESS_3_YEARS,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_FREE,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_TRIENNIAL_PERIOD,
-} from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
-import { formatCurrency } from '@automattic/number-formatters';
-import { render } from '@testing-library/react';
-import React from 'react';
-import { vi } from 'vitest';
-import { usePlansGridContext } from '../../grid-context';
-import BillingTimeframe from '../shared/billing-timeframe';
 
 describe( 'BillingTimeframe', () => {
 	const defaultProps = {

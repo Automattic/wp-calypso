@@ -1,6 +1,16 @@
 /**
  * @jest-environment jsdom
  */
+import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { AddOns, Purchases } from '@automattic/data-stores';
+import { render } from '@testing-library/react';
+import { useSelect } from '@wordpress/data';
+import React from 'react';
+import { type Mock, vi } from 'vitest';
+import { usePlansGridContext } from '../../grid-context';
+import useIsLargeCurrency from '../../hooks/use-is-large-currency';
+import StorageFeatureLabel from '../shared/storage/components/storage-feature-label';
+
 /**
  * Default mock implementations
  */
@@ -25,16 +35,6 @@ vi.mock( '@automattic/data-stores', () => ( {
 } ) );
 vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
 vi.mock( '../../hooks/use-is-large-currency', () => ( { default: vi.fn() } ) );
-
-import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { AddOns, Purchases } from '@automattic/data-stores';
-import { render } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
-import React from 'react';
-import { type Mock, vi } from 'vitest';
-import { usePlansGridContext } from '../../grid-context';
-import useIsLargeCurrency from '../../hooks/use-is-large-currency';
-import StorageFeatureLabel from '../shared/storage/components/storage-feature-label';
 
 describe( 'StorageFeatureLabel', () => {
 	const selectedStorageAddOn = {

@@ -1,10 +1,30 @@
 /**
  * @jest-environment jsdom
  */
+import {
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_TRIENNIAL_PERIOD,
+} from '@automattic/calypso-products';
+import { render, screen } from '@testing-library/react';
+import { useDispatch } from '@wordpress/data';
+import React from 'react';
+import { vi } from 'vitest';
+import { usePlansGridContext } from '../../grid-context';
+import ActionButton from '../shared/action-button';
+
 /**
  * Default mock implementations
  */
 vi.mock( '@wordpress/data', () => ( {
+	use: vi.fn(),
 	useSelect: vi.fn(),
 	combineReducers: vi.fn(),
 	createReduxStore: vi.fn(),
@@ -45,25 +65,6 @@ vi.mock( 'react-redux', async () => ( {
 	useDispatch: vi.fn(),
 } ) );
 vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
-
-import {
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_BUSINESS_3_YEARS,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_TRIENNIAL_PERIOD,
-} from '@automattic/calypso-products';
-import { render, screen } from '@testing-library/react';
-import { useDispatch } from '@wordpress/data';
-import React from 'react';
-import { vi } from 'vitest';
-import { usePlansGridContext } from '../../grid-context';
-import ActionButton from '../shared/action-button';
 
 describe( 'ActionButton', () => {
 	beforeEach( () => {

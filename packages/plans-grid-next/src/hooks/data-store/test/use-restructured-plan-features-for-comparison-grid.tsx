@@ -1,6 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import useRestructuredPlanFeaturesForComparisonGrid from '../use-restructured-plan-features-for-comparison-grid';
+import type { GridPlan, PlansIntent } from '../../../types';
+import type { FeatureList } from '@automattic/calypso-products';
 
 vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
@@ -34,12 +39,6 @@ vi.mock( '@automattic/calypso-products', async () => {
 		} ),
 	};
 } );
-
-import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
-import useRestructuredPlanFeaturesForComparisonGrid from '../use-restructured-plan-features-for-comparison-grid';
-import type { GridPlan, PlansIntent } from '../../../types';
-import type { FeatureList } from '@automattic/calypso-products';
 
 const PREMIUM = 'value_bundle';
 

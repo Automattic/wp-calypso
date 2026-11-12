@@ -1,6 +1,27 @@
 /**
  * @jest-environment jsdom
  */
+import {
+	type PlanSlug,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_TRIENNIAL_PERIOD,
+} from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import React, { useMemo } from 'react';
+import { type Mock, vi } from 'vitest';
+import { usePlansGridContext } from '../../grid-context';
+import { GridPlan } from '../../types';
+import HeaderPrice from '../shared/header-price';
+
 /**
  * Default mock implementations
  */
@@ -33,27 +54,6 @@ vi.mock( '../../lib/touch-detect', () => ( {
 vi.mock( '../shared/header-price/header-price-context', () => ( {
 	useHeaderPriceContext: () => mockUseHeaderPriceContext(),
 } ) );
-
-import {
-	type PlanSlug,
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_ENTERPRISE_GRID_WPCOM,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_TRIENNIAL_PERIOD,
-} from '@automattic/calypso-products';
-import { Plans } from '@automattic/data-stores';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import React, { useMemo } from 'react';
-import { type Mock, vi } from 'vitest';
-import { usePlansGridContext } from '../../grid-context';
-import { GridPlan } from '../../types';
-import HeaderPrice from '../shared/header-price';
 
 const Wrapper = ( { children } ) => {
 	const queryClient = useMemo( () => new QueryClient(), [] );

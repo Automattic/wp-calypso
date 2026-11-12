@@ -1,6 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { FEATURE_CUSTOM_DOMAIN, FEATURE_SIMPLE_PAYMENTS } from '@automattic/calypso-products';
+import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
+import type { GridPlan, PlansIntent } from '../../../types';
+import type { FeatureList } from '@automattic/calypso-products';
 
 vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
@@ -29,13 +35,6 @@ vi.mock( '@automattic/calypso-products', async () => ( {
 		getAnnualPlansOnlyFeatures: () => [ 'annual-only-feature' ],
 	} ),
 } ) );
-
-import { FEATURE_CUSTOM_DOMAIN, FEATURE_SIMPLE_PAYMENTS } from '@automattic/calypso-products';
-import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
-import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
-import type { GridPlan, PlansIntent } from '../../../types';
-import type { FeatureList } from '@automattic/calypso-products';
 
 const PERSONAL = 'personal-bundle';
 const PREMIUM = 'value_bundle';
