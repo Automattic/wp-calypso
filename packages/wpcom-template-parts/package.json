@@ -46,6 +46,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/jest-dom": "^7.0.1",
 		"jsdom": "^20.0.3",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",
