@@ -91,7 +91,7 @@ steps:
       - desktop/release/latest.yml
 
   - label: ":desktop_computer: Desktop publish"
-    branches: desktop-v*
+    branches: desktop-v* desktop/mokagio-ainfra-3707-validation
     depends_on:
       - desktop-build-mac
       - desktop-build-linux
