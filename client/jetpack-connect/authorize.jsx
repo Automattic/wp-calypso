@@ -132,6 +132,7 @@ export class JetpackAuthorize extends Component {
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
+		isCheckingUserConnection: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
@@ -823,7 +824,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Try again' );
 		}
 
-		if ( this.props.isFetchingAuthorizationSite ) {
+		if ( this.props.isFetchingAuthorizationSite || this.props.isCheckingUserConnection ) {
 			return translate( 'Preparing authorization' );
 		}
 
@@ -871,7 +872,7 @@ export class JetpackAuthorize extends Component {
 			return;
 		}
 
-		if ( this.props.isFetchingAuthorizationSite ) {
+		if ( this.props.isFetchingAuthorizationSite || this.props.isCheckingUserConnection ) {
 			return translate( 'Preparing authorization' );
 		}
 
@@ -1241,6 +1242,7 @@ export class JetpackAuthorize extends Component {
 		const { authorizeSuccess } = this.props.authorizationData;
 		return (
 			this.props.isFetchingAuthorizationSite ||
+			this.props.isCheckingUserConnection ||
 			this.props.isRequestingSitePurchases ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
@@ -1515,6 +1517,11 @@ const connectComponent = connect(
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
+			// A listed site only proves membership, not a connection. The check in
+			// QueryUserConnection settles this: success sets userAlreadyConnected,
+			// failure sets clientNotResponding, which takes the site off the list.
+			isCheckingUserConnection:
+				isRemoteSiteOnSitesList( state, authQuery.site ) && ! getUserAlreadyConnected( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,

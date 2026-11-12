@@ -2,12 +2,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { isUserConnected } from 'calypso/state/jetpack-connect/actions';
-import { isRequestingSite } from 'calypso/state/sites/selectors';
 
-const request = ( siteId, siteIsOnSitesList ) => ( dispatch, getState ) => {
-	if ( ! isRequestingSite( getState(), siteId ) ) {
-		dispatch( isUserConnected( siteId, siteIsOnSitesList ) );
-	}
+// Don't skip the check while another request for the site is in flight: the
+// authorize page waits for its result before offering "Return to your site".
+const request = ( siteId, siteIsOnSitesList ) => ( dispatch ) => {
+	dispatch( isUserConnected( siteId, siteIsOnSitesList ) );
 };
 
 function QueryUserConnection( { siteId, siteIsOnSitesList = false } ) {

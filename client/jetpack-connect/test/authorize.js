@@ -830,6 +830,30 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
+	describe( 'user connection check', () => {
+		test( 'should not offer "Return to your site" for a listed site until the check confirms the connection', () => {
+			renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } isAlreadyOnSitesList isCheckingUserConnection />
+			);
+
+			expect( screen.getByText( 'Preparing authorization' ) ).toBeVisible();
+			expect( screen.queryByText( 'Return to your site' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Approve' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'should offer "Return to your site" once the check confirms the connection', () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					isAlreadyOnSitesList
+					isCheckingUserConnection={ false }
+				/>
+			);
+
+			expect( screen.getByText( 'Return to your site' ) ).toBeVisible();
+		} );
+	} );
+
 	describe( 'getRedirectionTarget', () => {
 		let originalWindowLocation;
 
