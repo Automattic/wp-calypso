@@ -24,9 +24,10 @@ export default async function redirectToWpAdminStats( context, next ) {
 		return;
 	}
 
-	// Without a site in the URL this section shows a site picker, which the Sites list replaces.
+	// Without a site in the URL this section shows stats across all the user's sites, which
+	// wp-admin, being per site, has no page for.
 	if ( ! context.params.site ) {
-		page.redirect( '/sites' );
+		next();
 		return;
 	}
 

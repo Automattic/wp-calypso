@@ -5,7 +5,7 @@ import page from '@automattic/calypso-router';
 import { SESSION_ACTIVE } from 'calypso/state/support/constants';
 import redirectToWpAdminStats from '../redirect-to-wp-admin-stats';
 
-jest.mock( '@automattic/calypso-router', () => ( { redirect: jest.fn(), current: '' } ) );
+jest.mock( '@automattic/calypso-router', () => ( { current: '' } ) );
 jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 	fetchModuleList: ( siteId ) => ( { type: 'FETCH_MODULE_LIST', siteId } ),
 } ) );
@@ -124,15 +124,13 @@ describe( 'redirectToWpAdminStats()', () => {
 
 		expect( next ).toHaveBeenCalled();
 		expect( replace ).not.toHaveBeenCalled();
-		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	test( 'sends a route without a site to the Sites list', async () => {
+	test( 'leaves the all-sites overview on the classic page', async () => {
 		await redirectToWpAdminStats( makeContext( { pathname: '/stats/day', site: null } ), next );
 
-		expect( page.redirect ).toHaveBeenCalledWith( '/sites' );
+		expect( next ).toHaveBeenCalled();
 		expect( replace ).not.toHaveBeenCalled();
-		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	test( 'stays when the site has no known wp-admin address', async () => {
