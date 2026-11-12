@@ -15,29 +15,10 @@ jest.mock( '../../../components/inline-support-link', () => ( {
 	default: () => <span>Learn more</span>,
 } ) );
 
-const mockHasEnTranslation = jest.fn( () => true );
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
-	useHasEnTranslation: () => mockHasEnTranslation,
-} ) );
-
 describe( 'NameServersLayout', () => {
-	afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
-
-	test( 'describes what name servers do', () => {
+	test( 'describes the page', () => {
 		render( <NameServersLayout /> );
 
-		expect(
-			screen.getByText( /Name servers tell the internet where to find this domain name/ )
-		).toBeVisible();
-	} );
-
-	test( 'keeps the previous description until the new one is translated', () => {
-		mockHasEnTranslation.mockReturnValue( false );
-
-		render( <NameServersLayout /> );
-
-		expect( screen.queryByText( /Name servers tell the internet/ ) ).not.toBeInTheDocument();
 		expect( screen.getByText( /Change the name servers for your domain/ ) ).toBeVisible();
 	} );
 } );

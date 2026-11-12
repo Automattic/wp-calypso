@@ -66,7 +66,7 @@ test.describe(
 				selectedDomain = await domainSearchComponent.selectFirstSuggestion();
 				await Promise.all( [
 					domainSearchComponent.continue(),
-					page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
+					page.waitForURL( /\/checkout\//, { timeout: 30 * 1000, waitUntil: 'commit' } ),
 				] );
 			} );
 
