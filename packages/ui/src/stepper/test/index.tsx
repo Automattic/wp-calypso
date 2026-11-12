@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef, useState } from '@wordpress/element';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { Stepper } from '..';
 import type { StepperRef } from '../types';
 

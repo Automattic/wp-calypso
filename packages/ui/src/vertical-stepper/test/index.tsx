@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { VerticalStepper } from '..';
 
 describe( 'VerticalStepper', () => {
