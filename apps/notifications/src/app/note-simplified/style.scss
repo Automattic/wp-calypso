@@ -100,6 +100,14 @@
 	}
 }
 
+// The quote above a reply already has a bar, so text quoted inside it keeps
+// only its gray.
+.wpnc-simplified__thread.is-reply .wpnc-simplified__parent-text blockquote {
+	padding-inline: 0;
+	box-shadow: none;
+	font-style: normal;
+}
+
 .wpnc-simplified__show-more {
 	align-self: flex-start;
 }
