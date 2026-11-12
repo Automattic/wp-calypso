@@ -5,16 +5,17 @@
 import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { type MockedFunction, vi } from 'vitest';
 import { trackSplitScreenGuideClick, trackSplitScreenGuideRendered } from '../utils/tracking';
 import SplitScreenGuide from './split-screen-guide';
 
-const mockSetIsSplitScreen = jest.fn();
+const mockSetIsSplitScreen = vi.fn();
 let mockAgentsManagerState: {
 	isDocked?: boolean;
 	isSplitScreen?: boolean;
 };
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( { children, onClick }: { children: React.ReactNode; onClick: () => void } ) => (
 		<button type="button" onClick={ onClick }>
 			{ children }
@@ -22,7 +23,7 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: () => object ) => unknown ) =>
 		callback( () => ( {
 			getAgentsManagerState: () => mockAgentsManagerState,
@@ -32,25 +33,25 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackSplitScreenGuideClick: jest.fn( () => true ),
-	trackSplitScreenGuideRendered: jest.fn( () => true ),
+vi.mock( '../utils/tracking', () => ( {
+	trackSplitScreenGuideClick: vi.fn( () => true ),
+	trackSplitScreenGuideRendered: vi.fn( () => true ),
 } ) );
 
-const mockTrackSplitScreenGuideClick = trackSplitScreenGuideClick as jest.MockedFunction<
+const mockTrackSplitScreenGuideClick = trackSplitScreenGuideClick as MockedFunction<
 	typeof trackSplitScreenGuideClick
 >;
-const mockTrackSplitScreenGuideRendered = trackSplitScreenGuideRendered as jest.MockedFunction<
+const mockTrackSplitScreenGuideRendered = trackSplitScreenGuideRendered as MockedFunction<
 	typeof trackSplitScreenGuideRendered
 >;
 
 describe( 'SplitScreenGuide', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockAgentsManagerState = {
 			isDocked: true,
 			isSplitScreen: false,
@@ -102,18 +103,18 @@ describe( 'SplitScreenGuide', () => {
 	} );
 
 	it( 'retries the impression on the next task after a same-commit republish', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		try {
 			mockTrackSplitScreenGuideRendered.mockReturnValueOnce( false );
 			render( <SplitScreenGuide componentType="proofread" /> );
 			expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 1 );
 
 			act( () => {
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			} );
 			expect( mockTrackSplitScreenGuideRendered ).toHaveBeenCalledTimes( 2 );
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 

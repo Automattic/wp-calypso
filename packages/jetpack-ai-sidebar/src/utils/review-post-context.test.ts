@@ -4,7 +4,7 @@
 
 let mockCurrentPostId: number | string | null = 1;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( s: unknown ) => unknown ) =>
 		mapSelect( ( store: string ) =>
 			store === 'core/editor' ? { getCurrentPostId: () => mockCurrentPostId } : {}
@@ -12,6 +12,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	getCurrentEditorPostIdFromStore,
 	normalizeEditorPostId,

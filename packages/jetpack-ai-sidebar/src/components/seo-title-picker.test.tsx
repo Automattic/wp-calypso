@@ -7,17 +7,18 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import SeoTitlePicker from './seo-title-picker';
 
-const mockEditPost = jest.fn();
-const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
+const mockEditPost = vi.fn();
+const mockRevealSidebarField = vi.fn().mockResolvedValue( true );
 let mockCurrentMeta: Record< string, string > | undefined;
 
-jest.mock( '../utils/reveal-sidebar-field', () => ( {
+vi.mock( '../utils/reveal-sidebar-field', () => ( {
 	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
 		if ( store === 'core/editor' ) {
 			return { editPost: mockEditPost };
@@ -71,7 +72,7 @@ describe( 'SeoTitlePicker', () => {
 	} );
 
 	it( 'highlights the applied option and calls onComplete', () => {
-		const onComplete = jest.fn();
+		const onComplete = vi.fn();
 		render( <SeoTitlePicker titles={ titles } onComplete={ onComplete } /> );
 		const button = screen.getByText( titles[ 1 ].title ).closest( 'button' ) as HTMLButtonElement;
 		fireEvent.click( button );
