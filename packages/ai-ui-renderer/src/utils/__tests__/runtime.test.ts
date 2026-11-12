@@ -35,7 +35,7 @@ function createRuntime() {
 beforeEach( () => onError.mockClear() );
 
 it.each( [ new Error( 'Tool failed' ), 'Tool failed' ] )(
-	'reports a tool failure with its original surface owner: %p',
+	'reports a tool failure with its original surface owner: %o',
 	async ( failure ) => {
 		const runtime = createInteractiveUiRuntime( {
 			catalogs: [ createInteractiveUiCatalog() ],
