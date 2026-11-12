@@ -11,7 +11,6 @@ import type { Message } from '../../types';
 import type { ReactNode } from 'react';
 
 vi.mock( 'smooch', () => ( {
-	__esModule: true,
 	default: {
 		sendMessage: vi.fn(),
 		getConversationById: vi.fn(),

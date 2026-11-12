@@ -85,7 +85,7 @@ vi.mock( '../../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
 } ) );
 
-vi.mock( '..', () => ( { __esModule: true, default: () => null } ) );
+vi.mock( '..', () => ( { default: () => null } ) );
 vi.mock( '../jump-to-recent', () => ( { JumpToRecent: () => null } ) );
 vi.mock( '../messages-cluster/messages-cluster', () => ( { MessagesClusterizer: () => null } ) );
 vi.mock( '../thinking-placeholder', () => ( {

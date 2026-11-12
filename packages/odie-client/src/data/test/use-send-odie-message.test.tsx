@@ -30,7 +30,6 @@ vi.mock( 'react-router-dom', () => ( {
 } ) );
 
 vi.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
 	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );

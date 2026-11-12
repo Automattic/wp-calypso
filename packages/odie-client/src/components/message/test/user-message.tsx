@@ -66,8 +66,8 @@ vi.mock( '../mardown-or-children', () => ( {
 		<p>{ messageContent }</p>
 	),
 } ) );
-vi.mock( '../bot-message-actions', () => ( { __esModule: true, default: () => null } ) );
-vi.mock( '../sources', () => ( { __esModule: true, default: () => null } ) );
+vi.mock( '../bot-message-actions', () => ( { default: () => null } ) );
+vi.mock( '../sources', () => ( { default: () => null } ) );
 
 const LIMIT_TEXT = 'We noticed you have other open conversations. Would you like to see them?';
 

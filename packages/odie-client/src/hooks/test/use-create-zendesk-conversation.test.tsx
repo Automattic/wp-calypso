@@ -20,7 +20,6 @@ const mockGetOdieTransferMessages = vi.fn().mockReturnValue( [] );
 let mockHasReachedLimit = false;
 
 vi.mock( 'smooch', () => ( {
-	__esModule: true,
 	default: {
 		createConversation: vi.fn(),
 		updateConversation: vi.fn(),

@@ -21,7 +21,6 @@ vi.mock( '@automattic/zendesk-client', () => ( {
 	useConnectionStatusNotice: () => undefined,
 } ) );
 vi.mock( 'smooch', () => ( {
-	__esModule: true,
 	default: { startTyping: vi.fn(), stopTyping: vi.fn() },
 } ) );
 vi.mock( '../../../context', () => ( { useOdieAssistantContext: vi.fn() } ) );

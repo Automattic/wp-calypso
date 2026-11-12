@@ -7,7 +7,6 @@ import { useSendMessageHandler } from '../use-send-message-handler';
 import type { Chat, Message } from '../../../types';
 
 vi.mock( 'smooch', () => ( {
-	__esModule: true,
 	default: { stopTyping: vi.fn() },
 } ) );
 
