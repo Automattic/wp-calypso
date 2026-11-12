@@ -24,9 +24,10 @@ const STATE_DIR = path.join(
 
 class UserActionRequired extends Error {}
 
-// `yarn start` and `yarn start-dashboard` build first, then run `node build/server.js`.
+// `yarn start`, `yarn start-dashboard` and the other `start` scripts build first, then run
+// `node build/server.js`.
 const DEV_SERVER_PROCESS =
-	/^(\S*node\s+)?(build\/server\.js|\S*yarn\S*\s+(run\s+)?(start|start-dashboard|start:debug|build-start|start-build))(\s|$)/;
+	/^(\S*node\s+(-\S+\s+)*)?(build\/server\.js|\S*yarn\S*\s+(run\s+)?(start([:-][\w:-]+)?|build-start))(\s|$)/;
 
 function processCwd( pid ) {
 	try {
@@ -41,18 +42,32 @@ function processCwd( pid ) {
 	} catch {}
 }
 
+function isCalypsoCheckout( dir ) {
+	try {
+		const { name } = JSON.parse( fs.readFileSync( path.join( dir, 'package.json' ), 'utf8' ) );
+		return name === 'wp-calypso';
+	} catch {
+		return false;
+	}
+}
+
 /**
- * Lists the checkouts with a dev server that is running or still starting, by the working
- * directory of its processes. Returns null when the processes can't be listed.
+ * Lists the Calypso checkouts with a dev server that is running or still starting, by the working
+ * directory of its processes. Returns null when the processes, or the working directory of one
+ * that matches, can't be read.
  */
 function devServerCheckouts() {
 	try {
-		const pids = execFileSync( 'ps', [ '-axo', 'pid=,command=' ], { encoding: 'utf8' } )
+		// Without `-ww`, Linux cuts each command at `COLUMNS` when that is in the environment.
+		const dirs = execFileSync( 'ps', [ '-axww', '-o', 'pid=,command=' ], { encoding: 'utf8' } )
 			.split( '\n' )
 			.map( ( line ) => line.trim().match( /^(\d+)\s+(.*)$/ ) )
 			.filter( ( match ) => match && DEV_SERVER_PROCESS.test( match[ 2 ] ) )
-			.map( ( match ) => match[ 1 ] );
-		return [ ...new Set( pids.map( processCwd ).filter( Boolean ) ) ];
+			.map( ( match ) => processCwd( match[ 1 ] ) );
+		if ( dirs.includes( undefined ) ) {
+			return null;
+		}
+		return [ ...new Set( dirs.filter( isCalypsoCheckout ) ) ];
 	} catch {
 		return null;
 	}

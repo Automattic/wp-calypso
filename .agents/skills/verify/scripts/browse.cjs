@@ -110,12 +110,16 @@ function devServerDownMessage() {
 	}
 	const root = fs.realpathSync( REPO_ROOT );
 	if ( checkouts.includes( root ) ) {
-		return `${ down } One is starting in this checkout: wait for its build, then run this again.`;
+		return (
+			`${ down } One is running or still starting in this checkout: wait for its build, then ` +
+			'run this again. If it was started with another `PORT`, put the same one in front of this command.'
+		);
 	}
 	if ( checkouts.length ) {
 		return (
-			`${ down } Another checkout's dev server is running, and each takes several GB of memory, ` +
-			`so ask before starting a second one:\n  ${ checkouts.join( '\n  ' ) }`
+			`${ down } Another checkout's dev server is running, but it doesn't serve this checkout. ` +
+			'Each takes several GB of memory, so ask before starting a second one here, unless no ' +
+			`one can answer:\n  ${ checkouts.join( '\n  ' ) }`
 		);
 	}
 	return `${ down } No other checkout's dev server is running either. ${ start }`;
