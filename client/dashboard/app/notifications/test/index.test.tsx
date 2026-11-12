@@ -4,7 +4,7 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { StrictMode } from 'react';
@@ -93,6 +93,14 @@ const recordUnmatchedRequest = ( req: { path?: string } ) => {
 	unmatchedRequests.push( req.path ?? '' );
 };
 
+/**
+ * A request reaches nock a macrotask after it starts, so wait one before checking.
+ */
+async function expectNoUnmatchedRequests() {
+	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) ) );
+	expect( unmatchedRequests ).toEqual( [] );
+}
+
 function mockPreferences( preferenceEnabled: boolean ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
@@ -169,6 +177,8 @@ describe( 'Notifications subscriber alerts', () => {
 		mockUser.ID = 1;
 		mockOnNotificationCount = () => {};
 		mockOnConfirmed = () => {};
+		// Reset before mounting: resetting it under a mounted client counts as a focus and refetches.
+		focusManager.setFocused( undefined );
 		queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		unmatchedRequests = [];
 		nock.emitter.on( 'no match', recordUnmatchedRequest );
@@ -186,7 +196,7 @@ describe( 'Notifications subscriber alerts', () => {
 		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
 		expect( preferences?.isDone() ).toBe( false );
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
-		expect( unmatchedRequests ).toEqual( [] );
+		await expectNoUnmatchedRequests();
 	} );
 
 	test( 'keeps unseen-count updates without monitoring subscriber notes when the preference is off', async () => {
@@ -197,7 +207,7 @@ describe( 'Notifications subscriber alerts', () => {
 		await waitFor( () => expect( preferences?.isDone() ).toBe( true ) );
 		await waitFor( () => expect( queryClient.isFetching() ).toBe( 0 ) );
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
-		expect( unmatchedRequests ).toEqual( [] );
+		await expectNoUnmatchedRequests();
 	} );
 
 	test( 'monitors live subscriber notes without making site-count requests and keeps count updates immediate', async () => {
@@ -216,7 +226,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 		expect( omnibarEvents.notificationsUnseenCount.emit ).toHaveBeenCalledWith( 3 );
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).toHaveBeenCalledTimes( 1 );
-		expect( unmatchedRequests ).toEqual( [] );
+		await expectNoUnmatchedRequests();
 	} );
 
 	test( 'records the sound result of a subscriber alert', async () => {
@@ -319,16 +329,24 @@ describe( 'Notifications subscriber alerts', () => {
 	} );
 
 	test( 'stops monitoring subscriber notes when the preference refetch fails', async () => {
-		configure( true );
-		seedPreferences( true );
-		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/preferences' ).reply( 500 );
+		configure( true, true );
 		renderNotifications();
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+		const oldOnConfirmed = mockOnConfirmed;
+		mockSubscribeUnseenCount.mockClear();
+
+		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/preferences' ).reply( 500 );
+		act( () => {
+			queryClient.refetchQueries( { queryKey: preferencesQueryKey } );
+		} );
 
 		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
-		await waitFor( () =>
-			expect( queryClient.getQueryState( preferencesQueryKey )?.status ).toBe( 'error' )
-		);
-		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
+		expect( queryClient.getQueryState( preferencesQueryKey )?.status ).toBe( 'error' );
+		expect( mockUnsubscribe ).toHaveBeenCalledTimes( 1 );
+		act( () => oldOnConfirmed( candidate() ) );
+		expect( omnibarEvents.notificationsSubscriberReceived.emit ).not.toHaveBeenCalled();
 	} );
 
 	test( 'reports a failure to start the unseen count to Sentry', async () => {
@@ -354,9 +372,7 @@ describe( 'Notifications subscriber alerts', () => {
 		);
 
 		const release = mockPendingPreferences( true );
-		act( () => {
-			queryClient.refetchQueries( { queryKey: preferencesQueryKey } );
-		} );
+		act( () => focusManager.setFocused( true ) );
 		await waitFor( () => expect( queryClient.isFetching() ).toBe( 1 ) );
 
 		expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 );

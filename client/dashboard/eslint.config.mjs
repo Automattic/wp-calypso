@@ -12,10 +12,16 @@ const snackbarMetaRestriction = {
 };
 
 const bannedModuleMocks = [ '@tanstack/react-query', '@automattic/api-queries' ].map(
-	( module ) => ( {
-		selector: `CallExpression[callee.object.name='jest'][callee.property.name=/^(mock|doMock)$/][arguments.0.value='${ module }']`,
-		message: `Mocking \`${ module }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
-	} )
+	( module ) => {
+		// Matches the module and its subpaths, but not sibling packages such as
+		// `@tanstack/react-query-persist-client`. Selector regexes can't contain
+		// a literal slash, hence `\x2F`.
+		const name = `/^${ module.replace( '/', '\\x2F' ) }(\\x2F|$)/`;
+		return {
+			selector: `CallExpression[callee.object.name='jest'][callee.property.name=/^(mock|doMock|unstable_mockModule)$/][arguments.0.value=${ name }]`,
+			message: `Mocking \`${ module }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
+		};
+	}
 );
 
 export default defineConfig( [
@@ -231,7 +237,8 @@ export default defineConfig( [
 	},
 	{
 		name: 'calypso/dashboard/tests',
-		files: [ '**/*.test.ts', '**/*.test.tsx' ],
+		// Includes helpers and fixtures next to the tests.
+		files: [ '**/test/**/*.ts', '**/test/**/*.tsx', '**/*.test.ts', '**/*.test.tsx' ],
 		rules: {
 			'jest/consistent-test-it': [ 'error', { fn: 'test', withinDescribe: 'test' } ],
 			// Replaces the rule's options above, so the snackbar restriction is repeated.

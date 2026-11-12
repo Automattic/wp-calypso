@@ -3,6 +3,7 @@
  */
 import { DomainPropagationStatus } from '@automattic/api-core';
 import { domainPropagationStatusQuery } from '@automattic/api-queries';
+import { onlineManager, QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -176,6 +177,33 @@ describe( 'DomainPropagationStatus', () => {
 				expect( queryClient.getQueryState( queryKey )?.status ).toBe( 'error' )
 			);
 			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		describe( 'when the browser is offline', () => {
+			let queryClient: QueryClient;
+
+			beforeEach( () => {
+				queryClient = new QueryClient();
+				onlineManager.setOnline( false );
+			} );
+
+			afterEach( () => {
+				// Back online, the paused request would resume and take the next test's interceptor.
+				queryClient.clear();
+				onlineManager.setOnline( true );
+			} );
+
+			test( 'does not render while the request waits for the network', async () => {
+				const { container } = render(
+					<DomainPropagationStatusComponent domainName="example.com" />,
+					{ queryClient }
+				);
+
+				await waitFor( () =>
+					expect( queryClient.getQueryState( queryKey )?.fetchStatus ).toBe( 'paused' )
+				);
+				expect( container ).toBeEmptyDOMElement();
+			} );
 		} );
 
 		test( 'does not render when data is null', async () => {
