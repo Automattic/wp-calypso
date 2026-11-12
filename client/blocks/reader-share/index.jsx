@@ -4,6 +4,7 @@ import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import ReaderCommentRepostIcon from 'calypso/reader/components/icons/comment-repost';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
@@ -28,6 +29,7 @@ export const READER_SHARE_MENU_CLOSE = createShareMenuEvent();
 class ReaderShare extends Component {
 	static propTypes = {
 		iconSize: PropTypes.number,
+		showReblogLabel: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -106,12 +108,17 @@ class ReaderShare extends Component {
 	};
 
 	render() {
+		const showReblogLabel = this.props.isReblogSelection && this.props.showReblogLabel;
 		const buttonClasses = clsx( {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
-			tooltip: true,
+			tooltip: ! showReblogLabel,
 		} );
+
+		const buttonLabel = this.props.isReblogSelection
+			? translate( 'Repost with your thoughts' )
+			: translate( 'Share' );
 
 		const popoverProps = {
 			key: 'menu',
@@ -135,26 +142,28 @@ class ReaderShare extends Component {
 						this.toggle();
 					} }
 					ref={ this.shareButton }
-					aria-label={
-						this.props.isReblogSelection
-							? translate( 'Repost with your thoughts' )
-							: translate( 'Share' )
-					}
-					data-tooltip={
-						this.props.isReblogSelection
-							? translate( 'Repost with your thoughts' )
-							: translate( 'Share' )
-					}
+					aria-label={ buttonLabel }
+					data-tooltip={ showReblogLabel ? undefined : buttonLabel }
 				>
-					{ ! this.props.isReblogSelection
-						? ReaderShareIcon( {
-								iconSize: this.props.iconSize,
-								viewBox: '-1 -1 24 24',
-							} )
-						: ReaderRepostIcon( {
-								iconSize: this.props.iconSize,
-								viewBox: '0 0 20 20',
-							} ) }
+					{ ! this.props.isReblogSelection &&
+						ReaderShareIcon( {
+							iconSize: this.props.iconSize,
+							viewBox: '-1 -1 24 24',
+						} ) }
+					{ this.props.isReblogSelection &&
+						! showReblogLabel &&
+						ReaderRepostIcon( {
+							iconSize: this.props.iconSize,
+							viewBox: '0 0 20 20',
+						} ) }
+					{ showReblogLabel && (
+						<>
+							<ReaderCommentRepostIcon iconSize={ this.props.iconSize } />
+							<span className="reader-share__label">
+								{ translate( 'Repost', { context: 'verb' } ) }
+							</span>
+						</>
+					) }
 				</Button>
 				{ this.state.showingMenu &&
 					( ! this.props.isReblogSelection ? (

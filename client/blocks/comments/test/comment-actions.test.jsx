@@ -9,12 +9,12 @@ import { createStore } from 'redux';
 import CommentActions from '../comment-actions';
 import { CommentLabelsContext } from '../comment-labels-context';
 
-const renderCommentActions = ( props = {}, { spellOutLabels = false } = {} ) => {
+const renderCommentActions = ( props = {}, { spellOutLabels = false, hasSites = false } = {} ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	const store = createStore(
 		(
 			state = {
-				currentUser: { id: 1 },
+				currentUser: hasSites ? { id: 1, user: { ID: 1, primary_blog: 1 } } : { id: 1 },
 				sites: { items: {} },
 			}
 		) => state
@@ -81,5 +81,29 @@ describe( 'CommentActions', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Cancel reply' } ) );
 
 		expect( onReplyCancel ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	describe( 'Repost', () => {
+		const rebloggablePost = {
+			ID: 456,
+			site_ID: 123,
+			discussion: { comments_open: true },
+		};
+
+		it( 'names itself next to its icon when labels are spelled out', () => {
+			renderCommentActions( { post: rebloggablePost }, { spellOutLabels: true, hasSites: true } );
+
+			const repost = screen.getByRole( 'button', { name: 'Repost with your thoughts' } );
+			expect( repost ).toHaveTextContent( /^Repost$/ );
+			expect( repost ).not.toHaveAttribute( 'data-tooltip' );
+		} );
+
+		it( 'shows only its icon and a tooltip otherwise', () => {
+			renderCommentActions( { post: rebloggablePost }, { hasSites: true } );
+
+			const repost = screen.getByRole( 'button', { name: 'Repost with your thoughts' } );
+			expect( repost ).toHaveTextContent( /^$/ );
+			expect( repost ).toHaveAttribute( 'data-tooltip', 'Repost with your thoughts' );
+		} );
 	} );
 } );
