@@ -3,19 +3,20 @@
  */
 import { renderHook, act } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { LEGACY_CSS_END, LEGACY_CSS_START } from '../../utils/legacy-style-variation-css';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import useStyles, { resetLegacyCssSessionFlag } from '../use-styles';
 
-jest.mock( '../../utils/is-editor-page', () => ( {
-	isEditorPage: jest.fn( () => true ),
+vi.mock( '../../utils/is-editor-page', () => ( {
+	isEditorPage: vi.fn( () => true ),
 } ) );
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
 } ) );
 
-const mockEditEntityRecord = jest.fn();
+const mockEditEntityRecord = vi.fn();
 let mockGlobalStylesId: string | null = 'global-styles-1';
 const makeRecord = () => ( {
 	settings: { color: { palette: { theme: [ { slug: 'primary', color: '#000' } ] } } },
@@ -32,9 +33,9 @@ const makeRecord = () => ( {
 } );
 let mockCurrentRecord = makeRecord();
 
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn(),
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn(),
 	useSelect: ( callback: ( select: ( store: string ) => unknown ) => unknown ) =>
 		callback( () => ( {
 			__experimentalGetCurrentGlobalStylesId: () => mockGlobalStylesId,
@@ -52,15 +53,15 @@ const addLegacyCssToRecord = () => {
 
 describe( 'useStyles', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		vi.clearAllMocks();
+		( isEditorPage as Mock ).mockReturnValue( true );
 		mockGlobalStylesId = 'global-styles-1';
 		mockCurrentRecord = makeRecord();
 		resetLegacyCssSessionFlag();
 	} );
 
 	it( 'does not apply off the editor page', () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		( isEditorPage as Mock ).mockReturnValue( false );
 		const { result } = renderHook( () => useStyles() );
 
 		let applied: boolean | undefined;
@@ -372,7 +373,7 @@ describe( 'useStyles', () => {
 	} );
 
 	it( 'records legacy CSS telemetry once per session on a font pick', () => {
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		addLegacyCssToRecord();
 		const { result } = renderHook( () => useStyles() );
 
@@ -389,9 +390,9 @@ describe( 'useStyles', () => {
 	} );
 
 	it( 'forwards legacy CSS blocks to the provider store dialog when registered', () => {
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
-		const setLegacyCssBlocks = jest.fn();
-		( dispatch as jest.Mock ).mockReturnValue( { setLegacyCssBlocks } );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const setLegacyCssBlocks = vi.fn();
+		( dispatch as Mock ).mockReturnValue( { setLegacyCssBlocks } );
 		addLegacyCssToRecord();
 		const { result } = renderHook( () => useStyles() );
 

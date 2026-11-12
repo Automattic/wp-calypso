@@ -1,9 +1,10 @@
 import { select } from '@wordpress/data';
+import { vi } from 'vitest';
 import { getBlockSuggestions, getEditorEmptyViewSuggestions } from '../editor-suggestions';
 import type { EditorBlock } from '../editor-blocks';
 import type { Suggestion } from '@automattic/agenttic-ui';
 
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn() } ) );
 
 const TEXT_IDS = [ 'translate', 'change-tone', 'check-grammar' ];
 const IMAGE_IDS = [ 'generate-image', 'edit-image', 'remove-image-background' ];
@@ -34,7 +35,7 @@ describe( 'getEditorEmptyViewSuggestions', () => {
 		[ 'another theme', { stylesheet: 'pub/twentytwentyfive' }, NON_ASSEMBLER_IDS ],
 		[ 'a theme that has not loaded yet', undefined, NON_ASSEMBLER_IDS ],
 	] )( 'offers the design actions for %s', ( _theme, theme, expectedIds ) => {
-		jest.mocked( select ).mockReturnValue( {
+		vi.mocked( select ).mockReturnValue( {
 			getCurrentTheme: () => theme,
 		} as unknown as ReturnType< typeof select > );
 

@@ -1,10 +1,11 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockTypes: jest.fn( () => [
+import { vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockTypes: vi.fn( () => [
 		{ name: 'core/paragraph', attributes: { content: {} } },
 		{ name: 'core/button', attributes: { url: {}, text: {} } },
 	] ),
 } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( { getBlock: jest.fn() } ) );
+vi.mock( '../../../utils/editor-blocks', () => ( { getBlock: vi.fn() } ) );
 
 import { getBlock } from '../../../utils/editor-blocks';
 import {
@@ -47,7 +48,7 @@ const shortIds: Record< string, string > = { para: 'paragraph', btn: 'button' };
 const resolve = ( id: string ) => shortIds[ id ] ?? id;
 
 const withEditorBlocks = ( ...blocks: EditorBlock[] ) =>
-	jest
+	vi
 		.mocked( getBlock )
 		.mockImplementation( ( clientId ) => blocks.find( ( item ) => item.clientId === clientId ) );
 
@@ -89,7 +90,7 @@ function validate(
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	withEditorBlocks();
 } );
 

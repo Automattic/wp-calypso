@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 import { select } from '@wordpress/data';
+import { vi } from 'vitest';
 import { getEditorPostContext } from '../editor-post-context';
 
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn() } ) );
 
 describe( 'getEditorPostContext', () => {
 	it.each( [
@@ -25,7 +26,7 @@ describe( 'getEditorPostContext', () => {
 			expected: { current_page_id: 42 },
 		},
 	] )( '$case', ( { path, expected } ) => {
-		jest.mocked( select ).mockReturnValue( { getCurrentPostId: () => 42 } as never );
+		vi.mocked( select ).mockReturnValue( { getCurrentPostId: () => 42 } as never );
 		window.history.replaceState( {}, '', path );
 
 		expect( getEditorPostContext() ).toEqual( expected );

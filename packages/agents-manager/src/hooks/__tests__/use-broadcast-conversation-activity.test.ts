@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	CONVERSATION_ACTIVITY_EVENT,
 	useBroadcastConversationActivity,
 } from '../use-broadcast-conversation-activity';
 
 function renderWithCount( initialCount: number ) {
-	const listener = jest.fn();
+	const listener = vi.fn();
 	window.addEventListener( CONVERSATION_ACTIVITY_EVENT, listener );
 
 	const view = renderHook( ( { count } ) => useBroadcastConversationActivity( count ), {

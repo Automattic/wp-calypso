@@ -1,11 +1,12 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
+import { vi } from 'vitest';
 import useWebMcpTools from '../use-webmcp-tools';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpTool } from '../../webmcp/types';
 import type { Ability } from '@wordpress/abilities';
 
-jest.mock( '@wordpress/api-fetch' );
+vi.mock( '@wordpress/api-fetch' );
 
 const ability: Ability = {
 	name: 'big-sky/apply-block-edits',
@@ -18,7 +19,7 @@ const ability: Ability = {
 
 describe( 'useWebMcpTools', () => {
 	beforeEach( () => {
-		jest.mocked( apiFetch ).mockReset().mockResolvedValue( [] );
+		vi.mocked( apiFetch ).mockReset().mockResolvedValue( [] );
 		document.body.className = 'site-editor-php';
 		window.history.replaceState( {}, '', '/' );
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
@@ -37,14 +38,14 @@ describe( 'useWebMcpTools', () => {
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
 			value: {
-				registerTool: jest.fn( async ( tool: WebMcpTool, options?: { signal?: AbortSignal } ) => {
+				registerTool: vi.fn( async ( tool: WebMcpTool, options?: { signal?: AbortSignal } ) => {
 					registrations.push( { signal: options?.signal, tool } );
 				} ),
 			},
 		} );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ ability ] ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( async () => [ ability ] ),
+			executeAbility: vi.fn(),
 		};
 
 		const { rerender, unmount } = renderHook(
@@ -69,14 +70,14 @@ describe( 'useWebMcpTools', () => {
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			isDevMode: false,
 		};
-		const registerTool = jest.fn();
+		const registerTool = vi.fn();
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
 			value: { registerTool },
 		} );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ ability ] ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( async () => [ ability ] ),
+			executeAbility: vi.fn(),
 		};
 
 		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );

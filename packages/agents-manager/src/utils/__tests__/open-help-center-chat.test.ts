@@ -1,18 +1,19 @@
-const mockDispatch = jest.fn();
-jest.mock( '@wordpress/data', () => ( { dispatch: ( store: string ) => mockDispatch( store ) } ) );
-jest.mock( '../agent-session', () => ( { getActiveSessionId: jest.fn( () => 'session-1' ) } ) );
-jest.mock( '../get-agents-manager-inline-data', () => ( {
-	getAgentsManagerInlineData: jest.fn( () => ( { site: { ID: 42, domain: 'example.com' } } ) ),
+import { vi } from 'vitest';
+const mockDispatch = vi.fn();
+vi.mock( '@wordpress/data', () => ( { dispatch: ( store: string ) => mockDispatch( store ) } ) );
+vi.mock( '../agent-session', () => ( { getActiveSessionId: vi.fn( () => 'session-1' ) } ) );
+vi.mock( '../get-agents-manager-inline-data', () => ( {
+	getAgentsManagerInlineData: vi.fn( () => ( { site: { ID: 42, domain: 'example.com' } } ) ),
 } ) );
 
 import { getActiveSessionId } from '../agent-session';
 import { getAgentsManagerInlineData } from '../get-agents-manager-inline-data';
 import { openHelpCenterChat } from '../open-help-center-chat';
 
-const helpCenter = { setShowHelpCenter: jest.fn(), setNewMessagingChat: jest.fn() };
+const helpCenter = { setShowHelpCenter: vi.fn(), setNewMessagingChat: vi.fn() };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockDispatch.mockReturnValue( helpCenter );
 } );
 
@@ -37,8 +38,8 @@ describe( 'openHelpCenterChat', () => {
 	} );
 
 	it( 'sends a default message, and leaves out a site and session it does not have', () => {
-		jest.mocked( getAgentsManagerInlineData ).mockReturnValueOnce( undefined );
-		jest.mocked( getActiveSessionId ).mockReturnValueOnce( '' );
+		vi.mocked( getAgentsManagerInlineData ).mockReturnValueOnce( undefined );
+		vi.mocked( getActiveSessionId ).mockReturnValueOnce( '' );
 
 		openHelpCenterChat();
 
@@ -52,7 +53,7 @@ describe( 'openHelpCenterChat', () => {
 	// The Help Center is not on every page the chat is.
 	it.each( [
 		[ 'no store', undefined ],
-		[ 'a store without the chat action', { setShowHelpCenter: jest.fn() } ],
+		[ 'a store without the chat action', { setShowHelpCenter: vi.fn() } ],
 	] )( 'reports it could not open with %s', ( _, store ) => {
 		mockDispatch.mockReturnValue( store );
 

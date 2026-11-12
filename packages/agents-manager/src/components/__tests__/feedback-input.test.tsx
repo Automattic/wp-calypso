@@ -4,14 +4,15 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from '@wordpress/element';
+import { vi } from 'vitest';
 import FeedbackInput from '../feedback-input';
 
 describe( 'FeedbackInput', () => {
-	const mockOnSubmit = jest.fn();
-	const mockOnCancel = jest.fn();
+	const mockOnSubmit = vi.fn();
+	const mockOnCancel = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockOnSubmit.mockResolvedValue( undefined );
 	} );
 
@@ -162,7 +163,7 @@ describe( 'FeedbackInput', () => {
 		} );
 
 		it( 'calls onCancel after successful submission delay', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const user = userEvent.setup( { delay: null } );
 
 			render( <FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } /> );
@@ -179,11 +180,11 @@ describe( 'FeedbackInput', () => {
 
 			expect( mockOnCancel ).not.toHaveBeenCalled();
 
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 
 			expect( mockOnCancel ).toHaveBeenCalled();
 
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		it( 'shows error message when submission fails', async () => {
@@ -204,7 +205,7 @@ describe( 'FeedbackInput', () => {
 		} );
 
 		it( 'calls onCancel after error message delay', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const user = userEvent.setup( { delay: null } );
 			mockOnSubmit.mockRejectedValue( new Error( 'Network error' ) );
 
@@ -222,11 +223,11 @@ describe( 'FeedbackInput', () => {
 
 			expect( mockOnCancel ).not.toHaveBeenCalled();
 
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 
 			expect( mockOnCancel ).toHaveBeenCalled();
 
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		it( 'does not submit empty or whitespace-only feedback', async () => {
@@ -343,7 +344,7 @@ describe( 'FeedbackInput', () => {
 
 		it( 'marks Escape as handled so the chat does not close on it', async () => {
 			const user = userEvent.setup();
-			const chatListener = jest.fn( ( event: KeyboardEvent ) => event.defaultPrevented );
+			const chatListener = vi.fn( ( event: KeyboardEvent ) => event.defaultPrevented );
 			document.addEventListener( 'keydown', chatListener );
 			render(
 				<FeedbackInput variant="dialog" onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
@@ -443,11 +444,11 @@ describe( 'FeedbackInput', () => {
 			await user.click( screen.getByRole( 'button', { name: /^submit$/i } ) );
 
 			unmount();
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			resolveSubmit();
 			await Promise.resolve();
-			jest.advanceTimersByTime( 3000 );
-			jest.useRealTimers();
+			vi.advanceTimersByTime( 3000 );
+			vi.useRealTimers();
 
 			expect( mockOnCancel ).not.toHaveBeenCalled();
 		} );
@@ -512,7 +513,7 @@ describe( 'FeedbackInput', () => {
 
 	describe( 'cleanup', () => {
 		it( 'clears timeout on unmount', () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { unmount } = render(
 				<FeedbackInput onSubmit={ mockOnSubmit } onCancel={ mockOnCancel } />
 			);
@@ -520,9 +521,9 @@ describe( 'FeedbackInput', () => {
 			unmount();
 
 			// Should not throw or cause issues
-			jest.advanceTimersByTime( 3000 );
+			vi.advanceTimersByTime( 3000 );
 
-			jest.useRealTimers();
+			vi.useRealTimers();
 
 			expect( mockOnCancel ).not.toHaveBeenCalled();
 		} );

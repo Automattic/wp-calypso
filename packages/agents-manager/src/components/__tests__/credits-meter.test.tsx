@@ -5,34 +5,31 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
+import { type MockInstance, vi } from 'vitest';
 
 // agenttic-ui ships ESM only, which jest can't load here; its own tests cover the ring.
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		ProgressRing: ( {
-			percent,
-			tone,
-			size,
-			className,
-		}: {
-			percent: number;
-			tone?: string;
-			size?: number;
-			className?: string;
-		} ) => (
-			<svg
-				data-testid="credits-ring"
-				data-percent={ percent }
-				data-tone={ tone }
-				data-size={ size }
-				className={ className }
-			/>
-		),
-	} ),
-	{ virtual: true }
-);
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	ProgressRing: ( {
+		percent,
+		tone,
+		size,
+		className,
+	}: {
+		percent: number;
+		tone?: string;
+		size?: number;
+		className?: string;
+	} ) => (
+		<svg
+			data-testid="credits-ring"
+			data-percent={ percent }
+			data-tone={ tone }
+			data-size={ size }
+			className={ className }
+		/>
+	),
+} ) );
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 
 import CreditsMeter from '../credits-meter';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
@@ -128,7 +125,7 @@ describe( 'CreditsMeter', () => {
 	);
 
 	it( 'runs the action’s click handler without stopping the link from opening', () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<CreditsMeter
 				status={ livePaid( 0 ) }
@@ -145,7 +142,7 @@ describe( 'CreditsMeter', () => {
 	} );
 
 	it( 'keeps the demo CTA on its own handler, with no link', () => {
-		const onAction = jest.fn();
+		const onAction = vi.fn();
 		render(
 			<CreditsMeter status={ freeOut } isOpen onToggle={ () => {} } onAction={ onAction } />
 		);
@@ -155,11 +152,11 @@ describe( 'CreditsMeter', () => {
 	} );
 
 	describe( 'keyboard focus', () => {
-		let getClientRectsSpy: jest.SpyInstance;
+		let getClientRectsSpy: MockInstance;
 
 		beforeEach( () => {
 			// jsdom has no layout, so the popover's constrained tabbing finds nothing tabbable and blocks Tab.
-			getClientRectsSpy = jest
+			getClientRectsSpy = vi
 				.spyOn( HTMLElement.prototype, 'getClientRects' )
 				.mockReturnValue( [ {} ] as unknown as DOMRectList );
 		} );
@@ -207,7 +204,7 @@ describe( 'CreditsMeter', () => {
 	} );
 
 	it( 'labels the toggle with the balance sentence and toggles the popover', () => {
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
 		expect( toggle ).not.toHaveAccessibleDescription();
@@ -297,7 +294,7 @@ describe( 'CreditsMeter', () => {
 	} );
 
 	it( 'asks the chat for the balance from the popover header', () => {
-		const onShowCredits = jest.fn();
+		const onShowCredits = vi.fn();
 		const { rerender } = render(
 			<CreditsMeter status={ paid } isOpen onToggle={ () => {} } onShowCredits={ onShowCredits } />
 		);
@@ -311,7 +308,7 @@ describe( 'CreditsMeter', () => {
 	} );
 
 	it( 'lists each pool with its figures and a secondary CTA on paid plans', () => {
-		const onAction = jest.fn();
+		const onAction = vi.fn();
 		render( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } onAction={ onAction } /> );
 		expect( screen.getByText( 'Site credits' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Monthly plan' ) ).toBeInTheDocument();

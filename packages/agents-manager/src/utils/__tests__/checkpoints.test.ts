@@ -1,41 +1,42 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '../tool-call-history', () => ( {
-	getToolCallIdFromConversationHistory: jest.fn( () => 'call-1' ),
+import { vi } from 'vitest';
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '../tool-call-history', () => ( {
+	getToolCallIdFromConversationHistory: vi.fn( () => 'call-1' ),
 } ) );
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	dispatch: jest.fn(),
-	resolveSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	dispatch: vi.fn(),
+	resolveSelect: vi.fn(),
 } ) );
-jest.mock( '../editor-blocks', () => {
-	const getRootBlocks = jest.fn( () => [] );
-	const getTemplatePartBlocks = jest.fn( () => [] );
+vi.mock( '../editor-blocks', () => {
+	const getRootBlocks = vi.fn( () => [] );
+	const getTemplatePartBlocks = vi.fn( () => [] );
 
 	return {
-		findTemplatePartClientId: jest.fn(),
-		getBlocks: jest.fn( () => [] ),
-		getPageBlocks: jest.fn( () => ( {
+		findTemplatePartClientId: vi.fn(),
+		getBlocks: vi.fn( () => [] ),
+		getPageBlocks: vi.fn( () => ( {
 			blocks: getRootBlocks(),
 			templateParts: getTemplatePartBlocks(),
 		} ) ),
 		getRootBlocks,
 		getTemplatePartBlocks,
-		replaceRootBlocks: jest.fn(),
-		resolveBlocksRoot: jest.fn( () => ( {
+		replaceRootBlocks: vi.fn(),
+		resolveBlocksRoot: vi.fn( () => ( {
 			kind: 'post-content',
 			clientId: 'pc',
 			post: { id: 7, type: 'page', title: 'About' },
 		} ) ),
-		stageRootBlocks: jest.fn(),
+		stageRootBlocks: vi.fn(),
 	};
 } );
-jest.mock( '../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+vi.mock( '../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 // Reached through the navigation domain, and it registers a store on import —
 // which the mocked `@wordpress/data` above cannot serve.
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn(),
-	parse: jest.fn( () => [] ),
-	serialize: jest.fn( () => '' ),
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn(),
+	parse: vi.fn( () => [] ),
+	serialize: vi.fn( () => '' ),
 } ) );
 
 const GLOBAL_STYLES_RECORD = {
@@ -48,14 +49,14 @@ const SITE_RECORD = { site_logo: 42 };
 // The record store is module state — each test loads a fresh module (and the
 // matching mock instances) to start clean.
 async function loadCheckpoints() {
-	jest.resetModules();
+	vi.resetModules();
 	const { select, dispatch } = jest.requireMock( '@wordpress/data' );
-	const getGlobalStylesId = jest.fn().mockReturnValue( 'global-styles-1' );
-	const getEditedEntityRecord = jest.fn(
+	const getGlobalStylesId = vi.fn().mockReturnValue( 'global-styles-1' );
+	const getEditedEntityRecord = vi.fn(
 		( _kind: string, name: string ): Record< string, unknown > | undefined =>
 			name === 'site' ? SITE_RECORD : GLOBAL_STYLES_RECORD
 	);
-	const editEntityRecord = jest.fn();
+	const editEntityRecord = vi.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
 		getEditedEntityRecord,
@@ -73,10 +74,10 @@ async function loadCheckpoints() {
 /** What `resolveSelect` serves for every record read. */
 const withRecord = ( record: unknown ) =>
 	jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-		getEditedEntityRecord: jest.fn().mockResolvedValue( record ),
+		getEditedEntityRecord: vi.fn().mockResolvedValue( record ),
 	} );
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'setCheckpoint', () => {
 	it( 'captures the global-styles snapshot with keys and metadata', async () => {
@@ -528,7 +529,7 @@ describe( 'withCheckpoint', () => {
 		jest
 			.requireMock( '../tool-call-history' )
 			.getToolCallIdFromConversationHistory.mockReturnValueOnce( null );
-		const write = jest.fn();
+		const write = vi.fn();
 
 		await withCheckpoint( LOGO_WRITE, write );
 
@@ -593,7 +594,7 @@ describe( 'withCheckpoint', () => {
 		);
 
 		getEditedEntityRecord.mockReturnValue( undefined );
-		await expect( withCheckpoint( write, jest.fn() ) ).rejects.toThrow(
+		await expect( withCheckpoint( write, vi.fn() ) ).rejects.toThrow(
 			'Cannot record a way back for site_title'
 		);
 		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
@@ -603,7 +604,7 @@ describe( 'withCheckpoint', () => {
 	// change with no way back, so the write is refused instead.
 	it( 'refuses a write whose eager domain cannot be snapshotted', async () => {
 		const { withCheckpoint, hasCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
-		const write = jest.fn();
+		const write = vi.fn();
 
 		getEditedEntityRecord.mockReturnValue( undefined );
 
@@ -705,7 +706,7 @@ describe( 'restore by domain', () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
 			await loadCheckpoints();
 		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn( ( _kind: string, _name: string, id: number ) =>
+			getEditedEntityRecord: vi.fn( ( _kind: string, _name: string, id: number ) =>
 				Promise.resolve( id === 19 ? { id, blocks: [] } : null )
 			),
 		} );
@@ -1255,7 +1256,7 @@ describe( 'custom CSS domain', () => {
 	it( 'refuses the write when the global styles cannot be read', async () => {
 		const { withCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
 		getEditedEntityRecord.mockReturnValue( undefined );
-		const write = jest.fn();
+		const write = vi.fn();
 
 		await expect(
 			withCheckpoint( { toolId: 'tool', keys: [ 'custom_css' ], summary: 'x' }, write )

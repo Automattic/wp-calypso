@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import type * as BlockIds from '../block-ids';
 
 // The map lasts for the page load, so each test starts from a fresh module.
 function loadBlockIds() {
-	jest.resetModules();
+	vi.resetModules();
 
 	return jest.requireActual< typeof BlockIds >( '../block-ids' );
 }
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
 it( 'gives a block the same short id on every lookup, and resolves it back', () => {
 	const { createShortIdLookup, resolveClientId } = loadBlockIds();
@@ -23,7 +24,7 @@ it( 'gives a block the same short id on every lookup, and resolves it back', () 
 // Digits alone would read as a page id or a menu `ref`.
 it( 'mints four characters, a letter first, past an id already taken', () => {
 	const { toShortId } = loadBlockIds().createShortIdLookup();
-	const random = jest.spyOn( Math, 'random' ).mockReturnValue( 0 );
+	const random = vi.spyOn( Math, 'random' ).mockReturnValue( 0 );
 
 	expect( toShortId( 'uuid-taken' ) ).toBe( 'aaaa' );
 

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { generateUUID } from '../generate-uuid';
 
 describe( 'generateUUID', () => {
@@ -5,11 +6,11 @@ describe( 'generateUUID', () => {
 
 	afterEach( () => {
 		globalThis.crypto.randomUUID = savedRandomUUID;
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'uses crypto.randomUUID when available', () => {
-		const randomUUIDSpy = jest
+		const randomUUIDSpy = vi
 			.spyOn( globalThis.crypto, 'randomUUID' )
 			.mockReturnValue( 'crypto-uuid' as ReturnType< Crypto[ 'randomUUID' ] > );
 
@@ -29,7 +30,7 @@ describe( 'generateUUID', () => {
 	it( 'uses crypto.getRandomValues for fallback randomness when available', () => {
 		// @ts-expect-error - Simulating an older browser.
 		delete globalThis.crypto.randomUUID;
-		const getRandomValuesSpy = jest.spyOn( globalThis.crypto, 'getRandomValues' );
+		const getRandomValuesSpy = vi.spyOn( globalThis.crypto, 'getRandomValues' );
 
 		generateUUID();
 
@@ -39,7 +40,7 @@ describe( 'generateUUID', () => {
 	it( 'keeps fallback UUIDs valid when getRandomValues returns the maximum byte', () => {
 		// @ts-expect-error - Simulating an older browser.
 		delete globalThis.crypto.randomUUID;
-		jest.spyOn( globalThis.crypto, 'getRandomValues' ).mockImplementation( ( array ) => {
+		vi.spyOn( globalThis.crypto, 'getRandomValues' ).mockImplementation( ( array ) => {
 			if ( array ) {
 				new Uint8Array( array.buffer, array.byteOffset, array.byteLength ).fill( 255 );
 			}

@@ -2,29 +2,33 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { getEditorHistory } from '../../utils/editor-history';
 
-const editorHistory = { navigate: jest.fn() };
-const useHistory = jest.fn( () => editorHistory );
-const unlock = jest.fn( () => ( { useHistory } ) );
-const mockOptIn = jest.fn( () => ( { unlock } ) );
+const editorHistory = { navigate: vi.fn() };
+const useHistory = vi.fn( () => editorHistory );
+const unlock = vi.fn( () => ( { useHistory } ) );
+const mockOptIn = vi.fn( () => ( { unlock } ) );
 
-jest.mock( '@wordpress/private-apis', () => ( {
+vi.mock( '@wordpress/private-apis', () => ( {
 	__dangerousOptInToUnstableAPIsOnlyForCoreModules: () => mockOptIn(),
 } ) );
-jest.mock( '@wordpress/router', () => ( { privateApis: 'router-private-apis' } ) );
+vi.mock( '@wordpress/router', () => ( { privateApis: 'router-private-apis' } ) );
 
 // The bridge unlocks the router once, at module load, so every consent case
 // needs its own copy of it. React and the history module stay shared: a second
 // React leaves the component's hooks without a dispatcher, and a second history
 // module would publish where these assertions cannot see it.
-const sharedElement = jest.requireActual( '@wordpress/element' );
-const sharedEditorHistory = jest.requireActual( '../../utils/editor-history' );
+const sharedElement =
+	await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+const sharedEditorHistory = await vi.importActual< typeof import( '../../utils/editor-history' ) >(
+	'../../utils/editor-history'
+);
 
 async function renderBridge() {
-	jest.resetModules();
-	jest.doMock( '@wordpress/element', () => sharedElement );
-	jest.doMock( '../../utils/editor-history', () => sharedEditorHistory );
+	vi.resetModules();
+	vi.doMock( '@wordpress/element', () => sharedElement );
+	vi.doMock( '../../utils/editor-history', () => sharedEditorHistory );
 
 	const { default: EditorHistoryBridge } = await import( '../editor-history-bridge' );
 
@@ -32,7 +36,7 @@ async function renderBridge() {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockOptIn.mockImplementation( () => ( { unlock } ) );
 } );
 
@@ -60,7 +64,7 @@ describe( 'EditorHistoryBridge', () => {
 	} );
 
 	it( 'publishes nothing when WordPress accepts neither wording', async () => {
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		mockOptIn.mockImplementation( () => {
 			throw new Error( 'wrong consent string' );
 		} );

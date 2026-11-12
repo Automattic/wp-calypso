@@ -1,7 +1,8 @@
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlockRootClientId: jest.fn(),
-	getBlocks: jest.fn(),
+import { vi } from 'vitest';
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlockRootClientId: vi.fn(),
+	getBlocks: vi.fn(),
 } ) );
 
 import { getBlock, getBlockRootClientId, getBlocks } from '../../../utils/editor-blocks';
@@ -19,7 +20,7 @@ const block = (
 	innerBlocks: EditorBlock[] = []
 ): EditorBlock => ( { clientId, name, attributes, innerBlocks } );
 
-beforeEach( () => jest.resetAllMocks() );
+beforeEach( () => vi.resetAllMocks() );
 
 describe( 'getReorderOperations', () => {
 	/**
@@ -49,9 +50,9 @@ describe( 'getReorderOperations', () => {
 			innerBlocks: [ ...node.innerBlocks ].reverse().map( request ),
 		} );
 
-		jest
-			.mocked( getBlocks )
-			.mockImplementation( ( id ) => ( id && blocks[ id ]?.innerBlocks ) || [] );
+		vi.mocked( getBlocks ).mockImplementation(
+			( id ) => ( id && blocks[ id ]?.innerBlocks ) || []
+		);
 
 		return { root, requested: request( root ) };
 	};
@@ -140,7 +141,7 @@ describe( 'getReorderOperations', () => {
 		const paragraphs = [ block( 'p-a', 'core/paragraph' ), block( 'p-b', 'core/paragraph' ) ];
 		const postContent = block( 'post-content', 'core/post-content' );
 
-		jest.mocked( getBlocks ).mockReturnValue( paragraphs );
+		vi.mocked( getBlocks ).mockReturnValue( paragraphs );
 
 		expect(
 			getReorderOperations(
@@ -164,13 +165,9 @@ describe( 'getUnmappedParentReorder', () => {
 
 	/** The children live in `list`, the post editor's root when it is `undefined`. */
 	const setupList = ( list: string | undefined, blocks: EditorBlock[] ) => {
-		jest
-			.mocked( getBlock )
-			.mockImplementation( ( id ) => blocks.find( ( b ) => b.clientId === id ) );
-		jest.mocked( getBlockRootClientId ).mockReturnValue( list );
-		jest
-			.mocked( getBlocks )
-			.mockImplementation( ( id ) => ( id === ( list ?? '' ) ? blocks : [] ) );
+		vi.mocked( getBlock ).mockImplementation( ( id ) => blocks.find( ( b ) => b.clientId === id ) );
+		vi.mocked( getBlockRootClientId ).mockReturnValue( list );
+		vi.mocked( getBlocks ).mockImplementation( ( id ) => ( id === ( list ?? '' ) ? blocks : [] ) );
 	};
 
 	it( 'reorders the root list of the post editor', () => {
@@ -217,9 +214,9 @@ describe( 'getUnmappedParentReorder', () => {
 
 	it( 'declines children of different lists', () => {
 		setupList( undefined, [ heading, first ] );
-		jest
-			.mocked( getBlockRootClientId )
-			.mockImplementation( ( id ) => ( id === 'first' ? 'group' : undefined ) );
+		vi.mocked( getBlockRootClientId ).mockImplementation( ( id ) =>
+			id === 'first' ? 'group' : undefined
+		);
 
 		expect(
 			getUnmappedParentReorder(

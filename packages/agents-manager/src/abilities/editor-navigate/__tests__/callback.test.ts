@@ -2,42 +2,43 @@
  * @jest-environment jsdom
  */
 import { dispatch, select, subscribe } from '@wordpress/data';
+import { type Mock, type Mocked, vi } from 'vitest';
 import { getEditorHistory } from '../../../utils/editor-history';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import { editorNavigate, editorNavigateCallback } from '../callback';
 import type { EditorNavigateIO } from '../callback';
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn( () => undefined ),
-	dispatch: jest.fn( () => undefined ),
-	resolveSelect: jest.fn( () => undefined ),
-	subscribe: jest.fn( () => () => {} ),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn( () => undefined ),
+	dispatch: vi.fn( () => undefined ),
+	resolveSelect: vi.fn( () => undefined ),
+	subscribe: vi.fn( () => () => {} ),
 } ) );
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 // Pulled in by the shared menu reader; the block registry plays no part here.
-jest.mock( '@wordpress/blocks', () => ( {} ) );
-jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
-jest.mock( '../../../utils/editor-history', () => ( { getEditorHistory: jest.fn() } ) );
+vi.mock( '@wordpress/blocks', () => ( {} ) );
+vi.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: vi.fn( () => true ) } ) );
+vi.mock( '../../../utils/editor-history', () => ( { getEditorHistory: vi.fn() } ) );
 
-const navigate = jest.fn().mockResolvedValue( undefined );
+const navigate = vi.fn().mockResolvedValue( undefined );
 
 function createIO( overrides: Partial< EditorNavigateIO > = {} ) {
 	return {
-		saveEverything: jest.fn().mockResolvedValue( undefined ),
-		getHistory: jest.fn().mockReturnValue( { navigate } ),
-		waitForPage: jest.fn().mockResolvedValue( true ),
-		closeCommandPalette: jest.fn(),
-		getPostContentClientId: jest.fn().mockReturnValue( 'departing-block' ),
-		getLoadedPageId: jest.fn().mockReturnValue( 456 ),
-		restorePostContentEditing: jest.fn().mockResolvedValue( undefined ),
-		refreshNavigationBlocks: jest.fn().mockResolvedValue( 2 ),
-		navigateWholePage: jest.fn(),
+		saveEverything: vi.fn().mockResolvedValue( undefined ),
+		getHistory: vi.fn().mockReturnValue( { navigate } ),
+		waitForPage: vi.fn().mockResolvedValue( true ),
+		closeCommandPalette: vi.fn(),
+		getPostContentClientId: vi.fn().mockReturnValue( 'departing-block' ),
+		getLoadedPageId: vi.fn().mockReturnValue( 456 ),
+		restorePostContentEditing: vi.fn().mockResolvedValue( undefined ),
+		refreshNavigationBlocks: vi.fn().mockResolvedValue( 2 ),
+		navigateWholePage: vi.fn(),
 		...overrides,
-	} as jest.Mocked< EditorNavigateIO >;
+	} as Mocked< EditorNavigateIO >;
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	// The flow reads the URL for `wp_theme_preview`, so tests must not inherit
 	// one another's location.
 	window.history.replaceState( {}, '', '/wp-admin/site-editor.php' );
@@ -66,10 +67,10 @@ describe( 'editorNavigate', () => {
 	// Reading the departure state before the save would name a page the editor
 	// has since left, skipping the restore on a switch that really happened.
 	it( 'reads the page it is leaving after the save settles', async () => {
-		const getLoadedPageId = jest.fn().mockReturnValue( 123 );
+		const getLoadedPageId = vi.fn().mockReturnValue( 123 );
 		const io = createIO( {
 			getLoadedPageId,
-			saveEverything: jest.fn( async () => {
+			saveEverything: vi.fn( async () => {
 				getLoadedPageId.mockReturnValue( 789 );
 			} ),
 		} );
@@ -80,7 +81,7 @@ describe( 'editorNavigate', () => {
 	} );
 
 	it( 'skips the post-content restore when the page is already open', async () => {
-		const io = createIO( { getLoadedPageId: jest.fn().mockReturnValue( 123 ) } );
+		const io = createIO( { getLoadedPageId: vi.fn().mockReturnValue( 123 ) } );
 
 		const result = await editorNavigate( io, { path: '/page/123' } );
 
@@ -94,7 +95,7 @@ describe( 'editorNavigate', () => {
 	it( 'still restores when the editor was holding a non-page of the same id', async () => {
 		// Ids repeat across post types, so "already open" means the page, not
 		// whatever else happens to carry that number.
-		const io = createIO( { getLoadedPageId: jest.fn().mockReturnValue( undefined ) } );
+		const io = createIO( { getLoadedPageId: vi.fn().mockReturnValue( undefined ) } );
 
 		await editorNavigate( io, { path: '/page/123' } );
 
@@ -117,7 +118,7 @@ describe( 'editorNavigate', () => {
 
 	it( 'carries wp_theme_preview through the full-page fallback too', async () => {
 		window.history.replaceState( {}, '', '/wp-admin/post.php?wp_theme_preview=twentytwentyfive' );
-		const io = createIO( { getHistory: jest.fn().mockReturnValue( undefined ) } );
+		const io = createIO( { getHistory: vi.fn().mockReturnValue( undefined ) } );
 
 		await editorNavigate( io, { path: '/page/123' } );
 
@@ -129,12 +130,12 @@ describe( 'editorNavigate', () => {
 	it( 'saves before navigating, so pending edits are not lost', async () => {
 		const order: string[] = [];
 		const io = createIO( {
-			saveEverything: jest.fn( async () => {
+			saveEverything: vi.fn( async () => {
 				order.push( 'save' );
 			} ),
-			getHistory: jest
+			getHistory: vi
 				.fn()
-				.mockReturnValue( { navigate: jest.fn( async () => void order.push( 'navigate' ) ) } ),
+				.mockReturnValue( { navigate: vi.fn( async () => void order.push( 'navigate' ) ) } ),
 		} );
 
 		await editorNavigate( io, { path: '/page/123' } );
@@ -174,7 +175,7 @@ describe( 'editorNavigate', () => {
 	} );
 
 	it( 'refuses to report success when the editor never loads the page', async () => {
-		const io = createIO( { waitForPage: jest.fn().mockResolvedValue( false ) } );
+		const io = createIO( { waitForPage: vi.fn().mockResolvedValue( false ) } );
 
 		const result = await editorNavigate( io, { path: '/page/7' } );
 
@@ -189,7 +190,7 @@ describe( 'editorNavigate', () => {
 	} );
 
 	it( 'falls back to a whole-page load when there is no router', async () => {
-		const io = createIO( { getHistory: jest.fn().mockReturnValue( undefined ) } );
+		const io = createIO( { getHistory: vi.fn().mockReturnValue( undefined ) } );
 
 		const result = await editorNavigate( io, { path: '/page/9' } );
 
@@ -206,7 +207,7 @@ describe( 'editorNavigate', () => {
 
 	it( 'keeps a whole-page load inside a subdirectory install', async () => {
 		window.history.replaceState( {}, '', '/wordpress/wp-admin/post.php?post=9&action=edit' );
-		const io = createIO( { getHistory: jest.fn().mockReturnValue( undefined ) } );
+		const io = createIO( { getHistory: vi.fn().mockReturnValue( undefined ) } );
 
 		await editorNavigate( io, { path: '/page/9' } );
 
@@ -216,7 +217,7 @@ describe( 'editorNavigate', () => {
 	} );
 
 	it( 'omits the canvas from a whole-page load of the pages list', async () => {
-		const io = createIO( { getHistory: jest.fn().mockReturnValue( undefined ) } );
+		const io = createIO( { getHistory: vi.fn().mockReturnValue( undefined ) } );
 
 		await editorNavigate( io, { path: 'all-pages' } );
 
@@ -265,7 +266,7 @@ describe( 'editorNavigate', () => {
 	// source binding would read the arrival as the user leaving.
 	it( 'says it navigated when a step after the route change fails', async () => {
 		const io = createIO( {
-			restorePostContentEditing: jest.fn().mockRejectedValue( new Error( 'restore failed' ) ),
+			restorePostContentEditing: vi.fn().mockRejectedValue( new Error( 'restore failed' ) ),
 		} );
 
 		const result = await editorNavigate( io, { path: '/page/3' } );
@@ -276,7 +277,7 @@ describe( 'editorNavigate', () => {
 
 	it( 'reports a failed save as an error instead of claiming arrival', async () => {
 		const io = createIO( {
-			saveEverything: jest.fn().mockRejectedValue( new Error( 'save failed' ) ),
+			saveEverything: vi.fn().mockRejectedValue( new Error( 'save failed' ) ),
 		} );
 
 		const result = await editorNavigate( io, { path: '/page/3' } );
@@ -290,9 +291,9 @@ describe( 'editorNavigate', () => {
 
 	it( 'names the pages list, not “that page”, when the list fails to open', async () => {
 		const io = createIO( {
-			getHistory: jest
+			getHistory: vi
 				.fn()
-				.mockReturnValue( { navigate: jest.fn().mockRejectedValue( new Error( 'boom' ) ) } ),
+				.mockReturnValue( { navigate: vi.fn().mockRejectedValue( new Error( 'boom' ) ) } ),
 		} );
 
 		const result = await editorNavigate( io, { path: 'all-pages' } );
@@ -329,7 +330,7 @@ describe( 'editorNavigateCallback', () => {
 	} );
 
 	it( 'refuses to navigate when the editor is not open', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		( isEditorPage as Mock ).mockReturnValue( false );
 
 		const result = await editorNavigateCallback( { path: '/page/123' } );
 
@@ -340,24 +341,24 @@ describe( 'editorNavigateCallback', () => {
 	// Every other test injects the IO, so this is the only cover for the
 	// wiring itself: the stores each step actually reads and writes.
 	it( 'saves, routes, and re-enables the destination through the real stores', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		( isEditorPage as Mock ).mockReturnValue( true );
 
-		const navigate = jest.fn().mockResolvedValue( undefined );
-		const saveEditedEntityRecord = jest.fn().mockResolvedValue( undefined );
-		const editEntityRecord = jest.fn();
-		const setBlockEditingMode = jest.fn();
-		const closeCommandPalette = jest.fn();
+		const navigate = vi.fn().mockResolvedValue( undefined );
+		const saveEditedEntityRecord = vi.fn().mockResolvedValue( undefined );
+		const editEntityRecord = vi.fn();
+		const setBlockEditingMode = vi.fn();
+		const closeCommandPalette = vi.fn();
 		const listeners: ( () => void )[] = [];
 
 		let currentPostId = 456;
 		let postContentClientId = 'departing-block';
 
-		( getEditorHistory as jest.Mock ).mockReturnValue( { navigate } );
-		( subscribe as jest.Mock ).mockImplementation( ( listener: () => void ) => {
+		( getEditorHistory as Mock ).mockReturnValue( { navigate } );
+		( subscribe as Mock ).mockImplementation( ( listener: () => void ) => {
 			listeners.push( listener );
 			return () => {};
 		} );
-		( select as jest.Mock ).mockImplementation( ( store: string ) => {
+		( select as Mock ).mockImplementation( ( store: string ) => {
 			switch ( store ) {
 				case 'core':
 					return {
@@ -379,7 +380,7 @@ describe( 'editorNavigateCallback', () => {
 					};
 			}
 		} );
-		( dispatch as jest.Mock ).mockImplementation( ( store: string ) => {
+		( dispatch as Mock ).mockImplementation( ( store: string ) => {
 			switch ( store ) {
 				case 'core':
 					return { editEntityRecord, saveEditedEntityRecord };
@@ -388,7 +389,7 @@ describe( 'editorNavigateCallback', () => {
 				case 'core/block-editor':
 					return {
 						setBlockEditingMode,
-						__unstableMarkNextChangeAsNotPersistent: jest.fn(),
+						__unstableMarkNextChangeAsNotPersistent: vi.fn(),
 					};
 			}
 		} );

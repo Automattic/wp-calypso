@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { getCreditsLabel, isCreditsExhausted } from '../credits';
 import {
 	buildLiveCreditsStatus,
@@ -9,8 +10,8 @@ import { creditSnapshot } from './fixtures/credit-snapshot';
 import { localNumber } from './fixtures/local-number';
 import type { CreditsPlanTier } from '../credits';
 
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, value: unknown ) => format.replace( '%s', String( value ) ),

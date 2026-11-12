@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	type CreditsStatus,
 	buildMockCreditsStatus,
@@ -17,7 +18,7 @@ import {
 } from '../credits';
 import { localNumber } from './fixtures/local-number';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...args: unknown[] ) => {

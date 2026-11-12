@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	getCreditsAnswerSummary,
 	getTopUpCreditsRemaining,
@@ -6,8 +7,8 @@ import {
 import { buildLiveCreditsStatus } from '../live-credits';
 import { creditSnapshot } from './fixtures/credit-snapshot';
 
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...values: unknown[] ) => {

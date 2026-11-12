@@ -4,15 +4,19 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '@wordpress/data', () => ( { select: jest.fn( () => ( {} ) ) } ) );
-jest.mock( '../agent-session', () => ( { getActiveSessionId: jest.fn( () => 'session-xyz' ) } ) );
-jest.mock( '../is-reader-chat-agent', () => {
-	const actual = jest.requireActual( '../is-reader-chat-agent' );
-	return { ...actual, isReaderChatHost: jest.fn( () => false ) };
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn( () => ( {} ) ) } ) );
+vi.mock( '../agent-session', () => ( { getActiveSessionId: vi.fn( () => 'session-xyz' ) } ) );
+vi.mock( '../is-reader-chat-agent', async () => {
+	const actual =
+		await vi.importActual< typeof import( '../is-reader-chat-agent' ) >(
+			'../is-reader-chat-agent'
+		);
+	return { ...actual, isReaderChatHost: vi.fn( () => false ) };
 } );
 
 import { select } from '@wordpress/data';
+import { type MockedFunction, vi } from 'vitest';
 import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setLoadedProviderIds } from '../loaded-provider-ids';
@@ -24,12 +28,10 @@ import {
 	recordBigSkyTracksEvent,
 } from '../tracks';
 
-const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
-const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
-const mockSelect = select as jest.MockedFunction< typeof select >;
-const mockGetActiveSessionId = getActiveSessionId as jest.MockedFunction<
-	typeof getActiveSessionId
->;
+const mockRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
+const mockIsReaderChatHost = isReaderChatHost as MockedFunction< typeof isReaderChatHost >;
+const mockSelect = select as MockedFunction< typeof select >;
+const mockGetActiveSessionId = getActiveSessionId as MockedFunction< typeof getActiveSessionId >;
 
 function lastEventProps(): Record< string, unknown > {
 	const call = mockRecordTracksEvent.mock.calls.at( -1 );
@@ -47,7 +49,7 @@ function recordedEventNames(): string[] {
 
 describe( 'tracks wrappers', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// clearAllMocks keeps implementations, so restore any per-test override.
 		mockSelect.mockImplementation( () => ( {} ) as ReturnType< typeof select > );
 		mockIsReaderChatHost.mockReturnValue( false );

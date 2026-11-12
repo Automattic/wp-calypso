@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 type TestBlock = {
 	clientId: string;
 	name: string;
@@ -5,7 +6,7 @@ type TestBlock = {
 	innerBlocks: TestBlock[];
 };
 
-jest.mock( '@wordpress/blocks', () => {
+vi.mock( '@wordpress/blocks', () => {
 	const toTuples = ( blocks: TestBlock[] ): unknown[] =>
 		blocks.map( ( { name, attributes, innerBlocks } ) => [
 			name,
@@ -14,8 +15,8 @@ jest.mock( '@wordpress/blocks', () => {
 		] );
 
 	return {
-		serialize: jest.fn( ( blocks: TestBlock[] ) => JSON.stringify( toTuples( blocks ) ) ),
-		parse: jest.fn( ( content: string ) =>
+		serialize: vi.fn( ( blocks: TestBlock[] ) => JSON.stringify( toTuples( blocks ) ) ),
+		parse: vi.fn( ( content: string ) =>
 			( JSON.parse( content ) as [ string, unknown, unknown[] ][] ).map(
 				( [ name, attributes ], index ) => ( {
 					clientId: `parsed-${ index }`,
@@ -38,10 +39,10 @@ const block = (
 ): TestBlock => ( { clientId, name, attributes, innerBlocks } );
 
 const adapters = ( live: unknown[] ) => ( {
-	getLiveBlocks: jest.fn( () => live as never ),
-	stageBlocks: jest.fn(),
-	replaceBlocks: jest.fn(),
-	clearSelection: jest.fn(),
+	getLiveBlocks: vi.fn( () => live as never ),
+	stageBlocks: vi.fn(),
+	replaceBlocks: vi.fn(),
+	clearSelection: vi.fn(),
 } );
 
 it( 'writes nothing when the design equals what was there', () => {

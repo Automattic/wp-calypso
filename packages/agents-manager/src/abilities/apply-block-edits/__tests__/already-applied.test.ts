@@ -1,6 +1,7 @@
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlocks: jest.fn(),
+import { vi } from 'vitest';
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlocks: vi.fn(),
 } ) );
 
 import { getBlock, getBlocks } from '../../../utils/editor-blocks';
@@ -50,11 +51,11 @@ const satisfiedUpdate: BlockUpdate = {
 };
 
 beforeEach( () => {
-	jest.resetAllMocks();
-	jest.mocked( getBlock ).mockImplementation( ( clientId ) => blocks[ clientId ] );
-	jest
-		.mocked( getBlocks )
-		.mockImplementation( ( clientId ) => ( clientId === 'columns' ? [ columnB, columnA ] : [] ) );
+	vi.resetAllMocks();
+	vi.mocked( getBlock ).mockImplementation( ( clientId ) => blocks[ clientId ] );
+	vi.mocked( getBlocks ).mockImplementation( ( clientId ) =>
+		clientId === 'columns' ? [ columnB, columnA ] : []
+	);
 } );
 
 describe( 'areUpdateEditsAlreadySatisfied', () => {

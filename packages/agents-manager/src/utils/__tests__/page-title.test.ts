@@ -1,19 +1,20 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( { dispatch: jest.fn(), resolveSelect: jest.fn() } ) );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( { dispatch: vi.fn(), resolveSelect: vi.fn() } ) );
 
 import { dispatch, resolveSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { getPageTitle, setPageTitle } from '../page-title';
 
-const editEntityRecord = jest.fn();
+const editEntityRecord = vi.fn();
 
 const withPage = ( page: unknown ) => {
-	( resolveSelect as jest.Mock ).mockReturnValue( {
-		getEditedEntityRecord: jest.fn().mockResolvedValue( page ),
+	( resolveSelect as Mock ).mockReturnValue( {
+		getEditedEntityRecord: vi.fn().mockResolvedValue( page ),
 	} );
-	( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
+	( dispatch as Mock ).mockReturnValue( { editEntityRecord } );
 };
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'getPageTitle', () => {
 	// `flattenTitle()` owns the title shapes; here, only that it is applied.

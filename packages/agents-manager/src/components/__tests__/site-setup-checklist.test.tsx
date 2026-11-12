@@ -1,18 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-const mockAgentUIChecklist = jest.fn< ReactElement, [ unknown ] >( () => (
+const mockAgentUIChecklist = vi.fn< ( ...args: [ unknown ] ) => ReactElement >( () => (
 	<div data-testid="checklist" />
 ) );
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		AgentUIChecklist: ( props: unknown ) => mockAgentUIChecklist( props ),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	AgentUIChecklist: ( props: unknown ) => mockAgentUIChecklist( props ),
+} ) );
 
 import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import SiteSetupChecklist from '../site-setup-checklist';
 import type { ReactElement } from 'react';
 

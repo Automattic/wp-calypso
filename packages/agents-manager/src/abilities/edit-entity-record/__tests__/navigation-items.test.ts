@@ -1,19 +1,20 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
-	parse: jest.fn( () => [ { name: 'core/navigation-link', attributes: {}, innerBlocks: [] } ] ),
-	serialize: jest.fn( ( blocks ) => `<!-- ${ blocks.length } items -->` ),
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
+	parse: vi.fn( () => [ { name: 'core/navigation-link', attributes: {}, innerBlocks: [] } ] ),
+	serialize: vi.fn( ( blocks ) => `<!-- ${ blocks.length } items -->` ),
 } ) );
-jest.mock( '../../../utils/block-ids', () => ( {
-	getMenuItemAttributes: jest.fn(),
-	resolveClientId: jest.fn(),
+vi.mock( '../../../utils/block-ids', () => ( {
+	getMenuItemAttributes: vi.fn(),
+	resolveClientId: vi.fn(),
 } ) );
-jest.mock( '../../../utils/navigation-menu', () => ( {
+vi.mock( '../../../utils/navigation-menu', () => ( {
 	NAVIGATION_LINK_BLOCK: 'core/navigation-link',
 	NAVIGATION_SUBMENU_BLOCK: 'core/navigation-submenu',
-	readMenuItems: jest.fn(),
+	readMenuItems: vi.fn(),
 } ) );
 
 import { parse } from '@wordpress/blocks';
+import { type Mock, vi } from 'vitest';
 import { getMenuItemAttributes, resolveClientId } from '../../../utils/block-ids';
 import { readMenuItems } from '../../../utils/navigation-menu';
 import { buildNavigationItems } from '../navigation-items';
@@ -33,7 +34,7 @@ const item = (
 const SUBMENU = 'core/navigation-submenu';
 
 const withMenu = ( items: unknown[] | null ) =>
-	( readMenuItems as jest.Mock ).mockResolvedValue( items );
+	( readMenuItems as Mock ).mockResolvedValue( items );
 
 /** What the page structure kept for the agent's short ids. */
 const withPageStructure = ( {
@@ -43,8 +44,8 @@ const withPageStructure = ( {
 	clientIds?: Record< string, string >;
 	menuItemAttributes?: Record< string, Record< string, unknown > >;
 } ) => {
-	( resolveClientId as jest.Mock ).mockImplementation( ( id ) => clientIds[ id ] ?? id );
-	( getMenuItemAttributes as jest.Mock ).mockImplementation( ( id ) => menuItemAttributes[ id ] );
+	( resolveClientId as Mock ).mockImplementation( ( id ) => clientIds[ id ] ?? id );
+	( getMenuItemAttributes as Mock ).mockImplementation( ( id ) => menuItemAttributes[ id ] );
 };
 
 /** The labels of the rebuilt menu, in order. */
@@ -61,7 +62,7 @@ const attributesOf = ( record: Record< string, unknown >, index = 0 ) =>
 	( record.blocks as { attributes: Record< string, unknown > }[] )[ index ].attributes;
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	withPageStructure( {} );
 	withMenu( null );
 } );

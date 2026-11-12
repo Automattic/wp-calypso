@@ -2,26 +2,27 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
-jest.mock( '../../utils/is-reader-chat-agent', () => ( { isReaderChatHost: jest.fn() } ) );
-jest.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-	useSelect: jest.fn(),
+vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
+vi.mock( '../../utils/is-reader-chat-agent', () => ( { isReaderChatHost: vi.fn() } ) );
+vi.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn(),
+	useSelect: vi.fn(),
 } ) );
 
 import { renderHook } from '@testing-library/react';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useOpenChatUrlParam } from '../use-open-chat-url-param';
 
-const mockUseDispatch = useDispatch as jest.Mock;
-const mockUseSelect = useSelect as jest.Mock;
-const mockIsReaderChatHost = isReaderChatHost as jest.Mock;
+const mockUseDispatch = useDispatch as Mock;
+const mockUseSelect = useSelect as Mock;
+const mockIsReaderChatHost = isReaderChatHost as Mock;
 
-const setIsOpen = jest.fn();
-const setIsMinimized = jest.fn();
+const setIsOpen = vi.fn();
+const setIsMinimized = vi.fn();
 
 const mockStoreState = (
 	state: { hasLoaded?: boolean; isOpen?: boolean; isMinimized?: boolean } = {}
@@ -37,7 +38,7 @@ const mockStoreState = (
 
 describe( 'useOpenChatUrlParam', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseDispatch.mockReturnValue( { setIsOpen, setIsMinimized } );
 		mockIsReaderChatHost.mockReturnValue( false );
 		mockStoreState();

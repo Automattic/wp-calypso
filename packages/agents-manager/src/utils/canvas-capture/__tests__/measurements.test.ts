@@ -1,10 +1,11 @@
-jest.mock( '../../block-ids', () => ( {
+import { vi } from 'vitest';
+vi.mock( '../../block-ids', () => ( {
 	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
 } ) );
-jest.mock( '../../editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlockRootClientId: jest.fn(),
-	getBlocks: jest.fn(),
+vi.mock( '../../editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlockRootClientId: vi.fn(),
+	getBlocks: vi.fn(),
 } ) );
 
 import { getBlock, getBlockRootClientId, getBlocks } from '../../editor-blocks';
@@ -80,15 +81,13 @@ function mountCanvas( roots: CanvasBlock[] ) {
 		innerBlocks: ( block.children ?? [] ).map( toEditorBlock ),
 	} );
 
-	jest
-		.mocked( getBlock )
-		.mockImplementation( ( id ) => store[ id ] && toEditorBlock( store[ id ].block ) );
-	jest
-		.mocked( getBlocks )
-		.mockImplementation(
-			( id ) => ( id && store[ id ]?.block.children?.map( toEditorBlock ) ) || []
-		);
-	jest.mocked( getBlockRootClientId ).mockImplementation( ( id ) => store[ id ]?.parent );
+	vi.mocked( getBlock ).mockImplementation(
+		( id ) => store[ id ] && toEditorBlock( store[ id ].block )
+	);
+	vi.mocked( getBlocks ).mockImplementation(
+		( id ) => ( id && store[ id ]?.block.children?.map( toEditorBlock ) ) || []
+	);
+	vi.mocked( getBlockRootClientId ).mockImplementation( ( id ) => store[ id ]?.parent );
 }
 
 const LOGO_BLOCK = { top: 25, left: 0, width: 140, height: 140 };
@@ -175,7 +174,7 @@ const rowIn = ( notes: string[], clientId: string ) =>
 
 afterEach( () => {
 	document.body.innerHTML = '';
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 } );
 
 describe( 'with a small image at the top of its logo block', () => {
@@ -417,10 +416,10 @@ it( 'gives nothing when the canvas is not mounted', () => {
 
 it( 'gives nothing rather than throwing when the editor cannot be read', () => {
 	mountCanvas( [ header( { image: CAPPED_IMAGE } ) ] );
-	jest.mocked( getBlocks ).mockImplementation( () => {
+	vi.mocked( getBlocks ).mockImplementation( () => {
 		throw new Error( 'No store' );
 	} );
-	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 	expect( describeMeasuredLayout( EDITED ) ).toEqual( [] );
 } );

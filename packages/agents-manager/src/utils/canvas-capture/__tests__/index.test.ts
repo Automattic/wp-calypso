@@ -1,4 +1,5 @@
-jest.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+import { vi } from 'vitest';
+vi.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 
 import type { FilePart } from '@automattic/agenttic-client';
 
@@ -9,22 +10,22 @@ const screenshot: FilePart = {
 
 // A fresh facade per test, so each one decides what its chunk load does.
 async function load( captureModule: () => unknown ) {
-	jest.resetModules();
-	jest.doMock( '../capture', captureModule );
+	vi.resetModules();
+	vi.doMock( '../capture', captureModule );
 
 	const { captureCanvas } = await import( '..' );
 	const { recordBigSkyTracksEvent } = await import( '../../tracks' );
 
-	return { captureCanvas, recordEvent: jest.mocked( recordBigSkyTracksEvent ) };
+	return { captureCanvas, recordEvent: vi.mocked( recordBigSkyTracksEvent ) };
 }
 
 afterEach( () => {
-	jest.dontMock( '../capture' );
-	jest.restoreAllMocks();
+	vi.dontMock( '../capture' );
+	vi.restoreAllMocks();
 } );
 
 it( 'delegates to the lazily loaded capture with the options as given', async () => {
-	const captureCanvasFileParts = jest.fn().mockResolvedValue( [ screenshot ] );
+	const captureCanvasFileParts = vi.fn().mockResolvedValue( [ screenshot ] );
 	const { captureCanvas, recordEvent } = await load( () => ( { captureCanvasFileParts } ) );
 
 	await expect( captureCanvas( { clientIds: [ 'abc' ], fullPage: true } ) ).resolves.toEqual( [
@@ -37,7 +38,7 @@ it( 'delegates to the lazily loaded capture with the options as given', async ()
 
 it( 'resolves null and records the capture as unavailable when the chunk fails to load', async () => {
 	// A chunk that 404s must read as "no image", never as a failed edit.
-	const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	const { captureCanvas, recordEvent } = await load( () => {
 		throw new Error( 'Chunk failed.' );
 	} );

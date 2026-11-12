@@ -1,5 +1,6 @@
 import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
+import { vi } from 'vitest';
 import type { InteractiveUiBatch } from '../../messages';
 
 export const operations = [
@@ -40,8 +41,8 @@ export const formOperations = [
 export const createRuntime = () =>
 	createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog() ],
-		onAction: jest.fn(),
-		onError: jest.fn(),
+		onAction: vi.fn(),
+		onError: vi.fn(),
 	} );
 
 export const createBatch = (

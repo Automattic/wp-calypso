@@ -1,8 +1,8 @@
-jest.mock( '@wordpress/blocks', () => {
+vi.mock( '@wordpress/blocks', () => {
 	let nextId = 0;
 
 	return {
-		createBlock: jest.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
+		createBlock: vi.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
 			clientId: `preview-${ ++nextId }`,
 			name,
 			attributes,
@@ -11,12 +11,12 @@ jest.mock( '@wordpress/blocks', () => {
 	};
 } );
 // The scanner stays real; only the editor-side repair is stubbed.
-jest.mock( '../block-markup', () => {
+vi.mock( '../block-markup', async () => {
 	let nextId = 0;
 
 	return {
-		...jest.requireActual( '../block-markup' ),
-		repairBlocksFromMarkup: jest.fn( ( markup: string ) => [
+		...( await vi.importActual< typeof import( '../block-markup' ) >( '../block-markup' ) ),
+		repairBlocksFromMarkup: vi.fn( ( markup: string ) => [
 			{
 				clientId: `final-${ ++nextId }`,
 				name: 'core/paragraph',
@@ -26,13 +26,14 @@ jest.mock( '../block-markup', () => {
 		] ),
 	};
 } );
-jest.mock( '../preview', () => ( {
-	...jest.requireActual( '../preview' ),
-	ensurePreviewStyles: jest.fn(),
-	scrollToBlockBottom: jest.fn(),
+vi.mock( '../preview', async () => ( {
+	...( await vi.importActual< typeof import( '../preview' ) >( '../preview' ) ),
+	ensurePreviewStyles: vi.fn(),
+	scrollToBlockBottom: vi.fn(),
 } ) );
 
 import { act, renderHook } from '@testing-library/react';
+import { type Mocked, vi } from 'vitest';
 import { ensurePreviewStyles, PREVIEW_CLASS_NAME, scrollToBlockBottom } from '../preview';
 import { usePageDesignRenderer, type EditorHost } from '../renderer';
 import {
@@ -62,28 +63,28 @@ const streamed = ( markup: string, toolCallId = 'call-1', sessionId?: string ) =
 		},
 	} as unknown as TaskUpdate );
 
-const flush = () => act( () => jest.advanceTimersByTime( 150 ) );
+const flush = () => act( () => vi.advanceTimersByTime( 150 ) );
 
-let host: jest.Mocked< EditorHost >;
+let host: Mocked< EditorHost >;
 
 const lastStaged = () => host.stageBlocks.mock.calls[ host.stageBlocks.mock.calls.length - 1 ];
 
 beforeEach( () => {
-	jest.useFakeTimers();
-	jest.clearAllMocks();
+	vi.useFakeTimers();
+	vi.clearAllMocks();
 	host = {
-		resolveRoot: jest.fn( () => 'root' ),
-		stageBlocks: jest.fn(),
-		captureCheckpoint: jest.fn(),
-		commitFinalDesign: jest.fn(),
-		forgetToolCall: jest.fn(),
+		resolveRoot: vi.fn( () => 'root' ),
+		stageBlocks: vi.fn(),
+		captureCheckpoint: vi.fn(),
+		commitFinalDesign: vi.fn(),
+		forgetToolCall: vi.fn(),
 	};
 } );
 
 afterEach( () => {
 	setStreamHandler( undefined );
-	jest.useRealTimers();
-	jest.restoreAllMocks();
+	vi.useRealTimers();
+	vi.restoreAllMocks();
 } );
 
 it( 'paints a complete block after the throttle, snapshotting the page first', async () => {
@@ -193,7 +194,7 @@ it( 'closes a block left open by the final flush instead of committing its previ
 } );
 
 it( 'logs a frame that cannot be painted and goes on', async () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	host.stageBlocks.mockImplementationOnce( () => {
 		throw new Error( 'canvas gone' );
 	} );
@@ -218,12 +219,12 @@ it( 'keeps the preview styles injected while a design streams', async () => {
 	renderHook( () => usePageDesignRenderer( host ) );
 
 	await streamed( `${ PAGE }<!-- wp:group -->` );
-	act( () => jest.advanceTimersByTime( 2000 ) );
+	act( () => vi.advanceTimersByTime( 2000 ) );
 
 	expect( ensurePreviewStyles ).toHaveBeenCalledTimes( 3 );
 
 	await act( () => finalizePendingStreams() );
-	act( () => jest.advanceTimersByTime( 2000 ) );
+	act( () => vi.advanceTimersByTime( 2000 ) );
 
 	expect( ensurePreviewStyles ).toHaveBeenCalledTimes( 3 );
 } );
@@ -249,20 +250,20 @@ describe( 'without a root', () => {
 		renderHook( () => usePageDesignRenderer( host ) );
 
 		await streamed( `${ PAGE }${ PARAGRAPH }` );
-		act( () => jest.advanceTimersByTime( 150 * 30 ) );
+		act( () => vi.advanceTimersByTime( 150 * 30 ) );
 
 		expect( host.resolveRoot ).toHaveBeenCalledTimes( 21 );
 	} );
 
 	// The callback must not tell the agent the design was staged when it was not.
 	it( 'reports a final flush the canvas never took, and forgets the stream', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		host.resolveRoot.mockReturnValue( null );
 		renderHook( () => usePageDesignRenderer( host ) );
 
 		await streamed( `${ PAGE }${ PARAGRAPH }` );
 		const finalized = finalizePendingStreams();
-		await act( () => jest.advanceTimersByTimeAsync( 150 * 21 ) );
+		await act( () => vi.advanceTimersByTimeAsync( 150 * 21 ) );
 
 		expect( await finalized ).toBe( false );
 		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
@@ -282,7 +283,7 @@ describe( 'without a root', () => {
 		await finalizePendingStreams();
 
 		expect( host.commitFinalDesign ).toHaveBeenCalledTimes( 1 );
-		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 
 	it( 'finalizes each waiting tool call in turn, only once the canvas has a root', async () => {
@@ -292,12 +293,12 @@ describe( 'without a root', () => {
 		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-1' );
 		await streamed( `${ PAGE }${ PARAGRAPH }`, 'call-2' );
 		const finalized = finalizePendingStreams();
-		await act( () => jest.advanceTimersByTimeAsync( 0 ) );
+		await act( () => vi.advanceTimersByTimeAsync( 0 ) );
 
 		expect( host.commitFinalDesign ).not.toHaveBeenCalled();
 
 		host.resolveRoot.mockReturnValue( 'root' );
-		await act( () => jest.advanceTimersByTimeAsync( 150 ) );
+		await act( () => vi.advanceTimersByTimeAsync( 150 ) );
 
 		expect( await finalized ).toBe( true );
 		expect( host.commitFinalDesign.mock.calls.map( ( [ id ] ) => id ) ).toEqual( [
@@ -324,7 +325,7 @@ it( 'paints nothing for a stream the transport forgot before the flush', async (
 
 // Without the checkpoint the design would have no way back.
 it( 'stages nothing until the checkpoint is captured, retrying a failed capture', async () => {
-	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	host.captureCheckpoint.mockImplementationOnce( () => {
 		throw new Error( 'no root blocks' );
 	} );
@@ -347,7 +348,7 @@ it( 'stops listening and clears its timers when unmounted', async () => {
 	await streamed( `${ PAGE }<!-- wp:group -->` );
 	unmount();
 
-	expect( jest.getTimerCount() ).toBe( 0 );
+	expect( vi.getTimerCount() ).toBe( 0 );
 
 	await streamed( `${ PAGE }${ PARAGRAPH }` );
 	flush();

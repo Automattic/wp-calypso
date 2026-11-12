@@ -1,13 +1,14 @@
-jest.mock( '../../block-ids', () => ( {
+import { type Mock, vi } from 'vitest';
+vi.mock( '../../block-ids', () => ( {
 	// A block the agent was never shown has no short id; these tests name such blocks `long-…`.
 	createShortIdLookup: () => ( {
 		findShortId: ( clientId: string ) => ( clientId.startsWith( 'long-' ) ? undefined : clientId ),
 	} ),
 } ) );
-jest.mock( '../../editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlocks: jest.fn(),
-	getPaletteColors: jest.fn(),
+vi.mock( '../../editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlocks: vi.fn(),
+	getPaletteColors: vi.fn(),
 } ) );
 
 import { getBlock, getBlocks, getPaletteColors } from '../../editor-blocks';
@@ -109,7 +110,7 @@ function mountCanvas( roots: CanvasBlock[] ) {
 	const view = canvasDocument.defaultView as Window;
 	const getComputedStyle = view.getComputedStyle.bind( view );
 
-	jest.spyOn( view, 'getComputedStyle' ).mockImplementation( ( element, pseudo ) => {
+	vi.spyOn( view, 'getComputedStyle' ).mockImplementation( ( element, pseudo ) => {
 		// jsdom computes no pseudo-elements: none is generated unless a test says so.
 		const style = getComputedStyle( pseudo ? canvasDocument.createElement( 'span' ) : element );
 		const overrides = {
@@ -131,12 +132,10 @@ function mountCanvas( roots: CanvasBlock[] ) {
 		innerBlocks: ( block.children ?? [] ).map( toEditorBlock ),
 	} );
 
-	jest
-		.mocked( getBlock )
-		.mockImplementation( ( id ) => store[ id ] && toEditorBlock( store[ id ] ) );
-	jest
-		.mocked( getBlocks )
-		.mockImplementation( ( id ) => ( id && store[ id ]?.children?.map( toEditorBlock ) ) || [] );
+	vi.mocked( getBlock ).mockImplementation( ( id ) => store[ id ] && toEditorBlock( store[ id ] ) );
+	vi.mocked( getBlocks ).mockImplementation(
+		( id ) => ( id && store[ id ]?.children?.map( toEditorBlock ) ) || []
+	);
 }
 
 const PALE = 'rgb(243, 240, 234)';
@@ -173,12 +172,12 @@ const text = ( clientId: string, textStyle: Styles = NAVY_TEXT ): CanvasBlock =>
 const notesOf = ( clientIds: string[] ) => describeTextContrast( clientIds )?.notes ?? [];
 
 beforeEach( () => {
-	jest.mocked( getPaletteColors ).mockReturnValue( [] );
+	vi.mocked( getPaletteColors ).mockReturnValue( [] );
 } );
 
 afterEach( () => {
 	document.body.innerHTML = '';
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 } );
 
 describe( 'failures', () => {
@@ -1233,7 +1232,7 @@ describe( 'text over a cover image', () => {
 
 	/** Computed styles jsdom does not compute, such as a gradient, on one element. */
 	const withComputedStyle = < T extends Element >( element: T, styles: Styles ): T => {
-		const getComputedStyle = element.ownerDocument.defaultView?.getComputedStyle as jest.Mock;
+		const getComputedStyle = element.ownerDocument.defaultView?.getComputedStyle as Mock;
 		const computed = getComputedStyle.getMockImplementation();
 
 		getComputedStyle.mockImplementation( ( target: Element, pseudo?: string ) => {
@@ -1402,7 +1401,7 @@ describe( 'text over a cover image', () => {
 	} );
 
 	it( 'offers a palette colour when neither black nor white reads on both parts of the photo', () => {
-		jest.mocked( getPaletteColors ).mockReturnValue( [ 'var(--x)', '#707070' ] );
+		vi.mocked( getPaletteColors ).mockReturnValue( [ 'var(--x)', '#707070' ] );
 		mountCanvas( [
 			cover( {
 				overlay: { backgroundColor: 'rgb(0, 0, 0)', opacity: '0' },
@@ -1712,8 +1711,8 @@ describe( 'text over a cover image, read more than once or more than one way', (
 
 		const frameWindow = ( document.querySelector( 'iframe' ) as HTMLIFrameElement )
 			.contentWindow as Window & typeof globalThis;
-		const drawImage = jest.fn();
-		const getContext = jest
+		const drawImage = vi.fn();
+		const getContext = vi
 			.spyOn( frameWindow.HTMLCanvasElement.prototype, 'getContext' )
 			.mockReturnValue( {
 				drawImage,

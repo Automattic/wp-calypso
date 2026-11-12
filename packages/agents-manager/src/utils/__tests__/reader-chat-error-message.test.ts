@@ -1,6 +1,7 @@
+import { vi } from 'vitest';
 import { getReaderChatErrorMessage } from '../reader-chat-error-message';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 

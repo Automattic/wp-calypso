@@ -1,9 +1,10 @@
+import { vi } from 'vitest';
 import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
 } from '../orchestrator-error-message';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
