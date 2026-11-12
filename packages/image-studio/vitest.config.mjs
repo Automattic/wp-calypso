@@ -16,6 +16,12 @@ export default mergeConfig( base, {
 			{ find: /^@wordpress\/block-editor$/, replacement: mock( '@wordpress/block-editor.ts' ) },
 			{ find: /^@wordpress\/media-utils$/, replacement: mock( '@wordpress/media-utils.ts' ) },
 			{ find: /^.*\.(webp|png|jpe?g|gif|svg)$/, replacement: mock( 'fileMock.ts' ) },
+			// agenttic-client has no `calypso:src` export, and CI doesn't build it before the tests.
+			// Vitest resolves a mocked module too, so point it at the source.
+			{
+				find: /^@automattic\/agenttic-client$/,
+				replacement: `${ import.meta.dirname }/../agenttic-client/src/index.ts`,
+			},
 		],
 	},
 	test: {
