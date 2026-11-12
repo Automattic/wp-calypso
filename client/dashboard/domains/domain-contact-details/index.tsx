@@ -120,12 +120,14 @@ export default function DomainContactInfo() {
 		} )
 	);
 
-	const isSubmitting =
-		validateMutation.isPending ||
+	// The contact form validates in the background as soon as it loads, so the privacy
+	// toggles ignore validation and only wait for saves.
+	const isSaving =
 		updateMutation.isPending ||
 		savePrivacyMutation.isPending ||
 		disclosePrivacyMutation.isPending ||
 		redactPrivacyMutation.isPending;
+	const isSubmitting = validateMutation.isPending || isSaving;
 
 	const handleSubmit = ( normalizedFormData: DomainContactDetails ) => {
 		validateMutation.mutate( normalizedFormData, {
@@ -171,7 +173,7 @@ export default function DomainContactInfo() {
 								<CardBody>
 									<ContactFormPrivacy
 										domainName={ domainName }
-										isSubmitting={ isSubmitting }
+										isSubmitting={ isSaving }
 										onTogglePrivacyProtection={ handleTogglePrivacyProtection }
 										onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
 									/>
