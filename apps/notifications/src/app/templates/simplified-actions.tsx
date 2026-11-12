@@ -6,11 +6,12 @@ import getIsNoteLiked from '../../panel/state/selectors/get-is-note-liked';
 import { getInitialReplyValue } from './actions';
 import ActionsMenu from './actions-menu';
 import AnswerPromptButton from './button-answer-prompt';
+import ApproveButton from './button-approve';
 import LikeButton from './button-like';
 import ReplyInput from './comment-reply-input';
 import type { Note } from '../types';
 
-const MENU_ACTIONS = [ 'approve-comment', 'edit-comment', 'spam-comment', 'trash-comment' ];
+const MENU_ACTIONS = [ 'edit-comment', 'spam-comment', 'trash-comment' ];
 
 export const canReply = ( note: Note ): boolean => 'replyto-comment' in getActions( note );
 
@@ -26,9 +27,11 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 
 	const hasLike = hasAction( 'like-post', 'like-comment' );
 	const hasAnswerPrompt = hasAction( 'answer-prompt' );
-	const hasMenu = hasAction( ...MENU_ACTIONS );
+	// Approve sits beside Like while the comment is pending; Unapprove is in the menu.
+	const canApprove = hasAction( 'approve-comment' ) && ! isApproved;
+	const hasMenu = hasAction( ...MENU_ACTIONS ) || ( hasAction( 'approve-comment' ) && isApproved );
 
-	if ( ! hasLike && ! hasAnswerPrompt && ! hasMenu ) {
+	if ( ! hasLike && ! canApprove && ! hasAnswerPrompt && ! hasMenu ) {
 		return null;
 	}
 
@@ -37,12 +40,20 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 	return (
 		<CardFooter size="small" style={ { paddingBlock: '12px' } }>
 			<HStack spacing={ 2 }>
-				<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+				<HStack spacing={ 0.5 } justify="flex-start" expanded={ false }>
 					{ hasLike && (
 						<LikeButton
 							note={ note }
 							commentId={ getReferenceId( note, 'comment' ) }
 							isLiked={ isLiked }
+							isMinimal
+						/>
+					) }
+					{ canApprove && (
+						<ApproveButton
+							className="wpnc__approve-action"
+							note={ note }
+							isApproved={ false }
 							isMinimal
 						/>
 					) }

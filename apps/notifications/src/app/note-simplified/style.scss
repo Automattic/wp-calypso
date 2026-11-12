@@ -74,29 +74,21 @@
 	flex-shrink: 0;
 }
 
-.wpnc-simplified__pending-approval {
+// The note list's Pending badge, at the same size and in the same amber.
+.wpnc-simplified .wpnc__pending-badge {
 	flex-shrink: 0;
-	font-size: $font-size-medium;
-	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
-	color: var(--wpds-color-foreground-content-warning-weak, #926300);
+	padding-block: 2px;
+	padding-inline: 6px;
+	border-radius: var(--wpds-border-radius-md, 4px);
+	background-color: oklch(from var(--wpnc-pending) 0.94 calc(c * 0.55) h);
+	color: oklch(from var(--wpnc-pending) 0.44 c h);
+	font-size: var(--wpds-typography-font-size-xs, 11px);
+	font-weight: 500;
+	line-height: var(--wpds-typography-line-height-xs, 16px);
 
 	@include ui-mixins.when-dark-theme {
-		color: var(--dashboard__foreground-color-warning, #f5c15c);
-	}
-
-	svg {
-		align-self: center;
-		fill: currentColor;
-	}
-
-	a,
-	a:visited {
-		color: inherit;
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
+		background-color: oklch(from var(--wpnc-pending) 0.34 calc(c * 0.6) h);
+		color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
 	}
 }
 
@@ -152,6 +144,12 @@
 	flex-shrink: 0;
 	fill: var(--wp-components-color-gray-400, #{$gray-400});
 	transition: fill var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+}
+
+// The note list's hairline edge on every avatar, drawn inside so they keep their size.
+.wpnc-simplified .wpnc__note-icon > :first-child {
+	outline: 1px solid color-mix(in srgb, #000 10%, transparent);
+	outline-offset: -1px;
 }
 
 .wpnc-simplified__site-icon {

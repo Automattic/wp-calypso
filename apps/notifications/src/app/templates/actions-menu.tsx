@@ -52,6 +52,7 @@ export default function ActionsMenu( {
 		goBack();
 	};
 
+	const canUnapprove = isApproved && hasAction( 'approve-comment' );
 	const safeActions: ( MenuAction | false )[] = [
 		hasAction( 'edit-comment' ) && {
 			hotkey: 'e',
@@ -59,9 +60,9 @@ export default function ActionsMenu( {
 			action: () =>
 				dispatch( editComment( siteId, postId, commentId, getEditCommentLink( note ) ) ),
 		},
-		hasAction( 'approve-comment' ) && {
+		canUnapprove && {
 			hotkey: 'a',
-			label: isApproved ? __( 'Unapprove' ) : __( 'Approve' ),
+			label: __( 'Unapprove' ),
 			action: () =>
 				dispatch(
 					setApproveStatus(
