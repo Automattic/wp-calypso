@@ -16,7 +16,8 @@
 			padding: $grid-unit-30;
 
 			> .components-panel__body-title {
-				margin: ( -$grid-unit-30 ) ( -$grid-unit-30 ) $grid-unit-05;
+				margin-block: ( -$grid-unit-30 ) $grid-unit-05;
+				margin-inline: -$grid-unit-30;
 			}
 		}
 
