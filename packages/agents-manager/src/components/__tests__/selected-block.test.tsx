@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import SelectedBlock from '../selected-block';
 
 type MockBlock = {
 	clientId: string;
@@ -49,8 +49,6 @@ vi.mock( '@wordpress/data', () => ( {
 vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 vi.mock( '@wordpress/icons', () => ( { close: 'close' } ) );
 vi.mock( '../selected-block/style.scss', () => ( {} ) );
-
-import SelectedBlock from '../selected-block';
 
 function selectParagraph( clientId: string, text: string ): void {
 	mockSelectedBlock = {

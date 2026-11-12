@@ -1,4 +1,9 @@
 import { type Mock, vi } from 'vitest';
+import { getBlock, getBlocks, getPaletteColors } from '../../editor-blocks';
+import { describeTextContrast } from '../contrast';
+import { rememberImagePixels } from '../image-pixels';
+import type { BlockAttributes, EditorBlock } from '../../editor-blocks';
+
 vi.mock( '../../block-ids', () => ( {
 	// A block the agent was never shown has no short id; these tests name such blocks `long-…`.
 	createShortIdLookup: () => ( {
@@ -10,11 +15,6 @@ vi.mock( '../../editor-blocks', () => ( {
 	getBlocks: vi.fn(),
 	getPaletteColors: vi.fn(),
 } ) );
-
-import { getBlock, getBlocks, getPaletteColors } from '../../editor-blocks';
-import { describeTextContrast } from '../contrast';
-import { rememberImagePixels } from '../image-pixels';
-import type { BlockAttributes, EditorBlock } from '../../editor-blocks';
 
 type Styles = Partial< Record< keyof CSSStyleDeclaration, string > >;
 

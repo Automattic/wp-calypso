@@ -1,9 +1,9 @@
-vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-vi.mock( '@wordpress/data', () => ( { resolveSelect: vi.fn() } ) );
-
 import { resolveSelect } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import { readRecord } from '../read-record';
+
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( { resolveSelect: vi.fn() } ) );
 
 const getEditedEntityRecord = vi.fn();
 

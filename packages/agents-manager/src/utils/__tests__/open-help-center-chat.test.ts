@@ -1,14 +1,14 @@
 import { vi } from 'vitest';
+import { getActiveSessionId } from '../agent-session';
+import { getAgentsManagerInlineData } from '../get-agents-manager-inline-data';
+import { openHelpCenterChat } from '../open-help-center-chat';
+
 const mockDispatch = vi.fn();
 vi.mock( '@wordpress/data', () => ( { dispatch: ( store: string ) => mockDispatch( store ) } ) );
 vi.mock( '../agent-session', () => ( { getActiveSessionId: vi.fn( () => 'session-1' ) } ) );
 vi.mock( '../get-agents-manager-inline-data', () => ( {
 	getAgentsManagerInlineData: vi.fn( () => ( { site: { ID: 42, domain: 'example.com' } } ) ),
 } ) );
-
-import { getActiveSessionId } from '../agent-session';
-import { getAgentsManagerInlineData } from '../get-agents-manager-inline-data';
-import { openHelpCenterChat } from '../open-help-center-chat';
 
 const helpCenter = { setShowHelpCenter: vi.fn(), setNewMessagingChat: vi.fn() };
 

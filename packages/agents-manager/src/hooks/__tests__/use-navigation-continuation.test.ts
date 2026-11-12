@@ -1,15 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-let mockSessionId: string;
-vi.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: () => ( { getTabSessionId: () => mockSessionId } ),
-} ) );
-vi.mock( '../../utils/tracks', async () => ( {
-	...( await vi.importActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' ) ),
-	recordAgentsManagerTracksEvent: vi.fn(),
-} ) );
-
 import { renderHook } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
@@ -19,6 +10,15 @@ import {
 	savePendingNavigation,
 } from '../../utils/wp-admin-navigation-state';
 import { useNavigationContinuation } from '../use-navigation-continuation';
+
+let mockSessionId: string;
+vi.mock( '../../contexts', () => ( {
+	useAgentsManagerContext: () => ( { getTabSessionId: () => mockSessionId } ),
+} ) );
+vi.mock( '../../utils/tracks', async () => ( {
+	...( await vi.importActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' ) ),
+	recordAgentsManagerTracksEvent: vi.fn(),
+} ) );
 
 const STORAGE_KEY = 'agents-manager-pending-navigation';
 const SENT_KEY = 'agents-manager-navigation-continuation-sent';

@@ -2,6 +2,10 @@
  * @jest-environment jsdom
  */
 import { type Mock, vi } from 'vitest';
+import { withCheckpoint } from '../../../utils/checkpoints';
+import { hasSiteLogoBlock, setSiteLogo } from '../../../utils/site-logo';
+import { setSiteLogoCallback } from '../callback';
+
 vi.mock( '../../../utils/site-logo', () => ( {
 	hasSiteLogoBlock: vi.fn( () => true ),
 	setSiteLogo: vi.fn(),
@@ -10,10 +14,6 @@ vi.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { LOGO: 'logo' },
 	withCheckpoint: vi.fn( ( _checkpoint, write ) => write() ),
 } ) );
-
-import { withCheckpoint } from '../../../utils/checkpoints';
-import { hasSiteLogoBlock, setSiteLogo } from '../../../utils/site-logo';
-import { setSiteLogoCallback } from '../callback';
 
 const FILE_OBJ = { attachment_id: '99', url: 'https://example.com/logo.png' };
 

@@ -13,7 +13,10 @@ vi.mock(
 	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
 );
 vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-vi.mock( '../../components/credits-answer', () => ( { CreditsAnswer: () => null } ) );
+vi.mock( '../../components/credits-answer', () => ( {
+	CreditsAnswer: () => null,
+	CreditsMessage: () => null,
+} ) );
 vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string ) => plural || single,

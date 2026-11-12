@@ -1,11 +1,11 @@
 import { vi } from 'vitest';
+import { hasRequestedBlockEdits, normalizeEdits } from '../normalize-edits';
+
 vi.mock( '@wordpress/blocks', () => ( {
 	getBlockTypes: vi.fn( () =>
 		[ 'core/paragraph', 'core/group', 'core/button' ].map( ( name ) => ( { name } ) )
 	),
 } ) );
-
-import { hasRequestedBlockEdits, normalizeEdits } from '../normalize-edits';
 
 const paragraph = { clientId: 'para', name: 'core/paragraph', attributes: { content: 'Hi' } };
 

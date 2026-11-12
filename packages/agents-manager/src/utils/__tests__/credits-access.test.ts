@@ -48,7 +48,7 @@ describe( 'parseCreditsAccess', () => {
 		} );
 	} );
 
-	it.each( [ undefined, null, 'nope', [ true ] ] )( 'knows nothing from %p', ( data ) => {
+	it.each( [ undefined, null, 'nope', [ true ] ] )( 'knows nothing from %o', ( data ) => {
 		expect( parseCreditsAccess( data ) ).toEqual( {
 			canBuyCredits: undefined,
 			canUpgrade: undefined,

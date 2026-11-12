@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import useConversation from '../use-conversation';
+import type { ReactNode } from 'react';
+
 const mockIsTurnInFlight = vi.fn( () => false );
 const mockLoadAllMessagesFromServer = vi.fn();
 
@@ -21,12 +26,6 @@ vi.mock( '../../contexts', () => ( {
 		},
 	} ),
 } ) );
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
-import useConversation from '../use-conversation';
-import type { ReactNode } from 'react';
 
 const reply = ( text: string ) => ( {
 	role: 'agent',

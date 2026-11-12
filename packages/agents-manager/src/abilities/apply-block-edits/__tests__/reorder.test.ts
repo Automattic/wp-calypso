@@ -1,14 +1,14 @@
 import { vi } from 'vitest';
+import { getBlock, getBlockRootClientId, getBlocks } from '../../../utils/editor-blocks';
+import { getReorderOperations, getUnmappedParentReorder } from '../reorder';
+import type { EditorBlock } from '../../../utils/editor-blocks';
+import type { BlockData } from '../types';
+
 vi.mock( '../../../utils/editor-blocks', () => ( {
 	getBlock: vi.fn(),
 	getBlockRootClientId: vi.fn(),
 	getBlocks: vi.fn(),
 } ) );
-
-import { getBlock, getBlockRootClientId, getBlocks } from '../../../utils/editor-blocks';
-import { getReorderOperations, getUnmappedParentReorder } from '../reorder';
-import type { EditorBlock } from '../../../utils/editor-blocks';
-import type { BlockData } from '../types';
 
 // The agent refers to blocks by `ref-<clientId>`.
 const resolve = ( id: string ) => id.replace( /^ref-/, '' );

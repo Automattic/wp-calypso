@@ -1,7 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
+import { renderHook } from '@testing-library/react';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
+import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { useOpenChatUrlParam } from '../use-open-chat-url-param';
+
 vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
 vi.mock( '../../utils/is-reader-chat-agent', () => ( { isReaderChatHost: vi.fn() } ) );
 vi.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
@@ -9,13 +15,6 @@ vi.mock( '@wordpress/data', () => ( {
 	useDispatch: vi.fn(),
 	useSelect: vi.fn(),
 } ) );
-
-import { renderHook } from '@testing-library/react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
-import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import { useOpenChatUrlParam } from '../use-open-chat-url-param';
 
 const mockUseDispatch = useDispatch as Mock;
 const mockUseSelect = useSelect as Mock;

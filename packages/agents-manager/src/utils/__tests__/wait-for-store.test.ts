@@ -1,6 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import { subscribe } from '@wordpress/data';
+import { vi } from 'vitest';
+import { waitForStore } from '../wait-for-store';
+
 let notify: () => void = () => {};
 vi.mock( '@wordpress/data', () => ( {
 	subscribe: vi.fn( ( listener: () => void ) => {
@@ -10,10 +14,6 @@ vi.mock( '@wordpress/data', () => ( {
 		};
 	} ),
 } ) );
-
-import { subscribe } from '@wordpress/data';
-import { vi } from 'vitest';
-import { waitForStore } from '../wait-for-store';
 
 beforeEach( () => {
 	vi.clearAllMocks();

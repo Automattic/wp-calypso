@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { renderHook, act } from '@testing-library/react';
 import { vi } from 'vitest';
+import useHasAiChatEntryButton, { hasAiChatEntryButton } from '../use-has-ai-chat-entry-button';
 
 const mockIsEditorAiEntryEnabled = vi.fn( () => false );
 const mockIsAdminBarInEditor = vi.fn( () => false );
@@ -20,8 +20,6 @@ let mockHasMasterbarAiChatButton = false;
 vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { hasMasterbarAiChatButton: mockHasMasterbarAiChatButton } ),
 } ) );
-
-import useHasAiChatEntryButton, { hasAiChatEntryButton } from '../use-has-ai-chat-entry-button';
 
 const AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
 

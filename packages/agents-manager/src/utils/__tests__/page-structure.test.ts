@@ -1,4 +1,10 @@
 import { vi } from 'vitest';
+import { createShortIdLookup, setMenuItemAttributes } from '../block-ids';
+import * as editorBlocks from '../editor-blocks';
+import { getLoadedMenuItems } from '../navigation-menu';
+import { getPageStructure, type PageStructure } from '../page-structure';
+import type { EditorBlock } from '../editor-blocks';
+
 vi.mock( '../block-ids', () => ( {
 	createShortIdLookup: vi.fn(),
 	setMenuItemAttributes: vi.fn(),
@@ -20,12 +26,6 @@ vi.mock( '../navigation-menu', () => ( {
 	isMenuItem: ( block: { name?: string } ) =>
 		block.name === 'core/navigation-link' || block.name === 'core/navigation-submenu',
 } ) );
-
-import { createShortIdLookup, setMenuItemAttributes } from '../block-ids';
-import * as editorBlocks from '../editor-blocks';
-import { getLoadedMenuItems } from '../navigation-menu';
-import { getPageStructure, type PageStructure } from '../page-structure';
-import type { EditorBlock } from '../editor-blocks';
 
 const editor = vi.mocked( editorBlocks );
 

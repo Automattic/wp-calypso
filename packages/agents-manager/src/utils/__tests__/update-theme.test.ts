@@ -1,8 +1,8 @@
 import { type Mock, vi } from 'vitest';
-vi.mock( '../global-styles', () => ( { editGlobalStyles: vi.fn() } ) );
-
 import { editGlobalStyles } from '../global-styles';
 import { applyThemeUpdate, normalizeThemeUpdate } from '../update-theme';
+
+vi.mock( '../global-styles', () => ( { editGlobalStyles: vi.fn() } ) );
 
 const ACCENT = { slug: 'accent', name: 'Accent', color: '#ff0000' };
 const SERIF = { slug: 'serif', name: 'Serif', fontFamily: 'Georgia, serif' };

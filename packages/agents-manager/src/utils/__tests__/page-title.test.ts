@@ -1,9 +1,9 @@
-vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-vi.mock( '@wordpress/data', () => ( { dispatch: vi.fn(), resolveSelect: vi.fn() } ) );
-
 import { dispatch, resolveSelect } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import { getPageTitle, setPageTitle } from '../page-title';
+
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( { dispatch: vi.fn(), resolveSelect: vi.fn() } ) );
 
 const editEntityRecord = vi.fn();
 

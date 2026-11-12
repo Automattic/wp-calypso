@@ -1,11 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
-
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import AgentChat from '../agent-chat';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps, ReactNode, Ref } from 'react';
 
@@ -241,8 +240,6 @@ vi.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
 	default: () => mockHasAiChatEntry(),
 } ) );
-
-import AgentChat from '../agent-chat';
 
 function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > = {} ) {
 	return render(

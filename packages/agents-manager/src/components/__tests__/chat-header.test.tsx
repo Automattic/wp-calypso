@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
+import ChatHeader from '../chat-header';
 
 const mockSetIsMinimized = vi.fn();
 let mockIsInternalOnly = false;
@@ -52,8 +52,6 @@ vi.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	default: () => !! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ),
 } ) );
 vi.mock( '../chat-header/style.scss', () => ( {} ) );
-
-import ChatHeader from '../chat-header';
 
 function installAdminBarTrigger() {
 	const el = document.createElement( 'div' );

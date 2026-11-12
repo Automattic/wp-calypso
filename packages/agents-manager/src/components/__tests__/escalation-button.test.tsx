@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import type { MouseEventHandler, ReactNode } from 'react';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
+import { EscalationButton, findConversationByChatSessionId } from '../escalation-button';
 import type { ZendeskConversation } from '../../types';
+import type { MouseEventHandler, ReactNode } from 'react';
 
 const mockGetTabSessionId = vi.fn();
 const mockLoadAllMessagesFromServer = vi.fn();
@@ -60,9 +61,6 @@ vi.mock( '../../contexts', () => ( {
 		zendeskSmoochIntegrationKey: mockZendeskSmoochIntegrationKey,
 	} ),
 } ) );
-
-import { EscalationButton, findConversationByChatSessionId } from '../escalation-button';
-import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
 
 function createConversation(
 	id: string,

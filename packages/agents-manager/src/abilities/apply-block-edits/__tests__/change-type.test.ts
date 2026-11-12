@@ -1,4 +1,9 @@
 import { vi } from 'vitest';
+import { getBlock, getBlockParents } from '../../../utils/editor-blocks';
+import { getChangeType, getEditedMenuIds } from '../change-type';
+import type { EditorBlock } from '../../../utils/editor-blocks';
+import type { BlockEdits, BlockUpdate } from '../types';
+
 vi.mock( '../../../utils/editor-blocks', () => ( {
 	getBlock: vi.fn(),
 	getBlockParents: vi.fn(),
@@ -16,11 +21,6 @@ vi.mock( '@wordpress/blocks', () => ( {
 	serialize: vi.fn(),
 } ) );
 vi.mock( '../../../utils/site-metadata', () => ( { getSiteMetadata: vi.fn( () => ( {} ) ) } ) );
-
-import { getBlock, getBlockParents } from '../../../utils/editor-blocks';
-import { getChangeType, getEditedMenuIds } from '../change-type';
-import type { EditorBlock } from '../../../utils/editor-blocks';
-import type { BlockEdits, BlockUpdate } from '../types';
 
 const edits = ( partial: Partial< BlockEdits > ): BlockEdits => ( {
 	updates: [],

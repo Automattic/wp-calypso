@@ -1,11 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
 import { type MockInstance, vi } from 'vitest';
+import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
+import { localNumber } from '../../utils/__tests__/fixtures/local-number';
+import { buildMockCreditsStatus } from '../../utils/credits';
+import { buildLiveCreditsStatus, parseCreditSnapshot } from '../../utils/live-credits';
+import CreditsMeter from '../credits-meter';
+import type { CreditsStatus } from '../../utils/credits';
+import type { CreditSnapshot } from '../../utils/live-credits';
 
 // agenttic-ui ships ESM only, which jest can't load here; its own tests cover the ring.
 vi.mock( '@automattic/agenttic-ui', () => ( {
@@ -30,14 +36,6 @@ vi.mock( '@automattic/agenttic-ui', () => ( {
 	),
 } ) );
 vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-
-import CreditsMeter from '../credits-meter';
-import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
-import { localNumber } from '../../utils/__tests__/fixtures/local-number';
-import { buildMockCreditsStatus } from '../../utils/credits';
-import { buildLiveCreditsStatus, parseCreditSnapshot } from '../../utils/live-credits';
-import type { CreditsStatus } from '../../utils/credits';
-import type { CreditSnapshot } from '../../utils/live-credits';
 
 const freeFine: CreditsStatus = {
 	plan: 'free',

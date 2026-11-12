@@ -1,4 +1,6 @@
 import { vi } from 'vitest';
+import { commitStreamedPageDesign } from '../commit';
+
 type TestBlock = {
 	clientId: string;
 	name: string;
@@ -28,8 +30,6 @@ vi.mock( '@wordpress/blocks', () => {
 		),
 	};
 } );
-
-import { commitStreamedPageDesign } from '../commit';
 
 const block = (
 	clientId: string,

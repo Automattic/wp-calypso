@@ -1,13 +1,13 @@
 import { vi } from 'vitest';
-vi.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: vi.fn(),
-	getBlocks: vi.fn(),
-} ) );
-
 import { getBlock, getBlocks } from '../../../utils/editor-blocks';
 import { areUpdateEditsAlreadySatisfied } from '../already-applied';
 import type { EditorBlock } from '../../../utils/editor-blocks';
 import type { BlockEdits, BlockUpdate } from '../types';
+
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlocks: vi.fn(),
+} ) );
 
 const block = (
 	clientId: string,

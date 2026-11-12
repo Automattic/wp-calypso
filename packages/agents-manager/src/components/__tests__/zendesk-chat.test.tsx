@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- mocks must be registered before importing ZendeskChat */
 import { act, render } from '@testing-library/react';
 import { vi } from 'vitest';
+import ZendeskChat from '../zendesk-chat';
 
 const mockUseManagedZendeskChat = vi.fn();
 const mockAgentChatProps = vi.fn();
@@ -42,8 +42,6 @@ vi.mock( '../concluded-conversation-footer', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
-
-import ZendeskChat from '../zendesk-chat';
 
 describe( 'ZendeskChat', () => {
 	beforeEach( () => {

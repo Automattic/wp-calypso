@@ -1,20 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-
-vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
-vi.mock( '@wordpress/data', () => ( { select: vi.fn( () => ( {} ) ) } ) );
-vi.mock( '../agent-session', () => ( { getActiveSessionId: vi.fn( () => 'session-xyz' ) } ) );
-vi.mock( '../is-reader-chat-agent', async () => {
-	const actual =
-		await vi.importActual< typeof import( '../is-reader-chat-agent' ) >(
-			'../is-reader-chat-agent'
-		);
-	return { ...actual, isReaderChatHost: vi.fn( () => false ) };
-} );
-
 import { select } from '@wordpress/data';
 import { type MockedFunction, vi } from 'vitest';
 import { getActiveSessionId } from '../agent-session';
@@ -27,6 +14,17 @@ import {
 	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
 } from '../tracks';
+
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn( () => ( {} ) ) } ) );
+vi.mock( '../agent-session', () => ( { getActiveSessionId: vi.fn( () => 'session-xyz' ) } ) );
+vi.mock( '../is-reader-chat-agent', async () => {
+	const actual =
+		await vi.importActual< typeof import( '../is-reader-chat-agent' ) >(
+			'../is-reader-chat-agent'
+		);
+	return { ...actual, isReaderChatHost: vi.fn( () => false ) };
+} );
 
 const mockRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
 const mockIsReaderChatHost = isReaderChatHost as MockedFunction< typeof isReaderChatHost >;

@@ -1,3 +1,8 @@
+import { createBlock } from '@wordpress/blocks';
+import { vi } from 'vitest';
+import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from '../merge-blocks';
+import type { BlockAttributes, EditorBlock } from '../../../utils/editor-blocks';
+
 vi.mock( '@wordpress/blocks', () => ( {
 	createBlock: vi.fn( ( name: string, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: `new-${ name }`,
@@ -6,11 +11,6 @@ vi.mock( '@wordpress/blocks', () => ( {
 		innerBlocks,
 	} ) ),
 } ) );
-
-import { createBlock } from '@wordpress/blocks';
-import { vi } from 'vitest';
-import { createBlockRecursively, mergeAttributes, mergeBlocksRecursively } from '../merge-blocks';
-import type { BlockAttributes, EditorBlock } from '../../../utils/editor-blocks';
 
 const block = (
 	clientId: string,

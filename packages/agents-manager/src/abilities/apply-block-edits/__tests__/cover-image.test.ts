@@ -1,4 +1,8 @@
 import { vi } from 'vitest';
+import { getBlock } from '../../../utils/editor-blocks';
+import { syncCoverWithImage } from '../cover-image';
+import type { BlockAttributes, EditorBlock } from '../../../utils/editor-blocks';
+
 const mockGetColorAsync = vi.fn();
 
 vi.mock( 'fast-average-color', () => ( {
@@ -10,10 +14,6 @@ vi.mock( '../../../utils/editor-blocks', () => ( {
 	getBlock: vi.fn(),
 	getPaletteColor: ( slug: string ) => ( slug === 'vivid-red' ? '#cf2e2e' : undefined ),
 } ) );
-
-import { getBlock } from '../../../utils/editor-blocks';
-import { syncCoverWithImage } from '../cover-image';
-import type { BlockAttributes, EditorBlock } from '../../../utils/editor-blocks';
 
 const DARK = '#112233';
 const LIGHT = '#eeeeee';

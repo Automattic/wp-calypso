@@ -1,12 +1,4 @@
 import { vi } from 'vitest';
-vi.mock( '@wordpress/blocks', () => ( {
-	getBlockTypes: vi.fn( () => [
-		{ name: 'core/paragraph', attributes: { content: {} } },
-		{ name: 'core/button', attributes: { url: {}, text: {} } },
-	] ),
-} ) );
-vi.mock( '../../../utils/editor-blocks', () => ( { getBlock: vi.fn() } ) );
-
 import { getBlock } from '../../../utils/editor-blocks';
 import {
 	captureTargets,
@@ -16,6 +8,14 @@ import {
 } from '../validation-details';
 import type { EditorBlock, PageBlocks } from '../../../utils/editor-blocks';
 import type { BlockEdits, BlockUpdate } from '../types';
+
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockTypes: vi.fn( () => [
+		{ name: 'core/paragraph', attributes: { content: {} } },
+		{ name: 'core/button', attributes: { url: {}, text: {} } },
+	] ),
+} ) );
+vi.mock( '../../../utils/editor-blocks', () => ( { getBlock: vi.fn() } ) );
 
 const block = (
 	clientId: string,
@@ -171,7 +171,7 @@ describe( 'getValidationDetails', () => {
 		[ 'missing-after-apply', 'Old', null, 'New' ],
 		[ 'unresolved', null, null, 'New' ],
 	] )(
-		'marks an attribute `%s` when the page had %p, shows %p and %p was requested',
+		'marks an attribute `%s` when the page had %o, shows %o and %o was requested',
 		( status, before, after, requested ) => {
 			const details = validate(
 				edits( { updates: [ contentUpdate( requested ) ] } ),

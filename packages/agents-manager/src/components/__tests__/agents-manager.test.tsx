@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
+import AgentsManager from '../agents-manager';
 import type { AgentsManagerContextType } from '../../contexts';
 
 // Capture context value passed by `AgentsManager`
@@ -45,8 +45,6 @@ vi.mock( 'react-router-dom', () => ( {} ) );
 vi.mock( '../persistent-router', () => ( {
 	PersistentRouter: ( { children }: { children: React.ReactNode } ) => children,
 } ) );
-
-import AgentsManager from '../agents-manager';
 
 describe( 'AgentsManager', () => {
 	it( 'forwards props to the context provider', () => {

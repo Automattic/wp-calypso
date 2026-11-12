@@ -1,4 +1,8 @@
 import { vi } from 'vitest';
+import { getBlock, getBlockRootClientId, getBlocks } from '../../editor-blocks';
+import { describeMeasuredLayout, describeUnmoved, snapshotLayout } from '../measurements';
+import type { EditorBlock } from '../../editor-blocks';
+
 vi.mock( '../../block-ids', () => ( {
 	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
 } ) );
@@ -7,10 +11,6 @@ vi.mock( '../../editor-blocks', () => ( {
 	getBlockRootClientId: vi.fn(),
 	getBlocks: vi.fn(),
 } ) );
-
-import { getBlock, getBlockRootClientId, getBlocks } from '../../editor-blocks';
-import { describeMeasuredLayout, describeUnmoved, snapshotLayout } from '../measurements';
-import type { EditorBlock } from '../../editor-blocks';
 
 interface Rect {
 	top: number;

@@ -1,10 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { type Mock, vi } from 'vitest';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { getSessionId } from '../../utils/agent-session';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import AgentDock from '../agent-dock';
 import type { AgentsManagerContextType } from '../../contexts';
 
 const mockSetIsOpen = vi.fn();
@@ -162,12 +166,6 @@ vi.mock( '../support-guide', () => ( {
 	default: () => <div data-testid="support-guide">Support guide</div>,
 } ) );
 
-import AgentDock from '../agent-dock';
-import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
-import { getSessionId } from '../../utils/agent-session';
-import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
-import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
-
 const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as Mock;
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as Mock;
 
@@ -295,7 +293,7 @@ describe( 'AgentDock', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
-		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )![ 0 ];
 		act( () => onOpenSidebar() );
 
 		// Opening the docked sidebar must not override the route the WP admin bar chose.

@@ -1,21 +1,3 @@
-vi.mock( '@wordpress/blocks', () => ( { createBlock: vi.fn() } ) );
-vi.mock( '../../../utils/canvas-guard', () => ( { assertCanvasUnmoved: vi.fn() } ) );
-vi.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: vi.fn(),
-	getBlockParents: vi.fn(),
-	getBlockRootClientId: vi.fn(),
-	getBlocks: vi.fn(),
-	insertBlock: vi.fn(),
-	POST_CONTENT_BLOCK: 'core/post-content',
-	removeBlock: vi.fn(),
-	replaceBlock: vi.fn(),
-	replaceInnerBlocks: vi.fn(),
-	resolveBlocksRoot: vi.fn(),
-	updateBlockAttributes: vi.fn(),
-} ) );
-vi.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
-vi.mock( '../cover-image', () => ( { syncCoverWithImage: vi.fn() } ) );
-
 import { createBlock } from '@wordpress/blocks';
 import { type MockInstance, vi } from 'vitest';
 import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
@@ -35,6 +17,25 @@ import { applyEdits } from '../apply-edits';
 import { syncCoverWithImage } from '../cover-image';
 import type { EditorBlock, UndoLevel } from '../../../utils/editor-blocks';
 import type { BlockEdits } from '../types';
+
+vi.mock( '@wordpress/blocks', () => ( { createBlock: vi.fn() } ) );
+vi.mock( '../../../utils/canvas-guard', () => ( { assertCanvasUnmoved: vi.fn() } ) );
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlockParents: vi.fn(),
+	getBlockRootClientId: vi.fn(),
+	getBlocks: vi.fn(),
+	insertBlock: vi.fn(),
+	POST_CONTENT_BLOCK: 'core/post-content',
+	removeBlock: vi.fn(),
+	replaceBlock: vi.fn(),
+	replaceInnerBlocks: vi.fn(),
+	resolveBlocksRoot: vi.fn(),
+	TEMPLATE_PART_BLOCK: 'core/template-part',
+	updateBlockAttributes: vi.fn(),
+} ) );
+vi.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
+vi.mock( '../cover-image', () => ( { syncCoverWithImage: vi.fn() } ) );
 
 const block = (
 	clientId: string,

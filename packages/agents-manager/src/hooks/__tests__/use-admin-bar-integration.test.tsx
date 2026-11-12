@@ -1,7 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
+import { renderHook } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
+import useAdminBarIntegration from '../use-admin-bar-integration';
+import { useAiChatEntryState } from '../use-ai-chat-entry-state';
+
 const mockResumeChat = vi.fn();
 
 vi.mock( '../../contexts', () => ( {
@@ -14,13 +20,6 @@ vi.mock( '../use-has-ai-chat-entry-button', () => ( {
 	default: () => true,
 	ADMIN_BAR_AI_CHAT_BUTTON_ID: 'wp-admin-bar-agents-manager-ai-chat',
 } ) );
-
-import { renderHook } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { type Mock, vi } from 'vitest';
-import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
-import useAdminBarIntegration from '../use-admin-bar-integration';
-import { useAiChatEntryState } from '../use-ai-chat-entry-state';
 
 const mockUseAiChatEntryState = useAiChatEntryState as Mock;
 

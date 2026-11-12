@@ -18,6 +18,10 @@ const ability: Ability = {
 };
 
 describe( 'useWebMcpTools', () => {
+	// The hook loads the adapter lazily. Load it before the tests, so the first one doesn't wait
+	// on its cold import.
+	beforeAll( () => import( '../../webmcp/adapter' ) );
+
 	beforeEach( () => {
 		vi.mocked( apiFetch ).mockReset().mockResolvedValue( [] );
 		document.body.className = 'site-editor-php';

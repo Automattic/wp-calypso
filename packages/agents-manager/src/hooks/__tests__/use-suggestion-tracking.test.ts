@@ -1,6 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { useSuggestionTracking } from '../use-suggestion-tracking';
+import type { Suggestion } from '@automattic/agenttic-ui';
+
 let mockSelectedBlockType: string | undefined;
 
 vi.mock( '../../utils/tracks', () => ( {
@@ -12,12 +18,6 @@ vi.mock( '@wordpress/data', () => ( {
 			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
 		} ) ),
 } ) );
-
-import { act, renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
-import { useSuggestionTracking } from '../use-suggestion-tracking';
-import type { Suggestion } from '@automattic/agenttic-ui';
 
 type Options = Parameters< typeof useSuggestionTracking >[ 0 ];
 

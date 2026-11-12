@@ -2,6 +2,11 @@
  * @jest-environment jsdom
  */
 import { type Mock, vi } from 'vitest';
+import { THEME_CHECKPOINT_KEYS, withCheckpoint } from '../../../utils/checkpoints';
+import { waitForEditedGlobalStyles } from '../../../utils/global-styles';
+import { applyThemeUpdate } from '../../../utils/update-theme';
+import { applyUpdateThemeCallback } from '../callback';
+
 vi.mock( '../../../utils/global-styles', () => ( {
 	waitForEditedGlobalStyles: vi.fn( () =>
 		Promise.resolve( { id: 'global-styles-1', record: { settings: {}, styles: {} } } )
@@ -17,11 +22,6 @@ vi.mock( '../../../utils/checkpoints', () => ( {
 	THEME_CHECKPOINT_KEYS: [ 'color', 'font', 'button' ],
 	withCheckpoint: vi.fn( ( _checkpoint, write ) => write() ),
 } ) );
-
-import { THEME_CHECKPOINT_KEYS, withCheckpoint } from '../../../utils/checkpoints';
-import { waitForEditedGlobalStyles } from '../../../utils/global-styles';
-import { applyThemeUpdate } from '../../../utils/update-theme';
-import { applyUpdateThemeCallback } from '../callback';
 
 const SETTINGS = { color: { palette: [ { name: 'Sky', slug: 'sky', color: '#0000ff' } ] } };
 const STYLES = { elements: { button: { color: { background: 'var:preset|color|sky' } } } };

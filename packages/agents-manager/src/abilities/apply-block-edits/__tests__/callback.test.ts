@@ -1,4 +1,37 @@
 import { vi } from 'vitest';
+import { repointBlockId, resolveClientId } from '../../../utils/block-ids';
+import { getBlockingMove } from '../../../utils/canvas-binding';
+import {
+	captureCanvas,
+	describeMeasuredLayout,
+	describeTextContrast,
+	describeUnmoved,
+	snapshotLayout,
+} from '../../../utils/canvas-capture';
+import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
+import { getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
+import {
+	getCustomCss,
+	getEditedGlobalStyles,
+	setCustomCss,
+	waitForEditedGlobalStyles,
+} from '../../../utils/global-styles';
+import { isEditorPage } from '../../../utils/is-editor-page';
+import { getMenuIdAround } from '../../../utils/navigation-menu';
+import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
+import { recordBigSkyTracksEvent } from '../../../utils/tracks';
+import { areUpdateEditsAlreadySatisfied } from '../already-applied';
+import { applyEdits } from '../apply-edits';
+import { applyBlockEditsCallback } from '../callback';
+import { getChangeType, getEditedMenuIds } from '../change-type';
+import { hasRequestedBlockEdits, isCssOnly, normalizeEdits } from '../normalize-edits';
+import {
+	captureTargets,
+	getEditedClientIds,
+	getValidationDetails,
+	haveBlocksChanged,
+} from '../validation-details';
+
 vi.mock( '../../../utils/block-ids', () => ( {
 	repointBlockId: vi.fn(),
 	resolveClientId: vi.fn(),
@@ -54,39 +87,6 @@ vi.mock( '../validation-details', () => ( {
 	getValidationDetails: vi.fn(),
 	haveBlocksChanged: vi.fn(),
 } ) );
-
-import { repointBlockId, resolveClientId } from '../../../utils/block-ids';
-import { getBlockingMove } from '../../../utils/canvas-binding';
-import {
-	captureCanvas,
-	describeMeasuredLayout,
-	describeTextContrast,
-	describeUnmoved,
-	snapshotLayout,
-} from '../../../utils/canvas-capture';
-import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
-import { getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
-import {
-	getCustomCss,
-	getEditedGlobalStyles,
-	setCustomCss,
-	waitForEditedGlobalStyles,
-} from '../../../utils/global-styles';
-import { isEditorPage } from '../../../utils/is-editor-page';
-import { getMenuIdAround } from '../../../utils/navigation-menu';
-import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
-import { recordBigSkyTracksEvent } from '../../../utils/tracks';
-import { areUpdateEditsAlreadySatisfied } from '../already-applied';
-import { applyEdits } from '../apply-edits';
-import { applyBlockEditsCallback } from '../callback';
-import { getChangeType, getEditedMenuIds } from '../change-type';
-import { hasRequestedBlockEdits, isCssOnly, normalizeEdits } from '../normalize-edits';
-import {
-	captureTargets,
-	getEditedClientIds,
-	getValidationDetails,
-	haveBlocksChanged,
-} from '../validation-details';
 
 const paragraph = ( content: string ) => ( {
 	clientId: 'p1',

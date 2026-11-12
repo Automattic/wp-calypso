@@ -2,6 +2,14 @@
  * @jest-environment jsdom
  */
 import { vi } from 'vitest';
+import { recordAgentsManagerTracksEvent } from '../../../utils/tracks';
+import {
+	completePendingNavigation,
+	markContinuationSent,
+	NAVIGATION_PENDING_EVENT,
+} from '../../../utils/wp-admin-navigation-state';
+import { wpAdminNavigateCallback } from '../callback';
+
 vi.mock( '../../../utils/agent-session', () => ( {
 	getActiveSessionId: vi.fn( () => 'tab-session' ),
 } ) );
@@ -12,14 +20,6 @@ vi.mock( '../../../utils/tracks', async () => ( {
 	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
 
-import { recordAgentsManagerTracksEvent } from '../../../utils/tracks';
-import {
-	completePendingNavigation,
-	markContinuationSent,
-	NAVIGATION_PENDING_EVENT,
-} from '../../../utils/wp-admin-navigation-state';
-import { wpAdminNavigateCallback } from '../callback';
-
 const STORAGE_KEY = 'agents-manager-pending-navigation';
 
 function storedState() {
@@ -27,9 +27,10 @@ function storedState() {
 }
 
 beforeEach( () => {
+	// Before the fake clock: clearing stored state queues a jsdom storage event timer.
+	sessionStorage.clear();
 	vi.useFakeTimers();
 	vi.clearAllMocks();
-	sessionStorage.clear();
 	// A writable stub, so the redirect assignment does not hit jsdom's
 	// unimplemented navigation.
 	Reflect.deleteProperty( window, 'location' );

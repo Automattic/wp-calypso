@@ -1,8 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { type Mock, vi } from 'vitest';
+import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
+import { DOLLY_AGENT_ID } from '../../constants';
+import { getInteractiveUiSession, showInteractiveUiSession } from '../../interactive-ui/session';
+import { getSessionId } from '../agent-session';
+import { canConnectToZendesk } from '../can-connect-to-zendesk';
+import { createAgentConfig } from '../create-agent-config';
+import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
+import { getTurnId } from '../turn-id';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
+
 vi.mock( '../../auth/calypso-auth-provider', () => ( {
 	createCalypsoAuthProvider: vi.fn( () => ( { type: 'auth-provider' } ) ),
 } ) );
@@ -14,16 +23,6 @@ vi.mock( '../can-connect-to-zendesk', () => ( {
 vi.mock( '../turn-id', () => ( {
 	getTurnId: vi.fn( () => '' ),
 } ) );
-
-import { DOLLY_AGENT_ID } from '../../constants';
-import { getInteractiveUiSession, showInteractiveUiSession } from '../../interactive-ui/session';
-import { createAgentConfig } from '../create-agent-config';
-import { canConnectToZendesk } from '../can-connect-to-zendesk';
-import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
-import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
-import { getSessionId } from '../agent-session';
-import { getTurnId } from '../turn-id';
-import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 const mockCanConnectToZendesk = canConnectToZendesk as Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as Mock;

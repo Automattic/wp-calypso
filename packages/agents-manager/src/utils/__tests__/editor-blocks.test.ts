@@ -1,6 +1,3 @@
-vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
-vi.mock( '../private-apis', () => ( { unlock: vi.fn( ( store ) => store ) } ) );
-
 import { dispatch, select } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import {
@@ -17,6 +14,9 @@ import {
 	type EditorBlock,
 	type UndoLevel,
 } from '../editor-blocks';
+
+vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
+vi.mock( '../private-apis', () => ( { unlock: vi.fn( ( store ) => store ) } ) );
 
 const block = ( clientId: string, name: string ): EditorBlock => ( {
 	clientId,

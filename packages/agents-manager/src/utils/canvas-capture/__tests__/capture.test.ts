@@ -1,16 +1,16 @@
 import { vi } from 'vitest';
+import { getCanvasDocument } from '../../editor-canvas';
+import { recordBigSkyTracksEvent } from '../../tracks';
+import { captureCanvasFileParts } from '../capture';
+import { rasterizeCanvas, UnfaithfulCaptureError } from '../rasterizer';
+import type { FilePart } from '@automattic/agenttic-client';
+
 vi.mock( '../../editor-canvas', () => ( { getCanvasDocument: vi.fn() } ) );
 vi.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 vi.mock( '../rasterizer', async () => ( {
 	...( await vi.importActual< typeof import( '../rasterizer' ) >( '../rasterizer' ) ),
 	rasterizeCanvas: vi.fn(),
 } ) );
-
-import { getCanvasDocument } from '../../editor-canvas';
-import { recordBigSkyTracksEvent } from '../../tracks';
-import { captureCanvasFileParts } from '../capture';
-import { rasterizeCanvas, UnfaithfulCaptureError } from '../rasterizer';
-import type { FilePart } from '@automattic/agenttic-client';
 
 const mockGetCanvasDocument = vi.mocked( getCanvasDocument );
 const mockRasterizeCanvas = vi.mocked( rasterizeCanvas );

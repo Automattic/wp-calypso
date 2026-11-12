@@ -21,6 +21,7 @@ import { wpAdminNavigateAbility } from '../../abilities/wp-admin-navigate';
 import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../../constants';
 import * as canvasBinding from '../canvas-binding';
 import { getAvailableCheckpoints } from '../checkpoints';
+import * as checkpointsModule from '../checkpoints';
 import { getEditorPostContext } from '../editor-post-context';
 import { waitForEditedGlobalStyles } from '../global-styles';
 import {
@@ -135,7 +136,7 @@ function createCheckpointReturn(
 
 describe( 'mergeCapabilitiesInto', () => {
 	it.each( [ undefined, null, 'oops', 42 ] )(
-		'is a no-op for non-object capabilities: %p',
+		'is a no-op for non-object capabilities: %o',
 		( capabilities ) => {
 			const merged: ProviderCapabilities = {};
 			mergeCapabilitiesInto( merged, capabilities );
@@ -224,8 +225,8 @@ describe( 'loadExternalProviders', () => {
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 		setLoadedProviderIds( undefined );
 		vi.clearAllMocks();
-		jest.requireMock( '../checkpoints' ).hasCheckpoint.mockReset();
-		jest.requireMock( '../checkpoints' ).canSwapCheckpoint.mockReset();
+		vi.mocked( checkpointsModule, true ).hasCheckpoint.mockReset();
+		vi.mocked( checkpointsModule, true ).canSwapCheckpoint.mockReset();
 	} );
 
 	it( 'does not merge external editor providers into Reader Chat', async () => {
@@ -1203,7 +1204,7 @@ describe( 'loadExternalProviders', () => {
 	// The editor abilities write to AM's own store, which the chat's Undo has
 	// to see; the provider's hook still answers for the ids it holds.
 	const withBothStores = async () => {
-		const amCheckpoints = jest.requireMock( '../checkpoints' );
+		const amCheckpoints = vi.mocked( checkpointsModule, true );
 		amCheckpoints.hasCheckpoint.mockImplementation( ( id: string ) => id === 'am-cp' );
 		amCheckpoints.canSwapCheckpoint.mockReturnValue( true );
 		const providerReturn = createCheckpointReturn( {
@@ -1252,7 +1253,7 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( "serves AM's checkpoints with no provider hook at all", async () => {
-		jest.requireMock( '../checkpoints' ).hasCheckpoint.mockReturnValue( true );
+		vi.mocked( checkpointsModule, true ).hasCheckpoint.mockReturnValue( true );
 		setAgentsManagerData( { agentProviders: [ { getEmptyViewSuggestions: () => [] } ] } );
 
 		const checkpoint = ( await loadExternalProviders() ).useCheckpoint?.();

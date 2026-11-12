@@ -1,14 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
-vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
-vi.mock( '@wordpress/data', () => ( { useSelect: vi.fn() } ) );
-
 import { renderHook } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import { useAiChatEntryState } from '../use-ai-chat-entry-state';
+
+vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'automattic/agents-manager' } ) );
+vi.mock( '@wordpress/data', () => ( { useSelect: vi.fn() } ) );
 
 const mockUseSelect = useSelect as Mock;
 

@@ -1,3 +1,17 @@
+import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import { blockCurrentRequest, getBlockingMove } from '../../../utils/canvas-binding';
+import { clearCheckpoint, hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
+import {
+	clearBlockSelection,
+	getRootBlocks,
+	replaceRootBlocks,
+	resolveBlocksRoot,
+	stageRootBlocks,
+} from '../../../utils/editor-blocks';
+import { commitStreamedPageDesign } from '../commit';
+import { useEditorHost } from '../use-editor-host';
+
 const mockBatch = vi.fn();
 const mockLiveBlocks = [
 	{ clientId: 'a', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
@@ -22,20 +36,6 @@ vi.mock( '../../../utils/editor-blocks', () => ( {
 	stageRootBlocks: vi.fn(),
 } ) );
 vi.mock( '../commit', () => ( { commitStreamedPageDesign: vi.fn( () => true ) } ) );
-
-import { renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
-import { blockCurrentRequest, getBlockingMove } from '../../../utils/canvas-binding';
-import { clearCheckpoint, hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
-import {
-	clearBlockSelection,
-	getRootBlocks,
-	replaceRootBlocks,
-	resolveBlocksRoot,
-	stageRootBlocks,
-} from '../../../utils/editor-blocks';
-import { commitStreamedPageDesign } from '../commit';
-import { useEditorHost } from '../use-editor-host';
 
 const blocks = [ { clientId: 'b', name: 'core/heading', attributes: {}, innerBlocks: [] } ];
 

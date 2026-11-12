@@ -1,7 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
+import { useQuery } from '@tanstack/react-query';
+import { act, renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import { useAgentsManagerContext } from '../../contexts';
+import { getOrCreateSessionId, markSessionSent } from '../../utils/agent-session';
+import { INTERRUPTED_TOOL_RESULT } from '../../utils/tool-call-resume';
+import useConversation, { MAX_REPLY_WAIT_MS, RESUME_AFTER_MS } from '../use-conversation';
+import type { PendingClientTools } from '@automattic/agenttic-client';
+
 const mockIsTurnInFlight = vi.fn( () => false );
 const mockCancelQueries = vi.fn();
 const mockGetQueryData = vi.fn();
@@ -32,15 +40,6 @@ vi.mock( '../../utils/wp-admin-navigation-state', () => ( {
 	getPendingNavigation: () =>
 		mockParkedNavigationCallId ? { toolCallId: mockParkedNavigationCallId } : null,
 } ) );
-
-import { useQuery } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
-import { useAgentsManagerContext } from '../../contexts';
-import { getOrCreateSessionId, markSessionSent } from '../../utils/agent-session';
-import { INTERRUPTED_TOOL_RESULT } from '../../utils/tool-call-resume';
-import useConversation, { MAX_REPLY_WAIT_MS, RESUME_AFTER_MS } from '../use-conversation';
-import type { PendingClientTools } from '@automattic/agenttic-client';
 
 const mockUseQuery = useQuery as Mock;
 const mockUseAgentsManagerContext = useAgentsManagerContext as Mock;
@@ -80,7 +79,7 @@ const mockLoadedConversation = ( messages: object[], pendingClientTools?: Pendin
 		isFetchedAfterMount: true,
 	} );
 
-const lastQueryOptions = () => mockUseQuery.mock.calls.at( -1 )[ 0 ];
+const lastQueryOptions = () => mockUseQuery.mock.calls.at( -1 )![ 0 ];
 
 const renderWaitingConversation = ( onSuccess = vi.fn(), onRetry = vi.fn() ) =>
 	renderHook( () => useConversation( { waitForReply: true, onSuccess, onRetry } ) );

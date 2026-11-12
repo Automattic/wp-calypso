@@ -1,4 +1,7 @@
 import { vi } from 'vitest';
+import { captureCanvas } from '../../../utils/canvas-capture';
+import { captureCanvasCallback } from '../callback';
+
 vi.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: vi.fn( ( id: string ) => `resolved-${ id }` ),
 } ) );
@@ -11,9 +14,6 @@ vi.mock( '../../../utils/canvas-capture', async () => ( {
 	) ),
 	captureCanvas: vi.fn(),
 } ) );
-
-import { captureCanvas } from '../../../utils/canvas-capture';
-import { captureCanvasCallback } from '../callback';
 
 const filePart = ( metadata?: Record< string, unknown > ) => ( {
 	type: 'file' as const,
@@ -58,7 +58,7 @@ describe( 'captureCanvasCallback', () => {
 	} );
 
 	it.each( [ {}, null ] )(
-		'describes the visible area when no block was named (%p)',
+		'describes the visible area when no block was named (%o)',
 		async ( input ) => {
 			const { result } = await captureCanvasCallback( input );
 
@@ -87,7 +87,7 @@ describe( 'captureCanvasCallback', () => {
 	} );
 
 	it.each( [ null, [] ] )(
-		'fails without an image (%p), so the agent does not assume one',
+		'fails without an image (%o), so the agent does not assume one',
 		async ( parts ) => {
 			vi.mocked( captureCanvas ).mockResolvedValue( parts );
 

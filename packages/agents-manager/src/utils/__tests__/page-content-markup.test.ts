@@ -1,3 +1,15 @@
+import { serialize } from '@wordpress/blocks';
+import { vi } from 'vitest';
+import {
+	DOCUMENT_ROOT_CLIENT_ID,
+	findPostContentClientId,
+	getCurrentPost,
+	getRootBlocks,
+} from '../editor-blocks';
+import { isEditorPage } from '../is-editor-page';
+import { getPageContentMarkup } from '../page-content-markup';
+import { isSiteEditorContext } from '../site-editor-context';
+
 const mockGetRenderingMode = vi.fn();
 
 vi.mock( '@wordpress/blocks', () => ( { serialize: vi.fn() } ) );
@@ -12,18 +24,6 @@ vi.mock( '../editor-blocks', () => ( {
 } ) );
 vi.mock( '../is-editor-page', () => ( { isEditorPage: vi.fn() } ) );
 vi.mock( '../site-editor-context', () => ( { isSiteEditorContext: vi.fn() } ) );
-
-import { serialize } from '@wordpress/blocks';
-import { vi } from 'vitest';
-import {
-	DOCUMENT_ROOT_CLIENT_ID,
-	findPostContentClientId,
-	getCurrentPost,
-	getRootBlocks,
-} from '../editor-blocks';
-import { isEditorPage } from '../is-editor-page';
-import { getPageContentMarkup } from '../page-content-markup';
-import { isSiteEditorContext } from '../site-editor-context';
 
 const body = [
 	{ clientId: 'heading', name: 'core/heading', attributes: {}, innerBlocks: [] },

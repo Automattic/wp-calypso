@@ -1,10 +1,3 @@
-vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-vi.mock( '@wordpress/data', () => ( {
-	dispatch: vi.fn(),
-	select: vi.fn(),
-	subscribe: vi.fn( () => () => {} ),
-} ) );
-
 import { dispatch, select } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import {
@@ -12,6 +5,13 @@ import {
 	getEditedGlobalStyles,
 	waitForEditedGlobalStyles,
 } from '../global-styles';
+
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn(),
+	select: vi.fn(),
+	subscribe: vi.fn( () => () => {} ),
+} ) );
 
 const RECORD = { settings: { color: {} }, styles: {} };
 

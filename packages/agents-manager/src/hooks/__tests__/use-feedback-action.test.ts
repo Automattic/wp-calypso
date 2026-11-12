@@ -72,7 +72,7 @@ async function triggerFeedback( messageId: string, direction: 'up' | 'down' ) {
 function findFetchCall( urlSubstring: string ) {
 	return mockFetch.mock.calls.find(
 		( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( urlSubstring )
-	);
+	)!;
 }
 
 describe( 'useFeedbackAction', () => {

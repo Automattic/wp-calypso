@@ -1,6 +1,34 @@
 /**
  * @jest-environment jsdom
  */
+import { dispatch, resolveSelect, select } from '@wordpress/data';
+import { type Mock, type MockInstance, vi } from 'vitest';
+import { bindToEditorPath } from '../../../utils/canvas-guard';
+import { checkpointKeys, getCheckpoint, hasCheckpoint } from '../../../utils/checkpoints';
+import { getEditorHistory } from '../../../utils/editor-history';
+import { isEditorPage } from '../../../utils/is-editor-page';
+import {
+	addNavigationItem,
+	getMenuIdsToRelabel,
+	prefetchMenus,
+	readMenuItems,
+	removeNavigationItem,
+	renameNavigationItem,
+} from '../../../utils/navigation-menu';
+import {
+	getPageTitle,
+	getPageUrl,
+	getSavedPageTitle,
+	setPageTitle,
+} from '../../../utils/page-title';
+import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
+import { setSiteMetadata } from '../../../utils/site-metadata';
+import { getSiteRecord } from '../../../utils/site-record';
+import { setSiteTitle } from '../../../utils/site-title';
+import { navigateEditorWithoutSaving } from '../../editor-navigate/callback';
+import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
+import { buildNavigationItems, checkMenuRecord } from '../navigation-items';
+
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 // Reached through the checkpoint engine's tool-call lookup.
 vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: vi.fn() } ) );
@@ -60,34 +88,6 @@ vi.mock( '../../editor-navigate/callback', () => ( {
 	PAGES_LIST_PATH: 'all-pages',
 	navigateEditorWithoutSaving: vi.fn( async () => ( { result: { success: true } } ) ),
 } ) );
-
-import { dispatch, resolveSelect, select } from '@wordpress/data';
-import { type Mock, type MockInstance, vi } from 'vitest';
-import { bindToEditorPath } from '../../../utils/canvas-guard';
-import { checkpointKeys, getCheckpoint, hasCheckpoint } from '../../../utils/checkpoints';
-import { getEditorHistory } from '../../../utils/editor-history';
-import { isEditorPage } from '../../../utils/is-editor-page';
-import {
-	addNavigationItem,
-	getMenuIdsToRelabel,
-	prefetchMenus,
-	readMenuItems,
-	removeNavigationItem,
-	renameNavigationItem,
-} from '../../../utils/navigation-menu';
-import {
-	getPageTitle,
-	getPageUrl,
-	getSavedPageTitle,
-	setPageTitle,
-} from '../../../utils/page-title';
-import { logSiteMetadata, logSiteSession } from '../../../utils/session-log';
-import { setSiteMetadata } from '../../../utils/site-metadata';
-import { getSiteRecord } from '../../../utils/site-record';
-import { setSiteTitle } from '../../../utils/site-title';
-import { navigateEditorWithoutSaving } from '../../editor-navigate/callback';
-import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
-import { buildNavigationItems, checkMenuRecord } from '../navigation-items';
 
 const saveEntityRecord = vi.fn( async () => ( { id: 7, title: 'About', link: '/about/' } ) );
 const editEntityRecord = vi.fn();

@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
+import { fireEvent, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import { getOrCreateSessionId, saveSessionId } from '../../utils/agent-session';
+import { useSessionHandoffLinks } from '../use-session-handoff-links';
+
 const mockContext = {
 	siteKey: '111',
 	site: { ID: 111, domain: 'example.com' },
@@ -9,11 +13,6 @@ const mockContext = {
 };
 
 vi.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockContext } ) );
-
-import { fireEvent, renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
-import { getOrCreateSessionId, saveSessionId } from '../../utils/agent-session';
-import { useSessionHandoffLinks } from '../use-session-handoff-links';
 
 const CALYPSO_LINK = 'https://wordpress.com/home/example.com';
 const HANDED_OFF_LINK = `${ CALYPSO_LINK }?wp-agent-chat=sess&wp-agent-site=111`;

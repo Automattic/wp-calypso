@@ -1,9 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
+import {
+	getSessionId,
+	saveSessionId,
+	setSessionSiteKey,
+	setSessionUserId,
+} from '../../utils/agent-session';
+import AgentsManager from '../agents-manager';
+import type { AgentsManagerProps } from '../agents-manager';
 
 const mockAgentManager = {
 	hasAgent: vi.fn( () => true ),
@@ -91,15 +98,6 @@ vi.mock( '../agent-dock', async () => {
 	}
 	return { __esModule: true, default: MockAgentDock };
 } );
-
-import AgentsManager from '../agents-manager';
-import {
-	getSessionId,
-	saveSessionId,
-	setSessionSiteKey,
-	setSessionUserId,
-} from '../../utils/agent-session';
-import type { AgentsManagerProps } from '../agents-manager';
 
 const user = ( ID: number ) => ( { ID } ) as AgentsManagerProps[ 'currentUser' ];
 

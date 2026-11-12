@@ -1,3 +1,18 @@
+import { render, waitFor } from '@testing-library/react';
+import { createElement } from '@wordpress/element';
+import { vi } from 'vitest';
+import ButtonPicker from '../../components/button-picker';
+import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
+import ColorPicker from '../../components/color-picker';
+import FontPicker from '../../components/font-picker';
+import OpenHelpCenterButton from '../../components/open-help-center-button';
+import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
+import {
+	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
+	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
+} from '../show-component-tools';
+import type { UIMessage } from '@automattic/agenttic-client';
+
 function mockEscalationButton() {
 	return null;
 }
@@ -37,21 +52,6 @@ vi.mock( '../../components/chat-response-tracking', () => ( {
 	default: vi.fn( () => null ),
 	createChatResponseActionCallback: mockCreateChatResponseActionCallback,
 } ) );
-
-import { render, waitFor } from '@testing-library/react';
-import { createElement } from '@wordpress/element';
-import { vi } from 'vitest';
-import ButtonPicker from '../../components/button-picker';
-import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
-import ColorPicker from '../../components/color-picker';
-import FontPicker from '../../components/font-picker';
-import OpenHelpCenterButton from '../../components/open-help-center-button';
-import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
-import {
-	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
-	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
-} from '../show-component-tools';
-import type { UIMessage } from '@automattic/agenttic-client';
 
 const MockComponent = vi.fn();
 const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;

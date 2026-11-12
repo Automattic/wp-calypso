@@ -1,12 +1,12 @@
+import { select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
+import { hasSiteLogoBlock } from '../site-logo';
+
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( {
 	dispatch: vi.fn(),
 	select: vi.fn(),
 } ) );
-
-import { select } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
-import { hasSiteLogoBlock } from '../site-logo';
 
 describe( 'hasSiteLogoBlock', () => {
 	it.each( [

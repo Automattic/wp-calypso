@@ -1,3 +1,16 @@
+import { act, renderHook } from '@testing-library/react';
+import { type Mocked, vi } from 'vitest';
+import { ensurePreviewStyles, PREVIEW_CLASS_NAME, scrollToBlockBottom } from '../preview';
+import { usePageDesignRenderer, type EditorHost } from '../renderer';
+import {
+	finalizePendingStreams,
+	getStreamedMarkup,
+	handlePageDesignTaskUpdate,
+	setStreamHandler,
+	STREAM_PAGE_DESIGN_TOOL_ID,
+} from '../stream';
+import type { TaskUpdate } from '@automattic/agenttic-client';
+
 vi.mock( '@wordpress/blocks', () => {
 	let nextId = 0;
 
@@ -31,19 +44,6 @@ vi.mock( '../preview', async () => ( {
 	ensurePreviewStyles: vi.fn(),
 	scrollToBlockBottom: vi.fn(),
 } ) );
-
-import { act, renderHook } from '@testing-library/react';
-import { type Mocked, vi } from 'vitest';
-import { ensurePreviewStyles, PREVIEW_CLASS_NAME, scrollToBlockBottom } from '../preview';
-import { usePageDesignRenderer, type EditorHost } from '../renderer';
-import {
-	finalizePendingStreams,
-	getStreamedMarkup,
-	handlePageDesignTaskUpdate,
-	setStreamHandler,
-	STREAM_PAGE_DESIGN_TOOL_ID,
-} from '../stream';
-import type { TaskUpdate } from '@automattic/agenttic-client';
 
 const PAGE = '<!-- wpcom:page-design-section {"target":"page"} -->';
 const PARAGRAPH = '<!-- wp:paragraph --><p>Hi</p><!-- /wp:paragraph -->';

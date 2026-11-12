@@ -1,7 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
+import { useQuery } from '@tanstack/react-query';
+import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import useSiteSetupChecklist from '../use-site-setup-checklist';
+import type { UIMessage } from '@automattic/agenttic-client';
+
 vi.mock( '@tanstack/react-query', () => ( {
 	useQuery: vi.fn(),
 } ) );
@@ -20,12 +25,6 @@ vi.mock( '../../utils/site-setup-tasks', () => ( {
 	fetchSiteSetupTasks: ( ...args: unknown[] ) => mockFetchSiteSetupTasks( ...args ),
 	getSiteSetupSiteId: () => mockGetSiteSetupSiteId(),
 } ) );
-
-import { useQuery } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
-import useSiteSetupChecklist from '../use-site-setup-checklist';
-import type { UIMessage } from '@automattic/agenttic-client';
 
 const mockUseQuery = useQuery as Mock;
 const mockRefetch = vi.fn();
