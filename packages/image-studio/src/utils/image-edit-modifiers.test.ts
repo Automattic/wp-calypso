@@ -56,6 +56,17 @@ describe( 'getCropTransform', () => {
 	it( 'returns null when the area keeps the whole image', () => {
 		expect( getCropTransform( { x: 0, y: 0, width: 100, height: 100 } ) ).toBeNull();
 		expect( getCropTransform( { x: -0.1, y: 0, width: 100.2, height: 100 } ) ).toBeNull();
+		expect( getCropTransform( { x: 0, y: 0, width: 99.99999999999999, height: 100 } ) ).toBeNull();
+	} );
+
+	it( 'still crops an area just inside the whole image', () => {
+		expect( getCropTransform( { x: 0, y: 0, width: 99.9999, height: 100 } ) ).toEqual( {
+			type: 'crop',
+			left: 0,
+			top: 0,
+			width: 99.9999,
+			height: 100,
+		} );
 	} );
 
 	it( 'returns null for an empty area', () => {

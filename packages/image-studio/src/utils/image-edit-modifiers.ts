@@ -44,6 +44,10 @@ export function getImageEditModifiers( transform: ImageTransform ): ImageEditMod
 
 const clampPercentage = ( value: number ) => Math.min( 100, Math.max( 0, value ) );
 
+// The cropper's floating-point maths can report a whole-image side as e.g. 99.99999999999999.
+// One millionth of a percent is far above that error and far below one pixel of any real image.
+const WHOLE_IMAGE_TOLERANCE = 1e-6;
+
 interface CroppedArea {
 	x: number;
 	y: number;
@@ -61,7 +65,11 @@ export function getCropTransform( area: CroppedArea ): ImageTransform | null {
 	const width = Math.min( clampPercentage( area.width ), 100 - left );
 	const height = Math.min( clampPercentage( area.height ), 100 - top );
 
-	if ( width <= 0 || height <= 0 || ( width >= 100 && height >= 100 ) ) {
+	if (
+		width <= 0 ||
+		height <= 0 ||
+		( width >= 100 - WHOLE_IMAGE_TOLERANCE && height >= 100 - WHOLE_IMAGE_TOLERANCE )
+	) {
 		return null;
 	}
 

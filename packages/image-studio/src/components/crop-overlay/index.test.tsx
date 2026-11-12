@@ -115,6 +115,20 @@ describe( 'CropOverlay', () => {
 		expect( dialogHandler ).toHaveBeenCalled();
 	} );
 
+	it( 'leaves Escape to a popover', () => {
+		renderOverlay();
+		const popover = document.createElement( 'div' );
+		popover.className = 'components-popover';
+		const popoverButton = document.createElement( 'button' );
+		popover.appendChild( popoverButton );
+		document.body.appendChild( popover );
+
+		fireEvent.keyDown( popoverButton, { key: 'Escape' } );
+		popover.remove();
+
+		expect( onCancel ).not.toHaveBeenCalled();
+	} );
+
 	it( 'sets the cropper aspect ratio from the chosen option', async () => {
 		const user = userEvent.setup();
 		renderOverlay();
