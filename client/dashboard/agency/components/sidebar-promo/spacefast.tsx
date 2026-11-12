@@ -13,9 +13,11 @@ import './spacefast.scss';
  */
 export default function SpacefastSidebarPromo( {
 	tone,
+	devToolsHref = '/dev-tools',
 	recordTracksEvent,
 }: {
 	tone?: SidebarPromoTone;
+	devToolsHref?: string;
 	recordTracksEvent: RecordTracksEvent;
 } ) {
 	const onView = useCallback(
@@ -32,7 +34,7 @@ export default function SpacefastSidebarPromo( {
 			title={ __( 'Spacefast' ) }
 			badge={ __( 'New' ) }
 			description={ __( 'One shared place to ship your team’s AI work in seconds.' ) }
-			cta={ { label: __( 'Explore Spacefast' ), href: '/dev-tools' } }
+			cta={ { label: __( 'Explore Spacefast' ), href: devToolsHref } }
 			onView={ onView }
 			onClick={ () =>
 				recordTracksEvent( 'calypso_a4a_spacefast_promo_click', { placement: 'sidebar' } )

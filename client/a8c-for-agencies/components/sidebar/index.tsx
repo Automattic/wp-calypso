@@ -23,6 +23,7 @@ import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import ProvideFeedback from '../a4a-feedback/provide-feedback';
 import { DashboardOptInLinkModal } from '../dashboard-opt-in-modal';
 import { withOnboardingTour } from '../hoc/with-onboarding-tour';
+import { A4A_DEV_TOOLS_LINK } from '../sidebar-menu/lib/constants';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
@@ -119,7 +120,13 @@ const A4ASidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			{ showPromo && <SidebarPromo tone="dark" recordTracksEvent={ handleRecordTracksEvent } /> }
+			{ showPromo && (
+				<SidebarPromo
+					tone="dark"
+					devToolsHref={ A4A_DEV_TOOLS_LINK }
+					recordTracksEvent={ handleRecordTracksEvent }
+				/>
+			) }
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>
