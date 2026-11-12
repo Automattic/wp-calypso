@@ -4,7 +4,7 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { sslDetailsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
@@ -60,7 +60,6 @@ function renderCards( actions: Action< DomainSummary >[], data = [ domain ] ) {
 	);
 }
 
-// The card's only other button is the icon-only menu toggle, which has no text.
 const getFooterLabels = () =>
 	within( screen.getByRole( 'group', { name: 'example.com' } ) )
 		.getAllByRole( 'button' )
@@ -84,19 +83,13 @@ describe( '<DomainCardsLayout>', () => {
 	} );
 
 	test( 'names the card after its domain and ties its actions to it', async () => {
-		renderCards( [
-			{ id: 'manage-domain', label: () => 'Settings', callback: jest.fn() },
-			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
-		] );
+		renderCards( [ { id: 'manage-domain', label: () => 'Settings', callback: jest.fn() } ] );
 
 		const card = await screen.findByRole( 'group', { name: 'example.com' } );
 
 		expect(
 			within( card ).getByRole( 'button', { name: 'Settings' } )
 		).toHaveAccessibleDescription( 'example.com' );
-		expect( within( card ).getByRole( 'button', { name: 'Actions' } ) ).toHaveAccessibleDescription(
-			'example.com'
-		);
 	} );
 
 	test( 'shows the domain’s type under the title', async () => {
@@ -139,33 +132,20 @@ describe( '<DomainCardsLayout>', () => {
 		const settings = jest.fn();
 		const dns = jest.fn();
 		renderCards( [
-			{ id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() },
 			{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: settings },
 			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: dns },
-			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
 			{ id: 'ineligible', label: 'Ineligible', callback: jest.fn(), isEligible: () => false },
 		] );
 		const user = userEvent.setup();
 
 		const settingsButton = await screen.findByRole( 'button', { name: 'Settings' } );
 		expect( getFooterLabels() ).toEqual( [ 'Settings', 'DNS' ] );
+		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 
 		await user.click( settingsButton );
 		await user.click( screen.getByRole( 'button', { name: 'DNS' } ) );
 		expect( settings ).toHaveBeenCalledWith( [ domain ], expect.anything() );
 		expect( dns ).toHaveBeenCalledWith( [ domain ], expect.anything() );
-
-		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
-		const menu = await screen.findByRole( 'menu' );
-		await waitFor( () =>
-			expect( within( menu ).getByRole( 'menuitem', { name: 'Add mailbox' } ) ).toBeVisible()
-		);
-		await waitFor( () =>
-			expect( within( menu ).getByRole( 'menuitem', { name: 'Renew' } ) ).toBeVisible()
-		);
-		expect(
-			within( menu ).queryByRole( 'menuitem', { name: 'Ineligible' } )
-		).not.toBeInTheDocument();
 	} );
 
 	test( 'swaps DNS for Renew in the footer of an expired domain', async () => {
@@ -187,24 +167,26 @@ describe( '<DomainCardsLayout>', () => {
 
 		await user.click( renewButton );
 		expect( renew ).toHaveBeenCalledWith( [ expiredDomain ], expect.anything() );
-
-		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
-		const menu = await screen.findByRole( 'menu' );
-		await waitFor( () =>
-			expect( within( menu ).getByRole( 'menuitem', { name: 'Manage DNS' } ) ).toBeVisible()
-		);
 	} );
 
-	test( 'keeps Renew in the menu for a domain that has not expired', async () => {
-		renderCards( [ { id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() } ] );
-		const user = userEvent.setup();
+	test( 'swaps DNS for Set up in the footer of a connection that needs setting up', async () => {
+		renderCards(
+			[
+				{ id: 'setup', isPrimary: true, label: 'Set up', callback: jest.fn() },
+				{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: jest.fn() },
+				{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
+			],
+			[
+				{
+					...domain,
+					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
+					domain_status: { id: DomainStatus.CONNECTION_ERROR, label: 'Error', type: 'error' },
+				} as DomainSummary,
+			]
+		);
 
-		const menuToggle = await screen.findByRole( 'button', { name: 'Actions' } );
-		expect( screen.queryByRole( 'button', { name: 'Renew' } ) ).not.toBeInTheDocument();
-		await user.click( menuToggle );
-
-		const renew = await screen.findByRole( 'menuitem', { name: 'Renew' } );
-		await waitFor( () => expect( renew ).toBeVisible() );
+		await screen.findByRole( 'button', { name: 'Set up' } );
+		expect( getFooterLabels() ).toEqual( [ 'Settings', 'Set up' ] );
 	} );
 
 	test( 'leaves DNS out of the footer when the domain is not eligible for it', async () => {
@@ -237,49 +219,6 @@ describe( '<DomainCardsLayout>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Settings' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'keeps connection setup in the menu', async () => {
-		renderCards( [ { id: 'setup', isPrimary: true, label: 'Set up', callback: jest.fn() } ] );
-		const user = userEvent.setup();
-
-		const menuToggle = await screen.findByRole( 'button', { name: 'Actions' } );
-		expect( screen.queryByRole( 'button', { name: 'Set up' } ) ).not.toBeInTheDocument();
-		await user.click( menuToggle );
-
-		const setup = await screen.findByRole( 'menuitem', { name: 'Set up' } );
-		await waitFor( () => expect( setup ).toBeVisible() );
-	} );
-
-	test( 'opens modal actions in a modal', async () => {
-		renderCards( [
-			{
-				id: 'manage-auto-renew',
-				label: 'Manage auto-renew',
-				RenderModal: () => <p>Modal content</p>,
-			},
-		] );
-		const user = userEvent.setup();
-
-		await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
-		await user.click( await screen.findByRole( 'menuitem', { name: 'Manage auto-renew' } ) );
-
-		expect( await screen.findByText( 'Modal content' ) ).toBeVisible();
-
-		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
-
-		await waitFor( () => expect( screen.queryByText( 'Modal content' ) ).not.toBeInTheDocument() );
-	} );
-
-	test( 'does not run a disabled menu action', async () => {
-		const callback = jest.fn();
-		renderCards( [ { id: 'add-mailbox', label: 'Add mailbox', callback, disabled: true } ] );
-		const user = userEvent.setup();
-
-		await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
-		await user.click( await screen.findByRole( 'menuitem', { name: 'Add mailbox' } ) );
-
-		expect( callback ).not.toHaveBeenCalled();
-	} );
-
 	test( 'shows an error when an action throws', async () => {
 		renderCards( [
 			{
@@ -309,13 +248,6 @@ describe( '<DomainCardsLayout>', () => {
 			'title',
 			'example.com'
 		);
-	} );
-
-	test( 'hides the menu when no actions are left for it', async () => {
-		renderCards( [ { id: 'manage-domain', label: () => 'Settings', callback: jest.fn() } ] );
-
-		await screen.findByRole( 'button', { name: 'Settings' } );
-		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the empty state when there are no domains', async () => {

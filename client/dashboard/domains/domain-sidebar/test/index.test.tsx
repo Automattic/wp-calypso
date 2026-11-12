@@ -19,7 +19,7 @@ import { AnalyticsProvider } from '../../../app/analytics';
 import { setTransientQueryParamsAtPathname } from '../../../app/transient-query-params';
 import { useActions } from '../../dataviews/actions';
 import DomainSidebar from '../index';
-import type { DomainSummary, Site, User } from '@automattic/api-core';
+import type { DomainSummary, Site } from '@automattic/api-core';
 
 jest.mock( '../../../app/router/domains', () => {
 	const { useParams } = jest.requireActual( '@tanstack/react-router' );
@@ -45,7 +45,7 @@ const domain = {
 const site = { ID: 123, slug: 'site-slug.com' } as Site;
 
 function ViewSettings( { siteList }: { siteList?: Site } ) {
-	const actions = useActions( { user: {} as User, site: siteList, layout: 'table' } );
+	const actions = useActions( { site: siteList, layout: 'table' } );
 	const viewSettings = actions.find( ( { id } ) => id === 'manage-domain' ) as unknown as {
 		callback: ( items: DomainSummary[] ) => void;
 	};

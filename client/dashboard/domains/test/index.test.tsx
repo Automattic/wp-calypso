@@ -379,7 +379,7 @@ describe( '<Domains>', () => {
 		expect( domainNames() ).toHaveLength( 0 );
 	} );
 
-	test( 'switches to a table without bulk selection and tracks the change', async () => {
+	test( 'switches to a table with Settings and no actions menu, and tracks the change', async () => {
 		const user = userEvent.setup();
 		mockApis( mockDomains( 9 ) );
 		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
@@ -389,31 +389,12 @@ describe( '<Domains>', () => {
 
 		const table = await screen.findByRole( 'table' );
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
-		await user.click( within( table ).getAllByRole( 'button', { name: 'Actions' } )[ 0 ] );
-		expect( await screen.findByRole( 'menuitem', { name: /Manage auto-renew/ } ) ).toBeVisible();
+		expect( within( table ).getAllByRole( 'button', { name: 'Settings' } )[ 0 ] ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_view_type_changed',
 			{ type: 'table' }
 		);
-	} );
-
-	test( 'opens the purchase settings to manage auto-renew', async () => {
-		const user = userEvent.setup();
-		mockApis( [ mockDomain( 1, { auto_renewing: false } ) ] );
-		const { recordTracksEvent, router } = render( <Domains /> );
-
-		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
-		await user.click( within( card ).getByRole( 'button', { name: 'Actions' } ) );
-		await user.click( await screen.findByRole( 'menuitem', { name: 'Manage auto-renew' } ) );
-
-		await waitFor( () =>
-			expect( router.state.location.pathname ).toBe( '/me/billing/purchases/1' )
-		);
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_domains_action_click', {
-			action: 'manage-auto-renew',
-			layout: 'grid',
-			domain: 'domain01.com',
-		} );
 	} );
 
 	test( 'records the layout an action was used from', async () => {

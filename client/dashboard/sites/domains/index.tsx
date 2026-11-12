@@ -23,6 +23,7 @@ import {
 	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
+	getTableActions,
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
@@ -114,13 +115,13 @@ function SiteDomains() {
 	const isCardsLayout = view.type === 'grid';
 
 	const actions = useActions( {
-		user,
 		site,
 		sites,
-		domains: siteDomains,
 		layout: view.type,
 		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
 	} );
+
+	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
 
 	const deepLinkedAction = useDeepLinkedDataViewsAction( {
 		queryParams: searchParams,
@@ -137,7 +138,7 @@ function SiteDomains() {
 
 	// Hide actions column when no domain has eligible actions.
 	const hasEligibleActions = siteDomains.some( ( item ) =>
-		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
+		tableActions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
 	);
 
 	return (
@@ -191,7 +192,7 @@ function SiteDomains() {
 					onReset={ resetViewAndLayoutChoice }
 					view={ view }
 					// The cards render their own actions.
-					actions={ isCardsLayout || ! hasEligibleActions ? [] : actions }
+					actions={ isCardsLayout || ! hasEligibleActions ? [] : tableActions }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
