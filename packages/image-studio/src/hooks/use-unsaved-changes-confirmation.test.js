@@ -42,23 +42,14 @@ vi.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Mock @wordpress/element
-vi.mock( '@wordpress/element', async () => ( {
-	useState: (
-		( await vi.importActual ) <
-		typeof import( '@wordpress/element' ) >
-		'@wordpress/element'
-	).useState,
-	useCallback: (
-		( await vi.importActual ) <
-		typeof import( '@wordpress/element' ) >
-		'@wordpress/element'
-	).useCallback,
-	useEffect: (
-		( await vi.importActual ) <
-		typeof import( '@wordpress/element' ) >
-		'@wordpress/element'
-	).useEffect,
-} ) );
+vi.mock( '@wordpress/element', async () => {
+	const actual = await vi.importActual( '@wordpress/element' );
+	return {
+		useState: actual.useState,
+		useCallback: actual.useCallback,
+		useEffect: actual.useEffect,
+	};
+} );
 
 // Mock store
 vi.mock( '../store', () => ( {

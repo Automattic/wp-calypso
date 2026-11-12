@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import '@testing-library/jest-dom';
+import { type MockedFunction, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
@@ -75,7 +75,6 @@ vi.mock( '../icons/BrushIcon', () => ( {
 
 // Import after mocks
 import { useDispatch, useSelect } from '@wordpress/data';
-import { type MockedFunction, vi } from 'vitest';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { STYLE_OPTIONS, StylePicker, VIDEO_STYLE_OPTIONS } from './index';

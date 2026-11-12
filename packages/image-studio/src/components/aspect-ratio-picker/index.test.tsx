@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import '@testing-library/jest-dom';
+import { type Mock, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 vi.mock( '@automattic/agenttic-ui', () => ( {
@@ -42,7 +42,6 @@ vi.mock( '../icons/AspectRatioIcon', () => ( {
 
 // Import after mocks
 import { useDispatch, useSelect } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { ImageStudioMode } from '../../types';
 import { THEME_ASPECT_RATIOS } from '../../utils/theme-aspect-ratio';
 import { trackImageStudioAspectRatioSelected } from '../../utils/tracking';

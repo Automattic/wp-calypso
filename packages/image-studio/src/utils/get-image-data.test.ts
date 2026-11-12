@@ -172,7 +172,7 @@ describe( 'getImageData', () => {
 
 	describe( 'filename extraction', () => {
 		it( 'should extract filename from source_url', async () => {
-			const { extractFilenameFromUrl } = require( './extract-filename' );
+			const { extractFilenameFromUrl } = await import( './extract-filename' );
 
 			const mockMedia = {
 				id: 123,

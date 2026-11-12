@@ -1,8 +1,4 @@
-/**
- * @vitest-environment jsdom
- */
-
-// eslint-disable-next-line import/order
+/* eslint-disable import/order */
 import React from 'react';
 import { vi } from 'vitest';
 

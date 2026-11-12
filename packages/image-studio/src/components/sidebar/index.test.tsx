@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import '@testing-library/jest-dom';
+import { type MockedFunction, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
@@ -17,8 +17,9 @@ vi.mock( '../../utils/tracking', () => ( {
 	trackImageStudioMetadataUpdated: vi.fn(),
 } ) );
 
-vi.mock( './editable-field', () => {
-	const { useState } = require( '@wordpress/element' );
+vi.mock( './editable-field', async () => {
+	const { useState } =
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 	return {
 		EditableField: ( {
 			label,
@@ -91,7 +92,6 @@ vi.mock( '@wordpress/components', () => ( {
 
 // Import after mocks
 import { useDispatch, useSelect } from '@wordpress/data';
-import { type MockedFunction, vi } from 'vitest';
 import { MetadataField } from '../../types';
 import {
 	trackImageStudioMetadataUpdated,

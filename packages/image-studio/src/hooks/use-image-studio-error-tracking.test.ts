@@ -5,8 +5,8 @@ import { trackImageStudioError } from '../utils/tracking';
 import { useImageStudioErrorTracking } from './use-image-studio-error-tracking';
 
 // The package root loads the whole chat; the real tracking module only needs its credits helpers.
-vi.mock( '@automattic/agents-manager', async () =>
-	( { default: ( await vi.importActual< typeof import( '@automattic/agents-manager/src/utils/credits' ) >( '@automattic/agents-manager/src/utils/credits' ) } ) )
+vi.mock( '@automattic/agents-manager', () =>
+	vi.importActual( '@automattic/agents-manager/src/utils/credits' )
 );
 
 vi.mock( '../utils/tracking', async () => ( {

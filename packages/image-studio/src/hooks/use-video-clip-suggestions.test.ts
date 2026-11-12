@@ -1,7 +1,5 @@
-/**
- * @vitest-environment jsdom
- */
-
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 ( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
 
 const mockUseAsyncSuggestionsLoader = vi.fn();
@@ -44,10 +42,7 @@ vi.mock( '../types', () => ( {
 	ImageStudioMode: { Generate: 'generate', Edit: 'edit' },
 } ) );
 
-// eslint-disable-next-line import/order
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
-// eslint-disable-next-line import/order
 import { useVideoClipSuggestions } from './use-video-clip-suggestions';
 
 const noopAbort = () => {};

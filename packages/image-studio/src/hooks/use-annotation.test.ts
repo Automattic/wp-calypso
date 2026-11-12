@@ -110,7 +110,9 @@ describe( 'useAnnotation', () => {
 			onerror: null,
 			src: '',
 		};
-		global.Image = vi.fn( () => mockImageInstance ) as any;
+		global.Image = vi.fn( function () {
+			return mockImageInstance;
+		} ) as any;
 
 		// Hook uses window.wp.data.select to get the current attachment ID
 		( window as any ).wp = {

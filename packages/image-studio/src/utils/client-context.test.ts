@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 /* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '@wordpress/block-editor', () => ( {

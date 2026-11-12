@@ -1,8 +1,7 @@
-import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vitest/config';
 import base from '../../test/packages/vitest.config.mjs';
 
-const mock = ( file ) => fileURLToPath( new URL( `./src/__mocks__/${ file }`, import.meta.url ) );
+const mock = ( file ) => `${ import.meta.dirname }/src/__mocks__/${ file }`;
 
 export default mergeConfig( base, {
 	resolve: {

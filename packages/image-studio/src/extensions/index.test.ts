@@ -42,9 +42,8 @@ describe( 'Extension Registration', () => {
 	} );
 
 	describe( 'registerBlockEditorFilters', () => {
-		it( 'should register all three filters when called', () => {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const { registerBlockEditorFilters } = require( './index' );
+		it( 'should register all three filters when called', async () => {
+			const { registerBlockEditorFilters } = await import( './index' );
 
 			registerBlockEditorFilters();
 
@@ -79,9 +78,8 @@ describe( 'Extension Registration', () => {
 			);
 		} );
 
-		it( 'should only register filters once (idempotency)', () => {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const { registerBlockEditorFilters } = require( './index' );
+		it( 'should only register filters once (idempotency)', async () => {
+			const { registerBlockEditorFilters } = await import( './index' );
 
 			registerBlockEditorFilters();
 			registerBlockEditorFilters();
@@ -91,9 +89,8 @@ describe( 'Extension Registration', () => {
 			expect( mockAddFilter ).toHaveBeenCalledTimes( 4 );
 		} );
 
-		it( 'should use correct namespace for filters', () => {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const { registerBlockEditorFilters } = require( './index' );
+		it( 'should use correct namespace for filters', async () => {
+			const { registerBlockEditorFilters } = await import( './index' );
 			registerBlockEditorFilters();
 
 			const calls = mockAddFilter.mock.calls;

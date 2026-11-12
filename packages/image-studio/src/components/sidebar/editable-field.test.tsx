@@ -1,5 +1,5 @@
 /* eslint-disable import/order */
-import '@testing-library/jest-dom';
+import { type Mock, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
@@ -58,7 +58,6 @@ vi.mock( '../../store', () => ( {
 
 // Import after mocks
 import { useAgentChat, type TaskUpdate } from '@automattic/agenttic-client';
-import { type Mock, vi } from 'vitest';
 import { useAgentConfig } from '../../hooks/use-agent-config';
 import { MetadataField } from '../../types';
 import { trackImageStudioGenAIButtonClick } from '../../utils/tracking';

@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
@@ -94,10 +93,9 @@ describe( 'AnnotationCanvas', () => {
 
 		mockObserve = vi.fn();
 		mockDisconnect = vi.fn();
-		mockResizeObserver = vi.fn( () => ( {
-			observe: mockObserve,
-			disconnect: mockDisconnect,
-		} ) );
+		mockResizeObserver = vi.fn( function () {
+			return { observe: mockObserve, disconnect: mockDisconnect };
+		} );
 		global.ResizeObserver = mockResizeObserver as any;
 
 		HTMLCanvasElement.prototype.getContext = vi.fn( ( type: string ) => {

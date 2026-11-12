@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 /* eslint-disable import/order */
 import { vi } from 'vitest';
 import type { ImageStudioState, ImageStudioEntryPoint, AnnotationCanvasRef } from './index';

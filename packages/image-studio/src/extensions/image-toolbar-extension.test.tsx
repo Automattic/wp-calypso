@@ -1,11 +1,6 @@
-/**
- * @vitest-environment jsdom
- */
-
-import '@testing-library/jest-dom';
+/* eslint-disable import/order */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
-// eslint-disable-next-line import/order
 import React from 'react';
 import { type Mock, vi } from 'vitest';
 

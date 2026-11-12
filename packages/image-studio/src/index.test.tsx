@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 import { act } from '@testing-library/react';
 import { vi } from 'vitest';
 import { initImageStudioIntegration } from './index';
