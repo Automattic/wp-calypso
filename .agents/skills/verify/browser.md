@@ -32,7 +32,7 @@
 
 ## Setup
 
-- Local targets need a running dev server (`yarn start` or `yarn start-dashboard`). Don't start it yourself unless asked or [running unattended](#running-unattended). The script waits up to 90s for its first build; hosted URLs skip this check.
+- Local targets need a running dev server (`yarn start` or `yarn start-dashboard`). Use one that already serves this checkout. If none does, start one in the background as in [Running unattended](#running-unattended), and stop it once your checks are done. Never stop, restart or take the port of a server you didn't start. The script waits up to 90s for its first build; hosted URLs skip this check.
 - Ask the user directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps, and give the exact command for anything they have to run. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`, which goes in the user's own terminal to keep the key out of the conversation. For a failed login, offer these, each described in plain words by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command or setup details:
   1. **Playwright with the E2E test accounts:** the user runs `.agents/skills/verify/scripts/setup-test-accounts.sh` in their own terminal.
   2. **Playwright with their own account:** the user runs `! node .agents/skills/verify/scripts/auth.cjs me`.
