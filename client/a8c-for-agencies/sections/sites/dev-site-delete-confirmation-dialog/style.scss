@@ -1,0 +1,26 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dev-site-delete-confirmation-dialog {
+	&.dialog.card {
+		max-width: 800px;
+	}
+
+	p {
+		@include body-large;
+		margin-bottom: 1rem;
+	}
+
+	fieldset {
+		margin-top: 2rem;
+		margin-bottom: 0;
+
+		label {
+			@include heading-large;
+
+			strong {
+				color: var(--color-scary-50);
+			}
+		}
+	}
+}
