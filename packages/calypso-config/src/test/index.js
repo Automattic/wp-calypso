@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { vi } from 'vitest';
 describe( 'optionalConfig', () => {
 	let optionalConfig;

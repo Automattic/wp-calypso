@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';

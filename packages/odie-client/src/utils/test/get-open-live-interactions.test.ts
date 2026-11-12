@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import Smooch from 'smooch';
 import { type Mock, vi } from 'vitest';
 import {

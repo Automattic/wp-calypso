@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
 import { vi } from 'vitest';
 import { getAccountAgeInDays, setSurvicateVisitorTraits } from '../visitor-traits';

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook, act } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { useSendMessageHandler } from '../use-send-message-handler';

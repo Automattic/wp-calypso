@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { useOdieAssistantContext } from '../../../context';

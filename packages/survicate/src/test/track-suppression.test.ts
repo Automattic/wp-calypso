@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { type Mock, vi } from 'vitest';
