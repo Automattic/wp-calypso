@@ -247,7 +247,8 @@ describe( '<SiteDomains>', () => {
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'shows "Rename address" on the default address row of the table', async () => {
+	test( 'opens the change site address modal from "Rename address" on the default address row of the table', async () => {
+		const user = userEvent.setup();
 		nock.cleanAll();
 		mockApis( {
 			domains: [ defaultAddressDomain ],
@@ -257,7 +258,9 @@ describe( '<SiteDomains>', () => {
 		render( <SiteDomains />, { user: ownerUser } );
 
 		const table = await screen.findByRole( 'table' );
-		expect( within( table ).getByRole( 'button', { name: 'Rename address' } ) ).toBeVisible();
+		await user.click( within( table ).getByRole( 'button', { name: 'Rename address' } ) );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
 	test( 'hides "Rename address" when the site is suspended', async () => {
