@@ -287,65 +287,67 @@ describe( 'ShoppingCartManager', () => {
 		expect( p1 ).toEqual( p2 );
 	} );
 
-	it( 'queues actions that occur while the initial cart is loading and plays them when the cart has loaded', ( done ) => {
-		const setCartSpy = vi.fn().mockImplementation( setCart );
-		const cartManagerClient = createShoppingCartManagerClient( {
-			getCart,
-			setCart: setCartSpy,
-		} );
-		const manager = cartManagerClient.forCartKey( mainCartKey );
+	it( 'queues actions that occur while the initial cart is loading and plays them when the cart has loaded', () =>
+		new Promise< void >( ( resolve, reject ) => {
+			const setCartSpy = vi.fn().mockImplementation( setCart );
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart: setCartSpy,
+			} );
+			const manager = cartManagerClient.forCartKey( mainCartKey );
 
-		const subscriberCallback = () => {
-			const state = manager.getState();
-			if ( ! state.isLoading && ! state.isPendingUpdate ) {
-				try {
-					expect( state.responseCart.products.map( ( prod ) => prod.product_slug ) ).toContain(
-						planOne.product_slug
-					);
-					done();
-				} catch ( error ) {
-					done( error );
+			const subscriberCallback = () => {
+				const state = manager.getState();
+				if ( ! state.isLoading && ! state.isPendingUpdate ) {
+					try {
+						expect( state.responseCart.products.map( ( prod ) => prod.product_slug ) ).toContain(
+							planOne.product_slug
+						);
+						resolve();
+					} catch ( error ) {
+						reject( error );
+					}
 				}
-			}
-		};
-		manager.subscribe( subscriberCallback );
+			};
+			manager.subscribe( subscriberCallback );
 
-		// Trigger the initial fetch; this is async
-		manager.fetchInitialCart();
-		// While the fetch is still in-progress, trigger an action
-		manager.actions.addProductsToCart( [ planOne ] );
-	} );
+			// Trigger the initial fetch; this is async
+			manager.fetchInitialCart();
+			// While the fetch is still in-progress, trigger an action
+			manager.actions.addProductsToCart( [ planOne ] );
+		} ) );
 
-	it( 'queues actions that occur after initial cart has loaded when queued actions remain and plays them when the cart is loaded', ( done ) => {
-		const setCartSpy = vi.fn().mockImplementation( setCart );
-		const cartManagerClient = createShoppingCartManagerClient( {
-			getCart,
-			setCart: setCartSpy,
-		} );
-		const manager = cartManagerClient.forCartKey( mainCartKey );
+	it( 'queues actions that occur after initial cart has loaded when queued actions remain and plays them when the cart is loaded', () =>
+		new Promise< void >( ( resolve, reject ) => {
+			const setCartSpy = vi.fn().mockImplementation( setCart );
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart: setCartSpy,
+			} );
+			const manager = cartManagerClient.forCartKey( mainCartKey );
 
-		let hasAddedSecondProduct = false;
-		const subscriberCallback = () => {
-			const state = manager.getState();
-			if ( ! state.isLoading && ! hasAddedSecondProduct ) {
-				hasAddedSecondProduct = true;
-				manager.actions.addProductsToCart( [ planTwo ] );
-			}
-
-			if ( ! state.isLoading && ! state.isPendingUpdate ) {
-				try {
-					const slugsInCart = state.responseCart.products.map( ( prod ) => prod.product_slug );
-					expect( slugsInCart ).toContain( planOne.product_slug );
-					expect( slugsInCart ).toContain( planTwo.product_slug );
-					done();
-				} catch ( err ) {
-					done( err );
+			let hasAddedSecondProduct = false;
+			const subscriberCallback = () => {
+				const state = manager.getState();
+				if ( ! state.isLoading && ! hasAddedSecondProduct ) {
+					hasAddedSecondProduct = true;
+					manager.actions.addProductsToCart( [ planTwo ] );
 				}
-			}
-		};
 
-		manager.subscribe( subscriberCallback );
-		manager.fetchInitialCart();
-		manager.actions.addProductsToCart( [ planOne ] );
-	} );
+				if ( ! state.isLoading && ! state.isPendingUpdate ) {
+					try {
+						const slugsInCart = state.responseCart.products.map( ( prod ) => prod.product_slug );
+						expect( slugsInCart ).toContain( planOne.product_slug );
+						expect( slugsInCart ).toContain( planTwo.product_slug );
+						resolve();
+					} catch ( err ) {
+						reject( err );
+					}
+				}
+			};
+
+			manager.subscribe( subscriberCallback );
+			manager.fetchInitialCart();
+			manager.actions.addProductsToCart( [ planOne ] );
+		} ) );
 } );
