@@ -670,7 +670,11 @@ const onboarding: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					return navigateAfterDomain();
+					return navigateAfterDomain( {
+						requiresPaidPlan: isConnectedDomainMove(
+							providedDependencies.domainItem as MinimalRequestCartProduct | undefined
+						),
+					} );
 				case 'use-my-domain': {
 					if (
 						providedDependencies &&

@@ -342,7 +342,11 @@ describe( 'onboarding flow use-my-domain navigation', () => {
 } );
 
 describe( 'onboarding flow domains navigation', () => {
-	const submitDomains = ( search: string, cartPlan?: string ) => {
+	const submitDomains = (
+		search: string,
+		cartPlan?: string,
+		domainItem?: Record< string, unknown >
+	) => {
 		const query = new URLSearchParams( search );
 		( useQuery as jest.Mock ).mockReturnValue( query );
 		( useSelect as jest.Mock ).mockReturnValue( {
@@ -363,7 +367,7 @@ describe( 'onboarding flow domains navigation', () => {
 
 		result.current.submit?.( {
 			slug: 'domains',
-			providedDependencies: { siteUrl: 'example.wordpress.com' },
+			providedDependencies: { siteUrl: 'example.wordpress.com', domainItem },
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
 		return navigate;
@@ -400,6 +404,19 @@ describe( 'onboarding flow domains navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( null );
 		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
+	} );
+
+	// A connected-domain move needs a paid plan, so the free-plan shortcut must not take it
+	// past the plans grid, where the Free plan drops it.
+	it( 'goes to the plans step for a connected domain move on a Simple blueprint build', () => {
+		const navigate = submitDomains( 'blueprint=zoom&build_dest=simple', undefined, {
+			product_slug: 'domain_move_internal',
+			meta: 'connected.com',
+			extra: { is_connected_domain_move: true },
+		} );
+
+		expect( navigate ).toHaveBeenCalledWith( 'plans' );
+		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
 	} );
 } );
 
