@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import Checklist from '..';
 import ChecklistItem from '../../checklist-item';
 
@@ -8,7 +9,7 @@ describe( 'Checklist', () => {
 		id,
 		title: `Task ${ id }`,
 		completed,
-		onClick: jest.fn(),
+		onClick: vi.fn(),
 		disabled: false,
 	} );
 
