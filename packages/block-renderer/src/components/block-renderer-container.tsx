@@ -99,7 +99,6 @@ const ScaledBlockRendererContainer = ( {
 
 	const scriptAssets = useParsedAssets( scripts );
 
-	// Memoized so the duotone filter markup is only rebuilt when the presets change.
 	const svgFilters = useMemo( () => {
 		const presets = [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
 		return presets.map( ( preset ) => ( {
