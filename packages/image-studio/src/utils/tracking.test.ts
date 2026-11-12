@@ -830,7 +830,7 @@ describe( 'credits event details', () => {
 		] );
 
 	it.each( [ 3000, 0, 'none' ] as const )(
-		'sends the top-ups balance %p on each credits event',
+		'sends the top-ups balance %o on each credits event',
 		( topUpCreditsLeft ) => {
 			recordCreditsEvents( topUpCreditsLeft );
 

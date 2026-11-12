@@ -428,7 +428,7 @@ describe( 'useAiCredits', () => {
 			LINKS.flatMap( ( [ label, planTier, url ] ) =>
 				[ '', 'none' ].map( ( sessionId ) => [ label, sessionId, planTier, url ] as const )
 			)
-		)( 'leaves %s without a session for %p', async ( _label, sessionId, plan_tier, url ) => {
+		)( 'leaves %s without a session for %o', async ( _label, sessionId, plan_tier, url ) => {
 			vi.mocked( getSessionId ).mockReturnValue( sessionId );
 			respondWith( { ai_credits: planSnapshot( 0, { plan_tier } ), ...PLAN_BUYER } );
 			const { result } = renderCredits();
