@@ -1,7 +1,7 @@
 const fs = require( 'node:fs' );
+const { createRequire } = require( 'node:module' );
 const os = require( 'node:os' );
 const path = require( 'node:path' );
-const { createRequire } = require( 'node:module' );
 
 const REPO_ROOT = path.resolve( __dirname, '../../../..' );
 const e2eRequire = createRequire( path.join( REPO_ROOT, 'test/e2e/package.json' ) );
