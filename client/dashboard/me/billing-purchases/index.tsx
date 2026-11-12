@@ -36,7 +36,6 @@ import {
 	DEFAULT_VIEW,
 	getFields,
 	getItemId,
-	usePurchasesListActions,
 } from './dataviews';
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
 import { useOtherUsersSitePurchases } from './use-other-users-site-purchases';
@@ -153,10 +152,6 @@ export default function PurchasesList() {
 		return filterSortAndPaginate( allSubscriptions, view, purchasesDataFields );
 	}, [ allSubscriptions, view, purchasesDataFields ] );
 
-	const actions = usePurchasesListActions( {
-		transferredPurchases,
-	} );
-
 	const { recordTracksEvent } = useAnalytics();
 	const activeSiteId = siteFilterIds.length === 1 ? siteFilterIds[ 0 ] : undefined;
 
@@ -240,7 +235,6 @@ export default function PurchasesList() {
 						onChangeView={ updateView }
 						onReset={ resetView }
 						defaultLayouts={ { table: {} } }
-						actions={ actions }
 						getItemId={ getItemId }
 						paginationInfo={ paginationInfo }
 					/>

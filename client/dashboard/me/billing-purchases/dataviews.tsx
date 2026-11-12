@@ -1,10 +1,10 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Icon, Popover, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, cloud, code, envelope, globe, info, plugins } from '@wordpress/icons';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
 import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
@@ -517,35 +517,3 @@ export function getFields( {
 export const getItemId = ( purchase: Purchase ) => {
 	return purchase.ID.toString();
 };
-
-export function usePurchasesListActions( {
-	transferredPurchases,
-}: {
-	transferredPurchases: Purchase[];
-} ) {
-	const navigate = useNavigate();
-	return useMemo(
-		() => [
-			{
-				id: 'manage-purchase',
-				label: __( 'Manage purchase' ),
-				isEligible: ( item: Purchase ) => {
-					// Hide manage button for transferred ownership purchases
-					const hasTransferredOwnership = isTransferredOwnership(
-						item.ID,
-						transferredPurchases ?? []
-					);
-					return Boolean( item.domain && item.ID ) && ! hasTransferredOwnership;
-				},
-				callback: ( items: Purchase[] ) => {
-					const item = items[ 0 ];
-					navigate( {
-						to: purchaseSettingsRoute.fullPath,
-						params: { purchaseId: item.ID },
-					} );
-				},
-			},
-		],
-		[ transferredPurchases, navigate ]
-	);
-}

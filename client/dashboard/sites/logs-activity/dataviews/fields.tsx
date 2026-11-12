@@ -7,7 +7,8 @@ import { ActivityActor } from '../../../components/logs-activity/activity-actor'
 import { ActivityEvent } from '../../../components/logs-activity/activity-event';
 import { Activity } from '../../../components/logs-activity/types';
 import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
-import type { ActivityLogGroupCountResponse } from '@automattic/api-core';
+import { ManageBackupLink } from './manage-backup-link';
+import type { ActivityLogGroupCountResponse, Site } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 export type ActivityLogTypeOption = {
@@ -15,17 +16,19 @@ export type ActivityLogTypeOption = {
 	label: string;
 };
 
-type UseActivityFieldsArgs =
+type UseActivityFieldsArgs = {
+	site: Site;
+	activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined;
+} & (
 	| {
 			timezoneString: string;
 			gmtOffset?: number;
-			activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined;
 	  }
 	| {
 			timezoneString?: undefined;
 			gmtOffset: number;
-			activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined;
-	  };
+	  }
+);
 
 const getActivityLogTypeSlugFromName = ( name?: string ): string => {
 	if ( ! name ) {
@@ -50,6 +53,7 @@ const getActivityLogTypeDescriptionFromName = (
 };
 
 export function useActivityFields( {
+	site,
 	timezoneString,
 	gmtOffset,
 	activityLogTypes,
@@ -58,6 +62,8 @@ export function useActivityFields( {
 	const isLargeScreen = useViewportMatch( 'huge', '>=' );
 	const dateTimeLabel = getDateTimeLabel( { timezoneString, gmtOffset, isLargeScreen } );
 	const localIsUTC = gmtOffset === 0;
+	// Inaccessible Jetpack sites can't open the backup detail route.
+	const canManageBackups = ! site.__inaccessible_jetpack_error;
 
 	return useMemo( () => {
 		const activityLogTypeElements: ActivityLogTypeOption[] = Object.entries(
@@ -119,7 +125,15 @@ export function useActivityFields( {
 					return `${ item.activityTitle }: ${ item.activityDescription.textDescription }`;
 				},
 				render: ( { item } ) => {
-					return <ActivityEvent activity={ item } />;
+					return (
+						<ActivityEvent
+							activity={ item }
+							action={
+								canManageBackups &&
+								item.activityIsRewindable && <ManageBackupLink activity={ item } site={ site } />
+							}
+						/>
+					);
 				},
 				filterBy: { operators: [] },
 			},
@@ -148,5 +162,14 @@ export function useActivityFields( {
 				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 		];
-	}, [ timezoneString, gmtOffset, locale, dateTimeLabel, activityLogTypes, localIsUTC ] );
+	}, [
+		site,
+		canManageBackups,
+		timezoneString,
+		gmtOffset,
+		locale,
+		dateTimeLabel,
+		activityLogTypes,
+		localIsUTC,
+	] );
 }

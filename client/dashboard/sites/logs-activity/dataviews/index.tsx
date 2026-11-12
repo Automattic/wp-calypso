@@ -16,7 +16,6 @@ import { getActivityLogHiddenGroups } from '../../../utils/site-features';
 import { buildTimeRangeInSeconds } from '../../logs/utils';
 import { ActivityLogsCallout } from '../activity-logs-callout';
 import { transformActivityLogEntry } from '../activity-transformer';
-import { useActivityActions } from './actions';
 import { useActivityFields } from './fields';
 import { extractActivityLogTypeValues } from './filters';
 import { DEFAULT_VIEW } from './views';
@@ -124,11 +123,9 @@ function SiteActivityLogsDataViews( {
 
 	const fields = useActivityFields(
 		timezoneString
-			? { gmtOffset, timezoneString, activityLogTypes: groupCountsData?.groups }
-			: { gmtOffset, activityLogTypes: groupCountsData?.groups }
+			? { site, gmtOffset, timezoneString, activityLogTypes: groupCountsData?.groups }
+			: { site, gmtOffset, activityLogTypes: groupCountsData?.groups }
 	);
-
-	const actions = useActivityActions( { isLoading: isFetching, site } );
 
 	const onChangeView = ( next: View ) => {
 		const nextFilters = next.filters;
@@ -206,7 +203,6 @@ function SiteActivityLogsDataViews( {
 				paginationInfo={ paginationInfo }
 				fields={ fields as Field< Activity >[] }
 				view={ view }
-				actions={ actions }
 				getItemId={ ( item ) => item.activityId.toString() }
 				config={
 					hasActivityLogsAccess ? undefined : { perPageSizes: [ ACTIVITY_LOGS_DEFAULT_PAGE_SIZE ] }
