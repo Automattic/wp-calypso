@@ -59,10 +59,12 @@
 	"devDependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@types/react": "^18.3.31",
 		"@types/react-dom": "^18.3.7",
 		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
