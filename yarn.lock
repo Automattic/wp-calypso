@@ -488,6 +488,7 @@ __metadata:
     resize-observer-polyfill: "npm:^1.5.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     zod: "npm:^3.25.76"
   peerDependencies:
@@ -898,6 +899,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
     "@wordpress/data": ^10.48.0 || ^11.0.0
@@ -980,6 +982,7 @@ __metadata:
     debug: "npm:^4.4.3"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
@@ -1609,6 +1612,7 @@ __metadata:
     smooch: "npm:^5.7.17"
     typescript: "npm:^6.0.3"
     use-debounce: "npm:^10.0.6"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1756,6 +1760,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@types/react": "npm:^18.3.31"
     "@types/react-dom": "npm:^18.3.7"
@@ -1768,6 +1773,7 @@ __metadata:
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^20.0.0"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
     "@wordpress/data": ^11.1.0
@@ -1853,6 +1859,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@storybook/addon-a11y": "npm:^10.6.5"
     "@tanstack/react-query": "npm:^5.83.0"
+    "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
@@ -1870,6 +1877,7 @@ __metadata:
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
@@ -2206,6 +2214,7 @@ __metadata:
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
@@ -2255,6 +2264,7 @@ __metadata:
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
@@ -2828,6 +2838,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
