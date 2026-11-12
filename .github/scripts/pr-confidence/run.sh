@@ -42,7 +42,19 @@ apply_result() {
 	pr=$(jq -r .pr <<<"$result")
 	level=$(jq -r .level <<<"$result")
 	body=$(jq -r --arg marker "$MARKER" '
-		"\($marker) sha=\(.sha) fix_here=\(.signals.unresolved_fix_here_comments) -->\n**AI confidence: \(.level)** — " + ([.reasons[] | gsub("@"; "@​")] | join("; ")) + ".\n\n<sub>Helps reviewers prioritise; not a substitute for review. Re-scored when new commits land.</sub>"' <<<"$result")
+		def list: if length == 0 then "none" else join(", ") end;
+		.signals as $s
+		| "\($marker) sha=\(.sha) fix_here=\($s.unresolved_fix_here_comments) -->",
+		"**AI confidence: \(.level)**",
+		"",
+		"<details>",
+		"<summary>Details</summary>",
+		"",
+		(.reasons[] | "- " + gsub("@"; "@​")),
+		"",
+		"Model said \(.model_level). \($s.lines_changed) lines in \($s.files_changed) files; tests changed: \($s.tests_changed); sensitive: \($s.sensitive_paths | list); shared: \($s.shared_paths | list); failing checks: \($s.failing_checks | list); unresolved [fix here]: \($s.unresolved_fix_here_comments). Scored at \(.sha[0:7]).",
+		"",
+		"</details>"' <<<"$result")
 	for other in Low Medium High; do
 		if [ "$other" != "$level" ]; then
 			gh pr edit "$pr" --repo "$REPO" --remove-label "$LABEL_PREFIX $other" >/dev/null 2>&1 || true
