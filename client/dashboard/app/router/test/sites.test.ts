@@ -38,7 +38,50 @@ test( 'loads the site overview when the user cannot read media storage', async (
 	const loader = siteOverviewRoute.options.loader as any;
 
 	await expect(
-		loader( { params: { siteSlug: site.slug }, preload: false } )
+		loader( { params: { siteSlug: site.slug }, deps: {}, preload: false } )
+	).resolves.toBeUndefined();
+} );
+
+test( 'loads a move’s session before showing its site overview', async () => {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
+		.query( true )
+		.reply( 200, {} );
+	const sessionRequest = nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/static-site-import-session/abc123' )
+		.query( true )
+		.reply( 200, { session_id: 'abc123', state: 'capturing' } );
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const loader = siteOverviewRoute.options.loader as any;
+	await loader( {
+		params: { siteSlug: site.slug },
+		deps: { importSessionId: 'abc123' },
+		preload: false,
+	} );
+
+	expect( sessionRequest.isDone() ).toBe( true );
+} );
+
+test( 'loads the site overview when a move’s session can’t be read', async () => {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
+		.query( true )
+		.reply( 200, {} );
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/static-site-import-session/abc123' )
+		.query( true )
+		.reply( 403, { code: 'static_site_import_session_forbidden', message: 'Not yours.' } );
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const loader = siteOverviewRoute.options.loader as any;
+
+	await expect(
+		loader( {
+			params: { siteSlug: site.slug },
+			deps: { importSessionId: 'abc123' },
+			preload: false,
+		} )
 	).resolves.toBeUndefined();
 } );
 
