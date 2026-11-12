@@ -2,18 +2,19 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import LaunchpadInternal from '../launchpad-internal';
 import '@testing-library/jest-dom';
 import type { Task } from '../types';
 
-jest.mock( '@automattic/calypso-analytics' );
+vi.mock( '@automattic/calypso-analytics' );
 
-jest.mock( '../use-launchpad', () => {
+vi.mock( '../use-launchpad', () => {
 	// jest.mock factories are hoisted above imports, so the fixture has to be required here.
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const { buildTask } = require( './lib/fixtures' );
 	return {
-		useLaunchpad: jest.fn( () => {
+		useLaunchpad: vi.fn( () => {
 			return {
 				isFetchedAfterMount: true,
 				data: {
@@ -47,7 +48,7 @@ describe( 'LaunchpadInternal', () => {
 	it( 'records the checklist item click', async () => {
 		renderComponent();
 
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		await userEvent.click( screen.getByRole( 'button', { name: /Select to task 1/ } ) );
 
 		await waitFor( () => {
