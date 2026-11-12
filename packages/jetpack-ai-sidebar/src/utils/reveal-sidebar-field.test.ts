@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
 import { type Mock, vi } from 'vitest';
 const mockClearSelectedBlock = vi.fn();
 const mockClearActiveBlockFocus = vi.fn();
@@ -216,7 +217,7 @@ describe( 'revealSidebarField', () => {
 	} );
 
 	it( 'skips the smooth scroll when the user prefers reduced motion', async () => {
-		// The shared jest setup stubs matchMedia as always-false; override one call.
+		// The shared setup stubs matchMedia as always-false; override one call.
 		( window.matchMedia as Mock ).mockReturnValueOnce( { matches: true } );
 		const field = renderField();
 

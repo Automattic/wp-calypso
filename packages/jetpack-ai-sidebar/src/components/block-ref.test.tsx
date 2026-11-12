@@ -4,7 +4,6 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { getBlockType } from '@wordpress/blocks';
 import { type Mock, vi } from 'vitest';

@@ -4,7 +4,6 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { type Mock, vi } from 'vitest';
@@ -103,22 +102,24 @@ vi.mock( '@wordpress/data', () => ( {
 // BlockRef renders the block-type icon via BlockIcon; stub it and the block
 // registry so the real block-editor module (which needs @wordpress/data) is not
 // pulled in under the mocked data store.
-vi.mock( '@wordpress/block-editor', () => ( {
-	store: 'core/block-editor',
-	BlockIcon: () => null,
-	RichText: {
-		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
-			const { RawHTML } =
-				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
-			return react.createElement(
-				tagName as string,
-				props,
-				react.createElement( RawHTML, null, value as string )
-			);
+vi.mock( '@wordpress/block-editor', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const { RawHTML } =
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+	return {
+		store: 'core/block-editor',
+		BlockIcon: () => null,
+		RichText: {
+			Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+				return react.createElement(
+					tagName as string,
+					props,
+					react.createElement( RawHTML, null, value as string )
+				);
+			},
 		},
-	},
-} ) );
+	};
+} );
 vi.mock( '@wordpress/blocks', () => ( {
 	getBlockType: () => undefined,
 } ) );

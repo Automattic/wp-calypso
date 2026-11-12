@@ -93,24 +93,26 @@ const mockSerializeBlocks = vi.fn( ( blocks: any[] ) => {
 	return JSON.stringify( blocks.map( normalize ) );
 } );
 
-vi.mock( '@wordpress/block-editor', () => ( {
-	store: 'core/block-editor',
-	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
-	// tests focused on the card structure rather than icon rendering.
-	BlockIcon: () => null,
-	RichText: {
-		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
-			const { RawHTML } =
-				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
-			return react.createElement(
-				tagName as string,
-				props,
-				react.createElement( RawHTML, null, value as string )
-			);
+vi.mock( '@wordpress/block-editor', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const { RawHTML } =
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+	return {
+		store: 'core/block-editor',
+		// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
+		// tests focused on the card structure rather than icon rendering.
+		BlockIcon: () => null,
+		RichText: {
+			Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+				return react.createElement(
+					tagName as string,
+					props,
+					react.createElement( RawHTML, null, value as string )
+				);
+			},
 		},
-	},
-} ) );
+	};
+} );
 
 vi.mock( '@wordpress/blocks', () => ( {
 	// Nothing is registered in the test env, so block chips fall back to their

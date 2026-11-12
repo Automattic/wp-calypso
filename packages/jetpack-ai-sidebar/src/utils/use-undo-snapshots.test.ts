@@ -2,12 +2,13 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
+import { type MockedFunction, vi } from 'vitest';
 vi.mock( './block-actions', () => ( {
 	undoBlockEdit: vi.fn( () => true ),
 } ) );
 
 import { renderHook } from '@testing-library/react';
-import { type MockedFunction, vi } from 'vitest';
 import { undoBlockEdit } from './block-actions';
 import useUndoSnapshots from './use-undo-snapshots';
 

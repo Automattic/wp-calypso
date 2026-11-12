@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 let mockCurrentPostId: number | string | null = 1;
 
 vi.mock( '@wordpress/data', () => ( {
@@ -12,7 +14,6 @@ vi.mock( '@wordpress/data', () => ( {
 } ) );
 
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
 import {
 	getCurrentEditorPostIdFromStore,
 	normalizeEditorPostId,
