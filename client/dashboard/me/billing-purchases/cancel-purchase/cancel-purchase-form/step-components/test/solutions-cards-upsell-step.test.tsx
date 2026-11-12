@@ -4,9 +4,10 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { setSessionLocale } from '../../../../../../app/locale/session-locale';
 import { render } from '../../../../../../test-utils';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, User } from '@automattic/api-core';
 
 const mockSetNewMessagingChat = vi.fn();
 const mockSetNavigateToRoute = vi.fn();
@@ -49,6 +50,7 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
 		mockCanConnectToZendesk = true;
+		setSessionLocale( null );
 	} );
 
 	test( 'speak-with-support calls setNewMessagingChat when Zendesk eligible', async () => {
@@ -390,4 +392,67 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 
 		expect( screen.queryByRole( 'link', { name: /Book a 1:1 session/ } ) ).not.toBeInTheDocument();
 	} );
+
+	test.each( [
+		{ label: 'English', language: 'en', shown: true },
+		{ label: 'British English', language: 'en-gb', shown: true },
+		{ label: 'Spanish', language: 'es', shown: false },
+		// Catalan is marked incompletely translated in languages-meta.json, so
+		// "Display interface in English" shows the Dashboard in English.
+		{
+			label: 'Catalan with "Display interface in English"',
+			language: 'ca',
+			fallback: true,
+			shown: true,
+		},
+		{ label: 'Catalan', language: 'ca', shown: false },
+		{
+			label: 'English account, Spanish set in the language switcher',
+			language: 'en',
+			session: 'es',
+			shown: false,
+		},
+		{
+			label: 'Spanish account, English set in the language switcher',
+			language: 'es',
+			session: 'en',
+			shown: true,
+		},
+	] )(
+		'shows the 1:1 session card only in an English Dashboard: $label',
+		( { language, fallback = false, session, shown } ) => {
+			const recordEvent = vi.fn();
+			if ( session ) {
+				setSessionLocale( session );
+			}
+
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="difficultEditor"
+					purchase={ purchase }
+					closeDialog={ vi.fn() }
+					onDeclineUpsell={ vi.fn() }
+					recordEvent={ recordEvent }
+				/>,
+				{
+					user: {
+						ID: 1,
+						username: 'testuser',
+						language,
+						use_fallback_for_incomplete_languages: fallback,
+					} as User,
+				}
+			);
+
+			const otherCards = 'built-by,ask-ai-assistant,speak-with-support';
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+				solution_ids: shown ? `book-expert-session,${ otherCards }` : otherCards,
+				cancellation_reason: 'difficultEditor',
+			} );
+			expect( screen.getByRole( 'link', { name: /Let us build for you/ } ) ).toBeVisible();
+			expect( screen.queryAllByRole( 'link', { name: /Book a 1:1 session/ } ) ).toHaveLength(
+				shown ? 1 : 0
+			);
+		}
+	);
 } );
