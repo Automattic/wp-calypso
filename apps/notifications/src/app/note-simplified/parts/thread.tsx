@@ -112,7 +112,7 @@ const ThreadItem = ( {
 				<HStack
 					className="wpnc-simplified__quiet-links"
 					direction={ compact ? 'row' : 'column' }
-					alignment={ compact ? 'center' : 'topLeft' }
+					alignment={ compact ? 'baseline' : 'topLeft' }
 					justify="flex-start"
 					spacing={ compact ? 2 : 0 }
 					style={ { flex: 1 } }
