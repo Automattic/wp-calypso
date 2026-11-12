@@ -26,12 +26,10 @@ For a quicker and more efficient development experience, the application can be 
 
 Run `yarn run build:config` from the `desktop/` directory first. To develop against the hosted WordPress.com app, run `yarn run dev` there.
 
-To run Desktop against local Calypso, use **`http://calypso.localhost:3000`** for sign-in. Worktrees pick their own ports by default, so set `PORT=3000` explicitly:
+To run Desktop against local Calypso, use **`http://calypso.localhost:3000`** for sign-in. Worktrees pick their own ports by default, so set `PORT=3000` when starting Calypso:
 
-1. From the repository root, start Calypso with `PORT=3000 yarn start`.
-2. Once Calypso is ready, open a separate terminal and run `PORT=3000 yarn run dev:localhost` from `desktop/`.
-
-On Windows, start Calypso in WSL. In PowerShell, set `$env:PORT = '3000'` before running `yarn run dev:localhost`.
+1. From the repository root, start Calypso with `PORT=3000 yarn start`. On Windows, run this in WSL.
+2. Once Calypso is ready, open a separate terminal and run `yarn run dev:localhost` from `desktop/`.
 
 ## Development
 
