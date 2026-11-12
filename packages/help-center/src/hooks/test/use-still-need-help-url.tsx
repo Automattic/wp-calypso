@@ -3,11 +3,12 @@
  */
 import { renderHook } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { HelpCenterRequiredContextProvider } from '../../contexts/HelpCenterContext';
 import { useStillNeedHelpURL } from '../use-still-need-help-url';
 import type { HelpCenterProduct } from '../../feature-config';
 
-jest.mock( '../use-should-use-wapuu', () => ( {
+vi.mock( '../use-should-use-wapuu', () => ( {
 	useShouldUseWapuu: () => true,
 } ) );
 

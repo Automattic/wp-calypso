@@ -4,14 +4,15 @@
 
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useGetHistoryChats } from '../../hooks';
 import HelpCenterRecentConversations from '../help-center-recent-conversations';
 
-jest.mock( 'react-router-dom', () => ( {
-	useNavigate: () => jest.fn(),
+vi.mock( 'react-router-dom', () => ( {
+	useNavigate: () => vi.fn(),
 } ) );
 
-jest.mock( '@automattic/components/src/summary-button', () => ( {
+vi.mock( '@automattic/components/src/summary-button', () => ( {
 	__esModule: true,
 	default: ( { title, description }: { title: string; description: React.ReactNode } ) => (
 		<button>
@@ -21,24 +22,25 @@ jest.mock( '@automattic/components/src/summary-button', () => ( {
 	),
 } ) );
 
-jest.mock( '../../hooks', () => ( {
-	useGetHistoryChats: jest.fn(),
+vi.mock( '../../hooks', () => ( {
+	useGetHistoryChats: vi.fn(),
 } ) );
 
-jest.mock( '../../hooks/use-help-center-tracks-event', () => ( {
-	useHelpCenterTracksEvent: () => jest.fn(),
+vi.mock( '../../hooks/use-help-center-tracks-event', () => ( {
+	useHelpCenterTracksEvent: () => vi.fn(),
 } ) );
 
-jest.mock( '../../contexts/HelpCenterContext', () => ( {
+vi.mock( '../../contexts/HelpCenterContext', () => ( {
 	useHelpCenterContext: () => ( { sectionName: 'test' } ),
 } ) );
 
-jest.mock( '../utils', () => ( {
+vi.mock( '../utils', async () => ( {
 	getChatLinkFromConversation: () => '/odie',
-	getLastMessage: jest.requireActual( '../utils' ).getLastMessage,
+	getLastMessage: ( await vi.importActual< typeof import( '../utils' ) >( '../utils' ) )
+		.getLastMessage,
 } ) );
 
-const mockUseGetHistoryChats = useGetHistoryChats as jest.Mock;
+const mockUseGetHistoryChats = useGetHistoryChats as Mock;
 
 const odieConversation = {
 	id: '123',

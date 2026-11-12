@@ -6,47 +6,50 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { HelpCenterRequiredContextProvider } from '../../contexts/HelpCenterContext';
 import { HelpCenterContactForm } from '../help-center-contact-form';
 
-jest.mock( 'react-router-dom', () => ( {
-	...jest.requireActual( 'react-router-dom' ),
-	useNavigate: () => jest.fn(),
+vi.mock( 'react-router-dom', async () => ( {
+	...( await vi.importActual< typeof import( 'react-router-dom' ) >( 'react-router-dom' ) ),
+	useNavigate: () => vi.fn(),
 } ) );
 
-jest.mock( '../../data/use-user-sites', () => ( {
+vi.mock( '../../data/use-user-sites', () => ( {
 	useUserSites: () => ( { data: { sites: [] } } ),
 } ) );
 
-jest.mock( '../../data/use-site-analysis', () => ( {
+vi.mock( '../../data/use-site-analysis', () => ( {
 	useSiteAnalysis: () => ( { result: 'LOADING' } ),
 } ) );
 
-jest.mock( '../../data/use-submit-support-ticket', () => ( {
-	useSubmitTicketMutation: () => ( { isPending: false, mutateAsync: jest.fn() } ),
+vi.mock( '../../data/use-submit-support-ticket', () => ( {
+	useSubmitTicketMutation: () => ( { isPending: false, mutateAsync: vi.fn() } ),
 } ) );
 
-jest.mock( '../../data/use-jetpack-search-ai', () => ( {
+vi.mock( '../../data/use-jetpack-search-ai', () => ( {
 	useJetpackSearchAIQuery: () => ( { isFetching: false, isError: false } ),
 } ) );
 
-jest.mock( '@automattic/odie-client/src/data/use-current-support-interaction', () => ( {
+vi.mock( '@automattic/odie-client/src/data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: null } ),
 } ) );
 
-jest.mock( '@automattic/odie-client/src/utils', () => ( {
+vi.mock( '@automattic/odie-client/src/utils', () => ( {
 	getOdieIdFromInteraction: () => null,
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // @wordpress/components is imported directly by the contact form.  The
 // calypso:src resolver bypasses moduleNameMapper for @wordpress/* packages,
 // so we mock it here instead.
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( { children, onClick, disabled }: React.ComponentProps< 'button' > ) => (
 		<button onClick={ onClick } disabled={ disabled }>
 			{ children }
@@ -66,18 +69,18 @@ jest.mock( '@wordpress/components', () => ( {
 
 // Sibling components with deep dependency chains (odie-client → react-markdown
 // ESM, @wordpress/rich-text, etc.).
-jest.mock( '../help-center-gpt', () => ( { HelpCenterGPT: () => null } ) );
-jest.mock( '../help-center-search-results', () => ( { __esModule: true, default: () => null } ) );
-jest.mock( '../help-center-site-picker', () => ( { HelpCenterSitePicker: () => null } ) );
+vi.mock( '../help-center-gpt', () => ( { HelpCenterGPT: () => null } ) );
+vi.mock( '../help-center-search-results', () => ( { __esModule: true, default: () => null } ) );
+vi.mock( '../help-center-site-picker', () => ( { HelpCenterSitePicker: () => null } ) );
 
 // Override the global jestSetup mock so `config.isEnabled` is callable.
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const cfg = ( key: string ) => key;
 	cfg.isEnabled = () => false;
 	return { __esModule: true, default: cfg };
 } );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( cb: ( select: ( store: string ) => unknown ) => unknown ) => {
 		// Return the shape that HELP_CENTER_STORE selectors produce.
 		return cb( () => ( {
@@ -87,20 +90,20 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) );
 	},
 	useDispatch: () => ( {
-		resetStore: jest.fn(),
-		setUserDeclaredSite: jest.fn(),
-		setSubject: jest.fn(),
-		setMessage: jest.fn(),
+		resetStore: vi.fn(),
+		setUserDeclaredSite: vi.fn(),
+		setSubject: vi.fn(),
+		setMessage: vi.fn(),
 	} ),
-	register: jest.fn(),
-	createReduxStore: jest.fn(),
+	register: vi.fn(),
+	createReduxStore: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/formatting', () => ( {
+vi.mock( 'calypso/lib/formatting', () => ( {
 	preventWidows: ( s: string ) => s,
 } ) );
 
-jest.mock( 'calypso/lib/mobile-app', () => ( {
+vi.mock( 'calypso/lib/mobile-app', () => ( {
 	isWcMobileApp: () => false,
 } ) );
 
@@ -128,7 +131,7 @@ function renderContactForm( currentUser: unknown ) {
 
 describe( 'HelpCenterContactForm - logged-out user (null currentUser)', () => {
 	it( 'does not throw when currentUser is null (logged-out user)', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		expect( () => {
 			renderContactForm( null );

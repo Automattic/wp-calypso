@@ -7,13 +7,14 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
+import { type Mock, vi } from 'vitest';
 import { ZendeskStagingNotice } from '../help-center-zendesk-staging-notice';
 
-jest.mock( '@automattic/zendesk-client', () => ( {
-	isTestModeEnvironment: jest.fn(),
+vi.mock( '@automattic/zendesk-client', () => ( {
+	isTestModeEnvironment: vi.fn(),
 } ) );
 
-const mockIsTestModeEnvironment = isTestModeEnvironment as jest.Mock;
+const mockIsTestModeEnvironment = isTestModeEnvironment as Mock;
 
 const DISMISSED_STORAGE_KEY = 'help-center-zendesk-staging-notice-dismissed';
 

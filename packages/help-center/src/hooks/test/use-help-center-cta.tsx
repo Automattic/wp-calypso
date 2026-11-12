@@ -3,18 +3,19 @@
  */
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useHelpCenterCTA } from '../use-help-center-cta';
 import type { HelpCenterCTAVariant } from '../../components/help-center-cta';
 import type { HelpCenterCTAData } from '../../types';
 
-const mockUseFeatureConfig = jest.fn();
-const mockUseHelpCenterCTAQuery = jest.fn();
+const mockUseFeatureConfig = vi.fn();
+const mockUseHelpCenterCTAQuery = vi.fn();
 
-jest.mock( '../../contexts/HelpCenterContext', () => ( {
+vi.mock( '../../contexts/HelpCenterContext', () => ( {
 	useFeatureConfig: () => mockUseFeatureConfig(),
 } ) );
 
-jest.mock( '../../data/use-help-center-cta', () => ( {
+vi.mock( '../../data/use-help-center-cta', () => ( {
 	useHelpCenterCTAQuery: ( enabled?: boolean ) => mockUseHelpCenterCTAQuery( enabled ),
 } ) );
 
@@ -44,7 +45,7 @@ const setup = ( {
 
 describe( 'useHelpCenterCTA', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'maps the payload onto renderable props', () => {
