@@ -84,7 +84,7 @@ function PrimaryMenuSidebar() {
 			) }
 			{ supports.emails && (
 				<SidebarMenuItem icon={ envelope } to="/emails">
-					{ __( 'Emails' ) }
+					{ __( 'Email List' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.plugins && (
