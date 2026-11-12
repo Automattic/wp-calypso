@@ -11,7 +11,7 @@ import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useCallback } from 'react';
 import { Card, CardBody } from '../../../components/card';
-import { getSpacefastUrl, isSpacefastPromoEnabled } from '../../components/spacefast/constants';
+import { isSpacefastPromoEnabled } from '../../components/spacefast/constants';
 import SpacefastLogo from '../../components/spacefast/spacefast-logo';
 import { useRecordViewOnce } from '../../lib/use-record-view-once';
 import type { RecordTracksEvent } from '../../tiers/types';
@@ -44,6 +44,9 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 
 	const features = [
 		__(
+			'As an Automattic for Agencies partner, you get a Golden Ticket: 30 days of Spacefast Pro free, plus 30 more days when you create your first space'
+		),
+		__(
 			'Build client sites, prototypes, and internal agency tooling with database support, file uploads, and versioning included'
 		),
 		__(
@@ -52,7 +55,6 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 		__(
 			'Keep client work safe in private spaces you invite people to, or make a space public and share it with the world'
 		),
-		__( 'Get feedback in real time from clients and colleagues with built-in comments' ),
 		__(
 			'Made by Automattic and built on the infrastructure that runs Pressable, WordPress.com, and more'
 		),
@@ -94,7 +96,9 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 							__next40pxDefaultSize
 							variant="primary"
 							size="compact"
-							href={ getSpacefastUrl( 'dev_tools' ) }
+							// TODO: Placeholder. Each agency gets its own Golden Ticket code, so this
+							// needs to be the agency's own redeem URL, from the API.
+							href="https://my.spacefast.com/redeem/SPACEFAST-A4A-LAUNCH-213M"
 							target="_blank"
 							rel="noreferrer"
 							onClick={ () =>
@@ -103,7 +107,7 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 								} )
 							}
 						>
-							{ __( 'Try Spacefast' ) }
+							{ __( 'Redeem Golden Ticket' ) }
 						</Button>
 					</VStack>
 				</CardBody>
