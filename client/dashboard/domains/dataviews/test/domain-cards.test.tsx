@@ -132,7 +132,6 @@ describe( '<DomainCardsLayout>', () => {
 		const settings = jest.fn();
 		const dns = jest.fn();
 		renderCards( [
-			{ id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() },
 			{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: settings },
 			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: dns },
 			{ id: 'ineligible', label: 'Ineligible', callback: jest.fn(), isEligible: () => false },
@@ -168,6 +167,26 @@ describe( '<DomainCardsLayout>', () => {
 
 		await user.click( renewButton );
 		expect( renew ).toHaveBeenCalledWith( [ expiredDomain ], expect.anything() );
+	} );
+
+	test( 'swaps DNS for Set up in the footer of a connection that needs setting up', async () => {
+		renderCards(
+			[
+				{ id: 'setup', isPrimary: true, label: 'Set up', callback: jest.fn() },
+				{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: jest.fn() },
+				{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
+			],
+			[
+				{
+					...domain,
+					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
+					domain_status: { id: DomainStatus.CONNECTION_ERROR, label: 'Error', type: 'error' },
+				} as DomainSummary,
+			]
+		);
+
+		await screen.findByRole( 'button', { name: 'Set up' } );
+		expect( getFooterLabels() ).toEqual( [ 'Settings', 'Set up' ] );
 	} );
 
 	test( 'leaves DNS out of the footer when the domain is not eligible for it', async () => {

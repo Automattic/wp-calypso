@@ -46,16 +46,20 @@ function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) 
 }
 
 /*
- * Every renewable domain is eligible for "Renew", so it only moves to the footer once the domain has expired.
- * That's also when DNS stops being what the domain needs next, so it leaves the footer.
+ * The second link is the domain's next step: "Renew" once it has expired, "Set up" while its connection is broken,
+ * otherwise "DNS". Renew only applies to registrations and Set up only to connections, so at most one of them is
+ * eligible. If that ever changes, Renew wins: nothing else works on an expired domain until it's renewed.
  */
-function getFooterActionIds( item: DomainSummary ) {
+const NEXT_STEP_ACTION_IDS = [ 'renew', 'setup', 'manage-dns-settings' ];
+
+function getFooterActions( eligibleActions: Action< DomainSummary >[] ) {
+	const findAction = ( id: string ) => eligibleActions.find( ( action ) => action.id === id );
 	return [
-		'manage-domain',
-		item.expired ? 'renew' : 'manage-dns-settings',
-		'change-primary-domain',
-		'change-site-address',
-	];
+		findAction( 'manage-domain' ),
+		NEXT_STEP_ACTION_IDS.map( findAction ).find( Boolean ),
+		findAction( 'change-primary-domain' ),
+		findAction( 'change-site-address' ),
+	].flatMap( ( action ) => action ?? [] );
 }
 
 function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
@@ -100,10 +104,7 @@ function DomainCard( {
 	const eligibleActions = actions.filter(
 		( action ) => ! action.isEligible || action.isEligible( item )
 	);
-	const footerActionIds = getFooterActionIds( item );
-	const footerActions = footerActionIds.flatMap(
-		( id ) => eligibleActions.find( ( action ) => action.id === id ) ?? []
-	);
+	const footerActions = getFooterActions( eligibleActions );
 
 	return (
 		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>
