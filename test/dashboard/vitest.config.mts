@@ -21,5 +21,12 @@ export default calypsoTestConfig( {
 	test: {
 		include: [ 'dashboard/**/test/*.test.{js,jsx,ts,tsx}' ],
 		setupFiles: [ path.join( import.meta.dirname, 'vitest-setup.ts' ) ],
+		// nock can schedule the reply to a request after the file's `afterAll` aborted its pending
+		// replies. The reply then lands in the torn-down context, where nothing awaits it.
+		onUnhandledError: ( error ) =>
+			! (
+				error.message === 'ReadableStream is not defined' &&
+				error.stack?.includes( 'nock/lib/create_response.js' )
+			),
 	},
 } );
