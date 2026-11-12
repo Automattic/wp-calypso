@@ -38,9 +38,11 @@ function convertUrlsToMarkdown( text: string ): string {
 }
 
 // Format markdown to support file attachments, returns a link to download the file.
-function createDownloadableMarkdownLink( url: string, AttachmentTitle: string ): string {
+// Zendesk keeps the file name as the alt text, so the name in the URL is only a fallback.
+function createDownloadableMarkdownLink( url: string, altText?: string ): string {
 	const fileName = url.split( '/' ).pop()?.split( '?' )[ 0 ];
-	return `[${ AttachmentTitle } ${ fileName }](${ url })`;
+	const title = altText || `${ __( 'Attachment', __i18n_text_domain__ ) } ${ fileName }`;
+	return `[${ title }](${ url })`;
 }
 
 function getContentMessage( message: ZendeskMessage ): ReactNode {
@@ -75,10 +77,7 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 			break;
 		case 'file':
 			if ( message.mediaUrl ) {
-				messageContent = createDownloadableMarkdownLink(
-					message.mediaUrl,
-					message.altText || __( 'Attachment', __i18n_text_domain__ )
-				);
+				messageContent = createDownloadableMarkdownLink( message.mediaUrl, message.altText );
 			}
 			break;
 		case 'file-placeholder':
