@@ -3,15 +3,16 @@
 /**
  * Default mock implementations
  */
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Plans: {
-		usePricingMetaForGridPlans: jest.fn(),
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 } ) );
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen, render } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import PlanTypeSelector from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {
@@ -28,7 +29,7 @@ describe( '<PlanTypeSelector />', () => {
 				kind="interval"
 				plans={ [] }
 				selectedPlan={ PLAN_FREE }
-				useCheckPlanAvailabilityForPurchase={ jest.fn() }
+				useCheckPlanAvailabilityForPurchase={ vi.fn() }
 			/>
 		);
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'i18n-calypso', () => ( {
+vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 	translate: ( text: string ) => text,
 	// requireActual( calypso-products ) below reaches @automattic/components, which localizes a
@@ -11,8 +11,10 @@ jest.mock( 'i18n-calypso', () => ( {
 	useRtl: () => false,
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => {
-	const actual = jest.requireActual( '@automattic/calypso-products' );
+vi.mock( '@automattic/calypso-products', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-products' ) >(
+		'@automattic/calypso-products'
+	);
 
 	return {
 		...actual,
@@ -34,6 +36,7 @@ jest.mock( '@automattic/calypso-products', () => {
 } );
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useRestructuredPlanFeaturesForComparisonGrid from '../use-restructured-plan-features-for-comparison-grid';
 import type { GridPlan, PlansIntent } from '../../../types';
 import type { FeatureList } from '@automattic/calypso-products';
