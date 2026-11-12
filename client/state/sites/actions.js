@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
@@ -21,6 +20,7 @@ import {
 	SITE_MIGRATION_STATUS_UPDATE,
 	SITE_RESET,
 } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -280,7 +280,11 @@ export function leaveSite( siteId, userId ) {
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/users/${ userId }/delete` )
-			.then( () => {
+			.then( ( result ) => {
+				if ( result?.success !== true ) {
+					throw new Error( translate( 'Failed to leave the site. Please try again.' ) );
+				}
+
 				dispatch( receiveLeaveSite( siteId ) );
 				dispatch(
 					successNotice(

@@ -1,4 +1,9 @@
+import { applyMiddleware, createStore } from 'redux';
+import { thunk } from 'redux-thunk';
 import {
+	ANALYTICS_EVENT_RECORD,
+	NOTICE_CREATE,
+	SITE_LEAVE_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -8,8 +13,16 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import * as currentUserActions from 'calypso/state/current-user/actions';
 import useNock from 'calypso/test-helpers/use-nock';
-import { deleteSite, receiveSite, receiveSites, requestSites, requestSite } from '../actions';
+import {
+	deleteSite,
+	leaveSite,
+	receiveSite,
+	receiveSites,
+	requestSites,
+	requestSite,
+} from '../actions';
 
 describe( 'actions', () => {
 	const mySitesPath =
@@ -18,6 +31,107 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy = jest.fn();
+	} );
+
+	describe( '#leaveSite()', () => {
+		let backendStatus;
+		let backendBody;
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/123/users/5/delete' )
+				.times( 3 )
+				.query( true )
+				.reply( () => [ backendStatus, backendBody ] );
+		} );
+
+		afterEach( () => jest.restoreAllMocks() );
+
+		test.each( [
+			[
+				'confirmed removal',
+				200,
+				{ success: true },
+				true,
+				'success',
+				'is-success',
+				'You have left example.wordpress.com successfully.',
+			],
+			[
+				'unsuccessful removal',
+				200,
+				{ success: false },
+				false,
+				'failure',
+				'is-error',
+				'Failed to leave the site. Please try again.',
+			],
+			[
+				'rejected removal',
+				409,
+				{ error: 'site_owner_unavailable', message: 'No verified site owner.' },
+				false,
+				'failure',
+				'is-error',
+				'No verified site owner.',
+			],
+		] )(
+			'handles %s through Redux without interrupting the result',
+			async ( _case, status, body, success, event, noticeStatus, message ) => {
+				backendStatus = status;
+				backendBody = body;
+				jest
+					.spyOn( currentUserActions, 'fetchCurrentUser' )
+					.mockReturnValue( { type: 'TEST_CURRENT_USER_REFRESH' } );
+				const actions = [];
+				const recordActions = () => ( next ) => ( action ) => {
+					actions.push( action );
+					return next( action );
+				};
+				const initialState = {
+					sites: {
+						items: {
+							123: {
+								ID: 123,
+								URL: 'https://example.wordpress.com',
+								domain: 'example.wordpress.com',
+								slug: 'example.wordpress.com',
+							},
+						},
+					},
+					currentUser: { capabilities: { 123: { manage_options: true } } },
+				};
+				const store = createStore(
+					( state ) => state,
+					initialState,
+					applyMiddleware( thunk, recordActions )
+				);
+
+				await expect( store.dispatch( leaveSite( 123, 5 ) ) ).resolves.toBe( success );
+				expect( actions.some( ( action ) => action.type === SITE_LEAVE_RECEIVE ) ).toBe( success );
+				expect( actions.filter( ( action ) => action.type === NOTICE_CREATE ) ).toEqual( [
+					expect.objectContaining( {
+						notice: expect.objectContaining( { status: noticeStatus, text: message } ),
+					} ),
+				] );
+				expect( actions.filter( ( action ) => action.type === ANALYTICS_EVENT_RECORD ) ).toEqual( [
+					expect.objectContaining( {
+						meta: {
+							analytics: [
+								{
+									type: ANALYTICS_EVENT_RECORD,
+									payload: {
+										service: 'tracks',
+										name: `calypso_leave_blog_${ event }`,
+										properties: { site_id: 123, is_admin: true },
+									},
+								},
+							],
+						},
+					} ),
+				] );
+			}
+		);
 	} );
 
 	describe( '#receiveSite()', () => {

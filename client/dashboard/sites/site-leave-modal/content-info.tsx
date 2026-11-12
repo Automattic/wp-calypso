@@ -10,15 +10,14 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -144,11 +143,30 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
 	const { data: me } = useQuery( siteCurrentUserQuery( site.ID ) );
-	const mutation = useMutation( siteUserDeleteMutation( site.ID ) );
+	const deleteUserOptions = withSnackbar( siteUserDeleteMutation( site.ID ), {
+		success: sprintf(
+			/* translators: %s: site domain */
+			__( 'You have left %s successfully.' ),
+			site.slug
+		),
+		error: { source: 'server' },
+	} );
+	const mutation = useMutation( {
+		...deleteUserOptions,
+		onSuccess: ( ...args ) => {
+			deleteUserOptions.onSuccess?.( ...args );
+			recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
+		},
+		onError: ( error ) => {
+			recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_error', {
+				site_id: site.ID,
+				error: error.name,
+			} );
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< SiteLeaveFormData >( {
 		confirmed: false,
@@ -158,7 +176,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! me || ! isConfirmed ) {
+		if ( ! me || ! isConfirmed || mutation.isPending ) {
 			return;
 		}
 
@@ -166,25 +184,10 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 		mutation.mutate( me.id, {
 			onSuccess: () => {
-				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
-				createSuccessNotice(
-					/* translators: %s: site domain */
-					sprintf( __( 'You have left %s successfully.' ), site.slug ),
-					{ type: 'snackbar' }
-				);
-
 				router.navigate( { to: '/sites' } );
 				onClose();
 			},
-			onError: ( error: Error ) => {
-				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_error', {
-					site_id: site.ID,
-					error: error.name,
-				} );
-
-				createErrorNotice( error.message, { type: 'snackbar' } );
-				onClose();
-			},
+			onError: onClose,
 		} );
 	};
 
@@ -205,6 +208,13 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 						'Leaving will remove your access to the site, including all content, users, domains, upgrades, and anything else you have access to.'
 					) }
 				</Text>
+				{ site.is_wpcom_atomic && (
+					<Text as="p">
+						{ __(
+							'Any content you authored will stay on the site and be reassigned to the site owner.'
+						) }
+					</Text>
+				) }
 				<Text as="p">
 					{ __(
 						'To regain access, a current administrator must re-invite you. Please confirm this is your intent before proceeding.'
@@ -225,14 +235,19 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 					} }
 				/>
 				<ButtonStack justify="flex-end" expanded={ false }>
-					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						disabled={ mutation.isPending }
+						onClick={ onClose }
+					>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
-						disabled={ ! isConfirmed }
+						disabled={ ! me || ! isConfirmed || mutation.isPending }
 						isBusy={ mutation.isPending }
 					>
 						{ __( 'Leave site' ) }
