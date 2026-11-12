@@ -169,11 +169,13 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							<NoteBody note={ note } />
 						</div>
 					) }
-					{ isSimplifiedNote && <SimplifiedActionBlock note={ note } goBack={ goBack } /> }
 				</VStack>
 			</CardBody>
 			{ isSimplifiedNote ? (
-				<ReplyFooter note={ note } />
+				<>
+					<SimplifiedActionBlock note={ note } goBack={ goBack } />
+					<ReplyFooter note={ note } />
+				</>
 			) : (
 				<ActionBlock note={ note } goBack={ goBack } />
 			) }
