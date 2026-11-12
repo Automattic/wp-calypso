@@ -15,7 +15,6 @@ import { useMemo } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { Card, CardBody } from '../../components/card';
 import {
 	isCaDomain,
 	mapWhoisExtraToCaContactExtra,
@@ -167,16 +166,12 @@ export default function DomainContactInfo() {
 					! domain.is_hundred_year_domain && (
 						<VStack spacing={ 4 }>
 							<SectionHeader title={ __( 'Privacy protection' ) } level={ 3 } />
-							<Card>
-								<CardBody>
-									<ContactFormPrivacy
-										domainName={ domainName }
-										isSubmitting={ isSubmitting }
-										onTogglePrivacyProtection={ handleTogglePrivacyProtection }
-										onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
-									/>
-								</CardBody>
-							</Card>
+							<ContactFormPrivacy
+								domainName={ domainName }
+								isSubmitting={ isSubmitting }
+								onTogglePrivacyProtection={ handleTogglePrivacyProtection }
+								onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
+							/>
 						</VStack>
 					)
 				}

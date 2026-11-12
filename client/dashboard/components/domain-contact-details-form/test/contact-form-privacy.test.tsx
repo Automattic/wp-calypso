@@ -51,4 +51,34 @@ describe( '<ContactFormPrivacy>', () => {
 			screen.getByText( /Privacy protection is not available due to the registry’s policies/ )
 		).toBeVisible();
 	} );
+
+	test( 'explains the contact details toggle when privacy protection is off', async () => {
+		renderPrivacy( {
+			privacy_available: true,
+			private_domain: false,
+			contact_info_disclosure_available: true,
+		} );
+
+		expect(
+			await screen.findByRole( 'checkbox', { name: 'Show my contact details publicly' } )
+		).toBeEnabled();
+		expect(
+			screen.getByText(
+				'Turn on to show your name, address, email and phone to anyone who looks up the domain.'
+			)
+		).toBeVisible();
+	} );
+
+	test( 'hides the contact details toggle when privacy protection is on', async () => {
+		renderPrivacy( {
+			privacy_available: true,
+			private_domain: true,
+			contact_info_disclosure_available: true,
+		} );
+
+		await screen.findByRole( 'checkbox', { name: 'Privacy protection on' } );
+		expect(
+			screen.queryByRole( 'checkbox', { name: 'Show my contact details publicly' } )
+		).not.toBeInTheDocument();
+	} );
 } );
