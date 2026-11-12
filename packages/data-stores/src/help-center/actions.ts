@@ -160,11 +160,11 @@ const receiveCurrentUser = ( user: CurrentUser | undefined ) =>
  * Set the current user in the help center store.
  * This value is needed because the store makes decisions based on the logged in status.
  *
- * A page can ask whether the Help Center is open before the Help Center knows the user (checkout
- * does, on load). Those first reads come from local storage instead of the user's preferences, so
- * they're restored again once the user is known.
+ * A page can ask whether the Help Center is open or minimized before the Help Center knows the user
+ * (checkout does, on load). Those first reads come from local storage instead of the user's
+ * preferences, so they're restored again once the user is known.
  * @param user - The current user to set.
- * @yields The action that sets the user, then the ones that restore the open state.
+ * @yields The action that sets the user, then the ones that restore the open and minimized state.
  */
 export const setCurrentUser = function* ( user: CurrentUser | undefined ) {
 	const wasLoggedIn: boolean = yield controls.select( STORE_KEY, 'getIsLoggedIn' );
@@ -174,6 +174,7 @@ export const setCurrentUser = function* ( user: CurrentUser | undefined ) {
 	if ( ! wasLoggedIn && user?.ID ) {
 		yield controls.dispatch( STORE_KEY, 'invalidateResolution', 'isHelpCenterShown', [] );
 		yield controls.dispatch( STORE_KEY, 'invalidateResolution', 'getHelpCenterRouterHistory', [] );
+		yield controls.dispatch( STORE_KEY, 'invalidateResolution', 'getIsMinimized', [] );
 	}
 };
 

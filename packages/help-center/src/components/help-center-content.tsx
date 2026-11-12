@@ -192,7 +192,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 
 	return (
 		<CardBody ref={ containerRef } className="help-center__container-content">
-			<Wrapper isDisabled={ isMinimized } className="help-center__container-content-wrapper">
+			<Wrapper isDisabled={ !! isMinimized } className="help-center__container-content-wrapper">
 				<RoutesErrorBoundary>
 					<Routes>
 						<Route path="/" element={ <HelpCenterSearch currentRoute={ currentRoute } /> } />
