@@ -7,13 +7,14 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import BaseSuggestionPicker from './base-suggestion-picker';
 
 describe( 'BaseSuggestionPicker', () => {
 	const options = [ 'First option', 'Second option' ];
 
 	it( 'renders the intro and every option', () => {
-		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ jest.fn() } /> );
+		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ vi.fn() } /> );
 		expect( screen.getByText( 'Pick one:' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'First option' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Second option' ) ).toBeInTheDocument();
@@ -23,14 +24,14 @@ describe( 'BaseSuggestionPicker', () => {
 		// Mirrors the alt-text picker: an empty list means there is nothing to
 		// choose, so no intro renders either.
 		const { container } = render(
-			<BaseSuggestionPicker intro="Pick one:" options={ [] } onApply={ jest.fn() } />
+			<BaseSuggestionPicker intro="Pick one:" options={ [] } onApply={ vi.fn() } />
 		);
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'calls onApply with the clicked value', () => {
-		const onApply = jest.fn();
-		const onResponseAction = jest.fn();
+		const onApply = vi.fn();
+		const onResponseAction = vi.fn();
 		render(
 			<BaseSuggestionPicker
 				intro="Pick one:"
@@ -49,11 +50,11 @@ describe( 'BaseSuggestionPicker', () => {
 	} );
 
 	it( 'reports a failed apply without marking the option as applied', () => {
-		const onApply = jest.fn( () => {
+		const onApply = vi.fn( () => {
 			throw new Error( 'Could not apply suggestion' );
 		} );
-		const onComplete = jest.fn();
-		const onResponseAction = jest.fn();
+		const onComplete = vi.fn();
+		const onResponseAction = vi.fn();
 		render(
 			<BaseSuggestionPicker
 				intro="Pick one:"
@@ -81,7 +82,7 @@ describe( 'BaseSuggestionPicker', () => {
 	} );
 
 	it( 'highlights only the applied option', () => {
-		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ jest.fn() } /> );
+		render( <BaseSuggestionPicker intro="Pick one:" options={ options } onApply={ vi.fn() } /> );
 		const first = screen.getByText( 'First option' ).closest( 'button' ) as HTMLButtonElement;
 		const second = screen.getByText( 'Second option' ).closest( 'button' ) as HTMLButtonElement;
 		fireEvent.click( first );
@@ -90,12 +91,12 @@ describe( 'BaseSuggestionPicker', () => {
 	} );
 
 	it( 'marks the option matching currentValue as applied without a click', () => {
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 		render(
 			<BaseSuggestionPicker
 				intro="Pick one:"
 				options={ options }
-				onApply={ jest.fn() }
+				onApply={ vi.fn() }
 				appliedMessage="Applied."
 				currentValue="Second option"
 				onResponseAction={ onResponseAction }
@@ -112,7 +113,7 @@ describe( 'BaseSuggestionPicker', () => {
 			<BaseSuggestionPicker
 				intro="Pick one:"
 				options={ options }
-				onApply={ jest.fn() }
+				onApply={ vi.fn() }
 				appliedMessage="Applied."
 				currentValue="Unrelated value"
 			/>
@@ -131,7 +132,7 @@ describe( 'BaseSuggestionPicker', () => {
 			<BaseSuggestionPicker
 				intro="Pick one:"
 				options={ options }
-				onApply={ jest.fn() }
+				onApply={ vi.fn() }
 				appliedMessage="Applied."
 				currentValue="Second option"
 			/>
@@ -147,7 +148,7 @@ describe( 'BaseSuggestionPicker', () => {
 			<BaseSuggestionPicker
 				intro="Pick one:"
 				options={ options }
-				onApply={ jest.fn() }
+				onApply={ vi.fn() }
 				currentValue="Second option"
 			/>
 		);
@@ -163,7 +164,7 @@ describe( 'BaseSuggestionPicker', () => {
 			<BaseSuggestionPicker
 				intro="Pick one:"
 				options={ options }
-				onApply={ jest.fn() }
+				onApply={ vi.fn() }
 				appliedMessage="SEO title updated."
 			/>
 		);

@@ -1,11 +1,12 @@
-const mockAddFilter = jest.fn();
-const mockWithJetpackAiToolbarButton = jest.fn();
+import { vi } from 'vitest';
+const mockAddFilter = vi.fn();
+const mockWithJetpackAiToolbarButton = vi.fn();
 
-jest.mock( '@wordpress/hooks', () => ( {
+vi.mock( '@wordpress/hooks', () => ( {
 	addFilter: mockAddFilter,
 } ) );
 
-jest.mock( './block-toolbar-extension', () => ( {
+vi.mock( './block-toolbar-extension', () => ( {
 	withJetpackAiToolbarButton: mockWithJetpackAiToolbarButton,
 } ) );
 
@@ -27,7 +28,7 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 		mockAddFilter.mockClear();
 		mockWithJetpackAiToolbarButton.mockClear();
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
-		jest.resetModules();
+		vi.resetModules();
 	} );
 
 	it( 'registers the block toolbar filter when the toolbar button is enabled', async () => {

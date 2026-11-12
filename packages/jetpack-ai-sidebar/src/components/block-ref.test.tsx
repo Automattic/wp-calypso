@@ -7,16 +7,17 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { getBlockType } from '@wordpress/blocks';
+import { type Mock, vi } from 'vitest';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 // Mock the block registry + icon renderer so the chip's icon/title lookups are
 // deterministic and don't pull in the full editor. `getBlockType` returns
 // undefined by default (nothing registered), which each test can override.
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockType: jest.fn(),
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockType: vi.fn(),
 } ) );
-jest.mock( '@wordpress/block-editor', () => {
-	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@wordpress/block-editor', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		BlockIcon: ( { icon }: { icon?: unknown } ) =>
 			react.createElement(
@@ -27,7 +28,7 @@ jest.mock( '@wordpress/block-editor', () => {
 	};
 } );
 
-const mockGetBlockType = getBlockType as unknown as jest.Mock;
+const mockGetBlockType = getBlockType as unknown as Mock;
 
 const blocks: BlockSnapshot[] = [
 	{
@@ -109,7 +110,7 @@ describe( 'BlockRef', () => {
 	} );
 
 	it( 'fires onFocus with the index when clicked', () => {
-		const onFocus = jest.fn();
+		const onFocus = vi.fn();
 		render( <BlockRef index={ 1 } blocks={ blocks } onFocus={ onFocus } /> );
 		fireEvent.click( screen.getByRole( 'button' ) );
 		expect( onFocus ).toHaveBeenCalledWith( 1 );
@@ -117,7 +118,7 @@ describe( 'BlockRef', () => {
 
 	it( 'renders the icon and snippet inside the clickable button variant', () => {
 		mockGetBlockType.mockReturnValue( { title: 'Paragraph', icon: 'paragraph' } );
-		render( <BlockRef index={ 1 } blocks={ blocks } onFocus={ jest.fn() } /> );
+		render( <BlockRef index={ 1 } blocks={ blocks } onFocus={ vi.fn() } /> );
 		const button = screen.getByRole( 'button' );
 		expect( button.querySelector( '[data-testid="block-icon"]' ) ).not.toBeNull();
 		expect( button ).toHaveTextContent( 'Revenue Highlights' );

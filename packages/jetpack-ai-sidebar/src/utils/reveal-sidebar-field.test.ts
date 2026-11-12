@@ -2,15 +2,16 @@
  * @jest-environment jsdom
  */
 
-const mockClearSelectedBlock = jest.fn();
-const mockClearActiveBlockFocus = jest.fn();
-const mockEnableComplementaryArea = jest.fn();
+import { type Mock, vi } from 'vitest';
+const mockClearSelectedBlock = vi.fn();
+const mockClearActiveBlockFocus = vi.fn();
+const mockEnableComplementaryArea = vi.fn();
 let mockOpenPanels: string[] = [];
 let mockRemovedPanels: string[] = [];
 
 // Mirrors core's toggle so tests can assert the preference the user is left
 // with, rather than how many times it was written.
-const mockToggleEditorPanelOpened = jest.fn( ( panelName: string ) => {
+const mockToggleEditorPanelOpened = vi.fn( ( panelName: string ) => {
 	mockOpenPanels = mockOpenPanels.includes( panelName )
 		? mockOpenPanels.filter( ( name ) => name !== panelName )
 		: [ ...mockOpenPanels, panelName ];
@@ -27,8 +28,8 @@ function mockAssertEditorStore(): void {
 	}
 }
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( ( store: string ) => {
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn( ( store: string ) => {
 		if ( ! mockStoresRegistered ) {
 			return {};
 		}
@@ -44,7 +45,7 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	} ),
-	select: jest.fn( ( store: string ) => {
+	select: vi.fn( ( store: string ) => {
 		if ( store === 'core/editor' ) {
 			mockAssertEditorStore();
 			return {
@@ -56,7 +57,7 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( './block-actions', () => ( {
+vi.mock( './block-actions', () => ( {
 	clearActiveBlockFocus: () => mockClearActiveBlockFocus(),
 } ) );
 
@@ -81,13 +82,13 @@ function renderField() {
 		'<div class="excerpt-row"><p>New excerpt</p><div class="editor-post-excerpt__dropdown" tabindex="-1"></div></div>'
 	);
 	const field = sidebar.querySelector< HTMLElement >( '.editor-post-excerpt__dropdown' )!;
-	field.scrollIntoView = jest.fn();
+	field.scrollIntoView = vi.fn();
 	return field;
 }
 
 describe( 'revealSidebarField', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		document.body.innerHTML = '';
 		mockOpenPanels = [];
 		mockRemovedPanels = [];
@@ -131,8 +132,8 @@ describe( 'revealSidebarField', () => {
 		);
 		const core = sidebar.querySelector< HTMLElement >( '.editor-post-excerpt__dropdown' )!;
 		const jetpack = sidebar.querySelector< HTMLElement >( '.jetpack-ai-post-excerpt' )!;
-		core.scrollIntoView = jest.fn();
-		jetpack.scrollIntoView = jest.fn();
+		core.scrollIntoView = vi.fn();
+		jetpack.scrollIntoView = vi.fn();
 
 		await revealSidebarField( 'excerpt' );
 
@@ -180,7 +181,7 @@ describe( 'revealSidebarField', () => {
 		const sidebar = renderSidebar( '' );
 		const field = document.createElement( 'div' );
 		field.className = 'editor-post-excerpt__dropdown';
-		field.scrollIntoView = jest.fn();
+		field.scrollIntoView = vi.fn();
 
 		const revealing = revealSidebarField( 'excerpt', { timeout: 500 } );
 		requestAnimationFrame( () => requestAnimationFrame( () => sidebar.appendChild( field ) ) );
@@ -216,7 +217,7 @@ describe( 'revealSidebarField', () => {
 
 	it( 'skips the smooth scroll when the user prefers reduced motion', async () => {
 		// The shared jest setup stubs matchMedia as always-false; override one call.
-		( window.matchMedia as jest.Mock ).mockReturnValueOnce( { matches: true } );
+		( window.matchMedia as Mock ).mockReturnValueOnce( { matches: true } );
 		const field = renderField();
 
 		await revealSidebarField( 'excerpt' );
@@ -239,7 +240,7 @@ describe( 'revealSidebarField', () => {
 		mockOpenPanels = [ 'post-status' ];
 		const sidebar = renderSidebar( `<span class="${ className }"></span>` );
 		const field = sidebar.querySelector< HTMLElement >( `.${ className }` )!;
-		field.scrollIntoView = jest.fn();
+		field.scrollIntoView = vi.fn();
 
 		const revealed = await revealSidebarField( 'featuredImage' );
 

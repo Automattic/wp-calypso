@@ -7,11 +7,12 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import ImageAltTextPicker from './image-alt-text-picker';
 
-const mockUpdateBlockAttributes = jest.fn();
+const mockUpdateBlockAttributes = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
 		if ( store === 'core/block-editor' ) {
 			return { updateBlockAttributes: mockUpdateBlockAttributes };
@@ -55,7 +56,7 @@ describe( 'ImageAltTextPicker', () => {
 	} );
 
 	it( 'applies alt text to every image in one click and confirms', () => {
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 		render( <ImageAltTextPicker images={ images } onResponseAction={ onResponseAction } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
 
@@ -81,15 +82,15 @@ describe( 'ImageAltTextPicker', () => {
 	} );
 
 	it( 'calls onComplete after applying', () => {
-		const onComplete = jest.fn();
+		const onComplete = vi.fn();
 		render( <ImageAltTextPicker images={ images } onComplete={ onComplete } /> );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Apply to all 2 images' } ) );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'reports a partial failure when a later image update throws', () => {
-		const onComplete = jest.fn();
-		const onResponseAction = jest.fn();
+		const onComplete = vi.fn();
+		const onResponseAction = vi.fn();
 		mockUpdateBlockAttributes
 			.mockImplementationOnce( () => undefined )
 			.mockImplementationOnce( () => {
