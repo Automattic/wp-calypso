@@ -4,7 +4,6 @@ import {
 	__experimentalVStack as VStack,
 	VisuallyHidden,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { html } from '../../../panel/indices-to-html';
 import { p } from '../../../panel/templates/functions';
@@ -140,11 +139,13 @@ export function ThreadParent( {
 	comment,
 	truncate = false,
 	compact = false,
+	label,
 	maxLength,
 }: {
 	comment: NoteParentComment;
 	truncate?: boolean;
 	compact?: boolean;
+	label?: string;
 	maxLength?: number;
 } ) {
 	const fullContent = comment.content ?? { text: comment.text };
@@ -152,20 +153,12 @@ export function ThreadParent( {
 
 	return (
 		<ThreadItem
-			className="wpnc-simplified__thread-parent"
+			className={ clsx( 'wpnc-simplified__thread-parent', { 'is-compact': compact } ) }
 			avatar={ comment.author_avatar }
 			author={ comment.author_name }
 			authorUrl={ comment.author_url }
 			compact={ compact }
-			label={
-				compact
-					? sprintf(
-							/* translators: %s is the name of the person whose comment was replied to. */
-							__( 'In reply to %s' ),
-							comment.author_name
-						)
-					: undefined
-			}
+			label={ label }
 			meta={
 				comment.date && (
 					<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
@@ -212,19 +205,13 @@ export function ThreadReply( {
 
 export default function Thread( {
 	spacing = 4,
-	isReply = false,
 	children,
 }: {
 	spacing?: number;
-	isReply?: boolean;
 	children: ReactNode;
 } ) {
 	return (
-		<VStack
-			as="ol"
-			className={ clsx( 'wpnc-simplified__thread', { 'is-reply': isReply } ) }
-			spacing={ spacing }
-		>
+		<VStack as="ol" className="wpnc-simplified__thread" spacing={ spacing }>
 			{ children }
 		</VStack>
 	);

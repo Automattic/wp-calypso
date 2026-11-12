@@ -8,13 +8,17 @@ import Body from '../parts/body';
 import Context from '../parts/context';
 import type { Note } from '../../types';
 
+// Likes carry their count in the pane title, so they don't repeat it as a heading.
+const LIKE_TYPES = [ 'like', 'comment_like' ];
+
 export default function ReactionsNote( { note }: { note: Note } ) {
 	const heading = note.meta?.heading ?? note.title;
+	const isLike = LIKE_TYPES.includes( note.type );
 
 	return (
 		<>
-			<Context note={ note } />
-			{ heading && heading !== getTemporaryNoteTitle( note ) && (
+			<Context note={ note } quote={ isLike } />
+			{ heading && ! isLike && heading !== getTemporaryNoteTitle( note ) && (
 				<VStack className="wpnc-simplified__heading" spacing={ 3 }>
 					<Heading
 						level={ 3 }

@@ -34,9 +34,10 @@
 	list-style: none;
 	overflow-wrap: anywhere;
 
-	// The comment a reply answers sits above it as a smaller quote on a gray panel,
-	// so the reply itself leads and its own quotes can't be mistaken for it.
-	&.is-reply .wpnc-simplified__thread-parent {
+	// The comment a reply answers, or that someone liked, sits as a smaller quote on
+	// a gray panel, so what happened to it leads and a reply's own quotes can't be
+	// mistaken for it.
+	.wpnc-simplified__thread-parent.is-compact {
 		padding: $grid-unit-15 $grid-unit-20;
 		border-radius: $radius-large;
 		background: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
@@ -90,9 +91,9 @@
 	font-style: normal;
 }
 
-// The quote above a reply already sits on a panel, so text quoted inside it keeps
+// The quoted comment already sits on a panel, so text quoted inside it keeps
 // only its gray.
-.wpnc-simplified__thread.is-reply .wpnc-simplified__parent-text blockquote {
+.wpnc-simplified__thread-parent.is-compact .wpnc-simplified__parent-text blockquote {
 	padding-inline: 0;
 	box-shadow: none;
 	font-style: normal;
