@@ -1,12 +1,13 @@
 import warn from '@wordpress/warning';
+import { vi } from 'vitest';
 import createSelector from '../';
 
-jest.mock( '@wordpress/warning', () => jest.fn() );
+vi.mock( '@wordpress/warning', () => ( { default: vi.fn() } ) );
 
 describe( 'index', () => {
 	let getSitePosts;
 
-	const selector = jest.fn( ( state, siteId ) =>
+	const selector = vi.fn( ( state, siteId ) =>
 		Object.values( state.posts ?? {} ).filter( ( post ) => post.site_ID === siteId )
 	);
 
@@ -270,7 +271,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should call dependant state getter with arguments', () => {
-		const getDeps = jest.fn();
+		const getDeps = vi.fn();
 		const memoizedSelector = createSelector( () => null, getDeps );
 		const state = {};
 
@@ -280,8 +281,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should handle an array of selectors instead of a dependant state getter', () => {
-		const getPosts = jest.fn();
-		const getQuuxs = jest.fn();
+		const getPosts = vi.fn();
+		const getQuuxs = vi.fn();
 		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );
 		const state = {};
 

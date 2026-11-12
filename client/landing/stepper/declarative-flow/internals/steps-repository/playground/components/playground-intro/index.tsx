@@ -1,6 +1,7 @@
-import { __experimentalHeading as Heading, ProgressBar } from '@wordpress/components';
+import { __experimentalHeading as Heading } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
 import { cloud, rocket, tools } from './icons';
 import type { PlaygroundBootProgress } from '../../lib/boot-progress';
@@ -66,11 +67,15 @@ export function PlaygroundIntro( { progress }: { progress: PlaygroundBootProgres
 					<p className="playground-intro__caption" role="status">
 						{ captions[ progress.stage ] }
 					</p>
-					<ProgressBar
+					<Progress.Root
 						className="playground-intro__progress-bar"
-						value={ progress.value }
+						value={ progress.value ?? null }
 						aria-label={ __( 'Store loading progress' ) }
-					/>
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				</div>
 			</div>
 		</div>

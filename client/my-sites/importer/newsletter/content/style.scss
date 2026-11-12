@@ -58,6 +58,11 @@
 	text-align: center;
 	transform: translateY( -50% );
 
+	> svg {
+		fill: var( --color-neutral-20 );
+		color: var( --color-neutral-20 );
+	}
+
 	&.importer-upload-success {
 		color: var( --color-success );
 	}
@@ -129,8 +134,11 @@
 			margin-right: auto;
 			margin-bottom: 10px;
 			width: 160px;
-			height: 5px;
-			border-radius: 3px;
+
+			> * {
+				height: 5px;
+				border-radius: 3px;
+			}
 		}
 
 		p {

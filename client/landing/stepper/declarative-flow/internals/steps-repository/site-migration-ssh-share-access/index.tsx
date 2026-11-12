@@ -1,4 +1,4 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -6,8 +6,13 @@ import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Notice from 'calypso/components/notice';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
+import {
+	getErrorCode,
+	useMigrationTicketErrorMessage,
+} from 'calypso/landing/stepper/hooks/use-migration-ticket-error-message';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -32,6 +37,7 @@ import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
+import 'calypso/components/account-template/style.scss';
 import './styles.scss';
 
 /**
@@ -75,7 +81,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow, stepName } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
@@ -86,6 +92,8 @@ const SiteMigrationSshShareAccess: StepType< {
 	const [ migrationStarted, setMigrationStarted ] = useState( false );
 	const [ shouldStartMigration, setShouldStartMigration ] = useState( false );
 	const [ isProcessingNoSSH, setIsProcessingNoSSH ] = useState( false );
+	const [ ticketErrorMessage, setTicketErrorMessage ] = useState< string | null >( null );
+	const getTicketErrorMessage = useMigrationTicketErrorMessage();
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
 	const { sendTicketAsync, isPending: isSubmittingTicket } = useSubmitMigrationTicket();
@@ -149,6 +157,8 @@ const SiteMigrationSshShareAccess: StepType< {
 			// On error, fallback to credentials step
 			recordTracksEvent( 'calypso_site_migration_ssh_fallback_error', {
 				error: error instanceof Error ? error.message : 'Unknown error',
+				// API errors are plain objects, so the code is what tells failures apart.
+				error_code: getErrorCode( error ),
 			} );
 			return navigation.submit?.( { destination: 'no-ssh-access' } );
 		} finally {
@@ -169,13 +179,23 @@ const SiteMigrationSshShareAccess: StepType< {
 			automated_migration: true,
 		} );
 
+		setTicketErrorMessage( null );
+
 		try {
 			await sendTicketAsync( {
 				locale,
 				from_url: fromUrl,
 				blog_url: siteSlug,
 			} );
+		} catch ( error ) {
+			recordTracksEvent( 'calypso_site_migration_ticket_error', {
+				error_code: getErrorCode( error ),
+			} );
+			setTicketErrorMessage( getTicketErrorMessage( error ) );
+			return;
+		}
 
+		try {
 			// Update migration status to pending DIY
 			await updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
 
@@ -188,7 +208,10 @@ const SiteMigrationSshShareAccess: StepType< {
 				destination: 'do-it-for-me',
 			} );
 		} catch ( error ) {
-			// TODO: Handle error
+			// The ticket was filed, so our team has the request; record the failure instead of hiding it.
+			recordTracksEvent( 'calypso_site_migration_ssh_status_update_error', {
+				error_code: getErrorCode( error ),
+			} );
 		}
 	}, [
 		locale,
@@ -199,6 +222,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		navigation,
 		sendTicketAsync,
 		updateMigrationStatus,
+		getTicketErrorMessage,
 	] );
 
 	const navigateToDoItForMe = useCallback( () => {
@@ -355,11 +379,17 @@ const SiteMigrationSshShareAccess: StepType< {
 			);
 	const topBar = (
 		<Step.TopBar
+			logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+			onLogoClick={ () =>
+				recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+			}
 			rightElement={
-				<SupportNudge
-					onAskForHelp={ navigateToDoItForMe }
-					isLoading={ isSubmittingTicket || isProcessingNoSSH }
-				/>
+				<div className="account-template__top-bar-links">
+					<SupportNudge
+						onAskForHelp={ navigateToDoItForMe }
+						isLoading={ isSubmittingTicket || isProcessingNoSSH }
+					/>
+				</div>
 			}
 		/>
 	);
@@ -367,30 +397,35 @@ const SiteMigrationSshShareAccess: StepType< {
 	return (
 		<>
 			<DocumentHead title={ title } />
-			<Step.CenteredColumnLayout
-				columnWidth={ 4 }
-				topBar={ topBar }
-				heading={ <Step.Heading text={ title } subText={ subtitle } /> }
-			>
-				<SshMigrationContainer>
-					<Accordion steps={ steps } />
-					<div className="migration-site-ssh__continue-button">
-						<Button
-							variant="primary"
-							onClick={ handleContinue }
-							disabled={
-								! canStartMigration ||
-								isStartingMigration ||
-								migrationStarted ||
-								shouldStartMigration ||
-								isProcessingNoSSH
-							}
-							isBusy={ isBusy }
-						>
-							{ buttonText }
-						</Button>
-					</div>
-				</SshMigrationContainer>
+			<Step.CenteredColumnLayout columnWidth={ 4 } topBar={ topBar }>
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subtitle } />
+					{ ticketErrorMessage && (
+						<Notice status="is-warning" showDismiss={ false }>
+							{ ticketErrorMessage }
+						</Notice>
+					) }
+					<SshMigrationContainer>
+						<Accordion steps={ steps } />
+						<div className="migration-site-ssh__continue-button">
+							<Button
+								variant="primary"
+								onClick={ handleContinue }
+								disabled={
+									! canStartMigration ||
+									isStartingMigration ||
+									migrationStarted ||
+									shouldStartMigration ||
+									isProcessingNoSSH
+								}
+								isBusy={ isBusy }
+								__next40pxDefaultSize
+							>
+								{ buttonText }
+							</Button>
+						</div>
+					</SshMigrationContainer>
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

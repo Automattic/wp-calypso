@@ -12,15 +12,26 @@
 		margin-block-end: var(--wpds-dimension-gap-lg, 16px);
 	}
 
-	// The totals double as the chart's legend; the swatch is as thick as its lines.
+	// The totals double as the chart's legend; the swatch is as thick as its lines, or a
+	// square beside bars.
 	.stats-widget-metric__swatch {
 		display: inline-block;
 		inline-size: var(--wpds-dimension-size-2xs, 16px);
 		block-size: 2px;
 		border-radius: var(--wpds-border-radius-sm, 2px);
 
+		&.is-bar {
+			inline-size: var(--wpds-dimension-size-4xs, 8px);
+			block-size: var(--wpds-dimension-size-4xs, 8px);
+		}
+
 		&.is-views {
 			background-color: var(--chart-series-views);
+
+			// The views bar is drawn behind the visitors bar at the chart's comparison opacity.
+			&.is-bar {
+				opacity: 0.5;
+			}
 		}
 
 		&.is-visitors {
@@ -36,11 +47,6 @@
 		max-inline-size: 100%;
 		margin-inline: auto;
 		margin-block: var(--wpds-dimension-gap-lg, 16px);
-
-		// wp-admin doesn't give the icon `fill: currentColor`.
-		svg {
-			fill: currentColor;
-		}
 	}
 
 	// Styled as the lists' own "No data to show".
@@ -55,6 +61,15 @@
 	.stats-widget-chart {
 		inline-size: 100%;
 		overflow: hidden;
+
+		// The plot answers a click, so the cursor says so; the axes, which answer nothing, keep theirs.
+		&.is-clickable svg {
+			cursor: pointer;
+		}
+
+		&.is-clickable .visx-axis {
+			cursor: default;
+		}
 	}
 
 	.stats-widget-chart__skeleton {

@@ -83,9 +83,8 @@ button {
 .anchor-fm,
 .subscribers,
 .copy-site,
-.intro,
 .use-my-domain:not( :has( .step-container-v2 ) ),
-.domain-transfer,
+.hundred-year-domain-transfer,
 .update-design,
 .hundred-year-plan,
 .hundred-year-domain,
@@ -288,6 +287,7 @@ button {
 
 				svg {
 					fill: var( --studio-gray-30 );
+					color: var( --studio-gray-30 );
 				}
 
 				span {
@@ -300,6 +300,7 @@ button {
 
 					svg {
 						fill: var( --studio-wordpress-blue-50 );
+						color: var( --studio-wordpress-blue-50 );
 					}
 
 					span {
@@ -319,6 +320,7 @@ button {
 					box-shadow: none;
 					svg {
 						fill: #fff;
+						color: #fff;
 					}
 					span {
 						color: var( --studio-wordpress-blue-50 );

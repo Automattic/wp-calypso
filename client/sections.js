@@ -541,14 +541,6 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/shelves', '/reader/shelves/:id' ],
-		module: 'calypso/reader/shelves',
-		group: 'reader',
-		enableLoggedOut: false,
-		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
 		paths: [
 			'/reader/atmosphere',
 			'/reader/atmosphere/connect',
@@ -750,12 +742,6 @@ const sections = [
 		name: 'jetpack-cloud-partner-portal',
 		paths: [ '/partner-portal' ],
 		module: 'calypso/jetpack-cloud/sections/partner-portal',
-		group: 'jetpack-cloud',
-	},
-	{
-		name: 'jetpack-cloud-agency-signup',
-		paths: [ '/manage/signup', '/agency/signup' ],
-		module: 'calypso/jetpack-cloud/sections/agency-signup',
 		group: 'jetpack-cloud',
 	},
 	{
@@ -1014,7 +1000,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-amplify',
-		paths: [ '/amplify' ],
+		paths: [ '/prospect-reports', '/amplify' ],
 		module: 'calypso/a8c-for-agencies/sections/amplify',
 		group: 'a8c-for-agencies',
 	},

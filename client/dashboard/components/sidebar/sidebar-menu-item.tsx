@@ -13,6 +13,7 @@ interface SidebarMenuItemProps {
 	icon?: React.JSX.Element;
 	children: React.ReactNode;
 	activeOptions?: ActiveOptions;
+	search?: Record< string, string >;
 	onClick?: ( event: React.MouseEvent ) => void;
 }
 
@@ -22,6 +23,7 @@ export function SidebarMenuItem( {
 	icon,
 	children,
 	activeOptions,
+	search,
 	onClick,
 }: SidebarMenuItemProps ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -69,8 +71,9 @@ export function SidebarMenuItem( {
 		<RouterLinkButton
 			className="dashboard-sidebar__menu-item"
 			variant="tertiary"
-			to={ to }
+			to={ to as string }
 			activeOptions={ activeOptions }
+			search={ search }
 			__next40pxDefaultSize
 			onClick={ handleClick }
 		>

@@ -10,11 +10,13 @@ import { file } from '@wordpress/icons';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import EnableSftpCard from './enable-sftp-card';
 import SftpCard from './sftp-card';
 import SshCard from './ssh-card';
+import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
@@ -53,7 +55,9 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				feature={ HostingFeatures.SFTP }
 				upsellId="site-settings-sftp-ssh"
 				upsellIcon={ file }
-				upsellImage={ upsellIllustrationUrl }
+				upsellImage={
+					<ThemedIllustration light={ upsellIllustrationUrl } dark={ upsellIllustrationDarkUrl } />
+				}
 				upsellTitle={ __( 'Direct access to your site’s files' ) }
 				upsellDescription={ __(
 					'SFTP and SSH give you secure, direct access to your site’s filesystem—fast, reliable, and built for your workflow.'

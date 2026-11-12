@@ -2,6 +2,7 @@ import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
+	domainsQuery,
 	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
@@ -43,6 +44,7 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
+	staticSiteImportSessionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -58,6 +60,11 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
@@ -246,7 +253,8 @@ export const siteOverviewRoute = createRoute( {
 			migration: search.migration === 'completed' ? 'completed' : undefined,
 		};
 	},
-	loader: async ( { params: { siteSlug }, preload } ) => {
+	loaderDeps: ( { search: { importSessionId } } ) => ( { importSessionId } ),
+	loader: async ( { params: { siteSlug }, deps: { importSessionId }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			const notGroup = getActivityLogHiddenGroups( site );
@@ -272,6 +280,14 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
 				// Error gets logged at ErrorBoundary.
 			} ),
+
+			// A move's progress and notices start from where the session is, not from scratch.
+			importSessionId &&
+				queryClient
+					.ensureQueryData( staticSiteImportSessionQuery( importSessionId ) )
+					.catch( () => {
+						// The Overview reads the error from the query and says the move can't be shown.
+					} ),
 		] );
 	},
 } ).lazy( () =>
@@ -614,11 +630,11 @@ export const siteDomainsRoute = createRoute( {
 	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
 		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
 	} ),
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
 			queryClient.ensureQueryData( bulkDomainUpdateStatusQuery() ),
 		] );
@@ -642,6 +658,7 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -672,10 +689,25 @@ export const sitePerformanceFrontendRoute = createRoute( {
 export const sitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: sitePerformanceFrontendRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } );
 
 async function prefetchApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	// The page shows an upsell instead of APM data on these plans.
+	if ( ! hasBackendAccess( site.plan?.product_slug ) ) {
+		return;
+	}
 	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
 		await Promise.all( [
 			import( '@automattic/api-queries' ),
@@ -843,6 +875,7 @@ export const siteSettingsRoute = createRoute( {
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
 				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+			prefetchApmAccess(),
 		] );
 	},
 } );
@@ -869,12 +902,12 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -1332,6 +1365,14 @@ export const siteSettingsApmRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'apm',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-apm' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-apm' )( {
@@ -1887,8 +1928,7 @@ export const sitePlansRoute = createRoute( {
 );
 
 export const createSitesRoutes = ( config: AppConfig ) => {
-	const sitesComponent = config.components.sites;
-	if ( ! config.supports.sites || ! sitesComponent ) {
+	if ( ! config.supports.sites ) {
 		return [];
 	}
 
@@ -1989,7 +2029,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			sitesComponent().then( ( d ) =>
+			import( '../../sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
 					component: d.default,
 				} )

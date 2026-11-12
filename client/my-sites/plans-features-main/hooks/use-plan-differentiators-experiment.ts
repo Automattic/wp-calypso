@@ -7,12 +7,12 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { IAppState } from 'calypso/state/types';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
-const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-05T00:00:00Z';
+const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-10T14:31:34Z';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [
 	'control',
-	'ai_credits',
-	'ai_credits_reversed_order',
+	'reversed_order',
+	'mcp_features',
 ] as const;
 
 type PlanDifferentiatorsExperimentVariant =
@@ -22,14 +22,14 @@ type PlanDifferentiatorsResult = {
 	isLoading: boolean;
 	variant: PlanDifferentiatorsExperimentVariant;
 	/**
-	 * When true, show each paid plan's monthly AI credits on the grid.
-	 */
-	showAiCredits: boolean;
-	/**
 	 * When true, list the plans most expensive first, with Enterprise kept in the last column.
-	 * Not for intents that curate their own plan mix.
 	 */
 	useReversedPlanOrder: boolean;
+	/**
+	 * When true, show the AI agents (MCP) feature on the plan cards, in place of premium themes,
+	 * and in the comparison grid.
+	 */
+	useMcpFeature: boolean;
 	/**
 	 * When true, the user is eligible for the experiment (including control).
 	 */
@@ -67,6 +67,9 @@ function usePlanDifferentiatorsExperiment( {
 	// Eligibility depends on the site's options, so report loading until the site arrives
 	// rather than briefly reporting control.
 	const isSiteLoading = !! siteId && ! hasSite;
+	// The intent is resolved in an effect, and useExperiment enrols on its first eligible render,
+	// so wait for it. Otherwise users on a tailored intent get enrolled before they are excluded.
+	const isIntentLoading = ! intent;
 
 	const wasCreatedWithOnboardingFlow = siteCreationFlow === 'onboarding';
 	const wasCreatedAfterExperimentLaunch =
@@ -75,13 +78,16 @@ function usePlanDifferentiatorsExperiment( {
 
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
 	const isEligible =
-		( isEligibleSignupFlow && ! siteId ) ||
-		( wasCreatedWithOnboardingFlow && wasCreatedAfterExperimentLaunch );
+		! isIntentLoading &&
+		// Tailored intents replace the plan mix and feature lists that the variants change.
+		! hasTailoredFeatureList( intent ) &&
+		( ( isEligibleSignupFlow && ! siteId ) ||
+			( wasCreatedWithOnboardingFlow && wasCreatedAfterExperimentLaunch ) );
 
 	const [ isExperimentLoading, assignment ] = useExperiment( PLAN_DIFFERENTIATORS_EXPERIMENT_NAME, {
 		isEligible,
 	} );
-	const isLoading = isSiteLoading || isExperimentLoading;
+	const isLoading = isSiteLoading || isIntentLoading || isExperimentLoading;
 
 	const rawVariationName = assignment?.variationName;
 
@@ -94,13 +100,12 @@ function usePlanDifferentiatorsExperiment( {
 	return {
 		isLoading,
 		variant,
-		showAiCredits: variant !== 'control',
-		// Reversing assumes the standard lineup, which a curated intent (e.g. newsletter) replaces.
-		useReversedPlanOrder:
-			variant === 'ai_credits_reversed_order' && ! hasTailoredFeatureList( intent ),
+		useReversedPlanOrder: variant === 'reversed_order',
+		useMcpFeature: variant === 'mcp_features',
 		isExperimentEligible: isEligible,
 	};
 }
 
 export default usePlanDifferentiatorsExperiment;
+export { PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE };
 export type { PlanDifferentiatorsResult, PlanDifferentiatorsExperimentVariant };

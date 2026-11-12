@@ -1,7 +1,6 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
+import { vi } from 'vitest';
 import { closeSurvicateSurvey } from '../close-survey';
 
 describe( 'closeSurvicateSurvey', () => {
@@ -10,7 +9,7 @@ describe( 'closeSurvicateSurvey', () => {
 	} );
 
 	test( 'should call closeSurvey when the SDK is loaded', () => {
-		const closeSurvey = jest.fn();
+		const closeSurvey = vi.fn();
 		window._sva = { closeSurvey };
 
 		closeSurvicateSurvey();

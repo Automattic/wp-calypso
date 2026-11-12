@@ -1,9 +1,9 @@
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
 	flex: 1;
 	min-height: 0;
-	margin-top: -1px; // Make border collapsed
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
@@ -28,7 +28,7 @@
 
 	.wpnc__subject {
 		flex: 1;
-		font-weight: var(--wpds-typography-font-weight-default, 400);
+		font-weight: 500;
 
 		.wpnc__user,
 		.wpnc__site,
@@ -42,33 +42,103 @@
 		.wpnc__gridicon {
 			margin-right: 2px;
 		}
+
+		// The reply glyph fills ~2/3 of its 24px viewBox, so trim the box's side
+		// padding and center it on the x-height instead of nudging it down.
+		.wpnc__gridicon .gridicons-reply {
+			width: 16px;
+			height: 16px;
+			margin-inline-start: -2px;
+			vertical-align: middle;
+			transform: translateY(-1px);
+			fill: var(--wpds-color-foreground-interactive-neutral-weak, #707070);
+		}
 	}
 
-	.wpnc__note-icon .wpnc__gridicon {
+	// The theme has no text gray between neutral-weak and neutral, so mix the two.
+	.wpnc__excerpt {
+		--wpnc-excerpt-color: color-mix(
+			in srgb,
+			var(--wpds-color-foreground-content-neutral-weak, #707070) 75%,
+			var(--wpds-color-foreground-content-neutral, #1e1e1e)
+		);
+		color: var(--wpnc-excerpt-color);
+		line-height: 18px;
+	}
+
+	// On the unread tint, cool the gray toward the theme color so it doesn't look muddy.
+	div[role="article"]:has(.wpnc__subject.is-unread) .wpnc__excerpt {
+		color: color-mix(in oklch, var(--wpnc-excerpt-color) 88%, var(--wp-admin-theme-color));
+	}
+
+	// Follow the row's text into the brand color on hover and keyboard focus.
+	div[role="article"]:where(:hover, .is-hovered, :has(.dataviews-view-list__item:focus-visible))
+		.wpnc__subject
+		.gridicons-reply {
+		fill: currentColor;
+	}
+
+	// A hairline edge so light avatars don't bleed into the row. An inset outline
+	// paints over the image, which an inset box-shadow can't.
+	.wpnc__note-icon > :first-child {
+		outline: 1px solid color-mix(in srgb, #000 10%, transparent);
+		outline-offset: -1px;
+	}
+
+	// Cut a gap around the type badge out of the 36px avatar, so the row's
+	// background shows through in every state instead of a fixed-color ring. The
+	// shape is the avatar's circle less the badge's (r 10.75 at 32,32), with the two
+	// corners where they meet rounded off (r 1.5) so the edge has no sharp points.
+	// Its hairline is drawn along the same path, so the outline above is dropped.
+	$badge-cut: "M35.869 20.164A18 18 0 1 0 20.164 35.869A1.5 1.5 0 0 0 21.455 34.089A10.75 10.75 0 0 1 34.089 21.455A1.5 1.5 0 0 0 35.869 20.164Z";
+
+	.wpnc__note-icon:has(> .wpnc__note-type-badge) > :first-child {
+		outline: none;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='#{$badge-cut}'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+	}
+
+	// The hairline: a 2px stroke clipped to the shape, leaving 1px inside its edge.
+	.wpnc__note-icon:has(> .wpnc__note-type-badge)::after {
+		content: "";
 		position: absolute;
-		bottom: -6px;
-		right: -6px;
+		inset: 0;
+		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3CclipPath id='c'%3E%3Cpath d='#{$badge-cut}'/%3E%3C/clipPath%3E%3Cpath d='#{$badge-cut}' fill='none' stroke='%23000' stroke-opacity='.1' stroke-width='2' clip-path='url(%23c)'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+		pointer-events: none;
+	}
+
+	// Unflipped in RTL, so the badge stays where the mask above cuts its gap.
+	.wpnc__note-type-badge {
+		position: absolute;
+		bottom: -5px;
+		right: -5px #{"/*rtl:ignore*/"};
 		display: flex;
-		padding: 1px;
-		border: 1px solid $white;
-		border-radius: 50%;
-		color: $white;
-		background: $gray-600;
-		overflow: hidden;
 		z-index: 1;
+	}
 
-		svg {
-			fill: currentColor;
-		}
+	div[role="article"]:has(.wpnc__subject.is-unread):not(:has(.wpnc__pending-badge)) .wpnc__note-type-badge svg:not(.is-warning) circle {
+		fill: var(--wp-admin-theme-color);
+	}
 
-		&.is-unread {
-			color: $white;
-			background: var(--wp-admin-theme-color);
-		}
+	// Warnings stay red, read or unread, unless the comment is pending (below).
+	.wpnc__note-type-badge .is-warning circle {
+		fill: var(--wpds-color-background-interactive-error-strong, #cc1818);
+	}
 
-		&.is-unapproved {
-			color: var(--wpds-color-foreground-content-warning, #2e1900);
-			background: var(--wpds-color-background-surface-warning, #fde6be);
+	// Amber goes muddy on the unread blue, so the label turns white there, with a
+	// faint edge. The edge is a shadow, so it doesn't move the layout.
+	div[role="article"]:has(.wpnc__subject.is-unread) .wpnc__pending-badge {
+		background-color: var(--wpds-color-background-surface-neutral-strong, #fff);
+		box-shadow: 0 0 0 1px color-mix(in srgb, #000 12%, transparent);
+	}
+
+	div[role="article"]:has(.wpnc__pending-badge) .wpnc__note-type-badge circle {
+		fill: var(--wpnc-pending);
+	}
+
+	@include ui-mixins.when-dark-theme {
+		div[role="article"]:has(.wpnc__subject.is-unread) .wpnc__pending-badge {
+			background-color: var(--color-surface);
+			box-shadow: 0 0 0 1px color-mix(in srgb, #fff 16%, transparent);
 		}
 	}
 }

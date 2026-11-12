@@ -7,6 +7,7 @@ import {
 	isPermanentStaticSiteImportError,
 	pollStaticSiteImportSessionUntil,
 	staticSiteImportSessionQuery,
+	wowFunnelPendingQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
@@ -19,16 +20,28 @@ export interface StaticSiteImportSearch {
 }
 
 export interface StaticSiteImport {
-	status: 'moving' | 'finished' | 'failed';
+	/**
+	 * - moving: the move is running.
+	 * - finished / failed: the move itself reported that state.
+	 * - stalled: naming this site as the destination failed; asking again may work.
+	 * - unavailable: this move can't be read for this viewer (another account's move,
+	 *   a wrong or expired link). It isn't a failed move.
+	 */
+	status: 'moving' | 'finished' | 'failed' | 'stalled' | 'unavailable';
 	session?: StaticSiteImportSession;
-	errorCode?: string;
 	/** A site check refused the built site, so no other route applies. */
 	isRefused?: boolean;
-	/** The session is gone, so the source has to be read again. */
-	needsRestart: boolean;
-	/** Set when starting the move failed and it's worth asking again. */
+	/** Set when the move is stalled: asks again to name this site as the destination. */
 	retry?: () => void;
+	/** The site is an unpaid preview site, known once the move has finished. */
+	isPreview?: boolean;
+	/** Where a finished preview opens past Coming Soon, once the server has made its share link. */
+	previewUrl?: string;
 }
+
+// The share link is made when the build lands, so a finished preview can briefly read without one.
+const PREVIEW_URL_POLL_INTERVAL = 3000;
+const PREVIEW_URL_MAX_POLLS = 10;
 
 export const getSourceHost = ( url = '' ) => {
 	try {
@@ -49,11 +62,9 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		enabled: Boolean( sessionId ),
 		refetchInterval: pollStaticSiteImportSessionUntil( STATIC_SITE_IMPORT_TERMINAL_STATES ),
 	} );
-	const {
-		mutate: approve,
-		error: approveError,
-		reset: resetApprove,
-	} = useMutation( approveStaticSiteImportSessionMutation() );
+	const { mutate: approve, error: approveError } = useMutation(
+		approveStaticSiteImportSessionMutation()
+	);
 
 	// Checkout was the consent, so name this site as the destination right away.
 	// The server delivers as soon as the build lands, even if the user has left.
@@ -73,48 +84,63 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
 	}, [ approve, refetch, session, sessionId, site.ID ] );
 
+	// Only a finished move can be a preview with a share link, and the lookup is per user, not per site.
+	const isFinished = Boolean( sessionId ) && session?.state === 'finished';
+	const { data: pending } = useQuery( {
+		...wowFunnelPendingQuery(),
+		enabled: isFinished,
+		staleTime: 0,
+		refetchInterval: ( query ) => {
+			const preview = query.state.data?.preview_sites?.find( ( p ) => p.blog_id === site.ID );
+			return preview && ! preview.share_url && query.state.dataUpdateCount < PREVIEW_URL_MAX_POLLS
+				? PREVIEW_URL_POLL_INTERVAL
+				: false;
+		},
+	} );
+	const preview = isFinished
+		? pending?.preview_sites?.find( ( p ) => p.blog_id === site.ID )
+		: undefined;
+
 	if ( ! sessionId ) {
 		return null;
 	}
 
-	const errorCode =
-		getStaticSiteImportErrorCode( approveError ) ?? getStaticSiteImportErrorCode( sessionError );
-	const isRefused = session?.receipt?.code === 'static_site_capture_blocked';
-	const needsRestart =
-		! isRefused &&
-		( errorCode === 'static_site_import_session_not_found' ||
-			( session?.state === 'failed' && ! session.site_url ) );
-	const approveFailed =
-		Boolean( approveError ) &&
-		errorCode !== 'static_site_import_session_already_approved' &&
-		errorCode !== 'static_site_import_session_approval_in_progress';
-	const hasFailed =
-		needsRestart ||
-		approveFailed ||
-		session?.state === 'failed' ||
-		isPermanentStaticSiteImportError( sessionError );
-
-	if ( hasFailed ) {
+	// Only the move's own state decides finished or failed, so a passing error can't
+	// make a move that's still running look final.
+	if ( session?.state === 'failed' ) {
 		return {
 			status: 'failed',
 			session,
-			errorCode,
-			isRefused,
-			needsRestart,
-			retry:
-				approveFailed && ! needsRestart
-					? () => {
-							resetApprove();
-							hasRequestedApproval.current = false;
-							refetch();
-						}
-					: undefined,
+			isRefused: session.receipt?.code === 'static_site_capture_blocked',
+		};
+	}
+	if ( isFinished ) {
+		return {
+			status: 'finished',
+			session,
+			isPreview: Boolean( preview ),
+			previewUrl: preview?.share_url || undefined,
+		};
+	}
+	if ( ! session && isPermanentStaticSiteImportError( sessionError ) ) {
+		return { status: 'unavailable' };
+	}
+
+	const approveErrorCode = getStaticSiteImportErrorCode( approveError );
+	const isStalled =
+		Boolean( approveError ) &&
+		! session?.site_url &&
+		approveErrorCode !== 'static_site_import_session_already_approved' &&
+		approveErrorCode !== 'static_site_import_session_approval_in_progress';
+	if ( isStalled ) {
+		return {
+			status: 'stalled',
+			session,
+			retry: () => {
+				approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
+			},
 		};
 	}
 
-	return {
-		status: session?.state === 'finished' ? 'finished' : 'moving',
-		session,
-		needsRestart: false,
-	};
+	return { status: 'moving', session };
 }

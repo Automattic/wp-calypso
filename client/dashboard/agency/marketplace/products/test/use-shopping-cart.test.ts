@@ -17,7 +17,7 @@ describe( 'useShoppingCart', () => {
 		act( () => result.current.clearCart() );
 	} );
 
-	it( 'keeps one PHP memory add-on per site, and removes only the one asked for', () => {
+	test( 'keeps one PHP memory add-on per site, and removes only the one asked for', () => {
 		const { result } = renderHook( () => useShoppingCart() );
 
 		act( () => {
@@ -38,7 +38,7 @@ describe( 'useShoppingCart', () => {
 		);
 	} );
 
-	it( 'reads the site from a stored cart entry with site targets', () => {
+	test( 'reads the site from a stored cart entry with site targets', () => {
 		expect(
 			parseCartEntries( `${ MEMORY_ADDON }:1::site%2Ccom:three%2Eexample.com,jetpack-scan:1` )
 		).toEqual( [
@@ -52,7 +52,7 @@ describe( 'useShoppingCart', () => {
 		] );
 	} );
 
-	it( 'leaves out a site that cannot be decoded', () => {
+	test( 'leaves out a site that cannot be decoded', () => {
 		expect( parseCartEntries( `${ MEMORY_ADDON }:1:::%zz` ) ).toEqual( [
 			{ slug: MEMORY_ADDON, quantity: 1, raw: `${ MEMORY_ADDON }:1:::%zz` },
 		] );

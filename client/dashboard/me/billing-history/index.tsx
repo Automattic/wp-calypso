@@ -1,4 +1,4 @@
-import { allSitesQuery, countryListQuery, userReceiptsQuery } from '@automattic/api-queries';
+import { countryListQuery, sitesQuery, userReceiptsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -36,7 +36,7 @@ export default function BillingHistory() {
 	const { data: receipts = emptyReceipts, isLoading: isLoadingReceipts } =
 		useQuery( userReceiptsQuery() );
 	const { data: countryList = [] } = useQuery( countryListQuery() );
-	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
+	const { data: sites = [], isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const isLoading = isLoadingReceipts || isLoadingSites;
 
 	const locale = useIntlLocale();

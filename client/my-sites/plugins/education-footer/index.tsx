@@ -176,6 +176,7 @@ const FeatureIcon = styled.div`
 	margin-bottom: 16px;
 
 	svg {
+		color: var( --color-text-inverted );
 		fill: var( --color-text-inverted );
 	}
 `;

@@ -93,7 +93,7 @@ export default function CertificationDevToolsSection( {
 									<Icon
 										icon={ check }
 										size={ 24 }
-										style={ { flexShrink: 0, fill: 'var(--wp-admin-theme-color)' } }
+										style={ { flexShrink: 0, color: 'var(--wp-admin-theme-color)' } }
 									/>
 									<Text size={ 15 } lineHeight="24px">
 										{ fact }

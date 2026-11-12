@@ -1,0 +1,368 @@
+// Mirrors the Prospect reports overview: a tinted hero, a centered intro, then
+// alternating story sections with soft illustration panels.
+.dashboard-woopayments-landing {
+	--woopayments-landing-inset: clamp( 20px, 4vw, 48px );
+	--woopayments-landing-accent: var( --studio-woocommerce-purple-50, #7f54b3 );
+
+	position: relative;
+	isolation: isolate;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0 var( --woopayments-landing-inset ) 48px;
+	text-wrap: pretty;
+}
+
+.dashboard-woopayments-landing h2,
+.dashboard-woopayments-landing h3 {
+	margin: 0;
+	text-wrap: balance;
+}
+
+/* The page variant sits in an empty-state card; let it run edge to edge. */
+.dashboard-woopayments-landing-view > .dashboard-empty-state__wrapper {
+	overflow: clip;
+}
+
+.dashboard-woopayments-landing-view
+	.dashboard-empty-state__wrapper
+	.components-card__body:not( .dashboard-notice__body ) {
+	padding: 0;
+}
+
+.dashboard-woopayments-landing-view .dashboard-empty-state__wrapper-content {
+	padding-block: 0;
+}
+
+/* Hero */
+
+.dashboard-woopayments-landing__hero {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	box-sizing: border-box;
+	width: calc( 100% + var( --woopayments-landing-inset ) * 2 );
+	padding-block-start: 48px;
+	overflow: hidden;
+	background: linear-gradient(
+		135deg,
+		color-mix( in srgb, var( --woopayments-landing-accent ) 16%, var( --color-surface ) ),
+		color-mix( in srgb, var( --woopayments-landing-accent ) 5%, var( --color-surface ) )
+	);
+}
+
+.dashboard-woopayments-landing__hero::after {
+	position: absolute;
+	z-index: 1;
+	inset: auto 0 0;
+	height: 120px;
+	background: linear-gradient( to bottom, transparent, var( --color-surface ) 84% );
+	content: '';
+	pointer-events: none;
+}
+
+.dashboard-woopayments-landing__hero-image {
+	position: relative;
+	z-index: 0;
+	width: min( 100%, 480px );
+	height: auto;
+	margin-block-end: -40px;
+}
+
+.dashboard-woopayments-landing__hero-title {
+	position: absolute;
+	z-index: 2;
+	inset-block-start: 24px;
+	inset-inline-start: 28px;
+	max-width: calc( 100% - 96px );
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+/* Intro */
+
+.dashboard-woopayments-landing__intro {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	max-width: 720px;
+	margin-block-start: -12px;
+	text-align: center;
+}
+
+.dashboard-woopayments-landing__logo {
+	width: auto;
+	height: 28px;
+	margin-block-end: 4px;
+}
+
+.dashboard-woopayments-landing__summary.dashboard-woopayments-landing__summary {
+	max-width: 600px;
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: 16px;
+	line-height: 1.6;
+}
+
+.dashboard-woopayments-landing__cta {
+	margin-block-start: 12px;
+}
+
+/* Story */
+
+.dashboard-woopayments-landing__story {
+	width: min( 100%, 1080px );
+	margin-block-start: 76px;
+}
+
+.dashboard-woopayments-landing__section {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	align-items: center;
+	gap: clamp( 32px, 6vw, 88px );
+	margin-block-end: 88px;
+}
+
+.dashboard-woopayments-landing__section[data-reversed='true']
+	.dashboard-woopayments-landing__graphic {
+	order: 2;
+}
+
+.dashboard-woopayments-landing__graphic {
+	display: grid;
+	place-items: center;
+	min-height: 280px;
+	padding: 28px;
+	border-radius: 8px;
+	background: color-mix( in srgb, var( --woopayments-landing-accent ) 8%, var( --color-surface ) );
+}
+
+.dashboard-woopayments-landing__graphic[data-graphic='about'] {
+	background: color-mix( in srgb, var( --studio-green-50, #008a20 ) 8%, var( --color-surface ) );
+}
+
+.dashboard-woopayments-landing__graphic[data-graphic='demo'] {
+	background: color-mix( in srgb, var( --studio-yellow-30, #deb100 ) 14%, var( --color-surface ) );
+}
+
+.dashboard-woopayments-landing__graphic img {
+	width: min( 100%, 420px );
+	height: auto;
+}
+
+.dashboard-woopayments-landing__copy {
+	max-width: 460px;
+}
+
+.dashboard-woopayments-landing__copy p,
+.dashboard-woopayments-landing__panel p {
+	margin-block: 16px 0;
+	color: var( --color-text-subtle );
+	font-size: 16px;
+	line-height: 1.6;
+}
+
+.dashboard-woopayments-landing__copy > .components-h-stack {
+	margin-block-start: 24px;
+}
+
+/* Blocks: revenue share, commissions, benefits */
+
+.dashboard-woopayments-landing__block {
+	margin-block-end: 88px;
+}
+
+.dashboard-woopayments-landing__block-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.dashboard-woopayments-landing__columns {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	gap: 24px 48px;
+	margin-block-start: 32px;
+}
+
+.dashboard-woopayments-landing__panel {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 28px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+}
+
+.dashboard-woopayments-landing__panel > img {
+	width: 40px;
+	height: 40px;
+	margin-block-end: 16px;
+}
+
+.dashboard-woopayments-landing__panel h3 {
+	font-size: 20px;
+	line-height: 1.35;
+}
+
+.dashboard-woopayments-landing__panel .dashboard-woopayments-landing__checklist {
+	margin-block-start: 16px;
+}
+
+.dashboard-woopayments-landing__panel > a {
+	margin-block-start: auto;
+	padding-block-start: 16px;
+}
+
+.dashboard-woopayments-landing__checklist {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: var( --color-text );
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.dashboard-woopayments-landing__checklist li {
+	display: flex;
+	gap: 8px;
+}
+
+.dashboard-woopayments-landing__checklist svg {
+	flex: none;
+	fill: var( --woopayments-landing-accent );
+	color: var( --woopayments-landing-accent );
+}
+
+/* Commissions table */
+
+.dashboard-woopayments-landing__table-wrapper {
+	margin-block-start: 32px;
+	overflow-x: auto;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+}
+
+.dashboard-woopayments-landing__table {
+	width: 100%;
+	min-width: 720px;
+	border-collapse: collapse;
+	font-size: 14px;
+	line-height: 1.5;
+	text-align: start;
+}
+
+.dashboard-woopayments-landing__table th,
+.dashboard-woopayments-landing__table td {
+	padding: 12px 16px;
+	border-block-end: 1px solid var( --color-border-subtle );
+	text-align: start;
+	vertical-align: top;
+}
+
+.dashboard-woopayments-landing__table thead th {
+	background: color-mix( in srgb, var( --color-text ) 3%, var( --color-surface ) );
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.dashboard-woopayments-landing__table tbody th {
+	font-weight: 500;
+}
+
+.dashboard-woopayments-landing__table tbody tr:last-child th,
+.dashboard-woopayments-landing__table tbody tr:last-child td {
+	border-block-end: 0;
+}
+
+.dashboard-woopayments-landing__footnotes {
+	margin-block-start: 16px;
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	line-height: 1.6;
+}
+
+.dashboard-woopayments-landing__footnotes p {
+	margin: 0 0 8px;
+}
+
+@media ( max-width: 900px ) {
+	.dashboard-woopayments-landing__section,
+	.dashboard-woopayments-landing__columns {
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 24px;
+	}
+
+	.dashboard-woopayments-landing__section,
+	.dashboard-woopayments-landing__block {
+		margin-block-end: 64px;
+	}
+
+	.dashboard-woopayments-landing__section[data-reversed='true']
+		.dashboard-woopayments-landing__graphic {
+		order: 0;
+	}
+
+	.dashboard-woopayments-landing__graphic {
+		min-height: 220px;
+	}
+
+	.dashboard-woopayments-landing__hero-image {
+		width: min( 100%, 360px );
+	}
+}
+
+/* Learn more modal */
+
+.dashboard-woopayments-learn-more-modal.components-modal__frame {
+	width: min( 1160px, calc( 100vw - 32px ) );
+	max-width: none;
+	max-height: calc( 100dvh - 32px );
+}
+
+.dashboard-woopayments-learn-more-modal .components-modal__content {
+	margin-block-start: 0;
+	padding: 0;
+	overflow-y: auto;
+}
+
+.dashboard-woopayments-learn-more-modal .components-modal__header {
+	position: absolute;
+	z-index: 5;
+	inset-block-start: 0;
+	inset-inline: 0;
+	justify-content: flex-end;
+	height: 56px;
+	padding-block: 24px 0;
+	padding-inline: 28px;
+	border-block-end: 0;
+	background: none;
+}
+
+.dashboard-woopayments-landing[data-context='learn-more'] {
+	flex: none;
+}
+
+.dashboard-woopayments-landing[data-context='learn-more'] .dashboard-woopayments-landing__hero {
+	padding-block-start: 88px;
+}
+
+.dashboard-woopayments-learn-more-button.components-button.is-tertiary {
+	--wp-components-color-accent: var( --color-text );
+	--wp-components-color-accent-darker-20: var( --color-text );
+}

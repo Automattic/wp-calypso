@@ -4,6 +4,7 @@ import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { getAgentManager, type ToolResultInput, type TurnToolCall } from './agentManager';
+import { createLiveChat, getResumableChat, updateLiveChat } from './liveChat';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -14,7 +15,7 @@ import type {
 	TaskUpdate,
 	ToolProvider,
 } from '../client/types/index';
-import type { ReactNode } from 'react';
+import type { ReactNode, SetStateAction } from 'react';
 
 // Utility function to sort UI messages by timestamp
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
@@ -37,7 +38,9 @@ export const filterUiOnlyMessages = (
 	uiMessages: UIMessage[],
 	clientMessageIds: Set< string >
 ): UIMessage[] => {
-	return uiMessages.filter( ( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user' );
+	return uiMessages.filter(
+		( msg ) => ! clientMessageIds.has( msg.id ) && ( msg.role !== 'user' || msg.isUiOnly )
+	);
 };
 
 /**
@@ -157,6 +160,8 @@ export interface UIMessage {
 	icon?: string;
 	actions?: UIMessageAction[];
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
+	/** A user message that never goes to the server, so a rebuilt history keeps it as it does an agent's. */
+	isUiOnly?: boolean;
 }
 
 // Mirrors `MessageAction.visibility` in agenttic-ui.
@@ -368,6 +373,28 @@ export const transformClientMessageToUI = (
 	return uiMessage;
 };
 
+/**
+ * Resolves the registrations' actions onto the UI messages a client message
+ * backs. In place, so the list keeps its optimistic and UI-only messages.
+ */
+const resolveMessageActions = (
+	uiMessages: UIMessage[],
+	clientMessages: ClientMessage[],
+	registrations: MessageActionsRegistration[]
+): UIMessage[] => {
+	const actionsById = new Map(
+		clientMessages.map( ( msg ) => {
+			const uiMessage = transformClientMessageToUI( msg, registrations );
+
+			return [ uiMessage?.id, uiMessage?.actions ] as const;
+		} )
+	);
+
+	return uiMessages.map( ( msg ) =>
+		actionsById.has( msg.id ) ? { ...msg, actions: actionsById.get( msg.id ) } : msg
+	);
+};
+
 // Default providers
 const createNoOpContextProvider = (): ContextProvider => ( {
 	getClientContext: () => ( {} ),
@@ -413,6 +440,7 @@ export interface UseAgentChatConfig {
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
+	resumeOnRemount?: boolean; // Set to resume the chat, a streaming reply included, when it mounts again with the same agent.
 }
 
 // Hook return interface
@@ -442,6 +470,8 @@ export interface UseAgentChatReturn {
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
+	// Drops a shown error without a new send, for a reply the UI makes itself.
+	clearError: () => void;
 
 	// Abort control
 	abortCurrentRequest: () => void;
@@ -494,17 +524,50 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// Validate configuration
 	const isValidConfig = validateAgentConfig( agentConfig );
 
-	// Internal state
-	const [ state, setState ] = useState< AgentChatState >( {
-		clientMessages: [],
-		uiMessages: [],
-		isProcessing: false,
-		error: isValidConfig ? null : 'Invalid agent configuration',
-		suggestions: [],
-		progressMessage: null,
-		progressPhase: null,
-		isReplying: false,
-	} );
+	// Internal state: the component's own chat, or the agent's when resumable.
+	const [ ownLiveChat ] = useState( createLiveChat );
+	const isResumable = !! config.resumeOnRemount;
+
+	const getLiveChat = useCallback(
+		() => ( isResumable ? getResumableChat( agentConfig.agentId ) : ownLiveChat ),
+		[ agentConfig.agentId, isResumable, ownLiveChat ]
+	);
+
+	// Mirrored in React state, so the chat's updates batch as `useState`'s do.
+	const [ state, setRenderedState ] = useState( () => getLiveChat().state );
+
+	useEffect( () => {
+		// A chat that replaces this one takes the set over, so read it once.
+		const { listeners } = getLiveChat();
+		const renderState = () => setRenderedState( getLiveChat().state );
+
+		renderState();
+		listeners.add( renderState );
+
+		return () => {
+			listeners.delete( renderState );
+		};
+	}, [ getLiveChat ] );
+
+	// Bound to the chat of this render: a callback a tool still holds must not
+	// write to a chat that has replaced it.
+	const renderedChat = getLiveChat();
+
+	const setState = useCallback(
+		( update: SetStateAction< AgentChatState > ) => updateLiveChat( renderedChat, update ),
+		[ renderedChat ]
+	);
+
+	// Pins the chat current now, for work that outlives the render: a chat that
+	// replaces it must not get the result.
+	const pinLiveChat = useCallback( () => {
+		const liveChat = getLiveChat();
+
+		return {
+			liveChat,
+			setState: ( update: SetStateAction< AgentChatState > ) => updateLiveChat( liveChat, update ),
+		};
+	}, [ getLiveChat ] );
 
 	// Initialize message actions
 	const {
@@ -513,14 +576,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		clearAllMessageActions,
 		registrations,
 	} = useMessageActions();
-
-	// Guard against concurrent sends racing on `conversationHistory`
-	const isSendingRef = useRef( false );
-
-	const stateRef = useRef( state );
-	useEffect( () => {
-		stateRef.current = state;
-	}, [ state ] );
 
 	// Keep the raw task-update observer and `trackReplying` fresh without
 	// reinitializing the agent or changing the stable onSubmit callback identity.
@@ -533,21 +588,20 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		trackReplyingRef.current = config.trackReplying;
 	}, [ config.trackReplying ] );
 
-	// Use a ref to always have access to the latest registrations
-	const registrationsRef = useRef( registrations );
-	useEffect( () => {
-		registrationsRef.current = registrations;
-	}, [ registrations ] );
-
 	// Transform client messages to UI messages
 	const transformMessages = useCallback(
 		( messages: ClientMessage[] ): UIMessage[] => {
+			const { registrations: currentRegistrations } = getLiveChat();
+
 			return messages
-				.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+				.map( ( msg ) => transformClientMessageToUI( msg, currentRegistrations ) )
 				.filter( ( msg ): msg is UIMessage => msg !== null );
 		},
-		[] // registrationsRef is stable, so no deps needed
+		[ getLiveChat ]
 	);
+
+	// The session the config asked for on the last run of the effect below.
+	const requestedSessionIdRef = useRef( agentConfig.sessionId );
 
 	// Initialize agent
 	useEffect( () => {
@@ -555,11 +609,25 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			return;
 		}
 
+		// A resumable chat takes only a change of the config's session as a
+		// conversation switch: on mount that session can lag the agent's, as
+		// while the server assigns one during the first turn.
+		const isSessionRequested =
+			! isResumable || requestedSessionIdRef.current !== agentConfig.sessionId;
+
+		requestedSessionIdRef.current = agentConfig.sessionId;
+
 		const initializeAgent = async () => {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
+			let { setState } = pinLiveChat();
 			let hasAgent = agentManager.hasAgent( agentKey );
+
+			if ( hasAgent && ! isSessionRequested ) {
+				return;
+			}
+
 			if (
 				hasAgent &&
 				agentManager.getAgentSessionId( agentKey ) !== ( agentConfig.sessionId || null )
@@ -567,6 +635,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				agentManager.abortCurrentRequest( agentKey );
 				agentManager.removeAgent( agentKey );
 				hasAgent = false;
+				// The agent's removal replaced its chat.
+				( { setState } = pinLiveChat() );
 				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
 			}
 
@@ -641,7 +711,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
+		isResumable,
 		isValidConfig,
+		pinLiveChat,
 		transformMessages,
 	] );
 
@@ -665,10 +737,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
-			if ( isSendingRef.current ) {
+			const { liveChat, setState } = pinLiveChat();
+
+			if ( liveChat.isSending ) {
 				return;
 			}
-			isSendingRef.current = true;
 
 			// Keep in-flight updates attached to the site and agent that started the request.
 			const onTaskUpdate = onTaskUpdateRef.current;
@@ -686,7 +759,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// original error and leave `isProcessing` stuck. Surface the
 				// original error regardless of whether persistence succeeds.
 				try {
-					await agentManager.replaceMessages( agentKey, restoreOnError.clientMessages );
+					// A replaced chat means the agent now runs another conversation.
+					if ( liveChat === getLiveChat() ) {
+						await agentManager.replaceMessages( agentKey, restoreOnError.clientMessages );
+					}
 				} catch ( restoreError ) {
 					logger( 'Failed to restore conversation history after a failed send', restoreError );
 				}
@@ -694,7 +770,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				setState( ( prev ) => ( {
 					...prev,
 					clientMessages: restoreOnError.clientMessages,
-					uiMessages: restoreOnError.uiMessages,
+					// The registrations can have changed since these were captured.
+					uiMessages: resolveMessageActions(
+						restoreOnError.uiMessages,
+						restoreOnError.clientMessages,
+						liveChat.registrations
+					),
 					isProcessing: false,
 					progressMessage: null,
 					progressPhase: null,
@@ -750,6 +831,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					error: null,
 				} ) );
 			}
+
+			// Claimed last: only the `finally` below releases the lock, so a throw
+			// above must not strand it.
+			liveChat.isSending = true;
 
 			try {
 				// Truncate history inside the guarded send so a concurrent
@@ -904,7 +989,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						const currentStreamingId = streamingMessageId;
 						const finalMessage = transformClientMessageToUI(
 							update.status.message,
-							registrationsRef.current
+							liveChat.registrations
 						);
 
 						if ( finalMessage ) {
@@ -976,7 +1061,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						// Transform client messages to UI format
 						const transformedClientMessages = updatedClientHistory
-							.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+							.map( ( msg ) => transformClientMessageToUI( msg, liveChat.registrations ) )
 							.filter( ( msg ): msg is UIMessage => msg !== null );
 
 						// Find UI-only messages (messages not in client history, e.g. injected by tools)
@@ -1034,10 +1119,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				}
 				throw error;
 			} finally {
-				isSendingRef.current = false;
+				liveChat.isSending = false;
 			}
 		},
-		[ agentConfig.agentId, isValidConfig ]
+		[ agentConfig.agentId, getLiveChat, isValidConfig, pinLiveChat ]
 	);
 
 	const onSubmit = useCallback(
@@ -1046,59 +1131,74 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	);
 
 	// Add message function - for tools to directly add UI messages
-	const addMessage = useCallback( ( message: UIMessage ) => {
-		setState( ( prev ) => ( {
-			...prev,
-			uiMessages: sortUIMessagesByTime( [ ...prev.uiMessages, message ] ),
-		} ) );
-	}, [] );
+	const addMessage = useCallback(
+		( message: UIMessage ) => {
+			setState( ( prev ) => ( {
+				...prev,
+				uiMessages: sortUIMessagesByTime( [ ...prev.uiMessages, message ] ),
+			} ) );
+		},
+		[ setState ]
+	);
+
+	const clearError = useCallback( () => {
+		setState( ( prev ) => ( prev.error ? { ...prev, error: null } : prev ) );
+	}, [ setState ] );
 
 	// Suggestions management
-	const registerSuggestions = useCallback( ( suggestions: Suggestion[] ) => {
-		setState( ( prev ) => ( {
-			...prev,
-			suggestions,
-		} ) );
-	}, [] );
+	const registerSuggestions = useCallback(
+		( suggestions: Suggestion[] ) => {
+			setState( ( prev ) => ( {
+				...prev,
+				suggestions,
+			} ) );
+		},
+		[ setState ]
+	);
 
 	const clearSuggestions = useCallback( () => {
 		setState( ( prev ) => ( {
 			...prev,
 			suggestions: [],
 		} ) );
-	}, [] );
+	}, [ setState ] );
 
-	// Re-transform messages when registrations change so newly registered
-	// actions are resolved onto existing messages.
-	useEffect( () => {
-		setState( ( prev ) => {
-			// A send owns the optimistic user message until it reconciles, so
-			// rebuilding here mid-flight would drop it. Let the send settle.
-			if ( isSendingRef.current ) {
-				return prev;
-			}
+	// Sets the component's actions on the chat and resolves them onto its
+	// messages in place, so a send in flight keeps its optimistic message.
+	const applyRegistrations = useCallback(
+		( nextRegistrations: MessageActionsRegistration[] ) => {
+			renderedChat.registrations = nextRegistrations;
 
-			// Don't update if we have no client messages
-			if ( prev.clientMessages.length === 0 ) {
-				return prev;
-			}
-
-			// Re-transform all messages with current registrations
-			const updatedUIMessages = transformMessages( prev.clientMessages );
-
-			// Find UI-only messages (messages not in client history, e.g. injected by tools)
-			// Exclude user messages since they'll come back from server with different IDs
-			const clientMessageIds = new Set( prev.clientMessages.map( ( msg ) => msg.messageId ) );
-			const uiOnlyMessages = prev.uiMessages.filter(
-				( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
+			setState( ( prev ) =>
+				prev.clientMessages.length === 0
+					? prev
+					: {
+							...prev,
+							uiMessages: resolveMessageActions(
+								prev.uiMessages,
+								prev.clientMessages,
+								nextRegistrations
+							),
+						}
 			);
+		},
+		[ renderedChat, setState ]
+	);
 
-			return {
-				...prev,
-				uiMessages: sortUIMessagesByTime( [ ...updatedUIMessages, ...uiOnlyMessages ] ),
-			};
-		} );
-	}, [ registrations, transformMessages ] );
+	useEffect( () => applyRegistrations( registrations ), [ applyRegistrations, registrations ] );
+
+	// A resumable chat outlives its component, so it drops what was the
+	// component's: its actions, its suggestions and an error it has shown.
+	useEffect(
+		() => () => {
+			if ( isResumable ) {
+				applyRegistrations( [] );
+				clearSuggestions();
+				clearError();
+			}
+		},
+		[ applyRegistrations, clearError, clearSuggestions, isResumable ]
+	);
 
 	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {
@@ -1121,6 +1221,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
+			const { setState } = pinLiveChat();
+
 			// Replace agent's conversation history
 			await agentManager.replaceMessages( agentKey, messages );
 
@@ -1133,14 +1235,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				uiMessages,
 			} ) );
 		},
-		[ agentConfig.agentId, isValidConfig, transformMessages ]
+		[ agentConfig.agentId, isValidConfig, pinLiveChat, transformMessages ]
 	);
 
 	const { getRegenerateHandler } = useRegenerate( {
 		agentId: agentConfig.agentId,
 		isValidConfig,
-		isSendingRef,
-		stateRef,
+		getLiveChat,
 		transformMessages,
 		sendMessage,
 	} );
@@ -1149,7 +1250,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		// AgentUI props
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
-		error: state.error,
+		error: isValidConfig ? state.error : 'Invalid agent configuration',
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
@@ -1168,6 +1269,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 		// Tool integration
 		addMessage,
+		clearError,
 
 		// Abort control
 		abortCurrentRequest,

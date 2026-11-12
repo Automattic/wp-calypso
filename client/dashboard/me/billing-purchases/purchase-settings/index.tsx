@@ -117,7 +117,6 @@ import {
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
-import { BillingPurchaseInfoPopover } from '../dataviews';
 import { MovePurchaseActionItem } from '../move-purchase/move-purchase-action-item';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -953,18 +952,40 @@ function getFields( {
 				const locale = useLocale();
 				const navigate = useNavigate();
 				const { getValue } = field;
-				const helpText = ( () => {
+				const help = ( () => {
 					if (
 						purchase.is_auto_renew_enabled &&
-						Boolean( purchase.renew_date ) &&
+						purchase.renew_date &&
 						isRenewingBeforeExpiration( purchase )
 					) {
-						// translators: %(date)s is a formatted date string
-						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
-								dateStyle: 'long',
-							} ),
+						const renewDate = formatDate( new Date( purchase.renew_date ), locale, {
+							dateStyle: 'long',
 						} );
+						const isRenewingEarly =
+							Boolean( purchase.expiry_date ) &&
+							! purchase.is_hundred_year_domain &&
+							purchase.renew_date !== purchase.expiry_date;
+						if ( ! isRenewingEarly ) {
+							// translators: %(date)s is a formatted date string
+							return sprintf( __( 'You will be billed on %(date)s' ), { date: renewDate } );
+						}
+						return createInterpolateElement(
+							/* translators: <renewDate/> and <expiryDate/> are formatted dates, e.g. "January 5, 2026". inlineSupportLink is a web link. */
+							__(
+								'You will be billed on <renewDate/>. Your subscription is paid through <expiryDate/>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+							),
+							{
+								renewDate: <span>{ renewDate }</span>,
+								expiryDate: (
+									<span>
+										{ formatDate( new Date( purchase.expiry_date ), locale, {
+											dateStyle: 'long',
+										} ) }
+									</span>
+								),
+								inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+							}
+						);
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
 						const date = formatDate( new Date( purchase.expiry_date ), locale, {
@@ -984,44 +1005,6 @@ function getFields( {
 						);
 					}
 					return undefined;
-				} )();
-				const help = ( () => {
-					if ( ! helpText ) {
-						return helpText;
-					}
-					if (
-						purchase.expiry_date &&
-						purchase.renew_date &&
-						! purchase.is_hundred_year_domain &&
-						purchase.is_auto_renew_enabled &&
-						purchase.renew_date !== purchase.expiry_date &&
-						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
-					) {
-						return (
-							<HStack spacing={ 1 } expanded={ false }>
-								<span>{ helpText }</span>
-								<BillingPurchaseInfoPopover>
-									{ createInterpolateElement(
-										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
-										__(
-											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
-										),
-										{
-											expireDate: (
-												<span>
-													{ formatDate( new Date( purchase.expiry_date ), locale, {
-														dateStyle: 'long',
-													} ) }
-												</span>
-											),
-											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
-										}
-									) }
-								</BillingPurchaseInfoPopover>
-							</HStack>
-						);
-					}
-					return helpText;
 				} )();
 				if (
 					! purchase.is_rechargeable &&

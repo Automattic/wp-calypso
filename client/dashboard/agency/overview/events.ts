@@ -8,7 +8,7 @@ import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	PRESSABLE_OFFER_ENDS_AT,
 } from './constants';
 import type { CSSProperties, ReactNode } from 'react';
 
@@ -56,7 +56,7 @@ export interface FeaturedEvent {
 	when?: string;
 	title: string;
 	subtitle?: string;
-	/** One entry per paragraph. Supports `<strong>` and `<code>` tags. */
+	/** One entry per paragraph. Supports `<strong>` and `<coupon>` tags. */
 	description: string[];
 	ctas: ( FeaturedEventCta | FeaturedEventActionCta )[];
 	/** ISO expiry for dated events; omitted for announcements without an expiry. */
@@ -83,7 +83,7 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 		),
 		/* translators: Automattic50Off is a ticket discount code. Keep it exactly as written. */
 		__(
-			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <strong><code>Automattic50Off</code></strong>, so come say hello to our team while you’re there.'
+			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <coupon>Automattic50Off</coupon>, so come say hello to our team while you’re there.'
 		),
 	],
 	ctas: [
@@ -103,17 +103,17 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 };
 
 /**
- * The Q3 2026 Pressable promos, shown to eligible agencies alongside the
+ * The Pressable promos, shown to eligible agencies alongside the
  * featured event. Which one an agency sees is decided by the shells through
  * the eligibility props on AgencyOverviewContent: the introductory offer
  * targets agencies without a Pressable plan through A4A, the expansion offer
  * agencies with one that missed the introductory offer.
  */
 export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): FeaturedEvent => ( {
-	id: 'a4a-pressable-promo-offer-2026-q3',
+	id: 'a4a-pressable-promo-offer-2026-holiday',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
-	when: __( 'Limited time offer · Until September 30, 2026' ),
+	when: __( 'Limited time offer · Until November 30, 2026' ),
 	title: __( 'Get up to 6 months of free Pressable hosting on new plans!' ),
 	subtitle: __( 'Automattic for Agencies & Pressable' ),
 	description: [
@@ -128,7 +128,7 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 			url: pressableHostingHref,
 			variant: 'primary',
 			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
+				'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_view_promo_details_click',
 		},
 		{
 			id: 'see-full-terms',
@@ -136,10 +136,10 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 			url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 			isExternal: true,
 			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
+				'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 		},
 	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_OFFER_ENDS_AT,
 } );
 
 export const getPressableExpansionOfferEvent = (
@@ -177,7 +177,7 @@ export const getPressableExpansionOfferEvent = (
 				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
 		},
 	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_OFFER_ENDS_AT,
 } );
 
 export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): FeaturedEvent => ( {

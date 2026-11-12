@@ -43,10 +43,12 @@
 	},
 	"dependencies": {
 		"@automattic/popup-monitor": "workspace:^",
-		"@babel/runtime": "^8.0.7",
-		"debug": "^4.4.1"
+		"@babel/runtime": "^8.0.10",
+		"debug": "^4.4.3"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

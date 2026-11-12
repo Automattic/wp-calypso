@@ -22,6 +22,8 @@ import {
 } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
+import './style.scss';
+
 const DOMAIN_TRANSFER_STEPS = [
 	STEPS.DOMAIN_TRANSFER_INTRO,
 	STEPS.DOMAIN_TRANSFER_DOMAINS,

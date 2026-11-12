@@ -84,7 +84,7 @@ export function useReadFoo( id: string | null | undefined, options?: ReadFooQuer
 }
 ```
 
-Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useShelfBySlug` in `client/reader/data/shelves/index.ts`.
+Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`.
 
 ### Mutation factories must accept the consumer's `QueryClient`
 
@@ -131,11 +131,10 @@ patches React Query caches, walk this list:
   cross-pollute. Filter the walk by `connectionId` (or whichever slot
   scopes the cache key for your protocol). The same applies to
   `cancelQueries` — pass a `predicate` rather than the broad root key.
-- **Wrap `cancelQueries` in `try`/`catch` inside `onMutate`.** TanStack
-  docs flag it as best-effort; if it rejects (rare — route-change
-  teardown races), `onMutate` resolves to `undefined` and the actual
-  mutationFn never runs. The optimistic patch + mutationFn must still
-  fire if the cancel fails.
+- **Await `cancelQueries` in `onMutate` without a `try`/`catch`.** In
+  this repo's TanStack Query (5.83), `cancelQueries` ends in
+  `.catch( noop )` and can't reject, so a `try`/`catch` around it is
+  dead code.
 - **Add a `default:` arm to error-message switches.** TypeScript
   exhaustiveness keeps `MastodonError['kind']` / `AtmosphereError['kind']`
   switches complete today, but a future widening returns `undefined` →
@@ -163,7 +162,7 @@ patches React Query caches, walk this list:
 
 ### Stream keys
 
-Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `shelf:{shelfId}` (a Reader Shelf's posts feed, served by `/wpcom/v2/reader/shelves/{id}/posts`), `shelf_discover:{shelfId}` (a Reader Shelf's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/shelves/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 

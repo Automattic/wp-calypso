@@ -122,7 +122,7 @@ export function BackupDetails( {
 
 	return (
 		<Card>
-			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
+			<CardHeader direction="column" expanded={ false }>
 				<SectionHeader title={ backup.summary } actions={ ! isSmallViewport ? actions : null } />
 				{ isSmallViewport ? actions : null }
 			</CardHeader>

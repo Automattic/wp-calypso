@@ -126,13 +126,6 @@ body.is-mobile-app-view {
 		@include breakpoint-deprecated( ">960px" ) {
 			background-color: var(--color-checkout-masterbar-background);
 		}
-
-		// The labelled entry point puts an icon beside the text, as in the admin bar.
-		.checkout-skip-button.has-help-entry-label button {
-			display: inline-flex;
-			align-items: center;
-			gap: 2px;
-		}
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
@@ -283,6 +276,7 @@ body.is-mobile-app-view {
 	.gridicon,
 	svg {
 		fill: var(--color-masterbar-icon);
+		color: var(--color-masterbar-icon);
 		width: 24px;
 		height: 24px;
 	}
@@ -290,6 +284,7 @@ body.is-mobile-app-view {
 	.gridicon {
 		.masterbar--is-checkout & {
 			fill: var(--color-checkout-masterbar-text);
+			color: var(--color-checkout-masterbar-text);
 		}
 	}
 
@@ -311,9 +306,13 @@ body.is-mobile-app-view {
 	&:hover,
 	&.is-open,
 	&:has(+ .masterbar__item-subitems:hover) {
-		svg path,
+		svg:not([stroke]) path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
+		}
+
+		svg {
+			color: var(--color-masterbar-highlight);
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {

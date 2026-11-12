@@ -9,6 +9,7 @@ import {
 } from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { isCreditsCommandMessageId } from '../utils/credits-command';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import type { AuthProvider, UIMessage as Message } from '@automattic/agenttic-client';
 import type { MessageAction } from '@automattic/agenttic-ui';
@@ -77,15 +78,19 @@ export async function submitFeedback(
 	messageId: string,
 	feedback: string,
 	previousMessages?: PreviousMessage[],
-	traceId?: string
+	traceId?: string,
+	metadata?: Record< string, string >
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
 
-	const data: Record< string, string | PreviousMessage[] > = {
+	const data: Record< string, string | PreviousMessage[] | Record< string, string > > = {
 		message_id: messageId,
 		feedback,
 	};
+	if ( metadata ) {
+		data.metadata = metadata;
+	}
 	if ( traceId ) {
 		data.trace_id = traceId;
 	}
@@ -242,7 +247,9 @@ export default function useFeedbackAction( {
 
 		return createFeedbackActions( {
 			onFeedback: handleFeedback,
-			condition: ( message: Message ) => message.role === 'agent',
+			// The server has no record of the browser's own `/credits` answer to rate.
+			condition: ( message: Message ) =>
+				message.role === 'agent' && ! isCreditsCommandMessageId( message.id ),
 			icons: {
 				up: createElement( ThumbsUpIcon, { className: 'agents-manager-message-action-icon' } ),
 				down: createElement( ThumbsDownIcon, { className: 'agents-manager-message-action-icon' } ),

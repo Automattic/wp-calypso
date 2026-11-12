@@ -1,7 +1,7 @@
+import { domainsQuery } from '@automattic/api-queries';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { useAppContext } from '../../app/context';
 import { useSiteLaunch, type A4aLaunchModalComponent } from './use-site-launch';
 import type { Site } from '@automattic/api-core';
 
@@ -18,7 +18,6 @@ export function SiteLaunchButton( {
 	LaunchModal?: A4aLaunchModalComponent;
 	flowDestination?: string;
 } ) {
-	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 
 	const { isLoading, isExperimentLoading, isHidden, isDisabled, isBusy, href, onClick, modal } =
@@ -27,7 +26,7 @@ export function SiteLaunchButton( {
 			flowDestination,
 			a4aLaunchUrl: launchUrl,
 			a4aLaunchModal: LaunchModal,
-			domainsOptions: queries.domainsQuery(),
+			domainsOptions: domainsQuery(),
 			recordTracksEvent,
 		} );
 

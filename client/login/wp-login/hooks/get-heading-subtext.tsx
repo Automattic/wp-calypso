@@ -1,11 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
+import { getTwoFactorHelpText } from 'calypso/blocks/login/two-factor-authentication/get-two-factor-help-text';
 import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	isSocialFirst: boolean;
 	twoFactorAuthType: string;
+	hasTwoFactorEmailNonce?: boolean;
 	action?: string;
 	isWooJPC?: boolean;
 	partnerConfig?: PartnerConfig | null;
@@ -20,6 +22,7 @@ interface Props {
 const getHeadingSubText = ( {
 	isSocialFirst,
 	twoFactorAuthType,
+	hasTwoFactorEmailNonce,
 	action,
 	translate,
 	isWooJPC,
@@ -27,8 +30,14 @@ const getHeadingSubText = ( {
 	isUnifiedConnectionFlow,
 	connectorPlugins,
 }: Props ) => {
-	if ( ! isSocialFirst || twoFactorAuthType ) {
+	if ( ! isSocialFirst ) {
 		return null;
+	}
+
+	if ( twoFactorAuthType ) {
+		const primary = getTwoFactorHelpText( twoFactorAuthType, !! hasTwoFactorEmailNonce, translate );
+
+		return primary ? { primary, secondary: null } : null;
 	}
 
 	const tos = (
@@ -40,7 +49,7 @@ const getHeadingSubText = ( {
 							components: {
 								tosLink: (
 									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										href={ localizeUrl( 'https://automattic.com/tos/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -61,7 +70,7 @@ const getHeadingSubText = ( {
 							components: {
 								tosLink: (
 									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										href={ localizeUrl( 'https://automattic.com/tos/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>

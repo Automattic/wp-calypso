@@ -61,9 +61,9 @@
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/react-i18n": "^4.48.0",
-		"debug": "^4.4.1",
+		"debug": "^4.4.3",
 		"i18n-calypso": "workspace:^",
-		"postcss": "^8.5.31",
+		"postcss": "^8.5.32",
 		"prop-types": "^15.8.1"
 	},
 	"peerDependencies": {
@@ -76,6 +76,7 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
+		"@types/prop-types": "^15.7.15",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"

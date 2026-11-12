@@ -37,7 +37,7 @@ function setup( enabled: boolean ) {
 }
 
 describe( 'NotificationsSites subscriber settings', () => {
-	it( 'hides subscriber settings when the feature is disabled', async () => {
+	test( 'hides subscriber settings when the feature is disabled', async () => {
 		const { settings, sites } = setup( false );
 		await waitFor( () => {
 			expect( settings.isDone() ).toBe( true );
@@ -51,7 +51,7 @@ describe( 'NotificationsSites subscriber settings', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows the saved subscriber preference alongside browser notifications when enabled', async () => {
+	test( 'shows the saved subscriber preference alongside browser notifications when enabled', async () => {
 		const { preferences } = setup( true );
 		await waitFor( () =>
 			expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked()

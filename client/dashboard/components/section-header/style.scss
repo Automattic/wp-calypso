@@ -14,7 +14,7 @@
 
 .dashboard-section-header__heading {
 	margin-block: 0;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 
 	.dashboard-section-header.is-level-1 & {
 		font-family: var( --dashboard-h1__font-family );
@@ -50,6 +50,7 @@
 	}
 
 	svg {
+		color: $gray-700;
 		fill: $gray-700;
 		flex-shrink: 0;
 		width: $grid-unit-30;

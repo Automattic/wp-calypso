@@ -60,7 +60,7 @@ describe( 'cancelPurchaseRoute loader', () => {
 		queryClient.clear();
 	} );
 
-	it( 'resolves when the site-scoped queries 403 for an unreachable site', async () => {
+	test( 'resolves when the site-scoped queries 403 for an unreachable site', async () => {
 		interceptUserScopedQueries();
 
 		// `/upgrades?site=…` and `/sites/{id}/features` both run the blog manage

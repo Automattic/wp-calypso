@@ -4,6 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { ImageStudioMode } from '../types';
 import { getSessionId } from '../utils/session';
 import {
@@ -14,29 +15,42 @@ import {
 import { getSiteCreditsLevel, useAiCredits } from './use-ai-credits';
 import type { AuthProvider, TaskUpdate } from '@automattic/agenttic-client';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', async () => ( {
 	__: ( str: string ) => str,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
-	sprintf: jest.requireActual( '@wordpress/i18n' ).sprintf,
+	sprintf: ( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) )
+		.sprintf,
 } ) );
 
 // The package root loads the whole chat; its credits helpers are all this hook uses.
-jest.mock( '@automattic/agents-manager', () => ( {
-	...jest.requireActual( '@automattic/agents-manager/src/utils/credits' ),
-	...jest.requireActual( '@automattic/agents-manager/src/utils/live-credits' ),
-	...jest.requireActual( '@automattic/agents-manager/src/utils/credits-access' ),
+vi.mock( '@automattic/agents-manager', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/agents-manager/src/utils/credits' ) >(
+		'@automattic/agents-manager/src/utils/credits'
+	) ),
+	...( await vi.importActual<
+		typeof import( '@automattic/agents-manager/src/utils/live-credits' )
+	>( '@automattic/agents-manager/src/utils/live-credits' ) ),
+	...( await vi.importActual<
+		typeof import( '@automattic/agents-manager/src/utils/credits-access' )
+	>( '@automattic/agents-manager/src/utils/credits-access' ) ),
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	getImageStudioBlogId: jest.requireActual( '../utils/tracking' ).getImageStudioBlogId,
-	getImageStudioSiteType: jest.requireActual( '../utils/tracking' ).getImageStudioSiteType,
-	getImageStudioIsDevMode: jest.requireActual( '../utils/tracking' ).getImageStudioIsDevMode,
-	trackImageStudioCreditsMeterOpened: jest.fn(),
-	trackImageStudioUpgradeNoticeShown: jest.fn(),
-	trackImageStudioUpgradeNoticeClick: jest.fn(),
+vi.mock( '../utils/tracking', async () => ( {
+	getImageStudioBlogId: (
+		await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
+	).getImageStudioBlogId,
+	getImageStudioSiteType: (
+		await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
+	).getImageStudioSiteType,
+	getImageStudioIsDevMode: (
+		await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
+	).getImageStudioIsDevMode,
+	trackImageStudioCreditsMeterOpened: vi.fn(),
+	trackImageStudioUpgradeNoticeShown: vi.fn(),
+	trackImageStudioUpgradeNoticeClick: vi.fn(),
 } ) );
 
-jest.mock( '../utils/session', () => ( { getSessionId: jest.fn() } ) );
+vi.mock( '../utils/session', () => ( { getSessionId: vi.fn() } ) );
 
 const BLOG_ID = 123;
 /** The session Image Studio's events send as `ai_session_id`. */
@@ -131,7 +145,7 @@ describe( 'getSiteCreditsLevel', () => {
 
 describe( 'useAiCredits', () => {
 	const authProvider: AuthProvider = async () => ( { Authorization: 'Bearer token' } );
-	let fetchMock: jest.Mock;
+	let fetchMock: Mock;
 
 	const respondWith = ( body: unknown, ok = true ) =>
 		fetchMock.mockResolvedValue( { ok, json: async () => body } );
@@ -185,15 +199,15 @@ describe( 'useAiCredits', () => {
 		} ) as TaskUpdate;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( getSessionId ).mockReturnValue( SESSION_ID );
-		fetchMock = jest.fn();
+		vi.clearAllMocks();
+		vi.mocked( getSessionId ).mockReturnValue( SESSION_ID );
+		fetchMock = vi.fn();
 		window.fetch = fetchMock;
 		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple' };
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		delete window.imageStudioData;
 	} );
 
@@ -395,7 +409,7 @@ describe( 'useAiCredits', () => {
 		const withoutSession = ( url: string ) => url.replace( `&ai_session_id=${ SESSION_ID }`, '' );
 
 		afterEach( () => {
-			jest.mocked( trackImageStudioUpgradeNoticeClick ).mockReset();
+			vi.mocked( trackImageStudioUpgradeNoticeClick ).mockReset();
 		} );
 
 		it.each( LINKS )(
@@ -414,8 +428,8 @@ describe( 'useAiCredits', () => {
 			LINKS.flatMap( ( [ label, planTier, url ] ) =>
 				[ '', 'none' ].map( ( sessionId ) => [ label, sessionId, planTier, url ] as const )
 			)
-		)( 'leaves %s without a session for %p', async ( _label, sessionId, plan_tier, url ) => {
-			jest.mocked( getSessionId ).mockReturnValue( sessionId );
+		)( 'leaves %s without a session for %o', async ( _label, sessionId, plan_tier, url ) => {
+			vi.mocked( getSessionId ).mockReturnValue( sessionId );
 			respondWith( { ai_credits: planSnapshot( 0, { plan_tier } ), ...PLAN_BUYER } );
 			const { result } = renderCredits();
 			await waitFor( () => expect( result.current.notice ).toBeDefined() );
@@ -424,12 +438,10 @@ describe( 'useAiCredits', () => {
 		} );
 
 		it( 'sends the click event the session its link carries', async () => {
-			jest
-				.mocked( trackImageStudioUpgradeNoticeClick )
-				.mockImplementation(
-					jest.requireActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
-						.trackImageStudioUpgradeNoticeClick
-				);
+			vi.mocked( trackImageStudioUpgradeNoticeClick ).mockImplementation(
+				( await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' ) )
+					.trackImageStudioUpgradeNoticeClick
+			);
 			respondWith( { ai_credits: planSnapshot( 0, { plan_tier: 'business' } ), ...PLAN_BUYER } );
 			const { result } = renderCredits();
 			await waitFor( () => expect( result.current.notice ).toBeDefined() );
@@ -437,7 +449,7 @@ describe( 'useAiCredits', () => {
 			result.current.notice?.action?.onClick?.();
 			result.current.meter?.action?.onClick?.();
 
-			const clicks = jest
+			const clicks = vi
 				.mocked( recordTracksEvent )
 				.mock.calls.filter(
 					( [ name ] ) => name === 'jetpack_big_sky_image_studio_upgrade_notice_click'
@@ -455,7 +467,7 @@ describe( 'useAiCredits', () => {
 			await waitFor( () => expect( result.current.notice ).toBeDefined() );
 			expect( hrefs( result.current ) ).toEqual( both( UPGRADE_URL ) );
 
-			jest.mocked( getSessionId ).mockReturnValue( 'next-session' );
+			vi.mocked( getSessionId ).mockReturnValue( 'next-session' );
 			rerender( { mode: ImageStudioMode.Generate, authProvider } );
 
 			expect( hrefs( result.current ) ).toEqual(
@@ -568,6 +580,93 @@ describe( 'useAiCredits', () => {
 			expect( trackImageStudioCreditsMeterOpened ).toHaveBeenCalledWith(
 				expect.objectContaining( { trigger: 'exhausted', state: 'zero', topUpCreditsLeft: 0 } )
 			);
+		} );
+	} );
+
+	describe( 'the top-ups notice', () => {
+		it( 'shows once plan credits are spent with 10,000 or more in packs, with no notice event', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice ).toEqual( {
+				icon: false,
+				message: 'Now using top-ups: 25k left.',
+				action: { ...addCreditsButton, onClick: expect.any( Function ) },
+				dismissible: true,
+				onDismiss: expect.any( Function ),
+			} );
+			expect( result.current.isLimitReached ).toBe( false );
+			expect( result.current.beforeSubmit() ).toBe( true );
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tells someone who can’t buy who to ask, with no button', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...EDITOR } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice?.message ).toBe(
+				'Now using top-ups: 25k left. Ask a site admin to add more.'
+			);
+			expect( result.current.notice?.action ).toBeUndefined();
+		} );
+
+		it( 'records a click on its button as ok', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits( ImageStudioMode.Edit );
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			result.current.notice?.action?.onClick?.();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'open',
+				meter: 'site_credits',
+				state: 'ok',
+				planTier: 'business',
+				creditsLeft: 25_000,
+				topUpCreditsLeft: 25_000,
+				ctaType: 'top_up',
+				ref: 'wp_ai_credits',
+			} );
+		} );
+
+		it( 'hides once closed, until the modal opens again', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const first = renderCredits();
+			await waitFor( () => expect( first.result.current.notice ).toBeDefined() );
+
+			act( () => {
+				first.result.current.notice?.onDismiss?.();
+			} );
+			expect( first.result.current.notice ).toBeUndefined();
+			first.unmount();
+
+			const second = renderCredits();
+			await waitFor( () =>
+				expect( second.result.current.notice?.message ).toBe( 'Now using top-ups: 25k left.' )
+			);
+		} );
+
+		it( 'gives way to the low notice under 10,000 in packs, which records as usual', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+			expect( result.current.notice?.message ).toBe( 'Now using top-ups: 25k left.' );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( withPacks( 0, 6_000 ) ) );
+			} );
+			expect( result.current.notice?.message ).toBe( '6k credits left.' );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { state: 'low', topUpCreditsLeft: 6_000 } )
+			);
+
+			act( () => {
+				result.current.notice?.onDismiss?.();
+			} );
+			expect( result.current.notice ).toBeUndefined();
 		} );
 	} );
 
@@ -729,7 +828,7 @@ describe( 'useAiCredits', () => {
 		} );
 
 		it( 'records the notice with Upgrade when a slow opening check answers after 5 seconds', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			let resolveFetch: ( value: unknown ) => void = () => {};
 			fetchMock.mockReturnValue(
 				new Promise( ( resolve ) => {
@@ -743,7 +842,7 @@ describe( 'useAiCredits', () => {
 				result.current.onTaskUpdate( finalUpdate( planSnapshot( 6_000 ) ) );
 			} );
 			act( () => {
-				jest.advanceTimersByTime( 5000 );
+				vi.advanceTimersByTime( 5000 );
 			} );
 			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
 
@@ -922,7 +1021,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'shows nothing and logs when the request fails', async () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		fetchMock.mockRejectedValue( new Error( 'offline' ) );
 
 		const { result } = renderCredits();
@@ -1042,7 +1141,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'stops holding suggestions after 5 seconds, and still applies a late answer', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		let resolveFetch: ( value: unknown ) => void = () => {};
 		fetchMock.mockReturnValue(
 			new Promise( ( resolve ) => {
@@ -1056,7 +1155,7 @@ describe( 'useAiCredits', () => {
 		expect( result.current.isLoading ).toBe( true );
 
 		act( () => {
-			jest.advanceTimersByTime( 5000 );
+			vi.advanceTimersByTime( 5000 );
 		} );
 		expect( stateOf( result ) ).toEqual( NOTHING );
 
@@ -1282,7 +1381,7 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it( 'aborts a running check when the modal closes, without logging it as a failure', async () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		fetchUntilAborted();
 		const { unmount } = renderCredits();
 		await waitFor( () => expect( fetchMock ).toHaveBeenCalled() );
@@ -1352,7 +1451,7 @@ describe( 'useAiCredits', () => {
 			await returnToPage( [ 'focus' ] );
 
 			await waitFor( () => expect( result.current.isLimitReached ).toBe( false ) );
-			expect( result.current.notice ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe( 'Now using top-ups: 100k left.' );
 			expect( result.current.meter?.status ).toMatchObject( { remaining: 100_000 } );
 			expect( result.current.beforeSubmit() ).toBe( true );
 		} );

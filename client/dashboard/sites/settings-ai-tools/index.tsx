@@ -67,6 +67,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { isWriteTool } from '../../me/mcp/categories';
 import {
 	getAgentEmailAddress,
@@ -75,6 +76,7 @@ import {
 } from '../../utils/wordpress-agent-email';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import { collectNamespaces } from './remote-abilities-section';
+import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
@@ -471,8 +473,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>
 										<Icon
 											icon={ check }
-											fill="var(--dashboard__foreground-color-success)"
-											style={ { flexShrink: 0, alignSelf: 'flex-start' } }
+											style={ {
+												flexShrink: 0,
+												alignSelf: 'flex-start',
+												color: 'var(--dashboard__foreground-color-success)',
+											} }
 										/>
 										<Text>{ feature }</Text>
 									</HStack>
@@ -651,7 +656,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
 					) }
 					upsellIcon={ comment }
-					upsellImage={ upsellIllustrationUrl }
+					upsellImage={
+						<ThemedIllustration
+							light={ upsellIllustrationUrl }
+							dark={ upsellIllustrationDarkUrl }
+						/>
+					}
 				/>
 			) }
 			{ renderSettings() }

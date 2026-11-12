@@ -1,5 +1,4 @@
 import { sshKeysQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
@@ -11,7 +10,7 @@ import type {
 	SummaryButtonBadgeProps,
 } from '@automattic/components/src/summary-button/types';
 
-function getMultipleKeysBadgeText( keyCount: number ) {
+function getBadgeText( keyCount: number ) {
 	if ( ! keyCount ) {
 		return __( 'No SSH keys added' );
 	}
@@ -25,16 +24,9 @@ function getMultipleKeysBadgeText( keyCount: number ) {
 export default function SecuritySshKeySummary( { density }: { density?: Density } ) {
 	const { data: sshKeys } = useSuspenseQuery( sshKeysQuery() );
 	const keyCount = sshKeys.length;
-	const isMultipleKeysEnabled = isEnabled( 'ssh-multiple-keys' );
-
-	let badgeText: string = keyCount ? __( 'SSH key added' ) : __( 'No SSH key added' );
-	if ( isMultipleKeysEnabled ) {
-		badgeText = getMultipleKeysBadgeText( keyCount );
-	}
-
 	const badges: SummaryButtonBadgeProps[] = [
 		{
-			text: badgeText,
+			text: getBadgeText( keyCount ),
 			intent: keyCount ? 'stable' : 'draft',
 		},
 	];
@@ -43,16 +35,10 @@ export default function SecuritySshKeySummary( { density }: { density?: Density 
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/security/ssh-key"
-			title={ isMultipleKeysEnabled ? __( 'SSH keys' ) : __( 'SSH key' ) }
-			description={
-				isMultipleKeysEnabled
-					? __(
-							'Add SSH keys to your WordPress.com account to make them available for SFTP and SSH authentication.'
-						)
-					: __(
-							'Add a SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
-						)
-			}
+			title={ __( 'SSH keys' ) }
+			description={ __(
+				'Add SSH keys to your WordPress.com account to make them available for SFTP and SSH authentication.'
+			) }
 			decoration={ <Icon icon={ key } /> }
 			badges={ badges }
 		/>

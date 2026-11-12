@@ -113,6 +113,7 @@ a.comments__comment-username {
 
 	svg {
 		fill: var(--color-link);
+		color: var(--color-link);
 	}
 }
 
@@ -129,6 +130,7 @@ a.comments__comment-username {
 	.gridicon {
 		height: 24px;
 		fill: var(--color-neutral-20);
+		color: var(--color-neutral-20);
 		margin-left: 4px;
 		margin-top: 4px;
 	}
@@ -156,6 +158,7 @@ a.comments__comment-username {
 
 	.gridicon {
 		fill: var(--color-neutral-light);
+		color: var(--color-neutral-light);
 		position: relative;
 		left: -5px;
 		top: 3px;
@@ -165,11 +168,14 @@ a.comments__comment-username {
 .comments__comment-respondee .comments__comment-respondee-link {
 	color: var(--color-text-subtle);
 	font-weight: 400;
-	margin-left: -2px;
 
 	&:hover {
 		color: var(--color-link-light);
 	}
+}
+
+.comments__comment-respondee .gridicon + .comments__comment-respondee-link {
+	margin-left: -2px;
 }
 
 .comments__comment-timestamp a {

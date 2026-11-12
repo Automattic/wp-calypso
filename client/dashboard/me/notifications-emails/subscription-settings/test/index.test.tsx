@@ -121,7 +121,7 @@ describe( 'SubscriptionSettings', () => {
 		} );
 	} );
 
-	it( "doesn't render the automatticians only checkbox", async () => {
+	test( "doesn't render the automatticians only checkbox", async () => {
 		mockGetIsAutomatticianApi( false );
 		mockGetSettingsApi();
 
@@ -136,7 +136,7 @@ describe( 'SubscriptionSettings', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'starts with button disabled', async () => {
+	test( 'starts with button disabled', async () => {
 		mockGetIsAutomatticianApi( false );
 		mockGetSettingsApi();
 
@@ -145,7 +145,7 @@ describe( 'SubscriptionSettings', () => {
 		expect( await saveButton() ).toBeDisabled();
 	} );
 
-	it( 'enables the save button when any setting is changed', async () => {
+	test( 'enables the save button when any setting is changed', async () => {
 		mockGetIsAutomatticianApi( false );
 		mockGetSettingsApi();
 
@@ -156,7 +156,7 @@ describe( 'SubscriptionSettings', () => {
 		expect( await saveButton() ).toBeEnabled();
 	} );
 
-	it( 'renders the automatticians only checkbox', async () => {
+	test( 'renders the automatticians only checkbox', async () => {
 		nock.cleanAll();
 
 		mockGetIsAutomatticianApi( true );
@@ -169,7 +169,7 @@ describe( 'SubscriptionSettings', () => {
 		} );
 	} );
 
-	it( 'shows the current settings', async () => {
+	test( 'shows the current settings', async () => {
 		mockGetIsAutomatticianApi( false );
 		mockGetSettingsApi( {
 			subscription_delivery_email_default: 'weekly',
@@ -188,7 +188,7 @@ describe( 'SubscriptionSettings', () => {
 		expect( await jabberSubscriptionDeliveryCheckbox() ).not.toBeChecked();
 	} );
 
-	it( 'updates the settings on submit', async () => {
+	test( 'updates the settings on submit', async () => {
 		const currentValues = {
 			subscription_delivery_email_default: 'weekly',
 			subscription_delivery_jabber_default: false,
@@ -223,7 +223,7 @@ describe( 'SubscriptionSettings', () => {
 		} );
 	} );
 
-	it( 'displays the stored UTC window in local time and saves edits back as UTC', async () => {
+	test( 'displays the stored UTC window in local time and saves edits back as UTC', async () => {
 		// Evaluate the offset the same way the hook would, so the test stays
 		// correct across daylight-saving transitions.
 		const offsetHours = getDeliveryWindowOffsetHours( 'America/Los_Angeles' ) ?? 0;
@@ -273,7 +273,7 @@ describe( 'SubscriptionSettings', () => {
 		} );
 	} );
 
-	it( 'falls back to clearly labeled UTC when the time zone is unknown', async () => {
+	test( 'falls back to clearly labeled UTC when the time zone is unknown', async () => {
 		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
 			timezone: undefined,
 			offsetHours: null,
@@ -296,7 +296,7 @@ describe( 'SubscriptionSettings', () => {
 		expect( screen.getByRole( 'option', { name: '08:00 - 10:00 UTC' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'preserves an odd stored UTC hour when only the day changes in UTC fallback mode', async () => {
+	test( 'preserves an odd stored UTC hour when only the day changes in UTC fallback mode', async () => {
 		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
 			timezone: undefined,
 			offsetHours: null,

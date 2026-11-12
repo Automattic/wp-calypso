@@ -1,5 +1,5 @@
 import { Button, Gridicon, FormLabel, SelectDropdown } from '@automattic/components';
-import { chevronRight, Icon } from '@wordpress/icons';
+import { chevronRight, Icon, search } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
@@ -29,12 +29,13 @@ interface Props {
 		backToFlow?: string
 	) => string;
 	onNavBack?: () => void;
+	onDetectAutomatically?: () => void;
 }
 
 export default function ListStep( props: Props ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
-	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
+	const { siteSlug, submit, getFinalImporterUrl, onNavBack, onDetectAutomatically } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const fromSite = urlQueryParams.get( 'from' );
 
@@ -80,6 +81,13 @@ export default function ListStep( props: Props ) {
 							<Icon icon={ chevronRight } />
 						</Button>
 					) ) }
+					{ onDetectAutomatically && (
+						<Button className="list__importers-item-card" onClick={ onDetectAutomatically }>
+							<Icon icon={ search } size={ 32 } className="importer__service-icon" />
+							<h2>{ __( 'Detect automatically' ) }</h2>
+							<Icon icon={ chevronRight } />
+						</Button>
+					) }
 				</div>
 
 				<div className="list__importers list__importers-secondary">

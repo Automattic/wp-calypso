@@ -37,7 +37,6 @@ import useDetectedCountryCode from '../hooks/use-detected-country-code';
 import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
 import { useHasNonRenewableDomainError } from '../hooks/use-has-non-renewable-domain-error';
 import { useHasWrongAccountRenewalError } from '../hooks/use-has-wrong-account-renewal-error';
-import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
@@ -75,6 +74,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
@@ -225,11 +225,10 @@ export default function CheckoutMain( {
 	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
-		( error: string ) => {
+		( error: TranslateResult ) => {
 			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
 			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ), {
+				errorNotice( error || translate( 'An error occurred during your purchase.' ), {
 					duration: 5000,
 				} )
 			);
@@ -657,9 +656,6 @@ export default function CheckoutMain( {
 		weights: { ...checkoutTheme.weights, ...gravatarFontWeights },
 	};
 
-	const { isLoading: isMobileCheckoutStickySummaryLoading } =
-		useMobileCheckoutStickySummaryExperiment();
-
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
 	//
@@ -684,10 +680,6 @@ export default function CheckoutMain( {
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
 		{ name: translate( 'Loading Site' ), isLoading: isSiteLoading },
-		{
-			name: translate( 'Loading checkout' ),
-			isLoading: isMobileCheckoutStickySummaryLoading,
-		},
 	];
 
 	if ( shouldSetMigrationSticker ) {

@@ -133,6 +133,22 @@ describe( 'reader routes', () => {
 		expect( reddit?.getRedirect() ).toBe( '/reader/new' );
 	} );
 
+	it( 'sends retired shelf links to the Reader’s retirement modal, ahead of the catch-all', async () => {
+		await initReader();
+
+		const routes = registeredRoutes();
+		const shelvesIndex = routes.findIndex(
+			( [ route ] ) => Array.isArray( route ) && route.includes( '/reader/shelves/*' )
+		);
+		const catchAllIndex = routes.findIndex( ( [ route ] ) => route === '/reader/*' );
+		expect( routes[ shelvesIndex ][ 0 ] ).toEqual( [ '/reader/shelves', '/reader/shelves/*' ] );
+		expect( shelvesIndex ).toBeLessThan( catchAllIndex );
+
+		const redirectToReader = routes[ shelvesIndex ][ 1 ] as () => void;
+		redirectToReader();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader?retired=shelves' );
+	} );
+
 	it( 'keeps list viewing available to logged-out users', async () => {
 		await initReader();
 

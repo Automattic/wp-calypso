@@ -62,7 +62,7 @@ function mockTicket( ticketId: number | null ) {
 
 beforeEach( () => jest.clearAllMocks() );
 
-it( 'keeps the existing cancellation message when a ticket exists', async () => {
+test( 'keeps the existing cancellation message when a ticket exists', async () => {
 	mockTicket( 456 );
 	render( <StartedDIFMContentInfo site={ site } /> );
 
@@ -73,7 +73,7 @@ it( 'keeps the existing cancellation message when a ticket exists', async () => 
 	).toBeVisible();
 } );
 
-it( 'waits for fresh site data before navigating after cancelling a ticketless migration', async () => {
+test( 'waits for fresh site data before navigating after cancelling a ticketless migration', async () => {
 	mockTicket( null );
 	const cancellation = nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -123,7 +123,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 	} );
 } );
 
-it( 'does not navigate if refreshing the site fails', async () => {
+test( 'does not navigate if refreshing the site fails', async () => {
 	mockTicket( null );
 	nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -151,7 +151,7 @@ it( 'does not navigate if refreshing the site fails', async () => {
 	expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 } );
 
-it( 'requests support cancellation for an active transfer with a ticket', async () => {
+test( 'requests support cancellation for an active transfer with a ticket', async () => {
 	mockTicket( 456 );
 	const cancellation = nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -180,7 +180,7 @@ it( 'requests support cancellation for an active transfer with a ticket', async 
 	expect( mockNavigate ).not.toHaveBeenCalled();
 } );
 
-it( 'does not offer cancellation for an active transfer without a ticket', async () => {
+test( 'does not offer cancellation for an active transfer without a ticket', async () => {
 	const ticket = mockTicket( null );
 	render(
 		<StartedDIFMContentInfo
@@ -192,7 +192,7 @@ it( 'does not offer cancellation for an active transfer without a ticket', async
 	expect( screen.queryByRole( 'button', { name: /cancellation/i } ) ).toBeNull();
 } );
 
-it( 'does not offer cancellation for a completed migration', async () => {
+test( 'does not offer cancellation for a completed migration', async () => {
 	render(
 		<StartedDIFMContentInfo
 			site={ { ...site, site_migration: { ...site.site_migration, is_complete: true } } }

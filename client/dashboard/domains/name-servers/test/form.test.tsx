@@ -17,6 +17,12 @@ jest.mock( '../../../components/inline-support-link', () => ( {
 	),
 } ) );
 
+const mockHasEnTranslation = jest.fn( () => true );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => mockHasEnTranslation,
+} ) );
+
 describe( 'NameServersForm', () => {
 	const defaultProps = {
 		domainName: 'example.com',
@@ -29,7 +35,7 @@ describe( 'NameServersForm', () => {
 	};
 
 	describe( 'Basic Rendering', () => {
-		it( 'renders form with nameserver fields', () => {
+		test( 'renders form with nameserver fields', () => {
 			render( <NameServersForm { ...defaultProps } /> );
 
 			// Labels include "(Required)" suffix, so use partial matching
@@ -37,36 +43,37 @@ describe( 'NameServersForm', () => {
 			expect( screen.getByText( /Name server 2/ ) ).toBeVisible();
 		} );
 
-		it( 'renders toggle for "Use WordPress.com name servers"', () => {
+		test( 'renders a choice between WordPress.com and custom name servers', () => {
 			render( <NameServersForm { ...defaultProps } /> );
 
-			expect( screen.getByText( 'Use WordPress.com name servers' ) ).toBeVisible();
+			expect( screen.getByRole( 'radio', { name: /WordPress.com name servers/ } ) ).toBeVisible();
+			expect( screen.getByRole( 'radio', { name: /Custom name servers/ } ) ).toBeChecked();
 		} );
 
-		it( 'renders save button', () => {
+		test( 'renders save button', () => {
 			render( <NameServersForm { ...defaultProps } /> );
 
 			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeVisible();
 		} );
 	} );
 
-	describe( 'Toggle Behavior', () => {
-		it( 'populates default nameservers when toggle is enabled', async () => {
+	describe( 'Name Server Type', () => {
+		test( 'lists the default nameservers when WordPress.com name servers are selected', async () => {
 			const user = userEvent.setup();
 
 			render( <NameServersForm { ...defaultProps } /> );
 
-			const toggle = screen.getByRole( 'checkbox', { name: 'Use WordPress.com name servers' } );
-			await user.click( toggle );
+			await user.click( screen.getByRole( 'radio', { name: /WordPress.com name servers/ } ) );
 
 			await waitFor( () => {
-				expect( screen.getByDisplayValue( 'ns1.wordpress.com' ) ).toBeVisible();
-				expect( screen.getByDisplayValue( 'ns2.wordpress.com' ) ).toBeVisible();
-				expect( screen.getByDisplayValue( 'ns3.wordpress.com' ) ).toBeVisible();
+				expect( screen.getByText( 'ns1.wordpress.com' ) ).toBeVisible();
+				expect( screen.getByText( 'ns2.wordpress.com' ) ).toBeVisible();
+				expect( screen.getByText( 'ns3.wordpress.com' ) ).toBeVisible();
 			} );
+			expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'clears nameservers when toggle is disabled', async () => {
+		test( 'clears nameservers when custom name servers are selected', async () => {
 			const user = userEvent.setup();
 
 			render(
@@ -77,17 +84,17 @@ describe( 'NameServersForm', () => {
 				/>
 			);
 
-			const toggle = screen.getByRole( 'checkbox', { name: 'Use WordPress.com name servers' } );
-			await user.click( toggle );
+			await user.click( screen.getByRole( 'radio', { name: /Custom name servers/ } ) );
 
 			await waitFor( () => {
-				expect( screen.queryByDisplayValue( 'ns1.wordpress.com' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'ns1.wordpress.com' ) ).not.toBeInTheDocument();
 			} );
+			expect( screen.getByRole( 'textbox', { name: /Name server 1/ } ) ).toHaveValue( '' );
 		} );
 	} );
 
 	describe( 'Validation', () => {
-		it( 'accepts valid hostnames without showing errors', async () => {
+		test( 'accepts valid hostnames without showing errors', async () => {
 			const user = userEvent.setup();
 
 			render( <NameServersForm { ...defaultProps } /> );
@@ -107,14 +114,14 @@ describe( 'NameServersForm', () => {
 	} );
 
 	describe( 'Submit Button State', () => {
-		it( 'disables submit button when form is empty', () => {
+		test( 'disables submit button when form is empty', () => {
 			render( <NameServersForm { ...defaultProps } /> );
 
 			const submitButton = screen.getByRole( 'button', { name: 'Save' } );
 			expect( submitButton ).toBeDisabled();
 		} );
 
-		it( 'disables submit button when isBusy is true', () => {
+		test( 'disables submit button when isBusy is true', () => {
 			render(
 				<NameServersForm
 					{ ...defaultProps }
@@ -127,7 +134,7 @@ describe( 'NameServersForm', () => {
 			expect( submitButton ).toBeDisabled();
 		} );
 
-		it( 'disables submit button when form is unchanged', () => {
+		test( 'disables submit button when form is unchanged', () => {
 			render(
 				<NameServersForm
 					{ ...defaultProps }
@@ -139,7 +146,7 @@ describe( 'NameServersForm', () => {
 			expect( submitButton ).toBeDisabled();
 		} );
 
-		it( 'enables submit button when form has valid changes', async () => {
+		test( 'enables submit button when form has valid changes', async () => {
 			const user = userEvent.setup();
 
 			render( <NameServersForm { ...defaultProps } /> );
@@ -158,7 +165,7 @@ describe( 'NameServersForm', () => {
 	} );
 
 	describe( 'Additional Nameserver Fields', () => {
-		it( 'shows additional nameserver fields only when previous field has value', async () => {
+		test( 'shows additional nameserver fields only when previous field has value', async () => {
 			const user = userEvent.setup();
 
 			render( <NameServersForm { ...defaultProps } /> );
@@ -179,7 +186,7 @@ describe( 'NameServersForm', () => {
 			} );
 		} );
 
-		it( 'shows field 4 only when field 3 has value', async () => {
+		test( 'shows field 4 only when field 3 has value', async () => {
 			const user = userEvent.setup();
 
 			render(
@@ -203,8 +210,8 @@ describe( 'NameServersForm', () => {
 		} );
 	} );
 
-	describe( 'Read-only Fields', () => {
-		it( 'shows read-only nameserver fields when using WPCOM nameservers', () => {
+	describe( 'Read-only Name Servers', () => {
+		test( 'lists WPCOM nameservers as text instead of fields', () => {
 			render(
 				<NameServersForm
 					{ ...defaultProps }
@@ -213,14 +220,11 @@ describe( 'NameServersForm', () => {
 				/>
 			);
 
-			// Fields should be disabled when using WPCOM nameservers
-			const inputs = screen.getAllByRole( 'textbox' );
-			inputs.forEach( ( input ) => {
-				expect( input ).toBeDisabled();
-			} );
+			expect( screen.getByText( 'ns1.wordpress.com' ) ).toBeVisible();
+			expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'shows editable nameserver fields when using custom nameservers', () => {
+		test( 'shows editable nameserver fields when using custom nameservers', () => {
 			render(
 				<NameServersForm
 					{ ...defaultProps }
@@ -235,10 +239,23 @@ describe( 'NameServersForm', () => {
 			expect( input1 ).not.toBeDisabled();
 			expect( input2 ).not.toBeDisabled();
 		} );
+
+		test( 'disables the name server choice and inputs while busy', () => {
+			render(
+				<NameServersForm
+					{ ...defaultProps }
+					isBusy
+					nameServers={ [ 'ns1.custom.com', 'ns2.custom.com' ] }
+				/>
+			);
+
+			screen.getAllByRole( 'radio' ).forEach( ( radio ) => expect( radio ).toBeDisabled() );
+			screen.getAllByRole( 'textbox' ).forEach( ( input ) => expect( input ).toBeDisabled() );
+		} );
 	} );
 
 	describe( 'Form Submission', () => {
-		it( 'calls onSubmit with correct data when form is submitted', async () => {
+		test( 'calls onSubmit with correct data when form is submitted', async () => {
 			const user = userEvent.setup();
 			const mockOnSubmit = jest.fn();
 
@@ -261,14 +278,13 @@ describe( 'NameServersForm', () => {
 			expect( mockOnSubmit ).toHaveBeenCalledWith( [ 'ns1.example.com', 'ns2.example.com' ] );
 		} );
 
-		it( 'calls onSubmit with WPCOM nameservers when toggle is enabled', async () => {
+		test( 'calls onSubmit with WPCOM nameservers when they are selected', async () => {
 			const user = userEvent.setup();
 			const mockOnSubmit = jest.fn();
 
 			render( <NameServersForm { ...defaultProps } onSubmit={ mockOnSubmit } /> );
 
-			const toggle = screen.getByRole( 'checkbox', { name: 'Use WordPress.com name servers' } );
-			await user.click( toggle );
+			await user.click( screen.getByRole( 'radio', { name: /WordPress.com name servers/ } ) );
 
 			await waitFor( () => {
 				const submitButton = screen.getByRole( 'button', { name: 'Save' } );
@@ -287,7 +303,7 @@ describe( 'NameServersForm', () => {
 	} );
 
 	describe( 'Support Link', () => {
-		it( 'shows support link when using custom nameservers', async () => {
+		test( 'shows support link when using custom nameservers', async () => {
 			render( <NameServersForm { ...defaultProps } isUsingDefaultNameServers={ false } /> );
 
 			// The support link should be visible when not using WPCOM nameservers
@@ -296,6 +312,52 @@ describe( 'NameServersForm', () => {
 				'data-support-context',
 				'change-name-servers-finding-out-new-ns'
 			);
+		} );
+	} );
+
+	describe( 'Switching Away Warning', () => {
+		const warning = /the new host is in charge of this domain/;
+
+		test( 'warns before switching from WordPress.com to custom name servers', async () => {
+			const user = userEvent.setup();
+
+			render(
+				<NameServersForm
+					{ ...defaultProps }
+					isUsingDefaultNameServers
+					nameServers={ [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ] }
+				/>
+			);
+
+			expect( screen.queryByText( warning ) ).not.toBeInTheDocument();
+
+			await user.click( screen.getByRole( 'radio', { name: /Custom name servers/ } ) );
+
+			expect( screen.getByText( warning ) ).toBeVisible();
+		} );
+
+		test( 'does not warn when the domain already uses custom name servers', () => {
+			render(
+				<NameServersForm
+					{ ...defaultProps }
+					nameServers={ [ 'ns1.custom.com', 'ns2.custom.com' ] }
+				/>
+			);
+
+			expect( screen.queryByText( warning ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Translation Fallback', () => {
+		afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
+
+		test( 'keeps the previous lookup copy until the new one is translated', () => {
+			mockHasEnTranslation.mockReturnValue( false );
+
+			render( <NameServersForm { ...defaultProps } /> );
+
+			expect( screen.queryByText( /Not sure what to enter/ ) ).not.toBeInTheDocument();
+			expect( screen.getByText( /the name servers for popular hosts/ ) ).toBeVisible();
 		} );
 	} );
 } );

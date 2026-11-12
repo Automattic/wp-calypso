@@ -1,7 +1,7 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useRouter } from '@tanstack/react-router';
-import { Button, Dropdown, MenuItem } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../app/analytics';
 import { useAppContext } from '../app/context';
@@ -27,9 +27,15 @@ function buildDomainQueryArgs( siteSlug?: string ) {
 	return queryArgs;
 }
 
-function DomainOnlyAddDomainButton() {
-	const router = useRouter();
-	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+interface AddDomainButtonProps {
+	/**
+	 * The site's canonical slug. The route param can hold any domain on the site,
+	 * which the Stepper domain flow cannot resolve.
+	 */
+	siteSlug?: string;
+}
+
+function DomainOnlyAddDomainButton( { siteSlug }: AddDomainButtonProps ) {
 	const queryArgs = buildDomainQueryArgs( siteSlug );
 
 	const onSearchClick = () => {
@@ -47,17 +53,14 @@ function DomainOnlyAddDomainButton() {
 	};
 
 	return (
-		<AddDomainDropdown
+		<AddDomainButtons
 			onSearchClick={ onSearchClick }
 			onTransferOrConnectClick={ onTransferOrConnectClick }
-			transferLabel={ siteSlug ? __( 'Use a domain name I own' ) : __( 'Transfer domain name' ) }
 		/>
 	);
 }
 
-function DefaultAddDomainButton() {
-	const router = useRouter();
-	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+function DefaultAddDomainButton( { siteSlug }: AddDomainButtonProps ) {
 	const queryArgs = buildDomainQueryArgs( siteSlug );
 
 	const onSearchClick = () => {
@@ -69,82 +72,68 @@ function DefaultAddDomainButton() {
 	};
 
 	return (
-		<AddDomainDropdown
+		<AddDomainButtons
 			onSearchClick={ onSearchClick }
 			onTransferOrConnectClick={ onTransferOrConnectClick }
-			transferLabel={ __( 'Use a domain name I own' ) }
 		/>
 	);
 }
 
-function AddDomainDropdown( {
+const FILL_ROW_STYLE = { flexGrow: 1, justifyContent: 'center' };
+
+function AddDomainButtons( {
 	onSearchClick,
 	onTransferOrConnectClick,
-	transferLabel,
 }: {
 	onSearchClick: () => void;
 	onTransferOrConnectClick: () => void;
-	transferLabel: string;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const hasEnTranslation = useHasEnTranslation();
+
+	// Existing funnels expect `add_domain_clicked` followed by `add_domain_option_clicked`.
+	const recordOptionClick = ( option: 'search' | 'transfer_or_connect' ) => {
+		recordTracksEvent( 'calypso_dashboard_domains_add_domain_clicked' );
+		recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', { option } );
+	};
 
 	return (
-		<Dropdown
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					icon={ isOpen ? chevronUp : chevronDown }
-					iconPosition="right"
-					variant="primary"
-					__next40pxDefaultSize
-					onClick={ () => {
-						if ( ! isOpen ) {
-							recordTracksEvent( 'calypso_dashboard_domains_add_domain_clicked' );
-						}
-						onToggle();
-					} }
-					aria-expanded={ isOpen }
-				>
-					{ __( 'Add domain name' ) }
-				</Button>
-			) }
-			renderContent={ () => (
-				<>
-					<MenuItem
-						iconPosition="left"
-						icon={ search }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', {
-								option: 'search',
-							} );
-							onSearchClick();
-						} }
-					>
-						{ __( 'Search domain names' ) }
-					</MenuItem>
-					<MenuItem
-						iconPosition="left"
-						icon={ globe }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', {
-								option: 'transfer_or_connect',
-							} );
-							onTransferOrConnectClick();
-						} }
-					>
-						{ transferLabel }
-					</MenuItem>
-				</>
-			) }
-		/>
+		<HStack spacing={ 2 } wrap>
+			<Button
+				variant="tertiary"
+				__next40pxDefaultSize
+				style={ FILL_ROW_STYLE }
+				onClick={ () => {
+					recordOptionClick( 'transfer_or_connect' );
+					onTransferOrConnectClick();
+				} }
+			>
+				{ __( 'Use a domain name I own' ) }
+			</Button>
+			<Button
+				variant="primary"
+				__next40pxDefaultSize
+				style={ FILL_ROW_STYLE }
+				onClick={ () => {
+					recordOptionClick( 'search' );
+					onSearchClick();
+				} }
+			>
+				{ hasEnTranslation( 'Add new domain' ) ? __( 'Add new domain' ) : __( 'Add domain name' ) }
+			</Button>
+		</HStack>
 	);
 }
 
-export default function AddDomainButton() {
+export default function AddDomainButton( { siteSlug: siteSlugProp }: AddDomainButtonProps ) {
 	const { supports } = useAppContext();
+	const router = useRouter();
+	const { siteSlug: routeSiteSlug } = router.matchRoute( siteRoute.fullPath );
+	const siteSlug = siteSlugProp ?? routeSiteSlug;
 
 	if ( supports.domainOnlySites ) {
-		return <DomainOnlyAddDomainButton />;
+		return <DomainOnlyAddDomainButton siteSlug={ siteSlug } />;
 	}
 
-	return <DefaultAddDomainButton />;
+	return <DefaultAddDomainButton siteSlug={ siteSlug } />;
 }

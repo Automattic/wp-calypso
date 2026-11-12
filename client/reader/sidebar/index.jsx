@@ -49,7 +49,6 @@ import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import { ReaderSidebarShelves } from './shelves';
 
 const TrackingKeys = {
 	conversations: {
@@ -61,11 +60,6 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_a8c_conversations',
 		gaEvent: 'Clicked Reader Sidebar A8C Conversations',
 		tracksEvent: 'calypso_reader_sidebar_automattic_conversations_clicked',
-	},
-	conversationsInbox: {
-		action: 'clicked_reader_sidebar_conversations_inbox',
-		gaEvent: 'Clicked Reader Sidebar Conversations Inbox',
-		tracksEvent: 'calypso_reader_sidebar_conversations_inbox_clicked',
 	},
 	discover: {
 		action: 'clicked_reader_sidebar_discover',
@@ -227,6 +221,18 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf(
+							[ '/reader/conversations/inbox' ],
+							path,
+							{ 'sidebar-streams__conversations': true }
+						) }
+						label={ translate( 'Conversations' ) }
+						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
+						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
+						link="/reader/conversations/inbox"
+					/>
+
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span role="heading" aria-level="3">
 							{ translate( 'Feeds' ) }
@@ -240,8 +246,6 @@ export class ReaderSidebar extends Component {
 							path={ path }
 						/>
 					</li>
-
-					{ isEnabled( 'reader/shelves' ) && <ReaderSidebarShelves path={ path } /> }
 
 					{ this.props.organizations && (
 						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
@@ -295,16 +299,6 @@ export class ReaderSidebar extends Component {
 						} ) }
 					/>
 
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
-							'sidebar-streams__conversations': true,
-						} ) }
-						label={ translate( 'Conversations' ) }
-						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversations ) }
-						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
-						link="/reader/conversations"
-					/>
-
 					{ isAutomatticTeamMember( teams ) && (
 						<SidebarItem
 							className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
@@ -314,20 +308,6 @@ export class ReaderSidebar extends Component {
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
-						/>
-					) }
-
-					{ isAutomatticTeamMember( teams ) && (
-						<SidebarItem
-							className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf(
-								[ '/reader/conversations/inbox' ],
-								path,
-								{ 'sidebar-streams__conversations': true }
-							) }
-							label={ translate( 'Conversations (WIP)' ) }
-							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversationsInbox ) }
-							link="/reader/conversations/inbox"
-							customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						/>
 					) }
 

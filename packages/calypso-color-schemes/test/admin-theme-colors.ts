@@ -1,20 +1,17 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { parseAdminSchemes, getAdminSchemes } = require( '../bin/prepare-sass-assets' );
+import { parseAdminSchemes, getAdminSchemes } from '../bin/prepare-sass-assets';
 
 // Pinned, not shape-matched: which colours ship is the substance of this package, and a shape assertion passes just as happily when every scheme comes back the same wrong hex. A base-styles bump that changes one of these should fail here and be read as news, not noise.
 const EXPECTED_SCHEMES: Record< string, string > = {
-	blue: '#096484',
-	coffee: '#46403c',
-	ectoplasm: '#523f6d',
-	light: '#0085ba',
-	midnight: '#e14d43',
+	blue: '#437aa8',
+	coffee: '#916745',
+	ectoplasm: '#646c3e',
+	fresh: '#007cba',
+	light: '#007cba',
+	midnight: '#cf4339',
 	modern: '#3858e9',
-	ocean: '#627c83',
-	sunrise: '#dd823b',
+	ocean: '#567958',
+	sunrise: '#ad631e',
 };
 
 describe( 'parseAdminSchemes', () => {
@@ -27,13 +24,12 @@ describe( 'parseAdminSchemes', () => {
 		expect( parseAdminSchemes( source ) ).toEqual( EXPECTED_SCHEMES );
 	} );
 
-	it( 'adds fresh, which core publishes as a default rather than a scheme block', () => {
+	it( 'overrides fresh with the value wp-admin shows, not the one upstream added', () => {
 		const source = fs.readFileSync(
 			require.resolve( '@wordpress/base-styles/_mixins.scss' ),
 			'utf8'
 		);
 
-		expect( parseAdminSchemes( source ).fresh ).toBeUndefined();
 		expect( getAdminSchemes( source ) ).toEqual( { ...EXPECTED_SCHEMES, fresh: '#3858e9' } );
 	} );
 

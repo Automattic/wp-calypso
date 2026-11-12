@@ -44,11 +44,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/education-student-validation' ),
 	},
 
-	EMAIL_VERIFICATION: {
-		slug: 'email-verification',
-		asyncComponent: () => import( './steps-repository/email-verification' ),
-	},
-
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	NEWSLETTER_SETUP: {
@@ -374,6 +369,11 @@ export const STEPS = {
 	PLAYGROUND: {
 		slug: 'playground',
 		asyncComponent: () => import( './steps-repository/playground' ),
+	},
+
+	ZOOM_BLUEPRINT: {
+		slug: 'zoom',
+		asyncComponent: () => import( './steps-repository/zoom-blueprint' ),
 	},
 } as const;
 

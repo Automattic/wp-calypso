@@ -27,6 +27,8 @@ const Subheader = styled.p< {
 					color: inherit;
 					text-decoration: underline;
 					font-size: inherit;
+					line-height: inherit;
+					vertical-align: baseline;
 					padding: 0;
 				}
 				@media ( min-width: 600px ) {
@@ -34,9 +36,6 @@ const Subheader = styled.p< {
 				}
 				@media ( min-width: 960px ) {
 					font-size: 1rem;
-					button.is-borderless {
-						padding: 1px 0;
-					}
 				}
 			`
 			: `
@@ -49,6 +48,8 @@ const Subheader = styled.p< {
 					color: var( --studio-gray-90 );
 					text-decoration: underline;
 					font-size: 16px;
+					line-height: inherit;
+					vertical-align: baseline;
 					padding: 0;
 				}
 				@media ( max-width: 960px ) {
@@ -56,11 +57,6 @@ const Subheader = styled.p< {
 				}
 				@media ( min-width: 600px ) {
 					text-align: center;
-				}
-				@media ( min-width: 960px ) {
-					button.is-borderless {
-						padding: 1px 0;
-					}
 				}
 			` }
 `;
@@ -337,7 +333,6 @@ const PlansPageSubheader = ( {
 	isDisplayingPlansNeededForFeature,
 	deemphasizeFreePlan,
 	renderFreePlanCtaInStepContainerV2,
-	isInStepContainerV2,
 	showPlanBenefits,
 	offeringFreePlan,
 	flowName,
@@ -351,7 +346,6 @@ const PlansPageSubheader = ( {
 	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
 	renderFreePlanCtaInStepContainerV2?: boolean;
-	isInStepContainerV2?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
 	flowName?: string | null;
@@ -365,8 +359,7 @@ const PlansPageSubheader = ( {
 
 	const isOnboarding = isOnboardingFlow( flowName ?? null );
 
-	const isUsingStepContainerV2 =
-		isInStepContainerV2 ?? Boolean( flowName && shouldUseStepContainerV2( flowName ) );
+	const isUsingStepContainerV2 = Boolean( flowName && shouldUseStepContainerV2( flowName ) );
 
 	const isVisualSplitIntent =
 		intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder';

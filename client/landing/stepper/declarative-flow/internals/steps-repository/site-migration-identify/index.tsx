@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { Notice, VisuallyHidden } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
@@ -12,12 +14,15 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 type ConnectionIssue = 'unreachable';
@@ -27,14 +32,16 @@ const MINIMUM_CHECK_DURATION_MS = 1500;
 
 interface Props {
 	hasError?: boolean;
-	onComplete: ( siteInfo: UrlData, hostingProviderSlug?: string ) => void;
+	onComplete: ( siteInfo: Omit< UrlData, 'meta' >, hostingProviderSlug?: string ) => void;
 	onSkip: ( from?: string ) => void;
 	hideImporterListLink: boolean;
 	flowName: string;
 	onVisibilityChange: ( isVisible: boolean, issue?: ConnectionIssue ) => void;
 	isReprintFlow?: boolean;
+	isManualWordPress: boolean;
 	siteURL: string;
 	onSiteURLChange: ( url: string ) => void;
+	destinationSiteUrls?: string[];
 }
 
 export const Analyzer: FC< Props > = ( {
@@ -43,10 +50,16 @@ export const Analyzer: FC< Props > = ( {
 	onVisibilityChange,
 	hideImporterListLink = false,
 	isReprintFlow = false,
+	isManualWordPress,
 	siteURL,
 	onSiteURLChange,
+	destinationSiteUrls = [],
 } ) => {
 	const translate = useTranslate();
+	const enteredURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
+	const isDestinationUrl = ( sourceUrl: string ) =>
+		isReprintFlow && isSiteAddress( sourceUrl, destinationSiteUrls );
+	const isDestinationSite = isDestinationUrl( siteURL );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
 	const {
@@ -56,7 +69,7 @@ export const Analyzer: FC< Props > = ( {
 		isFetched,
 		refetch,
 		error,
-	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
+	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' && ! isDestinationSite );
 
 	const errorHealth =
 		error &&
@@ -74,7 +87,7 @@ export const Analyzer: FC< Props > = ( {
 		isUnhealthy = siteHealth !== 'not_found';
 	}
 	let connectionIssue: ConnectionIssue | undefined;
-	if ( isReprintFlow && siteURL && ! isFetching ) {
+	if ( isReprintFlow && ! isManualWordPress && ! isDestinationSite && siteURL && ! isFetching ) {
 		if (
 			( ! siteInfo || hasError || [ 'wordpress', 'unknown' ].includes( siteInfo.platform ) ) &&
 			( isUnhealthy ||
@@ -88,7 +101,8 @@ export const Analyzer: FC< Props > = ( {
 	}
 
 	// Fetch hosting provider after we get site info
-	const domain = siteInfo && ! connectionIssue ? urlToDomain( siteInfo.url ) : '';
+	const domain =
+		siteInfo && ! connectionIssue && ! isDestinationSite ? urlToDomain( siteInfo.url ) : '';
 	const {
 		data: hostingProviderData,
 		isFetching: isFetchingHosting,
@@ -116,26 +130,34 @@ export const Analyzer: FC< Props > = ( {
 
 	// Update loading state to include hosting check
 	const isScanning =
-		! shownIssue && ( isHeld || isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
+		! isDestinationSite &&
+		! shownIssue &&
+		( isHeld || isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
 	const isFormHidden = isReprintFlow && !! shownIssue;
 
 	useEffect( () => {
-		// Only complete when we have both site info AND hosting info (or hosting check failed)
 		if (
 			siteURL &&
-			siteInfo &&
+			! isDestinationSite &&
+			( siteInfo || ( isManualWordPress && hasError ) ) &&
 			! isHeld &&
 			! connectionIssue &&
-			! hasError &&
+			( ! hasError || isManualWordPress ) &&
 			! isFetching &&
 			! isFetchingHosting &&
-			( hostingProviderData || hasHostingError )
+			( hostingProviderData || hasHostingError || ( isManualWordPress && hasError ) )
 		) {
-			onCompleteRef.current( siteInfo, hostingProviderData?.hosting_provider?.slug );
+			onCompleteRef.current(
+				siteInfo ?? { url: enteredURL, platform: 'wordpress' },
+				hostingProviderData?.hosting_provider?.slug
+			);
 		}
 	}, [
 		siteURL,
+		isDestinationSite,
 		siteInfo,
+		isManualWordPress,
+		enteredURL,
 		isHeld,
 		hostingProviderData,
 		hasHostingError,
@@ -153,7 +175,6 @@ export const Analyzer: FC< Props > = ( {
 		return <ScanningStep />;
 	}
 
-	const enteredURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
 	const sourceURL = ! hasError && siteInfo ? siteInfo.url : enteredURL;
 	const { hostname } = getUrlParts( sourceURL );
 	const platformName =
@@ -200,18 +221,36 @@ export const Analyzer: FC< Props > = ( {
 				</div>
 			) }
 			<div className="import__capture-container" hidden={ isFormHidden }>
-				{ isReprintFlow && siteURL && hasError && ! isScanning && ! shownIssue && (
+				{ isDestinationSite && (
 					<Notice
 						status="error"
 						isDismissible={ false }
 						className="site-migration-identify__analysis-error"
 					>
-						<span role="alert">{ translate( 'We couldn’t check your site. Try again.' ) }</span>
+						<span role="alert">
+							{ __(
+								'This is your destination site. Enter the address of the site you want to migrate from.'
+							) }
+						</span>
 					</Notice>
 				) }
+				{ isReprintFlow &&
+					siteURL &&
+					hasError &&
+					! isDestinationSite &&
+					! isScanning &&
+					! shownIssue && (
+						<Notice
+							status="error"
+							isDismissible={ false }
+							className="site-migration-identify__analysis-error"
+						>
+							<span role="alert">{ translate( 'We couldn’t check your site. Try again.' ) }</span>
+						</Notice>
+					) }
 				<CaptureInput
 					onInputEnter={ ( url ) => {
-						if ( isReprintFlow && url === siteURL ) {
+						if ( isReprintFlow && url === siteURL && ! isDestinationSite ) {
 							refetch();
 						} else {
 							onSiteURLChange( url );
@@ -222,6 +261,9 @@ export const Analyzer: FC< Props > = ( {
 					isBusy={ isReprintFlow && isScanning }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ ( url ) => {
+						if ( url && isDestinationUrl( url ) ) {
+							return onSiteURLChange( url );
+						}
 						if ( ! isReprintFlow || ! url ) {
 							return onSkip();
 						}
@@ -229,9 +271,11 @@ export const Analyzer: FC< Props > = ( {
 					} }
 					placeholder={ translate( 'your-existing-site.com' ) }
 					label={ translate( 'Site address' ) }
-					dontHaveSiteAddressLabel={ translate(
-						'Or <button>pick your current platform from a list</button>'
-					) }
+					dontHaveSiteAddressLabel={
+						isManualWordPress
+							? translate( 'Or <button>select another platform from the list</button>' )
+							: translate( 'Or <button>pick your current platform from a list</button>' )
+					}
 					hideImporterListLink={
 						hideImporterListLink && ! ( isReprintFlow && siteURL && hasError )
 					}
@@ -245,7 +289,7 @@ export const Analyzer: FC< Props > = ( {
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationIdentify: StepType< {
-	accepts: { checkOnArrival?: boolean };
+	accepts: { checkOnArrival?: boolean; destinationSiteUrls?: string[] };
 	submits:
 		| {
 				action: SiteMigrationIdentifyAction;
@@ -253,17 +297,25 @@ const SiteMigrationIdentify: StepType< {
 				from?: string;
 				host?: string;
 				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
 		  }
 		| undefined;
-} > = function ( { navigation, flow, checkOnArrival = false } ) {
+} > = function ( { navigation, flow, stepName, checkOnArrival = false, destinationSiteUrls } ) {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
 		async (
 			action: SiteMigrationIdentifyAction,
-			data?: { platform: string; from: string; host?: string; isWpcom?: boolean }
+			data?: {
+				platform: string;
+				from: string;
+				host?: string;
+				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
+			}
 		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
@@ -279,9 +331,11 @@ const SiteMigrationIdentify: StepType< {
 
 	const urlQueryParams = useQuery();
 
+	const isManualWordPress = isReprintFlow && urlQueryParams.get( 'manualPlatform' ) === 'wordpress';
+
 	const [ siteURL, setSiteURL ] = useState( () => {
 		const from = urlQueryParams.get( 'from' ) || '';
-		return checkOnArrival && CAPTURE_URL_RGX.test( from ) ? from : '';
+		return checkOnArrival && ! isManualWordPress && CAPTURE_URL_RGX.test( from ) ? from : '';
 	} );
 	const [ isVisible, setIsVisible ] = useState( ! siteURL );
 	const [ connectionIssue, setConnectionIssue ] = useState< ConnectionIssue >();
@@ -297,8 +351,31 @@ const SiteMigrationIdentify: StepType< {
 	}, [] );
 
 	const isChecking = isReprintFlow && ! isVisible;
-	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
-	let title = translate( "Let's find your site" );
+	const contentRef = useRef< HTMLDivElement >( null );
+	const [ isReturningToAddress, setIsReturningToAddress ] = useState( false );
+	const changeAddress =
+		isChecking || connectionIssue
+			? () => {
+					setSiteURL( '' );
+					setIsReturningToAddress( true );
+				}
+			: undefined;
+
+	// Change address unmounts itself, so focus would drop to the page. Once the field is
+	// editable again, it takes the focus instead.
+	useEffect( () => {
+		if ( ! isReturningToAddress ) {
+			return;
+		}
+		const input = contentRef.current?.querySelector< HTMLInputElement >( 'input[type="text"]' );
+		if ( input && ! input.readOnly ) {
+			input.focus();
+			setIsReturningToAddress( false );
+		}
+	}, [ isReturningToAddress, siteURL, isVisible, connectionIssue ] );
+	let title = isManualWordPress
+		? translate( "Let's find your WordPress site" )
+		: translate( "Let's find your site" );
 	let subTitle = translate( 'Enter your current site address below to get started.' );
 	if ( connectionIssue === 'unreachable' ) {
 		title = translate( 'We couldn’t reach your site' );
@@ -309,12 +386,19 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url, platform_data }, hostingProviderSlug ) =>
+			destinationSiteUrls={ destinationSiteUrls }
+			onComplete={ (
+				{ platform, url, platform_data, static_site_importable },
+				hostingProviderSlug
+			) =>
 				handleSubmit( 'continue', {
-					platform,
+					platform: isManualWordPress ? 'wordpress' : platform,
 					from: url,
 					host: hostingProviderSlug,
 					...( isReprintFlow && platform_data?.is_wpcom ? { isWpcom: true } : {} ),
+					...( ! isManualWordPress && static_site_importable
+						? { staticSiteImportable: true }
+						: {} ),
 				} ).catch( () => setSiteURL( '' ) )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
@@ -325,6 +409,7 @@ const SiteMigrationIdentify: StepType< {
 				} )
 			}
 			isReprintFlow={ isReprintFlow }
+			isManualWordPress={ isManualWordPress }
 			siteURL={ siteURL }
 			onSiteURLChange={ setSiteURL }
 			flowName={ flow }
@@ -343,17 +428,27 @@ const SiteMigrationIdentify: StepType< {
 					'site-migration-identify--reprint': isReprintFlow,
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
-				columnWidth={ connectionIssue ? 6 : 4 }
+				columnWidth={ 4 }
 				topBar={
-					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
-				}
-				heading={
-					isReprintFlow || isVisible ? (
-						<Step.Heading text={ title } subText={ subTitle } />
-					) : undefined
+					<Step.TopBar
+						logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+						onLogoClick={ () =>
+							recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						}
+					/>
 				}
 			>
-				{ stepContent }
+				<div className="account-template" ref={ contentRef }>
+					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
+					{ stepContent }
+					{ changeAddress && (
+						<div className="account-template__secondary-actions">
+							<Step.LinkButton onClick={ changeAddress }>
+								{ translate( 'Change address' ) }
+							</Step.LinkButton>
+						</div>
+					) }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

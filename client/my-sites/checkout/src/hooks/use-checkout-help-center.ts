@@ -19,15 +19,14 @@ import {
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { AGENCY_CHECKOUT_PATH } from '../../agency-checkout/lib/agency-checkout-params';
 import { loadCheckoutSupportAssignment } from '../lib/checkout-support-routing';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -52,9 +51,6 @@ const isWordPressComCart = (
 			isTitanMail( product )
 	);
 
-// Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
-const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
-
 const getCartType = ( products: { is_renewal?: boolean }[] ) => {
 	const renewalCount = products.filter( ( product ) => product.is_renewal ).length;
 	if ( ! products.length ) {
@@ -70,9 +66,7 @@ export const useCheckoutHelpCenter = (): {
 	toggleHelpCenter: () => void;
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink: string;
-	showHelpIcon: boolean;
 } => {
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -116,9 +110,6 @@ export const useCheckoutHelpCenter = (): {
 		responseCart.products.length > 0 &&
 		isWordPressComCheckout &&
 		! hasPremiumSupport;
-
-	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );
-	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
 
 	const { setShowHelpCenter, setNavigateToRoute, setIsMinimized } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
@@ -211,7 +202,10 @@ export const useCheckoutHelpCenter = (): {
 			...helpCenterOptions,
 			checkoutSupportVariation,
 		} );
-		if ( hasPremiumSupport ) {
+		// Agencies have no support chat, only the agency contact form.
+		if ( pathname.startsWith( AGENCY_CHECKOUT_PATH ) ) {
+			setNavigateToRoute( '/contact-form' );
+		} else if ( hasPremiumSupport ) {
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,
 				userFieldFlowName,
@@ -235,9 +229,6 @@ export const useCheckoutHelpCenter = (): {
 	return {
 		toggleHelpCenter,
 		helpCenterButtonCopy,
-		helpCenterButtonLink: isGetHelpTreatment
-			? String( translate( 'Get Help' ) )
-			: helpCenterButtonLink,
-		showHelpIcon: isGetHelpTreatment,
+		helpCenterButtonLink,
 	};
 };

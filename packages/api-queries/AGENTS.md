@@ -6,7 +6,7 @@ See `README.md` for the package overview and the general guidelines on adding qu
 
 ```bash
 # Run tests
-yarn test-packages packages/api-queries
+yarn test-packages:vitest packages/api-queries
 
 # Type check (also emits dist/types)
 yarn typecheck-packages
@@ -75,5 +75,5 @@ Keep a family internally consistent — if one ID abbreviates a word, its siblin
 `src/__tests__/mutation-stat-ids.test.ts` is the only thing that catches either, along with a duplicate or over-length ID. It can't check the naming convention itself — noun-first and verb-final are a review concern, not a testable one. Run it after adding or renaming any mutation:
 
 ```bash
-yarn test-packages packages/api-queries
+yarn test-packages:vitest packages/api-queries
 ```

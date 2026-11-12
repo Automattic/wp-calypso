@@ -32,16 +32,16 @@
 		"README.md"
 	],
 	"engines": {
-		"node": "^20.19.0 || >=22.12.0"
+		"node": "^22.12.0 || ^24.0.0 || >=26.0.0"
 	},
 	"scripts": {
 		"start": "./cli.js",
-		"test": "rm -rf test/output && vitest run"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"commander": "^5.1.0",
 		"gettext-parser": "^4.0.3",
-		"glob": "^13.0.6",
+		"glob": "^14.0.0",
 		"oxc-parser": "^0.152.0"
 	},
 	"devDependencies": {
@@ -49,6 +49,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"i18n-calypso": "workspace:^",
 		"react": "^18.3.1",
-		"vitest": "^4.1.12"
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

@@ -25,6 +25,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
+import { CommentLabelsContext } from './comment-labels-context';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -50,6 +51,8 @@ const noop = () => {};
  */
 
 class PostComment extends PureComponent {
+	static contextType = CommentLabelsContext;
+
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -239,12 +242,18 @@ class PostComment extends PureComponent {
 		if ( canCollapse && this.state.isCollapsed ) {
 			const count = this.getAllChildrenIds( commentId ).length;
 			return (
-				<p className="comments__collapsed-replies">
+				<Button
+					__next40pxDefaultSize
+					variant="link"
+					className="comments__collapsed-replies"
+					aria-expanded={ false }
+					onClick={ this.handleToggleCollapsedClick }
+				>
 					{ translate( '%(count)s reply', '%(count)s replies', {
 						count,
 						args: { count: formatNumber( count ) },
 					} ) }
-				</p>
+				</Button>
 			);
 		}
 
@@ -377,7 +386,7 @@ class PostComment extends PureComponent {
 			<strong className={ className } id={ `comment-${ commentId }` }>
 				{ authorName }
 
-				{ isExternalUrl && (
+				{ isExternalUrl && ! this.context && (
 					<a
 						className="comments__external-link"
 						href={ authorUrl }
@@ -473,6 +482,14 @@ class PostComment extends PureComponent {
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );
+		const respondee =
+			parentAuthorName &&
+			this.renderAuthorTag( {
+				className: 'comments__comment-respondee-link',
+				authorName: parentAuthorName,
+				authorUrl: parentAuthorUrl,
+				commentId: parentCommentId,
+			} );
 
 		// highlight comments not older than 10s
 		const isHighlighted =
@@ -501,13 +518,17 @@ class PostComment extends PureComponent {
 					} ) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
-							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
-								className: 'comments__comment-respondee-link',
-								authorName: parentAuthorName,
-								authorUrl: parentAuthorUrl,
-								commentId: parentCommentId,
-							} ) }
+							{ this.context ? (
+								translate( 'to {{author/}}', {
+									components: { author: respondee },
+									comment: 'Names the commenter a reply answers, as in "Petra to Bram".',
+								} )
+							) : (
+								<>
+									<Gridicon icon="chevron-right" size={ 16 } />
+									{ respondee }
+								</>
+							) }
 						</span>
 					) }
 					<div className="comments__comment-timestamp">

@@ -1,10 +1,8 @@
-/**
- * @jest-environment jsdom
- */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { NamePulseResults } from '..';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../page/context';
 import { buildAvailability } from '../../test-helpers/factories/availability';
@@ -145,9 +143,9 @@ const domainsIn = ( id: string ) =>
 	);
 
 // Each test renders the full results page and drives it through several userEvent
-// interactions. On busy CI agents the slowest ones run close to Jest's 5s default
+// interactions. On busy CI agents the slowest ones run close to the 5s default
 // and sometimes cross it, so give them more headroom.
-jest.setTimeout( 12000 );
+vi.setConfig( { testTimeout: 12000 } );
 
 // The slowest tests in the suite, well above the others on CI, need more still.
 const SLOW_TEST_TIMEOUT = 20000;
@@ -229,7 +227,7 @@ describe( 'NamePulseResults', () => {
 	it( 'shows a notice with retry when the TLD list fails to load', async () => {
 		const user = userEvent.setup();
 		const availabilityRequests: string[][] = [];
-		const tldsResponse = jest
+		const tldsResponse = vi
 			.fn()
 			.mockRejectedValueOnce( new Error( 'tlds failed' ) )
 			.mockResolvedValue( NAME_PULSE_TLDS_FIXTURE );
@@ -499,7 +497,7 @@ describe( 'NamePulseResults', () => {
 
 	it( 'offers a transfer for a typed domain registered elsewhere, keeping its row in the grid', async () => {
 		const user = userEvent.setup();
-		const onExternalDomainClick = jest.fn();
+		const onExternalDomainClick = vi.fn();
 
 		render(
 			<NamePulseTestSearch
@@ -936,10 +934,10 @@ describe( 'NamePulseResults', () => {
 
 	it( 'adds the exact-match card to the cart through the real-time check, then offers to continue', async () => {
 		const user = userEvent.setup();
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 		const items: string[] = [];
 		const cart = buildCart( {
-			onAddItem: jest.fn( async ( suggestion ) => {
+			onAddItem: vi.fn( async ( suggestion ) => {
 				items.push( suggestion.domain_name );
 			} ),
 			hasItem: ( domainName ) => items.includes( domainName ),
@@ -1006,7 +1004,7 @@ describe( 'NamePulseResults', () => {
 
 	describe( 'bundle card', () => {
 		it( 'is not requested when bundle suggestions are off', async () => {
-			const bundleForDomain = jest.fn( async () => null );
+			const bundleForDomain = vi.fn( async () => null );
 
 			render( <NamePulseTestSearch query="icecream.com" bundleForDomain={ bundleForDomain } /> );
 
@@ -1018,8 +1016,8 @@ describe( 'NamePulseResults', () => {
 		} );
 
 		it( 'sits beside the exact-match card of a typed .com, anchored on it', async () => {
-			const onBundleShown = jest.fn();
-			const bundleForDomain = jest.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
+			const onBundleShown = vi.fn();
+			const bundleForDomain = vi.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
 
 			render(
 				<NamePulseTestSearch
@@ -1064,7 +1062,7 @@ describe( 'NamePulseResults', () => {
 		} );
 
 		it( 'falls back to the first top result with a bundle when the typed ending has none', async () => {
-			const bundleForDomain = jest.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
+			const bundleForDomain = vi.fn( async ( fqdn: string ) => buildNamePulseBundle( fqdn ) );
 
 			render(
 				<NamePulseTestSearch
@@ -1115,7 +1113,7 @@ describe( 'NamePulseResults', () => {
 		} );
 
 		it( 'renders nothing when no anchor has a bundle', async () => {
-			const bundleForDomain = jest.fn( async () => null );
+			const bundleForDomain = vi.fn( async () => null );
 
 			render(
 				<NamePulseTestSearch
@@ -1166,9 +1164,9 @@ describe( 'NamePulseResults', () => {
 
 		it( 'adds every member to the cart in one go, and explains a bundle that is gone', async () => {
 			const user = userEvent.setup();
-			const onBundleAddToCart = jest.fn();
+			const onBundleAddToCart = vi.fn();
 			const cart = buildCart( {
-				onAddBundle: jest
+				onAddBundle: vi
 					.fn()
 					.mockRejectedValueOnce(
 						Object.assign( new Error(), { code: 'domain_bundle_unavailable' } )
@@ -1206,16 +1204,16 @@ describe( 'NamePulseResults', () => {
 
 	describe( 'Tracks', () => {
 		const buildEvents = () => ( {
-			onNamePulseSearch: jest.fn(),
-			onNamePulseTracksEvent: jest.fn(),
-			onSuggestionsReceive: jest.fn(),
-			onSuggestionRender: jest.fn(),
-			onSuggestionInteract: jest.fn(),
-			onAddDomainToCart: jest.fn(),
-			onQueryAvailabilityCheck: jest.fn(),
-			onShowMoreResults: jest.fn(),
-			onTrademarkClaimsNoticeShown: jest.fn(),
-			onTrademarkClaimsNoticeClosed: jest.fn(),
+			onNamePulseSearch: vi.fn(),
+			onNamePulseTracksEvent: vi.fn(),
+			onSuggestionsReceive: vi.fn(),
+			onSuggestionRender: vi.fn(),
+			onSuggestionInteract: vi.fn(),
+			onAddDomainToCart: vi.fn(),
+			onQueryAvailabilityCheck: vi.fn(),
+			onShowMoreResults: vi.fn(),
+			onTrademarkClaimsNoticeShown: vi.fn(),
+			onTrademarkClaimsNoticeClosed: vi.fn(),
 		} );
 
 		const namePulseEvent = ( events: ReturnType< typeof buildEvents >, name: string ) =>
@@ -1250,6 +1248,81 @@ describe( 'NamePulseResults', () => {
 					result_count_related: NAME_PULSE_SUGGESTIONS_FIXTURE.length,
 				} )
 			);
+		} );
+
+		it( 'counts every group in the result count, not only the suggestions', async () => {
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+
+			const [ [ , , , properties ] ] = events.onSuggestionsReceive.mock.calls;
+
+			expect( properties.result_count ).toBe(
+				properties.result_count_exact +
+					properties.result_count_top +
+					properties.result_count_exact_tlds +
+					properties.result_count_related +
+					properties.result_count_creative
+			);
+			expect( properties.result_count ).toBeGreaterThan( properties.result_count_related );
+		} );
+
+		it( 'records nothing for a query too short to register', async () => {
+			const events = buildEvents();
+
+			const { rerender } = render( <NamePulseTestSearch query="b" events={ events } /> );
+
+			// Longer than the settle delay, so the query has settled.
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionsReceive ).not.toHaveBeenCalled();
+
+			rerender( <NamePulseTestSearch query="icecream" events={ events } /> );
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 ) );
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'records neither the search nor its cards when the query changes before it has results', async () => {
+			const events = buildEvents();
+			// The first query's suggestions never arrive, so its result set is never complete.
+			const suggestions = ( { query, use_ai }: NamePulseSuggestionsQuery ) =>
+				query === 'icecream'
+					? new Promise< NamePulseSuggestionsResponse >( () => {} )
+					: Promise.resolve( {
+							suggestions: use_ai
+								? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						} );
+
+			const { rerender } = render(
+				<NamePulseTestSearch query="icecream" events={ events } suggestions={ suggestions } />
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			// Longer than the settle delay, so the first query has settled with cards on the page.
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionRender ).not.toHaveBeenCalled();
+
+			rerender(
+				<NamePulseTestSearch query="ice cream" events={ events } suggestions={ suggestions } />
+			);
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+			await waitFor( () => expect( events.onSuggestionRender ).toHaveBeenCalled() );
+
+			const [ [ , , , { result_set_id: resultSetId } ] ] = events.onSuggestionsReceive.mock.calls;
+
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+			expect( events.onNamePulseSearch.mock.calls[ 0 ][ 0 ] ).toBe( 'ice cream' );
+			expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 );
+			expect(
+				events.onSuggestionRender.mock.calls.every(
+					( [ , , properties ] ) => properties.result_set_id === resultSetId
+				)
+			).toBe( true );
 		} );
 
 		it( 'reports every name with a verdict once, taken ones included, each with its own railcar', async () => {
@@ -1368,7 +1441,7 @@ describe( 'NamePulseResults', () => {
 			const user = userEvent.setup();
 			const events = buildEvents();
 			let id = 0;
-			jest.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `id-${ ++id }` as never );
+			vi.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `id-${ ++id }` as never );
 
 			render( <NamePulseTestSearch query="ice cream" events={ events } /> );
 
@@ -1420,6 +1493,42 @@ describe( 'NamePulseResults', () => {
 				expect.objectContaining( { domain_name: 'icecream.net', position: 0 } ),
 				renderCall?.[ 2 ].railcar
 			);
+		} );
+
+		it( 'records no interaction when the real-time check finds the name taken', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.NOT_AVAILABLE,
+						} )
+					}
+				/>
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await waitFor( () =>
+				expect( events.onSuggestionRender ).toHaveBeenCalledWith(
+					expect.objectContaining( { domain_name: 'icecream.net' } ),
+					undefined,
+					expect.anything()
+				)
+			);
+			await user.click(
+				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			);
+
+			expect(
+				await within( rowFor( 'icecream.net' ) ).findByText( 'Unavailable' )
+			).toBeInTheDocument();
+			expect( events.onSuggestionInteract ).not.toHaveBeenCalled();
+			expect( events.onAddDomainToCart ).not.toHaveBeenCalled();
 		} );
 
 		it( 'adds to the cart without an interaction when the name has not reported its render', async () => {
@@ -1499,10 +1608,11 @@ describe( 'NamePulseResults', () => {
 
 			await waitFor( () =>
 				expect( namePulseEvent( events, 'results_error' ) ).toEqual( {
-					search_id: events.onNamePulseSearch.mock.calls[ 0 ][ 2 ].search_id,
+					search_id: expect.any( String ),
 					error_type: 'tlds_failed',
 				} )
 			);
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
 			expect( events.onSuggestionsReceive ).not.toHaveBeenCalled();
 		} );
 

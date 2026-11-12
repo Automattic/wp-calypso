@@ -26,7 +26,17 @@ import {
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	getPlan,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_SITE_STAGING_SITES,
+	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 } from '../src';
+
+let mockDevToolsOnAllPaidPlans = false;
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => '';
+	config.isEnabled = ( flag: string ) =>
+		flag === 'hosting/dev-tools-all-paid-plans' && mockDevToolsOnAllPaidPlans;
+	return { __esModule: true, default: config, isEnabled: config.isEnabled };
+} );
 
 describe( 'getFeatureDifference function related tests', () => {
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Free --> Personal difference', () => {
@@ -58,6 +68,17 @@ describe( 'getFeatureDifference function related tests', () => {
 		expect(
 			getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
 		).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_DEV_TOOLS ] );
+	} );
+
+	it( 'get2023PricingGridSignupWpcomFeatures bundle selector: Premium --> Business difference with dev tools on all paid plans', () => {
+		mockDevToolsOnAllPaidPlans = true;
+		try {
+			expect(
+				getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
+			).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_SITE_STAGING_SITES ] );
+		} finally {
+			mockDevToolsOnAllPaidPlans = false;
+		}
 	} );
 
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Business --> Woo difference', () => {
@@ -114,5 +135,35 @@ describe( 'getFeatureDifference function related tests', () => {
 		planPersonalFeatures.forEach( ( f ) => {
 			expect( difference ).not.toContain( f );
 		} );
+	} );
+
+	it( 'shows WooCommerce payment features as a check mark on every paid plan in the comparison grid', () => {
+		[ PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( planSlug ) => {
+			const plan = getPlan( planSlug );
+			expect( plan?.get2023PlanComparisonFeatureOverride?.() ).toContain(
+				FEATURE_COMMISSION_FEE_WOO_FEATURES
+			);
+			expect( plan?.get2023PlanComparisonFeatureOverrideForExperiment?.() ).toContain(
+				FEATURE_COMMISSION_FEE_WOO_FEATURES
+			);
+		} );
+
+		[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( planSlug ) => {
+			const plan = getPlan( planSlug );
+			expect( plan?.getPlanComparisonFeatureLabels?.() ).not.toHaveProperty(
+				FEATURE_COMMISSION_FEE_WOO_FEATURES
+			);
+			expect(
+				plan?.getPlanComparisonFeatureLabels?.( { isExperimentVariant: true } )
+			).not.toHaveProperty( FEATURE_COMMISSION_FEE_WOO_FEATURES );
+		} );
+
+		const freePlan = getPlan( PLAN_FREE );
+		expect( freePlan?.get2023PlanComparisonFeatureOverride?.() ?? [] ).not.toContain(
+			FEATURE_COMMISSION_FEE_WOO_FEATURES
+		);
+		expect( freePlan?.get2023PlanComparisonFeatureOverrideForExperiment?.() ?? [] ).not.toContain(
+			FEATURE_COMMISSION_FEE_WOO_FEATURES
+		);
 	} );
 } );
