@@ -34,22 +34,11 @@
 	list-style: none;
 	overflow-wrap: anywhere;
 
-	&.is-reply > li > :last-child {
-		padding-inline-start: 48px;
-	}
-
+	// The comment a reply answers sits above it as a smaller quote, so the reply
+	// itself leads.
 	&.is-reply .wpnc-simplified__thread-parent {
-		position: relative;
-
-		&::before {
-			content: "";
-			position: absolute;
-			inset-block: 48px -4px;
-			inset-inline-start: 17px;
-			width: 2px;
-			border-radius: 2px;
-			background: var(--wp-components-color-gray-300, #{$gray-300});
-		}
+		padding-inline-start: $grid-unit-15;
+		border-inline-start: 2px solid var(--wp-components-color-gray-300, #{$gray-300});
 
 		.wpnc-simplified__author,
 		.wpnc-simplified__parent-text {
@@ -59,7 +48,6 @@
 
 		.wpnc-simplified__parent-text {
 			@extend .wpnc-simplified__quiet-links;
-			color: var(--wp-components-color-gray-700, #{$gray-700});
 		}
 	}
 }
