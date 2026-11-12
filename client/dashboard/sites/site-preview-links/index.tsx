@@ -22,9 +22,19 @@ interface SitePreviewLinksProps {
 	site: Site;
 	title?: string;
 	description?: string;
+	/**
+	 * Whether the link is always on, so it is shown without the toggle: a preview site keeps its
+	 * share link until it is bought.
+	 */
+	alwaysOn?: boolean;
 }
 
-export default function SitePreviewLinks( { site, title, description }: SitePreviewLinksProps ) {
+export default function SitePreviewLinks( {
+	site,
+	title,
+	description,
+	alwaysOn = false,
+}: SitePreviewLinksProps ) {
 	const linksPermitted = hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS );
 
 	const { data: links = [] } = useQuery( {
@@ -96,12 +106,14 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 
 		return (
 			<VStack spacing={ 4 }>
-				<DataForm< { enabled: boolean } >
-					data={ data }
-					fields={ fields }
-					form={ form }
-					onChange={ handleChange }
-				/>
+				{ ! alwaysOn && (
+					<DataForm< { enabled: boolean } >
+						data={ data }
+						fields={ fields }
+						form={ form }
+						onChange={ handleChange }
+					/>
+				) }
 				{ links.map( ( link ) => (
 					<SitePreviewLink
 						key={ link.code }
