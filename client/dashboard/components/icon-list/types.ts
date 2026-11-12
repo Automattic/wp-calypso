@@ -52,6 +52,10 @@ export interface IconListItemProps {
 	 */
 	suffixAlignment?: 'center' | 'top';
 
+	/**
+	 * Overrides the density-based gap between the content and the suffix,
+	 * in grid units (1 unit = 4px).
+	 */
 	suffixSpacing?: number;
 }
 
