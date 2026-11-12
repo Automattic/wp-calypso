@@ -3,16 +3,14 @@
  */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { localizeUrl, useLocalizeUrl } from '../';
+import { useLocale } from '../locale-context';
 
-jest.mock( '../locale-context', () => {
-	const original = jest.requireActual( '../locale-context' );
-	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
-		useLocale: jest.fn( () => 'en' ),
-	} );
-} );
-
-const { useLocale } = jest.requireMock( '../locale-context' );
+vi.mock( '../locale-context', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	useLocale: vi.fn( () => 'en' ),
+} ) );
 
 describe( '#localizeUrl', () => {
 	function testLocalizeUrl( locale = 'en' ) {
@@ -469,20 +467,26 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 	test( 'tos', () => {
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
-			'https://wordpress.com/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'en' ) ).toEqual(
+			'https://automattic.com/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'de' ) ).toEqual(
-			'https://wordpress.com/de/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'de' ) ).toEqual(
+			'https://automattic.com/de/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/pt-br/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'fr' ) ).toEqual(
+			'https://automattic.com/fr/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'pl' ) ).toEqual(
-			'https://wordpress.com/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'es' ) ).toEqual(
+			'https://automattic.com/es/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'th' ) ).toEqual(
-			'https://wordpress.com/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'pt-br' ) ).toEqual(
+			'https://automattic.com/tos/'
+		);
+		expect( localizeUrl( 'https://automattic.com/tos/', 'pl' ) ).toEqual(
+			'https://automattic.com/tos/'
+		);
+		expect( localizeUrl( 'https://automattic.com/tos/', 'th' ) ).toEqual(
+			'https://automattic.com/tos/'
 		);
 	} );
 

@@ -678,9 +678,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 			try {
 				// Dynamic import of registered script module
-				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
+				// The webpackIgnore and @vite-ignore comments tell the bundler not to bundle this - it's loaded at runtime
 				const module = ( await import(
-					/* webpackIgnore: true */ providerEntry
+					/* webpackIgnore: true */ /* @vite-ignore */ providerEntry
 				) ) as LoadedProviders;
 				// eslint-disable-next-line no-console
 				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );

@@ -24,7 +24,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { has100YearPlan, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
-import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import {
 	isRenewalPricingTreatment,
 	useRenewalPricingExperiment,
@@ -351,7 +350,6 @@ function LineItemWrapper( {
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
@@ -481,7 +479,6 @@ function LineItemWrapper( {
 				shouldShowComparison={ shouldShowComparison }
 				compareToPrice={ compareToPrice }
 				isRenewalPricingExperiment={ isRenewalPricingExperiment }
-				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

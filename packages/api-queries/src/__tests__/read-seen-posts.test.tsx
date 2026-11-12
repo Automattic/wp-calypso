@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { patchSubscriptionSeenCount } from '../read-follows';
 import { patchListsSeenCount } from '../read-lists';
 import {
@@ -13,18 +14,18 @@ import {
 } from '../read-seen-posts';
 import type { ReactNode } from 'react';
 
-jest.mock( '../read-follows', () => ( {
-	patchSubscriptionSeenCount: jest.fn(),
+vi.mock( '../read-follows', () => ( {
+	patchSubscriptionSeenCount: vi.fn(),
 } ) );
 
-jest.mock( '../read-lists', () => ( {
-	patchListsSeenCount: jest.fn(),
+vi.mock( '../read-lists', () => ( {
+	patchListsSeenCount: vi.fn(),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
 const SOURCE = 'reader-web';
-const patchSubscriptionSeenCountSpy = patchSubscriptionSeenCount as jest.Mock;
-const patchListsSeenCountSpy = patchListsSeenCount as jest.Mock;
+const patchSubscriptionSeenCountSpy = patchSubscriptionSeenCount as Mock;
+const patchListsSeenCountSpy = patchListsSeenCount as Mock;
 
 const makeWrapper = ( client: QueryClient ) =>
 	function Wrapper( { children }: { children: ReactNode } ) {

@@ -2,6 +2,7 @@
  * Tests for tool provider utilities
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
+import { type Mock, vi } from 'vitest';
 import { registerUpdateCanvasImageAbility, registerUpdateCanvasVideoAbility } from '../abilities';
 import {
 	ALLOWED_ABILITIES,
@@ -12,23 +13,23 @@ import {
 } from './tool-provider';
 
 // Mock WordPress abilities
-jest.mock( '@wordpress/abilities', () => ( {
-	getAbilities: jest.fn().mockResolvedValue( [] ),
-	executeAbility: jest.fn().mockResolvedValue( {} ),
+vi.mock( '@wordpress/abilities', () => ( {
+	getAbilities: vi.fn().mockResolvedValue( [] ),
+	executeAbility: vi.fn().mockResolvedValue( {} ),
 } ) );
 
 // Mock abilities registration
-jest.mock( '../abilities', () => ( {
-	registerUpdateCanvasImageAbility: jest.fn(),
-	registerUpdateCanvasVideoAbility: jest.fn(),
+vi.mock( '../abilities', () => ( {
+	registerUpdateCanvasImageAbility: vi.fn(),
+	registerUpdateCanvasVideoAbility: vi.fn(),
 } ) );
 
 // Mock console methods
-const consoleLogSpy = jest.spyOn( console, 'log' ).mockImplementation( () => {} );
+const consoleLogSpy = vi.spyOn( console, 'log' ).mockImplementation( () => {} );
 
 describe( 'Tool Provider', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Don't reset modules for getFilteredAbilities/executeFilteredAbility tests
 		// as they need the mocked @wordpress/abilities to work properly
 	} );
@@ -73,7 +74,7 @@ describe( 'Tool Provider', () => {
 				{ name: 'another/ability', description: 'Also not allowed' },
 			];
 
-			( getAbilities as jest.Mock ).mockResolvedValue( mockAbilities );
+			( getAbilities as Mock ).mockResolvedValue( mockAbilities );
 
 			const filtered = await getFilteredAbilities();
 
@@ -92,7 +93,7 @@ describe( 'Tool Provider', () => {
 				{ name: '', description: 'Empty name' }, // Empty name
 			];
 
-			( getAbilities as jest.Mock ).mockResolvedValue( mockAbilities );
+			( getAbilities as Mock ).mockResolvedValue( mockAbilities );
 
 			const filtered = await getFilteredAbilities();
 
@@ -106,7 +107,7 @@ describe( 'Tool Provider', () => {
 				{ name: 'image-studio/render-images', description: 'Render images' },
 			];
 
-			( getAbilities as jest.Mock ).mockResolvedValue( mockAbilities );
+			( getAbilities as Mock ).mockResolvedValue( mockAbilities );
 
 			await getFilteredAbilities();
 
@@ -121,7 +122,7 @@ describe( 'Tool Provider', () => {
 				{ name: 'image-studio/update-canvas-image', description: 'Update canvas' },
 			];
 
-			( getAbilities as jest.Mock ).mockResolvedValue( mockAbilities );
+			( getAbilities as Mock ).mockResolvedValue( mockAbilities );
 
 			await getFilteredAbilities();
 
@@ -135,7 +136,7 @@ describe( 'Tool Provider', () => {
 			const abilityArgs = { imageUrl: 'https://example.com/image.jpg' };
 			const mockResult = { success: true };
 
-			( executeAbility as jest.Mock ).mockResolvedValue( mockResult );
+			( executeAbility as Mock ).mockResolvedValue( mockResult );
 
 			const result = await executeFilteredAbility( abilityName, abilityArgs );
 
@@ -162,7 +163,7 @@ describe( 'Tool Provider', () => {
 			const abilityName = 'image-studio/render-images';
 			const abilityArgs = {};
 
-			( executeAbility as jest.Mock ).mockResolvedValue( {} );
+			( executeAbility as Mock ).mockResolvedValue( {} );
 
 			await executeFilteredAbility( abilityName, abilityArgs );
 
@@ -173,7 +174,7 @@ describe( 'Tool Provider', () => {
 			const abilityName = 'image-studio/update-canvas-image';
 			const executionError = new Error( 'Execution failed' );
 
-			( executeAbility as jest.Mock ).mockRejectedValue( executionError );
+			( executeAbility as Mock ).mockRejectedValue( executionError );
 
 			await expect( executeFilteredAbility( abilityName, {} ) ).rejects.toThrow(
 				'Execution failed'
@@ -196,7 +197,7 @@ describe( 'Tool Provider', () => {
 				{ name: 'image-studio/update-canvas-image', description: 'Update canvas' },
 			];
 
-			( getAbilities as jest.Mock ).mockResolvedValue( mockAbilities );
+			( getAbilities as Mock ).mockResolvedValue( mockAbilities );
 
 			const toolProvider = createToolProvider();
 
@@ -210,7 +211,7 @@ describe( 'Tool Provider', () => {
 			const abilityArgs = { test: 'data' };
 			const mockResult = { success: true };
 
-			( executeAbility as jest.Mock ).mockResolvedValue( mockResult );
+			( executeAbility as Mock ).mockResolvedValue( mockResult );
 
 			const toolProvider = createToolProvider();
 

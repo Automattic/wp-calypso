@@ -1,5 +1,6 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { FeaturedSearchResults } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
@@ -10,8 +11,8 @@ import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer'
 describe( 'FeaturedSearchResults', () => {
 	it( 'keeps rendering the other featured results if one of them throws', async () => {
 		// React logs the error caught by the boundary.
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const onSuggestionNotFound = jest.fn();
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const onSuggestionNotFound = vi.fn();
 
 		mockGetSuggestionsQuery( {
 			params: { query: 'test' },

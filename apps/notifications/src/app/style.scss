@@ -138,6 +138,15 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	z-index: 1;
 }
 
+// Pass the pane's column layout through to the list so it fills and scrolls.
+.wpnc-app__tabs,
+.wpnc-app__tab-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
 .wpnc-app__detail-pane {
 	z-index: 2;
 	transform: translateX(100%);

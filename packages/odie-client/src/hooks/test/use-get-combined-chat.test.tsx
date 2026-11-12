@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, waitFor, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useGetCombinedChat } from '../use-get-combined-chat';
 import type { Message } from '../../types';
 
@@ -18,12 +19,12 @@ let mockZendeskJwt: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
-const mockGetZendeskConversation = jest.fn();
-const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
-const mockGetZendeskConversationHistory = jest.fn();
-const mockGetQueryData = jest.fn();
+const mockGetZendeskConversation = vi.fn();
+const mockGetOdieTransferMessages = vi.fn().mockReturnValue( [] );
+const mockGetZendeskConversationHistory = vi.fn();
+const mockGetQueryData = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: () => ( {
 		isChatLoaded: mockIsChatLoaded,
 		connectionStatus: mockConnectionStatus,
@@ -32,20 +33,20 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
+vi.mock( '@tanstack/react-query', () => ( {
 	useIsMutating: () => 0,
 	useQueryClient: () => ( { getQueryData: mockGetQueryData } ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => false,
 } ) );
 
-jest.mock( '../use-logged-out-session', () => ( {
+vi.mock( '../use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( {
 		loggedOutOdieChatId: undefined,
 		sessionId: undefined,
@@ -53,7 +54,7 @@ jest.mock( '../use-logged-out-session', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../data', () => ( {
+vi.mock( '../../data', () => ( {
 	useAuthenticateZendeskMessaging: () => ( {
 		data: mockZendeskJwt ? { jwt: mockZendeskJwt } : undefined,
 	} ),
@@ -66,21 +67,21 @@ jest.mock( '../../data', () => ( {
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
-jest.mock( '../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( {
 		data: mockCurrentSupportInteraction,
 		isLoading: false,
 	} ),
 } ) );
 
-jest.mock( '../../utils', () => ( {
+vi.mock( '../../utils', () => ( {
 	getConversationIdFromInteraction: ( interaction: { conversationId?: string } ) =>
 		interaction?.conversationId ?? null,
 	getOdieIdFromInteraction: ( interaction: { odieId?: number } ) => interaction?.odieId ?? null,
 	getIsRequestingHumanSupport: () => false,
 } ) );
 
-jest.mock( '../../constants', () => ( {
+vi.mock( '../../constants', () => ( {
 	HELP_CENTER_STORE: 'automattic/help-center',
 	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
@@ -91,7 +92,7 @@ jest.mock( '../../constants', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../context', () => ( {
+vi.mock( '../../context', () => ( {
 	emptyChat: {
 		odieId: null,
 		conversationId: null,
@@ -115,7 +116,7 @@ const renderCombinedChat = () =>
 	renderHook( () => useGetCombinedChat( /* canConnectToZendesk */ true, /* isLoading */ false ) );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockIsChatLoaded = true;
 	mockConnectionStatus = undefined;
 	mockZendeskClientId = 'client-1';

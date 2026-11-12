@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import { eventToLogstashPayload, makeLogstashTransport, redactUrl } from '../logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
@@ -187,18 +188,18 @@ describe( 'redactUrl', () => {
 } );
 
 describe( 'makeLogstashTransport', () => {
-	let fetchMock: jest.Mock;
+	let fetchMock: Mock;
 	const originalFetch = global.fetch;
 
 	beforeEach( () => {
-		fetchMock = jest.fn().mockResolvedValue( {} );
+		fetchMock = vi.fn().mockResolvedValue( {} );
 		global.fetch = fetchMock;
 	} );
 
 	afterEach( () => {
 		global.fetch = originalFetch;
-		jest.restoreAllMocks();
-		jest.useRealTimers();
+		vi.restoreAllMocks();
+		vi.useRealTimers();
 	} );
 
 	it( 'sends only event items to logstash', async () => {
@@ -233,7 +234,7 @@ describe( 'makeLogstashTransport', () => {
 	} );
 
 	it( 'sends at most 10 events a minute and reports how many it dropped', async () => {
-		const now = jest.spyOn( Date, 'now' ).mockReturnValue( 1_000_000 );
+		const now = vi.spyOn( Date, 'now' ).mockReturnValue( 1_000_000 );
 		const transport = makeLogstashTransport();
 		const envelope = envelopeWith( [ 'event', exceptionEvent ] );
 
@@ -299,9 +300,9 @@ describe( 'makeLogstashTransport', () => {
 		const transport = makeLogstashTransport();
 		await transport.send( envelopeWith( [ 'event', exceptionEvent ] ) );
 
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const timedOut = transport.flush( 100 );
-		jest.advanceTimersByTime( 100 );
+		vi.advanceTimersByTime( 100 );
 		await expect( timedOut ).resolves.toBe( false );
 
 		finishRequest();

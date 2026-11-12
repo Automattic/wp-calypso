@@ -30,7 +30,7 @@ export default function SiteScreenshot( {
 } ) {
 	const shotWidth = compact ? 300 : 1200;
 	const shotHeight = compact ? 180 : 675;
-	const baseSrc = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=${ shotWidth }&h=${ shotHeight }&vpw=1200&vph=800`;
+	const baseSrc = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url.replace( /\/+$/, '' ) ) }?w=${ shotWidth }&h=${ shotHeight }&vpw=1200&vph=800`;
 	const loadedSrc = loadedScreenshots.get( baseSrc );
 	const [ attempt, setAttempt ] = useState( 0 );
 	const [ ready, setReady ] = useState( !! loadedSrc );

@@ -43,6 +43,7 @@ export interface UserPreferences {
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
+	[ key: `hosting-dashboard-dataviews-layout-chosen-${ string }` ]: boolean | undefined; // Whether the user picked a layout, kept even when it matches the default
 	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
