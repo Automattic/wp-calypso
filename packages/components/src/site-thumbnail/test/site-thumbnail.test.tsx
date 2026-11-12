@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SiteThumbnail } from '..';
 import { fetchAwaitRedirect } from '../fetch-await-redirect';
 
 const MSHOTS_URL = 'https://fakeUrl';
 const IMG_ALT = 'test image';
 
-jest.mock( '../fetch-await-redirect' );
+vi.mock( '../fetch-await-redirect' );
 
 describe( 'SiteThumbnail', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.useFakeTimers();
+		vi.useFakeTimers();
+		vi.useFakeTimers();
 		// Mocking the fetch function to return response.redirect = false by default
 		// and to return response.redirect = true when the url is the same as the mshots url
 		// This is to simulate the mshots image being loaded

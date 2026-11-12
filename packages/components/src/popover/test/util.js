@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import Popover from '../index';
 import { arrowLeftOffset, constrainLeft, onViewportChange } from '../util';
 
@@ -67,7 +68,7 @@ describe( 'constrainLeft', () => {
 	} );
 
 	test( 'resolves a function left boundary', () => {
-		const leftBoundary = jest.fn( () => 160 );
+		const leftBoundary = vi.fn( () => 160 );
 
 		expect( constrainLeft( { left: 100 }, element, false, leftBoundary ) ).toEqual( {
 			left: 160,
@@ -84,7 +85,7 @@ describe( 'constrainLeft', () => {
 	} );
 
 	test( 'resolves a function right boundary', () => {
-		const rightBoundary = jest.fn( () => 700 );
+		const rightBoundary = vi.fn( () => 700 );
 
 		expect( constrainLeft( { left: 800 }, element, false, 0, rightBoundary ) ).toEqual( {
 			left: 600,
@@ -113,7 +114,7 @@ test( 'positions the rendered arrow over the target after clamping', async () =>
 		y: top,
 		toJSON: () => {},
 	} );
-	const getBoundingClientRect = jest
+	const getBoundingClientRect = vi
 		.spyOn( Element.prototype, 'getBoundingClientRect' )
 		.mockImplementation( function () {
 			if ( this === target ) {

@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
+import { vi } from 'vitest';
 import { Breadcrumbs } from '../index';
 
 const ITEMS = [
@@ -112,7 +113,7 @@ describe( 'Breadcrumbs', () => {
 
 	it( 'renders a custom item link', async () => {
 		const user = userEvent.setup();
-		const consoleLog = jest.fn();
+		const consoleLog = vi.fn();
 		render(
 			<Breadcrumbs
 				items={ FIVE_ITEMS }

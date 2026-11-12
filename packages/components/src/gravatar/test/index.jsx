@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';

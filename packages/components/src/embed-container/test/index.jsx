@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 /* eslint-disable react/no-danger -- the point of these tests is to feed the component raw post markup. */
 import { render, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn(),
-	loadjQueryDependentScript: jest.fn(),
+vi.mock( '@automattic/load-script', () => ( {
+	loadScript: vi.fn(),
+	loadjQueryDependentScript: vi.fn(),
 } ) );
 
 const INSTAGRAM_SCRIPT = 'https://platform.instagram.com/en_US/embeds.js';
@@ -25,7 +26,7 @@ let loadjQueryDependentScript;
 beforeEach( () => {
 	// `loadAndRun` memoises provider scripts in a module-level cache, so without a fresh registry
 	// only the first test to render a given embed sees its script load.
-	jest.resetModules();
+	vi.resetModules();
 	EmbedContainer = require( '../' ).default;
 	( { loadScript, loadjQueryDependentScript } = require( '@automattic/load-script' ) );
 } );
@@ -446,7 +447,7 @@ describe( 'EmbedContainer', () => {
 			loadScript.mockImplementation( ( url, callback ) => callback() );
 			loadjQueryDependentScript.mockImplementation( ( url, callback ) => callback() );
 
-			const jQuery = jest.fn( () => ( {
+			const jQuery = vi.fn( () => ( {
 				trigger: () => {
 					triggerCount += 1;
 					galleriesAtInit = readGalleries();

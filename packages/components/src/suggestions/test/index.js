@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import Suggestions from '..';
 
 const defaultProps = {
-	suggest: jest.fn(),
+	suggest: vi.fn(),
 	suggestions: [
 		{
 			label: 'Apple',
@@ -23,7 +24,7 @@ const defaultProps = {
 
 describe( '<Suggestions>', () => {
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	test( 'render basic list of suggestions', () => {

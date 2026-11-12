@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Count } from '../';
 
 describe( 'Count', () => {
 	test( 'should call provided as prop numberFormat function', () => {
-		const numberFormatSpy = jest.fn();
+		const numberFormatSpy = vi.fn();
 		render( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
 		expect( numberFormatSpy ).toHaveBeenCalledWith( 23 );
 	} );
