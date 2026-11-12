@@ -78,6 +78,21 @@ describe( 'SimplifiedNote', () => {
 		expect( screen.getByText( 'Ben' ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows a comment and its author when the note carries no actor', () => {
+		renderNote(
+			makeNote( {
+				meta: { ids: { site: SITE, post: POST, comment: 31 } },
+				body: [
+					person( 'Tomas', 4 ),
+					text( 'Grinds evenly', { meta: { ids: { site: SITE, post: POST, comment: 31 } } } ),
+				],
+			} )
+		);
+
+		expect( screen.getByText( 'Tomas' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Grinds evenly' ) ).toBeInTheDocument();
+	} );
+
 	it( 'offers to subscribe to the one person behind a note when they have a site', () => {
 		renderNote(
 			makeNote( {
