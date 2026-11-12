@@ -41,10 +41,7 @@ const selectors = {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
-	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
-	spotlightPlan: '.plan-features-2023-grid__plan-spotlight',
-	// My Plans tab
-	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
+	activePlan: ( plan: Plans ) => `button.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
 };
 
 /**
@@ -321,24 +318,14 @@ export class PlansPage {
 	/**
 	 * Validates the expected plan is active.
 	 *
-	 * This method accepts a parameter of `Plan` type which defines the expected
-	 * plan to be active on the site. This method then compares this against the
-	 * actual text on both the My Plans and Plans tabs, hence the race.
+	 * The plans grid marks the owned plan's "Manage plan" button with
+	 * `is-current-plan` on both desktop and mobile.
 	 *
 	 * @param {Plans} expectedPlan Name of the expected plan.
-	 * @throws If the expected plan title is not found in the timeout period.
+	 * @throws If the expected plan's current-plan button is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile stacks the plans and surfaces the owned plan in the "My Plan"
-			// card, not the desktop spotlight card. Confirm both the plan name
-			// (scoped to the card title) and the owned-plan "Manage plan" control,
-			// which renders as an anchor rather than a button.
-			await this.page.locator( selectors.myPlanTitle( expectedPlan ) ).first().waitFor();
-			await this.page.locator( selectors.managePlanButton ).first().waitFor();
-			return;
-		}
-		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
+		await this.page.locator( selectors.activePlan( expectedPlan ) ).first().waitFor();
 	}
 
 	/**
