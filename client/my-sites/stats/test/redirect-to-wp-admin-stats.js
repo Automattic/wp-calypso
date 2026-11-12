@@ -5,7 +5,7 @@ import page from '@automattic/calypso-router';
 import { SESSION_ACTIVE } from 'calypso/state/support/constants';
 import redirectToWpAdminStats from '../redirect-to-wp-admin-stats';
 
-jest.mock( '@automattic/calypso-router', () => ( { redirect: jest.fn() } ) );
+jest.mock( '@automattic/calypso-router', () => ( { redirect: jest.fn(), current: '' } ) );
 jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 	fetchModuleList: ( siteId ) => ( { type: 'FETCH_MODULE_LIST', siteId } ),
 } ) );
@@ -52,7 +52,10 @@ function makeContext( {
 } = {} ) {
 	let state = makeState( { support, jetpack, statsModuleActive, adminUrl } );
 
+	page.current = pathname;
+
 	return {
+		path: pathname,
 		pathname,
 		querystring,
 		params: { site },
@@ -165,6 +168,20 @@ describe( 'redirectToWpAdminStats()', () => {
 			siteId: SITE_ID,
 		} );
 		expect( replace ).toHaveBeenCalledWith( `${ STATS_URL }#!/stats/day/${ SITE_ID }` );
+	} );
+
+	test( 'does nothing when the user navigates away while the module list loads', async () => {
+		const context = makeContext( { jetpack: true, fetchedStatsModuleActive: true } );
+		const fetchModules = context.store.dispatch.getMockImplementation();
+		context.store.dispatch.mockImplementation( async ( action ) => {
+			await fetchModules( action );
+			page.current = '/home/example.com';
+		} );
+
+		await redirectToWpAdminStats( context, next );
+
+		expect( replace ).not.toHaveBeenCalled();
+		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	test( 'stays when the fetched module list has Stats off', async () => {

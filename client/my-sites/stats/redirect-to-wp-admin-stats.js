@@ -45,6 +45,11 @@ export default async function redirectToWpAdminStats( context, next ) {
 	if ( isJetpackSite( state, siteId ) ) {
 		if ( isJetpackModuleActive( state, siteId, 'stats' ) === null ) {
 			await context.store.dispatch( fetchModuleList( siteId ) );
+
+			// The user may have moved on while the module list loaded.
+			if ( page.current !== context.path ) {
+				return;
+			}
 		}
 
 		if ( isJetpackModuleActive( context.store.getState(), siteId, 'stats' ) !== true ) {
