@@ -277,7 +277,7 @@ describe( '<Sites>', () => {
 			} as User,
 		} );
 
-		await screen.findByRole( 'heading', { name: 'Sites' } );
+		await screen.findByRole( 'heading', { name: 'My Sites List' } );
 		await waitFor( () => expect( resolveDeletedCheck ).not.toBeNull() );
 		expect(
 			screen.queryByRole( 'heading', { name: /You don.t have any sites yet/ } )
