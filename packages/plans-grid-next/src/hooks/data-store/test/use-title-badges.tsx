@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,

@@ -4,6 +4,8 @@
 /**
  * Default mock implementations
  */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@automattic/data-stores', () => ( {
 	AddOns: {
 		useAvailableStorageAddOns: vi.fn(),
@@ -38,7 +40,6 @@ import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { type Mock, vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import PlanStorage from '../shared/storage/components/plan-storage';
 

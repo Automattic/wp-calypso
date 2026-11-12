@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 const mockComboboxClick = vi.fn();
 const mockSetSelectedStorageOptionForPlan = vi.fn();
 
@@ -60,7 +62,6 @@ import { AddOns, Purchases } from '@automattic/data-stores';
 import { render } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import React from 'react';
-import { type Mock, vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import StorageDropdown from '../shared/storage/components/storage-dropdown';
 

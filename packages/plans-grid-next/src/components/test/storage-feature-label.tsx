@@ -4,6 +4,8 @@
 /**
  * Default mock implementations
  */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/data', () => ( {
 	useSelect: vi.fn(),
 	combineReducers: vi.fn(),
@@ -31,7 +33,6 @@ import { AddOns, Purchases } from '@automattic/data-stores';
 import { render } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import React from 'react';
-import { type Mock, vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import useIsLargeCurrency from '../../hooks/use-is-large-currency';
 import StorageFeatureLabel from '../shared/storage/components/storage-feature-label';

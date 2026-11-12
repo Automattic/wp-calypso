@@ -4,6 +4,8 @@
 /**
  * Default mock implementations
  */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 const mockUseHeaderPriceContext = vi.fn();
 
 vi.mock( '@wordpress/element', async () => ( {
@@ -50,7 +52,6 @@ import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React, { useMemo } from 'react';
-import { type Mock, vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import HeaderPrice from '../shared/header-price';

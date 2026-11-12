@@ -4,7 +4,10 @@
 /**
  * Default mock implementations
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 vi.mock( '@wordpress/data', () => ( {
+	use: vi.fn(),
 	useSelect: vi.fn(),
 	combineReducers: vi.fn(),
 	createReduxStore: vi.fn(),
@@ -61,7 +64,6 @@ import {
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
-import { vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import ActionButton from '../shared/action-button';
 

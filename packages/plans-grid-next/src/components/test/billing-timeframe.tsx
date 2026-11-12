@@ -4,6 +4,8 @@
 /**
  * Default mock implementations
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 vi.mock( 'i18n-calypso', async () => ( {
 	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 } ) );
@@ -41,7 +43,6 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import BillingTimeframe from '../shared/billing-timeframe';
 

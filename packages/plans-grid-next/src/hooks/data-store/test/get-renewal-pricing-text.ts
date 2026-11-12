@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 // This copy is the only place the grid states what a shopper will actually be
 // charged. It shipped without an "excl. taxes" note in #107817 (MARTECH-3020),
 // so pin the suffix on both strings.
@@ -17,7 +19,6 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
-import { vi } from 'vitest';
 import { getRenewalPricingText } from '../get-renewal-pricing-text';
 import type { Plans as PlansType } from '@automattic/data-stores';
 

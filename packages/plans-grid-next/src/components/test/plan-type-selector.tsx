@@ -3,6 +3,8 @@
 /**
  * Default mock implementations
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 vi.mock( '@automattic/data-stores', () => ( {
 	Plans: {
 		usePricingMetaForGridPlans: vi.fn(),
@@ -12,7 +14,6 @@ vi.mock( '@automattic/data-stores', () => ( {
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen, render } from '@testing-library/react';
 import React from 'react';
-import { vi } from 'vitest';
 import PlanTypeSelector from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {

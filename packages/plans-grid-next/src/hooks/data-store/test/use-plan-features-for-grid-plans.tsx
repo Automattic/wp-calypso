@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 	translate: ( text: string ) => text,
@@ -29,7 +31,6 @@ vi.mock( '@automattic/calypso-products', async () => ( {
 } ) );
 
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
 import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
 import type { GridPlan, PlansIntent } from '../../../types';
 import type { FeatureList } from '@automattic/calypso-products';
