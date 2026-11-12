@@ -16,6 +16,7 @@ import {
 import { ar } from 'date-fns/locale';
 import { useState, default as React } from 'react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import { DateCalendar, TZDate } from '../../';
 import {
 	getDateButton,
@@ -68,7 +69,7 @@ const ControlledDateCalendar = (
 function setupUserEvent() {
 	// The `advanceTimersByTime` is needed since we're using jest
 	// fake timers to simulate a fixed date for tests.
-	return userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+	return userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 }
 
 describe( 'DateCalendar', () => {
@@ -82,10 +83,10 @@ describe( 'DateCalendar', () => {
 	let prevPrevMonth: Date;
 
 	beforeAll( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		// For consistent tests, set the system time to a fixed date:
 		// Thursday, May 15, 2025, 20:00 UTC
-		jest.setSystemTime( 1747339200000 );
+		vi.setSystemTime( 1747339200000 );
 
 		today = startOfDay( new Date() );
 		tomorrow = addDays( today, 1 );
@@ -98,7 +99,7 @@ describe( 'DateCalendar', () => {
 	} );
 
 	afterAll( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	describe( 'Semantics and basic behavior', () => {
@@ -195,7 +196,7 @@ describe( 'DateCalendar', () => {
 		] )( '[`%s`]', ( _mode, Component ) => {
 			it( 'should select a date when a date button is clicked', async () => {
 				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -215,7 +216,7 @@ describe( 'DateCalendar', () => {
 
 			it( 'should not select a disabled date when a date button is clicked', async () => {
 				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } disabled={ tomorrow } /> );
 
@@ -227,7 +228,7 @@ describe( 'DateCalendar', () => {
 
 			it( 'should select a new date when a different date button is clicked', async () => {
 				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const onSelect = vi.fn();
 
 				render( <Component initialSelected={ today } onSelect={ onSelect } /> );
 
@@ -247,7 +248,7 @@ describe( 'DateCalendar', () => {
 
 			it( 'should de-select the selected date when the selected date button is clicked', async () => {
 				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const onSelect = vi.fn();
 
 				render( <Component initialSelected={ today } onSelect={ onSelect } /> );
 
@@ -267,7 +268,7 @@ describe( 'DateCalendar', () => {
 
 			it( 'should not de-select the selected date when the selected date button is clicked if the `required` prop is set to `true`', async () => {
 				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const onSelect = vi.fn();
 
 				render( <Component initialSelected={ today } onSelect={ onSelect } required /> );
 
@@ -313,7 +314,7 @@ describe( 'DateCalendar', () => {
 		] )( '[`%s`]', ( _mode, Component ) => {
 			it( 'should navigate to the previous and next months when the previous and next month buttons are clicked', async () => {
 				const user = setupUserEvent();
-				const onMonthChange = jest.fn();
+				const onMonthChange = vi.fn();
 
 				render( <Component onMonthChange={ onMonthChange } /> );
 
@@ -355,7 +356,7 @@ describe( 'DateCalendar', () => {
 
 			it( 'should not navigate to a month that is before the `startMonth` prop', async () => {
 				const user = setupUserEvent();
-				const onMonthChange = jest.fn();
+				const onMonthChange = vi.fn();
 
 				render( <Component startMonth={ nextMonth } onMonthChange={ onMonthChange } /> );
 
@@ -392,7 +393,7 @@ describe( 'DateCalendar', () => {
 
 			it( 'should not navigate to a month that is after the `endMonth` prop', async () => {
 				const user = setupUserEvent();
-				const onMonthChange = jest.fn();
+				const onMonthChange = vi.fn();
 
 				render( <Component endMonth={ prevMonth } onMonthChange={ onMonthChange } /> );
 
@@ -744,7 +745,7 @@ describe( 'DateCalendar', () => {
 
 		it( 'should support timezones according to the `timeZone` prop', async () => {
 			const user = setupUserEvent();
-			const onSelect = jest.fn();
+			const onSelect = vi.fn();
 
 			render( <DateCalendar timeZone="Asia/Tokyo" onSelect={ onSelect } /> );
 
