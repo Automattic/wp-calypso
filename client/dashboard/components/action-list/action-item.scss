@@ -6,8 +6,4 @@
 	.action-item__actions {
 		flex-shrink: 0;
 	}
-
-	&.is-layout-inline .action-item__actions {
-		margin-inline-start: $grid-unit-20;
-	}
 }

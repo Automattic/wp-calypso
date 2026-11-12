@@ -51,6 +51,8 @@ export interface IconListItemProps {
 	 * @default 'center'
 	 */
 	suffixAlignment?: 'center' | 'top';
+
+	suffixSpacing?: number;
 }
 
 export interface IconListProps {

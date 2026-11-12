@@ -26,12 +26,13 @@ function UnforwardedActionItem(
 	const buttonConfig = BUTTON_STACK_CONFIG[ layout ];
 	return (
 		<IconListItem
-			className={ clsx( 'action-item', `is-layout-${ layout }`, className ) }
+			className={ clsx( 'action-item', className ) }
 			title={ title }
 			description={ description }
 			decoration={ decoration }
 			layout={ layout }
 			suffixAlignment={ suffixAlignment }
+			suffixSpacing={ layout === 'inline' ? 6 : undefined }
 			suffix={
 				<ButtonStack
 					className="action-item__actions"
