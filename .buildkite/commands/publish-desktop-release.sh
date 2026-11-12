@@ -14,23 +14,12 @@ download_step_artifacts() {
 	for query in "$@"; do
 		echo "--- :buildkite: Downloading artifacts from $step"
 		if buildkite-agent artifact download "$query" . --step "$step"; then
-			normalize_windows_artifact_paths
 			return
 		fi
 	done
 
 	echo "Failed to download artifacts from $step." >&2
 	exit 1
-}
-
-normalize_windows_artifact_paths() {
-	local artifact
-	local filename
-
-	while IFS= read -r -d '' artifact; do
-		filename="${artifact##*\\}"
-		mv "$artifact" "$release_dir/$filename"
-	done < <(find . -maxdepth 1 -type f -name 'desktop\\release\\*' -print0)
 }
 
 rm -rf "$release_dir" "$changelog_path"
@@ -51,8 +40,8 @@ fi
 
 download_step_artifacts desktop-build-mac 'desktop/release/*'
 download_step_artifacts desktop-build-linux 'desktop/release/*'
-download_step_artifacts desktop-build-windows-store 'desktop\release\*'
-download_step_artifacts desktop-build-windows-nsis 'desktop\release\*'
+download_step_artifacts desktop-build-windows-store 'desktop/release/*'
+download_step_artifacts desktop-build-windows-nsis 'desktop/release/*'
 
 echo "--- :mag: Validating combined desktop release payload"
 .buildkite/commands/validate-desktop-artifacts.sh all "$release_dir"
