@@ -193,11 +193,11 @@ function Emails() {
 				/>
 			}
 		>
-			{ /* One notice at a time: a missing DKIM record can send mail to spam, so it comes first. */ }
-			{ dkimRecordChecks.entries.length ? (
-				<DkimMissingNotice { ...dkimRecordChecks } />
-			) : (
+			{ /* One notice at a time: free mailboxes come first. */ }
+			{ domainsWithUnusedMailboxes.length ? (
 				<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
+			) : (
+				<DkimMissingNotice { ...dkimRecordChecks } />
 			) }
 			{ renderContent() }
 		</PageLayout>

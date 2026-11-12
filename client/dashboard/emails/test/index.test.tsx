@@ -152,7 +152,7 @@ describe( '<Emails>', () => {
 		).toBeVisible();
 	} );
 
-	test( 'shows the missing DKIM record notice instead of the free mailbox notice', async () => {
+	test( 'shows the free mailbox notice instead of the missing DKIM record notice', async () => {
 		const titanAccount = {
 			account_type: EmailProvider.Titan,
 			maximum_mailboxes: 2,
@@ -176,10 +176,10 @@ describe( '<Emails>', () => {
 		} );
 		render( <Emails /> );
 
-		expect( await screen.findByText( `Add the DKIM record for ${ DOMAIN }` ) ).toBeVisible();
 		expect(
-			screen.queryByText( 'You have 1 free mailbox waiting to be set up.' )
-		).not.toBeInTheDocument();
+			await screen.findByText( 'You have 1 free mailbox waiting to be set up.' )
+		).toBeVisible();
+		expect( screen.queryByText( `Add the DKIM record for ${ DOMAIN }` ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not check DKIM records without a Professional Email domain', async () => {

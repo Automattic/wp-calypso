@@ -21,6 +21,10 @@ const DkimMissingNotice = ( {
 	showTryLater,
 	onCheckAgain,
 }: DkimMissingNoticeProps ) => {
+	if ( ! entries.length ) {
+		return null;
+	}
+
 	const isSingleDomain = entries.length === 1;
 
 	const title = isSingleDomain
