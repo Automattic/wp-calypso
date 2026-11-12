@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import { amToolProvider } from '../../abilities';
 import { applyBlockEditsAbility } from '../../abilities/apply-block-edits';
 import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
@@ -40,38 +41,36 @@ import type { Ability } from '@wordpress/abilities';
 
 const acceptedUploadTypes = DEFAULT_ACCEPTED_UPLOAD_TYPES;
 
-jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
-	virtual: true,
-} );
-jest.mock( '../canvas-binding', () => ( {
-	...jest.requireActual( '../canvas-binding' ),
-	bindToOpenCanvas: jest.fn(),
-	getBlockingMove: jest.fn( () => null ),
+vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: vi.fn() } ) );
+vi.mock( '../canvas-binding', async () => ( {
+	...( await vi.importActual< typeof import( '../canvas-binding' ) >( '../canvas-binding' ) ),
+	bindToOpenCanvas: vi.fn(),
+	getBlockingMove: vi.fn( () => null ),
 } ) );
-jest.mock( '../editor-post-context', () => ( { getEditorPostContext: jest.fn( () => ( {} ) ) } ) );
-jest.mock( '../global-styles', () => ( {
-	...jest.requireActual( '../global-styles' ),
-	waitForEditedGlobalStyles: jest.fn( async () => undefined ),
+vi.mock( '../editor-post-context', () => ( { getEditorPostContext: vi.fn( () => ( {} ) ) } ) );
+vi.mock( '../global-styles', async () => ( {
+	...( await vi.importActual< typeof import( '../global-styles' ) >( '../global-styles' ) ),
+	waitForEditedGlobalStyles: vi.fn( async () => undefined ),
 } ) );
-jest.mock( '../page-content-markup', () => ( { getPageContentMarkup: jest.fn( () => '' ) } ) );
-jest.mock( '../page-structure', () => ( { getPageStructure: jest.fn( () => null ) } ) );
-jest.mock( '../checkpoints', () => ( {
+vi.mock( '../page-content-markup', () => ( { getPageContentMarkup: vi.fn( () => '' ) } ) );
+vi.mock( '../page-structure', () => ( { getPageStructure: vi.fn( () => null ) } ) );
+vi.mock( '../checkpoints', () => ( {
 	RESTORE_CHECKPOINT_TOOL_ID: 'big_sky__restore_checkpoint',
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
-	canSwapCheckpoint: jest.fn(),
-	clearCheckpoint: jest.fn(),
-	getAvailableCheckpoints: jest.fn( () => [] ),
-	getCheckpoints: jest.fn( () => [] ),
-	hasCheckpoint: jest.fn(),
-	restoreCheckpoint: jest.fn(),
-	setCheckpoint: jest.fn(),
-	swapCheckpoint: jest.fn(),
+	canSwapCheckpoint: vi.fn(),
+	clearCheckpoint: vi.fn(),
+	getAvailableCheckpoints: vi.fn( () => [] ),
+	getCheckpoints: vi.fn( () => [] ),
+	hasCheckpoint: vi.fn(),
+	restoreCheckpoint: vi.fn(),
+	setCheckpoint: vi.fn(),
+	swapCheckpoint: vi.fn(),
 } ) );
 // The temporary WooCommerce abilities would join every ability list below.
-jest.mock( '../../abilities/woocommerce', () => ( {
-	wooFallbackToolProvider: { getAbilities: () => Promise.resolve( [] ), executeAbility: jest.fn() },
+vi.mock( '../../abilities/woocommerce', () => ( {
+	wooFallbackToolProvider: { getAbilities: () => Promise.resolve( [] ), executeAbility: vi.fn() },
 } ) );
-jest.mock( '../../hooks/use-block-suggestions', () => ( {
+vi.mock( '../../hooks/use-block-suggestions', () => ( {
 	useBlockSuggestions: () => ( {
 		suggestions: [
 			{ id: 'translate', label: 'Translate content', prompt: 'Translate this to:' },
@@ -120,16 +119,16 @@ function createCheckpointReturn(
 	overrides: Partial< UseCheckpointReturn > = {}
 ): UseCheckpointReturn {
 	return {
-		getLastEditorState: jest.fn( () => null ),
-		setCheckpoint: jest.fn(),
-		addCheckpointKeys: jest.fn(),
-		restoreCheckpoint: jest.fn( () => Promise.resolve() ),
-		addNewPageToCheckpoint: jest.fn(),
-		addPageRenameToCheckpoint: jest.fn(),
-		addPageRemovalToCheckpoint: jest.fn(),
-		getLatestUserMessageId: jest.fn( () => undefined ),
-		clearCheckpoint: jest.fn(),
-		hasCheckpoint: jest.fn( () => false ),
+		getLastEditorState: vi.fn( () => null ),
+		setCheckpoint: vi.fn(),
+		addCheckpointKeys: vi.fn(),
+		restoreCheckpoint: vi.fn( () => Promise.resolve() ),
+		addNewPageToCheckpoint: vi.fn(),
+		addPageRenameToCheckpoint: vi.fn(),
+		addPageRemovalToCheckpoint: vi.fn(),
+		getLatestUserMessageId: vi.fn( () => undefined ),
+		clearCheckpoint: vi.fn(),
+		hasCheckpoint: vi.fn( () => false ),
 		...overrides,
 	};
 }
@@ -224,7 +223,7 @@ describe( 'loadExternalProviders', () => {
 		delete ( globalThis as typeof globalThis & { agentsManagerData?: unknown } ).agentsManagerData;
 		delete ( window as typeof window & { agentsManagerData?: unknown } ).agentsManagerData;
 		setLoadedProviderIds( undefined );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		jest.requireMock( '../checkpoints' ).hasCheckpoint.mockReset();
 		jest.requireMock( '../checkpoints' ).canSwapCheckpoint.mockReset();
 	} );
@@ -261,7 +260,7 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'delegates marketplace recommendations to the original provider', async () => {
 		window.history.replaceState( {}, '', '/plugins' );
-		const executeAbility = jest.fn().mockResolvedValue( { rendered: true, count: 1 } );
+		const executeAbility = vi.fn().mockResolvedValue( { rendered: true, count: 1 } );
 		setAgentsManagerData( {
 			agentProviders: [
 				{
@@ -303,14 +302,14 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'merges abilities from multiple tool providers and dispatches execution to the owner', async () => {
 		const firstProvider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'host' } ) ),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'host' } ) ),
 		};
 		const secondProvider = {
-			getAbilities: jest.fn( () =>
+			getAbilities: vi.fn( () =>
 				Promise.resolve( [ createAbility( 'woocommerce/get-products' ) ] )
 			),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'woo' } ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'woo' } ) ),
 		};
 		setAgentsManagerData( {
 			agentProviders: [ { toolProvider: firstProvider }, { toolProvider: secondProvider } ],
@@ -349,12 +348,12 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'keeps the earlier tool provider on duplicate ability names', async () => {
 		const firstProvider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'shared/action' ) ] ) ),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'first' } ) ),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'shared/action' ) ] ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'first' } ) ),
 		};
 		const secondProvider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'shared/action' ) ] ) ),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'second' } ) ),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'shared/action' ) ] ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'second' } ) ),
 		};
 		setAgentsManagerData( {
 			agentProviders: [ { toolProvider: firstProvider }, { toolProvider: secondProvider } ],
@@ -392,10 +391,8 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'runs AM abilities ahead of a provider ability with the same name', async () => {
 		const bigSkyProvider = {
-			getAbilities: jest.fn( () =>
-				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
-			),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
 		};
 		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
 
@@ -410,14 +407,14 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( 'keeps the remaining abilities when a provider fails to list its own', async () => {
-		const consoleWarn = jest.spyOn( console, 'warn' ).mockImplementation();
+		const consoleWarn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		const failingProvider = {
-			getAbilities: jest.fn( () => Promise.reject( new Error( 'Provider is not ready.' ) ) ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( () => Promise.reject( new Error( 'Provider is not ready.' ) ) ),
+			executeAbility: vi.fn(),
 		};
 		const workingProvider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'host' } ) ),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'host' } ) ),
 		};
 		setAgentsManagerData( {
 			agentProviders: [ { toolProvider: failingProvider }, { toolProvider: workingProvider } ],
@@ -453,8 +450,8 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'rejects execution when no provider handles the ability', async () => {
 		const provider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'host/navigate' ) ] ) ),
+			executeAbility: vi.fn(),
 		};
 		setAgentsManagerData( { agentProviders: [ { toolProvider: provider } ] } );
 
@@ -543,7 +540,7 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( 'skips failed context providers when merging context from multiple providers', async () => {
-		const consoleWarn = jest.spyOn( console, 'warn' ).mockImplementation();
+		const consoleWarn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		setAgentsManagerData( {
 			agentProviders: [
 				{
@@ -597,7 +594,7 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( 'returns a minimal browser context when every merged context provider fails', async () => {
-		const consoleWarn = jest.spyOn( console, 'warn' ).mockImplementation();
+		const consoleWarn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		setAgentsManagerData( {
 			agentProviders: [
 				{
@@ -662,8 +659,8 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( 'merges markdown components and extensions from multiple providers', async () => {
-		const hostStrong = jest.fn( () => ( { type: 'strong', props: { provider: 'host' } } ) );
-		const wooTable = jest.fn( () => ( { type: 'table', props: { provider: 'woo' } } ) );
+		const hostStrong = vi.fn( () => ( { type: 'strong', props: { provider: 'host' } } ) );
+		const wooTable = vi.fn( () => ( { type: 'table', props: { provider: 'woo' } } ) );
 		setAgentsManagerData( {
 			agentProviders: [
 				{
@@ -704,11 +701,11 @@ describe( 'loadExternalProviders', () => {
 	} );
 
 	it( 'chains markdown code renderers so later providers can handle structured blocks', async () => {
-		const hostCode = jest.fn( ( props ) => ( {
+		const hostCode = vi.fn( ( props ) => ( {
 			type: 'code',
 			props: { ...props, provider: 'host-fallback' },
 		} ) );
-		const wooCode = jest.fn( ( props: { className?: string } ) =>
+		const wooCode = vi.fn( ( props: { className?: string } ) =>
 			props.className === 'language-product'
 				? { type: 'ProductCard', props: { provider: 'woo' } }
 				: { type: 'code', props: { ...props, provider: 'woo-fallback' } }
@@ -736,8 +733,8 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'resolves chat components through providers until one matches', async () => {
 		const TitlePicker = () => null;
-		const hostComponents = jest.fn( () => null );
-		const wooComponents = jest.fn( ( type: string ) =>
+		const hostComponents = vi.fn( () => null );
+		const wooComponents = vi.fn( ( type: string ) =>
 			type === 'title-picker' ? TitlePicker : null
 		);
 		setAgentsManagerData( {
@@ -792,10 +789,10 @@ describe( 'loadExternalProviders', () => {
 			},
 		};
 		const update = { status: { message: { parts: [ text, stream ] } } };
-		let renderer: jest.Mock;
+		let renderer: Mock;
 
 		beforeEach( () => {
-			renderer = jest.fn();
+			renderer = vi.fn();
 			setStreamHandler( renderer );
 		} );
 
@@ -842,10 +839,10 @@ describe( 'loadExternalProviders', () => {
 		};
 
 		// Not a once-value: the sidebar case never reads it, and it would leak.
-		afterEach( () => jest.mocked( getPageStructure ).mockReturnValue( null ) );
+		afterEach( () => vi.mocked( getPageStructure ).mockReturnValue( null ) );
 
 		it( 'adds the page body the editor holds to the client context', async () => {
-			jest.mocked( getPageContentMarkup ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
+			vi.mocked( getPageContentMarkup ).mockReturnValueOnce( '<!-- wp:paragraph /-->' );
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
 			} );
@@ -871,7 +868,7 @@ describe( 'loadExternalProviders', () => {
 				expected: providerContext,
 			},
 		] )( '$case', async ( { amCheckpoints, expected } ) => {
-			jest.mocked( getAvailableCheckpoints ).mockReturnValueOnce( amCheckpoints );
+			vi.mocked( getAvailableCheckpoints ).mockReturnValueOnce( amCheckpoints );
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => providerContext } } ],
 			} );
@@ -910,7 +907,7 @@ describe( 'loadExternalProviders', () => {
 				expected: providerStructure,
 			},
 		] )( '$case', async ( { environment, expected } ) => {
-			jest.mocked( getPageStructure ).mockReturnValue( pageStructure );
+			vi.mocked( getPageStructure ).mockReturnValue( pageStructure );
 			const context = { ...providerContext, environment, ...providerStructure };
 			setAgentsManagerData( {
 				agentProviders: [ { contextProvider: { getClientContext: () => context } } ],
@@ -944,11 +941,11 @@ describe( 'loadExternalProviders', () => {
 		} );
 
 		beforeEach( () => {
-			jest.mocked( getEditorPostContext ).mockReturnValue( postContext );
-			jest.mocked( waitForEditedGlobalStyles ).mockClear();
+			vi.mocked( getEditorPostContext ).mockReturnValue( postContext );
+			vi.mocked( waitForEditedGlobalStyles ).mockClear();
 		} );
 
-		afterEach( () => jest.mocked( getEditorPostContext ).mockReturnValue( {} ) );
+		afterEach( () => vi.mocked( getEditorPostContext ).mockReturnValue( {} ) );
 
 		it( 'goes first where Big Sky is enabled', async () => {
 			const sidebarContext = { environment: 'gutenberg', titleSuggestionCount: 3 };
@@ -1113,16 +1110,16 @@ describe( 'loadExternalProviders', () => {
 		// provider live, or those late registrations would never dispatch.
 		let editorAbilityRegistered = false;
 		const bigSkyProvider = {
-			getAbilities: jest.fn( () =>
+			getAbilities: vi.fn( () =>
 				Promise.resolve(
 					editorAbilityRegistered ? [ createAbility( 'big-sky/compose-patterns' ) ] : []
 				)
 			),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
 		};
 		const otherProvider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ createAbility( 'wpcom/manage-site' ) ] ) ),
-			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'wpcom' } ) ),
+			getAbilities: vi.fn( () => Promise.resolve( [ createAbility( 'wpcom/manage-site' ) ] ) ),
+			executeAbility: vi.fn( () => Promise.resolve( { handledBy: 'wpcom' } ) ),
 		};
 		setAgentsManagerData( {
 			agentProviders: [ { toolProvider: bigSkyProvider }, { toolProvider: otherProvider } ],
@@ -1162,16 +1159,16 @@ describe( 'loadExternalProviders', () => {
 
 	it( 'composes checkpoint hooks so id lookups search every provider store', async () => {
 		const firstReturn = createCheckpointReturn( {
-			getLastEditorState: jest.fn( () => 'first-editor-state' ),
-			hasCheckpoint: jest.fn( ( id: string ) => id === 'first-cp' ),
+			getLastEditorState: vi.fn( () => 'first-editor-state' ),
+			hasCheckpoint: vi.fn( ( id: string ) => id === 'first-cp' ),
 		} );
 		const secondReturn = createCheckpointReturn( {
-			hasCheckpoint: jest.fn( ( id: string ) => id === 'second-cp' ),
-			canSwapCheckpoint: jest.fn( ( id: string ) => id === 'second-cp' ),
-			swapCheckpoint: jest.fn( () => Promise.resolve() ),
+			hasCheckpoint: vi.fn( ( id: string ) => id === 'second-cp' ),
+			canSwapCheckpoint: vi.fn( ( id: string ) => id === 'second-cp' ),
+			swapCheckpoint: vi.fn( () => Promise.resolve() ),
 		} );
-		const firstHook = jest.fn( () => firstReturn );
-		const secondHook = jest.fn( () => secondReturn );
+		const firstHook = vi.fn( () => firstReturn );
+		const secondHook = vi.fn( () => secondReturn );
 		setAgentsManagerData( {
 			agentProviders: [ { useCheckpoint: firstHook }, { useCheckpoint: secondHook } ],
 		} );
@@ -1210,8 +1207,8 @@ describe( 'loadExternalProviders', () => {
 		amCheckpoints.hasCheckpoint.mockImplementation( ( id: string ) => id === 'am-cp' );
 		amCheckpoints.canSwapCheckpoint.mockReturnValue( true );
 		const providerReturn = createCheckpointReturn( {
-			hasCheckpoint: jest.fn( ( id: string ) => id === 'provider-cp' ),
-			canSwapCheckpoint: jest.fn( () => false ),
+			hasCheckpoint: vi.fn( ( id: string ) => id === 'provider-cp' ),
+			canSwapCheckpoint: vi.fn( () => false ),
 		} );
 		setAgentsManagerData( { agentProviders: [ { useCheckpoint: () => providerReturn } ] } );
 
@@ -1267,8 +1264,8 @@ describe( 'loadExternalProviders', () => {
 
 describe( 'mergeUseSuggestionsHooks', () => {
 	it( 'treats undefined provider hook results as no suggestions', () => {
-		const undefinedHook = jest.fn( () => undefined ) as UseSuggestionsHook;
-		const suggestionsHook = jest.fn( () => ( {
+		const undefinedHook = vi.fn( () => undefined ) as UseSuggestionsHook;
+		const suggestionsHook = vi.fn( () => ( {
 			suggestions: [ { id: 'reader-followup', label: 'Follow up', prompt: 'Follow up on this.' } ],
 		} ) ) as UseSuggestionsHook;
 
@@ -1280,13 +1277,13 @@ describe( 'mergeUseSuggestionsHooks', () => {
 	} );
 
 	it( 'dedupes suggestions by id when multiple providers return suggestions', () => {
-		const firstHook = jest.fn( () => ( {
+		const firstHook = vi.fn( () => ( {
 			suggestions: [
 				{ id: 'shared', label: 'First shared', prompt: 'First shared prompt.' },
 				{ id: 'first-only', label: 'First only', prompt: 'First only prompt.' },
 			],
 		} ) ) as UseSuggestionsHook;
-		const secondHook = jest.fn( () => ( {
+		const secondHook = vi.fn( () => ( {
 			suggestions: [
 				{ id: 'shared', label: 'Second shared', prompt: 'Second shared prompt.' },
 				{ id: 'second-only', label: 'Second only', prompt: 'Second only prompt.' },
@@ -1305,8 +1302,8 @@ describe( 'mergeUseSuggestionsHooks', () => {
 	} );
 
 	it( 'forwards the suggestion limit to provider hooks', () => {
-		const firstHook = jest.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
-		const secondHook = jest.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
+		const firstHook = vi.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
+		const secondHook = vi.fn( () => ( { suggestions: [] } ) ) as UseSuggestionsHook;
 		const merged = mergeUseSuggestionsHooks( [ firstHook, secondHook ] );
 
 		merged?.( 3 );
@@ -1316,10 +1313,10 @@ describe( 'mergeUseSuggestionsHooks', () => {
 	} );
 
 	it( 'uses only contextual suggestions when any provider replaces the empty view', () => {
-		const firstHook = jest.fn( () => ( {
+		const firstHook = vi.fn( () => ( {
 			suggestions: [ { id: 'first', label: 'First', prompt: 'First prompt.' } ],
 		} ) ) as UseSuggestionsHook;
-		const secondHook = jest.fn( () => ( {
+		const secondHook = vi.fn( () => ( {
 			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
 			replaceEmptyViewSuggestions: true,
 		} ) ) as UseSuggestionsHook;
@@ -1337,7 +1334,7 @@ describe( 'canvas guard wiring', () => {
 	// is under test here is that the wrappers are actually applied to the providers
 	// `loadExternalProviders` hands back, not the state machine itself (covered in
 	// `canvas-binding.test.ts`).
-	const mockedBinding = jest.mocked( canvasBinding );
+	const mockedBinding = vi.mocked( canvasBinding );
 
 	beforeEach( () => {
 		mockedBinding.getBlockingMove.mockReturnValue( null );
@@ -1350,11 +1347,11 @@ describe( 'canvas guard wiring', () => {
 	// provider is registered — which is most editor surfaces.
 	it.each( [ 1, 2 ] )( 'refuses a moved canvas write with %i tool provider(s)', async ( count ) => {
 		mockedBinding.getBlockingMove.mockReturnValue( { from: 'About', to: 'Contact' } );
-		const executeAbility = jest.fn();
+		const executeAbility = vi.fn();
 		setAgentsManagerData( {
 			agentProviders: Array.from( { length: count }, ( _unused, index ) => ( {
 				toolProvider: {
-					getAbilities: jest.fn( () =>
+					getAbilities: vi.fn( () =>
 						Promise.resolve( [ createAbility( `big-sky/apply-block-edits-${ index }` ) ] )
 					),
 					executeAbility,

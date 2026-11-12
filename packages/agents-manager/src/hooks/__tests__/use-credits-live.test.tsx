@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
@@ -33,10 +34,13 @@ let onTaskUpdate: ( update: TaskUpdate ) => void;
 let mockVisit: Pick< AgentsManagerContextType, 'agentConfig' | 'siteKey' | 'site' > & {
 	currentUser?: { ID: number };
 };
-jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
+vi.mock(
+	'@wordpress/element',
+	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
+);
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...values: unknown[] ) => {
@@ -46,11 +50,11 @@ jest.mock( '@wordpress/i18n', () => ( {
 			.replace( /%%/g, '%' );
 	},
 } ) );
-jest.mock( '../../components/credits-meter', () => () => null );
-jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( '../../components/credits-meter', () => ( { default: () => null } ) );
+vi.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: vi.fn() } ) );
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 
-const authProvider = jest.fn();
+const authProvider = vi.fn();
 const agentConfig: AgentConfig = {
 	authenticationScope: { siteId: 123, userId: 1 },
 	agentId: 'wp-orchestrator',
@@ -136,7 +140,7 @@ const refuse = ( aiCredits: unknown, code = 'ai_credit_allowance_exhausted' ) =>
 	);
 const low = ( plan_tier: CreditsPlanTier = 'personal' ) =>
 	creditSnapshot( { credits_remaining: 5, credits_used: 2495, plan_tier } );
-const fetchMock = jest.fn();
+const fetchMock = vi.fn();
 // `null` leaves a field out, as an older server does; the server itself sends
 // `can_upgrade: null` when it can't tell who bought the plan.
 const response = (
@@ -163,8 +167,8 @@ function deferred< T >() {
 }
 
 beforeEach( () => {
-	jest.useFakeTimers();
-	jest.setSystemTime( new Date( '2026-09-21T12:00:00Z' ) );
+	vi.useFakeTimers();
+	vi.setSystemTime( new Date( '2026-09-21T12:00:00Z' ) );
 	chatIsProcessing = false;
 	chatMessages = [ { id: 'm' } ];
 	window.history.replaceState( {}, '', '/' );
@@ -172,10 +176,10 @@ beforeEach( () => {
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
 	Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'visible' } );
 	globalThis.fetch = fetchMock;
-	jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+	vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 } );
 afterEach( () => {
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 const UPGRADE_URL = 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits';
@@ -278,7 +282,7 @@ describe( 'session', () => {
 		setResolvedAgentId( undefined );
 		setSessionSiteKey( NO_SITE );
 		setSessionUserId( undefined );
-		jest.mocked( recordAgentsManagerTracksEvent ).mockReset();
+		vi.mocked( recordAgentsManagerTracksEvent ).mockReset();
 	} );
 
 	it.each( LINKS )(
@@ -304,11 +308,11 @@ describe( 'session', () => {
 
 	it( 'sends the click event the session its link carries', async () => {
 		const tracks =
-			jest.requireActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' );
-		jest
-			.mocked( recordAgentsManagerTracksEvent )
-			.mockImplementation( tracks.recordAgentsManagerTracksEvent );
-		jest.mocked( recordTracksEvent ).mockClear();
+			await vi.importActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' );
+		vi.mocked( recordAgentsManagerTracksEvent ).mockImplementation(
+			tracks.recordAgentsManagerTracksEvent
+		);
+		vi.mocked( recordTracksEvent ).mockClear();
 		saveSessionId( 'session-a' );
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'business' } ) );
 		const { result } = renderCredits();
@@ -317,7 +321,7 @@ describe( 'session', () => {
 		act( () => result.current.notice?.action?.onClick?.() );
 		act( () => props( result.current ).action?.onClick?.() );
 
-		const clicks = jest
+		const clicks = vi
 			.mocked( recordTracksEvent )
 			.mock.calls.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_cta_clicked' );
 		expect( clicks.map( ( [ , eventProps ] ) => eventProps?.ai_session_id ) ).toEqual( [
@@ -370,7 +374,7 @@ describe( 'purchase access', () => {
 
 	it( 'offers the popover’s credits button for a live balance, and closes the popover on click', async () => {
 		fetchMock.mockResolvedValueOnce( response( exhausted() ) );
-		const onShowCredits = jest.fn();
+		const onShowCredits = vi.fn();
 		const { result } = renderCredits( { onShowCredits } );
 		await flush();
 		act( () => props( result.current ).onShowCredits!() );
@@ -573,7 +577,7 @@ describe( 'purchase access', () => {
 			{
 				agentConfig: {
 					...agentConfig,
-					authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer other' } ),
+					authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer other' } ),
 				},
 			},
 		],
@@ -689,7 +693,7 @@ it( 'never uses a previous site destination during a site switch', async () => {
 		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits'
 	);
 } );
-it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
+it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: vi.fn() } } ] )(
 	'drops the upgrade action when the authenticated visit changes: %p',
 	async ( next ) => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
@@ -1156,11 +1160,11 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 			window.dispatchEvent( new Event( 'focus' ) );
 		} );
 		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
-		await act( async () => jest.advanceTimersByTime( 1000 ) );
+		await act( async () => vi.advanceTimersByTime( 1000 ) );
 		expect( result.current.trailingActions ).toBeUndefined();
 		expect( result.current.beforeSubmit() ).toBe( true );
 		await receive( exhausted() );
-		jest.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
+		vi.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
 		// Timers can be throttled in a hidden tab; the submit gate also checks expiry.
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( fetchMock ).not.toHaveBeenCalled();
@@ -1824,12 +1828,12 @@ it( 'expires the old balance and reads the next period without sending a prompt'
 	await flush();
 	act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
-	await act( async () => jest.advanceTimersByTime( 1000 ) );
+	await act( async () => vi.advanceTimersByTime( 1000 ) );
 	expect( props( result.current ).status.remaining ).toBe( 2450 );
 	expect( result.current.beforeSubmit() ).toBe( true );
 	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
 	await receive( exhausted() );
-	jest.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
+	vi.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
 	// Timers can be throttled in a hidden tab; the submit gate also checks expiry.
 	act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 	expect( result.current.trailingActions ).toBeUndefined();
@@ -1876,7 +1880,7 @@ it.each( [
 	await flush();
 	expect( authProvider ).toHaveBeenCalledTimes( 1 );
 	expect( fetchMock ).not.toHaveBeenCalled();
-	const newAuth = jest.fn().mockResolvedValue( { Authorization: 'Bearer new-scope' } );
+	const newAuth = vi.fn().mockResolvedValue( { Authorization: 'Bearer new-scope' } );
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: next.siteId } ) ) );
 	view.rerender( {
 		...nextOptions,
@@ -1906,7 +1910,7 @@ it( 'does not reuse B authentication when returning to A before configuration is
 	const bConfig = {
 		...agentConfig,
 		authenticationScope: { siteId: 456, userId: 1 },
-		authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer B' } ),
+		authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer B' } ),
 	};
 	view.rerender( { ...defaultOptions, siteKey: '456', agentConfig: bConfig } );
 	await flush();
@@ -1918,7 +1922,7 @@ it( 'does not reuse B authentication when returning to A before configuration is
 		...defaultOptions,
 		agentConfig: {
 			...agentConfig,
-			authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer new-A' } ),
+			authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer new-A' } ),
 		},
 	} );
 	await flush();
@@ -1968,7 +1972,7 @@ it( 'rejects callbacks and pending reads from the previous initialized conversat
 		agentConfig: {
 			...agentConfig,
 			sessionId: 'new-conversation',
-			authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer new-agent' } ),
+			authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer new-agent' } ),
 		},
 	} );
 	await flush();
@@ -2004,7 +2008,7 @@ describe( 'credits Tracks events', () => {
 		};
 	};
 	const creditsEvents = () =>
-		jest
+		vi
 			.mocked( recordAgentsManagerTracksEvent )
 			.mock.calls.filter( ( [ eventName ] ) => eventName.includes( '_credits_' ) );
 	const healthy = () =>
@@ -2062,7 +2066,7 @@ describe( 'credits Tracks events', () => {
 		second.rerender( {
 			...defaultOptions,
 			...scope,
-			agentConfig: { ...scope.agentConfig, authProvider: jest.fn( authProvider ) },
+			agentConfig: { ...scope.agentConfig, authProvider: vi.fn( authProvider ) },
 		} );
 		await flush();
 		expect( second.result.current.notice ).toBeDefined();
@@ -2614,7 +2618,7 @@ describe( 'credits Tracks events', () => {
 				if ( cause === 'a reply without a balance' ) {
 					await receive( undefined );
 				} else {
-					act( () => jest.advanceTimersByTime( 10 * 24 * 60 * 60 * 1000 ) );
+					act( () => vi.advanceTimersByTime( 10 * 24 * 60 * 60 * 1000 ) );
 				}
 				expect( view.result.current.trailingActions ).toBeUndefined();
 				showChat( true );
@@ -3182,7 +3186,7 @@ describe( 'refusal code', () => {
 			} );
 
 			it( 'offers Continue, which resends the refused question', async () => {
-				const onTryAgain = jest.fn();
+				const onTryAgain = vi.fn();
 				chatMessages = question( { type: 'text', text: 'Make it shorter' } );
 				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
 				const { result } = renderCredits( { onTryAgain } );
@@ -3198,7 +3202,7 @@ describe( 'refusal code', () => {
 			it( 'offers no Continue for a question with images, which is asked again by hand', async () => {
 				chatMessages = question( { type: 'text', text: 'Match this' }, { type: 'component' } );
 				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
-				const { result } = renderCredits( { onTryAgain: jest.fn() } );
+				const { result } = renderCredits( { onTryAgain: vi.fn() } );
 				await flush();
 				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
 				await topUp();
@@ -3317,7 +3321,7 @@ describe( 'refusal code', () => {
 				} );
 				const reset = deferred< unknown >();
 				fetchMock.mockReturnValueOnce( reset.promise );
-				await act( async () => jest.advanceTimersByTime( 1000 ) );
+				await act( async () => vi.advanceTimersByTime( 1000 ) );
 				expect( result.current.trailingActions ).toBeUndefined();
 				expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
 				reset.resolve( response( creditSnapshot( { plan_tier: 'business' } ) ) );
@@ -3418,7 +3422,7 @@ describe( 'credits answer', () => {
 			] );
 			expect( actions?.[ 0 ] ).toMatchObject( { href: props( result.current ).action?.href } );
 
-			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 			act( () => actions?.[ 0 ].onClick?.() );
 			act( () => actions?.[ 1 ].onClick?.() );
 			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
@@ -3595,7 +3599,7 @@ describe( 'credits answer', () => {
 			await flush();
 			expect( result.current.creditsCommand?.state ).toBe( 'stale' );
 
-			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 			act( () => actions[ 0 ].onClick?.() );
 			act( () => actions[ 1 ].onClick?.() );
 			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(

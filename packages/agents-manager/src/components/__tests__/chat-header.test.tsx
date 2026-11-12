@@ -4,11 +4,12 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 
-const mockSetIsMinimized = jest.fn();
+const mockSetIsMinimized = vi.fn();
 let mockIsInternalOnly = false;
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		className,
@@ -28,29 +29,29 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 	DropdownMenu: ( { label }: { label?: string } ) => <button>{ label }</button>,
 } ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+vi.mock( '@wordpress/icons', () => ( {
 	chevronLeft: 'chevronLeft',
 	close: 'close',
 	Icon: () => null,
 	moreVertical: 'moreVertical',
 } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
 } ) );
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { isInternalOnly: mockIsInternalOnly } ),
 } ) );
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
-	recordAgentsManagerTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
+	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
-jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+vi.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
 	default: () => !! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ),
 } ) );
-jest.mock( '../chat-header/style.scss', () => ( {} ) );
+vi.mock( '../chat-header/style.scss', () => ( {} ) );
 
 import ChatHeader from '../chat-header';
 
@@ -64,7 +65,7 @@ function renderChatHeader( title?: string, isDocked = false, onBack?: () => void
 	return render(
 		<MemoryRouter>
 			<ChatHeader
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				options={ [] }
 				title={ title }
 				onBack={ onBack }
@@ -88,7 +89,7 @@ describe( 'ChatHeader', () => {
 		( isDocked ) => {
 			window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
 			installAdminBarTrigger();
-			renderChatHeader( 'History', isDocked, jest.fn() );
+			renderChatHeader( 'History', isDocked, vi.fn() );
 			expect( screen.queryByText( 'Close' ) ).toBeNull();
 			expect( screen.queryByText( 'Minimize' ) ).toBeNull();
 			expect( screen.getByText( 'More Options' ) ).toBeInTheDocument();
@@ -122,7 +123,7 @@ describe( 'ChatHeader', () => {
 	it( 'places the internal-only pill after the back button and title', () => {
 		mockIsInternalOnly = true;
 
-		const { container } = renderChatHeader( 'Chat history', false, jest.fn() );
+		const { container } = renderChatHeader( 'Chat history', false, vi.fn() );
 		const header = container.querySelector( '.agents-manager-chat-header' );
 
 		expect( Array.from( header?.children ?? [] ).map( ( child ) => child.className ) ).toEqual( [
@@ -136,7 +137,7 @@ describe( 'ChatHeader', () => {
 	it( 'exempts its controls, but not the title, from the floating panel drag', () => {
 		installAdminBarTrigger();
 
-		const { container } = renderChatHeader( 'History', false, jest.fn() );
+		const { container } = renderChatHeader( 'History', false, vi.fn() );
 		// agenttic's non-draggable selector for header controls.
 		const isExempt = ( element: Element | null ) =>
 			!! element?.closest( '[data-slot="chat-header"] [data-slot="button"]' );

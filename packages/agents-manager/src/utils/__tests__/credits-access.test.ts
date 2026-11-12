@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	getCreditsBackNotice,
 	getCreditsCtaType,
@@ -10,7 +11,7 @@ import {
 	parseCreditsAccess,
 } from '../credits-access';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, value: unknown ) => format.replace( '%s', String( value ) ),
@@ -246,7 +247,7 @@ describe( 'getCreditsOutNotice', () => {
 describe( 'getCreditsTopUpsNotice', () => {
 	it( 'can be closed, with the purchase action', () => {
 		const action = { label: 'Upgrade', href: UPGRADE_URL };
-		const onDismiss = jest.fn();
+		const onDismiss = vi.fn();
 		expect( getCreditsTopUpsNotice( 25_000, undefined, action, onDismiss ) ).toEqual( {
 			icon: false,
 			message: 'Now using top-ups: 25k left.',

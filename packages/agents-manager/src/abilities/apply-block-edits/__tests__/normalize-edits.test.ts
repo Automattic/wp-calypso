@@ -1,5 +1,6 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockTypes: jest.fn( () =>
+import { vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockTypes: vi.fn( () =>
 		[ 'core/paragraph', 'core/group', 'core/button' ].map( ( name ) => ( { name } ) )
 	),
 } ) );

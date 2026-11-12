@@ -1,17 +1,18 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( { select: jest.fn(), dispatch: jest.fn() } ) );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
 
 import { dispatch, select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { editSiteFields } from '../site-record';
 
-const editEntityRecord = jest.fn();
+const editEntityRecord = vi.fn();
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	( select as jest.Mock ).mockReturnValue( {
+	vi.clearAllMocks();
+	( select as Mock ).mockReturnValue( {
 		getEditedEntityRecord: () => ( { title: 'Old', description: 'Kept' } ),
 	} );
-	( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
+	( dispatch as Mock ).mockReturnValue( { editEntityRecord } );
 } );
 
 it( 'writes the field as a pending edit, out of the undo stack', () => {
@@ -29,7 +30,7 @@ it( 'writes the field as a pending edit, out of the undo stack', () => {
 } );
 
 it( 'refuses to write before the site record has loaded', () => {
-	( select as jest.Mock ).mockReturnValue( { getEditedEntityRecord: () => false } );
+	( select as Mock ).mockReturnValue( { getEditedEntityRecord: () => false } );
 
 	expect( () => editSiteFields( { title: 'New' } ) ).toThrow( 'unavailable' );
 	expect( editEntityRecord ).not.toHaveBeenCalled();

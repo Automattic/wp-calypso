@@ -1,18 +1,19 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( { select: jest.fn(), dispatch: jest.fn() } ) );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
 
 import { dispatch, select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { getSiteMetadata, replaceSiteMetadata, setSiteMetadata } from '../site-metadata';
 
-const editEntityRecord = jest.fn();
-const setProviderMetadata = jest.fn();
+const editEntityRecord = vi.fn();
+const setProviderMetadata = vi.fn();
 
 /**
  * Serves `site` with the given `big_sky_site_metadata`, or nothing at all, and
  * Big Sky's store with `provider`.
  */
 function withSiteRecord( metadata?: unknown, provider: Record< string, unknown > = {} ) {
-	( select as jest.Mock ).mockImplementation( ( storeName: unknown ) => {
+	( select as Mock ).mockImplementation( ( storeName: unknown ) => {
 		if ( storeName === 'ai-assembler' ) {
 			return { getSiteMetadata: () => provider };
 		}
@@ -21,7 +22,7 @@ function withSiteRecord( metadata?: unknown, provider: Record< string, unknown >
 			? { getEditedEntityRecord: () => false }
 			: { getEditedEntityRecord: () => ( { big_sky_site_metadata: metadata } ) };
 	} );
-	( dispatch as jest.Mock ).mockImplementation( ( storeName: unknown ) =>
+	( dispatch as Mock ).mockImplementation( ( storeName: unknown ) =>
 		storeName === 'ai-assembler' ? { setSiteMetadata: setProviderMetadata } : { editEntityRecord }
 	);
 }
@@ -30,7 +31,7 @@ function withSiteRecord( metadata?: unknown, provider: Record< string, unknown >
 const writtenMetadata = () =>
 	JSON.parse( editEntityRecord.mock.calls.at( -1 )[ 3 ].big_sky_site_metadata );
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'getSiteMetadata', () => {
 	it.each( [

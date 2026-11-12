@@ -2,15 +2,19 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { CreditsAnswer } from '../../components/credits-answer';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { buildLiveCreditsStatus } from '../../utils/live-credits';
 import { useCreditsCommand } from '../use-credits-command';
 
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '../../components/credits-answer', () => ( { CreditsAnswer: () => null } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock(
+	'@wordpress/element',
+	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
+);
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '../../components/credits-answer', () => ( { CreditsAnswer: () => null } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string ) => plural || single,
 	sprintf: ( format: string ) => format,
@@ -23,9 +27,9 @@ const answerContent = {
 };
 const reply = { state: 'balance' as const, answer: answerContent };
 const setup = ( overrides: Partial< Parameters< typeof useCreditsCommand >[ 0 ] > = {} ) => {
-	const addMessage = jest.fn();
-	const beforeSubmit = jest.fn( () => false );
-	const clearError = jest.fn();
+	const addMessage = vi.fn();
+	const beforeSubmit = vi.fn( () => false );
+	const clearError = vi.fn();
 	const { result } = renderHook( () =>
 		useCreditsCommand( { reply, beforeSubmit, addMessage, clearError, ...overrides } )
 	);

@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import VariationPicker from '../variation-picker';
 
 // Mock the `Variation` component
-jest.mock( '../variation-picker/variation', () => {
+vi.mock( '../variation-picker/variation', () => {
 	const MockVariation = ( {
 		variation,
 		isDisabled,
@@ -18,10 +19,10 @@ jest.mock( '../variation-picker/variation', () => {
 		</div>
 	);
 	MockVariation.displayName = 'MockVariation';
-	return MockVariation;
+	return { default: MockVariation };
 } );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalVStack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	Button: ( { children, ...props }: { children: React.ReactNode } ) => (
 		<button { ...props }>{ children }</button>
@@ -29,13 +30,13 @@ jest.mock( '@wordpress/components', () => ( {
 	Tooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/icons', () => ( {
 	chevronLeft: 'chevron-left',
 	chevronRight: 'chevron-right',
 } ) );
 
 let mockWidth: number | null = null;
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	useResizeObserver:
 		( callback: ( entries: { contentRect: { width: number } }[] ) => void ) =>
 		( element: Element | null ) => {
@@ -46,7 +47,7 @@ jest.mock( '@wordpress/compose', () => ( {
 } ) );
 
 const defaultProps = {
-	onSelect: jest.fn(),
+	onSelect: vi.fn(),
 };
 
 const mockVariations = [

@@ -1,29 +1,30 @@
-const mockBatch = jest.fn();
+const mockBatch = vi.fn();
 const mockLiveBlocks = [
 	{ clientId: 'a', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
 ];
 
-jest.mock( '@wordpress/data', () => ( { useRegistry: () => ( { batch: mockBatch } ) } ) );
-jest.mock( '../../../utils/canvas-binding', () => ( {
-	blockCurrentRequest: jest.fn(),
-	getBlockingMove: jest.fn( () => null ),
+vi.mock( '@wordpress/data', () => ( { useRegistry: () => ( { batch: mockBatch } ) } ) );
+vi.mock( '../../../utils/canvas-binding', () => ( {
+	blockCurrentRequest: vi.fn(),
+	getBlockingMove: vi.fn( () => null ),
 } ) );
-jest.mock( '../../../utils/checkpoints', () => ( {
+vi.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks' },
-	clearCheckpoint: jest.fn(),
-	hasCheckpoint: jest.fn( () => false ),
-	setCheckpoint: jest.fn(),
+	clearCheckpoint: vi.fn(),
+	hasCheckpoint: vi.fn( () => false ),
+	setCheckpoint: vi.fn(),
 } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	clearBlockSelection: jest.fn(),
-	getRootBlocks: jest.fn( () => mockLiveBlocks ),
-	replaceRootBlocks: jest.fn(),
-	resolveBlocksRoot: jest.fn( () => ( { clientId: 'root' } ) ),
-	stageRootBlocks: jest.fn(),
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	clearBlockSelection: vi.fn(),
+	getRootBlocks: vi.fn( () => mockLiveBlocks ),
+	replaceRootBlocks: vi.fn(),
+	resolveBlocksRoot: vi.fn( () => ( { clientId: 'root' } ) ),
+	stageRootBlocks: vi.fn(),
 } ) );
-jest.mock( '../commit', () => ( { commitStreamedPageDesign: jest.fn( () => true ) } ) );
+vi.mock( '../commit', () => ( { commitStreamedPageDesign: vi.fn( () => true ) } ) );
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { blockCurrentRequest, getBlockingMove } from '../../../utils/canvas-binding';
 import { clearCheckpoint, hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import {
@@ -40,19 +41,19 @@ const blocks = [ { clientId: 'b', name: 'core/heading', attributes: {}, innerBlo
 
 const host = () => renderHook( () => useEditorHost() ).result.current;
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 it( 'resolves the root the stream writes into', () => {
 	expect( host().resolveRoot() ).toBe( 'root' );
 
-	( resolveBlocksRoot as jest.Mock ).mockReturnValueOnce( null );
+	( resolveBlocksRoot as Mock ).mockReturnValueOnce( null );
 
 	expect( host().resolveRoot() ).toBeNull();
 } );
 
 // The callback's canvas guard runs after the frames; the host refuses first.
 it( 'refuses a root once the canvas moved, and latches the block', () => {
-	( getBlockingMove as jest.Mock ).mockReturnValueOnce( { from: 'About', to: 'Contact' } );
+	( getBlockingMove as Mock ).mockReturnValueOnce( { from: 'About', to: 'Contact' } );
 
 	expect( host().resolveRoot() ).toBeNull();
 	expect( blockCurrentRequest ).toHaveBeenCalled();
@@ -69,7 +70,7 @@ it( 'checkpoints the page once per tool call', () => {
 	const editorHost = host();
 
 	editorHost.captureCheckpoint( 'call-1', 'root' );
-	( hasCheckpoint as jest.Mock ).mockReturnValueOnce( true );
+	( hasCheckpoint as Mock ).mockReturnValueOnce( true );
 	editorHost.captureCheckpoint( 'call-1', 'root' );
 
 	expect( setCheckpoint ).toHaveBeenCalledTimes( 1 );
@@ -92,7 +93,7 @@ it( 'commits once against a copy of the page as it was, through adapters bound t
 	expect( commitStreamedPageDesign ).toHaveBeenCalledTimes( 1 );
 	expect( clearCheckpoint ).not.toHaveBeenCalled();
 
-	const [ adapters, before ] = ( commitStreamedPageDesign as jest.Mock ).mock.calls[ 0 ];
+	const [ adapters, before ] = ( commitStreamedPageDesign as Mock ).mock.calls[ 0 ];
 
 	expect( before ).toEqual( mockLiveBlocks );
 	expect( before ).not.toBe( mockLiveBlocks );
@@ -110,7 +111,7 @@ it( 'commits once against a copy of the page as it was, through adapters bound t
 
 // An undo that does nothing is never offered.
 it( 'drops the checkpoint of a stream that left the page as it was', () => {
-	( commitStreamedPageDesign as jest.Mock ).mockReturnValueOnce( false );
+	( commitStreamedPageDesign as Mock ).mockReturnValueOnce( false );
 	const editorHost = host();
 
 	editorHost.captureCheckpoint( 'call-1', 'root' );

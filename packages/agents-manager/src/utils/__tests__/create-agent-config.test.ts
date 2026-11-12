@@ -2,16 +2,17 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-jest.mock( '../../auth/calypso-auth-provider', () => ( {
-	createCalypsoAuthProvider: jest.fn( () => ( { type: 'auth-provider' } ) ),
+import { type Mock, vi } from 'vitest';
+vi.mock( '../../auth/calypso-auth-provider', () => ( {
+	createCalypsoAuthProvider: vi.fn( () => ( { type: 'auth-provider' } ) ),
 } ) );
 
-jest.mock( '../can-connect-to-zendesk', () => ( {
-	canConnectToZendesk: jest.fn( () => Promise.resolve( false ) ),
+vi.mock( '../can-connect-to-zendesk', () => ( {
+	canConnectToZendesk: vi.fn( () => Promise.resolve( false ) ),
 } ) );
 
-jest.mock( '../turn-id', () => ( {
-	getTurnId: jest.fn( () => '' ),
+vi.mock( '../turn-id', () => ( {
+	getTurnId: vi.fn( () => '' ),
 } ) );
 
 import { DOLLY_AGENT_ID } from '../../constants';
@@ -24,9 +25,9 @@ import { getSessionId } from '../agent-session';
 import { getTurnId } from '../turn-id';
 import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
-const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
-const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
-const mockGetTurnId = getTurnId as jest.Mock;
+const mockCanConnectToZendesk = canConnectToZendesk as Mock;
+const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as Mock;
+const mockGetTurnId = getTurnId as Mock;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =

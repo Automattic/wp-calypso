@@ -1,12 +1,15 @@
-jest.mock( '../../../utils/block-ids', () => ( {
-	resolveClientId: jest.fn( ( id: string ) => `resolved-${ id }` ),
+import { vi } from 'vitest';
+vi.mock( '../../../utils/block-ids', () => ( {
+	resolveClientId: vi.fn( ( id: string ) => `resolved-${ id }` ),
 } ) );
 // Only the capture itself is stubbed. `describeCaptureShape` is a pure
 // function of the files that came back, so the real sentences are under test
 // rather than a second copy of them written into a mock.
-jest.mock( '../../../utils/canvas-capture', () => ( {
-	...jest.requireActual( '../../../utils/canvas-capture' ),
-	captureCanvas: jest.fn(),
+vi.mock( '../../../utils/canvas-capture', async () => ( {
+	...( await vi.importActual< typeof import( '../../../utils/canvas-capture' ) >(
+		'../../../utils/canvas-capture'
+	) ),
+	captureCanvas: vi.fn(),
 } ) );
 
 import { captureCanvas } from '../../../utils/canvas-capture';
@@ -19,13 +22,13 @@ const filePart = ( metadata?: Record< string, unknown > ) => ( {
 } );
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	jest.mocked( captureCanvas ).mockResolvedValue( [ filePart() ] );
+	vi.clearAllMocks();
+	vi.mocked( captureCanvas ).mockResolvedValue( [ filePart() ] );
 } );
 
 describe( 'captureCanvasCallback', () => {
 	it( 'frames the capture on the resolved blocks and sends the image beside the result', async () => {
-		jest.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 2 } ) ] );
+		vi.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 2 } ) ] );
 
 		const result = await captureCanvasCallback( { clientIds: [ 'a1', 7, 'b2' ] } );
 
@@ -43,14 +46,10 @@ describe( 'captureCanvasCallback', () => {
 	// Placeholders are still described as such when no fetch succeeded, so a
 	// grey box is never read as a real, empty image.
 	it( 'says the framed blocks show their real images only when some were inlined', async () => {
-		jest
-			.mocked( captureCanvas )
-			.mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 1 } ) ] );
+		vi.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 1 } ) ] );
 		const inlined = await captureCanvasCallback( { clientIds: [ 'a1' ] } );
 
-		jest
-			.mocked( captureCanvas )
-			.mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 0 } ) ] );
+		vi.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 0 } ) ] );
 		const placeholders = await captureCanvasCallback( { clientIds: [ 'a1' ] } );
 
 		expect( inlined.result.message ).toContain( 'shown as they really are' );
@@ -70,7 +69,7 @@ describe( 'captureCanvasCallback', () => {
 
 	// The rasterizer says what it framed; a block with no box on the canvas frames nothing.
 	it( 'describes the visible area when none of the named blocks was framed', async () => {
-		jest.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 0 } ) ] );
+		vi.mocked( captureCanvas ).mockResolvedValue( [ filePart( { framed: 0 } ) ] );
 
 		const { result } = await captureCanvasCallback( { clientIds: [ 'gone' ] } );
 
@@ -79,7 +78,7 @@ describe( 'captureCanvasCallback', () => {
 
 	// The picture that exists is described, not the one that was asked for.
 	it( 'describes the whole page when the capture covered it, and only then', async () => {
-		jest.mocked( captureCanvas ).mockResolvedValue( [ filePart( { fullPage: true } ) ] );
+		vi.mocked( captureCanvas ).mockResolvedValue( [ filePart( { fullPage: true } ) ] );
 
 		const { result } = await captureCanvasCallback( { fullPage: 'yes' } );
 
@@ -90,7 +89,7 @@ describe( 'captureCanvasCallback', () => {
 	it.each( [ null, [] ] )(
 		'fails without an image (%p), so the agent does not assume one',
 		async ( parts ) => {
-			jest.mocked( captureCanvas ).mockResolvedValue( parts );
+			vi.mocked( captureCanvas ).mockResolvedValue( parts );
 
 			const result = await captureCanvasCallback( { fullPage: true } );
 

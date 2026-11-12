@@ -3,26 +3,23 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import type { MouseEventHandler, ReactNode } from 'react';
 import type { ZendeskConversation } from '../../types';
 
-const mockGetTabSessionId = jest.fn();
-const mockLoadAllMessagesFromServer = jest.fn();
-const mockNavigate = jest.fn();
-const mockUseGetZendeskConversations = jest.fn();
+const mockGetTabSessionId = vi.fn();
+const mockLoadAllMessagesFromServer = vi.fn();
+const mockNavigate = vi.fn();
+const mockUseGetZendeskConversations = vi.fn();
 let mockZendeskSmoochIntegrationKey: string | undefined = 'woo';
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
-		isOdieBotId: () => false,
-		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-client', () => ( {
+	createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
+	isOdieBotId: () => false,
+	loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
+} ) );
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	SummaryButton: ( {
 		title,
 		description,
@@ -42,17 +39,17 @@ jest.mock( '@automattic/components', () => ( {
 	TimeSince: ( { date }: { date: string } ) => <time dateTime={ date }>2h ago</time>,
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useGetZendeskConversations: ( enabled: boolean ) => mockUseGetZendeskConversations( enabled ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( {
 		agentConfig: {
 			agentId: 'woo-workflow-orchestrator',
@@ -82,7 +79,7 @@ function createConversation(
 
 describe( 'EscalationButton', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		setLoadedProviderIds( [ 'woocommerce-ai' ] );
 		mockZendeskSmoochIntegrationKey = 'woo';
 		mockGetTabSessionId.mockReturnValue( 'ai-chat-123' );

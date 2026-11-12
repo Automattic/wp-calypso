@@ -1,19 +1,20 @@
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	AgentsManager: {
-		register: jest.fn( () => 'automattic/agents-manager' ),
+		register: vi.fn( () => 'automattic/agents-manager' ),
 	},
 } ) );
 
-jest.mock( '../utils/is-reader-chat-agent', () => ( {
-	isReaderChatHost: jest.fn(),
+vi.mock( '../utils/is-reader-chat-agent', () => ( {
+	isReaderChatHost: vi.fn(),
 } ) );
 
 import { AgentsManager } from '@automattic/data-stores';
+import { type MockedFunction, vi } from 'vitest';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import '../stores';
 
-const mockRegister = AgentsManager.register as jest.MockedFunction< typeof AgentsManager.register >;
-const mockIsReaderChatHost = isReaderChatHost as jest.MockedFunction< typeof isReaderChatHost >;
+const mockRegister = AgentsManager.register as MockedFunction< typeof AgentsManager.register >;
+const mockIsReaderChatHost = isReaderChatHost as MockedFunction< typeof isReaderChatHost >;
 
 describe( 'Agents Manager store', () => {
 	it( 'uses persisted state only for non-Reader Chat hosts', () => {

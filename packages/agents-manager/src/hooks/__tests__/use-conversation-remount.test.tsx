@@ -2,21 +2,17 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-const mockIsTurnInFlight = jest.fn( () => false );
-const mockLoadAllMessagesFromServer = jest.fn();
+const mockIsTurnInFlight = vi.fn( () => false );
+const mockLoadAllMessagesFromServer = vi.fn();
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ),
-		isOdieBotId: () => false,
-		createOdieBotId: ( agentId: string ) => agentId,
-		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-client', () => ( {
+	getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ),
+	isOdieBotId: () => false,
+	createOdieBotId: ( agentId: string ) => agentId,
+	loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
+} ) );
 
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( {
 		agentConfig: {
 			agentId: 'wp-orchestrator',
@@ -28,6 +24,7 @@ jest.mock( '../../contexts', () => ( {
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import useConversation from '../use-conversation';
 import type { ReactNode } from 'react';
 
@@ -61,7 +58,7 @@ describe( 'useConversation across mounts', () => {
 			);
 			const inherited = deferredLoad();
 			const own = deferredLoad();
-			const onSuccess = jest.fn();
+			const onSuccess = vi.fn();
 
 			mockLoadAllMessagesFromServer
 				.mockReturnValueOnce( inherited.promise )
