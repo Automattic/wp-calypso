@@ -1010,6 +1010,7 @@ export interface ImageStudioSelectors {
 	getImageStudioOriginalImageUrl: ( state: ImageStudioState ) => string | null;
 	getImageStudioCurrentImageUrl: ( state: ImageStudioState ) => string | null;
 	getImageStudioAiProcessing: ( state: ImageStudioState ) => boolean;
+	getIsImageStudioAiProcessingSource: ( state: ImageStudioState, source: string ) => boolean;
 	getIsAnnotationMode: ( state: ImageStudioState ) => boolean;
 	getImageStudioTransitioning: ( state: ImageStudioState ) => boolean;
 	getAnnotationCanvasRef: ( state: ImageStudioState ) => AnnotationCanvasRef | null;
@@ -1067,6 +1068,10 @@ const selectors = {
 
 	getImageStudioAiProcessing( state: ImageStudioState ): boolean {
 		return state.imageStudioAiProcessing;
+	},
+
+	getIsImageStudioAiProcessingSource( state: ImageStudioState, source: string ): boolean {
+		return !! state.imageStudioAiProcessingSources[ source ];
 	},
 
 	getIsAnnotationMode( state: ImageStudioState ): boolean {

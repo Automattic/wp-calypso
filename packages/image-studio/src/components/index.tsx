@@ -100,6 +100,14 @@ function ImageStudioAgentChat( {
 		return select( imageStudioStore ).getIsAnnotationSaving();
 	}, [] );
 
+	const isAiProcessing = useSelect( ( select ) => {
+		return select( imageStudioStore ).getImageStudioAiProcessing();
+	}, [] );
+
+	const isTransforming = useSelect( ( select ) => {
+		return select( imageStudioStore ).getIsImageStudioAiProcessingSource( 'transform' );
+	}, [] );
+
 	const entryPoint = useSelect( ( select ) => {
 		return select( imageStudioStore ).getEntryPoint();
 	}, [] );
@@ -189,14 +197,15 @@ function ImageStudioAgentChat( {
 	useImageStudioErrorTracking( agentError, mode, attachmentId );
 	useErrorNotice( agentError, addNotice, mode );
 
-	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
+	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving || isAiProcessing;
 
 	const progressPhase = ( agentChatProps as unknown as { progressPhase?: string } ).progressPhase;
 	const isFinalizingPhase = progressPhase === 'uploading';
 	const isVideoGeneratingPhase = progressPhase === 'generating-video';
 
 	// Stop is meaningless once the video job is in flight server-side; only the SSE stream would abort.
-	const isStopDisabled = isFinalizingPhase || isAnnotationSaving || isVideoGeneratingPhase;
+	const isStopDisabled =
+		isFinalizingPhase || isAnnotationSaving || isTransforming || isVideoGeneratingPhase;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">

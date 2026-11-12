@@ -992,6 +992,16 @@ describe( 'Image Studio Store', () => {
 			expect( selectors.getImageStudioAiProcessing( state ) ).toBe( true );
 		} );
 
+		it( 'getIsImageStudioAiProcessingSource', () => {
+			const state: ImageStudioState = {
+				...getInitialState(),
+				imageStudioAiProcessing: true,
+				imageStudioAiProcessingSources: { transform: true },
+			};
+			expect( selectors.getIsImageStudioAiProcessingSource( state, 'transform' ) ).toBe( true );
+			expect( selectors.getIsImageStudioAiProcessingSource( state, 'agent' ) ).toBe( false );
+		} );
+
 		it( 'getIsAnnotationMode', () => {
 			const state: ImageStudioState = { ...getInitialState(), isAnnotationMode: true };
 			expect( selectors.getIsAnnotationMode( state ) ).toBe( true );
