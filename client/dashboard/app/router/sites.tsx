@@ -162,7 +162,7 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		// The site shows that it is being set up until its owner can manage it.
+		// While the site turns Atomic, its owner keeps its pages: their capabilities come back with it.
 		if ( ! canManageSite( site ) && ! ( await isOwnerAwaitingAtomicTransfer( site ) ) ) {
 			throw notFound();
 		}

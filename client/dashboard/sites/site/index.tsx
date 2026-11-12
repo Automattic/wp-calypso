@@ -14,7 +14,6 @@ import {
 import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite } from '../features';
 import SiteLaunchCelebrationModal from '../site-launch-modal/celebration-modal';
-import SiteBeingSetUp from './site-being-set-up';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
@@ -27,18 +26,16 @@ function Site() {
 		...siteLatestAtomicTransferQuery( site.ID ),
 		enabled: mayBeTransferring,
 	} );
+	// While the site turns Atomic, its owner keeps its pages: their capabilities come back with it.
+	const isAwaitingTransfer =
+		mayBeTransferring &&
+		( isTransferPending || isAwaitingAtomicTransfer( site, user.ID, transfer ) );
 
 	if ( isError ) {
 		throw error;
 	}
 
-	if ( ! canManage ) {
-		if ( mayBeTransferring && isTransferPending ) {
-			return null;
-		}
-		if ( isAwaitingAtomicTransfer( site, user.ID, transfer ) ) {
-			return <SiteBeingSetUp siteSlug={ siteSlug } />;
-		}
+	if ( ! canManage && ! isAwaitingTransfer ) {
 		throw notFound();
 	}
 
