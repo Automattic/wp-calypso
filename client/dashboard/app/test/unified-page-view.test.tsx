@@ -117,7 +117,7 @@ describe( 'Unified admin page views', () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( [
+	test.each( [
 		{ app: 'msd', basePath: '/dashboard' },
 		{ app: 'a4a', basePath: '' },
 	] as const )( 'records an initial view for $app', async ( { app, basePath } ) => {
@@ -136,7 +136,7 @@ describe( 'Unified admin page views', () => {
 		} );
 	} );
 
-	it( 'counts pathname changes', async () => {
+	test( 'counts pathname changes', async () => {
 		const { router, navigate, recordedPaths } = await renderTracker();
 		const paths = [
 			'/sites/first.example',
@@ -155,7 +155,7 @@ describe( 'Unified admin page views', () => {
 		expect( recordTracksPageViewWithPageParams ).toHaveBeenCalledTimes( 3 );
 	} );
 
-	it.each( [ '/sites/pending.example', '/sites' ] )(
+	test.each( [ '/sites/pending.example', '/sites' ] )(
 		'records only the completed destination %s',
 		async ( destination ) => {
 			const { router, navigate, pendingLoad, recordedPaths } = await renderTracker();
@@ -176,7 +176,7 @@ describe( 'Unified admin page views', () => {
 		}
 	);
 
-	it.each( [ '/beforeLoad-redirect', '/loader-redirect' ] )(
+	test.each( [ '/beforeLoad-redirect', '/loader-redirect' ] )(
 		'counts only the destination of %s',
 		async ( initialPath ) => {
 			const { navigate, recordedPaths } = await renderTracker( 'msd', initialPath );
@@ -192,7 +192,7 @@ describe( 'Unified admin page views', () => {
 		}
 	);
 
-	it( 'does not track apps without unified tracking enabled', async () => {
+	test( 'does not track apps without unified tracking enabled', async () => {
 		const { recordTracksEvent } = await renderTracker( null );
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();

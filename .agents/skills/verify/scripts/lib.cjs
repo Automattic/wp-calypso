@@ -1,7 +1,7 @@
 const fs = require( 'node:fs' );
+const { createRequire } = require( 'node:module' );
 const os = require( 'node:os' );
 const path = require( 'node:path' );
-const { createRequire } = require( 'node:module' );
 
 const REPO_ROOT = path.resolve( __dirname, '../../../..' );
 const e2eRequire = createRequire( path.join( REPO_ROOT, 'test/e2e/package.json' ) );
@@ -47,8 +47,6 @@ async function launchBrowser( options ) {
 }
 
 /**
- * Saves the context's cookies so later runs can reuse the session.
- *
  * Locally, the app reaches the API through a public-api.wordpress.com iframe embedded in
  * a *.localhost page. That's a cross-site context, so Chromium withholds the session
  * cookies, which wordpress.com sets as SameSite=Lax, and the app bounces to the login page.
@@ -62,7 +60,10 @@ async function saveState( context, account ) {
 		}
 	}
 	fs.mkdirSync( STATE_DIR, { recursive: true, mode: 0o700 } );
-	fs.writeFileSync( statePath( account ), JSON.stringify( state ), { mode: 0o600 } );
+	// Renamed into place, so a run reading the file at the same moment never sees it half-written.
+	const temporaryPath = `${ statePath( account ) }.${ process.pid }.tmp`;
+	fs.writeFileSync( temporaryPath, JSON.stringify( state ), { mode: 0o600 } );
+	fs.renameSync( temporaryPath, statePath( account ) );
 }
 
 function e2eSetupError( reason ) {
@@ -76,15 +77,10 @@ function e2eSetupError( reason ) {
 	);
 }
 
-/**
- * Logs in an E2E test account using the credentials in the decrypted E2E secrets.
- */
 async function logInTestAccount( account ) {
 	// Logging in on calypso.localhost can't set the wordpress.com session cookie (it would
 	// be a cross-site cookie), so log in on wordpress.com itself.
 	process.env.CALYPSO_BASE_URL = 'https://wordpress.com';
-	process.env.COOKIES_PATH = path.join( STATE_DIR, 'e2e-cookies' );
-	fs.mkdirSync( process.env.COOKIES_PATH, { recursive: true, mode: 0o700 } );
 
 	let TestAccount;
 	try {
@@ -109,16 +105,21 @@ async function logInTestAccount( account ) {
 	try {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		await testAccount.authenticate( page );
+		// The same steps as TestAccount.authenticate() on a first login, without its login lock:
+		// a killed login leaves that lock behind, and every later login waits on it forever.
+		// logInViaLoginPage() also returns when the password is rejected, so wait to leave the
+		// login page, as its confirmLoggedIn() does, before saving the session.
+		await testAccount.logInViaLoginPage( page );
+		await page.waitForURL( ( url ) => ! isLoginUrl( url.toString() ), {
+			waitUntil: 'commit',
+			timeout: 60 * 1000,
+		} );
 		await saveState( context, account );
 	} finally {
 		await browser.close();
 	}
 }
 
-/**
- * Returns the slug of a test account's site, e.g. `example.wordpress.com`.
- */
 function testAccountSite( account ) {
 	try {
 		const { DataHelper } = e2eRequire( '@automattic/calypso-e2e' );
@@ -128,9 +129,6 @@ function testAccountSite( account ) {
 	}
 }
 
-/**
- * Opens a visible browser window and waits for the user to log in to WordPress.com.
- */
 async function logInOwnAccount( { timeoutMs = 10 * 60 * 1000 } = {} ) {
 	const browser = await launchBrowser( {
 		headless: false,

@@ -8,6 +8,7 @@ import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-lib
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useEffect } from 'react';
+import { vi } from 'vitest';
 import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -182,7 +183,7 @@ describe( 'SearchNotice', () => {
 				} )
 			);
 
-			const onMakePrimaryAddressClick = jest.fn();
+			const onMakePrimaryAddressClick = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -321,7 +322,7 @@ describe( 'SearchNotice', () => {
 					} ),
 				} );
 
-				const onMoveDomainToSiteClick = jest.fn();
+				const onMoveDomainToSiteClick = vi.fn();
 
 				render(
 					<TestDomainSearchWithSuggestions
@@ -375,7 +376,7 @@ describe( 'SearchNotice', () => {
 					} ),
 				} );
 
-				const onMoveDomainToSiteClick = jest.fn();
+				const onMoveDomainToSiteClick = vi.fn();
 
 				render(
 					<TestDomainSearchWithSuggestions
@@ -485,7 +486,7 @@ describe( 'SearchNotice', () => {
 				} ),
 			} );
 
-			const onMoveDomainToSiteClick = jest.fn();
+			const onMoveDomainToSiteClick = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -622,7 +623,7 @@ describe( 'SearchNotice', () => {
 				} )
 			);
 
-			const onRegisterDomainClick = jest.fn();
+			const onRegisterDomainClick = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -664,7 +665,7 @@ describe( 'SearchNotice', () => {
 				} )
 			);
 
-			const onCheckTransferStatusClick = jest.fn();
+			const onCheckTransferStatusClick = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -781,8 +782,8 @@ describe( 'SearchNotice', () => {
 			} );
 
 			it( 'renders an info notice with a specific maintenance end time if there is a maintenance end time', async () => {
-				jest.useFakeTimers();
-				jest.setSystemTime( new Date( '2025-01-01' ) );
+				vi.useFakeTimers();
+				vi.setSystemTime( new Date( '2025-01-01' ) );
 
 				mockNoSuggestionsAndAvailability(
 					'test-maintenance.com',
@@ -808,7 +809,7 @@ describe( 'SearchNotice', () => {
 
 				expect( notice ).toBeInTheDocument();
 
-				jest.useRealTimers();
+				vi.useRealTimers();
 			} );
 		} );
 
@@ -839,8 +840,8 @@ describe( 'SearchNotice', () => {
 			} );
 
 			it( 'renders an info notice with a specific end time if there is a maintenance end time', async () => {
-				jest.useFakeTimers();
-				jest.setSystemTime( new Date( '2025-01-01' ) );
+				vi.useFakeTimers();
+				vi.setSystemTime( new Date( '2025-01-01' ) );
 
 				mockNoSuggestionsAndAvailability(
 					'test-purchases-disabled.com',
@@ -866,7 +867,7 @@ describe( 'SearchNotice', () => {
 
 				expect( notice ).toBeInTheDocument();
 
-				jest.useRealTimers();
+				vi.useRealTimers();
 			} );
 		} );
 
@@ -1019,7 +1020,7 @@ describe( 'SearchNotice', () => {
 					} ),
 				} );
 
-				const onMapDomainClick = jest.fn();
+				const onMapDomainClick = vi.fn();
 
 				render(
 					<TestDomainSearchWithSuggestions
@@ -1529,8 +1530,8 @@ describe( 'SearchNotice', () => {
 			'skips the domain step when status is $status and mappable is $mappable',
 			async ( { status, mappable } ) => {
 				const query = `taken-${ status }-${ mappable }.com`;
-				const onSkip = jest.fn();
-				const onSearchNoticeSkipClick = jest.fn();
+				const onSkip = vi.fn();
+				const onSearchNoticeSkipClick = vi.fn();
 
 				mockNoSuggestionsAndAvailability(
 					query,
@@ -1562,7 +1563,7 @@ describe( 'SearchNotice', () => {
 			{
 				name: 'the search is not skippable',
 				config: { skippable: false },
-				events: { onSearchNoticeSkipClick: jest.fn() },
+				events: { onSearchNoticeSkipClick: vi.fn() },
 			},
 		] )( 'keeps the original message when $name', async ( { config, events } ) => {
 			mockNoSuggestionsAndAvailability(
@@ -1615,7 +1616,7 @@ describe( 'SearchNotice', () => {
 				<TestDomainSearchWithSuggestions
 					query={ query }
 					config={ { skippable: true } }
-					events={ { onSearchNoticeSkipClick: jest.fn() } }
+					events={ { onSearchNoticeSkipClick: vi.fn() } }
 				>
 					<SearchNotice />
 				</TestDomainSearchWithSuggestions>
@@ -1745,14 +1746,14 @@ describe( 'SearchNotice', () => {
 
 		it( 'tracks the move and closes the dialog once it succeeds', async () => {
 			const user = userEvent.setup();
-			const onAddDomainToCart = jest.fn();
-			const onSuggestionInteract = jest.fn();
+			const onAddDomainToCart = vi.fn();
+			const onSuggestionInteract = vi.fn();
 			mockMovableConnectedDomain();
 
 			render(
 				<TestDomainSearchWithCustomCart
 					query={ DOMAIN }
-					cart={ buildCart( { onAddItem: jest.fn().mockResolvedValue( undefined ) } ) }
+					cart={ buildCart( { onAddItem: vi.fn().mockResolvedValue( undefined ) } ) }
 					events={ { onAddDomainToCart, onSuggestionInteract } }
 				>
 					<SearchNotice />
@@ -1840,7 +1841,7 @@ describe( 'SearchNotice', () => {
 
 		it( 'moves the domain only after the user confirms', async () => {
 			const user = userEvent.setup();
-			const onAddItem = jest.fn().mockResolvedValue( undefined );
+			const onAddItem = vi.fn().mockResolvedValue( undefined );
 			mockMovableConnectedDomain();
 
 			render(
@@ -1889,7 +1890,7 @@ describe( 'SearchNotice', () => {
 
 		it( 'does not move the domain when the user cancels', async () => {
 			const user = userEvent.setup();
-			const onAddItem = jest.fn();
+			const onAddItem = vi.fn();
 			mockMovableConnectedDomain();
 
 			render(
@@ -1941,7 +1942,7 @@ describe( 'SearchNotice', () => {
 
 		it( 'shows the error in the dialog when the move fails', async () => {
 			const user = userEvent.setup();
-			const onAddItem = jest.fn().mockRejectedValue( new Error( 'Something went wrong' ) );
+			const onAddItem = vi.fn().mockRejectedValue( new Error( 'Something went wrong' ) );
 			mockMovableConnectedDomain();
 
 			render(

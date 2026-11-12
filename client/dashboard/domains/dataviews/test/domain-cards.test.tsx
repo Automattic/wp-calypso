@@ -83,10 +83,7 @@ describe( '<DomainCardsLayout>', () => {
 	} );
 
 	test( 'names the card after its domain and ties its actions to it', async () => {
-		renderCards( [
-			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
-			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
-		] );
+		renderCards( [ { id: 'manage-domain', label: () => 'Settings', callback: jest.fn() } ] );
 
 		const card = await screen.findByRole( 'group', { name: 'example.com' } );
 
@@ -112,7 +109,7 @@ describe( '<DomainCardsLayout>', () => {
 	test( 'adds "Change primary" to the footer when the domain can use it', async () => {
 		const changePrimary = jest.fn();
 		renderCards( [
-			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'manage-domain', label: () => 'Settings', callback: jest.fn() },
 			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
 			{
 				id: 'change-primary-domain',
@@ -136,15 +133,15 @@ describe( '<DomainCardsLayout>', () => {
 		const dns = jest.fn();
 		renderCards( [
 			{ id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() },
-			{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: settings },
+			{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: settings },
 			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: dns },
-			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
 			{ id: 'ineligible', label: 'Ineligible', callback: jest.fn(), isEligible: () => false },
 		] );
 		const user = userEvent.setup();
 
 		const settingsButton = await screen.findByRole( 'button', { name: 'Settings' } );
 		expect( getFooterLabels() ).toEqual( [ 'Settings', 'DNS' ] );
+		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 
 		await user.click( settingsButton );
 		await user.click( screen.getByRole( 'button', { name: 'DNS' } ) );
@@ -158,7 +155,7 @@ describe( '<DomainCardsLayout>', () => {
 		renderCards(
 			[
 				{ id: 'renew', isPrimary: true, label: 'Renew', callback: renew },
-				{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: jest.fn() },
+				{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: jest.fn() },
 				{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
 			],
 			[ expiredDomain ]
@@ -175,7 +172,7 @@ describe( '<DomainCardsLayout>', () => {
 
 	test( 'leaves DNS out of the footer when the domain is not eligible for it', async () => {
 		renderCards( [
-			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'manage-domain', label: () => 'Settings', callback: jest.fn() },
 			{
 				id: 'manage-dns-settings',
 				label: 'Manage DNS',
@@ -207,7 +204,7 @@ describe( '<DomainCardsLayout>', () => {
 		renderCards( [
 			{
 				id: 'manage-domain',
-				label: () => 'View settings',
+				label: () => 'Settings',
 				callback: () => {
 					throw new Error( 'Action failed' );
 				},
@@ -232,19 +229,6 @@ describe( '<DomainCardsLayout>', () => {
 			'title',
 			'example.com'
 		);
-	} );
-
-	test( 'offers Settings and no actions menu, whatever other actions the domain has', async () => {
-		renderCards( [
-			{ id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() },
-			{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: jest.fn() },
-			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
-			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
-		] );
-
-		expect( await screen.findByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
-		expect( getFooterLabels() ).toEqual( [ 'Settings', 'DNS' ] );
-		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the empty state when there are no domains', async () => {

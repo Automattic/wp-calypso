@@ -224,6 +224,13 @@ export default defineConfig( [
 		},
 	},
 	{
+		name: 'calypso/dashboard/tests',
+		files: [ '**/*.test.ts', '**/*.test.tsx' ],
+		rules: {
+			'jest/consistent-test-it': [ 'error', { fn: 'test', withinDescribe: 'test' } ],
+		},
+	},
+	{
 		name: 'calypso/dashboard/tsx-only-for-jsx',
 		files: [ '**/*.ts', '**/*.tsx' ],
 		// Code blocks in Markdown docs are linted as virtual `.tsx` files.

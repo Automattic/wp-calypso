@@ -33,7 +33,7 @@ function renderStatsAdminUrl( testSite: StatsAdminUrlSite, statsPath?: string ) 
 }
 
 describe( 'useStatsAdminUrl', () => {
-	it( 'opens the Premium Analytics dashboard when the site has it switched on', async () => {
+	test( 'opens the Premium Analytics dashboard when the site has it switched on', async () => {
 		mockPremiumAnalyticsEnabled( true );
 
 		const { result } = renderStatsAdminUrl( site );
@@ -45,18 +45,20 @@ describe( 'useStatsAdminUrl', () => {
 		);
 	} );
 
-	it( 'opens the given Stats path when the site has it switched off', async () => {
+	test( 'opens the given Stats path when the site has it switched off', async () => {
 		const scope = mockPremiumAnalyticsEnabled( false );
 
 		const { result } = renderStatsAdminUrl( site, 'admin.php?page=stats#!/stats/month/1' );
 
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		expect( result.current ).toBe(
-			'https://example.com/wp-admin/admin.php?page=stats#!/stats/month/1'
+		await waitFor( () =>
+			expect( result.current ).toBe(
+				'https://example.com/wp-admin/admin.php?page=stats#!/stats/month/1'
+			)
 		);
+		expect( scope.isDone() ).toBe( true );
 	} );
 
-	it( 'does not ask a site whose settings the user cannot read', () => {
+	test( 'does not ask a site whose settings the user cannot read', () => {
 		const { result, queryClient } = renderStatsAdminUrl( {
 			...site,
 			capabilities: { manage_options: false },
@@ -66,7 +68,7 @@ describe( 'useStatsAdminUrl', () => {
 		expect( result.current ).toBe( 'https://example.com/wp-admin/admin.php?page=stats' );
 	} );
 
-	it( 'gives no link while the site has not answered, so an early click cannot open classic Stats', () => {
+	test( 'gives no link while the site has not answered, so an early click cannot open classic Stats', () => {
 		mockPremiumAnalyticsEnabled( true );
 
 		const { result } = renderStatsAdminUrl( site );
@@ -74,7 +76,7 @@ describe( 'useStatsAdminUrl', () => {
 		expect( result.current ).toBeUndefined();
 	} );
 
-	it( 'adds the slash an admin URL without a trailing one is missing', async () => {
+	test( 'adds the slash an admin URL without a trailing one is missing', async () => {
 		mockPremiumAnalyticsEnabled( false );
 
 		const { result } = renderStatsAdminUrl( {

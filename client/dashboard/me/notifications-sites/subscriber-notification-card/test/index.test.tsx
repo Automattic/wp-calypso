@@ -29,34 +29,34 @@ describe( 'SubscriberNotificationCard', () => {
 		} );
 	} );
 
-	it( 'defaults to on when the account has no saved preference', () => {
+	test( 'defaults to on when the account has no saved preference', () => {
 		setup();
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked();
 	} );
 
-	it( 'leaves unset preferences off when the default rollout is disabled', () => {
+	test( 'leaves unset preferences off when the default rollout is disabled', () => {
 		jest.mocked( isEnabled ).mockReturnValue( false );
 		setup();
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).not.toBeChecked();
 	} );
 
-	it( 'preserves saved opt-ins when the default rollout is disabled', () => {
+	test( 'preserves saved opt-ins when the default rollout is disabled', () => {
 		jest.mocked( isEnabled ).mockReturnValue( false );
 		setup( true );
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked();
 	} );
 
-	it( 'preserves saved opt-outs when the default rollout is enabled', () => {
+	test( 'preserves saved opt-outs when the default rollout is enabled', () => {
 		setup( false );
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).not.toBeChecked();
 	} );
 
-	it( 'reflects the shared account preference', () => {
+	test( 'reflects the shared account preference', () => {
 		setup( true );
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked();
 	} );
 
-	it( 'saves the shared boolean only after a successful request', async () => {
+	test( 'saves the shared boolean only after a successful request', async () => {
 		const { user, recordTracksEvent } = setup( false );
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences', { calypso_preferences: { [ key ]: true } } )
@@ -72,7 +72,7 @@ describe( 'SubscriberNotificationCard', () => {
 		);
 	} );
 
-	it( 'saves and tracks an explicit opt-out from the new default', async () => {
+	test( 'saves and tracks an explicit opt-out from the new default', async () => {
 		const { user, recordTracksEvent } = setup();
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences', { calypso_preferences: { [ key ]: false } } )
@@ -88,7 +88,7 @@ describe( 'SubscriberNotificationCard', () => {
 		);
 	} );
 
-	it( 'stays off and disabled while loading and when the preference request fails', async () => {
+	test( 'stays off and disabled while loading and when the preference request fails', async () => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/preferences' )
 			.reply( 500, { error: 'server_error' } );
@@ -101,7 +101,7 @@ describe( 'SubscriberNotificationCard', () => {
 		expect( toggle ).toBeDisabled();
 	} );
 
-	it( 'keeps the cached preference checked during a background refetch', async () => {
+	test( 'keeps the cached preference checked during a background refetch', async () => {
 		queryClient.setQueryDefaults( rawUserPreferencesQuery().queryKey, { retry: false } );
 		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, { [ key ]: true } );
 		const scope = nock( 'https://public-api.wordpress.com' )
@@ -117,7 +117,7 @@ describe( 'SubscriberNotificationCard', () => {
 		expect( toggle ).toBeChecked();
 	} );
 
-	it( 'stays off when saving the preference fails', async () => {
+	test( 'stays off when saving the preference fails', async () => {
 		const { user, recordTracksEvent } = setup( false );
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences' )

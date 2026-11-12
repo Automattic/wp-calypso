@@ -52,7 +52,7 @@ describe( 'WebSettings', () => {
 		window.scrollTo = jest.fn();
 	} );
 
-	it( 'renders the web settings values', async () => {
+	test( 'renders the web settings values', async () => {
 		mockGetSettingsApiAndReply( {
 			other: {
 				timeline: {
@@ -77,7 +77,7 @@ describe( 'WebSettings', () => {
 		} );
 	} );
 
-	it( 'updates the settings when the checkbox is changed', async () => {
+	test( 'updates the settings when the checkbox is changed', async () => {
 		mockGetSettingsApiAndReply( {
 			other: {
 				timeline: {

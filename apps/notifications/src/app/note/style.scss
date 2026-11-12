@@ -413,7 +413,7 @@
 	gap: 2px;
 	padding-inline-start: 0;
 	font-size: $font-size-medium;
-	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
+	font-weight: 500;
 	color: var(--wpnc-action__color, #{$gray-700});
 
 	&:hover:not(:disabled) {
@@ -427,8 +427,25 @@
 	}
 }
 
-.wpnc__actions-menu-toggle.components-button {
+// Approving is the job on a pending comment, so it takes the Pending badge's
+// amber text rather than Like's gray.
+.wpnc__action-link.wpnc__approve-action {
+	--wpnc-action__color: oklch(from var(--wpnc-pending) 0.44 c h);
+	--wpnc-action__color-hover: var(--wpnc-action__color);
+
+	@include ui-mixins.when-dark-theme {
+		--wpnc-action__color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
+	}
+}
+
+.wpnc__actions-menu-dropdown {
 	flex-shrink: 0;
+
+	// The same weight as Like and Approve beside it.
+	.wpnc__actions-menu-toggle {
+		border-radius: var(--wpds-border-radius-md, 4px);
+		font-weight: 500;
+	}
 }
 
 .wpnc__actions-menu .components-menu-group + .components-menu-group {
@@ -510,6 +527,9 @@
 // readable muted quote text (passes AA on the overlay panel), a neutral quote
 // bar, and the gray-400 divider used across the dark overlays (Help Center).
 .wpnc-app {
+	// The note list's row line, so the detail's dividers match it.
+	--wpnc-divider__color: color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+
 	.components-card__header,
 	.components-card__footer,
 	.components-card__divider {
@@ -522,6 +542,10 @@
 		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
 		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-action__color-hover: var( --wp-components-color-gray-100, #f0f0f1 );
+		// The dark theme maps the neutral tokens but not a disabled solid button's,
+		// which would stay light; map them onto its grays for the reply send button.
+		--wpds-color-background-interactive-neutral-strong-disabled: var( --wp-components-color-gray-200, #3a3a3a );
+		--wpds-color-foreground-interactive-neutral-strong-disabled: var( --wp-components-color-gray-600, #8a8a8a );
 
 		// Code blocks: a subtly raised surface against the dark panel, with a
 		// neutral border and light text that keeps AA contrast.

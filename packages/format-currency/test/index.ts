@@ -25,10 +25,8 @@ describe( 'getCurrencyObject default export', () => {
 
 describe( 'formatCurrency', () => {
 	let formatter: CurrencyFormatter;
-	const originalFetch = globalThis.fetch;
-
 	beforeEach( () => {
-		globalThis.fetch = originalFetch;
+		vi.unstubAllGlobals();
 		formatter = createFormatter();
 	} );
 
@@ -155,14 +153,17 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to $ if geolocation is US and locale is en', async () => {
-		globalThis.fetch = vi.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'US' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				( url: string ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: 'US' } )
+								: Promise.resolve( 'invalid' ),
+					} ) as any
+			)
 		);
 		formatter = createFormatter();
 		await formatter.geolocateCurrencySymbol();
@@ -171,14 +172,17 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to US$ if geolocation is US but locale is not en', async () => {
-		globalThis.fetch = vi.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'US' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				( url: string ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: 'US' } )
+								: Promise.resolve( 'invalid' ),
+					} ) as any
+			)
 		);
 		formatter = createFormatter();
 		await formatter.geolocateCurrencySymbol();
@@ -187,14 +191,17 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to US$ if geolocation is US but locale is an en variant', async () => {
-		globalThis.fetch = vi.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'US' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				( url: string ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: 'US' } )
+								: Promise.resolve( 'invalid' ),
+					} ) as any
+			)
 		);
 		formatter = createFormatter();
 		await formatter.geolocateCurrencySymbol();
@@ -203,14 +210,17 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'does not change USD currency symbol from $ if geolocation is unknown and locale is en', async () => {
-		globalThis.fetch = vi.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: '' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				( url: string ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: '' } )
+								: Promise.resolve( 'invalid' ),
+					} ) as any
+			)
 		);
 		formatter = createFormatter();
 		await formatter.geolocateCurrencySymbol();
@@ -219,14 +229,17 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'sets USD currency symbol to US$ if geolocation is not US and locale is en', async () => {
-		globalThis.fetch = vi.fn(
-			( url: string ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'CA' } )
-							: Promise.resolve( 'invalid' ),
-				} ) as any
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				( url: string ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: 'CA' } )
+								: Promise.resolve( 'invalid' ),
+					} ) as any
+			)
 		);
 		formatter = createFormatter();
 		await formatter.geolocateCurrencySymbol();

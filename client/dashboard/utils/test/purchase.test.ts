@@ -901,7 +901,7 @@ describe( 'getDelayedDowngradeRenewalPriceText', () => {
 } );
 
 describe( 'isJetpackCrmProduct', () => {
-	it.each( [
+	test.each( [
 		'jetpack_complete',
 		'jetpack-complete_abc123',
 		'jetpack_pro_yearly',
@@ -912,7 +912,7 @@ describe( 'isJetpackCrmProduct', () => {
 		expect( isJetpackCrmProduct( keyOrSlug ) ).toBe( true );
 	} );
 
-	it.each( [
+	test.each( [
 		'jetpack_professional',
 		'jetpack-professional_abc123',
 		'jetpack_security_t1_yearly',

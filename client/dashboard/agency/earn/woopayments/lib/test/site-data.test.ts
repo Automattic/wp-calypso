@@ -58,7 +58,7 @@ describe( 'getSiteData', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'includes only current quarter transactions when next and current payout dates are equal', () => {
+	test( 'includes only current quarter transactions when next and current payout dates are equal', () => {
 		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const result = getSiteData( mockWooPaymentsData, 123 );
@@ -68,7 +68,7 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 500 );
 	} );
 
-	it( 'includes both current and previous quarter transactions when payout dates differ', () => {
+	test( 'includes both current and previous quarter transactions when payout dates differ', () => {
 		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
 
 		const result = getSiteData( mockWooPaymentsData, 123 );
@@ -78,7 +78,7 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 500 );
 	} );
 
-	it( 'returns null transactions when site has no data', () => {
+	test( 'returns null transactions when site has no data', () => {
 		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const result = getSiteData( mockWooPaymentsData, 999 );
@@ -88,7 +88,7 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 0 );
 	} );
 
-	it( 'handles missing estimated data gracefully', () => {
+	test( 'handles missing estimated data gracefully', () => {
 		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const dataWithoutEstimates: WooPaymentsData = {
@@ -120,7 +120,7 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 500 );
 	} );
 
-	it( 'returns estimated transactions even when completed transactions are zero (regression test)', () => {
+	test( 'returns estimated transactions even when completed transactions are zero (regression test)', () => {
 		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
 
 		const newMerchantData: WooPaymentsData = {

@@ -351,13 +351,13 @@ fires correctly. The rule lives in the Survicate panel, not in our code.
   event fires only once per page load — code that registers a `SurvicateReady` listener
   _after_ the SDK already loaded will never run, so register at load time.
 - Each `src/*.ts` file has a matching `src/test/*.test.ts`. Tests use
-  `@jest-environment jsdom`, mock `@wordpress/data`'s `select`, and stub `window._sva`.
+  `// @vitest-environment jsdom`, mock `@wordpress/data`'s `select`, and stub `window._sva`.
 - Tab indentation, tabs for alignment (match existing files).
 
 ## Commands
 
 ```bash
-yarn test-packages packages/survicate          # run all package tests
+yarn test-packages:vitest packages/survicate   # run all package tests
 cd packages/survicate && npx tsc --build ./tsconfig.json   # typecheck
 yarn eslint packages/survicate/src/<file>       # lint
 ```

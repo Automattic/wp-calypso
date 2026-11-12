@@ -139,7 +139,7 @@ describe( 'Notifications subscriber alerts', () => {
 		mockOnConfirmed = () => {};
 	} );
 
-	it( 'keeps unseen-count updates without monitoring subscriber notes when the feature flag is off', async () => {
+	test( 'keeps unseen-count updates without monitoring subscriber notes when the feature flag is off', async () => {
 		configure( false, true );
 		render( <Notifications /> );
 
@@ -152,7 +152,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockSitesQuery ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps unseen-count updates without monitoring subscriber notes when the preference is off', async () => {
+	test( 'keeps unseen-count updates without monitoring subscriber notes when the preference is off', async () => {
 		configure( true, false );
 		render( <Notifications /> );
 
@@ -161,7 +161,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockSitesQuery ).not.toHaveBeenCalled();
 	} );
 
-	it( 'monitors live subscriber notes without making site-count requests and keeps count updates immediate', async () => {
+	test( 'monitors live subscriber notes without making site-count requests and keeps count updates immediate', async () => {
 		configure( true, true );
 		render( <Notifications /> );
 
@@ -180,7 +180,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockSitesQuery ).not.toHaveBeenCalled();
 	} );
 
-	it( 'records the sound result of a subscriber alert', async () => {
+	test( 'records the sound result of a subscriber alert', async () => {
 		configure( true, true );
 		render( <Notifications /> );
 		await waitFor( () =>
@@ -195,7 +195,7 @@ describe( 'Notifications subscriber alerts', () => {
 		);
 	} );
 
-	it( 'logs sound errors to logstash', async () => {
+	test( 'logs sound errors to logstash', async () => {
 		configure( true, true );
 		render( <Notifications /> );
 		await waitFor( () =>
@@ -217,7 +217,7 @@ describe( 'Notifications subscriber alerts', () => {
 		);
 	} );
 
-	it( 'does not record sound results that every tab or burst would repeat', async () => {
+	test( 'does not record sound results that every tab or burst would repeat', async () => {
 		configure( true, true );
 		render( <Notifications /> );
 		await waitFor( () =>
@@ -233,7 +233,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
-	it( 'reports a failure to start monitoring subscriber notes to Sentry', async () => {
+	test( 'reports a failure to start monitoring subscriber notes to Sentry', async () => {
 		configure( true, true );
 		mockSubscribeSubscriberNotifications.mockImplementationOnce( () => {
 			throw new Error( 'init failed' );
@@ -248,7 +248,7 @@ describe( 'Notifications subscriber alerts', () => {
 		);
 	} );
 
-	it( 'counts chunk load failures instead of reporting them', async () => {
+	test( 'counts chunk load failures instead of reporting them', async () => {
 		configure( true, true );
 		mockSubscribeSubscriberNotifications.mockImplementationOnce( () => {
 			throw Object.assign( new Error( 'Loading chunk 123 failed' ), { name: 'ChunkLoadError' } );
@@ -264,7 +264,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( captureException ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not trust a cached preference until the server answers', async () => {
+	test( 'does not trust a cached preference until the server answers', async () => {
 		configure( true, true );
 		mockUseQuery.mockImplementation(
 			() =>
@@ -282,7 +282,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
 	} );
 
-	it( 'stops monitoring subscriber notes when the preference refetch fails', async () => {
+	test( 'stops monitoring subscriber notes when the preference refetch fails', async () => {
 		configure( true, true );
 		mockUseQuery.mockImplementation(
 			() =>
@@ -300,7 +300,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
 	} );
 
-	it( 'reports a failure to start the unseen count to Sentry', async () => {
+	test( 'reports a failure to start the unseen count to Sentry', async () => {
 		configure( false, false );
 		mockSubscribeUnseenCount.mockImplementationOnce( () => {
 			throw new Error( 'init failed' );
@@ -315,7 +315,7 @@ describe( 'Notifications subscriber alerts', () => {
 		);
 	} );
 
-	it( 'keeps the subscription while the preference refetches on focus', async () => {
+	test( 'keeps the subscription while the preference refetches on focus', async () => {
 		configure( true, true );
 		const { rerender } = render( <Notifications /> );
 		await waitFor( () =>
@@ -339,7 +339,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockUnsubscribe ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not record a sound result after unmount', async () => {
+	test( 'does not record a sound result after unmount', async () => {
 		configure( true, true );
 		const { unmount } = render( <Notifications /> );
 		await waitFor( () =>
@@ -352,7 +352,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
-	it( 'ignores a note whose live push predates enabling the preference', async () => {
+	test( 'ignores a note whose live push predates enabling the preference', async () => {
 		configure( true, true );
 		render( <Notifications /> );
 		await waitFor( () =>
@@ -368,7 +368,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'ignores a delayed note callback after an account switch', async () => {
+	test( 'ignores a delayed note callback after an account switch', async () => {
 		configure( true, true );
 		const { rerender } = render( <Notifications /> );
 		await waitFor( () =>
@@ -387,7 +387,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'ignores a delayed note callback after the preference is disabled', async () => {
+	test( 'ignores a delayed note callback after the preference is disabled', async () => {
 		configure( true, true );
 		const { rerender } = render( <Notifications /> );
 		await waitFor( () =>
@@ -404,7 +404,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'ignores a delayed note callback after unmount', async () => {
+	test( 'ignores a delayed note callback after unmount', async () => {
 		configure( true, true );
 		const { unmount } = render( <Notifications /> );
 		await waitFor( () =>
@@ -419,7 +419,7 @@ describe( 'Notifications subscriber alerts', () => {
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not create duplicate subscriptions during StrictMode setup and cleanup', async () => {
+	test( 'does not create duplicate subscriptions during StrictMode setup and cleanup', async () => {
 		configure( true, true );
 		const { unmount } = render(
 			<StrictMode>

@@ -47,7 +47,7 @@ describe( 'BrowserNotificationCard', () => {
 		return render( ui, { wrapper: Wrapper( queryClient || new QueryClient() ) } );
 	};
 
-	it( 'renders the option to enable browser notifications', async () => {
+	test( 'renders the option to enable browser notifications', async () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'granted' );
 		renderWithProvider( <BrowserNotificationCard />, queryClient );
@@ -59,7 +59,7 @@ describe( 'BrowserNotificationCard', () => {
 		} );
 	} );
 
-	it( 'renders the option to disable browser notification when status is denied', () => {
+	test( 'renders the option to disable browser notification when status is denied', () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'denied' );
 		renderWithProvider( <BrowserNotificationCard />, queryClient );
@@ -69,7 +69,7 @@ describe( 'BrowserNotificationCard', () => {
 		).toBeDisabled();
 	} );
 
-	it( 'renders the option to disable browser notification when status is not supported', () => {
+	test( 'renders the option to disable browser notification when status is not supported', () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'not-supported' );
 
@@ -80,7 +80,7 @@ describe( 'BrowserNotificationCard', () => {
 		).toBeDisabled();
 	} );
 
-	it( 'registers a device when the feature is enabled', async () => {
+	test( 'registers a device when the feature is enabled', async () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'granted' );
 
@@ -127,7 +127,7 @@ describe( 'BrowserNotificationCard', () => {
 		} );
 	} );
 
-	it( 'removes a device when the checkbox is unchecked', async () => {
+	test( 'removes a device when the checkbox is unchecked', async () => {
 		const queryClient = new QueryClient();
 		const deviceId = 'device_id_2';
 

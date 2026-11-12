@@ -1,6 +1,7 @@
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { Dropdown, MenuGroup, MenuItem, NavigableMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronDown } from '@wordpress/icons';
+import { Button } from '@wordpress/ui';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getEditCommentLink, getReferenceId } from '../../panel/helpers/notes';
@@ -51,6 +52,7 @@ export default function ActionsMenu( {
 		goBack();
 	};
 
+	const canUnapprove = isApproved && hasAction( 'approve-comment' );
 	const safeActions: ( MenuAction | false )[] = [
 		hasAction( 'edit-comment' ) && {
 			hotkey: 'e',
@@ -58,9 +60,9 @@ export default function ActionsMenu( {
 			action: () =>
 				dispatch( editComment( siteId, postId, commentId, getEditCommentLink( note ) ) ),
 		},
-		hasAction( 'approve-comment' ) && {
+		canUnapprove && {
 			hotkey: 'a',
-			label: isApproved ? __( 'Unapprove' ) : __( 'Approve' ),
+			label: __( 'Unapprove' ),
 			action: () =>
 				dispatch(
 					setApproveStatus(
@@ -96,43 +98,49 @@ export default function ActionsMenu( {
 
 	return (
 		<HotkeyContainer shortcuts={ shortcuts }>
-			<DropdownMenu
-				icon={ chevronDown }
-				text={ __( 'Actions' ) }
-				label={ __( 'Actions' ) }
-				toggleProps={ {
-					className: 'wpnc__actions-menu-toggle',
-					variant: 'secondary',
-					size: 'compact',
-					iconPosition: 'right',
-					showTooltip: false,
-					isBusy,
-					disabled: isBusy,
-					accessibleWhenDisabled: true,
-				} }
+			<Dropdown
+				className="wpnc__actions-menu-dropdown"
 				popoverProps={ { placement: 'bottom-end', className: 'wpnc__actions-menu' } }
-			>
-				{ ( { onClose } ) =>
-					groups.map( ( group ) => (
-						<MenuGroup key={ group[ 0 ].hotkey }>
-							{ group.map( ( { hotkey, label, isDestructive, action } ) => (
-								<MenuItem
-									key={ hotkey }
-									isDestructive={ isDestructive }
-									onClick={ ( event ) => {
-										// Prevent the notification panel from being closed.
-										event.stopPropagation();
-										onClose();
-										action();
-									} }
-								>
-									{ label }
-								</MenuItem>
-							) ) }
-						</MenuGroup>
-					) )
-				}
-			</DropdownMenu>
+				renderToggle={ ( { isOpen, onToggle } ) => (
+					<Button
+						className="wpnc__actions-menu-toggle"
+						variant="outline"
+						tone="neutral"
+						size="compact"
+						aria-expanded={ isOpen }
+						aria-haspopup="menu"
+						onClick={ onToggle }
+						loading={ isBusy }
+						disabled={ isBusy }
+						focusableWhenDisabled
+					>
+						{ __( 'Actions' ) }
+						<Button.Icon icon={ chevronDown } />
+					</Button>
+				) }
+				renderContent={ ( { onClose } ) => (
+					<NavigableMenu role="menu" aria-label={ __( 'Actions' ) }>
+						{ groups.map( ( group ) => (
+							<MenuGroup key={ group[ 0 ].hotkey }>
+								{ group.map( ( { hotkey, label, isDestructive, action } ) => (
+									<MenuItem
+										key={ hotkey }
+										isDestructive={ isDestructive }
+										onClick={ ( event ) => {
+											// Prevent the notification panel from being closed.
+											event.stopPropagation();
+											onClose();
+											action();
+										} }
+									>
+										{ label }
+									</MenuItem>
+								) ) }
+							</MenuGroup>
+						) ) }
+					</NavigableMenu>
+				) }
+			/>
 		</HotkeyContainer>
 	);
 }

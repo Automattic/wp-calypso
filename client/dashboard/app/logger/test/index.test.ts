@@ -70,7 +70,7 @@ const createErrorInfo = ( stack = 'at SomeComponent' ): ErrorInfo => ( {
 } );
 
 describe( 'handleOnCatch', () => {
-	it( 'does not log or capture benign inaccessible Jetpack error', () => {
+	test( 'does not log or capture benign inaccessible Jetpack error', () => {
 		const error = new Error( 'The Jetpack site is inaccessible or returned an error' );
 		error.name = 'ParseError';
 
@@ -87,7 +87,7 @@ describe( 'handleOnCatch', () => {
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
-	it( 'logs and captures a non-benign error with DOM fingerprint and component stack', () => {
+	test( 'logs and captures a non-benign error with DOM fingerprint and component stack', () => {
 		const error = new Error( 'Boom' );
 		const errorInfo = createErrorInfo( 'at SitePage' );
 		const router = createRouter( { siteSlug: 'my-site', someId: '123' } );
@@ -145,7 +145,7 @@ describe( 'handleOnCatch', () => {
 		} );
 	} );
 
-	it( 'reports no previous path when the error happens on a fresh page load', () => {
+	test( 'reports no previous path when the error happens on a fresh page load', () => {
 		const error = new Error( 'Boom' );
 		const router = createRouter( { siteSlug: 'my-site' } );
 
@@ -165,7 +165,7 @@ describe( 'handleOnCatch', () => {
 		);
 	} );
 
-	it( 'does not log or capture when a chunk load error triggers a reload', () => {
+	test( 'does not log or capture when a chunk load error triggers a reload', () => {
 		mockedMaybeReloadForChunkError.mockReturnValue( true );
 
 		const error = new Error( 'Loading chunk emails failed.' );
@@ -181,7 +181,7 @@ describe( 'handleOnCatch', () => {
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
-	it( 'logs but does not capture when dashboard_backport is true', () => {
+	test( 'logs but does not capture when dashboard_backport is true', () => {
 		const error = new Error( 'Backport-only error' );
 		const errorInfo = createErrorInfo();
 		const router = createRouter( { siteSlug: 'my-site' } );
@@ -208,7 +208,7 @@ describe( 'handleUncaughtError', () => {
 		consoleError.mockRestore();
 	} );
 
-	it( 'reports an uncaught error with fingerprint and component stack, and still console.errors', () => {
+	test( 'reports an uncaught error with fingerprint and component stack, and still console.errors', () => {
 		const error = new Error( 'Uncaught boom' );
 
 		handleUncaughtError( error, { componentStack: 'at DomainUpsellCardContent' } );
@@ -233,7 +233,7 @@ describe( 'handleUncaughtError', () => {
 		expect( consoleError ).toHaveBeenCalledWith( error );
 	} );
 
-	it( 'normalizes a non-Error value before reporting', () => {
+	test( 'normalizes a non-Error value before reporting', () => {
 		handleUncaughtError( 'just a string', {} );
 
 		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );

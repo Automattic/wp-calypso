@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`CookieBanner renders in customized consent correctly (after customize button click) 1`] = `
+exports[`CookieBanner > renders in customized consent correctly (after customize button click) 1`] = `
 <div>
   <div
     class="cookie-banner"
@@ -122,7 +122,7 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
 </div>
 `;
 
-exports[`CookieBanner renders in simple consent correctly 1`] = `
+exports[`CookieBanner > renders in simple consent correctly 1`] = `
 <div>
   <div
     class="cookie-banner"

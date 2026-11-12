@@ -1,21 +1,19 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useOdieAssistantContext } from '../../context';
 import { useRequestHumanSupport } from '../use-request-human-support';
 import type { HumanSupportRequest } from '../../types';
 
-const mockCreateZendeskConversation = jest.fn();
-const mockSetPendingHumanSupportRequest = jest.fn();
-const mockSetChatStatus = jest.fn();
-const mockTrackEvent = jest.fn();
+const mockCreateZendeskConversation = vi.fn();
+const mockSetPendingHumanSupportRequest = vi.fn();
+const mockSetChatStatus = vi.fn();
+const mockTrackEvent = vi.fn();
 
-jest.mock( '../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../use-create-zendesk-conversation', () => ( {
+vi.mock( '../use-create-zendesk-conversation', () => ( {
 	useCreateZendeskConversation: () => mockCreateZendeskConversation,
 } ) );
 
@@ -27,7 +25,7 @@ const request: HumanSupportRequest = {
 };
 
 const mockContext = ( humanSupportRouting: unknown ) =>
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		humanSupportRouting,
 		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
 		setChatStatus: mockSetChatStatus,
@@ -35,7 +33,7 @@ const mockContext = ( humanSupportRouting: unknown ) =>
 	} );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 } );
 
 describe( 'useRequestHumanSupport', () => {

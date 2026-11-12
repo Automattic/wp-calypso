@@ -8,7 +8,7 @@ import type { JetpackLicense } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
 describe( 'toFetchOptions', () => {
-	it( 'maps the default view to the not-revoked filter sorted by issue date', () => {
+	test( 'maps the default view to the not-revoked filter sorted by issue date', () => {
 		expect( toFetchOptions( DEFAULT_VIEW ) ).toEqual( {
 			filter: JetpackLicenseFilter.NotRevoked,
 			search: undefined,
@@ -19,7 +19,7 @@ describe( 'toFetchOptions', () => {
 		} );
 	} );
 
-	it( 'maps the status filter, search, and sortable date fields', () => {
+	test( 'maps the status filter, search, and sortable date fields', () => {
 		const view: View = {
 			...DEFAULT_VIEW,
 			search: 'example',
@@ -36,7 +36,7 @@ describe( 'toFetchOptions', () => {
 		} );
 	} );
 
-	it( 'ignores a status filter value it does not know', () => {
+	test( 'ignores a status filter value it does not know', () => {
 		for ( const value of [ 'constructor', 'active', [ 'constructor' ], [] ] ) {
 			const view: View = {
 				...DEFAULT_VIEW,
@@ -46,7 +46,7 @@ describe( 'toFetchOptions', () => {
 		}
 	} );
 
-	it( 'reads a status filter persisted while the field was multi-select', () => {
+	test( 'reads a status filter persisted while the field was multi-select', () => {
 		const view: View = {
 			...DEFAULT_VIEW,
 			filters: [ { field: 'status', operator: 'isAny', value: [ 'unassigned' ] } ],
@@ -54,7 +54,7 @@ describe( 'toFetchOptions', () => {
 		expect( toFetchOptions( view ).filter ).toBe( JetpackLicenseFilter.Detached );
 	} );
 
-	it( 'falls back to sorting by issue date for fields the endpoint cannot sort', () => {
+	test( 'falls back to sorting by issue date for fields the endpoint cannot sort', () => {
 		const view: View = { ...DEFAULT_VIEW, sort: { field: 'product', direction: 'asc' } };
 		expect( toFetchOptions( view ).sortField ).toBe( JetpackLicenseSortField.IssuedAt );
 	} );
@@ -92,7 +92,7 @@ describe( 'Renewal/expiry field', () => {
 		},
 	};
 
-	it( 'shows the expiry date with a badge for what needs attention', () => {
+	test( 'shows the expiry date with a badge for what needs attention', () => {
 		render( <RenewalCell license={ license } locale="en" /> );
 		expect( screen.getByText( 'Oct 21, 2026' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew off' ) ).toBeVisible();
@@ -112,14 +112,14 @@ describe( 'Titan inbox license', () => {
 		subscription: { trial_end: '2026-12-20T00:00:00+00:00', is_active_trial: true },
 	} as JetpackLicense;
 
-	it( 'shows the inbox count and trial under the product name', () => {
+	test( 'shows the inbox count and trial under the product name', () => {
 		render( <ProductCell license={ titan } locale="en" /> );
 		expect( screen.getByText( '5 inboxes' ) ).toBeVisible();
 		expect( screen.getByText( '90-day trial ends Dec 20, 2026' ) ).toBeVisible();
 		expect( screen.queryByText( '×5' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the domain in the Site column', () => {
+	test( 'shows the domain in the Site column', () => {
 		render(
 			<SiteCell
 				license={ titan }
@@ -132,7 +132,7 @@ describe( 'Titan inbox license', () => {
 		expect( screen.queryByText( 'Manage in Pressable' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows a dash rather than the Pressable link when the domain is missing', () => {
+	test( 'shows a dash rather than the Pressable link when the domain is missing', () => {
 		render(
 			<SiteCell
 				license={ { ...titan, meta: null } }

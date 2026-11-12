@@ -30,21 +30,21 @@ describe( 'isFrDomain', () => {
 } );
 
 describe( 'hasFrDomain', () => {
-	it( 'is true when any selected domain is a .fr one', () => {
+	test( 'is true when any selected domain is a .fr one', () => {
 		expect( hasFrDomain( [ 'example.com', 'example.fr' ] ) ).toBe( true );
 	} );
 
-	it( 'is false when none are', () => {
+	test( 'is false when none are', () => {
 		expect( hasFrDomain( [ 'example.com', 'example.co.uk' ] ) ).toBe( false );
 	} );
 
-	it( 'is false for an empty selection', () => {
+	test( 'is false for an empty selection', () => {
 		expect( hasFrDomain( [] ) ).toBe( false );
 	} );
 } );
 
 describe( 'getFrContactFormFields', () => {
-	it( 'always requires a registrant type and offers no pre-selected value', () => {
+	test( 'always requires a registrant type and offers no pre-selected value', () => {
 		const registrantType = fieldById(
 			getFrContactFormFields( undefined ),
 			FR_FIELD_IDS.registrantType
@@ -60,7 +60,7 @@ describe( 'getFrContactFormFields', () => {
 		expect( registrantType?.getValue?.( { item: { optOutTransferLock: false } } ) ).toBe( '' );
 	} );
 
-	it( 'omits the organization fields for an individual registrant', () => {
+	test( 'omits the organization fields for an individual registrant', () => {
 		const fields = getFrContactFormFields( 'individual' );
 
 		expect( fieldById( fields, FR_FIELD_IDS.registrantVatId ) ).toBeUndefined();
@@ -69,7 +69,7 @@ describe( 'getFrContactFormFields', () => {
 		expect( getFrContactFormLayout( 'individual' ) ).toEqual( [ FR_FIELD_IDS.registrantType ] );
 	} );
 
-	it( 'adds the optional organization fields for an organization registrant', () => {
+	test( 'adds the optional organization fields for an organization registrant', () => {
 		const fields = getFrContactFormFields( 'organization' );
 
 		expect( fieldById( fields, FR_FIELD_IDS.registrantVatId )?.isValid?.required ).toBeUndefined();
@@ -83,7 +83,7 @@ describe( 'getFrContactFormFields', () => {
 		] );
 	} );
 
-	it( 'reads nested values out of extra.fr', () => {
+	test( 'reads nested values out of extra.fr', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: { fr: { registrantType: 'organization', sirenSiret: '123456789' } },
@@ -99,7 +99,7 @@ describe( 'getFrContactFormFields', () => {
 		);
 	} );
 
-	it( 'returns the whole extra object on edit so sibling values survive the shallow merge', () => {
+	test( 'returns the whole extra object on edit so sibling values survive the shallow merge', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: {
@@ -125,7 +125,7 @@ describe( 'getFrContactFormFields', () => {
 		} );
 	} );
 
-	it( 'drops the organization values when the registrant switches to individual', () => {
+	test( 'drops the organization values when the registrant switches to individual', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: {
@@ -151,7 +151,7 @@ describe( 'getFrContactFormFields', () => {
 		} );
 	} );
 
-	it( 'clears the organization name when the registrant switches to individual', () => {
+	test( 'clears the organization name when the registrant switches to individual', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			organization: 'Some organization name',
@@ -171,7 +171,7 @@ describe( 'getFrContactFormFields', () => {
 		} );
 	} );
 
-	it( 'leaves the organization name alone for other registrant type changes', () => {
+	test( 'leaves the organization name alone for other registrant type changes', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			organization: 'Some organization name',
@@ -191,7 +191,7 @@ describe( 'getFrContactFormFields', () => {
 		} );
 	} );
 
-	it( 'keeps the organization values when the registrant switches back to organization', () => {
+	test( 'keeps the organization values when the registrant switches back to organization', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: { fr: { registrantType: 'individual', sirenSiret: '123456789' } },
@@ -207,7 +207,7 @@ describe( 'getFrContactFormFields', () => {
 		} );
 	} );
 
-	it( 'sanitizes the VAT number to uppercase alphanumerics as checkout does', () => {
+	test( 'sanitizes the VAT number to uppercase alphanumerics as checkout does', () => {
 		const field = fieldById(
 			getFrContactFormFields( 'organization' ),
 			FR_FIELD_IDS.registrantVatId
@@ -218,7 +218,7 @@ describe( 'getFrContactFormFields', () => {
 		).toEqual( { extra: { fr: { registrantVatId: 'FRXX123456789' } } } );
 	} );
 
-	it( 'strips non-digits from the SIREN/SIRET and trademark numbers', () => {
+	test( 'strips non-digits from the SIREN/SIRET and trademark numbers', () => {
 		const fields = getFrContactFormFields( 'organization' );
 		const item: DomainContactDetails = { optOutTransferLock: false };
 
@@ -233,7 +233,7 @@ describe( 'getFrContactFormFields', () => {
 		).toEqual( { extra: { fr: { trademarkNumber: '012345678' } } } );
 	} );
 
-	it( 'accepts a 9-digit SIREN or 14-digit SIRET, or an empty value', () => {
+	test( 'accepts a 9-digit SIREN or 14-digit SIRET, or an empty value', () => {
 		const field = fieldById( getFrContactFormFields( 'organization' ), FR_FIELD_IDS.sirenSiret );
 
 		const pattern = new RegExp( field?.isValid?.pattern ?? '' );
@@ -245,7 +245,7 @@ describe( 'getFrContactFormFields', () => {
 		expect( pattern.test( '1234567890' ) ).toBe( false );
 	} );
 
-	it( 'accepts a 9-digit trademark number, or an empty value', () => {
+	test( 'accepts a 9-digit trademark number, or an empty value', () => {
 		const field = fieldById(
 			getFrContactFormFields( 'organization' ),
 			FR_FIELD_IDS.trademarkNumber
@@ -261,7 +261,7 @@ describe( 'getFrContactFormFields', () => {
 } );
 
 describe( 'validateFrOrganization', () => {
-	it( 'rejects an organization name on an individual registrant', () => {
+	test( 'rejects an organization name on an individual registrant', () => {
 		expect(
 			validateFrOrganization( {
 				optOutTransferLock: false,
@@ -271,7 +271,7 @@ describe( 'validateFrOrganization', () => {
 		).toEqual( expect.any( String ) );
 	} );
 
-	it( 'accepts an individual registrant with no organization name', () => {
+	test( 'accepts an individual registrant with no organization name', () => {
 		expect(
 			validateFrOrganization( {
 				optOutTransferLock: false,
@@ -281,7 +281,7 @@ describe( 'validateFrOrganization', () => {
 		).toBeNull();
 	} );
 
-	it( 'accepts an organization registrant with an organization name', () => {
+	test( 'accepts an organization registrant with an organization name', () => {
 		expect(
 			validateFrOrganization( {
 				optOutTransferLock: false,
@@ -291,7 +291,7 @@ describe( 'validateFrOrganization', () => {
 		).toBeNull();
 	} );
 
-	it( 'accepts an organization name while no registrant type is selected', () => {
+	test( 'accepts an organization name while no registrant type is selected', () => {
 		expect(
 			validateFrOrganization( {
 				optOutTransferLock: false,
@@ -302,7 +302,7 @@ describe( 'validateFrOrganization', () => {
 } );
 
 describe( 'mapWhoisExtraToFrContactExtra', () => {
-	it( 'converts the registrar snake_case keys to the form shape', () => {
+	test( 'converts the registrar snake_case keys to the form shape', () => {
 		expect(
 			mapWhoisExtraToFrContactExtra( {
 				registrant_type: 'organization',
@@ -318,13 +318,13 @@ describe( 'mapWhoisExtraToFrContactExtra', () => {
 		} );
 	} );
 
-	it( 'omits organization values the registrar has not stored', () => {
+	test( 'omits organization values the registrar has not stored', () => {
 		expect( mapWhoisExtraToFrContactExtra( { registrant_type: 'individual' } ) ).toEqual( {
 			registrantType: 'individual',
 		} );
 	} );
 
-	it( 'returns undefined when there is no stored registrant type, rather than guessing one', () => {
+	test( 'returns undefined when there is no stored registrant type, rather than guessing one', () => {
 		expect( mapWhoisExtraToFrContactExtra( undefined ) ).toBeUndefined();
 		expect( mapWhoisExtraToFrContactExtra( {} ) ).toBeUndefined();
 		expect( mapWhoisExtraToFrContactExtra( { registrant_type: '' } ) ).toBeUndefined();
