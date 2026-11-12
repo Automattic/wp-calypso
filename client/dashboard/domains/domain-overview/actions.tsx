@@ -19,7 +19,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { domainRoute, domainsIndexRoute, domainTransferRoute } from '../../app/router/domains';
-import { purchaseSettingsRoute, cancelPurchaseRoute } from '../../app/router/me';
+import { cancelPurchaseRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
@@ -162,9 +162,10 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								size="compact"
 								variant="secondary"
 								isDestructive
-								to={ purchaseSettingsRoute.fullPath }
+								to={ cancelPurchaseRoute.fullPath }
 								onClick={ () => trackItem( 'action-remove' ) }
 								params={ { purchaseId: purchase.ID } }
+								search={ { intent: 'remove' } }
 							>
 								{ getDeleteLabel( domain ) }
 							</RouterLinkButton>
