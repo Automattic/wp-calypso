@@ -39,7 +39,7 @@ proxy( { path: '/me' }, function ( err, body, headers ) {
 ## Running tests
 
 ```sh
-yarn test-packages packages/wpcom-proxy-request
+yarn test-packages:vitest packages/wpcom-proxy-request
 ```
 
 ## License
