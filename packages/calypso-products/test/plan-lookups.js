@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import {
 	FEATURE_200GB_STORAGE,
 	FEATURE_50GB_STORAGE,
@@ -147,11 +148,11 @@ import {
 	isWooExpressPlusPlan,
 } from '../src/index';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
-	mock.isEnabled = jest.fn( () => true );
+	mock.isEnabled = vi.fn( () => true );
 
-	return mock;
+	return { default: mock };
 } );
 
 describe( 'isFreePlan', () => {
@@ -1128,7 +1129,7 @@ describe( 'findPlansKeys', () => {
 	} );
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	test( 'all matching plans keys - by term', () => {

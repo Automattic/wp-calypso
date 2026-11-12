@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	FEATURE_DEV_TOOLS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
@@ -31,7 +32,7 @@ import {
 } from '../src';
 
 let mockDevToolsOnAllPaidPlans = false;
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => '';
 	config.isEnabled = ( flag: string ) =>
 		flag === 'hosting/dev-tools-all-paid-plans' && mockDevToolsOnAllPaidPlans;
@@ -113,9 +114,10 @@ describe( 'getFeatureDifference function related tests', () => {
 
 	it( 'Handles case when feature bundle selector returns a function instead of array', () => {
 		const mockPlan = getPlan( PLAN_BUSINESS );
-		jest
-			.spyOn( mockPlan as any, 'getCheckoutFeatures' )
-			.mockImplementation( () => [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_UPLOAD_PLUGINS ] );
+		vi.spyOn( mockPlan as any, 'getCheckoutFeatures' ).mockImplementation( () => [
+			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_UPLOAD_PLUGINS,
+		] );
 
 		expect( getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'getCheckoutFeatures' ) ).toEqual( [
 			FEATURE_PRIORITY_24_7_SUPPORT,
