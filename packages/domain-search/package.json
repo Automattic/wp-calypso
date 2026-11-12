@@ -85,6 +85,7 @@
 		"nock": "^14.0.17",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",

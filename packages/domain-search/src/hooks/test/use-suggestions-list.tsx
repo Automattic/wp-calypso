@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {

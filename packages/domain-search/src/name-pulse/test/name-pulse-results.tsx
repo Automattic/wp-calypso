@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -146,9 +143,9 @@ const domainsIn = ( id: string ) =>
 	);
 
 // Each test renders the full results page and drives it through several userEvent
-// interactions. On busy CI agents the slowest ones run close to Jest's 5s default
+// interactions. On busy CI agents the slowest ones run close to the 5s default
 // and sometimes cross it, so give them more headroom.
-vi.setTimeout( 12000 );
+vi.setConfig( { testTimeout: 12000 } );
 
 // The slowest tests in the suite, well above the others on CI, need more still.
 const SLOW_TEST_TIMEOUT = 20000;

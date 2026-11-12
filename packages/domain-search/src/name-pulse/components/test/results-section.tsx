@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 import { act, render, screen } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { vi } from 'vitest';

@@ -1,6 +1,14 @@
 import '@testing-library/jest-dom/vitest';
 import nock from 'nock';
+import ResizeObserver from 'resize-observer-polyfill';
 import { queryClient } from './renderer';
+
+globalThis.ResizeObserver = ResizeObserver;
+
+// React Testing Library's `waitFor` only advances fake timers when it finds a global `jest`.
+( globalThis as unknown as Record< string, unknown > ).jest = {
+	advanceTimersByTime: ( ms: number ) => vi.advanceTimersByTime( ms ),
+};
 
 // Disables all network requests for all tests.
 nock.disableNetConnect();

@@ -4,11 +4,11 @@ import { vi } from 'vitest';
 import { DomainSearchTrademarkClaimsModal } from '..';
 import * as scrollToEndModule from '../../../helpers/has-scrolled-to-end';
 
-const hasScrolledToEndModuleMock = vi.mock( '../../../helpers/has-scrolled-to-end' );
+vi.mock( '../../../helpers/has-scrolled-to-end' );
 
 describe( 'DomainSearchTrademarkClaimsModal', () => {
 	afterEach( () => {
-		hasScrolledToEndModuleMock.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'allows clicking onAccept if the user has scrolled to the end', async () => {

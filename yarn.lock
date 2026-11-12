@@ -1317,6 +1317,7 @@ __metadata:
     qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.5"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.7"

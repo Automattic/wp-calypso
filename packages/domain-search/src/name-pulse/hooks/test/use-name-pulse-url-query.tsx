@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 import { useNamePulseUrlQuery } from '../use-name-pulse-url-query';
