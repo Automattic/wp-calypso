@@ -25,7 +25,7 @@ import {
 	getIsRequestingHumanSupport,
 } from '../utils';
 import { useLoggedOutSession } from './use-logged-out-session';
-import type { Chat, Message } from '../types';
+import type { Chat, Message, MessageType } from '../types';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
 
 /**
@@ -58,17 +58,49 @@ function isQueuedZendeskMessage( message: Message ) {
 	return message.role === 'user' && !! message.metadata?.temporary_id;
 }
 
+const UPLOADED_ATTACHMENT_TYPES: Partial< Record< MessageType, MessageType > > = {
+	'file-placeholder': 'file',
+	'image-placeholder': 'image',
+};
+
+/**
+ * Whether a message is the one Zendesk returns for an uploaded file. The placeholder the
+ * composer adds for the file has no id in common with it, so they are matched by file name.
+ * @param placeholder - The message that may be the placeholder.
+ * @param message - The message that may be the uploaded file.
+ * @returns Whether the message is the file the placeholder stands for.
+ */
+function isUploadedAttachment( placeholder: Message, message: Message ) {
+	const uploadedType = UPLOADED_ATTACHMENT_TYPES[ placeholder.type ];
+	return (
+		!! uploadedType &&
+		message.type === uploadedType &&
+		message.role === 'user' &&
+		!! placeholder.altText &&
+		message.altText === placeholder.altText
+	);
+}
+
 /**
  * Deduplicate Zendesk messages by their temporary id. During connection recovery, some duplication can occur.
+ * An uploaded file also replaces its placeholder. Only a file that comes after the placeholder
+ * does, and only one placeholder each, so a file sent earlier with the same name doesn't hide it.
  * @param messages - The messages to deduplicate.
  * @returns The deduplicated messages.
  */
 export function deduplicateZDMessages( messages: Message[] ) {
 	const distinctMessages: Message[] = [];
 	for ( const message of messages ) {
-		if ( ! distinctMessages.some( ( otherMessage ) => isEqual( message, otherMessage ) ) ) {
-			distinctMessages.push( message );
+		if ( distinctMessages.some( ( otherMessage ) => isEqual( message, otherMessage ) ) ) {
+			continue;
 		}
+		const placeholderIndex = distinctMessages.findIndex( ( otherMessage ) =>
+			isUploadedAttachment( otherMessage, message )
+		);
+		if ( placeholderIndex !== -1 ) {
+			distinctMessages.splice( placeholderIndex, 1 );
+		}
+		distinctMessages.push( message );
 	}
 	return distinctMessages;
 }

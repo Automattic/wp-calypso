@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import DOMPurify from 'dompurify';
-import { isCsatTriggerMessage, isZendeskSurveyMessage } from './util';
+import { getFileNameFromMediaUrl, isCsatTriggerMessage, isZendeskSurveyMessage } from './util';
 import type { MessageType, ZendeskMessage } from './types';
 import type { ReactNode } from 'react';
 
@@ -38,9 +38,11 @@ function convertUrlsToMarkdown( text: string ): string {
 }
 
 // Format markdown to support file attachments, returns a link to download the file.
-function createDownloadableMarkdownLink( url: string, AttachmentTitle: string ): string {
-	const fileName = url.split( '/' ).pop()?.split( '?' )[ 0 ];
-	return `[${ AttachmentTitle } ${ fileName }](${ url })`;
+function createDownloadableMarkdownLink( url: string, altText?: string ): string {
+	// Zendesk saves the file name as the alt text, so the name from the URL is only a fallback.
+	const linkText =
+		altText || `${ __( 'Attachment', __i18n_text_domain__ ) } ${ getFileNameFromMediaUrl( url ) }`;
+	return `[${ linkText }](${ url })`;
 }
 
 function getContentMessage( message: ZendeskMessage ): ReactNode {
@@ -75,10 +77,7 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 			break;
 		case 'file':
 			if ( message.mediaUrl ) {
-				messageContent = createDownloadableMarkdownLink(
-					message.mediaUrl,
-					message.altText || __( 'Attachment', __i18n_text_domain__ )
-				);
+				messageContent = createDownloadableMarkdownLink( message.mediaUrl, message.altText );
 			}
 			break;
 		case 'file-placeholder':

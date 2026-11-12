@@ -15,6 +15,19 @@ export function isSupportedImageType( type: string ) {
 	return SUPPORTED_IMAGE_TYPES.includes( type );
 }
 
+/**
+ * The file name at the end of a media URL, decoded so it reads as the user named the file.
+ */
+export function getFileNameFromMediaUrl( mediaUrl: string ) {
+	const fileName = mediaUrl.split( '/' ).pop()?.split( '?' )[ 0 ] ?? '';
+	try {
+		return decodeURIComponent( fileName );
+	} catch {
+		// Not valid percent-encoding, e.g. a lone `%`.
+		return fileName;
+	}
+}
+
 let smoochContainer: HTMLDivElement | null = null;
 
 export function getSmoochContainer(): HTMLDivElement | null {
@@ -238,7 +251,7 @@ export const convertZendeskMessageToAgentticFormat = (
 		case 'file': {
 			// Handle file attachments as text links
 			if ( message.mediaUrl ) {
-				const fileName = message.mediaUrl.split( '/' ).pop()?.split( '?' )[ 0 ] || 'file';
+				const fileName = getFileNameFromMediaUrl( message.mediaUrl ) || 'file';
 				content.push( {
 					type: 'text',
 					text: `📎 ${ message.altText || fileName }`,

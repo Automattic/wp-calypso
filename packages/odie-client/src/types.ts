@@ -196,6 +196,14 @@ export type Message = {
 	 * Timestamp of the message.
 	 */
 	received?: number;
+	/**
+	 * Set on attachments, where it holds the file name.
+	 */
+	altText?: string;
+	/**
+	 * Set on attachments: the file's URL, or a local blob URL while it is a placeholder.
+	 */
+	mediaUrl?: string;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
