@@ -195,7 +195,7 @@ object BuildDockerImage : BuildType({
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
 				Calypso Live links are being generated...
-				Please wait a few minutes and refresh this page.
+				Please wait a few minutes until the Docker image is built.
 				EOF
 			"""
 		}
