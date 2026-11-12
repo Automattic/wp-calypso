@@ -43,7 +43,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns false and omits the incentive tag while the agency is still loading', () => {
+	test( 'returns false and omits the incentive tag while the agency is still loading', () => {
 		mockUseQuery.mockReturnValue( {
 			data: undefined,
 			isLoading: true,
@@ -55,7 +55,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
 	} );
 
-	it( 'returns canTagSitesForCommission true and includes incentive tag when no start_date', () => {
+	test( 'returns canTagSitesForCommission true and includes incentive tag when no start_date', () => {
 		mockAgencyQuery( mockActiveAgency() );
 
 		const { result } = renderHook( () => useCanTagSitesForCommission() );
@@ -67,7 +67,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		] );
 	} );
 
-	it( 'returns true and includes incentive tag when start_date is empty string', () => {
+	test( 'returns true and includes incentive tag when start_date is empty string', () => {
 		mockAgencyQuery( mockActiveAgency( '' ) );
 
 		const { result } = renderHook( () => useCanTagSitesForCommission() );
@@ -79,7 +79,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		] );
 	} );
 
-	it( 'returns true when start_date is on or before cutoff (2025-08-10)', () => {
+	test( 'returns true when start_date is on or before cutoff (2025-08-10)', () => {
 		mockAgencyQuery( mockActiveAgency( '2025-08-10' ) );
 
 		const { result } = renderHook( () => useCanTagSitesForCommission() );
@@ -91,7 +91,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		] );
 	} );
 
-	it( 'returns false when start_date is in gap (2025-08-11 to 2026-02-10)', () => {
+	test( 'returns false when start_date is in gap (2025-08-11 to 2026-02-10)', () => {
 		mockAgencyQuery( mockActiveAgency( '2025-08-11' ) );
 
 		const { result } = renderHook( () => useCanTagSitesForCommission() );
@@ -100,7 +100,7 @@ describe( 'useCanTagSitesForCommission', () => {
 		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
 	} );
 
-	it( 'returns true when start_date is on or after promo start (2026-02-11)', () => {
+	test( 'returns true when start_date is on or after promo start (2026-02-11)', () => {
 		mockAgencyQuery( mockActiveAgency( '2026-02-11' ) );
 
 		const { result } = renderHook( () => useCanTagSitesForCommission() );

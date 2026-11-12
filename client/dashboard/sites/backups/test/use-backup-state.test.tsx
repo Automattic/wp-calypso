@@ -77,7 +77,7 @@ describe( 'useBackupState', () => {
 	} );
 
 	describe( 'idle state', () => {
-		it( 'should return idle state when no backups exist', async () => {
+		test( 'should return idle state when no backups exist', async () => {
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
 			} );
@@ -89,7 +89,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should return idle state when latest backup is finished (not tracked)', async () => {
+		test( 'should return idle state when latest backup is finished (not tracked)', async () => {
 			const finishedBackup = createBackupEntry( {
 				status: BackupEntryStatuses.FINISHED,
 				percent: '100',
@@ -107,7 +107,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should return idle state when latest backup failed (not tracked)', async () => {
+		test( 'should return idle state when latest backup failed (not tracked)', async () => {
 			const failedBackup = createBackupEntry( {
 				status: BackupEntryStatuses.ERROR,
 				percent: '95',
@@ -127,7 +127,7 @@ describe( 'useBackupState', () => {
 	} );
 
 	describe( 'running state', () => {
-		it( 'should detect and track a backup in progress (running)', async () => {
+		test( 'should detect and track a backup in progress (running)', async () => {
 			const runningBackup = createBackupEntry( {
 				status: BackupEntryStatuses.STARTED,
 				percent: '45',
@@ -146,7 +146,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should handle backup without percent value', async () => {
+		test( 'should handle backup without percent value', async () => {
 			const backupWithoutPercent = createBackupEntry( {
 				status: BackupEntryStatuses.STARTED,
 				percent: '',
@@ -164,7 +164,7 @@ describe( 'useBackupState', () => {
 	} );
 
 	describe( 'success state', () => {
-		it( 'should transition from progress to success and set hasRecentlyCompleted', async () => {
+		test( 'should transition from progress to success and set hasRecentlyCompleted', async () => {
 			// Start with backup in progress
 			const progressBackup = createBackupEntry( {
 				status: BackupEntryStatuses.STARTED,
@@ -205,7 +205,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should identify completed backups', async () => {
+		test( 'should identify completed backups', async () => {
 			const completedBackup = createBackupEntry( {
 				status: BackupEntryStatuses.FINISHED,
 				period: '1756169052',
@@ -225,7 +225,7 @@ describe( 'useBackupState', () => {
 	} );
 
 	describe( 'error state', () => {
-		it( 'should identify failed backups that are not being tracked', async () => {
+		test( 'should identify failed backups that are not being tracked', async () => {
 			const failedBackup = createBackupEntry( {
 				status: BackupEntryErrorStatuses.ERROR,
 				period: '1756169052',
@@ -242,7 +242,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should transition from progress to error when tracked backup fails', async () => {
+		test( 'should transition from progress to error when tracked backup fails', async () => {
 			// Start with backup in progress
 			const progressBackup = createBackupEntry( {
 				status: BackupEntryStatuses.STARTED,
@@ -284,7 +284,7 @@ describe( 'useBackupState', () => {
 	} );
 
 	describe( 'enqueued state', () => {
-		it( 'should return enqueued state when setEnqueued(true) is called', async () => {
+		test( 'should return enqueued state when setEnqueued(true) is called', async () => {
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
 			} );
@@ -304,7 +304,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should transition from enqueued to running when backup starts', async () => {
+		test( 'should transition from enqueued to running when backup starts', async () => {
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
 			} );
@@ -336,7 +336,7 @@ describe( 'useBackupState', () => {
 			} );
 		} );
 
-		it( 'should reset enqueued state when setEnqueued(false) is called', async () => {
+		test( 'should reset enqueued state when setEnqueued(false) is called', async () => {
 			const { result } = renderHook( () => useBackupState( mockSiteId ), {
 				wrapper: TestWrapper,
 			} );

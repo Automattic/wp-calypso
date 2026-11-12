@@ -1,7 +1,6 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
+import { vi } from 'vitest';
 import { isModalOpen, isSurveyVisible, observeModals } from '../modal-detection';
 
 function makeRendered< T extends HTMLElement >( el: T ): T {
@@ -160,7 +159,7 @@ describe( 'observeModals', () => {
 	}
 
 	test( 'should fire when a modal is inserted', async () => {
-		const onOpen = jest.fn();
+		const onOpen = vi.fn();
 		const disconnect = observeModals( onOpen );
 
 		const modal = document.createElement( 'div' );
@@ -174,7 +173,7 @@ describe( 'observeModals', () => {
 	} );
 
 	test( 'should fire when an inserted subtree contains a modal', async () => {
-		const onOpen = jest.fn();
+		const onOpen = vi.fn();
 		const disconnect = observeModals( onOpen );
 
 		const wrapper = document.createElement( 'div' );
@@ -189,7 +188,7 @@ describe( 'observeModals', () => {
 	} );
 
 	test( 'should not fire for non-modal insertions', async () => {
-		const onOpen = jest.fn();
+		const onOpen = vi.fn();
 		const disconnect = observeModals( onOpen );
 
 		document.body.appendChild( document.createElement( 'div' ) );
@@ -200,7 +199,7 @@ describe( 'observeModals', () => {
 	} );
 
 	test( 'should not fire for the Survicate widget itself', async () => {
-		const onOpen = jest.fn();
+		const onOpen = vi.fn();
 		const disconnect = observeModals( onOpen );
 
 		const box = document.createElement( 'div' );
@@ -217,7 +216,7 @@ describe( 'observeModals', () => {
 	} );
 
 	test( 'should stop firing after disconnect', async () => {
-		const onOpen = jest.fn();
+		const onOpen = vi.fn();
 		const disconnect = observeModals( onOpen );
 		disconnect();
 
@@ -241,8 +240,8 @@ describe( 'observeModals', () => {
 
 	test( 'should fire onAllClosed when the last modal is removed', async () => {
 		const modal = appendModal();
-		const onOpen = jest.fn();
-		const onAllClosed = jest.fn();
+		const onOpen = vi.fn();
+		const onAllClosed = vi.fn();
 		const disconnect = observeModals( onOpen, onAllClosed );
 
 		modal.remove();
@@ -255,8 +254,8 @@ describe( 'observeModals', () => {
 	test( 'should not fire onAllClosed while another modal remains open', async () => {
 		const first = appendModal();
 		appendModal();
-		const onAllClosed = jest.fn();
-		const disconnect = observeModals( jest.fn(), onAllClosed );
+		const onAllClosed = vi.fn();
+		const disconnect = observeModals( vi.fn(), onAllClosed );
 
 		first.remove();
 		await flushMutations();
@@ -274,8 +273,8 @@ describe( 'observeModals', () => {
 		box.appendChild( survey );
 		document.body.appendChild( box );
 
-		const onAllClosed = jest.fn();
-		const disconnect = observeModals( jest.fn(), onAllClosed );
+		const onAllClosed = vi.fn();
+		const disconnect = observeModals( vi.fn(), onAllClosed );
 
 		box.remove();
 		await flushMutations();
@@ -287,8 +286,8 @@ describe( 'observeModals', () => {
 	test( 'should not fire onAllClosed for non-modal removals', async () => {
 		const div = document.createElement( 'div' );
 		document.body.appendChild( div );
-		const onAllClosed = jest.fn();
-		const disconnect = observeModals( jest.fn(), onAllClosed );
+		const onAllClosed = vi.fn();
+		const disconnect = observeModals( vi.fn(), onAllClosed );
 
 		div.remove();
 		await flushMutations();

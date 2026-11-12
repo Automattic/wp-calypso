@@ -53,7 +53,7 @@ function setup( {
 }
 
 describe( 'useTeamActions eligibility', () => {
-	it( 'offers no actions for the agency owner', () => {
+	test( 'offers no actions for the agency owner', () => {
 		const isEligible = setup();
 		for ( const id of [
 			'resend-user-invite',
@@ -66,7 +66,7 @@ describe( 'useTeamActions eligibility', () => {
 		}
 	} );
 
-	it( 'allows resend/cancel only for invited members', () => {
+	test( 'allows resend/cancel only for invited members', () => {
 		const isEligible = setup();
 		for ( const invite of [ pendingInvite, expiredInvite ] ) {
 			expect( isEligible( 'resend-user-invite', invite ) ).toBe( true );
@@ -79,28 +79,28 @@ describe( 'useTeamActions eligibility', () => {
 		expect( isEligible( 'cancel-user-invite', activeOther ) ).toBe( false );
 	} );
 
-	it( 'allows transfer/remove for other active members', () => {
+	test( 'allows transfer/remove for other active members', () => {
 		const isEligible = setup();
 		expect( isEligible( 'transfer-ownership', activeOther ) ).toBe( true );
 		expect( isEligible( 'remove-team-member', activeOther ) ).toBe( true );
 		expect( isEligible( 'leave-agency', activeOther ) ).toBe( false );
 	} );
 
-	it( 'offers leave-agency (not transfer/remove) for the current user', () => {
+	test( 'offers leave-agency (not transfer/remove) for the current user', () => {
 		const isEligible = setup();
 		expect( isEligible( 'leave-agency', activeSelf ) ).toBe( true );
 		expect( isEligible( 'transfer-ownership', activeSelf ) ).toBe( false );
 		expect( isEligible( 'remove-team-member', activeSelf ) ).toBe( false );
 	} );
 
-	it( 'gates remove-team-member behind the remove capability', () => {
+	test( 'gates remove-team-member behind the remove capability', () => {
 		const isEligible = setup( { canRemove: false } );
 		expect( isEligible( 'remove-team-member', activeOther ) ).toBe( false );
 		// Transfer stays available; it is not capability-gated.
 		expect( isEligible( 'transfer-ownership', activeOther ) ).toBe( true );
 	} );
 
-	it( 'gates resend/cancel invite behind the invite capability', () => {
+	test( 'gates resend/cancel invite behind the invite capability', () => {
 		const isEligible = setup( { canInvite: false } );
 		expect( isEligible( 'resend-user-invite', pendingInvite ) ).toBe( false );
 		expect( isEligible( 'cancel-user-invite', pendingInvite ) ).toBe( false );

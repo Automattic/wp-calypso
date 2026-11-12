@@ -208,8 +208,11 @@ function injectScopedReset() {
 			color: #949494 !important;
 			cursor: default !important;
 		}
-		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg {
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg:not([stroke]) {
 			fill: currentColor !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg[stroke]:not([fill]) {
+			fill: none !important;
 		}
 		/*
 		 * Popover itself has z-index: auto by default — sits behind the

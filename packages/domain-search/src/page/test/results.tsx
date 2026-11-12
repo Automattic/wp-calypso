@@ -1,6 +1,7 @@
 import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
 import { act, getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
@@ -182,7 +183,7 @@ describe( 'ResultsPage', () => {
 		] )(
 			'reports the suggestion positions after the %s FQDN when searching for it',
 			async ( status, expectedPositions ) => {
-				const onSuggestionRender = jest.fn();
+				const onSuggestionRender = vi.fn();
 
 				mockGetAvailabilityQuery( {
 					params: { domainName: 'test.com' },
@@ -1025,7 +1026,7 @@ describe( 'ResultsPage', () => {
 	describe( 'bundle suggestion', () => {
 		it( 'calls cart.onAddBundle once with the bundle suggestion when "Get bundle" is clicked', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockResolvedValue( undefined );
+			const onAddBundle = vi.fn().mockResolvedValue( undefined );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-add.com' },
@@ -1070,7 +1071,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'shows the server error message on the bundle card when adding the bundle fails', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest
+			const onAddBundle = vi
 				.fn()
 				.mockRejectedValue(
 					new Error(
@@ -1113,7 +1114,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'shows a generic error message when the rejection has no usable message', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( '' ) );
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( '' ) );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-fallback.com' },
@@ -1148,7 +1149,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'keeps the bundle card and shows a notice when the bundle is no longer available', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue(
+			const onAddBundle = vi.fn().mockRejectedValue(
 				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
 					code: 'domain_bundle_unavailable',
 				} )
@@ -1199,7 +1200,7 @@ describe( 'ResultsPage', () => {
 				...buildBundleSuggestion( 'test-bundle-late-fresh' ),
 				bundle_group_id: staleBundle.bundle_group_id,
 			};
-			const onAddBundle = jest.fn(
+			const onAddBundle = vi.fn(
 				() =>
 					new Promise< void >( ( _resolve, reject ) => {
 						rejectAddBundle = reject;
@@ -1273,7 +1274,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'clears the error when retrying succeeds', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest
+			const onAddBundle = vi
 				.fn()
 				.mockRejectedValueOnce( new Error( 'Transient bundle error' ) )
 				.mockResolvedValueOnce( undefined );
@@ -1314,7 +1315,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'clears the error when the search query changes', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Stale bundle error' ) );
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( 'Stale bundle error' ) );
 			const cart = buildCart( { onAddBundle } );
 
 			mockGetSuggestionsQuery( {
@@ -1372,7 +1373,7 @@ describe( 'ResultsPage', () => {
 		it( 'disables the CTA while the bundle add is pending', async () => {
 			const user = userEvent.setup();
 			let resolveAdd = () => {};
-			const onAddBundle = jest.fn().mockImplementation(
+			const onAddBundle = vi.fn().mockImplementation(
 				() =>
 					new Promise< void >( ( resolve ) => {
 						resolveAdd = resolve;
@@ -1415,7 +1416,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'yields the bundle error when another add-to-cart mutation starts', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-supersede.com' },
@@ -1462,7 +1463,7 @@ describe( 'ResultsPage', () => {
 	describe( 'bundle continue state', () => {
 		it( 'shows Continue instead of Get bundle when every bundle member is in the cart', async () => {
 			const user = userEvent.setup();
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-added.com' },
@@ -1733,7 +1734,7 @@ describe( 'ResultsPage', () => {
 		];
 
 		it( 'renders the bundle card beside the recommended suggestion and drops best-alternative', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
 			mockGetBundleSuggestionQuery( {
 				params: { query: 'flowers' },
@@ -1977,7 +1978,7 @@ describe( 'ResultsPage', () => {
 
 	describe( 'tracking', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
-			const onSuggestionsReceive = jest.fn();
+			const onSuggestionsReceive = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-receive' },
@@ -2005,7 +2006,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'fires the onShowMoreResults event when the show more results button is clicked', async () => {
 			const user = userEvent.setup();
-			const onShowMoreResults = jest.fn();
+			const onShowMoreResults = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test query' },
@@ -2038,7 +2039,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onBundleShown event once when a bundle suggestion renders', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-shown.com' },
@@ -2075,7 +2076,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'does not fire the onBundleShown event when bundles are disabled', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-off' },
@@ -2093,7 +2094,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onBundleShown event with placement "card" for the top bundle card', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-card-shown.com' },
@@ -2124,7 +2125,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onBundleShown event with placement "inline" once per rendered inline bundle', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			// petals.com leads the list, so it is promoted to the featured section and
 			// its inline offer is the featured-inline row (the Phase 3 path). A domain
@@ -2168,13 +2169,13 @@ describe( 'ResultsPage', () => {
 		it( 'fires the onBundleAddToCart event after the bundle add succeeds', async () => {
 			const user = userEvent.setup();
 			let resolveAddBundle: () => void = () => {};
-			const onAddBundle = jest.fn(
+			const onAddBundle = vi.fn(
 				() =>
 					new Promise< void >( ( resolve ) => {
 						resolveAddBundle = resolve;
 					} )
 			);
-			const onBundleAddToCart = jest.fn();
+			const onBundleAddToCart = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-accept.com' },
@@ -2216,8 +2217,8 @@ describe( 'ResultsPage', () => {
 
 		it( 'does not fire the onBundleAddToCart event when the bundle add fails', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
-			const onBundleAddToCart = jest.fn();
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+			const onBundleAddToCart = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-reject.com' },
@@ -2252,7 +2253,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'does not fire the onBundleAddToCart event when no bundle add handler exists', async () => {
 			const user = userEvent.setup();
-			const onBundleAddToCart = jest.fn();
+			const onBundleAddToCart = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-no-handler.com' },
@@ -2283,7 +2284,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {
-			const onQueryAvailabilityCheck = jest.fn();
+			const onQueryAvailabilityCheck = vi.fn();
 
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test-available.com' },

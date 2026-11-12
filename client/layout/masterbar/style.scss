@@ -276,6 +276,7 @@ body.is-mobile-app-view {
 	.gridicon,
 	svg {
 		fill: var(--color-masterbar-icon);
+		color: var(--color-masterbar-icon);
 		width: 24px;
 		height: 24px;
 	}
@@ -283,6 +284,7 @@ body.is-mobile-app-view {
 	.gridicon {
 		.masterbar--is-checkout & {
 			fill: var(--color-checkout-masterbar-text);
+			color: var(--color-checkout-masterbar-text);
 		}
 	}
 
@@ -304,9 +306,13 @@ body.is-mobile-app-view {
 	&:hover,
 	&.is-open,
 	&:has(+ .masterbar__item-subitems:hover) {
-		svg path,
+		svg:not([stroke]) path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
+		}
+
+		svg {
+			color: var(--color-masterbar-highlight);
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {

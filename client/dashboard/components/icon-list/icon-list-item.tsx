@@ -42,6 +42,7 @@ function UnforwardedIconListItem(
 		density = 'medium',
 		layout = 'inline',
 		suffixAlignment = 'center',
+		suffixSpacing,
 	}: IconListItemProps,
 	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
@@ -53,7 +54,7 @@ function UnforwardedIconListItem(
 
 	const iconSpacing = densitySpacingMap[ density ];
 	const textSpacing = densitySpacingMap[ density ] / 2;
-	const suffixSpacing = densitySpacingMap[ density ];
+	const suffixGap = suffixSpacing ?? densitySpacingMap[ density ];
 	const titleSize = density === 'low' ? '15px' : undefined;
 
 	const layoutConfig = LAYOUT_CONFIG[ layout ];
@@ -71,7 +72,7 @@ function UnforwardedIconListItem(
 					className={ layoutConfig.className }
 					alignment={ innerAlignment }
 					{ ...( suffixAlignment === 'top' && { justify: 'space-between' } ) }
-					spacing={ suffixSpacing }
+					spacing={ suffixGap }
 					as="span"
 				>
 					<VStack spacing={ textSpacing } as="span">

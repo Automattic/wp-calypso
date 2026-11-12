@@ -42,7 +42,7 @@
 		"@wordpress/base-styles": "^15.0.0",
 		"@wordpress/components": "^44.0.0",
 		"@wordpress/data": "^11.1.0",
-		"@wordpress/icons": "^15.5.0",
+		"@wordpress/icons": "^20.0.0",
 		"@wordpress/ui": "^0.26.0",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",

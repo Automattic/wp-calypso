@@ -28,12 +28,12 @@ const referral = ( email: string, purchases: ReferralPurchase[] ): Referral =>
 	} ) as Referral;
 
 describe( 'hasActivePressablePlanForClient', () => {
-	it( 'finds an active Pressable plan on the client, ignoring case and spaces in the email', () => {
+	test( 'finds an active Pressable plan on the client, ignoring case and spaces in the email', () => {
 		const referrals = [ referral( 'Client@Example.com', [ purchase( {} ) ] ) ];
 		expect( hasActivePressablePlanForClient( referrals, ' client@example.com ' ) ).toBe( true );
 	} );
 
-	it( 'ignores revoked, inactive and add-on licenses, and other clients', () => {
+	test( 'ignores revoked, inactive and add-on licenses, and other clients', () => {
 		const referrals = [
 			referral( 'a@example.com', [
 				purchase( { status: 'pending' } ),

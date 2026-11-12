@@ -14,7 +14,7 @@ CRITICAL: consult these reference examples:
 - @client/dashboard/sites/settings-php/test/index.test.tsx - form submission
 - @client/dashboard/app/hooks/test/use-visit-counter.test.tsx - a hook
 
-These rules win over the style of the file you're editing: add `test()` cases to a file of `it()` cases, and leave the existing ones alone unless the rename is the task.
+These rules win over the style of the file you're editing.
 
 ## Setup
 

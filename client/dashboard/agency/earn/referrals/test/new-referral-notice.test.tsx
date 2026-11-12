@@ -25,7 +25,7 @@ describe( 'NewReferralNotice', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'confirms a sent referral with the client’s email', async () => {
+	test( 'confirms a sent referral with the client’s email', async () => {
 		mockUseSearch.mockReturnValue( {
 			new_referral_order_email: 'client@example.com',
 			new_referral_order_checkout_url: CHECKOUT_URL,
@@ -37,7 +37,7 @@ describe( 'NewReferralNotice', () => {
 		expect( screen.getByRole( 'button', { name: 'Copy link' } ) ).toBeVisible();
 	} );
 
-	it( 'confirms a copied link', async () => {
+	test( 'confirms a copied link', async () => {
 		mockUseSearch.mockReturnValue( {
 			new_referral_order_email: 'client@example.com',
 			new_referral_order_checkout_url: CHECKOUT_URL,
@@ -52,7 +52,7 @@ describe( 'NewReferralNotice', () => {
 		expect( screen.getByRole( 'button', { name: 'Copy link again' } ) ).toBeVisible();
 	} );
 
-	it( 'offers to copy the link when the browser refused the copy', async () => {
+	test( 'offers to copy the link when the browser refused the copy', async () => {
 		mockUseSearch.mockReturnValue( {
 			new_referral_order_email: 'client@example.com',
 			new_referral_order_checkout_url: CHECKOUT_URL,
@@ -66,7 +66,7 @@ describe( 'NewReferralNotice', () => {
 		expect( screen.getByRole( 'button', { name: 'Copy link' } ) ).toBeVisible();
 	} );
 
-	it( 'confirms a sent referral without the copy button when the link is missing', async () => {
+	test( 'confirms a sent referral without the copy button when the link is missing', async () => {
 		mockUseSearch.mockReturnValue( {
 			new_referral_order_email: 'client@example.com',
 			flow_type: 'send',
@@ -77,7 +77,7 @@ describe( 'NewReferralNotice', () => {
 		expect( screen.queryByRole( 'button', { name: /Copy link/ } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows nothing without the client’s email', () => {
+	test( 'shows nothing without the client’s email', () => {
 		mockUseSearch.mockReturnValue( { new_referral_order_checkout_url: CHECKOUT_URL } );
 		render( <NewReferralNotice /> );
 
@@ -85,7 +85,7 @@ describe( 'NewReferralNotice', () => {
 		expect( screen.queryByRole( 'button', { name: /Copy link/ } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'clears the request from the URL on Dismiss', async () => {
+	test( 'clears the request from the URL on Dismiss', async () => {
 		mockUseSearch.mockReturnValue( {
 			new_referral_order_email: 'client@example.com',
 			new_referral_order_checkout_url: CHECKOUT_URL,

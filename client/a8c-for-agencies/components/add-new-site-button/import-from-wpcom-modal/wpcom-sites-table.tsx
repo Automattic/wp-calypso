@@ -20,6 +20,7 @@ import WPCOMSitesTableContent from './table-content';
 
 export type SiteItem = {
 	id: number;
+	name: string;
 	site: string;
 	date: string;
 	type: string;
@@ -86,6 +87,7 @@ export default function WPCOMSitesTable( {
 				site
 					? {
 							id: site.ID,
+							name: site.name ?? '',
 							site: urlToSlug( site.URL ),
 							date: site.options?.created_at || '',
 						}
@@ -127,7 +129,8 @@ export default function WPCOMSitesTable( {
 									/>
 								</div>
 							),
-							getValue: () => '-' as string,
+							getValue: ( { item }: { item: SiteItem } ) => item.site,
+							enableGlobalSearch: true,
 							render: ( { item }: { item: SiteItem } ) => (
 								<div className="wpcom-sites-table__site-mobile">
 									<CheckboxControl
@@ -146,6 +149,14 @@ export default function WPCOMSitesTable( {
 							enableHiding: false,
 							enableSorting: false,
 						},
+						{
+							id: 'name',
+							label: translate( 'Name' ),
+							getValue: ( { item }: { item: SiteItem } ) => item.name,
+							enableGlobalSearch: true,
+							enableHiding: false,
+							enableSorting: false,
+						},
 					]
 				: [
 						{
@@ -160,7 +171,8 @@ export default function WPCOMSitesTable( {
 									/>
 								</div>
 							),
-							getValue: () => '-' as string,
+							getValue: ( { item }: { item: SiteItem } ) => item.site,
+							enableGlobalSearch: true,
 							render: ( { item }: { item: SiteItem } ) => (
 								<CheckboxControl
 									className="view-details-button"
@@ -188,6 +200,14 @@ export default function WPCOMSitesTable( {
 							label: translate( 'Type' ).toUpperCase(),
 							getValue: () => '-',
 							render: ( { item }: { item: SiteItem } ) => <TypeIcon siteId={ item.id } />,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
+							id: 'name',
+							label: translate( 'Name' ),
+							getValue: ( { item }: { item: SiteItem } ) => item.name,
+							enableGlobalSearch: true,
 							enableHiding: false,
 							enableSorting: false,
 						},

@@ -1,6 +1,9 @@
 ## Unreleased
 
 - `SummaryButton`: set `color` alongside `fill` on the navigation and decoration icons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) take the same grey, and the accent color on hover.
+- `FoldableCard`: set `color` alongside `fill` on the expand chevron, so its stroke-drawn icon keeps the dark grey, and the light grey when disabled.
+- `FlowQuestion`, `HorizontalBarList`, `ImageCarousel` and `NoticeBanner`: set `color` alongside `fill` on their icons, so stroke-drawn icons keep their hover, status and button colors.
+- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 5.0.0
 

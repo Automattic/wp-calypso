@@ -1,9 +1,8 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import {
 	CheckoutProvider,
 	FormStatus,
@@ -140,7 +139,7 @@ describe( 'CheckoutProvider', () => {
 	} );
 
 	it( 'does not call onPaymentComplete when transaction status is not complete', async () => {
-		const onPaymentComplete = jest.fn();
+		const onPaymentComplete = vi.fn();
 		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 		expect( screen.getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentComplete ).not.toHaveBeenCalled();
@@ -148,7 +147,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'calls onPaymentComplete when transaction status is complete', async () => {
 		const user = userEvent.setup();
-		const onPaymentComplete = jest.fn();
+		const onPaymentComplete = vi.fn();
 		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 		user.click( screen.getByText( 'Complete' ) );
 		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
@@ -157,7 +156,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'passes the active payment method and processor to onPaymentComplete', async () => {
 		const user = userEvent.setup();
-		const onPaymentComplete = jest.fn();
+		const onPaymentComplete = vi.fn();
 		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 		user.click( screen.getByText( 'Complete' ) );
 		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
@@ -171,7 +170,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'does not call onPaymentComplete twice when transaction status is complete even if callback changes', async () => {
 		const user = userEvent.setup();
-		const onPaymentComplete = jest.fn();
+		const onPaymentComplete = vi.fn();
 		const { getByText, rerender } = render(
 			<MyCheckout onPaymentComplete={ () => onPaymentComplete() } />
 		);
@@ -206,14 +205,14 @@ describe( 'CheckoutProvider', () => {
 	} );
 
 	it( 'does not call onPaymentComplete when form loads', async () => {
-		const onPaymentComplete = jest.fn();
+		const onPaymentComplete = vi.fn();
 		render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 		expect( screen.getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentComplete ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not call onPaymentRedirect when form loads', async () => {
-		const onPaymentRedirect = jest.fn();
+		const onPaymentRedirect = vi.fn();
 		render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
 		expect( screen.getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentRedirect ).not.toHaveBeenCalled();
@@ -221,7 +220,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'does not call onPaymentRedirect when transaction status is complete', async () => {
 		const user = userEvent.setup();
-		const onPaymentRedirect = jest.fn();
+		const onPaymentRedirect = vi.fn();
 		render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
 		user.click( screen.getByText( 'Complete' ) );
 		expect( await screen.findByText( 'Form Complete' ) ).toBeInTheDocument();
@@ -230,7 +229,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', async () => {
 		const user = userEvent.setup();
-		const onPaymentRedirect = jest.fn();
+		const onPaymentRedirect = vi.fn();
 		const { getByText, rerender } = render(
 			<MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } />
 		);
@@ -242,7 +241,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'calls onPaymentRedirect when transaction status is redirecting', async () => {
 		const user = userEvent.setup();
-		const onPaymentRedirect = jest.fn();
+		const onPaymentRedirect = vi.fn();
 		render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
 		user.click( screen.getByText( 'Redirect' ) );
 		expect( await screen.findByText( 'Redirecting' ) ).toBeInTheDocument();
@@ -250,14 +249,14 @@ describe( 'CheckoutProvider', () => {
 	} );
 
 	it( 'does not call onPaymentError when form loads', () => {
-		const onPaymentError = jest.fn();
+		const onPaymentError = vi.fn();
 		const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
 		expect( getByText( 'Submit' ) ).not.toBeDisabled();
 		expect( onPaymentError ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not call onPaymentError when transaction status is complete', async () => {
-		const onPaymentError = jest.fn();
+		const onPaymentError = vi.fn();
 		const user = userEvent.setup();
 		render( <MyCheckout onPaymentError={ onPaymentError } /> );
 		user.click( screen.getByText( 'Complete' ) );
@@ -266,7 +265,7 @@ describe( 'CheckoutProvider', () => {
 	} );
 
 	it( 'calls onPaymentError when transaction status is error', async () => {
-		const onPaymentError = jest.fn();
+		const onPaymentError = vi.fn();
 		const user = userEvent.setup();
 		render( <MyCheckout onPaymentError={ onPaymentError } /> );
 		user.click( screen.getByText( 'Cause Error' ) );
@@ -275,7 +274,7 @@ describe( 'CheckoutProvider', () => {
 	} );
 
 	it( 'passes the active payment method and processor to onPaymentError', async () => {
-		const onPaymentError = jest.fn();
+		const onPaymentError = vi.fn();
 		const user = userEvent.setup();
 		render( <MyCheckout onPaymentError={ onPaymentError } /> );
 		user.click( screen.getByText( 'Cause Error' ) );
@@ -289,7 +288,7 @@ describe( 'CheckoutProvider', () => {
 	} );
 
 	it( 'renders form as submitting when isValidating changed from true to false and transaction is submitting', async () => {
-		const onPaymentError = jest.fn();
+		const onPaymentError = vi.fn();
 		const user = userEvent.setup();
 		render( <MyCheckout onPaymentError={ onPaymentError } /> );
 		user.click( screen.getByText( 'Submit' ) );
@@ -300,7 +299,7 @@ describe( 'CheckoutProvider', () => {
 
 	it( 'does not call onPaymentError twice when transaction status is error even if callback changes', async () => {
 		const user = userEvent.setup();
-		const onPaymentError = jest.fn();
+		const onPaymentError = vi.fn();
 		const { getByText, rerender } = render(
 			<MyCheckout onPaymentError={ () => onPaymentError() } />
 		);
