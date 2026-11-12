@@ -61,7 +61,7 @@ describe( '<DkimMissingNotice>', () => {
 		const scope = mockStatus( [
 			entry( { domain: 'found.com', status: 'found' } ),
 			entry( { domain: 'wpcom.com', status: 'not_applicable', record: null } ),
-			entry( { domain: 'new.com', status: 'unknown', checked_at: null, record: null } ),
+			entry( { domain: 'failed.com', status: 'unknown', record: null } ),
 			entry(),
 		] );
 		render( <DkimNotice /> );
@@ -69,7 +69,7 @@ describe( '<DkimMissingNotice>', () => {
 		expect( await screen.findByText( TITLE ) ).toBeVisible();
 		expect( scope.isDone() ).toBe( true );
 		expect( screen.getAllByRole( 'button', { name: 'Check again' } ) ).toHaveLength( 1 );
-		expect( screen.queryByText( /found\.com|wpcom\.com|new\.com/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /found\.com|wpcom\.com|failed\.com/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the record from the response', async () => {
@@ -109,7 +109,7 @@ describe( '<DkimMissingNotice>', () => {
 		expect( scope.isDone() ).toBe( false );
 	} );
 
-	describe( 'Check again', () => {
+	describe( 'with polling', () => {
 		beforeEach( () => jest.useFakeTimers() );
 		afterEach( () => jest.useRealTimers() );
 
@@ -119,6 +119,55 @@ describe( '<DkimMissingNotice>', () => {
 				await act( () => jest.advanceTimersByTimeAsync( 100 ) );
 			}
 		};
+
+		const neverChecked = entry( { status: 'unknown', checked_at: null, record: null } );
+
+		test( 'polls a never-checked domain until its first check has a result', async () => {
+			const first = mockStatus( [ neverChecked ] );
+			render( <DkimNotice /> );
+			await waitFor( () => expect( first.isDone() ).toBe( true ) );
+
+			// Polling starts once the first response lands, so each poll is a little past the interval.
+			const stillPending = mockStatus( [ neverChecked ] );
+			const checked = mockStatus( [ entry() ] );
+			await advance( DKIM_POLL_INTERVAL + 500 );
+			expect( stillPending.isDone() ).toBe( true );
+			expect( screen.queryByText( TITLE ) ).not.toBeInTheDocument();
+
+			await advance( DKIM_POLL_INTERVAL + 500 );
+			expect( checked.isDone() ).toBe( true );
+			expect( await screen.findByText( TITLE ) ).toBeVisible();
+
+			const extraPoll = mockStatus( [ entry() ] );
+			await advance( DKIM_POLL_INTERVAL * 2 );
+			expect( extraPoll.isDone() ).toBe( false );
+		} );
+
+		test( 'stops polling a never-checked domain when the time runs out', async () => {
+			const first = mockStatus( [ neverChecked ] );
+			render( <DkimNotice /> );
+			await waitFor( () => expect( first.isDone() ).toBe( true ) );
+
+			const polls = nock( API ).get( PATH ).times( 100 ).reply( 200, [ neverChecked ] );
+			let pollCount = 0;
+			polls.on( 'request', () => pollCount++ );
+			await advance( DKIM_POLL_TIMEOUT + DKIM_POLL_INTERVAL );
+
+			const pollsAtTimeout = pollCount;
+			expect( pollsAtTimeout ).toBeGreaterThan( 0 );
+			await advance( DKIM_POLL_INTERVAL * 3 );
+			expect( pollCount ).toBe( pollsAtTimeout );
+		} );
+
+		test( 'does not poll a domain whose last check failed', async () => {
+			const first = mockStatus( [ entry( { status: 'unknown', record: null } ) ] );
+			render( <DkimNotice /> );
+			await waitFor( () => expect( first.isDone() ).toBe( true ) );
+
+			const extraPoll = mockStatus( [] );
+			await advance( DKIM_POLL_INTERVAL * 2 );
+			expect( extraPoll.isDone() ).toBe( false );
+		} );
 
 		const clickCheckAgain = async () => {
 			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
@@ -196,6 +245,31 @@ describe( '<DkimMissingNotice>', () => {
 			expect( bothDone.isDone() ).toBe( true );
 			expect( await screen.findByText( TRY_LATER ) ).toBeVisible();
 			expect( checkAgainButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+			expect( select( noticesStore ).getNotices() ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( { content: `We found the DKIM record for ${ DOMAIN }.` } ),
+				] )
+			);
+		} );
+
+		test( 'announces a found domain when another one times out', async () => {
+			const other = 'other.com';
+			mockStatus( [ entry(), entry( { domain: other } ) ] );
+			render( <DkimNotice /> );
+
+			mockForce( [ entry(), entry( { domain: other } ) ] );
+			nock( API )
+				.get( PATH )
+				.times( 100 )
+				.reply( 200, [
+					entry( { status: 'found', checked_at: NEW_CHECKED_AT } ),
+					entry( { domain: other } ),
+				] );
+			await clickCheckAgain();
+
+			await advance( DKIM_POLL_TIMEOUT );
+			expect( await screen.findByText( TRY_LATER ) ).toBeVisible();
+			expect( screen.getByText( `Add the DKIM record for ${ other }` ) ).toBeVisible();
 			expect( select( noticesStore ).getNotices() ).toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( { content: `We found the DKIM record for ${ DOMAIN }.` } ),

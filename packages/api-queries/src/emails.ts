@@ -52,15 +52,13 @@ export const titanDkimStatusQuery = () =>
 
 /**
  * Queues a new check for every domain whose DKIM record is missing. The response is the
- * cached list, so the new results only show up in a later `titanDkimStatusQuery` fetch.
+ * cached list, so the new results only show up in a later `titanDkimStatusQuery` fetch. It
+ * isn't written to that query's cache: it could arrive after a newer poll and overwrite it.
  */
 export const titanDkimStatusRecheckMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'titan-dkim-status-recheck' },
 		mutationFn: () => fetchTitanDkimStatus( { force: true } ),
-		onSuccess: ( data ) => {
-			queryClient.setQueryData( titanDkimStatusQuery().queryKey, data );
-		},
 	} );
 
 export const createTitanMailboxMutation = () => {
