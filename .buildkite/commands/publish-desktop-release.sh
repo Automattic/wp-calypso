@@ -6,22 +6,6 @@ release_dir="desktop/release"
 changelog_path="desktop/CHANGELOG.md"
 version_from_git_tag="${BUILDKITE_TAG:-}"
 
-download_step_artifacts() {
-	local step="$1"
-	shift
-	local query
-
-	for query in "$@"; do
-		echo "--- :buildkite: Downloading artifacts from $step"
-		if buildkite-agent artifact download "$query" . --step "$step"; then
-			return
-		fi
-	done
-
-	echo "Failed to download artifacts from $step." >&2
-	exit 1
-}
-
 rm -rf "$release_dir" "$changelog_path"
 mkdir -p "$release_dir"
 
@@ -38,10 +22,10 @@ if [[ -n "$version_from_git_tag" ]]; then
 	)
 fi
 
-download_step_artifacts desktop-build-mac 'desktop/release/*'
-download_step_artifacts desktop-build-linux 'desktop/release/*'
-download_step_artifacts desktop-build-windows-store 'desktop/release/*'
-download_step_artifacts desktop-build-windows-nsis 'desktop/release/*'
+for step in desktop-build-mac desktop-build-linux desktop-build-windows-store desktop-build-windows-nsis; do
+	echo "--- :buildkite: Downloading artifacts from $step"
+	buildkite-agent artifact download "$release_dir/*" . --step "$step"
+done
 
 echo "--- :mag: Validating combined desktop release payload"
 .buildkite/commands/validate-desktop-artifacts.sh all "$release_dir"
