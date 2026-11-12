@@ -2,8 +2,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom/vitest';
 import { VerticalStepper } from '..';
 
 describe( 'VerticalStepper', () => {
@@ -70,7 +68,7 @@ describe( 'VerticalStepper', () => {
 
 describe( 'VerticalStepper behavioral', () => {
 	it( 'calls onValueChange when switching steps', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<VerticalStepper value="a" onValueChange={ onValueChange } aria-label="Test">
@@ -87,7 +85,7 @@ describe( 'VerticalStepper behavioral', () => {
 	} );
 
 	it( 'does not fire onValueChange when a disabled step trigger is clicked', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<VerticalStepper value="a" onValueChange={ onValueChange } aria-label="Test">
@@ -135,7 +133,7 @@ describe( 'VerticalStepper behavioral', () => {
 
 describe( 'VerticalStepper linear mode', () => {
 	it( 'does not navigate to a non-completed step', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<VerticalStepper value="a" linear onValueChange={ onValueChange } aria-label="Test">
@@ -152,7 +150,7 @@ describe( 'VerticalStepper linear mode', () => {
 	} );
 
 	it( 'navigates to a completed past-step', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<VerticalStepper value="b" linear onValueChange={ onValueChange } aria-label="Test">

@@ -1,14 +1,12 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef, useState } from '@wordpress/element';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom/vitest';
 import { Stepper } from '..';
 import type { StepperRef } from '../types';
 
 describe( 'Stepper.Root', () => {
 	it( 'warns in dev when neither aria-label nor aria-labelledby is provided', () => {
-		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
 			// @ts-expect-error -- intentionally omitting both aria-label and aria-labelledby to test the runtime warning
 			<Stepper.Root orientation="vertical">
@@ -334,7 +332,7 @@ describe( 'Stepper.List', () => {
 	} );
 
 	it( 'warns and renders nothing in vertical mode', () => {
-		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
 			<Stepper.Root orientation="vertical" value="a" aria-label="Test">
 				<Stepper.List>
@@ -352,7 +350,7 @@ describe( 'Stepper.List', () => {
 
 describe( 'Stepper uncontrolled mode', () => {
 	it( 'opens the defaultValue step on mount and calls onValueChange on navigation', () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		render(
 			<Stepper.Root
 				orientation="vertical"
@@ -437,7 +435,7 @@ describe( 'Stepper.Panel keepMounted', () => {
 
 describe( 'Stepper.Indicator formatStepLabel', () => {
 	it( 'uses the custom formatStepLabel from Root to generate the visually-hidden label', () => {
-		const format = vi.fn( ( step: number, total: number ) => `Item ${ step } of ${ total }` );
+		const format = jest.fn( ( step: number, total: number ) => `Item ${ step } of ${ total }` );
 		render(
 			<Stepper.Root orientation="vertical" value="a" formatStepLabel={ format } aria-label="Test">
 				<Stepper.Step value="a">
@@ -451,7 +449,7 @@ describe( 'Stepper.Indicator formatStepLabel', () => {
 
 describe( 'Stepper linear mode interaction', () => {
 	it( 'does not navigate when a linear-disabled tab is clicked', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<Stepper.Root
@@ -478,7 +476,7 @@ describe( 'Stepper linear mode interaction', () => {
 	} );
 
 	it( 'navigates to a completed past step in linear mode', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<Stepper.Root
@@ -505,7 +503,7 @@ describe( 'Stepper linear mode interaction', () => {
 	} );
 
 	it( 'navigates to an error-status step in linear mode', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<Stepper.Root
@@ -578,7 +576,7 @@ describe( 'Stepper dynamic step removal', () => {
 
 describe( 'Stepper dev warnings', () => {
 	it( 'warns when value does not match any step', async () => {
-		const spy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
 			<Stepper.Root orientation="vertical" value="z" aria-label="Test">
 				<Stepper.Step value="a">
@@ -597,7 +595,7 @@ describe( 'Stepper dev warnings', () => {
 	// NOTE: warning() dedupes messages process-wide, so these tests use step values
 	// unique to this file to make sure the expected message has not fired elsewhere.
 	it( 'warns when two steps share the same value', async () => {
-		const spy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
 			<Stepper.Root orientation="vertical" value="dup-warn" aria-label="Test">
 				<Stepper.Step value="dup-warn">
@@ -617,7 +615,7 @@ describe( 'Stepper dev warnings', () => {
 	} );
 
 	it( 'keeps the original step registered when a duplicate step unmounts', async () => {
-		const spy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		function Dynamic() {
 			const [ showDuplicate, setShowDuplicate ] = useState( true );
 			return (
@@ -651,7 +649,7 @@ describe( 'Stepper dev warnings', () => {
 	} );
 
 	it( 'keeps the step registered when the original unmounts but a duplicate is still mounted', async () => {
-		const spy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		function Dynamic() {
 			const [ showOriginal, setShowOriginal ] = useState( true );
 			return (
@@ -687,7 +685,7 @@ describe( 'Stepper dev warnings', () => {
 
 describe( 'Stepper.Panel dev warnings', () => {
 	it( 'warns when a horizontal Panel has no matching step value', async () => {
-		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
 			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
 				<Stepper.List>
@@ -709,7 +707,7 @@ describe( 'Stepper.Panel dev warnings', () => {
 	// NOTE: warning() dedupes messages process-wide, so this test relies on being
 	// the only place in this file that triggers the missing-`value` message.
 	it( 'warns when a horizontal Panel has no value prop and no StepContext', async () => {
-		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		render(
 			<Stepper.Root orientation="horizontal" value="a" aria-label="Test">
 				<Stepper.List>
@@ -772,7 +770,7 @@ describe( 'Stepper activationMode', () => {
 
 describe( 'Stepper.Step disabled in vertical mode', () => {
 	it( 'does not fire onValueChange when a disabled accordion trigger is clicked', async () => {
-		const onValueChange = vi.fn();
+		const onValueChange = jest.fn();
 		const user = userEvent.setup();
 		render(
 			<Stepper.Root

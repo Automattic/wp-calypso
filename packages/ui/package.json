@@ -65,7 +65,6 @@
 		"@testing-library/user-event": "^14.6.8",
 		"esbuild": "^0.25.5",
 		"esbuild-sass-plugin": "^3.1.0",
-		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
@@ -73,9 +72,7 @@
 		"stylelint": "^17.16.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^8.5.1",
-		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
-		"vitest": "^5.1.0"
+		"typescript": "^6.0.3"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",

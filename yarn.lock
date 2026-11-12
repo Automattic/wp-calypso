@@ -2562,7 +2562,6 @@ __metadata:
     date-fns: "npm:^4.4.0"
     esbuild: "npm:^0.25.5"
     esbuild-sass-plugin: "npm:^3.1.0"
-    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     postcss-modules: "npm:^6.0.1"
     react-day-picker: "npm:^9.7.0"
@@ -2572,8 +2571,6 @@ __metadata:
     stylelint-plugin-logical-css: "npm:^2.1.0"
     tsup: "npm:^8.5.1"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.7"
-    vitest: "npm:^5.1.0"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0

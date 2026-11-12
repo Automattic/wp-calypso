@@ -7,7 +7,7 @@
 		"declarationDir": "dist",
 		"emitDeclarationOnly": true,
 		"rootDir": "src",
-		"types": [ "vitest/globals" ]
+		"types": [ "@testing-library/jest-dom" ]
 	},
 	"include": [ "src" ]
 }
