@@ -36,6 +36,13 @@ The PR title is the commit subject. The description follows `.github/PULL_REQUES
 
 Start with a line linking the related GitHub or Linear issue: `Fixes #123` or `Fixes LIN-123` when merging resolves it, `Part of LIN-123` when it doesn't, e.g. it still needs a separate deploy. Leave the line out when there is no issue.
 
+If the change adds new translatable strings, add this warning next, so a human remembers the label (see the String Freeze section of [docs/i18n.md](../../../docs/i18n.md#string-freeze)):
+
+```
+> [!IMPORTANT]
+> This PR introduces new translatable strings. Remember to add the `[Status] String Freeze` label before merging.
+```
+
 The description then reuses the commit body's two paragraphs in reverse order, each under its own heading. `## What` holds the fix paragraph rewritten to start with a verb in the imperative, then `## Why` holds the problem paragraph as is.
 
 For a change users can see (UI, or new or changed translatable strings), add before/after screenshots under `## What`, after its paragraph. Take and upload them as in [verify/screenshots.md](../verify/screenshots.md).
