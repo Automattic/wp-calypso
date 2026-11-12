@@ -114,6 +114,79 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 	} );
 
+	test.each( [
+		[ 'capture_queued', {}, 'Pages' ],
+		[ 'capturing', { progress: { pages_captured: 3, pages_total: 12 } }, 'Pages' ],
+		[ 'capturing', { progress: { pages_captured: 12, pages_total: 12 } }, 'Images' ],
+		[ 'building', { progress: { phase: 'building' } }, 'Fonts, colors, and layout' ],
+		[
+			'building',
+			{ progress: { phase: 'exporting' } },
+			'Checking every page against your current site',
+		],
+		[ 'queued', {}, 'Checking every page against your current site' ],
+	] )(
+		'resumes the checklist where a %s session is when the page opens',
+		( state, extra, currentStep ) => {
+			const siteImport = {
+				status: 'moving',
+				session: session( state, extra ) as StaticSiteImportSession,
+			} as StaticSiteImportState;
+
+			render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+
+			const current = screen
+				.getAllByRole( 'listitem' )
+				.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
+			expect( current ).toHaveLength( 1 );
+			expect( current[ 0 ] ).toHaveTextContent( currentStep );
+		}
+	);
+
+	test.each( [
+		[ 10, 'Pages' ],
+		[ 25, 'Images' ],
+		[ 45, 'Fonts, colors, and layout' ],
+		[ 500, 'Checking every page against your current site' ],
+	] )(
+		'resumes the checklist where it was %i seconds into the move, even before the session gets there',
+		( secondsIn, currentStep ) => {
+			const siteImport = {
+				status: 'moving',
+				session: session( 'capturing', {
+					progress: {
+						phase: 'capturing',
+						step_seconds: { inspecting: 5 },
+						phase_started_at: 1000,
+						checked_at: 1000 + secondsIn - 5,
+						pages_captured: 0,
+						pages_total: 12,
+					},
+				} ) as StaticSiteImportSession,
+			} as StaticSiteImportState;
+
+			render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+
+			const current = screen
+				.getAllByRole( 'listitem' )
+				.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
+			expect( current ).toHaveLength( 1 );
+			expect( current[ 0 ] ).toHaveTextContent( currentStep );
+		}
+	);
+
+	test( 'moves the checklist forward when the session moves on', () => {
+		const moving = ( state: string ) =>
+			( { status: 'moving', session: session( state ) } ) as StaticSiteImportState;
+		const { rerender } = render(
+			<StaticSiteImportProgress siteImport={ moving( 'capturing' ) } search={ search } />
+		);
+
+		rerender( <StaticSiteImportProgress siteImport={ moving( 'building' ) } search={ search } /> );
+
+		expect( screen.getAllByRole( 'listitem' )[ 2 ] ).toHaveAttribute( 'aria-current', 'step' );
+	} );
+
 	test( 'offers to connect the kept domain and preview the site once it is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )

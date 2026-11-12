@@ -62,6 +62,12 @@ export interface StaticSiteImportPreviewSummary {
 
 export interface StaticSiteImportProgress {
 	phase?: 'installing' | 'inspecting' | 'capturing' | 'building' | 'exporting';
+	/** Unix time the current phase started. */
+	phase_started_at?: number;
+	/** Unix time the server last checked the session: its "now" for this response. */
+	checked_at?: number;
+	/** How long each finished phase took, in seconds. */
+	step_seconds?: Partial< Record< string, number > >;
 	finding_pages?: boolean;
 	pages_captured?: number;
 	pages_total?: number;

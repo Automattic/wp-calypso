@@ -31,18 +31,63 @@ import './style.scss';
 
 export * from './use-static-site-import';
 
-// The list moves on a timer and never finishes its last item before the session does.
+// Between session updates the list moves on a timer, and never finishes its last item before the session does.
 const STEP_DURATION = 20000;
 
-function useTimedStep( stepCount: number ) {
-	const [ step, setStep ] = useState( 0 );
+/** The checklist item the session itself has reached. */
+function getReachedStep( session?: StaticSiteImportSession ) {
+	const progress = session?.progress;
+	switch ( session?.state ) {
+		case 'capturing':
+			return progress?.pages_total && ( progress.pages_captured ?? 0 ) >= progress.pages_total
+				? 1
+				: 0;
+		case 'building':
+			return progress?.phase === 'exporting' ? 3 : 2;
+		case 'preview_ready':
+		case 'queued':
+		case 'finished':
+			return 3;
+		default:
+			return 0;
+	}
+}
+
+/**
+ * The checklist item the timer would be on had it started with the move, timed by the server's
+ * clock, so a reload shows the same item instead of starting over.
+ */
+function getElapsedStep( session?: StaticSiteImportSession ) {
+	const progress = session?.progress;
+	if ( ! progress?.phase_started_at || ! progress.checked_at ) {
+		return 0;
+	}
+	const finishedPhasesSeconds = Object.values( progress.step_seconds ?? {} ).reduce< number >(
+		( total, seconds ) => total + ( seconds ?? 0 ),
+		0
+	);
+	const elapsedSeconds = progress.checked_at - progress.phase_started_at + finishedPhasesSeconds;
+	return Math.max( 0, Math.floor( ( elapsedSeconds * 1000 ) / STEP_DURATION ) );
+}
+
+/** Where the checklist resumes: the session's own progress, or the timer's if it ran ahead. */
+function getSessionStep( session?: StaticSiteImportSession ) {
+	return Math.max( getReachedStep( session ), getElapsedStep( session ) );
+}
+
+function useTimedStep( stepCount: number, sessionStep: number ) {
+	const lastStep = stepCount - 1;
+	const [ step, setStep ] = useState( () => Math.min( sessionStep, lastStep ) );
+	useEffect( () => {
+		setStep( ( current ) => Math.max( current, Math.min( sessionStep, lastStep ) ) );
+	}, [ sessionStep, lastStep ] );
 	useEffect( () => {
 		const id = window.setInterval(
-			() => setStep( ( current ) => Math.min( current + 1, stepCount - 1 ) ),
+			() => setStep( ( current ) => Math.min( current + 1, lastStep ) ),
 			STEP_DURATION
 		);
 		return () => window.clearInterval( id );
-	}, [ stepCount ] );
+	}, [ lastStep ] );
 	return step;
 }
 
@@ -64,7 +109,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 		{ label: __( 'Fonts, colors, and layout' ) },
 		{ label: __( 'Checking every page against your current site' ) },
 	];
-	const current = useTimedStep( items.length );
+	const current = useTimedStep( items.length, getSessionStep( session ) );
 
 	return (
 		<VStack as="ul" spacing={ 4 } className="static-site-import-card__checklist">
@@ -72,7 +117,13 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 				const isDone = index < current;
 				const isCurrent = index === current;
 				return (
-					<HStack as="li" key={ item.label } justify="flex-start" spacing={ 3 }>
+					<HStack
+						as="li"
+						key={ item.label }
+						justify="flex-start"
+						spacing={ 3 }
+						aria-current={ isCurrent ? 'step' : undefined }
+					>
 						{ isDone && (
 							<Icon
 								icon={ published }
