@@ -507,11 +507,14 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/url": "npm:^4.48.0"
     he: "npm:^1.2.0"
+    jsdom: "npm:^20.0.3"
     qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
 
@@ -1095,13 +1098,17 @@ __metadata:
     fast-deep-equal: "npm:^3.1.3"
     gridicons: "npm:^3.4.3"
     i18n-calypso: "workspace:^"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.3"
+    resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     utility-types: "npm:^3.10.0"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
     "@wordpress/data": ^10.48.0 || ^11.0.0
@@ -1181,6 +1188,7 @@ __metadata:
     "@wordpress/url": "npm:^4.48.0"
     debug: "npm:^4.4.3"
     i18n-calypso: "workspace:^"
+    jsdom: "npm:^20.0.3"
     nock: "npm:^14.0.17"
     qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
@@ -1189,6 +1197,8 @@ __metadata:
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     utility-types: "npm:^3.10.0"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.48.0 || ^11.0.0
