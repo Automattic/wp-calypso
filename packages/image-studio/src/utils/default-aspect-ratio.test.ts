@@ -46,14 +46,14 @@ describe( 'getDefaultAspectRatio', () => {
 		'starts %s at the theme ratio when the picker offers it',
 		( entryPoint ) => {
 			expect( getDefaultAspectRatio( entryPoint, themeWith43 ) ).toBe( '4:3' );
+			expect( getDefaultAspectRatio( entryPoint, themeWith32 ) ).toBe( '3:2' );
 			expect( getDefaultAspectRatio( entryPoint, themeWith169 ) ).toBe( '16:9' );
 		}
 	);
 
 	it.each( FEATURED_ENTRY_POINTS )(
-		'starts %s at 16:9 when the theme ratio is portrait or unsupported',
+		'starts %s at 16:9 when the theme ratio is portrait',
 		( entryPoint ) => {
-			expect( getDefaultAspectRatio( entryPoint, themeWith32 ) ).toBe( '16:9' );
 			expect( getDefaultAspectRatio( entryPoint, themeWith34 ) ).toBe( '16:9' );
 		}
 	);
