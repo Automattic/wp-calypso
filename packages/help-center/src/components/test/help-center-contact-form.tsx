@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -73,7 +72,7 @@ vi.mock( '../help-center-gpt', () => ( { HelpCenterGPT: () => null } ) );
 vi.mock( '../help-center-search-results', () => ( { __esModule: true, default: () => null } ) );
 vi.mock( '../help-center-site-picker', () => ( { HelpCenterSitePicker: () => null } ) );
 
-// Override the global jestSetup mock so `config.isEnabled` is callable.
+// Override the global vitest-setup mock so `config.isEnabled` is callable.
 vi.mock( '@automattic/calypso-config', () => {
 	const cfg = ( key: string ) => key;
 	cfg.isEnabled = () => false;

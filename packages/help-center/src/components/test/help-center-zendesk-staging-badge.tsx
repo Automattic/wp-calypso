@@ -3,7 +3,6 @@
  */
 
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { ZendeskStagingBadge } from '../help-center-zendesk-staging-badge';
