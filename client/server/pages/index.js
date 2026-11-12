@@ -1589,6 +1589,19 @@ export default function pages() {
 		const locale = req.params.lang ?? config( 'i18n_default_locale_slug' );
 		res.redirect( 301, localizeUrl( 'https://wordpress.com/support/site-speed/', locale ) );
 	} );
+	// The classic `/migrate` section was retired; its links continue in the site migration flow.
+	app.get( [ '/migrate', '/migrate/*' ], ( req, res ) => {
+		const siteSlug = req.path.match(
+			/^\/migrate\/(?:choose\/|(?:upgrade\/)?from\/[^/]+\/to\/)?([^/]+)\/?$/
+		)?.[ 1 ];
+		res.redirect(
+			301,
+			siteSlug
+				? `/setup/site-migration?siteSlug=${ encodeURIComponent( siteSlug ) }`
+				: '/setup/site-migration'
+		);
+	} );
+
 	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );
 

@@ -1243,6 +1243,21 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /migrate', () => {
+		it.each( [
+			[ '/migrate', '/setup/site-migration' ],
+			[ '/migrate/example.com', '/setup/site-migration?siteSlug=example.com' ],
+			[ '/migrate/choose/example.com', '/setup/site-migration?siteSlug=example.com' ],
+			[
+				'/migrate/upgrade/from/source.com/to/example.com',
+				'/setup/site-migration?siteSlug=example.com',
+			],
+		] )( 'redirects %s to the site migration flow', async ( url, location ) => {
+			const { response } = await app.run( { request: { url } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, location );
+		} );
+	} );
+
 	describe( 'Route /menus', () => {
 		it( 'redirects to menus when there is a site', async () => {
 			const { response } = await app.run( { request: { url: '/menus/my-site' } } );
