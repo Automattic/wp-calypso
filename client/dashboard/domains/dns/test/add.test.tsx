@@ -166,9 +166,24 @@ describe( '<DomainAddDNS>', () => {
 		expect(
 			screen.getByText( 'The same as an A record, for newer IPv6 addresses (like 2001:db8::1).' )
 		).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: 'Show all record types' } )
-		).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Show fewer record types' } ) );
+
+		expect( screen.queryByRole( 'radio', { name: 'AAAA' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Show all record types' } ) ).toBeVisible();
+	} );
+
+	test( 'keeps a selected uncommon record type visible after showing fewer types', async () => {
+		mockApi();
+		const user = userEvent.setup();
+		render( <DomainAddDNS /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Show all record types' } ) );
+		await selectType( 'AAAA' );
+		await user.click( screen.getByRole( 'button', { name: 'Show fewer record types' } ) );
+
+		expect( screen.getByRole( 'radio', { name: 'AAAA' } ) ).toBeChecked();
+		expect( screen.queryByRole( 'radio', { name: 'SRV' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'explains when to pick TXT over CNAME', async () => {
