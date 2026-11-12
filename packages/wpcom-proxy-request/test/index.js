@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 const PROXY_ORIGIN = 'https://public-api.wordpress.com';
 
 const getProxyWindow = () => document.querySelector( 'iframe' ).contentWindow;
@@ -16,22 +17,21 @@ describe( 'wpcom-proxy-request', () => {
 
 	const installProxy = () => {
 		proxy.reloadProxy();
-		postMessage = jest.spyOn( getProxyWindow(), 'postMessage' ).mockImplementation( () => {} );
+		postMessage = vi.spyOn( getProxyWindow(), 'postMessage' ).mockImplementation( () => {} );
 	};
 
-	beforeEach( () => {
+	beforeEach( async () => {
 		// The module keeps its iframe, buffered requests and cookie flag in module state,
 		// so each test loads a fresh copy.
-		jest.isolateModules( () => {
-			proxy = require( '../src' );
-		} );
+		vi.resetModules();
+		proxy = await import( '../src' );
 
 		let uuid = 0;
-		jest.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `uuid-${ ++uuid }` );
+		vi.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `uuid-${ ++uuid }` );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		document.body.innerHTML = '';
 	} );
 
@@ -85,7 +85,7 @@ describe( 'wpcom-proxy-request', () => {
 	} );
 
 	test( 'passes the body and headers of a successful response to the callback', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		installProxy();
 		sendFromProxy( 'ready' );
 		proxy.default( { path: '/me' }, callback );
@@ -101,7 +101,7 @@ describe( 'wpcom-proxy-request', () => {
 	} );
 
 	test( 'passes each response to the callback of the request it answers', () => {
-		const callbacks = [ jest.fn(), jest.fn(), jest.fn() ];
+		const callbacks = [ vi.fn(), vi.fn(), vi.fn() ];
 		installProxy();
 		sendFromProxy( 'ready' );
 		callbacks.forEach( ( callback, i ) => proxy.default( { path: `/${ i }` }, callback ) );
@@ -126,7 +126,7 @@ describe( 'wpcom-proxy-request', () => {
 	} );
 
 	test( 'passes a WordPress.com error for an unsuccessful response to the callback', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		installProxy();
 		sendFromProxy( 'ready' );
 		proxy.default( { path: '/sites/this-site-does-not-exist' }, callback );
@@ -158,7 +158,7 @@ describe( 'wpcom-proxy-request', () => {
 	} );
 
 	test( 'ignores messages that are not from the proxy iframe', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		installProxy();
 		sendFromProxy( 'ready' );
 		proxy.default( { path: '/me' }, callback );
