@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { getByText, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { BundleCard } from '..';
 import type { BundleSuggestion, BundleSuggestionDomain } from '@automattic/api-core';
 
@@ -133,7 +134,7 @@ describe( 'BundleCard', () => {
 
 	it( 'invokes onAddToCart once with the suggestion when the CTA is clicked', async () => {
 		const user = userEvent.setup();
-		const onAddToCart = jest.fn();
+		const onAddToCart = vi.fn();
 		const suggestion = buildSuggestion( twoDomains );
 
 		render( <BundleCard suggestion={ suggestion } onAddToCart={ onAddToCart } /> );
@@ -146,8 +147,8 @@ describe( 'BundleCard', () => {
 
 	it( 'renders a Continue CTA instead of Get bundle when the bundle is already in the cart', async () => {
 		const user = userEvent.setup();
-		const onContinue = jest.fn();
-		const onAddToCart = jest.fn();
+		const onContinue = vi.fn();
+		const onAddToCart = vi.fn();
 
 		render(
 			<BundleCard

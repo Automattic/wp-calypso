@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	getAllByRole,
@@ -13,6 +13,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
+import { vi } from 'vitest';
 import { useDomainSearch } from '../../../page/context';
 import { buildCart, buildCartItem } from '../../../test-helpers/factories/cart';
 import { TestDomainSearch, TestDomainSearchWithCart } from '../../../test-helpers/renderer';
@@ -97,7 +98,7 @@ describe( 'FullCart', () => {
 
 	it( 'calls onContinue when the continue button is clicked', async () => {
 		const fireEvent = userEvent.setup();
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		render(
 			<TestDomainSearchWithCart
@@ -275,7 +276,7 @@ describe( 'FullCart', () => {
 
 	it( 'allows skipping the step when config.skippable is true', async () => {
 		const fireEvent = userEvent.setup();
-		const onSkip = jest.fn();
+		const onSkip = vi.fn();
 
 		render(
 			<TestDomainSearchWithCart
@@ -494,7 +495,7 @@ describe( 'FullCart', () => {
 
 		it( 'falls back to removing each member individually when onRemoveBundle is not provided', async () => {
 			const fireEvent = userEvent.setup();
-			const onRemoveItem = jest.fn().mockResolvedValue( undefined );
+			const onRemoveItem = vi.fn().mockResolvedValue( undefined );
 
 			render(
 				<TestDomainSearch

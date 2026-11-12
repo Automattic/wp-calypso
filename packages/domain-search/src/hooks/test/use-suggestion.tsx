@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';

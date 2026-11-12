@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { InlineBundleRow } from '..';
 import { buildCart } from '../../../test-helpers/factories/cart';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
@@ -92,7 +93,7 @@ describe( 'InlineBundleRow', () => {
 
 	it( 'adds every bundle member via cart.onAddBundle when "Get bundle" is clicked', async () => {
 		const user = userEvent.setup();
-		const onAddBundle = jest.fn().mockResolvedValue( undefined );
+		const onAddBundle = vi.fn().mockResolvedValue( undefined );
 
 		renderRow( {}, { onAddBundle } );
 
@@ -106,7 +107,7 @@ describe( 'InlineBundleRow', () => {
 
 	it( 'swaps "Get bundle" for a "Continue" CTA when every bundle member is already in the cart', async () => {
 		const user = userEvent.setup();
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		render(
 			<TestDomainSearch cart={ buildCart( { hasItem: () => true } ) } events={ { onContinue } }>

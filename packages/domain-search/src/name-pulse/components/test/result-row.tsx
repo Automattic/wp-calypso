@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
+import { vi } from 'vitest';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -16,12 +17,12 @@ import { NamePulseResultSetContext } from '../../hooks/use-name-pulse-result-set
 import { NamePulseResultRow, type NamePulseResultRowVariant } from '../result-row';
 import type { DomainAvailability } from '@automattic/api-core';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
-const mockUseViewportMatch = jest.mocked( useViewportMatch );
+const mockUseViewportMatch = vi.mocked( useViewportMatch );
 
 beforeEach( () => {
 	mockUseViewportMatch.mockReturnValue( false );
@@ -30,16 +31,17 @@ beforeEach( () => {
 const LONG_DOMAIN = 'icecreamshopnearsuratairport.boutique';
 
 const mockLabelLayout = ( labelWidth: number ) => {
-	jest
-		.spyOn( Element.prototype, 'getBoundingClientRect' )
-		.mockReturnValue( { width: labelWidth, right: 0 } as DOMRect );
-	jest.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockReturnValue( {
+	vi.spyOn( Element.prototype, 'getBoundingClientRect' ).mockReturnValue( {
+		width: labelWidth,
+		right: 0,
+	} as DOMRect );
+	vi.spyOn( HTMLCanvasElement.prototype, 'getContext' ).mockReturnValue( {
 		measureText: ( text: string ) => ( { width: text.length * 10 } ),
 	} as unknown as CanvasRenderingContext2D );
 };
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 const buildResult = ( overrides: Partial< NamePulseDomainResult > ): NamePulseDomainResult => ( {
@@ -83,7 +85,7 @@ const renderRow = (
 	cart = buildCart(),
 	variant?: NamePulseResultRowVariant
 ) => {
-	const fetcher = jest.fn( domainAvailability );
+	const fetcher = vi.fn( domainAvailability );
 
 	const Wrapper = () => {
 		const contextValue = useDomainSearchContextValue( {
@@ -116,7 +118,7 @@ describe( 'NamePulseResultRow', () => {
 	} );
 
 	it( 'gives each name its own railcar when several show in the same slot', () => {
-		const onSuggestionRender = jest.fn();
+		const onSuggestionRender = vi.fn();
 		const resultSet = { id: 'set-1', rendered: new Map() };
 
 		const Wrapper = ( { result }: { result: NamePulseDomainResult } ) => {
@@ -192,7 +194,7 @@ describe( 'NamePulseResultRow', () => {
 	it( 'uses the free space on the left of the name in RTL', () => {
 		mockLabelLayout( 100 );
 		// 900px free on the left of a 100px label; none on the right.
-		jest.spyOn( Element.prototype, 'getBoundingClientRect' ).mockImplementation( function (
+		vi.spyOn( Element.prototype, 'getBoundingClientRect' ).mockImplementation( function (
 			this: Element
 		) {
 			return (
@@ -202,7 +204,7 @@ describe( 'NamePulseResultRow', () => {
 			) as DOMRect;
 		} );
 		const getComputedStyle = window.getComputedStyle;
-		jest.spyOn( window, 'getComputedStyle' ).mockImplementation(
+		vi.spyOn( window, 'getComputedStyle' ).mockImplementation(
 			( element ) =>
 				new Proxy( getComputedStyle( element ), {
 					get: ( style, property ) =>
@@ -386,9 +388,7 @@ describe( 'NamePulseResultRow', () => {
 		it( 'keeps the dialog open until the name is in the cart', async () => {
 			let finishAdding = () => {};
 			const cart = buildCart( {
-				onAddItem: jest.fn(
-					() => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) )
-				),
+				onAddItem: vi.fn( () => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) ) ),
 			} );
 			renderRow( buildPolicyResult(), available, cart );
 

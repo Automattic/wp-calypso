@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { namePulseTldsQuery } from '@automattic/api-queries';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -27,12 +28,12 @@ import type {
 	NamePulseSuggestionsResponse,
 } from '@automattic/api-core';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
-const mockUseViewportMatch = jest.mocked( useViewportMatch );
+const mockUseViewportMatch = vi.mocked( useViewportMatch );
 
 const API = 'https://public-api.wordpress.com';
 const AVAILABILITY_PATH = '/wpcom/v2/domains/name-pulse/availability-check';
@@ -84,14 +85,14 @@ const FetcherSearch = ( {
 };
 
 const renderTypedSearch = ( query: string ) => {
-	const availability = jest.fn( async ( domainNames: string[] ) =>
+	const availability = vi.fn( async ( domainNames: string[] ) =>
 		buildNamePulseAvailabilityResponse( domainNames )
 	);
-	const suggestions = jest.fn( async ( params: NamePulseSuggestionsQuery ) => ( {
+	const suggestions = vi.fn( async ( params: NamePulseSuggestionsQuery ) => ( {
 		suggestions: params.use_ai ? NAME_PULSE_AI_SUGGESTIONS_FIXTURE : NAME_PULSE_SUGGESTIONS_FIXTURE,
 		errors: [],
 	} ) );
-	const domainAvailability = jest.fn( async ( domainName: string ) =>
+	const domainAvailability = vi.fn( async ( domainName: string ) =>
 		buildAvailability( { domain_name: domainName } )
 	);
 	const rendered = renderHook( ( { q }: { q: string } ) => useNamePulseSearch( q ), {
@@ -113,7 +114,7 @@ const renderTypedSearch = ( query: string ) => {
 // Async so the availability batch, which flushes on a microtask, goes out.
 const advance = ( ms: number ) =>
 	act( async () => {
-		jest.advanceTimersByTime( ms );
+		vi.advanceTimersByTime( ms );
 	} );
 
 const statusOf = ( result: ReturnType< typeof renderSearch >[ 'result' ], name: string ) =>
@@ -131,7 +132,7 @@ describe( 'useNamePulseSearch', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'keeps the status of a row a refined query still lists and only requests the new rows', async () => {
@@ -201,7 +202,7 @@ describe( 'useNamePulseSearch', () => {
 
 	it( 'keeps the bundle anchors once known, dropping only a name that turns out taken', async () => {
 		let calls = 0;
-		const availability = jest.fn( ( domainNames: string[] ) => {
+		const availability = vi.fn( ( domainNames: string[] ) => {
 			calls += 1;
 
 			// Later checks never answer, so a name that has to be checked again stays WAITING.
@@ -253,7 +254,7 @@ describe( 'useNamePulseSearch', () => {
 	} );
 
 	it( 'regenerates the rows on every keystroke and checks availability once the query settles', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const { result, rerender, availability } = renderTypedSearch( 'a' );
 		const rows = () => [ ...result.current.topResults, ...result.current.exactList ];
 
@@ -286,7 +287,7 @@ describe( 'useNamePulseSearch', () => {
 	} );
 
 	it( 'serves a name that leaves the grid and comes back from the cache: no second request and never WAITING', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const { result, rerender, availability } = renderTypedSearch( 'test' );
 
 		await advance( NAME_PULSE_QUERY_SETTLE_MS );
@@ -310,7 +311,7 @@ describe( 'useNamePulseSearch', () => {
 	} );
 
 	it( 'reports the keyword section as loading while typing and fetches once for the settled query', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const { result, rerender, suggestions } = renderTypedSearch( 'ice' );
 
 		await waitFor( () => expect( suggestions ).toHaveBeenCalledTimes( 1 ) );
@@ -337,7 +338,7 @@ describe( 'useNamePulseSearch', () => {
 	} );
 
 	it( 'asks for related matches without the ending of a typed domain', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const { result, suggestions } = renderTypedSearch( 'icecream.com' );
 
 		await advance( NAME_PULSE_QUERY_SETTLE_MS );
@@ -349,7 +350,7 @@ describe( 'useNamePulseSearch', () => {
 	} );
 
 	it( 'mounts Creative matches on the fourth word but collapses the exact grid only once the query settles', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const { result, rerender, availability, suggestions } = renderTypedSearch( 'a blog about' );
 
 		await advance( NAME_PULSE_QUERY_SETTLE_MS );
@@ -393,7 +394,7 @@ describe( 'useNamePulseSearch', () => {
 	} );
 
 	it( 'waits for the query to settle before checking a typed domain or showing a notice', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const { result, rerender, domainAvailability } = renderTypedSearch( 'icecream' );
 
 		await advance( NAME_PULSE_QUERY_SETTLE_MS );

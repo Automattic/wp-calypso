@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { buildCart } from '../../../test-helpers/factories/cart';
 import {
@@ -59,7 +60,7 @@ const renderVerdicts = (
 		buildNamePulseAvailabilityResponse( domainNames ),
 	enabled = true
 ) => {
-	const fetcher = jest.fn( availability );
+	const fetcher = vi.fn( availability );
 	const rendered = renderHook(
 		( props: { names: string[]; enabled: boolean } ) =>
 			useNamePulseVerdicts( props.names, props.enabled ),
@@ -80,7 +81,7 @@ describe( 'useNamePulseVerdicts', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'checks the names in parallel batches of 36 and maps each entry to a verdict with its pricing', async () => {
@@ -150,18 +151,18 @@ describe( 'useNamePulseVerdicts', () => {
 	} );
 
 	it( 'marks a batch UNKNOWN when no response arrives within the timeout, and a late response still lands', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const late = Promise.withResolvers< NamePulseAvailabilityResponse >();
 		const { result } = renderVerdicts( [ 'test.com' ], () => late.promise );
 
 		await flushBatches();
 		await act( async () => {
-			jest.advanceTimersByTime( NAME_PULSE_SKELETON_TIMEOUT_MS - 1 );
+			vi.advanceTimersByTime( NAME_PULSE_SKELETON_TIMEOUT_MS - 1 );
 		} );
 		expect( result.current[ 'test.com' ] ).toEqual( { isUnknown: false } );
 
 		await act( async () => {
-			jest.advanceTimersByTime( 1 );
+			vi.advanceTimersByTime( 1 );
 		} );
 		await waitFor( () => expect( result.current[ 'test.com' ]?.isUnknown ).toBe( true ) );
 
