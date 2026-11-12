@@ -408,7 +408,8 @@ export const useActions = ( {
 				id: 'change-site-address',
 				isPrimary: true,
 				label: hasEnTranslation( 'Rename address' )
-					? __( 'Rename address' )
+					? /* translators: Row action on a site's free WordPress.com address that opens the dialog to change that address. */
+						__( 'Rename address' )
 					: __( 'Change site address' ),
 				modalHeader: __( 'Change site address' ),
 				supportsBulk: false,
