@@ -1,6 +1,6 @@
 /**
  * @vitest-environment jsdom
- * @jest-environment-options { "url": "https://my.localhost/" }
+ * @vitest-environment-options { "url": "https://my.localhost/" }
  */
 
 import { screen, waitFor } from '@testing-library/react';

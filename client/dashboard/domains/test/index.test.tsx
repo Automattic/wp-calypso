@@ -32,8 +32,9 @@ vi.mock( '../../app/router/sites', async () => {
 	return { ...actual, siteRoute: { fullPath: '/sites/$siteSlug' } };
 } );
 
-jest.mock( '../../app/router/me', () => {
-	const actual = jest.requireActual( '../../app/router/me' );
+vi.mock( '../../app/router/me', async () => {
+	const actual =
+		await vi.importActual< typeof import( '../../app/router/me' ) >( '../../app/router/me' );
 	return {
 		...actual,
 		purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },

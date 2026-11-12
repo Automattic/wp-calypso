@@ -1,6 +1,6 @@
 /**
  * @vitest-environment jsdom
- * @jest-environment-options {"url": "http://my.a4a.localhost/"}
+ * @vitest-environment-options {"url": "http://my.a4a.localhost/"}
  */
 
 import { screen } from '@testing-library/react';

@@ -1,6 +1,6 @@
 /**
  * @vitest-environment jsdom
- * @jest-environment-options { "url": "https://my.localhost/" }
+ * @vitest-environment-options { "url": "https://my.localhost/" }
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

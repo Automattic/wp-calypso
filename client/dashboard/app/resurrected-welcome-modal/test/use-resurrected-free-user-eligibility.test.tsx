@@ -1,6 +1,6 @@
 /**
  * @vitest-environment jsdom
- * @jest-environment-options { "url": "https://my.localhost/" }
+ * @vitest-environment-options { "url": "https://my.localhost/" }
  */
 
 import { disable, enable } from '@automattic/calypso-config';

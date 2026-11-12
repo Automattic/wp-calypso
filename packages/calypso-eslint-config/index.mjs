@@ -208,6 +208,7 @@ function build( rootDir ) {
 							'jest-environment',
 							'jest-environment-options',
 							'vitest-environment',
+							'vitest-environment-options',
 							'jsxImportSource',
 						],
 					},
