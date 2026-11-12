@@ -18,3 +18,8 @@
 		text-decoration: none;
 	}
 }
+
+// DataViews aligns cells to the top, which leaves single-line cells above two-line ones.
+.domains-table .dataviews-view-table tbody td {
+	vertical-align: middle;
+}
