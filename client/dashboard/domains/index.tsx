@@ -89,7 +89,7 @@ function Domains() {
 			<PageLayout
 				header={
 					<PageHeader
-						title={ __( 'Domains' ) }
+						title={ __( 'Domain List' ) }
 						actions={ ! hasDomains ? null : <AddDomainButton /> }
 					/>
 				}
