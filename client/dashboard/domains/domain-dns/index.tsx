@@ -55,8 +55,9 @@ const DEFAULT_VIEW: DnsView = {
 	filters: [],
 	layout: {
 		styles: {
-			type: { maxWidth: '96px', minWidth: '72px' },
 			name: { maxWidth: '140px', minWidth: '72px' },
+			// DataViews shrinks every column but the title one to fit, so the value column has to claim the spare width.
+			value: { width: '100%' },
 		},
 	},
 };

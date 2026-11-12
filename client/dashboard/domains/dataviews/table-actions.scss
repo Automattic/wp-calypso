@@ -18,3 +18,17 @@
 		text-decoration: none;
 	}
 }
+
+// Wider gaps between columns: 32px instead of DataViews' 24px, except in the compact density.
+.domains-table .dataviews-view-table:where( :not( .has-compact-density ) ) {
+	:is( td, th ):not( :first-child, .dataviews-view-table__checkbox-column + * ) {
+		padding-inline-start: var( --wpds-dimension-padding-xl );
+	}
+
+	// The header button adds its own 8px, so this keeps the labels in line with the values.
+	th:not( :first-child, .dataviews-view-table__checkbox-column + * ):has(
+			.dataviews-view-table-header-button
+		) {
+		padding-inline-start: var( --wpds-dimension-padding-md );
+	}
+}
