@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { userPreferenceQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { StrictMode } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { bumpStat } from '../../analytics';
@@ -19,12 +21,11 @@ type Candidate = {
 	wasVisibleAtReceipt: boolean;
 };
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
 const mockUseAuth = useAuth as jest.MockedFunction< typeof useAuth >;
-const mockSitesQuery = jest.fn();
 const mockSubscribeSubscriberNotifications = jest.fn();
 const mockSubscribeUnseenCount = jest.fn();
 const mockUnsubscribe = jest.fn();
+const mockUnsubscribeUnseenCount = jest.fn();
 const mockUser = { ID: 1, has_unseen_notes: false };
 let mockOnNotificationCount: ( count: number ) => void = () => {};
 let mockOnConfirmed: ( candidate: Candidate ) => boolean | void = () => {};
@@ -49,15 +50,6 @@ jest.mock( '../../analytics', () => ( {
 	bumpStat: jest.fn(),
 	useAnalytics: () => ( { recordTracksEvent: mockRecordTracksEvent } ),
 } ) );
-jest.mock( '@tanstack/react-query', () => ( {
-	useMutation: jest.fn( () => ( { mutateAsync: jest.fn() } ) ),
-	useQuery: jest.fn(),
-} ) );
-jest.mock( '@automattic/api-queries', () => ( {
-	userPreferenceQuery: jest.fn( ( key ) => ( { queryKey: [ key ] } ) ),
-	userPreferencesMutation: jest.fn( () => ( {} ) ),
-	sitesQuery: ( ...args: unknown[] ) => mockSitesQuery( ...args ),
-} ) );
 jest.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
 jest.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
@@ -81,7 +73,6 @@ jest.mock( '@wordpress/compose', () => ( {
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
 jest.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
-jest.mock( 'calypso/lib/wp', () => ( { __esModule: true, default: {} } ) );
 jest.mock(
 	'@automattic/notifications/src/app/subscriber-notifications',
 	() => ( { subscribeSubscriberNotifications: mockSubscribeSubscriberNotifications } ),
@@ -93,23 +84,63 @@ jest.mock(
 	{ virtual: true }
 );
 
-const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
+const preferencesQueryKey = userPreferenceQuery(
+	'notifications-subscriber-alerts-enabled'
+).queryKey;
+let queryClient: QueryClient;
+let unmatchedRequests: string[];
+const recordUnmatchedRequest = ( req: { path?: string } ) => {
+	unmatchedRequests.push( req.path ?? '' );
+};
+
+function mockPreferences( preferenceEnabled: boolean ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, {
+			calypso_preferences: { 'notifications-subscriber-alerts-enabled': preferenceEnabled },
+		} );
+}
+
+/**
+ * Holds the preferences response back until `release()` is called, to keep the query fetching.
+ */
+function mockPendingPreferences( preferenceEnabled: boolean ) {
+	let release = () => {};
+	const released = new Promise< void >( ( resolve ) => {
+		release = resolve;
+	} );
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( async () => {
+			await released;
+			return [
+				200,
+				{ calypso_preferences: { 'notifications-subscriber-alerts-enabled': preferenceEnabled } },
+			];
+		} );
+	return release;
+}
+
+function seedPreferences( preferenceEnabled: boolean ) {
+	queryClient.setQueryData( preferencesQueryKey, {
+		'notifications-subscriber-alerts-enabled': preferenceEnabled,
+	} );
+}
+
+function Wrapper( { children }: { children: React.ReactNode } ) {
+	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+}
+
+function renderNotifications( ui = <Notifications /> ) {
+	return render( ui, { wrapper: Wrapper } );
+}
+
+const configure = ( featureEnabled: boolean, preferenceEnabled?: boolean ) => {
 	jest
 		.mocked( config.isEnabled )
 		.mockImplementation( ( key ) => key === 'notifications/subscriber-alerts' && featureEnabled );
-	mockUseQuery.mockImplementation( ( options ) => {
-		const queryOptions = options as { queryKey?: string[] };
-		if ( queryOptions.queryKey?.[ 0 ] === 'notifications-subscriber-alerts-enabled' ) {
-			return {
-				data: preferenceEnabled,
-				isSuccess: true,
-				isFetching: false,
-				isFetchedAfterMount: true,
-				isError: false,
-			} as ReturnType< typeof useQuery >;
-		}
-		return {} as ReturnType< typeof useQuery >;
-	} );
+	const preferences =
+		preferenceEnabled === undefined ? undefined : mockPreferences( preferenceEnabled );
 	mockUseAuth.mockReturnValue( {
 		user: mockUser,
 	} as ReturnType< typeof useAuth > );
@@ -121,7 +152,8 @@ const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
 			return mockUnsubscribe;
 		}
 	);
-	mockSubscribeUnseenCount.mockReturnValue( mockUnsubscribe );
+	mockSubscribeUnseenCount.mockReturnValue( mockUnsubscribeUnseenCount );
+	return preferences;
 };
 
 const candidate = (): Candidate => ( {
@@ -137,33 +169,40 @@ describe( 'Notifications subscriber alerts', () => {
 		mockUser.ID = 1;
 		mockOnNotificationCount = () => {};
 		mockOnConfirmed = () => {};
+		queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		unmatchedRequests = [];
+		nock.emitter.on( 'no match', recordUnmatchedRequest );
+	} );
+
+	afterEach( () => {
+		nock.emitter.off( 'no match', recordUnmatchedRequest );
+		nock.cleanAll();
 	} );
 
 	test( 'keeps unseen-count updates without monitoring subscriber notes when the feature flag is off', async () => {
-		configure( false, true );
-		render( <Notifications /> );
+		const preferences = configure( false, true );
+		renderNotifications();
 
 		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
-		const subscriberPreferencesQuery = mockUseQuery.mock.calls
-			.map( ( [ options ] ) => options as { enabled?: boolean; queryKey?: string[] } )
-			.find( ( options ) => options.queryKey?.[ 0 ] === 'notifications-subscriber-alerts-enabled' );
-		expect( subscriberPreferencesQuery?.enabled ).toBe( false );
+		expect( preferences?.isDone() ).toBe( false );
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
-		expect( mockSitesQuery ).not.toHaveBeenCalled();
+		expect( unmatchedRequests ).toEqual( [] );
 	} );
 
 	test( 'keeps unseen-count updates without monitoring subscriber notes when the preference is off', async () => {
-		configure( true, false );
-		render( <Notifications /> );
+		const preferences = configure( true, false );
+		renderNotifications();
 
 		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
+		await waitFor( () => expect( preferences?.isDone() ).toBe( true ) );
+		await waitFor( () => expect( queryClient.isFetching() ).toBe( 0 ) );
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
-		expect( mockSitesQuery ).not.toHaveBeenCalled();
+		expect( unmatchedRequests ).toEqual( [] );
 	} );
 
 	test( 'monitors live subscriber notes without making site-count requests and keeps count updates immediate', async () => {
 		configure( true, true );
-		render( <Notifications /> );
+		renderNotifications();
 
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
@@ -177,12 +216,12 @@ describe( 'Notifications subscriber alerts', () => {
 
 		expect( omnibarEvents.notificationsUnseenCount.emit ).toHaveBeenCalledWith( 3 );
 		expect( omnibarEvents.notificationsSubscriberReceived.emit ).toHaveBeenCalledTimes( 1 );
-		expect( mockSitesQuery ).not.toHaveBeenCalled();
+		expect( unmatchedRequests ).toEqual( [] );
 	} );
 
 	test( 'records the sound result of a subscriber alert', async () => {
 		configure( true, true );
-		render( <Notifications /> );
+		renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -197,7 +236,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'logs sound errors to logstash', async () => {
 		configure( true, true );
-		render( <Notifications /> );
+		renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -219,7 +258,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'does not record sound results that every tab or burst would repeat', async () => {
 		configure( true, true );
-		render( <Notifications /> );
+		renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -238,7 +277,7 @@ describe( 'Notifications subscriber alerts', () => {
 		mockSubscribeSubscriberNotifications.mockImplementationOnce( () => {
 			throw new Error( 'init failed' );
 		} );
-		render( <Notifications /> );
+		renderNotifications();
 
 		await waitFor( () =>
 			expect( captureException ).toHaveBeenCalledWith(
@@ -253,7 +292,7 @@ describe( 'Notifications subscriber alerts', () => {
 		mockSubscribeSubscriberNotifications.mockImplementationOnce( () => {
 			throw Object.assign( new Error( 'Loading chunk 123 failed' ), { name: 'ChunkLoadError' } );
 		} );
-		render( <Notifications /> );
+		renderNotifications();
 
 		await waitFor( () =>
 			expect( bumpStat ).toHaveBeenCalledWith(
@@ -265,38 +304,30 @@ describe( 'Notifications subscriber alerts', () => {
 	} );
 
 	test( 'does not trust a cached preference until the server answers', async () => {
-		configure( true, true );
-		mockUseQuery.mockImplementation(
-			() =>
-				( {
-					data: true,
-					isSuccess: true,
-					isFetching: true,
-					isFetchedAfterMount: false,
-					isError: false,
-				} ) as ReturnType< typeof useQuery >
-		);
-		render( <Notifications /> );
+		configure( true );
+		seedPreferences( true );
+		const release = mockPendingPreferences( true );
+		renderNotifications();
 
 		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
+
+		release();
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
 	} );
 
 	test( 'stops monitoring subscriber notes when the preference refetch fails', async () => {
-		configure( true, true );
-		mockUseQuery.mockImplementation(
-			() =>
-				( {
-					data: true,
-					isSuccess: false,
-					isFetching: false,
-					isFetchedAfterMount: true,
-					isError: true,
-				} ) as ReturnType< typeof useQuery >
-		);
-		render( <Notifications /> );
+		configure( true );
+		seedPreferences( true );
+		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/preferences' ).reply( 500 );
+		renderNotifications();
 
 		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
+		await waitFor( () =>
+			expect( queryClient.getQueryState( preferencesQueryKey )?.status ).toBe( 'error' )
+		);
 		expect( mockSubscribeSubscriberNotifications ).not.toHaveBeenCalled();
 	} );
 
@@ -305,7 +336,7 @@ describe( 'Notifications subscriber alerts', () => {
 		mockSubscribeUnseenCount.mockImplementationOnce( () => {
 			throw new Error( 'init failed' );
 		} );
-		render( <Notifications /> );
+		renderNotifications();
 
 		await waitFor( () =>
 			expect( captureException ).toHaveBeenCalledWith(
@@ -317,31 +348,29 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'keeps the subscription while the preference refetches on focus', async () => {
 		configure( true, true );
-		const { rerender } = render( <Notifications /> );
+		renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
 
-		mockUseQuery.mockImplementation(
-			() =>
-				( {
-					data: true,
-					isSuccess: true,
-					isFetching: true,
-					isFetchedAfterMount: true,
-					isError: false,
-				} ) as ReturnType< typeof useQuery >
-		);
-		rerender( <Notifications /> );
-		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		const release = mockPendingPreferences( true );
+		act( () => {
+			queryClient.refetchQueries( { queryKey: preferencesQueryKey } );
+		} );
+		await waitFor( () => expect( queryClient.isFetching() ).toBe( 1 ) );
 
+		expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 );
+		expect( mockUnsubscribe ).not.toHaveBeenCalled();
+
+		release();
+		await waitFor( () => expect( queryClient.isFetching() ).toBe( 0 ) );
 		expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 );
 		expect( mockUnsubscribe ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not record a sound result after unmount', async () => {
 		configure( true, true );
-		const { unmount } = render( <Notifications /> );
+		const { unmount } = renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -354,7 +383,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'ignores a note whose live push predates enabling the preference', async () => {
 		configure( true, true );
-		render( <Notifications /> );
+		renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -370,7 +399,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'ignores a delayed note callback after an account switch', async () => {
 		configure( true, true );
-		const { rerender } = render( <Notifications /> );
+		const { rerender } = renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -389,15 +418,15 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'ignores a delayed note callback after the preference is disabled', async () => {
 		configure( true, true );
-		const { rerender } = render( <Notifications /> );
+		renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
 		const oldOnConfirmed = mockOnConfirmed;
 
-		configure( true, false );
-		rerender( <Notifications /> );
-		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 1 ) );
+		act( () => seedPreferences( false ) );
+		// Once while the preference loads, then again when it is disabled.
+		await waitFor( () => expect( mockSubscribeUnseenCount ).toHaveBeenCalledTimes( 2 ) );
 		act( () => oldOnConfirmed( candidate() ) );
 
 		expect( mockUnsubscribe ).toHaveBeenCalledTimes( 1 );
@@ -406,7 +435,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'ignores a delayed note callback after unmount', async () => {
 		configure( true, true );
-		const { unmount } = render( <Notifications /> );
+		const { unmount } = renderNotifications();
 		await waitFor( () =>
 			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
 		);
@@ -421,7 +450,7 @@ describe( 'Notifications subscriber alerts', () => {
 
 	test( 'does not create duplicate subscriptions during StrictMode setup and cleanup', async () => {
 		configure( true, true );
-		const { unmount } = render(
+		const { unmount } = renderNotifications(
 			<StrictMode>
 				<Notifications />
 			</StrictMode>

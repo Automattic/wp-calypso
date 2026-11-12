@@ -2,16 +2,11 @@
  * @jest-environment jsdom
  */
 import { DomainPropagationStatus } from '@automattic/api-core';
-import { useQuery } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { domainPropagationStatusQuery } from '@automattic/api-queries';
+import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainPropagationStatusComponent from '../components/domain-propagation-status';
-
-// Mock the useQuery hook from React Query
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
-} ) );
 
 // Mock the useTimeSince hook
 jest.mock( '../../../components/time-since', () => ( {
@@ -33,34 +28,39 @@ const createMockPropagationStatus = (
 	...overrides,
 } );
 
+const queryKey = domainPropagationStatusQuery( 'example.com' ).queryKey;
+
+function mockPropagationStatus( status: number, body?: DomainPropagationStatus | null ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/domains/propagation-status/example.com/' )
+		.reply( status, JSON.stringify( body ?? null ), { 'Content-Type': 'application/json' } );
+}
+
+async function renderLoaded() {
+	render( <DomainPropagationStatusComponent domainName="example.com" /> );
+	await screen.findByText( 'Global propagation status' );
+}
+
 describe( 'DomainPropagationStatus', () => {
-	const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
+	afterEach( () => {
+		nock.cleanAll();
+	} );
 
 	describe( 'Successful data loading', () => {
-		test( 'renders component with title when data is loaded', () => {
+		test( 'renders component with title when data is loaded', async () => {
 			const mockData = createMockPropagationStatus();
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
 		} );
 
-		test( 'renders all propagation areas with correct names', () => {
+		test( 'renders all propagation areas with correct names', async () => {
 			const mockData = createMockPropagationStatus();
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			expect( screen.getByText( 'North America' ) ).toBeVisible();
 			expect( screen.getByText( 'Asia' ) ).toBeVisible();
@@ -70,21 +70,16 @@ describe( 'DomainPropagationStatus', () => {
 			expect( screen.getByText( 'Europe' ) ).toBeVisible();
 		} );
 
-		test( 'renders propagated indicators with correct ARIA labels', () => {
+		test( 'renders propagated indicators with correct ARIA labels', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [
 					{ area_code: 'NA', area_name: 'North America', propagated: true },
 					{ area_code: 'EU', area_name: 'Europe', propagated: false },
 				],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			const propagatedIndicator = screen.getByLabelText( 'Propagated' );
 			expect( propagatedIndicator ).toBeInTheDocument();
@@ -93,25 +88,20 @@ describe( 'DomainPropagationStatus', () => {
 			expect( notPropagatedIndicator ).toBeInTheDocument();
 		} );
 
-		test( 'renders last updated timestamp in formatted time', () => {
+		test( 'renders last updated timestamp in formatted time', async () => {
 			const mockData = createMockPropagationStatus( {
 				last_updated: '2025-11-11 13:15:48',
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// Should show "Last checked" text with relative time
 			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 			expect( screen.getByText( /2m ago/i ) ).toBeVisible();
 		} );
 
-		test( 'renders with all areas propagated', () => {
+		test( 'renders with all areas propagated', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [
 					{ area_code: 'NA', area_name: 'North America', propagated: true },
@@ -119,21 +109,16 @@ describe( 'DomainPropagationStatus', () => {
 					{ area_code: 'EU', area_name: 'Europe', propagated: true },
 				],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// All indicators should have "Propagated" ARIA label
 			const propagatedIndicators = screen.getAllByLabelText( 'Propagated' );
 			expect( propagatedIndicators ).toHaveLength( 3 );
 		} );
 
-		test( 'renders with all areas not propagated', () => {
+		test( 'renders with all areas not propagated', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [
 					{ area_code: 'NA', area_name: 'North America', propagated: false },
@@ -141,21 +126,16 @@ describe( 'DomainPropagationStatus', () => {
 					{ area_code: 'EU', area_name: 'Europe', propagated: false },
 				],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// All indicators should have "Not propagated" ARIA label
 			const notPropagatedIndicators = screen.getAllByLabelText( 'Not propagated' );
 			expect( notPropagatedIndicators ).toHaveLength( 3 );
 		} );
 
-		test( 'renders with mixed propagation status', () => {
+		test( 'renders with mixed propagation status', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [
 					{ area_code: 'NA', area_name: 'North America', propagated: true },
@@ -163,14 +143,9 @@ describe( 'DomainPropagationStatus', () => {
 					{ area_code: 'EU', area_name: 'Europe', propagated: true },
 				],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			const propagatedIndicators = screen.getAllByLabelText( 'Propagated' );
 			expect( propagatedIndicators ).toHaveLength( 2 );
@@ -181,107 +156,75 @@ describe( 'DomainPropagationStatus', () => {
 	} );
 
 	describe( 'Loading and error states', () => {
-		test( 'does not render when loading', () => {
-			mockUseQuery.mockReturnValue( {
-				data: undefined,
-				isLoading: true,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+		test( 'does not render when loading', async () => {
+			mockPropagationStatus( 200, createMockPropagationStatus() );
 
 			const { container } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
 
 			expect( container ).toBeEmptyDOMElement();
+			expect( await screen.findByText( 'Global propagation status' ) ).toBeVisible();
 		} );
 
-		test( 'does not render when there is an error', () => {
-			mockUseQuery.mockReturnValue( {
-				data: undefined,
-				isLoading: false,
-				isError: true,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+		test( 'does not render when there is an error', async () => {
+			mockPropagationStatus( 500 );
 
-			const { container } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			const { container, queryClient } = render(
+				<DomainPropagationStatusComponent domainName="example.com" />
+			);
 
+			await waitFor( () =>
+				expect( queryClient.getQueryState( queryKey )?.status ).toBe( 'error' )
+			);
 			expect( container ).toBeEmptyDOMElement();
 		} );
 
-		test( 'does not render when data is undefined', () => {
-			mockUseQuery.mockReturnValue( {
-				data: undefined,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+		test( 'does not render when data is null', async () => {
+			mockPropagationStatus( 200, null );
 
-			const { container } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			const { container, queryClient } = render(
+				<DomainPropagationStatusComponent domainName="example.com" />
+			);
 
-			expect( container ).toBeEmptyDOMElement();
-		} );
-
-		test( 'does not render when data is null', () => {
-			mockUseQuery.mockReturnValue( {
-				data: null,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
-
-			const { container } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
-
+			await waitFor( () =>
+				expect( queryClient.getQueryState( queryKey )?.status ).toBe( 'success' )
+			);
 			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 
 	describe( 'Edge cases', () => {
-		test( 'renders with empty propagation status array', () => {
+		test( 'renders with empty propagation status array', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// Should still render the component structure
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
 			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 		} );
 
-		test( 'renders with single propagation area', () => {
+		test( 'renders with single propagation area', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [ { area_code: 'NA', area_name: 'North America', propagated: true } ],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			expect( screen.getByText( 'North America' ) ).toBeVisible();
 			expect( screen.getByLabelText( 'Propagated' ) ).toBeInTheDocument();
 		} );
 
-		test( 'handles invalid date format in last_updated', () => {
+		test( 'handles invalid date format in last_updated', async () => {
 			const mockData = createMockPropagationStatus( {
 				last_updated: 'invalid-date',
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// Should still render without crashing
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
@@ -289,18 +232,13 @@ describe( 'DomainPropagationStatus', () => {
 			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 		} );
 
-		test( 'handles empty string in last_updated', () => {
+		test( 'handles empty string in last_updated', async () => {
 			const mockData = createMockPropagationStatus( {
 				last_updated: '',
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// Should still render without crashing
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
@@ -308,59 +246,37 @@ describe( 'DomainPropagationStatus', () => {
 			expect( screen.getByText( /Last checked/i ) ).toBeVisible();
 		} );
 
-		test( 'handles various invalid date formats', () => {
-			const invalidDates = [ 'not-a-date', '0000-00-00', '99/99/9999', 'null', 'undefined' ];
+		test.each( [ 'not-a-date', '0000-00-00', '99/99/9999', 'null', 'undefined' ] )(
+			'handles the invalid date %s',
+			async ( invalidDate ) => {
+				mockPropagationStatus( 200, createMockPropagationStatus( { last_updated: invalidDate } ) );
 
-			invalidDates.forEach( ( invalidDate ) => {
-				const mockData = createMockPropagationStatus( {
-					last_updated: invalidDate,
-				} );
-				mockUseQuery.mockReturnValue( {
-					data: mockData,
-					isLoading: false,
-					isError: false,
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				} as any );
+				await renderLoaded();
 
-				const { unmount } = render( <DomainPropagationStatusComponent domainName="example.com" /> );
-
-				// Should render without crashing for any invalid date
 				expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
-
-				unmount();
-			} );
-		} );
+			}
+		);
 	} );
 
 	describe( 'Component structure', () => {
-		test( 'renders Card component with propagation status grid', () => {
+		test( 'renders Card component with propagation status grid', async () => {
 			const mockData = createMockPropagationStatus();
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			// Verify Card component structure exists with title and content
 			expect( screen.getByText( 'Global propagation status' ) ).toBeVisible();
 			expect( screen.getByText( 'North America' ) ).toBeVisible();
 		} );
 
-		test( 'renders indicators with correct styling attributes', () => {
+		test( 'renders indicators with correct styling attributes', async () => {
 			const mockData = createMockPropagationStatus( {
 				propagation_status: [ { area_code: 'NA', area_name: 'North America', propagated: true } ],
 			} );
-			mockUseQuery.mockReturnValue( {
-				data: mockData,
-				isLoading: false,
-				isError: false,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			} as any );
+			mockPropagationStatus( 200, mockData );
 
-			render( <DomainPropagationStatusComponent domainName="example.com" /> );
+			await renderLoaded();
 
 			const indicator = screen.getByLabelText( 'Propagated' );
 			expect( indicator ).toHaveStyle( {
