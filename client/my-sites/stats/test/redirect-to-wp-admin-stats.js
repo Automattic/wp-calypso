@@ -146,6 +146,16 @@ describe( 'redirectToWpAdminStats()', () => {
 		expect( replace ).not.toHaveBeenCalled();
 	} );
 
+	test( 'leaves the purchase page on the classic page', async () => {
+		await redirectToWpAdminStats(
+			makeContext( { pathname: '/stats/purchase/example.com' } ),
+			next
+		);
+
+		expect( next ).toHaveBeenCalled();
+		expect( replace ).not.toHaveBeenCalled();
+	} );
+
 	test( 'loads a site that is not in state yet before redirecting', async () => {
 		const context = makeContext( { siteLoaded: false } );
 

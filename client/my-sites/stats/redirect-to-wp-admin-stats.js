@@ -27,8 +27,8 @@ export default async function redirectToWpAdminStats( context, next ) {
 	}
 
 	// Without a site in the URL this section shows stats across all the user's sites, which
-	// wp-admin, being per site, has no page for.
-	if ( ! context.params.site ) {
+	// wp-admin, being per site, has no page for. Nor does it have a purchase page.
+	if ( ! context.params.site || context.pathname.startsWith( '/stats/purchase' ) ) {
 		next();
 		return;
 	}
