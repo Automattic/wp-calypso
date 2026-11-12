@@ -147,6 +147,7 @@
 		"typecheck-client": "tsc --project client",
 		"typecheck-apps": "find apps -depth 2 -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
 		"typecheck-packages": "tsc --build packages/tsconfig.json",
+		"vite-check": "node build-tools/vite/check.mjs",
 		"vscode:link": "node bin/set-up-vs-code.js",
 		"vscode:unlink": "node bin/set-up-vs-code.js --unlink"
 	},
