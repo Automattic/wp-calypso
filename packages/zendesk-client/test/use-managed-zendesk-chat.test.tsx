@@ -302,7 +302,9 @@ describe( 'useManagedZendeskChat', () => {
 		}
 
 		async function triggerAuthError() {
-			vi.mocked( fetchMessagingAuth ).mockResolvedValue( { jwt: 'refreshed-jwt' } );
+			vi.mocked( fetchMessagingAuth, { partial: true } ).mockResolvedValue( {
+				jwt: 'refreshed-jwt',
+			} );
 			const { delegate } = smooch.init.mock.calls[ 0 ][ 0 ] as SmoochInitOptions;
 			await delegate.onInvalidAuth();
 		}

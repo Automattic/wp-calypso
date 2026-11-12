@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, fireEvent, getByText, getByTestId, queryByText } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';

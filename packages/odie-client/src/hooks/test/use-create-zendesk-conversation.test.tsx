@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import Smooch from 'smooch';
 import { type Mock, vi } from 'vitest';

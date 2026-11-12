@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { type Mock, vi } from 'vitest';
 import { getOdieTransferMessages } from '../constants';

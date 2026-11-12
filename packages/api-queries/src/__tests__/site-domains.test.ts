@@ -1,6 +1,6 @@
 import { setPrimaryDomain } from '@automattic/api-core';
 import { MutationObserver } from '@tanstack/react-query';
-import { type MockedFunction, type MockInstance, vi } from 'vitest';
+import { type MockInstance, vi } from 'vitest';
 import { queryClient } from '../query-client';
 import { siteSetPrimaryDomainMutation } from '../site-domains';
 
@@ -10,12 +10,12 @@ vi.mock( '../query-client', async () => {
 	return { queryClient: new QC() };
 } );
 
-vi.mock( '@automattic/api-core', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/api-core' ) >() ),
 	setPrimaryDomain: vi.fn(),
 } ) );
 
-const mockSetPrimaryDomain = setPrimaryDomain as MockedFunction< typeof setPrimaryDomain >;
+const mockSetPrimaryDomain = vi.mocked( setPrimaryDomain );
 const SITE_ID = 123;
 
 function mutate() {

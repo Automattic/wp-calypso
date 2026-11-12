@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, fireEvent } from '@testing-library/react';
 import Modal from 'react-modal';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

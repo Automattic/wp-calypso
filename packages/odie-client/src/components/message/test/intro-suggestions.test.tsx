@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { PLANS_PRESALES_LAUNCHER_CONTEXT } from '../../../constants';

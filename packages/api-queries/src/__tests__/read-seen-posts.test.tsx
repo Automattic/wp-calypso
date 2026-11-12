@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import nock from 'nock';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { patchSubscriptionSeenCount } from '../read-follows';
 import { patchListsSeenCount } from '../read-lists';
 import {
@@ -24,8 +24,8 @@ vi.mock( '../read-lists', () => ( {
 
 const BASE = 'https://public-api.wordpress.com';
 const SOURCE = 'reader-web';
-const patchSubscriptionSeenCountSpy = patchSubscriptionSeenCount as Mock;
-const patchListsSeenCountSpy = patchListsSeenCount as Mock;
+const patchSubscriptionSeenCountSpy = vi.mocked( patchSubscriptionSeenCount );
+const patchListsSeenCountSpy = vi.mocked( patchListsSeenCount );
 
 const makeWrapper = ( client: QueryClient ) =>
 	function Wrapper( { children }: { children: ReactNode } ) {

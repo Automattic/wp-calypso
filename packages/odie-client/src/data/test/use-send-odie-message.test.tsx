@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';

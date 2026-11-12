@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { HelpCenter } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
 import { StrictMode } from 'react';

@@ -1,5 +1,5 @@
 import { fetchAgencySites } from '@automattic/api-core';
-import { type MockedFunction, vi } from 'vitest';
+import { vi } from 'vitest';
 import { agencyQuery } from '../agency';
 import { agencySiteQuery } from '../jetpack-agency-sites';
 import { queryClient } from '../query-client';
@@ -18,12 +18,12 @@ vi.mock( '@tanstack/react-router', () => ( {
 	notFound: () => new Error( 'Not found' ),
 } ) );
 
-vi.mock( '@automattic/api-core', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/api-core' ) >() ),
 	fetchAgencySites: vi.fn(),
 } ) );
 
-const mockFetchAgencySites = fetchAgencySites as MockedFunction< typeof fetchAgencySites >;
+const mockFetchAgencySites = vi.mocked( fetchAgencySites );
 
 const AGENCY_ID = 123;
 const SITE_SLUG = 'devsite.wpcomstaging.com';
