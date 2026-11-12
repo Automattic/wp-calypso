@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { transferDomainToSite } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { addProductsToCart, createSite, replaceProductsInCart } from '@automattic/onboarding';
+import { addProductsToCart, createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFlowState } from '../../../state-manager/store';
 import CreateSite from '../index';
 
@@ -16,9 +18,14 @@ let mockBlueprint: string | null = null;
 let mockSiteUrl = 'my-site.wordpress.com';
 let mockQueryParams = new URLSearchParams( '' );
 let mockIsSimplifiedOnboarding = false;
-let mockDomainCartItems: { product_slug: string; meta: string }[] = [];
-// The slug of the site a first visit created, when the user came back from checkout.
-let mockReEnteredSiteSlug: string | null = null;
+let mockDomainCartItems: Record< string, unknown >[] = [];
+let mockPlanCartItem: Record< string, unknown > | null = null;
+
+const registeredMove = {
+	product_slug: 'domain_move_internal',
+	meta: 'owned-domain.com',
+	extra: { move_source_site_id: 555 },
+};
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
 const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
@@ -28,6 +35,8 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	isDomainMoveInternal: ( { product_slug }: { product_slug: string } ) =>
 		product_slug === 'domain_move_internal',
 } ) );
+
+jest.mock( '@automattic/api-core', () => ( { transferDomainToSite: jest.fn() } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
 	Site: { Visibility: { PublicIndexed: 1, PublicNotIndexed: 0 } },
@@ -42,7 +51,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	StepContainer: () => null,
 	Step: { Loading: () => null },
 	addProductsToCart: jest.fn(),
-	replaceProductsInCart: jest.fn(),
 	createSite: jest.fn( async () => ( {
 		siteId: 111,
 		siteSlug: 'brand-new.wordpress.com',
@@ -73,7 +81,7 @@ jest.mock( '@wordpress/data', () => ( {
 		domainItem: undefined,
 		domainCartItem: undefined,
 		domainCartItems: mockDomainCartItems,
-		planCartItem: null,
+		planCartItem: mockPlanCartItem,
 		productCartItems: [],
 		selectedSiteTitle: 'My site',
 		siteUrl: mockSiteUrl,
@@ -109,10 +117,10 @@ jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn(), post: jest.fn() } } ) );
 jest.mock( 'calypso/signup/storageUtils', () => ( {
-	retrieveSignupDestination: () => ( mockReEnteredSiteSlug ? '/checkout' : null ),
-	getSignupCompleteFlowName: () => ( mockReEnteredSiteSlug ? 'onboarding' : null ),
-	wasSignupCheckoutPageUnloaded: () => Boolean( mockReEnteredSiteSlug ),
-	getSignupCompleteSlug: () => mockReEnteredSiteSlug,
+	retrieveSignupDestination: () => null,
+	getSignupCompleteFlowName: () => null,
+	wasSignupCheckoutPageUnloaded: () => false,
+	getSignupCompleteSlug: () => null,
 } ) );
 jest.mock( 'calypso/state', () => ( { useSelector: () => undefined } ) );
 jest.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: jest.fn() } ) );
@@ -151,7 +159,7 @@ describe( 'create-site', () => {
 		mockQueryParams = new URLSearchParams( '' );
 		mockIsSimplifiedOnboarding = false;
 		mockDomainCartItems = [];
-		mockReEnteredSiteSlug = null;
+		mockPlanCartItem = null;
 		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
@@ -289,33 +297,52 @@ describe( 'create-site', () => {
 		expect( createSite ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	// A move completes only at checkout, so a Free plan run with one still has to go there.
-	it( 'goes to checkout with a domain move and no plan', async () => {
-		mockDomainCartItems = [ { product_slug: 'domain_move_internal', meta: 'owned-domain.com' } ];
-
-		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
-	} );
-
-	it( 'does not go to checkout with a domain registration and no plan', async () => {
-		mockDomainCartItems = [ { product_slug: 'dotcom_domain', meta: 'new-domain.com' } ];
+	// A move on the Free plan costs nothing, so the step moves the domain without a checkout.
+	it( 'moves a registered domain to the new site on the Free plan, without checkout', async () => {
+		mockDomainCartItems = [ registeredMove ];
 
 		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: false } );
+
+		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
+		expect( addProductsToCart ).not.toHaveBeenCalled();
 	} );
 
-	// Back from checkout, the cart still has the plan the user then declined.
-	it( 'replaces the cart on re-entry without a plan, so the declined plan leaves it', async () => {
-		mockReEnteredSiteSlug = 'existing-site.wordpress.com';
-		mockDomainCartItems = [ { product_slug: 'domain_move_internal', meta: 'owned-domain.com' } ];
+	it( 'leaves a domain move in the cart when a plan is in the cart', async () => {
+		mockDomainCartItems = [ registeredMove ];
+		mockPlanCartItem = { product_slug: 'personal-bundle' };
 
 		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
 
-		expect( replaceProductsInCart ).toHaveBeenCalledWith(
-			'existing-site.wordpress.com',
-			mockDomainCartItems,
-			'onboarding'
+		expect( transferDomainToSite ).not.toHaveBeenCalled();
+		expect( addProductsToCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', 'onboarding', [
+			mockPlanCartItem,
+			registeredMove,
+		] );
+	} );
+
+	// The site works without the domain, so a failed move must not stop the signup.
+	it( 'finishes the signup and records the failure when the move fails', async () => {
+		mockDomainCartItems = [ registeredMove ];
+		( transferDomainToSite as jest.Mock ).mockRejectedValueOnce( { error: 'dispute_flag' } );
+
+		await expect( runStep() ).resolves.toMatchObject( { siteCreated: true } );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_free_plan_domain_move_failed',
+			{ flow: 'onboarding', error: 'dispute_flag' }
 		);
-		expect( addProductsToCart ).not.toHaveBeenCalled();
-		expect( createSite ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not call the move without the site the domain is on now', async () => {
+		mockDomainCartItems = [ { ...registeredMove, extra: {} } ];
+
+		await expect( runStep() ).resolves.toMatchObject( { siteCreated: true } );
+
+		expect( transferDomainToSite ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_free_plan_domain_move_failed',
+			{ flow: 'onboarding', error: 'missing_move_source' }
+		);
 	} );
 
 	it( 'rejects with "Failed to create site" when /sites/new returns nothing', async () => {

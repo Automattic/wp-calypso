@@ -200,6 +200,14 @@ export const useWPCOMDomainSearchCart = ( {
 					isDomainMoveInternal( { product_slug } ) &&
 					'status' in item &&
 					item.status === DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER;
+				// Onboarding moves a registered domain on the Free plan without checkout. The move
+				// call needs the site the domain is on now.
+				const moveSourceSiteId =
+					isDomainMoveInternal( { product_slug } ) &&
+					'will_remove_from_site' in item &&
+					typeof item.will_remove_from_site === 'number'
+						? item.will_remove_from_site
+						: undefined;
 				const product = beforeAddDomainToCart( {
 					product_slug,
 					meta: domain_name,
@@ -210,6 +218,7 @@ export const useWPCOMDomainSearchCart = ( {
 						} ),
 						...( flowName && { flow_name: flowName } ),
 						...( isConnectedDomainMove && { is_connected_domain_move: true } ),
+						...( moveSourceSiteId && { move_source_site_id: moveSourceSiteId } ),
 					},
 				} );
 

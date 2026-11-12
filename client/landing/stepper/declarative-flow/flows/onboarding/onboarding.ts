@@ -910,9 +910,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
 							const redirectTo: string =
 								playgroundId &&
-								// A domain move goes to checkout without a plan, as a Free plan run.
-								!! planCartItem &&
-								! isPlanProductFree( {} as unknown as State, planCartItem.product_id )
+								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
 									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 											siteSlug,
 											siteId: providedDependencies.siteId,

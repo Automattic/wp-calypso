@@ -921,6 +921,28 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 		} );
 
+		it( 'records the site a moved domain is on now', async () => {
+			const onContinue = jest.fn();
+			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					events: { ...defaultProps.events, onContinue },
+				} )
+			);
+
+			await result.current.cart.onAddItem( { ...ownedDomain, will_remove_from_site: 123 } );
+
+			expect( onContinue ).toHaveBeenCalledWith( [
+				{
+					product_slug: 'domain_move_internal',
+					meta: 'owned-domain.com',
+					extra: { flow_name: 'flow-name', move_source_site_id: 123 },
+				},
+			] );
+		} );
+
 		it( 'carries the domains already in the siteless cart along, after the moved domain', async () => {
 			const onContinue = jest.fn();
 			const existingDomain = buildProduct( {

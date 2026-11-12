@@ -293,18 +293,14 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 
 export async function replaceProductsInCart(
 	siteSlug: string,
-	cartItems: MinimalRequestCartProduct[],
-	flowName?: string
+	cartItems: MinimalRequestCartProduct[]
 ) {
-	const cartItemsToReplace = flowName
-		? cartItems.map( ( cartItem ) => prepareItemForAddingToCart( cartItem, flowName ) )
-		: cartItems;
 	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 
 	try {
 		const updatedCart = await cartManagerClient
 			.forCartKey( cartKey )
-			.actions.replaceProductsInCart( cartItemsToReplace );
+			.actions.replaceProductsInCart( cartItems );
 
 		debug( 'product replace request complete', updatedCart );
 	} catch ( error ) {
