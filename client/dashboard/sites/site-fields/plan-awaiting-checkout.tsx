@@ -105,7 +105,10 @@ export function useSiteIsPreview( site: Site ): {
  * @returns The URL to send the owner to.
  */
 export function getPreviewLaunchUrl( site: Site ): string {
-	return addQueryArgs( wpcomLink( '/setup/launch-site' ), { siteSlug: site.slug, hide_free_plan: 1 } );
+	return addQueryArgs( wpcomLink( '/setup/launch-site' ), {
+		siteSlug: site.slug,
+		hide_free_plan: 1,
+	} );
 }
 
 /**
