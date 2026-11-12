@@ -1,10 +1,11 @@
 // Mocks
-jest.mock( '@wordpress/element', () => ( {
-	useMemo: jest.fn( ( callback ) => callback() ),
+import { vi } from 'vitest';
+vi.mock( '@wordpress/element', () => ( {
+	useMemo: vi.fn( ( callback ) => callback() ),
 } ) );
 
-jest.mock( '../../queries/use-site-plans', () => jest.fn() );
-jest.mock( '../../queries/use-plans', () => jest.fn() );
+vi.mock( '../../queries/use-site-plans', () => ( { default: vi.fn() } ) );
+vi.mock( '../../queries/use-plans', () => ( { default: vi.fn() } ) );
 
 import * as MockData from '../../mock';
 import usePlans from '../../queries/use-plans';
@@ -13,7 +14,7 @@ import useIntroOffers from '../use-intro-offers';
 
 describe( 'useIntroOffers selector', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should give precedence to intro offers defined on SitePlans over Plans', () => {

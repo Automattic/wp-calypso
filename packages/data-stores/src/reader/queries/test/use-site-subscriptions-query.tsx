@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	getSiteSubscriptionsQueryKey,
@@ -8,6 +8,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React, { act } from 'react';
+import { type Mock, vi } from 'vitest';
 import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../../constants';
 import {
 	SiteSubscriptionsQueryPropsProvider,
@@ -17,10 +18,10 @@ import { callApi, getSubkey } from '../../helpers';
 import useSiteSubscriptionsQuery from '../../queries/use-site-subscriptions-query';
 import type { SiteSubscriptionItem } from '../../types';
 
-jest.mock( '../../helpers', () => ( {
-	...jest.requireActual( '../../helpers' ),
-	callApi: jest.fn(),
-	getSubkey: jest.fn(),
+vi.mock( '../../helpers', async () => ( {
+	...( await vi.importActual< typeof import( '../../helpers' ) >( '../../helpers' ) ),
+	callApi: vi.fn(),
+	getSubkey: vi.fn(),
 } ) );
 
 const queryClient = new QueryClient();
@@ -75,10 +76,10 @@ const seedSiteSubscriptions = ( pages: SiteSubscriptionItem[][], totalCount?: nu
 describe( 'useSiteSubscriptionsQuery hook', () => {
 	beforeEach( () => {
 		queryClient.clear();
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 
-		( getSubkey as jest.Mock ).mockReturnValue( () => 'test-key' );
-		( callApi as jest.Mock ).mockResolvedValue( {
+		( getSubkey as Mock ).mockReturnValue( () => 'test-key' );
+		( callApi as Mock ).mockResolvedValue( {
 			subscriptions: [],
 			total_subscriptions: 0,
 			page: 1,
@@ -119,7 +120,7 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		);
 		const secondPage = [ makeApiSubscription( 101 ) ];
 
-		( callApi as jest.Mock ).mockImplementation( ( { path, isLoggedIn } ) => {
+		( callApi as Mock ).mockImplementation( ( { path, isLoggedIn } ) => {
 			expect( isLoggedIn ).toBe( false );
 
 			if ( path.includes( 'page=1' ) ) {
@@ -149,11 +150,11 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 
 		await waitFor( () => expect( callApi ).toHaveBeenCalledTimes( 2 ) );
 		await waitFor( () => expect( result.current.data.subscriptions ).toHaveLength( 101 ) );
-		expect( ( callApi as jest.Mock ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+		expect( ( callApi as Mock ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			apiVersion: '1.2',
 			isLoggedIn: false,
 		} );
-		expect( ( callApi as jest.Mock ).mock.calls[ 0 ][ 0 ].path ).toContain(
+		expect( ( callApi as Mock ).mock.calls[ 0 ][ 0 ].path ).toContain(
 			'/read/following/mine'
 		);
 	} );

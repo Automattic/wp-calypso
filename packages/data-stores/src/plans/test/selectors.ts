@@ -1,4 +1,5 @@
 import * as deprecate from '@wordpress/deprecated';
+import { vi } from 'vitest';
 import { TIMELESS_PLAN_ECOMMERCE, TIMELESS_PLAN_FREE, FREE_PLAN_PRODUCT_ID } from '../constants';
 import * as MockData from '../mock';
 import * as Selectors from '../selectors';
@@ -43,10 +44,10 @@ const mockState: State = {
 };
 
 // Mocks
-jest.mock( '@wordpress/deprecated', () => {
-	return jest.fn();
+vi.mock( '@wordpress/deprecated', () => {
+	return { default: vi.fn() };
 } );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	// Mocking `select` allows unit tests to run in isolation for selectors,
 	// without the corresponding resolvers being called
 	select: () => ( {
@@ -56,7 +57,7 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 } );
 
 // Tests

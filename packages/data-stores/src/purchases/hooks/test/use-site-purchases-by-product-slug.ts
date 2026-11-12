@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useSitePurchases from '../../queries/use-site-purchases';
 import useSitePurchasesByProductSlug from '../use-site-purchases-by-product-slug';
 
-jest.mock( '../../queries/use-site-purchases' );
+vi.mock( '../../queries/use-site-purchases' );
 
 describe( 'useSitePurchasesByProductSlug', () => {
 	const mockData = {
@@ -16,11 +17,11 @@ describe( 'useSitePurchasesByProductSlug', () => {
 	};
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'should return undefined when sitePurchases.data is undefined', () => {
-		( useSitePurchases as jest.Mock ).mockReturnValue( {} );
+		( useSitePurchases as Mock ).mockReturnValue( {} );
 
 		const { result } = renderHook( () =>
 			useSitePurchasesByProductSlug( { siteId: 1, productSlug: 'foo' } )
@@ -30,7 +31,7 @@ describe( 'useSitePurchasesByProductSlug', () => {
 	} );
 
 	it( 'should filter site purchases based on the provided slug', () => {
-		( useSitePurchases as jest.Mock ).mockReturnValue( { data: mockData } );
+		( useSitePurchases as Mock ).mockReturnValue( { data: mockData } );
 
 		const { result } = renderHook( () =>
 			useSitePurchasesByProductSlug( { siteId: 1, productSlug: 'foo' } )
@@ -43,7 +44,7 @@ describe( 'useSitePurchasesByProductSlug', () => {
 	} );
 
 	it( 'should return null if no match', () => {
-		( useSitePurchases as jest.Mock ).mockReturnValue( { data: mockData } );
+		( useSitePurchases as Mock ).mockReturnValue( { data: mockData } );
 
 		// No match
 		expect(

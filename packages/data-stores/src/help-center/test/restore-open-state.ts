@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { dispatch, resolveSelect } from '@wordpress/data';
+import { vi } from 'vitest';
 import { register } from '../index';
 
-const mockWpcomRequest = jest.fn();
+const mockWpcomRequest = vi.fn();
 
-jest.mock( '../../wpcom-request', () => ( {
+vi.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
 	default: ( params: unknown ) => mockWpcomRequest( params ),
 	canAccessWpcomApis: () => true,
 } ) );
 
-jest.mock( 'wpcom-proxy-request', () => ( {
-	...jest.requireActual( 'wpcom-proxy-request' ),
+vi.mock( 'wpcom-proxy-request', async () => ( {
+	...( await vi.importActual< typeof import( 'wpcom-proxy-request' ) >( 'wpcom-proxy-request' ) ),
 	isCookieAuthMissing: () => false,
 } ) );
 

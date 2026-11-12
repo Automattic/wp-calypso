@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
+import { type Mock, vi } from 'vitest';
 import { EmailDeliveryFrequency } from '../../constants';
 import { callApi } from '../../helpers';
 import useSiteDeliveryFrequencyMutation from '../../mutations/use-site-delivery-frequency-mutation';
 
 // Mock the useIsLoggedIn function
-jest.mock( '../../hooks', () => ( {
-	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true } ),
-	useCacheKey: jest.fn(),
+vi.mock( '../../hooks', () => ( {
+	useIsLoggedIn: vi.fn().mockReturnValue( { isLoggedIn: true } ),
+	useCacheKey: vi.fn(),
 } ) );
 
 // Mock the entire Helpers module
-jest.mock( '../../helpers', () => ( {
-	callApi: jest.fn(),
-	applyCallbackToPages: jest.fn(),
-	buildQueryKey: jest.fn(),
+vi.mock( '../../helpers', () => ( {
+	callApi: vi.fn(),
+	applyCallbackToPages: vi.fn(),
+	buildQueryKey: vi.fn(),
 } ) );
 
 const client = new QueryClient();
@@ -41,7 +42,7 @@ describe( 'useSiteDeliveryFrequencyMutation()', () => {
 			return <p></p>;
 		};
 
-		( callApi as jest.Mock ).mockResolvedValue( {
+		( callApi as Mock ).mockResolvedValue( {
 			success: true,
 		} );
 

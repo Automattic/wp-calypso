@@ -1,30 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_BUSINESS, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import wpcomRequest from '../../../wpcom-request';
 import usePlans from '../use-plans';
 import useSitePlans from '../use-site-plans';
 import type { PricedAPIPlan, PricedAPISitePlan } from '../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: vi.fn( () => false ),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	useLocale: jest.fn( () => 'en' ),
+vi.mock( '@automattic/i18n-utils', () => ( {
+	useLocale: vi.fn( () => 'en' ),
 } ) );
 
-jest.mock( '../../../wpcom-request', () => ( {
+vi.mock( '../../../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-const mockWpcomRequest = wpcomRequest as jest.Mock;
+const mockWpcomRequest = wpcomRequest as Mock;
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -62,7 +63,7 @@ const makeAPISitePlan = ( overrides: Partial< PricedAPISitePlan > = {} ): Priced
 
 describe( 'plans query hooks', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'ignores API plans that are not defined in calypso-products', async () => {

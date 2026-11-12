@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	getSiteSubscriptionsQueryKey,
@@ -9,20 +9,21 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { callApi } from '../../helpers';
 import useSiteSubscribeMutation from '../../mutations/use-site-subscribe-mutation';
 import useSiteUnsubscribeMutation from '../../mutations/use-site-unsubscribe-mutation';
 import type { SiteSubscriptionItem } from '../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( '../../hooks', () => ( {
-	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true, id: 1 } ),
-	useCacheKey: jest.fn( ( key ) => [ ...key, true, 1 ] ),
+vi.mock( '../../hooks', () => ( {
+	useIsLoggedIn: vi.fn().mockReturnValue( { isLoggedIn: true, id: 1 } ),
+	useCacheKey: vi.fn( ( key ) => [ ...key, true, 1 ] ),
 } ) );
 
-jest.mock( '../../helpers', () => ( {
-	...jest.requireActual( '../../helpers' ),
-	callApi: jest.fn(),
+vi.mock( '../../helpers', async () => ( {
+	...( await vi.importActual< typeof import( '../../helpers' ) >( '../../helpers' ) ),
+	callApi: vi.fn(),
 } ) );
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -66,7 +67,7 @@ const getCachedSubscriptions = ( queryClient: QueryClient ) =>
 
 describe( 'site subscription mutations', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'optimistically restores a deleted site subscription and increments total count', async () => {
@@ -78,7 +79,7 @@ describe( 'site subscription mutations', () => {
 				0
 			)
 		);
-		( callApi as jest.Mock ).mockResolvedValue( { subscribed: true } );
+		( callApi as Mock ).mockResolvedValue( { subscribed: true } );
 
 		const { result } = renderHook( () => useSiteSubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -103,8 +104,8 @@ describe( 'site subscription mutations', () => {
 
 	it( 'invalidates the feed query so the subscribe button reflects the new subscription', async () => {
 		const queryClient = makeQueryClient();
-		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
-		( callApi as jest.Mock ).mockResolvedValue( { subscribed: true } );
+		const invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
+		( callApi as Mock ).mockResolvedValue( { subscribed: true } );
 
 		const { result } = renderHook( () => useSiteSubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -130,8 +131,8 @@ describe( 'site subscription mutations', () => {
 
 	it( 'invalidates blog caches using the subscribe response blog_ID when params omit it', async () => {
 		const queryClient = makeQueryClient();
-		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
-		( callApi as jest.Mock ).mockResolvedValue( {
+		const invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
+		( callApi as Mock ).mockResolvedValue( {
 			subscribed: true,
 			subscription: { ID: '1', blog_ID: '99' },
 		} );
@@ -163,7 +164,7 @@ describe( 'site subscription mutations', () => {
 			0
 		);
 		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), previousData );
-		( callApi as jest.Mock ).mockRejectedValue( new Error( 'subscribe failed' ) );
+		( callApi as Mock ).mockRejectedValue( new Error( 'subscribe failed' ) );
 
 		const { result } = renderHook( () => useSiteSubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -187,7 +188,7 @@ describe( 'site subscription mutations', () => {
 			getSiteSubscriptionsQueryKey(),
 			makeSiteSubscriptionsData( [ makeSubscription() ], 1 )
 		);
-		( callApi as jest.Mock ).mockResolvedValue( { subscribed: false } );
+		( callApi as Mock ).mockResolvedValue( { subscribed: false } );
 
 		const { result } = renderHook( () => useSiteUnsubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -217,7 +218,7 @@ describe( 'site subscription mutations', () => {
 			getSiteSubscriptionsQueryKey(),
 			makeSiteSubscriptionsData( [ makeSubscription( { ID: 456, blog_ID: 456 } ) ], 1 )
 		);
-		( callApi as jest.Mock ).mockResolvedValue( { subscribed: false } );
+		( callApi as Mock ).mockResolvedValue( { subscribed: false } );
 
 		const { result } = renderHook( () => useSiteUnsubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -242,8 +243,8 @@ describe( 'site subscription mutations', () => {
 
 	it( 'invalidates the feed query so the subscribe button reflects the removed subscription', async () => {
 		const queryClient = makeQueryClient();
-		const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
-		( callApi as jest.Mock ).mockResolvedValue( { subscribed: false } );
+		const invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
+		( callApi as Mock ).mockResolvedValue( { subscribed: false } );
 
 		const { result } = renderHook( () => useSiteUnsubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -270,7 +271,7 @@ describe( 'site subscription mutations', () => {
 		const queryClient = makeQueryClient();
 		const previousData = makeSiteSubscriptionsData( [ makeSubscription() ], 1 );
 		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), previousData );
-		( callApi as jest.Mock ).mockRejectedValue( new Error( 'unsubscribe failed' ) );
+		( callApi as Mock ).mockRejectedValue( new Error( 'unsubscribe failed' ) );
 
 		const { result } = renderHook( () => useSiteUnsubscribeMutation(), {
 			wrapper: makeWrapper( queryClient ),

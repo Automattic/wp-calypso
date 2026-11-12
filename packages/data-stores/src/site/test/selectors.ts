@@ -3,10 +3,11 @@
  * but we're waiting for this PR to merge:
  * https://github.com/WordPress/gutenberg/pull/20486
  *
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { dispatch, select, subscribe } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register, STORE_KEY } from '..';
 import wpcomRequest from '../../wpcom-request';
 import {
@@ -20,10 +21,10 @@ import {
 import { SiteDetails } from '../types';
 import type { State } from '../reducer';
 
-jest.mock( '../../wpcom-request', () => ( {
+vi.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn( () => true ),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn( () => true ),
 } ) );
 
 let store: ReturnType< typeof register >;
@@ -33,7 +34,7 @@ beforeAll( () => {
 } );
 
 beforeEach( () => {
-	( wpcomRequest as jest.Mock ).mockReset();
+	( wpcomRequest as Mock ).mockReset();
 	dispatch( store ).reset();
 } );
 
@@ -92,7 +93,7 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -132,7 +133,7 @@ describe( 'getSite', () => {
 			URL: 'http://mytestsite12345.wordpress.com',
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -165,7 +166,7 @@ describe( 'getSite', () => {
 			},
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -194,7 +195,7 @@ describe( 'getSite', () => {
 			message: 'Unknown blog',
 		};
 
-		( wpcomRequest as jest.Mock ).mockRejectedValue( apiResponse );
+		( wpcomRequest as Mock ).mockRejectedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			// The subscribe function in wordpress/data stores only updates when state changes,
@@ -239,7 +240,7 @@ describe( 'requiresUpgrade', () => {
 				},
 			},
 		};
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as Mock ).mockResolvedValue( apiResponse );
 
 		// First call returns undefined
 		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
@@ -277,7 +278,7 @@ describe( 'requiresUpgrade', () => {
 				},
 			},
 		};
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as Mock ).mockResolvedValue( apiResponse );
 
 		// First call returns undefined
 		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
@@ -438,7 +439,7 @@ describe( 'siteHasFeature', () => {
 			},
 		};
 
-		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+		( wpcomRequest as Mock ).mockResolvedValue( apiResponse );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
