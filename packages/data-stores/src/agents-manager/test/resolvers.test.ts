@@ -10,9 +10,7 @@ vi.mock( '../../wpcom-request', () => ( {
 	canAccessWpcomApis: vi.fn(),
 } ) );
 
-const mockCanAccessWpcomApis = canAccessWpcomApis as MockedFunction<
-	typeof canAccessWpcomApis
->;
+const mockCanAccessWpcomApis = canAccessWpcomApis as MockedFunction< typeof canAccessWpcomApis >;
 
 describe( 'Agents Manager resolvers', () => {
 	beforeEach( () => {

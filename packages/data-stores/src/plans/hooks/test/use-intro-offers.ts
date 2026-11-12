@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 // Mocks
 import { vi } from 'vitest';
 vi.mock( '@wordpress/element', () => ( {

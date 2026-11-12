@@ -1,4 +1,4 @@
-import * as deprecate from '@wordpress/deprecated';
+import deprecate from '@wordpress/deprecated';
 import { vi } from 'vitest';
 import { TIMELESS_PLAN_ECOMMERCE, TIMELESS_PLAN_FREE, FREE_PLAN_PRODUCT_ID } from '../constants';
 import * as MockData from '../mock';

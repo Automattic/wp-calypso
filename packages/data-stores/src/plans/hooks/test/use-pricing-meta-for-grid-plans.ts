@@ -1,6 +1,8 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 
 /**
  * Default mock implementations
@@ -36,7 +38,6 @@ vi.mock( '@automattic/api-core', async () => ( {
 import { logToLogstash } from '@automattic/api-core';
 import { PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useSelect } from '@wordpress/data';
-import { vi } from 'vitest';
 import * as Plans from '../../';
 import * as AddOns from '../../../add-ons';
 import { ADD_ON_50GB_STORAGE } from '../../../add-ons/constants';

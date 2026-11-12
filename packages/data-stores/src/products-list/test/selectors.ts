@@ -3,7 +3,7 @@
  * but we're waiting for this PR to merge:
  * https://github.com/WordPress/gutenberg/pull/20486
  *
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 import { select, subscribe } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';

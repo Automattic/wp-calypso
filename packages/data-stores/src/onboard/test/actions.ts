@@ -1,5 +1,5 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 
 import { setProfilerData, setTransferStartedAt, setTransferStatus } from '../actions';

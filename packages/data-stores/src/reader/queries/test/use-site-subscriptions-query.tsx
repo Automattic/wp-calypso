@@ -1,5 +1,5 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 import {
 	getSiteSubscriptionsQueryKey,
@@ -154,9 +154,7 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			apiVersion: '1.2',
 			isLoggedIn: false,
 		} );
-		expect( ( callApi as Mock ).mock.calls[ 0 ][ 0 ].path ).toContain(
-			'/read/following/mine'
-		);
+		expect( ( callApi as Mock ).mock.calls[ 0 ][ 0 ].path ).toContain( '/read/following/mine' );
 	} );
 
 	it( 'fetches subscriptions data with search term', async () => {
