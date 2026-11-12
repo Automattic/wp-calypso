@@ -12,8 +12,12 @@ import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-config', () => {
-	const { clientData } = jest.requireActual( '@automattic/calypso-config' );
-	globalThis.window.configData = { ...clientData, env_id: 'dashboard-production' };
+	globalThis.window.configData = {
+		env_id: 'dashboard-production',
+		calypso_live_image: false,
+		calypso_live_envs: false,
+		wpcom_url: 'https://wordpress.com',
+	};
 	globalThis.window.electron = {};
 	return jest.requireActual( '../../../../../packages/calypso-config/src' );
 } );

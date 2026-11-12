@@ -11,8 +11,7 @@ import { render } from '../../../test-utils';
 import ActivationCallout from '../activation';
 
 jest.mock( '@automattic/calypso-config', () => {
-	const { clientData } = jest.requireActual( '@automattic/calypso-config' );
-	globalThis.window.configData = { ...clientData, env_id: 'dashboard-horizon' };
+	globalThis.window.configData = { env_id: 'dashboard-horizon' };
 	globalThis.window.electron = {};
 	return jest.requireActual( '../../../../../packages/calypso-config/src' );
 } );
