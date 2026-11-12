@@ -16,7 +16,7 @@
 
 ```bash
 # Unit tests (from repo root)
-yarn test-packages:vitest agents-manager   # also runs the agents-manager store tests in packages/data-stores; one file: yarn test-packages:vitest <path>
+yarn test-packages:vitest packages/agents-manager packages/data-stores/src/agents-manager   # with the store tests in data-stores; one file: yarn test-packages:vitest <path>
 yarn test-apps apps/agents-manager   # the app's entry-point tests
 
 # Type-check and lint (from repo root)
