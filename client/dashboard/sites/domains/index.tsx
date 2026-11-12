@@ -115,10 +115,8 @@ function SiteDomains() {
 	const isCardsLayout = view.type === 'grid';
 
 	const actions = useActions( {
-		user,
 		site,
 		sites,
-		domains: siteDomains,
 		layout: view.type,
 		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
 	} );

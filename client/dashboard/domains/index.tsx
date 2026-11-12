@@ -4,7 +4,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAnalytics } from '../app/analytics';
-import { useAuth } from '../app/auth';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
@@ -47,7 +46,6 @@ const defaultView = {
 };
 
 function Domains() {
-	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
@@ -76,7 +74,7 @@ function Domains() {
 		resetView: resetViewAndLayoutChoice,
 	} = useDomainsListLayouts( { slug: 'domains', domainCount: domains.length, view, resetView } );
 
-	const actions = useActions( { user, sites, domains, layout: view.type } );
+	const actions = useActions( { sites, layout: view.type } );
 	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
