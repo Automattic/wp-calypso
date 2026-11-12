@@ -6,7 +6,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { html } from '../../../panel/indices-to-html';
 import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
@@ -15,8 +14,7 @@ import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
 
 /**
- * Flattens a block onto one line for a clamped preview, so a short opening line
- * doesn't spend half the preview. Same length, so its ranges still line up.
+ * Flattens a block onto one line, for a clamped preview.
  */
 function toPreview( block: Block ): Block {
 	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
@@ -147,53 +145,6 @@ export function ThreadParent( {
 } ) {
 	const fullContent = comment.content ?? { text: comment.text };
 	const content = maxLength ? truncateBlock( fullContent, maxLength ) : fullContent;
-	const textId = useId();
-	const textRef = useRef< HTMLDivElement >( null );
-	const [ isExpanded, setIsExpanded ] = useState( false );
-	const [ isClamped, setIsClamped ] = useState( false );
-	// Only the full `content` has more to show; `text` is already a short excerpt.
-	const canExpand = truncate && !! comment.content;
-	const isTruncated = truncate && ! isExpanded;
-
-	const startHeightRef = useRef< number | null >( null );
-
-	// Offer Show more only when the clamp actually hides text, rechecking as the pane resizes.
-	useEffect( () => {
-		const text = textRef.current;
-		if ( ! canExpand || isExpanded || ! text ) {
-			return;
-		}
-		const measure = () => setIsClamped( text.scrollHeight > text.clientHeight );
-		measure();
-		const observer = new ResizeObserver( measure );
-		observer.observe( text );
-		return () => observer.disconnect();
-	}, [ canExpand, isExpanded ] );
-
-	// Ease the text between its clamped and full heights rather than jumping.
-	useLayoutEffect( () => {
-		const text = textRef.current;
-		const startHeight = startHeightRef.current;
-		startHeightRef.current = null;
-		if (
-			! text ||
-			startHeight === null ||
-			! text.animate ||
-			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
-		) {
-			return;
-		}
-		text.animate( [ { height: `${ startHeight }px` }, { height: `${ text.offsetHeight }px` } ], {
-			duration: 150,
-			easing: 'ease-out',
-		} );
-	}, [ isExpanded ] );
-
-	const toggle = () => {
-		startHeightRef.current = textRef.current?.offsetHeight ?? null;
-		setIsExpanded( ! isExpanded );
-	};
-	const canToggle = canExpand && ( isClamped || isExpanded );
 
 	return (
 		<ThreadItem
@@ -219,41 +170,14 @@ export function ThreadParent( {
 				)
 			}
 		>
-			{ /* The button below is the accessible control; clicking the clamped text is a shortcut. */ }
-			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
 			<div
-				ref={ textRef }
-				id={ textId }
 				className={ clsx( 'wpnc-simplified__parent-text', {
-					'is-truncated': isTruncated,
-					'is-excerpt': maxLength || isExpanded,
-					'is-expandable': isTruncated && canToggle,
+					'is-truncated': truncate,
+					'is-excerpt': maxLength,
 				} ) }
-				onClick={ ( event ) => {
-					// Links in the comment still go where they point, and selecting text doesn't expand it.
-					if (
-						isTruncated &&
-						canToggle &&
-						! ( event.target as Element ).closest( 'a' ) &&
-						! window.getSelection()?.toString()
-					) {
-						toggle();
-					}
-				} }
 			>
-				{ p( html( isTruncated ? toPreview( content ) : content ) ) }
+				{ p( html( truncate ? toPreview( content ) : content ) ) }
 			</div>
-			{ canToggle && (
-				<button
-					type="button"
-					className="wpnc-simplified__show-more"
-					aria-expanded={ isExpanded }
-					aria-controls={ textId }
-					onClick={ toggle }
-				>
-					{ isExpanded ? __( 'Show less' ) : __( 'Show more' ) }
-				</button>
-			) }
 		</ThreadItem>
 	);
 }
