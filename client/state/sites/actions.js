@@ -282,7 +282,7 @@ export function leaveSite( siteId, userId ) {
 			.post( `/sites/${ siteId }/users/${ userId }/delete` )
 			.then( ( result ) => {
 				if ( result?.success !== true ) {
-					throw new Error( translate( 'Could not leave the site. Please try again.' ) );
+					throw new Error( translate( 'Failed to leave the site. Please try again.' ) );
 				}
 
 				dispatch( receiveLeaveSite( siteId ) );

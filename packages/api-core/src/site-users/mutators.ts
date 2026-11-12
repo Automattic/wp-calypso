@@ -8,7 +8,7 @@ export async function deleteSiteUser( siteId: number, userId: number ) {
 	} );
 
 	if ( result?.success !== true ) {
-		throw new Error( __( 'Could not leave the site. Please try again.' ) );
+		throw new Error( __( 'Failed to leave the site. Please try again.' ) );
 	}
 
 	return result;
