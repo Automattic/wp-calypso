@@ -170,7 +170,7 @@ test( 'shows redirect options panel', async () => {
 	await user.click( advancedPanel );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'How permanent is this forward?' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Where visitors land' ) ).toBeInTheDocument();
 	} );
 } );
@@ -191,7 +191,7 @@ test( 'updates the redirect summary and examples as the options change', async (
 		screen.getByText( 'shop.example.com/prices goes to https://newsite.com/prices.' )
 	).toBeVisible();
 
-	await user.click( screen.getByRole( 'radio', { name: /permanent \(301\)/i } ) );
+	await user.click( screen.getByRole( 'radio', { name: /permanent redirect \(301\)/i } ) );
 	await user.click( screen.getByRole( 'radio', { name: /the matching page/i } ) );
 
 	expect(
