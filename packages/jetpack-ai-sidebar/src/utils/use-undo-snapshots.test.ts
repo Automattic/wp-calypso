@@ -1,15 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-
-vi.mock( './block-actions', () => ( {
-	undoBlockEdit: vi.fn( () => true ),
-} ) );
-
 import { renderHook } from '@testing-library/react';
 import { type MockedFunction, vi } from 'vitest';
 import { undoBlockEdit } from './block-actions';
 import useUndoSnapshots from './use-undo-snapshots';
+
+vi.mock( './block-actions', () => ( {
+	undoBlockEdit: vi.fn( () => true ),
+} ) );
 
 const mockUndoBlockEdit = undoBlockEdit as MockedFunction< typeof undoBlockEdit >;
 

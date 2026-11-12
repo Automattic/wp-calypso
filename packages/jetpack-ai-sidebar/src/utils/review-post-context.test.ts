@@ -1,6 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
+import {
+	getCurrentEditorPostIdFromStore,
+	normalizeEditorPostId,
+	useReviewPostContext,
+} from './review-post-context';
 
 let mockCurrentPostId: number | string | null = 1;
 
@@ -10,14 +17,6 @@ vi.mock( '@wordpress/data', () => ( {
 			store === 'core/editor' ? { getCurrentPostId: () => mockCurrentPostId } : {}
 		),
 } ) );
-
-import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
-import {
-	getCurrentEditorPostIdFromStore,
-	normalizeEditorPostId,
-	useReviewPostContext,
-} from './review-post-context';
 
 type WpDataWindow = Window & {
 	wp?: { data?: { select?: ( store: string ) => unknown } };

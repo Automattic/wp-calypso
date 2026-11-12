@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-
 import { type Mock, vi } from 'vitest';
+import { revealSidebarField } from './reveal-sidebar-field';
+
 const mockClearSelectedBlock = vi.fn();
 const mockClearActiveBlockFocus = vi.fn();
 const mockEnableComplementaryArea = vi.fn();
@@ -60,8 +61,6 @@ vi.mock( '@wordpress/data', () => ( {
 vi.mock( './block-actions', () => ( {
 	clearActiveBlockFocus: () => mockClearActiveBlockFocus(),
 } ) );
-
-import { revealSidebarField } from './reveal-sidebar-field';
 
 function renderSidebar( innerHTML: string ) {
 	const sidebar = document.createElement( 'div' );
@@ -216,7 +215,7 @@ describe( 'revealSidebarField', () => {
 	} );
 
 	it( 'skips the smooth scroll when the user prefers reduced motion', async () => {
-		// The shared jest setup stubs matchMedia as always-false; override one call.
+		// The shared setup stubs matchMedia as always-false; override one call.
 		( window.matchMedia as Mock ).mockReturnValueOnce( { matches: true } );
 		const field = renderField();
 
