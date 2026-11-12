@@ -28,7 +28,6 @@ describe( 'getSolutionsForReason', () => {
 	} );
 
 	test.each( [
-		'otherTooHardToUse',
 		'tooExpensive',
 		'lackOfCustomization',
 		'foundBetterValue',
@@ -57,6 +56,14 @@ describe( 'getSolutionsForReason', () => {
 		'mayReturn',
 		'noLongerNeedSite',
 		'otherNoLongerNeedSite',
+	] )( 'leaves out the 1:1 session card for %s', ( reason ) => {
+		expect( getSolutionsForReason( reason )?.map( ( { id } ) => id ) ).not.toContain(
+			'book-expert-session'
+		);
+	} );
+
+	test.each( [
+		'otherTooHardToUse',
 		'anotherReasonOne',
 		'otherPriceValue',
 		'otherMissingFeatures',
@@ -64,9 +71,7 @@ describe( 'getSolutionsForReason', () => {
 		'otherDomain',
 		'otherWrongPlanOrSite',
 		'otherBadSupport',
-	] )( 'leaves out the 1:1 session card for %s', ( reason ) => {
-		expect( getSolutionsForReason( reason ) ?? [] ).not.toContainEqual( {
-			id: 'book-expert-session',
-		} );
+	] )( 'skips the solution cards step for %s', ( reason ) => {
+		expect( getSolutionsForReason( reason ) ).toBeNull();
 	} );
 } );
