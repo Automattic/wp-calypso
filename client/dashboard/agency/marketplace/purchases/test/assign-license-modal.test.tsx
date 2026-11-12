@@ -31,8 +31,6 @@ function mockAssignError( code: string, message: string ) {
 }
 
 async function assign() {
-	// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-	window.scrollTo = jest.fn();
 	Element.prototype.scrollIntoView = jest.fn();
 	render(
 		<>

@@ -30,11 +30,6 @@ const pauseCheckbox = () => {
 };
 
 describe( 'PauseAllEmails', () => {
-	beforeAll( () => {
-		// Snackbar component requires it to work and jest doesn't mock it
-		window.scrollTo = jest.fn();
-	} );
-
 	const Wrapper = ( { children }: PropsWithChildren ) => {
 		const queryClient = new QueryClient();
 		return (

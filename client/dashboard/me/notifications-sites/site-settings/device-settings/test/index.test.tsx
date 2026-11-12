@@ -139,11 +139,6 @@ const mockGetDevicesApiAndReply = ( devices: UserNotificationDevice[] ) => {
 };
 
 describe( 'DevicesSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	test( 'renders a list of devices names', async () => {
 		const devices = [
 			buildDevice( {

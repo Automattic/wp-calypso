@@ -265,8 +265,6 @@ describe( '<MarketplacePurchases>', () => {
 	} );
 
 	test( 'does not ask a partner who already answered', async () => {
-		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = jest.fn();
 		mockAgency();
 		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
 		mockAssignableLicense();

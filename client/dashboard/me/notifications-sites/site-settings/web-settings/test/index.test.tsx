@@ -101,11 +101,6 @@ const buildWebNotificationSettings = (
 };
 
 describe( 'WebSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	test( 'renders the web settings values', async () => {
 		mockGetSettingsApiAndReply(
 			buildWebNotificationSettings( 1, {

@@ -58,11 +58,6 @@ const mockGetDevicesApiAndReply = ( data: Partial< UserNotificationDevice[] > ) 
 };
 
 describe( 'DevicesSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	test( 'shows a message when there are no devices', async () => {
 		mockGetDevicesApiAndReply( [] );
 		mockGetDevicesApiAndReply( [] );

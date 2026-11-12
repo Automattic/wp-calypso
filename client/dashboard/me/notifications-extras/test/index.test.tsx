@@ -84,11 +84,6 @@ const notificationSnackBar = () => {
 };
 
 describe( 'NotificationsExtras', () => {
-	beforeEach( () => {
-		// Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	test( 'renders the page header and sections correctly', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();

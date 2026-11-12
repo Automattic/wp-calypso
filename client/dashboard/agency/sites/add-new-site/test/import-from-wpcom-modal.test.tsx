@@ -200,8 +200,6 @@ describe( 'ImportFromWPCOMModal', () => {
 	} );
 
 	test( 'reports the server’s reason when the import fails', async () => {
-		// Snackbar needs this, and jsdom has no scrolling.
-		window.scrollTo = jest.fn();
 		mockEndpoints( { withSnackbars: true } );
 		nock( BASE )
 			.post( `/wpcom/v2/agency/${ AGENCY_ID }/sites` )

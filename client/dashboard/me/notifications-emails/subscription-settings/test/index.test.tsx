@@ -111,8 +111,6 @@ describe( 'SubscriptionSettings', () => {
 		};
 
 	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
 		// Default to UTC so the existing tests keep their identity behavior.
 		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
 			timezone: 'UTC',

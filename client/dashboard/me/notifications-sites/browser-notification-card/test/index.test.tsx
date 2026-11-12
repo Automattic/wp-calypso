@@ -24,8 +24,6 @@ describe( 'BrowserNotificationCard', () => {
 	};
 
 	beforeEach( () => {
-		window.scrollTo = jest.fn();
-
 		Object.defineProperty( window, 'navigator', {
 			value: {
 				serviceWorker: {
