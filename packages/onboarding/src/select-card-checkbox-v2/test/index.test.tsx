@@ -4,17 +4,18 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import SelectCardCheckboxV2 from '../index';
 
 describe( 'SelectCardCheckboxV2', () => {
 	it( 'renders the elements and labels', () => {
-		render( <SelectCardCheckboxV2 onChange={ jest.fn() }>Hello</SelectCardCheckboxV2> );
+		render( <SelectCardCheckboxV2 onChange={ vi.fn() }>Hello</SelectCardCheckboxV2> );
 		expect( screen.getByRole( 'checkbox', { name: 'Hello' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the checked state', () => {
 		render(
-			<SelectCardCheckboxV2 onChange={ jest.fn() } checked>
+			<SelectCardCheckboxV2 onChange={ vi.fn() } checked>
 				Hello
 			</SelectCardCheckboxV2>
 		);
@@ -23,7 +24,7 @@ describe( 'SelectCardCheckboxV2', () => {
 
 	it( 'renders the disabled state', () => {
 		render(
-			<SelectCardCheckboxV2 onChange={ jest.fn() } disabled>
+			<SelectCardCheckboxV2 onChange={ vi.fn() } disabled>
 				Hello
 			</SelectCardCheckboxV2>
 		);
@@ -31,7 +32,7 @@ describe( 'SelectCardCheckboxV2', () => {
 	} );
 
 	it( 'calls onChange when the checkbox is clicked', () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		render( <SelectCardCheckboxV2 onChange={ onChange }>Hello</SelectCardCheckboxV2> );
 		fireEvent.click( screen.getByRole( 'checkbox', { name: 'Hello' } ) );
 
@@ -40,7 +41,7 @@ describe( 'SelectCardCheckboxV2', () => {
 	} );
 	it( 'disables the checkbox when isBusy is true', () => {
 		render(
-			<SelectCardCheckboxV2 onChange={ jest.fn() } isBusy>
+			<SelectCardCheckboxV2 onChange={ vi.fn() } isBusy>
 				Hello
 			</SelectCardCheckboxV2>
 		);
