@@ -8,7 +8,7 @@ import { SummaryButtonList } from '../index';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 describe( 'SummaryButtonList', () => {
-	it( 'renders a title and description', () => {
+	test( 'renders a title and description', () => {
 		render(
 			<SummaryButtonList title="My Settings" description="Configure your settings">
 				<SummaryButton title="Setting One" />
@@ -18,7 +18,7 @@ describe( 'SummaryButtonList', () => {
 		expect( heading ).toBeVisible();
 		expect( screen.getByText( 'Configure your settings' ) ).toBeVisible();
 	} );
-	it( 'passes the density prop to children', () => {
+	test( 'passes the density prop to children', () => {
 		interface TestChildProps {
 			density?: Density;
 		}

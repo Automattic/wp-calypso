@@ -26,21 +26,21 @@ describe( 'isCaDomain', () => {
 } );
 
 describe( 'hasCaDomain', () => {
-	it( 'is true when any selected domain is a .ca one', () => {
+	test( 'is true when any selected domain is a .ca one', () => {
 		expect( hasCaDomain( [ 'example.com', 'example.ca' ] ) ).toBe( true );
 	} );
 
-	it( 'is false when none are', () => {
+	test( 'is false when none are', () => {
 		expect( hasCaDomain( [ 'example.com', 'example.fr' ] ) ).toBe( false );
 	} );
 
-	it( 'is false for an empty selection', () => {
+	test( 'is false for an empty selection', () => {
 		expect( hasCaDomain( [] ) ).toBe( false );
 	} );
 } );
 
 describe( 'getCaContactFormFields', () => {
-	it( 'always requires a legal type and offers no pre-selected value', () => {
+	test( 'always requires a legal type and offers no pre-selected value', () => {
 		const legalType = fieldById( getCaContactFormFields(), CA_FIELD_IDS.legalType );
 
 		expect( legalType?.isValid?.required ).toBe( true );
@@ -53,7 +53,7 @@ describe( 'getCaContactFormFields', () => {
 		expect( legalType?.getValue?.( { item: { optOutTransferLock: false } } ) ).toBe( '' );
 	} );
 
-	it( 'offers all 18 CIRA legal types', () => {
+	test( 'offers all 18 CIRA legal types', () => {
 		const legalType = fieldById( getCaContactFormFields(), CA_FIELD_IDS.legalType );
 
 		// 18 legal types plus the empty "Select an option" placeholder.
@@ -62,11 +62,11 @@ describe( 'getCaContactFormFields', () => {
 		expect( legalType?.elements?.map( ( element ) => element.value ) ).toContain( 'CCO' );
 	} );
 
-	it( 'lays out the legal type field', () => {
+	test( 'lays out the legal type field', () => {
 		expect( getCaContactFormLayout() ).toEqual( [ CA_FIELD_IDS.legalType ] );
 	} );
 
-	it( 'reads nested values out of extra.ca', () => {
+	test( 'reads nested values out of extra.ca', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: { ca: { legalType: 'CCO' } },
@@ -77,7 +77,7 @@ describe( 'getCaContactFormFields', () => {
 		expect( legalType?.getValue?.( { item } ) ).toBe( 'CCO' );
 	} );
 
-	it( 'returns the whole extra object on edit so sibling values survive the shallow merge', () => {
+	test( 'returns the whole extra object on edit so sibling values survive the shallow merge', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: {
@@ -98,20 +98,20 @@ describe( 'getCaContactFormFields', () => {
 } );
 
 describe( 'mapWhoisExtraToCaContactExtra', () => {
-	it( 'converts the registrar snake_case keys to the form shape', () => {
+	test( 'converts the registrar snake_case keys to the form shape', () => {
 		expect( mapWhoisExtraToCaContactExtra( { legal_type: 'CCO', lang: 'FR' } ) ).toEqual( {
 			legalType: 'CCO',
 			lang: 'FR',
 		} );
 	} );
 
-	it( 'omits the language when the registrar has not stored one', () => {
+	test( 'omits the language when the registrar has not stored one', () => {
 		expect( mapWhoisExtraToCaContactExtra( { legal_type: 'CCT' } ) ).toEqual( {
 			legalType: 'CCT',
 		} );
 	} );
 
-	it( 'returns undefined when there is no stored legal type, rather than guessing one', () => {
+	test( 'returns undefined when there is no stored legal type, rather than guessing one', () => {
 		expect( mapWhoisExtraToCaContactExtra( undefined ) ).toBeUndefined();
 		expect( mapWhoisExtraToCaContactExtra( {} ) ).toBeUndefined();
 		expect( mapWhoisExtraToCaContactExtra( { legal_type: '' } ) ).toBeUndefined();

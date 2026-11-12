@@ -49,20 +49,20 @@ describe( 'ExtrasToggleCard', () => {
 		);
 	};
 
-	it( 'renders section title', () => {
+	test( 'renders section title', () => {
 		renderExtrasToggleCard( { sectionTitle: 'Test Section Title' } );
 
 		expect( screen.getByText( 'Test Section Title' ) ).toBeVisible();
 	} );
 
-	it( 'renders section description when provided', () => {
+	test( 'renders section description when provided', () => {
 		const sectionDescription = <div>Test description</div>;
 		renderExtrasToggleCard( { sectionDescription } );
 
 		expect( screen.getByText( 'Test description' ) ).toBeVisible();
 	} );
 
-	it( 'renders all toggle controls with correct labels', () => {
+	test( 'renders all toggle controls with correct labels', () => {
 		renderExtrasToggleCard();
 
 		expect( screen.getByLabelText( 'Suggestions' ) ).toBeVisible();
@@ -77,7 +77,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
 	} );
 
-	it( 'shows descriptions as help text', () => {
+	test( 'shows descriptions as help text', () => {
 		renderExtrasToggleCard();
 
 		expect( screen.getByText( 'Tips for getting the most out of WordPress.com.' ) ).toBeVisible();
@@ -89,14 +89,14 @@ describe( 'ExtrasToggleCard', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows "Subscribe to all" when no options are enabled', () => {
+	test( 'shows "Subscribe to all" when no options are enabled', () => {
 		renderExtrasToggleCard();
 
 		expect( screen.getByRole( 'checkbox', { name: 'Subscribe to all' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Unsubscribe from all' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows "Unsubscribe from all" when some options are enabled', () => {
+	test( 'shows "Unsubscribe from all" when some options are enabled', () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -109,7 +109,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.queryByText( 'Subscribe to all' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'reflects current settings in toggle states', () => {
+	test( 'reflects current settings in toggle states', () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -126,7 +126,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Reports' ) ).toBeChecked();
 	} );
 
-	it( 'calls onMutate when "Subscribe to all" is clicked', async () => {
+	test( 'calls onMutate when "Subscribe to all" is clicked', async () => {
 		renderExtrasToggleCard();
 
 		const subscribeAllToggle = screen.getByLabelText( 'Subscribe to all' );
@@ -149,7 +149,7 @@ describe( 'ExtrasToggleCard', () => {
 		);
 	} );
 
-	it( 'calls onMutate with only changed values when "Unsubscribe from all" is clicked', async () => {
+	test( 'calls onMutate with only changed values when "Unsubscribe from all" is clicked', async () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -172,7 +172,7 @@ describe( 'ExtrasToggleCard', () => {
 		);
 	} );
 
-	it( 'disables all toggles when isSaving is true', () => {
+	test( 'disables all toggles when isSaving is true', () => {
 		renderExtrasToggleCard( { isSaving: true } );
 
 		expect( screen.getByLabelText( 'Subscribe to all' ) ).toBeDisabled();
@@ -181,7 +181,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Community' ) ).toBeDisabled();
 	} );
 
-	it( 'disables all toggles when extraSettings is undefined', () => {
+	test( 'disables all toggles when extraSettings is undefined', () => {
 		renderExtrasToggleCard( { extraSettings: undefined } );
 
 		expect( screen.getByLabelText( 'Subscribe to all' ) ).toBeDisabled();
@@ -190,7 +190,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( screen.getByLabelText( 'Community' ) ).toBeDisabled();
 	} );
 
-	it( 'does not call onMutate when extraSettings is undefined', async () => {
+	test( 'does not call onMutate when extraSettings is undefined', async () => {
 		renderExtrasToggleCard( { extraSettings: undefined } );
 
 		const subscribeAllToggle = screen.getByLabelText( 'Subscribe to all' );
@@ -199,7 +199,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( mockOnMutate ).not.toHaveBeenCalled();
 	} );
 
-	it( 'handles individual toggle changes correctly', async () => {
+	test( 'handles individual toggle changes correctly', async () => {
 		const extraSettings = {
 			...defaultExtraSettings,
 			marketing: true,
@@ -222,7 +222,7 @@ describe( 'ExtrasToggleCard', () => {
 		expect( mockOnMutate ).toHaveBeenCalledWith( { research: true }, 'single' );
 	} );
 
-	it( 'renders without descriptions when not provided', () => {
+	test( 'renders without descriptions when not provided', () => {
 		render(
 			<ExtrasToggleCard
 				extraSettings={ defaultExtraSettings }

@@ -24,7 +24,7 @@ jest.mock( '@automattic/i18n-utils', () => ( {
 describe( 'NameServersLayout', () => {
 	afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
 
-	it( 'describes what name servers do', () => {
+	test( 'describes what name servers do', () => {
 		render( <NameServersLayout /> );
 
 		expect(
@@ -32,7 +32,7 @@ describe( 'NameServersLayout', () => {
 		).toBeVisible();
 	} );
 
-	it( 'keeps the previous description until the new one is translated', () => {
+	test( 'keeps the previous description until the new one is translated', () => {
 		mockHasEnTranslation.mockReturnValue( false );
 
 		render( <NameServersLayout /> );
