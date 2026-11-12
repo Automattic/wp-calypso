@@ -1,4 +1,4 @@
-const { cssNameFromFilename } = require( '../util' );
+import { cssNameFromFilename } from '../util';
 
 describe( 'cssNameFromFilename()', () => {
 	test( 'Transforms static string', () => {
