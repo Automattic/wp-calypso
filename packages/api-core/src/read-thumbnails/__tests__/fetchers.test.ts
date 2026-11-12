@@ -1,5 +1,5 @@
 /**
- * @vitest-environment node
+ * @jest-environment node
  */
 import nock from 'nock';
 import { fetchReaderThumbnail } from '../fetchers';
