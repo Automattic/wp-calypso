@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '../../../utils/editor-blocks', () => ( {
 	getBlock: vi.fn(),

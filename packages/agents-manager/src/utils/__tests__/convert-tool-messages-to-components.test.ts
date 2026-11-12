@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 function mockEscalationButton() {
 	return null;
 }
@@ -40,7 +42,6 @@ vi.mock( '../../components/chat-response-tracking', () => ( {
 
 import { render, waitFor } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
-import { vi } from 'vitest';
 import ButtonPicker from '../../components/button-picker';
 import ChatResponseRenderedTracker from '../../components/chat-response-tracking';
 import ColorPicker from '../../components/color-picker';

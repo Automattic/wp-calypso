@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { type Mock, vi } from 'vitest';
 vi.mock( '../stream', async () => ( {
 	...( await vi.importActual< typeof import( '../stream' ) >( '../stream' ) ),
@@ -38,7 +39,7 @@ it( 'reports a design the canvas never took, without a staged summary', async ()
 } );
 
 it.each( [ { summary: '   ' }, { summary: 7, toolCallId: 7 }, null ] )(
-	'falls back to the staged message for %p, finalizing whatever is pending',
+	'falls back to the staged message for %o, finalizing whatever is pending',
 	async ( input ) => {
 		const result = await streamPageDesignCallback( input as never );
 

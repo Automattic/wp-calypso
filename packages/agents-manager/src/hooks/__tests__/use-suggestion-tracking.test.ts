@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 let mockSelectedBlockType: string | undefined;
 
 vi.mock( '../../utils/tracks', () => ( {
@@ -14,7 +16,6 @@ vi.mock( '@wordpress/data', () => ( {
 } ) );
 
 import { act, renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useSuggestionTracking } from '../use-suggestion-tracking';
 import type { Suggestion } from '@automattic/agenttic-ui';

@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '../../editor-canvas', () => ( { getCanvasDocument: vi.fn() } ) );
 vi.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );

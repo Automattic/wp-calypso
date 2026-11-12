@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { type Mock, type MockInstance, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 // Reached through the checkpoint engine's tool-call lookup.
 vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: vi.fn() } ) );
@@ -62,7 +64,6 @@ vi.mock( '../../editor-navigate/callback', () => ( {
 } ) );
 
 import { dispatch, resolveSelect, select } from '@wordpress/data';
-import { type Mock, type MockInstance, vi } from 'vitest';
 import { bindToEditorPath } from '../../../utils/canvas-guard';
 import { checkpointKeys, getCheckpoint, hasCheckpoint } from '../../../utils/checkpoints';
 import { getEditorHistory } from '../../../utils/editor-history';

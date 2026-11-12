@@ -1,8 +1,9 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
 
 import { dispatch, select } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { getSiteMetadata, replaceSiteMetadata, setSiteMetadata } from '../site-metadata';
 
 const editEntityRecord = vi.fn();
@@ -29,7 +30,7 @@ function withSiteRecord( metadata?: unknown, provider: Record< string, unknown >
 
 /** The metadata JSON the last write sent. */
 const writtenMetadata = () =>
-	JSON.parse( editEntityRecord.mock.calls.at( -1 )[ 3 ].big_sky_site_metadata );
+	JSON.parse( editEntityRecord.mock.calls.at( -1 )![ 3 ].big_sky_site_metadata );
 
 beforeEach( () => vi.clearAllMocks() );
 

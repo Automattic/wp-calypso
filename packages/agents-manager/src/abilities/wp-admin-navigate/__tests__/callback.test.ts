@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '../../../utils/agent-session', () => ( {
 	getActiveSessionId: vi.fn( () => 'tab-session' ),
@@ -27,9 +28,10 @@ function storedState() {
 }
 
 beforeEach( () => {
+	// Before the fake clock: clearing stored state queues a jsdom storage event timer.
+	sessionStorage.clear();
 	vi.useFakeTimers();
 	vi.clearAllMocks();
-	sessionStorage.clear();
 	// A writable stub, so the redirect assignment does not hit jsdom's
 	// unimplemented navigation.
 	Reflect.deleteProperty( window, 'location' );

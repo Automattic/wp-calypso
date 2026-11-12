@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 const mockIsTurnInFlight = vi.fn( () => false );
 const mockCancelQueries = vi.fn();
 const mockGetQueryData = vi.fn();
@@ -35,7 +37,6 @@ vi.mock( '../../utils/wp-admin-navigation-state', () => ( {
 
 import { useQuery } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
 import { useAgentsManagerContext } from '../../contexts';
 import { getOrCreateSessionId, markSessionSent } from '../../utils/agent-session';
 import { INTERRUPTED_TOOL_RESULT } from '../../utils/tool-call-resume';
@@ -80,7 +81,7 @@ const mockLoadedConversation = ( messages: object[], pendingClientTools?: Pendin
 		isFetchedAfterMount: true,
 	} );
 
-const lastQueryOptions = () => mockUseQuery.mock.calls.at( -1 )[ 0 ];
+const lastQueryOptions = () => mockUseQuery.mock.calls.at( -1 )![ 0 ];
 
 const renderWaitingConversation = ( onSuccess = vi.fn(), onRetry = vi.fn() ) =>
 	renderHook( () => useConversation( { waitForReply: true, onSuccess, onRetry } ) );

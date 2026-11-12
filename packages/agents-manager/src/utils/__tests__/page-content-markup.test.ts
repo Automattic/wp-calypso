@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 const mockGetRenderingMode = vi.fn();
 
 vi.mock( '@wordpress/blocks', () => ( { serialize: vi.fn() } ) );
@@ -14,7 +16,6 @@ vi.mock( '../is-editor-page', () => ( { isEditorPage: vi.fn() } ) );
 vi.mock( '../site-editor-context', () => ( { isSiteEditorContext: vi.fn() } ) );
 
 import { serialize } from '@wordpress/blocks';
-import { vi } from 'vitest';
 import {
 	DOCUMENT_ROOT_CLIENT_ID,
 	findPostContentClientId,

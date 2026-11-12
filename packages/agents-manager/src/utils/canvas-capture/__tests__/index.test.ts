@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 
@@ -9,7 +10,7 @@ const screenshot: FilePart = {
 };
 
 // A fresh facade per test, so each one decides what its chunk load does.
-async function load( captureModule: () => unknown ) {
+async function load( captureModule: () => object ) {
 	vi.resetModules();
 	vi.doMock( '../capture', captureModule );
 
@@ -20,7 +21,7 @@ async function load( captureModule: () => unknown ) {
 }
 
 afterEach( () => {
-	vi.dontMock( '../capture' );
+	vi.doUnmock( '../capture' );
 	vi.restoreAllMocks();
 } );
 

@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@automattic/agenttic-client', () => ( {
 	createOdieBotId: vi.fn( ( agentId: string ) => `wpcom-agent-${ agentId.replace( /-/g, '_' ) }` ),
 	isOdieBotId: vi.fn( ( agentId: string ) => agentId.startsWith( 'wpcom-' ) ),
 } ) );
 
 import { createOdieBotId } from '@automattic/agenttic-client';
-import { type Mock, vi } from 'vitest';
 import { getConversationBotId } from '../conversation-bot-id';
 
 const mockCreateOdieBotId = createOdieBotId as Mock;

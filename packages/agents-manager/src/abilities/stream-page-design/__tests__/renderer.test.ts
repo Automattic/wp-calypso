@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type Mocked, vi } from 'vitest';
 vi.mock( '@wordpress/blocks', () => {
 	let nextId = 0;
 
@@ -33,7 +35,6 @@ vi.mock( '../preview', async () => ( {
 } ) );
 
 import { act, renderHook } from '@testing-library/react';
-import { type Mocked, vi } from 'vitest';
 import { ensurePreviewStyles, PREVIEW_CLASS_NAME, scrollToBlockBottom } from '../preview';
 import { usePageDesignRenderer, type EditorHost } from '../renderer';
 import {

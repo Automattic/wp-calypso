@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 const mockApiFetch = vi.fn();
 vi.mock( '@wordpress/api-fetch', () => ( {

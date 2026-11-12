@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 const mockDispatch = vi.fn();
 vi.mock( '@wordpress/data', () => ( { dispatch: ( store: string ) => mockDispatch( store ) } ) );

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 const mockResumeChat = vi.fn();
 
 vi.mock( '../../contexts', () => ( {
@@ -17,7 +19,6 @@ vi.mock( '../use-has-ai-chat-entry-button', () => ( {
 
 import { renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { type Mock, vi } from 'vitest';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import useAdminBarIntegration from '../use-admin-bar-integration';
 import { useAiChatEntryState } from '../use-ai-chat-entry-state';

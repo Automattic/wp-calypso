@@ -1,8 +1,9 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
 
 import { dispatch, select } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { editSiteFields } from '../site-record';
 
 const editEntityRecord = vi.fn();

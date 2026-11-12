@@ -20,7 +20,7 @@ describe( 'generateUUID', () => {
 
 	it( 'falls back when crypto.randomUUID is unavailable', () => {
 		// @ts-expect-error - Simulating an older browser.
-		delete globalThis.crypto.randomUUID;
+		globalThis.crypto.randomUUID = undefined;
 
 		expect( generateUUID() ).toMatch(
 			/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
@@ -29,7 +29,7 @@ describe( 'generateUUID', () => {
 
 	it( 'uses crypto.getRandomValues for fallback randomness when available', () => {
 		// @ts-expect-error - Simulating an older browser.
-		delete globalThis.crypto.randomUUID;
+		globalThis.crypto.randomUUID = undefined;
 		const getRandomValuesSpy = vi.spyOn( globalThis.crypto, 'getRandomValues' );
 
 		generateUUID();
@@ -39,7 +39,7 @@ describe( 'generateUUID', () => {
 
 	it( 'keeps fallback UUIDs valid when getRandomValues returns the maximum byte', () => {
 		// @ts-expect-error - Simulating an older browser.
-		delete globalThis.crypto.randomUUID;
+		globalThis.crypto.randomUUID = undefined;
 		vi.spyOn( globalThis.crypto, 'getRandomValues' ).mockImplementation( ( array ) => {
 			if ( array ) {
 				new Uint8Array( array.buffer, array.byteOffset, array.byteLength ).fill( 255 );

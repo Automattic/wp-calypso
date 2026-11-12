@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type MockedFunction, vi } from 'vitest';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
@@ -16,7 +18,6 @@ vi.mock( '../is-reader-chat-agent', async () => {
 } );
 
 import { select } from '@wordpress/data';
-import { type MockedFunction, vi } from 'vitest';
 import { getActiveSessionId } from '../agent-session';
 import { isReaderChatHost } from '../is-reader-chat-agent';
 import { setLoadedProviderIds } from '../loaded-provider-ids';

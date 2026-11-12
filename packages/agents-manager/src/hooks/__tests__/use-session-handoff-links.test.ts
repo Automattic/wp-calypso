@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 const mockContext = {
 	siteKey: '111',
 	site: { ID: 111, domain: 'example.com' },
@@ -11,7 +13,6 @@ const mockContext = {
 vi.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockContext } ) );
 
 import { fireEvent, renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
 import { getOrCreateSessionId, saveSessionId } from '../../utils/agent-session';
 import { useSessionHandoffLinks } from '../use-session-handoff-links';
 

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@tanstack/react-query', () => ( {
 	useQuery: vi.fn(),
 } ) );
@@ -23,7 +25,6 @@ vi.mock( '../../utils/site-setup-tasks', () => ( {
 
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
 import useSiteSetupChecklist from '../use-site-setup-checklist';
 import type { UIMessage } from '@automattic/agenttic-client';
 

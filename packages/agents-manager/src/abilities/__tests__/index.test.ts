@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
 import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/abilities', () => ( {
 	registerAbility: vi.fn(),
@@ -34,10 +35,10 @@ vi.mock( '../show-template', () => ( {
 import { executeAbilityFromList } from '../execute-ability';
 
 // Registration runs once per module instance, so each test loads fresh
-// modules (and the matching mock instances) to start clean.
+// modules to start clean.
 async function load() {
 	vi.resetModules();
-	const abilities = jest.requireMock( '@wordpress/abilities' );
+	const abilities = vi.mocked( await import( '@wordpress/abilities' ) );
 	const facade = await import( '..' );
 	const editorAbilities = await import( '../editor-abilities' );
 	return { ...facade, editorAbilities, ...abilities } as typeof facade & {
@@ -185,7 +186,7 @@ describe( 'abilities facade', () => {
 			);
 			expect( error ).toHaveBeenCalled();
 		} finally {
-			vi.dontMock( '../editor-abilities' );
+			vi.doUnmock( '../editor-abilities' );
 		}
 	} );
 
@@ -215,7 +216,7 @@ describe( 'abilities facade', () => {
 	} );
 
 	// Hosts call it across bundles, with whatever they hold.
-	it.each( [ undefined, '' ] )( 'gives a host no block id for %p', async ( clientId ) => {
+	it.each( [ undefined, '' ] )( 'gives a host no block id for %o', async ( clientId ) => {
 		const { getAmAgentBlockId } = await load();
 
 		expect( getAmAgentBlockId( clientId as never ) ).toBe( '' );
@@ -242,7 +243,7 @@ describe( 'abilities facade', () => {
 				expect.any( Error )
 			);
 		} finally {
-			vi.dontMock( '../editor-abilities' );
+			vi.doUnmock( '../editor-abilities' );
 		}
 	} );
 
@@ -267,7 +268,7 @@ describe( 'abilities facade', () => {
 				expect.any( Error )
 			);
 		} finally {
-			vi.dontMock( '../editor-abilities' );
+			vi.doUnmock( '../editor-abilities' );
 		}
 	} );
 } );

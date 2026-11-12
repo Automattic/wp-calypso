@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 const mockUseSelect = vi.fn();
 let mockContext = {
 	sectionName: 'gutenberg',
@@ -26,7 +28,6 @@ vi.mock( '../../contexts', () => ( {
 } ) );
 
 import { renderHook, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
 import { hideTopLevelDescriptions, useEmptyViewSuggestions } from '../use-empty-view-suggestions';
 import type { LoadedProviders } from '../../utils/load-external-providers';
 

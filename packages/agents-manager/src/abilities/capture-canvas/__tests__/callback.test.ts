@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: vi.fn( ( id: string ) => `resolved-${ id }` ),
@@ -58,7 +59,7 @@ describe( 'captureCanvasCallback', () => {
 	} );
 
 	it.each( [ {}, null ] )(
-		'describes the visible area when no block was named (%p)',
+		'describes the visible area when no block was named (%o)',
 		async ( input ) => {
 			const { result } = await captureCanvasCallback( input );
 
@@ -87,7 +88,7 @@ describe( 'captureCanvasCallback', () => {
 	} );
 
 	it.each( [ null, [] ] )(
-		'fails without an image (%p), so the agent does not assume one',
+		'fails without an image (%o), so the agent does not assume one',
 		async ( parts ) => {
 			vi.mocked( captureCanvas ).mockResolvedValue( parts );
 

@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '@wordpress/blocks', () => ( {
 	getBlockTypes: vi.fn( () => [
@@ -171,7 +172,7 @@ describe( 'getValidationDetails', () => {
 		[ 'missing-after-apply', 'Old', null, 'New' ],
 		[ 'unresolved', null, null, 'New' ],
 	] )(
-		'marks an attribute `%s` when the page had %p, shows %p and %p was requested',
+		'marks an attribute `%s` when the page had %o, shows %o and %o was requested',
 		( status, before, after, requested ) => {
 			const details = validate(
 				edits( { updates: [ contentUpdate( requested ) ] } ),

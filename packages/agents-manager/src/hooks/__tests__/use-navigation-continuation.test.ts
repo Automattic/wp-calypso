@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 let mockSessionId: string;
 vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { getTabSessionId: () => mockSessionId } ),
@@ -11,7 +13,6 @@ vi.mock( '../../utils/tracks', async () => ( {
 } ) );
 
 import { renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import {
 	markContinuationSent,

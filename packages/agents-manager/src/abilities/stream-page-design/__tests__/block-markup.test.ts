@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/blocks', () => ( {
 	createBlock: vi.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: 'new',
@@ -15,7 +17,6 @@ vi.mock( '@wordpress/blocks', () => ( {
 } ) );
 
 import { createBlock, parse } from '@wordpress/blocks';
-import { type Mock, vi } from 'vitest';
 import {
 	extractCompleteTopLevelBlock,
 	fixNestedParagraphs,

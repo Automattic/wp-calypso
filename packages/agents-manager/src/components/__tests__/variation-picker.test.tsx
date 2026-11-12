@@ -205,7 +205,7 @@ describe( 'VariationPicker', () => {
 		expect( arrows ).not.toBeInTheDocument();
 	} );
 
-	it.each( [ 0, -1, NaN ] )( 'falls back to the default page size for maxToShow=%p', ( value ) => {
+	it.each( [ 0, -1, NaN ] )( 'falls back to the default page size for maxToShow=%o', ( value ) => {
 		render(
 			<VariationPicker
 				{ ...defaultProps }

@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 vi.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: vi.fn() } ) );
 vi.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
 import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OpenHelpCenterButton from '../open-help-center-button';

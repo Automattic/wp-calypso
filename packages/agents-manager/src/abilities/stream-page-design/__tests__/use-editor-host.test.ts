@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 const mockBatch = vi.fn();
 const mockLiveBlocks = [
 	{ clientId: 'a', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
@@ -24,7 +26,6 @@ vi.mock( '../../../utils/editor-blocks', () => ( {
 vi.mock( '../commit', () => ( { commitStreamedPageDesign: vi.fn( () => true ) } ) );
 
 import { renderHook } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
 import { blockCurrentRequest, getBlockingMove } from '../../../utils/canvas-binding';
 import { clearCheckpoint, hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import {

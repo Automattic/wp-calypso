@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@automattic/oauth-token', () => ( {
 	getToken: vi.fn( () => false ),
 } ) );
@@ -20,7 +22,6 @@ vi.mock( 'wpcom-proxy-request', () => ( {
 import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { type Mock, vi } from 'vitest';
 import { createCalypsoAuthProvider } from '../calypso-auth-provider';
 
 const mockApiFetch = apiFetch as unknown as Mock;

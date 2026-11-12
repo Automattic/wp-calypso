@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { type Mock, vi } from 'vitest';
 vi.mock( '../global-styles', () => ( { editGlobalStyles: vi.fn() } ) );
 

@@ -1,8 +1,9 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( { resolveSelect: vi.fn() } ) );
 
 import { resolveSelect } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { readRecord } from '../read-record';
 
 const getEditedEntityRecord = vi.fn();

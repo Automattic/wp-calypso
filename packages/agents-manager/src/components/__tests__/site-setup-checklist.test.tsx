@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 const mockAgentUIChecklist = vi.fn< ( ...args: [ unknown ] ) => ReactElement >( () => (
 	<div data-testid="checklist" />
 ) );
@@ -9,7 +11,6 @@ vi.mock( '@automattic/agenttic-ui', () => ( {
 } ) );
 
 import { act, render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
 import SiteSetupChecklist from '../site-setup-checklist';
 import type { ReactElement } from 'react';
 

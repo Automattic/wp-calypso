@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( {
 	dispatch: vi.fn(),
@@ -5,7 +7,6 @@ vi.mock( '@wordpress/data', () => ( {
 } ) );
 
 import { select } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { hasSiteLogoBlock } from '../site-logo';
 
 describe( 'hasSiteLogoBlock', () => {

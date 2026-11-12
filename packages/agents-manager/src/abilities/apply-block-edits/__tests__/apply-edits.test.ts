@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type MockInstance, vi } from 'vitest';
 vi.mock( '@wordpress/blocks', () => ( { createBlock: vi.fn() } ) );
 vi.mock( '../../../utils/canvas-guard', () => ( { assertCanvasUnmoved: vi.fn() } ) );
 vi.mock( '../../../utils/editor-blocks', () => ( {
@@ -11,13 +13,13 @@ vi.mock( '../../../utils/editor-blocks', () => ( {
 	replaceBlock: vi.fn(),
 	replaceInnerBlocks: vi.fn(),
 	resolveBlocksRoot: vi.fn(),
+	TEMPLATE_PART_BLOCK: 'core/template-part',
 	updateBlockAttributes: vi.fn(),
 } ) );
 vi.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
 vi.mock( '../cover-image', () => ( { syncCoverWithImage: vi.fn() } ) );
 
 import { createBlock } from '@wordpress/blocks';
-import { type MockInstance, vi } from 'vitest';
 import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
 import {
 	getBlock,

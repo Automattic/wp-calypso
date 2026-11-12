@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/blocks', () => ( {
 	createBlock: vi.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
 	parse: vi.fn( () => [ { name: 'core/navigation-link', attributes: {}, innerBlocks: [] } ] ),
@@ -14,7 +16,6 @@ vi.mock( '../../../utils/navigation-menu', () => ( {
 } ) );
 
 import { parse } from '@wordpress/blocks';
-import { type Mock, vi } from 'vitest';
 import { getMenuItemAttributes, resolveClientId } from '../../../utils/block-ids';
 import { readMenuItems } from '../../../utils/navigation-menu';
 import { buildNavigationItems } from '../navigation-items';
@@ -443,7 +444,7 @@ describe( 'raw menu edits', () => {
 	} );
 
 	// Anything but serialized blocks would persist while the editor kept its own.
-	it.each( [ null, 7 ] )( 'refuses content that is not a string: %p', async ( content ) => {
+	it.each( [ null, 7 ] )( 'refuses content that is not a string: %o', async ( content ) => {
 		await expect( buildNavigationItems( 10, { content } ) ).rejects.toThrow(
 			'content must be a string'
 		);

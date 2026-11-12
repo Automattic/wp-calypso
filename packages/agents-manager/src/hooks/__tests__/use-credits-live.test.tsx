@@ -270,7 +270,11 @@ describe( 'session', () => {
 	const both = ( url: string ) => ( { notice: url, popover: url } );
 	const withSession = ( url: string, aiSessionId: string ) =>
 		url.replace( 'source=wp_ai_credits', `source=wp_ai_credits&ai_session_id=${ aiSessionId }` );
+	let actualTracks: typeof import( '../../utils/tracks' );
 
+	beforeAll( async () => {
+		actualTracks = await vi.importActual( '../../utils/tracks' );
+	} );
 	beforeEach( () => {
 		// The scope the chat publishes for its Tracks events.
 		setResolvedAgentId( 'wp-orchestrator' );
@@ -307,10 +311,8 @@ describe( 'session', () => {
 	);
 
 	it( 'sends the click event the session its link carries', async () => {
-		const tracks =
-			await vi.importActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' );
 		vi.mocked( recordAgentsManagerTracksEvent ).mockImplementation(
-			tracks.recordAgentsManagerTracksEvent
+			actualTracks.recordAgentsManagerTracksEvent
 		);
 		vi.mocked( recordTracksEvent ).mockClear();
 		saveSessionId( 'session-a' );
@@ -353,7 +355,7 @@ describe( 'session', () => {
 	} );
 } );
 it.each( [ undefined, null, 'unsupported' ] )(
-	'keeps the balance without a purchase link or fabricated guidance for tier %p',
+	'keeps the balance without a purchase link or fabricated guidance for tier %o',
 	async ( plan_tier ) => {
 		const { result } = renderCredits();
 		await receive( { ...creditSnapshot(), plan_tier } );
@@ -662,7 +664,7 @@ it( 'waits for matching site data and follows a domain change for the same site'
 	);
 } );
 it.each( [ '', '.', '..', ' ' ] )(
-	'omits the destination for an invalid site slug %p',
+	'omits the destination for an invalid site slug %o',
 	async ( domain ) => {
 		const { result } = renderCredits( { site: { ...site, domain } } );
 		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
@@ -694,7 +696,7 @@ it( 'never uses a previous site destination during a site switch', async () => {
 	);
 } );
 it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: vi.fn() } } ] )(
-	'drops the upgrade action when the authenticated visit changes: %p',
+	'drops the upgrade action when the authenticated visit changes: %o',
 	async ( next ) => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 		const view = renderCredits();
@@ -1032,7 +1034,7 @@ describe( 'the top-ups notice', () => {
 } );
 
 it.each( [ undefined, 'unsupported' ] )(
-	'shows the exhausted notice without a purchase link for tier %p',
+	'shows the exhausted notice without a purchase link for tier %o',
 	async ( plan_tier ) => {
 		const { result } = renderCredits();
 		await receive( { ...exhausted(), plan_tier } );
@@ -1372,7 +1374,7 @@ it.each( [
 	creditSnapshot( { blog_id: 456 } ),
 	creditSnapshot( { credits_remaining: -1 } ),
 	creditSnapshot( { resets_at: '2026-09-01T00:00:00Z' } ),
-] )( 'rejects an invalid balance read %p', async ( snapshot ) => {
+] )( 'rejects an invalid balance read %o', async ( snapshot ) => {
 	fetchMock.mockResolvedValueOnce( response( snapshot ) );
 	const { result } = renderCredits();
 	await flush();
@@ -1422,7 +1424,7 @@ it( 'does not refetch a hidden tab or use an absent auth provider', async () => 
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 } );
 it.each( [ { siteKey: '456' }, { userId: 2 }, { enabled: false } ] )(
-	'ignores a previous read after changing scope %p',
+	'ignores a previous read after changing scope %o',
 	async ( next ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock.mockReturnValueOnce( read.promise );
@@ -1605,7 +1607,7 @@ it.each( [ false, true ] )(
 	}
 );
 it.each( [ null, undefined, false, { broken: true }, creditSnapshot( { blog_id: 456 } ) ] )(
-	'invalidates prior balance on unreadable, absent, invalid or wrong-site status %p',
+	'invalidates prior balance on unreadable, absent, invalid or wrong-site status %o',
 	async ( snapshot ) => {
 		const { result } = renderCredits();
 		await receive( exhausted() );
@@ -1629,7 +1631,7 @@ it.each( [
 	{ siteKey: 'no-site' },
 	{ agentConfig: { ...agentConfig, agentId: 'reader-chat' } },
 	{ agentConfig: { ...agentConfig, agentUrl: 'https://legacy.example/agent' } },
-] )( 'ignores live metadata on unsupported surfaces %p', async ( options ) => {
+] )( 'ignores live metadata on unsupported surfaces %o', async ( options ) => {
 	const { result } = renderCredits( options );
 	await receive( creditSnapshot() );
 	expect( result.current.trailingActions ).toBeUndefined();
@@ -1868,7 +1870,7 @@ it.each( [
 it.each( [
 	{ siteKey: '456', userId: 1, siteId: 456 },
 	{ siteKey: '123', userId: 2, siteId: 123 },
-] )( 'waits for configuration authentication to match the selected scope %p', async ( next ) => {
+] )( 'waits for configuration authentication to match the selected scope %o', async ( next ) => {
 	const oldAuth = deferred< Record< string, string > >();
 	authProvider.mockReturnValueOnce( oldAuth.promise );
 	const view = renderCredits();
@@ -1938,7 +1940,7 @@ it.each( [
 	{ siteKey: '456', userId: 1, agentId: 'wp-orchestrator' },
 	{ siteKey: '123', userId: 2, agentId: 'wp-orchestrator' },
 	{ siteKey: '123', userId: 1, agentId: 'other-agent' },
-] )( 'keeps an open popover and its callbacks within their visit %p', async ( next ) => {
+] )( 'keeps an open popover and its callbacks within their visit %o', async ( next ) => {
 	const view = renderCredits();
 	await receive( creditSnapshot() );
 	const oldToggle = props( view.result.current ).onToggle;
@@ -2231,7 +2233,7 @@ describe( 'credits Tracks events', () => {
 		[ true, false, 'admin', 'contact_plan_owner', 'none' ],
 		[ null, null, 'none', 'none', 'none' ],
 	] as const )(
-		'records who may buy (%p, %p) as %s with the %s call to action the notice shows, and ref %s',
+		'records who may buy (%o, %o) as %s with the %s call to action the notice shows, and ref %s',
 		async ( canBuyCredits, canUpgrade, userRole, ctaType, ref ) => {
 			fetchMock.mockResolvedValueOnce( response( low(), canBuyCredits, canUpgrade ) );
 			renderCredits( freshScope() );

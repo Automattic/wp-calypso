@@ -1,8 +1,9 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
 vi.mock( '../private-apis', () => ( { unlock: vi.fn( ( store ) => store ) } ) );
 
 import { dispatch, select } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import {
 	clearBlockSelection,
 	DOCUMENT_ROOT_CLIENT_ID,

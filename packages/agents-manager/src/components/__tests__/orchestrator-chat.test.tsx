@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { DataPart, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
@@ -562,7 +564,6 @@ vi.mock( '../agent-chat', async () => {
 } );
 
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
-import { type Mock, vi } from 'vitest';
 import { getShownInteractiveUiDataModel } from '../../interactive-ui/session';
 import { getSessionId } from '../../utils/agent-session';
 import { takeActionOrigin } from '../../utils/action-origin';
@@ -578,6 +579,8 @@ import {
 import { bindToEditorPath } from '../../utils/canvas-guard';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
+import * as convertToolMessages from '../../utils/convert-tool-messages-to-components';
+import * as externalContext from '../../utils/external-context';
 
 const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
 	<OrchestratorChat
@@ -1826,7 +1829,7 @@ describe( 'OrchestratorChat', () => {
 
 		await act( async () => {} );
 		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
-		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		const { removeExternalContextCard } = vi.mocked( externalContext, true );
 		expect( removeExternalContextCard ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
 			'jetpack_big_sky_chat_input_send_message',
@@ -4126,8 +4129,7 @@ describe( 'OrchestratorChat', () => {
 		} as unknown as TaskUpdate;
 		// The converter is mocked, so check the retries the chat hands it.
 		const isToolCallRetried = () => {
-			const convert = jest.requireMock( '../../utils/convert-tool-messages-to-components' )
-				.default as Mock;
+			const convert = vi.mocked( convertToolMessages, true ).default as Mock;
 			const { retriedToolCallIds } = convert.mock.calls.at( -1 )![ 0 ] as {
 				retriedToolCallIds?: ReadonlySet< string >;
 			};

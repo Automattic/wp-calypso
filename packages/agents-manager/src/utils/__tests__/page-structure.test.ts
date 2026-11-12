@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { vi } from 'vitest';
 vi.mock( '../block-ids', () => ( {
 	createShortIdLookup: vi.fn(),

@@ -295,7 +295,7 @@ describe( 'AgentDock', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
-		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )![ 0 ];
 		act( () => onOpenSidebar() );
 
 		// Opening the docked sidebar must not override the route the WP admin bar chose.

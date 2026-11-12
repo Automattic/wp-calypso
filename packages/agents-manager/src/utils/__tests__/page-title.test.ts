@@ -1,8 +1,9 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( { dispatch: vi.fn(), resolveSelect: vi.fn() } ) );
 
 import { dispatch, resolveSelect } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { getPageTitle, setPageTitle } from '../page-title';
 
 const editEntityRecord = vi.fn();

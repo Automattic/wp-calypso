@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '@wordpress/data', () => ( {
 	select: vi.fn(),
@@ -14,7 +16,6 @@ vi.mock( '../editor-blocks', () => ( { getBlock: vi.fn(), getBlockParents: vi.fn
 
 import { parse } from '@wordpress/blocks';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
 import { getBlock, getBlockParents } from '../editor-blocks';
 import {
 	addNavigationItem,
@@ -83,7 +84,7 @@ const expectItemsSaved = ( menuId: number ) =>
 
 /** The items the last write sent, the menu it wrote to, and its options. */
 const lastWrite = () => {
-	const call = editEntityRecord.mock.calls.at( -1 );
+	const call = editEntityRecord.mock.calls.at( -1 )!;
 	return { menuId: call[ 2 ], items: call[ 3 ].blocks, options: call[ 4 ] };
 };
 

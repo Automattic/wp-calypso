@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import { type Mock, vi } from 'vitest';
 vi.mock( '../../block-ids', () => ( {
 	// A block the agent was never shown has no short id; these tests name such blocks `long-…`.
