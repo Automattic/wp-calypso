@@ -47,8 +47,6 @@ async function launchBrowser( options ) {
 }
 
 /**
- * Saves the context's cookies so later runs can reuse the session.
- *
  * Locally, the app reaches the API through a public-api.wordpress.com iframe embedded in
  * a *.localhost page. That's a cross-site context, so Chromium withholds the session
  * cookies, which wordpress.com sets as SameSite=Lax, and the app bounces to the login page.
@@ -79,9 +77,6 @@ function e2eSetupError( reason ) {
 	);
 }
 
-/**
- * Logs in an E2E test account using the credentials in the decrypted E2E secrets.
- */
 async function logInTestAccount( account ) {
 	// Logging in on calypso.localhost can't set the wordpress.com session cookie (it would
 	// be a cross-site cookie), so log in on wordpress.com itself.
@@ -125,9 +120,6 @@ async function logInTestAccount( account ) {
 	}
 }
 
-/**
- * Returns the slug of a test account's site, e.g. `example.wordpress.com`.
- */
 function testAccountSite( account ) {
 	try {
 		const { DataHelper } = e2eRequire( '@automattic/calypso-e2e' );
@@ -137,9 +129,6 @@ function testAccountSite( account ) {
 	}
 }
 
-/**
- * Opens a visible browser window and waits for the user to log in to WordPress.com.
- */
 async function logInOwnAccount( { timeoutMs = 10 * 60 * 1000 } = {} ) {
 	const browser = await launchBrowser( {
 		headless: false,
