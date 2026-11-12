@@ -231,10 +231,13 @@ async function navigate( page, url, problems, requests ) {
 		problems.length = 0;
 		requests.length = 0;
 		// Retry the original link so the launcher can resolve the current container.
-		const response = await page.goto( url, {
-			waitUntil,
-			timeout: Math.max( 1, deadline - Date.now() ),
-		} );
+		const response = await page
+			.goto( url, { waitUntil, timeout: Math.max( 1, deadline - Date.now() ) } )
+			.catch( ( error ) => {
+				if ( error.name !== 'TimeoutError' ) {
+					throw error;
+				}
+			} );
 		status = response?.status();
 		if ( status >= 200 && status < 300 && status !== 202 ) {
 			return;
@@ -245,7 +248,20 @@ async function navigate( page, url, problems, requests ) {
 		await delay( Math.min( 3000, Math.max( 0, deadline - Date.now() ) ) );
 	} while ( Date.now() < deadline );
 
-	throw new Error( `Calypso Live did not load: ${ status ? `HTTP ${ status }` : 'no response' }.` );
+	if ( status === 404 ) {
+		throw new UsageError(
+			'Calypso Live has no image for this link (HTTP 404): the preview is not built yet, or its image ' +
+				"was removed. Wait for the PR's `Docker image (Web app)` check, then use the link in the bot's " +
+				'comment as it reads now.'
+		);
+	}
+	if ( ! status ) {
+		throw new UsageError(
+			`Calypso Live did not answer within ${ BUILD_TIMEOUT / 1000 }s. ` +
+				'A container that is still starting does that: run this again.'
+		);
+	}
+	throw new Error( `Calypso Live did not load: HTTP ${ status }.` );
 }
 
 async function open( browser, account, url ) {
