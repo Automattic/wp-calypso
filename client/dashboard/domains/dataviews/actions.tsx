@@ -12,7 +12,7 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { useMemo, Suspense, lazy } from 'react';
+import { useCallback, useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
@@ -120,32 +120,44 @@ export const useActions = ( {
 		return map;
 	}, [ primaryCandidateDomainNames, sslActiveKey ] );
 
+	const renewDomain = useCallback(
+		( items: DomainSummary[] ) => {
+			const domain = items[ 0 ];
+
+			recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+				action: 'renew',
+				layout,
+				domain: domain.domain,
+			} );
+
+			const purchase = purchases?.find(
+				( p ) => p.ID === parseInt( domain.subscription_id ?? '0', 10 )
+			);
+
+			if ( ! purchase ) {
+				return;
+			}
+
+			window.location.href = getRenewalUrlFromPurchase( purchase );
+		},
+		[ purchases, recordTracksEvent, layout ]
+	);
+
+	// `isPrimary` applies to every row, so "Renew" is two actions: inline once the domain has expired, in the menu before.
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
 				id: 'renew',
 				isPrimary: true,
 				label: __( 'Renew' ),
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-
-					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
-						action: 'renew',
-						layout,
-						domain: domain.domain,
-					} );
-
-					const purchase = purchases?.find(
-						( p ) => p.ID === parseInt( domain.subscription_id ?? '0', 10 )
-					);
-
-					if ( ! purchase ) {
-						return;
-					}
-
-					window.location.href = getRenewalUrlFromPurchase( purchase );
-				},
-				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ),
+				callback: renewDomain,
+				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ) && item.expired,
+			},
+			{
+				id: 'renew-before-expiry',
+				label: __( 'Renew' ),
+				callback: renewDomain,
+				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ) && ! item.expired,
 			},
 			{
 				id: 'setup',
@@ -504,7 +516,7 @@ export const useActions = ( {
 		[
 			user,
 			router,
-			purchases,
+			renewDomain,
 			hasEnTranslation,
 			setPrimaryDomain,
 			isSettingPrimaryDomain,

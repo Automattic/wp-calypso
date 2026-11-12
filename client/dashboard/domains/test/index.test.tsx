@@ -189,6 +189,29 @@ describe( '<Domains>', () => {
 		expect( within( card ).queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows Renew on a table row only once the domain has expired', async () => {
+		mockApis(
+			[
+				mockDomain( 1, {
+					expired: true,
+					domain_status: { id: 'expired', label: 'Expired', type: 'error' },
+				} ),
+				mockDomain( 2 ),
+			],
+			SAVED_TABLE_VIEW
+		);
+
+		render( <Domains /> );
+
+		const table = await screen.findByRole( 'table' );
+		const expiredRow = within( table ).getByRole( 'row', { name: /domain01\.com/ } );
+		const renewableRow = within( table ).getByRole( 'row', { name: /domain02\.com/ } );
+		expect( within( expiredRow ).getByRole( 'button', { name: 'Renew' } ) ).toBeVisible();
+		expect(
+			within( renewableRow ).queryByRole( 'button', { name: 'Renew' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'shows only cards, without the layout switch, for up to 8 domains', async () => {
 		mockApis( mockDomains( 8 ) );
 
