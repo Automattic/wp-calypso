@@ -64,12 +64,12 @@ apply_result() {
 			gh pr edit "$pr" --repo "$REPO" --remove-label "$LABEL_PREFIX $other" >/dev/null 2>&1 || true
 		fi
 	done
-	gh pr edit "$pr" --repo "$REPO" --add-label "$LABEL_PREFIX $level" >/dev/null
+	gh pr edit "$pr" --repo "$REPO" --add-label "$LABEL_PREFIX $level" >/dev/null || return 1
 	comment_id=$(gh api "repos/$REPO/issues/$pr/comments" --paginate --jq ".[] | select(.body | startswith(\"$MARKER\")) | .id" | tail -1)
 	if [ -n "$comment_id" ]; then
-		gh api -X PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" >/dev/null
+		gh api -X PATCH "repos/$REPO/issues/comments/$comment_id" -f body="$body" >/dev/null || return 1
 	else
-		gh pr comment "$pr" --repo "$REPO" --body "$body" >/dev/null
+		gh pr comment "$pr" --repo "$REPO" --body "$body" >/dev/null || return 1
 	fi
 }
 
@@ -87,7 +87,9 @@ process_pr() {
 	fi
 	echo "$result" >"$OUT/$pr.json"
 	if [ "$DRY_RUN" != "true" ]; then
-		apply_result "$result"
+		if ! apply_result "$result"; then
+			jq -nc --argjson pr "$pr" '{pr: $pr, error: "writing label or comment failed"}' >"$OUT/$pr.json"
+		fi
 	fi
 }
 export -f skip_reason apply_result process_pr
@@ -103,8 +105,8 @@ summarize() {
 }
 
 if [ "$DRY_RUN" != "true" ]; then
-	for level in Low Medium High; do
-		gh label create "$LABEL_PREFIX $level" --repo "$REPO" --color "$(case $level in Low) echo d93f0b ;; Medium) echo fbca04 ;; High) echo 0e8a16 ;; esac)" \
+	for spec in Low:d93f0b Medium:fbca04 High:0e8a16; do
+		gh label create "$LABEL_PREFIX ${spec%%:*}" --repo "$REPO" --color "${spec##*:}" \
 			--description "AI estimate of how much careful review this PR needs" >/dev/null 2>&1 || true
 	done
 fi
