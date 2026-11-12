@@ -146,15 +146,22 @@ a.dataviews-url-field {
 	}
 }
 
-// Turn the 1px line DataViews draws on the sticky actions column into the same shadow. It starts
-// 1px higher to cover the row border, which would otherwise cut the shadow at every row.
-.dataviews-view-table :is( td, th ).dataviews-view-table__actions-column--stuck::after {
-	inset-block-start: -1px;
-	inset-inline-start: -16px;
-	width: 16px;
-	background: linear-gradient( to left, rgba( 0, 0, 0, 0.13 ), transparent );
+// Turn the 1px line DataViews draws on the sticky actions column into the same shadow. A single
+// element, from the header cell down, draws it for the whole column: one piece per row lets the
+// row borders show through between the pieces. The table clips it at its bottom edge.
+.dataviews-view-table td.dataviews-view-table__actions-column--stuck::after {
+	display: none;
 }
 
-.dataviews-view-table :is( td, th ).dataviews-view-table__actions-column--stuck {
-	box-shadow: inset 1px 0 0 var( --wpds-color-stroke-surface-neutral, #dcdcdc );
+.dataviews-view-table th.dataviews-view-table__actions-column--stuck::after {
+	inset-block: 0 auto;
+	inset-inline-start: -16px;
+	width: 17px;
+	height: 100000px;
+	background: linear-gradient( to left, var( --wpds-color-stroke-surface-neutral, #dcdcdc ) 1px, rgba( 0, 0, 0, 0.13 ) 1px, transparent );
+	pointer-events: none;
+}
+
+.dataviews-view-table:has( th.dataviews-view-table__actions-column--stuck ) {
+	clip-path: inset( -100vh -100vw 0 );
 }
