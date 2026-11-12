@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { PLANS_PRESALES_LAUNCHER_CONTEXT } from '../../../constants';
 import { useOdieAssistantContext } from '../../../context';
 import { useSendChatMessage } from '../../../hooks';
@@ -14,40 +15,39 @@ interface SuggestionsProps {
 	onSubmit: ( suggestion: Suggestion ) => void;
 }
 
-jest.mock(
+vi.mock(
 	'@automattic/agenttic-ui',
 	() => ( {
 		Suggestions: ( { suggestions, onSubmit }: SuggestionsProps ) => (
 			<button onClick={ () => onSubmit( suggestions[ 0 ] ) }>Send prompt</button>
 		),
-	} ),
-	{ virtual: true }
+	} )
 );
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => () => true,
 } ) );
-jest.mock( '../../../context', () => ( { useOdieAssistantContext: jest.fn() } ) );
-jest.mock( '../../../hooks', () => ( { useSendChatMessage: jest.fn() } ) );
+vi.mock( '../../../context', () => ( { useOdieAssistantContext: vi.fn() } ) );
+vi.mock( '../../../hooks', () => ( { useSendChatMessage: vi.fn() } ) );
 
-const trackEvent = jest.fn();
-const sendMessage = jest.fn().mockResolvedValue( undefined );
+const trackEvent = vi.fn();
+const sendMessage = vi.fn().mockResolvedValue( undefined );
 
 function setup(
 	messages: { role: string; content: string }[] = [],
 	status = 'loaded',
 	provider = 'odie'
 ) {
-	jest.mocked( useOdieAssistantContext ).mockReturnValue( {
+	vi.mocked( useOdieAssistantContext ).mockReturnValue( {
 		chat: { messages, status, provider },
 		launcherContext: PLANS_PRESALES_LAUNCHER_CONTEXT,
 		trackEvent,
 	} as unknown as ReturnType< typeof useOdieAssistantContext > );
-	jest.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: jest.fn() } );
+	vi.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: vi.fn() } );
 	return render( <IntroSuggestions /> );
 }
 
 describe( 'presales suggestion conversation starts', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'tracks the first prompt before sending it', () => {
 		setup();

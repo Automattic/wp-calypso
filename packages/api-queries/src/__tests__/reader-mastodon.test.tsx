@@ -1,8 +1,8 @@
 // `logToLogstash` fires a real HTTPS request to the wpcom logstash
 // endpoint. Mute it so the optimistic-mutation onError tests don't
 // trigger an unmocked nock request.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 import {
@@ -20,6 +20,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	createMastodonPostMutation,
 	followMastodonActorMutation,
@@ -79,7 +80,7 @@ describe( 'reader-mastodon hooks', () => {
 				state: 'abc',
 			} );
 		const client = new QueryClient();
-		const spy = jest.spyOn( client, 'invalidateQueries' );
+		const spy = vi.spyOn( client, 'invalidateQueries' );
 		const { result } = renderHook( () => useAuthorizeMastodonConnectionMutation(), {
 			wrapper: makeWrapper( client ),
 		} );
@@ -189,7 +190,7 @@ describe( 'reader-mastodon hooks', () => {
 			} );
 		const client = new QueryClient();
 		client.setQueryData( readerMastodonKeys.connections(), 'old' );
-		const spy = jest.spyOn( client, 'invalidateQueries' );
+		const spy = vi.spyOn( client, 'invalidateQueries' );
 		const { result } = renderHook( () => useCompleteMastodonConnectionMutation(), {
 			wrapper: makeWrapper( client ),
 		} );
@@ -701,7 +702,7 @@ describe( 'createMastodonPostMutation', () => {
 			} );
 
 		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -737,7 +738,7 @@ describe( 'createMastodonPostMutation', () => {
 			} );
 
 		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -773,7 +774,7 @@ describe( 'createMastodonPostMutation', () => {
 			} );
 
 		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -827,7 +828,7 @@ describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () =>
 				viewer: { favourited: false, reblogged: false },
 			} );
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-			const cancelQueriesSpy = jest.spyOn( client, 'cancelQueries' );
+			const cancelQueriesSpy = vi.spyOn( client, 'cancelQueries' );
 			seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
 
 			nock( BASE )
@@ -1188,7 +1189,7 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 				viewer: { favourited: false, reblogged: false },
 			} );
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-			const cancelQueriesSpy = jest.spyOn( client, 'cancelQueries' );
+			const cancelQueriesSpy = vi.spyOn( client, 'cancelQueries' );
 			seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
 
 			nock( BASE )
@@ -1768,7 +1769,7 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			// No setQueryData seeding — context.previous will be undefined,
 			// so onError must fall back to invalidateQueries to avoid
 			// leaving an optimistic patch as a stale cache value.
-			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+			const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 			nock( BASE )
 				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
@@ -1805,7 +1806,7 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 					viewer: { following: true, followed_by: false, requested: false },
 				} );
 
-			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+			const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
 				wrapper: makeWrapper( client ),

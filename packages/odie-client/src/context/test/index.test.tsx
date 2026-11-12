@@ -4,26 +4,27 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
+import { type Mock, vi } from 'vitest';
 import { OdieAssistantProvider, useOdieAssistantContext } from '../index';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
 
 let mockCheckoutSupportVariation: CheckoutSupportVariation | undefined;
 let mockOdieBotNameSlug: string | undefined;
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 	withSiteContext: ( properties: Record< string, unknown > ) => properties,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( select: unknown ) => unknown ) =>
 		selector( () => ( {
 			getOdieBotNameSlug: () => mockOdieBotNameSlug,
@@ -33,18 +34,18 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
-	useNavigate: () => jest.fn(),
+vi.mock( 'react-router-dom', () => ( {
+	useNavigate: () => vi.fn(),
 } ) );
 
 // Arguments: whether Zendesk chats can be loaded, and whether that is still being checked.
-const mockUseGetCombinedChat = jest.fn< object, [ boolean, boolean ] >( () => ( {
+const mockUseGetCombinedChat = vi.fn< object, [ boolean, boolean ] >( () => ( {
 	mainChatState: { messages: [] },
-	setMainChatState: jest.fn(),
+	setMainChatState: vi.fn(),
 	isLoadingZendeskHistory: false,
 } ) );
 
-jest.mock( '../../hooks', () => ( {
+vi.mock( '../../hooks', () => ( {
 	useGetCombinedChat: ( canConnectToZendesk: boolean, isLoadingCanConnectToZendesk: boolean ) =>
 		mockUseGetCombinedChat( canConnectToZendesk, isLoadingCanConnectToZendesk ),
 } ) );
@@ -106,7 +107,7 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 		);
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterEach( () => {
@@ -128,7 +129,7 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 	it( 'leaves the variation out of other events', () => {
 		renderAndSendEvent();
 
-		expect( ( recordTracksEvent as jest.Mock ).mock.calls[ 0 ][ 1 ] ).not.toHaveProperty(
+		expect( ( recordTracksEvent as Mock ).mock.calls[ 0 ][ 1 ] ).not.toHaveProperty(
 			'checkout_support_variation'
 		);
 	} );
@@ -224,7 +225,7 @@ describe( 'OdieAssistantProvider – pending request for a human', () => {
 	const mockChat = ( odieId: number ) =>
 		mockUseGetCombinedChat.mockReturnValue( {
 			mainChatState: { messages: [], odieId },
-			setMainChatState: jest.fn(),
+			setMainChatState: vi.fn(),
 			isLoadingZendeskHistory: false,
 		} );
 
@@ -232,7 +233,7 @@ describe( 'OdieAssistantProvider – pending request for a human', () => {
 		mockUseGetCombinedChat.mockReset();
 		mockUseGetCombinedChat.mockReturnValue( {
 			mainChatState: { messages: [] },
-			setMainChatState: jest.fn(),
+			setMainChatState: vi.fn(),
 			isLoadingZendeskHistory: false,
 		} );
 	} );

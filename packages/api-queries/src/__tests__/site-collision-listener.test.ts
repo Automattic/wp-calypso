@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import { queryClient } from '../query-client';
 import { siteBySlugQuery, siteByIdQuery } from '../site';
 import { startSiteCollisionListener } from '../site-collision-listener';
@@ -6,14 +7,14 @@ import { sitesQuery, paginatedSitesQuery } from '../sites';
 import type { Site } from '@automattic/api-core';
 
 // Mock with Jest so that the same client is used in siteBySlugQuery/siteByIdQuery
-jest.mock( '../query-client', () => {
+vi.mock( '../query-client', () => {
 	const { QueryClient: QC } = require( '@tanstack/react-query' );
 	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
 	return { queryClient: qc };
 } );
 
 // notFound used in queryFn error handling — won't fire in success-path tests.
-jest.mock( '@tanstack/react-router', () => ( {
+vi.mock( '@tanstack/react-router', () => ( {
 	notFound: () => new Error( 'Not found' ),
 } ) );
 

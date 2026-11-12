@@ -1,8 +1,8 @@
 // `logToLogstash` fires a real HTTPS request to the wpcom logstash
 // endpoint. Mute it so the optimistic-mutation onError tests don't
 // trigger an unmocked nock request.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 import {
@@ -20,6 +20,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	createFediversePostMutation,
 	followFediverseActorMutation,

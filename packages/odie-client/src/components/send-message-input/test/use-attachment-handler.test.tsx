@@ -2,34 +2,35 @@
  * @jest-environment jsdom
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useOdieAssistantContext } from '../../../context';
 import { useAttachmentHandler } from '../use-attachment-handler';
 
-const mockAddMessage = jest.fn();
-const mockAttachFileToConversation = jest.fn().mockResolvedValue( undefined );
-const mockTrackEvent = jest.fn();
+const mockAddMessage = vi.fn();
+const mockAttachFileToConversation = vi.fn().mockResolvedValue( undefined );
+const mockTrackEvent = vi.fn();
 // Arguments: whether the token may be fetched, and the token type.
-const mockUseAuthenticateZendeskMessaging = jest.fn< object, [ boolean, string ] >( () => ( {
+const mockUseAuthenticateZendeskMessaging = vi.fn< object, [ boolean, string ] >( () => ( {
 	data: { token: 'token' },
 } ) );
 
-jest.mock( '@wordpress/i18n', () => {
+vi.mock( '@wordpress/i18n', () => {
 	Object.assign( globalThis, { __i18n_text_domain__: 'default' } );
 	return { __: ( text: string ) => text };
 } );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	DropZone: () => null,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: () => ( {
 		zendeskClientId: 'zendesk-client-id',
 		connectionStatus: 'connected',
 	} ),
 } ) );
 
-jest.mock(
+vi.mock(
 	'@automattic/zendesk-client',
 	() => ( {
 		useAttachFileToConversation: () => ( {
@@ -38,37 +39,36 @@ jest.mock(
 		} ),
 		useAuthenticateZendeskMessaging: ( enabled: boolean, type: string ) =>
 			mockUseAuthenticateZendeskMessaging( enabled, type ),
-		zendeskMessageConverter: jest.fn( ( message ) => ( {
+		zendeskMessageConverter: vi.fn( ( message ) => ( {
 			...message,
 			content: message.type === 'file-placeholder' ? `📎 ${ message.altText }` : '',
 		} ) ),
-	} ),
-	{ virtual: true }
+	} )
 );
 
-jest.mock( '../../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../../../constants', () => ( {
+vi.mock( '../../../constants', () => ( {
 	HELP_CENTER_STORE: 'help-center',
 } ) );
 
-jest.mock( '../../attachment-preview', () => ( {
+vi.mock( '../../attachment-preview', () => ( {
 	AttachmentPreviews: () => null,
 } ) );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	Object.defineProperty( crypto, 'randomUUID', {
 		configurable: true,
-		value: jest.fn( () => 'temporary-id' ),
+		value: vi.fn( () => 'temporary-id' ),
 	} );
 	Object.defineProperty( URL, 'createObjectURL', {
 		configurable: true,
-		value: jest.fn( () => 'blob:attachment' ),
+		value: vi.fn( () => 'blob:attachment' ),
 	} );
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		trackEvent: mockTrackEvent,
 		addMessage: mockAddMessage,
 		isUserEligibleForPaidSupport: true,
@@ -118,8 +118,8 @@ describe( 'useAttachmentHandler', () => {
 	} );
 
 	it( 'does not attach plain text from the clipboard', async () => {
-		const getType = jest.fn();
-		const read = jest.fn().mockResolvedValue( [
+		const getType = vi.fn();
+		const read = vi.fn().mockResolvedValue( [
 			{
 				types: [ 'text/plain' ],
 				getType,
@@ -164,8 +164,8 @@ describe( 'useAttachmentHandler', () => {
 
 describe( 'useAttachmentHandler – chat token', () => {
 	const withContext = ( overrides: Record< string, unknown > ) =>
-		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
-			...( useOdieAssistantContext as jest.Mock )(),
+		( useOdieAssistantContext as Mock ).mockReturnValue( {
+			...( useOdieAssistantContext as Mock )(),
 			...overrides,
 		} );
 
@@ -188,8 +188,8 @@ describe( 'useAttachmentHandler – chat token', () => {
 
 describe( 'useAttachmentHandler – messaging integration', () => {
 	it( "uploads files on the chat's messaging integration", async () => {
-		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
-			...( useOdieAssistantContext as jest.Mock )(),
+		( useOdieAssistantContext as Mock ).mockReturnValue( {
+			...( useOdieAssistantContext as Mock )(),
 			zendeskIntegrationKey: 'woo',
 		} );
 		const { result } = renderHook( () => useAttachmentHandler() );

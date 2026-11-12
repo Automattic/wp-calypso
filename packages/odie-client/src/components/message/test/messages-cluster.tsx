@@ -1,12 +1,13 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { MessagesClusterizer } from '../messages-cluster/messages-cluster';
 import type { Message } from '../../../types';
 
-jest.mock( '../../../utils', () => ( {
+vi.mock( '../../../utils', () => ( {
 	isCSATMessage: ( message: Message ) => message?.metadata?.type === 'csat',
 } ) );
 
-jest.mock( '../../../utils/csat', () => ( {
+vi.mock( '../../../utils/csat', () => ( {
 	hasFeedbackForm: () => false,
 	isAttachment: () => false,
 	isHappinessEngineerMessage: ( message: Message ) =>
@@ -19,9 +20,9 @@ jest.mock( '../../../utils/csat', () => ( {
 // Tracks every mount of the mocked ChatMessage below, so tests can assert a re-render did (or
 // didn't) force React to remount a message -- which is exactly the failure mode of DOTCOM-18205:
 // an unstable message-cluster key wiped CSATForm's local rating state on every unrelated re-render.
-const mockMountSpy = jest.fn();
+const mockMountSpy = vi.fn();
 
-jest.mock( '..', () => ( {
+vi.mock( '..', () => ( {
 	__esModule: true,
 	default: ( { message, header }: { message: Message; header?: React.ReactNode } ) => {
 		// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -38,7 +39,7 @@ jest.mock( '..', () => ( {
 	},
 } ) );
 
-jest.mock( '../../chat-with-support', () => () => null );
+vi.mock( '../../chat-with-support', () => ( { default: () => null } ) );
 
 const createBusinessMessage = ( {
 	content,
@@ -76,7 +77,7 @@ const createCSATMessage = ( {
 describe( 'MessagesClusterizer', () => {
 	beforeEach( () => {
 		let nextId = 0;
-		jest
+		vi
 			.spyOn( crypto, 'randomUUID' )
 			.mockImplementation(
 				() => `00000000-0000-0000-0000-${ String( ++nextId ).padStart( 12, '0' ) }`
@@ -84,7 +85,7 @@ describe( 'MessagesClusterizer', () => {
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		mockMountSpy.mockClear();
 	} );
 

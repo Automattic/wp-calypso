@@ -1,19 +1,20 @@
 import { setPrimaryDomain } from '@automattic/api-core';
 import { MutationObserver } from '@tanstack/react-query';
+import { type MockedFunction, type MockInstance, vi } from 'vitest';
 import { queryClient } from '../query-client';
 import { siteSetPrimaryDomainMutation } from '../site-domains';
 
-jest.mock( '../query-client', () => {
-	const { QueryClient: QC } = jest.requireActual( '@tanstack/react-query' );
+vi.mock( '../query-client', async () => {
+	const { QueryClient: QC } = ( await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' ) );
 	return { queryClient: new QC() };
 } );
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	setPrimaryDomain: jest.fn(),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	setPrimaryDomain: vi.fn(),
 } ) );
 
-const mockSetPrimaryDomain = setPrimaryDomain as jest.MockedFunction< typeof setPrimaryDomain >;
+const mockSetPrimaryDomain = setPrimaryDomain as MockedFunction< typeof setPrimaryDomain >;
 const SITE_ID = 123;
 
 function mutate() {
@@ -22,14 +23,14 @@ function mutate() {
 }
 
 describe( 'siteSetPrimaryDomainMutation', () => {
-	let invalidateQueries: jest.SpyInstance;
+	let invalidateQueries: MockInstance;
 
 	beforeEach( () => {
-		invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+		invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		mockSetPrimaryDomain.mockReset();
 	} );
 
