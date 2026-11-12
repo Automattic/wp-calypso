@@ -29,6 +29,7 @@ import {
 	siteCurrentPlanQuery,
 	sitePlansQuery,
 	siteBySlugQuery,
+	siteLatestAtomicTransferQuery,
 	siteByIdQuery,
 	siteAdminBarQuery,
 	siteAdminMenuQuery,
@@ -66,6 +67,11 @@ import {
 	prefetchApmAccess,
 } from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
+import {
+	AtomicTransferInProgressError,
+	isAwaitingAtomicTransfer,
+	mayBeAwaitingAtomicTransfer,
+} from '../../utils/site-atomic-transfers';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -117,6 +123,23 @@ export const sitesRoute = createRoute( {
 	},
 } );
 
+/**
+ * While a site turns Atomic, `/sites/<slug>` reports it without its owner's capabilities for a
+ * minute or two. Asks the site's transfer whether that is why.
+ */
+async function isOwnerAwaitingAtomicTransfer( site: Site ) {
+	const userId = queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.ID;
+	if ( ! mayBeAwaitingAtomicTransfer( site, userId ) ) {
+		return false;
+	}
+	try {
+		const transfer = await queryClient.fetchQuery( siteLatestAtomicTransferQuery( site.ID ) );
+		return isAwaitingAtomicTransfer( site, userId, transfer );
+	} catch {
+		return false;
+	}
+}
+
 export const siteRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
 		meta: [
@@ -141,6 +164,9 @@ export const siteRoute = createRoute( {
 		}
 
 		if ( ! canManageSite( site ) ) {
+			if ( await isOwnerAwaitingAtomicTransfer( site ) ) {
+				throw new AtomicTransferInProgressError();
+			}
 			throw notFound();
 		}
 

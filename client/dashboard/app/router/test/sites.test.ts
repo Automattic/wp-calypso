@@ -2,10 +2,13 @@
  * @jest-environment jsdom
  */
 
-import { queryClient } from '@automattic/api-queries';
+import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
 import { defaultParseSearch } from '@tanstack/react-router';
 import nock from 'nock';
-import { siteBackupsRoute, siteLogsRoute, siteOverviewRoute } from '../sites';
+import { AtomicTransferInProgressError } from '../../../utils/site-atomic-transfers';
+import { AUTH_QUERY_KEY } from '../../auth';
+import { siteBackupsRoute, siteLogsRoute, siteOverviewRoute, siteRoute } from '../sites';
+import type { Site, User } from '@automattic/api-core';
 
 const site = {
 	ID: 1,
@@ -125,5 +128,77 @@ describe( 'date range routes search', () => {
 		const search = validateSearch( defaultParseSearch( '?from=1729987200000&to=1730159999000' ) );
 
 		expect( search ).toMatchObject( { from: 1729987200, to: 1730159999 } );
+	} );
+} );
+
+describe( 'siteRoute while the site turns Atomic', () => {
+	const owner = { ID: 7 } as User;
+	const movingSite = {
+		ID: 99,
+		slug: 'moving-site.wpcomstaging.com',
+		site_owner: owner.ID,
+		is_wpcom_atomic: true,
+		capabilities: {},
+	} as unknown as Site;
+
+	const runSiteGuard = ( user: User ) => {
+		queryClient.setQueryData( AUTH_QUERY_KEY, user );
+		queryClient.setQueryData( siteBySlugQuery( movingSite.slug ).queryKey, movingSite );
+
+		const beforeLoad = siteRoute.options.beforeLoad as unknown as ( options: {
+			cause: string;
+			params: { siteSlug: string };
+			location: { pathname: string };
+			matches: [];
+		} ) => Promise< void >;
+
+		return beforeLoad( {
+			cause: 'enter',
+			params: { siteSlug: movingSite.slug },
+			location: { pathname: `/sites/${ movingSite.slug }` },
+			matches: [],
+		} );
+	};
+
+	const mockLatestTransfer = () =>
+		nock( 'https://public-api.wordpress.com' ).get(
+			`/wpcom/v2/sites/${ movingSite.ID }/atomic/transfers/latest`
+		);
+
+	afterEach( () => nock.cleanAll() );
+
+	test( 'tells the owner their site is being set up while its transfer runs', async () => {
+		mockLatestTransfer().query( true ).reply( 200, { status: 'active' } );
+
+		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( AtomicTransferInProgressError );
+	} );
+
+	test( 'tells the owner their site is being set up until their capabilities reach it', async () => {
+		mockLatestTransfer().query( true ).reply( 200, { status: 'completed' } );
+
+		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( AtomicTransferInProgressError );
+	} );
+
+	test( 'shows not found to the owner when the site isn’t turning Atomic', async () => {
+		mockLatestTransfer().query( true ).reply( 200, { status: 'error' } );
+
+		await expect( runSiteGuard( owner ) ).rejects.toMatchObject( { isNotFound: true } );
+	} );
+
+	test( 'shows not found to the owner when the site’s transfer can’t be read', async () => {
+		mockLatestTransfer()
+			.query( true )
+			.reply( 403, { code: 'unauthorized', message: 'Not allowed.' } );
+
+		await expect( runSiteGuard( owner ) ).rejects.toMatchObject( { isNotFound: true } );
+	} );
+
+	test( 'shows not found to someone else without asking for the transfer', async () => {
+		const transferRequest = mockLatestTransfer().query( true ).reply( 200, { status: 'active' } );
+
+		await expect( runSiteGuard( { ID: 8 } as User ) ).rejects.toMatchObject( {
+			isNotFound: true,
+		} );
+		expect( transferRequest.isDone() ).toBe( false );
 	} );
 } );
