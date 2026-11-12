@@ -44,6 +44,7 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
+	staticSiteImportSessionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -252,7 +253,8 @@ export const siteOverviewRoute = createRoute( {
 			migration: search.migration === 'completed' ? 'completed' : undefined,
 		};
 	},
-	loader: async ( { params: { siteSlug }, preload } ) => {
+	loaderDeps: ( { search: { importSessionId } } ) => ( { importSessionId } ),
+	loader: async ( { params: { siteSlug }, deps: { importSessionId }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			const notGroup = getActivityLogHiddenGroups( site );
@@ -278,6 +280,14 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
 				// Error gets logged at ErrorBoundary.
 			} ),
+
+			// A move's progress and notices start from where the session is, not from scratch.
+			importSessionId &&
+				queryClient
+					.ensureQueryData( staticSiteImportSessionQuery( importSessionId ) )
+					.catch( () => {
+						// The Overview reads the error from the query and says the move can't be shown.
+					} ),
 		] );
 	},
 } ).lazy( () =>
