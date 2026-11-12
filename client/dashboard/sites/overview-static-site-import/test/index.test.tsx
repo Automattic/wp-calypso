@@ -114,66 +114,49 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 	} );
 
+	const currentStepOf = ( state: string, extra = {} ) => {
+		const siteImport = {
+			status: 'moving',
+			session: session( state, extra ) as StaticSiteImportSession,
+		} as StaticSiteImportState;
+		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+		const current = screen
+			.getAllByRole( 'listitem' )
+			.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
+		expect( current ).toHaveLength( 1 );
+		return current[ 0 ];
+	};
+
 	test.each( [
-		[ 'capture_queued', {}, 'Pages' ],
-		[ 'capturing', { progress: { pages_captured: 3, pages_total: 12 } }, 'Pages' ],
-		[ 'capturing', { progress: { pages_captured: 12, pages_total: 12 } }, 'Images' ],
-		[ 'building', { progress: { phase: 'building' } }, 'Fonts, colors, and layout' ],
+		[ 'capture_queued', {}, 'Finding your pages' ],
+		[ 'capturing', { progress: { phase: 'inspecting' } }, 'Finding your pages' ],
 		[
-			'building',
-			{ progress: { phase: 'exporting' } },
-			'Checking every page against your current site',
+			'capturing',
+			{ progress: { phase: 'capturing', finding_pages: true } },
+			'Finding your pages',
 		],
-		[ 'queued', {}, 'Checking every page against your current site' ],
-	] )(
-		'resumes the checklist where a %s session is when the page opens',
-		( state, extra, currentStep ) => {
-			const siteImport = {
-				status: 'moving',
-				session: session( state, extra ) as StaticSiteImportSession,
-			} as StaticSiteImportState;
+		[
+			'capturing',
+			{ progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 } },
+			'Copying your pages',
+		],
+		[ 'building', { progress: { phase: 'building' } }, 'Building your WordPress site' ],
+		[ 'building', { progress: { phase: 'exporting' } }, 'Building your WordPress site' ],
+		[ 'preview_ready', {}, 'Moving it onto your site' ],
+		[ 'queued', {}, 'Moving it onto your site' ],
+	] )( 'shows a %s session on the step the server reports', ( state, extra, currentStep ) => {
+		expect( currentStepOf( state, extra ) ).toHaveTextContent( currentStep );
+	} );
 
-			render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+	test( 'counts the pages copied so far while copying', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 },
+		} );
 
-			const current = screen
-				.getAllByRole( 'listitem' )
-				.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
-			expect( current ).toHaveLength( 1 );
-			expect( current[ 0 ] ).toHaveTextContent( currentStep );
-		}
-	);
-
-	test.each( [
-		[ 10, 'Pages' ],
-		[ 25, 'Images' ],
-		[ 45, 'Fonts, colors, and layout' ],
-		[ 500, 'Checking every page against your current site' ],
-	] )(
-		'resumes the checklist where it was %i seconds into the move, even before the session gets there',
-		( secondsIn, currentStep ) => {
-			const siteImport = {
-				status: 'moving',
-				session: session( 'capturing', {
-					progress: {
-						phase: 'capturing',
-						step_seconds: { inspecting: 5 },
-						phase_started_at: 1000,
-						checked_at: 1000 + secondsIn - 5,
-						pages_captured: 0,
-						pages_total: 12,
-					},
-				} ) as StaticSiteImportSession,
-			} as StaticSiteImportState;
-
-			render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
-
-			const current = screen
-				.getAllByRole( 'listitem' )
-				.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
-			expect( current ).toHaveLength( 1 );
-			expect( current[ 0 ] ).toHaveTextContent( currentStep );
-		}
-	);
+		expect( current ).toHaveTextContent( 'Copying your pages' );
+		expect( current ).toHaveTextContent( '3 of 12' );
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '12 pages found' );
+	} );
 
 	test( 'moves the checklist forward when the session moves on', () => {
 		const moving = ( state: string ) =>

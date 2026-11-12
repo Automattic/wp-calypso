@@ -10,7 +10,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, border, caution, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
@@ -31,19 +31,17 @@ import './style.scss';
 
 export * from './use-static-site-import';
 
-// Between session updates the list moves on a timer, and never finishes its last item before the session does.
-const STEP_DURATION = 20000;
-
-/** The checklist item the session itself has reached. */
-function getReachedStep( session?: StaticSiteImportSession ) {
+/**
+ * The checklist item the move is on, from what the server reports: the runner finds the source's
+ * pages, copies them, builds the WordPress site from the copy, and wpcom then delivers it here.
+ */
+function getCurrentStep( session?: StaticSiteImportSession ) {
 	const progress = session?.progress;
 	switch ( session?.state ) {
 		case 'capturing':
-			return progress?.pages_total && ( progress.pages_captured ?? 0 ) >= progress.pages_total
-				? 1
-				: 0;
+			return progress?.pages_total && ! progress.finding_pages ? 1 : 0;
 		case 'building':
-			return progress?.phase === 'exporting' ? 3 : 2;
+			return 2;
 		case 'preview_ready':
 		case 'queued':
 		case 'finished':
@@ -53,63 +51,37 @@ function getReachedStep( session?: StaticSiteImportSession ) {
 	}
 }
 
-/**
- * The checklist item the timer would be on had it started with the move, timed by the server's
- * clock, so a reload shows the same item instead of starting over.
- */
-function getElapsedStep( session?: StaticSiteImportSession ) {
-	const progress = session?.progress;
-	if ( ! progress?.phase_started_at || ! progress.checked_at ) {
-		return 0;
-	}
-	const finishedPhasesSeconds = Object.values( progress.step_seconds ?? {} ).reduce< number >(
-		( total, seconds ) => total + ( seconds ?? 0 ),
-		0
-	);
-	const elapsedSeconds = progress.checked_at - progress.phase_started_at + finishedPhasesSeconds;
-	return Math.max( 0, Math.floor( ( elapsedSeconds * 1000 ) / STEP_DURATION ) );
-}
-
-/** Where the checklist resumes: the session's own progress, or the timer's if it ran ahead. */
-function getSessionStep( session?: StaticSiteImportSession ) {
-	return Math.max( getReachedStep( session ), getElapsedStep( session ) );
-}
-
-function useTimedStep( stepCount: number, sessionStep: number ) {
-	const lastStep = stepCount - 1;
-	const [ step, setStep ] = useState( () => Math.min( sessionStep, lastStep ) );
-	useEffect( () => {
-		setStep( ( current ) => Math.max( current, Math.min( sessionStep, lastStep ) ) );
-	}, [ sessionStep, lastStep ] );
-	useEffect( () => {
-		const id = window.setInterval(
-			() => setStep( ( current ) => Math.min( current + 1, lastStep ) ),
-			STEP_DURATION
-		);
-		return () => window.clearInterval( id );
-	}, [ lastStep ] );
-	return step;
-}
-
 function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
-	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
-	const pages = summary?.pages;
+	const progress = session?.progress;
+	const current = getCurrentStep( session );
+	const pagesTotal = progress?.pages_total;
 	const items = [
 		{
-			label: __( 'Pages' ),
-			total: pages
-				? sprintf(
-						/* translators: %s: formatted number of pages. */
-						__( '%s pages' ),
-						formatNumber( pages )
-					)
-				: '',
+			label: __( 'Finding your pages' ),
+			detail:
+				current > 0 && pagesTotal
+					? sprintf(
+							/* translators: %s: formatted number of pages found on the site being moved. */
+							_n( '%s page found', '%s pages found', pagesTotal ),
+							formatNumber( pagesTotal )
+						)
+					: '',
 		},
-		{ label: __( 'Images' ) },
-		{ label: __( 'Fonts, colors, and layout' ) },
-		{ label: __( 'Checking every page against your current site' ) },
+		{
+			label: __( 'Copying your pages' ),
+			detail:
+				current === 1 && pagesTotal
+					? sprintf(
+							/* translators: %1$s: formatted number of pages copied so far, %2$s: formatted number of pages to copy. */
+							__( '%1$s of %2$s' ),
+							formatNumber( progress?.pages_captured ?? 0 ),
+							formatNumber( pagesTotal )
+						)
+					: '',
+		},
+		{ label: __( 'Building your WordPress site' ), detail: '' },
+		{ label: __( 'Moving it onto your site' ), detail: '' },
 	];
-	const current = useTimedStep( items.length, getSessionStep( session ) );
 
 	return (
 		<VStack as="ul" spacing={ 4 } className="static-site-import-card__checklist">
@@ -140,9 +112,9 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							/>
 						) }
 						<Text variant={ isDone || isCurrent ? undefined : 'muted' }>{ item.label }</Text>
-						{ isDone && item.total && (
+						{ item.detail && (
 							<Text variant="muted" className="static-site-import-card__count">
-								{ item.total }
+								{ item.detail }
 							</Text>
 						) }
 					</HStack>
