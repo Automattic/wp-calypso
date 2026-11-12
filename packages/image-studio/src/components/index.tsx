@@ -45,6 +45,7 @@ import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
 import { type ActionButton, ConfirmationDialog } from './confirmation-dialog';
+import { LazyCropOverlay } from './crop-overlay/lazy';
 import { EditLayout } from './edit-layout';
 import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
@@ -54,6 +55,7 @@ import LoadingSpinner from './loading-spinner';
 import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
+import type { ImageTransform } from '../utils/image-edit-modifiers';
 import './style.scss';
 
 /** Content for one flavor of the modal's close-confirmation dialog. */
@@ -70,12 +72,14 @@ function ImageStudioAgentChat( {
 	mode,
 	onChatSubmit,
 	credits,
+	hideSuggestions = false,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
 	mode: ImageStudioMode;
 	onChatSubmit?: () => Promise< void > | void;
 	credits: AiCreditsState;
+	hideSuggestions?: boolean;
 } ) {
 	const {
 		notice: creditsNotice,
@@ -249,7 +253,7 @@ function ImageStudioAgentChat( {
 					<AgentUI.Messages />
 					<AgentUI.Footer>
 						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
-						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
+						{ ! hideSuggestions && ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
 						<AgentUI.Notice />
 						{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
 						<AgentUI.Input
@@ -292,6 +296,7 @@ const ImageStudioAgentUIComponent = ( {
 	onChatSubmit,
 	mode,
 	credits,
+	hideSuggestions,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
@@ -299,6 +304,7 @@ const ImageStudioAgentUIComponent = ( {
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
 	credits: AiCreditsState;
+	hideSuggestions?: boolean;
 } ) => {
 	return (
 		<ImageStudioAgentChat
@@ -308,6 +314,7 @@ const ImageStudioAgentUIComponent = ( {
 			mode={ mode }
 			onChatSubmit={ onChatSubmit }
 			credits={ credits }
+			hideSuggestions={ hideSuggestions }
 		/>
 	);
 };
@@ -566,6 +573,51 @@ const ImageStudioContent = withInstanceId(
 			<AnnotationCanvas imageUrl={ finalDisplayUrl } imageElement={ imageRef.current } />
 		) : null;
 
+		const isCropMode =
+			mode === ImageStudioMode.Edit &&
+			activeToolbarOption === ToolbarOption.Crop &&
+			!! finalDisplayUrl;
+
+		const cropButtonRef = useRef< HTMLButtonElement >( null );
+
+		const leaveCropMode = useCallback( () => {
+			setActiveToolbarOption( null );
+			cropButtonRef.current?.focus();
+		}, [] );
+
+		// The cropper would hide the processing state of a chat request.
+		useEffect( () => {
+			if ( isCropMode && isAiProcessing ) {
+				setActiveToolbarOption( null );
+			}
+		}, [ isCropMode, isAiProcessing ] );
+
+		const handleCropLoadError = useCallback( () => {
+			leaveCropMode();
+			addNotice(
+				__( 'Could not open the crop tool. Please try again.', __i18n_text_domain__ ),
+				'error'
+			);
+		}, [ addNotice, leaveCropMode ] );
+
+		const handleCropApply = useCallback(
+			( transform: ImageTransform ) => {
+				leaveCropMode();
+				applyImageTransform( transform );
+			},
+			[ applyImageTransform, leaveCropMode ]
+		);
+
+		const cropOverlay = isCropMode ? (
+			<LazyCropOverlay
+				imageUrl={ finalDisplayUrl }
+				disabled={ isAiProcessing || isSaving }
+				onApply={ handleCropApply }
+				onCancel={ leaveCropMode }
+				onLoadError={ handleCropLoadError }
+			/>
+		) : null;
+
 		// Show feedback buttons only for AI-generated/edited images — never for the
 		// original attachment — and not while annotating (suggestions differ there).
 		const isOriginalImage = attachmentId !== null && attachmentId === originalAttachmentId;
@@ -580,7 +632,8 @@ const ImageStudioContent = withInstanceId(
 		// canRevert already checks: originalAttachmentId exists, image changed, not processing
 		const showImageActionsMenu = mode === ImageStudioMode.Edit && canRevert;
 
-		const showCanvasControls = !! finalDisplayUrl && isRenderedImageLoaded && !! isAiProcessed;
+		const showCanvasControls =
+			!! finalDisplayUrl && isRenderedImageLoaded && !! isAiProcessed && ! isCropMode;
 
 		const canvasControls = showCanvasControls ? (
 			<CanvasControls
@@ -676,6 +729,7 @@ const ImageStudioContent = withInstanceId(
 							onAnnotationUndo={ handleAnnotationUndo }
 							onAnnotationRedo={ handleAnnotationRedo }
 							onTransform={ applyImageTransform }
+							cropButtonRef={ cropButtonRef }
 							// Any close from Header flows into the same confirmation logic
 							onClose={ handleRequestClose }
 							hasPendingAnnotations={ hasAnnotations }
@@ -701,7 +755,7 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessing={ isAiProcessing }
 								isAnnotationSaving={ isAnnotationSaving }
 								isAiProcessed={ isAiProcessed }
-								overlay={ annotationOverlay }
+								overlay={ cropOverlay ?? annotationOverlay }
 								showProcessingOverlay={ showProcessingOverlay }
 								canvasControls={ canvasControls }
 								attachmentId={ attachmentId }
@@ -728,6 +782,7 @@ const ImageStudioContent = withInstanceId(
 										onChatSubmit={ handleChatSubmit }
 										mode={ mode }
 										credits={ credits }
+										hideSuggestions={ isCropMode }
 									/>
 								) : (
 									<div className="image-studio-agent-loading">

@@ -1,0 +1,50 @@
+@import "../styles/variables";
+
+.image-studio-crop {
+	position: absolute;
+	inset: 0;
+	background-color: $color-background;
+
+	&__cropper {
+		position: absolute;
+		inset: 0;
+	}
+
+	&__controls {
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: -4px;
+		transform: translateY(100%);
+		z-index: 100;
+		display: flex;
+		// Keeps Cancel and Apply on the line next to the image when the controls wrap.
+		flex-wrap: wrap-reverse;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px 16px;
+		color: $color-foreground;
+
+		.components-button.is-tertiary:not(:disabled, [aria-disabled="true"]) {
+			color: $color-foreground;
+
+			&:hover {
+				background-color: $color-hover-overlay;
+			}
+		}
+
+		.components-button.is-pressed {
+			background: $color-hover-overlay;
+		}
+	}
+
+	&__aspect-ratios,
+	&__actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	&__zoom {
+		flex: 1 1 120px;
+		max-inline-size: 200px;
+	}
+}
