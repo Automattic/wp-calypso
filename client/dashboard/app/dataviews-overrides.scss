@@ -96,8 +96,8 @@ a.dataviews-url-field {
 		animation: dashboard-dataviews-overflow-fade linear both;
 		animation-timeline: scroll( self inline );
 
-		// A mask would fade the sticky actions column too, so the trailing fade is drawn on the
-		// column itself, see below.
+		// A mask would fade the sticky actions column too, so that column carries a shadow
+		// instead, see below.
 		&:has( .dataviews-view-table__actions-column--sticky ) {
 			animation-name: dashboard-dataviews-overflow-fade-start-only;
 		}
@@ -130,15 +130,16 @@ a.dataviews-url-field {
 	}
 }
 
-// Columns fade into the sticky actions column while more of them are hidden. The 1px line
-// DataViews draws there stays, as a border on the cell.
+// With a sticky actions column, a fade is too weak next to the column: it only shows where text
+// reaches it. Turn the 1px line DataViews draws there into a shadow instead. It starts 1px higher
+// to cover the row border, which would otherwise cut the shadow at every row.
 .dataviews-view-table :is( td, th ).dataviews-view-table__actions-column--stuck::after {
 	inset-block-start: -1px;
-	inset-inline-start: -48px;
-	width: 48px;
-	background: linear-gradient( to right, transparent, var( --wp-dataviews-color-background, var( --wpds-color-background-surface-neutral-strong, #fff ) ) );
+	inset-inline-start: -16px;
+	width: 16px;
+	background: linear-gradient( to left, rgba( 0, 0, 0, 0.13 ), transparent );
 }
 
 .dataviews-view-table :is( td, th ).dataviews-view-table__actions-column--stuck {
-	box-shadow: inset 1px 0 0 var( --wpds-color-stroke-surface-neutral-weak, #f0f0f0 );
+	box-shadow: inset 1px 0 0 var( --wpds-color-stroke-surface-neutral, #dcdcdc );
 }
