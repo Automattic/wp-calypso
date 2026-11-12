@@ -2,9 +2,6 @@
 @import '@wordpress/base-styles/colors';
 
 .wpnc__note-list {
-	// One amber for everything pending: the type badge, and the Pending label's
-	// tint and text at lighter and darker steps of the same hue.
-	--wpnc-pending: #967023;
 	flex: 1;
 	min-height: 0;
 	overflow: hidden;
@@ -127,18 +124,6 @@
 		fill: var(--wpds-color-background-interactive-error-strong, #cc1818);
 	}
 
-	// Badge has no size prop, so step it down a size to sit within the title's 20px line.
-	.wpnc__pending-badge {
-		background-color: oklch(from var(--wpnc-pending) 0.94 calc(c * 0.55) h);
-		color: oklch(from var(--wpnc-pending) 0.44 c h);
-		padding-block: 2px;
-		padding-inline: 6px;
-		border-radius: var(--wpds-border-radius-md, 4px);
-		font-size: var(--wpds-typography-font-size-xs, 11px);
-		font-weight: 500;
-		line-height: var(--wpds-typography-line-height-xs, 16px);
-	}
-
 	// Amber goes muddy on the unread blue, so the label turns white there, with a
 	// faint edge. The edge is a shadow, so it doesn't move the layout.
 	div[role="article"]:has(.wpnc__subject.is-unread) .wpnc__pending-badge {
@@ -150,13 +135,7 @@
 		fill: var(--wpnc-pending);
 	}
 
-	// The same amber steps flipped for the dark surface: a deep tint with light text.
 	@include ui-mixins.when-dark-theme {
-		.wpnc__pending-badge {
-			background-color: oklch(from var(--wpnc-pending) 0.34 calc(c * 0.6) h);
-			color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
-		}
-
 		div[role="article"]:has(.wpnc__subject.is-unread) .wpnc__pending-badge {
 			background-color: var(--color-surface);
 			box-shadow: 0 0 0 1px color-mix(in srgb, #fff 16%, transparent);

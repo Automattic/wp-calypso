@@ -74,24 +74,6 @@
 	flex-shrink: 0;
 }
 
-// The note list's Pending badge, at the same size and in the same amber.
-.wpnc-simplified .wpnc__pending-badge {
-	flex-shrink: 0;
-	padding-block: 2px;
-	padding-inline: 6px;
-	border-radius: var(--wpds-border-radius-md, 4px);
-	background-color: oklch(from var(--wpnc-pending) 0.94 calc(c * 0.55) h);
-	color: oklch(from var(--wpnc-pending) 0.44 c h);
-	font-size: var(--wpds-typography-font-size-xs, 11px);
-	font-weight: 500;
-	line-height: var(--wpds-typography-line-height-xs, 16px);
-
-	@include ui-mixins.when-dark-theme {
-		background-color: oklch(from var(--wpnc-pending) 0.34 calc(c * 0.6) h);
-		color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
-	}
-}
-
 .wpnc-simplified__parent-text.is-truncated {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;

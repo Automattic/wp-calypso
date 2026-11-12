@@ -82,6 +82,9 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 }
 
 .wpnc-app {
+	// One amber for everything pending: the list's type badge, the Pending badge
+	// and the note detail's Approve action, at lighter and darker steps of its hue.
+	--wpnc-pending: #967023;
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -91,6 +94,25 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		text-rendering: optimizeLegibility;
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-font-smoothing: antialiased;
+	}
+}
+
+// The Pending badge on comments awaiting moderation, in the note list and the
+// note detail. Badge has no size prop, so it's stepped down a size here.
+.wpnc-app .wpnc__pending-badge {
+	flex-shrink: 0;
+	padding-block: 2px;
+	padding-inline: 6px;
+	border-radius: var(--wpds-border-radius-md, 4px);
+	background-color: oklch(from var(--wpnc-pending) 0.94 calc(c * 0.55) h);
+	color: oklch(from var(--wpnc-pending) 0.44 c h);
+	font-size: var(--wpds-typography-font-size-xs, 11px);
+	font-weight: 500;
+	line-height: var(--wpds-typography-line-height-xs, 16px);
+
+	@include ui-mixins.when-dark-theme {
+		background-color: oklch(from var(--wpnc-pending) 0.34 calc(c * 0.6) h);
+		color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
 	}
 }
 
