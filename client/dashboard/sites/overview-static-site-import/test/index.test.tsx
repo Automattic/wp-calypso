@@ -158,6 +158,12 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '12 pages found' );
 	} );
 
+	test( 'keeps the number of pages found once the server stops reporting progress', () => {
+		currentStepOf( 'queued', { preview_summary: { pages: 15 } } );
+
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '15 pages found' );
+	} );
+
 	test( 'moves the checklist forward when the session moves on', () => {
 		const moving = ( state: string ) =>
 			( { status: 'moving', session: session( state ) } ) as StaticSiteImportState;

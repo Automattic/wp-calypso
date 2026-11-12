@@ -55,15 +55,18 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	const progress = session?.progress;
 	const current = getCurrentStep( session );
 	const pagesTotal = progress?.pages_total;
+	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
+	// The server stops reporting progress once the build is done; the built site's count takes over.
+	const pagesFound = pagesTotal ?? summary?.pages;
 	const items = [
 		{
 			label: __( 'Finding your pages' ),
 			detail:
-				current > 0 && pagesTotal
+				current > 0 && pagesFound
 					? sprintf(
 							/* translators: %s: formatted number of pages found on the site being moved. */
-							_n( '%s page found', '%s pages found', pagesTotal ),
-							formatNumber( pagesTotal )
+							_n( '%s page found', '%s pages found', pagesFound ),
+							formatNumber( pagesFound )
 						)
 					: '',
 		},
