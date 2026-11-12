@@ -5,7 +5,6 @@ import {
 	VisuallyHidden,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Button } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { html } from '../../../panel/indices-to-html';
@@ -232,15 +231,15 @@ export function ThreadParent( {
 				{ p( html( content ) ) }
 			</div>
 			{ canToggle && (
-				<Button
+				<button
+					type="button"
 					className="wpnc-simplified__show-more"
-					variant="unstyled"
 					aria-expanded={ isExpanded }
 					aria-controls={ textId }
 					onClick={ toggle }
 				>
 					{ isExpanded ? __( 'Show less' ) : __( 'Show more' ) }
-				</Button>
+				</button>
 			) }
 		</ThreadItem>
 	);
