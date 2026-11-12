@@ -1,12 +1,12 @@
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { shouldLoadSurvicate, SURVICATE_WORKSPACE_ID } from '../conditions';
 
 vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: vi.fn( () => false ),
 } ) );
 
-const mockIsSupportSession = isSupportSession as Mock;
+const mockIsSupportSession = vi.mocked( isSupportSession );
 
 beforeEach( () => {
 	mockIsSupportSession.mockReturnValue( false );

@@ -3,7 +3,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { loadSurvicateScript } from '../load-script';
 
 vi.mock( '@automattic/load-script', () => ( {
@@ -25,9 +25,9 @@ vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: () => false,
 } ) );
 
-const mockSelect = select as Mock;
-const mockSubscribe = subscribe as unknown as Mock;
-const mockRecordTracksEvent = recordTracksEvent as Mock;
+const mockSelect = vi.mocked( select, { partial: true } );
+const mockSubscribe = vi.mocked( subscribe );
+const mockRecordTracksEvent = vi.mocked( recordTracksEvent );
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -68,7 +68,7 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should propagate errors from loadScript', async () => {
-		( loadScript as Mock ).mockRejectedValueOnce( new Error( 'load failed' ) );
+		vi.mocked( loadScript ).mockRejectedValueOnce( new Error( 'load failed' ) );
 
 		await expect( loadSurvicateScript( 'test-id', controller.signal ) ).rejects.toThrow(
 			'load failed'

@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { recordSurveySuppressed } from '../track-suppression';
 
 vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: vi.fn(),
 } ) );
 
-const mockRecordTracksEvent = recordTracksEvent as Mock;
+const mockRecordTracksEvent = vi.mocked( recordTracksEvent );
 
 describe( 'recordSurveySuppressed', () => {
 	afterEach( () => {

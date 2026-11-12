@@ -3,7 +3,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { select, subscribe } from '@wordpress/data';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { invokeSurvicateEvent, observeHelpCenter } from '../invoke-event';
 
 vi.mock( '@wordpress/data', () => ( {
@@ -19,10 +19,10 @@ vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: vi.fn( () => false ),
 } ) );
 
-const mockSelect = select as Mock;
-const mockSubscribe = subscribe as unknown as Mock;
-const mockRecordTracksEvent = recordTracksEvent as Mock;
-const mockIsSupportSession = isSupportSession as Mock;
+const mockSelect = vi.mocked( select, { partial: true } );
+const mockSubscribe = vi.mocked( subscribe );
+const mockRecordTracksEvent = vi.mocked( recordTracksEvent );
+const mockIsSupportSession = vi.mocked( isSupportSession );
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );

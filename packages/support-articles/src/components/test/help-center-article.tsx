@@ -84,9 +84,10 @@ describe( 'HelpCenterArticle analytics', () => {
 	it( 'reports no site rather than falling back to the article blog', () => {
 		renderArticle( undefined );
 
-		const [ , properties ] = vi
-			.mocked( recordTracksEvent )
-			.mock.calls.find( ( [ name ] ) => name === 'calypso_helpcenter_article_viewed' );
+		const [ , properties ] =
+			vi
+				.mocked( recordTracksEvent )
+				.mock.calls.find( ( [ name ] ) => name === 'calypso_helpcenter_article_viewed' ) ?? [];
 
 		expect( properties ).toEqual(
 			expect.objectContaining( {

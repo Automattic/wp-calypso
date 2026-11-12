@@ -1,19 +1,15 @@
 import { fetchWordPressTrackVersions, fetchWpOrgCoreVersion } from '@automattic/api-core';
-import { type MockedFunction, vi } from 'vitest';
+import { vi } from 'vitest';
 import { siteWordPressTrackVersionsQuery } from '../site-wordpress-version';
 
-vi.mock( '@automattic/api-core', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/api-core' ) >() ),
 	fetchWordPressTrackVersions: vi.fn(),
 	fetchWpOrgCoreVersion: vi.fn(),
 } ) );
 
-const mockFetchWordPressTrackVersions = fetchWordPressTrackVersions as MockedFunction<
-	typeof fetchWordPressTrackVersions
->;
-const mockFetchWpOrgCoreVersion = fetchWpOrgCoreVersion as MockedFunction<
-	typeof fetchWpOrgCoreVersion
->;
+const mockFetchWordPressTrackVersions = vi.mocked( fetchWordPressTrackVersions );
+const mockFetchWpOrgCoreVersion = vi.mocked( fetchWpOrgCoreVersion );
 
 describe( 'siteWordPressTrackVersionsQuery', () => {
 	const queryFn = siteWordPressTrackVersionsQuery( 123 ).queryFn!;
