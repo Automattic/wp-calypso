@@ -46,6 +46,10 @@ function CropTool( { imageUrl, disabled = false, onApply, onCancel }: CropOverla
 			if ( targetModal && ! targetModal.contains( rootRef.current ) ) {
 				return;
 			}
+			// Popovers (e.g. dropdown menus) close themselves on Escape.
+			if ( event.target instanceof Element && event.target.closest( '.components-popover' ) ) {
+				return;
+			}
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			onCancel();
