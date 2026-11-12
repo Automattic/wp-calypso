@@ -1,4 +1,5 @@
 import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -8,6 +9,8 @@ type Props = {
 	minimum?: number;
 	maximum?: number;
 	increment?: number;
+	/** Read out by screen readers; the field shows no label. */
+	label?: ReactNode;
 };
 
 export default function A4ANumberInputV2( {
@@ -16,6 +19,7 @@ export default function A4ANumberInputV2( {
 	minimum = 1,
 	maximum,
 	increment = 1,
+	label,
 }: Props ) {
 	const handleOnChange = ( newValue: unknown ) => {
 		// Force convert to number, if NaN use minimum
@@ -27,6 +31,8 @@ export default function A4ANumberInputV2( {
 		<NumberControl
 			className="a4a-number-input-v2"
 			__next40pxDefaultSize
+			label={ label }
+			hideLabelFromVision
 			isShiftStepEnabled
 			min={ minimum }
 			max={ maximum }

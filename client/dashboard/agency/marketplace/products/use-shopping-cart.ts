@@ -139,6 +139,26 @@ export function useShoppingCart( type?: MarketplaceType ) {
 		[ marketplaceType ]
 	);
 
+	// Sets how many of a product its cart line holds, keeping the line in place.
+	const setItemQuantity = useCallback(
+		( ref: CartItemRef, quantity: number ) => {
+			const nextQuantity = Math.min( MAX_CART_ITEM_QUANTITY, Math.max( 1, quantity ) );
+			writeItems(
+				marketplaceType,
+				getSnapshot( marketplaceType ).map( ( item ) =>
+					isSameItem( item, ref )
+						? {
+								slug: item.slug,
+								quantity: nextQuantity,
+								...( item.siteDomain ? { siteDomain: item.siteDomain } : {} ),
+							}
+						: item
+				)
+			);
+		},
+		[ marketplaceType ]
+	);
+
 	const replaceItems = useCallback(
 		( nextItems: ShoppingCartItem[] ) => writeItems( marketplaceType, nextItems ),
 		[ marketplaceType ]
@@ -158,7 +178,16 @@ export function useShoppingCart( type?: MarketplaceType ) {
 
 	const clearCart = useCallback( () => writeItems( marketplaceType, [] ), [ marketplaceType ] );
 
-	return { items, hasItem, addItem, removeItem, replaceItems, swapItems, clearCart };
+	return {
+		items,
+		hasItem,
+		addItem,
+		removeItem,
+		setItemQuantity,
+		replaceItems,
+		swapItems,
+		clearCart,
+	};
 }
 
 // Classic links open the cart with a `#cart` hash, e.g. from a "View cart" notice.
