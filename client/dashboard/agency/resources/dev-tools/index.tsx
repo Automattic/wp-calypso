@@ -15,7 +15,7 @@ export default function DevTools() {
 				<PageHeader
 					title={ __( 'Developer tools' ) }
 					description={ __(
-						'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments that need no cleanup.'
+						'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments.'
 					) }
 				/>
 			}

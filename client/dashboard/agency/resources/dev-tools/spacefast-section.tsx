@@ -7,13 +7,18 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
+import { check, pause, play } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useCallback } from 'react';
+import clsx from 'clsx';
+import { useCallback, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { isSpacefastPromoEnabled } from '../../components/spacefast/constants';
 import SpacefastLogo from '../../components/spacefast/spacefast-logo';
 import { useRecordViewOnce } from '../../lib/use-record-view-once';
+import designQuestionnaireImage from './images/spacefast-design-questionnaire.webp';
+import homepageConceptsImage from './images/spacefast-homepage-concepts.webp';
+import projectTrackerImage from './images/spacefast-project-tracker.webp';
+import SpacefastTermsModal from './spacefast-terms-modal';
 import type { RecordTracksEvent } from '../../tiers/types';
 
 import './spacefast-section.scss';
@@ -42,9 +47,19 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 		)
 	);
 
+	const [ isTermsOpen, setIsTermsOpen ] = useState( false );
+	const [ isPaused, setIsPaused ] = useState( false );
+
+	// Sample spaces from spacefast.com/for/agencies, shown in turn after the logo.
+	const samples = [
+		{ image: designQuestionnaireImage, label: __( 'Design briefs' ) },
+		{ image: homepageConceptsImage, label: __( 'Homepage comparisons' ) },
+		{ image: projectTrackerImage, label: __( 'Project trackers' ) },
+	];
+
 	const features = [
 		__(
-			'As an Automattic for Agencies partner, you get a Golden Ticket: 30 days of Spacefast Pro free, plus 30 more days when you create your first space'
+			'As an Automattic for Agencies partner, you get an exclusive invitation: 30 days of Spacefast Pro free, plus 30 more days when you create your first space'
 		),
 		__(
 			'Build client sites, prototypes, and internal agency tooling with database support, file uploads, and versioning included'
@@ -63,8 +78,35 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 	return (
 		<Card size="large" className="a4a-spacefast-dev-tools">
 			<div className="a4a-spacefast-dev-tools__layout">
-				<div className="a4a-spacefast-dev-tools__media">
+				<div className={ clsx( 'a4a-spacefast-dev-tools__media', { 'is-paused': isPaused } ) }>
 					<SpacefastLogo className="a4a-spacefast-dev-tools__logo" />
+					<SpacefastLogo className="a4a-spacefast-dev-tools__logo-badge" />
+					<span className="a4a-spacefast-dev-tools__captions" aria-hidden="true">
+						{ samples.map( ( { label } ) => (
+							<span key={ label } className="a4a-spacefast-dev-tools__caption">
+								{ label }
+							</span>
+						) ) }
+						<span className="a4a-spacefast-dev-tools__tagline">
+							{ __( 'Build anything. Live in seconds.' ) }
+						</span>
+					</span>
+					{ samples.map( ( { image } ) => (
+						<img
+							key={ image }
+							className="a4a-spacefast-dev-tools__sample"
+							src={ image }
+							alt=""
+							decoding="async"
+						/>
+					) ) }
+					<Button
+						className="a4a-spacefast-dev-tools__playback"
+						icon={ isPaused ? play : pause }
+						label={ isPaused ? __( 'Play' ) : __( 'Pause' ) }
+						size="small"
+						onClick={ () => setIsPaused( ! isPaused ) }
+					/>
 				</div>
 				<CardBody>
 					<VStack spacing={ 4 } alignment="flex-start">
@@ -92,23 +134,27 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 								</HStack>
 							) ) }
 						</VStack>
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							size="compact"
-							// TODO: Placeholder. Each agency gets its own Golden Ticket code, so this
-							// needs to be the agency's own redeem URL, from the API.
-							href="https://my.spacefast.com/redeem/SPACEFAST-A4A-LAUNCH-213M"
-							target="_blank"
-							rel="noreferrer"
-							onClick={ () =>
-								recordTracksEvent( 'calypso_a4a_spacefast_promo_click', {
-									placement: 'dev_tools',
-								} )
-							}
-						>
-							{ __( 'Redeem Golden Ticket' ) }
-						</Button>
+						<HStack alignment="left" spacing={ 4 } wrap>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								size="compact"
+								href="https://my.spacefast.com/redeem/SPACEFAST-LAUNCH-213M"
+								target="_blank"
+								rel="noreferrer"
+								onClick={ () =>
+									recordTracksEvent( 'calypso_a4a_spacefast_promo_click', {
+										placement: 'dev_tools',
+									} )
+								}
+							>
+								{ __( 'Start your 30 days' ) }
+							</Button>
+							<Button variant="link" onClick={ () => setIsTermsOpen( true ) }>
+								{ __( 'Offer terms' ) }
+							</Button>
+						</HStack>
+						{ isTermsOpen && <SpacefastTermsModal onClose={ () => setIsTermsOpen( false ) } /> }
 					</VStack>
 				</CardBody>
 			</div>

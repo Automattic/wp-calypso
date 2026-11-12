@@ -27,7 +27,7 @@ export default function DevToolsContent() {
 		<VStack spacing={ 6 }>
 			<Text size={ 15 }>
 				{ __(
-					'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments that need no cleanup.'
+					'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments.'
 				) }
 			</Text>
 			<SpacefastDevToolsSection recordTracksEvent={ recordTracks } />
