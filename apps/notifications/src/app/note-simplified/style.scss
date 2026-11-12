@@ -157,6 +157,9 @@
 .wpnc-simplified__site-icon {
 	flex-shrink: 0;
 	border-radius: $radius-medium;
+	// The same hairline edge as the list avatars, drawn inside so the icon stays 36px.
+	outline: 1px solid color-mix(in srgb, #000 10%, transparent);
+	outline-offset: -1px;
 
 	&.is-placeholder {
 		padding: $grid-unit-05;

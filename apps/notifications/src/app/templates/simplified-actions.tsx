@@ -1,8 +1,4 @@
-import {
-	CardDivider,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { CardFooter, __experimentalHStack as HStack } from '@wordpress/components';
 import { useSelector } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
@@ -36,9 +32,10 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 		return null;
 	}
 
+	// A footer outside the scrolling body, like the reply below it, so the actions
+	// stay pinned to the bottom of the panel.
 	return (
-		<VStack spacing={ 4 }>
-			<CardDivider />
+		<CardFooter size="small" style={ { paddingBlock: '12px' } }>
 			<HStack spacing={ 2 }>
 				<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 					{ hasLike && (
@@ -60,6 +57,6 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 					/>
 				) }
 			</HStack>
-		</VStack>
+		</CardFooter>
 	);
 }
