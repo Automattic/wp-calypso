@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Suggestions> render basic list of suggestions 1`] = `
+exports[`<Suggestions> > render basic list of suggestions 1`] = `
 <div
   class="suggestions"
 >
