@@ -76,12 +76,11 @@ function getContentMessage( message: ZendeskMessage ): ReactNode {
 			}
 			break;
 		case 'file':
+		// A placeholder links to the browser's copy of the file until a refresh brings Zendesk's.
+		case 'file-placeholder':
 			if ( message.mediaUrl ) {
 				messageContent = createDownloadableMarkdownLink( message.mediaUrl, message.altText );
 			}
-			break;
-		case 'file-placeholder':
-			messageContent = `📎 ${ message.altText || __( 'Attachment', __i18n_text_domain__ ) }`;
 			break;
 		default:
 			// We don't support it yet return generic message.
