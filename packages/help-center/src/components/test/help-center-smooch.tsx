@@ -1,31 +1,21 @@
 /**
  * @jest-environment jsdom
  */
+import { fetchMessagingAuth } from '@automattic/zendesk-client';
+import { act, render } from '@testing-library/react';
+import { vi } from 'vitest';
+import HelpCenterSmooch from '../help-center-smooch';
 
-// babel-jest.  Assigning into a `var` (which is also hoisted) avoids the
-// TDZ error while still letting the factory populate the object at
-// require-time. `mockSmooch` prefix satisfies Jest's "mock" naming rule.
-// eslint-disable-next-line no-var
-var mockSmooch: {
-	init: Mock;
-	destroy: Mock;
-	render: Mock;
-	on: Mock;
-	off: Mock;
-	getConversationById: Mock;
-};
+const mockSmooch = vi.hoisted( () => ( {
+	init: vi.fn(),
+	destroy: vi.fn(),
+	render: vi.fn(),
+	on: vi.fn(),
+	off: vi.fn(),
+	getConversationById: vi.fn().mockResolvedValue( {} ),
+} ) );
 
-vi.mock( 'smooch', () => {
-	mockSmooch = {
-		init: vi.fn(),
-		destroy: vi.fn(),
-		render: vi.fn(),
-		on: vi.fn(),
-		off: vi.fn(),
-		getConversationById: vi.fn().mockResolvedValue( {} ),
-	};
-	return { default: mockSmooch };
-} );
+vi.mock( 'smooch', () => ( { default: mockSmooch } ) );
 
 vi.mock( '@automattic/calypso-analytics', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
@@ -128,12 +118,6 @@ vi.mock( '@wordpress/data', () => ( {
 vi.mock( '@wordpress/element', async () => ( {
 	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 } ) );
-
-import '@testing-library/jest-dom';
-import { fetchMessagingAuth } from '@automattic/zendesk-client';
-import { act, render } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
-import HelpCenterSmooch from '../help-center-smooch';
 
 describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', () => {
 	const destroyError = new Error( 'SDK not fully initialized' );
