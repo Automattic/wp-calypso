@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { DomainData } from '@automattic/data-stores';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import moment from 'moment';
@@ -372,7 +369,7 @@ describe( 'selected domain', () => {
 
 describe( 'site linking ctas', () => {
 	beforeAll( async () => {
-		global.ResizeObserver = ( await import( 'resize-observer-polyfill' ) ).default;
+		vi.stubGlobal( 'ResizeObserver', ( await import( 'resize-observer-polyfill' ) ).default );
 	} );
 
 	test( 'when a site is not associated with a domain and the user has no connectable sites, display the site linking ctas targeting site creation', async () => {

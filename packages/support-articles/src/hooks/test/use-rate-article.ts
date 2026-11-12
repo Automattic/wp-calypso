@@ -1,11 +1,8 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcomRequest from 'wpcom-proxy-request';
-import { type Mock, vi } from 'vitest';
 import { getSessionRating, useRateArticle } from '../use-rate-article';
 
 vi.mock( 'wpcom-proxy-request', () => ( {
@@ -14,7 +11,7 @@ vi.mock( 'wpcom-proxy-request', () => ( {
 	canAccessWpcomApis: () => true,
 } ) );
 
-const mockedRequest = wpcomRequest as Mock;
+const mockedRequest = vi.mocked( wpcomRequest );
 
 function renderRateArticle() {
 	const queryClient = new QueryClient();

@@ -1,16 +1,13 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { useCanConnectToZendeskMessaging } from '../src/use-can-connect-to-zendesk-messaging';
 import type { ReactNode } from 'react';
 
-vi.mock( '@automattic/calypso-analytics', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >( '@automattic/calypso-analytics' ) ),
+vi.mock( '@automattic/calypso-analytics', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/calypso-analytics' ) >() ),
 	recordTracksEvent: vi.fn(),
 } ) );
 
@@ -18,7 +15,6 @@ const REQUEST_EVENT = 'calypso_helpcenter_zendesk_config_request';
 const ERROR_EVENT = 'calypso_helpcenter_zendesk_config_error';
 const REPORTING_VERSION = 4;
 const fetchMock = vi.fn();
-const originalFetch = globalThis.fetch;
 
 function makeResponse( data: boolean ) {
 	return { json: () => Promise.resolve( data ) };
@@ -37,7 +33,7 @@ function makeWrapper( queryClient: QueryClient, strictMode = false ) {
 }
 
 function getEventCalls( eventName: string ) {
-	return ( recordTracksEvent as Mock ).mock.calls.filter( ( [ name ] ) => name === eventName );
+	return vi.mocked( recordTracksEvent ).mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
 describe( 'useCanConnectToZendeskMessaging', () => {
@@ -45,11 +41,11 @@ describe( 'useCanConnectToZendeskMessaging', () => {
 		vi.clearAllMocks();
 		fetchMock.mockReset();
 		fetchMock.mockResolvedValue( makeResponse( true ) );
-		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		vi.stubGlobal( 'fetch', fetchMock );
 	} );
 
 	afterEach( () => {
-		globalThis.fetch = originalFetch;
+		vi.unstubAllGlobals();
 	} );
 
 	it( 'reports one event after a successful resolution', async () => {

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import page from '@automattic/calypso-router';
 import { screen, act, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';

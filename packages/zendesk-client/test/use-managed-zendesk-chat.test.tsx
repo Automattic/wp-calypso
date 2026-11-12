@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -10,14 +7,11 @@ import { type Mock, vi } from 'vitest';
 import { fetchMessagingAuth } from '../src/use-authenticate-zendesk-messaging';
 import { useGetZendeskConversations, useManagedZendeskChat } from '../src/use-managed-zendesk-chat';
 
-vi.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		ThinkingMessage: () => null,
-		ThumbsDownIcon: () => null,
-		ThumbsUpIcon: () => null,
-	} )
-);
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	ThinkingMessage: () => null,
+	ThumbsDownIcon: () => null,
+	ThumbsUpIcon: () => null,
+} ) );
 
 const mockConversation = {
 	id: 'conversation-1',
@@ -48,8 +42,8 @@ vi.mock( 'smooch', () => ( {
 	},
 } ) );
 
-vi.mock( '@automattic/calypso-analytics', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >( '@automattic/calypso-analytics' ) ),
+vi.mock( '@automattic/calypso-analytics', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/calypso-analytics' ) >() ),
 	recordTracksEvent: vi.fn(),
 } ) );
 
@@ -309,7 +303,7 @@ describe( 'useManagedZendeskChat', () => {
 		}
 
 		async function triggerAuthError() {
-			( fetchMessagingAuth as Mock ).mockResolvedValue( { jwt: 'refreshed-jwt' } );
+			vi.mocked( fetchMessagingAuth ).mockResolvedValue( { jwt: 'refreshed-jwt' } );
 			const { delegate } = smooch.init.mock.calls[ 0 ][ 0 ] as SmoochInitOptions;
 			await delegate.onInvalidAuth();
 		}

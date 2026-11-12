@@ -1,12 +1,8 @@
-/**
- * @jest-environment jsdom
- */
-
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_CUSTOM,
@@ -27,13 +23,13 @@ vi.mock( '@automattic/data-stores', () => ( {
 describe( 'isTestModeEnvironment', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
-		( isInSupportSession as Mock ).mockReturnValue( false );
+		vi.mocked( isInSupportSession ).mockReturnValue( false );
 	} );
 
 	describe( 'Support session override', () => {
 		test( 'should return false (production) when in support session, regardless of environment', () => {
-			( isInSupportSession as Mock ).mockReturnValue( true );
-			( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+			vi.mocked( isInSupportSession ).mockReturnValue( true );
+			vi.mocked( config ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'dashboard-development';
 				}
@@ -60,7 +56,7 @@ describe( 'isTestModeEnvironment', () => {
 				const configPath = join( __dirname, '../../../config', `${ configFile }.json` );
 				const configData = JSON.parse( readFileSync( configPath, 'utf-8' ) );
 
-				( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+				vi.mocked( config ).mockImplementation( ( key: string ) => {
 					if ( key === 'env_id' ) {
 						return configData.env_id;
 					}
@@ -98,7 +94,7 @@ describe( 'isTestModeEnvironment', () => {
 				const configPath = join( __dirname, '../../../config', `${ configFile }.json` );
 				const configData = JSON.parse( readFileSync( configPath, 'utf-8' ) );
 
-				( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+				vi.mocked( config ).mockImplementation( ( key: string ) => {
 					if ( key === 'env_id' ) {
 						return configData.env_id;
 					}
@@ -115,7 +111,7 @@ describe( 'isTestModeEnvironment', () => {
 
 	describe( 'Future-proof scenarios', () => {
 		test( 'should automatically treat new production environment as production', () => {
-			( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+			vi.mocked( config ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'new-product-production';
 				}
@@ -129,7 +125,7 @@ describe( 'isTestModeEnvironment', () => {
 		} );
 
 		test( 'should automatically treat new "-development"/"-staging" environment as test mode', () => {
-			( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+			vi.mocked( config ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'new-product-staging';
 				}
@@ -143,7 +139,7 @@ describe( 'isTestModeEnvironment', () => {
 		} );
 
 		test( 'should automatically treat new "-stage" environment as production', () => {
-			( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+			vi.mocked( config ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'new-product-stage';
 				}
@@ -159,14 +155,14 @@ describe( 'isTestModeEnvironment', () => {
 		test( 'should default to production when config is unavailable (env undefined)', () => {
 			// Simulates contexts where window.configData is not set (e.g. Gutenberg editor
 			// before config.js executes), where config() returns undefined without throwing.
-			( config as unknown as Mock ).mockReturnValue( undefined );
+			vi.mocked( config ).mockReturnValue( undefined );
 
 			expect( isTestModeEnvironment() ).toBe( false );
 		} );
 
 		test( 'should treat proxied dev environment (staging env_id) as test mode', () => {
 			// apps/help-center/config.js sets env_id = env = 'staging' for proxied Automatticians.
-			( config as unknown as Mock ).mockImplementation( ( key: string ) => {
+			vi.mocked( config ).mockImplementation( ( key: string ) => {
 				if ( key === 'env_id' ) {
 					return 'staging';
 				}
@@ -183,13 +179,15 @@ describe( 'isTestModeEnvironment', () => {
 
 describe( 'getSmoochIntegrationId', () => {
 	const mockEnv = ( env: string ) =>
-		( config as unknown as Mock ).mockImplementation( ( key: string ) =>
-			key === 'env_id' || key === 'env' ? env : undefined
-		);
+		vi
+			.mocked( config )
+			.mockImplementation( ( key: string ) =>
+				key === 'env_id' || key === 'env' ? env : undefined
+			);
 
 	beforeEach( () => {
 		vi.clearAllMocks();
-		( isInSupportSession as Mock ).mockReturnValue( false );
+		vi.mocked( isInSupportSession ).mockReturnValue( false );
 	} );
 
 	test( 'uses the WordPress.com integration without a key', () => {

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import languages from '@automattic/languages';
 import { render, screen } from '@testing-library/react';
 import { languageEntries, PureUniversalNavbarFooter } from '../index';

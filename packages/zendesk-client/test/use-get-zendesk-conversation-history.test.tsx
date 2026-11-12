@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
@@ -24,7 +21,6 @@ vi.mock( '../src/util', () => ( {
 } ) );
 
 const fetchMock = vi.fn();
-const originalFetch = globalThis.fetch;
 
 const rawMessage = ( id: string, received: number, role = 'appMaker' ) => ( {
 	_id: id,
@@ -55,11 +51,11 @@ function renderHistoryHook() {
 describe( 'useGetZendeskConversationHistory', () => {
 	beforeEach( () => {
 		fetchMock.mockReset();
-		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		vi.stubGlobal( 'fetch', fetchMock );
 	} );
 
 	afterEach( () => {
-		globalThis.fetch = originalFetch;
+		vi.unstubAllGlobals();
 	} );
 
 	it( 'follows `hasPrevious` back to the start and returns the messages oldest first', async () => {

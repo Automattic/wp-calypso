@@ -1,10 +1,7 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { type Mock, vi } from 'vitest';
+import { vi } from 'vitest';
 import { HelpCenterArticle } from '../help-center-article';
 
 const post = {
@@ -15,8 +12,8 @@ const post = {
 	source: '/support',
 };
 
-vi.mock( '@automattic/calypso-analytics', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >( '@automattic/calypso-analytics' ) ),
+vi.mock( '@automattic/calypso-analytics', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/calypso-analytics' ) >() ),
 	recordTracksEvent: vi.fn(),
 } ) );
 
@@ -47,11 +44,14 @@ vi.mock( '../back-to-top-button', () => ( {
 
 beforeAll( () => {
 	// jsdom has no IntersectionObserver; the section-view effect constructs one on mount.
-	window.IntersectionObserver = class {
-		observe() {}
-		unobserve() {}
-		disconnect() {}
-	} as unknown as typeof IntersectionObserver;
+	vi.stubGlobal(
+		'IntersectionObserver',
+		class {
+			observe() {}
+			unobserve() {}
+			disconnect() {}
+		}
+	);
 } );
 
 function renderArticle( siteId?: number | string ) {
@@ -85,9 +85,9 @@ describe( 'HelpCenterArticle analytics', () => {
 	it( 'reports no site rather than falling back to the article blog', () => {
 		renderArticle( undefined );
 
-		const [ , properties ] = ( recordTracksEvent as Mock ).mock.calls.find(
-			( [ name ] ) => name === 'calypso_helpcenter_article_viewed'
-		);
+		const [ , properties ] = vi
+			.mocked( recordTracksEvent )
+			.mock.calls.find( ( [ name ] ) => name === 'calypso_helpcenter_article_viewed' );
 
 		expect( properties ).toEqual(
 			expect.objectContaining( {

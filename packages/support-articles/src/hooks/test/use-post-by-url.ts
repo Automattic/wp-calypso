@@ -1,12 +1,9 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcomRequest from 'wpcom-proxy-request';
-import { type Mock, vi } from 'vitest';
 import { usePostByUrl } from '../use-post-by-url';
 
 vi.mock( 'wpcom-proxy-request', () => ( {
@@ -19,8 +16,8 @@ vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: vi.fn(),
 } ) );
 
-const mockedRequest = wpcomRequest as Mock;
-const mockedRecordTracksEvent = recordTracksEvent as Mock;
+const mockedRequest = vi.mocked( wpcomRequest );
+const mockedRecordTracksEvent = vi.mocked( recordTracksEvent );
 
 function renderPostByUrl( url: string ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
