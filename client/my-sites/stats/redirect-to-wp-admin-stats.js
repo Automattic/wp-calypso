@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteAdminUrl, getSiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Stats now lives in wp-admin, which serves the same routes as this section behind
@@ -14,12 +14,14 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  *
  * Support sessions stay here so Happiness Engineers can compare numbers with the classic page.
  *
- * Kept out of `controller.jsx`, which wp-admin Stats shares.
+ * Kept out of `controller.jsx`, which wp-admin Stats shares. Runs before `siteSelection`, so the
+ * page the user came from stays up until wp-admin replaces it: selecting the site would first
+ * switch Calypso to that site's layout.
  */
 export default async function redirectToWpAdminStats( context, next ) {
-	const state = context.store.getState();
+	const { getState, dispatch } = context.store;
 
-	if ( isSupportSession( state ) ) {
+	if ( isSupportSession( getState() ) ) {
 		next();
 		return;
 	}
@@ -31,8 +33,20 @@ export default async function redirectToWpAdminStats( context, next ) {
 		return;
 	}
 
-	const siteId = getSelectedSiteId( state );
-	const statsAdminUrl = getSiteAdminUrl( state, siteId, 'admin.php?page=stats' );
+	let siteId = getSiteId( getState(), context.params.site );
+
+	// Opened directly, the site may not be loaded yet. If it can't be, `siteSelection` handles it.
+	if ( ! siteId ) {
+		await dispatch( requestSite( context.params.site ) ).catch( () => null );
+
+		if ( page.current !== context.path ) {
+			return;
+		}
+
+		siteId = getSiteId( getState(), context.params.site );
+	}
+
+	const statsAdminUrl = getSiteAdminUrl( getState(), siteId, 'admin.php?page=stats' );
 
 	if ( ! statsAdminUrl ) {
 		next();
@@ -43,9 +57,9 @@ export default async function redirectToWpAdminStats( context, next ) {
 	// to switch the module on instead. The module list usually isn't loaded yet on arrival, since
 	// this section only asks for it once it renders, so ask here and redirect only when the module
 	// is known to be on.
-	if ( isJetpackSite( state, siteId ) ) {
-		if ( isJetpackModuleActive( state, siteId, 'stats' ) === null ) {
-			await context.store.dispatch( fetchModuleList( siteId ) );
+	if ( isJetpackSite( getState(), siteId ) ) {
+		if ( isJetpackModuleActive( getState(), siteId, 'stats' ) === null ) {
+			await dispatch( fetchModuleList( siteId ) );
 
 			// The user may have moved on while the module list loaded.
 			if ( page.current !== context.path ) {
@@ -53,7 +67,7 @@ export default async function redirectToWpAdminStats( context, next ) {
 			}
 		}
 
-		if ( isJetpackModuleActive( context.store.getState(), siteId, 'stats' ) !== true ) {
+		if ( isJetpackModuleActive( getState(), siteId, 'stats' ) !== true ) {
 			next();
 			return;
 		}

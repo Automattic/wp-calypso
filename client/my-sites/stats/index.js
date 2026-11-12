@@ -28,8 +28,8 @@ import './style.scss';
 const statsPage = ( url, controller ) => {
 	page(
 		url,
-		siteSelection,
 		redirectToWpAdminStats,
+		siteSelection,
 		navigation,
 		controller,
 		makeLayout,
