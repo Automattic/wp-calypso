@@ -11,6 +11,13 @@ import { render } from '../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
 
+jest.mock( '@automattic/calypso-config', () => {
+	const { clientData } = jest.requireActual( '@automattic/calypso-config' );
+	globalThis.window.configData = { ...clientData, env_id: 'dashboard-production' };
+	globalThis.window.electron = {};
+	return jest.requireActual( '../../../../../packages/calypso-config/src' );
+} );
+
 const createMockSite = ( options = {} ): Site =>
 	( {
 		ID: 1,
@@ -129,7 +136,7 @@ describe( 'StagingSiteSyncDropdown', () => {
 			expect( await screen.findByRole( 'menuitem', { name: 'Push to Production' } ) ).toBeVisible();
 		} );
 
-		test( 'opens the pull dialog in the Dashboard without a Redux store', async () => {
+		test( 'opens the pull dialog in the standalone Desktop Dashboard without Redux', async () => {
 			const stagingSite = createMockStagingSite();
 			mockSiteBySlug( stagingSite );
 			mockSyncState();

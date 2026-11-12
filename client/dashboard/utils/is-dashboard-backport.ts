@@ -1,8 +1,9 @@
+import { serverEnvId } from '@automattic/calypso-config';
 import isDashboardEnv from './is-dashboard-env';
 
 export function isDashboardBackport() {
 	// No need to check for backport if it's a dashboard Calypso environment.
-	if ( isDashboardEnv() ) {
+	if ( isDashboardEnv( serverEnvId ) ) {
 		return false;
 	}
 

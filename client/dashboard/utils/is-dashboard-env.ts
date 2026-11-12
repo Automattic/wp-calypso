@@ -7,6 +7,7 @@ const dashboardEnvironments = [
 	'dashboard-production',
 ];
 
-const isDashboardEnv = (): boolean => dashboardEnvironments.includes( config( 'env_id' ) );
+const isDashboardEnv = ( envId = config< string >( 'env_id' ) ): boolean =>
+	!! envId && dashboardEnvironments.includes( envId );
 
 export default isDashboardEnv;
