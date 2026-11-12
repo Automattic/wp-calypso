@@ -49,7 +49,7 @@ export default function Headline( { note }: { note: Note } ) {
 				/>
 				<NoteMeta note={ note } />
 			</VStack>
-			{ isPendingApproval && <PendingApproval note={ note } /> }
+			{ isPendingApproval && <PendingApproval /> }
 		</HStack>
 	);
 }

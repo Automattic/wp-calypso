@@ -3,16 +3,14 @@
  */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { localizeUrl, useLocalizeUrl } from '../';
+import { useLocale } from '../locale-context';
 
-jest.mock( '../locale-context', () => {
-	const original = jest.requireActual( '../locale-context' );
-	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
-		useLocale: jest.fn( () => 'en' ),
-	} );
-} );
-
-const { useLocale } = jest.requireMock( '../locale-context' );
+vi.mock( '../locale-context', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	useLocale: vi.fn( () => 'en' ),
+} ) );
 
 describe( '#localizeUrl', () => {
 	function testLocalizeUrl( locale = 'en' ) {

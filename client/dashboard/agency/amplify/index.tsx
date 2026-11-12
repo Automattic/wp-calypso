@@ -1,19 +1,28 @@
 import { useNavigate } from '@tanstack/react-router';
+import { agencyAmplifyRoute } from '../../app/router/agency';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { AgencyNotices } from '../components/agency-notices';
-import { getFeatureDescription, getFeatureName } from './constants';
+import { getFeatureDescription, getFeatureName, NEW_REPORT_ACTION } from './constants';
 import AmplifyContent from './content';
 import AmplifyHeaderActions from './header-actions';
 import { AmplifyApprovalNotice } from './usage-meter';
 import { useAmplifyPage } from './use-amplify-page';
-import type { AmplifyTiersLink } from './types';
+import type { AmplifyNewReportRequest, AmplifyTiersLink } from './types';
+
+import './style.scss';
 
 export default function AgencyAmplify() {
 	const page = useAmplifyPage();
 	const navigate = useNavigate();
 	const tiersLink: AmplifyTiersLink = {
 		onNavigate: ( path ) => navigate( { to: path as '/tiers' } ),
+	};
+	const { action } = agencyAmplifyRoute.useSearch();
+	const newReportRequest: AmplifyNewReportRequest = {
+		isRequested: action === NEW_REPORT_ACTION,
+		onClear: () =>
+			navigate( { to: '/prospect-reports', search: { action: undefined }, replace: true } ),
 	};
 
 	return (
@@ -35,7 +44,13 @@ export default function AgencyAmplify() {
 				<PageHeader
 					title={ getFeatureName() }
 					description={ getFeatureDescription() }
-					actions={ <AmplifyHeaderActions page={ page } tiersLink={ tiersLink } /> }
+					actions={
+						<AmplifyHeaderActions
+							page={ page }
+							tiersLink={ tiersLink }
+							newReportRequest={ newReportRequest }
+						/>
+					}
 				/>
 			}
 		>

@@ -50,10 +50,12 @@ describe( 'useStatsAdminUrl', () => {
 
 		const { result } = renderStatsAdminUrl( site, 'admin.php?page=stats#!/stats/month/1' );
 
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		expect( result.current ).toBe(
-			'https://example.com/wp-admin/admin.php?page=stats#!/stats/month/1'
+		await waitFor( () =>
+			expect( result.current ).toBe(
+				'https://example.com/wp-admin/admin.php?page=stats#!/stats/month/1'
+			)
 		);
+		expect( scope.isDone() ).toBe( true );
 	} );
 
 	test( 'does not ask a site whose settings the user cannot read', () => {

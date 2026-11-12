@@ -23,7 +23,7 @@ import { Text } from '../../components/text';
 import SiteScreenshot from '../components/site-screenshot';
 import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AmplifyReport } from '@automattic/api-core';
-import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
+import type { Action, Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
 import './reports.scss';
 
@@ -402,25 +402,6 @@ export default function AmplifyReportsList( {
 						{ ( item.status === 'pending' || item.status === 'in_progress' ) && (
 							<Text variant="muted">{ getStatusLabels()[ item.status ] }</Text>
 						) }
-						<Button
-							__next40pxDefaultSize
-							size="compact"
-							icon={ archiveBoxIcon }
-							label={ __( 'Archive report' ) }
-							aria-label={ sprintf(
-								/* translators: %s: name or address of the site the report is for */
-								__( 'Archive report for %s' ),
-								titleFor( item )
-							) }
-							showTooltip
-							onClick={ () => {
-								recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
-									report_id: item.id,
-									mode: item.mode,
-								} );
-								setReportToArchive( item );
-							} }
-						/>
 					</HStack>
 				),
 				enableSorting: false,
@@ -428,7 +409,25 @@ export default function AmplifyReportsList( {
 				filterBy: false,
 			},
 		],
-		[ downloadingId, locale, onDownload, onRetry, recordTracksEvent, retryingId ]
+		[ downloadingId, locale, onDownload, onRetry, retryingId ]
+	);
+
+	const actions = useMemo< Action< AmplifyReport >[] >(
+		() => [
+			{
+				id: 'archive',
+				label: __( 'Archive' ),
+				icon: archiveBoxIcon,
+				callback: ( [ item ] ) => {
+					recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
+						report_id: item.id,
+						mode: item.mode,
+					} );
+					setReportToArchive( item );
+				},
+			},
+		],
+		[ recordTracksEvent ]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
@@ -440,6 +439,7 @@ export default function AmplifyReportsList( {
 				<DataViews< AmplifyReport >
 					data={ visibleReports }
 					fields={ fields }
+					actions={ actions }
 					view={ view }
 					onChangeView={ setView }
 					isLoading={ isLoading }

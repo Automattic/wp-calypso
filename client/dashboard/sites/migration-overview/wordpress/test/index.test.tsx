@@ -89,6 +89,7 @@ describe( 'WordPressMigration', () => {
 	// The site only reads as locked by its own state while the flow is switched on.
 	beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 	afterEach( () => {
+		jest.useRealTimers();
 		config.disable( 'migration/reprint-flow' );
 		queryClient.clear();
 		// After clearing: going back to the default focus state refetches every query it finds, and a refetch still in
@@ -571,8 +572,13 @@ describe( 'WordPressMigration', () => {
 	} );
 
 	test( 'waits on a completed migration whose site is still locked, then offers a way out', async () => {
-		jest.useFakeTimers( { advanceTimers: true } );
-		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
+		// Only the clock: faking the queues a request goes through holds the mocked replies back.
+		jest.useFakeTimers( {
+			advanceTimers: true,
+			doNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
+		} );
+		// Waiting on the site reloads the migration too.
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) ).persist();
 
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
@@ -588,7 +594,6 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
 		expect( router.state.location.pathname ).toBe( '/' );
-		jest.useRealTimers();
 	} );
 
 	test( 'hands over to the site once a completed migration has unlocked it', async () => {

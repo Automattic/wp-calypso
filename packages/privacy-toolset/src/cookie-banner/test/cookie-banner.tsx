@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, fireEvent, getByText, getByTestId, queryByText } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { describe, expect, test, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { CookieBanner } from '..';
 import type { CookieBannerProps } from '..';
 
@@ -35,7 +36,7 @@ const genericContent: CookieBannerProps[ 'content' ] = {
 describe( 'CookieBanner', () => {
 	test( 'renders in simple consent correctly', () => {
 		const { container } = render(
-			<CookieBanner content={ genericContent } onAccept={ jest.fn } />
+			<CookieBanner content={ genericContent } onAccept={ vi.fn() } />
 		);
 
 		expect( getByText( container, 'acceptAllButton' ) ).toBeInTheDocument();
@@ -44,7 +45,7 @@ describe( 'CookieBanner', () => {
 	} );
 	test( 'renders in customized consent correctly (after customize button click)', () => {
 		const { container } = render(
-			<CookieBanner content={ genericContent } onAccept={ jest.fn } />
+			<CookieBanner content={ genericContent } onAccept={ vi.fn() } />
 		);
 		fireEvent.click( getByText( container, 'customizeButton' ) );
 
@@ -53,7 +54,7 @@ describe( 'CookieBanner', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 	test( 'fires onAccept with all buckets true (on accept all button click)', () => {
-		const onAccept = jest.fn();
+		const onAccept = vi.fn();
 		const { container } = render(
 			<CookieBanner content={ genericContent } onAccept={ onAccept } />
 		);
@@ -66,7 +67,7 @@ describe( 'CookieBanner', () => {
 		} );
 	} );
 	test( 'fires onAccept with default selection (all true except advertising) (when no change is done in customized consent)', () => {
-		const onAccept = jest.fn();
+		const onAccept = vi.fn();
 		const { container } = render(
 			<CookieBanner content={ genericContent } onAccept={ onAccept } />
 		);
@@ -80,7 +81,7 @@ describe( 'CookieBanner', () => {
 		} );
 	} );
 	test( 'fires onAccept with correct selection (when change is done in customized consent)', () => {
-		const onAccept = jest.fn();
+		const onAccept = vi.fn();
 		const { container } = render(
 			<CookieBanner content={ genericContent } onAccept={ onAccept } />
 		);

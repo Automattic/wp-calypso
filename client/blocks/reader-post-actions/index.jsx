@@ -1,8 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@wordpress/components';
-import { category } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
@@ -16,14 +13,13 @@ import {
 	isRebloggable,
 	isLikeable,
 } from 'calypso/reader/post/capabilities';
-import { useShelfPicker } from 'calypso/reader/shelves/subscribe-with-shelf/use-shelf-picker';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import './style.scss';
 
 /**
- * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; variant?: 'default' | 'discreet'; split?: boolean; }} props
+ * @param {{ post: Object; site?: Object; onCommentClick?: Function; iconSize?: number; className?: string; fullPost?: boolean; commentsApiDisabled?: boolean; }} props
  */
 const ReaderPostActions = ( {
 	post,
@@ -33,17 +29,7 @@ const ReaderPostActions = ( {
 	className,
 	fullPost,
 	commentsApiDisabled = false,
-	variant = 'default',
-	split = false,
 } ) => {
-	const translate = useTranslate();
-	const showShelves = isEnabled( 'reader/shelves' );
-	const { openShelfPicker, shelfPickerModal } = useShelfPicker( {
-		feedId: post.feed_ID,
-		blogId: post.site_ID,
-		feedUrl: post.feed_URL || post.site_URL,
-		source: 'post_actions',
-	} );
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const showShare = isSharable( post );
@@ -51,82 +37,65 @@ const ReaderPostActions = ( {
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
 	const showSave = isEnabled( 'reader/saved-posts' ) && isLoggedIn && canSavePost( post );
-	const listClassnames = clsx( 'reader-post-actions', className, {
-		'is-discreet': variant === 'discreet',
-		'is-split': split,
-	} );
+	const listClassnames = clsx( 'reader-post-actions', className );
 
 	return (
-		<>
-			<ul className={ listClassnames }>
-				{ showShelves && (
-					<li className="reader-post-actions__item">
-						<Button
-							className="reader-post-actions__shelf-button"
-							icon={ category }
-							iconSize={ iconSize }
-							label={ translate( 'Move site to a shelf' ) }
-							onClick={ openShelfPicker }
-						/>
-					</li>
-				) }
-				{ showShare && (
-					<li className="reader-post-actions__item">
-						<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
-					</li>
-				) }
+		<ul className={ listClassnames }>
+			{ showShare && (
+				<li className="reader-post-actions__item">
+					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
+				</li>
+			) }
 
-				{ showReblog && (
-					<li className="reader-post-actions__item">
-						<ShareButton
-							post={ post }
-							position="bottom"
-							tagName="div"
-							iconSize={ iconSize }
-							isReblogSelection
-						/>
-					</li>
-				) }
-				{ showSave && (
-					<li className="reader-post-actions__item">
-						<ReaderSaveButton post={ post } iconSize={ iconSize } />
-					</li>
-				) }
-				{ showComments && ! commentsApiDisabled && (
-					<li className="reader-post-actions__item">
-						<CommentButton
-							key="comment-button"
-							commentCount={ post.discussion.comment_count }
-							onClick={ onCommentClick }
-							tagName="button"
-							icon={ ReaderCommentIcon( {
-								iconSize,
-								viewBox: '0 -1 20 20',
-							} ) }
-							alwaysShowTooltip
-						/>
-					</li>
-				) }
-				{ showLikes && (
-					<li className="reader-post-actions__item">
-						<LikeButton
-							key="like-button"
-							siteId={ +post.site_ID }
-							postId={ +post.ID }
-							post={ post }
-							site={ site }
-							fullPost={ fullPost }
-							tagName="button"
-							forceCounter
-							iconSize={ iconSize }
-							showZeroCount={ false }
-							likeSource="reader"
-						/>
-					</li>
-				) }
-			</ul>
-			{ showShelves && shelfPickerModal }
-		</>
+			{ showReblog && (
+				<li className="reader-post-actions__item">
+					<ShareButton
+						post={ post }
+						position="bottom"
+						tagName="div"
+						iconSize={ iconSize }
+						isReblogSelection
+					/>
+				</li>
+			) }
+			{ showSave && (
+				<li className="reader-post-actions__item">
+					<ReaderSaveButton post={ post } iconSize={ iconSize } />
+				</li>
+			) }
+			{ showComments && ! commentsApiDisabled && (
+				<li className="reader-post-actions__item">
+					<CommentButton
+						key="comment-button"
+						commentCount={ post.discussion.comment_count }
+						onClick={ onCommentClick }
+						tagName="button"
+						icon={ ReaderCommentIcon( {
+							iconSize,
+							viewBox: '0 -1 20 20',
+						} ) }
+						alwaysShowTooltip
+					/>
+				</li>
+			) }
+			{ showLikes && (
+				<li className="reader-post-actions__item">
+					<LikeButton
+						key="like-button"
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						post={ post }
+						site={ site }
+						fullPost={ fullPost }
+						tagName="button"
+						forceCounter
+						iconSize={ iconSize }
+						showZeroCount={ false }
+						likeSource="reader"
+					/>
+				</li>
+			) }
+		</ul>
 	);
 };
 
@@ -137,8 +106,6 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
-	variant: PropTypes.oneOf( [ 'default', 'discreet' ] ),
-	split: PropTypes.bool,
 };
 
 export default ReaderPostActions;

@@ -1,10 +1,3 @@
-// `logToLogstash` fires a real HTTPS request to the wpcom logstash
-// endpoint. Mute it so the optimistic-mutation onError tests don't
-// trigger an unmocked nock request.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
-} ) );
-
 import {
 	PENDING_FEDIVERSE_POST_URI,
 	readerFediverseKeys,
@@ -20,6 +13,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	createFediversePostMutation,
 	followFediverseActorMutation,
@@ -27,6 +21,13 @@ import {
 	unfollowFediverseActorMutation,
 	useFediverseNotificationsInfiniteQuery,
 } from '../reader-fediverse';
+
+// `logToLogstash` fires a real HTTPS request to the wpcom logstash
+// endpoint. Mute it so the optimistic-mutation onError tests don't
+// trigger an unmocked nock request.
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 

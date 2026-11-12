@@ -1,4 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useRevertToOriginal } from './use-revert-to-original';
 
 /**
@@ -20,15 +21,15 @@ let mockSelectorState: {
 };
 
 // Mock dispatch functions
-const mockUpdateImageStudioCanvas = jest.fn();
-const mockResetCanvasHistory = jest.fn();
-const mockSetCanvasMetadata = jest.fn();
-const mockAddNotice = jest.fn();
-const mockDeleteDraftsExcept = jest.fn();
-const mockResolveSelect = jest.fn();
+const mockUpdateImageStudioCanvas = vi.fn();
+const mockResetCanvasHistory = vi.fn();
+const mockSetCanvasMetadata = vi.fn();
+const mockAddNotice = vi.fn();
+const mockDeleteDraftsExcept = vi.fn();
+const mockResolveSelect = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( ( selector ) => {
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( ( selector ) => {
 		return selector( () => ( {
 			getOriginalAttachmentId: () => mockSelectorState.originalAttachmentId,
 			getImageStudioAttachmentId: () => mockSelectorState.attachmentId,
@@ -36,22 +37,22 @@ jest.mock( '@wordpress/data', () => ( {
 			getIsAnnotationSaving: () => mockSelectorState.isAnnotationSaving,
 		} ) );
 	} ),
-	useDispatch: jest.fn( () => ( {
+	useDispatch: vi.fn( () => ( {
 		updateImageStudioCanvas: mockUpdateImageStudioCanvas,
 		resetCanvasHistory: mockResetCanvasHistory,
 		setCanvasMetadata: mockSetCanvasMetadata,
 		addNotice: mockAddNotice,
 	} ) ),
-	resolveSelect: jest.fn( () => ( {
+	resolveSelect: vi.fn( () => ( {
 		getEntityRecord: mockResolveSelect,
 	} ) ),
 } ) );
 
-jest.mock( '@wordpress/core-data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
+vi.mock( '@wordpress/element', () => ( {
 	useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
 	useRef: ( initial: unknown ) => ( { current: initial } ),
 	useState: ( initial: unknown ) => {
@@ -63,13 +64,13 @@ jest.mock( '@wordpress/element', () => ( {
 	},
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 	sprintf: ( format: string, ...args: unknown[] ) =>
 		format.replace( /%s/g, () => String( args.shift() ) ),
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
@@ -82,7 +83,7 @@ const originalAttachment = {
 
 describe( 'useRevertToOriginal', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSelectorState = {
 			originalAttachmentId: 1,
 			attachmentId: 2,
@@ -266,7 +267,7 @@ describe( 'useRevertToOriginal', () => {
 				isAnnotationSaving: false,
 			};
 
-			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
+			const consoleWarnSpy = vi.spyOn( console, 'warn' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useRevertToOriginal( {
@@ -293,7 +294,7 @@ describe( 'useRevertToOriginal', () => {
 				source_url: undefined,
 			} );
 
-			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation();
+			const consoleWarnSpy = vi.spyOn( console, 'warn' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useRevertToOriginal( {
@@ -340,7 +341,7 @@ describe( 'useRevertToOriginal', () => {
 		it( 'shows error notice when attachment fetch fails', async () => {
 			mockResolveSelect.mockRejectedValue( new Error( 'Network error' ) );
 
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useRevertToOriginal( {
@@ -366,7 +367,7 @@ describe( 'useRevertToOriginal', () => {
 			mockResolveSelect.mockResolvedValue( originalAttachment );
 			mockDeleteDraftsExcept.mockRejectedValue( new Error( 'Delete failed' ) );
 
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useRevertToOriginal( {

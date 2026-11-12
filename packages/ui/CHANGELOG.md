@@ -3,6 +3,7 @@
 ### Breaking Changes
 
 - `Badge`: Remove component. Use `Badge` from `@wordpress/ui` instead.
+- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 2.0.0
 

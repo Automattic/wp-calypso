@@ -12,8 +12,30 @@ import {
 	envelope,
 	payment,
 	trendingUp,
+	megaphone,
 } from '@wordpress/icons';
-import type { TierItem } from './types';
+import { getReportAllowance } from '../amplify/constants';
+import type { Benefit, TierItem } from './types';
+import type { AgencyTierId } from '@automattic/api-core';
+
+/**
+ * Upgrade incentive on higher tiers' cards: the bigger monthly allowance.
+ * Gated on the same link as the essential row, so agencies without access
+ * don't see it.
+ */
+function prospectReportsAllowanceBenefit( tierId: AgencyTierId ): Benefit {
+	return {
+		icon: megaphone,
+		title: sprintf(
+			/* translators: %d is the number of Prospect Reports an agency can create each month */
+			__( '%d Prospect Reports a month' ),
+			getReportAllowance( tierId )
+		),
+		description: __( 'Audit more prospects every month and keep your sales pipeline full.' ),
+		requiresLink: 'generate-prospect-report',
+		isUpgradeOnly: true,
+	};
+}
 
 export const TARGET_INFLUENCED_REVENUE = {
 	'emerging-partner': 0,
@@ -34,7 +56,7 @@ export const ALL_TIERS: TierItem[] = [
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( 'Essential benefits' ),
-		subheading: __( 'Tools, earning opportunities, support & training and more' ),
+		subheading: __( 'Tools, Prospect Reports, earning opportunities, support & training and more' ),
 		influencedRevenue: TARGET_INFLUENCED_REVENUE[ 'agency-partner' ],
 		progressCardDescription: __(
 			"You're just getting started. Explore your benefits and learn how to grow your influenced revenue."
@@ -58,6 +80,25 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'manage-purchases',
 						label: __( 'Manage purchase' ),
+					},
+				],
+			},
+			{
+				id: 'prospect-reports',
+				icon: megaphone,
+				title: __( 'Prospect Reports' ),
+				description: __(
+					'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fixes.'
+				),
+				requiresLink: 'generate-prospect-report',
+				actions: [
+					{
+						id: 'generate-prospect-report',
+						label: __( 'Generate a report' ),
+					},
+					{
+						id: 'view-prospect-reports',
+						label: __( 'View reports' ),
 					},
 				],
 			},
@@ -119,7 +160,13 @@ export const ALL_TIERS: TierItem[] = [
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'agency-partner' ], 'USD', { stripZeros: true } )
 		),
 		heading: __( '2 additional benefits unlocked' ),
-		subheading: __( 'Directory inclusion, early access to product & feature improvements' ),
+		subheading: sprintf(
+			/* translators: %d is the number of Prospect Reports an agency can create each month */
+			__(
+				'Directory inclusion, %d Prospect Reports a month, and early access to product & feature improvements'
+			),
+			getReportAllowance( 'agency-partner' )
+		),
 		progressCardDescription: __(
 			"You're making great progress! Keep growing your influenced revenue to unlock Pro Partner benefits."
 		),
@@ -149,6 +196,7 @@ export const ALL_TIERS: TierItem[] = [
 					'Early access to new Automattic products and features (as available), and opportunities to contribute to the product roadmap.'
 				),
 			},
+			prospectReportsAllowanceBenefit( 'agency-partner' ),
 		],
 	},
 	{
@@ -163,7 +211,11 @@ export const ALL_TIERS: TierItem[] = [
 			} )
 		),
 		heading: __( '3 additional benefits unlocked' ),
-		subheading: __( 'Co-Marketing, qualified leads, partner manager & more' ),
+		subheading: sprintf(
+			/* translators: %d is the number of Prospect Reports an agency can create each month */
+			__( 'Co-Marketing, qualified leads, partner manager, %d Prospect Reports a month & more' ),
+			getReportAllowance( 'pro-agency-partner' )
+		),
 		progressCardDescription: __(
 			"Congratulations! You've unlocked all Pro Partner benefits including Co-Marketing opportunities and your dedicated partner manager."
 		),
@@ -196,6 +248,7 @@ export const ALL_TIERS: TierItem[] = [
 					},
 				],
 			},
+			prospectReportsAllowanceBenefit( 'pro-agency-partner' ),
 		],
 	},
 	{
@@ -210,7 +263,11 @@ export const ALL_TIERS: TierItem[] = [
 			} )
 		),
 		heading: __( '2 additional benefits unlocked' ),
-		subheading: __( 'Higher VIP referral commissions, annual credits' ),
+		subheading: sprintf(
+			/* translators: %d is the number of Prospect Reports an agency can create each month */
+			__( 'Higher VIP referral commissions, annual credits, and %d Prospect Reports a month' ),
+			getReportAllowance( 'vip-pro-agency-partner' )
+		),
 		progressCardDescription: __(
 			"Congratulations! You've unlocked higher VIP referral commissions, and annual credits for WooCommerce and Jetpack extensions."
 		),
@@ -230,6 +287,7 @@ export const ALL_TIERS: TierItem[] = [
 					'WordPress VIP Pro partners receive annual credits toward WooCommerce and Jetpack premium extensions for agency and client sites.'
 				),
 			},
+			prospectReportsAllowanceBenefit( 'vip-pro-agency-partner' ),
 		],
 	},
 	{

@@ -33,8 +33,9 @@
   2. **Playwright with their own account:** the user runs `! node .agents/skills/verify/scripts/auth.cjs me`.
   3. **Claude in Chrome with their own account:** usually already signed in; the user connects it with `/chrome` in Claude Code.
 
-  Describe each option by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command. When the user picks one, show its command and wait until they say it's done before running the script again. Don't set up the test accounts yourself unless running unattended.
+  Describe each option by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command. When the user picks one, show its command and wait until they say it's done before running the script again. Don't set up the test accounts yourself unless running unattended or in a git worktree (below).
 
+- A new git worktree has neither the decrypted secrets nor the `@automattic/calypso-e2e` build, since both are gitignored, so logins fail there once a saved session expires. Run `setup-test-accounts.sh` yourself first, after `yarn install`: without `E2E_SECRETS_KEY`, it copies the decrypted secrets of another checkout (the main one, or another worktree) that has the same encrypted secrets, and asks for no key. If it stops with `No key entered.`, or the login still fails afterwards, offer the options above. Never print the secrets file.
 - Sessions are saved in `~/.local/state/wp-calypso-verify/`. They are live logins: never print, copy or commit them, and never save network recordings (HAR files, traces) of a login.
 
 ## Calypso Live
@@ -52,7 +53,7 @@ node .agents/skills/verify/scripts/browse.cjs 'PASTE_THE_FULL_PR_PREVIEW_URL_HER
 If you're a subagent that can't ask the user, report back to the agent that started you instead of acting on your own. When no one can answer at all (a pipeline or cloud run), don't stop to ask:
 
 - If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build. If it fails with `EADDRINUSE`, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard`. Stop a server you started once your checks are done.
-- If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
+- If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, or you're in a git worktree, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
 - Skip any check that would change something and report it as not done.
@@ -106,6 +107,7 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
   } );
   ```
 
+- **The local Dashboard (`my.localhost`) keeps returning to the wordpress.com “Continue as …” login screen after you sign in** when the browser blocks third-party cookies for the local origin, as incognito windows and automated Chrome profiles do by default. Allow them for the origin, e.g. `http://my.localhost:3000`, or for `https://public-api.wordpress.com` (see `docs/install.md`).
 - **Don't wait for `networkidle`.** The dashboard keeps polling. Wait for a visible element.
 - **Tour popovers** can cover parts of a screenshot. Dismiss them in `--eval` if they get in the way.
 - **Sandboxes.** Headless Chromium can reach production even when `/etc/hosts` points at a sandbox. Responses from the edge have an `x-ac` header; sandbox responses don't. To reach the sandbox, start the `--eval` with:
@@ -122,5 +124,5 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
 When you drive a browser yourself (Claude in Chrome, Playwright MCP, an automated Chrome profile), sign in by hand:
 
 - Sign in on `wordpress.com/log-in`, then open `calypso.localhost:<port>/read?flags=oauth` once, with the port the dev server printed when it started (3000 in the main checkout). Signing in on the calypso.localhost form doesn't stick: the cookie is refused as cross-site.
-- An automated Chrome profile blocks third-party cookies by default; allow them (see `docs/install.md`).
+- An automated Chrome profile or an incognito window blocks third-party cookies by default; allow them, or the login loops (see [Gotchas](#gotchas)).
 - Playwright MCP's browser starts logged out, so it doesn't help when `browse.cjs` can't log in.
