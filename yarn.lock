@@ -507,11 +507,14 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/url": "npm:^4.48.0"
     he: "npm:^1.2.0"
+    jsdom: "npm:^20.0.3"
     qs: "npm:^6.17.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
 
