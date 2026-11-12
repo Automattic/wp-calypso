@@ -9,7 +9,9 @@ import {
 	domainQuery,
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
+	queryClient,
 	userPurchaseSetAutoRenewQuery,
+	userPurchasesQuery,
 	siteDifmWebsiteContentQuery,
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
@@ -37,6 +39,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
@@ -49,6 +52,7 @@ import {
 	info,
 	check,
 } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -1107,7 +1111,14 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
-	} = useMutation( userPurchaseSetAutoRenewQuery() );
+		variables: pendingAutoRenew,
+	} = useMutation( {
+		...userPurchaseSetAutoRenewQuery(),
+		// Stay pending until the purchase is refetched, so the toggle doesn't flip back to
+		// its old state in between.
+		onSuccess: () => queryClient.invalidateQueries( userPurchasesQuery() ),
+	} );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
@@ -1123,6 +1134,10 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	const formData =
+		isMutationPending && pendingAutoRenew
+			? { ...purchase, is_auto_renew_enabled: pendingAutoRenew.autoRenew }
+			: purchase;
 	const fields = getFields( { isMutationPending, user, purchase } );
 	if ( fields.length === 0 && ! error ) {
 		return null;
@@ -1131,7 +1146,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		<Card>
 			<CardBody>
 				<DataForm< Purchase >
-					data={ purchase }
+					data={ formData }
 					fields={ fields }
 					form={ form }
 					onChange={ ( newData ) => {
@@ -1144,7 +1159,18 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 								} );
 								return;
 							}
-							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
+							setAutoRenew(
+								{ purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled },
+								{
+									onSuccess: ( _data, { autoRenew } ) =>
+										createSuccessNotice(
+											autoRenew
+												? __( 'Auto-renew has been enabled.' )
+												: __( 'Auto-renew has been disabled.' ),
+											{ type: 'snackbar' }
+										),
+								}
+							);
 						}
 					} }
 				/>
