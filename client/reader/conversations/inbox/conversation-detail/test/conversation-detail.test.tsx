@@ -219,6 +219,10 @@ describe( 'ConversationDetail', () => {
 
 			expect( isRebloggable( commentsPost(), true ) ).toBe( canReblog );
 			expect( screen.getByRole( 'feed', { name: /^3 comments/ } ) ).toBeVisible();
+			expect( screen.queryByText( 'This post can’t be loaded.' ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'link', { name: /Open it on the site/ } )
+			).not.toBeInTheDocument();
 		}
 	} );
 
@@ -245,6 +249,11 @@ describe( 'ConversationDetail', () => {
 		expect( container.querySelector( '.components-spinner' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'heading', { name: 'A post title' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'feed' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'This post can’t be loaded.' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /Open it on the site/ } ) ).toHaveAttribute(
+			'href',
+			conversation.url
+		);
 	} );
 
 	it( 'disables the previous and next buttons when there is nowhere to go', () => {

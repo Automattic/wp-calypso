@@ -285,7 +285,7 @@ export function ConversationDetail( {
 						</Notice>
 					) }
 					{ isLoading && ! post && <ConversationContentPlaceholder /> }
-					{ isPostError && (
+					{ isPostError && ! listDetails && (
 						<Text as="p" color="var(--color-text-subtle)">
 							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
 							{ conversation?.url && (
