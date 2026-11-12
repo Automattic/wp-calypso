@@ -25338,7 +25338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moo-color@npm:^1.0.2":
+"moo-color@npm:^1.0.2, moo-color@npm:^1.0.3":
   version: 1.0.3
   resolution: "moo-color@npm:1.0.3"
   dependencies:
@@ -32608,6 +32608,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vitest-canvas-mock@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "vitest-canvas-mock@npm:1.2.0"
+  dependencies:
+    cssfontparser: "npm:^1.2.1"
+    moo-color: "npm:^1.0.3"
+  peerDependencies:
+    vitest: ^3.0.0 || ^4.0.0 || ^5.0.0
+  checksum: 7721130ce09df23c2d727391fb3454cf0c44979c06503863563e88806c1c064eeaff0461c0ca1d53741a82fec5e71fba92cba7aa877d918fcbc6d2d7e044285f
+  languageName: node
+  linkType: hard
+
 "vitest@npm:^5.1.0":
   version: 5.1.0
   resolution: "vitest@npm:5.1.0"
@@ -33306,6 +33318,7 @@ __metadata:
     typescript: "npm:6.0.3"
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
+    vitest-canvas-mock: "npm:^1.2.0"
     webpack: "npm:^5.111.1"
     webpack-bundle-analyzer: "npm:^5.4.0"
     webpack-cli: "npm:^7.2.3"
