@@ -192,8 +192,8 @@ function watch( page ) {
 }
 
 async function mainContent( page ) {
-	const main = page.locator( 'main' ).first();
-	return ( await main.count() ) ? main : page.locator( 'body' );
+	const mainElement = page.locator( 'main' ).first();
+	return ( await mainElement.count() ) ? mainElement : page.locator( 'body' );
 }
 
 /**
@@ -401,13 +401,13 @@ async function takeScreenshot( page, file, { selector, fullPage = false, arrow }
 				box.right = Math.max( box.right, drawing.right );
 				box.bottom = Math.max( box.bottom, drawing.bottom );
 			}
-			const clip = {
+			const area = {
 				x: box.left,
 				y: box.top,
 				width: box.right - box.left,
 				height: box.bottom - box.top,
 			};
-			await page.screenshot( { ...settings, fullPage: true, clip } );
+			await page.screenshot( { ...settings, fullPage: true, clip: area } );
 		} else {
 			await page.screenshot( { ...settings, fullPage } );
 		}

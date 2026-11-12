@@ -38,19 +38,9 @@ proxy( { path: '/me' }, function ( err, body, headers ) {
 
 ## Running tests
 
-Compile and `watch` client-test application
-
 ```sh
-make watch-test-app
+yarn test-packages packages/wpcom-proxy-request
 ```
-
-Run server
-
-```sh
-make run-test-app
-```
-
-Open a tab pointing to `http://calypso.localhost:3001/`
 
 ## License
 

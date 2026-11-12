@@ -1,7 +1,10 @@
 import React from 'react';
 import type { IconListItemProps, IconListProps, ItemLayout } from '../icon-list/types';
 
-export interface ActionItemProps extends Omit< IconListItemProps, 'suffix' | 'density' > {
+export interface ActionItemProps extends Omit<
+	IconListItemProps,
+	'suffix' | 'density' | 'suffixSpacing'
+> {
 	/**
 	 * Renders a button that invokes the related action.
 	 */

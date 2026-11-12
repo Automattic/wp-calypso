@@ -1,27 +1,28 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ShareReelAction } from './index';
 
-const mockUseReelShare = jest.fn();
-const mockUseGenericShare = jest.fn();
-const mockDialogProps = jest.fn();
+const mockUseReelShare = vi.fn();
+const mockUseGenericShare = vi.fn();
+const mockDialogProps = vi.fn();
 
-jest.mock( '../../../hooks/use-reel-share', () => ( {
+vi.mock( '../../../hooks/use-reel-share', () => ( {
 	useReelShare: ( ...args: unknown[] ) => mockUseReelShare( ...args ),
 } ) );
 
-jest.mock( '../../../hooks/use-generic-share', () => ( {
+vi.mock( '../../../hooks/use-generic-share', () => ( {
 	useGenericShare: ( ...args: unknown[] ) => mockUseGenericShare( ...args ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/icons', () => ( {
 	share: 'share-icon',
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( props: Record< string, unknown > ) => {
 		const { icon, label, variant, isBusy, showTooltip, ...rest } = props;
 		// Strip wp-Button-only props so the rest spread to <button> is clean.
@@ -36,14 +37,14 @@ jest.mock( '@wordpress/components', () => ( {
 	},
 } ) );
 
-jest.mock( '../../reel-share-confirmation-dialog', () => ( {
+vi.mock( '../../reel-share-confirmation-dialog', () => ( {
 	ReelShareConfirmationDialog: ( props: Record< string, unknown > ) => {
 		mockDialogProps( props );
 		return props.isOpen ? <div role="dialog" /> : null;
 	},
 } ) );
 
-jest.mock( 'social-logos', () => ( {
+vi.mock( 'social-logos', () => ( {
 	SocialLogo: ( { icon, size }: { icon: string; size: number } ) => (
 		<span data-testid="social-logo" data-icon={ icon } data-size={ size } />
 	),
@@ -54,20 +55,20 @@ const visibleReel = {
 	isSharing: false,
 	isConfirming: false,
 	igDisplayName: null as string | null,
-	requestShare: jest.fn(),
-	confirmShare: jest.fn(),
-	cancelShare: jest.fn(),
+	requestShare: vi.fn(),
+	confirmShare: vi.fn(),
+	cancelShare: vi.fn(),
 };
 
 const visibleGeneric = {
 	isVisible: true,
 	isSharing: false,
-	handleShare: jest.fn(),
+	handleShare: vi.fn(),
 };
 
 describe( '<ShareReelAction />', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseReelShare.mockReturnValue( { ...visibleReel } );
 		mockUseGenericShare.mockReturnValue( { ...visibleGeneric } );
 	} );
@@ -127,8 +128,8 @@ describe( '<ShareReelAction />', () => {
 	} );
 
 	it( 'invokes requestShare on IG click (does not dispatch yet)', () => {
-		const requestShare = jest.fn();
-		const confirmShare = jest.fn();
+		const requestShare = vi.fn();
+		const confirmShare = vi.fn();
 		mockUseReelShare.mockReturnValue( { ...visibleReel, requestShare, confirmShare } );
 
 		render( <ShareReelAction /> );
@@ -138,7 +139,7 @@ describe( '<ShareReelAction />', () => {
 	} );
 
 	it( 'invokes generic handleShare on share-icon click', () => {
-		const handleShare = jest.fn();
+		const handleShare = vi.fn();
 		mockUseGenericShare.mockReturnValue( { ...visibleGeneric, handleShare } );
 
 		render( <ShareReelAction /> );
@@ -148,8 +149,8 @@ describe( '<ShareReelAction />', () => {
 
 	describe( 'confirmation dialog wiring', () => {
 		it( 'passes through reel state and handlers as props', () => {
-			const confirmShare = jest.fn();
-			const cancelShare = jest.fn();
+			const confirmShare = vi.fn();
+			const cancelShare = vi.fn();
 			mockUseReelShare.mockReturnValue( {
 				...visibleReel,
 				isConfirming: true,

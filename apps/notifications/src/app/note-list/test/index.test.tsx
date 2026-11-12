@@ -171,7 +171,7 @@ describe( 'NoteList loading state', () => {
 
 	// Reading a note in-app must drop the row's unread indicator right away,
 	// before any server refetch flips the note's raw `read` flag. The indicator
-	// is the `is-unread` icon badge rendered for each unread row.
+	// is the `is-unread` class on each unread row's subject.
 	it( 'drops the unread styling from a row the moment its note is read', () => {
 		const store = initStore();
 		store.dispatch( actions.notes.addNotes( [ makeNote( 950, 'Read me' ) ] ) );

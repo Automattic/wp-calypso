@@ -74,6 +74,9 @@ function hasRoutePath( routes: unknown[], path: string ): boolean {
 	);
 }
 
+// The notifications screen is a lazy route, so load it up front for the tests that navigate there.
+beforeAll( () => import( '../../../me/notifications' ) );
+
 beforeEach( () => {
 	mockIsDashboardBackport.mockReturnValue( false );
 	queryClient.clear();
