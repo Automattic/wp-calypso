@@ -27,6 +27,8 @@ import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
+import './style.scss';
+
 function getStorageKey( domainName: string ) {
 	return `dashboard-domain-overview-show-advanced:${ domainName }`;
 }
@@ -228,6 +230,7 @@ export default function DomainOverviewSettings( {
 			<SectionHeader
 				title={ __( 'Settings' ) }
 				level={ 3 }
+				className="domain-overview-section-header"
 				actions={
 					advancedButtonListItems.length > 0 && (
 						<Button
