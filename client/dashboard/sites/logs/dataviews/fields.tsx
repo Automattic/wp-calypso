@@ -12,6 +12,7 @@ import {
 	toRequestTypeIntent,
 	toSeverityIntent,
 } from '../../logs/utils';
+import { LongValue } from '../components/long-value';
 import {
 	VALUES_CACHED,
 	VALUES_RENDERER,
@@ -160,7 +161,7 @@ export function useFields( {
 					enableSorting: false,
 					getValue: ( { item }: { item: PHPLog } ) => item.name,
 					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
-						<span className="site-logs-wrap">{ String( item.name ) }</span>
+						<LongValue value={ String( item.name ) } />
 					),
 					filterBy: { operators: [] as Operator[] },
 				},
@@ -171,7 +172,7 @@ export function useFields( {
 					enableSorting: false,
 					getValue: ( { item }: { item: PHPLog } ) => item.file,
 					render: ( { item }: DataViewRenderFieldProps< PHPLog > ) => (
-						<span className="site-logs-wrap">{ String( item.file ) }</span>
+						<LongValue value={ String( item.file ) } />
 					),
 					filterBy: { operators: [] as Operator[] },
 				},
@@ -231,7 +232,7 @@ export function useFields( {
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.request_url,
 				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
-					<span className="site-logs-wrap">{ String( item.request_url ) }</span>
+					<LongValue value={ String( item.request_url ) } />
 				),
 				filterBy: { operators: [ 'is' as Operator ] },
 			},
@@ -276,7 +277,7 @@ export function useFields( {
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_referer,
 				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
-					<span className="site-logs-wrap">{ String( item.http_referer ) }</span>
+					<LongValue value={ String( item.http_referer ) } />
 				),
 				filterBy: { operators: [] as Operator[] },
 			},
@@ -295,7 +296,7 @@ export function useFields( {
 				enableSorting: false,
 				getValue: ( { item }: { item: ServerLog } ) => item.http_user_agent,
 				render: ( { item }: DataViewRenderFieldProps< ServerLog > ) => (
-					<span className="site-logs-wrap">{ String( item.http_user_agent ) }</span>
+					<LongValue value={ String( item.http_user_agent ) } />
 				),
 				filterBy: { operators: [] as Operator[] },
 			},
