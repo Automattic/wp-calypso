@@ -330,6 +330,6 @@ A React Hook that returns an object with the following properties to be used by 
 
 In the root of the monorepo, run `yarn workspace @automattic/composite-checkout run storybook:start` which will start a local webserver that will display the component.
 
-To run the tests for this package, run `yarn test-packages:vitest packages/composite-checkout`.
+To run the tests for this package, run `yarn test-packages packages/composite-checkout`.
 
 **Please don't add anything to this package that is specific to WordPress.com checkout! It is a general purpose toolkit.**

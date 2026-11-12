@@ -70,7 +70,6 @@ yarn test-client                                # Run unit tests for client, exc
 yarn test-dashboard [path]                      # Run Dashboard unit tests (on Vitest)
 yarn test-apps                                  # Run apps unit tests
 yarn test-packages [path]                       # Run packages unit tests on Vitest
-yarn test-packages:vitest [path]                # Run unit tests for packages on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
