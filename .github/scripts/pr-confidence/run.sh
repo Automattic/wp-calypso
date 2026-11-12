@@ -54,7 +54,7 @@ apply_result() {
 		"<details>",
 		"<summary>Details</summary>",
 		"",
-		(.reasons[] | "- " + gsub("@"; "@​")),
+		(.reasons[] | "- " + .),
 		"",
 		"Model said \(.model_level). \($s.lines_changed) lines in \($s.files_changed) files; tests changed: \($s.tests_changed); sensitive: \($s.sensitive_paths | list); shared: \($s.shared_paths | list); failing checks: \($s.failing_checks | list); unresolved [fix here]: \($s.unresolved_fix_here_comments). Scored at \(.sha[0:7]).",
 		"",

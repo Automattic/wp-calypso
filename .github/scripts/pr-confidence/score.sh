@@ -70,12 +70,13 @@ jq -c \
 	--arg sha "$(jq -r .headRefOid <<<"$PR_JSON")" \
 	--argjson signals "$SIGNALS" '
 	def rank: {"Low": 0, "Medium": 1, "High": 2}[.];
+	def clean: gsub("[<>\\[\\]()!`*_~|#\\\\]"; "") | gsub("@"; "@\u200b") | gsub("://"; ":\u200b//") | gsub("(?<w>www)\\."; "\(.w)\u200b.");
 	.structured_output as $out
 	| [
 		(if $signals.unresolved_fix_here_comments > 0 then {level: "Low", reason: "unresolved [fix here] review comment", always: true} else empty end),
-		(if ($signals.sensitive_paths | length) > 0 then {level: "Medium", reason: "touches sensitive paths (\($signals.sensitive_paths[0]))"} else empty end),
-		(if ($signals.shared_paths | length) > 0 then {level: "Medium", reason: "touches shared code (\($signals.shared_paths[0]))"} else empty end),
-		(if $signals.lines_changed > 1000 then {level: "Medium", reason: "large diff (\($signals.lines_changed) lines)"} else empty end)
+		(if ($signals.sensitive_paths | length) > 0 then {level: "Medium", reason: "touches sensitive paths: \($signals.sensitive_paths[0])"} else empty end),
+		(if ($signals.shared_paths | length) > 0 then {level: "Medium", reason: "touches shared code: \($signals.shared_paths[0])"} else empty end),
+		(if $signals.lines_changed > 1000 then {level: "Medium", reason: "large diff, \($signals.lines_changed) lines"} else empty end)
 	] as $caps
 	| ([$out.level] + [$caps[].level] | min_by(rank)) as $level
 	| {
@@ -83,7 +84,7 @@ jq -c \
 		sha: $sha,
 		level: $level,
 		model_level: $out.level,
-		reasons: ([$caps[] | select(.always or ((.level | rank) < ($out.level | rank))) | .reason] + $out.reasons | .[0:3]),
-		signals: $signals,
+		reasons: ([$caps[] | select(.always or ((.level | rank) < ($out.level | rank))) | .reason] + $out.reasons | .[0:3] | map(clean)),
+		signals: ($signals | .sensitive_paths |= map(clean) | .shared_paths |= map(clean) | .failing_checks |= map(clean)),
 		cost_usd: (.total_cost_usd // 0)
 	}' <<<"$RESULT"
