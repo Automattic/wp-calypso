@@ -192,10 +192,34 @@ describe( 'StaticSiteImportCard', () => {
 		).toHaveTextContent( /^Building your WordPress site$/ );
 	} );
 
-	test( 'keeps the number of pages found once the server stops reporting progress', () => {
+	test( 'says how many pages were found so far while the capture is still finding them', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', finding_pages: true, source: { pages_found: 9 } },
+		} );
+
+		expect( current ).toHaveTextContent( 'Finding your pages' );
+		expect( current ).toHaveTextContent( '9 pages found so far' );
+	} );
+
+	test( 'drops “so far” once the capture settles on its total', () => {
+		currentStepOf( 'capturing', {
+			progress: {
+				phase: 'capturing',
+				pages_captured: 0,
+				pages_total: 12,
+				source: { pages_found: 9 },
+			},
+		} );
+
+		const found = screen.getAllByRole( 'listitem' )[ 0 ];
+		expect( found ).toHaveTextContent( '12 pages found' );
+		expect( found ).not.toHaveTextContent( 'so far' );
+	} );
+
+	test( 'shows no page count it can’t back once the server stops reporting progress', () => {
 		currentStepOf( 'queued', { preview_summary: { pages: 15 } } );
 
-		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '15 pages found' );
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( /^Finding your pages$/ );
 	} );
 
 	test( 'moves the checklist forward when the session moves on', () => {

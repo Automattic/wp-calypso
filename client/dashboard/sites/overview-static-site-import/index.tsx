@@ -114,20 +114,26 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	const progress = session?.progress;
 	const current = getCurrentStep( session );
 	const pagesTotal = progress?.pages_total;
-	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
-	// The server stops reporting progress once the build is done; the built site's count takes over.
-	const pagesFound = pagesTotal ?? summary?.pages;
+	// Until the capture settles on its total, the inspection's count is all that's known.
+	const pagesFoundSoFar = progress?.source?.pages_found;
+	let pagesFoundDetail = '';
+	if ( pagesTotal ) {
+		pagesFoundDetail = sprintf(
+			/* translators: %s: formatted number of pages found on the site being moved. */
+			_n( '%s page found', '%s pages found', pagesTotal ),
+			formatNumber( pagesTotal )
+		);
+	} else if ( pagesFoundSoFar ) {
+		pagesFoundDetail = sprintf(
+			/* translators: %s: formatted number of pages found so far on the site being moved; more may follow. */
+			_n( '%s page found so far', '%s pages found so far', pagesFoundSoFar ),
+			formatNumber( pagesFoundSoFar )
+		);
+	}
 	const items = [
 		{
 			label: __( 'Finding your pages' ),
-			detail:
-				current > 0 && pagesFound
-					? sprintf(
-							/* translators: %s: formatted number of pages found on the site being moved. */
-							_n( '%s page found', '%s pages found', pagesFound ),
-							formatNumber( pagesFound )
-						)
-					: '',
+			detail: pagesFoundDetail,
 		},
 		{
 			label: __( 'Copying your pages' ),
