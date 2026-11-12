@@ -1077,7 +1077,6 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
-		hideFreeDomainBadge: isDomainMove,
 	} );
 
 	const gridPlansForComparisonGrid = useMemo(
