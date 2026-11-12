@@ -5,7 +5,7 @@
 ## Choosing where to test
 
 - **[Calypso Live](#calypso-live)** for final signed-in checks, when a PR is open or you were asked to open one. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built, before marking it ready. Drafts from branches in this repository get previews, which verify the intended commit without sharing a local dev server across worktrees.
-- **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. A dev server takes roughly 9 GB of memory while it builds and 2 to 6 GB after, so stop one you no longer need.
+- **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. A dev server takes 4 to 9 GB of memory while it builds, more on a machine with more cores, and 2 to 6 GB after, so stop one you no longer need.
 
 ## Accounts
 
