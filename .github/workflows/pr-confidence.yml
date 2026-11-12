@@ -28,7 +28,8 @@ permissions:
 jobs:
   score:
     if: |
-      github.repository_owner == 'Automattic' && (
+      github.repository_owner == 'Automattic' &&
+      (github.event_name == 'workflow_dispatch' || vars.PR_CONFIDENCE_ENABLED == 'true') && (
         github.event_name != 'pull_request' || (
           github.event.pull_request.draft == false &&
           github.event.pull_request.head.repo.full_name == github.repository
