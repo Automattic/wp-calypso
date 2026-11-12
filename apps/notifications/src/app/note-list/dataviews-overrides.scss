@@ -5,24 +5,16 @@
 // Base DataViews styles, so the app is self-contained in any host.
 @import '@wordpress/dataviews/build-style/style.css';
 
+// The light tint and its hover step, on the dark surface, where hover lightens
+// instead. The left bar stays the open row's, as in light mode.
 @mixin dark-unread-note-list-item {
-	div[role="article"]:has(.is-unread),
-	div[role="article"]:has(.is-unread):focus-within {
-		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 10%, var(--color-surface));
-			box-shadow: inset 3px 0 0
-				color-mix(in srgb, var(--wp-admin-theme-color) 72%, transparent);
-		}
-	}
+	div[role="article"]:has(.wpnc__subject.is-unread) {
+		--wpnc-unread-tint: color-mix(in srgb, var(--wp-admin-theme-color) 10%, var(--color-surface));
+		--wpds-color-background-interactive-neutral-weak-active: oklch(from var(--wpnc-unread-tint) calc(l + 0.025) calc(c * 1.35) h);
+		background-color: var(--wpnc-unread-tint);
 
-	div[role="article"]:has(.is-unread) + div[role="article"]:has(.is-unread) {
-		border-top-color: rgba(var(--wp-admin-theme-color--rgb), 0.22);
-	}
-
-	div[role="article"]:where(.is-hovered):has(.is-unread),
-	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
-		.dataviews-view-list__item-wrapper {
-			background-color: color-mix(in srgb, var(--wp-admin-theme-color) 16%, var(--color-surface));
+		&:is(:hover, .is-hovered, :focus-within, :has(.wpnc__subject.is-active)) {
+			background-color: var(--wpds-color-background-interactive-neutral-weak-active);
 		}
 	}
 }
@@ -40,15 +32,20 @@
 .wpnc__note-list .dataviews-view-list__group-header {
 	margin: 0;
 	padding: $grid-unit-10 $grid-unit-20;
-	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+	border-top: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
 	// Shrink the default 15px heading-sized label, keeping core weight and color.
 	font-size: var(--wpds-typography-font-size-sm, 13px);
 }
 
-// Persistent divider under the tabs, even on non-grouped views. The wrapper
-// draws it; the first group header drops its border so they don't stack.
-.wpnc__note-list > .dataviews-wrapper {
-	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak, #e4e4e4);
+// Persistent divider under the tabs, drawn by the list container so it's there
+// while a tab loads too; the first group header drops its border so they don't
+// stack. The dark text override below sits inside the list, so set it here too.
+.wpnc__note-list {
+	border-top: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+
+	@include ui-mixins.when-dark-theme {
+		--wpds-color-foreground-content-neutral: #f0f0f0;
+	}
 }
 
 .wpnc__note-list
@@ -59,12 +56,26 @@
 	border-top: 0;
 }
 
+// Nothing follows the final row to draw its line, so it closes itself.
+.wpnc__note-list .dataviews-view-list__group > .dataviews-view-list > :last-child > div[role="article"]:last-child {
+	margin-block-end: 0;
+	border-block-end-color: color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+}
+
 .wpnc__note-list .dataviews-view-list {
-	// When displaying fields in the DataViews, using the --wp-admin-theme-color color on hover is overwhelming.
-	// We override the hover color with the text color.
+	// DataViews paints the row hover with this token. Keep it neutral so blue only means unread.
+	--wpds-color-background-interactive-neutral-weak-active: color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 2%, transparent);
+
+	// One shared line between rows: each row's background reaches under its
+	// neighbour's top border, so a hovered or unread row tints both of its edges.
 	div[role="article"] {
+		margin-block-end: -1px;
+		border-block: 1px solid transparent;
+		border-block-start-color: color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+		transition: background-color var(--wpds-motion-duration-sm, 100ms) var(--wpds-motion-easing-balanced, ease);
+
 		.dataviews-view-list__item-wrapper {
-			padding: $grid-unit-15 $grid-unit-20;
+			padding: 14px $grid-unit-20 $grid-unit-20;
 
 			.dataviews-view-list__fields {
 				color: $gray-700;
@@ -80,12 +91,19 @@
 		line-height: var(--wpds-typography-line-height-sm, 20px);
 	}
 
-	.dataviews-view-list__title-field {
-		font-size: 14px;
+	// Let the Pending badge's outside outline show past the cell's edges.
+	.dataviews-view-list__title-field:has(.wpnc__pending-badge) {
+		overflow: clip;
+		overflow-clip-margin: 1px;
 	}
 
-	// Center short text in the column's two-line min-height.
+	// Tighten the title-to-excerpt gap and center short text in a two-line
+	// min-height (20px + 2px + 18px) rather than DataViews' 48px, so the title
+	// starts at the top of every multi-line row. DataViews sets the gap inline,
+	// hence `!important`.
 	.dataviews-view-list__field-wrapper {
+		min-height: 40px;
+		gap: calc(var(--wpds-dimension-base, 4px) / 2) !important;
 		justify-content: center;
 	}
 
@@ -96,25 +114,16 @@
 		display: none;
 	}
 
-	// We override styles with the selected styles for unread items.
-	div[role="article"]:has(.is-unread),
-	div[role="article"]:has(.is-unread):focus-within {
-		.dataviews-view-list__item-wrapper {
-			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.1);
-		}
-	}
+	// Unread tint, mixed in OKLCH so the pale blue stays clean rather than gray.
+	// It's opaque, so hover and the open row step its lightness down instead, with
+	// a little more chroma to keep the same blue.
+	div[role="article"]:has(.wpnc__subject.is-unread) {
+		--wpnc-unread-tint: color-mix(in oklch, var(--wp-admin-theme-color) 5%, var(--wpds-color-background-surface-neutral-strong, #fff));
+		--wpds-color-background-interactive-neutral-weak-active: oklch(from var(--wpnc-unread-tint) calc(l - 0.015) calc(c * 1.35) h);
+		background-color: var(--wpnc-unread-tint);
 
-	div[role="article"]:has(.is-unread),
-	div[role="article"]:has(.is-unread) + div[role="article"],
-	> div:has(> div[role="article"]:last-child .is-unread) + div > .dataviews-view-list__group-header {
-		border-top-color: rgba(var(--wp-admin-theme-color--rgb), 0.18);
-	}
-
-	// We override hover styles for unread items.
-	div[role="article"]:where(.is-hovered):has(.is-unread),
-	div[role="article"]:where(.is-hovered):has(.is-unread):focus-within {
-		.dataviews-view-list__item-wrapper {
-			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.1);
+		&:is(:hover, .is-hovered, :focus-within) {
+			background-color: var(--wpds-color-background-interactive-neutral-weak-active);
 		}
 	}
 
@@ -123,23 +132,10 @@
 		// by our own `is-active` marker (see getFields), not DataViews selection, so
 		// the unread tint still shows through on a selected unread row.
 		div[role="article"]:has(.wpnc__subject.is-active) {
+			background-color: var(--wpds-color-background-interactive-neutral-weak-active);
+
 			.dataviews-view-list__item-wrapper {
 				box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
-			}
-		}
-
-		// Unread rows keep their tint when open.
-		div[role="article"]:has(.wpnc__subject.is-active):not(:has(.is-unread)) {
-			.dataviews-view-list__item-wrapper {
-				background-color: var(--wpds-color-background-surface-neutral, #fcfcfc);
-			}
-		}
-
-		// A pending comment keeps its warning color when open, so the bar matches its
-		// icon badge and its Pending badge rather than switching to the theme accent.
-		div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
-			.dataviews-view-list__item-wrapper {
-				box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
 			}
 		}
 	}
@@ -152,8 +148,10 @@
 		// it at a light foreground for dark mode.
 		--wpds-color-foreground-content-neutral: #f0f0f0;
 
-		div[role="article"]:has(.wpnc__subject.is-active):not(:has(.is-unread)) .dataviews-view-list__item-wrapper {
-			background-color: var(--color-surface);
+		// The global dark theme paints DataViews rows a solid gray line, heavier than
+		// the headers' and too dark on the unread tint, so keep the shared 8% line.
+		div[role="article"] {
+			border-block-start-color: color-mix(in srgb, var(--wpds-color-foreground-content-neutral) 8%, transparent);
 		}
 
 		// $gray-700 (#757575) is a light-mode literal — it fails WCAG AA on the
@@ -162,6 +160,10 @@
 		div[role="article"] .dataviews-view-list__item-wrapper .dataviews-view-list__fields {
 			color: #c2c5cc;
 		}
+
+		.wpnc__excerpt {
+			--wpnc-excerpt-color: #c2c5cc;
+		}
 	}
 
 	// We override the media field
@@ -169,11 +171,12 @@
 		width: 36px;
 		height: 36px;
 		margin-inline-end: $grid-unit-05;
-		// Half the difference between the text column's 48px min-height and the
-		// icon, so it centers on short rows and stays by the first line on tall ones.
-		margin-block-start: calc(var(--wpds-dimension-base, 4px) * 1.5);
+		// Half the difference between the text column's 40px min-height and the
+		// avatar, so it sits the same distance from the title on every row.
+		margin-block-start: 2px;
 		border-radius: 50%;
 		overflow: visible;
+		background-color: transparent;
 
 		&::after {
 			display: none;

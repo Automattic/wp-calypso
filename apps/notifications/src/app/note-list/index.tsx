@@ -149,8 +149,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// does would otherwise follow the account into it.
 	const storedLayoutStyle = useSelector( getLayoutStyle );
 	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'detailed';
-	const showBadge = isAllTab || filterName === 'unread';
-	const fields = useMemo( () => getFields( layoutStyle, showBadge ), [ layoutStyle, showBadge ] );
+	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
 
 	const { data, paginationInfo } = filterSortAndPaginate( visibleNotes, view, fields );
 
