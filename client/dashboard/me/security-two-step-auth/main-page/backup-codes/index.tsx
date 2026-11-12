@@ -26,7 +26,7 @@ export default function BackupCodes() {
 	const isBackupCodesPrinted = userSettings.two_step_backup_codes_printed;
 	const [ showGenerateDialog, setShowGenerateDialog ] = useState( false );
 
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 
 	const title = __( 'Backup codes' );
 	const description = __(
@@ -78,6 +78,11 @@ export default function BackupCodes() {
 									placeholder: '12345678',
 								} }
 								actionType="create-backup-receipt"
+								onSuccess={ () => {
+									createSuccessNotice( __( 'Backup codes verified.' ), {
+										type: 'snackbar',
+									} );
+								} }
 								onError={ () => {
 									createErrorNotice( __( 'Failed to verify backup codes.' ), {
 										type: 'snackbar',
