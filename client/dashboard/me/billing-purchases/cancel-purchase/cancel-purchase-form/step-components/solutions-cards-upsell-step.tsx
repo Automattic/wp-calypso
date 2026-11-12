@@ -14,6 +14,7 @@ import {
 	brush,
 	calendar,
 	comment,
+	commentAuthorAvatar,
 	commentContent,
 	globe,
 	people,
@@ -40,6 +41,7 @@ import { getFreeMonthOfferText, getFreeMonthOfferTitle } from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
+const BOOK_EXPERT_SESSION_URL = 'https://savvycal.com/CustomerExperience/WordPress-Onboarding';
 const RENEW_COUPON = 'CANRENEW25OFF';
 
 const CARD_ICONS: Record< string, IconType > = {
@@ -57,6 +59,7 @@ const CARD_ICONS: Record< string, IconType > = {
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
 	'explore-domain-options': search,
+	'book-expert-session': commentAuthorAvatar,
 	'free-month-offer': calendar,
 };
 
@@ -112,6 +115,9 @@ function getCardHref(
 	if ( cardId === 'find-guides' ) {
 		return SUPPORT_GUIDES_URL;
 	}
+	if ( cardId === 'book-expert-session' ) {
+		return BOOK_EXPERT_SESSION_URL;
+	}
 	if ( cardId === 'make-site-faster' ) {
 		return SITE_SPEED_URL;
 	}
@@ -148,6 +154,7 @@ function getCardOnClick(
 		'use-migration-tools',
 		'use-domain-guide',
 		'explore-domain-options',
+		'book-expert-session',
 	];
 	if ( navCardIds.includes( cardId ) ) {
 		return ( e: React.MouseEvent ) => {
@@ -183,6 +190,8 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Change your plan' );
 		case 'find-guides':
 			return __( 'Find easy step-by-step guides' );
+		case 'book-expert-session':
+			return __( 'Book a 1:1 session' );
 		case 'make-site-faster':
 			return __( 'Make your site faster' );
 		case 'use-migration-tools':
@@ -221,6 +230,8 @@ function getCardDescription( cardId: string, planName: string ): string {
 			return __( 'Unlock premium themes on another plan.' );
 		case 'find-guides':
 			return __( 'Browse our guides and get back on track quickly.' );
+		case 'book-expert-session':
+			return __( 'Get hands-on help from a WordPress.com expert.' );
 		case 'make-site-faster':
 			return __( 'Run our free speed test and get personalized recommendations.' );
 		case 'use-migration-tools':
@@ -380,6 +391,9 @@ export default function SolutionsCardsUpsellStep( {
 			case 'find-guides':
 				window.open( SUPPORT_GUIDES_URL, '_blank' );
 				break;
+			case 'book-expert-session':
+				window.open( BOOK_EXPERT_SESSION_URL, '_blank' );
+				break;
 			case 'make-site-faster':
 				window.open( SITE_SPEED_URL, '_blank' );
 				break;
@@ -439,6 +453,7 @@ export default function SolutionsCardsUpsellStep( {
 						card.id === 'use-migration-tools' ||
 						card.id === 'use-domain-guide' ||
 						card.id === 'explore-domain-options' ||
+						card.id === 'book-expert-session' ||
 						card.id === 'free-month-offer'
 					);
 					const href = getCardHref(

@@ -100,6 +100,12 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			365,
 			'change-plan,find-guides,ask-ai-assistant,speak-with-support',
 		],
+		[
+			'complicatedDashboard',
+			'business-bundle',
+			365,
+			'book-expert-session,built-by,ask-ai-assistant,speak-with-support',
+		],
 	] )(
 		'fires view event on mount with visible card IDs %s %s',
 		( cancellationReason, productSlug, billPeriodDays, solutionIds ) => {
@@ -298,5 +304,90 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		expect(
 			await screen.findByRole( 'link', { name: /Switch to a different plan/ } )
 		).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
+	} );
+
+	test( 'shows the 1:1 session card after the free month card', async () => {
+		const recordEvent = vi.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooMuchTimeToLearn"
+				purchase={ { ...purchase, bill_period_days: 31 } as Purchase }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
+				recordEvent={ recordEvent }
+				showFreeMonthOffer
+			/>
+		);
+
+		const list = await screen.findByRole( 'list', {
+			name: 'Before canceling, you can consider these options:',
+		} );
+		const items = within( list ).getAllByRole( 'listitem' );
+		expect(
+			within( items[ 1 ] ).getByRole( 'link', { name: /Book a 1:1 session/ } )
+		).toBeVisible();
+		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+			solution_ids:
+				'free-month-offer,book-expert-session,built-by,ask-ai-assistant,speak-with-support',
+			cancellation_reason: 'tooMuchTimeToLearn',
+		} );
+	} );
+
+	test( 'the 1:1 session card opens the booking page in a new tab and records the click', async () => {
+		const user = userEvent.setup();
+		const recordEvent = vi.fn();
+		const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="inadequateOnboarding"
+					purchase={ purchase }
+					closeDialog={ vi.fn() }
+					onDeclineUpsell={ vi.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
+
+			const link = await screen.findByRole( 'link', { name: /^Book a 1:1 session/ } );
+			expect(
+				within( link ).getByText( 'Get hands-on help from a WordPress.com expert.' )
+			).toBeVisible();
+			expect( link ).toHaveAttribute(
+				'href',
+				'https://savvycal.com/CustomerExperience/WordPress-Onboarding'
+			);
+
+			const windowClick = vi.fn( ( event: MouseEvent ) => event.defaultPrevented );
+			window.addEventListener( 'click', windowClick, { once: true } );
+			await user.click( link );
+
+			expect( open ).toHaveBeenCalledWith(
+				'https://savvycal.com/CustomerExperience/WordPress-Onboarding',
+				'_blank'
+			);
+			// This tab stays on the cancel flow.
+			expect( windowClick ).toHaveReturnedWith( true );
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+				solution_id: 'book-expert-session',
+				cancellation_reason: 'inadequateOnboarding',
+			} );
+		} finally {
+			open.mockRestore();
+		}
+	} );
+
+	test( 'leaves out the 1:1 session card for "Something else related to too hard to use"', () => {
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="otherTooHardToUse"
+				purchase={ purchase }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
+			/>
+		);
+
+		expect( screen.queryByRole( 'link', { name: /Book a 1:1 session/ } ) ).not.toBeInTheDocument();
 	} );
 } );
