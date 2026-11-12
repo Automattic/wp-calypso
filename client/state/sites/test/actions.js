@@ -45,7 +45,7 @@ describe( 'actions', () => {
 					type: NOTICE_CREATE,
 					notice: expect.objectContaining( {
 						status: 'is-error',
-						text: 'Could not leave the site. Please try again.',
+						text: 'Failed to leave the site. Please try again.',
 					} ),
 				} )
 			);

@@ -11,7 +11,7 @@ describe( 'deleteSiteUser', () => {
 			.reply( 200, { success: false } );
 
 		await expect( deleteSiteUser( 99, 12 ) ).rejects.toThrow(
-			'Could not leave the site. Please try again.'
+			'Failed to leave the site. Please try again.'
 		);
 	} );
 } );
