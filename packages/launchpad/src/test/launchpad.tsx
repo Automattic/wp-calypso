@@ -4,15 +4,12 @@ import userEvent from '@testing-library/user-event';
 import React, { ComponentProps } from 'react';
 import { vi } from 'vitest';
 import LaunchpadInternal from '../launchpad-internal';
-import '@testing-library/jest-dom';
 import type { Task } from '../types';
 
 vi.mock( '@automattic/calypso-analytics' );
 
-vi.mock( '../use-launchpad', () => {
-	// jest.mock factories are hoisted above imports, so the fixture has to be required here.
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const { buildTask } = require( './lib/fixtures' );
+vi.mock( '../use-launchpad', async () => {
+	const { buildTask } = await import( './lib/fixtures' );
 	return {
 		useLaunchpad: vi.fn( () => {
 			return {
