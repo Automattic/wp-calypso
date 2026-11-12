@@ -44,6 +44,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"espree": "^11.2.0"
+		"espree": "^11.2.0",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

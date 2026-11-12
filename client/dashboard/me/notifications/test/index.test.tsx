@@ -33,7 +33,7 @@ function setup( enabled: boolean ) {
 }
 
 describe( 'Notifications settings navigation', () => {
-	it.each( [ false, true ] )(
+	test.each( [ false, true ] )(
 		'keeps subscriber settings off the root page with feature enabled=%s',
 		async ( enabled ) => {
 			const settings = setup( enabled );

@@ -39,7 +39,7 @@ describe( 'DifmOfferReviews', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'renders the first review in a labelled region', () => {
+	test( 'renders the first review in a labelled region', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		expect( screen.getByRole( 'region', { name: 'Customer reviews' } ) ).toBeVisible();
@@ -51,7 +51,7 @@ describe( 'DifmOfferReviews', () => {
 		expect( review.getByText( 'Rated 5 out of 5' ) ).toBeInTheDocument();
 	} );
 
-	it( 'shows the next review after the interval and returns to the first after the last', () => {
+	test( 'shows the next review after the interval and returns to the first after the last', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		act( () => jest.advanceTimersByTime( INTERVAL ) );
@@ -61,7 +61,7 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
-	it( 'stops while the pointer is over the reviews', () => {
+	test( 'stops while the pointer is over the reviews', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		fireEvent.mouseEnter( screen.getByRole( 'figure' ) );
@@ -69,7 +69,7 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
-	it( 'stops while the focus is in the reviews', () => {
+	test( 'stops while the focus is in the reviews', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		act( () => screen.getByRole( 'button', { name: 'Show review 1 of 4' } ).focus() );
@@ -77,7 +77,7 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
-	it( 'shows the review the user picks with a dot, and stops the rotation', () => {
+	test( 'shows the review the user picks with a dot, and stops the rotation', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		const dot = screen.getByRole( 'button', { name: 'Show review 3 of 4' } );
@@ -91,7 +91,7 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Steve Sonn' ) ).toBeVisible();
 	} );
 
-	it( 'does not rotate when the user prefers reduced motion, but the dots still work', () => {
+	test( 'does not rotate when the user prefers reduced motion, but the dots still work', () => {
 		prefersReducedMotion = true;
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
@@ -102,7 +102,7 @@ describe( 'DifmOfferReviews', () => {
 		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 	} );
 
-	it( 'links a review with a URL to Trustpilot in a new tab', () => {
+	test( 'links a review with a URL to Trustpilot in a new tab', () => {
 		const onReviewLinkClick = jest.fn();
 		render( <DifmOfferReviews interval={ INTERVAL } onReviewLinkClick={ onReviewLinkClick } /> );
 
@@ -122,7 +122,7 @@ describe( 'DifmOfferReviews', () => {
 		);
 	} );
 
-	it( 'keeps the links of hidden reviews out of the tab order', () => {
+	test( 'keeps the links of hidden reviews out of the tab order', () => {
 		const { container } = render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		// Pablo's review has a URL but is not the visible one.

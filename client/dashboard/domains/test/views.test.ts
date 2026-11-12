@@ -3,6 +3,7 @@ import {
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
+	withDomainsListDefaultLayout,
 } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
 
@@ -381,6 +382,25 @@ describe( 'recordDomainViewChanges', () => {
 		expect( tracks ).toHaveBeenCalledWith( 'calypso_dashboard_domains_view_sort_changed', {
 			field: 'domain',
 			direction: 'desc',
+		} );
+	} );
+} );
+
+describe( 'withDomainsListDefaultLayout', () => {
+	const cardsView: View = {
+		type: 'grid',
+		perPage: 12,
+		sort: { field: 'domain', direction: 'asc' },
+	};
+
+	test( 'keeps the cards for up to 16 domains', () => {
+		expect( withDomainsListDefaultLayout( cardsView, 16 ) ).toBe( cardsView );
+	} );
+
+	test( 'switches to a table, keeping the other settings, from 17 domains', () => {
+		expect( withDomainsListDefaultLayout( cardsView, 17 ) ).toEqual( {
+			...cardsView,
+			type: 'table',
 		} );
 	} );
 } );

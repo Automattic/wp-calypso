@@ -55,7 +55,7 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 		queryClient.clear();
 	} );
 
-	it( 'matches the address the invitation email links to', () => {
+	test( 'matches the address the invitation email links to', () => {
 		const matches = matchInviteUrl( '/team/invite/accept', {
 			agency_id: '5',
 			invite_id: '7',
@@ -68,7 +68,7 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 		} );
 	} );
 
-	it( 'drops ids that are not positive numbers', () => {
+	test( 'drops ids that are not positive numbers', () => {
 		expect( validateSearch( { agency_id: 'abc', invite_id: '0' } ) ).toEqual( {
 			agency_id: undefined,
 			invite_id: undefined,
@@ -76,7 +76,7 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 		} );
 	} );
 
-	it( 'lets a user with no agency through to the invite', async () => {
+	test( 'lets a user with no agency through to the invite', async () => {
 		nock( API_ROOT )
 			.get( '/wpcom/v2/agency' )
 			.query( true )
@@ -85,7 +85,7 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 		await expect( runRootGuard( '/team/invite/accept' ) ).resolves.toBeUndefined();
 	} );
 
-	it( 'still sends a user with no agency to signup on other paths', async () => {
+	test( 'still sends a user with no agency to signup on other paths', async () => {
 		nock( API_ROOT )
 			.get( '/wpcom/v2/agency' )
 			.query( true )
@@ -93,10 +93,10 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 
 		const redirect = await runRootGuard( '/overview' ).catch( ( error ) => error );
 
-		expect( redirect ).toMatchObject( { isRedirect: true, href: '/signup' } );
+		expect( redirect ).toMatchObject( { options: { href: '/signup' } } );
 	} );
 
-	it( 'lets a new member into the dashboard even when a "no agency" answer was cached', async () => {
+	test( 'lets a new member into the dashboard even when a "no agency" answer was cached', async () => {
 		// An earlier visit, before the invite was accepted, cached `hasAgency: false`.
 		queryClient.setQueryData( agencyQuery().queryKey, { isClientUser: false, hasAgency: false } );
 		nock( API_ROOT ).post( '/wpcom/v2/agency/5/user-invites/7' ).reply( 200, { success: true } );

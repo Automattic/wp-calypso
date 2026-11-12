@@ -11,7 +11,7 @@ const validateSearch = marketplacePurchasesRoute.options
 	.validateSearch as unknown as ValidateSearch;
 
 describe( 'marketplacePurchasesRoute', () => {
-	it( 'keeps the receipt id a finished checkout returns with', () => {
+	test( 'keeps the receipt id a finished checkout returns with', () => {
 		const search = validateSearch( defaultParseSearch( '?receipt_id=123' ) );
 
 		expect( search.receipt_id ).toBe( '123' );

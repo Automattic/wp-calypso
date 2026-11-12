@@ -222,7 +222,7 @@ GEM
     net-http (0.9.1)
       uri (>= 0.11.1)
     nkf (0.3.0)
-    nokogiri (1.19.4)
+    nokogiri (1.19.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     octokit (6.1.1)

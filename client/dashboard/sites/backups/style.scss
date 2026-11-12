@@ -6,6 +6,7 @@
 	top: 50%;
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
+	color: $gray-700;
 	fill: $gray-700;
 }
 
@@ -41,6 +42,7 @@
 	}
 
 	.file-card__preview-sensitive svg {
+		color: var(--wp-admin-theme-color);
 		fill: var(--wp-admin-theme-color);
 	}
 

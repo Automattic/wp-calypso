@@ -156,7 +156,7 @@ export default function DNSRecordsDataView( {
 				enableSorting: false,
 				header: <></>,
 				render: () => {
-					return <Icon icon={ arrowRight } fill="#CCCCCC" size={ 24 } />;
+					return <Icon icon={ arrowRight } style={ { color: '#CCCCCC' } } size={ 24 } />;
 				},
 			},
 			{

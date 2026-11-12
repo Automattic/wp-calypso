@@ -6,6 +6,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../test-utils';
+import { DOMAINS_LIST_DEFAULT_VIEW } from '../dataviews/views';
 import Domains from '../index';
 
 const mockSearch: { current: Record< string, string > } = { current: {} };
@@ -25,6 +26,14 @@ jest.mock( '../../app/router/domains', () => {
 jest.mock( '../../app/router/sites', () => {
 	const actual = jest.requireActual( '../../app/router/sites' );
 	return { ...actual, siteRoute: { fullPath: '/sites/$siteSlug' } };
+} );
+
+jest.mock( '../../app/router/me', () => {
+	const actual = jest.requireActual( '../../app/router/me' );
+	return {
+		...actual,
+		purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },
+	};
 } );
 
 const site = {
@@ -54,6 +63,9 @@ const mockDomain = ( index: number, overrides = {} ) => ( {
 	...overrides,
 } );
 
+const mockDomains = ( count: number ) =>
+	Array.from( { length: count }, ( _, index ) => mockDomain( index ) );
+
 function mockApis( domains: unknown[], preferences = {} ) {
 	const savedPreferences: Record< string, unknown >[] = [];
 	const scope = nock( 'https://public-api.wordpress.com' ).persist();
@@ -79,6 +91,14 @@ function mockApis( domains: unknown[], preferences = {} ) {
 		} );
 	return { savedPreferences };
 }
+
+const SAVED_CARDS_VIEW = {
+	'hosting-dashboard-dataviews-view-domains': { type: 'grid', titleField: 'domain', perPage: 12 },
+};
+
+const SAVED_TABLE_VIEW = {
+	'hosting-dashboard-dataviews-view-domains': { type: 'table', titleField: 'domain', perPage: 12 },
+};
 
 describe( '<Domains>', () => {
 	beforeEach( () => {
@@ -151,11 +171,11 @@ describe( '<Domains>', () => {
 	} );
 
 	test( 'offers the toolbar controls on the cards', async () => {
-		mockApis( [ mockDomain( 1 ) ] );
+		mockApis( mockDomains( 9 ) );
 
 		render( <Domains /> );
 
-		await screen.findByRole( 'group', { name: 'domain01.com' } );
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
 		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'View options' } ) ).toBeVisible();
@@ -177,8 +197,148 @@ describe( '<Domains>', () => {
 		expect( within( card ).queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows Renew on a table row only once the domain has expired', async () => {
+		mockApis(
+			[
+				mockDomain( 1, {
+					expired: true,
+					domain_status: { id: 'expired', label: 'Expired', type: 'error' },
+				} ),
+				mockDomain( 2 ),
+			],
+			SAVED_TABLE_VIEW
+		);
+
+		render( <Domains /> );
+
+		const table = await screen.findByRole( 'table' );
+		const expiredRow = within( table ).getByRole( 'row', { name: /domain01\.com/ } );
+		const renewableRow = within( table ).getByRole( 'row', { name: /domain02\.com/ } );
+		expect( within( expiredRow ).getByRole( 'button', { name: 'Renew' } ) ).toBeVisible();
+		expect(
+			within( renewableRow ).queryByRole( 'button', { name: 'Renew' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows only cards, without the layout switch, for up to 8 domains', async () => {
+		mockApis( mockDomains( 8 ) );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( domainNames() ).toHaveLength( 8 );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows cards with the layout switch for 9 domains', async () => {
+		mockApis( mockDomains( 9 ) );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'shows cards with the layout switch for 16 domains', async () => {
+		mockApis( mockDomains( 16 ) );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'shows a table with the layout switch for 17 domains', async () => {
+		mockApis( mockDomains( 17 ) );
+
+		render( <Domains /> );
+
+		expect( await screen.findByRole( 'table' ) ).toBeVisible();
+		expect( screen.queryByRole( 'group', { name: 'domain00.com' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'keeps a saved table view and the layout switch for up to 8 domains', async () => {
+		mockApis( mockDomains( 8 ), SAVED_TABLE_VIEW );
+
+		render( <Domains /> );
+
+		expect( await screen.findByRole( 'table' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'hides the layout switch for a saved view without a layout choice', async () => {
+		mockApis( mockDomains( 8 ), SAVED_CARDS_VIEW );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the layout switch after moving from a saved table view to cards', async () => {
+		const user = userEvent.setup();
+		const { savedPreferences } = mockApis( mockDomains( 8 ), {
+			'hosting-dashboard-dataviews-view-domains': {
+				...DOMAINS_LIST_DEFAULT_VIEW,
+				type: 'table',
+				filters: [ { field: 'owner', operator: 'isAny', value: [ 'owned-by-me' ] } ],
+			},
+		} );
+		render( <Domains />, { queryClient: apiQueryClient } );
+
+		await screen.findByRole( 'table' );
+		await user.click( screen.getByRole( 'button', { name: 'Layout' } ) );
+		await user.click( await screen.findByRole( 'menuitemradio', { name: /grid/i } ) );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( savedPreferences ).toContainEqual( {
+				'hosting-dashboard-dataviews-layout-chosen-domains': true,
+			} )
+		);
+	} );
+
+	test( 'keeps the layout switch for a layout choice until Reset view', async () => {
+		const user = userEvent.setup();
+		const { savedPreferences } = mockApis( mockDomains( 8 ), {
+			'hosting-dashboard-dataviews-layout-chosen-domains': true,
+		} );
+		render( <Domains />, { queryClient: apiQueryClient } );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'View options' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Reset view' } ) );
+
+		await waitFor( () =>
+			expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument()
+		);
+		expect( savedPreferences ).toContainEqual( {
+			'hosting-dashboard-dataviews-layout-chosen-domains': null,
+		} );
+	} );
+
+	test( 'keeps a saved cards view for 17 domains', async () => {
+		mockApis( mockDomains( 17 ), SAVED_CARDS_VIEW );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
 	test( 'shows 12 cards per page with pagination', async () => {
-		mockApis( Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ) );
+		mockApis(
+			Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ),
+			SAVED_CARDS_VIEW
+		);
 
 		render( <Domains /> );
 
@@ -189,7 +349,10 @@ describe( '<Domains>', () => {
 
 	test( 'shows the page from the URL', async () => {
 		mockSearch.current = { page: '2' };
-		mockApis( Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ) );
+		mockApis(
+			Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ),
+			SAVED_CARDS_VIEW
+		);
 
 		render( <Domains /> );
 
@@ -216,16 +379,18 @@ describe( '<Domains>', () => {
 		expect( domainNames() ).toHaveLength( 0 );
 	} );
 
-	test( 'switches to a table with bulk selection and tracks the change', async () => {
+	test( 'switches to a table with Settings and no actions menu, and tracks the change', async () => {
 		const user = userEvent.setup();
-		mockApis( [ mockDomain( 1 ) ] );
+		mockApis( mockDomains( 9 ) );
 		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Layout' } ) );
 		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
 
 		const table = await screen.findByRole( 'table' );
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( within( table ).getAllByRole( 'button', { name: 'Settings' } )[ 0 ] ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_view_type_changed',
 			{ type: 'table' }
@@ -262,8 +427,8 @@ describe( '<Domains>', () => {
 		const table = await screen.findByRole( 'table' );
 		const headers = within( table ).getAllByRole( 'columnheader' );
 		expect( headers.map( ( header ) => header.textContent ) ).not.toContain( 'SSL' );
-		// Selection, name, site, paid until, status and actions.
-		expect( headers ).toHaveLength( 6 );
+		// Name, site, paid until, status and actions.
+		expect( headers ).toHaveLength( 5 );
 		expect( screen.queryByRole( 'group', { name: 'domain01.com' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -288,16 +453,19 @@ describe( '<Domains>', () => {
 
 	test( 'saves view changes to the `domains` preference', async () => {
 		const user = userEvent.setup();
-		const { savedPreferences } = mockApis( [ mockDomain( 1 ) ] );
+		const { savedPreferences } = mockApis( mockDomains( 9 ) );
 		// `userPreferenceOptimisticMutation` writes to the API package's client.
 		render( <Domains />, { queryClient: apiQueryClient } );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Layout' } ) );
 		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
 
-		await waitFor( () => expect( savedPreferences ).not.toHaveLength( 0 ) );
-		expect( savedPreferences[ 0 ] ).toHaveProperty( [
-			'hosting-dashboard-dataviews-view-domains',
-		] );
+		await waitFor( () =>
+			expect( savedPreferences ).toContainEqual(
+				expect.objectContaining( {
+					'hosting-dashboard-dataviews-view-domains': expect.objectContaining( { type: 'table' } ),
+				} )
+			)
+		);
 	} );
 } );

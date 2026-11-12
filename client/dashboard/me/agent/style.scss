@@ -39,6 +39,9 @@
 	iframe {
 		display: block;
 		max-width: 100%;
+		// The Telegram embed doesn't declare a color scheme, so it must match here or
+		// browsers paint an opaque backdrop behind the button in the dark theme.
+		color-scheme: light;
 	}
 }
 

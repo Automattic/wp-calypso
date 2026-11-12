@@ -21,6 +21,6 @@ test.each( [ DomainTransferStatus.PENDING_START, DomainTransferStatus.COMPLETED 
 			location: { search: { back_to: 'site-domains' } },
 		} ).catch( ( error: unknown ) => error );
 
-		expect( redirect ).toMatchObject( { isRedirect: true, search: { back_to: 'site-domains' } } );
+		expect( redirect ).toMatchObject( { options: { search: { back_to: 'site-domains' } } } );
 	}
 );

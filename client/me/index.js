@@ -60,7 +60,7 @@ export default function () {
 	page(
 		'/me/mcp/read',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/read' ),
 		controller.sidebar,
 		controller.mcpRead,
 		makeLayout,
@@ -69,7 +69,7 @@ export default function () {
 	page(
 		'/me/mcp/write',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/write' ),
 		controller.sidebar,
 		controller.mcpWrite,
 		makeLayout,
@@ -78,7 +78,7 @@ export default function () {
 	page(
 		'/me/mcp/mcp-sites',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/mcp-sites' ),
 		controller.sidebar,
 		controller.mcpMcpSites,
 		makeLayout,
@@ -87,7 +87,7 @@ export default function () {
 	page(
 		'/me/mcp/add-site',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/mcp-sites' ),
 		controller.sidebar,
 		controller.mcpAddSite,
 		makeLayout,

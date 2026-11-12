@@ -1,28 +1,25 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
 import Smooch from 'smooch';
+import { type Mock, vi } from 'vitest';
 import { useOdieAssistantContext } from '../../context';
 import { useSendZendeskMessage } from '../use-send-zendesk-message';
 import type { Message } from '../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( 'smooch', () => ( {
-	__esModule: true,
+vi.mock( 'smooch', () => ( {
 	default: {
-		sendMessage: jest.fn(),
-		getConversationById: jest.fn(),
-		on: jest.fn(),
-		off: jest.fn(),
+		sendMessage: vi.fn(),
+		getConversationById: vi.fn(),
+		on: vi.fn(),
+		off: vi.fn(),
 	},
 } ) );
-jest.mock( '../../context', () => ( { useOdieAssistantContext: jest.fn() } ) );
-jest.mock( '../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../context', () => ( { useOdieAssistantContext: vi.fn() } ) );
+vi.mock( '../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: undefined } ),
 } ) );
-jest.mock( '../../utils', () => ( { getConversationIdFromInteraction: () => undefined } ) );
+vi.mock( '../../utils', () => ( { getConversationIdFromInteraction: () => undefined } ) );
 
 const TEMPORARY_ID = 'temporary-1';
 const message = {
@@ -35,7 +32,7 @@ const message = {
 type SentMessage = { metadata: { temporary_id: string } };
 type StoredMessage = { id?: string; metadata: { temporary_id: string }; sendStatus?: string };
 
-const sendMessage = jest.mocked( Smooch.sendMessage ) as unknown as jest.Mock;
+const sendMessage = vi.mocked( Smooch.sendMessage ) as unknown as Mock;
 let store: StoredMessage[];
 let sentListeners: Set< ( message: StoredMessage ) => void >;
 
@@ -72,36 +69,36 @@ async function send() {
 		sending = result.current.mutateAsync( message );
 	} );
 	await act( async () => {
-		await jest.advanceTimersByTimeAsync( 20000 );
+		await vi.advanceTimersByTimeAsync( 20000 );
 	} );
 	return sending as Promise< Message >;
 }
 
 describe( 'useSendZendeskMessage', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.clearAllMocks();
+		vi.useFakeTimers();
+		vi.clearAllMocks();
 		store = [];
 		sentListeners = new Set();
-		jest
-			.mocked( Smooch.getConversationById )
-			.mockImplementation( async () => ( { messages: store } ) as never );
-		jest.mocked( Smooch.on ).mockImplementation( ( ( _event: string, listener: never ) => {
+		vi.mocked( Smooch.getConversationById ).mockImplementation(
+			async () => ( { messages: store } ) as never
+		);
+		vi.mocked( Smooch.on ).mockImplementation( ( ( _event: string, listener: never ) => {
 			sentListeners.add( listener );
 		} ) as never );
 		// @ts-expect-error -- 'off' is not part of the def.
-		jest.mocked( Smooch.off ).mockImplementation( ( _event: string, listener: never ) => {
+		vi.mocked( Smooch.off ).mockImplementation( ( _event: string, listener: never ) => {
 			sentListeners.delete( listener );
 		} );
-		jest.mocked( useOdieAssistantContext ).mockReturnValue( {
+		vi.mocked( useOdieAssistantContext ).mockReturnValue( {
 			chat: { conversationId: 'conversation-1', messages: [] },
-			setChat: jest.fn(),
-			trackEvent: jest.fn(),
+			setChat: vi.fn(),
+			trackEvent: vi.fn(),
 		} as unknown as ReturnType< typeof useOdieAssistantContext > );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'posts the message once when the server is slow to answer', async () => {

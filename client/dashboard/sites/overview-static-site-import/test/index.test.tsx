@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -9,8 +9,10 @@ import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
+	useOpenPreviewWhenReady,
 	useStaticSiteImport,
 } from '../index';
+import type { StaticSiteImport as StaticSiteImportState } from '../index';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
 const site = {
@@ -55,7 +57,7 @@ function StaticSiteImport() {
 }
 
 describe( 'StaticSiteImportCard', () => {
-	it( 'names this site as the destination while the site is still being read', async () => {
+	test( 'names this site as the destination while the site is still being read', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -77,7 +79,7 @@ describe( 'StaticSiteImportCard', () => {
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
 	} );
 
-	it( 'does not approve again once delivery is bound to this site', async () => {
+	test( 'does not approve again once delivery is bound to this site', async () => {
 		const sessionRequest = mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -93,7 +95,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( approve.isDone() ).toBe( false );
 	} );
 
-	it( 'keeps moving while another approval holds the delivery', async () => {
+	test( 'keeps moving while another approval holds the delivery', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.times( 2 )
@@ -112,7 +114,127 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 	} );
 
-	it( 'offers to connect the kept domain and preview the site once it is ready', async () => {
+	const currentStepOf = ( state: string, extra = {} ) => {
+		const siteImport = {
+			status: 'moving',
+			session: session( state, extra ) as StaticSiteImportSession,
+		} as StaticSiteImportState;
+		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+		const current = screen
+			.getAllByRole( 'listitem' )
+			.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
+		expect( current ).toHaveLength( 1 );
+		return current[ 0 ];
+	};
+
+	test.each( [
+		[ 'capture_queued', {}, 'Finding your pages' ],
+		[ 'capturing', { progress: { phase: 'inspecting' } }, 'Finding your pages' ],
+		[
+			'capturing',
+			{ progress: { phase: 'capturing', finding_pages: true } },
+			'Finding your pages',
+		],
+		[
+			'capturing',
+			{ progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 } },
+			'Copying your pages',
+		],
+		[ 'building', { progress: { phase: 'building' } }, 'Building your WordPress site' ],
+		[ 'building', { progress: { phase: 'exporting' } }, 'Building your WordPress site' ],
+		[ 'preview_ready', {}, 'Moving it onto your site' ],
+		[ 'queued', {}, 'Moving it onto your site' ],
+	] )( 'shows a %s session on the step the server reports', ( state, extra, currentStep ) => {
+		expect( currentStepOf( state, extra ) ).toHaveTextContent( currentStep );
+	} );
+
+	test( 'counts the pages copied so far while copying', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 },
+		} );
+
+		expect( current ).toHaveTextContent( 'Copying your pages' );
+		expect( current ).toHaveTextContent( '3 of 12' );
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '12 pages found' );
+	} );
+
+	test.each( [
+		[ { phase: 'building' }, 'Setting up WordPress' ],
+		[
+			{ phase: 'building', building: { stage: 'prepare_shared', current: 0, total: 13 } },
+			'Preparing your styles and layout',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compile_pages', current: 5, total: 13 } },
+			'Turning your pages into blocks · 5 of 13',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compose', current: 13, total: 13 } },
+			'Putting your theme together',
+		],
+		[
+			{ phase: 'building', building: { stage: 'materialize', current: 13, total: 13 } },
+			'Creating your pages and theme',
+		],
+		[
+			{ phase: 'exporting', building: { stage: 'completed', current: 13, total: 13 } },
+			'Packaging your site',
+		],
+	] )( 'says what the build is doing: %o', ( progress, detail ) => {
+		expect( currentStepOf( 'building', { progress } ) ).toHaveTextContent( detail );
+	} );
+
+	test( 'shows no build detail for a step it doesn’t know', () => {
+		expect(
+			currentStepOf( 'building', {
+				progress: { phase: 'building', building: { stage: 'something_new', current: 1, total: 2 } },
+			} )
+		).toHaveTextContent( /^Building your WordPress site$/ );
+	} );
+
+	test( 'says how many pages were found so far while the capture is still finding them', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', finding_pages: true, source: { pages_found: 9 } },
+		} );
+
+		expect( current ).toHaveTextContent( 'Finding your pages' );
+		expect( current ).toHaveTextContent( '9 pages found so far' );
+	} );
+
+	test( 'drops “so far” once the capture settles on its total', () => {
+		currentStepOf( 'capturing', {
+			progress: {
+				phase: 'capturing',
+				pages_captured: 0,
+				pages_total: 12,
+				source: { pages_found: 9 },
+			},
+		} );
+
+		const found = screen.getAllByRole( 'listitem' )[ 0 ];
+		expect( found ).toHaveTextContent( '12 pages found' );
+		expect( found ).not.toHaveTextContent( 'so far' );
+	} );
+
+	test( 'shows no page count it can’t back once the server stops reporting progress', () => {
+		currentStepOf( 'queued', { preview_summary: { pages: 15 } } );
+
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( /^Finding your pages$/ );
+	} );
+
+	test( 'moves the checklist forward when the session moves on', () => {
+		const moving = ( state: string ) =>
+			( { status: 'moving', session: session( state ) } ) as StaticSiteImportState;
+		const { rerender } = render(
+			<StaticSiteImportProgress siteImport={ moving( 'capturing' ) } search={ search } />
+		);
+
+		rerender( <StaticSiteImportProgress siteImport={ moving( 'building' ) } search={ search } /> );
+
+		expect( screen.getAllByRole( 'listitem' )[ 2 ] ).toHaveAttribute( 'aria-current', 'step' );
+	} );
+
+	test( 'offers to connect the kept domain and preview the site once it is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -141,7 +263,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'offers to get a domain when the old address is missing', () => {
+	test( 'offers to get a domain when the old address is missing', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -161,7 +283,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
 	} );
 
-	it( 'offers to get a domain when the server names none the customer can connect', () => {
+	test( 'offers to get a domain when the server names none the customer can connect', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -180,7 +302,7 @@ describe( 'StaticSiteImportCard', () => {
 		);
 	} );
 
-	it( 'does not ask for feedback after the site is previewed', async () => {
+	test( 'does not ask for feedback after the site is previewed', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -207,7 +329,7 @@ describe( 'StaticSiteImportCard', () => {
 				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
 		const props = { site_id: 42, source_platform: 'wix' };
 
-		it( 'records the ready notice being shown once', async () => {
+		test( 'records the ready notice being shown once', async () => {
 			finished();
 			const { recordTracksEvent } = render( <StaticSiteImport /> );
 
@@ -222,7 +344,7 @@ describe( 'StaticSiteImportCard', () => {
 			] );
 		} );
 
-		it( 'records which button in the ready notice was clicked', async () => {
+		test( 'records which button in the ready notice was clicked', async () => {
 			finished();
 			const { recordTracksEvent } = render( <StaticSiteImport /> );
 
@@ -241,7 +363,7 @@ describe( 'StaticSiteImportCard', () => {
 			);
 		} );
 
-		it( 'records the ready notice being closed', async () => {
+		test( 'records the ready notice being closed', async () => {
 			finished();
 			const { recordTracksEvent } = render( <StaticSiteImport /> );
 
@@ -254,7 +376,7 @@ describe( 'StaticSiteImportCard', () => {
 		} );
 	} );
 
-	it( 'shows the failed move with the team and refund options when the move failed', async () => {
+	test( 'shows the failed move with the team and refund options when the move failed', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -271,7 +393,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( await screen.findByRole( 'link', { name: 'Get a refund' } ) ).toBeVisible();
 	} );
 
-	it( 'hands the move to our migrations team as a non-WordPress migration ticket', async () => {
+	test( 'hands the move to our migrations team as a non-WordPress migration ticket', async () => {
 		mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
 		const ticket = mockApi()
 			.post( '/wpcom/v2/help/migration-ticket/new', {
@@ -290,7 +412,66 @@ describe( 'StaticSiteImportCard', () => {
 		expect( ticket.isDone() ).toBe( true );
 	} );
 
-	it( 'shows a neutral notice, not a failed move, when the move can’t be read', async () => {
+	describe( 'preview site', () => {
+		const shareUrl = 'https://busybears.wpcomstaging.com/?share=code';
+
+		test( 'offers to view and keep a finished preview instead of connecting a domain', async () => {
+			mockApi()
+				.get( '/wpcom/v2/static-site-import-session/abc123' )
+				.query( true )
+				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+			mockApi()
+				.get( '/wpcom/v2/wow-funnel/pending' )
+				.query( true )
+				.reply( 200, {
+					pending: false,
+					preview_sites: [ { blog_id: 42, site_slug: site.slug, share_url: shareUrl } ],
+				} );
+
+			render( <StaticSiteImport /> );
+
+			expect( await screen.findByText( 'Your preview is ready' ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: /View site/ } ) ).toHaveAttribute(
+				'href',
+				shareUrl
+			);
+			expect( screen.getByRole( 'link', { name: 'Choose a plan' } ) ).toHaveAttribute(
+				'href',
+				expect.stringContaining( `/plans/${ site.slug }` )
+			);
+			expect( screen.queryByRole( 'link', { name: /Connect/ } ) ).not.toBeInTheDocument();
+		} );
+
+		const moving: StaticSiteImportState = { status: 'moving' };
+		const finishedPreview: StaticSiteImportState = {
+			status: 'finished',
+			isPreview: true,
+			previewUrl: shareUrl,
+		};
+
+		test.each( [
+			{ name: 'opens a preview whose move finishes here', first: moving, opens: true },
+			{
+				name: 'stays on a preview that had already finished',
+				first: finishedPreview,
+				opens: false,
+			},
+		] )( '$name', async ( { first, opens } ) => {
+			const assign = jest.fn();
+			const originalLocation = window.location;
+			Object.defineProperty( window, 'location', { value: { ...originalLocation, assign } } );
+
+			const { rerender } = renderHook( ( siteImport ) => useOpenPreviewWhenReady( siteImport ), {
+				initialProps: first,
+			} );
+			rerender( finishedPreview );
+
+			await waitFor( () => expect( assign.mock.calls ).toEqual( opens ? [ [ shareUrl ] ] : [] ) );
+			Object.defineProperty( window, 'location', { value: originalLocation } );
+		} );
+	} );
+
+	test( 'shows a neutral notice, not a failed move, when the move can’t be read', async () => {
 		// Another account's move, or a wrong or expired link.
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
@@ -306,7 +487,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByRole( 'link', { name: 'Get a refund' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'offers to try again, not a refund, when naming the destination fails', async () => {
+	test( 'offers to try again, not a refund, when naming the destination fails', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -352,7 +533,7 @@ describe( 'StaticSiteImportCard', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'trusts the move over a stale approval error once it finishes', async () => {
+	test( 'trusts the move over a stale approval error once it finishes', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -371,7 +552,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByText( 'Your move hasn’t started yet' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'stops at a refused site instead of offering to read it again', async () => {
+	test( 'stops at a refused site instead of offering to read it again', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -390,7 +571,7 @@ describe( 'StaticSiteImportCard', () => {
 describe( 'StaticSiteImportNotice preview link', () => {
 	const finished = { status: 'finished' as const };
 
-	it.each( [
+	test.each( [
 		[
 			'logs the owner in to a Coming Soon Atomic site on the way',
 			{ is_coming_soon: true, is_wpcom_atomic: true },
@@ -411,7 +592,7 @@ describe( 'StaticSiteImportNotice preview link', () => {
 } );
 
 describe( 'StaticSiteImportNotice help with the move', () => {
-	it( 'hands the move to our migrations team when the moved site isn’t right', async () => {
+	test( 'hands the move to our migrations team when the moved site isn’t right', async () => {
 		const ticket = mockApi()
 			.post( '/wpcom/v2/help/migration-ticket/new', {
 				blog_url: 'busybears.wordpress.com',
@@ -440,7 +621,31 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 	} );
 
-	it( 'shows the note wpcom wrote about what the move found', () => {
+	test( 'stops offering help once wpcom refused the handoff', async () => {
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 429, { code: 'too_many_requests', message: 'Server message' } );
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished' } }
+				search={ search }
+			/>
+		);
+
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		);
+
+		expect(
+			await screen.findByText( /You’ve already sent us several migration requests today/ )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the note wpcom wrote about what the move found', () => {
 		const finished = {
 			status: 'finished' as const,
 			session: session( 'finished', {
@@ -452,7 +657,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		expect( screen.getByText( 'We found a store on busybearscleaning.com.' ) ).toBeVisible();
 	} );
 
-	it( 'leaves a failed move to the failure card', () => {
+	test( 'leaves a failed move to the failure card', () => {
 		const { container } = render(
 			<StaticSiteImportNotice site={ site } siteImport={ { status: 'failed' } } search={ search } />
 		);
@@ -465,7 +670,7 @@ describe( 'StaticSiteImportFailed', () => {
 	beforeEach( () => nock.cleanAll() );
 	afterEach( () => nock.cleanAll() );
 
-	it( 'says nothing is lost and names the old site', async () => {
+	test( 'says nothing is lost and names the old site', async () => {
 		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
 		render( <StaticSiteImportFailed site={ site } search={ search } /> );
 		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
@@ -476,7 +681,7 @@ describe( 'StaticSiteImportFailed', () => {
 		).toBeVisible();
 	} );
 
-	it( 'sends Get a refund to cancelling the site’s plan', async () => {
+	test( 'sends Get a refund to cancelling the site’s plan', async () => {
 		mockApi()
 			.get( '/rest/v1.2/upgrades' )
 			.query( true )
@@ -496,7 +701,42 @@ describe( 'StaticSiteImportFailed', () => {
 		);
 	} );
 
-	it( 'offers no refund when the site has no plan to refund', async () => {
+	test.each( [
+		[
+			'tells the customer our team will reach out when wpcom refused the handoff',
+			'migration_request_not_submitted',
+			'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.',
+			false,
+		],
+		[
+			'tells the customer they reached today’s limit',
+			'too_many_requests',
+			'You’ve already sent us several migration requests today. Our team will follow up by email on the ones we’ve received. If you need to add details, just reply to that email.',
+			false,
+		],
+		[
+			'asks the customer to try again when our team couldn’t be reached',
+			'internal_error',
+			'We couldn’t reach our team. Please try again.',
+			true,
+		],
+	] )( '%s', async ( _, code, message, canRetry ) => {
+		mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 422, { code, message: 'Server message', data: { status: 422 } } );
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Let our team move it' } ) );
+
+		expect( await screen.findByText( message ) ).toBeVisible();
+		// A refused handoff would only be refused again, so it isn't offered.
+		expect( screen.queryAllByRole( 'button', { name: 'Let our team move it' } ) ).toHaveLength(
+			canRetry ? 1 : 0
+		);
+	} );
+
+	test( 'offers no refund when the site has no plan to refund', async () => {
 		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
 		render( <StaticSiteImportFailed site={ site } search={ search } /> );
 		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );

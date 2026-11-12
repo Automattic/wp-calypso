@@ -1,4 +1,12 @@
 .conversations-inbox__list-pane {
+	// Text colors the lines, hover and excerpt mix from. The WPDS tokens don't
+	// follow the Reader's dark mode, so dark mode swaps in Calypso's.
+	--conversations-ink: var( --wpds-color-foreground-content-neutral );
+	--conversations-ink-weak: var( --wpds-color-foreground-content-neutral-weak );
+	--conversations-line: color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
+	// Lines read darker on the unread tint, so the ones an unread row touches are softer.
+	--conversations-line-unread: color-mix( in srgb, var( --conversations-ink ) 6%, transparent );
+
 	flex: 0 0 372px;
 	min-width: 0;
 	min-height: 0;
@@ -8,7 +16,11 @@
 		padding: 20px 16px 12px 16px;
 
 		.components-button {
-			color: var( --color-text );
+			transition: color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+
+			&:not( :hover, :active ) {
+				color: var( --color-text );
+			}
 		}
 	}
 
@@ -22,38 +34,49 @@
 	}
 }
 
-.conversations-inbox__tabs {
-	padding: 0 16px;
-	border-block-end: 1px solid var( --color-border-subtle );
+.conversations-inbox__tabs-root,
+.conversations-inbox__tab-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
 }
 
-.conversations-inbox__tab {
-	padding: 12px;
-	background: none;
-	border: 0;
-	border-block-end: 2px solid transparent;
-	color: var( --color-text );
-	cursor: pointer;
+// The panel being left stays mounted for a frame, empty and without `[hidden]`.
+.conversations-inbox__tab-panel:empty {
+	display: none;
+}
 
-	&.is-active {
-		border-block-end-color: var( --color-text );
-	}
+.conversations-inbox__tabs {
+	padding: 0 16px;
+	border-block-end: 1px solid var( --conversations-line );
+}
+
+// Lets the active tab's underline sit on the divider.
+.conversations-inbox__tab-list {
+	margin-block-end: -1px;
 }
 
 .conversations-inbox__badge {
-	padding: 0 8px;
+	padding: 2px 8px;
 	border-radius: 16px;
 	background: var( --color-primary );
 	color: var( --color-text-inverted );
-	font-size: 0.75rem;
+	font-size: 11px;
+	font-weight: 500;
 }
 
 .conversations-inbox__toolbar {
-	padding: 16px 16px 8px;
+	padding: 16px;
 
 	.components-search-control {
 		flex: 1;
 		min-width: 0;
+	}
+
+	// Keeps the dropdown wrappers as tall as their buttons, without line-height below.
+	.components-dropdown {
+		display: flex;
 	}
 
 	.components-button {
@@ -63,9 +86,15 @@
 
 .conversations-inbox__mark-read.components-button.is-link {
 	align-self: flex-start;
-	margin: 0 16px 12px;
-	font-size: 0.875rem;
-	color: var( --color-text );
+	// 12px under the search field reads like the toolbar's 16px.
+	margin: -4px 16px 16px;
+	font-size: 13px;
+	line-height: 20px;
+	transition: color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+
+	&:not( :hover, :active ) {
+		color: var( --color-text );
+	}
 }
 
 .conversations-inbox__list {
@@ -74,7 +103,7 @@
 	flex-direction: column;
 	flex: 1;
 	overflow-y: auto;
-	border-block-start: 1px solid var( --color-border-subtle );
+	border-block-start: 1px solid var( --conversations-line );
 
 	ul {
 		list-style: none;
@@ -82,9 +111,15 @@
 	}
 }
 
+// Centered in the empty list while the first page loads.
 .conversations-inbox__day {
-	padding: 12px 16px;
-	border-block-end: 1px solid var( --color-border-subtle );
+	padding: 6px 16px;
+	border-block-start: 1px solid var( --conversations-line );
+}
+
+// The list's own top border already separates the first section.
+.conversations-inbox__list > section:first-child > .conversations-inbox__day {
+	border-block-start: 0;
 }
 
 .conversations-inbox__message {
@@ -99,42 +134,81 @@
 }
 
 .conversations-inbox__item {
-	--conversations-item-bg: var( --color-surface );
+	// Read rows stay transparent, so an unread row's tint shows under the line below it.
+	--conversations-item-bg: transparent;
+	--conversations-item-active-bg: color-mix( in srgb, var( --conversations-ink ) 2%, transparent );
 
 	width: 100%;
 	padding: 16px;
 	background: var( --conversations-item-bg );
 	color: var( --color-text );
+	// Rows share one line: each draws a translucent line at its top and overlaps
+	// the row above by 1px, so the line picks up a hovered, open or unread row's tint.
+	margin-block-end: -1px;
 	border: 0;
-	border-inline-start: 3px solid transparent;
-	border-block-end: 1px solid var( --color-border-subtle );
+	border-block: 1px solid transparent;
+	border-block-start-color: var( --conversations-line );
 	text-align: start;
 	cursor: pointer;
+	transition: background-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
 
 	&.is-unread {
 		--conversations-item-bg: color-mix(
-			in srgb,
-			var( --color-primary ) 6%,
+			in oklch,
+			var( --color-primary ) 5%,
+			var( --color-surface )
+		);
+		--conversations-item-active-bg: color-mix(
+			in oklch,
+			var( --color-primary ) 6.5%,
 			var( --color-surface )
 		);
 	}
 
-	&:not( .is-selected ):hover {
-		background: color-mix( in srgb, var( --color-text ) 3%, var( --conversations-item-bg ) );
+	&:hover,
+	&.is-selected {
+		background: var( --conversations-item-active-bg );
+	}
+
+	&.is-selected {
+		box-shadow: inset 3px 0 0 var( --color-primary );
 	}
 
 	&:focus-visible {
 		outline: 2px solid var( --color-primary );
 		outline-offset: -2px;
 	}
+}
 
-	&.is-selected {
-		--conversations-item-bg: var( --color-neutral-0 );
-		border-inline-start-color: var( --color-primary );
+.conversations-inbox__item.is-unread,
+li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__item {
+	border-block-start-color: var( --conversations-line-unread );
+}
+
+// The last row closes the list with a line of its own, in its top line's color.
+.conversations-inbox__list
+	> section:last-of-type
+	> ul
+	> li:last-child
+	> .conversations-inbox__item {
+	margin-block-end: 0;
+	border-block-end-color: var( --conversations-line );
+
+	&.is-unread {
+		border-block-end-color: var( --conversations-line-unread );
 	}
 }
 
-// Only takes focus from code, after the load-more button goes away.
+// A section without a day label starts right under the list's top border.
+.conversations-inbox__list
+	> section:first-child
+	> ul:first-child
+	> li:first-child
+	> .conversations-inbox__item {
+	border-block-start-color: transparent;
+}
+
+// Only takes focus from code, when a focused control inside it goes away.
 .conversations-inbox__list:focus {
 	outline: none;
 }
@@ -152,12 +226,19 @@
 	text-overflow: ellipsis;
 }
 
-.conversations-inbox__item-title {
-	font-weight: 600;
-}
-
+// The theme has no text gray between neutral-weak and neutral, so mix the two.
 .conversations-inbox__item-excerpt {
-	color: var( --color-text-subtle );
+	--conversations-excerpt-color: color-mix(
+		in srgb,
+		var( --conversations-ink-weak ) 75%,
+		var( --conversations-ink )
+	);
+
+	color: var( --conversations-excerpt-color );
+
+	.conversations-inbox__item.is-unread & {
+		color: color-mix( in oklch, var( --conversations-excerpt-color ) 88%, var( --color-primary ) );
+	}
 }
 
 .conversations-inbox__avatars {
@@ -165,7 +246,17 @@
 
 	img {
 		border-radius: 50%;
-		border: 2px solid var( --conversations-item-bg, var( --color-surface ) );
+
+		// Cut a 1px ring where the next avatar overlaps, so the row's background shows
+		// through. The next avatar is centered 22px in, with a 10px radius.
+		&:not( :last-child ) {
+			mask-image: radial-gradient( circle at 22px 50%, transparent 11px, currentcolor 11.5px );
+
+			// rtlcss doesn't flip gradient positions.
+			&:dir( rtl ) {
+				mask-image: radial-gradient( circle at -2px 50%, transparent 11px, currentcolor 11.5px );
+			}
+		}
 
 		& + img {
 			margin-inline-start: -8px;
@@ -178,8 +269,8 @@
 }
 
 .conversations-inbox__settings {
-	min-width: 280px;
-	padding: 16px;
+	// Leaves room for the wrapper's padding on narrow screens.
+	width: min( 320px, calc( 100vw - 64px ) );
 }
 
 .conversations-inbox__list-end {
@@ -187,4 +278,34 @@
 	justify-content: center;
 	min-height: 1px;
 	padding-block: 8px;
+}
+
+@mixin conversations-inbox-list-dark {
+	.conversations-inbox__list-pane {
+		--conversations-ink: var( --color-text );
+		--conversations-ink-weak: var( --color-text-subtle );
+		// The tabs read these, and they stay at their light values here too.
+		--wpds-color-foreground-interactive-neutral: var( --color-text );
+		--wpds-color-foreground-interactive-neutral-active: var( --color-text );
+		--wpds-color-stroke-interactive-neutral-strong: var( --color-text-subtle );
+	}
+}
+
+:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
+	@include conversations-inbox-list-dark;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
+		@include conversations-inbox-list-dark;
+	}
+}
+
+.conversations-inbox__placeholder {
+	pointer-events: none;
+
+	// The rows are divs here rather than buttons, which are border-box by default.
+	.conversations-inbox__item {
+		box-sizing: border-box;
+	}
 }

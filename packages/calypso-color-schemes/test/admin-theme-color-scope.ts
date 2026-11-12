@@ -1,13 +1,6 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import * as sass from 'sass';
-const {
-	getAdminSchemes,
-	buildAdminThemeColors,
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-} = require( '../bin/prepare-sass-assets' );
+import { getAdminSchemes, buildAdminThemeColors } from '../bin/prepare-sass-assets';
 
 // Built here rather than read from src/__wp-base-styles, which is generated and git-ignored: that file survives branch switches, so asserting against it fails for reasons unrelated to the code under test.
 const schemes = (): Record< string, string > =>

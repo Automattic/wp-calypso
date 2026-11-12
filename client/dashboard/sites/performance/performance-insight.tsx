@@ -287,16 +287,17 @@ export const PerformanceInsight = ( {
 						spacing={ 4 }
 						style={ { flexWrap: isDesktop ? 'nowrap' : 'wrap-reverse' } }
 					>
-						<Markdown
-							className="performance-insight__markdown"
-							components={ {
-								a( props ) {
-									return <a target="_blank" { ...props } />;
-								},
-							} }
-						>
-							{ llmAnswer.messages }
-						</Markdown>
+						<div className="performance-insight__markdown">
+							<Markdown
+								components={ {
+									a( props ) {
+										return <a target="_blank" { ...props } />;
+									},
+								} }
+							>
+								{ llmAnswer.messages }
+							</Markdown>
+						</div>
 						{ showTip && <PerformanceInsightTip /> }
 					</HStack>
 					<PerformanceInsightFeedback chatId={ llmAnswer.chatId } hash={ hash } />

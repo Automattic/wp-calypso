@@ -15,7 +15,6 @@ import {
 	useCompleteAllSteps,
 	useMakeStepActive,
 	useNextIncompleteStepId,
-	useSuppressNextForwardScroll,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import { PAYMENT_METHOD_STEP_ID } from './components/default-steps';
@@ -77,7 +76,6 @@ export {
 	useProcessPayment,
 	useSetStepComplete,
 	useCompleteAllSteps,
-	useSuppressNextForwardScroll,
 	useTogglePaymentMethod,
 	useTransactionStatus,
 	useMakeStepActive,
