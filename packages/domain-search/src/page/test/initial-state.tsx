@@ -1,17 +1,18 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
+import { vi } from 'vitest';
 import { TestDomainSearch } from '../../test-helpers/renderer';
 import { InitialState } from '../initial-state';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
 describe( 'InitialState', () => {
 	beforeEach( () => {
-		jest.mocked( useViewportMatch ).mockReturnValue( false );
+		vi.mocked( useViewportMatch ).mockReturnValue( false );
 	} );
 
 	it( 'renders the search form', () => {
@@ -27,7 +28,7 @@ describe( 'InitialState', () => {
 	it( 'renders the already own domain CTA when config allows it', () => {
 		render(
 			<TestDomainSearch
-				events={ { onExternalDomainClick: jest.fn() } }
+				events={ { onExternalDomainClick: vi.fn() } }
 				config={ { allowsUsingOwnDomain: true } }
 			>
 				<InitialState />
@@ -48,7 +49,7 @@ describe( 'InitialState', () => {
 	} );
 
 	it( 'calls onExternalDomainClick when CTA is clicked', () => {
-		const onExternalDomainClick = jest.fn();
+		const onExternalDomainClick = vi.fn();
 
 		render(
 			<TestDomainSearch
@@ -74,12 +75,12 @@ describe( 'InitialState', () => {
 	} );
 
 	it( 'renders both CTAs and calls onMigrateSiteClick when the site CTA is clicked', async () => {
-		const onMigrateSiteClick = jest.fn();
+		const onMigrateSiteClick = vi.fn();
 
 		render(
 			<TestDomainSearch
 				config={ { allowsUsingOwnDomain: true } }
-				events={ { onExternalDomainClick: jest.fn(), onMigrateSiteClick } }
+				events={ { onExternalDomainClick: vi.fn(), onMigrateSiteClick } }
 			>
 				<InitialState />
 			</TestDomainSearch>
@@ -95,7 +96,7 @@ describe( 'InitialState', () => {
 		render(
 			<TestDomainSearch
 				config={ { allowsUsingOwnDomain: false } }
-				events={ { onMigrateSiteClick: jest.fn() } }
+				events={ { onMigrateSiteClick: vi.fn() } }
 			>
 				<InitialState />
 			</TestDomainSearch>
@@ -107,16 +108,16 @@ describe( 'InitialState', () => {
 
 	describe( 'with Name Pulse on', () => {
 		beforeEach( () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 		} );
 
 		afterEach( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		it( 'searches as the user types, without submitting', async () => {
-			const onQueryChange = jest.fn();
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			const onQueryChange = vi.fn();
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 
 			render(
 				<TestDomainSearch events={ { onQueryChange } } config={ { showNamePulseSearch: true } }>
@@ -126,15 +127,15 @@ describe( 'InitialState', () => {
 
 			await user.type( screen.getByRole( 'searchbox' ), 'coffee' );
 			act( () => {
-				jest.advanceTimersByTime( 300 );
+				vi.advanceTimersByTime( 300 );
 			} );
 
 			expect( onQueryChange ).toHaveBeenCalledWith( 'coffee' );
 		} );
 
 		it( 'keeps submit-only search when Name Pulse is off', async () => {
-			const onQueryChange = jest.fn();
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			const onQueryChange = vi.fn();
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 
 			render(
 				<TestDomainSearch events={ { onQueryChange } }>
@@ -144,7 +145,7 @@ describe( 'InitialState', () => {
 
 			await user.type( screen.getByRole( 'searchbox' ), 'coffee' );
 			act( () => {
-				jest.advanceTimersByTime( 300 );
+				vi.advanceTimersByTime( 300 );
 			} );
 
 			expect( onQueryChange ).not.toHaveBeenCalled();

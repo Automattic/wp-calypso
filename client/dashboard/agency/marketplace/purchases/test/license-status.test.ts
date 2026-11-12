@@ -44,17 +44,17 @@ const license = ( overrides: Partial< JetpackLicense > = {} ): JetpackLicense =>
 } );
 
 describe( 'getLicenseStatus', () => {
-	it( 'is unassigned when the license has no site', () => {
+	test( 'is unassigned when the license has no site', () => {
 		expect( getLicenseStatus( license() ) ).toBe( 'unassigned' );
 	} );
 
-	it( 'is assigned when the license is attached to a site', () => {
+	test( 'is assigned when the license is attached to a site', () => {
 		expect( getLicenseStatus( license( { attached_at: '2026-01-02 00:00:00' } ) ) ).toBe(
 			'assigned'
 		);
 	} );
 
-	it( 'is revoked even when the license was previously attached', () => {
+	test( 'is revoked even when the license was previously attached', () => {
 		expect(
 			getLicenseStatus(
 				license( { attached_at: '2026-01-02 00:00:00', revoked_at: '2026-01-03 00:00:00' } )
@@ -64,14 +64,14 @@ describe( 'getLicenseStatus', () => {
 } );
 
 describe( 'getLicenseDisplayStatus', () => {
-	it( 'shows no assignment status for Pressable add-ons and bundle parents', () => {
+	test( 'shows no assignment status for Pressable add-ons and bundle parents', () => {
 		const addon = license( { license_key: 'pressable-addon-storage_x' } );
 		const bundle = license( { quantity: 5 } );
 		expect( getLicenseDisplayStatus( addon ) ).toBeNull();
 		expect( getLicenseDisplayStatus( bundle ) ).toBeNull();
 	} );
 
-	it( 'still shows revoked for them', () => {
+	test( 'still shows revoked for them', () => {
 		const revoked = { revoked_at: '2026-01-03 00:00:00' };
 		expect(
 			getLicenseDisplayStatus( license( { license_key: 'pressable-addon-storage_x', ...revoked } ) )
@@ -79,7 +79,7 @@ describe( 'getLicenseDisplayStatus', () => {
 		expect( getLicenseDisplayStatus( license( { quantity: 5, ...revoked } ) ) ).toBe( 'revoked' );
 	} );
 
-	it( 'matches the real status for every other license', () => {
+	test( 'matches the real status for every other license', () => {
 		expect( getLicenseDisplayStatus( license() ) ).toBe( 'unassigned' );
 		expect( getLicenseDisplayStatus( license( { license_key: 'pressable-wp-1_x' } ) ) ).toBe(
 			'unassigned'
@@ -91,7 +91,7 @@ describe( 'getLicenseDisplayStatus', () => {
 } );
 
 describe( 'isLicenseStatus', () => {
-	it( 'accepts only the known statuses', () => {
+	test( 'accepts only the known statuses', () => {
 		expect( isLicenseStatus( 'revoked' ) ).toBe( true );
 		expect( isLicenseStatus( 'constructor' ) ).toBe( false );
 		expect( isLicenseStatus( 'active' ) ).toBe( false );
@@ -101,33 +101,33 @@ describe( 'isLicenseStatus', () => {
 } );
 
 describe( 'license key helpers', () => {
-	it( 'detects bundle parents by quantity', () => {
+	test( 'detects bundle parents by quantity', () => {
 		expect( isBundleParent( license( { quantity: 5 } ) ) ).toBe( true );
 		expect( isBundleParent( license( { quantity: 1 } ) ) ).toBe( true );
 		expect( isBundleParent( license( { quantity: 0 } ) ) ).toBe( false );
 		expect( isBundleParent( license() ) ).toBe( false );
 	} );
 
-	it( 'treats a Titan quantity as inboxes, not a bundle', () => {
+	test( 'treats a Titan quantity as inboxes, not a bundle', () => {
 		expect(
 			isBundleParent( license( { license_key: 'pressable-addon-titan-inbox_abc', quantity: 5 } ) )
 		).toBe( false );
 	} );
 
-	it( 'treats user-owned licenses as standard rather than partner licenses', () => {
+	test( 'treats user-owned licenses as standard rather than partner licenses', () => {
 		expect( isPartnerLicense( license() ) ).toBe( true );
 		expect( isPartnerLicense( license( { owner_type: null } ) ) ).toBe( true );
 		expect( isPartnerLicense( license( { owner_type: 'user' } ) ) ).toBe( false );
 	} );
 
-	it( 'detects WordPress.com hosting licenses', () => {
+	test( 'detects WordPress.com hosting licenses', () => {
 		expect( isWpcomHostingLicense( license( { license_key: 'wpcom-hosting-business_x' } ) ) ).toBe(
 			true
 		);
 		expect( isWpcomHostingLicense( license() ) ).toBe( false );
 	} );
 
-	it( 'detects Pressable licenses and add-ons', () => {
+	test( 'detects Pressable licenses and add-ons', () => {
 		expect( isPressableLicense( license( { license_key: 'pressable-wp-1_x' } ) ) ).toBe( true );
 		expect( isPressableLicense( license( { license_key: 'jetpack-pressable_x' } ) ) ).toBe( true );
 		expect( isPressableLicense( license( { license_key: 'pressable-addon-storage_x' } ) ) ).toBe(
@@ -145,7 +145,7 @@ describe( 'license key helpers', () => {
 } );
 
 describe( 'getLicenseProductName', () => {
-	it( 'lists every WordPress.com plan under one name, like the classic list', () => {
+	test( 'lists every WordPress.com plan under one name, like the classic list', () => {
 		expect(
 			getLicenseProductName(
 				license( { license_key: 'wpcom-hosting-business_x', product: 'WordPress.com Business' } )
@@ -158,19 +158,19 @@ describe( 'getLicenseProductName', () => {
 		).toBe( 'WordPress.com Site' );
 	} );
 
-	it( 'leaves other products alone', () => {
+	test( 'leaves other products alone', () => {
 		expect( getLicenseProductName( license() ) ).toBe( 'Jetpack VaultPress Backup' );
 	} );
 } );
 
 describe( 'subscription and bundle helpers', () => {
-	it( 'detects Jetpack CRM products, including Complete', () => {
+	test( 'detects Jetpack CRM products, including Complete', () => {
 		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-crm_x' } ) ) ).toBe( true );
 		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-complete_x' } ) ) ).toBe( true );
 		expect( isJetpackCrmLicense( license() ) ).toBe( false );
 	} );
 
-	it( 'flags an active subscription with auto-renew turned off', () => {
+	test( 'flags an active subscription with auto-renew turned off', () => {
 		const subscription = {
 			id: 'sub_1',
 			product_name: 'Hosting',
@@ -194,7 +194,7 @@ describe( 'subscription and bundle helpers', () => {
 		expect( isAutoRenewDisabled( license() ) ).toBe( false );
 	} );
 
-	it( 'detects child licenses of a bundle', () => {
+	test( 'detects child licenses of a bundle', () => {
 		expect( isChildLicense( license( { parent_license_id: 7 } ) ) ).toBe( true );
 		expect( isChildLicense( license() ) ).toBe( false );
 	} );
@@ -213,11 +213,11 @@ describe( 'renewal details', () => {
 		is_refundable: false,
 	};
 
-	it( 'shows the expiry date of the subscription', () => {
+	test( 'shows the expiry date of the subscription', () => {
 		expect( getLicenseRenewalDate( license( { subscription } ) ) ).toBe( subscription.expiry );
 	} );
 
-	it( 'shows nothing without a subscription or once the license is revoked', () => {
+	test( 'shows nothing without a subscription or once the license is revoked', () => {
 		expect( getLicenseRenewalDate( license() ) ).toBeNull();
 		expect( getRenewalBadges( license() ) ).toEqual( [] );
 
@@ -226,11 +226,11 @@ describe( 'renewal details', () => {
 		expect( getRenewalBadges( revoked ) ).toEqual( [] );
 	} );
 
-	it( 'adds no badge to a subscription that renews normally', () => {
+	test( 'adds no badge to a subscription that renews normally', () => {
 		expect( getRenewalBadges( license( { subscription } ) ) ).toEqual( [] );
 	} );
 
-	it( 'flags auto-renew off and refundable subscriptions', () => {
+	test( 'flags auto-renew off and refundable subscriptions', () => {
 		expect(
 			getRenewalBadges(
 				license( {
@@ -240,7 +240,7 @@ describe( 'renewal details', () => {
 		).toEqual( [ 'auto-renew-off', 'refundable' ] );
 	} );
 
-	it( 'only flags an inactive subscription as expired', () => {
+	test( 'only flags an inactive subscription as expired', () => {
 		expect(
 			getRenewalBadges(
 				license( {
@@ -257,11 +257,11 @@ describe( 'renewal details', () => {
 } );
 
 describe( 'getLicenseTags', () => {
-	it( 'returns no tags for a plain license', () => {
+	test( 'returns no tags for a plain license', () => {
 		expect( getLicenseTags( license() ) ).toEqual( [] );
 	} );
 
-	it( 'tags referral and development licenses', () => {
+	test( 'tags referral and development licenses', () => {
 		expect(
 			getLicenseTags(
 				license( {
@@ -272,7 +272,7 @@ describe( 'getLicenseTags', () => {
 		).toEqual( [ 'Referral', 'Development' ] );
 	} );
 
-	it( 'tags licenses purchased on Jetpack.com as standard licenses', () => {
+	test( 'tags licenses purchased on Jetpack.com as standard licenses', () => {
 		expect( getLicenseTags( license( { owner_type: 'user' } ) ) ).toEqual( [ 'Standard license' ] );
 	} );
 } );
@@ -284,7 +284,7 @@ describe( 'isRecentlyTransferred', () => {
 		return date.toISOString();
 	};
 
-	it( 'is true for a while after the old subscription ended', () => {
+	test( 'is true for a while after the old subscription ended', () => {
 		expect(
 			isRecentlyTransferred(
 				license( { meta: { a4a_transferred_subscription_expiration: daysAgo( 10 ) } } )
@@ -292,7 +292,7 @@ describe( 'isRecentlyTransferred', () => {
 		).toBe( true );
 	} );
 
-	it( 'is false once that window has passed, or when nothing was transferred', () => {
+	test( 'is false once that window has passed, or when nothing was transferred', () => {
 		expect(
 			isRecentlyTransferred(
 				license( { meta: { a4a_transferred_subscription_expiration: daysAgo( 100 ) } } )

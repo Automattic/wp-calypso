@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import { startOfDay, endOfDay } from 'date-fns';
@@ -29,8 +30,8 @@ const toUtcSecForSiteClock = (
 	);
 
 /**
- * Convert a local date range to inclusive epoch-second boundaries (UTC).
- * Covers the full start and end calendar days.
+ * Serialize site calendar days, held as browser-local Dates, to inclusive UTC seconds.
+ * The Dates are day carriers, not instants to format in the site timezone again.
  */
 export function buildTimeRangeInSeconds(
 	start: Date,
@@ -39,10 +40,28 @@ export function buildTimeRangeInSeconds(
 	gmtOffset?: number
 ): { startSec: number; endSec: number } {
 	if ( timezoneString ) {
-		const startYmd = dateI18n( 'Y-m-d', start, timezoneString );
-		const endYmd = dateI18n( 'Y-m-d', end, timezoneString );
-		const startSec = Number( dateI18n( 'U', `${ startYmd } 00:00:00`, timezoneString ) );
-		const endSec = Number( dateI18n( 'U', `${ endYmd } 23:59:59`, timezoneString ) );
+		const startSec = Math.floor(
+			new TZDate(
+				start.getFullYear(),
+				start.getMonth(),
+				start.getDate(),
+				0,
+				0,
+				0,
+				timezoneString
+			).getTime() / 1000
+		);
+		const endSec = Math.floor(
+			new TZDate(
+				end.getFullYear(),
+				end.getMonth(),
+				end.getDate(),
+				23,
+				59,
+				59,
+				timezoneString
+			).getTime() / 1000
+		);
 		if ( Number.isFinite( startSec ) && Number.isFinite( endSec ) ) {
 			return { startSec, endSec };
 		}

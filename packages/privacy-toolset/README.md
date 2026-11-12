@@ -40,9 +40,9 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Tests
 
-`yarn run test-packages -- packages/privacy-toolset`
+`yarn run test-packages:vitest packages/privacy-toolset`
 
-`yarn run test-packages:watch -- packages/privacy-toolset`
+`yarn run test-packages:vitest --watch packages/privacy-toolset`
 
 ### Using [Storybook](https://storybook.js.org/)
 

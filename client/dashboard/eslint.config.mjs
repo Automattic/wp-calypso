@@ -24,7 +24,7 @@ export default defineConfig( [
 								'!calypso/data/data-center',
 								'!calypso/data/php-versions',
 								// Allowed: calypso/lib/explat
-								// Allowed: calypso/lib/color-scheme
+								// Allowed: calypso/lib/color-scheme/* (leaf modules, not the barrel)
 								// Allowed: calypso/lib/interval/use-interval (temporary)
 								// Allowed: calypso/lib/load-dev-helpers
 								// Allowed: calypso/lib/logstash
@@ -110,6 +110,11 @@ export default defineConfig( [
 							],
 							message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 						},
+						{
+							group: [ 'calypso/lib/color-scheme/classic-provider' ],
+							message:
+								'Dashboard must use the query-backed color scheme provider, not the Classic Redux provider.',
+						},
 					],
 					paths: [
 						{
@@ -124,9 +129,8 @@ export default defineConfig( [
 						},
 						{
 							name: 'calypso/lib/color-scheme',
-							importNames: [ 'ClassicColorSchemeProvider' ],
 							message:
-								'Dashboard must use the query-backed color scheme provider, not the Classic Redux provider.',
+								'Import from the leaf modules (e.g. calypso/lib/color-scheme/shared) instead. The barrel pulls the Classic Redux provider and calypso/state into the dashboard.',
 						},
 						{
 							name: '@automattic/components',
@@ -217,6 +221,13 @@ export default defineConfig( [
 						'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
 				},
 			],
+		},
+	},
+	{
+		name: 'calypso/dashboard/tests',
+		files: [ '**/*.test.ts', '**/*.test.tsx' ],
+		rules: {
+			'jest/consistent-test-it': [ 'error', { fn: 'test', withinDescribe: 'test' } ],
 		},
 	},
 	{

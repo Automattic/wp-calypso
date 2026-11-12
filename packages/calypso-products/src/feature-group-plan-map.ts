@@ -156,6 +156,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 	FEATURE_BUILT_IN_SITE_ASSISTANT,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
@@ -739,8 +740,9 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 
 export function resolveFeatureGroupsForComparisonGrid( props?: {
 	isExperimentVariant?: boolean;
+	useMcpFeature?: boolean;
 } ): Partial< FeatureGroupMap > {
-	const { isExperimentVariant } = props || {};
+	const { isExperimentVariant, useMcpFeature } = props || {};
 
 	// For experiment variants, add FEATURE_WORDPRESS_STUDIO_SYNC
 	const developerToolsGroup = isExperimentVariant
@@ -824,6 +826,7 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 					FEATURE_PLUGIN_AUTOUPDATE_JP,
 					FEATURE_SUPPORT,
 					FEATURE_BUILT_IN_SITE_ASSISTANT,
+					...( useMcpFeature ? [ FEATURE_CONNECT_AI_AGENTS ] : [] ),
 					FEATURE_STATS_JP,
 					// AI features for plan differentiators experiment
 					FEATURE_AI_WRITER_DESIGNER,

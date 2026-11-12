@@ -47,7 +47,9 @@ export const PageSelector = ( { onBlur, ...props }: PageSelectorProps ) => {
 					<Icon
 						icon={ search }
 						size={ 24 }
-						style={ { fill: props.disabled ? 'var(--studio-gray-20)' : 'var(--color-neutral-50)' } }
+						style={ {
+							color: props.disabled ? 'var(--studio-gray-20)' : 'var(--color-neutral-50)',
+						} }
 					/>
 				</div>
 			</div>

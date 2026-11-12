@@ -4,7 +4,7 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"types": [ "jest", "@testing-library/jest-dom" ],
+		"types": [ "vitest/globals" ],
 		"resolveJsonModule": true
 	},
 	"include": [ "src", "src/**/*.json" ],

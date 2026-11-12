@@ -1,5 +1,24 @@
 import { html as toHtml } from '../indices-to-html';
 
+const blockTagRegex =
+	/^\s*<\/?(blockquote|figure|figcaption|hr|ol|ul|li|div|p|pre|h[1-6])\b|<\/(blockquote|figure|figcaption|hr|ol|ul|li|div|p|pre|h[1-6])>\s*$/i;
+const emptySpanLineRegex = /^\s*(<span[^>]*>\s*<\/span>\s*)+$/i;
+
+/**
+ * Whether a line starts or ends with a block-level tag.
+ * @param {string} [line] a line of the HTML string
+ * @returns {boolean} true for block tag lines
+ */
+const isBlockLine = ( line ) => !! line && blockTagRegex.test( line );
+
+/**
+ * Splits an HTML string into lines, dropping lines that hold only empty spans.
+ * @param {string} text HTML string
+ * @returns {string[]} lines
+ */
+const toLines = ( text ) =>
+	text.split( '\n' ).filter( ( line ) => ! emptySpanLineRegex.test( line ) );
+
 /**
  * Adds markup to some common text patterns
  *
@@ -20,10 +39,13 @@ import { html as toHtml } from '../indices-to-html';
  * @returns {string} marked-up text
  */
 const toBlocks = ( text ) =>
-	text.split( '\n' ).reduce(
+	toLines( text ).reduce(
 		( { out, inFence, inList }, raw, index, src ) => {
 			if ( ! raw ) {
-				if ( ! src[ index + 1 ] ) {
+				if (
+					! src[ index + 1 ] ||
+					( isBlockLine( src[ index - 1 ] ) && isBlockLine( src[ index + 1 ] ) )
+				) {
 					return { out, inFence, inList };
 				}
 				return {
@@ -33,12 +55,9 @@ const toBlocks = ( text ) =>
 				};
 			}
 
-			// Blockquote and list start/end tags do not need to be wrapped in div/p
-			const skipRegex = /(blockquote|ol|ul|li|div)(.*)>/i;
-			const shouldSkipWrap = skipRegex.test( raw );
-			if ( shouldSkipWrap ) {
+			if ( isBlockLine( raw ) ) {
 				return {
-					out: out + raw,
+					out: out + raw + '\n',
 					inFence,
 					inList,
 				};

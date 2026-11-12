@@ -138,7 +138,7 @@ const SITE_ACTIONS = [
 ];
 
 describe( 'getLicenseActions eligibility', () => {
-	it( 'offers site actions only for sites created from a WordPress.com hosting license', () => {
+	test( 'offers site actions only for sites created from a WordPress.com hosting license', () => {
 		const isEligible = setup();
 		for ( const id of SITE_ACTIONS ) {
 			expect( isEligible( id, assignedWpcom ) ).toBe( true );
@@ -149,14 +149,14 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'debug-site', assignedJetpack ) ).toBe( true );
 	} );
 
-	it( 'never offers site actions for Pressable licenses, even to the agency owner', () => {
+	test( 'never offers site actions for Pressable licenses, even to the agency owner', () => {
 		const isEligible = setup( { isAgencyOwner: true } );
 		for ( const id of [ ...SITE_ACTIONS, 'debug-site', 'prepare-for-launch' ] ) {
 			expect( isEligible( id, assignedPressable ) ).toBe( false );
 		}
 	} );
 
-	it( 'swaps launch-related actions for development sites', () => {
+	test( 'swaps launch-related actions for development sites', () => {
 		const isEligible = setup();
 		expect( isEligible( 'prepare-for-launch', assignedWpcomDev ) ).toBe( true );
 		expect( isEligible( 'prepare-for-launch', assignedWpcom ) ).toBe( false );
@@ -165,7 +165,7 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'upgrade', assignedWpcomDev ) ).toBe( false );
 	} );
 
-	it( 'keeps Change domain outside the dashboard', () => {
+	test( 'keeps Change domain outside the dashboard', () => {
 		const { run } = setupWithCallbacks();
 		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 
@@ -176,7 +176,7 @@ describe( 'getLicenseActions eligibility', () => {
 		open.mockRestore();
 	} );
 
-	it( 'sends the site actions to their dashboard routes', () => {
+	test( 'sends the site actions to their dashboard routes', () => {
 		const { run, onNavigate } = setupWithCallbacks();
 
 		run( 'set-up-site', assignedWpcom );
@@ -192,7 +192,7 @@ describe( 'getLicenseActions eligibility', () => {
 		] );
 	} );
 
-	it( 'offers upgrade for hosting licenses that are still renewing', () => {
+	test( 'offers upgrade for hosting licenses that are still renewing', () => {
 		const isEligible = setup();
 		expect( isEligible( 'upgrade', assignedWpcom ) ).toBe( true );
 		expect( isEligible( 'upgrade', unassignedWpcom ) ).toBe( true );
@@ -205,13 +205,13 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'set-up-site', referral ) ).toBe( true );
 	} );
 
-	it( 'upgrade hands the license to the hosting callback', () => {
+	test( 'upgrade hands the license to the hosting callback', () => {
 		const { run, onOpenHosting } = setupWithCallbacks();
 		run( 'upgrade', pressable );
 		expect( onOpenHosting ).toHaveBeenCalledWith( pressable );
 	} );
 
-	it( 'offers Manage in Pressable for live Pressable licenses, add-ons included', () => {
+	test( 'offers Manage in Pressable for live Pressable licenses, add-ons included', () => {
 		const isEligible = setup( { isAgencyOwner: true } );
 		expect( isEligible( 'manage-in-pressable', pressable ) ).toBe( true );
 		expect( isEligible( 'manage-in-pressable', pressableAddon ) ).toBe( true );
@@ -224,13 +224,13 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'manage-in-pressable', unassigned ) ).toBe( false );
 	} );
 
-	it( 'never exposes the key of a Pressable license', () => {
+	test( 'never exposes the key of a Pressable license', () => {
 		const isEligible = setup();
 		expect( isEligible( 'copy-license-key', unassigned ) ).toBe( true );
 		expect( isEligible( 'copy-license-key', pressable ) ).toBe( false );
 	} );
 
-	it( 'offers the CRM extensions download for assigned CRM licenses', () => {
+	test( 'offers the CRM extensions download for assigned CRM licenses', () => {
 		const isEligible = setup();
 		expect( isEligible( 'download-crm-extensions', assignedCrm ) ).toBe( true );
 		expect(
@@ -239,7 +239,7 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'download-crm-extensions', assignedJetpack ) ).toBe( false );
 	} );
 
-	it( 'CRM extensions download opens the CRM downloads page', () => {
+	test( 'CRM extensions download opens the CRM downloads page', () => {
 		const { run, onNavigate } = setupWithCallbacks();
 		run( 'download-crm-extensions', assignedCrm );
 		expect( onNavigate ).toHaveBeenCalledWith(
@@ -247,7 +247,7 @@ describe( 'getLicenseActions eligibility', () => {
 		);
 	} );
 
-	it( 'offers assignment only for unassigned partner licenses', () => {
+	test( 'offers assignment only for unassigned partner licenses', () => {
 		const isEligible = setup();
 		expect( isEligible( 'assign-license', unassigned ) ).toBe( true );
 		expect( isEligible( 'assign-license', assignedJetpack ) ).toBe( false );
@@ -257,14 +257,14 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'assign-license', revoked ) ).toBe( false );
 	} );
 
-	it( 'sends unassigned WordPress.com hosting licenses to site creation instead', () => {
+	test( 'sends unassigned WordPress.com hosting licenses to site creation instead', () => {
 		const isEligible = setup();
 		expect( isEligible( 'create-site', unassignedWpcom ) ).toBe( true );
 		expect( isEligible( 'assign-license', unassignedWpcom ) ).toBe( false );
 		expect( isEligible( 'create-site', unassigned ) ).toBe( false );
 	} );
 
-	it( 'never offers revoke for referral or standard licenses', () => {
+	test( 'never offers revoke for referral or standard licenses', () => {
 		const isEligible = setup();
 		expect( isEligible( 'revoke-license', unassigned ) ).toBe( true );
 		expect( isEligible( 'revoke-license', assignedJetpack ) ).toBe( true );
@@ -273,7 +273,7 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'revoke-license', revoked ) ).toBe( false );
 	} );
 
-	it( 'hides revoke once auto-renew is off, and for unassigned child licenses', () => {
+	test( 'hides revoke once auto-renew is off, and for unassigned child licenses', () => {
 		const isEligible = setup();
 		expect( isEligible( 'revoke-license', autoRenewOff ) ).toBe( false );
 		expect( isEligible( 'revoke-license', assignedChild ) ).toBe( true );
@@ -281,12 +281,12 @@ describe( 'getLicenseActions eligibility', () => {
 		expect( isEligible( 'revoke-license', bundleParent ) ).toBe( true );
 	} );
 
-	it( 'hides revoke for Titan inboxes, which are cancelled in Pressable', () => {
+	test( 'hides revoke for Titan inboxes, which are cancelled in Pressable', () => {
 		const titan = license( { license_key: 'pressable-addon-titan-inbox_abc', quantity: 5 } );
 		expect( setup()( 'revoke-license', titan ) ).toBe( false );
 	} );
 
-	it( 'gates a bundle on the revoke capability alone, like classic', () => {
+	test( 'gates a bundle on the revoke capability alone, like classic', () => {
 		const referralBundle = license( {
 			quantity: 5,
 			referral: { id: 1 } as JetpackLicense[ 'referral' ],
@@ -300,12 +300,12 @@ describe( 'getLicenseActions eligibility', () => {
 		).toBe( false );
 	} );
 
-	it( 'respects the revoke capability', () => {
+	test( 'respects the revoke capability', () => {
 		const isEligible = setup( { canRevoke: false } );
 		expect( isEligible( 'revoke-license', unassigned ) ).toBe( false );
 	} );
 
-	it( 'offers downloads only for partner licenses with downloads', () => {
+	test( 'offers downloads only for partner licenses with downloads', () => {
 		const isEligible = setup();
 		expect( isEligible( 'download-license-product', unassigned ) ).toBe( true );
 		expect( isEligible( 'download-license-product', standard ) ).toBe( false );
@@ -315,7 +315,7 @@ describe( 'getLicenseActions eligibility', () => {
 		);
 	} );
 
-	it( 'only lets the agency owner act on Pressable licenses', () => {
+	test( 'only lets the agency owner act on Pressable licenses', () => {
 		const ownerEligible = setup( { isAgencyOwner: true } );
 		const memberEligible = setup( { isAgencyOwner: false } );
 		for ( const id of [

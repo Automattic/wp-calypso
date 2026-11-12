@@ -1,7 +1,7 @@
 import { getSshKeyComment, isSshKeyValid } from '../ssh';
 
 describe( 'isSshKeyValid', () => {
-	it.each( [
+	test.each( [
 		'ssh-rsa AAAAB3NzaC1yc2E user@host',
 		'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 user@host',
 		'ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTY= user@host',
@@ -10,7 +10,7 @@ describe( 'isSshKeyValid', () => {
 		expect( isSshKeyValid( key ) ).toBe( true );
 	} );
 
-	it.each( [
+	test.each( [
 		'',
 		'ssh-dss AAAAB3NzaC1kc3M user@host',
 		'ssh-ed25519',
@@ -22,23 +22,23 @@ describe( 'isSshKeyValid', () => {
 } );
 
 describe( 'getSshKeyComment', () => {
-	it( 'returns the comment after the key', () => {
+	test( 'returns the comment after the key', () => {
 		expect( getSshKeyComment( 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 user@host' ) ).toBe( 'user@host' );
 	} );
 
-	it( 'keeps comments with spaces', () => {
+	test( 'keeps comments with spaces', () => {
 		expect( getSshKeyComment( '  ssh-rsa AAAAB3NzaC1yc2E  Work   laptop \n' ) ).toBe(
 			'Work laptop'
 		);
 	} );
 
-	it( 'cuts long comments to the label length limit', () => {
+	test( 'cuts long comments to the label length limit', () => {
 		expect( getSshKeyComment( `ssh-rsa AAAAB3NzaC1yc2E ${ 'a'.repeat( 60 ) }` ) ).toHaveLength(
 			50
 		);
 	} );
 
-	it.each( [ '', 'ssh-rsa AAAAB3NzaC1yc2E', 'not-a-key AAAA user@host' ] )(
+	test.each( [ '', 'ssh-rsa AAAAB3NzaC1yc2E', 'not-a-key AAAA user@host' ] )(
 		'returns an empty string for %p',
 		( key ) => {
 			expect( getSshKeyComment( key ) ).toBe( '' );

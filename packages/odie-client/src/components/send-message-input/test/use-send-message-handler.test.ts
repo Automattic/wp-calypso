@@ -1,13 +1,10 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook, act } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useSendMessageHandler } from '../use-send-message-handler';
 import type { Chat, Message } from '../../../types';
 
-jest.mock( 'smooch', () => ( {
-	__esModule: true,
-	default: { stopTyping: jest.fn() },
+vi.mock( 'smooch', () => ( {
+	default: { stopTyping: vi.fn() },
 } ) );
 
 const userMessage = ( content: string ): Message =>
@@ -20,18 +17,18 @@ function makeChat( { provider = 'odie', messages = [] as Message[] } = {} ) {
 }
 
 function setup( chat: Chat ) {
-	const trackEvent = jest.fn();
-	const sendMessage = jest.fn().mockResolvedValue( undefined );
-	const textareaRef = { current: { focus: jest.fn() } };
+	const trackEvent = vi.fn();
+	const sendMessage = vi.fn().mockResolvedValue( undefined );
+	const textareaRef = { current: { focus: vi.fn() } };
 
 	const { result } = renderHook( () =>
 		useSendMessageHandler( {
 			inputValue: 'How do I add a domain?',
-			setInputValue: jest.fn(),
+			setInputValue: vi.fn(),
 			hasAttachments: false,
 			isChatBusy: false,
 			chat,
-			sendAttachments: jest.fn(),
+			sendAttachments: vi.fn(),
 			textareaRef: textareaRef as unknown as React.RefObject< HTMLTextAreaElement >,
 			trackEvent,
 			sendMessage,
@@ -41,7 +38,7 @@ function setup( chat: Chat ) {
 	return { send: result.current, trackEvent };
 }
 
-const startEvents = ( trackEvent: jest.Mock ) =>
+const startEvents = ( trackEvent: Mock ) =>
 	trackEvent.mock.calls.filter( ( [ name ] ) => name === 'chat_conversation_start' );
 
 describe( 'useSendMessageHandler conversation start tracking', () => {

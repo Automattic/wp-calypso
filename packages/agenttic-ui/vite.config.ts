@@ -16,7 +16,7 @@ export default defineConfig( {
 			fileName: ( format, entryName ) => `${ entryName }.js`,
 			formats: [ 'es' ],
 		},
-		rollupOptions: {
+		rolldownOptions: {
 			external: [
 				// Externalize all dependencies and peerDependencies
 				'react',

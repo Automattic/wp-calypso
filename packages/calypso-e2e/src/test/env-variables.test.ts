@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import vm from 'vm';
-import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { afterAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import envVariables, {
 	ATOMIC_VARIATIONS,
 	MIXED_RUN_WORKERS,
@@ -22,12 +22,12 @@ const AMBIENT_VALUES = URL_ENV_VARS.map( ( name ) => process.env[ name ] );
 
 describe( 'EnvVariables Tests', function () {
 	// Each case starts from the unset state so the assertions never depend on the
-	// shell that launched Jest, or on the order the cases run in.
+	// shell that launched the tests, or on the order the cases run in.
 	beforeEach( function () {
 		URL_ENV_VARS.forEach( ( name ) => delete process.env[ name ] );
 	} );
 
-	// Jest workers are reused across test files, so hand the environment back.
+	// A worker can be reused for the next test file, so hand the environment back.
 	afterAll( function () {
 		URL_ENV_VARS.forEach( ( name, index ) => {
 			const ambient = AMBIENT_VALUES[ index ];
@@ -100,7 +100,7 @@ describe( 'EnvVariables Tests', function () {
 		}
 
 		/**
-		 * Restores an environment variable, which Jest workers carry into the next test file.
+		 * Restores an environment variable, which a reused worker carries into the next test file.
 		 */
 		function restore( name: string, ambient: string | undefined ) {
 			if ( ambient === undefined ) {
@@ -196,7 +196,7 @@ describe( 'EnvVariables Tests', function () {
 
 		// Files whose hashes collide still have to keep their variations across re-runs.
 		test( 'the same commit assigns the same variations when hashes collide', function () {
-			const collision = jest.spyOn( crypto, 'createHash' ).mockReturnValue( {
+			const collision = vi.spyOn( crypto, 'createHash' ).mockReturnValue( {
 				update() {
 					return this;
 				},
@@ -216,7 +216,7 @@ describe( 'EnvVariables Tests', function () {
 		// A re-run on a machine with another locale, e.g. da_DK sorting "aa" after "f", has to match.
 		test( 'the assignment ignores the locale', function () {
 			const expected = assignAtomicVariations( SPEC_FILES );
-			const reversedCollation = jest
+			const reversedCollation = vi
 				.spyOn( String.prototype, 'localeCompare' )
 				.mockImplementation( function ( this: string, other: string ) {
 					return this < other ? 1 : -1;

@@ -35,7 +35,7 @@ describe( '<AgentsManagerLoader />', () => {
 	} );
 	afterEach( () => jest.restoreAllMocks() );
 
-	it( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
+	test( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
 		const cancelQueries = jest.spyOn( queryClient, 'cancelQueries' );
 		mockedUseShouldLoadAgentsManager.mockReturnValue( {
 			routeIsEnabled: true,
@@ -55,7 +55,7 @@ describe( '<AgentsManagerLoader />', () => {
 		} );
 	} );
 
-	it( 'publishes disabled eligibility outside the allowlist', async () => {
+	test( 'publishes disabled eligibility outside the allowlist', async () => {
 		mockedUseShouldLoadAgentsManager.mockReturnValue( {
 			routeIsEnabled: false,
 			isInternalOnly: false,

@@ -88,6 +88,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-dataviews-view': 'dvview',
+	'hosting-dashboard-dataviews-layout-chosen': 'dvlyt',
 	'hosting-dashboard-visit-count': 'visits',
 	'hosting-dashboard-overview-storage-notice-dismissed': 'storage',
 	'hosting-dashboard-tours': 'tours',

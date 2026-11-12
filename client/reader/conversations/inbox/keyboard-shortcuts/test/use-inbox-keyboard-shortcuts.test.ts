@@ -136,6 +136,21 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		expect( handlers.onToggleShortcuts ).not.toHaveBeenCalled();
 	} );
 
+	it( 'leaves the left and right arrows to a focused tab list', async () => {
+		const user = userEvent.setup();
+		const handlers = makeHandlers();
+		document.body.innerHTML =
+			'<div role="tablist"><button type="button" role="tab">All</button></div>';
+		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
+
+		document.querySelector< HTMLButtonElement >( 'button' )?.focus();
+		await user.keyboard( '{ArrowRight}{ArrowLeft}j' );
+
+		expect( handlers.onNextTab ).not.toHaveBeenCalled();
+		expect( handlers.onPreviousTab ).not.toHaveBeenCalled();
+		expect( handlers.onNext ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'ignores modifier combinations', async () => {
 		const user = userEvent.setup();
 		const handlers = makeHandlers();

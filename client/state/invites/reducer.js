@@ -283,6 +283,8 @@ const initInvitingState = {
 	error: false,
 	errorType: undefined,
 	failure: false,
+	failureStatusCode: undefined,
+	failureMessage: undefined,
 	success: false,
 };
 export function inviting( state = initInvitingState, action ) {
@@ -310,6 +312,8 @@ export function inviting( state = initInvitingState, action ) {
 			return Object.assign( {}, state, {
 				...initInvitingState,
 				failure: true,
+				failureStatusCode: action.statusCode,
+				failureMessage: action.message,
 			} );
 	}
 

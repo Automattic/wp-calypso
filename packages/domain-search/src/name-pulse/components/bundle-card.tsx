@@ -2,7 +2,7 @@ import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { arrowRight, Icon, lockOutline, plus, shield } from '@wordpress/icons';
+import { arrowRight, Icon, lock, plus, shield } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -91,7 +91,7 @@ export const NamePulseBundleCard = ( { bundle, isWide = false }: NamePulseBundle
 		<div className={ clsx( 'name-pulse-bundle-card', isWide && 'name-pulse-bundle-card--wide' ) }>
 			<div className="name-pulse-bundle-card__header">
 				<span className="name-pulse-bundle-card__title">
-					<Icon icon={ lockOutline } size={ 20 } />
+					<Icon icon={ lock } size={ 20 } />
 					{ __( 'Protect your brand' ) }
 				</span>
 				<Badge intent="low">

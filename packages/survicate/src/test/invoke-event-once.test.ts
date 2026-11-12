@@ -1,24 +1,23 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	subscribe: jest.fn( () => jest.fn() ),
-} ) );
-
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
-
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
-} ) );
-
+import { vi } from 'vitest';
 import { invokeSurvicateEventOnce } from '../invoke-event-once';
 
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	subscribe: vi.fn( () => vi.fn() ),
+} ) );
+
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
+} ) );
+
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
+} ) );
+
 describe( 'invokeSurvicateEventOnce', () => {
-	const invokeEvent = jest.fn();
+	const invokeEvent = vi.fn();
 
 	beforeEach( () => {
 		window._sva = { invokeEvent };

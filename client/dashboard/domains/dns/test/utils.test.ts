@@ -19,20 +19,20 @@ describe( 'getRRsetTtl', () => {
 		},
 	];
 
-	it( 'returns the TTL of the records with the same name and type', () => {
+	test( 'returns the TTL of the records with the same name and type', () => {
 		expect( getRRsetTtl( records, { type: 'MX', name: 'example.com.' } ) ).toBe( 300 );
 	} );
 
-	it( 'matches names ignoring case', () => {
+	test( 'matches names ignoring case', () => {
 		expect( getRRsetTtl( records, { type: 'A', name: 'WWW' } ) ).toBe( 7200 );
 	} );
 
-	it( 'returns undefined when no record has the same name and type', () => {
+	test( 'returns undefined when no record has the same name and type', () => {
 		expect( getRRsetTtl( records, { type: 'TXT', name: 'example.com.' } ) ).toBe( undefined );
 		expect( getRRsetTtl( records, { type: 'MX', name: 'mail' } ) ).toBe( undefined );
 	} );
 
-	it( 'matches SRV records by service and protocol too', () => {
+	test( 'matches SRV records by service and protocol too', () => {
 		expect(
 			getRRsetTtl( records, {
 				type: 'SRV',

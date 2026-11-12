@@ -39,11 +39,11 @@
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/cli": "^8.0.6",
 		"@babel/compat-data": "^8.0.5",
-		"@babel/core": "^8.0.7",
+		"@babel/core": "^8.0.10",
 		"@swc/core": "^1.11.24",
 		"@types/webpack-env": "^1.18.8",
-		"@wordpress/browserslist-config": "^6.48.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
+		"@wordpress/browserslist-config": "^7.1.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
 		"autoprefixer": "^10.4.21",
 		"babel-loader": "^10.1.1",
 		"browserslist": "^4.29.5",
@@ -66,10 +66,12 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"gettext-parser": "^6.0.0"
+		"gettext-parser": "^6.0.0",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
-		"postcss": "^8.5.31",
+		"postcss": "^8.5.32",
 		"webpack": "^5.101.0"
 	}
 }

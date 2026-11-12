@@ -45,7 +45,7 @@ describe( 'PauseAllEmails', () => {
 		);
 	};
 
-	it( 'renders unchecked when all emails are not blocked', async () => {
+	test( 'renders unchecked when all emails are not blocked', async () => {
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
 			subscription_delivery_email_blocked: false,
 		} );
@@ -57,7 +57,7 @@ describe( 'PauseAllEmails', () => {
 		} );
 	} );
 
-	it( 'renders checked when all emails are blocked', async () => {
+	test( 'renders checked when all emails are blocked', async () => {
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
 			subscription_delivery_email_blocked: true,
 		} );
@@ -66,7 +66,7 @@ describe( 'PauseAllEmails', () => {
 		expect( await pauseCheckbox() ).toBeChecked();
 	} );
 
-	it( 'cancels the change when the cancel button is clicked', async () => {
+	test( 'cancels the change when the cancel button is clicked', async () => {
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
 			subscription_delivery_email_blocked: false,
 		} );
@@ -88,7 +88,7 @@ describe( 'PauseAllEmails', () => {
 		expect( await pauseCheckbox() ).not.toBeChecked();
 	} );
 
-	it( 'shows confirmation message when the user blocks all emails are paused', async () => {
+	test( 'shows confirmation message when the user blocks all emails are paused', async () => {
 		const initialSettings = {
 			subscription_delivery_email_blocked: false,
 		};
@@ -120,7 +120,7 @@ describe( 'PauseAllEmails', () => {
 		} );
 	} );
 
-	it( 'shows confirmation message when the settings all emails are unpaused', async () => {
+	test( 'shows confirmation message when the settings all emails are unpaused', async () => {
 		const initialSettings = {
 			subscription_delivery_email_blocked: true,
 		};

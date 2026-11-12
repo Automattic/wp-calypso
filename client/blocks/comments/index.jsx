@@ -73,6 +73,10 @@ const PostCommentsWithData = ( props ) => {
 		return null;
 	}
 
+	if ( commentsData.isCommentsLoading && props.loadingPlaceholder ) {
+		return props.loadingPlaceholder;
+	}
+
 	return <PostComments { ...props } { ...commentsData } />;
 };
 
