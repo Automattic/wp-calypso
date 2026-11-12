@@ -17,7 +17,7 @@ import Notice, {
 	RouterNoticeActionLinkButton,
 } from '../../components/notice';
 import { a4aLink } from '../../utils/link';
-import { SiteLaunchButton } from '../site-launch-button';
+import { SiteLaunchNoticeAction } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
 import type { AgencyBlog, Site } from '@automattic/api-core';
@@ -99,7 +99,7 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 			title={ __( 'Your site hasn’t been launched yet' ) }
 			actions={
 				<>
-					<SiteLaunchButton
+					<SiteLaunchNoticeAction
 						site={ site }
 						tracksContext="agency_site_settings"
 						{ ...( isBillingTypeBD
@@ -152,7 +152,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 			<Notice
 				title={ __( 'Your site hasn’t been launched yet' ) }
 				actions={
-					<SiteLaunchButton
+					<SiteLaunchNoticeAction
 						site={ site }
 						tracksContext="site_settings"
 						flowDestination={ `/sites/${ site.slug }` }
