@@ -40,6 +40,8 @@ export default function useAgencyCart(
 							isA4ASitelessCheckout: true,
 							agency_id: agencyId,
 							cart_item_index: cartItemIndex,
+							// The checkout shows a product's licenses as one line.
+							mergeIdenticalItems: true,
 							...( siteDomain ? { a4a_pressable_site_domain: siteDomain } : {} ),
 						},
 					} )

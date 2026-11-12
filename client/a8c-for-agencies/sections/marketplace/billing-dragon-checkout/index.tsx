@@ -202,6 +202,8 @@ function BillingDragonCheckoutContent( {
 						isA4ASitelessCheckout: true,
 						agency_id: agency.id,
 						cart_item_index: cartItemIndex++,
+						// The checkout shows a product's licenses as one line.
+						mergeIdenticalItems: true,
 						...( product.site_domain ? { a4a_pressable_site_domain: product.site_domain } : {} ),
 					},
 				};
