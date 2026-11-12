@@ -1,7 +1,6 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
-import '@testing-library/jest-dom';
 import { cleanup, render, screen } from '@testing-library/react';
 import RootChild from '..';
 

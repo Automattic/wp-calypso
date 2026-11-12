@@ -1,8 +1,7 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { Gravatar } from '../';
 
 describe( 'Gravatar', () => {

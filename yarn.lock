@@ -1102,6 +1102,7 @@ __metadata:
     postcss: "npm:^8.5.32"
     prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.3"
+    resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"

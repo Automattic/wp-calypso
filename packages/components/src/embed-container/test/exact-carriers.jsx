@@ -1,5 +1,5 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 /* eslint-disable react/no-danger */
 import { render, waitFor } from '@testing-library/react';
@@ -14,10 +14,10 @@ let EmbedContainer;
 let loadScript;
 let loadjQueryDependentScript;
 
-beforeEach( () => {
+beforeEach( async () => {
 	vi.resetModules();
-	EmbedContainer = require( '../' ).default;
-	( { loadScript, loadjQueryDependentScript } = require( '@automattic/load-script' ) );
+	EmbedContainer = ( await import( '../' ) ).default;
+	( { loadScript, loadjQueryDependentScript } = await import( '@automattic/load-script' ) );
 } );
 
 afterEach( () => {

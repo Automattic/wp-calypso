@@ -1,5 +1,5 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */

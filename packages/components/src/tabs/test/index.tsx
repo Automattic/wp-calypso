@@ -1,7 +1,6 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
-import '@testing-library/jest-dom';
 import { press, click } from '@ariakit/test';
 import { render } from '@ariakit/test/react';
 import { screen, waitFor } from '@testing-library/react';
@@ -13,7 +12,7 @@ import type { TabsProps } from '../types';
 
 // Setup mocking the `isRTL` function to test arrow key navigation behavior.
 vi.mock( '@wordpress/i18n', async () => {
-	const original = ( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) );
+	const original = await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' );
 	return {
 		...original,
 		isRTL: vi.fn( () => false ),

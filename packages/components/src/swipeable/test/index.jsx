@@ -1,5 +1,5 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 import { render, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
@@ -29,9 +29,12 @@ describe( 'Swipeable', () => {
 			</Swipeable>
 		);
 		const swipeable = container.querySelector( '.swipeable__container' );
-		vi
-			.spyOn( swipeable, 'getBoundingClientRect' )
-			.mockReturnValue( { left: 0, right: 400, top: 0, bottom: 400 } );
+		vi.spyOn( swipeable, 'getBoundingClientRect' ).mockReturnValue( {
+			left: 0,
+			right: 400,
+			top: 0,
+			bottom: 400,
+		} );
 		return swipeable;
 	};
 

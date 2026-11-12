@@ -109,6 +109,7 @@
 		"@types/node": "^24.12.2",
 		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
+		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",
