@@ -12,6 +12,7 @@ import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
+import NewTabLabel from '../../components/new-tab-label';
 import { isSpacefastPromoEnabled } from '../../components/spacefast/constants';
 import SpacefastLogo from '../../components/spacefast/spacefast-logo';
 import { useRecordViewOnce } from '../../lib/use-record-view-once';
@@ -138,7 +139,6 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
-								size="compact"
 								href="https://my.spacefast.com/redeem/SPACEFAST-LAUNCH-213M"
 								target="_blank"
 								rel="noreferrer"
@@ -148,7 +148,7 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 									} )
 								}
 							>
-								{ __( 'Start your 30 days' ) }
+								<NewTabLabel>{ __( 'Start your 30 days' ) }</NewTabLabel>
 							</Button>
 							<Button variant="link" onClick={ () => setIsTermsOpen( true ) }>
 								{ __( 'Offer terms' ) }

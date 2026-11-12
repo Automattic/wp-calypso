@@ -1,4 +1,10 @@
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
+import { Text } from '../../../components/text';
 import { useRecordViewOnce } from '../../lib/use-record-view-once';
 import NewTabLabel from '../new-tab-label';
 import type { ReactNode } from 'react';
@@ -59,17 +65,32 @@ export default function SidebarPromoCard( {
 			{ ...( isExternal && { target: '_blank', rel: 'noreferrer' } ) }
 			onClick={ onClick }
 		>
-			<span className="a4a-sidebar-promo-card__icon">{ icon }</span>
-			<span className="a4a-sidebar-promo-card__text">
-				<span className="a4a-sidebar-promo-card__title">
-					{ title }
-					{ badge && <span className="a4a-sidebar-promo-card__badge">{ badge }</span> }
-				</span>
-				<span className="a4a-sidebar-promo-card__description">{ description }</span>
-				<span className="a4a-sidebar-promo-card__link">
-					{ isExternal ? <NewTabLabel justify="flex-start">{ label }</NewTabLabel> : label }
-				</span>
-			</span>
+			<HStack as="span" spacing={ 3 } alignment="topLeft">
+				<span className="a4a-sidebar-promo-card__icon">{ icon }</span>
+				<VStack as="span" spacing={ 1 }>
+					<HStack as="span" spacing={ 2 } justify="flex-start">
+						<Text color="inherit" size={ 13 } weight={ 500 } lineHeight="20px">
+							{ title }
+						</Text>
+						{ badge && (
+							<Badge intent="stable" className="a4a-sidebar-promo-card__badge">
+								{ badge }
+							</Badge>
+						) }
+					</HStack>
+					<Text
+						variant="muted"
+						size={ 12 }
+						lineHeight="16px"
+						className="a4a-sidebar-promo-card__description"
+					>
+						{ description }
+					</Text>
+					<Text color="inherit" size={ 12 } weight={ 500 } lineHeight="16px">
+						{ isExternal ? <NewTabLabel justify="flex-start">{ label }</NewTabLabel> : label }
+					</Text>
+				</VStack>
+			</HStack>
 		</a>
 	);
 }
