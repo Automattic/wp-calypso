@@ -114,6 +114,126 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 	} );
 
+	const currentStepOf = ( state: string, extra = {} ) => {
+		const siteImport = {
+			status: 'moving',
+			session: session( state, extra ) as StaticSiteImportSession,
+		} as StaticSiteImportState;
+		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+		const current = screen
+			.getAllByRole( 'listitem' )
+			.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
+		expect( current ).toHaveLength( 1 );
+		return current[ 0 ];
+	};
+
+	test.each( [
+		[ 'capture_queued', {}, 'Finding your pages' ],
+		[ 'capturing', { progress: { phase: 'inspecting' } }, 'Finding your pages' ],
+		[
+			'capturing',
+			{ progress: { phase: 'capturing', finding_pages: true } },
+			'Finding your pages',
+		],
+		[
+			'capturing',
+			{ progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 } },
+			'Copying your pages',
+		],
+		[ 'building', { progress: { phase: 'building' } }, 'Building your WordPress site' ],
+		[ 'building', { progress: { phase: 'exporting' } }, 'Building your WordPress site' ],
+		[ 'preview_ready', {}, 'Moving it onto your site' ],
+		[ 'queued', {}, 'Moving it onto your site' ],
+	] )( 'shows a %s session on the step the server reports', ( state, extra, currentStep ) => {
+		expect( currentStepOf( state, extra ) ).toHaveTextContent( currentStep );
+	} );
+
+	test( 'counts the pages copied so far while copying', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 3, pages_total: 12 },
+		} );
+
+		expect( current ).toHaveTextContent( 'Copying your pages' );
+		expect( current ).toHaveTextContent( '3 of 12' );
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '12 pages found' );
+	} );
+
+	test.each( [
+		[ { phase: 'building' }, 'Setting up WordPress' ],
+		[
+			{ phase: 'building', building: { stage: 'prepare_shared', current: 0, total: 13 } },
+			'Preparing your styles and layout',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compile_pages', current: 5, total: 13 } },
+			'Turning your pages into blocks · 5 of 13',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compose', current: 13, total: 13 } },
+			'Putting your theme together',
+		],
+		[
+			{ phase: 'building', building: { stage: 'materialize', current: 13, total: 13 } },
+			'Creating your pages and theme',
+		],
+		[
+			{ phase: 'exporting', building: { stage: 'completed', current: 13, total: 13 } },
+			'Packaging your site',
+		],
+	] )( 'says what the build is doing: %o', ( progress, detail ) => {
+		expect( currentStepOf( 'building', { progress } ) ).toHaveTextContent( detail );
+	} );
+
+	test( 'shows no build detail for a step it doesn’t know', () => {
+		expect(
+			currentStepOf( 'building', {
+				progress: { phase: 'building', building: { stage: 'something_new', current: 1, total: 2 } },
+			} )
+		).toHaveTextContent( /^Building your WordPress site$/ );
+	} );
+
+	test( 'says how many pages were found so far while the capture is still finding them', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', finding_pages: true, source: { pages_found: 9 } },
+		} );
+
+		expect( current ).toHaveTextContent( 'Finding your pages' );
+		expect( current ).toHaveTextContent( '9 pages found so far' );
+	} );
+
+	test( 'drops “so far” once the capture settles on its total', () => {
+		currentStepOf( 'capturing', {
+			progress: {
+				phase: 'capturing',
+				pages_captured: 0,
+				pages_total: 12,
+				source: { pages_found: 9 },
+			},
+		} );
+
+		const found = screen.getAllByRole( 'listitem' )[ 0 ];
+		expect( found ).toHaveTextContent( '12 pages found' );
+		expect( found ).not.toHaveTextContent( 'so far' );
+	} );
+
+	test( 'shows no page count it can’t back once the server stops reporting progress', () => {
+		currentStepOf( 'queued', { preview_summary: { pages: 15 } } );
+
+		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( /^Finding your pages$/ );
+	} );
+
+	test( 'moves the checklist forward when the session moves on', () => {
+		const moving = ( state: string ) =>
+			( { status: 'moving', session: session( state ) } ) as StaticSiteImportState;
+		const { rerender } = render(
+			<StaticSiteImportProgress siteImport={ moving( 'capturing' ) } search={ search } />
+		);
+
+		rerender( <StaticSiteImportProgress siteImport={ moving( 'building' ) } search={ search } /> );
+
+		expect( screen.getAllByRole( 'listitem' )[ 2 ] ).toHaveAttribute( 'aria-current', 'step' );
+	} );
+
 	test( 'offers to connect the kept domain and preview the site once it is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
