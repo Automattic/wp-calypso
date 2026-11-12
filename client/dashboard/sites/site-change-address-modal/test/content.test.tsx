@@ -65,9 +65,20 @@ describe( '<SiteChangeAddressContent>', () => {
 		renderContent();
 
 		expect(
-			await screen.findByText( /A custom domain is easier to share and remember/ )
+			await screen.findByText(
+				'A custom domain is easier to share and remember than a wordpress.com address. You will also keep this one.'
+			)
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Add a custom domain' } ) ).toBeVisible();
+	} );
+
+	test( 'shows the current address as the placeholder of the new address', async () => {
+		renderContent();
+
+		expect( await screen.findByRole( 'textbox', { name: 'New site address' } ) ).toHaveAttribute(
+			'placeholder',
+			'test-site'
+		);
 	} );
 
 	test( 'falls back to the previous custom domain suggestion until it is translated', async () => {
