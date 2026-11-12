@@ -269,6 +269,17 @@
 	}
 }
 
+/* Agency sidebar promo */
+@mixin dashboard-dark-theme-sidebar-promo {
+	.a4a-sidebar-promo-card {
+		--a4a-sidebar-promo-icon-color: var( --a4a-sidebar-promo-icon-color-on-dark, currentColor );
+		--a4a-sidebar-promo-icon-background: var(
+			--a4a-sidebar-promo-icon-background-on-dark,
+			transparent
+		);
+	}
+}
+
 /* Item Group */
 @mixin dashboard-dark-theme-item-group {
 	.components-item-group {
@@ -579,6 +590,7 @@
 	@include color-scheme-dark-theme-primary-button;
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
+	@include dashboard-dark-theme-sidebar-promo;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
 	@include color-scheme-dark-theme-summary-button;

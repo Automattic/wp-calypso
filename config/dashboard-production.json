@@ -32,6 +32,7 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
 		"a4a-dashboard-opt-in": true,
+		"a4a-spacefast-promo": false,
 		"bilmur-script": true,
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,

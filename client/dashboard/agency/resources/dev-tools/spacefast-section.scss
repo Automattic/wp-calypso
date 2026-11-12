@@ -1,0 +1,232 @@
+@import '@wordpress/base-styles/variables';
+@import '../../components/spacefast/brand';
+
+// Matches the page's dev tool cards, with the media beside the body instead of
+// above it so the card spans the page.
+.a4a-spacefast-dev-tools {
+	overflow: hidden;
+	container: a4a-spacefast-dev-tools / inline-size;
+}
+
+.a4a-spacefast-dev-tools__layout {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr );
+
+	@container a4a-spacefast-dev-tools ( max-width: 719px ) {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+}
+
+// Spacefast's green and ink in place of the other cards' screenshots. The logo
+// fades in first, then gives way to a loop of sample spaces with a small logo above
+// them. Without motion, the panel shows that end state with the first sample.
+.a4a-spacefast-dev-tools__media {
+	position: relative;
+	overflow: hidden;
+	min-block-size: 360px;
+	background-color: $spacefast-green;
+	color: $spacefast-ink;
+
+	@container a4a-spacefast-dev-tools ( max-width: 719px ) {
+		aspect-ratio: 8 / 5;
+		min-block-size: 0;
+	}
+}
+
+.a4a-spacefast-dev-tools__logo {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	display: none;
+	inline-size: 75%;
+	max-inline-size: 420px;
+	block-size: auto;
+	transform: translate( -50%, -50% );
+}
+
+.a4a-spacefast-dev-tools__logo-badge {
+	position: absolute;
+	inset-block-start: $grid-unit-30;
+	inset-inline-start: $grid-unit-30;
+	inline-size: 28%;
+	max-inline-size: 160px;
+	block-size: auto;
+}
+
+// Opposite the logo: the current sample's name, and what Spacefast does with it.
+.a4a-spacefast-dev-tools__captions {
+	position: absolute;
+	inset-block-start: $grid-unit-30;
+	inset-inline-end: $grid-unit-30;
+	display: grid;
+	justify-items: end;
+	text-align: end;
+	font-size: $font-size-small;
+	line-height: $default-line-height;
+}
+
+.a4a-spacefast-dev-tools__caption {
+	grid-area: 1 / 1;
+	font-weight: 600;
+	opacity: 0;
+
+	&:first-of-type {
+		opacity: 1;
+	}
+}
+
+.a4a-spacefast-dev-tools__tagline {
+	grid-area: 2 / 1;
+	opacity: 0.7;
+}
+
+// Only useful when there's motion to pause, so it's shown with the animations.
+.a4a-spacefast-dev-tools__playback.components-button {
+	position: absolute;
+	inset-block-end: $grid-unit-30;
+	inset-inline-start: $grid-unit-30;
+	display: none;
+	border-radius: $radius-round;
+	background-color: $spacefast-ink;
+	color: $spacefast-green;
+
+	&:hover:not( :disabled ),
+	&:active:not( :disabled ) {
+		background-color: $spacefast-ink;
+		color: $spacefast-green;
+	}
+
+	&:focus:not( :disabled ) {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $spacefast-ink;
+		outline: 2px solid transparent;
+	}
+}
+
+// A browser-like card that bleeds off the bottom-right corner.
+.a4a-spacefast-dev-tools__sample {
+	position: absolute;
+	inset-block-start: 84px;
+	inset-inline-start: 14%;
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	border: $border-width solid rgba( $spacefast-ink, 0.2 );
+	border-start-start-radius: $radius-large;
+	box-shadow: 0 $grid-unit-10 $grid-unit-40 rgba( $spacefast-ink, 0.25 );
+	opacity: 0;
+
+	&:first-of-type {
+		opacity: 1;
+	}
+
+	@container a4a-spacefast-dev-tools ( max-width: 719px ) {
+		inset-block-start: 26%;
+	}
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	$intro: 2.4s;
+	$slide: 3.2s;
+
+	.a4a-spacefast-dev-tools__logo {
+		display: block;
+		animation: a4a-spacefast-dev-tools-intro $intro ease-in-out both;
+	}
+
+	.a4a-spacefast-dev-tools__playback.components-button {
+		display: flex;
+	}
+
+	.a4a-spacefast-dev-tools__media.is-paused > * {
+		animation-play-state: paused;
+	}
+
+	.a4a-spacefast-dev-tools__logo-badge {
+		animation: a4a-spacefast-dev-tools-fade-in 0.6s ease-out ( $intro - 0.3s ) both;
+	}
+
+	.a4a-spacefast-dev-tools__captions {
+		animation: a4a-spacefast-dev-tools-fade-in 0.6s ease-out ( $intro - 0.3s ) both;
+	}
+
+	.a4a-spacefast-dev-tools__sample,
+	.a4a-spacefast-dev-tools__caption {
+		animation: a4a-spacefast-dev-tools-sample ( $slide * 3 ) ease-in-out infinite both;
+
+		&:nth-of-type( 1 ) {
+			animation-delay: $intro;
+		}
+
+		&:nth-of-type( 2 ) {
+			animation-delay: $intro + $slide;
+		}
+
+		&:nth-of-type( 3 ) {
+			animation-delay: $intro + $slide * 2;
+		}
+	}
+}
+
+@keyframes a4a-spacefast-dev-tools-intro {
+	0% {
+		opacity: 0;
+		transform: translate( -50%, -50% ) scale( 0.94 );
+	}
+
+	18%,
+	78% {
+		opacity: 1;
+		transform: translate( -50%, -50% ) scale( 1 );
+	}
+
+	100% {
+		opacity: 0;
+		transform: translate( -50%, -50% ) scale( 0.9 );
+	}
+}
+
+@keyframes a4a-spacefast-dev-tools-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+// Each sample rises in, holds for its third of the loop, then fades under the next.
+@keyframes a4a-spacefast-dev-tools-sample {
+	0% {
+		opacity: 0;
+		transform: translateY( $grid-unit-20 );
+	}
+
+	8%,
+	33% {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+
+	42%,
+	100% {
+		opacity: 0;
+		transform: translateY( 0 );
+	}
+}
+
+.a4a-spacefast-dev-tools__features {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.a4a-spacefast-dev-tools__check {
+	flex-shrink: 0;
+	fill: var( --wp-admin-theme-color );
+}
+
+.a4a-spacefast-terms {
+	margin: 0;
+	padding-inline-start: $grid-unit-20;
+}
