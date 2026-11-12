@@ -328,4 +328,4 @@ handle most of this:
 ## Development
 
 Build with `yarn workspace @automattic/ai-ui-renderer build`, and test with
-`yarn test-packages packages/ai-ui-renderer`.
+`yarn test-packages:vitest packages/ai-ui-renderer`.
