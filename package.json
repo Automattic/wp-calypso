@@ -346,7 +346,7 @@
 		"dompurify@npm:^3.3.3": "3.4.17",
 		"dompurify@npm:3.4.11": "3.4.17",
 		"colord@npm:2.9.3": "2.9.4",
-		"fast-uri@npm:^3.0.1": "3.1.8",
+		"fast-uri@npm:^3.0.1": "3.1.9",
 		"flatted@npm:^2.0.0": "3.4.2",
 		"immutable@npm:~3.7.4": "4.3.9",
 		"ip-address@npm:^10.1.1": "10.7.5",
