@@ -27,6 +27,7 @@ const TYPE_RENAMES = {
 	MockedClass: 'MockedClass',
 	MockedObject: 'MockedObject',
 	SpyInstance: 'MockInstance',
+	SpiedFunction: 'MockInstance',
 	MockInstance: 'MockInstance',
 	Func: 'Procedure',
 };
@@ -68,6 +69,12 @@ for ( const file of files ) {
 	const isMockFactory = ( fn ) =>
 		fn && fn.parent && isMockCall( fn.parent ) && fn.parent.arguments[ 1 ] === fn;
 	const unwrap = ( e ) => ( ts.isParenthesizedExpression( e ) ? unwrap( e.expression ) : e );
+	// `jest.requireActual()` already returns an object of exports.
+	const isRequireActual = ( e ) =>
+		ts.isCallExpression( e ) &&
+		ts.isPropertyAccessExpression( e.expression ) &&
+		isJest( e.expression.expression ) &&
+		e.expression.name.text === 'requireActual';
 
 	// Jest lets a factory return the module itself (e.g. a function, read through the default
 	// import); Vitest needs an object of exports.
@@ -79,7 +86,7 @@ for ( const file of files ) {
 		if ( ts.isBlock( factory.body ) ) {
 			for ( const r of factory.body.statements.filter( ts.isReturnStatement ) ) {
 				const e = r.expression && unwrap( r.expression );
-				if ( ! e || ts.isObjectLiteralExpression( e ) ) {
+				if ( ! e || ts.isObjectLiteralExpression( e ) || isRequireActual( e ) ) {
 					continue;
 				}
 				// `Object.assign( fn, { default: fn, … } )`: copy its exports onto a plain object.
@@ -111,7 +118,8 @@ for ( const file of files ) {
 		}
 		if (
 			ts.isObjectLiteralExpression( unwrap( factory.body ) ) ||
-			ts.isAwaitExpression( unwrap( factory.body ) )
+			ts.isAwaitExpression( unwrap( factory.body ) ) ||
+			isRequireActual( unwrap( factory.body ) )
 		) {
 			return;
 		}
@@ -122,6 +130,18 @@ for ( const file of files ) {
 		} );
 		edits.push( { start: factory.body.end, end: factory.body.end, text: ' } )' } );
 		vitestImports.add( 'vi' );
+	};
+	// Jest's mock generics are `< Return, Args >`; Vitest's take the function type.
+	const toFunctionTypeArguments = ( typeArguments ) => {
+		if ( typeArguments?.length !== 2 ) {
+			return;
+		}
+		const [ returns, parameters ] = typeArguments.map( ( t ) => t.getText( sf ) );
+		edits.push( {
+			start: typeArguments.pos,
+			end: typeArguments.end,
+			text: ` ( ...args: ${ parameters } ) => ${ returns } `,
+		} );
 	};
 	const isAsync = ( fn ) => fn.modifiers?.some( ( m ) => m.kind === ts.SyntaxKind.AsyncKeyword );
 	const madeAsync = new Set();
@@ -142,7 +162,7 @@ for ( const file of files ) {
 			if (
 				opts &&
 				ts.isObjectLiteralExpression( opts ) &&
-				/^\{\s*virtual:\s*true\s*\}$/.test( opts.getText( sf ) )
+				/^\{\s*virtual:\s*true\s*,?\s*\}$/.test( opts.getText( sf ) )
 			) {
 				edits.push( { start: node.arguments[ 1 ].end, end: opts.end, text: '' } );
 			}
@@ -155,6 +175,15 @@ for ( const file of files ) {
 			node.expression.name.text === 'importActual'
 		) {
 			typeByPath( node );
+		}
+		// Vitest's types require the implementation that Jest's let tests leave out.
+		if (
+			ts.isCallExpression( node ) &&
+			ts.isPropertyAccessExpression( node.expression ) &&
+			[ 'mockImplementation', 'mockImplementationOnce' ].includes( node.expression.name.text ) &&
+			node.arguments.length === 0
+		) {
+			edits.push( { start: node.arguments.pos, end: node.arguments.pos, text: '() => {}' } );
 		}
 		if ( ts.isPropertyAccessExpression( node ) && isJest( node.expression ) ) {
 			const name = node.name.text;
@@ -195,6 +224,9 @@ for ( const file of files ) {
 					text: 'vi',
 				} );
 				vitestImports.add( 'vi' );
+				if ( name === 'fn' && ts.isCallExpression( node.parent ) ) {
+					toFunctionTypeArguments( node.parent.typeArguments );
+				}
 				if ( name === 'useFakeTimers' && ts.isCallExpression( node.parent ) ) {
 					const [ opts ] = node.parent.arguments;
 					if ( opts && ts.isObjectLiteralExpression( opts ) ) {
@@ -220,6 +252,9 @@ for ( const file of files ) {
 			if ( renamed ) {
 				edits.push( { start: node.getStart( sf ), end: node.end, text: renamed } );
 				vitestImports.add( `type ${ renamed }` );
+				if ( ts.isTypeReferenceNode( node.parent ) ) {
+					toFunctionTypeArguments( node.parent.typeArguments );
+				}
 			} else {
 				flag( node, `unknown jest type ${ node.getText( sf ) }` );
 			}
