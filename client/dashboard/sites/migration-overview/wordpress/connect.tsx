@@ -132,11 +132,14 @@ export function Connect( {
 				</Notice>
 			) }
 			{ connectionOption?.installed_on_destination && ! isConnected && (
-				<Notice variant="warning" title={ __( 'The plugin is installed on the wrong site' ) }>
+				<Notice
+					variant="warning"
+					title={ __( 'Install the plugin on the site you’re migrating from' ) }
+				>
 					{ withDomain(
 						/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
 						__(
-							'Migrate to WordPress.com is installed on your WordPress.com site. Install it on <domain />, the site you’re migrating from.'
+							'Migrate to WordPress.com is active on your WordPress.com site, but it needs to be on <domain />.'
 						),
 						sourceHost
 					) }

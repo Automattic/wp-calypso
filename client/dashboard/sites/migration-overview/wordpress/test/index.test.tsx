@@ -218,7 +218,7 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
 	} );
 
-	test( 'warns when the plugin is installed on the WordPress.com site, until the source is connected', async () => {
+	test( 'warns when the plugin is active on the WordPress.com site, until the source is connected', async () => {
 		const onDestination = ( connected: boolean ) => ( {
 			...configuration,
 			available_source_connections: [
@@ -234,9 +234,11 @@ describe( 'WordPressMigration', () => {
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'The plugin is installed on the wrong site' ) ).toBeVisible();
-		expect( screen.getByText( /installed on your WordPress.com site/ ) ).toHaveTextContent(
-			'Install it on example.com, the site you’re migrating from.'
+		expect(
+			await screen.findByText( 'Install the plugin on the site you’re migrating from' )
+		).toBeVisible();
+		expect( screen.getByText( /active on your WordPress.com site/ ) ).toHaveTextContent(
+			'but it needs to be on example.com.'
 		);
 
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
@@ -245,7 +247,7 @@ describe( 'WordPressMigration', () => {
 
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
 		expect(
-			screen.queryByText( 'The plugin is installed on the wrong site' )
+			screen.queryByText( 'Install the plugin on the site you’re migrating from' )
 		).not.toBeInTheDocument();
 	} );
 
