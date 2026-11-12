@@ -78,9 +78,13 @@ if ( ! nock.isActive() ) {
 nock.disableNetConnect();
 
 // Node's `http` outlives each file's vm context under `vmForks`, so unpatch it when the file ends.
+// A request still in flight schedules its reply only after reading its body, so one abort can miss
+// it, and the reply then lands in the torn-down context.
 afterAll( async () => {
-	await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-	nock.abortPendingRequests();
+	for ( let pass = 0; pass < 5; pass++ ) {
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		nock.abortPendingRequests();
+	}
 	nock.restore();
 } );
 
