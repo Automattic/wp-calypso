@@ -1,9 +1,10 @@
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
+import { useLocale } from '../../../../app/locale';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	CANCEL_FLOW_TYPE,
 	isExpiredOrRemoved,
@@ -148,6 +149,7 @@ function SurveyContent( {
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
+	const locale = useLocale();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -176,9 +178,12 @@ function SurveyContent( {
 					cancellationReason={ solutionsReason }
 					closeDialog={ closeDialog }
 					intent={ intent ?? undefined }
+					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+					plans={ plans }
 					purchase={ purchase }
 					recordEvent={ recordEvent }
+					showFreeMonthOffer={ upsell === 'free-month-offer' }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
@@ -269,9 +274,7 @@ function SurveyContent( {
 								),
 								{
 									planName: productName,
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
-										dateStyle: 'medium',
-									} ),
+									purchaseRenewalDate: formatDate( new Date( purchase.expiry_date ), locale ),
 								}
 							),
 							{

@@ -1,332 +1,196 @@
-import { before } from 'node:test';
-import proxy, { reloadProxy } from '../';
+const PROXY_ORIGIN = 'https://public-api.wordpress.com';
 
-/**
- * Expose proxy for development purpose
- */
-window.proxy = proxy;
+const getProxyWindow = () => document.querySelector( 'iframe' ).contentWindow;
 
-const runs = [ { shouldReloadProxy: false }, { shouldReloadProxy: true } ];
+const sendFromProxy = ( data, { origin = PROXY_ORIGIN, source = getProxyWindow() } = {} ) =>
+	window.dispatchEvent( new MessageEvent( 'message', { data, origin, source } ) );
 
-runs.forEach( ( { shouldReloadProxy } ) => {
-	let description = '';
-	if ( shouldReloadProxy ) {
-		description = ' (after proxy has been reloaded)';
-	}
-	describe( 'wpcom-proxy-request' + description, () => {
-		const siteDomain = 'en.blog.wordpress.com';
-		const siteId = 3584907;
-		const postId = 35600;
+describe( 'wpcom-proxy-request', () => {
+	let proxy;
+	let postMessage;
 
-		// run the proxy
-		before( ( done ) => {
-			if ( shouldReloadProxy ) {
-				reloadProxy();
-			}
-			proxy( { metaAPI: { accessAllUsersBlogs: true } }, ( err ) => {
-				if ( err ) {
-					throw err;
-				}
+	const sentRequests = () => postMessage.mock.calls.map( ( [ params ] ) => params );
+	const lastRequest = () => sentRequests().at( -1 );
+	const respond = ( body, statusCode, headers = {}, sent = lastRequest() ) =>
+		sendFromProxy( [ body, statusCode, headers, sent.callback ] );
 
-				if ( shouldReloadProxy ) {
-					console.log( 'proxy reloaded' );
-				}
-				console.log( 'proxy now running in "access all user\'s blogs" mode' );
-				done();
-			} );
+	const installProxy = () => {
+		proxy.reloadProxy();
+		postMessage = jest.spyOn( getProxyWindow(), 'postMessage' ).mockImplementation( () => {} );
+	};
+
+	beforeEach( () => {
+		// The module keeps its iframe, buffered requests and cookie flag in module state,
+		// so each test loads a fresh copy.
+		jest.isolateModules( () => {
+			proxy = require( '../src' );
 		} );
 
-		describe( 'REST-API', () => {
-			const apiVersion = '1';
+		let uuid = 0;
+		jest.spyOn( crypto, 'randomUUID' ).mockImplementation( () => `uuid-${ ++uuid }` );
+	} );
 
-			describe( 'v1', () => {
-				describe( 'successful requests', () => {
-					it( '[v1] should get `WordPress` blog post info', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: `/sites/${ siteDomain }/posts/${ postId }`,
-									apiVersion: apiVersion,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBe( null );
+	afterEach( () => {
+		jest.restoreAllMocks();
+		document.body.innerHTML = '';
+	} );
 
-									// body
-									expect( body ).toBeTruthy();
-									expect( body.ID ).toBe( expect.any( Number ) );
-									expect( body.ID ).toEqual( postId );
-									expect( body.site_ID ).toBe( expect.any( Number ) );
-									expect( body.site_ID ).toEqual( siteId );
+	test( 'injects a hidden proxy iframe for the current origin on the first request', () => {
+		expect( document.querySelector( 'iframe' ) ).toBeNull();
 
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 200 );
+		proxy.default( { path: '/me' }, () => {} );
 
-									done();
-								}
-							);
-						} );
-					} );
+		const iframes = document.querySelectorAll( 'iframe' );
+		expect( iframes ).toHaveLength( 1 );
+		expect( iframes[ 0 ].src ).toBe(
+			`${ PROXY_ORIGIN }/wp-admin/rest-proxy/?v=2.0#${ window.location.origin }`
+		);
+		expect( iframes[ 0 ].style.display ).toBe( 'none' );
+	} );
 
-					it( '[v1] should get `me` user', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/me',
-									apiVersion: apiVersion,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBe( null );
+	test( 'buffers requests until the proxy is ready, then sends them to the proxy origin', () => {
+		installProxy();
+		proxy.default( { path: '/me' }, () => {} );
+		proxy.default( { path: '/sites/example.com', method: 'post' }, () => {} );
 
-									// body
-									expect( body.ID ).toBeTruthy();
-									expect( body.ID ).toBe( expect.any( Number ) );
-									expect( body.username ).toBeTruthy();
+		expect( postMessage ).not.toHaveBeenCalled();
 
-									// headers
-									expect( headers ).toBeTruthy();
+		sendFromProxy( 'ready' );
 
-									done();
-								}
-							);
-						} );
-					} );
-				} );
-
-				describe( 'wrong requests', () => {
-					it( '[v1] should get `404` for a non-exiting route', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/this-route-does-not-exists',
-								},
-								( error, body, headers ) => {
-									expect( error ).toBeTruthy();
-									expect( error.name ).toEqual( 'NotFoundError' );
-									expect( error.message ).toBeTruthy();
-									expect( error.statusCode ).toEqual( 404 );
-
-									// error
-									expect( error ).toBeTruthy();
-
-									// body
-									expect( body ).toBeFalsy();
-
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 404 );
-
-									done();
-								}
-							);
-						} );
-					} );
-
-					it( '[v1] should get `404` for a non-exiting site', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/sites/this-site-does-not-exit-i-hope',
-									apiVersion: apiVersion,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBeTruthy();
-									expect( error.name ).toEqual( 'UnknownBlogError' );
-									expect( error.message ).toBeTruthy();
-									expect( error.statusCode ).toEqual( 404 );
-
-									// body
-									expect( body ).toBeFalsy();
-
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 404 );
-
-									done();
-								}
-							);
-						} );
-					} );
-
-					it( '[v1] should get `404` for a non-exiting post', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: `/sites/${ siteDomain }/posts/0`,
-									apiVersion: apiVersion,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBeTruthy();
-									expect( error.name ).toEqual( 'UnknownPostError' );
-									expect( error.message ).toBeTruthy();
-									expect( error.statusCode ).toEqual( 404 );
-
-									// body
-									expect( body ).toBeFalsy();
-
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 404 );
-
-									done();
-								}
-							);
-						} );
-					} );
-				} );
-			} );
+		expect( postMessage ).toHaveBeenCalledTimes( 2 );
+		expect( postMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: '/me',
+				method: 'GET',
+				callback: 'uuid-1',
+				supports_args: true,
+				supports_error_obj: true,
+				supports_progress: true,
+			} ),
+			PROXY_ORIGIN
+		);
+		expect( sentRequests()[ 1 ] ).toMatchObject( {
+			path: '/sites/example.com',
+			method: 'POST',
+			callback: 'uuid-2',
 		} );
+	} );
 
-		describe( 'WP-API', () => {
-			describe( 'wp/v2', () => {
-				const namespace = 'wp/v2';
+	test( 'sends requests straight away once the proxy is ready', () => {
+		installProxy();
+		sendFromProxy( 'ready' );
+		proxy.default( { path: '/me' }, () => {} );
 
-				describe( 'successful requests', () => {
-					it( '[wp/v2] should get `me` user', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: `/sites/${ siteDomain }/users/me`,
-									apiNamespace: namespace,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBe( null );
+		expect( lastRequest() ).toMatchObject( { path: '/me' } );
+	} );
 
-									// body
-									expect( body.name ).toBeTruthy();
-									expect( body.link ).toBeTruthy();
+	test( 'passes the body and headers of a successful response to the callback', () => {
+		const callback = jest.fn();
+		installProxy();
+		sendFromProxy( 'ready' );
+		proxy.default( { path: '/me' }, callback );
 
-									// headers
-									expect( headers ).toBeTruthy();
+		respond( { ID: 1, username: 'user' }, 200, { 'Content-Type': 'application/json' } );
 
-									done();
-								}
-							);
-						} );
-					} );
-				} );
+		expect( callback ).toHaveBeenCalledTimes( 1 );
+		expect( callback ).toHaveBeenCalledWith(
+			null,
+			{ ID: 1, username: 'user' },
+			{ 'Content-Type': 'application/json', status: 200 }
+		);
+	} );
 
-				describe( 'wrong requests', () => {
-					it( '[wp/v2] should get `404` for a non-exiting route', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/this-route-does-not-exists',
-									apiNamespace: namespace,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBeTruthy();
-									expect( error.name ).toEqual( 'RestNoRouteError' );
-									expect( error.statusCode ).toEqual( 404 );
-									expect( error.message ).toEqual(
-										'No route was found matching the URL and request method'
-									);
+	test( 'passes each response to the callback of the request it answers', () => {
+		const callbacks = [ jest.fn(), jest.fn(), jest.fn() ];
+		installProxy();
+		sendFromProxy( 'ready' );
+		callbacks.forEach( ( callback, i ) => proxy.default( { path: `/${ i }` }, callback ) );
+		const requests = sentRequests();
 
-									// body
-									expect( body ).toBeFalsy();
+		[ 1, 2, 0 ].forEach( ( i ) => respond( { index: i }, 200, {}, requests[ i ] ) );
 
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 404 );
-
-									done();
-								}
-							);
-						} );
-					} );
-
-					it( '[wp/v2] should get `404` a non-existing post', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/sites/retrofocs.wordpress.com/posts/0',
-									apiNamespace: namespace,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBeTruthy();
-									expect( error.name ).toEqual( 'RestPostInvalidIdError' );
-									expect( error.statusCode ).toEqual( 404 );
-									expect( error.message ).toEqual( 'Invalid post ID.' );
-
-									// body
-									expect( body ).toBeFalsy();
-
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 404 );
-
-									done();
-								}
-							);
-						} );
-					} );
-				} );
-			} );
-
-			describe( 'wpcom/v2', () => {
-				const namespace = 'wpcom/v2';
-
-				describe( 'successful requests', () => {
-					it( '[wpcom/v2] should get timezones list', function () {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/timezones',
-									apiNamespace: namespace,
-								},
-								( error, body ) => {
-									// error
-									expect( error ).toBe( null );
-
-									// body
-									expect( body.found ).toBeTruthy();
-									expect( body.timezones ).toBe( expect.any( Array ) );
-
-									done();
-								}
-							);
-						} );
-					} );
-				} );
-
-				describe( 'wrong requests', () => {
-					it( '[wpcom/v2] should get `404` for a non-exiting route', () => {
-						return new Promise( ( done ) => {
-							proxy(
-								{
-									path: '/this-route-does-not-exists',
-									apiNamespace: namespace,
-								},
-								( error, body, headers ) => {
-									// error
-									expect( error ).toBeTruthy();
-									expect( error.name ).toEqual( 'RestNoRouteError' );
-									expect( error.statusCode ).toEqual( 404 );
-									expect( error.message ).toEqual(
-										'No route was found matching the URL and request method'
-									);
-
-									// body
-									expect( body ).toBeFalsy();
-
-									// headers
-									expect( headers ).toBeTruthy();
-									expect( headers.status ).toEqual( 404 );
-
-									done();
-								}
-							);
-						} );
-					} );
-				} );
-			} );
+		callbacks.forEach( ( callback, i ) => {
+			expect( callback ).toHaveBeenCalledTimes( 1 );
+			expect( callback ).toHaveBeenCalledWith( null, { index: i }, { status: 200 } );
 		} );
+	} );
+
+	test( 'resolves the returned promise when no callback is given', async () => {
+		installProxy();
+		sendFromProxy( 'ready' );
+		const response = proxy.default( { path: '/timezones', apiNamespace: 'wpcom/v2' } );
+
+		respond( { found: 1, timezones: [] }, 200 );
+
+		await expect( response ).resolves.toEqual( { found: 1, timezones: [] } );
+	} );
+
+	test( 'passes a WordPress.com error for an unsuccessful response to the callback', () => {
+		const callback = jest.fn();
+		installProxy();
+		sendFromProxy( 'ready' );
+		proxy.default( { path: '/sites/this-site-does-not-exist' }, callback );
+
+		respond( { error: 'unknown_blog', message: 'Unknown blog' }, 404 );
+
+		expect( callback ).toHaveBeenCalledTimes( 1 );
+		const [ error, body, headers ] = callback.mock.calls[ 0 ];
+		expect( error ).toMatchObject( {
+			name: 'UnknownBlogError',
+			message: 'Unknown blog',
+			statusCode: 404,
+		} );
+		expect( body ).toBeNull();
+		expect( headers ).toEqual( { status: 404 } );
+	} );
+
+	test( 'rejects the returned promise for an unsuccessful response', async () => {
+		installProxy();
+		sendFromProxy( 'ready' );
+		const response = proxy.default( { path: '/sites/example.com/posts/0' } );
+
+		respond( { error: 'unknown_post', message: 'Unknown post' }, 404 );
+
+		await expect( response ).rejects.toMatchObject( {
+			name: 'UnknownPostError',
+			statusCode: 404,
+		} );
+	} );
+
+	test( 'ignores messages that are not from the proxy iframe', () => {
+		const callback = jest.fn();
+		installProxy();
+		sendFromProxy( 'ready' );
+		proxy.default( { path: '/me' }, callback );
+		const message = [ { ID: 1 }, 200, {}, lastRequest().callback ];
+
+		sendFromProxy( message, { origin: 'https://example.com' } );
+		sendFromProxy( message, { source: window } );
+
+		expect( callback ).not.toHaveBeenCalled();
+
+		sendFromProxy( message );
+
+		expect( callback ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'resolves a meta API request when the proxy confirms the update', async () => {
+		installProxy();
+		sendFromProxy( 'ready' );
+		const response = proxy.requestAllBlogsAccess();
+
+		expect( lastRequest() ).toMatchObject( { metaAPI: { accessAllUsersBlogs: true } } );
+		respond( 'metaAPIupdated', undefined );
+
+		await expect( response ).resolves.toBe( 'metaAPIupdated' );
+	} );
+
+	test( 'reports when the proxy says the cookie auth is missing', () => {
+		installProxy();
+		expect( proxy.isCookieAuthMissing() ).toBe( false );
+
+		sendFromProxy( 'cookie-auth-missing' );
+
+		expect( proxy.isCookieAuthMissing() ).toBe( true );
 	} );
 } );

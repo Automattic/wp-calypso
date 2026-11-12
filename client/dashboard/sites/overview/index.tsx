@@ -40,6 +40,7 @@ import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
+	useOpenPreviewWhenReady,
 	useStaticSiteImport,
 } from '../overview-static-site-import';
 import SubscribersCard from '../overview-subscribers-card';
@@ -193,6 +194,7 @@ function SiteOverview( {
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
 	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
 	const siteImport = useStaticSiteImport( site, importSearch.importSessionId );
+	useOpenPreviewWhenReady( siteImport );
 	const { migration: migrationCompletedSearch }: MigrationCompletedSearch = useSearch( {
 		strict: false,
 	} );

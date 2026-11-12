@@ -50,6 +50,10 @@ export interface UseGridPlansParams {
 	 */
 	usePlansGridRedesignFeatures?: boolean;
 	/**
+	 * When true, show the AI agents (MCP) feature on the plan cards, in place of premium themes.
+	 */
+	useMcpFeature?: boolean;
+	/**
 	 * When true, use the pricing grid redesign taglines for plan headers.
 	 */
 	usePlansGridRedesignNewDescription?: boolean;

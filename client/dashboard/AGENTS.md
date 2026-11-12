@@ -10,6 +10,7 @@ This is the new hosting dashboard for WordPress.com.
 ## Conventions
 
 - Use TanStack Query and TanStack Router.
+- Parse and normalize search params in `validateSearch`, write them with `router.navigate`, and avoid `history.replaceState` in components.
 - Don't use Redux and `calypso/state`.
 - **Never branch on `appConfig.name`** (e.g. `if (appConfig.name === 'dotcom')`). The dashboard has many variants; hardcoding behavior per variant doesn't scale. Some alternatives:
   1. If the behavior depends on the **site** (e.g. available features, capabilities), use `siteTypeSupportsFeature()` or extend `SiteTypeFeatureSupports` in `utils/site-type-feature-support.ts`.

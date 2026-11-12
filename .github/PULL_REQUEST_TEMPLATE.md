@@ -8,6 +8,7 @@ Fixes #
 
 <!--
 How this change solves the problem, starting with a verb in the imperative, e.g. "Read the PHP version of Simple sites from Core's get-environment-info ability."
+For a change users can see (UI, or new or changed translatable strings), add "Before / After" screenshots after this paragraph: reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of new strings for translators.
 -->
 
 ## Why
@@ -24,7 +25,7 @@ State the rollout order when changes must ship in a particular sequence.
 -->
 
 <details>
-<summary>Click to view details</summary>
+<summary>Details</summary>
 
 -
 
@@ -35,8 +36,7 @@ State the rollout order when changes must ship in a particular sequence.
 <!--
 Steps a reviewer can follow on Calypso Live or a local dev server: where to go, what to do, and what to expect. Keep each step to one action and its result, starting with any setup it needs (site, account, flag); for a fix, also say what happens without it. If the change runs in more than one app (for example Dashboard and A4A, or Calypso and Jetpack Cloud), include steps for each.
 List any companion patches above step 1 and say which steps or environments need each patch. Link public PRs, and reference private PRs by the private links, such as 12345-ghe-Automattic/wpcom.
-Run every step before asking for review, then add one short line naming the commit and where you ran them. Skip a step only when you can't run it (for example, it needs access you don't have, or changes something you can't undo): keep it in the list, marked "Not run:" with the reason, so the reviewer can run it.
-For a change users can see (UI, or new or changed translatable strings), add "Before / After" screenshots: reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of new strings for translators.
+Run every step before asking for review, then add one short line naming the commit and where you ran them. Skip a step only when you can't run it (for example, it needs access you don't have, or changes something you can't undo): keep it in the list and say after the steps why you skipped it.
 -->
 
 1.

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -9,8 +9,10 @@ import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
+	useOpenPreviewWhenReady,
 	useStaticSiteImport,
 } from '../index';
+import type { StaticSiteImport as StaticSiteImportState } from '../index';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
 const site = {
@@ -290,6 +292,65 @@ describe( 'StaticSiteImportCard', () => {
 		expect( ticket.isDone() ).toBe( true );
 	} );
 
+	describe( 'preview site', () => {
+		const shareUrl = 'https://busybears.wpcomstaging.com/?share=code';
+
+		it( 'offers to view and keep a finished preview instead of connecting a domain', async () => {
+			mockApi()
+				.get( '/wpcom/v2/static-site-import-session/abc123' )
+				.query( true )
+				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+			mockApi()
+				.get( '/wpcom/v2/wow-funnel/pending' )
+				.query( true )
+				.reply( 200, {
+					pending: false,
+					preview_sites: [ { blog_id: 42, site_slug: site.slug, share_url: shareUrl } ],
+				} );
+
+			render( <StaticSiteImport /> );
+
+			expect( await screen.findByText( 'Your preview is ready' ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: /View site/ } ) ).toHaveAttribute(
+				'href',
+				shareUrl
+			);
+			expect( screen.getByRole( 'link', { name: 'Choose a plan' } ) ).toHaveAttribute(
+				'href',
+				expect.stringContaining( `/plans/${ site.slug }` )
+			);
+			expect( screen.queryByRole( 'link', { name: /Connect/ } ) ).not.toBeInTheDocument();
+		} );
+
+		const moving: StaticSiteImportState = { status: 'moving' };
+		const finishedPreview: StaticSiteImportState = {
+			status: 'finished',
+			isPreview: true,
+			previewUrl: shareUrl,
+		};
+
+		it.each( [
+			{ name: 'opens a preview whose move finishes here', first: moving, opens: true },
+			{
+				name: 'stays on a preview that had already finished',
+				first: finishedPreview,
+				opens: false,
+			},
+		] )( '$name', async ( { first, opens } ) => {
+			const assign = jest.fn();
+			const originalLocation = window.location;
+			Object.defineProperty( window, 'location', { value: { ...originalLocation, assign } } );
+
+			const { rerender } = renderHook( ( siteImport ) => useOpenPreviewWhenReady( siteImport ), {
+				initialProps: first,
+			} );
+			rerender( finishedPreview );
+
+			await waitFor( () => expect( assign.mock.calls ).toEqual( opens ? [ [ shareUrl ] ] : [] ) );
+			Object.defineProperty( window, 'location', { value: originalLocation } );
+		} );
+	} );
+
 	it( 'shows a neutral notice, not a failed move, when the move can’t be read', async () => {
 		// Another account's move, or a wrong or expired link.
 		mockApi()
@@ -440,6 +501,30 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 	} );
 
+	it( 'stops offering help once wpcom refused the handoff', async () => {
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 429, { code: 'too_many_requests', message: 'Server message' } );
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished' } }
+				search={ search }
+			/>
+		);
+
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		);
+
+		expect(
+			await screen.findByText( /You’ve already sent us several migration requests today/ )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'shows the note wpcom wrote about what the move found', () => {
 		const finished = {
 			status: 'finished' as const,
@@ -493,6 +578,41 @@ describe( 'StaticSiteImportFailed', () => {
 				'href',
 				expect.stringContaining( '/me/purchases/paid.wordpress.com/991/cancel' )
 			)
+		);
+	} );
+
+	it.each( [
+		[
+			'tells the customer our team will reach out when wpcom refused the handoff',
+			'migration_request_not_submitted',
+			'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.',
+			false,
+		],
+		[
+			'tells the customer they reached today’s limit',
+			'too_many_requests',
+			'You’ve already sent us several migration requests today. Our team will follow up by email on the ones we’ve received. If you need to add details, just reply to that email.',
+			false,
+		],
+		[
+			'asks the customer to try again when our team couldn’t be reached',
+			'internal_error',
+			'We couldn’t reach our team. Please try again.',
+			true,
+		],
+	] )( '%s', async ( _, code, message, canRetry ) => {
+		mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new' )
+			.reply( 422, { code, message: 'Server message', data: { status: 422 } } );
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Let our team move it' } ) );
+
+		expect( await screen.findByText( message ) ).toBeVisible();
+		// A refused handoff would only be refused again, so it isn't offered.
+		expect( screen.queryAllByRole( 'button', { name: 'Let our team move it' } ) ).toHaveLength(
+			canRetry ? 1 : 0
 		);
 	} );
 

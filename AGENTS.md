@@ -41,7 +41,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 
 ## Development
 
-> **Note**: The Calypso dev server listens on the `PORT` set in the repo-root `.env`, or `3000`. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
+> **Note**: The Calypso dev server listens on the `PORT` set in the environment or the repo-root `.env`. Without one it uses `3000` in the main checkout and, in a linked git worktree, a port derived from the worktree's path (`client/server/config/default-port.js`), which it prints when it starts. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
 
 > **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
 
@@ -106,4 +106,4 @@ Test with an account made for testing. Use your own WordPress.com account only w
 
 When taking over an existing PR, check whether its current changes introduce any new companion PR dependencies. Flag any potential dependencies you haven't verified yet.
 
-To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). Before marking a PR ready for review, and after each later push, run the How to Test steps the change affects, on a local dev server or on the Calypso Live build of the pushed commit, then fix whatever in the description no longer matches the code. Skipping a step is the exception, only for a step you can't run, for example because it needs access you don't have or changes something you can't undo. Keep a skipped step in the list, marked `Not run:` with the reason.
+To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). Before marking a PR ready for review, and after each later push, run the How to Test steps the change affects, on a local dev server or on the Calypso Live build of the pushed commit, then fix whatever in the description no longer matches the code. Skipping a step is the exception, only for a step you can't run, for example because it needs access you don't have or changes something you can't undo. Keep a skipped step in the list and say after the steps why you skipped it.

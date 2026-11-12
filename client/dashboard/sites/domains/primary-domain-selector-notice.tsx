@@ -28,7 +28,8 @@ const PrimaryDomainSelectorNotice = ( {
 }: PrimaryDomainSelectorNoticeProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const canUserSetPrimaryDomainOnThisSite = canUserSetPrimaryDomain( site, user );
-	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
+	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
+	const currentPrimaryDomain = primaryDomain?.domain;
 	const domainsList = domains.filter( isPrimaryDomainCandidate );
 
 	const renderMessage = () => {
@@ -91,7 +92,7 @@ const PrimaryDomainSelectorNotice = ( {
 			{ isModalOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }
-					currentPrimaryDomain={ currentPrimaryDomain }
+					currentPrimaryDomain={ primaryDomain }
 					eligibleDomains={ domainsList }
 					onClose={ () => setIsModalOpen( false ) }
 				/>

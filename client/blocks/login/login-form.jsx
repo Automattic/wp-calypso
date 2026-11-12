@@ -746,7 +746,7 @@ export class LoginForm extends Component {
 					components: {
 						tosLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+								href={ localizeUrl( 'https://automattic.com/tos/' ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
@@ -1131,4 +1131,11 @@ export default connect(
 		createSocialUserFailed,
 		loginSocialUser,
 	}
-)( localize( withBlackboxProtection( LoginForm, { feature: 'blackbox-login' } ) ) );
+)(
+	localize(
+		withBlackboxProtection( LoginForm, {
+			feature: 'blackbox-login',
+			flow: 'login',
+		} )
+	)
+);

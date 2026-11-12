@@ -11,12 +11,14 @@ export default function NameServersSettingsSummary( {
 	isDisabled?: boolean;
 	onClick?: () => void;
 } ) {
-	let badges = [];
-	if ( domain.has_wpcom_nameservers ) {
-		badges = [ { text: __( 'Using WordPress.com name servers' ), intent: 'stable' as const } ];
-	} else {
-		badges = [ { text: __( 'Using custom name servers' ), intent: 'draft' as const } ];
-	}
+	const badges = [
+		{
+			text: domain.has_wpcom_nameservers
+				? __( 'Using WordPress.com name servers' )
+				: __( 'Using custom name servers' ),
+			intent: 'draft' as const,
+		},
+	];
 
 	return (
 		<RouterLinkSummaryButton

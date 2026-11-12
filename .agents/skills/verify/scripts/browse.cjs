@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 /**
- * Opens a page of the local dev server as a logged-in user and reports what it shows.
+ * Opens a local or hosted Calypso page as a logged-in user and reports what it shows.
  *
  *   node browse.cjs <url> [options]
  *
- * <url> is absolute, or a path on the dashboard (http://my.localhost:$PORT).
- * The options are documented in ../SKILL.md.
+ * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT). An absolute
+ * local URL without a port gets $PORT too. $PORT defaults to the checkout's dev server port.
+ * The options are documented in ../browser.md.
  */
 const fs = require( 'node:fs' );
 const path = require( 'node:path' );
+const { setTimeout: delay } = require( 'node:timers/promises' );
 const { parseArgs } = require( 'node:util' );
 const {
 	AUTH_COMMAND,
@@ -32,6 +34,7 @@ const { values: options, positionals } = parseArgs( {
 		'eval-file': { type: 'string' },
 		screenshot: { type: 'string' },
 		clip: { type: 'string' },
+		arrow: { type: 'string' },
 		'full-page': { type: 'boolean', default: false },
 		'no-snapshot': { type: 'boolean', default: false },
 		viewport: { type: 'string', default: '1440x1000' },
@@ -60,6 +63,43 @@ const LOADING_TIMEOUT = 60000;
 const LOADING_QUIET_PERIOD = 2000;
 
 const BUILD_TIMEOUT = 90000;
+const LOCAL_DASHBOARD_ORIGIN = `http://my.localhost:${ PORT }`;
+
+function isLocalTarget( url ) {
+	const { hostname } = new URL( url, LOCAL_DASHBOARD_ORIGIN );
+	return (
+		hostname === 'localhost' ||
+		hostname.endsWith( '.localhost' ) ||
+		hostname === '127.0.0.1' ||
+		hostname === '[::1]'
+	);
+}
+
+/**
+ * Points an absolute local URL at this checkout's dev server: `http://calypso.localhost/read`
+ * gets its port, and another port is refused, since another checkout's server may be there.
+ */
+function withDevServerPort( target ) {
+	if ( ! URL.canParse( target ) || ! isLocalTarget( target ) ) {
+		return target;
+	}
+	const { port } = new URL( target );
+	if ( ! port ) {
+		return target.replace( /^(\w+:\/\/[^/?#]+)/, `$1:${ PORT }` );
+	}
+	if ( port !== String( PORT ) ) {
+		throw new UserActionRequired(
+			`${ target } is on port ${ port }, but this checkout's dev server uses port ${ PORT }. ` +
+				`Leave the port out of the URL, or put PORT=${ port } in front of the command if that server runs this checkout.`
+		);
+	}
+	return target;
+}
+
+function isCalypsoLiveTarget( url ) {
+	const { hostname } = new URL( url );
+	return hostname === 'calypso.live' || hostname.endsWith( '.calypso.live' );
+}
 
 /**
  * Until the first webpack build finishes, the dev server answers `/` with a "please wait"
@@ -91,7 +131,7 @@ async function waitForDevServer() {
 			console.log( 'dev server: compiling its first build, waiting…' );
 			announced = true;
 		}
-		await new Promise( ( resolve ) => setTimeout( resolve, 5000 ) );
+		await delay( 5000 );
 	}
 }
 
@@ -127,7 +167,7 @@ function watch( page ) {
 	page.on( 'response', async ( response ) => {
 		const url = response.url();
 		const logged = logPattern?.test( url );
-		if ( ! logged && ! /localhost|wordpress\.com/.test( url ) ) {
+		if ( ! logged && ! /localhost|wordpress\.com|calypso\.live/.test( url ) ) {
 			return;
 		}
 		let status = String( response.status() );
@@ -182,6 +222,37 @@ async function waitUntilLoaded( page ) {
 	);
 }
 
+async function navigate( page, url, problems, requests ) {
+	// Hosted pages can render while third-party resources are still loading.
+	const waitUntil = isLocalTarget( url ) ? 'load' : 'domcontentloaded';
+	if ( ! isCalypsoLiveTarget( url ) ) {
+		await page.goto( url, { waitUntil, timeout: 60000 } );
+		return;
+	}
+
+	const deadline = Date.now() + BUILD_TIMEOUT;
+	let status;
+	do {
+		problems.length = 0;
+		requests.length = 0;
+		// Retry the original link so the launcher can resolve the current container.
+		const response = await page.goto( url, {
+			waitUntil,
+			timeout: Math.max( 1, deadline - Date.now() ),
+		} );
+		status = response?.status();
+		if ( status >= 200 && status < 300 && status !== 202 ) {
+			return;
+		}
+		if ( status !== 202 && ! ( status >= 500 && status <= 599 ) ) {
+			break;
+		}
+		await delay( Math.min( 3000, Math.max( 0, deadline - Date.now() ) ) );
+	} while ( Date.now() < deadline );
+
+	throw new Error( `Calypso Live did not load: ${ status ? `HTTP ${ status }` : 'no response' }.` );
+}
+
 async function open( browser, account, url ) {
 	const [ width, height ] = options.viewport.split( 'x' ).map( Number );
 	const context = await browser.newContext( {
@@ -191,7 +262,7 @@ async function open( browser, account, url ) {
 	} );
 	const page = await context.newPage();
 	const { problems, requests } = watch( page );
-	await page.goto( url, { waitUntil: 'load', timeout: 60000 } );
+	await navigate( page, url, problems, requests );
 	// The dashboard checks the session client-side, so a rejected one redirects after load.
 	await Promise.race( [
 		page.waitForURL( ( current ) => isLoginUrl( current.toString() ), { timeout: 30000 } ),
@@ -213,11 +284,88 @@ function screenshotTarget( file ) {
 	return target;
 }
 
+async function findElement( page, selector ) {
+	const element = page.locator( selector ).first();
+	const found = await element
+		.waitFor( { state: 'attached', timeout: 5000 } )
+		.then( () => true )
+		.catch( () => false );
+	if ( ! found ) {
+		throw new UsageError(
+			`No element on ${ page.url() } matches ${ JSON.stringify( selector ) }. ` +
+				`Check with --eval 'return page.locator( ${ JSON.stringify( selector ) } ).count();'`
+		);
+	}
+	return element;
+}
+
+/**
+ * Draws a red arrow pointing at the element from the first side with room for it, within
+ * the page or, with `inViewport`, the visible part of it. Returns the bounds of the
+ * arrow and element in page coordinates, so a cropped screenshot can include them.
+ */
+function drawArrow( node, inViewport ) {
+	const LENGTH = 80;
+	const rect = node.getBoundingClientRect();
+	const box = {
+		left: rect.left + window.scrollX - 4,
+		top: rect.top + window.scrollY - 4,
+		right: rect.right + window.scrollX + 4,
+		bottom: rect.bottom + window.scrollY + 4,
+	};
+	const root = document.documentElement;
+	const limits = inViewport
+		? {
+				left: window.scrollX,
+				top: window.scrollY,
+				right: window.scrollX + window.innerWidth,
+				bottom: window.scrollY + window.innerHeight,
+			}
+		: { left: 0, top: 0, right: root.scrollWidth, bottom: root.scrollHeight };
+	const midX = ( box.left + box.right ) / 2;
+	const midY = ( box.top + box.bottom ) / 2;
+	const reach = LENGTH + 16;
+	const sides = [
+		{ tip: [ box.left, midY ], dir: [ 1, 0 ], fits: box.left - reach >= limits.left },
+		{ tip: [ box.right, midY ], dir: [ -1, 0 ], fits: box.right + reach <= limits.right },
+		{ tip: [ midX, box.bottom ], dir: [ 0, -1 ], fits: box.bottom + reach <= limits.bottom },
+		{ tip: [ midX, box.top ], dir: [ 0, 1 ], fits: box.top - reach >= limits.top },
+	];
+	const { tip, dir } = sides.find( ( side ) => side.fits ) ?? sides[ 0 ];
+	const at = ( back, side = 0 ) => [
+		tip[ 0 ] - dir[ 0 ] * back - dir[ 1 ] * side,
+		tip[ 1 ] - dir[ 1 ] * back + dir[ 0 ] * side,
+	];
+	const [ tailX, tailY ] = at( LENGTH );
+	const [ neckX, neckY ] = at( 20 );
+
+	const svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+	svg.id = 'verify-arrow';
+	svg.setAttribute(
+		'style',
+		'position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:2147483647;' +
+			'pointer-events:none;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 1px #fff)'
+	);
+	svg.innerHTML = `<g stroke="#d63638" fill="#d63638" stroke-width="5" stroke-linejoin="round">
+		<line x1="${ tailX }" y1="${ tailY }" x2="${ neckX }" y2="${ neckY }" stroke-linecap="round" />
+		<polygon points="${ [ at( 0 ), at( 20, 12 ), at( 20, -12 ) ].join( ' ' ) }" />
+	</g>`;
+	root.appendChild( svg );
+
+	return {
+		left: Math.min( box.left, tailX - 16 ),
+		top: Math.min( box.top, tailY - 16 ),
+		right: Math.max( box.right, tailX + 16 ),
+		bottom: Math.max( box.bottom, tailY + 16 ),
+	};
+}
+
 /**
  * Saves a screenshot of the page, or with `selector`, of the first element matching it.
+ * With `arrow`, points an arrow at the first element matching that selector.
  * Also available to --eval code as `screenshot( path, options )`.
  */
-async function takeScreenshot( page, file, { selector, fullPage = false } = {} ) {
+async function takeScreenshot( page, file, { selector, fullPage = false, arrow } = {} ) {
 	const target = screenshotTarget( file );
 	fs.mkdirSync( path.dirname( target ), { recursive: true } );
 	const settings = {
@@ -227,27 +375,46 @@ async function takeScreenshot( page, file, { selector, fullPage = false } = {} )
 		// The dev server's environment badge isn't on production.
 		style: '.environment-badge { display: none !important; }',
 	};
-	if ( selector ) {
-		const element = page.locator( selector ).first();
-		const found = await element
-			.waitFor( { state: 'attached', timeout: 5000 } )
-			.then( () => true )
-			.catch( () => false );
-		if ( ! found ) {
-			throw new UsageError(
-				`No element on ${ page.url() } matches ${ JSON.stringify( selector ) }. ` +
-					`Check with --eval 'return page.locator( ${ JSON.stringify( selector ) } ).count();'`
-			);
+	let drawing;
+	if ( arrow ) {
+		const marked = await findElement( page, arrow );
+		await marked.scrollIntoViewIfNeeded();
+		drawing = await marked.evaluate( drawArrow, ! selector && ! fullPage );
+	}
+	try {
+		if ( selector ) {
+			const element = await findElement( page, selector );
+			// Crop a full-page capture rather than scrolling to the element, so fixed
+			// headers stay at the top of the page instead of covering it.
+			const box = await element.evaluate( ( node ) => {
+				const { left, top, right, bottom } = node.getBoundingClientRect();
+				return {
+					left: left + window.scrollX,
+					top: top + window.scrollY,
+					right: right + window.scrollX,
+					bottom: bottom + window.scrollY,
+				};
+			} );
+			if ( drawing ) {
+				box.left = Math.max( 0, Math.min( box.left, drawing.left ) );
+				box.top = Math.max( 0, Math.min( box.top, drawing.top ) );
+				box.right = Math.max( box.right, drawing.right );
+				box.bottom = Math.max( box.bottom, drawing.bottom );
+			}
+			const clip = {
+				x: box.left,
+				y: box.top,
+				width: box.right - box.left,
+				height: box.bottom - box.top,
+			};
+			await page.screenshot( { ...settings, fullPage: true, clip } );
+		} else {
+			await page.screenshot( { ...settings, fullPage } );
 		}
-		// Crop a full-page capture rather than scrolling to the element, so fixed
-		// headers stay at the top of the page instead of covering it.
-		const box = await element.evaluate( ( node ) => {
-			const { x, y, width, height } = node.getBoundingClientRect();
-			return { x: x + window.scrollX, y: y + window.scrollY, width, height };
-		} );
-		await page.screenshot( { ...settings, fullPage: true, clip: box } );
-	} else {
-		await page.screenshot( { ...settings, fullPage } );
+	} finally {
+		if ( drawing ) {
+			await page.evaluate( () => document.getElementById( 'verify-arrow' )?.remove() );
+		}
 	}
 	console.log( 'screenshot:', target );
 }
@@ -267,7 +434,7 @@ async function check( browser, account, target ) {
 	const resolved = target.includes( '{site}' )
 		? target.replaceAll( '{site}', testAccountSite( account ) )
 		: target;
-	const url = new URL( resolved, `http://my.localhost:${ PORT }` ).toString();
+	const url = new URL( resolved, LOCAL_DASHBOARD_ORIGIN ).toString();
 	await ensureState( account );
 
 	let { context, page, problems, requests } = await open( browser, account, url );
@@ -288,6 +455,14 @@ async function check( browser, account, target ) {
 	}
 
 	try {
+		if ( isCalypsoLiveTarget( url ) && ! isLoginUrl( page.url() ) ) {
+			const commit = await page.evaluate( () => window.COMMIT_SHA );
+			if ( ! isCalypsoLiveTarget( page.url() ) || ! commit ) {
+				throw new Error( `Calypso Live did not load a build at ${ page.url() }.` );
+			}
+			console.log( 'preview commit:', commit );
+		}
+
 		const waitFor = options[ 'wait-for' ];
 		if ( waitFor ) {
 			await page.locator( waitFor ).first().waitFor( { timeout: 60000 } );
@@ -345,6 +520,7 @@ async function check( browser, account, target ) {
 			await takeScreenshot( page, screenshotPathFor( options.screenshot, account ), {
 				selector: options.clip,
 				fullPage: options[ 'full-page' ],
+				arrow: options.arrow,
 			} );
 		}
 
@@ -358,16 +534,18 @@ async function check( browser, account, target ) {
 }
 
 async function main() {
-	const [ target ] = positionals;
-	if ( ! target ) {
+	if ( ! positionals[ 0 ] ) {
 		throw new UserActionRequired( 'Usage: node browse.cjs <url> [options]' );
 	}
+	const target = withDevServerPort( positionals[ 0 ] );
 	if ( options.screenshot ) {
 		screenshotTarget( options.screenshot );
 	}
 
-	await waitForDevServer();
-	console.log( `dev server: up on port ${ PORT }` );
+	if ( isLocalTarget( target ) ) {
+		await waitForDevServer();
+		console.log( `dev server: up on port ${ PORT }` );
+	}
 
 	const browser = await launchBrowser();
 	try {
