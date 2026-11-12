@@ -27,7 +27,6 @@ const mockConversation = {
 };
 
 vi.mock( 'smooch', () => ( {
-	__esModule: true,
 	default: {
 		render: vi.fn(),
 		init: vi.fn(),

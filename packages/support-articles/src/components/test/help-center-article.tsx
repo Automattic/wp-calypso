@@ -34,7 +34,6 @@ vi.mock( '../../hooks/use-help-center-article-scroll', () => ( {
 } ) );
 
 vi.mock( '../help-center-article/help-center-article-content', () => ( {
-	__esModule: true,
 	default: () => <div>content</div>,
 } ) );
 

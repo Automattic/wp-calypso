@@ -6,7 +6,6 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { getSessionRating, useRateArticle } from '../use-rate-article';
 
 vi.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
 	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );

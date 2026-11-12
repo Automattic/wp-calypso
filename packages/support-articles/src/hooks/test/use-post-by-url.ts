@@ -7,7 +7,6 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { usePostByUrl } from '../use-post-by-url';
 
 vi.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
 	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );
