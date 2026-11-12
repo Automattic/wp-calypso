@@ -222,8 +222,13 @@ export function ThreadParent( {
 					'is-expandable': isTruncated && canToggle,
 				} ) }
 				onClick={ ( event ) => {
-					// Links in the comment still go where they point.
-					if ( isTruncated && canToggle && ! ( event.target as Element ).closest( 'a' ) ) {
+					// Links in the comment still go where they point, and selecting text doesn't expand it.
+					if (
+						isTruncated &&
+						canToggle &&
+						! ( event.target as Element ).closest( 'a' ) &&
+						! window.getSelection()?.toString()
+					) {
 						toggle();
 					}
 				} }

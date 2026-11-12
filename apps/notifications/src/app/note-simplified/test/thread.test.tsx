@@ -3,8 +3,12 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { init as initStore } from '../../../panel/state';
+import { AppProvider } from '../../context';
+import SimplifiedNote from '../index';
 import { ThreadParent } from '../parts/thread';
-import type { NoteParentComment } from '../../types';
+import type { Note, NoteParentComment } from '../../types';
 
 const comment = ( extra: Partial< NoteParentComment > = {} ): NoteParentComment => ( {
 	text: 'The first paragraph of a long comment…',
@@ -61,6 +65,45 @@ describe( 'ThreadParent', () => {
 		render( <ThreadParent comment={ comment() } truncate compact /> );
 
 		expect( screen.getByText( 'In reply to Mia Chen' ) ).toBeInTheDocument();
+	} );
+
+	it( 'starts the next reply’s quote collapsed', async () => {
+		clampHidesText( true );
+		const reply = ( id: number ) =>
+			( {
+				id,
+				type: 'comment',
+				read: 1,
+				noticon: '',
+				timestamp: '2026-09-01T09:00:00+00:00',
+				icon: '',
+				url: 'https://site.example/post/',
+				title: 'Note',
+				note_hash: id,
+				subject: [ { text: 'Someone replied' } ],
+				body: [ { text: 'The reply' } ],
+				meta: {
+					ids: { site: 10, post: 20, comment: id, parent_comment: 1 },
+					parent_comment: comment(),
+					actor: { name: 'Ben', avatar: '' },
+				},
+			} ) as Note;
+		const panel = ( note: Note ) => (
+			<Provider store={ initStore() }>
+				<AppProvider client={ null } locale="en">
+					<SimplifiedNote note={ note } />
+				</AppProvider>
+			</Provider>
+		);
+		const { rerender } = render( panel( reply( 2 ) ) );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Show more' } ) );
+		rerender( panel( reply( 3 ) ) );
+
+		expect( screen.getByRole( 'button', { name: 'Show more' } ) ).toHaveAttribute(
+			'aria-expanded',
+			'false'
+		);
 	} );
 
 	it( 'offers nothing to expand when the comment fits in two lines', () => {

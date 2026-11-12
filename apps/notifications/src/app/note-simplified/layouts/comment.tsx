@@ -14,7 +14,10 @@ export default function CommentNote( { note }: { note: Note } ) {
 		<>
 			{ post && <PostCard post={ post } site={ site } url={ note.url } /> }
 			<Thread spacing={ 6 } isReply={ !! repliedTo }>
-				{ repliedTo && <ThreadParent comment={ repliedTo } truncate compact /> }
+				{ repliedTo && (
+					// Keyed so moving to another note starts its quote collapsed and re-measured.
+					<ThreadParent key={ note.id } comment={ repliedTo } truncate compact />
+				) }
 				{ actor && (
 					<ThreadReply
 						commenter={ actor }
