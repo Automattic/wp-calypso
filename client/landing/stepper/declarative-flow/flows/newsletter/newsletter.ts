@@ -3,10 +3,11 @@ import { Onboard, OnboardActions } from '@automattic/data-stores';
 import { updateLaunchpadSettings } from '@automattic/launchpad';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch } from '@wordpress/data';
+import { resolveSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { getLaunchpadDestination } from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
@@ -17,7 +18,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import {
@@ -148,16 +149,14 @@ const newsletter: Flow = {
 				case 'processing': {
 					const processingResult = providedDependencies.processingResult as
 						ProcessingResult | undefined;
-					const newSite = providedDependencies.siteSlug ?? providedDependencies.siteId;
+					const newSite = ( providedDependencies.siteSlug ?? providedDependencies.siteId ) as
+						string | number | undefined;
 
 					if ( processingResult !== ProcessingResult.SUCCESS || ! newSite ) {
 						return navigate( 'error', {
 							errorReason: getProcessingErrorReason( processingResult ),
 						} );
 					}
-
-					// My Home forwards the site to its AI Launchpad (Site Setup) in wp-admin.
-					const siteHomeUrl = `/home/${ newSite }`;
 
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
@@ -168,19 +167,26 @@ const newsletter: Flow = {
 						);
 					}
 
+					// AI Launchpad and no-guidance sites land in wp-admin instead of My Home.
+					const site = await resolveSelect( SITE_STORE ).getSite( newSite );
+					const adminUrl = site?.options?.admin_url;
+					const destination =
+						( adminUrl && getLaunchpadDestination( site.options, adminUrl ) ) ||
+						`/home/${ newSite }`;
+
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
-						persistSignupDestination( siteHomeUrl );
+						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								providedDependencies?.siteSlug as string
-							) }?redirect_to=${ encodeURIComponent( siteHomeUrl ) }&signup=1`
+							) }?redirect_to=${ encodeURIComponent( destination ) }&signup=1`
 						);
 					}
 
-					return window.location.assign( siteHomeUrl );
+					return window.location.assign( destination );
 				}
 
 				case 'subscribers':

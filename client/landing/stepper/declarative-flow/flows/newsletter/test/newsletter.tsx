@@ -1,10 +1,29 @@
 /**
  * @jest-environment jsdom
  */
+import { waitFor } from '@testing-library/react';
+import { resolveSelect } from '@wordpress/data';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import { runFlowNavigation } from '../../../test/helpers';
 import newsletterFlow from '../newsletter';
+
+// Spreading the real module drops its getters, which the data stores need when they register.
+jest.mock( '@wordpress/data', () => {
+	const actual = jest.requireActual( '@wordpress/data' );
+	const resolveSelect = jest.fn();
+	return new Proxy( actual, {
+		get: ( target, key ) => ( key === 'resolveSelect' ? resolveSelect : target[ key ] ),
+	} );
+} );
+
+const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
+const SITE_SETUP_URL = `${ ADMIN_URL }admin.php?page=site-setup-wp-admin`;
+
+const mockSite = ( options?: Record< string, unknown > ) =>
+	( resolveSelect as jest.Mock ).mockReturnValue( {
+		getSite: jest.fn().mockResolvedValue( options ? { options } : undefined ),
+	} );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( newsletterFlow, options, 'forward' );
@@ -38,7 +57,9 @@ describe( 'Newsletter Flow', () => {
 	} );
 
 	describe( 'after creating the site', () => {
-		it( 'sends a free site to its home, which forwards to Site Setup', () => {
+		it( 'sends an AI Launchpad site straight to Site Setup', async () => {
+			mockSite( { admin_url: ADMIN_URL, wpcom_ai_launchpad_enabled: true } );
+
 			runNavigation( {
 				from: STEPS.PROCESSING,
 				dependencies: {
@@ -48,10 +69,14 @@ describe( 'Newsletter Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/home/example.wordpress.com' );
+			await waitFor( () =>
+				expect( window.location.assign ).toHaveBeenCalledWith( SITE_SETUP_URL )
+			);
 		} );
 
-		it( 'sends a paid site to checkout, returning to its home', () => {
+		it( 'sends a paid site to checkout, returning to Site Setup', async () => {
+			mockSite( { admin_url: ADMIN_URL, wpcom_ai_launchpad_enabled: true } );
+
 			runNavigation( {
 				from: STEPS.PROCESSING,
 				dependencies: {
@@ -62,18 +87,41 @@ describe( 'Newsletter Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/checkout/example.wordpress.com?redirect_to=%2Fhome%2Fexample.wordpress.com&signup=1'
+			await waitFor( () =>
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
+						SITE_SETUP_URL
+					) }&signup=1`
+				)
 			);
 		} );
 
-		it( 'falls back to the site ID without a site slug', () => {
+		it( 'sends a site without the AI Launchpad to its home', async () => {
+			mockSite( { admin_url: ADMIN_URL } );
+
+			runNavigation( {
+				from: STEPS.PROCESSING,
+				dependencies: {
+					processingResult: ProcessingResult.SUCCESS,
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+				},
+			} );
+
+			await waitFor( () =>
+				expect( window.location.assign ).toHaveBeenCalledWith( '/home/example.wordpress.com' )
+			);
+		} );
+
+		it( 'falls back to the home of the site ID when the site cannot be loaded', async () => {
+			mockSite();
+
 			runNavigation( {
 				from: STEPS.PROCESSING,
 				dependencies: { processingResult: ProcessingResult.SUCCESS, siteId: 123 },
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/home/123' );
+			await waitFor( () => expect( window.location.assign ).toHaveBeenCalledWith( '/home/123' ) );
 		} );
 
 		it.each( [
