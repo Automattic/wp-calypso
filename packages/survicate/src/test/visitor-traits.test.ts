@@ -1,7 +1,6 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
+import { vi } from 'vitest';
 import { getAccountAgeInDays, setSurvicateVisitorTraits } from '../visitor-traits';
 
 const DAY_IN_MS = 86400000;
@@ -33,7 +32,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 
 	describe( 'when _sva is not yet available (event-based path)', () => {
 		test( 'should set visitor traits when SurvicateReady fires', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 
 			// _sva not available at call time
 			setSurvicateVisitorTraits( { email: 'test@example.com' } );
@@ -64,7 +63,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 		} );
 
 		test( 'should not call setVisitorTraits before the event fires', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 
 			setSurvicateVisitorTraits( { email: 'test@example.com' } );
 
@@ -77,7 +76,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 		} );
 
 		test( 'should return a cleanup function that removes the listener', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 
 			const cleanup = setSurvicateVisitorTraits( { email: 'test@example.com' } );
 
@@ -89,7 +88,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 		} );
 
 		test( 'should only fire once due to { once: true }', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 
 			setSurvicateVisitorTraits( { email: 'test@example.com' } );
 
@@ -103,7 +102,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 
 	describe( 'when _sva is already available (immediate path)', () => {
 		test( 'should set traits immediately', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 			window._sva = { setVisitorTraits };
 
 			setSurvicateVisitorTraits( { email: 'already@loaded.com' } );
@@ -113,7 +112,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 		} );
 
 		test( 'should return a no-op cleanup function', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 			window._sva = { setVisitorTraits };
 
 			const cleanup = setSurvicateVisitorTraits( { email: 'already@loaded.com' } );
@@ -127,7 +126,7 @@ describe( 'setSurvicateVisitorTraits', () => {
 		} );
 
 		test( 'should only call setVisitorTraits once even if event fires', () => {
-			const setVisitorTraits = jest.fn();
+			const setVisitorTraits = vi.fn();
 			window._sva = { setVisitorTraits };
 
 			setSurvicateVisitorTraits( { email: 'already@loaded.com' } );

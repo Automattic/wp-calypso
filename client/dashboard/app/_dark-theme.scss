@@ -202,7 +202,8 @@
 	.dataforms-layouts-regular__field,
 	.dataforms-layouts-row__field,
 	.dataforms-layouts-card__field,
-	.dataforms-layouts-panel__field-dropdown {
+	.dataforms-layouts-panel__field-dropdown,
+	.performance-page-selector {
 		--wpds-color-foreground-content-neutral: var( --dashboard__text-color );
 		--wpds-color-foreground-content-neutral-weak: var( --dashboard__text-muted-color );
 		--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );
@@ -263,6 +264,7 @@
 	}
 
 	.dashboard-section-header__decoration svg {
+		color: var( --dashboard-subtle__color );
 		fill: var( --dashboard-subtle__color );
 	}
 }
@@ -304,6 +306,7 @@
 		background-color: var( --wp-components-color-gray-200 );
 
 		.dashboard-backups__list-icon {
+			color: var( --wp-components-color-gray-700 );
 			fill: var( --wp-components-color-gray-700 );
 		}
 
@@ -317,6 +320,7 @@
 		background-color: var( --wp-components-color-gray-200 );
 
 		.dashboard-overview-latest-activity-card__icon {
+			color: var( --wp-components-color-gray-700 );
 			fill: var( --wp-components-color-gray-700 );
 		}
 
@@ -350,6 +354,7 @@
 	.site-scan-threats__type-icon {
 		background-color: var( --wp-components-color-gray-200 );
 		box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+		color: var( --wp-components-color-gray-700 );
 		fill: var( --wp-components-color-gray-700 );
 	}
 }
@@ -454,6 +459,7 @@
 		border-color: var( --wp-components-color-gray-300 );
 
 		svg {
+			color: var( --wp-components-color-gray-700 );
 			fill: var( --wp-components-color-gray-700 );
 		}
 	}
@@ -516,6 +522,7 @@
 	}
 
 	.site-launch-pre-launch-modal__meta svg {
+		color: var( --dashboard__text-color );
 		fill: var( --dashboard__text-color );
 	}
 }

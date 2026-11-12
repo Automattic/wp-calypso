@@ -62,8 +62,8 @@ describe( 'agencySiteRoute access', () => {
 			( error ) => error
 		);
 
-		expect( redirect ).toMatchObject( { isRedirect: true, to: `/sites/${ SITE_SLUG }` } );
-		expect( redirect.search ).toBeUndefined();
+		expect( redirect ).toMatchObject( { options: { to: `/sites/${ SITE_SLUG }` } } );
+		expect( redirect.options.search ).toBeUndefined();
 	} );
 
 	test( 'keeps a team member without access on the site overview', async () => {

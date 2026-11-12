@@ -1,4 +1,5 @@
 import { fetchAgencySites } from '@automattic/api-core';
+import { vi } from 'vitest';
 import { agencyQuery } from '../agency';
 import { agencySiteQuery } from '../jetpack-agency-sites';
 import { queryClient } from '../query-client';
@@ -6,22 +7,23 @@ import { siteBySlugQuery } from '../site';
 import type { AgencySite, FetchAgencySitesOptions, Site } from '@automattic/api-core';
 
 // Same-instance query client so the queries and the test share state.
-jest.mock( '../query-client', () => {
-	const { QueryClient: QC } = jest.requireActual( '@tanstack/react-query' );
+vi.mock( '../query-client', async () => {
+	const { QueryClient: QC } =
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
 	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
 	return { queryClient: qc };
 } );
 
-jest.mock( '@tanstack/react-router', () => ( {
+vi.mock( '@tanstack/react-router', () => ( {
 	notFound: () => new Error( 'Not found' ),
 } ) );
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	fetchAgencySites: jest.fn(),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/api-core' ) >() ),
+	fetchAgencySites: vi.fn(),
 } ) );
 
-const mockFetchAgencySites = fetchAgencySites as jest.MockedFunction< typeof fetchAgencySites >;
+const mockFetchAgencySites = vi.mocked( fetchAgencySites );
 
 const AGENCY_ID = 123;
 const SITE_SLUG = 'devsite.wpcomstaging.com';

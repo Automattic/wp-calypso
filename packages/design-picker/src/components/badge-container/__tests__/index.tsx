@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import BadgeContainer from '../index';
 
 describe( '<BadgeContainer /> integration', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should render the premium badge', async () => {

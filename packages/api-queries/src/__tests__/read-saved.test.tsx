@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	addMissingReadSavedKeys,
 	getReadSavedKeyId,
@@ -213,7 +214,7 @@ describe( 'saveReadPostMutation', () => {
 
 	it( 'still sends the request when cancelling the keys query fails', async () => {
 		const client = newClient();
-		jest.spyOn( client, 'cancelQueries' ).mockRejectedValueOnce( new Error( 'cancel failed' ) );
+		vi.spyOn( client, 'cancelQueries' ).mockRejectedValueOnce( new Error( 'cancel failed' ) );
 		const request = nock( BASE )
 			.post( '/wpcom/v2/read/saved/new' )
 			.reply( 200, { saved: true, key: POST_KEY, total: 1 } );
@@ -334,7 +335,7 @@ describe( 'overlapping saves and unsaves', () => {
 	it( 'only invalidates after the last of several concurrent writes settles', async () => {
 		const client = newClient();
 		setKeys( client, [] );
-		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateQueries = vi.spyOn( client, 'invalidateQueries' );
 		const first = start( client, saveReadPostMutation, POST_KEY );
 		const second = start( client, saveReadPostMutation, OTHER_KEY );
 		await flush();

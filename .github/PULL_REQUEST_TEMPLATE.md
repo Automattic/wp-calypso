@@ -25,7 +25,7 @@ State the rollout order when changes must ship in a particular sequence.
 -->
 
 <details>
-<summary>Click to view details</summary>
+<summary>Details</summary>
 
 -
 

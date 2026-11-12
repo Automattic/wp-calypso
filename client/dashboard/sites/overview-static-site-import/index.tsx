@@ -22,6 +22,7 @@ import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../compon
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
+import { getPreviewPlansUrl } from '../site-fields/plan-awaiting-checkout';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
@@ -76,7 +77,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							<Icon
 								icon={ published }
 								size={ 32 }
-								style={ { fill: 'var(--dashboard__foreground-color-success)' } }
+								style={ { color: 'var(--dashboard__foreground-color-success)' } }
 							/>
 						) }
 						{ isCurrent && <Spinner className="static-site-import-card__spinner" /> }
@@ -84,7 +85,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							<Icon
 								icon={ border }
 								size={ 32 }
-								style={ { fill: 'var(--dashboard__text-muted-color)' } }
+								style={ { color: 'var(--dashboard__text-muted-color)' } }
 							/>
 						) }
 						<Text variant={ isDone || isCurrent ? undefined : 'muted' }>{ item.label }</Text>
@@ -176,7 +177,7 @@ export function StaticSiteImportFailed( {
 						<Icon
 							icon={ caution }
 							size={ 24 }
-							style={ { fill: 'var(--dashboard__foreground-color-error)' } }
+							style={ { color: 'var(--dashboard__foreground-color-error)' } }
 						/>
 						<Heading level={ 2 } size={ 20 } weight={ 600 }>
 							{ __( 'Your move stopped' ) }
@@ -222,6 +223,27 @@ export function StaticSiteImportFailed( {
 			</CardBody>
 		</Card>
 	);
+}
+
+/**
+ * Open a preview site once its move finishes while the customer watches it here. Only after the
+ * move was seen in progress, so coming back to a finished preview's Overview stays on it.
+ * @param siteImport The site's import, from useStaticSiteImport().
+ */
+export function useOpenPreviewWhenReady( siteImport: StaticSiteImport | null ) {
+	const hasSeenMoving = useRef( false );
+	const status = siteImport?.status;
+	const previewUrl = siteImport?.previewUrl;
+	useEffect( () => {
+		if ( status === 'moving' ) {
+			hasSeenMoving.current = true;
+			return;
+		}
+		if ( hasSeenMoving.current && status === 'finished' && previewUrl ) {
+			hasSeenMoving.current = false;
+			window.location.assign( previewUrl );
+		}
+	}, [ status, previewUrl ] );
 }
 
 /** Takes the place of the overview cards while the site is being moved. */
@@ -300,7 +322,7 @@ export function StaticSiteImportNotice( {
 	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
 	const recordClick = (
-		action: 'connect_domain' | 'get_domain' | 'preview_site' | 'request_handoff'
+		action: 'connect_domain' | 'get_domain' | 'preview_site' | 'request_handoff' | 'choose_plan'
 	) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
@@ -360,6 +382,44 @@ export function StaticSiteImportNotice( {
 				{ __(
 					'It may belong to another account. If you started it, make sure you’re logged in to that account.'
 				) }
+			</Notice>
+		);
+	}
+
+	// A preview has no plan to connect a domain with: keeping it is the next step.
+	if ( isReady && siteImport.isPreview ) {
+		return (
+			<Notice
+				variant="success"
+				title={ __( 'Your preview is ready' ) }
+				actions={
+					<>
+						<NoticeActionLinkButton
+							variant="solid"
+							href={ siteImport.previewUrl || previewUrl }
+							openInNewTab
+							rel="noopener noreferrer"
+							onClick={ () => recordClick( 'preview_site' ) }
+						>
+							{ __( 'View site' ) }
+						</NoticeActionLinkButton>
+						<NoticeActionLinkButton
+							variant="outline"
+							href={ getPreviewPlansUrl( site ) }
+							onClick={ () => recordClick( 'choose_plan' ) }
+						>
+							{ __( 'Choose a plan' ) }
+						</NoticeActionLinkButton>
+					</>
+				}
+			>
+				{ sourceHost
+					? sprintf(
+							/* translators: %s: the domain of the site that was copied, e.g. example.com. */
+							__( '%s is copied onto a preview site. Choose a plan to keep it.' ),
+							sourceHost
+						)
+					: __( 'Your site is copied onto a preview site. Choose a plan to keep it.' ) }
 			</Notice>
 		);
 	}

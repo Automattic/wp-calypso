@@ -1,27 +1,28 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { DomainSearchTrademarkClaimsModal } from '..';
 import * as scrollToEndModule from '../../../helpers/has-scrolled-to-end';
 
-const hasScrolledToEndModuleMock = jest.mock( '../../../helpers/has-scrolled-to-end' );
+vi.mock( '../../../helpers/has-scrolled-to-end' );
 
 describe( 'DomainSearchTrademarkClaimsModal', () => {
 	afterEach( () => {
-		hasScrolledToEndModuleMock.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'allows clicking onAccept if the user has scrolled to the end', async () => {
-		jest.spyOn( scrollToEndModule, 'hasScrolledToEnd' ).mockReturnValue( true );
+		vi.spyOn( scrollToEndModule, 'hasScrolledToEnd' ).mockReturnValue( true );
 
 		const user = userEvent.setup();
 
-		const onAccept = jest.fn();
+		const onAccept = vi.fn();
 
 		render(
 			<DomainSearchTrademarkClaimsModal
 				domainName="test-trademark-claim.com"
 				onAccept={ onAccept }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				trademarkClaimsNoticeInfo={ { claim: { markName: 'Test Trademark' } } }
 			/>
 		);
@@ -32,15 +33,15 @@ describe( 'DomainSearchTrademarkClaimsModal', () => {
 	} );
 
 	it( 'does not allow clicking onAccept if the user has not scrolled to the end', async () => {
-		jest.spyOn( scrollToEndModule, 'hasScrolledToEnd' ).mockReturnValue( false );
+		vi.spyOn( scrollToEndModule, 'hasScrolledToEnd' ).mockReturnValue( false );
 
-		const onAccept = jest.fn();
+		const onAccept = vi.fn();
 
 		render(
 			<DomainSearchTrademarkClaimsModal
 				domainName="test-trademark-claim.com"
 				onAccept={ onAccept }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				trademarkClaimsNoticeInfo={ { claim: { markName: 'Test Trademark' } } }
 			/>
 		);

@@ -4,7 +4,8 @@
  *
  *   node browse.cjs <url> [options]
  *
- * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT).
+ * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT). An absolute
+ * local URL without a port gets $PORT too. $PORT defaults to the checkout's dev server port.
  * The options are documented in ../browser.md.
  */
 const fs = require( 'node:fs' );
@@ -44,11 +45,9 @@ const { values: options, positionals } = parseArgs( {
 
 const AsyncFunction = async function () {}.constructor;
 
-// A mistake in the options, reported without a stack trace.
 class UsageError extends Error {}
 
-// Spinners, the dashboard's loading bar and blurred placeholder text, busy regions, and
-// Calypso's W logo shown until its JavaScript loads.
+// `.wpcom-site__logo` is Calypso's W logo, shown until its JavaScript loads.
 const LOADING_SELECTOR = [
 	'.components-spinner',
 	'.wpcom-site__logo',
@@ -72,6 +71,27 @@ function isLocalTarget( url ) {
 		hostname === '127.0.0.1' ||
 		hostname === '[::1]'
 	);
+}
+
+/**
+ * Points an absolute local URL at this checkout's dev server: `http://calypso.localhost/read`
+ * gets its port, and another port is refused, since another checkout's server may be there.
+ */
+function withDevServerPort( target ) {
+	if ( ! URL.canParse( target ) || ! isLocalTarget( target ) ) {
+		return target;
+	}
+	const { port } = new URL( target );
+	if ( ! port ) {
+		return target.replace( /^(\w+:\/\/[^/?#]+)/, `$1:${ PORT }` );
+	}
+	if ( port !== String( PORT ) ) {
+		throw new UserActionRequired(
+			`${ target } is on port ${ port }, but this checkout's dev server uses port ${ PORT }. ` +
+				`Leave the port out of the URL, or put PORT=${ port } in front of the command if that server runs this checkout.`
+		);
+	}
+	return target;
 }
 
 function isCalypsoLiveTarget( url ) {
@@ -170,14 +190,11 @@ function watch( page ) {
 }
 
 async function mainContent( page ) {
-	const main = page.locator( 'main' ).first();
-	return ( await main.count() ) ? main : page.locator( 'body' );
+	const mainElement = page.locator( 'main' ).first();
+	return ( await mainElement.count() ) ? mainElement : page.locator( 'body' );
 }
 
-/**
- * Waits until no loading indicator has been visible in the main content for a short while.
- * Returns the indicators still showing when it gives up.
- */
+// Returns the loading indicators still showing when it gives up.
 async function waitUntilLoaded( page ) {
 	const root = await mainContent( page );
 	const indicators = root.locator( LOADING_SELECTOR ).filter( { visible: true } );
@@ -249,9 +266,6 @@ async function open( browser, account, url ) {
 	return { context, page, problems, requests };
 }
 
-/**
- * Resolves a screenshot path, refusing one inside the repository so images never get committed.
- */
 function screenshotTarget( file ) {
 	const target = path.resolve( file );
 	if ( ! path.relative( REPO_ROOT, target ).startsWith( '..' ) ) {
@@ -338,11 +352,7 @@ function drawArrow( node, inViewport ) {
 	};
 }
 
-/**
- * Saves a screenshot of the page, or with `selector`, of the first element matching it.
- * With `arrow`, points an arrow at the first element matching that selector.
- * Also available to --eval code as `screenshot( path, options )`.
- */
+// Also available to --eval code as `screenshot( path, options )`.
 async function takeScreenshot( page, file, { selector, fullPage = false, arrow } = {} ) {
 	const target = screenshotTarget( file );
 	fs.mkdirSync( path.dirname( target ), { recursive: true } );
@@ -379,13 +389,13 @@ async function takeScreenshot( page, file, { selector, fullPage = false, arrow }
 				box.right = Math.max( box.right, drawing.right );
 				box.bottom = Math.max( box.bottom, drawing.bottom );
 			}
-			const clip = {
+			const area = {
 				x: box.left,
 				y: box.top,
 				width: box.right - box.left,
 				height: box.bottom - box.top,
 			};
-			await page.screenshot( { ...settings, fullPage: true, clip } );
+			await page.screenshot( { ...settings, fullPage: true, clip: area } );
 		} else {
 			await page.screenshot( { ...settings, fullPage } );
 		}
@@ -399,7 +409,6 @@ async function takeScreenshot( page, file, { selector, fullPage = false, arrow }
 
 const accounts = options.as.split( ',' );
 
-// With several accounts, `after.png` becomes `after-atomicUser.png`.
 function screenshotPathFor( file, account ) {
 	if ( accounts.length === 1 ) {
 		return file;
@@ -512,10 +521,10 @@ async function check( browser, account, target ) {
 }
 
 async function main() {
-	const [ target ] = positionals;
-	if ( ! target ) {
+	if ( ! positionals[ 0 ] ) {
 		throw new UserActionRequired( 'Usage: node browse.cjs <url> [options]' );
 	}
+	const target = withDevServerPort( positionals[ 0 ] );
 	if ( options.screenshot ) {
 		screenshotTarget( options.screenshot );
 	}

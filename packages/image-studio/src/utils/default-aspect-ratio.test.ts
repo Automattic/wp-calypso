@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ImageStudioEntryPoint } from '../store';
 import { getDefaultAspectRatio } from './default-aspect-ratio';
 
@@ -46,14 +47,14 @@ describe( 'getDefaultAspectRatio', () => {
 		'starts %s at the theme ratio when the picker offers it',
 		( entryPoint ) => {
 			expect( getDefaultAspectRatio( entryPoint, themeWith43 ) ).toBe( '4:3' );
+			expect( getDefaultAspectRatio( entryPoint, themeWith32 ) ).toBe( '3:2' );
 			expect( getDefaultAspectRatio( entryPoint, themeWith169 ) ).toBe( '16:9' );
 		}
 	);
 
 	it.each( FEATURED_ENTRY_POINTS )(
-		'starts %s at 16:9 when the theme ratio is portrait or unsupported',
+		'starts %s at 16:9 when the theme ratio is portrait',
 		( entryPoint ) => {
-			expect( getDefaultAspectRatio( entryPoint, themeWith32 ) ).toBe( '16:9' );
 			expect( getDefaultAspectRatio( entryPoint, themeWith34 ) ).toBe( '16:9' );
 		}
 	);
@@ -61,7 +62,7 @@ describe( 'getDefaultAspectRatio', () => {
 	it.each( OTHER_ENTRY_POINTS )(
 		'leaves %s to the model without reading the theme',
 		( entryPoint ) => {
-			const select = jest.fn( themeWith43 );
+			const select = vi.fn( themeWith43 );
 			expect( getDefaultAspectRatio( entryPoint, select ) ).toBeNull();
 			expect( select ).not.toHaveBeenCalled();
 		}

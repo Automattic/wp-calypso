@@ -64,6 +64,14 @@ const tscPackages = withTscInfo( {
 	id: 'type_check_packages',
 } );
 
+// Local checkouts only build the packages that packages/tsconfig.json references,
+// while the task above builds every package, so CI would not notice a missing one.
+const checkPackagesReferences = {
+	name: 'node',
+	args: 'bin/check-packages-tsconfig-references.mjs',
+	testId: 'check_packages_tsconfig_references',
+};
+
 const tscCommands = [
 	{ cmd: 'tsc --noEmit --project build-tools/tsconfig.json', id: 'type_check_build_tools' },
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
@@ -132,6 +140,7 @@ try {
 	// jest and the remaining for tsc and anything else accomplished this.
 	const tscTasks = ( async () => {
 		// This task is a prerequisite for the other tsc tasks, so it must run separately.
+		await runTask( checkPackagesReferences );
 		await runTask( tscPackages );
 		await completeTasks( tscCommands.map( runTask ) );
 	} )();

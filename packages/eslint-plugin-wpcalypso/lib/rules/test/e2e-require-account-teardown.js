@@ -7,8 +7,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
 
 const ruleTester = new RuleTester( {
 	languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
