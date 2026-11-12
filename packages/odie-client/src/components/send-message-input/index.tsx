@@ -147,6 +147,7 @@ export const OdieSendMessageButton = ( { aiDisclosureId }: { aiDisclosureId?: st
 		showAttachmentButton,
 		AttachmentDropZone,
 		badFormatNotice,
+		uploadErrorNotice,
 	} = useAttachmentHandler();
 
 	const hasAttachments = !! attachmentPreviews;
@@ -169,7 +170,7 @@ export const OdieSendMessageButton = ( { aiDisclosureId }: { aiDisclosureId?: st
 	}, [ textareaRef ] );
 
 	// Prioritize connection status notice over message size notice
-	const notice = connectionNotice || messageSizeNotice || badFormatNotice;
+	const notice = connectionNotice || messageSizeNotice || badFormatNotice || uploadErrorNotice;
 
 	useEffect( () => {
 		function handleBlur() {
