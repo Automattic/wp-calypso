@@ -32,7 +32,7 @@ beforeEach( () => {
 } );
 
 describe( 'getHostingDashboardEnrollment', () => {
-	it( 'leaves users unenrolled while the rollout flag is off', () => {
+	test( 'leaves users unenrolled while the rollout flag is off', () => {
 		expect( getHostingDashboardEnrollment( undefined, LOW_USER_ID ) ).toEqual( {
 			enrolled: false,
 		} );
@@ -44,13 +44,13 @@ describe( 'getHostingDashboardEnrollment', () => {
 	describe( 'with the rollout flag on', () => {
 		beforeEach( () => enableFlags( 'dashboard/enable-percentage-rollout' ) );
 
-		it( 'the escape hatch (forced-opt-out) wins over cohort membership', () => {
+		test( 'the escape hatch (forced-opt-out) wins over cohort membership', () => {
 			expect(
 				getHostingDashboardEnrollment( preference( 'forced-opt-out' ), LOW_USER_ID )
 			).toEqual( { enrolled: false } );
 		} );
 
-		it( 'enrolls every user, whatever their ID', () => {
+		test( 'enrolls every user, whatever their ID', () => {
 			expect( getHostingDashboardEnrollment( undefined, LOW_USER_ID ) ).toEqual( {
 				enrolled: true,
 				reason: 'forced',
@@ -61,7 +61,7 @@ describe( 'getHostingDashboardEnrollment', () => {
 			} );
 		} );
 
-		it( 'the cohort overrides an explicit opt-out', () => {
+		test( 'the cohort overrides an explicit opt-out', () => {
 			expect( getHostingDashboardEnrollment( preference( 'opt-out' ), LOW_USER_ID ) ).toEqual( {
 				enrolled: true,
 				reason: 'forced',
@@ -70,14 +70,14 @@ describe( 'getHostingDashboardEnrollment', () => {
 
 		// At full rollout the cohort is checked first, so users who had opted in
 		// of their own accord now report as 'forced' rather than 'opt-in'.
-		it( 'reports opted-in users as forced', () => {
+		test( 'reports opted-in users as forced', () => {
 			expect( getHostingDashboardEnrollment( preference( 'opt-in' ), HIGH_USER_ID ) ).toEqual( {
 				enrolled: true,
 				reason: 'forced',
 			} );
 		} );
 
-		it( 'leaves users with no ID unenrolled', () => {
+		test( 'leaves users with no ID unenrolled', () => {
 			expect( getHostingDashboardEnrollment( preference( 'opt-out' ), undefined ) ).toEqual( {
 				enrolled: false,
 			} );
@@ -86,7 +86,7 @@ describe( 'getHostingDashboardEnrollment', () => {
 } );
 
 describe( 'isAdvancedNoticeVisible', () => {
-	it( 'shows nothing while the rollout-advance-notice flag is off', () => {
+	test( 'shows nothing while the rollout-advance-notice flag is off', () => {
 		expect( isAdvancedNoticeVisible( undefined, LOW_USER_ID ) ).toBe( false );
 		expect( isAdvancedNoticeVisible( undefined, HIGH_USER_ID ) ).toBe( false );
 	} );
@@ -94,16 +94,16 @@ describe( 'isAdvancedNoticeVisible', () => {
 	describe( 'with the rollout-advance-notice flag on', () => {
 		beforeEach( () => enableFlags( 'dashboard/rollout-advance-notice' ) );
 
-		it( 'shows the banner to every user, regardless of cohort', () => {
+		test( 'shows the banner to every user, regardless of cohort', () => {
 			expect( isAdvancedNoticeVisible( undefined, LOW_USER_ID ) ).toBe( true );
 			expect( isAdvancedNoticeVisible( undefined, HIGH_USER_ID ) ).toBe( true );
 		} );
 
-		it( 'hides the banner from escape-hatched (forced-opt-in) users', () => {
+		test( 'hides the banner from escape-hatched (forced-opt-in) users', () => {
 			expect( isAdvancedNoticeVisible( preference( 'forced-opt-in' ), LOW_USER_ID ) ).toBe( false );
 		} );
 
-		it( 'hides the banner from escape-hatched (forced-opt-out) users', () => {
+		test( 'hides the banner from escape-hatched (forced-opt-out) users', () => {
 			expect( isAdvancedNoticeVisible( preference( 'forced-opt-out' ), LOW_USER_ID ) ).toBe(
 				false
 			);

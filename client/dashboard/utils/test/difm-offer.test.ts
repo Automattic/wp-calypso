@@ -49,13 +49,13 @@ function createExperimentAssignment( variationName: string | null ) {
 }
 
 describe( 'isEligibleForDifmOffer', () => {
-	it( 'accepts free, personal and premium plans', () => {
+	test( 'accepts free, personal and premium plans', () => {
 		for ( const planSlug of [ DotcomPlans.FREE_PLAN, DotcomPlans.PERSONAL, DotcomPlans.PREMIUM ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( true );
 		}
 	} );
 
-	it( 'accepts the monthly, 2-year and 3-year terms of personal and premium', () => {
+	test( 'accepts the monthly, 2-year and 3-year terms of personal and premium', () => {
 		for ( const planSlug of [
 			DotcomPlans.PERSONAL_MONTHLY,
 			DotcomPlans.PERSONAL_2_YEARS,
@@ -68,7 +68,7 @@ describe( 'isEligibleForDifmOffer', () => {
 		}
 	} );
 
-	it( 'accepts the Personal free trial', () => {
+	test( 'accepts the Personal free trial', () => {
 		expect(
 			isEligibleForDifmOffer(
 				{ ...eligibleInput(), planSlug: DotcomPlans.PERSONAL_TRIAL_MONTHLY },
@@ -77,7 +77,7 @@ describe( 'isEligibleForDifmOffer', () => {
 		).toBe( true );
 	} );
 
-	it( 'rejects the Woo hosted free plans', () => {
+	test( 'rejects the Woo hosted free plans', () => {
 		for ( const planSlug of [
 			WooHostedPlans.WOO_HOSTED_FREE_PLAN,
 			WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY,
@@ -86,13 +86,13 @@ describe( 'isEligibleForDifmOffer', () => {
 		}
 	} );
 
-	it( 'rejects business, commerce and unknown plans', () => {
+	test( 'rejects business, commerce and unknown plans', () => {
 		for ( const planSlug of [ DotcomPlans.BUSINESS, DotcomPlans.ECOMMERCE, 'not-a-plan' ] ) {
 			expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug }, NOW ) ).toBe( false );
 		}
 	} );
 
-	it( 'rejects Jetpack plans that share a type with an eligible plan', () => {
+	test( 'rejects Jetpack plans that share a type with an eligible plan', () => {
 		for ( const planSlug of [
 			JetpackPlans.PLAN_JETPACK_FREE,
 			JetpackPlans.PLAN_JETPACK_PERSONAL,
@@ -102,7 +102,7 @@ describe( 'isEligibleForDifmOffer', () => {
 		}
 	} );
 
-	it( 'accepts a site exactly at the maximum age and rejects one a millisecond older', () => {
+	test( 'accepts a site exactly at the maximum age and rejects one a millisecond older', () => {
 		const maxAgeMs = DIFM_OFFER_MAX_SITE_AGE_DAYS * MS_PER_DAY;
 		expect(
 			isEligibleForDifmOffer(
@@ -118,13 +118,13 @@ describe( 'isEligibleForDifmOffer', () => {
 		).toBe( false );
 	} );
 
-	it( 'rejects an unparseable creation date', () => {
+	test( 'rejects an unparseable creation date', () => {
 		expect(
 			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: 'not-a-date' }, NOW )
 		).toBe( false );
 	} );
 
-	it( 'accepts a just-created site even when it appears slightly in the future', () => {
+	test( 'accepts a just-created site even when it appears slightly in the future', () => {
 		const justCreated = new Date( NOW ).toISOString();
 		const slightlyFuture = new Date( NOW + 10 * 60 * 1000 ).toISOString();
 		expect(
@@ -135,13 +135,13 @@ describe( 'isEligibleForDifmOffer', () => {
 		).toBe( true );
 	} );
 
-	it( 'accepts a space-separated GMT creation date within the window', () => {
+	test( 'accepts a space-separated GMT creation date within the window', () => {
 		expect(
 			isEligibleForDifmOffer( { ...eligibleInput(), siteCreatedAt: '2026-09-24 11:00:00' }, NOW )
 		).toBe( true );
 	} );
 
-	it( 'accepts en and en-gb and rejects en-us and fr', () => {
+	test( 'accepts en and en-gb and rejects en-us and fr', () => {
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'en' }, NOW ) ).toBe( true );
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'en-gb' }, NOW ) ).toBe(
 			true
@@ -152,7 +152,7 @@ describe( 'isEligibleForDifmOffer', () => {
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), localeSlug: 'fr' }, NOW ) ).toBe( false );
 	} );
 
-	it( 'rejects an A4A dev site, and a site whose A4A status is unknown', () => {
+	test( 'rejects an A4A dev site, and a site whose A4A status is unknown', () => {
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), isA4ADevSite: true }, NOW ) ).toBe(
 			false
 		);
@@ -161,7 +161,7 @@ describe( 'isEligibleForDifmOffer', () => {
 		);
 	} );
 
-	it( 'rejects input with a missing planSlug, siteCreatedAt or localeSlug', () => {
+	test( 'rejects input with a missing planSlug, siteCreatedAt or localeSlug', () => {
 		expect( isEligibleForDifmOffer( { ...eligibleInput(), planSlug: undefined }, NOW ) ).toBe(
 			false
 		);
@@ -175,28 +175,28 @@ describe( 'isEligibleForDifmOffer', () => {
 } );
 
 describe( 'normalizeCreatedAt', () => {
-	it( 'rewrites a space-separated date to explicit ISO 8601 UTC', () => {
+	test( 'rewrites a space-separated date to explicit ISO 8601 UTC', () => {
 		expect( normalizeCreatedAt( '2026-09-24 11:00:00' ) ).toBe( '2026-09-24T11:00:00Z' );
 	} );
 
-	it( 'passes an ISO 8601 date through unchanged', () => {
+	test( 'passes an ISO 8601 date through unchanged', () => {
 		expect( normalizeCreatedAt( '2026-09-24T11:00:00+00:00' ) ).toBe( '2026-09-24T11:00:00+00:00' );
 		expect( normalizeCreatedAt( '2026-09-24T11:00:00Z' ) ).toBe( '2026-09-24T11:00:00Z' );
 	} );
 } );
 
 describe( 'normalizeDifmOfferVariation', () => {
-	it( 'returns control for null and unrecognised variation names', () => {
+	test( 'returns control for null and unrecognised variation names', () => {
 		expect( normalizeDifmOfferVariation( null ) ).toBe( 'control' );
 		expect( normalizeDifmOfferVariation( undefined ) ).toBe( 'control' );
 		expect( normalizeDifmOfferVariation( 'rotating' ) ).toBe( 'control' );
 	} );
 
-	it( 'returns control for the single arm the experiment had before registration', () => {
+	test( 'returns control for the single arm the experiment had before registration', () => {
 		expect( normalizeDifmOfferVariation( 'treatment' ) ).toBe( 'control' );
 	} );
 
-	it.each( [ 'expert_help', 'no_time_to_build', 'skip_the_setup' ] )(
+	test.each( [ 'expert_help', 'no_time_to_build', 'skip_the_setup' ] )(
 		'returns the %s arm',
 		( arm ) => {
 			expect( normalizeDifmOfferVariation( arm ) ).toBe( arm );
@@ -213,7 +213,7 @@ describe( 'useDifmOffer', () => {
 		config.disable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 	} );
 
-	it( 'keeps an ineligible user out of the experiment and returns control', () => {
+	test( 'keeps an ineligible user out of the experiment and returns control', () => {
 		mockUseExperiment.mockReturnValue( [ false, null ] );
 
 		const { result } = renderHook( () =>
@@ -230,7 +230,7 @@ describe( 'useDifmOffer', () => {
 		} );
 	} );
 
-	it( 'returns the assigned variation for an eligible user', () => {
+	test( 'returns the assigned variation for an eligible user', () => {
 		mockUseExperiment.mockReturnValue( [
 			false,
 			createExperimentAssignment( 'no_time_to_build' ),
@@ -248,7 +248,7 @@ describe( 'useDifmOffer', () => {
 		} );
 	} );
 
-	it( 'returns control for an eligible user with a null assignment', () => {
+	test( 'returns control for an eligible user with a null assignment', () => {
 		mockUseExperiment.mockReturnValue( [ false, null ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
@@ -256,7 +256,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current.variation ).toBe( 'control' );
 	} );
 
-	it( 'returns control for an eligible user with an unrecognised variation', () => {
+	test( 'returns control for an eligible user with an unrecognised variation', () => {
 		mockUseExperiment.mockReturnValue( [ false, createExperimentAssignment( 'rotating' ) ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
@@ -264,7 +264,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current.variation ).toBe( 'control' );
 	} );
 
-	it( 'returns treatment without an assignment when the QA flag is on', () => {
+	test( 'returns treatment without an assignment when the QA flag is on', () => {
 		config.enable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 		mockUseExperiment.mockReturnValue( [ true, null ] );
 
@@ -280,7 +280,7 @@ describe( 'useDifmOffer', () => {
 		} );
 	} );
 
-	it( 'keeps an ineligible user in control when the QA flag is on', () => {
+	test( 'keeps an ineligible user in control when the QA flag is on', () => {
 		config.enable( DIFM_OFFER_FORCE_TREATMENT_FLAG );
 		mockUseExperiment.mockReturnValue( [ false, null ] );
 
@@ -291,7 +291,7 @@ describe( 'useDifmOffer', () => {
 		expect( result.current.variation ).toBe( 'control' );
 	} );
 
-	it( 'reports loading while an eligible user waits for an assignment', () => {
+	test( 'reports loading while an eligible user waits for an assignment', () => {
 		mockUseExperiment.mockReturnValue( [ true, null ] );
 
 		const { result } = renderHook( () => useDifmOffer( eligibleInput( Date.now() ) ) );
@@ -305,11 +305,11 @@ describe( 'useDifmOffer', () => {
 } );
 
 describe( 'getDifmOfferCopy', () => {
-	it( 'returns no copy for control', () => {
+	test( 'returns no copy for control', () => {
 		expect( getDifmOfferCopy( 'control' ) ).toBeNull();
 	} );
 
-	it.each( [
+	test.each( [
 		[
 			'expert_help',
 			'Expert help to get you started',

@@ -1,14 +1,15 @@
 import { renderHook, act } from '@testing-library/react';
+import { type MockInstance, vi } from 'vitest';
 import { useStepRegistration } from '../use-step-registration';
 import type { StepMeta } from '../types';
 
 describe( 'useStepRegistration duplicate values', () => {
-	let warnSpy: jest.SpyInstance;
+	let warnSpy: MockInstance;
 
 	beforeEach( () => {
 		// Duplicate values are a dev error and emit a one-time console warning;
 		// suppress it here so test output stays clean.
-		warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		warnSpy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
@@ -82,10 +83,10 @@ describe( 'useStepRegistration duplicate values', () => {
 } );
 
 describe( 'useStepRegistration duplicate warning', () => {
-	let warnSpy: jest.SpyInstance;
+	let warnSpy: MockInstance;
 
 	beforeEach( () => {
-		warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		warnSpy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {

@@ -1,7 +1,7 @@
 import { isReferralCheckoutUrl } from '../referral-checkout-url';
 
 describe( 'isReferralCheckoutUrl', () => {
-	it( 'accepts the checkout links the referral is created with', () => {
+	test( 'accepts the checkout links the referral is created with', () => {
 		expect(
 			isReferralCheckoutUrl(
 				'https://wordpress.com/checkout/agency/referral?agency_id=1&referral_id=2&secret=abc'
@@ -14,7 +14,7 @@ describe( 'isReferralCheckoutUrl', () => {
 		).toBe( true );
 	} );
 
-	it( 'rejects other hosts, other pages and other protocols', () => {
+	test( 'rejects other hosts, other pages and other protocols', () => {
 		expect( isReferralCheckoutUrl( 'https://example.com/checkout/agency/referral' ) ).toBe( false );
 		expect( isReferralCheckoutUrl( 'https://wordpress.com.example.com/checkout/' ) ).toBe( false );
 		expect( isReferralCheckoutUrl( 'https://wordpress.com/log-in' ) ).toBe( false );

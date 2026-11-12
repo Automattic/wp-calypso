@@ -1,18 +1,18 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
+import { type Mock, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { LocaleProvider, useLocale, withLocale } from '../locale-context';
 
-jest.mock( '@wordpress/i18n', () => ( {
-	getLocaleData: jest.fn( () => ( {} ) ),
-	subscribe: jest.fn( () => () => undefined ),
+vi.mock( '@wordpress/i18n', () => ( {
+	getLocaleData: vi.fn(),
+	subscribe: vi.fn(),
 } ) );
 
 beforeEach( () => {
-	( getLocaleData as jest.Mock ).mockReset();
-	( subscribe as jest.Mock ).mockReset();
+	vi.mocked( getLocaleData ).mockReset();
+	vi.mocked( subscribe ).mockReset();
 } );
 
 describe( 'useLocale', () => {
@@ -41,7 +41,7 @@ describe( 'useLocale', () => {
 	} );
 
 	it( "uses locale data from @wordpress/i18n if <LocaleProvider> isn't present", () => {
-		( getLocaleData as jest.Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'ar' },
 		} ) );
 
@@ -51,7 +51,7 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'prefers <LocaleProvider> if both are present', () => {
-		( getLocaleData as jest.Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'he' },
 		} ) );
 
@@ -63,12 +63,12 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'subscribes to changes to @wordpress/i18n data', () => {
-		( getLocaleData as jest.Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'es' },
 		} ) );
 
 		let subscribeCallback;
-		( subscribe as jest.Mock ).mockImplementation( ( callback ) => {
+		( subscribe as Mock ).mockImplementation( ( callback ) => {
 			subscribeCallback = callback;
 		} );
 
@@ -77,7 +77,7 @@ describe( 'useLocale', () => {
 		expect( subscribe ).toHaveBeenCalledWith( expect.any( Function ) );
 		expect( result.current ).toBe( 'es' );
 
-		( getLocaleData as jest.Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'ja' },
 		} ) );
 		act( () => subscribeCallback() );
@@ -86,12 +86,12 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'unsubscribes from @wordpress/i18n when <LocaleProvider> starts to provide a value', async () => {
-		( getLocaleData as jest.Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'es' },
 		} ) );
 
-		const unsubscribe = jest.fn();
-		( subscribe as jest.Mock ).mockImplementation( () => {
+		const unsubscribe = vi.fn();
+		vi.mocked( subscribe ).mockImplementation( () => {
 			return unsubscribe();
 		} );
 

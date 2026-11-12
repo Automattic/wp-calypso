@@ -1,8 +1,4 @@
 /**
- * @jest-environment jsdom
- */
-
-/**
  * Internal dependencies
  */
 import { getUpgradeURL, isWpcomSimpleSite } from '../src/logo-generator/lib/upgrade-url';

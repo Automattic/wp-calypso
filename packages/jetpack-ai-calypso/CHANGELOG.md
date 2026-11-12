@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Remove the optional `@babel/runtime` peer dependency. The built package doesn't use it.
+- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## v2.0.1
 

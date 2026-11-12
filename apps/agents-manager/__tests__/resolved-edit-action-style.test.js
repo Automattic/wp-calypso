@@ -48,7 +48,8 @@ describe( 'Resolved edit action CSS contract', () => {
 		const declarations = getDeclarations( '.agents-manager-resolved-edit-action__icon path' );
 
 		expect( declarations.get( 'color' ) ).toBe( 'inherit' );
-		expect( declarations.get( 'fill' ) ).toBe( 'currentColor' );
+		// A path fill would fill in the stroke-drawn @wordpress/icons icons.
+		expect( declarations.has( 'fill' ) ).toBe( false );
 	} );
 
 	it( 'uses circular status icons and distinct active and disabled actions', () => {

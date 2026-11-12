@@ -1,7 +1,5 @@
-/**
- * @jest-environment jsdom
- */
 import Smooch from 'smooch';
+import { type Mock, vi } from 'vitest';
 import {
 	getOpenLiveInteractions,
 	MAX_OPEN_CONVERSATIONS,
@@ -9,12 +7,11 @@ import {
 } from '../get-open-live-interactions';
 import type { ZendeskConversation } from '@automattic/zendesk-client';
 
-jest.mock( 'smooch', () => ( {
-	getConversations: jest.fn(),
+vi.mock( 'smooch', () => ( {
+	default: { getConversations: vi.fn() },
 } ) );
 
-const mockGetConversations = ( Smooch as unknown as { getConversations: jest.Mock } )
-	.getConversations;
+const mockGetConversations = ( Smooch as unknown as { getConversations: Mock } ).getConversations;
 
 const now = () => Math.floor( Date.now() / 1000 );
 

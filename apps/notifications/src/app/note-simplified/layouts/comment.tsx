@@ -19,7 +19,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 					<ThreadReply
 						commenter={ actor }
 						meta={ <NoteMeta note={ note } /> }
-						status={ isPendingApproval && <PendingApproval note={ note } /> }
+						status={ isPendingApproval && <PendingApproval /> }
 					>
 						<Body note={ note } hidePeople />
 					</ThreadReply>

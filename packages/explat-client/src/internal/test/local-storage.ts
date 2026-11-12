@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
 import { polyfilledLocalStorage as localStorage } from '../local-storage';
 

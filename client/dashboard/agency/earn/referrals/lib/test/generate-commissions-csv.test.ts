@@ -29,7 +29,7 @@ function payoutWithProductName( productName: string ): ReferralCommissionPayout 
 }
 
 describe( 'generateCommissionsCsv', () => {
-	it.each( [ '=HYPERLINK(evil)', '+1+1', '-1', '@SUM(A1)', '\tcmd', '\rcmd' ] )(
+	test.each( [ '=HYPERLINK(evil)', '+1+1', '-1', '@SUM(A1)', '\tcmd', '\rcmd' ] )(
 		'neutralizes formula injection in fields starting with %j',
 		( payload ) => {
 			const csv = generateCommissionsCsv( [], [], payoutWithProductName( payload ) );
@@ -38,18 +38,18 @@ describe( 'generateCommissionsCsv', () => {
 		}
 	);
 
-	it( 'does not alter values that do not start with a formula trigger', () => {
+	test( 'does not alter values that do not start with a formula trigger', () => {
 		const csv = generateCommissionsCsv( [], [], payoutWithProductName( 'Pro Plan' ) );
 		expect( csv ).toContain( 'Pro Plan' );
 		expect( csv ).not.toContain( "'Pro Plan" );
 	} );
 
-	it( 'does not prefix a lone trigger character used as a placeholder', () => {
+	test( 'does not prefix a lone trigger character used as a placeholder', () => {
 		const csv = generateCommissionsCsv( [], [], payoutWithProductName( '-' ) );
 		expect( csv ).not.toContain( "'-" );
 	} );
 
-	it( 'still quotes and escapes fields containing commas and quotes', () => {
+	test( 'still quotes and escapes fields containing commas and quotes', () => {
 		const csv = generateCommissionsCsv( [], [], payoutWithProductName( 'Plan "A", annual' ) );
 		expect( csv ).toContain( '"Plan ""A"", annual"' );
 	} );
@@ -102,7 +102,7 @@ describe( 'generateCommissionsCsv', () => {
 		};
 	}
 
-	it.each( [
+	test.each( [
 		[ 'monthly alternative', 3301 ],
 		[ 'yearly alternative', 3300 ],
 		[ 'legacy alternative', 9999 ],
@@ -123,7 +123,7 @@ describe( 'generateCommissionsCsv', () => {
 		}
 	);
 
-	it( 'drops the row in the single-client view when no product matches', () => {
+	test( 'drops the row in the single-client view when no product matches', () => {
 		const csv = generateCommissionsCsv(
 			[ referral ],
 			[ catalogProduct ],

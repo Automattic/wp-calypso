@@ -36,6 +36,19 @@
 			opacity: 0.6;
 		}
 	}
+
+	// Two actions side by side when an open chat can be resumed or restarted.
+	&.help-center__container-footer--has-new-chat {
+		display: flex;
+		gap: 8px;
+		padding: 16px;
+
+		.button.help-center-contact-page__button {
+			flex: 1;
+			margin: 0;
+			width: auto;
+		}
+	}
 }
 
 .wp-core-ui {

@@ -132,6 +132,7 @@ $conversations-inbox-post-card-shadow:
 .conversations-inbox__post-arrow {
 	flex-shrink: 0;
 	fill: var( --color-text );
+	color: var( --color-text );
 	opacity: 0;
 	transition: opacity $conversations-inbox-duration $conversations-inbox-easing;
 
@@ -308,16 +309,6 @@ $conversations-inbox-post-card-shadow:
 		}
 
 		// The design's reply arrow is the return icon, mirrored.
-		// Its 24-unit outline renders 1.25px wide at 20px; a 0.3-unit stroke brings it
-		// to the 1.5px of the star beside it.
-		.comments__comment-actions-reply-icon,
-		.comments__comment-actions-cancel-icon {
-			fill: currentcolor;
-			stroke: currentcolor;
-			stroke-width: 0.3;
-			stroke-linejoin: round;
-		}
-
 		.comments__comment-actions-reply-icon {
 			transform: scaleX( -1 );
 

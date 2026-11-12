@@ -37,7 +37,7 @@ describe( 'getSecurityKeyHostname', () => {
 		} );
 	} );
 
-	it.each( [ 'wordpress.com', 'my.wordpress.com', 'wpcalypso.wordpress.com' ] )(
+	test.each( [ 'wordpress.com', 'my.wordpress.com', 'wpcalypso.wordpress.com' ] )(
 		'returns undefined on %s so registration uses the canonical wordpress.com rp id',
 		( hostname ) => {
 			setHostname( hostname );
@@ -45,7 +45,7 @@ describe( 'getSecurityKeyHostname', () => {
 		}
 	);
 
-	it.each( [ 'example.com', 'mystore.woo.com', 'calypso.localhost' ] )(
+	test.each( [ 'example.com', 'mystore.woo.com', 'calypso.localhost' ] )(
 		'returns the host itself on %s, where wordpress.com is not a registrable suffix',
 		( hostname ) => {
 			setHostname( hostname );

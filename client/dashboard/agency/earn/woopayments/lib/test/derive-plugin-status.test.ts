@@ -14,7 +14,7 @@ const plugin = ( overrides: Partial< CorePlugin > ): CorePlugin =>
 	} ) as CorePlugin;
 
 describe( 'derivePluginStatus', () => {
-	it( 'reports both plugins missing when the list is empty', () => {
+	test( 'reports both plugins missing when the list is empty', () => {
 		expect( derivePluginStatus( [] ) ).toEqual( {
 			hasWooCommerce: false,
 			hasWooPayments: false,
@@ -26,11 +26,11 @@ describe( 'derivePluginStatus', () => {
 		} );
 	} );
 
-	it( 'defaults to an empty list when called with no argument', () => {
+	test( 'defaults to an empty list when called with no argument', () => {
 		expect( derivePluginStatus().hasWooCommerce ).toBe( false );
 	} );
 
-	it( 'flags an inactive WooCommerce install', () => {
+	test( 'flags an inactive WooCommerce install', () => {
 		const status = derivePluginStatus( [
 			plugin( { plugin: WOOCOMMERCE_PLUGIN, status: 'inactive' } ),
 		] );
@@ -40,7 +40,7 @@ describe( 'derivePluginStatus', () => {
 		expect( status.isWooCommerceInactive ).toBe( true );
 	} );
 
-	it( 'flags an active WooPayments install', () => {
+	test( 'flags an active WooPayments install', () => {
 		const status = derivePluginStatus( [
 			plugin( { plugin: WOOCOMMERCE_PAYMENTS_PLUGIN, status: 'active' } ),
 		] );
@@ -50,7 +50,7 @@ describe( 'derivePluginStatus', () => {
 		expect( status.isWooPaymentsInactive ).toBe( false );
 	} );
 
-	it( 'flags an inactive WooPayments install', () => {
+	test( 'flags an inactive WooPayments install', () => {
 		const status = derivePluginStatus( [
 			plugin( { plugin: WOOCOMMERCE_PAYMENTS_PLUGIN, status: 'inactive' } ),
 		] );
@@ -59,7 +59,7 @@ describe( 'derivePluginStatus', () => {
 		expect( status.isWooPaymentsInactive ).toBe( true );
 	} );
 
-	it( 'resolves both plugins when both are present', () => {
+	test( 'resolves both plugins when both are present', () => {
 		const status = derivePluginStatus( [
 			plugin( { plugin: WOOCOMMERCE_PLUGIN, status: 'active' } ),
 			plugin( { plugin: WOOCOMMERCE_PAYMENTS_PLUGIN, status: 'active' } ),
