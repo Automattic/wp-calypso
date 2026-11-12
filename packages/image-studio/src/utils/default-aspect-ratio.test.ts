@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ImageStudioEntryPoint } from '../store';
 import { getDefaultAspectRatio } from './default-aspect-ratio';
 
@@ -61,7 +62,7 @@ describe( 'getDefaultAspectRatio', () => {
 	it.each( OTHER_ENTRY_POINTS )(
 		'leaves %s to the model without reading the theme',
 		( entryPoint ) => {
-			const select = jest.fn( themeWith43 );
+			const select = vi.fn( themeWith43 );
 			expect( getDefaultAspectRatio( entryPoint, select ) ).toBeNull();
 			expect( select ).not.toHaveBeenCalled();
 		}

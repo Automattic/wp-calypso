@@ -1,8 +1,8 @@
 /* eslint-disable import/order */
-import '@testing-library/jest-dom';
+import { type Mock, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-jest.mock( '@automattic/agenttic-ui', () => ( {
+vi.mock( '@automattic/agenttic-ui', () => ( {
 	AgentUI: {
 		InputToolbar: ( { label, children }: { label: string; children: React.ReactNode } ) => (
 			<div>
@@ -15,20 +15,20 @@ jest.mock( '@automattic/agenttic-ui', () => ( {
 		[ base, ...Object.keys( flags ).filter( ( key ) => flags[ key ] ) ].join( ' ' ),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn( () => ( {} ) ),
-	useSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn( () => ( {} ) ),
+	useSelect: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
-	trackImageStudioAspectRatioSelected: jest.fn(),
+vi.mock( '../../utils/tracking', () => ( {
+	trackImageStudioAspectRatioSelected: vi.fn(),
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: {
 		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
@@ -36,7 +36,7 @@ jest.mock( '../../store', () => ( {
 	},
 } ) );
 
-jest.mock( '../icons/AspectRatioIcon', () => ( {
+vi.mock( '../icons/AspectRatioIcon', () => ( {
 	AspectRatioIcon: () => null,
 } ) );
 
@@ -58,7 +58,7 @@ function mockStore(
 	entryPoint: string | null,
 	templateContent: string | null = null
 ) {
-	( useSelect as jest.Mock ).mockImplementation( ( selector ) =>
+	( useSelect as Mock ).mockImplementation( ( selector ) =>
 		selector( ( storeName: string ) => {
 			if ( storeName === 'image-studio' ) {
 				return {
@@ -134,8 +134,8 @@ describe( 'AspectRatioPicker', () => {
 	} );
 
 	it( 'records the picked ratio and the mode', () => {
-		const setSelectedAspectRatio = jest.fn();
-		( useDispatch as jest.Mock ).mockReturnValue( { setSelectedAspectRatio } );
+		const setSelectedAspectRatio = vi.fn();
+		( useDispatch as Mock ).mockReturnValue( { setSelectedAspectRatio } );
 		mockStore( null, 'jetpack_ai_featured_image', THREE_TWO_TEMPLATE );
 
 		render( <AspectRatioPicker mode={ ImageStudioMode.Generate } /> );

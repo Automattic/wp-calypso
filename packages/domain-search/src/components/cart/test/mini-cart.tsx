@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { buildCartItem } from '../../../test-helpers/factories/cart';
 import { TestDomainSearchWithCart } from '../../../test-helpers/renderer';
 import { MockMutation } from '../../../test-helpers/utils';
@@ -25,7 +26,7 @@ describe( 'MiniCart', () => {
 
 	it( 'calls onContinue when the continue button is clicked', async () => {
 		const fireEvent = userEvent.setup();
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		render(
 			<TestDomainSearchWithCart initialCartItems={ [ buildCartItem() ] } events={ { onContinue } }>

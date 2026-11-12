@@ -3,38 +3,39 @@
  */
 import { dispatch, select } from '@wordpress/data';
 import { transformAttachment } from '@wordpress/media-utils';
+import { type Mock, vi } from 'vitest';
 import { ImageStudioMode } from '../types';
 import { handleImageSelection, openImageStudioForBlock } from './utils';
 import type { ImageData } from '../utils/get-image-data';
 
 // Mock store
 const mockImageStudioStore = {
-	openImageStudio: jest.fn(),
+	openImageStudio: vi.fn(),
 };
 
 const mockBlockEditorStore = {
-	updateBlockAttributes: jest.fn(),
+	updateBlockAttributes: vi.fn(),
 };
 
 const mockCoreStore = {
-	getEntityRecord: jest.fn(),
+	getEntityRecord: vi.fn(),
 };
 
 // Mock console.error to capture error logs
-const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 describe( 'Extension Utils', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
-		( dispatch as unknown as jest.Mock ).mockImplementation( ( storeName ) => {
+		( dispatch as unknown as Mock ).mockImplementation( ( storeName ) => {
 			if ( storeName?.name === 'core/block-editor' ) {
 				return mockBlockEditorStore;
 			}
 			return mockImageStudioStore;
 		} );
 
-		( select as unknown as jest.Mock ).mockImplementation( ( storeName ) => {
+		( select as unknown as Mock ).mockImplementation( ( storeName ) => {
 			if ( storeName?.name === 'core' ) {
 				return mockCoreStore;
 			}
@@ -47,7 +48,7 @@ describe( 'Extension Utils', () => {
 	} );
 
 	describe( 'handleImageSelection', () => {
-		const mockOnSelect = jest.fn();
+		const mockOnSelect = vi.fn();
 
 		it( 'should return early when image is null (deletion case)', () => {
 			handleImageSelection( {

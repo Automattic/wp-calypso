@@ -41,7 +41,8 @@
 		"build": "tsc --build ./tsconfig-build.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook:start": "storybook dev -p 26836"
+		"storybook:start": "storybook dev -p 26836",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@automattic/api-core": "workspace:^",
@@ -77,13 +78,17 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-a11y": "^10.6.5",
 		"@testing-library/dom": "^10.4.2",
+		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"@types/jest": "^30.0.0",
 		"@wordpress/base-styles": "^9.1.0",
+		"jsdom": "^20.0.3",
 		"nock": "^14.0.17",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^10.6.5",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }
