@@ -181,6 +181,7 @@ describe( '<ContentInfo> purchase blockers', () => {
 			let finishRequest: ( () => void ) | undefined;
 			let requestCount = 0;
 			const leaveRequest = nock( 'https://public-api.wordpress.com' )
+				.persist()
 				.post( '/rest/v1.1/sites/123/users/1/delete' )
 				.query( true )
 				.reply( ( _uri, _body, callback ) => {
