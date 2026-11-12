@@ -139,7 +139,7 @@ export function Connect( {
 					{ withDomain(
 						/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
 						__(
-							'Migrate to WordPress.com is active on your WordPress.com site, but it needs to be on <domain />.'
+							'The <strong>Migrate to WordPress.com</strong> plugin is active on your WordPress.com site, but it needs to be on <domain />.'
 						),
 						sourceHost
 					) }
@@ -391,6 +391,7 @@ function getConnectStep( {
 function withDomain( text: string, sourceHost: string ) {
 	return createInterpolateElement( text, {
 		domain: <code className="wordpress-migration__domain">{ sourceHost }</code>,
+		strong: <strong />,
 	} );
 }
 

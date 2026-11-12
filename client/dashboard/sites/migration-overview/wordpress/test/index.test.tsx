@@ -238,7 +238,7 @@ describe( 'WordPressMigration', () => {
 			await screen.findByText( 'Install the plugin on the site you’re migrating from' )
 		).toBeVisible();
 		expect( screen.getByText( /active on your WordPress.com site/ ) ).toHaveTextContent(
-			'but it needs to be on example.com.'
+			'The Migrate to WordPress.com plugin is active on your WordPress.com site, but it needs to be on example.com.'
 		);
 
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
