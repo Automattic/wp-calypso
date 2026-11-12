@@ -152,7 +152,7 @@ vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
 	mock.isEnabled = vi.fn( () => true );
 
-	return { default: mock };
+	return { default: mock, isEnabled: mock.isEnabled };
 } );
 
 describe( 'isFreePlan', () => {
