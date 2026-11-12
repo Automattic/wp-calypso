@@ -100,7 +100,7 @@ function createSurface(
 it.each( [
 	[ undefined, 'ai-ui-renderer' ],
 	[ 'host a2ui-dark', 'ai-ui-renderer host a2ui-dark' ],
-] )( 'adds className %p to the surface', ( className, expectedClassName ) => {
+] )( 'adds className %o to the surface', ( className, expectedClassName ) => {
 	const surface = createSurface( [ { id: 'root', component: 'Text', text: 'Hello' } ] );
 
 	render( <InteractiveUiSurface surface={ surface } className={ className } /> );
@@ -115,7 +115,7 @@ it.each( [
 	[ undefined, 'is-outline' ],
 	[ 'primary', 'is-solid' ],
 	[ 'borderless', 'is-minimal' ],
-] )( 'renders a Button with variant %p as WordPress’s %s Button', ( variant, className ) => {
+] )( 'renders a Button with variant %o as WordPress’s %s Button', ( variant, className ) => {
 	const surface = createSurface( [
 		{ id: 'root', component: 'Button', child: 'label', action: { event: { name: 'go' } }, variant },
 		{ id: 'label', component: 'Text', text: 'Go' },

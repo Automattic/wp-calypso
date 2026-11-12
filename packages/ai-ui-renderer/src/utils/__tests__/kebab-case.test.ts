@@ -4,6 +4,6 @@ it.each( [
 	[ 'smallFeature', 'small-feature' ],
 	[ 'spaceAround', 'space-around' ],
 	[ 'contain', 'contain' ],
-] )( 'turns %p into %p', ( value, expected ) => {
+] )( 'turns %o into %o', ( value, expected ) => {
 	expect( kebabCase( value ) ).toBe( expected );
 } );
