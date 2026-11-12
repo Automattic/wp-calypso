@@ -104,9 +104,13 @@ describe( 'usePlanFeaturesForGridPlans badges', () => {
 			} )
 		);
 
-		return result.current[ planSlug ].wpcomFeatures.find(
-			( feature ) => feature.getSlug() === featureSlug
-		)?.badgeText;
+		const feature = result.current[ planSlug ].wpcomFeatures.find(
+			( wpcomFeature ) => wpcomFeature.getSlug() === featureSlug
+		);
+		// Without this, a missing feature would satisfy the toBeUndefined() assertion below.
+		expect( feature ).toBeDefined();
+
+		return feature?.badgeText;
 	}
 
 	it( 'shows the Free badge on the Personal custom domain by default', () => {
