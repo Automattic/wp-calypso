@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
-import { getSpacefastUrl } from '../spacefast/constants';
 import SpacefastSymbol from '../spacefast/spacefast-symbol';
 import SidebarPromoCard from './sidebar-promo-card';
 import type { SidebarPromoTone } from './sidebar-promo-card';
@@ -33,7 +32,7 @@ export default function SpacefastSidebarPromo( {
 			title={ __( 'Spacefast' ) }
 			badge={ __( 'New' ) }
 			description={ __( 'One shared place to ship your team’s AI work in seconds.' ) }
-			cta={ { label: __( 'Try Spacefast' ), href: getSpacefastUrl( 'sidebar' ) } }
+			cta={ { label: __( 'Explore Spacefast' ), href: '/dev-tools' } }
 			onView={ onView }
 			onClick={ () =>
 				recordTracksEvent( 'calypso_a4a_spacefast_promo_click', { placement: 'sidebar' } )

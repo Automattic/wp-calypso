@@ -22,7 +22,7 @@ export interface SidebarPromoCardProps {
 	/** A short label beside the title, such as "New". */
 	badge?: string;
 	description: string;
-	/** The whole card links here, in a new tab. */
+	/** The whole card links here; a full URL opens in a new tab, a path in the same one. */
 	cta: {
 		label: string;
 		href: string;
@@ -49,13 +49,14 @@ export default function SidebarPromoCard( {
 	onClick,
 }: SidebarPromoCardProps ) {
 	useRecordViewOnce( `sidebar-promo:${ id }`, onView ?? noop );
+	const isExternal = /^https?:\/\//.test( cta.href );
+	const label = <span className="a4a-sidebar-promo-card__link-label">{ cta.label }</span>;
 
 	return (
 		<a
 			className={ clsx( 'a4a-sidebar-promo-card', className, { 'is-tone-dark': tone === 'dark' } ) }
 			href={ cta.href }
-			target="_blank"
-			rel="noreferrer"
+			{ ...( isExternal && { target: '_blank', rel: 'noreferrer' } ) }
 			onClick={ onClick }
 		>
 			<span className="a4a-sidebar-promo-card__icon">{ icon }</span>
@@ -66,9 +67,7 @@ export default function SidebarPromoCard( {
 				</span>
 				<span className="a4a-sidebar-promo-card__description">{ description }</span>
 				<span className="a4a-sidebar-promo-card__link">
-					<NewTabLabel justify="flex-start">
-						<span className="a4a-sidebar-promo-card__link-label">{ cta.label }</span>
-					</NewTabLabel>
+					{ isExternal ? <NewTabLabel justify="flex-start">{ label }</NewTabLabel> : label }
 				</span>
 			</span>
 		</a>
