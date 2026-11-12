@@ -2,8 +2,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	Button,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { useEffect, useId, useRef, useState } from 'react';
 import { html } from '../../../panel/indices-to-html';
 import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
@@ -140,6 +143,26 @@ export function ThreadParent( {
 } ) {
 	const fullContent = comment.content ?? { text: comment.text };
 	const content = maxLength ? truncateBlock( fullContent, maxLength ) : fullContent;
+	const textId = useId();
+	const textRef = useRef< HTMLDivElement >( null );
+	const [ isExpanded, setIsExpanded ] = useState( false );
+	const [ isClamped, setIsClamped ] = useState( false );
+	// Only the full `content` has more to show; `text` is already a short excerpt.
+	const canExpand = truncate && !! comment.content;
+	const isTruncated = truncate && ! isExpanded;
+
+	// Offer Show more only when the clamp actually hides text, rechecking as the pane resizes.
+	useEffect( () => {
+		const text = textRef.current;
+		if ( ! canExpand || isExpanded || ! text ) {
+			return;
+		}
+		const measure = () => setIsClamped( text.scrollHeight > text.clientHeight );
+		measure();
+		const observer = new ResizeObserver( measure );
+		observer.observe( text );
+		return () => observer.disconnect();
+	}, [ canExpand, isExpanded ] );
 
 	return (
 		<ThreadItem
@@ -157,13 +180,26 @@ export function ThreadParent( {
 			}
 		>
 			<div
+				ref={ textRef }
+				id={ textId }
 				className={ clsx( 'wpnc-simplified__parent-text', {
-					'is-truncated': truncate,
-					'is-excerpt': maxLength,
+					'is-truncated': isTruncated,
+					'is-excerpt': maxLength || isExpanded,
 				} ) }
 			>
-				{ p( html( truncate ? toPreview( content ) : content ) ) }
+				{ p( html( isTruncated ? toPreview( content ) : content ) ) }
 			</div>
+			{ canExpand && ( isClamped || isExpanded ) && (
+				<Button
+					className="wpnc-simplified__show-more"
+					variant="link"
+					aria-expanded={ isExpanded }
+					aria-controls={ textId }
+					onClick={ () => setIsExpanded( ! isExpanded ) }
+				>
+					{ isExpanded ? __( 'Show less' ) : __( 'Show more' ) }
+				</Button>
+			) }
 		</ThreadItem>
 	);
 }
