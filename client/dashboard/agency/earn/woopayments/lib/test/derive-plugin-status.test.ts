@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { WOOCOMMERCE_PLUGIN, WOOCOMMERCE_PAYMENTS_PLUGIN } from '../constants';
 import { derivePluginStatus } from '../derive-plugin-status';

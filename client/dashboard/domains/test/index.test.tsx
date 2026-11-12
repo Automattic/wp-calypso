@@ -1,18 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { queryClient as apiQueryClient } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import { DOMAINS_LIST_DEFAULT_VIEW } from '../dataviews/views';
 import Domains from '../index';
 
 const mockSearch: { current: Record< string, string > } = { current: {} };
 
-jest.mock( '../../app/router/domains', () => {
-	const actual = jest.requireActual( '../../app/router/domains' );
+vi.mock( '../../app/router/domains', async () => {
+	const actual = await vi.importActual< typeof import( '../../app/router/domains' ) >(
+		'../../app/router/domains'
+	);
 	return {
 		...actual,
 		domainsIndexRoute: {
@@ -23,8 +26,9 @@ jest.mock( '../../app/router/domains', () => {
 	};
 } );
 
-jest.mock( '../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../app/router/sites' );
+vi.mock( '../../app/router/sites', async () => {
+	const actual =
+		await vi.importActual< typeof import( '../../app/router/sites' ) >( '../../app/router/sites' );
 	return { ...actual, siteRoute: { fullPath: '/sites/$siteSlug' } };
 } );
 

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ContactForm from '../contact-form';
 import type { DomainContactDetails } from '@automattic/api-core';
@@ -27,7 +28,7 @@ const frIndividualContact: DomainContactDetails = {
 	extra: { fr: { registrantType: 'individual' } },
 };
 
-const alwaysValid = jest.fn( () =>
+const alwaysValid = vi.fn( () =>
 	Promise.resolve( { success: true } )
 ) as unknown as ContactFormProps[ 'validate' ];
 
@@ -71,7 +72,7 @@ describe( '<ContactForm>', () => {
 				} }
 				domainNames={ [ 'example.com' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -83,7 +84,7 @@ describe( '<ContactForm>', () => {
 
 	test( 'does not submit a stored state for a country whose form hides the state field', async () => {
 		const user = userEvent.setup();
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 
 		render(
 			<ContactForm
@@ -119,7 +120,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -140,7 +141,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.com' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -159,7 +160,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.com' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -175,7 +176,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -221,7 +222,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -259,7 +260,7 @@ describe( '<ContactForm>', () => {
 				initialData={ { ...frIndividualContact, address2: 'Second floor' } }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  * @jest-environment-options { "url": "https://my.localhost/" }
  */
 
@@ -7,6 +7,7 @@ import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	RESURRECTED_FREE_USERS_EXPERIMENT,
@@ -17,11 +18,11 @@ import {
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: vi.fn(),
 } ) );
 
-const mockUseExperiment = jest.mocked( useExperiment );
+const mockUseExperiment = vi.mocked( useExperiment );
 const DAY_IN_SECONDS = 24 * 60 * 60;
 
 function timestampDaysAgo( days: number ): number {
@@ -97,7 +98,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 	afterEach( () => {
 		disable( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG );
 		disable( WELCOME_BACK_MODAL_FORCE_FLAG );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'returns an assigned variation for an eligible resurrected user', async () => {

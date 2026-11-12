@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  * @jest-environment-options { "url": "https://my.localhost/" }
  */
 

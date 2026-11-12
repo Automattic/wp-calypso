@@ -200,10 +200,17 @@ function build( rootDir ) {
 					},
 				],
 
-				// Only use known tag names plus `jest-environment`.
+				// Only use known tag names plus the test environment ones.
 				'jsdoc/check-tag-names': [
 					'error',
-					{ definedTags: [ 'jest-environment', 'jest-environment-options', 'jsxImportSource' ] },
+					{
+						definedTags: [
+							'jest-environment',
+							'jest-environment-options',
+							'vitest-environment',
+							'jsxImportSource',
+						],
+					},
 				],
 
 				// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
