@@ -1,3 +1,4 @@
+const { execFileSync } = require( 'node:child_process' );
 const fs = require( 'node:fs' );
 const { createRequire } = require( 'node:module' );
 const os = require( 'node:os' );
@@ -22,6 +23,40 @@ const STATE_DIR = path.join(
 );
 
 class UserActionRequired extends Error {}
+
+// `yarn start` and `yarn start-dashboard` build first, then run `node build/server.js`.
+const DEV_SERVER_PROCESS =
+	/^(\S*node\s+)?(build\/server\.js|\S*yarn\S*\s+(run\s+)?(start|start-dashboard|start:debug|build-start|start-build))(\s|$)/;
+
+function processCwd( pid ) {
+	try {
+		return fs.readlinkSync( `/proc/${ pid }/cwd` );
+	} catch {}
+	try {
+		const output = execFileSync( 'lsof', [ '-a', '-p', pid, '-d', 'cwd', '-Fn' ], {
+			encoding: 'utf8',
+			stdio: [ 'ignore', 'pipe', 'ignore' ],
+		} );
+		return output.match( /^n(.+)$/m )?.[ 1 ];
+	} catch {}
+}
+
+/**
+ * Lists the checkouts with a dev server that is running or still starting, by the working
+ * directory of its processes. Returns null when the processes can't be listed.
+ */
+function devServerCheckouts() {
+	try {
+		const pids = execFileSync( 'ps', [ '-axo', 'pid=,command=' ], { encoding: 'utf8' } )
+			.split( '\n' )
+			.map( ( line ) => line.trim().match( /^(\d+)\s+(.*)$/ ) )
+			.filter( ( match ) => match && DEV_SERVER_PROCESS.test( match[ 2 ] ) )
+			.map( ( match ) => match[ 1 ] );
+		return [ ...new Set( pids.map( processCwd ).filter( Boolean ) ) ];
+	} catch {
+		return null;
+	}
+}
 
 function statePath( account ) {
 	return path.join( STATE_DIR, `${ account }.json` );
@@ -166,6 +201,7 @@ module.exports = {
 	OWN_ACCOUNT,
 	PORT,
 	UserActionRequired,
+	devServerCheckouts,
 	isLoginUrl,
 	launchBrowser,
 	logInOwnAccount,
