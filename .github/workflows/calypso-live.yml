@@ -38,16 +38,46 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             // The Docker image build replaces this comment with the links once
-            // it has an image to link to (see `linksBlock` in
-            // .teamcity/_self/projects/WebApp.kt). Don't guess a link here: the
-            // image doesn't exist yet, and the `commit-<sha>` tag is not
-            // reliably published for the commit a PR is opened with.
+            // it has an image (see `linksBlock` in
+            // .teamcity/_self/projects/WebApp.kt). Link here only when that
+            // build has already passed for this commit, e.g. for a PR opened
+            // some time after the push. Links posted before the image existed
+            // answered "not found", and kept doing so after the build.
+            const sha = context.payload.pull_request.head.sha;
+            const { data: status } = await github.rest.repos.getCombinedStatusForRef( {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: sha,
+              per_page: 100,
+            } );
+            const imageIsBuilt = status.statuses.some(
+              ( { context: name, state } ) => name === 'Docker image (Web app)' && state === 'success'
+            );
+
+            const link = `https://calypso.live?image=registry.a8c.com/calypso/app:commit-${ sha }`;
+            const readerLink = `https://calypso.live/reader?image=registry.a8c.com/calypso/app:commit-${ sha }`;
+            const environments = [
+              { label: 'WordPress.com Dashboard', url: `${link}&env=dashboard` },
+              { label: 'WordPress.com (/reader)', url: readerLink },
+              { label: 'Automattic for Agencies Dashboard', url: `${link}&env=dashboard-a4a` },
+              { label: 'Automattic for Agencies', url: `${link}&env=a8c-for-agencies` },
+              { label: 'Jetpack Cloud', url: `${link}&env=jetpack` },
+            ];
+
             const body = [
               '<!--calypso-live-watermark:apr@v1-->',
               '<h2>🧐 Test on Calypso Live ⛅</h2>',
               '',
-              'Calypso Live links are being generated...',
-              'They will replace this message when the `Docker image (Web app)` check finishes, usually within a few minutes.',
+              ...( imageIsBuilt
+                ? [
+                    '| Environment | 🔗 |',
+                    '| - | - |',
+                    ...environments.map( env => `| ${ env.label } | [live link](${ env.url }) |` ),
+                  ]
+                : [
+                    'Calypso Live links are being generated...',
+                    'They will replace this message when the `Docker image (Web app)` check finishes, usually within a few minutes.',
+                  ] ),
             ].join( '\n' );
 
             github.rest.issues.createComment({
