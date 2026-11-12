@@ -68,7 +68,7 @@ describe( 'SubscriberNotificationCard', () => {
 		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
-			{ setting_value: true }
+			{ setting_value: true, source: 'settings' }
 		);
 	} );
 
@@ -84,7 +84,7 @@ describe( 'SubscriberNotificationCard', () => {
 		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
-			{ setting_value: false }
+			{ setting_value: false, source: 'settings' }
 		);
 	} );
 
