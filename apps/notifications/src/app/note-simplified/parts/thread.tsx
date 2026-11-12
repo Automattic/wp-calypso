@@ -15,6 +15,14 @@ import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
 
 /**
+ * Flattens a block onto one line for a clamped preview, so a short opening line
+ * doesn't spend half the preview. Same length, so its ranges still line up.
+ */
+function toPreview( block: Block ): Block {
+	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
+}
+
+/**
  * Shortens a block to at most `maxLength` characters at a word boundary, ending it with an ellipsis.
  */
 function truncateBlock( block: Block, maxLength: number ): Block {
@@ -233,7 +241,7 @@ export function ThreadParent( {
 					}
 				} }
 			>
-				{ p( html( content ) ) }
+				{ p( html( isTruncated ? toPreview( content ) : content ) ) }
 			</div>
 			{ canToggle && (
 				<button

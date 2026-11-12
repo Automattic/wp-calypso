@@ -56,7 +56,7 @@ describe( 'ThreadParent', () => {
 		clampHidesText( true );
 		render( <ThreadParent comment={ comment() } truncate compact /> );
 
-		await userEvent.click( screen.getByText( 'The first paragraph of a long comment.' ) );
+		await userEvent.click( screen.getByText( /The first paragraph of a long comment/ ) );
 
 		expect( screen.getByRole( 'button', { name: 'Show less' } ) ).toBeVisible();
 	} );
