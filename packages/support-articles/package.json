@@ -40,5 +40,10 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
-	"private": true
+	"private": true,
+	"devDependencies": {
+		"jsdom": "^20.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
+	}
 }

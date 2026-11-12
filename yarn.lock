@@ -1127,11 +1127,14 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
     debug: "npm:^4.4.3"
+    jsdom: "npm:^20.0.3"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^10.6.5"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
@@ -1217,7 +1220,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^5.1.0"
     "@wordpress/url": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
-    jest: "npm:^30.5.2"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1227,6 +1230,8 @@ __metadata:
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     utility-types: "npm:^3.10.0"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
     "@wordpress/data": ^11.1.0
@@ -1350,7 +1355,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
     date-fns: "npm:^4.4.0"
-    jest: "npm:^30.5.2"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1358,6 +1363,8 @@ __metadata:
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^6.0.3"
     use-debounce: "npm:^10.0.6"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
@@ -1700,11 +1707,14 @@ __metadata:
     "@wordpress/icons": "npm:^15.5.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.3"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1883,8 +1893,11 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     debug: "npm:^4.4.3"
     i18n-calypso: "workspace:^"
+    jsdom: "npm:^20.0.3"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@emotion/react": ^11.4.1
     react: ^18.3.1 || ^19.0.0
@@ -2230,6 +2243,9 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     events: "npm:^3.3.0"
+    jsdom: "npm:^20.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
 
@@ -2321,7 +2337,10 @@ __metadata:
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
     debug: "npm:^4.4.3"
+    jsdom: "npm:^20.0.3"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
@@ -2345,12 +2364,15 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^15.5.0"
     canvas-confetti: "npm:^1.6.0"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
@@ -2370,7 +2392,10 @@ __metadata:
     "@testing-library/react": "npm:^16.3.3"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
+    jsdom: "npm:^20.0.3"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@wordpress/data": ^10.48.0 || ^11.0.0
     react: ^18.3.1 || ^19.0.0
@@ -2450,6 +2475,9 @@ __metadata:
   resolution: "@automattic/support-articles@workspace:packages/support-articles"
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
+    jsdom: "npm:^20.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -2534,6 +2562,7 @@ __metadata:
     date-fns: "npm:^4.4.0"
     esbuild: "npm:^0.25.5"
     esbuild-sass-plugin: "npm:^3.1.0"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     postcss-modules: "npm:^6.0.1"
     react-day-picker: "npm:^9.7.0"
@@ -2543,6 +2572,8 @@ __metadata:
     stylelint-plugin-logical-css: "npm:^2.1.0"
     tsup: "npm:^8.5.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
@@ -2585,11 +2616,14 @@ __metadata:
     "@wordpress/stylelint-config": "npm:^27.1.0"
     "@wordpress/url": "npm:^5.1.0"
     css-loader: "npm:^7.1.5"
+    jsdom: "npm:^20.0.3"
     sass-embedded: "npm:^1.89.0"
     sass-loader: "npm:^16.0.8"
     stylelint: "npm:^17.16.0"
     stylelint-scss: "npm:^7.4.0"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@wordpress/data": ^11.1.0
     "@wordpress/element": ^10.1.0
@@ -2780,7 +2814,10 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@wordpress/url": "npm:^5.1.0"
     i18n-calypso: "workspace:^"
+    jsdom: "npm:^20.0.3"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@wordpress/data": ^11.1.0
     react: ^18.3.1 || ^19.0.0
@@ -2809,12 +2846,15 @@ __metadata:
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     dompurify: "npm:3.4.17"
+    jsdom: "npm:^20.0.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:7.18.4"
     smooch: "npm:^5.7.17"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
@@ -33367,7 +33407,10 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^8.0.10"
     debug: "npm:^4.4.3"
+    jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
     wp-error: "npm:^1.3.0"
   languageName: unknown

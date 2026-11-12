@@ -1,4 +1,4 @@
-const { configure } = require( '@testing-library/react' );
+import { configure } from '@testing-library/react';
 
 // Domain-row assertions wait on an async React Query transition: the link href starts with the
 // numeric blog_id and switches to the site slug once the site query resolves. RTL's default 1000ms
