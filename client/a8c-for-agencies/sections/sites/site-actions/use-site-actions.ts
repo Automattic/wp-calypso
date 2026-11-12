@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { hasNoWPAdminAccess } from 'calypso/a8c-for-agencies/hooks/use-wp-admin-access-control';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -120,11 +120,11 @@ export default function useSiteActions( {
 			{
 				name: translate( 'Issue new license' ),
 				onClick: () => {
-					page( A4A_MARKETPLACE_LINK );
+					page( A4A_MARKETPLACE_PRODUCTS_LINK );
 					handleClickMenuItem( 'issue_license' );
 				},
 				isExternalLink: false,
-				isEnabled: ! siteError && ! isWPCOMSite && ! isUrlOnly,
+				isEnabled: ! siteError && ! isWPCOMSimpleSite && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),
@@ -360,10 +360,10 @@ export function useSiteActionsDataViews( {
 				id: 'issue_license',
 				label: translate( 'Issue new license' ),
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && ! isUrlOnly( item );
 				},
 				callback: () => {
-					page( A4A_MARKETPLACE_LINK );
+					page( A4A_MARKETPLACE_PRODUCTS_LINK );
 					dispatch( recordTracksEvent( getActionEventName( 'issue_license', isLargeScreen ) ) );
 				},
 			},
