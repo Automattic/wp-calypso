@@ -18,6 +18,6 @@ describe( 'cssNameFromFilename()', () => {
 	} );
 
 	test( 'Returns other extensions untouched 😬', () => {
-		expect( 'static.jsx' ).toBe( 'static.jsx' );
+		expect( cssNameFromFilename( 'static.jsx' ) ).toBe( 'static.jsx' );
 	} );
 } );
