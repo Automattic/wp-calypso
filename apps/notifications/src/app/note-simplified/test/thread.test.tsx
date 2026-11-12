@@ -48,6 +48,21 @@ describe( 'ThreadParent', () => {
 		);
 	} );
 
+	it( 'expands when the clamped text itself is clicked', async () => {
+		clampHidesText( true );
+		render( <ThreadParent comment={ comment() } truncate compact /> );
+
+		await userEvent.click( screen.getByText( 'The first paragraph of a long comment.' ) );
+
+		expect( screen.getByRole( 'button', { name: 'Show less' } ) ).toBeVisible();
+	} );
+
+	it( 'tells screen readers which comment the reply answers', () => {
+		render( <ThreadParent comment={ comment() } truncate compact /> );
+
+		expect( screen.getByText( 'In reply to Mia Chen' ) ).toBeInTheDocument();
+	} );
+
 	it( 'offers nothing to expand when the comment fits in two lines', () => {
 		clampHidesText( false );
 		render( <ThreadParent comment={ comment() } truncate compact /> );

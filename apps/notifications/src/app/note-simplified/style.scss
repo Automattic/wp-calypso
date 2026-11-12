@@ -108,8 +108,23 @@
 	font-style: normal;
 }
 
+.wpnc-simplified__parent-text.is-expandable {
+	cursor: pointer;
+}
+
+// A quiet toggle in the quote's own gray, so it doesn't outshout the reply.
 .wpnc-simplified__show-more {
 	align-self: flex-start;
+	padding-block: 2px;
+	font: inherit;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+	cursor: pointer;
+
+	&:hover {
+		color: var(--wp-components-color-foreground, #{$gray-900});
+	}
 }
 
 .wpnc-simplified__parent-text.is-excerpt img:not(.emoji) {

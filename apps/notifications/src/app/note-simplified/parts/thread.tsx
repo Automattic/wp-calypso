@@ -2,24 +2,18 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	Button,
+	VisuallyHidden,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { Button } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { html } from '../../../panel/indices-to-html';
 import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
 import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
-
-/**
- * Flattens a block onto one line, for a clamped preview.
- */
-function toPreview( block: Block ): Block {
-	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
-}
 
 /**
  * Shortens a block to at most `maxLength` characters at a word boundary, ending it with an ellipsis.
@@ -57,6 +51,7 @@ const ThreadItem = ( {
 	authorUrl,
 	meta,
 	status,
+	label,
 	compact = false,
 	className,
 	children,
@@ -66,6 +61,7 @@ const ThreadItem = ( {
 	authorUrl?: string | null;
 	meta?: ReactNode;
 	status?: ReactNode;
+	label?: string;
 	compact?: boolean;
 	className?: string;
 	children: ReactNode;
@@ -91,6 +87,7 @@ const ThreadItem = ( {
 
 	return (
 		<VStack as="li" className={ className } spacing={ compact ? 2 : 3 }>
+			{ label && <VisuallyHidden>{ label }</VisuallyHidden> }
 			<HStack
 				alignment={ compact ? 'center' : 'top' }
 				justify="flex-start"
@@ -151,6 +148,8 @@ export function ThreadParent( {
 	const canExpand = truncate && !! comment.content;
 	const isTruncated = truncate && ! isExpanded;
 
+	const startHeightRef = useRef< number | null >( null );
+
 	// Offer Show more only when the clamp actually hides text, rechecking as the pane resizes.
 	useEffect( () => {
 		const text = textRef.current;
@@ -164,6 +163,31 @@ export function ThreadParent( {
 		return () => observer.disconnect();
 	}, [ canExpand, isExpanded ] );
 
+	// Ease the text between its clamped and full heights rather than jumping.
+	useLayoutEffect( () => {
+		const text = textRef.current;
+		const startHeight = startHeightRef.current;
+		startHeightRef.current = null;
+		if (
+			! text ||
+			startHeight === null ||
+			! text.animate ||
+			window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches
+		) {
+			return;
+		}
+		text.animate( [ { height: `${ startHeight }px` }, { height: `${ text.offsetHeight }px` } ], {
+			duration: 150,
+			easing: 'ease-out',
+		} );
+	}, [ isExpanded ] );
+
+	const toggle = () => {
+		startHeightRef.current = textRef.current?.offsetHeight ?? null;
+		setIsExpanded( ! isExpanded );
+	};
+	const canToggle = canExpand && ( isClamped || isExpanded );
+
 	return (
 		<ThreadItem
 			className="wpnc-simplified__thread-parent"
@@ -171,6 +195,15 @@ export function ThreadParent( {
 			author={ comment.author_name }
 			authorUrl={ comment.author_url }
 			compact={ compact }
+			label={
+				compact
+					? sprintf(
+							/* translators: %s is the name of the person whose comment was replied to. */
+							__( 'In reply to %s' ),
+							comment.author_name
+						)
+					: undefined
+			}
 			meta={
 				comment.date && (
 					<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
@@ -179,23 +212,32 @@ export function ThreadParent( {
 				)
 			}
 		>
+			{ /* The button below is the accessible control; clicking the clamped text is a shortcut. */ }
+			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
 			<div
 				ref={ textRef }
 				id={ textId }
 				className={ clsx( 'wpnc-simplified__parent-text', {
 					'is-truncated': isTruncated,
 					'is-excerpt': maxLength || isExpanded,
+					'is-expandable': isTruncated && canToggle,
 				} ) }
+				onClick={ ( event ) => {
+					// Links in the comment still go where they point.
+					if ( isTruncated && canToggle && ! ( event.target as Element ).closest( 'a' ) ) {
+						toggle();
+					}
+				} }
 			>
-				{ p( html( isTruncated ? toPreview( content ) : content ) ) }
+				{ p( html( content ) ) }
 			</div>
-			{ canExpand && ( isClamped || isExpanded ) && (
+			{ canToggle && (
 				<Button
 					className="wpnc-simplified__show-more"
-					variant="link"
+					variant="unstyled"
 					aria-expanded={ isExpanded }
 					aria-controls={ textId }
-					onClick={ () => setIsExpanded( ! isExpanded ) }
+					onClick={ toggle }
 				>
 					{ isExpanded ? __( 'Show less' ) : __( 'Show more' ) }
 				</Button>
