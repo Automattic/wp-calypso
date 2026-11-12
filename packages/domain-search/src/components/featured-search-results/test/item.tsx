@@ -4,6 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { HTTPS_SSL } from '@automattic/urls';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { VALID_MATCH_REASONS } from '../../../helpers/parse-match-reasons';
 import { DomainPriceRule } from '../../../hooks/use-suggestion';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
@@ -758,7 +759,7 @@ describe( 'FeaturedSearchResultsItem', () => {
 			suggestions: [ suggestion ],
 		} );
 
-		const onSuggestionRender = jest.fn();
+		const onSuggestionRender = vi.fn();
 
 		render(
 			<TestDomainSearchWithSuggestions

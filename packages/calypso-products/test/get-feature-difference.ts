@@ -27,6 +27,7 @@ import {
 	getPlan,
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_SITE_STAGING_SITES,
+	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 } from '../src';
 
 let mockDevToolsOnAllPaidPlans = false;
@@ -134,5 +135,35 @@ describe( 'getFeatureDifference function related tests', () => {
 		planPersonalFeatures.forEach( ( f ) => {
 			expect( difference ).not.toContain( f );
 		} );
+	} );
+
+	it( 'shows WooCommerce payment features as a check mark on every paid plan in the comparison grid', () => {
+		[ PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( planSlug ) => {
+			const plan = getPlan( planSlug );
+			expect( plan?.get2023PlanComparisonFeatureOverride?.() ).toContain(
+				FEATURE_COMMISSION_FEE_WOO_FEATURES
+			);
+			expect( plan?.get2023PlanComparisonFeatureOverrideForExperiment?.() ).toContain(
+				FEATURE_COMMISSION_FEE_WOO_FEATURES
+			);
+		} );
+
+		[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( planSlug ) => {
+			const plan = getPlan( planSlug );
+			expect( plan?.getPlanComparisonFeatureLabels?.() ).not.toHaveProperty(
+				FEATURE_COMMISSION_FEE_WOO_FEATURES
+			);
+			expect(
+				plan?.getPlanComparisonFeatureLabels?.( { isExperimentVariant: true } )
+			).not.toHaveProperty( FEATURE_COMMISSION_FEE_WOO_FEATURES );
+		} );
+
+		const freePlan = getPlan( PLAN_FREE );
+		expect( freePlan?.get2023PlanComparisonFeatureOverride?.() ?? [] ).not.toContain(
+			FEATURE_COMMISSION_FEE_WOO_FEATURES
+		);
+		expect( freePlan?.get2023PlanComparisonFeatureOverrideForExperiment?.() ?? [] ).not.toContain(
+			FEATURE_COMMISSION_FEE_WOO_FEATURES
+		);
 	} );
 } );

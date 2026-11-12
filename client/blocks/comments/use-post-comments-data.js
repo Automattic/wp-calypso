@@ -70,6 +70,8 @@ export const usePostCommentsData = ( props ) => {
 
 	const {
 		comments: loadedComments,
+		isLoading,
+		isFetched,
 		commentsFetchingStatus,
 		fetchEarlierComments,
 		fetchLaterComments,
@@ -178,6 +180,8 @@ export const usePostCommentsData = ( props ) => {
 		comments: commentsForDisplay,
 		loadedComments,
 		commentsTree: visibleCommentsTree,
+		// `isLoading` turns true again when a failed first page refetches, which would remount the list.
+		isCommentsLoading: isLoading && ! isFetched,
 		commentsFetchingStatus,
 		initialComment,
 		isInitialCommentLoading: shouldFetchStartingComment && startingComment.isLoading,

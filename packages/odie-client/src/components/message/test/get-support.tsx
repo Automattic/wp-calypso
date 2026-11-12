@@ -1,45 +1,44 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { useOdieAssistantContext } from '../../../context';
 import { GetSupport } from '../get-support';
 
-const mockCreateZendeskConversation = jest.fn();
-const mockNavigate = jest.fn();
+const mockCreateZendeskConversation = vi.fn();
+const mockNavigate = vi.fn();
 
 let mockHasReachedLimit = false;
 let mockSupportInteraction: { uuid: string } | null = { uuid: 'int-1' };
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url: string ) => url,
 	translationExists: () => true,
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Icon: () => null,
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/icons', () => ( {
 	Icon: () => null,
 	chevronRight: 'chevron-right',
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: '', pathname: '/' } ),
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '../../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../../../data', () => ( {
+vi.mock( '../../../data', () => ( {
 	useGetSupportInteractionById: () => ( { data: mockSupportInteraction } ),
 } ) );
 
-jest.mock( '../../../hooks', () => ( {
+vi.mock( '../../../hooks', () => ( {
 	useCreateZendeskConversation: () => mockCreateZendeskConversation,
 	// Without a routing step, asking for a human starts the chat.
 	useRequestHumanSupport:
@@ -48,7 +47,7 @@ jest.mock( '../../../hooks', () => ( {
 			mockCreateZendeskConversation( request ),
 } ) );
 
-jest.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
+vi.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenLiveInteractions: () => ( {
 		mostRecentSupportInteractionId: mockSupportInteraction?.uuid ?? null,
 		hasReachedLimit: mockHasReachedLimit,
@@ -62,11 +61,11 @@ const setContext = ( {
 	isChatLoaded: boolean;
 	forceEmailSupport?: boolean;
 } ) => {
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		chat: { provider: 'odie', status: 'loaded' },
 		isUserEligibleForPaidSupport: true,
 		canConnectToZendesk: true,
-		trackEvent: jest.fn(),
+		trackEvent: vi.fn(),
 		isChatLoaded,
 		forceEmailSupport,
 	} );
@@ -74,7 +73,7 @@ const setContext = ( {
 
 describe( 'GetSupport', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockHasReachedLimit = false;
 		mockSupportInteraction = { uuid: 'int-1' };
 	} );

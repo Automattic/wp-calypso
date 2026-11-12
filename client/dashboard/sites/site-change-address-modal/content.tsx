@@ -315,13 +315,13 @@ const ConfirmNewSiteAddressForm = ( {
 		<VStack spacing={ 4 }>
 			<Text as="p">{ __( 'Once you confirm, this will be the new address for your site:' ) }</Text>
 			<Text as="p" intent="success" style={ { display: 'flex', alignItems: 'center ' } }>
-				<Icon icon={ check } size={ 24 } style={ { fill: 'currentColor' } } />
+				<Icon icon={ check } size={ 24 } />
 				<strong>{ newSubdomain }</strong>
 				{ DOMAIN_SUFFIX }
 			</Text>
 			<Text as="p">{ __( 'And this address will be removed and unavailable for use:' ) }</Text>
 			<Text as="p" intent="error" style={ { display: 'flex', alignItems: 'center ' } }>
-				<Icon icon={ closeSmall } size={ 24 } style={ { fill: 'currentColor' } } />
+				<Icon icon={ closeSmall } size={ 24 } />
 				<strong>{ currentSubdomain }</strong>
 				{ DOMAIN_SUFFIX }
 			</Text>

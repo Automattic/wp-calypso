@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["runComponentTests", "expect"] }] */
 
 import { act, Component, useState, useEffect } from 'react';
@@ -92,7 +88,7 @@ describe( '@automattic/viewport-react', () => {
 	}
 
 	beforeAll( async () => {
-		window.matchMedia = matchMediaMock;
+		vi.stubGlobal( 'matchMedia', matchMediaMock );
 		helpers = await import( '../src' );
 		// Disable console warnings.
 		vi.spyOn( console, 'warn' ).mockImplementation( () => '' );
@@ -119,6 +115,7 @@ describe( '@automattic/viewport-react', () => {
 
 	afterAll( () => {
 		vi.restoreAllMocks();
+		vi.unstubAllGlobals();
 	} );
 
 	describe( 'useBreakpoint', () => {

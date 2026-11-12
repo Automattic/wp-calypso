@@ -128,58 +128,6 @@ export function isValidNameServerSubdomain( nameServerSubdomain: string ): boole
 	return true;
 }
 
-export function shouldUpgradeToMakeDomainPrimary( {
-	domain,
-	site,
-	user,
-}: {
-	domain: DomainSummary;
-	site: Site;
-	user: User;
-} ) {
-	return (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ) &&
-		! domain.primary_domain &&
-		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
-		!! site.plan?.is_free &&
-		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
-	);
-}
-
-export function canSetAsPrimary( {
-	domain,
-	site,
-	user,
-}: {
-	domain: DomainSummary;
-	site: Site;
-	user: User;
-} ): boolean {
-	return (
-		domain.can_set_as_primary &&
-		! domain.primary_domain &&
-		domain.domain_status.id !== DomainStatus.CONNECTION_ERROR &&
-		! shouldUpgradeToMakeDomainPrimary( {
-			domain,
-			site,
-			user,
-		} )
-	);
-}
-
-export function canSetAsPrimaryIgnoringSsl( {
-	domain,
-	site,
-	user,
-}: {
-	domain: DomainSummary;
-	site: Site;
-	user: User;
-} ): boolean {
-	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
-}
-
 export function hasGSuiteWithUs( domain: Domain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );

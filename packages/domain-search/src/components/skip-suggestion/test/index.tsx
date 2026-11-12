@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SkipSuggestion } from '..';
 import { buildFreeSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetFreeSuggestionQuery } from '../../../test-helpers/queries/suggestions';
@@ -9,7 +10,7 @@ import { MockMutation } from '../../../test-helpers/utils';
 describe( 'SkipSuggestion', () => {
 	describe( 'continue with existing site if current site url is provided', () => {
 		it( 'allows skipping the step', async () => {
-			const onSkip = jest.fn();
+			const onSkip = vi.fn();
 
 			render(
 				<TestDomainSearch
@@ -38,7 +39,7 @@ describe( 'SkipSuggestion', () => {
 		} );
 
 		it( 'disables the button when a mutation is in progress', async () => {
-			const onSkip = jest.fn();
+			const onSkip = vi.fn();
 
 			const mutation = Promise.withResolvers< void >();
 
@@ -71,7 +72,7 @@ describe( 'SkipSuggestion', () => {
 
 	describe( 'skip with free suggestion if no current site url is provided', () => {
 		it( 'allows skipping the step', async () => {
-			const onSkip = jest.fn();
+			const onSkip = vi.fn();
 
 			const freeSuggestion = buildFreeSuggestion( { domain_name: 'site.wordpress.com' } );
 
@@ -127,7 +128,7 @@ describe( 'SkipSuggestion', () => {
 		} );
 
 		it( 'searches for the suggested subdomain when the searched one is unavailable', async () => {
-			const onSearchStart = jest.fn();
+			const onSearchStart = vi.fn();
 
 			mockGetFreeSuggestionQuery( {
 				params: { query: 'taken' },
@@ -152,7 +153,7 @@ describe( 'SkipSuggestion', () => {
 		} );
 
 		it( 'disables the button when a mutation is in progress', async () => {
-			const onSkip = jest.fn();
+			const onSkip = vi.fn();
 
 			const mutation = Promise.withResolvers< void >();
 

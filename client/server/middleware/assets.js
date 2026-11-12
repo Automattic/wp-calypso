@@ -20,10 +20,7 @@ const getAssetType = ( asset ) => {
 
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
-/**
- * @returns {import('express').RequestHandler}
- */
-export default () => {
+function createAssetsFileReader() {
 	let assetsFile = null;
 	let assetsFileModified = 0;
 	async function doReadAssets() {
@@ -38,7 +35,7 @@ export default () => {
 	}
 
 	let checking = null;
-	function readAssets() {
+	return function readAssets() {
 		if ( ! checking ) {
 			checking = doReadAssets().finally( () => {
 				checking = null;
@@ -46,9 +43,21 @@ export default () => {
 		}
 
 		return checking;
-	}
+	};
+}
+
+/**
+ * Reads the assets from `build/assets.json`, which webpack writes, unless a bundler replaces the
+ * provider with `app.set( 'assets-provider', provider )`. A provider is a function that returns
+ * (a promise of) an object shaped like `assets.json`: `{ manifests, assets }`. The file is only
+ * read when no other provider is set, so it doesn't have to exist then.
+ * @returns {import('express').RequestHandler}
+ */
+export default () => {
+	const readAssetsFile = createAssetsFileReader();
 
 	return asyncHandler( async ( req, res, next ) => {
+		const readAssets = req.app.get( 'assets-provider' ) ?? readAssetsFile;
 		const assets = await readAssets();
 
 		req.getAssets = () => assets;

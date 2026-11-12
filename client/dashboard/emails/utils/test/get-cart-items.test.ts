@@ -4,7 +4,7 @@ import { titanMailProduct } from '../get-cart-items';
 const mailbox = { email: 'info@example.com', password: 'secret' };
 
 describe( 'titanMailProduct', () => {
-	it( 'keeps an explicit new_quantity', () => {
+	test( 'keeps an explicit new_quantity', () => {
 		const cartItem = titanMailProduct(
 			{
 				domain: 'example.com',
@@ -17,7 +17,7 @@ describe( 'titanMailProduct', () => {
 		expect( cartItem.extra?.new_quantity ).toBe( 2 );
 	} );
 
-	it( 'uses the number of mailboxes when new_quantity is missing', () => {
+	test( 'uses the number of mailboxes when new_quantity is missing', () => {
 		const cartItem = titanMailProduct(
 			{
 				domain: 'example.com',
@@ -29,7 +29,7 @@ describe( 'titanMailProduct', () => {
 		expect( cartItem.extra?.new_quantity ).toBe( 3 );
 	} );
 
-	it( 'uses the number of mailboxes when new_quantity is 0', () => {
+	test( 'uses the number of mailboxes when new_quantity is 0', () => {
 		const cartItem = titanMailProduct(
 			{
 				domain: 'example.com',
@@ -41,7 +41,7 @@ describe( 'titanMailProduct', () => {
 		expect( cartItem.extra?.new_quantity ).toBe( 1 );
 	} );
 
-	it( 'defaults new_quantity to 1 when there is no mailbox count at all', () => {
+	test( 'defaults new_quantity to 1 when there is no mailbox count at all', () => {
 		const cartItem = titanMailProduct(
 			{ domain: 'example.com' },
 			TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG
@@ -50,7 +50,7 @@ describe( 'titanMailProduct', () => {
 		expect( cartItem.extra?.new_quantity ).toBe( 1 );
 	} );
 
-	it( 'keeps the other extra fields', () => {
+	test( 'keeps the other extra fields', () => {
 		const cartItem = titanMailProduct(
 			{
 				domain: 'example.com',

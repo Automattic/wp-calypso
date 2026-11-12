@@ -93,17 +93,17 @@ describe( 'domains expiry field', () => {
 	const expiryLabel = ( fields: Field< DomainSummary >[] ) =>
 		fields.find( ( field ) => field.id === 'expiry' )?.label;
 
-	it( 'is labelled "Renews on"', async () => {
+	test( 'is labelled "Renews on"', async () => {
 		expect( expiryLabel( await getFields() ) ).toBe( 'Renews on' );
 	} );
 
-	it( 'keeps the "Paid until" label until "Renews on" is translated', async () => {
+	test( 'keeps the "Paid until" label until "Renews on" is translated', async () => {
 		mockHasEnTranslation = false;
 
 		expect( expiryLabel( await getFields() ) ).toBe( 'Paid until' );
 	} );
 
-	it( 'sorts by date with undated domains last in both directions', async () => {
+	test( 'sorts by date with undated domains last in both directions', async () => {
 		const fields = await getFields();
 
 		expect( names( query( fields, { sort: { field: 'expiry', direction: 'asc' } } ) ) ).toEqual( [
@@ -122,7 +122,7 @@ describe( 'domains expiry field', () => {
 		] );
 	} );
 
-	it( 'filters by expiry bucket and counts the matching rows', async () => {
+	test( 'filters by expiry bucket and counts the matching rows', async () => {
 		const fields = await getFields();
 		const filterBy = ( value?: string[] ) =>
 			query( fields, { filters: [ expiryFilter( value ) ] } );

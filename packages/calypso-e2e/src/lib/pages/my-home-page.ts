@@ -1,6 +1,7 @@
 import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { handleActiveThrottles } from '../throttle-flags';
+import { gotoWithRetry, isServerErrorPage } from '../transient-server-error';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
@@ -45,6 +46,14 @@ export class MyHomePage {
 				.filter( { hasText: /\S+\.\S+/ } )
 				.waitFor( { timeout: 60 * 1000 } );
 		} catch ( error ) {
+			// A gateway-error page has no card at all: say so before a domain
+			// suggestion ban is blamed for the missing name.
+			if ( await isServerErrorPage( this.page ) ) {
+				throw new Error(
+					'Home page shows a transient server error (502/503/504), not a missing domain suggestion.'
+				);
+			}
+
 			handleActiveThrottles( [ 'domain-suggestions' ] );
 			throw error;
 		}
@@ -53,10 +62,13 @@ export class MyHomePage {
 	/**
 	 * Visits the `/home` endpoint.
 	 *
+	 * A transient upstream error (502/503/504) is retried with backoff; once the
+	 * retries run out this throws rather than leave the error page.
+	 *
 	 * @param {string} siteSlug Site URL.
 	 */
 	async visit( siteSlug: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `/home/${ siteSlug }` ), {
+		await gotoWithRetry( this.page, getCalypsoURL( `/home/${ siteSlug }` ), {
 			timeout: 20 * 1000,
 		} );
 	}

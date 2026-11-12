@@ -32,9 +32,7 @@ $search-border-radius: 4px;
 		.search__open-icon {
 			transform: rotate(-90deg) scale(1.058);
 
-			path {
-				fill: var(--color-neutral-30);
-			}
+			color: var(--color-neutral-30);
 		}
 	}
 

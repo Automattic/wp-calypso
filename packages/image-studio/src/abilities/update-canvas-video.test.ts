@@ -7,19 +7,20 @@
  */
 /* eslint-disable import/order */
 
-const mockRegisterAbility = jest.fn();
-const mockRegisterAbilityCategory = jest.fn();
-const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
-const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
-const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
-const mockAddNotice = jest.fn();
-const mockTrackImageStudioImageGenerated = jest.fn();
-const mockSaveEntityRecord = jest.fn().mockResolvedValue( undefined );
+import { vi } from 'vitest';
+const mockRegisterAbility = vi.fn();
+const mockRegisterAbilityCategory = vi.fn();
+const mockSetCurrentVideoUrl = vi.fn().mockResolvedValue( undefined );
+const mockSetCurrentAttachmentId = vi.fn().mockResolvedValue( undefined );
+const mockSetCurrentDurationSeconds = vi.fn().mockResolvedValue( undefined );
+const mockAddNotice = vi.fn();
+const mockTrackImageStudioImageGenerated = vi.fn();
+const mockSaveEntityRecord = vi.fn().mockResolvedValue( undefined );
 
 let mockCurrentPostId: number | null = null;
 let mockCurrentPostType = 'post';
 
-const mockDispatch = jest.fn( ( store?: string ) => {
+const mockDispatch = vi.fn( ( store?: string ) => {
 	if ( store === 'core' ) {
 		return { saveEntityRecord: mockSaveEntityRecord };
 	}
@@ -31,7 +32,7 @@ const mockDispatch = jest.fn( ( store?: string ) => {
 	};
 } );
 
-const mockSelect = jest.fn( ( store?: string ) => {
+const mockSelect = vi.fn( ( store?: string ) => {
 	if ( store === 'core/editor' ) {
 		return {
 			getCurrentPostId: () => mockCurrentPostId,
@@ -41,27 +42,23 @@ const mockSelect = jest.fn( ( store?: string ) => {
 	return null;
 } );
 
-jest.mock( '../utils/tracking', () => ( {
+vi.mock( '../utils/tracking', () => ( {
 	trackImageStudioImageGenerated: ( ...args: unknown[] ) =>
 		mockTrackImageStudioImageGenerated( ...args ),
 } ) );
 
-jest.mock(
-	'@wordpress/abilities',
-	() => ( {
-		registerAbility: ( ...args: unknown[] ) => mockRegisterAbility( ...args ),
-		registerAbilityCategory: ( ...args: unknown[] ) => mockRegisterAbilityCategory( ...args ),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@wordpress/abilities', () => ( {
+	registerAbility: ( ...args: unknown[] ) => mockRegisterAbility( ...args ),
+	registerAbilityCategory: ( ...args: unknown[] ) => mockRegisterAbilityCategory( ...args ),
+} ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	dispatch: ( ...args: unknown[] ) => mockDispatch( ...args ),
-	createReduxStore: jest.fn( ( storeName: string, config: Record< string, unknown > ) => ( {
+	createReduxStore: vi.fn( ( storeName: string, config: Record< string, unknown > ) => ( {
 		name: storeName,
 		...config,
 	} ) ),
-	register: jest.fn(),
+	register: vi.fn(),
 	select: ( ...args: unknown[] ) => mockSelect( ...args ),
 } ) );
 
@@ -79,14 +76,14 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 	let originalCreateElement: typeof document.createElement;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockRegisterAbilityCategory.mockResolvedValue( undefined );
 		mockRegisterAbility.mockResolvedValue( undefined );
 		mockSaveEntityRecord.mockResolvedValue( undefined );
 		mockCurrentPostId = null;
 		mockCurrentPostType = 'post';
 		// Reset module-level isRegistered guard between tests.
-		jest.resetModules();
+		vi.resetModules();
 
 		// preloadVideo() inside the ability creates a <video>, sets src, and waits
 		// for onloadedmetadata / onerror — neither of which fire reliably in jsdom,
@@ -94,9 +91,8 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		// per test that tips us past Jest's 5s timeout. Stub createElement('video')
 		// so onloadedmetadata fires synchronously when src is assigned.
 		originalCreateElement = document.createElement.bind( document );
-		jest
-			.spyOn( document, 'createElement' )
-			.mockImplementation( ( tagName: string, options?: ElementCreationOptions ) => {
+		vi.spyOn( document, 'createElement' ).mockImplementation(
+			( tagName: string, options?: ElementCreationOptions ) => {
 				const element = originalCreateElement( tagName, options );
 				if ( tagName.toLowerCase() === 'video' ) {
 					Object.defineProperty( element, 'src', {
@@ -113,11 +109,12 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 					} );
 				}
 				return element;
-			} );
+			}
+		);
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'registers the ability with the expected name and required schema', async () => {
@@ -364,7 +361,7 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		it( 'never throws when the meta write fails — the canvas still swaps', async () => {
 			mockCurrentPostId = 7;
 			mockSaveEntityRecord.mockRejectedValueOnce( new Error( 'network down' ) );
-			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const consoleWarnSpy = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
 			await registerUpdateCanvasVideoAbility();

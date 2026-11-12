@@ -1,11 +1,11 @@
 # Browser check
 
-`scripts/browse.cjs` drives headless Chromium against a local dev server or a hosted build, logged in as a WordPress.com user, and reports what the page shows. Use it by default. Drive a browser yourself (see [Other browsers](#other-browsers)) only when the user asks for one, when the check needs a long interactive session, or when `browse.cjs` can't log in.
+`scripts/browse.cjs` drives headless Chromium against a local dev server or a hosted build, logged in as a WordPress.com user, and reports what the page shows. Use it by default. Drive a browser yourself ([Other browsers](#other-browsers)) only when the user asks for one, when the check needs a long interactive session, or when `browse.cjs` can't log in.
 
 ## Choosing where to test
 
-- When a PR is open or you were asked to open one, prefer [Calypso Live](#calypso-live) for final signed-in checks. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built. Draft PRs opened from branches in this repository get preview links, so you can run those checks before marking the PR ready. Each preview lets you verify the intended commit without sharing a local dev server across worktrees.
-- Use a [local dev server](#setup) to reproduce bugs, test unpushed changes, or run checks when the preview is unavailable or can't support them, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. Each git worktree's dev server has its own default port (the main checkout keeps 3000), and the script targets the port of the checkout it runs from, so run both from the checkout you're verifying. The script accepts whatever server answers on that port, so when you set `PORT` by hand, make sure it is this checkout's server.
+- **[Calypso Live](#calypso-live)** for final signed-in checks, when a PR is open or you were asked to open one. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built, before marking it ready. Drafts from branches in this repository get previews, which verify the intended commit without sharing a local dev server across worktrees.
+- **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview.
 
 ## Accounts
 
@@ -15,7 +15,12 @@
 > [!CAUTION]
 > **CRITICAL: the E2E test accounts are shared with CI and other developers. Use them for read-only checks only, with no exceptions, even when the user asks.** Don't save, publish, install, delete or buy anything, submit a form, or send a `POST`, `PUT` or `DELETE` request, in any browser or `--eval`.
 >
-> When a check needs a change, ask the user to sign in with their own account instead (options 2 and 3 in [Setup](#setup)) and to pick one of their sites whose URL contains `test`. To see a state a change would show, stop at the confirmation step or stub the response with `context.route()`.
+> When a check needs a change, ask the user to sign in with their own account instead (options 2 and 3 in [Setup](#setup)), then run it there:
+>
+> - **A change to a site**, e.g. its settings, content or plugins: ask the user which of their sites to test on, and use only that one. Put its slug in the URL; `{site}` only works for test accounts.
+> - **A change to the account**, e.g. profile, notification or privacy settings: test on the user's account itself.
+>
+> Note each setting's value before you change it and set it back afterwards. Ask before anything you can't undo, such as a purchase or a deletion. To see a state a change would show without making it, stop at the confirmation step or stub the response with `context.route()`.
 
 **Check each site type the change affects**, e.g. when the code branches on `isAtomic`, `isJetpack`, hosting features or plans: `--as defaultUser,atomicUser,jetpackRemoteSiteUser`.
 
@@ -27,22 +32,22 @@
 
 ## Setup
 
-- Local targets require a running dev server (`yarn start` or `yarn start-dashboard`). Don't start it yourself unless asked or [running unattended](#running-unattended). The script waits up to 90s for its first build. Hosted URLs skip this check.
-- If you need something from the user, ask directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps. For anything the user has to run, give the exact command. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`: that one goes in the user's own terminal, to keep the key out of the conversation. For a failed login, offer, in plain words without setup details:
+- Local targets need a running dev server (`yarn start` or `yarn start-dashboard`). Use one that already serves this checkout, never another checkout's, which runs that checkout's code. If none does, the script stops and says whether another checkout's server is running. If none is, start one in the background with the command in [Running unattended](#running-unattended), and stop it once your checks are done. If one is, ask before starting a second one, since each takes several GB of memory, unless no one can answer. Never stop, restart or take the port of a server you didn't start. The script waits up to 90s for its first build; hosted URLs skip this check.
+- Ask the user directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps, and give the exact command for anything they have to run. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`, which goes in the user's own terminal to keep the key out of the conversation. For a failed login, offer these, each described in plain words by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command or setup details:
   1. **Playwright with the E2E test accounts:** the user runs `.agents/skills/verify/scripts/setup-test-accounts.sh` in their own terminal.
   2. **Playwright with their own account:** the user runs `! node .agents/skills/verify/scripts/auth.cjs me`.
   3. **Claude in Chrome with their own account:** usually already signed in; the user connects it with `/chrome` in Claude Code.
 
-  Describe each option by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command. When the user picks one, show its command and wait until they say it's done before running the script again. Don't set up the test accounts yourself unless running unattended or in a git worktree (below).
+  When the user picks one, show its command and wait until they say it's done before running the script again. Don't set up the test accounts yourself unless running unattended or in a git worktree (below).
 
-- A new git worktree has neither the decrypted secrets nor the `@automattic/calypso-e2e` build, since both are gitignored, so logins fail there once a saved session expires. Run `setup-test-accounts.sh` yourself first, after `yarn install`: without `E2E_SECRETS_KEY`, it copies the decrypted secrets of another checkout (the main one, or another worktree) that has the same encrypted secrets, and asks for no key. If it stops with `No key entered.`, or the login still fails afterwards, offer the options above. Never print the secrets file.
+- A new git worktree lacks the decrypted secrets and the `@automattic/calypso-e2e` build (both gitignored), so logins fail there once a saved session expires. After `yarn install`, run `setup-test-accounts.sh` yourself: without `E2E_SECRETS_KEY`, it copies the decrypted secrets from another checkout (the main one, or another worktree) with the same encrypted secrets, and asks for no key. If it stops with `No key entered.`, or the login still fails, offer the options above. Never print the secrets file.
 - Sessions are saved in `~/.local/state/wp-calypso-verify/`. They are live logins: never print, copy or commit them, and never save network recordings (HAR files, traces) of a login.
 
 ## Calypso Live
 
-1. Use the preview link from the PR bot for each affected client. Set the path you want to check and keep the image and environment query parameters. Pass the full URL to `browse.cjs` in single quotes with the usual test account. The script retries startup responses for up to 90 seconds and fails if it cannot load a build. Use a fresh bot link if a container URL has expired.
-2. Check the final host and path to confirm the intended client. A signed-in account can redirect from Classic to Dashboard. Confirm that the report's `preview commit` matches the PR head you intend to verify. If it doesn't, wait for the `Docker image (Web app)` check on that commit, reread the bot link, and confirm the commit again. Builds for successive pushes can update the link out of order, so if it still serves another commit, verify locally. Don't verify an older build. The preview may also include trunk as of build time.
-3. Run the same interactions and capture the same states you would check locally. When using response fixtures with a shared test account, keep the live account read-only. Report which UI checks used fixtures and which real backend behavior remains unverified.
+1. Take the PR bot's preview link for each affected client, set the path you want to check, and keep the image and environment query parameters. Pass the full URL to `browse.cjs` in single quotes, with the usual test account. The script retries startup responses for up to 90 seconds and fails if no build loads. If a container URL has expired, use a fresh bot link.
+2. Check the final host and path: a signed-in account can redirect from Classic to Dashboard. Check that the report's `preview commit` is the PR head you intend to verify. If it isn't, wait for the `Docker image (Web app)` check on that commit, reread the bot link and check again. Builds for successive pushes can update the link out of order, so if it still serves another commit, verify locally. Never verify an older build. The preview may also include trunk as of build time.
+3. Run the same interactions and capture the same states as you would locally. With response fixtures on a shared test account, keep the live account read-only, and report which checks used fixtures and which backend behavior remains unverified.
 
 ```bash
 node .agents/skills/verify/scripts/browse.cjs 'PASTE_THE_FULL_PR_PREVIEW_URL_HERE' --no-snapshot
@@ -52,8 +57,8 @@ node .agents/skills/verify/scripts/browse.cjs 'PASTE_THE_FULL_PR_PREVIEW_URL_HER
 
 If you're a subagent that can't ask the user, report back to the agent that started you instead of acting on your own. When no one can answer at all (a pipeline or cloud run), don't stop to ask:
 
-- If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` when you need classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past the build. If it fails with `EADDRINUSE`, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard`. Stop a server you started once your checks are done.
-- If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, or you're in a git worktree, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
+- If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` for classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past it. On `EADDRINUSE`, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard`. Stop a server you started once your checks are done.
+- If the E2E test accounts aren't set up and `E2E_SECRETS_KEY` is set, or you're in a git worktree, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
 - Skip any check that would change something and report it as not done.
@@ -64,7 +69,9 @@ If you're a subagent that can't ask the user, report back to the agent that star
 node .agents/skills/verify/scripts/browse.cjs <url> [options]
 ```
 
-`<url>` is a path on the local Dashboard (such as `/sites`) or an absolute URL. Use an absolute URL for Calypso Live, production, or Classic on the local dev server (such as `http://calypso.localhost/read`: leave the port out and the script adds the checkout's). `{site}` in it becomes the test account's site, e.g. `/sites/{site}`: open it directly, since the first site in the Sites list may be another one. The script reads `PORT` from `.env` itself, ahead of the checkout's default; don't open `.env`. Its `dev server: up on port` line shows the port in use. Don't pipe its output (e.g. through `tail`): you'd lose its exit code.
+`<url>` is a path on the local Dashboard (such as `/sites`) or an absolute URL: use one for Calypso Live, production, or Classic on the local dev server (such as `http://calypso.localhost/read`; leave the port out and the script adds it). `{site}` becomes the test account's site, e.g. `/sites/{site}`: open it directly, since the first site in the Sites list may be another one. Don't pipe the output (e.g. through `tail`): you'd lose the exit code.
+
+The script targets the dev server port of the checkout it runs from (3000 in the main checkout, its own default in each git worktree), so start the server and run the script from the checkout you're verifying. `PORT` from the environment or `.env` takes precedence; the script reads `.env` itself, so don't open it. It accepts whatever server answers on that port, so when you set `PORT` by hand, make sure it's this checkout's server. Its `dev server: up on port` line shows the port in use.
 
 | Option                                 | Purpose                                                                                                              |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |

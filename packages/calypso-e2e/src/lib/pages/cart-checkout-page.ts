@@ -4,6 +4,18 @@ import { waitForElementEnabled } from '../../element-helper';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
 import type { Page } from 'playwright';
 
+const PURCHASE_TRANSACTION_PATH = /\/me\/transactions$/;
+
+/**
+ * Whether a request is the checkout purchase itself.
+ *
+ * Checkout also sends `GET me/transactions/supported-countries` before the
+ * purchase, so matching the path prefix alone resolves too early.
+ */
+export function isPurchaseTransaction( method: string, url: string ): boolean {
+	return method === 'POST' && PURCHASE_TRANSACTION_PATH.test( new URL( url ).pathname );
+}
+
 const selectors = {
 	// Modal
 	modalContinueButton: '.checkout-modal__content button:text("Continue")',
@@ -388,7 +400,10 @@ export class CartCheckoutPage {
 	 */
 	async purchase( { timeout }: { timeout: number } = { timeout: 60000 } ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
+			this.page.waitForResponse(
+				( response ) => isPurchaseTransaction( response.request().method(), response.url() ),
+				{ timeout: timeout }
+			),
 			// The submit button reads "Pay now" by default, but "Pay with **** 1234"
 			// when a saved card is selected, so match either label.
 			this.page.getByRole( 'button', { name: /Pay (now|with)/ } ).click(),

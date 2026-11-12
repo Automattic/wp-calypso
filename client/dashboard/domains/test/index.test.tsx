@@ -28,6 +28,14 @@ jest.mock( '../../app/router/sites', () => {
 	return { ...actual, siteRoute: { fullPath: '/sites/$siteSlug' } };
 } );
 
+jest.mock( '../../app/router/me', () => {
+	const actual = jest.requireActual( '../../app/router/me' );
+	return {
+		...actual,
+		purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },
+	};
+} );
+
 const site = {
 	ID: 1,
 	name: 'Test Site',
@@ -189,6 +197,29 @@ describe( '<Domains>', () => {
 		expect( within( card ).queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows Renew on a table row only once the domain has expired', async () => {
+		mockApis(
+			[
+				mockDomain( 1, {
+					expired: true,
+					domain_status: { id: 'expired', label: 'Expired', type: 'error' },
+				} ),
+				mockDomain( 2 ),
+			],
+			SAVED_TABLE_VIEW
+		);
+
+		render( <Domains /> );
+
+		const table = await screen.findByRole( 'table' );
+		const expiredRow = within( table ).getByRole( 'row', { name: /domain01\.com/ } );
+		const renewableRow = within( table ).getByRole( 'row', { name: /domain02\.com/ } );
+		expect( within( expiredRow ).getByRole( 'button', { name: 'Renew' } ) ).toBeVisible();
+		expect(
+			within( renewableRow ).queryByRole( 'button', { name: 'Renew' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'shows only cards, without the layout switch, for up to 8 domains', async () => {
 		mockApis( mockDomains( 8 ) );
 
@@ -348,7 +379,7 @@ describe( '<Domains>', () => {
 		expect( domainNames() ).toHaveLength( 0 );
 	} );
 
-	test( 'switches to a table without bulk selection and tracks the change', async () => {
+	test( 'switches to a table with Settings and no actions menu, and tracks the change', async () => {
 		const user = userEvent.setup();
 		mockApis( mockDomains( 9 ) );
 		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
@@ -358,8 +389,8 @@ describe( '<Domains>', () => {
 
 		const table = await screen.findByRole( 'table' );
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
-		await user.click( within( table ).getAllByRole( 'button', { name: 'Actions' } )[ 0 ] );
-		expect( await screen.findByRole( 'menuitem', { name: /Manage auto-renew/ } ) ).toBeVisible();
+		expect( within( table ).getAllByRole( 'button', { name: 'Settings' } )[ 0 ] ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_view_type_changed',
 			{ type: 'table' }

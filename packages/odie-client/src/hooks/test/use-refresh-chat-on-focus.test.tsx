@@ -1,7 +1,5 @@
-/**
- * @jest-environment jsdom
- */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useRefreshChatOnFocus } from '../use-refresh-chat-on-focus';
 import type { Chat } from '../../types';
 
@@ -12,28 +10,28 @@ import type { Chat } from '../../types';
 let mockChatStatus: Chat[ 'status' ] = 'loaded';
 let mockInteraction: { uuid: string } | undefined = { uuid: 'int-1' };
 let mockLoggedOutOdieChatId: number | null = null;
-const mockSetChat = jest.fn();
-const mockInvalidateQueries = jest.fn< Promise< void >, [ { queryKey: unknown[] } ] >( () =>
-	Promise.resolve()
+const mockSetChat = vi.fn();
+const mockInvalidateQueries = vi.fn< ( ...args: [ { queryKey: unknown[] } ] ) => Promise< void > >(
+	() => Promise.resolve()
 );
 
-jest.mock( '../../context', () => ( {
+vi.mock( '../../context', () => ( {
 	useOdieAssistantContext: () => ( { chat: { status: mockChatStatus }, setChat: mockSetChat } ),
 } ) );
 
-jest.mock( '../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: mockInteraction } ),
 } ) );
 
-jest.mock( '../use-logged-out-session', () => ( {
+vi.mock( '../use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( { loggedOutOdieChatId: mockLoggedOutOdieChatId } ),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
+vi.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: () => ( { invalidateQueries: mockInvalidateQueries } ),
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
@@ -62,7 +60,7 @@ const applyLastUpdater = ( status: Chat[ 'status' ] ) => {
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockChatStatus = 'loaded';
 	mockInteraction = { uuid: 'int-1' };
 	mockLoggedOutOdieChatId = null;

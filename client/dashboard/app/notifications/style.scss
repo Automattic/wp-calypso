@@ -1,8 +1,7 @@
 .dashboard-notifications__icon {
-	svg {
-		circle {
-			fill: var( --wp-admin-theme-color );
-		}
+	// The unread dot of `bellUnread`; its fill and inherited stroke both use currentColor.
+	svg path:nth-child(3) {
+		color: var( --wp-admin-theme-color );
 	}
 }
 

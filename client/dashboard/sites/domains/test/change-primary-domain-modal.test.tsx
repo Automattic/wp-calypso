@@ -12,6 +12,7 @@ import ChangePrimaryDomainModal from '../change-primary-domain-modal';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;
+const currentPrimaryDomain = { domain: 'primary-domain-test.wordpress.com' } as DomainSummary;
 const domains = [ { domain: 'example.com' } ] as DomainSummary[];
 
 beforeEach( () => {
@@ -31,7 +32,7 @@ async function submitChange( onClose = jest.fn() ) {
 		<>
 			<ChangePrimaryDomainModal
 				site={ site }
-				currentPrimaryDomain="primary-domain-test.wordpress.com"
+				currentPrimaryDomain={ currentPrimaryDomain }
 				eligibleDomains={ domains }
 				onClose={ onClose }
 			/>
@@ -44,7 +45,7 @@ async function submitChange( onClose = jest.fn() ) {
 }
 
 describe( 'ChangePrimaryDomainModal', () => {
-	it.each( [
+	test.each( [
 		[
 			'atomic_primary_domain_change_failed',
 			"We couldn't make this domain your primary domain. Please try again in a few minutes, or contact support if it keeps happening.",
@@ -69,7 +70,7 @@ describe( 'ChangePrimaryDomainModal', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
-	it( 'closes and shows success after a successful change', async () => {
+	test( 'closes and shows success after a successful change', async () => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/sites/123/domains/primary', { domain: 'example.com' } )
 			.reply( 200, { success: true } );

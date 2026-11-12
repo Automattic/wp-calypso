@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 import { webcrypto } from 'node:crypto';
 import { vi } from 'vitest';
 import { generatePassword, DIGITS, SPECIAL_CHARS, EXTRA_SPECIAL_CHARS } from '../';
