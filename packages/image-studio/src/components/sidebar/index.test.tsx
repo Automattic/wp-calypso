@@ -3,21 +3,21 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-	useSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn(),
+	useSelect: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
-	trackImageStudioSidebarClose: jest.fn(),
-	trackImageStudioMetadataUpdated: jest.fn(),
+vi.mock( '../../utils/tracking', () => ( {
+	trackImageStudioSidebarClose: vi.fn(),
+	trackImageStudioMetadataUpdated: vi.fn(),
 } ) );
 
-jest.mock( './editable-field', () => {
+vi.mock( './editable-field', () => {
 	const { useState } = require( '@wordpress/element' );
 	return {
 		EditableField: ( {
@@ -45,13 +45,13 @@ jest.mock( './editable-field', () => {
 	};
 } );
 
-jest.mock( './file-details', () => ( {
+vi.mock( './file-details', () => ( {
 	FileDetails: ( { attachmentId }: { attachmentId: number } ) => (
 		<div data-testid="file-details">File Details: { attachmentId }</div>
 	),
 } ) );
 
-jest.mock( '../confirmation-dialog', () => ( {
+vi.mock( '../confirmation-dialog', () => ( {
 	ConfirmationDialog: ( { isOpen, title, children, actions }: any ) =>
 		isOpen ? (
 			<div role="dialog">
@@ -66,11 +66,11 @@ jest.mock( '../confirmation-dialog', () => ( {
 		) : null,
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		text,
@@ -91,6 +91,7 @@ jest.mock( '@wordpress/components', () => ( {
 
 // Import after mocks
 import { useDispatch, useSelect } from '@wordpress/data';
+import { type MockedFunction, vi } from 'vitest';
 import { MetadataField } from '../../types';
 import {
 	trackImageStudioMetadataUpdated,
@@ -98,24 +99,24 @@ import {
 } from '../../utils/tracking';
 import { ImageStudioAltTextSidebar, ImageStudioSidebar } from './index';
 
-const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
-const mockUseSelect = useSelect as jest.MockedFunction< typeof useSelect >;
-const mockTrackSidebarClose = trackImageStudioSidebarClose as jest.MockedFunction<
+const mockUseDispatch = useDispatch as MockedFunction< typeof useDispatch >;
+const mockUseSelect = useSelect as MockedFunction< typeof useSelect >;
+const mockTrackSidebarClose = trackImageStudioSidebarClose as MockedFunction<
 	typeof trackImageStudioSidebarClose
 >;
-const mockTrackMetadataUpdated = trackImageStudioMetadataUpdated as jest.MockedFunction<
+const mockTrackMetadataUpdated = trackImageStudioMetadataUpdated as MockedFunction<
 	typeof trackImageStudioMetadataUpdated
 >;
 
 describe( 'ImageStudioSidebar', () => {
 	const defaultProps = {
-		onClose: jest.fn(),
+		onClose: vi.fn(),
 		title: 'Test Sidebar',
 		children: <div>Test Content</div>,
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'Rendering', () => {
@@ -135,7 +136,7 @@ describe( 'ImageStudioSidebar', () => {
 
 	describe( 'Interactions', () => {
 		it( 'calls onClose and tracks event when close button is clicked', async () => {
-			const onClose = jest.fn();
+			const onClose = vi.fn();
 			const user = userEvent.setup();
 
 			render( <ImageStudioSidebar { ...defaultProps } onClose={ onClose } /> );
@@ -150,14 +151,14 @@ describe( 'ImageStudioSidebar', () => {
 
 describe( 'ImageStudioAltTextSidebar', () => {
 	const defaultProps = {
-		onClose: jest.fn(),
+		onClose: vi.fn(),
 	};
 
-	const mockSetHasUpdatedMetadata = jest.fn();
-	const mockSetCanvasMetadata = jest.fn();
+	const mockSetHasUpdatedMetadata = vi.fn();
+	const mockSetCanvasMetadata = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockUseDispatch.mockReturnValue( {
 			setHasUpdatedMetadata: mockSetHasUpdatedMetadata,
@@ -223,7 +224,7 @@ describe( 'ImageStudioAltTextSidebar', () => {
 		} );
 
 		it( 'renders delete button when onDeletePermanently is provided', () => {
-			const onDeletePermanently = jest.fn();
+			const onDeletePermanently = vi.fn();
 
 			render(
 				<ImageStudioAltTextSidebar
@@ -325,7 +326,7 @@ describe( 'ImageStudioAltTextSidebar', () => {
 
 	describe( 'Delete Functionality', () => {
 		it( 'disables delete button when canDeletePermanently is false', () => {
-			const onDeletePermanently = jest.fn();
+			const onDeletePermanently = vi.fn();
 
 			render(
 				<ImageStudioAltTextSidebar
@@ -340,7 +341,7 @@ describe( 'ImageStudioAltTextSidebar', () => {
 		} );
 
 		it( 'shows confirmation dialog when delete button is clicked', async () => {
-			const onDeletePermanently = jest.fn();
+			const onDeletePermanently = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -362,7 +363,7 @@ describe( 'ImageStudioAltTextSidebar', () => {
 		} );
 
 		it( 'closes confirmation dialog when Cancel is clicked', async () => {
-			const onDeletePermanently = jest.fn();
+			const onDeletePermanently = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -390,7 +391,7 @@ describe( 'ImageStudioAltTextSidebar', () => {
 		} );
 
 		it( 'calls onDeletePermanently when confirmed', async () => {
-			const onDeletePermanently = jest.fn().mockResolvedValue( undefined );
+			const onDeletePermanently = vi.fn().mockResolvedValue( undefined );
 			const user = userEvent.setup();
 
 			render(
@@ -426,7 +427,7 @@ describe( 'ImageStudioAltTextSidebar', () => {
 				void resolve;
 			} );
 
-			const onDeletePermanently = jest.fn().mockReturnValue( deletePromise );
+			const onDeletePermanently = vi.fn().mockReturnValue( deletePromise );
 			const user = userEvent.setup();
 
 			render(

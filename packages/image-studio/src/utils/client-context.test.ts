@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 /* eslint-disable import/order */
-jest.mock( '@wordpress/block-editor', () => ( {
+import { vi } from 'vitest';
+vi.mock( '@wordpress/block-editor', () => ( {
 	store: 'block-editor',
 } ) );
 
-const mockSelect = jest.fn();
-jest.mock( '@wordpress/data', () => ( {
+const mockSelect = vi.fn();
+vi.mock( '@wordpress/data', () => ( {
 	select: ( ...args: unknown[] ) => mockSelect( ...args ),
 } ) );
 
-jest.mock( '../store', () => {
+vi.mock( '../store', () => {
 	const ImageStudioEntryPoint = {
 		MediaLibrary: 'media_library',
 		EditorBlock: 'editor_block',
@@ -28,7 +29,7 @@ jest.mock( '../store', () => {
 	};
 } );
 
-jest.mock( '../stores/video-studio', () => ( {
+vi.mock( '../stores/video-studio', () => ( {
 	store: 'video-studio',
 } ) );
 
@@ -89,7 +90,7 @@ function setupSelect( {
 
 describe( 'getClientContext', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'emits an imageStudio payload for default (image) entry points', () => {

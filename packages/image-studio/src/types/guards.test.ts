@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	isMediaAttachment,
 	isAttachmentRecord,
@@ -52,7 +53,7 @@ const validBlockEditProps = {
 	clientId: 'abc-123',
 	isSelected: true,
 	attributes: { id: 1 },
-	setAttributes: jest.fn(),
+	setAttributes: vi.fn(),
 };
 
 const validErrorPayload = {
@@ -248,9 +249,9 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'accepts valid dispatch', () => {
 		expect(
 			isCoreDataDispatch( {
-				saveEntityRecord: jest.fn(),
-				deleteEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				saveEntityRecord: vi.fn(),
+				deleteEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( true );
 	} );
@@ -258,8 +259,8 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'rejects missing saveEntityRecord', () => {
 		expect(
 			isCoreDataDispatch( {
-				deleteEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				deleteEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -267,8 +268,8 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'rejects missing deleteEntityRecord', () => {
 		expect(
 			isCoreDataDispatch( {
-				saveEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				saveEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -276,8 +277,8 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'rejects missing invalidateResolution', () => {
 		expect(
 			isCoreDataDispatch( {
-				saveEntityRecord: jest.fn(),
-				deleteEntityRecord: jest.fn(),
+				saveEntityRecord: vi.fn(),
+				deleteEntityRecord: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -286,8 +287,8 @@ describe( 'isCoreDataDispatch', () => {
 		expect(
 			isCoreDataDispatch( {
 				saveEntityRecord: 'not-fn',
-				deleteEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				deleteEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -301,7 +302,7 @@ describe( 'isBlockEditorDispatch', () => {
 	} );
 
 	it( 'accepts valid dispatch', () => {
-		expect( isBlockEditorDispatch( { updateBlockAttributes: jest.fn() } ) ).toBe( true );
+		expect( isBlockEditorDispatch( { updateBlockAttributes: vi.fn() } ) ).toBe( true );
 	} );
 
 	it( 'rejects missing method', () => {

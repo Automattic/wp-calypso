@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { initImageStudioIntegration } from './index';
 
-const mockAttachToEditorPost = jest.fn();
-const mockSetLastSavedAttachmentId = jest.fn();
-const mockAddSavedAttachmentId = jest.fn();
+const mockAttachToEditorPost = vi.fn();
+const mockSetLastSavedAttachmentId = vi.fn();
+const mockAddSavedAttachmentId = vi.fn();
 const mockCaptured: { onSave?: () => Promise< void > } = {};
 
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', () => {
 	const imageStudioSelectors = {
 		getIsImageStudioOpen: () => true,
 		getImageStudioAttachmentId: () => 42,
@@ -24,27 +25,27 @@ jest.mock( '@wordpress/data', () => {
 		select,
 		useSelect: ( mapSelect: ( s: typeof select ) => unknown ) => mapSelect( select ),
 		useDispatch: () => ( {
-			openImageStudio: jest.fn(),
-			closeImageStudio: jest.fn(),
-			setCanvasMetadata: jest.fn(),
+			openImageStudio: vi.fn(),
+			closeImageStudio: vi.fn(),
+			setCanvasMetadata: vi.fn(),
 			setLastSavedAttachmentId: mockSetLastSavedAttachmentId,
 			addSavedAttachmentId: mockAddSavedAttachmentId,
-			setHasUpdatedMetadata: jest.fn(),
-			addNotice: jest.fn(),
-			invalidateResolution: jest.fn(),
-			saveEntityRecord: jest.fn(),
+			setHasUpdatedMetadata: vi.fn(),
+			addNotice: vi.fn(),
+			invalidateResolution: vi.fn(),
+			saveEntityRecord: vi.fn(),
 		} ),
 	};
 } );
 
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 
-jest.mock( './store', () => ( {
+vi.mock( './store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: { MediaLibrary: 'media_library' },
 } ) );
 
-jest.mock( './components', () => ( {
+vi.mock( './components', () => ( {
 	__esModule: true,
 	default: ( props: { onSave: () => Promise< void > } ) => {
 		mockCaptured.onSave = props.onSave;
@@ -52,31 +53,31 @@ jest.mock( './components', () => ( {
 	},
 } ) );
 
-jest.mock( './extensions', () => ( { registerBlockEditorFilters: jest.fn() } ) );
+vi.mock( './extensions', () => ( { registerBlockEditorFilters: vi.fn() } ) );
 
-jest.mock( './hooks/use-draft-cleanup', () => ( {
-	useDraftCleanup: () => ( { cleanupOnExit: jest.fn() } ),
+vi.mock( './hooks/use-draft-cleanup', () => ( {
+	useDraftCleanup: () => ( { cleanupOnExit: vi.fn() } ),
 } ) );
 
-jest.mock( './hooks/use-image-file-navigation', () => ( {
+vi.mock( './hooks/use-image-file-navigation', () => ( {
 	useImageFileNavigation: () => ( {
-		handleNavigatePrevious: jest.fn(),
-		handleNavigateNext: jest.fn(),
+		handleNavigatePrevious: vi.fn(),
+		handleNavigateNext: vi.fn(),
 		hasPreviousImage: false,
 		hasNextImage: false,
 	} ),
 } ) );
 
-jest.mock( './hooks/use-attach-to-editor-post', () => ( {
+vi.mock( './hooks/use-attach-to-editor-post', () => ( {
 	useAttachToEditorPost: () => mockAttachToEditorPost,
 } ) );
 
-jest.mock( './utils/get-image-data', () => ( { getImageData: jest.fn( async () => null ) } ) );
+vi.mock( './utils/get-image-data', () => ( { getImageData: vi.fn( async () => null ) } ) );
 
-jest.mock( './utils/tracking', () => ( {
-	trackImageStudioClosed: jest.fn(),
-	trackImageStudioImageSaved: jest.fn(),
-	trackImageStudioOpened: jest.fn(),
+vi.mock( './utils/tracking', () => ( {
+	trackImageStudioClosed: vi.fn(),
+	trackImageStudioImageSaved: vi.fn(),
+	trackImageStudioOpened: vi.fn(),
 } ) );
 
 describe( 'Image Studio save', () => {

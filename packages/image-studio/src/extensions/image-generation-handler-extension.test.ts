@@ -1,7 +1,8 @@
 import { select } from '@wordpress/data';
+import { vi } from 'vitest';
 import { addImageStudioHandler } from './image-generation-handler-extension';
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: {
 		JetpackAIFeaturedImage: 'jetpack_ai_featured_image',
@@ -9,17 +10,17 @@ jest.mock( '../store', () => ( {
 	},
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioOpened: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioOpened: vi.fn(),
 } ) );
 
 describe( 'addImageStudioHandler', () => {
-	const getSettings = jest.fn();
-	const context = { entryPoint: 'featured-image', onImageSelect: jest.fn() };
+	const getSettings = vi.fn();
+	const context = { entryPoint: 'featured-image', onImageSelect: vi.fn() };
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( select ).mockReturnValue( { getSettings } as ReturnType< typeof select > );
+		vi.clearAllMocks();
+		vi.mocked( select ).mockReturnValue( { getSettings } as ReturnType< typeof select > );
 	} );
 
 	it.each( [ false, undefined ] )( 'returns no handler when mediaUpload is %s', ( mediaUpload ) => {
@@ -29,7 +30,7 @@ describe( 'addImageStudioHandler', () => {
 	} );
 
 	it( 'returns a handler when uploads are available', () => {
-		getSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		getSettings.mockReturnValue( { mediaUpload: vi.fn() } );
 
 		expect( addImageStudioHandler( null, context ) ).toEqual( expect.any( Function ) );
 	} );

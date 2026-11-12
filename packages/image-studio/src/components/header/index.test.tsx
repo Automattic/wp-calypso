@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
-jest.mock( '@automattic/agenttic-ui', () => ( {
+vi.mock( '@automattic/agenttic-ui', () => ( {
 	cn: ( ...args: any[] ) => {
 		return args
 			.map( ( arg ) => {
@@ -22,12 +22,12 @@ jest.mock( '@automattic/agenttic-ui', () => ( {
 	},
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-	useSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn(),
+	useSelect: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		text,
@@ -56,7 +56,7 @@ jest.mock( '@wordpress/components', () => ( {
 	Icon: ( { icon }: any ) => <span>{ icon }</span>,
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: any[] ) => {
 		let result = format;
@@ -67,19 +67,19 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
-	useKeyboardShortcut: jest.fn(),
+vi.mock( '@wordpress/compose', () => ( {
+	useKeyboardShortcut: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/keycodes', () => ( {
-	isAppleOS: jest.fn( () => true ),
+vi.mock( '@wordpress/keycodes', () => ( {
+	isAppleOS: vi.fn( () => true ),
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
-	trackImageStudioToolClick: jest.fn(),
+vi.mock( '../../utils/tracking', () => ( {
+	trackImageStudioToolClick: vi.fn(),
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: {
 		MediaLibrary: 'media_library',
@@ -94,22 +94,23 @@ jest.mock( '../../store', () => ( {
 
 // Import after mocks
 import { useDispatch, useSelect } from '@wordpress/data';
+import { type MockedFunction, vi } from 'vitest';
 import { ImageStudioEntryPoint } from '../../store';
 import { ImageStudioMode, ToolbarOption } from '../../types';
 import { trackImageStudioToolClick } from '../../utils/tracking';
 import { Header } from './index';
 
-const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
-const mockUseSelect = useSelect as jest.MockedFunction< typeof useSelect >;
-const mockTrackImageStudioToolClick = trackImageStudioToolClick as jest.MockedFunction<
+const mockUseDispatch = useDispatch as MockedFunction< typeof useDispatch >;
+const mockUseSelect = useSelect as MockedFunction< typeof useSelect >;
+const mockTrackImageStudioToolClick = trackImageStudioToolClick as MockedFunction<
 	typeof trackImageStudioToolClick
 >;
 
 describe( 'Header', () => {
 	const defaultProps = {
 		mode: ImageStudioMode.Edit,
-		onClose: jest.fn(),
-		setActiveToolbarOption: jest.fn(),
+		onClose: vi.fn(),
+		setActiveToolbarOption: vi.fn(),
 		activeToolbarOption: null,
 		config: {
 			imageData: {
@@ -118,10 +119,10 @@ describe( 'Header', () => {
 		},
 	};
 
-	const mockSetAnnotationMode = jest.fn();
+	const mockSetAnnotationMode = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockUseDispatch.mockReturnValue( {
 			setAnnotationMode: mockSetAnnotationMode,
@@ -311,7 +312,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'calls onSave when save button is clicked', async () => {
-			const onSave = jest.fn();
+			const onSave = vi.fn();
 			const user = userEvent.setup();
 
 			render( <Header { ...defaultProps } mode={ ImageStudioMode.Edit } onSave={ onSave } /> );
@@ -324,7 +325,7 @@ describe( 'Header', () => {
 
 	describe( 'Toolbar Interactions', () => {
 		it( 'toggles Annotate toolbar option when Select button is clicked', async () => {
-			const setActiveToolbarOption = jest.fn();
+			const setActiveToolbarOption = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -343,7 +344,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'deactivates Annotate when clicked again', async () => {
-			const setActiveToolbarOption = jest.fn();
+			const setActiveToolbarOption = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -362,7 +363,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'toggles AltText toolbar option when Image Info button is clicked', async () => {
-			const setActiveToolbarOption = jest.fn();
+			const setActiveToolbarOption = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -381,7 +382,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'tracks close event when AltText is toggled off', async () => {
-			const setActiveToolbarOption = jest.fn();
+			const setActiveToolbarOption = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -459,7 +460,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'calls onAnnotationUndo when undo button is clicked', async () => {
-			const onAnnotationUndo = jest.fn();
+			const onAnnotationUndo = vi.fn();
 			const user = userEvent.setup();
 
 			mockUseSelect.mockImplementation( ( selector: any ) => {
@@ -509,7 +510,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'calls onAnnotationRedo when redo button is clicked', async () => {
-			const onAnnotationRedo = jest.fn();
+			const onAnnotationRedo = vi.fn();
 			const user = userEvent.setup();
 
 			mockUseSelect.mockImplementation( ( selector: any ) => {
@@ -571,7 +572,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'calls onNavigatePrevious when previous button is clicked', async () => {
-			const onNavigatePrevious = jest.fn();
+			const onNavigatePrevious = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -589,7 +590,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'calls onNavigateNext when next button is clicked', async () => {
-			const onNavigateNext = jest.fn();
+			const onNavigateNext = vi.fn();
 			const user = userEvent.setup();
 
 			render(
@@ -709,7 +710,7 @@ describe( 'Header', () => {
 					...defaultProps.config,
 					attachmentId: 123,
 				},
-				onClassicMediaEditorNavigation: jest.fn(),
+				onClassicMediaEditorNavigation: vi.fn(),
 			};
 
 			render( <Header { ...propsWithAttachmentId } mode={ ImageStudioMode.Edit } /> );
@@ -724,7 +725,7 @@ describe( 'Header', () => {
 		it( 'does not render Media Library button without attachment ID', () => {
 			const propsWithoutAttachmentId = {
 				...defaultProps,
-				onClassicMediaEditorNavigation: jest.fn(),
+				onClassicMediaEditorNavigation: vi.fn(),
 			};
 
 			render( <Header { ...propsWithoutAttachmentId } mode={ ImageStudioMode.Edit } /> );
@@ -737,7 +738,7 @@ describe( 'Header', () => {
 		} );
 
 		it( 'calls onClassicMediaEditorNavigation when Media Library button is clicked', async () => {
-			const onClassicMediaEditorNavigation = jest.fn().mockResolvedValue( undefined );
+			const onClassicMediaEditorNavigation = vi.fn().mockResolvedValue( undefined );
 			const user = userEvent.setup();
 
 			const propsWithAttachmentId = {
@@ -784,7 +785,7 @@ describe( 'Header', () => {
 				...defaultProps.config,
 				attachmentId: 123,
 			},
-			onClassicMediaEditorNavigation: jest.fn(),
+			onClassicMediaEditorNavigation: vi.fn(),
 		};
 
 		const disabledLabel = 'Save or discard your changes to edit in the WordPress Media Library';
@@ -838,7 +839,7 @@ describe( 'Header', () => {
 
 	describe( 'Close Button', () => {
 		it( 'calls onClose when close button is clicked', async () => {
-			const onClose = jest.fn();
+			const onClose = vi.fn();
 			const user = userEvent.setup();
 
 			render( <Header { ...defaultProps } onClose={ onClose } /> );

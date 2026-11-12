@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
-jest.mock( '@automattic/agenttic-ui', () => {
+vi.mock( '@automattic/agenttic-ui', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require( 'react' );
 	const { useState } = React;
@@ -48,48 +48,49 @@ jest.mock( '@automattic/agenttic-ui', () => {
 	};
 } );
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-	useSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn(),
+	useSelect: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
-	trackImageStudioStyleSelected: jest.fn(),
+vi.mock( '../../utils/tracking', () => ( {
+	trackImageStudioStyleSelected: vi.fn(),
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '../../stores/video-studio', () => ( {
+vi.mock( '../../stores/video-studio', () => ( {
 	store: 'video-studio',
 } ) );
 
-jest.mock( '../icons/BrushIcon', () => ( {
+vi.mock( '../icons/BrushIcon', () => ( {
 	BrushIcon: ( { size }: { size: number } ) => <div data-testid="brush-icon">Brush { size }</div>,
 } ) );
 
 // Import after mocks
 import { useDispatch, useSelect } from '@wordpress/data';
+import { type MockedFunction, vi } from 'vitest';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { STYLE_OPTIONS, StylePicker, VIDEO_STYLE_OPTIONS } from './index';
 
-const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
-const mockUseSelect = useSelect as jest.MockedFunction< typeof useSelect >;
-const mockTrackStyleSelected = trackImageStudioStyleSelected as jest.MockedFunction<
+const mockUseDispatch = useDispatch as MockedFunction< typeof useDispatch >;
+const mockUseSelect = useSelect as MockedFunction< typeof useSelect >;
+const mockTrackStyleSelected = trackImageStudioStyleSelected as MockedFunction<
 	typeof trackImageStudioStyleSelected
 >;
 
 describe( 'StylePicker', () => {
-	const mockSetSelectedStyle = jest.fn();
+	const mockSetSelectedStyle = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockUseDispatch.mockReturnValue( {
 			setSelectedStyle: mockSetSelectedStyle,
@@ -103,17 +104,17 @@ describe( 'StylePicker', () => {
 		} );
 
 		// Mock requestAnimationFrame
-		global.requestAnimationFrame = jest.fn( ( cb ) => {
+		global.requestAnimationFrame = vi.fn( ( cb ) => {
 			cb( 0 );
 			return 0;
 		} );
 
 		// Mock document.body.dispatchEvent
-		document.body.dispatchEvent = jest.fn();
+		document.body.dispatchEvent = vi.fn();
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		delete ( window as Record< string, unknown > ).imageStudioData;
 	} );
 
@@ -493,7 +494,7 @@ describe( 'StylePicker', () => {
 				}
 
 				// Reset for next iteration
-				jest.clearAllMocks();
+				vi.clearAllMocks();
 			}
 		} );
 	} );

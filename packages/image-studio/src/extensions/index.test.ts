@@ -3,30 +3,31 @@
  */
 
 // Mock @wordpress/hooks
-const mockAddFilter = jest.fn();
-jest.mock( '@wordpress/hooks', () => ( {
+import { vi } from 'vitest';
+const mockAddFilter = vi.fn();
+vi.mock( '@wordpress/hooks', () => ( {
 	addFilter: mockAddFilter,
 } ) );
 
 // Mock extension modules
-const mockAddImageStudioMediaSource = jest.fn();
-const mockWithImageStudioGenerateButton = jest.fn();
-const mockWithImageStudioToolbarButton = jest.fn();
-const mockAddImageStudioHandler = jest.fn();
+const mockAddImageStudioMediaSource = vi.fn();
+const mockWithImageStudioGenerateButton = vi.fn();
+const mockWithImageStudioToolbarButton = vi.fn();
+const mockAddImageStudioHandler = vi.fn();
 
-jest.mock( './external-media-source-extension', () => ( {
+vi.mock( './external-media-source-extension', () => ( {
 	addImageStudioMediaSource: mockAddImageStudioMediaSource,
 } ) );
 
-jest.mock( './generate-button-extension', () => ( {
+vi.mock( './generate-button-extension', () => ( {
 	withImageStudioGenerateButton: mockWithImageStudioGenerateButton,
 } ) );
 
-jest.mock( './image-toolbar-extension', () => ( {
+vi.mock( './image-toolbar-extension', () => ( {
 	withImageStudioToolbarButton: mockWithImageStudioToolbarButton,
 } ) );
 
-jest.mock( './image-generation-handler-extension', () => ( {
+vi.mock( './image-generation-handler-extension', () => ( {
 	addImageStudioHandler: mockAddImageStudioHandler,
 } ) );
 
@@ -37,7 +38,7 @@ describe( 'Extension Registration', () => {
 		mockWithImageStudioGenerateButton.mockClear();
 		mockWithImageStudioToolbarButton.mockClear();
 		// Reset module to clear filtersRegistered flag
-		jest.resetModules();
+		vi.resetModules();
 	} );
 
 	describe( 'registerBlockEditorFilters', () => {

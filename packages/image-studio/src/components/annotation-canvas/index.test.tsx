@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { store as imageStudioStore } from '../../store';
 import AnnotationCanvas from './index';
 
@@ -9,12 +10,12 @@ const mockStoreState: { annotationCanvasRef: any } = {
 	annotationCanvasRef: null,
 };
 
-const mockSetAnnotationCanvasRef = jest.fn( ( ref ) => {
+const mockSetAnnotationCanvasRef = vi.fn( ( ref ) => {
 	mockStoreState.annotationCanvasRef = ref;
 } );
 
-jest.mock( '@wordpress/data', () => {
-	const mockSelect = jest.fn( ( storeName ) => {
+vi.mock( '@wordpress/data', () => {
+	const mockSelect = vi.fn( ( storeName ) => {
 		if ( storeName === 'image-studio' ) {
 			return {
 				getAnnotationCanvasRef: () => mockStoreState.annotationCanvasRef,
@@ -24,7 +25,7 @@ jest.mock( '@wordpress/data', () => {
 	} );
 
 	return {
-		useDispatch: jest.fn( ( storeName ) => {
+		useDispatch: vi.fn( ( storeName ) => {
 			if ( storeName === 'image-studio' ) {
 				return {
 					setAnnotationCanvasRef: mockSetAnnotationCanvasRef,
@@ -36,27 +37,27 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
 describe( 'AnnotationCanvas', () => {
 	let mockImageElement: HTMLImageElement;
-	let mockResizeObserver: jest.Mock;
-	let mockObserve: jest.Mock;
-	let mockDisconnect: jest.Mock;
+	let mockResizeObserver: Mock;
+	let mockObserve: Mock;
+	let mockDisconnect: Mock;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 
 		// Reset store state
 		mockStoreState.annotationCanvasRef = null;
@@ -82,7 +83,7 @@ describe( 'AnnotationCanvas', () => {
 			configurable: true,
 		} );
 		Object.defineProperty( mockImageElement, 'getBoundingClientRect', {
-			value: jest.fn( () => ( {
+			value: vi.fn( () => ( {
 				left: 0,
 				top: 0,
 				width: 800,
@@ -91,39 +92,39 @@ describe( 'AnnotationCanvas', () => {
 			configurable: true,
 		} );
 
-		mockObserve = jest.fn();
-		mockDisconnect = jest.fn();
-		mockResizeObserver = jest.fn( () => ( {
+		mockObserve = vi.fn();
+		mockDisconnect = vi.fn();
+		mockResizeObserver = vi.fn( () => ( {
 			observe: mockObserve,
 			disconnect: mockDisconnect,
 		} ) );
 		global.ResizeObserver = mockResizeObserver as any;
 
-		HTMLCanvasElement.prototype.getContext = jest.fn( ( type: string ) => {
+		HTMLCanvasElement.prototype.getContext = vi.fn( ( type: string ) => {
 			if ( type === '2d' ) {
 				return {
-					clearRect: jest.fn(),
-					drawImage: jest.fn(),
-					beginPath: jest.fn(),
-					moveTo: jest.fn(),
-					lineTo: jest.fn(),
-					stroke: jest.fn(),
-					save: jest.fn(),
-					restore: jest.fn(),
+					clearRect: vi.fn(),
+					drawImage: vi.fn(),
+					beginPath: vi.fn(),
+					moveTo: vi.fn(),
+					lineTo: vi.fn(),
+					stroke: vi.fn(),
+					save: vi.fn(),
+					restore: vi.fn(),
 					fillStyle: '',
-					fillRect: jest.fn(),
+					fillRect: vi.fn(),
 				} as any;
 			}
 			return null;
 		} );
 
-		HTMLCanvasElement.prototype.toBlob = jest.fn( ( callback ) => {
+		HTMLCanvasElement.prototype.toBlob = vi.fn( ( callback ) => {
 			const blob = new Blob( [ 'test' ], { type: 'image/png' } );
 			setTimeout( () => callback( blob ), 0 );
 		} );
 
-		HTMLCanvasElement.prototype.setPointerCapture = jest.fn();
-		HTMLCanvasElement.prototype.releasePointerCapture = jest.fn();
+		HTMLCanvasElement.prototype.setPointerCapture = vi.fn();
+		HTMLCanvasElement.prototype.releasePointerCapture = vi.fn();
 
 		Object.defineProperty( HTMLCanvasElement.prototype, 'width', {
 			writable: true,
@@ -138,8 +139,8 @@ describe( 'AnnotationCanvas', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
-		jest.restoreAllMocks();
+		vi.useRealTimers();
+		vi.restoreAllMocks();
 	} );
 
 	describe( 'Rendering', () => {
@@ -218,7 +219,7 @@ describe( 'AnnotationCanvas', () => {
 			expect( mockSetAnnotationCanvasRef ).toHaveBeenCalled();
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			const liveCanvas = container.querySelector( '.annotation-canvas-live' ) as HTMLCanvasElement;
@@ -235,7 +236,7 @@ describe( 'AnnotationCanvas', () => {
 				{ keys: '[/MouseLeft]' },
 			] );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			const canvasRef = select( imageStudioStore ).getAnnotationCanvasRef();
 			expect( canvasRef?.hasAnnotations() ).toBe( true );
@@ -268,7 +269,7 @@ describe( 'AnnotationCanvas', () => {
 			);
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			const liveCanvas = container.querySelector( '.annotation-canvas-live' ) as HTMLCanvasElement;
@@ -285,7 +286,7 @@ describe( 'AnnotationCanvas', () => {
 				{ keys: '[/MouseLeft]' },
 			] );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			act( () => {
 				select( imageStudioStore ).getAnnotationCanvasRef()?.undo();
@@ -309,7 +310,7 @@ describe( 'AnnotationCanvas', () => {
 			expect( mockSetAnnotationCanvasRef ).toHaveBeenCalled();
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			const liveCanvas = container.querySelector( '.annotation-canvas-live' ) as HTMLCanvasElement;
@@ -326,7 +327,7 @@ describe( 'AnnotationCanvas', () => {
 				{ keys: '[/MouseLeft]' },
 			] );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			act( () => {
 				select( imageStudioStore ).getAnnotationCanvasRef()?.undo();
@@ -356,7 +357,7 @@ describe( 'AnnotationCanvas', () => {
 			const liveCanvas = container.querySelector( '.annotation-canvas-live' ) as HTMLCanvasElement;
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			await user.pointer( {
@@ -365,7 +366,7 @@ describe( 'AnnotationCanvas', () => {
 				keys: '[MouseLeft]',
 			} );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( liveCanvas.setPointerCapture ).toHaveBeenCalled();
 		} );
@@ -381,19 +382,19 @@ describe( 'AnnotationCanvas', () => {
 			const liveCanvas = container.querySelector( '.annotation-canvas-live' ) as HTMLCanvasElement;
 
 			const mockLiveContext = {
-				clearRect: jest.fn(),
-				drawImage: jest.fn(),
-				beginPath: jest.fn(),
-				moveTo: jest.fn(),
-				lineTo: jest.fn(),
-				stroke: jest.fn(),
-				save: jest.fn(),
-				restore: jest.fn(),
+				clearRect: vi.fn(),
+				drawImage: vi.fn(),
+				beginPath: vi.fn(),
+				moveTo: vi.fn(),
+				lineTo: vi.fn(),
+				stroke: vi.fn(),
+				save: vi.fn(),
+				restore: vi.fn(),
 				fillStyle: '',
-				fillRect: jest.fn(),
+				fillRect: vi.fn(),
 			};
 
-			( liveCanvas.getContext as jest.Mock ) = jest.fn( ( type: string ) => {
+			( liveCanvas.getContext as Mock ) = vi.fn( ( type: string ) => {
 				if ( type === '2d' ) {
 					return mockLiveContext;
 				}
@@ -401,7 +402,7 @@ describe( 'AnnotationCanvas', () => {
 			} );
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			await user.pointer( [
@@ -418,7 +419,7 @@ describe( 'AnnotationCanvas', () => {
 				},
 			] );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( mockLiveContext.clearRect ).toHaveBeenCalled();
 			expect( mockLiveContext.beginPath ).toHaveBeenCalled();
@@ -442,19 +443,19 @@ describe( 'AnnotationCanvas', () => {
 			) as HTMLCanvasElement;
 
 			const mockCommittedContext = {
-				clearRect: jest.fn(),
-				drawImage: jest.fn(),
-				beginPath: jest.fn(),
-				moveTo: jest.fn(),
-				lineTo: jest.fn(),
-				stroke: jest.fn(),
-				save: jest.fn(),
-				restore: jest.fn(),
+				clearRect: vi.fn(),
+				drawImage: vi.fn(),
+				beginPath: vi.fn(),
+				moveTo: vi.fn(),
+				lineTo: vi.fn(),
+				stroke: vi.fn(),
+				save: vi.fn(),
+				restore: vi.fn(),
 				fillStyle: '',
-				fillRect: jest.fn(),
+				fillRect: vi.fn(),
 			};
 
-			( committedCanvas.getContext as jest.Mock ) = jest.fn( ( type: string ) => {
+			( committedCanvas.getContext as Mock ) = vi.fn( ( type: string ) => {
 				if ( type === '2d' ) {
 					return mockCommittedContext;
 				}
@@ -462,7 +463,7 @@ describe( 'AnnotationCanvas', () => {
 			} );
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			await user.pointer( [
@@ -479,7 +480,7 @@ describe( 'AnnotationCanvas', () => {
 				},
 			] );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( mockCommittedContext.beginPath ).toHaveBeenCalled();
 			expect( mockCommittedContext.stroke ).toHaveBeenCalled();
@@ -501,19 +502,19 @@ describe( 'AnnotationCanvas', () => {
 				'.annotation-canvas-committed'
 			) as HTMLCanvasElement;
 			const mockCommittedContext = {
-				clearRect: jest.fn(),
-				drawImage: jest.fn(),
-				beginPath: jest.fn(),
-				moveTo: jest.fn(),
-				lineTo: jest.fn(),
-				stroke: jest.fn(),
-				save: jest.fn(),
-				restore: jest.fn(),
+				clearRect: vi.fn(),
+				drawImage: vi.fn(),
+				beginPath: vi.fn(),
+				moveTo: vi.fn(),
+				lineTo: vi.fn(),
+				stroke: vi.fn(),
+				save: vi.fn(),
+				restore: vi.fn(),
 				fillStyle: '',
-				fillRect: jest.fn(),
+				fillRect: vi.fn(),
 			};
 
-			( committedCanvas.getContext as jest.Mock ) = jest.fn( ( type: string ) => {
+			( committedCanvas.getContext as Mock ) = vi.fn( ( type: string ) => {
 				if ( type === '2d' ) {
 					return mockCommittedContext;
 				}
@@ -521,7 +522,7 @@ describe( 'AnnotationCanvas', () => {
 			} );
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			await user.pointer( [
@@ -533,7 +534,7 @@ describe( 'AnnotationCanvas', () => {
 				{ target: document.body }, // change target to trigger pointerLeave
 			] );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( mockCommittedContext.beginPath ).toHaveBeenCalled();
 			expect( mockCommittedContext.stroke ).toHaveBeenCalled();
@@ -624,7 +625,7 @@ describe( 'AnnotationCanvas', () => {
 			const liveCanvas = container.querySelector( '.annotation-canvas-live' ) as HTMLCanvasElement;
 
 			const user = userEvent.setup( {
-				advanceTimers: jest.advanceTimersByTime,
+				advanceTimers: vi.advanceTimersByTime,
 			} );
 
 			await user.pointer( [
@@ -645,7 +646,7 @@ describe( 'AnnotationCanvas', () => {
 			expect( canvasRef?.hasAnnotations() ).toBe( true );
 
 			const blobPromise = canvasRef?.getBlob();
-			jest.runAllTimers();
+			vi.runAllTimers();
 			const blob = await blobPromise;
 
 			expect( blob ).toBeInstanceOf( Blob );

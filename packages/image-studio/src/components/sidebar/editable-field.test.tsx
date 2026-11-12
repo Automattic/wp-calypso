@@ -3,33 +3,25 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( { addNotice: jest.fn(), setHasUpdatedMetadata: jest.fn() } ),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( { addNotice: vi.fn(), setHasUpdatedMetadata: vi.fn() } ),
 	useSelect: () => false,
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
 // Both agenttic packages ship ESM only, which jest can't resolve, so the mocks are virtual.
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		useAgentChat: jest.fn(),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-client', () => ( {
+	useAgentChat: vi.fn(),
+} ) );
 
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		RegenerateIcon: () => null,
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	RegenerateIcon: () => null,
+} ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		label,
 		icon,
@@ -44,42 +36,43 @@ jest.mock( '@wordpress/components', () => ( {
 	TextareaControl: () => null,
 } ) );
 
-jest.mock( '../../hooks/use-agent-config', () => ( {
-	useAgentConfig: jest.fn(),
+vi.mock( '../../hooks/use-agent-config', () => ( {
+	useAgentConfig: vi.fn(),
 } ) );
 
-jest.mock( '../../hooks/use-error-notice', () => ( {
-	useErrorNotice: jest.fn(),
+vi.mock( '../../hooks/use-error-notice', () => ( {
+	useErrorNotice: vi.fn(),
 } ) );
 
-jest.mock( '../../utils/agent-config', () => ( {
+vi.mock( '../../utils/agent-config', () => ( {
 	defaultAgentConfigFactory: {},
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
-	trackImageStudioGenAIButtonClick: jest.fn(),
+vi.mock( '../../utils/tracking', () => ( {
+	trackImageStudioGenAIButtonClick: vi.fn(),
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
 // Import after mocks
 import { useAgentChat, type TaskUpdate } from '@automattic/agenttic-client';
+import { type Mock, vi } from 'vitest';
 import { useAgentConfig } from '../../hooks/use-agent-config';
 import { MetadataField } from '../../types';
 import { trackImageStudioGenAIButtonClick } from '../../utils/tracking';
 import { EditableField, type RegenerateCredits } from './editable-field';
 
-const mockUseAgentChat = useAgentChat as jest.Mock;
-const mockUseAgentConfig = useAgentConfig as jest.Mock;
+const mockUseAgentChat = useAgentChat as Mock;
+const mockUseAgentConfig = useAgentConfig as Mock;
 
 describe( 'EditableField Regenerate', () => {
-	const onSubmit = jest.fn();
-	const agentConfig = { agentId: 'wp-orchestrator', onTaskUpdate: jest.fn() };
+	const onSubmit = vi.fn();
+	const agentConfig = { agentId: 'wp-orchestrator', onTaskUpdate: vi.fn() };
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseAgentConfig.mockReturnValue( agentConfig );
 		mockUseAgentChat.mockReturnValue( { onSubmit, isProcessing: false, error: null } );
 	} );
@@ -89,7 +82,7 @@ describe( 'EditableField Regenerate', () => {
 			<EditableField
 				label="Alt Text"
 				value=""
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 				field={ MetadataField.AltText }
 				attachmentId={ 7 }
 				credits={ credits }
@@ -97,7 +90,7 @@ describe( 'EditableField Regenerate', () => {
 		);
 
 	it( 'sends the prompt when there are credits left', async () => {
-		renderField( { onTaskUpdate: jest.fn(), beforeSubmit: () => true } );
+		renderField( { onTaskUpdate: vi.fn(), beforeSubmit: () => true } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Regenerate' } ) );
 
@@ -106,8 +99,8 @@ describe( 'EditableField Regenerate', () => {
 	} );
 
 	it( 'sends nothing at zero credits, so the credits details open instead', async () => {
-		const beforeSubmit = jest.fn( () => false );
-		renderField( { onTaskUpdate: jest.fn(), beforeSubmit } );
+		const beforeSubmit = vi.fn( () => false );
+		renderField( { onTaskUpdate: vi.fn(), beforeSubmit } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Regenerate' } ) );
 
@@ -117,7 +110,7 @@ describe( 'EditableField Regenerate', () => {
 	} );
 
 	it( 'passes the regeneration’s turn updates to the shared credits balance', () => {
-		const onTaskUpdate = jest.fn();
+		const onTaskUpdate = vi.fn();
 		renderField( { onTaskUpdate, beforeSubmit: () => true } );
 
 		const update = { id: 'task', final: true, status: { state: 'completed' }, text: '' };

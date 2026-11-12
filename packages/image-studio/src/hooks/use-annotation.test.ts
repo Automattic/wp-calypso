@@ -1,33 +1,34 @@
 import { renderHook } from '@testing-library/react';
+import { type Mocked, vi } from 'vitest';
 import { useAnnotation } from './use-annotation';
 let mockSelectorState: {
 	annotationCanvas: any;
 	imageStudioAttachmentId: number | null;
 };
 
-const mockSetAnnotationMode = jest.fn();
-const mockUpdateImageStudioCanvas = jest.fn();
-const mockSetImageStudioOriginalImageUrl = jest.fn();
-const mockSetImageStudioAiProcessing = jest.fn();
-const mockSetIsAnnotationSaving = jest.fn();
-const mockAddAnnotatedAttachmentId = jest.fn();
+const mockSetAnnotationMode = vi.fn();
+const mockUpdateImageStudioCanvas = vi.fn();
+const mockSetImageStudioOriginalImageUrl = vi.fn();
+const mockSetImageStudioAiProcessing = vi.fn();
+const mockSetIsAnnotationSaving = vi.fn();
+const mockAddAnnotatedAttachmentId = vi.fn();
 
 const mockAnnotationCanvas = {
-	getBlob: jest.fn(),
-	clear: jest.fn(),
-	hasAnnotations: jest.fn(),
-	undo: jest.fn(),
-	redo: jest.fn(),
-	hasUndoneAnnotations: jest.fn(),
+	getBlob: vi.fn(),
+	clear: vi.fn(),
+	hasAnnotations: vi.fn(),
+	undo: vi.fn(),
+	redo: vi.fn(),
+	hasUndoneAnnotations: vi.fn(),
 };
 
-const mockCreateObjectURL = jest.fn();
-const mockRevokeObjectURL = jest.fn();
+const mockCreateObjectURL = vi.fn();
+const mockRevokeObjectURL = vi.fn();
 
 let mockImageInstance: any;
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn( ( storeName ) => {
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn( ( storeName ) => {
 		if ( storeName === 'image-studio' ) {
 			return {
 				setAnnotationMode: mockSetAnnotationMode,
@@ -40,7 +41,7 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	} ),
-	useSelect: jest.fn( ( callback ) =>
+	useSelect: vi.fn( ( callback ) =>
 		callback( ( storeName: string ) => {
 			if ( storeName === 'image-studio' ) {
 				return {
@@ -52,26 +53,27 @@ jest.mock( '@wordpress/data', () => ( {
 	),
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '../utils/upload-annotation', () => ( {
-	uploadAnnotation: jest.fn(),
+vi.mock( '../utils/upload-annotation', () => ( {
+	uploadAnnotation: vi.fn(),
 } ) );
 
-const { uploadAnnotation: mockUploadAnnotation } = jest.requireMock(
-	'../utils/upload-annotation'
-) as jest.Mocked< typeof import( '../utils/upload-annotation' ) >;
+const { uploadAnnotation: mockUploadAnnotation } =
+	( await import( '../utils/upload-annotation' ) ) as unknown as Mocked<
+		typeof import( '../utils/upload-annotation' )
+	>;
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioAnnotationSave: jest.fn(),
-	trackImageStudioImageGenerated: jest.fn(),
-	trackImageStudioAnnotationUndo: jest.fn(),
-	trackImageStudioAnnotationRedo: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioAnnotationSave: vi.fn(),
+	trackImageStudioImageGenerated: vi.fn(),
+	trackImageStudioAnnotationUndo: vi.fn(),
+	trackImageStudioAnnotationRedo: vi.fn(),
 } ) );
 
-const trackingMocks = jest.requireMock( '../utils/tracking' ) as jest.Mocked<
+const trackingMocks = ( await import( '../utils/tracking' ) ) as unknown as Mocked<
 	typeof import( '../utils/tracking' )
 >;
 const {
@@ -87,8 +89,8 @@ describe( 'useAnnotation', () => {
 	const mockUploadedUrl = 'https://example.com/uploaded-image.jpg';
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 
 		mockBlob = new Blob( [ 'test content' ], { type: 'image/png' } );
 		mockBlobUrl = 'blob:http://example.com/test-123';
@@ -108,12 +110,12 @@ describe( 'useAnnotation', () => {
 			onerror: null,
 			src: '',
 		};
-		global.Image = jest.fn( () => mockImageInstance ) as any;
+		global.Image = vi.fn( () => mockImageInstance ) as any;
 
 		// Hook uses window.wp.data.select to get the current attachment ID
 		( window as any ).wp = {
 			data: {
-				select: jest.fn( ( storeName ) => {
+				select: vi.fn( ( storeName ) => {
 					if ( storeName === 'image-studio' ) {
 						return {
 							getImageStudioAttachmentId: () => mockSelectorState.imageStudioAttachmentId,
@@ -138,7 +140,7 @@ describe( 'useAnnotation', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	describe( 'handleAnnotationDone', () => {
@@ -185,7 +187,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockTrackImageStudioAnnotationSave ).toHaveBeenCalledWith( {
@@ -202,7 +204,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockCreateObjectURL ).toHaveBeenNthCalledWith( 1, mockBlob );
@@ -217,7 +219,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockUpdateImageStudioCanvas ).toHaveBeenNthCalledWith( 1, mockBlobUrl, 5, false );
@@ -231,7 +233,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockAnnotationCanvas.clear ).toHaveBeenCalled();
@@ -246,7 +248,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockUploadAnnotation ).toHaveBeenCalledWith( {
@@ -265,7 +267,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockUploadAnnotation ).toHaveBeenCalledWith( {
@@ -294,7 +296,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockUpdateImageStudioCanvas ).toHaveBeenCalledWith( mockUploadedUrl, 456, false );
@@ -315,7 +317,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockRevokeObjectURL ).toHaveBeenCalledWith( mockBlobUrl );
@@ -323,7 +325,7 @@ describe( 'useAnnotation', () => {
 
 		it( 'handles upload error', async () => {
 			const error = new Error( 'Upload failed' );
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 			mockUploadAnnotation.mockImplementation( ( options ) => {
 				options.onError( error );
@@ -337,7 +339,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			expect( mockRevokeObjectURL ).toHaveBeenCalledWith( mockBlobUrl );
@@ -455,7 +457,7 @@ describe( 'useAnnotation', () => {
 			);
 
 			const promise = result.current.handleAnnotationDone();
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			await promise;
 
 			// Should use  attachment id from store (42) for blob and 123 for uploaded image instead of the id from config

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -7,6 +7,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useSelect } from '@wordpress/data';
 // eslint-disable-next-line import/order
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 
 // Webpack global injected at build time, used at render time by __().
 ( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
@@ -39,31 +40,31 @@ const STALE_ATTACHMENT = {
 	},
 };
 
-jest.mock( '@wordpress/core-data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-const mockOpenImageStudio = jest.fn();
-const mockCreateNotice = jest.fn();
-const mockResolveEntityRecord = jest.fn();
+const mockOpenImageStudio = vi.fn();
+const mockCreateNotice = vi.fn();
+const mockResolveEntityRecord = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( { openImageStudio: mockOpenImageStudio } ) ),
-	resolveSelect: jest.fn( () => ( { getEntityRecord: mockResolveEntityRecord } ) ),
-	useDispatch: jest.fn( ( store: string ) =>
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn( () => ( { openImageStudio: mockOpenImageStudio } ) ),
+	resolveSelect: vi.fn( () => ( { getEntityRecord: mockResolveEntityRecord } ) ),
+	useDispatch: vi.fn( ( store: string ) =>
 		store === 'core/notices' ? { createNotice: mockCreateNotice } : {}
 	),
-	useSelect: jest.fn(),
+	useSelect: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/block-editor', () => ( {
+vi.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	BlockControls: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="block-controls">{ children }</div>
 	),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	ToolbarButton: ( {
 		children,
 		label,
@@ -91,34 +92,34 @@ jest.mock( '@wordpress/components', () => ( {
 	ToolbarGroup: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( fn: ( component: React.ComponentType ) => React.ComponentType ) =>
 		fn,
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../store/index', () => ( {
+vi.mock( '../store/index', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: { EditorBlock: 'editor-block' },
 } ) );
 
-jest.mock( '../types', () => ( {
+vi.mock( '../types', () => ( {
 	IMAGE_STUDIO_SUPPORTED_MIME_TYPES: [ 'image/jpeg', 'image/png', 'image/webp' ],
 	ImageStudioMode: { Edit: 'edit' },
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioOpened: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioOpened: vi.fn(),
 } ) );
 
-jest.mock( '../utils/get-image-data', () => ( {} ) );
+vi.mock( '../utils/get-image-data', () => ( {} ) );
 
 // Must import after jest.mock() calls to receive the mocked dependencies.
 import { trackImageStudioOpened } from '../utils/tracking';
@@ -132,7 +133,7 @@ function renderToolbar( {
 	hasResolved = true,
 	attributes = { id: 1, url: BASE_URL },
 	name = 'core/image',
-	settings = { mediaUpload: jest.fn() },
+	settings = { mediaUpload: vi.fn() },
 	isSelected = true,
 }: {
 	attachment?: ReturnType< typeof makeAttachment > | null;
@@ -142,13 +143,13 @@ function renderToolbar( {
 	settings?: { mediaUpload?: unknown };
 	isSelected?: boolean;
 } = {} ) {
-	const getEntityRecord = jest.fn( () => attachment );
-	( useSelect as jest.Mock ).mockImplementation(
-		( callback: ( select: () => Record< string, jest.Mock > ) => unknown ) =>
+	const getEntityRecord = vi.fn( () => attachment );
+	( useSelect as Mock ).mockImplementation(
+		( callback: ( select: () => Record< string, Mock > ) => unknown ) =>
 			callback( () => ( {
-				getSettings: jest.fn( () => settings ),
+				getSettings: vi.fn( () => settings ),
 				getEntityRecord,
-				hasFinishedResolution: jest.fn( () => hasResolved ),
+				hasFinishedResolution: vi.fn( () => hasResolved ),
 			} ) )
 	);
 
@@ -157,7 +158,7 @@ function renderToolbar( {
 			name={ name }
 			attributes={ blockAttributes }
 			isSelected={ selected }
-			setAttributes={ jest.fn() }
+			setAttributes={ vi.fn() }
 		/>
 	);
 	const view = render( block( isSelected ) );
@@ -173,7 +174,7 @@ function renderToolbar( {
 
 describe( 'withImageStudioToolbarButton', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it.each( [ false, undefined ] )( 'hides the button when mediaUpload is %s', ( mediaUpload ) => {
@@ -193,14 +194,14 @@ describe( 'withImageStudioToolbarButton', () => {
 				name="core/image"
 				attributes={ { id: 1, url: BASE_URL } }
 				isSelected
-				setAttributes={ jest.fn() }
+				setAttributes={ vi.fn() }
 			/>
 		);
 		expect(
 			screen.queryByRole( 'button', { name: 'Edit image with AI' } )
 		).not.toBeInTheDocument();
 
-		settings.mediaUpload = jest.fn();
+		settings.mediaUpload = vi.fn();
 		rerender( block() );
 		expect( screen.getByRole( 'button', { name: 'Edit image with AI' } ) ).toBeInTheDocument();
 
@@ -473,7 +474,7 @@ describe( 'withImageStudioToolbarButton', () => {
 		);
 
 		it( 'logs the error when the pending read fails', async () => {
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 			try {
 				const error = new Error( 'Not found' );
 				mockResolveEntityRecord.mockRejectedValue( error );
