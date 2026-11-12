@@ -5,12 +5,13 @@ on:
     types: [opened, reopened, ready_for_review, synchronize]
     paths:
       - 'client/dashboard/**'
+      - 'apps/notifications/**'
   schedule:
     - cron: '0 6 * * 1-5'
   workflow_dispatch:
     inputs:
       pr_numbers:
-        description: 'Space-separated PR numbers; leave empty for all open Dashboard PRs'
+        description: 'Space-separated PR numbers; leave empty for all open Dashboard and Notifications PRs'
         required: false
         default: ''
       dry_run:
@@ -54,7 +55,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           REPO: ${{ github.repository }}
-          PATHS_PATTERN: '^client/dashboard/'
+          PATHS_PATTERN: '^(client/dashboard|apps/notifications)/'
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.dry_run || inputs.pr_numbers == '') || 'false' }}
           PR_NUMBERS: ${{ github.event.pull_request.number || inputs.pr_numbers }}
         run: |
