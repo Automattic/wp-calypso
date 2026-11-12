@@ -5,7 +5,7 @@ import { createSite, getNewSiteParams } from '..';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
 
-vi.mock( 'calypso/lib/wp', () => ( { req: { post: vi.fn() } } ) );
+vi.mock( 'calypso/lib/wp', () => ( { default: { req: { post: vi.fn() } } } ) );
 vi.mock( '../../wpcom-request', () => ( { default: vi.fn() } ) );
 vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => `config:${ key }`;
