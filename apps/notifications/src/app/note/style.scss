@@ -542,6 +542,10 @@
 		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
 		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-action__color-hover: var( --wp-components-color-gray-100, #f0f0f1 );
+		// The dark theme maps the neutral tokens but not a disabled solid button's,
+		// which would stay light; map them onto its grays for the reply send button.
+		--wpds-color-background-interactive-neutral-strong-disabled: var( --wp-components-color-gray-200, #3a3a3a );
+		--wpds-color-foreground-interactive-neutral-strong-disabled: var( --wp-components-color-gray-600, #8a8a8a );
 
 		// Code blocks: a subtly raised surface against the dark panel, with a
 		// neutral border and light text that keeps AA contrast.
