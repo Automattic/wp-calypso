@@ -4,7 +4,6 @@ import React, { ComponentProps } from 'react';
 import { vi } from 'vitest';
 import ChecklistItem from '..';
 import { buildTask } from '../../test/lib/fixtures';
-import '@testing-library/jest-dom';
 
 describe( 'ChecklistItem', () => {
 	const defaultProps = {

@@ -3,7 +3,6 @@ import React from 'react';
 import Checklist from '../';
 import ChecklistItem from '../../checklist-item';
 import { buildTask } from '../../test/lib/fixtures';
-import '@testing-library/jest-dom';
 
 describe( 'Checklist', () => {
 	it( 'renders the list of items', () => {
