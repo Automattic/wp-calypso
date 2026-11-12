@@ -167,6 +167,51 @@ describe( '<ContentInfo> purchase blockers', () => {
 	} );
 
 	test.each( [
+		{ outcome: 'success', success: true, navigations: [ [ { to: '/sites' } ] ] },
+		{ outcome: 'error', success: false, navigations: [] },
+	] )(
+		'completes a mounted $outcome after one leave request',
+		async ( { success, navigations } ) => {
+			mockIsBackport = false;
+			mockPurchases( [] );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wp/v2/sites/123/users/me' )
+				.query( true )
+				.reply( 200, { id: CURRENT_USER_ID } );
+			let finishRequest: ( () => void ) | undefined;
+			let requestCount = 0;
+			const leaveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/123/users/1/delete' )
+				.query( true )
+				.reply( ( _uri, _body, callback ) => {
+					requestCount++;
+					finishRequest = () => callback( null, [ 200, { success } ] );
+				} );
+			const onClose = jest.fn();
+			const { router } = render( <ContentInfo site={ site } onClose={ onClose } /> );
+			const navigate = jest.spyOn( router, 'navigate' ).mockResolvedValue();
+			const user = userEvent.setup();
+
+			await user.click( await screen.findByRole( 'checkbox' ) );
+			const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+			await waitFor( () => expect( submit ).toBeEnabled() );
+			await user.dblClick( submit );
+			await waitFor( () => expect( finishRequest ).toBeDefined() );
+			expect( submit ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+			expect( requestCount ).toBe( 1 );
+			expect( leaveRequest.isDone() ).toBe( true );
+			expect( navigate ).not.toHaveBeenCalled();
+			expect( onClose ).not.toHaveBeenCalled();
+
+			finishRequest?.();
+			await waitFor( () => expect( onClose ).toHaveBeenCalledTimes( 1 ) );
+			expect( navigate.mock.calls ).toEqual( navigations );
+			expect( requestCount ).toBe( 1 );
+		}
+	);
+
+	test.each( [
 		{
 			outcome: 'success',
 			success: true,
@@ -201,7 +246,8 @@ describe( '<ContentInfo> purchase blockers', () => {
 			}
 
 			const user = userEvent.setup();
-			render( <LeaveDialog /> );
+			const { router } = render( <LeaveDialog /> );
+			const navigate = jest.spyOn( router, 'navigate' ).mockResolvedValue();
 			await user.click( await screen.findByRole( 'checkbox' ) );
 			const submit = screen.getByRole( 'button', { name: 'Leave site' } );
 			await waitFor( () => expect( submit ).toBeEnabled() );
@@ -217,6 +263,7 @@ describe( '<ContentInfo> purchase blockers', () => {
 					notices.find( ( notice ) => notice.closest( '.dashboard-snackbars' ) )
 				).toBeVisible()
 			);
+			expect( navigate ).not.toHaveBeenCalled();
 		}
 	);
 
