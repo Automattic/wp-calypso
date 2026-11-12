@@ -34,8 +34,10 @@ function processCwd( pid ) {
 		return fs.readlinkSync( `/proc/${ pid }/cwd` );
 	} catch {}
 	try {
+		// Outside a UTF-8 locale, `lsof` escapes the non-ASCII characters of a path.
 		const output = execFileSync( 'lsof', [ '-a', '-p', pid, '-d', 'cwd', '-Fn' ], {
 			encoding: 'utf8',
+			env: { ...process.env, LC_ALL: 'en_US.UTF-8' },
 			stdio: [ 'ignore', 'pipe', 'ignore' ],
 		} );
 		return output.match( /^n(.+)$/m )?.[ 1 ];
@@ -53,8 +55,8 @@ function isCalypsoCheckout( dir ) {
 
 /**
  * Lists the Calypso checkouts with a dev server that is running or still starting, by the working
- * directory of its processes. Returns null when the processes, or the working directory of one
- * that matches, can't be read.
+ * directory of its processes. Returns null when the processes can't be listed, or when it finds
+ * none and can't read the working directory of a process that matches.
  */
 function devServerCheckouts() {
 	try {
@@ -64,10 +66,8 @@ function devServerCheckouts() {
 			.map( ( line ) => line.trim().match( /^(\d+)\s+(.*)$/ ) )
 			.filter( ( match ) => match && DEV_SERVER_PROCESS.test( match[ 2 ] ) )
 			.map( ( match ) => processCwd( match[ 1 ] ) );
-		if ( dirs.includes( undefined ) ) {
-			return null;
-		}
-		return [ ...new Set( dirs.filter( isCalypsoCheckout ) ) ];
+		const checkouts = [ ...new Set( dirs.filter( isCalypsoCheckout ) ) ];
+		return checkouts.length || ! dirs.includes( undefined ) ? checkouts : null;
 	} catch {
 		return null;
 	}
