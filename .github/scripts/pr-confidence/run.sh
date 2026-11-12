@@ -22,8 +22,12 @@ list_prs() {
 # Prints a skip reason for a PR, or nothing when it should be scored.
 skip_reason() {
 	local pr="$1" meta perm last_marker
-	meta=$(gh pr view "$pr" --repo "$REPO" --json isDraft,author,headRefOid,headRepositoryOwner,headRepository,reviewDecision)
+	meta=$(gh pr view "$pr" --repo "$REPO" --json isDraft,author,headRefOid,headRepositoryOwner,headRepository,reviewDecision,files)
 	if [ "$(jq -r .isDraft <<<"$meta")" = "true" ]; then echo "draft"; return; fi
+	if [ -n "${PATHS_PATTERN:-}" ] && [ "$(jq --arg re "$PATHS_PATTERN" 'any(.files[].path; test($re))' <<<"$meta")" != "true" ]; then
+		echo "no files matching $PATHS_PATTERN"
+		return
+	fi
 	if [ "$(jq -r .author.is_bot <<<"$meta")" = "true" ]; then echo "bot author"; return; fi
 	if [ "$(jq -r '"\(.headRepositoryOwner.login)/\(.headRepository.name)"' <<<"$meta")" != "$REPO" ]; then echo "fork"; return; fi
 	if [ "$(jq -r .reviewDecision <<<"$meta")" = "APPROVED" ]; then echo "already approved"; return; fi
