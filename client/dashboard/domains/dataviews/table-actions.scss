@@ -5,6 +5,7 @@
 	.dataviews-item-actions
 	.components-button:not( .dataviews-all-actions-button ) {
 	opacity: 1;
+	font-weight: var( --wpds-typography-font-weight-default );
 	text-decoration: underline;
 	text-underline-offset: 0.2em;
 	text-decoration-thickness: from-font;
