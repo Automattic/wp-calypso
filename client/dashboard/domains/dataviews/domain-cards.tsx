@@ -1,4 +1,3 @@
-import { DomainSubtype } from '@automattic/api-core';
 import {
 	Button,
 	DropdownMenu,
@@ -59,16 +58,13 @@ function getFooterActionIds( item: DomainSummary ) {
 		'manage-domain',
 		item.expired ? 'renew' : 'manage-dns-settings',
 		'change-primary-domain',
+		'change-site-address',
 	];
 }
 
 function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
 	if ( action.id === 'manage-dns-settings' ) {
 		return __( 'DNS' );
-	}
-	// A transfer's "View transfer" says where it goes, which isn't its settings.
-	if ( action.id === 'manage-domain' && item.subtype.id !== DomainSubtype.DOMAIN_TRANSFER ) {
-		return __( 'Settings' );
 	}
 	return getActionLabel( action, item );
 }

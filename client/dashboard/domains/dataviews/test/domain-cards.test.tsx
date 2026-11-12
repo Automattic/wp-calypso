@@ -85,7 +85,7 @@ describe( '<DomainCardsLayout>', () => {
 
 	test( 'names the card after its domain and ties its actions to it', async () => {
 		renderCards( [
-			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'manage-domain', label: () => 'Settings', callback: jest.fn() },
 			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
 		] );
 
@@ -116,7 +116,7 @@ describe( '<DomainCardsLayout>', () => {
 	test( 'adds "Change primary" to the footer when the domain can use it', async () => {
 		const changePrimary = jest.fn();
 		renderCards( [
-			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'manage-domain', label: () => 'Settings', callback: jest.fn() },
 			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
 			{
 				id: 'change-primary-domain',
@@ -140,7 +140,7 @@ describe( '<DomainCardsLayout>', () => {
 		const dns = jest.fn();
 		renderCards( [
 			{ id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() },
-			{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: settings },
+			{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: settings },
 			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: dns },
 			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
 			{ id: 'ineligible', label: 'Ineligible', callback: jest.fn(), isEligible: () => false },
@@ -174,7 +174,7 @@ describe( '<DomainCardsLayout>', () => {
 		renderCards(
 			[
 				{ id: 'renew', isPrimary: true, label: 'Renew', callback: renew },
-				{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: jest.fn() },
+				{ id: 'manage-domain', isPrimary: true, label: () => 'Settings', callback: jest.fn() },
 				{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
 			],
 			[ expiredDomain ]
@@ -209,7 +209,7 @@ describe( '<DomainCardsLayout>', () => {
 
 	test( 'leaves DNS out of the footer when the domain is not eligible for it', async () => {
 		renderCards( [
-			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'manage-domain', label: () => 'Settings', callback: jest.fn() },
 			{
 				id: 'manage-dns-settings',
 				label: 'Manage DNS',
@@ -284,7 +284,7 @@ describe( '<DomainCardsLayout>', () => {
 		renderCards( [
 			{
 				id: 'manage-domain',
-				label: () => 'View settings',
+				label: () => 'Settings',
 				callback: () => {
 					throw new Error( 'Action failed' );
 				},
@@ -312,7 +312,7 @@ describe( '<DomainCardsLayout>', () => {
 	} );
 
 	test( 'hides the menu when no actions are left for it', async () => {
-		renderCards( [ { id: 'manage-domain', label: () => 'View settings', callback: jest.fn() } ] );
+		renderCards( [ { id: 'manage-domain', label: () => 'Settings', callback: jest.fn() } ] );
 
 		await screen.findByRole( 'button', { name: 'Settings' } );
 		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();

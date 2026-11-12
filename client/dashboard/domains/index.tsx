@@ -14,6 +14,7 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	getDomainId,
@@ -104,7 +105,7 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard>
+					<DataViewsCard className={ DOMAINS_TABLE_CLASS_NAME }>
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }

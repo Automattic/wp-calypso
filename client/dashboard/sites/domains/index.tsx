@@ -20,6 +20,7 @@ import PageLayout from '../../components/page-layout';
 import { usePendingPrimaryDomain } from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
+	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	useActions,
@@ -179,7 +180,7 @@ function SiteDomains() {
 				</>
 			}
 		>
-			<DataViewsCard>
+			<DataViewsCard className={ DOMAINS_TABLE_CLASS_NAME }>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }

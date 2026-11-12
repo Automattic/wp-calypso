@@ -220,6 +220,10 @@ describe( '<SiteDomains>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Add new domain' } ) ).not.toBeInTheDocument();
+		const defaultAddressCard = screen.getByRole( 'group', { name: defaultAddressDomain.domain } );
+		expect(
+			within( defaultAddressCard ).getByRole( 'button', { name: 'Change site address' } )
+		).toBeVisible();
 	} );
 
 	test( 'opens the change site address modal when deep linked', async () => {
@@ -230,20 +234,36 @@ describe( '<SiteDomains>', () => {
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'shows "Change site address" action for the default address', async () => {
+	test( 'opens the change site address modal from "Rename address" on the default address card', async () => {
 		const user = userEvent.setup();
 		nock.cleanAll();
 		mockApis( { domains: [ defaultAddressDomain ] } );
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		await user.click( await screen.findByLabelText( 'Actions' ) );
+		const card = await screen.findByRole( 'group', { name: defaultAddressDomain.domain } );
+		await user.click( within( card ).getByRole( 'button', { name: 'Rename address' } ) );
 
-		const action = await screen.findByText( 'Change site address' );
-		await waitFor( () => expect( action ).toBeVisible() );
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'hides "Change site address" action when the site is suspended', async () => {
+	test( 'opens the change site address modal from "Rename address" on the default address row of the table', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ defaultAddressDomain ],
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		await user.click( within( table ).getByRole( 'button', { name: 'Rename address' } ) );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'hides "Rename address" when the site is suspended', async () => {
 		nock.cleanAll();
 		mockApis( { domains: [ { ...defaultAddressDomain, is_suspended_site: true } ] } );
 
@@ -251,7 +271,7 @@ describe( '<SiteDomains>', () => {
 
 		await screen.findByRole( 'group', { name: 'test-site.wordpress.com' } );
 
-		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Rename address' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'sorts domains by whether they are primary', async () => {
