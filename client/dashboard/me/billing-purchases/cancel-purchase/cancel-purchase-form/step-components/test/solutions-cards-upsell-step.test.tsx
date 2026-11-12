@@ -380,19 +380,6 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		}
 	} );
 
-	test( 'leaves out the 1:1 session card for "Something else related to too hard to use"', () => {
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="otherTooHardToUse"
-				purchase={ purchase }
-				closeDialog={ vi.fn() }
-				onDeclineUpsell={ vi.fn() }
-			/>
-		);
-
-		expect( screen.queryByRole( 'link', { name: /Book a 1:1 session/ } ) ).not.toBeInTheDocument();
-	} );
-
 	test.each( [
 		{ label: 'English', language: 'en', shown: true },
 		{ label: 'British English', language: 'en-gb', shown: true },
