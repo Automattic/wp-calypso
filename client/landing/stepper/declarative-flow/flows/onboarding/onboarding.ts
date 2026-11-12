@@ -343,6 +343,19 @@ function isConnectedDomainMove( item: MinimalRequestCartProduct | null | undefin
 	);
 }
 
+// The domain items a run on the Free plan keeps. The server rejects a connected move without a
+// plan. The Free plan move dialog promises a run on the Free plan, so with a registered move
+// no paid registration stays either.
+function getFreePlanDomainCartItems(
+	domainCartItems: MinimalRequestCartProduct[]
+): MinimalRequestCartProduct[] {
+	const allowedItems = domainCartItems.filter( ( item ) => ! isConnectedDomainMove( item ) );
+
+	return allowedItems.some( isDomainMoveInternal )
+		? allowedItems.filter( isDomainMoveInternal )
+		: allowedItems;
+}
+
 async function initialize( reduxStore: Store ) {
 	if ( await goToOwnPreviewSiteLaunch( reduxStore ) ) {
 		return false as const;
@@ -717,14 +730,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
 
-						// Without a plan the server rejects the move, so it must not reach the cart.
-						if ( isConnectedDomainMove( domainCartItem ) ) {
+						const freePlanDomainCartItems = getFreePlanDomainCartItems( domainCartItems ?? [] );
+						if ( freePlanDomainCartItems.length !== ( domainCartItems?.length ?? 0 ) ) {
+							setDomainCartItems( freePlanDomainCartItems );
+							// The domain step makes the first cart item the selected domain.
+							setDomainCartItem( freePlanDomainCartItems[ 0 ] );
+						} else if ( isConnectedDomainMove( domainCartItem ) ) {
 							setDomainCartItem( undefined );
-						}
-						if ( domainCartItems?.some( isConnectedDomainMove ) ) {
-							setDomainCartItems(
-								domainCartItems.filter( ( item ) => ! isConnectedDomainMove( item ) )
-							);
 						}
 					}
 

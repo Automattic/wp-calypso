@@ -19,6 +19,7 @@ import {
 	isOnboardingFlow,
 	Step,
 	isNewSiteMigrationFlow,
+	replaceProductsInCart,
 	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
@@ -247,7 +248,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...( productCartItems ?? [] ),
 				...mergedDomainCartItems,
 			];
-			if ( manageFlowCartItems.length > 0 && slug ) {
+			// The cart still holds the first visit's plan. A user who went back and chose Free must
+			// not see that plan at checkout, which a domain move now sends them to.
+			if ( ! planCartItem && slug ) {
+				await replaceProductsInCart( slug, manageFlowCartItems, flow );
+			} else if ( manageFlowCartItems.length > 0 && slug ) {
 				await addProductsToCart( slug, flow, manageFlowCartItems );
 			}
 

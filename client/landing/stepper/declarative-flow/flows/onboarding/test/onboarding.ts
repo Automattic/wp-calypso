@@ -462,13 +462,36 @@ describe( 'onboarding flow plans navigation', () => {
 	it( 'drops a connected domain move from the cart on the Free plan', () => {
 		const navigate = submitFreePlan( [ connectedMove, registration ] );
 
-		expect( mockSetDomainCartItem ).toHaveBeenCalledWith( undefined );
+		// The selected domain follows the cart, so signup analytics still see the registration.
+		expect( mockSetDomainCartItem ).toHaveBeenCalledWith( registration );
 		expect( mockSetDomainCartItems ).toHaveBeenCalledWith( [ registration ] );
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
+	it( 'clears the selected domain when a connected domain move was the only item', () => {
+		submitFreePlan( [ connectedMove ] );
+
+		expect( mockSetDomainCartItem ).toHaveBeenCalledWith( undefined );
+		expect( mockSetDomainCartItems ).toHaveBeenCalledWith( [] );
+	} );
+
 	it( 'keeps a registered domain move in the cart on the Free plan', () => {
 		submitFreePlan( [ registeredMove ] );
+
+		expect( mockSetDomainCartItem ).not.toHaveBeenCalled();
+		expect( mockSetDomainCartItems ).not.toHaveBeenCalled();
+	} );
+
+	// The Free plan move dialog names only the moved domain, so checkout must not add a paid one.
+	it( 'drops a paid registration next to a registered domain move on the Free plan', () => {
+		submitFreePlan( [ registration, registeredMove ] );
+
+		expect( mockSetDomainCartItem ).toHaveBeenCalledWith( registeredMove );
+		expect( mockSetDomainCartItems ).toHaveBeenCalledWith( [ registeredMove ] );
+	} );
+
+	it( 'keeps a paid registration on the Free plan when no domain move is in the cart', () => {
+		submitFreePlan( [ registration ] );
 
 		expect( mockSetDomainCartItem ).not.toHaveBeenCalled();
 		expect( mockSetDomainCartItems ).not.toHaveBeenCalled();
