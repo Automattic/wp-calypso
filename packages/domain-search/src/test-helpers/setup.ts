@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import nock from 'nock';
 import { queryClient } from './renderer';
 
