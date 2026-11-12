@@ -51,6 +51,65 @@ function getCurrentStep( session?: StaticSiteImportSession ) {
 	}
 }
 
+const formatCount = ( current: number, total: number ) =>
+	sprintf(
+		/* translators: %1$s: formatted number of pages done so far, %2$s: formatted number of pages in all. */
+		__( '%1$s of %2$s' ),
+		formatNumber( current ),
+		formatNumber( total )
+	);
+
+/**
+ * What the build is doing, from the importer's own step. Steps that work page by page also say how
+ * many pages are done. Servers that don't report the step show no detail.
+ */
+function getBuildDetail( progress?: StaticSiteImportSession[ 'progress' ] ) {
+	if ( progress?.phase === 'exporting' ) {
+		return __( 'Packaging your site' );
+	}
+	const building = progress?.building;
+	if ( ! building ) {
+		return progress?.phase === 'building' ? __( 'Setting up WordPress' ) : '';
+	}
+	const count = building.total > 0 ? formatCount( building.current, building.total ) : '';
+	switch ( building.stage ) {
+		case 'freezing':
+		case 'prepare_shared':
+		case 'preparing_shared':
+			return __( 'Preparing your styles and layout' );
+		case 'prepare_pages':
+		case 'preparing_pages':
+			return count
+				? sprintf(
+						/* translators: %s: progress such as "3 of 12". */
+						__( 'Preparing your pages · %s' ),
+						count
+					)
+				: __( 'Preparing your pages' );
+		case 'compile_pages':
+		case 'compiling_pages':
+			return count
+				? sprintf(
+						/* translators: %s: progress such as "3 of 12". */
+						__( 'Turning your pages into blocks · %s' ),
+						count
+					)
+				: __( 'Turning your pages into blocks' );
+		case 'compose':
+		case 'composed':
+		case 'canonical_plan':
+			return __( 'Putting your theme together' );
+		case 'prepare_lifecycle':
+		case 'dependencies_prepared':
+		case 'materialize':
+		case 'materialization_claimed':
+		case 'completed':
+			return __( 'Creating your pages and theme' );
+		default:
+			return '';
+	}
+}
+
 function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	const progress = session?.progress;
 	const current = getCurrentStep( session );
@@ -73,16 +132,12 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 		{
 			label: __( 'Copying your pages' ),
 			detail:
-				current === 1 && pagesTotal
-					? sprintf(
-							/* translators: %1$s: formatted number of pages copied so far, %2$s: formatted number of pages to copy. */
-							__( '%1$s of %2$s' ),
-							formatNumber( progress?.pages_captured ?? 0 ),
-							formatNumber( pagesTotal )
-						)
-					: '',
+				current === 1 && pagesTotal ? formatCount( progress?.pages_captured ?? 0, pagesTotal ) : '',
 		},
-		{ label: __( 'Building your WordPress site' ), detail: '' },
+		{
+			label: __( 'Building your WordPress site' ),
+			detail: current === 2 ? getBuildDetail( progress ) : '',
+		},
 		{ label: __( 'Moving it onto your site' ), detail: '' },
 	];
 

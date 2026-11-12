@@ -158,6 +158,40 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '12 pages found' );
 	} );
 
+	test.each( [
+		[ { phase: 'building' }, 'Setting up WordPress' ],
+		[
+			{ phase: 'building', building: { stage: 'prepare_shared', current: 0, total: 13 } },
+			'Preparing your styles and layout',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compile_pages', current: 5, total: 13 } },
+			'Turning your pages into blocks · 5 of 13',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compose', current: 13, total: 13 } },
+			'Putting your theme together',
+		],
+		[
+			{ phase: 'building', building: { stage: 'materialize', current: 13, total: 13 } },
+			'Creating your pages and theme',
+		],
+		[
+			{ phase: 'exporting', building: { stage: 'completed', current: 13, total: 13 } },
+			'Packaging your site',
+		],
+	] )( 'says what the build is doing: %o', ( progress, detail ) => {
+		expect( currentStepOf( 'building', { progress } ) ).toHaveTextContent( detail );
+	} );
+
+	test( 'shows no build detail for a step it doesn’t know', () => {
+		expect(
+			currentStepOf( 'building', {
+				progress: { phase: 'building', building: { stage: 'something_new', current: 1, total: 2 } },
+			} )
+		).toHaveTextContent( /^Building your WordPress site$/ );
+	} );
+
 	test( 'keeps the number of pages found once the server stops reporting progress', () => {
 		currentStepOf( 'queued', { preview_summary: { pages: 15 } } );
 

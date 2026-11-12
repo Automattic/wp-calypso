@@ -64,6 +64,11 @@ export interface StaticSiteImportProgress {
 	phase?: 'installing' | 'inspecting' | 'capturing' | 'comparing' | 'building' | 'exporting';
 	/** Capture is still discovering the source's pages. */
 	finding_pages?: boolean;
+	/**
+	 * The importer's build step while the site is built, e.g. `compile_pages`, and its pages done of
+	 * the total. Absent before the importer starts and on servers that don't report it.
+	 */
+	building?: { stage: string; current: number; total: number };
 	pages_captured?: number;
 	pages_total?: number;
 }
