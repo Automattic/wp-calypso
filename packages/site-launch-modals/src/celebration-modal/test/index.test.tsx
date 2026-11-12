@@ -4,9 +4,10 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import CelebrationModal from '..';
 
-jest.mock( 'canvas-confetti', () => jest.fn() );
+vi.mock( 'canvas-confetti', () => ( { default: vi.fn() } ) );
 
 describe( '<CelebrationModal>', () => {
 	const baseProps = {
@@ -96,7 +97,7 @@ describe( '<CelebrationModal>', () => {
 
 	test( 'fires onUpsellClick when the upsell button is clicked', async () => {
 		const user = userEvent.setup();
-		const onUpsellClick = jest.fn();
+		const onUpsellClick = vi.fn();
 		render(
 			<CelebrationModal
 				{ ...baseProps }

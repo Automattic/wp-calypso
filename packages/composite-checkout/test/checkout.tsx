@@ -8,6 +8,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createContext, useState, useContext } from 'react';
+import { vi } from 'vitest';
 import {
 	CheckoutProvider,
 	CheckoutStep,
@@ -859,7 +860,7 @@ describe( 'Checkout', () => {
 			// This test verifies that when a step is marked complete but is still active
 			// (e.g., user went back to edit it), attempting to proceed past it will
 			// revalidate the step instead of skipping validation.
-			const firstStepCallback = jest.fn();
+			const firstStepCallback = vi.fn();
 			firstStepCallback.mockResolvedValue( true );
 
 			const { getAllByText, getByText } = render(
@@ -956,7 +957,7 @@ describe( 'Checkout', () => {
 		const byTagName = ( tagName ) => ( el ) => el.tagName === tagName;
 		const positionElements = ( positions ) => {
 			const original = window.HTMLElement.prototype.getBoundingClientRect;
-			jest
+			vi
 				.spyOn( window.HTMLElement.prototype, 'getBoundingClientRect' )
 				.mockImplementation( function () {
 					const position = positions.find( ( [ matches ] ) => matches( this ) );
@@ -973,11 +974,11 @@ describe( 'Checkout', () => {
 		// falls back to the rect alone without it. Tests that need to simulate the
 		// sticky summary covering an on-screen step provide it.
 		const putElementOverEverything = ( element ) => {
-			document.elementFromPoint = jest.fn( () => element );
+			document.elementFromPoint = vi.fn( () => element );
 		};
 
 		afterEach( () => {
-			jest.restoreAllMocks();
+			vi.restoreAllMocks();
 			delete ( document as unknown as { elementFromPoint?: unknown } ).elementFromPoint;
 		} );
 
@@ -1012,7 +1013,7 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'disables Continue when disableContinueButton is set', async () => {
-			const isCompleteCallback = jest.fn( () => true );
+			const isCompleteCallback = vi.fn( () => true );
 			const activeStep = { ...steps[ 3 ], isCompleteCallback };
 			const { container } = render(
 				<ContinueCheckout
@@ -1030,7 +1031,7 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'disables Continue while the step it validates is still resolving', async () => {
-			const isCompleteCallback = jest.fn( () => new Promise< boolean >( () => {} ) );
+			const isCompleteCallback = vi.fn( () => new Promise< boolean >( () => {} ) );
 			const pendingActiveStep = { ...steps[ 3 ], isCompleteCallback };
 			const { container } = render(
 				<ContinueCheckout withProp steps={ [ steps[ 0 ], pendingActiveStep, steps[ 1 ] ] } />
@@ -1050,7 +1051,7 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'smooth-scrolls to the next incomplete step when Continue is clicked', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
 			const { container } = render(
 				<ContinueCheckout withProp steps={ [ steps[ 0 ], steps[ 1 ], steps[ 3 ] ] } />
@@ -1070,9 +1071,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'tries to complete the active step and stays on it when it fails to validate', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			// The active (first numbered) step is invalid; a later step follows it so the
 			// summary shows "Continue" rather than the Pay button.
 			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
@@ -1097,9 +1098,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'only scrolls the active step into view when it is entirely off-screen', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
 			putStepAt( 'custom-incomplete-step', window.innerHeight + 100 );
 			const { container } = render(
@@ -1120,9 +1121,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'only scrolls the active step into view when something is covering it', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
 			// On-screen by its rect, but taller than the viewport, which is the normal
 			// case for a checkout step on a phone.
@@ -1145,9 +1146,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'only scrolls the active step into view when its first field is off-screen', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			const stepWithAField = {
 				...steps[ 3 ],
 				isCompleteCallback,
@@ -1175,9 +1176,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'validates the active step with an off-screen first field once the shopper has touched the steps', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			const stepWithAField = {
 				...steps[ 3 ],
 				isCompleteCallback,
@@ -1203,9 +1204,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'validates the active step when its first field is on-screen', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			const stepWithAField = {
 				...steps[ 3 ],
 				isCompleteCallback,
@@ -1228,9 +1229,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'validates the active step when it is on-screen and nothing is covering it', async () => {
-			const scrollIntoView = jest.fn();
+			const scrollIntoView = vi.fn();
 			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
-			const isCompleteCallback = jest.fn( () => false );
+			const isCompleteCallback = vi.fn( () => false );
 			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
 			putStepAt( 'custom-incomplete-step', 100 );
 			const { container } = render(
@@ -1403,9 +1404,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'does not call the payment processor function if the validateForm callback is falsy', async () => {
-			const validateForm = jest.fn();
+			const validateForm = vi.fn();
 			validateForm.mockResolvedValue( false );
-			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+			const processor = vi.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 			render(
 				<MyCheckout
 					steps={ [ steps[ 0 ] ] }
@@ -1422,9 +1423,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'calls the payment processor function if the validateForm callback is truthy', async () => {
-			const validateForm = jest.fn();
+			const validateForm = vi.fn();
 			validateForm.mockResolvedValue( true );
-			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+			const processor = vi.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 			render(
 				<MyCheckout
 					steps={ [ steps[ 0 ] ] }
@@ -1441,7 +1442,7 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'calls the payment processor function if the validateForm callback undefined', async () => {
-			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+			const processor = vi.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 			render( <MyCheckout steps={ [ steps[ 0 ] ] } paymentProcessor={ processor } /> );
 			const submitButton = screen.getByText( 'Pay Please' );
 
@@ -1452,9 +1453,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'skips validation for a step with skipValidationOnSubmit set to true', async () => {
-			const stepCallback = jest.fn();
+			const stepCallback = vi.fn();
 			stepCallback.mockResolvedValue( false ); // Step validation would fail
-			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+			const processor = vi.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 
 			render(
 				<MyCheckout
@@ -1487,9 +1488,9 @@ describe( 'Checkout', () => {
 		} );
 
 		it( 'validates a step without skipValidationOnSubmit and blocks submission if invalid', async () => {
-			const stepCallback = jest.fn();
+			const stepCallback = vi.fn();
 			stepCallback.mockResolvedValue( false ); // Step validation fails
-			const processor = jest.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
+			const processor = vi.fn().mockResolvedValue( makeErrorResponse( 'good' ) );
 
 			render(
 				<MyCheckout

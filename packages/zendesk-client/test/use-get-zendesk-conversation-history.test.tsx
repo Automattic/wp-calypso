@@ -3,6 +3,7 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SMOOCH_APP_ID, WIDGET_URL } from '../src/constants';
 import {
 	getZendeskConversationHistoryQueryKey,
@@ -10,19 +11,19 @@ import {
 } from '../src/use-get-zendesk-conversation-history';
 import type { ReactNode } from 'react';
 
-jest.mock( 'smooch', () => ( {} ) );
+vi.mock( 'smooch', () => ( {} ) );
 
-jest.mock( '../src/use-get-unread-conversations', () => ( {
-	useGetUnreadConversations: () => jest.fn(),
+vi.mock( '../src/use-get-unread-conversations', () => ( {
+	useGetUnreadConversations: () => vi.fn(),
 } ) );
 
-jest.mock( '../src/util', () => ( {
+vi.mock( '../src/util', () => ( {
 	isTestModeEnvironment: () => false,
 	isCsatTriggerMessage: () => false,
 	isZendeskSurveyMessage: () => false,
 } ) );
 
-const fetchMock = jest.fn();
+const fetchMock = vi.fn();
 const originalFetch = globalThis.fetch;
 
 const rawMessage = ( id: string, received: number, role = 'appMaker' ) => ( {

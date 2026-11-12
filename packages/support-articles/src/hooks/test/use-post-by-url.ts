@@ -6,20 +6,21 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { type Mock, vi } from 'vitest';
 import { usePostByUrl } from '../use-post-by-url';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+vi.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-const mockedRequest = wpcomRequest as jest.Mock;
-const mockedRecordTracksEvent = recordTracksEvent as jest.Mock;
+const mockedRequest = wpcomRequest as Mock;
+const mockedRecordTracksEvent = recordTracksEvent as Mock;
 
 function renderPostByUrl( url: string ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -30,7 +31,7 @@ function renderPostByUrl( url: string ) {
 }
 
 describe( 'usePostByUrl', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'records the error once no matter how often the component re-renders', async () => {
 		mockedRequest.mockRejectedValue( {

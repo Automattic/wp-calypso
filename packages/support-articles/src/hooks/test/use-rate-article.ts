@@ -5,15 +5,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { type Mock, vi } from 'vitest';
 import { getSessionRating, useRateArticle } from '../use-rate-article';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+vi.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );
 
-const mockedRequest = wpcomRequest as jest.Mock;
+const mockedRequest = wpcomRequest as Mock;
 
 function renderRateArticle() {
 	const queryClient = new QueryClient();
@@ -24,7 +25,7 @@ function renderRateArticle() {
 }
 
 describe( 'useRateArticle', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'posts the rating and remembers the rating on record', async () => {
 		mockedRequest.mockResolvedValue( { user_rating: 2 } );

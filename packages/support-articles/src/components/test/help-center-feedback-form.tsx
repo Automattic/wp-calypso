@@ -4,17 +4,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import HelpCenterFeedbackForm from '../help-center-feedback-form';
 
-const mockRateArticle = jest.fn();
+const mockRateArticle = vi.fn();
 const mockSessionRatings: Record< number, 1 | 2 | undefined > = {};
 let mockCheckoutSupportVariation: string | undefined;
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/odie-client', () => ( {
+vi.mock( '@automattic/odie-client', () => ( {
 	GetSupport: ( {
 		onClickAdditionalEvent,
 	}: {
@@ -23,11 +24,11 @@ jest.mock( '@automattic/odie-client', () => ( {
 	useCheckoutSupportVariation: () => mockCheckoutSupportVariation,
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
 
-jest.mock( '../../hooks/use-rate-article', () => ( {
+vi.mock( '../../hooks/use-rate-article', () => ( {
 	useRateArticle: () => ( { mutate: mockRateArticle } ),
 	getSessionRating: ( _blogId: number, postId: number ) => mockSessionRatings[ postId ],
 } ) );
@@ -46,7 +47,7 @@ function renderForm( userRating?: 1 | 2 | null ) {
 
 describe( 'HelpCenterFeedbackForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		delete mockSessionRatings[ 185130 ];
 		mockCheckoutSupportVariation = undefined;
 	} );

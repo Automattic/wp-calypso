@@ -4,6 +4,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { HelpCenterArticle } from '../help-center-article';
 
 const post = {
@@ -14,33 +15,33 @@ const post = {
 	source: '/support',
 };
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >( '@automattic/calypso-analytics' ) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useSearchParams: () => [ new URLSearchParams( { link: post.URL, query: 'domains' } ) ],
 } ) );
 
-jest.mock( '../../hooks/use-post-by-url', () => ( {
+vi.mock( '../../hooks/use-post-by-url', () => ( {
 	usePostByUrl: () => ( { data: post, isLoading: false, error: null } ),
 } ) );
 
-jest.mock( '../../hooks/use-help-center-article-tab-component', () => ( {
+vi.mock( '../../hooks/use-help-center-article-tab-component', () => ( {
 	useHelpCenterArticleTabComponent: () => undefined,
 } ) );
 
-jest.mock( '../../hooks/use-help-center-article-scroll', () => ( {
+vi.mock( '../../hooks/use-help-center-article-scroll', () => ( {
 	useHelpCenterArticleScroll: () => undefined,
 } ) );
 
-jest.mock( '../help-center-article/help-center-article-content', () => ( {
+vi.mock( '../help-center-article/help-center-article-content', () => ( {
 	__esModule: true,
 	default: () => <div>content</div>,
 } ) );
 
-jest.mock( '../back-to-top-button', () => ( {
+vi.mock( '../back-to-top-button', () => ( {
 	BackToTopButton: () => null,
 } ) );
 
@@ -65,7 +66,7 @@ function renderArticle( siteId?: number | string ) {
 }
 
 describe( 'HelpCenterArticle analytics', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'reports the support site as blog_id and the docs blog separately', () => {
 		renderArticle( 217279297 );
@@ -84,7 +85,7 @@ describe( 'HelpCenterArticle analytics', () => {
 	it( 'reports no site rather than falling back to the article blog', () => {
 		renderArticle( undefined );
 
-		const [ , properties ] = ( recordTracksEvent as jest.Mock ).mock.calls.find(
+		const [ , properties ] = ( recordTracksEvent as Mock ).mock.calls.find(
 			( [ name ] ) => name === 'calypso_helpcenter_article_viewed'
 		);
 

@@ -5,6 +5,7 @@ import { fireEvent, getByText, screen, waitFor, within } from '@testing-library/
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
+import { vi } from 'vitest';
 import { DomainsTable } from '..';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { transferStatus } from '../../utils/constants';
@@ -57,7 +58,7 @@ test( 'when two domains share the same underlying site, there is only one fetch 
 		primary_domain: true,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( ( siteId ) =>
+	const fetchSiteDomains = vi.fn().mockImplementation( ( siteId ) =>
 		Promise.resolve( {
 			domains: siteId === 123 ? [ primaryFull, notPrimaryFull ] : [ differentSiteFull ],
 		} )
@@ -91,7 +92,7 @@ test( 'when isAllSitesView is true, the primary domain label is displayed if a d
 		wpcom_domain: true,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( ( siteId ) =>
+	const fetchSiteDomains = vi.fn().mockImplementation( ( siteId ) =>
 		Promise.resolve( {
 			domains: siteId === 123 ? [ primaryFull, notPrimaryFull ] : [],
 		} )
@@ -330,7 +331,7 @@ test( 'Owner column is rendered when domains has owner that is not the currently
 		current_user_is_owner: false,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+	const fetchSiteDomains = vi.fn().mockImplementation( () =>
 		Promise.resolve( {
 			domains: [ primaryFull ],
 		} )
@@ -356,7 +357,7 @@ test( 'Owner column is not rendered when domains do not have an owner', async ()
 		primary_domain: true,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+	const fetchSiteDomains = vi.fn().mockImplementation( () =>
 		Promise.resolve( {
 			domains: [ primaryFull ],
 		} )
@@ -390,7 +391,7 @@ test( 'Owner column is not rendered when all domains have the same owner', async
 		owner: 'owner',
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+	const fetchSiteDomains = vi.fn().mockImplementation( () =>
 		Promise.resolve( {
 			domains: [ primaryFull, notPrimaryFull ],
 		} )
@@ -437,13 +438,13 @@ test( 'when isAllSitesView is true, display site column', async () => {
 		owner: 'owner',
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+	const fetchSiteDomains = vi.fn().mockImplementation( () =>
 		Promise.resolve( {
 			domains: [ primaryFull ],
 		} )
 	);
 
-	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+	const fetchSite = vi.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
 	render(
 		<DomainsTable
@@ -470,13 +471,13 @@ test( 'when isAllSitesView is false, do not display site column', async () => {
 		owner: 'owner',
 	} );
 
-	const fetchSiteDomains = jest.fn().mockImplementation( () =>
+	const fetchSiteDomains = vi.fn().mockImplementation( () =>
 		Promise.resolve( {
 			domains: [ primaryFull ],
 		} )
 	);
 
-	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+	const fetchSite = vi.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
 	render(
 		<DomainsTable
@@ -558,7 +559,7 @@ describe( 'column sorting', () => {
 	const OriginalTimeFormat = Intl.DateTimeFormat;
 
 	beforeAll( () => {
-		dateTimeFormatSpy = jest.spyOn( global.Intl, 'DateTimeFormat' );
+		dateTimeFormatSpy = vi.spyOn( global.Intl, 'DateTimeFormat' );
 		dateTimeFormatSpy.mockImplementation(
 			( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
 		);
@@ -592,13 +593,13 @@ describe( 'column sorting', () => {
 			current_user_is_owner: false,
 		} );
 
-		const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		const fetchSiteDomains = vi.fn().mockImplementation( () =>
 			Promise.resolve( {
 				domains: [ ownedByAFull, ownedByFFull, ownedByCFull ],
 			} )
 		);
 
-		const fetchSite = jest.fn().mockResolvedValue( { ID: blogId, name: 'The blog' } );
+		const fetchSite = vi.fn().mockResolvedValue( { ID: blogId, name: 'The blog' } );
 
 		render(
 			<DomainsTable
@@ -665,13 +666,13 @@ describe( 'column sorting', () => {
 			auto_renewing: false,
 		} );
 
-		const fetchSiteDomains = jest.fn().mockImplementation( () =>
+		const fetchSiteDomains = vi.fn().mockImplementation( () =>
 			Promise.resolve( {
 				domains: [ activeFull, expiringFull, errorFull ],
 			} )
 		);
 
-		const fetchSite = jest.fn().mockResolvedValue( { ID: blogId, name: 'The blog' } );
+		const fetchSite = vi.fn().mockResolvedValue( { ID: blogId, name: 'The blog' } );
 
 		render(
 			<DomainsTable

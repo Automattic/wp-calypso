@@ -2,6 +2,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
+import { vi } from 'vitest';
 import { HorizontalStepper } from '..';
 
 describe( 'HorizontalStepper', () => {
@@ -83,7 +84,7 @@ describe( 'HorizontalStepper', () => {
 	} );
 
 	it( 'does not call onValueChange when an explicitly disabled step tab is clicked', async () => {
-		const onValueChange = jest.fn();
+		const onValueChange = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<HorizontalStepper value="a" onValueChange={ onValueChange } aria-label="Test">
@@ -102,7 +103,7 @@ describe( 'HorizontalStepper', () => {
 
 describe( 'HorizontalStepper linear mode', () => {
 	it( 'does not navigate to a non-completed step', async () => {
-		const onValueChange = jest.fn();
+		const onValueChange = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<HorizontalStepper value="a" linear onValueChange={ onValueChange } aria-label="Test">
@@ -119,7 +120,7 @@ describe( 'HorizontalStepper linear mode', () => {
 	} );
 
 	it( 'navigates to a completed past-step', async () => {
-		const onValueChange = jest.fn();
+		const onValueChange = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<HorizontalStepper value="b" linear onValueChange={ onValueChange } aria-label="Test">

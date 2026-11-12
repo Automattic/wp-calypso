@@ -3,6 +3,7 @@ import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/s
 import { RestorableProductsProvider } from '@automattic/wpcom-checkout';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { MiniCartLineItems } from '../src/mini-cart-line-items';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -45,9 +46,9 @@ function renderLineItems( showBundleGrouping: boolean, responseCart: ResponseCar
 			<RestorableProductsProvider>
 				<MiniCartLineItems
 					responseCart={ responseCart }
-					removeProductFromCart={ jest.fn() }
-					addProductsToCart={ jest.fn() }
-					removeCoupon={ jest.fn() }
+					removeProductFromCart={ vi.fn() }
+					addProductsToCart={ vi.fn() }
+					removeCoupon={ vi.fn() }
 					showBundleGrouping={ showBundleGrouping }
 				/>
 			</RestorableProductsProvider>

@@ -6,17 +6,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Smooch from 'smooch';
+import { type Mock, vi } from 'vitest';
 import { fetchMessagingAuth } from '../src/use-authenticate-zendesk-messaging';
 import { useGetZendeskConversations, useManagedZendeskChat } from '../src/use-managed-zendesk-chat';
 
-jest.mock(
+vi.mock(
 	'@automattic/agenttic-ui',
 	() => ( {
 		ThinkingMessage: () => null,
 		ThumbsDownIcon: () => null,
 		ThumbsUpIcon: () => null,
-	} ),
-	{ virtual: true }
+	} )
 );
 
 const mockConversation = {
@@ -32,59 +32,59 @@ const mockConversation = {
 	metadata: {},
 };
 
-jest.mock( 'smooch', () => ( {
+vi.mock( 'smooch', () => ( {
 	__esModule: true,
 	default: {
-		render: jest.fn(),
-		init: jest.fn(),
-		createConversation: jest.fn(),
-		getConversationById: jest.fn(),
-		getConversations: jest.fn( () => [] ),
-		loadConversation: jest.fn(),
-		on: jest.fn(),
-		off: jest.fn(),
-		startTyping: jest.fn(),
-		stopTyping: jest.fn(),
+		render: vi.fn(),
+		init: vi.fn(),
+		createConversation: vi.fn(),
+		getConversationById: vi.fn(),
+		getConversations: vi.fn( () => [] ),
+		loadConversation: vi.fn(),
+		on: vi.fn(),
+		off: vi.fn(),
+		startTyping: vi.fn(),
+		stopTyping: vi.fn(),
 	},
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >( '@automattic/calypso-analytics' ) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	isRTL: () => false,
 } ) );
 
-jest.mock( '../src/components/csat-form', () => ( {
+vi.mock( '../src/components/csat-form', () => ( {
 	CSATForm: () => null,
 } ) );
 
-jest.mock( '../src/use-authenticate-zendesk-messaging', () => ( {
+vi.mock( '../src/use-authenticate-zendesk-messaging', () => ( {
 	useAuthenticateZendeskMessaging: () => ( {
 		data: { jwt: 'jwt', externalId: 'external-id' },
 		isFetching: false,
 	} ),
-	fetchMessagingAuth: jest.fn(),
+	fetchMessagingAuth: vi.fn(),
 } ) );
 
-jest.mock( '../src/use-attach-file', () => ( {
+vi.mock( '../src/use-attach-file', () => ( {
 	useAttachFileToConversation: () => ( {
 		isPending: false,
-		mutateAsync: jest.fn(),
+		mutateAsync: vi.fn(),
 	} ),
 } ) );
 
-jest.mock( '../src/use-connection-status-notice', () => ( {
+vi.mock( '../src/use-connection-status-notice', () => ( {
 	useConnectionStatusNotice: () => undefined,
 } ) );
 
-jest.mock( '../src/util', () => ( {
+vi.mock( '../src/util', () => ( {
 	SUPPORTED_IMAGE_TYPES: [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ],
 	MAX_ATTACHMENTS: 5,
-	convertZendeskMessageToAgentticFormat: jest.fn( ( message ) => ( {
+	convertZendeskMessageToAgentticFormat: vi.fn( ( message ) => ( {
 		id: message.id,
 		role: message.role,
 		content: [],
@@ -98,18 +98,18 @@ jest.mock( '../src/util', () => ( {
 	isSupportedImageType: ( type: string ) =>
 		[ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ].includes( type ),
 	isTestModeEnvironment: () => false,
-	playNotificationSound: jest.fn(),
+	playNotificationSound: vi.fn(),
 } ) );
 
 const smooch = Smooch as unknown as {
-	init: jest.Mock;
-	createConversation: jest.Mock;
-	getConversationById: jest.Mock;
-	loadConversation: jest.Mock;
-	on: jest.Mock;
-	off: jest.Mock;
-	startTyping: jest.Mock;
-	stopTyping: jest.Mock;
+	init: Mock;
+	createConversation: Mock;
+	getConversationById: Mock;
+	loadConversation: Mock;
+	on: Mock;
+	off: Mock;
+	startTyping: Mock;
+	stopTyping: Mock;
 };
 
 type SmoochInitOptions = { delegate: { onInvalidAuth: () => Promise< string > } };
@@ -180,7 +180,7 @@ function renderUseManagedZendeskChat( {
 
 describe( 'useManagedZendeskChat', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		smooch.init.mockResolvedValue( undefined );
 		smooch.createConversation.mockResolvedValue( mockConversation );
 		smooch.getConversationById.mockResolvedValue( mockConversation );
@@ -309,7 +309,7 @@ describe( 'useManagedZendeskChat', () => {
 		}
 
 		async function triggerAuthError() {
-			( fetchMessagingAuth as jest.Mock ).mockResolvedValue( { jwt: 'refreshed-jwt' } );
+			( fetchMessagingAuth as Mock ).mockResolvedValue( { jwt: 'refreshed-jwt' } );
 			const { delegate } = smooch.init.mock.calls[ 0 ][ 0 ] as SmoochInitOptions;
 			await delegate.onInvalidAuth();
 		}

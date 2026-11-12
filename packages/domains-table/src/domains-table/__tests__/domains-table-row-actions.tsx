@@ -3,16 +3,17 @@
  */
 import page from '@automattic/calypso-router';
 import { screen, act, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from '../../test-utils';
 import { ResponseDomain } from '../../utils/types';
 import { DomainsTableStateContext } from '../domains-table';
 import { DomainsTableRowActions } from '../domains-table-row-actions';
 
-jest.mock( '@automattic/calypso-router' );
+vi.mock( '@automattic/calypso-router' );
 
 // Mock context value to avoid network requests from useGenerateDomainsTableState hooks
 const mockContextValue = {
-	onDomainAction: jest.fn(),
+	onDomainAction: vi.fn(),
 	userCanSetPrimaryDomains: false,
 	updatingDomain: null,
 	domainStatusPurchaseActions: undefined,
