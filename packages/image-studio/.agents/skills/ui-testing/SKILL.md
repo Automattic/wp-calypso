@@ -174,7 +174,7 @@ When running these tests with Playwright MCP (not playwright-test):
 | 5.4  | Click **Style** button                                           | Panel opens showing style options: **"None"**, **"Vivid"**, **"Anime"**, **"Photographic"**, **"Digital Art"**, **"Comicbook"**, etc. Each has preview thumbnail |
 | 5.5  | Select **"Photographic"** style                                  | Style panel closes, **"Photographic"** shown as selected                                                                                                         |
 | 5.6  | Look for **Aspect Ratio** selector                               | Button showing **"Aspect Ratio"** (when default) or current ratio label                                                                                          |
-| 5.7  | Click **Aspect Ratio** button                                    | Panel opens showing ratios: **"1:1"** (square), **"16:9"**, **"9:16"**, **"4:3"**, **"3:2"**, **"3:4"**. Each has a visual icon showing the shape                |
+| 5.7  | Click **Aspect Ratio** button                                    | Panel opens showing ratios: **"1:1"** (square), **"16:9"**, **"9:16"**, **"4:3"**, **"3:4"**, **"3:2"**, **"2:3"**. Each has a visual icon showing the shape     |
 | 5.8  | Select **"16:9"** ratio                                          | Panel closes, **"16:9"** shown as selected in button                                                                                                             |
 
 **FAIL if:** Style/aspect panels don't open, options missing, or selections don't update

@@ -58,7 +58,7 @@ describe( 'normalizeThemeAspectRatio', () => {
 	it.each( [
 		[ '1/1', 'square' ],
 		[ '21/9', 'landscape ratio the picker lacks' ],
-		[ '2/3', 'portrait' ],
+		[ '2/3', 'portrait, picker only' ],
 		[ '3/4', 'portrait' ],
 		[ '9/16', 'portrait' ],
 		[ 'auto', 'natural image shape' ],

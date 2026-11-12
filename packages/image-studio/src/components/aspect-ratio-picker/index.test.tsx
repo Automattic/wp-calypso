@@ -148,6 +148,11 @@ describe( 'AspectRatioPicker', () => {
 		} );
 	} );
 
+	it( 'offers the portrait pair of every landscape card', () => {
+		const values = ASPECT_RATIO_OPTIONS.map( ( option ) => option.value );
+		expect( values ).toEqual( [ '1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3' ] );
+	} );
+
 	it( 'offers every ratio a theme default can resolve to', () => {
 		const values = ASPECT_RATIO_OPTIONS.map( ( option ) => option.value );
 		THEME_ASPECT_RATIOS.forEach( ( ratio ) => expect( values ).toContain( ratio ) );

@@ -17,8 +17,9 @@ export const ASPECT_RATIO_OPTIONS = [
 	{ label: __( '16:9', __i18n_text_domain__ ), value: '16:9' },
 	{ label: __( '9:16', __i18n_text_domain__ ), value: '9:16' },
 	{ label: __( '4:3', __i18n_text_domain__ ), value: '4:3' },
-	{ label: __( '3:2', __i18n_text_domain__ ), value: '3:2' },
 	{ label: __( '3:4', __i18n_text_domain__ ), value: '3:4' },
+	{ label: __( '3:2', __i18n_text_domain__ ), value: '3:2' },
+	{ label: __( '2:3', __i18n_text_domain__ ), value: '2:3' },
 ];
 
 export function AspectRatioPicker( { disabled = false, mode }: AspectRatioPickerProps ) {
