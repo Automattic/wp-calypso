@@ -133,7 +133,7 @@ const testPackagesVitest = withVitestInfo(
 	'test-packages:vitest --maxWorkers=4',
 	'test_packages_vitest'
 );
-const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=8', 'test_dashboard' );
+const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
 
 const testWorkspaces = {
 	name: 'yarn',
@@ -145,11 +145,10 @@ try {
 	// Since this task is so much larger than the others, we give it a large amount
 	// of CPU and run it by itself. We let other tasks complete in parallel with
 	// less CPU since they'll still finish much more quickly.
-	// The Dashboard tests follow on the same CPU budget.
-	const testClientTask = ( async () => {
-		await runTask( testClient );
-		await runVitestTask( testDashboard );
-	} )();
+	const testClientTask = runTask( testClient );
+
+	// Runs alongside the client tests, which take longer than the rest, so it stays off the critical path.
+	const testDashboardTask = runVitestTask( testDashboard );
 
 	// The async () wrapper is needed so that the Promise settles only after
 	// all tasks finish. If we instead use Promise.all with a chain of Promises,
@@ -178,7 +177,7 @@ try {
 		await runTask( testApps );
 	} )();
 
-	await completeTasks( [ testClientTask, tscTasks, otherTestTasks ] );
+	await completeTasks( [ testClientTask, testDashboardTask, tscTasks, otherTestTasks ] );
 } catch ( exitCode ) {
 	console.error( 'One or more tasks failed.' );
 	process.exit( exitCode );
