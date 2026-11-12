@@ -84,10 +84,13 @@ describe( 'redirectToWpAdminStats()', () => {
 	} );
 
 	test( 'sends the traffic page to wp-admin Stats, keyed by blog ID', async () => {
-		await redirectToWpAdminStats( makeContext(), next );
+		const context = makeContext();
+
+		await redirectToWpAdminStats( context, next );
 
 		expect( replace ).toHaveBeenCalledWith( `${ STATS_URL }#!/stats/day/${ SITE_ID }` );
 		expect( next ).not.toHaveBeenCalled();
+		expect( context.store.dispatch ).not.toHaveBeenCalled();
 	} );
 
 	test( 'keeps the rest of the route and the query string', async () => {
@@ -179,14 +182,5 @@ describe( 'redirectToWpAdminStats()', () => {
 
 		expect( next ).toHaveBeenCalled();
 		expect( replace ).not.toHaveBeenCalled();
-	} );
-
-	test( 'does not ask for modules on a site that is not Jetpack', async () => {
-		const context = makeContext();
-
-		await redirectToWpAdminStats( context, next );
-
-		expect( context.store.dispatch ).not.toHaveBeenCalled();
-		expect( replace ).toHaveBeenCalled();
 	} );
 } );

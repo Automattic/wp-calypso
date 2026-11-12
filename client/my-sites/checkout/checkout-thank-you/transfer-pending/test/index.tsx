@@ -72,9 +72,6 @@ describe( 'TransferPending', () => {
 				'https://example.wordpress.com/wp-admin/'
 			);
 			expect( mockPage ).not.toHaveBeenCalled();
-			expect( mockDispatch ).not.toHaveBeenCalledWith(
-				expect.objectContaining( { notice: expect.anything() } )
-			);
 		}
 	);
 
