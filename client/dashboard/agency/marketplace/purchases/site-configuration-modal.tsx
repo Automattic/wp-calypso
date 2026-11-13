@@ -196,6 +196,8 @@ interface BaseConfigurationFormProps {
 	closeModal?: () => void;
 	/** Lets a surrounding modal hold itself open until the site is created. */
 	onCreatingChange?: ( isCreating: boolean ) => void;
+	/** Runs instead of closing and going to Sites, for a flow that shows the new site itself. */
+	onCreated?: ( siteId: number ) => void;
 }
 
 /**
@@ -204,10 +206,10 @@ interface BaseConfigurationFormProps {
  * free development license on a site the agency has already paid for.
  */
 type SiteConfigurationFormProps =
-	| ( BaseConfigurationFormProps & { isDevSite: true } )
+	| ( BaseConfigurationFormProps & { isDevSite: true; importSessionId?: string } )
 	| ( BaseConfigurationFormProps & { isDevSite: false; pendingSiteId: number } );
 
-function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
+export function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
 	const { agencyId, closeModal, onCreatingChange, isDevSite } = props;
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
@@ -303,6 +305,10 @@ function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
 			trackProvisioningSite( siteId );
 			// The next site gets its own address, not the one just claimed.
 			siteAddress.refreshSuggestion();
+			if ( props.onCreated ) {
+				props.onCreated( siteId );
+				return;
+			}
 			closeModal?.();
 			navigate( { to: '/sites' } );
 		};
@@ -315,7 +321,11 @@ function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
 			// A development site has no pending record to provision, so the
 			// response is the only place its id comes from.
 			provisionDevSite.mutate(
-				{ ...configuration, site_name: siteAddress.address },
+				{
+					...configuration,
+					site_name: siteAddress.address,
+					import_session_id: props.importSessionId,
+				},
 				{ onSuccess: ( { site } ) => onCreated( site.id ), onError }
 			);
 		} else {
