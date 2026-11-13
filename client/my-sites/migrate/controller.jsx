@@ -7,11 +7,13 @@ export function migrateSite( context, next ) {
 		context.params.sourceSiteId &&
 		getSiteId( context.store.getState(), context.params.sourceSiteId );
 
-	context.primary = <SectionMigrate sourceSiteId={ sourceSiteId } />;
+	context.primary = (
+		<SectionMigrate sourceSiteId={ sourceSiteId } fromSite={ context.query[ 'from-site' ] } />
+	);
 
 	next();
 }
 
 export function redirectToMigrationFlow( context ) {
-	goToMigrationFlow( context.params.site_id );
+	goToMigrationFlow( context.params.site_id, context.query[ 'from-site' ] );
 }

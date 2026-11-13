@@ -33,6 +33,7 @@ describe( 'SectionMigrate', () => {
 			<SectionMigrate
 				targetSiteId={ 123 }
 				targetSiteSlug="example.com"
+				fromSite="https://source.example"
 				translate={ ( text ) => text }
 				updateSiteMigrationMeta={ jest.fn() }
 				requestSite={ jest.fn() }
@@ -40,7 +41,9 @@ describe( 'SectionMigrate', () => {
 		);
 
 		await waitFor( () =>
-			expect( locationReplace ).toHaveBeenCalledWith( '/setup/site-migration?siteSlug=example.com' )
+			expect( locationReplace ).toHaveBeenCalledWith(
+				'/setup/site-migration?siteSlug=example.com&from=https%3A%2F%2Fsource.example'
+			)
 		);
 	} );
 } );

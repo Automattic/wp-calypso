@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 
-export function goToMigrationFlow( siteSlug ) {
+export function goToMigrationFlow( siteSlug, from ) {
 	const flow = '/setup/site-migration';
-	window.location.replace( siteSlug ? addQueryArgs( flow, { siteSlug } ) : flow );
+	window.location.replace( siteSlug || from ? addQueryArgs( flow, { siteSlug, from } ) : flow );
 }
