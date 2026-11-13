@@ -54,6 +54,10 @@ export interface UseGridPlansParams {
 	 */
 	useMcpFeature?: boolean;
 	/**
+	 * When true, hide the "Free" badge on the Personal plan's custom domain feature.
+	 */
+	hideFreeDomainBadge?: boolean;
+	/**
 	 * When true, use the pricing grid redesign taglines for plan headers.
 	 */
 	usePlansGridRedesignNewDescription?: boolean;

@@ -1115,6 +1115,7 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignNewDescription,
 		useMcpFeature,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		hideFreeDomainBadge: isDomainMove,
 	} );
 
 	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
