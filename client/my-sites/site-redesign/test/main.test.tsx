@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { act, configure, screen, waitFor } from '@testing-library/react';
@@ -24,6 +25,10 @@ jest.mock( '@automattic/calypso-router', () => {
 	return { __esModule: true, default: mock };
 } );
 jest.mock( 'calypso/components/data/document-head', () => () => null );
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../api', () => ( {
 	...jest.requireActual( '../api' ),
 	fetchRedesign: jest.fn(),
@@ -72,7 +77,8 @@ const session = ( overrides: Partial< Redesign > = {} ): Redesign => ( {
 const renderPage = (
 	resume = false,
 	redesignId: string | null = REDESIGN_ID,
-	queryClient = new QueryClient()
+	queryClient = new QueryClient(),
+	entryRef: string | null = null
 ) =>
 	renderWithProvider(
 		<SiteRedesign
@@ -80,6 +86,7 @@ const renderPage = (
 			siteSlug="example.wordpress.com"
 			redesignId={ redesignId }
 			resume={ resume }
+			entryRef={ entryRef }
 		/>,
 		{ queryClient }
 	);
@@ -99,20 +106,24 @@ const selectDesign = async ( name: string, preview: string, { withBar = true } =
 	}
 };
 
-describe( 'SiteRedesign', () => {
-	beforeEach( () => {
-		jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
-		jest.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
-			Promise.resolve( {
-				generation_id: generationId,
-				path: '/',
-				html: '<p>preview</p>',
-				routes: [],
-			} )
-		);
-	} );
-	afterEach( () => jest.clearAllMocks() );
+beforeEach( () => {
+	jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+	jest.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
+		Promise.resolve( {
+			generation_id: generationId,
+			path: '/',
+			html: '<p>preview</p>',
+			routes: [],
+		} )
+	);
+} );
+afterEach( () => {
+	jest.clearAllMocks();
+	// The funnel remembers its steps per tab.
+	window.sessionStorage.clear();
+} );
 
+describe( 'SiteRedesign', () => {
 	it( 'automatically starts an empty first session once, including in Strict Mode', async () => {
 		jest
 			.mocked( openRedesign )
@@ -1369,6 +1380,164 @@ describe( 'SiteRedesign', () => {
 				selector: '.components-notice__content',
 			} )
 		).toBeVisible();
+	} );
+} );
+
+describe( 'SiteRedesign funnel events', () => {
+	const PAID = {
+		can_preview: true,
+		can_apply: true,
+		reason: null,
+		required_plan: 'personal',
+	};
+	const eventsNamed = ( name: string ) =>
+		jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter( ( [ event ] ) => event === name )
+			.map( ( [ , properties ] ) => properties );
+	const renderFromBar = ( redesignId: string | null, resume = false ) =>
+		renderPage( resume, redesignId, new QueryClient(), 'marketing_bar' );
+
+	it( 'follows the owner from the bar to checkout, keeping where they came from', async () => {
+		jest.mocked( openRedesign ).mockResolvedValue( session() );
+		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		jest.mocked( applyRedesign ).mockRejectedValue( {
+			code: 'site_redesign_upgrade_required',
+			message: 'Upgrade',
+			data: { status: 402, checkout_url: CHECKOUT_URL },
+		} );
+		const { rerender } = renderFromBar( null );
+
+		await waitFor( () =>
+			expect( page.replace ).toHaveBeenCalledWith(
+				`/site-redesign/example.wordpress.com?redesign=${ REDESIGN_ID }&ref=marketing_bar`
+			)
+		);
+		// The page follows its new URL, as the router does after the replace.
+		rerender(
+			<SiteRedesign
+				siteId={ 1 }
+				siteSlug="example.wordpress.com"
+				redesignId={ REDESIGN_ID }
+				resume={ false }
+				entryRef="marketing_bar"
+			/>
+		);
+		await selectDesign( 'Design 2 of 4', 'Preview of design 2' );
+		await userEvent.click( chooseButton() );
+		await waitFor( () => expect( page ).toHaveBeenCalled() );
+
+		expect( eventsNamed( 'calypso_site_redesign_view' ) ).toEqual( [
+			{ ref: 'marketing_bar', redesign_id: null, resume: false },
+		] );
+		expect( eventsNamed( 'calypso_site_redesign_candidate_shown' ) ).toHaveLength( 1 );
+		expect( eventsNamed( 'calypso_site_redesign_candidate_shown' )[ 0 ] ).toMatchObject( {
+			ref: 'marketing_bar',
+			redesign_id: REDESIGN_ID,
+		} );
+		expect( eventsNamed( 'calypso_site_redesign_pick' ) ).toEqual( [
+			{
+				ref: 'marketing_bar',
+				redesign_id: REDESIGN_ID,
+				generation_id: candidate( 2 ).id,
+				can_apply: false,
+			},
+		] );
+		expect( eventsNamed( 'calypso_site_redesign_checkout_start' ) ).toEqual( [
+			{ ref: 'marketing_bar', redesign_id: REDESIGN_ID },
+		] );
+		const [ [ checkoutPath ] ] = jest.mocked( page ).mock.calls as unknown as [ [ string ] ];
+		const checkout = new URL( checkoutPath, 'https://x.test' );
+		expect( checkout.pathname ).toBe( '/checkout/example.wordpress.com/personal' );
+		expect( checkout.searchParams.get( 'redirect_to' ) ).toBe(
+			`/site-redesign/example.wordpress.com?redesign=${ REDESIGN_ID }&resume=apply&ref=marketing_bar`
+		);
+	} );
+
+	it( 'records the purchase once on the checkout return, then the install', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { pending_apply: candidate( 3 ).id, eligibility: PAID } ) );
+		jest.mocked( applyRedesign ).mockResolvedValue(
+			session( {
+				status: 'installed',
+				selected: candidate( 3 ).id,
+				eligibility: PAID,
+				apply: { status: 'succeeded', error: null },
+			} )
+		);
+		renderFromBar( REDESIGN_ID, true );
+
+		await waitFor( () =>
+			expect( eventsNamed( 'calypso_site_redesign_installed' ) ).toEqual( [
+				{ ref: 'marketing_bar', redesign_id: REDESIGN_ID, generation_id: candidate( 3 ).id },
+			] )
+		);
+		expect( eventsNamed( 'calypso_site_redesign_purchase_complete' ) ).toEqual( [
+			{ ref: 'marketing_bar', redesign_id: REDESIGN_ID },
+		] );
+	} );
+
+	it( 'counts the purchase once when the checkout return is reloaded', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'applying',
+				pending_apply: candidate( 3 ).id,
+				eligibility: PAID,
+				apply: { status: 'delivering', error: null },
+			} )
+		);
+		const first = renderFromBar( REDESIGN_ID, true );
+		await waitFor( () =>
+			expect( eventsNamed( 'calypso_site_redesign_purchase_complete' ) ).toHaveLength( 1 )
+		);
+		first.unmount();
+
+		renderFromBar( REDESIGN_ID, true );
+		await waitFor( () => expect( eventsNamed( 'calypso_site_redesign_view' ) ).toHaveLength( 2 ) );
+		expect( eventsNamed( 'calypso_site_redesign_purchase_complete' ) ).toHaveLength( 1 );
+	} );
+
+	it( 'records no purchase on a return without the plan', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
+		renderFromBar( REDESIGN_ID, true );
+
+		expect(
+			await screen.findByText( 'Finishing your purchase…', { selector: 'span' } )
+		).toBeVisible();
+		expect( eventsNamed( 'calypso_site_redesign_purchase_complete' ) ).toEqual( [] );
+	} );
+
+	it( 'records the design going live', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'applied',
+				selected: candidate( 1 ).id,
+				apply: { status: 'succeeded', error: null },
+			} )
+		);
+		renderFromBar( REDESIGN_ID );
+
+		await waitFor( () =>
+			expect( eventsNamed( 'calypso_site_redesign_applied' ) ).toEqual( [
+				{ ref: 'marketing_bar', redesign_id: REDESIGN_ID, generation_id: candidate( 1 ).id },
+			] )
+		);
+	} );
+
+	it( 'sends no ref when the page was not opened from an entry point', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		renderPage();
+
+		await waitFor( () =>
+			expect( eventsNamed( 'calypso_site_redesign_candidate_shown' ) ).toHaveLength( 1 )
+		);
+		expect( eventsNamed( 'calypso_site_redesign_view' ) ).toEqual( [
+			{ ref: undefined, redesign_id: REDESIGN_ID, resume: false },
+		] );
+		expect( page.replace ).not.toHaveBeenCalled();
 	} );
 } );
 
