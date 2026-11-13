@@ -15,6 +15,7 @@ export {
 	isZendeskSurveyMessage,
 } from './csat';
 export { isStaleOdieChat } from './chat-utils';
+export { shouldShowAiDisclosureLine } from './should-show-ai-disclosure-line';
 export {
 	getHumanSupportFlags,
 	getLatestHumanSupportFlags,

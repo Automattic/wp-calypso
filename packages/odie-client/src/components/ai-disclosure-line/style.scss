@@ -1,0 +1,26 @@
+// Its own colors and a minimum font size, rather than the host page's.
+.odie-ai-disclosure-line {
+	flex-shrink: 0;
+	box-sizing: border-box;
+	width: 100%;
+	margin: 0;
+	padding: 8px 16px;
+	background: #f8f8f8;
+	color: #1e1e1e;
+	font-size: max( 12px, 0.75rem );
+	line-height: 1.4;
+
+	@media screen {
+		:root[data-theme='dark'] & {
+			background: var( --dashboard__background-color, #1e1e1e );
+			color: var( --dashboard__text-color, #e0e0e0 );
+		}
+	}
+
+	@media screen and ( prefers-color-scheme: dark ) {
+		:root[data-theme='system'] & {
+			background: var( --dashboard__background-color, #1e1e1e );
+			color: var( --dashboard__text-color, #e0e0e0 );
+		}
+	}
+}
