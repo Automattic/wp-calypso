@@ -42,6 +42,8 @@ describe( '<ManageSubscriptionCard />', () => {
 		const getToggle = () => screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } );
 		await waitFor( () => expect( getToggle() ).toBeChecked() );
 		expect( getToggle() ).toBeDisabled();
+		// The rest of the card keeps the confirmed state until the purchase is refetched.
+		expect( screen.getByText( 'Expires on February 1, 2027.' ) ).toBeVisible();
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		await waitFor( () => expect( getToggle() ).toBeEnabled() );

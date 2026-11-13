@@ -928,10 +928,12 @@ function WPComResourceMeters( {
 
 function getFields( {
 	isMutationPending,
+	pendingAutoRenew,
 	user,
 	purchase,
 }: {
 	isMutationPending?: boolean;
+	pendingAutoRenew?: boolean;
 	user: User;
 	purchase: Purchase;
 } ): Field< Purchase >[] {
@@ -1056,7 +1058,7 @@ function getFields( {
 									? __( 'Re-activate subscription' )
 									: field.label
 							}
-							checked={ getValue( { item: purchase } ) }
+							checked={ pendingAutoRenew ?? getValue( { item: purchase } ) }
 							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 							onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
 							help={ help }
@@ -1134,11 +1136,14 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	const formData =
-		isMutationPending && pendingAutoRenew
-			? { ...purchase, is_auto_renew_enabled: pendingAutoRenew.autoRenew }
-			: purchase;
-	const fields = getFields( { isMutationPending, user, purchase } );
+	// Only the toggle moves ahead of the refetch. The help text and payment method below it wait
+	// for the updated purchase, so the card doesn't show a state the server hasn't confirmed yet.
+	const fields = getFields( {
+		isMutationPending,
+		pendingAutoRenew: isMutationPending ? pendingAutoRenew?.autoRenew : undefined,
+		user,
+		purchase,
+	} );
 	if ( fields.length === 0 && ! error ) {
 		return null;
 	}
@@ -1146,7 +1151,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		<Card>
 			<CardBody>
 				<DataForm< Purchase >
-					data={ formData }
+					data={ purchase }
 					fields={ fields }
 					form={ form }
 					onChange={ ( newData ) => {
