@@ -254,15 +254,6 @@ export function getSignature( blocks, note ) {
 	} );
 }
 
-export function formatString() {
-	const args = [].slice.apply( arguments );
-	const str = args.shift();
-
-	return str.replace( /{(\d+)}/g, function ( match, number ) {
-		return typeof args[ number ] !== 'undefined' ? args[ number ] : match;
-	} );
-}
-
 export function zipWithSignature( blocks, note ) {
 	const signature = getSignature( blocks, note );
 
@@ -275,18 +266,24 @@ export function zipWithSignature( blocks, note ) {
 }
 
 /**
- * An http(s) URL as it can go in a double-quoted `href` of HTML built by hand, or null. Parsing
- * rejects `<` and `>` and percent-encodes `"` everywhere but the host, which keeps it as is.
+ * A new-tab link to an http(s) URL as HTML, or null for any other URL. Built with the DOM, like
+ * indices-to-html, so serializing it escapes quotes in the URL and text.
  */
-export function getLinkHref( url ) {
+export function getLinkHtml( url, text ) {
 	try {
-		const { protocol, href } = new URL( url );
-		return ( protocol === 'http:' || protocol === 'https:' ) && ! href.includes( '"' )
-			? href
-			: null;
+		const { protocol } = new URL( url );
+		if ( protocol !== 'http:' && protocol !== 'https:' ) {
+			return null;
+		}
 	} catch {
 		return null;
 	}
+
+	const link = document.createElement( 'a' );
+	link.setAttribute( 'target', '_blank' );
+	link.setAttribute( 'href', url );
+	link.textContent = text;
+	return link.outerHTML;
 }
 
 export const linkProps = ( note, block ) => {
