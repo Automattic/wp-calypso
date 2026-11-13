@@ -46,18 +46,15 @@ const DEFAULT_VIEW: DnsView = {
 	search: '',
 	page: 1,
 	perPage: 20,
-	titleField: 'type',
 	sort: {
 		field: 'type',
 		direction: 'asc',
 	},
-	fields: [ 'name', 'value' ],
+	fields: [ 'type', 'name', 'value' ],
 	filters: [],
 	layout: {
 		styles: {
 			name: { maxWidth: '140px', minWidth: '72px' },
-			// DataViews shrinks every column but the title one to fit, so the value column has to claim the spare width.
-			value: { width: '100%' },
 		},
 	},
 };
