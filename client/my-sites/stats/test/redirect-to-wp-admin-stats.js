@@ -17,7 +17,15 @@ const SITE_ID = 123;
 const ADMIN_URL = 'https://example.com/wp-admin/';
 const STATS_URL = `${ ADMIN_URL }admin.php?page=stats`;
 
-function makeState( { support, siteLoaded = true, jetpack, statsModuleActive, adminUrl } ) {
+function makeState( {
+	support,
+	siteLoaded = true,
+	jetpack,
+	statsModuleActive,
+	adminUrl,
+	siteOptions,
+	siteProps,
+} ) {
 	return {
 		support,
 		sites: {
@@ -27,7 +35,8 @@ function makeState( { support, siteLoaded = true, jetpack, statsModuleActive, ad
 							ID: SITE_ID,
 							URL: 'https://example.com',
 							jetpack,
-							options: { admin_url: adminUrl },
+							options: { admin_url: adminUrl, ...siteOptions },
+							...siteProps,
 						},
 					}
 				: {},
@@ -56,8 +65,11 @@ function makeContext( {
 	statsModuleActive,
 	fetchedStatsModuleActive,
 	adminUrl = ADMIN_URL,
+	siteOptions,
+	siteProps,
 } = {} ) {
-	let state = makeState( { support, siteLoaded, jetpack, statsModuleActive, adminUrl } );
+	const siteState = { support, jetpack, adminUrl, siteOptions, siteProps };
+	let state = makeState( { ...siteState, siteLoaded, statsModuleActive } );
 
 	page.current = pathname;
 
@@ -73,15 +85,10 @@ function makeContext( {
 					if ( ! siteLoadable ) {
 						throw new Error( 'unknown_blog' );
 					}
-					state = makeState( { support, jetpack, statsModuleActive, adminUrl } );
+					state = makeState( { ...siteState, statsModuleActive } );
 				}
 				if ( action.type === 'FETCH_MODULE_LIST' ) {
-					state = makeState( {
-						support,
-						jetpack,
-						statsModuleActive: fetchedStatsModuleActive,
-						adminUrl,
-					} );
+					state = makeState( { ...siteState, statsModuleActive: fetchedStatsModuleActive } );
 				}
 			} ),
 		},
@@ -222,6 +229,42 @@ describe( 'redirectToWpAdminStats()', () => {
 		expect( replace ).toHaveBeenCalledWith( `${ STATS_URL }#!/stats/day/${ SITE_ID }` );
 	} );
 
+	test( 'redirects a Jetpack site whose own module list has Stats on, without asking for it', async () => {
+		const context = makeContext( {
+			jetpack: true,
+			siteOptions: { active_modules: [ 'stats' ] },
+		} );
+
+		await redirectToWpAdminStats( context, next );
+
+		expect( replace ).toHaveBeenCalledWith( `${ STATS_URL }#!/stats/day/${ SITE_ID }` );
+		expect( context.store.dispatch ).not.toHaveBeenCalled();
+	} );
+
+	test( 'stays for a Jetpack site whose own module list has Stats off, without asking for it', async () => {
+		const context = makeContext( { jetpack: true, siteOptions: { active_modules: [] } } );
+
+		await redirectToWpAdminStats( context, next );
+
+		expect( next ).toHaveBeenCalled();
+		expect( replace ).not.toHaveBeenCalled();
+		expect( context.store.dispatch ).not.toHaveBeenCalled();
+	} );
+
+	test( 'trusts a loaded module list over the site option', async () => {
+		await redirectToWpAdminStats(
+			makeContext( {
+				jetpack: true,
+				statsModuleActive: false,
+				siteOptions: { active_modules: [ 'stats' ] },
+			} ),
+			next
+		);
+
+		expect( next ).toHaveBeenCalled();
+		expect( replace ).not.toHaveBeenCalled();
+	} );
+
 	test( 'asks for the module list before redirecting a Jetpack site it has not loaded', async () => {
 		const context = makeContext( { jetpack: true, fetchedStatsModuleActive: true } );
 
@@ -260,6 +303,21 @@ describe( 'redirectToWpAdminStats()', () => {
 
 	test( 'stays when the module list cannot be loaded', async () => {
 		await redirectToWpAdminStats( makeContext( { jetpack: true } ), next );
+
+		expect( next ).toHaveBeenCalled();
+		expect( replace ).not.toHaveBeenCalled();
+	} );
+
+	test.each( [
+		[ 'a domain-only site', { siteOptions: { is_domain_only: true } } ],
+		[ 'a site being migrated', { siteProps: { site_migration: { status: 'restoring' } } } ],
+		[ 'a DIFM site being built', { siteOptions: { is_difm_lite_in_progress: true } } ],
+		[
+			'a site whose eCommerce trial expired',
+			{ siteProps: { was_ecommerce_trial: true, plan: { product_slug: 'free_plan' } } },
+		],
+	] )( 'leaves %s to site selection', async ( _, site ) => {
+		await redirectToWpAdminStats( makeContext( site ), next );
 
 		expect( next ).toHaveBeenCalled();
 		expect( replace ).not.toHaveBeenCalled();

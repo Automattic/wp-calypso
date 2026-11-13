@@ -1,9 +1,36 @@
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
+import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteAdminUrl, getSiteId, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	getSiteId,
+	getSitePlanSlug,
+	isJetpackModuleActive as isJetpackModuleActiveViaSiteOption,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
+
+/**
+ * Whether `siteSelection` keeps the site on a Calypso screen of its own whatever the route: an
+ * expired eCommerce trial, a migration in progress, a domain-only site or a DIFM build in progress.
+ */
+function isHeldOnOwnScreen( state, siteId ) {
+	return (
+		( wasEcommerceTrialSite( state, siteId ) &&
+			! wasUpgradedFromTrialSite( state, siteId ) &&
+			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( getSitePlanSlug( state, siteId ) ) ) ||
+		isSiteMigrationInProgress( state, siteId ) ||
+		isDomainOnlySite( state, siteId ) ||
+		isDIFMLiteInProgress( state, siteId )
+	);
+}
 
 /**
  * Stats now lives in wp-admin, which serves the same routes as this section behind
@@ -52,26 +79,32 @@ export default async function redirectToWpAdminStats( context, next ) {
 
 	const statsAdminUrl = getSiteAdminUrl( getState(), siteId, 'admin.php?page=stats' );
 
-	if ( ! statsAdminUrl ) {
+	if ( ! statsAdminUrl || isHeldOnOwnScreen( getState(), siteId ) ) {
 		next();
 		return;
 	}
 
 	// A Jetpack site with the Stats module off has no wp-admin Stats page; this section offers
-	// to switch the module on instead. The module list usually isn't loaded yet on arrival, since
-	// this section only asks for it once it renders, so ask here and redirect only when the module
-	// is known to be on.
+	// to switch the module on instead. The module list usually isn't loaded yet on arrival, but the
+	// site's own list of active modules is. Ask the site for the module list, which can be slow, only
+	// when neither is known, and redirect only when the module is known to be on.
 	if ( isJetpackSite( getState(), siteId ) ) {
-		if ( isJetpackModuleActive( getState(), siteId, 'stats' ) === null ) {
+		let isStatsActive =
+			isJetpackModuleActive( getState(), siteId, 'stats' ) ??
+			isJetpackModuleActiveViaSiteOption( getState(), siteId, 'stats' );
+
+		if ( isStatsActive === null ) {
 			await dispatch( fetchModuleList( siteId ) );
 
 			// The user may have moved on while the module list loaded.
 			if ( page.current !== context.path ) {
 				return;
 			}
+
+			isStatsActive = isJetpackModuleActive( getState(), siteId, 'stats' );
 		}
 
-		if ( isJetpackModuleActive( getState(), siteId, 'stats' ) !== true ) {
+		if ( isStatsActive !== true ) {
 			next();
 			return;
 		}
