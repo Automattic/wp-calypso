@@ -99,6 +99,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 					) }
 					{ showTitle && (
 						<FormattedHeader
+							as="div"
 							align="left"
 							headerText={ title }
 							subHeaderText={ subtitle }
