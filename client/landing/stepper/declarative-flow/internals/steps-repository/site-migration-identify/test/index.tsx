@@ -600,6 +600,32 @@ describe( 'SiteMigrationIdentify', () => {
 			} );
 		} );
 
+		it( 'keeps an unchecked edit after choosing WordPress from the platform list', async () => {
+			const submit = jest.fn();
+			mockFlowState.set( 'migrationSourceUrl', 'first.example.com' );
+			const { unmount } = render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://first.example.com' }
+			);
+			expect( getInput() ).toHaveValue( 'first.example.com' );
+
+			await user.clear( getInput() );
+			await user.type( getInput(), 'second.example.com' );
+			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://second.example.com',
+			} );
+			unmount();
+
+			// Selecting WordPress in the list returns here with the edited address in `from`.
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://second.example.com&manualPlatform=wordpress' }
+			);
+			expect( getInput() ).toHaveValue( 'second.example.com' );
+		} );
+
 		it( 'edits the supplied address and waits for platform and hosting checks before continuing', async () => {
 			const submit = jest.fn();
 			render(

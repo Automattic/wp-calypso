@@ -271,6 +271,8 @@ export const Analyzer: FC< Props > = ( {
 						if ( ! isReprintFlow || ! url ) {
 							return onSkip();
 						}
+						// The platform list hands this address back in `from`, so save it as the entered one.
+						set( 'migrationSourceUrl', url );
 						onSkip( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );
 					} }
 					placeholder={ translate( 'your-existing-site.com' ) }
