@@ -16,6 +16,7 @@ let mockZendeskJwt: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
+let mockIsOdieChatFetching = false;
 const mockGetZendeskConversation = vi.fn();
 const mockGetOdieTransferMessages = vi.fn().mockReturnValue( [] );
 const mockGetZendeskConversationHistory = vi.fn();
@@ -61,7 +62,7 @@ vi.mock( '../../data', () => ( {
 		'zendesk-conversation-history',
 		conversationId,
 	],
-	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
+	useOdieChat: () => ( { data: mockOdieChat, isFetching: mockIsOdieChatFetching } ),
 } ) );
 
 vi.mock( '../../data/use-current-support-interaction', () => ( {
@@ -122,6 +123,10 @@ beforeEach( () => {
 	mockCurrentSupportInteraction = undefined;
 	mockConversation = null;
 	mockOdieChat = undefined;
+	mockIsOdieChatFetching = false;
+	// Also drops implementations queued for one call that a failed test never used.
+	mockGetZendeskConversation.mockReset();
+	mockGetZendeskConversationHistory.mockReset();
 	mockGetZendeskConversation.mockImplementation( () => Promise.resolve( mockConversation ) );
 	mockGetZendeskConversationHistory.mockImplementation( () =>
 		Promise.resolve( { messages: [], truncated: false } )
@@ -622,6 +627,97 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 		expect( result.current.isLoadingZendeskHistory ).toBe( false );
 	} );
 
+	it( 'does not load them again for a background refresh when the latest page has not moved', async () => {
+		const { result } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 1 );
+			expect( result.current.isLoadingZendeskHistory ).toBe( false );
+		} );
+
+		act( () => result.current.refreshChatInBackground() );
+
+		// The refetched conversation has been merged once the cached history was read for it.
+		await waitFor( () => {
+			expect( mockGetQueryData ).toHaveBeenCalledTimes( 2 );
+		} );
+		await act( async () => {
+			await Promise.resolve();
+		} );
+		expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 1 );
+		expect( result.current.isLoadingZendeskHistory ).toBe( false );
+	} );
+
+	it( 'loads them again for a background refresh when the latest page moved', async () => {
+		mockConversation = {
+			id: 'conv-1',
+			messages: [ receivedMessage( 3, 'third', 300 ), receivedMessage( 4, 'fourth', 400 ) ],
+		};
+		mockGetQueryData.mockReturnValue( [ receivedMessage( 1, 'first', 100 ) ] );
+		mockGetZendeskConversationHistory.mockImplementation( ( { before }: { before: number } ) =>
+			Promise.resolve( {
+				messages:
+					before === 400
+						? [ receivedMessage( 1, 'first', 100 ), receivedMessage( 3, 'third', 300 ) ]
+						: [ receivedMessage( 1, 'first', 100 ) ],
+				truncated: false,
+			} )
+		);
+		const { result } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+				'chat-started',
+				'first',
+				'third',
+				'fourth',
+			] );
+			expect( result.current.isLoadingZendeskHistory ).toBe( false );
+		} );
+
+		// While the user was away, a reply pushed 'third' out of the latest page.
+		mockConversation = {
+			id: 'conv-1',
+			messages: [ receivedMessage( 4, 'fourth', 400 ), receivedMessage( 5, 'fifth', 500 ) ],
+		};
+		act( () => result.current.refreshChatInBackground() );
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { conversationId: 'conv-1', before: 400 } )
+			);
+			expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+				'chat-started',
+				'first',
+				'third',
+				'fourth',
+				'fifth',
+			] );
+		} );
+	} );
+
+	it( 'tries them again on a background refresh when they could not be loaded', async () => {
+		// Nothing is cached: the older messages failed to load.
+		mockGetZendeskConversationHistory.mockImplementationOnce( () =>
+			Promise.reject( new Error( 'network' ) )
+		);
+		const { result } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 1 );
+			expect( result.current.isLoadingZendeskHistory ).toBe( false );
+		} );
+
+		act( () => result.current.refreshChatInBackground() );
+
+		await waitFor( () => {
+			expect( mockGetZendeskConversationHistory ).toHaveBeenCalledTimes( 2 );
+		} );
+		expect( mockGetZendeskConversationHistory ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { conversationId: 'conv-1', before: 300 } )
+		);
+	} );
+
 	it( 'keeps the latest page when the history cannot be loaded', async () => {
 		mockGetZendeskConversationHistory.mockImplementation( () =>
 			Promise.reject( new Error( 'unauthorized' ) )
@@ -680,6 +776,316 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 					checkout_support_variation: 'hybrid',
 				}
 			);
+		} );
+	} );
+} );
+
+describe( 'useGetCombinedChat — refreshing in the background', () => {
+	const odieMessage = ( id: number, role: 'user' | 'bot', content: string ): Message =>
+		( { content, role, type: 'message', message_id: id } ) as unknown as Message;
+
+	const contents = ( messages: Message[] ) => messages.map( ( message ) => message.content );
+
+	const hasMessage = ( messages: Message[], id: number ) =>
+		messages.some( ( message ) => message.message_id === id );
+
+	// Records each status the chat renders with, to tell whether the loader showed.
+	const renderTrackingStatuses = () => {
+		const statuses: string[] = [];
+		const hook = renderHook( () => {
+			const combinedChat = useGetCombinedChat( true, false );
+			statuses.push( combinedChat.mainChatState.status );
+			return combinedChat;
+		} );
+		return { ...hook, statuses };
+	};
+
+	// Lets the effects and the promises they started settle.
+	const settle = () =>
+		act( async () => {
+			await Promise.resolve();
+			await Promise.resolve();
+		} );
+
+	describe( 'an AI chat', () => {
+		const askedAndAnswered = [ odieMessage( 1, 'user', 'q1' ), odieMessage( 2, 'bot', 'a1' ) ];
+
+		beforeEach( () => {
+			mockCurrentSupportInteraction = { uuid: 'int-1', odieId: 42 };
+			mockOdieChat = { odieId: 42, wpcomUserId: 99, messages: askedAndAnswered };
+		} );
+
+		it( 'shows what another tab added, without the loading state', async () => {
+			const { result, rerender, statuses } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( contents( result.current.mainChatState.messages ) ).toEqual( [ 'q1', 'a1' ] );
+			} );
+			statuses.length = 0;
+
+			// As the focus hook does it: the Odie chat refetch is in flight when the refresh is asked for.
+			mockIsOdieChatFetching = true;
+			act( () => result.current.refreshChatInBackground() );
+			mockOdieChat = {
+				...mockOdieChat,
+				messages: [
+					...askedAndAnswered,
+					odieMessage( 3, 'user', 'q2' ),
+					odieMessage( 4, 'bot', 'a2' ),
+				],
+			};
+			mockIsOdieChatFetching = false;
+			rerender();
+
+			await waitFor( () => {
+				expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+					'q1',
+					'a1',
+					'q2',
+					'a2',
+				] );
+			} );
+			expect( statuses ).not.toContain( 'loading' );
+		} );
+
+		it( 'keeps the chat as it is when the refresh brings nothing new', async () => {
+			const { result, rerender } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( result.current.mainChatState.status ).toBe( 'loaded' );
+			} );
+			// A notice that only this tab shows, such as the one about the conversation limit.
+			act( () =>
+				result.current.setMainChatState( ( chat ) => ( {
+					...chat,
+					messages: [
+						...chat.messages,
+						{ content: 'notice', role: 'bot', internal_message_id: 'notice-1' } as Message,
+					],
+				} ) )
+			);
+			const chatBefore = result.current.mainChatState;
+
+			mockIsOdieChatFetching = true;
+			act( () => result.current.refreshChatInBackground() );
+			mockOdieChat = {
+				...mockOdieChat,
+				messages: askedAndAnswered.map( ( message ) => ( { ...message } ) ),
+			};
+			mockIsOdieChatFetching = false;
+			rerender();
+			await settle();
+
+			expect( result.current.mainChatState ).toBe( chatBefore );
+		} );
+
+		const question = { content: 'q2', role: 'user', type: 'message' } as Message;
+		const answer = { content: 'a2', role: 'bot', type: 'message' } as Message;
+
+		it.each( [
+			{ when: 'while it is sent', sent: [ question ], status: 'sending' },
+			{ when: 'once it is answered', sent: [ question, answer ], status: 'loaded' },
+		] as const )( 'keeps a message sent during the refresh, $when', async ( { sent, status } ) => {
+			const { result, rerender } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( result.current.mainChatState.status ).toBe( 'loaded' );
+			} );
+
+			mockIsOdieChatFetching = true;
+			act( () => result.current.refreshChatInBackground() );
+			act( () =>
+				result.current.setMainChatState( ( chat ) => ( {
+					...chat,
+					messages: [ ...chat.messages, ...sent ],
+					status,
+				} ) )
+			);
+			// The refetch started before the question reached the server.
+			mockOdieChat = {
+				...mockOdieChat,
+				messages: [ ...askedAndAnswered, odieMessage( 5, 'bot', 'from another tab' ) ],
+			};
+			mockIsOdieChatFetching = false;
+			rerender();
+			await settle();
+
+			expect( contents( result.current.mainChatState.messages ) ).toEqual( [
+				'q1',
+				'a1',
+				...sent.map( ( message ) => message.content ),
+			] );
+			expect( result.current.mainChatState.status ).toBe( status );
+		} );
+
+		it( 'leaves a transfer to a human that starts during the refresh alone', async () => {
+			const { result, rerender } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( result.current.mainChatState.status ).toBe( 'loaded' );
+			} );
+			const messagesBefore = result.current.mainChatState.messages;
+
+			mockIsOdieChatFetching = true;
+			act( () => result.current.refreshChatInBackground() );
+			// The user asks for a human: the transfer creates the conversation while the refetch runs.
+			act( () =>
+				result.current.setMainChatState( ( chat ) => ( { ...chat, status: 'transfer' } ) )
+			);
+			mockCurrentSupportInteraction = { uuid: 'int-1', odieId: 42, conversationId: 'conv-1' };
+			mockIsOdieChatFetching = false;
+			rerender();
+			await settle();
+
+			expect( mockGetZendeskConversation ).not.toHaveBeenCalled();
+			expect( result.current.mainChatState.status ).toBe( 'transfer' );
+			expect( result.current.mainChatState.messages ).toBe( messagesBefore );
+		} );
+	} );
+
+	describe( 'a human chat', () => {
+		const firstPage = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		beforeEach( () => {
+			mockCurrentSupportInteraction = {
+				uuid: 'int-1',
+				conversationId: 'conv-1',
+				odieId: null,
+				status: 'open',
+			};
+			mockConversation = firstPage;
+		} );
+
+		// Holds the next conversation fetch until the test resolves it.
+		const holdNextFetch = () => {
+			let resolveFetch: ( conversation: typeof firstPage ) => void = () => {};
+			mockGetZendeskConversation.mockImplementationOnce(
+				() => new Promise( ( resolve ) => ( resolveFetch = resolve ) )
+			);
+			return ( conversation: typeof firstPage ) => act( async () => resolveFetch( conversation ) );
+		};
+
+		it( 'shows a reply that arrived meanwhile, without the loading state', async () => {
+			const { result, statuses } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 1 ) ).toBe( true );
+			} );
+			statuses.length = 0;
+
+			mockConversation = {
+				id: 'conv-1',
+				messages: [ ...firstPage.messages, agentMessage( 2, 'still here' ) ],
+			};
+			act( () => result.current.refreshChatInBackground() );
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 2 ) ).toBe( true );
+			} );
+			expect( statuses ).not.toContain( 'loading' );
+			expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'keeps a live message that arrives while the conversation is refetched', async () => {
+			const { result } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 1 ) ).toBe( true );
+			} );
+			const resolveFetch = holdNextFetch();
+			act( () => result.current.refreshChatInBackground() );
+			await waitFor( () => {
+				expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 2 );
+			} );
+
+			// The message listener shows a reply that the refetched page predates.
+			act( () =>
+				result.current.setMainChatState( ( chat ) => ( {
+					...chat,
+					messages: [ ...chat.messages, agentMessage( 3, 'live' ) ],
+					status: 'loaded',
+				} ) )
+			);
+			await resolveFetch( {
+				id: 'conv-1',
+				messages: [ ...firstPage.messages, agentMessage( 2, 'missed while away' ) ],
+			} );
+
+			expect( hasMessage( result.current.mainChatState.messages, 3 ) ).toBe( true );
+		} );
+
+		it( 'keeps the chat as it is when the refetch fails', async () => {
+			const { result } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 1 ) ).toBe( true );
+			} );
+			const chatBefore = result.current.mainChatState;
+			mockGetZendeskConversation.mockImplementationOnce( () =>
+				Promise.reject( new Error( 'network' ) )
+			);
+			act( () => result.current.refreshChatInBackground() );
+
+			await waitFor( () => {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_odie_zendesk_conversation_not_found',
+					expect.objectContaining( { error: 'network' } )
+				);
+			} );
+			await settle();
+			expect( result.current.mainChatState ).toBe( chatBefore );
+		} );
+
+		it( 'never moves the chat back to the AI', async () => {
+			mockCurrentSupportInteraction = { ...mockCurrentSupportInteraction, odieId: 42 };
+			mockOdieChat = { odieId: 42, wpcomUserId: 99, messages: [ odieMessage( 10, 'user', 'q1' ) ] };
+			const { result, rerender } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 1 ) ).toBe( true );
+			} );
+			// A stale copy of the interaction, from before the chat moved to a human, and an Odie
+			// chat with something new.
+			mockCurrentSupportInteraction = { uuid: 'int-1', odieId: 42, status: 'open' };
+			mockOdieChat = {
+				...mockOdieChat,
+				messages: [ odieMessage( 10, 'user', 'q1' ), odieMessage( 11, 'bot', 'a1' ) ],
+			};
+			rerender();
+			act( () => result.current.refreshChatInBackground() );
+			await settle();
+
+			expect( result.current.mainChatState.provider ).toBe( 'zendesk' );
+			expect( hasMessage( result.current.mainChatState.messages, 1 ) ).toBe( true );
+		} );
+
+		it( 'still reloads the chat for a reconnect that comes while it runs', async () => {
+			const { result, rerender } = renderTrackingStatuses();
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 1 ) ).toBe( true );
+			} );
+			const resolveFetch = holdNextFetch();
+			act( () => result.current.refreshChatInBackground() );
+			await waitFor( () => {
+				expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 2 );
+			} );
+
+			mockConversation = {
+				id: 'conv-1',
+				messages: [ ...firstPage.messages, agentMessage( 2, 'sent during the drop' ) ],
+			};
+			act( () => {
+				mockConnectionStatus = 'connected';
+			} );
+			rerender();
+			await resolveFetch( firstPage );
+
+			await waitFor( () => {
+				expect( hasMessage( result.current.mainChatState.messages, 2 ) ).toBe( true );
+			} );
+			expect( result.current.mainChatState.status ).toBe( 'loaded' );
+			expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 3 );
 		} );
 	} );
 } );
