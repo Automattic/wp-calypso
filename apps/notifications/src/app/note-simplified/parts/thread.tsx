@@ -2,6 +2,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
+	VisuallyHidden,
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { html } from '../../../panel/indices-to-html';
@@ -54,6 +55,8 @@ const ThreadItem = ( {
 	authorUrl,
 	meta,
 	status,
+	label,
+	compact = false,
 	className,
 	children,
 }: {
@@ -62,14 +65,24 @@ const ThreadItem = ( {
 	authorUrl?: string | null;
 	meta?: ReactNode;
 	status?: ReactNode;
+	label?: string;
+	compact?: boolean;
 	className?: string;
 	children: ReactNode;
 } ) => {
 	const photo = (
-		<NoteIcon className="wpnc-simplified__photo" icon={ avatar ?? undefined } size={ 36 } />
+		<NoteIcon
+			className="wpnc-simplified__photo"
+			icon={ avatar ?? undefined }
+			size={ compact ? 16 : 36 }
+		/>
 	);
 	const name = author && (
-		<Text className="wpnc-simplified__author" size={ 15 } weight={ 600 }>
+		<Text
+			className="wpnc-simplified__author"
+			size={ compact ? 13 : 15 }
+			weight={ compact ? 500 : 600 }
+		>
 			{ authorUrl ? (
 				<a href={ authorUrl } target="_blank" rel="noreferrer">
 					{ author }
@@ -81,8 +94,13 @@ const ThreadItem = ( {
 	);
 
 	return (
-		<VStack as="li" className={ className } spacing={ 3 }>
-			<HStack alignment="top" justify="flex-start" spacing={ 3 }>
+		<VStack as="li" className={ className } spacing={ compact ? 2 : 3 }>
+			{ label && <VisuallyHidden>{ label }</VisuallyHidden> }
+			<HStack
+				alignment={ compact ? 'center' : 'top' }
+				justify="flex-start"
+				spacing={ compact ? 2 : 3 }
+			>
 				{ authorUrl ? (
 					// The name beside it links to the same profile, so the photo stays out of the tab order.
 					<a
@@ -98,10 +116,18 @@ const ThreadItem = ( {
 				) : (
 					photo
 				) }
-				<VStack className="wpnc-simplified__quiet-links" spacing={ 0 } style={ { flex: 1 } }>
+				{ /* A compact item, the comment a reply answers, keeps its name and time on one line. */ }
+				<HStack
+					className="wpnc-simplified__quiet-links"
+					direction={ compact ? 'row' : 'column' }
+					alignment={ compact ? 'baseline' : 'topLeft' }
+					justify="flex-start"
+					spacing={ compact ? 2 : 0 }
+					style={ { flex: 1 } }
+				>
 					{ name }
 					{ meta }
-				</VStack>
+				</HStack>
 				{ status }
 			</HStack>
 			{ children }
@@ -112,10 +138,14 @@ const ThreadItem = ( {
 export function ThreadParent( {
 	comment,
 	truncate = false,
+	compact = false,
+	label,
 	maxLength,
 }: {
 	comment: NoteParentComment;
 	truncate?: boolean;
+	compact?: boolean;
+	label?: string;
 	maxLength?: number;
 } ) {
 	const fullContent = comment.content ?? { text: comment.text };
@@ -123,10 +153,12 @@ export function ThreadParent( {
 
 	return (
 		<ThreadItem
-			className="wpnc-simplified__thread-parent"
+			className={ clsx( 'wpnc-simplified__thread-parent', { 'is-compact': compact } ) }
 			avatar={ comment.author_avatar }
 			author={ comment.author_name }
 			authorUrl={ comment.author_url }
+			compact={ compact }
+			label={ label }
 			meta={
 				comment.date && (
 					<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
@@ -173,19 +205,13 @@ export function ThreadReply( {
 
 export default function Thread( {
 	spacing = 4,
-	isReply = false,
 	children,
 }: {
 	spacing?: number;
-	isReply?: boolean;
 	children: ReactNode;
 } ) {
 	return (
-		<VStack
-			as="ol"
-			className={ clsx( 'wpnc-simplified__thread', { 'is-reply': isReply } ) }
-			spacing={ spacing }
-		>
+		<VStack as="ol" className="wpnc-simplified__thread" spacing={ spacing }>
 			{ children }
 		</VStack>
 	);
