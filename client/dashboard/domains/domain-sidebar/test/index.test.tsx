@@ -16,25 +16,31 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AnalyticsProvider } from '../../../app/analytics';
+import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
 import { setTransientQueryParamsAtPathname } from '../../../app/transient-query-params';
+import SidebarNavigator from '../../../components/sidebar-navigator';
 import { useActions } from '../../dataviews/actions';
-import DomainSidebar from '../index';
+import DomainSidebar, { isOpenDomainEmailsMatch } from '../index';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/router/domains', () => {
-	const { useParams } = jest.requireActual( '@tanstack/react-router' );
-	return {
-		domainRoute: { useParams: () => useParams( { strict: false } ) },
-		domainOverviewRoute: { fullPath: '/domains/$domainName' },
-		domainTransferRoute: { fullPath: '/domains/$domainName/transfer' },
-	};
-} );
+jest.mock( '../../../app/router/domains', () => ( {
+	domainOverviewRoute: { fullPath: '/domains/$domainName' },
+	domainTransferRoute: { fullPath: '/domains/$domainName/transfer' },
+} ) );
 jest.mock( '../../../app/router/sites', () => ( {
 	siteOverviewRoute: { fullPath: '/sites/$siteSlug' },
 	siteDomainsRoute: { fullPath: '/sites/$siteSlug/domains' },
 } ) );
-jest.mock( '../../../app/router/emails', () => ( { emailsRoute: { fullPath: '/emails' } } ) );
+jest.mock( '../../../app/router/emails', () => ( {
+	emailsRoute: { fullPath: '/emails' },
+	emailsIndexRoute: { id: '/emails/' },
+} ) );
 jest.mock( '../domain-switcher-item', () => () => null );
+// Screens fade in, which never finishes in jsdom.
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useReducedMotion: () => true,
+} ) );
 
 const domain = {
 	domain: 'example.com',
@@ -58,8 +64,16 @@ function renderAt( url: string ) {
 			const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
 			return (
 				<>
-					{ pathname.startsWith( '/domains/' ) && ! pathname.endsWith( '/no-sidebar' ) && (
-						<DomainSidebar />
+					{ ! pathname.endsWith( '/no-sidebar' ) && (
+						<SidebarNavigator>
+							<SidebarNavigator.Screen path="/">{ null }</SidebarNavigator.Screen>
+							<SidebarNavigator.Screen
+								path="/domains/$domainName"
+								alsoMatches={ isOpenDomainEmailsMatch }
+							>
+								<DomainSidebar />
+							</SidebarNavigator.Screen>
+						</SidebarNavigator>
 					) }
 					<Outlet />
 				</>
@@ -68,6 +82,9 @@ function renderAt( url: string ) {
 	} );
 	const page = ( path: string, component: () => React.ReactNode = () => null ) =>
 		createRoute( { getParentRoute: () => rootRoute, path, component } );
+	const emailsRoute = page( 'emails', () => <Outlet /> );
+	const emailsPage = ( path: string ) =>
+		createRoute( { getParentRoute: () => emailsRoute, path, component: () => null } );
 	const router = createRouter( {
 		history: createMemoryHistory( { initialEntries: [ url ] } ),
 		routeTree: rootRoute.addChildren( [
@@ -76,6 +93,11 @@ function renderAt( url: string ) {
 			page( 'domains/$domainName/dns' ),
 			page( 'domains/$domainName/no-sidebar' ),
 			page( 'sites/$siteSlug/domains', () => <ViewSettings siteList={ site } /> ),
+			emailsRoute.addChildren( [
+				emailsPage( '/' ),
+				emailsPage( 'choose-domain' ),
+				emailsPage( 'choose-email-solution/$domain' ),
+			] ),
 		] ),
 	} );
 
@@ -89,9 +111,16 @@ function renderAt( url: string ) {
 
 	render(
 		<QueryClientProvider client={ queryClient }>
-			<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
-				<RouterProvider router={ router } />
-			</AnalyticsProvider>
+			<AppProvider
+				config={ {
+					...APP_CONTEXT_DEFAULT_CONFIG,
+					supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, emails: true },
+				} }
+			>
+				<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
+					<RouterProvider router={ router } />
+				</AnalyticsProvider>
+			</AppProvider>
 		</QueryClientProvider>
 	);
 
@@ -158,6 +187,40 @@ describe( 'DomainSidebar', () => {
 			await goTo( '/domains/example.com/dns' );
 
 			expect( await findBackLink( 'Back to Domains' ) ).toBeVisible();
+		}
+	);
+
+	test( 'stays on the email screens of the domain', async () => {
+		const goTo = renderAt( '/domains/example.com?back_to=site-domains' );
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Emails' } ) );
+
+		expect( await findBackLink( 'Back to site' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Emails' } ) ).toHaveAttribute(
+			'aria-current',
+			'page'
+		);
+
+		await goTo( '/emails/choose-domain' );
+
+		expect( await findBackLink( 'Back to site' ) ).toBeVisible();
+
+		await goTo( '/emails/choose-email-solution/example.com' );
+
+		expect( await findBackLink( 'Back to site' ) ).toBeVisible();
+	} );
+
+	test.each( [ '/emails', '/emails?domainName=other.com', '/sites/site-slug.com/domains' ] )(
+		'forgets the domain after going to %s',
+		async ( destination ) => {
+			const goTo = renderAt( '/domains/example.com' );
+			await findBackLink( 'Back to Domains' );
+
+			await goTo( destination );
+			await waitFor( () => expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument() );
+			await goTo( '/emails?domainName=example.com' );
+
+			expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		}
 	);
 

@@ -6,7 +6,7 @@ import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
-import DomainSidebar from '../../domains/domain-sidebar';
+import DomainSidebar, { isOpenDomainEmailsMatch } from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
@@ -54,7 +54,10 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				<SidebarNavigator.Screen path="/agency/referrals/$referralId">
 					<ReferralSidebar />
 				</SidebarNavigator.Screen>
-				<SidebarNavigator.Screen path="/domains/$domainName">
+				<SidebarNavigator.Screen
+					path="/domains/$domainName"
+					alsoMatches={ isOpenDomainEmailsMatch }
+				>
 					<DomainSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/me">

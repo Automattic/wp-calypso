@@ -6,6 +6,7 @@ import { usePrevious, useReducedMotion } from '@wordpress/compose';
 import { isRTL } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useSidebarNavigator } from './context';
+import type { AnyRouteMatch } from '@tanstack/react-router';
 
 const SLIDE_DISTANCE = 100;
 
@@ -16,6 +17,11 @@ const transition = {
 
 export interface SidebarNavigatorScreenProps {
 	path: string;
+	/**
+	 * Also shows the screen on routes outside `path` when this returns true for
+	 * the deepest route match.
+	 */
+	alsoMatches?: ( match: AnyRouteMatch ) => boolean;
 	children: React.ReactNode;
 }
 

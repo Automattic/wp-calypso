@@ -70,10 +70,14 @@ function UnforwardedSidebarNavigator(
 
 	const screenPaths = screens.map( ( s ) => s.props.path );
 
-	// Find the active path: exact match, then nearest parent, then the root screen.
-	const routeId = matches[ matches.length - 1 ]?.routeId;
+	// Find the active path: exact match, then a screen claiming the route, then
+	// nearest parent, then the root screen.
+	const deepestMatch = matches[ matches.length - 1 ];
+	const routeId = deepestMatch?.routeId;
 	const activePath =
 		screenPaths.find( ( sp ) => matches.some( ( m ) => m.routeId === sp ) ) ??
+		( deepestMatch &&
+			screens.find( ( s ) => s.props.alsoMatches?.( deepestMatch ) )?.props.path ) ??
 		findParentPath( routeId, screenPaths ) ??
 		screenPaths[ 0 ];
 
