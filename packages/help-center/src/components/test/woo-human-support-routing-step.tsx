@@ -378,8 +378,9 @@ describe( 'WooHumanSupportRoutingStep', () => {
 			);
 			expect( startChat ).not.toHaveBeenCalled();
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Done' } ) );
-			expect( dismiss ).toHaveBeenCalled();
+			// The card is the answer: nothing on it hands the request back to the chat.
+			expect( screen.queryByRole( 'button', { name: 'Done' } ) ).not.toBeInTheDocument();
+			expect( dismiss ).not.toHaveBeenCalled();
 		} );
 
 		it( 'starts a chat for an externally supported product without a support link', async () => {
@@ -417,6 +418,8 @@ describe( 'WooHumanSupportRoutingStep', () => {
 				'href',
 				'https://wordpress.org/support/plugin/woocommerce/'
 			);
+			expect( screen.queryByRole( 'button', { name: 'Done' } ) ).not.toBeInTheDocument();
+			expect( dismiss ).not.toHaveBeenCalled();
 			expect( startChat ).not.toHaveBeenCalled();
 		} );
 
