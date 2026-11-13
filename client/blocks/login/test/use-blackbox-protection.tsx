@@ -221,17 +221,20 @@ describe( 'useBlackboxProtection key', () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 	} );
 
-	it( 'collects with the login key', async () => {
-		const { result } = renderHook( () =>
-			useBlackboxProtection( { feature: 'blackbox-signup', flow: 'signup' } )
-		);
+	it.each( [ 'login', 'signup' ] as const )(
+		'collects the %s flow with the shared key',
+		async ( flow ) => {
+			const { result } = renderHook( () =>
+				useBlackboxProtection( { feature: `blackbox-${ flow }`, flow } )
+			);
 
-		await result.current.getSessionId();
+			await result.current.getSessionId();
 
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith(
-			'login-key',
-			expect.any( AbortSignal ),
-			'signup'
-		);
-	} );
+			expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+				'login-key',
+				expect.any( AbortSignal ),
+				flow
+			);
+		}
+	);
 } );
