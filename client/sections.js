@@ -633,6 +633,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'migrate',
+		paths: [ '/migrate' ],
+		module: 'calypso/my-sites/migrate',
+		group: 'sites',
+	},
+	{
 		name: 'home',
 		paths: [ '/home' ],
 		module: 'calypso/my-sites/customer-home',

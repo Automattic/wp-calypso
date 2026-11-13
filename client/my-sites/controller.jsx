@@ -73,6 +73,7 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteA4ADevSite from 'calypso/state/selectors/is-site-a4a-dev-site';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -406,6 +407,13 @@ function onSelectedSiteAvailable( context ) {
 			return false;
 		}
 		context.hideLeftNavigation = true;
+	} else {
+		// If migration is in progress, only /migrate paths should be loaded for the site
+		const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
+		if ( isMigrationInProgress && ! context.pathname.startsWith( '/migrate/' ) ) {
+			page.redirect( `/migrate/${ selectedSite.slug }` );
+			return false;
+		}
 	}
 
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
