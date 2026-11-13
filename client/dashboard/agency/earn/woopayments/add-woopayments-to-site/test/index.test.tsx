@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import AddWooPaymentsToSite from '../index';
 
 const API = 'https://public-api.wordpress.com';
 const PICKER = { name: 'Which site would you like to add WooPayments to?' };
-const recordTracksEvent = jest.fn();
+const recordTracksEvent = vi.fn();
 
 // Owns the open request like a page does: a link sets it, and the button acknowledges it.
 function Page( {
@@ -31,7 +32,7 @@ function Page( {
 				agencyId={ 0 }
 				excludedSiteIds={ [] }
 				recordTracksEvent={ recordTracksEvent }
-				onSelectSite={ jest.fn() }
+				onSelectSite={ vi.fn() }
 				isApprovalGated={ isApprovalGated }
 				autoOpen={ isRequested }
 				onAutoOpen={ () => setIsRequested( false ) }
@@ -99,7 +100,7 @@ describe( 'AddWooPaymentsToSite', () => {
 				agencyId={ 123 }
 				excludedSiteIds={ [] }
 				recordTracksEvent={ recordTracksEvent }
-				onSelectSite={ jest.fn() }
+				onSelectSite={ vi.fn() }
 				isApprovalGated
 			/>
 		);
