@@ -240,21 +240,7 @@ class PostComment extends PureComponent {
 		}
 
 		if ( canCollapse && this.state.isCollapsed ) {
-			const count = this.getAllChildrenIds( commentId ).length;
-			return (
-				<Button
-					__next40pxDefaultSize
-					variant="link"
-					className="comments__collapsed-replies"
-					aria-expanded={ false }
-					onClick={ this.handleToggleCollapsedClick }
-				>
-					{ translate( '%(count)s reply', '%(count)s replies', {
-						count,
-						args: { count: formatNumber( count ) },
-					} ) }
-				</Button>
-			);
+			return null;
 		}
 
 		const showRepliesText = translate(
@@ -498,6 +484,7 @@ class PostComment extends PureComponent {
 		const isNew = highlightedCommentIds.includes( commentId );
 		const canCollapse = this.canCollapse();
 		const { isCollapsed } = this.state;
+		const collapsedCount = canCollapse ? this.getAllChildrenIds( commentId ).length : 0;
 
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
@@ -552,12 +539,29 @@ class PostComment extends PureComponent {
 							size="small"
 							className="comments__comment-collapse-toggle"
 							icon={ isCollapsed ? chevronDown : chevronUp }
-							label={ isCollapsed ? translate( 'Show replies' ) : translate( 'Hide replies' ) }
+							label={
+								isCollapsed
+									? translate( 'Show %(count)s reply', 'Show %(count)s replies', {
+											count: collapsedCount,
+											args: { count: formatNumber( collapsedCount ) },
+										} )
+									: translate( 'Hide replies' )
+							}
+							showTooltip
 							aria-expanded={ ! isCollapsed }
 							disabled={ this.hasPendingReply() }
 							accessibleWhenDisabled
 							onClick={ this.handleToggleCollapsedClick }
-						/>
+						>
+							{ isCollapsed && (
+								<span className="comments__collapsed-replies">
+									{ translate( '%(count)s reply', '%(count)s replies', {
+										count: collapsedCount,
+										args: { count: formatNumber( collapsedCount ) },
+									} ) }
+								</span>
+							) }
+						</Button>
 					) }
 				</div>
 
