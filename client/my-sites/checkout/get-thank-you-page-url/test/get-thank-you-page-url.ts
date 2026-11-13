@@ -89,6 +89,15 @@ describe( 'getThankYouPageUrl', () => {
 		jest.mocked( getDashboardFromQuery ).mockReturnValue( undefined );
 	} );
 
+	it( 'resolves the agent handoff receipt only when checkout supplies it', () => {
+		const redirectTo =
+			'/checkout/thank-you/foo.bar/:receiptId?agentHandoffId=sbh_0123456789abcdef01234567';
+		expect( getThankYouPageUrl( { ...defaultArgs, redirectTo, receiptId: '123' } ) ).toBe(
+			'/checkout/thank-you/foo.bar/123?agentHandoffId=sbh_0123456789abcdef01234567'
+		);
+		expect( getThankYouPageUrl( { ...defaultArgs, redirectTo } ) ).toBe( redirectTo );
+	} );
+
 	it( 'redirects to the root page when no site is set', () => {
 		const url = getThankYouPageUrl( defaultArgs );
 		expect( url ).toBe( '/' );
