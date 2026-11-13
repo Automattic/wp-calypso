@@ -91,4 +91,19 @@ describe( 'User step account creation', () => {
 		await waitFor( () => expect( navigation.submit ).toHaveBeenCalled() );
 		expect( mockRawCurrentUserFetch ).toHaveBeenLastCalledWith( { retry: true } );
 	} );
+
+	it( 'offers to log in when neither `/me` fetch finds the new user', async () => {
+		mockRawCurrentUserFetch.mockRejectedValue( LOGGED_OUT );
+		const navigation = renderUserStep();
+		await waitFor( () => expect( mockRawCurrentUserFetch ).toHaveBeenCalledTimes( 1 ) );
+		expect( screen.queryByRole( 'link', { name: 'Log in now' } ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Create account' } ) );
+
+		const loginLink = await screen.findByRole( 'link', { name: 'Log in now' } );
+		expect( loginLink ).toBeVisible();
+		expect( loginLink ).toHaveAttribute( 'href', expect.stringContaining( '/log-in' ) );
+		expect( mockRawCurrentUserFetch ).toHaveBeenCalledTimes( 3 );
+		expect( navigation.submit ).not.toHaveBeenCalled();
+	} );
 } );

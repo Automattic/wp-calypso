@@ -13,6 +13,7 @@ import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-ov
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import Notice from 'calypso/dashboard/components/notice';
 import {
 	THEME_GRID_SIGNUP_LAYOUT,
 	WOO_HOSTING_SOLUTIONS_REF,
@@ -77,6 +78,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const store = useStore();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+	const [ isNewUserMissing, setIsNewUserMissing ] = useState( false );
 	const { socialServiceResponse } = useSocialService();
 	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -116,11 +118,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			) as unknown as Promise< void >;
 
 		// `fetchCurrentUser` hands back a `/me` already in flight, sent before the token and failed
-		// by the proxy reload, so fetch once more if nobody is logged in after it.
+		// by the proxy reload, so fetch once more if nobody is logged in after it. If that fails too,
+		// the account exists but this session can't load it: offer to log in instead.
 		fetchNewUser().then( () => {
-			if ( ! isUserLoggedIn( store.getState() ) ) {
-				fetchNewUser();
+			if ( isUserLoggedIn( store.getState() ) ) {
+				return;
 			}
+
+			fetchNewUser().then( () => {
+				if ( ! isUserLoggedIn( store.getState() ) ) {
+					setIsNewUserMissing( true );
+				}
+			} );
 		} );
 	}, [ dispatch, store, wpAccountCreateResponse ] );
 
@@ -193,6 +202,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
+			{ /* Outside the form: its own `notice` is hidden once it switches to the email screen. */ }
+			{ isNewUserMissing && (
+				<Notice variant="error">
+					{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+						components: { a: <a href={ loginLink } /> },
+					} ) }
+				</Notice>
+			) }
 			<SignupFormSocialFirst
 				stepName={ stepName }
 				flowName={ flow }
