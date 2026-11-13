@@ -63,6 +63,16 @@ describe( 'DomainOverviewSslStatus', () => {
 	} );
 
 	test.each( [
+		[ 'connected', { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' } ],
+		[ 'registered', registered ],
+	] )( 'links the certificate of a %s domain not pointing here', async ( _, subtype ) => {
+		renderStatus( { ssl_status: 'pending', points_to_wpcom: false, subtype } );
+
+		expect( await screen.findByText( 'SSL pending' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'View SSL details' } ) ).toBeVisible();
+	} );
+
+	test.each( [
 		[ 'pending', 'SSL Pending' ],
 		[ 'inactive', 'SSL Disabled' ],
 	] )(
@@ -84,7 +94,14 @@ describe( 'DomainOverviewSslStatus', () => {
 
 	test.each( [
 		[ 'a null status', { ssl_status: null } ],
-		[ 'a domain not pointing here', { ssl_status: 'inactive', points_to_wpcom: false } ],
+		[
+			'a completed transfer not pointing here',
+			{
+				ssl_status: 'inactive',
+				points_to_wpcom: false,
+				transfer_status: DomainTransferStatus.COMPLETED,
+			},
+		],
 		[
 			'a transfer',
 			{

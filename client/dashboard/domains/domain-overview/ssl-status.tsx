@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { isTldInMaintenance } from '../../utils/domain';
 import { useSslStatusLabels } from '../domain-security/use-ssl-status-labels';
+import { isCompletedTransferNotPointingToWpcom } from './point-to-wpcom-notice';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
 export default function DomainOverviewSslStatus( { domain }: { domain: Domain } ) {
@@ -23,9 +24,9 @@ export default function DomainOverviewSslStatus( { domain }: { domain: Domain } 
 	}
 
 	// Other subtypes have no certificate to fix, the security route rejects pending registrations,
-	// and PointToWpcomNotice already covers domains that don't point here.
+	// and PointToWpcomNotice already covers completed transfers that don't point here.
 	if (
-		! domain.points_to_wpcom ||
+		isCompletedTransferNotPointingToWpcom( domain ) ||
 		( domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION &&
 			domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION ) ||
 		domain.pending_registration ||
