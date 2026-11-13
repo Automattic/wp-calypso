@@ -1,5 +1,7 @@
-jest.mock( '@wordpress/data', () => ( { select: jest.fn(), dispatch: jest.fn() } ) );
-jest.mock( '../private-apis', () => ( { unlock: jest.fn( ( store ) => store ) } ) );
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
+vi.mock( '../private-apis', () => ( { unlock: vi.fn( ( store ) => store ) } ) );
 
 import { dispatch, select } from '@wordpress/data';
 import {
@@ -24,11 +26,11 @@ const block = ( clientId: string, name: string ): EditorBlock => ( {
 	innerBlocks: [],
 } );
 
-const replaceInnerBlocks = jest.fn();
-const resetBlocks = jest.fn();
-const markNextChangeAsNotPersistent = jest.fn();
-const markLastChangeAsPersistent = jest.fn();
-const clearSelectedBlock = jest.fn();
+const replaceInnerBlocks = vi.fn();
+const resetBlocks = vi.fn();
+const markNextChangeAsNotPersistent = vi.fn();
+const markLastChangeAsPersistent = vi.fn();
+const clearSelectedBlock = vi.fn();
 
 // Each record's blocks, by its clientId (`''` for the document), as the writes leave them.
 let records: Record< string, EditorBlock[] > = {};
@@ -36,7 +38,7 @@ const NO_BLOCKS: EditorBlock[] = [];
 
 // A write to the list of the block it names, which lands in `record`, or is
 // dropped without one, as a restricted list does.
-const land = jest.fn( ( _clientId: string, record?: string ) => {
+const land = vi.fn( ( _clientId: string, record?: string ) => {
 	if ( record !== undefined ) {
 		records[ record ] = [ ...( records[ record ] ?? [] ) ];
 	}
@@ -63,7 +65,7 @@ function withEditor( {
 	/** The blocks whose inner blocks sync to their own record. */
 	controlled?: string[];
 } = {} ) {
-	( select as jest.Mock ).mockImplementation( ( store: string ) =>
+	( select as Mock ).mockImplementation( ( store: string ) =>
 		store === 'core/block-editor'
 			? {
 					getBlocks: ( root?: string ) => records[ root ?? '' ] ?? ( root ? NO_BLOCKS : blocks ),
@@ -91,7 +93,7 @@ function withEditor( {
 						attribute === 'title' ? title : undefined,
 				}
 	);
-	( dispatch as jest.Mock ).mockReturnValue( {
+	( dispatch as Mock ).mockReturnValue( {
 		replaceInnerBlocks,
 		resetBlocks,
 		clearSelectedBlock,
@@ -101,7 +103,7 @@ function withEditor( {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	records = {};
 } );
 
@@ -146,7 +148,7 @@ it( 'reads the document root as the top-level blocks', () => {
 } );
 
 it( 'reads a palette colour by slug', () => {
-	jest.mocked( select ).mockReturnValue( {
+	vi.mocked( select ).mockReturnValue( {
 		getSettings: () => ( { colors: [ { slug: 'vivid-red', color: '#cf2e2e' } ] } ),
 	} as never );
 
@@ -176,7 +178,7 @@ describe( 'writes', () => {
 	it( 'stages outside the undo stack, mark and write in one batch', () => {
 		withEditor();
 		const queued: ( () => void )[] = [];
-		const batch = jest.fn( ( run: () => void ) => queued.push( run ) );
+		const batch = vi.fn( ( run: () => void ) => queued.push( run ) );
 
 		stageRootBlocks( 'pc', blocks, batch );
 
@@ -284,7 +286,7 @@ describe( 'writes', () => {
 	} );
 
 	it( 'refuses to write, and clears no selection, without the block editor', () => {
-		( dispatch as jest.Mock ).mockReturnValue( undefined );
+		( dispatch as Mock ).mockReturnValue( undefined );
 
 		expect( () => replaceRootBlocks( 'pc', blocks ) ).toThrow( 'unavailable' );
 		expect( () => clearBlockSelection() ).not.toThrow();
@@ -313,10 +315,10 @@ describe( 'isTemplatePartLoaded', () => {
 		resolved?: boolean;
 		record?: { blocks?: unknown[]; content?: unknown };
 	} ) {
-		const hasFinishedResolution = jest.fn( () => resolved );
-		const getEditedEntityRecord = jest.fn( () => record );
+		const hasFinishedResolution = vi.fn( () => resolved );
+		const getEditedEntityRecord = vi.fn( () => record );
 
-		jest.mocked( select ).mockImplementation( ( store ) =>
+		vi.mocked( select ).mockImplementation( ( store ) =>
 			store === 'core/block-editor'
 				? ( {
 						getBlocks: () => blocks,

@@ -1,66 +1,66 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+/* eslint-disable import/order */
+import { type Mock, type MockInstance, vi } from 'vitest';
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 // Reached through the checkpoint engine's tool-call lookup.
-jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
-	virtual: true,
-} );
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn(),
-	resolveSelect: jest.fn(),
-	select: jest.fn(),
+vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: vi.fn() } ) );
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn(),
+	resolveSelect: vi.fn(),
+	select: vi.fn(),
 } ) );
-jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
+vi.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: vi.fn( () => true ) } ) );
 // Reached through the checkpoint engine, and it registers a store on import —
 // which the mocked `@wordpress/data` above cannot serve.
-jest.mock( '@wordpress/blocks', () => ( { serialize: jest.fn( () => '' ) } ) );
-jest.mock( '../../../utils/navigation-menu', () => ( {
+vi.mock( '@wordpress/blocks', () => ( { serialize: vi.fn( () => '' ) } ) );
+vi.mock( '../../../utils/navigation-menu', () => ( {
 	MENU_FIELDS: [ 'blocks', 'content' ],
-	addNavigationItem: jest.fn( async () => [] ),
-	getMenuIdsToRelabel: jest.fn( async () => [ 10 ] ),
+	addNavigationItem: vi.fn( async () => [] ),
+	getMenuIdsToRelabel: vi.fn( async () => [ 10 ] ),
 	// The checkpoint recorder snapshots and discards menus through these.
 	isSameMenuId: ( a: unknown, b: unknown ) => String( a ) === String( b ),
-	prefetchMenus: jest.fn(),
-	readMenuItems: jest.fn( async () => [] ),
-	removeNavigationItem: jest.fn( async () => [] ),
-	renameNavigationItem: jest.fn(),
+	prefetchMenus: vi.fn(),
+	readMenuItems: vi.fn( async () => [] ),
+	removeNavigationItem: vi.fn( async () => [] ),
+	renameNavigationItem: vi.fn(),
 } ) );
-jest.mock( '../../../utils/page-title', () => ( {
-	getPageTitle: jest.fn( async () => 'About' ),
-	getPageUrl: jest.fn( async () => '/about/' ),
-	getSavedPageTitle: jest.fn( async () => 'About' ),
-	setPageTitle: jest.fn(),
+vi.mock( '../../../utils/page-title', () => ( {
+	getPageTitle: vi.fn( async () => 'About' ),
+	getPageUrl: vi.fn( async () => '/about/' ),
+	getSavedPageTitle: vi.fn( async () => 'About' ),
+	setPageTitle: vi.fn(),
 } ) );
-jest.mock( '../../../utils/session-log', () => ( {
-	logSiteMetadata: jest.fn(),
-	logSiteSession: jest.fn(),
+vi.mock( '../../../utils/session-log', () => ( {
+	logSiteMetadata: vi.fn(),
+	logSiteSession: vi.fn(),
 } ) );
 // The getters are what the checkpoint engine reads to snapshot these domains.
-jest.mock( '../../../utils/site-metadata', () => ( {
-	getSiteMetadata: jest.fn( () => ( { existing: true } ) ),
-	setSiteMetadata: jest.fn( ( changes ) => ( { existing: true, ...changes } ) ),
+vi.mock( '../../../utils/site-metadata', () => ( {
+	getSiteMetadata: vi.fn( () => ( { existing: true } ) ),
+	setSiteMetadata: vi.fn( ( changes ) => ( { existing: true, ...changes } ) ),
 } ) );
-jest.mock( '../../../utils/site-title', () => ( {
-	getSiteTitle: jest.fn( () => 'Old Site' ),
-	setSiteTitle: jest.fn(),
+vi.mock( '../../../utils/site-title', () => ( {
+	getSiteTitle: vi.fn( () => 'Old Site' ),
+	setSiteTitle: vi.fn(),
 } ) );
-jest.mock( '../navigation-items', () => ( {
-	buildNavigationItems: jest.fn( async ( _id, record ) => record ),
-	checkMenuRecord: jest.fn(),
+vi.mock( '../navigation-items', () => ( {
+	buildNavigationItems: vi.fn( async ( _id, record ) => record ),
+	checkMenuRecord: vi.fn(),
 } ) );
-jest.mock( '../../../utils/site-record', () => ( {
-	getSiteRecord: jest.fn( () => ( { show_on_front: 'page', page_on_front: 3 } ) ),
+vi.mock( '../../../utils/site-record', () => ( {
+	getSiteRecord: vi.fn( () => ( { show_on_front: 'page', page_on_front: 3 } ) ),
 } ) );
-jest.mock( '../../../utils/editor-history', () => ( {
-	getEditorHistory: jest.fn( () => ( {} ) ),
+vi.mock( '../../../utils/editor-history', () => ( {
+	getEditorHistory: vi.fn( () => ( {} ) ),
 } ) );
-jest.mock( '../../../utils/canvas-guard', () => ( {
-	bindToEditorPath: jest.fn( () => jest.fn() ),
+vi.mock( '../../../utils/canvas-guard', () => ( {
+	bindToEditorPath: vi.fn( () => vi.fn() ),
 } ) );
-jest.mock( '../../editor-navigate/callback', () => ( {
+vi.mock( '../../editor-navigate/callback', () => ( {
 	PAGES_LIST_PATH: 'all-pages',
-	navigateEditorWithoutSaving: jest.fn( async () => ( { result: { success: true } } ) ),
+	navigateEditorWithoutSaving: vi.fn( async () => ( { result: { success: true } } ) ),
 } ) );
 
 import { dispatch, resolveSelect, select } from '@wordpress/data';
@@ -90,9 +90,9 @@ import { navigateEditorWithoutSaving } from '../../editor-navigate/callback';
 import { editEntityRecordCallback, getCheckpointKeys } from '../callback';
 import { buildNavigationItems, checkMenuRecord } from '../navigation-items';
 
-const saveEntityRecord = jest.fn( async () => ( { id: 7, title: 'About', link: '/about/' } ) );
-const editEntityRecord = jest.fn();
-const deleteEntityRecord = jest.fn();
+const saveEntityRecord = vi.fn( async () => ( { id: 7, title: 'About', link: '/about/' } ) );
+const editEntityRecord = vi.fn();
+const deleteEntityRecord = vi.fn();
 
 const page = ( recordId?: number ) => ( {
 	entityType: 'postType',
@@ -115,19 +115,19 @@ const menu = ( recordId?: number ) => ( {
 const site = { entityType: 'root', entityName: 'site' };
 
 // Every refusal logs once; the spy keeps the run quiet and pins the prefix.
-let consoleError: jest.SpyInstance;
+let consoleError: MockInstance;
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-	( select as jest.Mock ).mockReturnValue( undefined );
-	( dispatch as jest.Mock ).mockReturnValue( {
+	vi.clearAllMocks();
+	consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+	( select as Mock ).mockReturnValue( undefined );
+	( dispatch as Mock ).mockReturnValue( {
 		saveEntityRecord,
 		editEntityRecord,
 		deleteEntityRecord,
 	} );
-	( resolveSelect as jest.Mock ).mockReturnValue( {
-		getEditedEntityRecord: jest.fn().mockResolvedValue( {} ),
+	( resolveSelect as Mock ).mockReturnValue( {
+		getEditedEntityRecord: vi.fn().mockResolvedValue( {} ),
 	} );
 } );
 
@@ -187,7 +187,7 @@ describe( 'getCheckpointKeys', () => {
 
 describe( 'editEntityRecordCallback', () => {
 	it( 'refuses when the editor is not open', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValueOnce( false );
+		( isEditorPage as Mock ).mockReturnValueOnce( false );
 
 		const result = await editEntityRecordCallback( {
 			editEntities: [ { ...page( 7 ), record: { content: 'Hello' } } ],
@@ -256,16 +256,16 @@ describe( 'editEntityRecordCallback', () => {
 			{ id: 10, items: [] },
 		] );
 		// Read before the relabel, or the snapshot would hold the new label.
-		expect( ( readMenuItems as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			( renameNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
+		expect( ( readMenuItems as Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			( renameNavigationItem as Mock ).mock.invocationCallOrder[ 0 ]
 		);
 	} );
 
 	// A menu that cannot be read stops the rename, and a snapshot of a menu the
 	// rename never touched would let an undo overwrite the user's edits there.
 	it( 'discards the menu snapshots it took when a later menu cannot be read', async () => {
-		( getMenuIdsToRelabel as jest.Mock ).mockResolvedValueOnce( [ 10, 11 ] );
-		( readMenuItems as jest.Mock ).mockResolvedValueOnce( [] ).mockResolvedValueOnce( null );
+		( getMenuIdsToRelabel as Mock ).mockResolvedValueOnce( [ 10, 11 ] );
+		( readMenuItems as Mock ).mockResolvedValueOnce( [] ).mockResolvedValueOnce( null );
 
 		const result = await editEntityRecordCallback( {
 			toolCallId: 'call-rename-unreadable-menu',
@@ -280,7 +280,7 @@ describe( 'editEntityRecordCallback', () => {
 	// The rename reads every menu before writing any, so one that fails changed
 	// nothing; its snapshots would only let an undo overwrite later user edits.
 	it( 'discards the menu snapshots it took when the rename fails', async () => {
-		( renameNavigationItem as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
+		( renameNavigationItem as Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 		const result = await editEntityRecordCallback( {
 			toolCallId: 'call-rename-failed',
@@ -302,7 +302,7 @@ describe( 'editEntityRecordCallback', () => {
 	// A menu label follows the saved title until the page's own edit is saved,
 	// so both titles travel with the rename.
 	it( 'relabels by the saved title too when the one on screen is an unsaved edit', async () => {
-		( getPageTitle as jest.Mock ).mockResolvedValueOnce( 'About (draft)' );
+		( getPageTitle as Mock ).mockResolvedValueOnce( 'About (draft)' );
 
 		await editEntityRecordCallback( {
 			editEntities: [ { ...page( 7 ), record: { title: 'About us' } } ],
@@ -319,7 +319,7 @@ describe( 'editEntityRecordCallback', () => {
 	// The user's unsaved menu edits are theirs to save; the item waits with
 	// them, and the reply says so rather than leaving it to the model.
 	it( 'tells the user when the menu item waits with their unsaved edits', async () => {
-		( addNavigationItem as jest.Mock ).mockResolvedValueOnce( [ 10 ] );
+		( addNavigationItem as Mock ).mockResolvedValueOnce( [ 10 ] );
 
 		const result = await editEntityRecordCallback( {
 			addEntities: [ { ...page(), record: { title: 'About' } } ],
@@ -342,11 +342,11 @@ describe( 'editEntityRecordCallback', () => {
 		expect( deleteEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', 7, undefined, {
 			throwOnError: true,
 		} );
-		expect( ( prefetchMenus as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+		expect( ( prefetchMenus as Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			deleteEntityRecord.mock.invocationCallOrder[ 0 ]
 		);
 		expect( deleteEntityRecord.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-			( removeNavigationItem as jest.Mock ).mock.invocationCallOrder[ 0 ]
+			( removeNavigationItem as Mock ).mock.invocationCallOrder[ 0 ]
 		);
 	} );
 
@@ -365,13 +365,13 @@ describe( 'editEntityRecordCallback', () => {
 
 	describe( 'deleting the record on screen', () => {
 		const open = ( type: string, id: number ) =>
-			( select as jest.Mock ).mockReturnValue( {
+			( select as Mock ).mockReturnValue( {
 				getCurrentPostType: () => type,
 				getCurrentPostId: () => id,
 			} );
 
 		// The rollback `bindToEditorPath()` handed back for the navigation.
-		const rollbackBinding = () => ( bindToEditorPath as jest.Mock ).mock.results[ 0 ].value;
+		const rollbackBinding = () => ( bindToEditorPath as Mock ).mock.results[ 0 ].value;
 
 		beforeEach( () => open( 'page', 7 ) );
 
@@ -381,9 +381,9 @@ describe( 'editEntityRecordCallback', () => {
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
 			expect( navigateEditorWithoutSaving ).toHaveBeenCalledWith( '/page/3' );
-			expect(
-				( navigateEditorWithoutSaving as jest.Mock ).mock.invocationCallOrder[ 0 ]
-			).toBeLessThan( deleteEntityRecord.mock.invocationCallOrder[ 0 ] );
+			expect( ( navigateEditorWithoutSaving as Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				deleteEntityRecord.mock.invocationCallOrder[ 0 ]
+			);
 		} );
 
 		it.each( [
@@ -391,7 +391,7 @@ describe( 'editEntityRecordCallback', () => {
 			{ case: 'the posts index', siteRecord: { show_on_front: 'posts', page_on_front: 3 } },
 			{ case: 'the page being deleted', siteRecord: { show_on_front: 'page', page_on_front: 7 } },
 		] )( 'leaves for the pages list when the front page is $case', async ( { siteRecord } ) => {
-			( getSiteRecord as jest.Mock ).mockReturnValueOnce( siteRecord );
+			( getSiteRecord as Mock ).mockReturnValueOnce( siteRecord );
 
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
@@ -410,8 +410,8 @@ describe( 'editEntityRecordCallback', () => {
 			await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
 			expect( bindToEditorPath ).toHaveBeenCalledWith( '/page/3' );
-			expect( ( bindToEditorPath as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-				( navigateEditorWithoutSaving as jest.Mock ).mock.invocationCallOrder[ 0 ]
+			expect( ( bindToEditorPath as Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				( navigateEditorWithoutSaving as Mock ).mock.invocationCallOrder[ 0 ]
 			);
 			expect( rollbackBinding() ).not.toHaveBeenCalled();
 		} );
@@ -419,7 +419,7 @@ describe( 'editEntityRecordCallback', () => {
 		// Without the site editor's router the only way out is a full page load,
 		// which could cut the delete request off mid-flight.
 		it( 'refuses without a router to leave by', async () => {
-			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
+			( getEditorHistory as Mock ).mockReturnValueOnce( undefined );
 
 			const result = await editEntityRecordCallback( { deleteEntities: [ page( 7 ) ] } );
 
@@ -433,7 +433,7 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		it( 'refuses without a router before asking to confirm', async () => {
-			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
+			( getEditorHistory as Mock ).mockReturnValueOnce( undefined );
 
 			const result = await editEntityRecordCallback( {
 				deleteEntities: [ page( 7 ) ],
@@ -449,7 +449,7 @@ describe( 'editEntityRecordCallback', () => {
 		// The post editor opens posts too, and has no router to leave by.
 		it( 'refuses to delete the post open in the post editor', async () => {
 			open( 'post', 7 );
-			( getEditorHistory as jest.Mock ).mockReturnValueOnce( undefined );
+			( getEditorHistory as Mock ).mockReturnValueOnce( undefined );
 
 			const result = await editEntityRecordCallback( {
 				deleteEntities: [ post( 7 ) ],
@@ -463,7 +463,7 @@ describe( 'editEntityRecordCallback', () => {
 		// failure; rebinding the source page then would read the arrival as the
 		// user leaving.
 		it( 'keeps the destination binding when the navigation fired but did not settle', async () => {
-			( navigateEditorWithoutSaving as jest.Mock ).mockResolvedValueOnce( {
+			( navigateEditorWithoutSaving as Mock ).mockResolvedValueOnce( {
 				result: { success: false, error: 'did not finish', details: { navigated: true } },
 			} );
 
@@ -474,7 +474,7 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		it( 'does not delete when it cannot leave', async () => {
-			( navigateEditorWithoutSaving as jest.Mock ).mockResolvedValueOnce( {
+			( navigateEditorWithoutSaving as Mock ).mockResolvedValueOnce( {
 				result: { success: false, error: 'the editor is busy' },
 			} );
 
@@ -533,8 +533,8 @@ describe( 'editEntityRecordCallback', () => {
 	// `editEntityRecord()` reads the persisted record to tell a real change from
 	// a no-op, and throws on one that was never fetched.
 	it( 'refuses a record it cannot read', async () => {
-		( resolveSelect as jest.Mock ).mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( undefined ),
+		( resolveSelect as Mock ).mockReturnValue( {
+			getEditedEntityRecord: vi.fn().mockResolvedValue( undefined ),
 		} );
 
 		const result = await editEntityRecordCallback( {
@@ -590,8 +590,8 @@ describe( 'editEntityRecordCallback', () => {
 	// The block tree shows a clientId beside the numeric `ref`; the hint names
 	// the one that works.
 	it( 'names the numeric ref when a menu edit names no menu', async () => {
-		( resolveSelect as jest.Mock ).mockReturnValue( {
-			getEditedEntityRecord: jest.fn().mockResolvedValue( null ),
+		( resolveSelect as Mock ).mockReturnValue( {
+			getEditedEntityRecord: vi.fn().mockResolvedValue( null ),
 		} );
 
 		const result = await editEntityRecordCallback( {
@@ -818,7 +818,7 @@ describe( 'editEntityRecordCallback', () => {
 		// Checked with the rest of the batch: found only when its turn came, a
 		// malformed menu edit would fail after the creates before it had landed.
 		it( 'refuses a malformed menu edit before anything is written', async () => {
-			( checkMenuRecord as jest.Mock ).mockImplementationOnce( () => {
+			( checkMenuRecord as Mock ).mockImplementationOnce( () => {
 				throw new Error( 'Invalid navigation items at the top level' );
 			} );
 
@@ -837,7 +837,7 @@ describe( 'editEntityRecordCallback', () => {
 		// A batch that creates a page then fails must not have the agent create it
 		// again, so the failure carries what already landed.
 		it( 'reports what applied when a later change fails', async () => {
-			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
+			( setPageTitle as Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 			const result = await editEntityRecordCallback( {
 				addEntities: [ { ...page(), record: { title: 'About' } } ],
@@ -853,7 +853,7 @@ describe( 'editEntityRecordCallback', () => {
 		// The undo has to reach back to before the call, not vanish with the error
 		// — the writes that already landed are exactly what the user needs undone.
 		it( 'keeps the checkpoint when restorable work landed before the failure', async () => {
-			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
+			( setPageTitle as Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
 
 			await editEntityRecordCallback( {
 				toolCallId: 'call-partial',
@@ -892,7 +892,7 @@ describe( 'editEntityRecordCallback', () => {
 			'reports the %s a menu edit wrote before its title write failed',
 			async ( sent ) => {
 				const toolCallId = `call-menu-partial-${ sent }`;
-				( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( {
+				( buildNavigationItems as Mock ).mockResolvedValueOnce( {
 					blocks: [],
 					title: 'Header',
 				} );
@@ -923,7 +923,7 @@ describe( 'editEntityRecordCallback', () => {
 		// The site title keeps the checkpoint alive, and a snapshot of a menu the
 		// failed write never changed would let an undo overwrite the user's edits.
 		it( 'discards the snapshot of a menu whose write failed', async () => {
-			( buildNavigationItems as jest.Mock ).mockResolvedValueOnce( { blocks: [] } );
+			( buildNavigationItems as Mock ).mockResolvedValueOnce( { blocks: [] } );
 			editEntityRecord.mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 			await editEntityRecordCallback( {
@@ -940,7 +940,7 @@ describe( 'editEntityRecordCallback', () => {
 		// The creation landed, but nothing can un-create a page, so the checkpoint
 		// holds nothing to restore and is dropped rather than offering an empty undo.
 		it( 'drops the checkpoint when only unrestorable work landed', async () => {
-			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
+			( setPageTitle as Mock ).mockRejectedValueOnce( new Error( 'page is locked' ) );
 
 			await editEntityRecordCallback( {
 				toolCallId: 'call-created-only',
@@ -952,7 +952,7 @@ describe( 'editEntityRecordCallback', () => {
 		} );
 
 		it( 'drops the checkpoint when the batch changed nothing', async () => {
-			( setPageTitle as jest.Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
+			( setPageTitle as Mock ).mockRejectedValueOnce( new Error( 'menu is locked' ) );
 
 			await editEntityRecordCallback( {
 				toolCallId: 'call-nothing',

@@ -1,14 +1,16 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( { resolveSelect: jest.fn() } ) );
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( { resolveSelect: vi.fn() } ) );
 
 import { resolveSelect } from '@wordpress/data';
 import { readRecord } from '../read-record';
 
-const getEditedEntityRecord = jest.fn();
+const getEditedEntityRecord = vi.fn();
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	( resolveSelect as jest.Mock ).mockReturnValue( { getEditedEntityRecord } );
+	vi.clearAllMocks();
+	( resolveSelect as Mock ).mockReturnValue( { getEditedEntityRecord } );
 } );
 
 it( 'returns the record', async () => {

@@ -2,16 +2,13 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useRegenerateAction from '../use-regenerate-action';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		RegenerateAltIcon: () => null,
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	RegenerateAltIcon: () => null,
+} ) );
 
 const createMessage = ( id: string, role: 'user' | 'agent' ): UIMessage => ( {
 	id,
@@ -25,11 +22,11 @@ const createMessage = ( id: string, role: 'user' | 'agent' ): UIMessage => ( {
 const latestComplete = { isLatestAgentMessage: true };
 
 describe( 'useRegenerateAction', () => {
-	const onRegenerate = jest.fn();
-	const getRegenerateHandler = jest.fn( () => onRegenerate );
+	const onRegenerate = vi.fn();
+	const getRegenerateHandler = vi.fn( () => onRegenerate );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'returns no action when disabled', () => {

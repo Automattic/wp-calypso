@@ -1,5 +1,7 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockTypes: jest.fn( () =>
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockTypes: vi.fn( () =>
 		[ 'core/paragraph', 'core/group', 'core/button' ].map( ( name ) => ( { name } ) )
 	),
 } ) );

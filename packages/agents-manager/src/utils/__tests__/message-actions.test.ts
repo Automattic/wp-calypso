@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import { withComputedActions, withDisabledActions } from '../message-actions';
 import type { UIMessageAction } from '@automattic/agenttic-client';
 
 function action( id: string, order?: number ) {
-	return { id, label: id, onClick: jest.fn(), order } as UIMessageAction;
+	return { id, label: id, onClick: vi.fn(), order } as UIMessageAction;
 }
 
 describe( 'withComputedActions', () => {
@@ -40,7 +41,7 @@ describe( 'withDisabledActions', () => {
 		const component = {
 			type: 'component',
 			id: 'checkpoint',
-			component: jest.fn(),
+			component: vi.fn(),
 		} as UIMessageAction;
 
 		const { actions } = withDisabledActions( { actions: [ action( 'feedback-up' ), component ] } );

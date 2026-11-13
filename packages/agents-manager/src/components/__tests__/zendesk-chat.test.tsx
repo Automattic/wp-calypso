@@ -3,24 +3,25 @@
  */
 /* eslint-disable import/order -- mocks must be registered before importing ZendeskChat */
 import { act, render } from '@testing-library/react';
+import { vi } from 'vitest';
 
-const mockUseManagedZendeskChat = jest.fn();
-const mockAgentChatProps = jest.fn();
-const mockOnTypingStatusChange = jest.fn();
+const mockUseManagedZendeskChat = vi.fn();
+const mockAgentChatProps = vi.fn();
+const mockOnTypingStatusChange = vi.fn();
 let mockZendeskTicketProductFieldValue: string | undefined = 'woocommerce_core_product';
 let mockSite: { ID: number | string; URL: string } | null = {
 	ID: 123,
 	URL: 'https://example.com',
 };
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useManagedZendeskChat: ( props: unknown ) => mockUseManagedZendeskChat( props ),
 	ZENDESK_CUSTOM_FIELD_PRODUCT: 25254766,
 	ZENDESK_CUSTOM_FIELD_WEBSITE_URL: 22054927,
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID: 23752099174548,
 } ) );
 
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( {
 		site: mockSite,
 		zendeskConversationTags: [ 'woo_support_flow_ai_plugin' ],
@@ -29,7 +30,7 @@ jest.mock( '../../contexts', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../agent-chat', () => ( {
+vi.mock( '../agent-chat', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => {
 		mockAgentChatProps( props );
@@ -37,7 +38,7 @@ jest.mock( '../agent-chat', () => ( {
 	},
 } ) );
 
-jest.mock( '../concluded-conversation-footer', () => ( {
+vi.mock( '../concluded-conversation-footer', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
@@ -46,12 +47,12 @@ import ZendeskChat from '../zendesk-chat';
 
 describe( 'ZendeskChat', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockZendeskTicketProductFieldValue = 'woocommerce_core_product';
 		mockSite = { ID: 123, URL: 'https://example.com' };
 		mockUseManagedZendeskChat.mockReturnValue( {
 			agentticMessages: [],
-			onSubmit: jest.fn(),
+			onSubmit: vi.fn(),
 			isLoadingConversation: false,
 			isProcessing: false,
 			onTypingStatusChange: mockOnTypingStatusChange,
@@ -68,8 +69,8 @@ describe( 'ZendeskChat', () => {
 				chatHeaderOptions={ [] }
 				isDocked={ false }
 				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
+				onClose={ vi.fn() }
+				onExpand={ vi.fn() }
 			/>
 		);
 
@@ -94,8 +95,8 @@ describe( 'ZendeskChat', () => {
 				chatHeaderOptions={ [] }
 				isDocked={ false }
 				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
+				onClose={ vi.fn() }
+				onExpand={ vi.fn() }
 			/>
 		);
 
@@ -112,8 +113,8 @@ describe( 'ZendeskChat', () => {
 				chatHeaderOptions={ [] }
 				isDocked={ false }
 				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
+				onClose={ vi.fn() }
+				onExpand={ vi.fn() }
 			/>
 		);
 
@@ -130,8 +131,8 @@ describe( 'ZendeskChat', () => {
 				chatHeaderOptions={ [] }
 				isDocked={ false }
 				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
+				onClose={ vi.fn() }
+				onExpand={ vi.fn() }
 			/>
 		);
 
@@ -151,8 +152,8 @@ describe( 'ZendeskChat', () => {
 					chatHeaderOptions={ [] }
 					isDocked={ false }
 					isOpen
-					onClose={ jest.fn() }
-					onExpand={ jest.fn() }
+					onClose={ vi.fn() }
+					onExpand={ vi.fn() }
 				/>
 			);
 		} );

@@ -1,15 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: jest.fn() } ) );
-jest.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: vi.fn() } ) );
+vi.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OpenHelpCenterButton from '../open-help-center-button';
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'OpenHelpCenterButton', () => {
 	it( 'records when it is shown, and opens the support chat with the message on click', () => {

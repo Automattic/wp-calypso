@@ -2,26 +2,27 @@
  * @jest-environment jsdom
  */
 import { select, subscribe } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import { showTemplate, showTemplateCallback } from '../callback';
 import type { ShowTemplateIO } from '../callback';
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn( () => undefined ),
-	dispatch: jest.fn( () => undefined ),
-	subscribe: jest.fn( () => () => {} ),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn( () => undefined ),
+	dispatch: vi.fn( () => undefined ),
+	subscribe: vi.fn( () => () => {} ),
 } ) );
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '../../../utils/is-editor-page', () => ( {
-	isEditorPage: jest.fn( () => true ),
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '../../../utils/is-editor-page', () => ( {
+	isEditorPage: vi.fn( () => true ),
 } ) );
 
 type IOOverrides = Partial< ShowTemplateIO > & {
 	renderingModes?: Record< string, Record< string, string > >;
 };
 
-const setRenderingMode = jest.fn();
-const setRenderingModes = jest.fn();
+const setRenderingMode = vi.fn();
+const setRenderingModes = vi.fn();
 
 /**
  * A page in `post-only` on a themed site — the case the ability exists for.
@@ -43,7 +44,7 @@ function makeIO( overrides: IOOverrides = {} ): ShowTemplateIO {
 	};
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'showTemplate', () => {
 	it( 'turns the template on and persists the choice for this theme and post type', async () => {
@@ -137,7 +138,7 @@ describe( 'showTemplate', () => {
 
 describe( 'showTemplateCallback', () => {
 	it( 'refuses off an editor page without touching the editor', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		( isEditorPage as Mock ).mockReturnValue( false );
 
 		const result = await showTemplateCallback();
 
@@ -147,7 +148,7 @@ describe( 'showTemplateCallback', () => {
 	} );
 
 	it( 'refuses when the editor store is unavailable', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		( isEditorPage as Mock ).mockReturnValue( true );
 
 		const result = await showTemplateCallback();
 
@@ -171,11 +172,11 @@ describe( 'showTemplateCallback', () => {
 		let listeners: ( () => void )[] = [];
 
 		beforeEach( () => {
-			( isEditorPage as jest.Mock ).mockReturnValue( true );
+			( isEditorPage as Mock ).mockReturnValue( true );
 			Object.assign( part, { blocks: [], resolved: false, record: undefined } );
 			listeners = [];
 
-			( select as jest.Mock ).mockImplementation( ( store ) => {
+			( select as Mock ).mockImplementation( ( store ) => {
 				if ( store === 'core/block-editor' ) {
 					return {
 						getBlocksByName: () => [ 'header-part' ],
@@ -196,7 +197,7 @@ describe( 'showTemplateCallback', () => {
 					getEditedEntityRecord: () => part.record,
 				};
 			} );
-			( subscribe as jest.Mock ).mockImplementation( ( listener ) => {
+			( subscribe as Mock ).mockImplementation( ( listener ) => {
 				listeners.push( listener );
 				return () => {};
 			} );

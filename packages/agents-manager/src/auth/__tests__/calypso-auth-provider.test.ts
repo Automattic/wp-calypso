@@ -2,42 +2,32 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-jest.mock(
-	'@automattic/oauth-token',
-	() => ( {
-		getToken: jest.fn( () => false ),
-	} ),
-	{ virtual: true }
-);
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@automattic/oauth-token', () => ( {
+	getToken: vi.fn( () => false ),
+} ) );
 
-jest.mock(
-	'@wordpress/api-fetch',
-	() => ( {
-		__esModule: true,
-		default: jest.fn(),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@wordpress/api-fetch', () => ( {
+	__esModule: true,
+	default: vi.fn(),
+} ) );
 
-jest.mock(
-	'wpcom-proxy-request',
-	() => ( {
-		__esModule: true,
-		default: jest.fn(),
-		canAccessWpcomApis: jest.fn( () => false ),
-	} ),
-	{ virtual: true }
-);
+vi.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn( () => false ),
+} ) );
 
 import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { createCalypsoAuthProvider } from '../calypso-auth-provider';
 
-const mockApiFetch = apiFetch as unknown as jest.Mock;
-const mockCanAccessWpcomApis = canAccessWpcomApis as jest.Mock;
-const mockGetOAuthToken = oauthToken.getToken as jest.Mock;
-const mockWpcomRequest = wpcomRequest as jest.Mock;
+const mockApiFetch = apiFetch as unknown as Mock;
+const mockCanAccessWpcomApis = canAccessWpcomApis as Mock;
+const mockGetOAuthToken = oauthToken.getToken as Mock;
+const mockWpcomRequest = wpcomRequest as Mock;
 
 describe( 'createCalypsoAuthProvider JWT cache', () => {
 	beforeEach( () => {
@@ -50,7 +40,7 @@ describe( 'createCalypsoAuthProvider JWT cache', () => {
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'reuses a token for the same user and site without writing it to browser storage', async () => {
@@ -96,7 +86,7 @@ describe( 'createCalypsoAuthProvider JWT cache', () => {
 
 	it( 'refetches an expired token', async () => {
 		const now = 1_000_000;
-		const nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( now );
+		const nowSpy = vi.spyOn( Date, 'now' ).mockReturnValue( now );
 		mockApiFetch
 			.mockResolvedValueOnce( { token: 'first-token', blog_id: '4105' } )
 			.mockResolvedValueOnce( { token: 'fresh-token', blog_id: '4105' } );

@@ -3,20 +3,21 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 
-const mockIsEditorAiEntryEnabled = jest.fn( () => false );
-const mockIsAdminBarInEditor = jest.fn( () => false );
+const mockIsEditorAiEntryEnabled = vi.fn( () => false );
+const mockIsAdminBarInEditor = vi.fn( () => false );
 
 // The real checks read `window.matchMedia` and Gutenberg globals; mock them
 // down to controllable flags.
-jest.mock( '../../utils/editor-entry-points', () => ( {
+vi.mock( '../../utils/editor-entry-points', () => ( {
 	isEditorAiEntryEnabled: () => mockIsEditorAiEntryEnabled(),
 	isAdminBarInEditor: () => mockIsAdminBarInEditor(),
 } ) );
 
 let mockHasMasterbarAiChatButton = false;
 
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { hasMasterbarAiChatButton: mockHasMasterbarAiChatButton } ),
 } ) );
 

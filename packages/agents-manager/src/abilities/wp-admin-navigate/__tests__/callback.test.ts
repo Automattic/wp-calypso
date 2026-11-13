@@ -1,12 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../../../utils/agent-session', () => ( {
-	getActiveSessionId: jest.fn( () => 'tab-session' ),
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '../../../utils/agent-session', () => ( {
+	getActiveSessionId: vi.fn( () => 'tab-session' ),
 } ) );
-jest.mock( '../../../utils/tracks', () => ( {
-	...jest.requireActual( '../../../utils/tracks' ),
-	recordAgentsManagerTracksEvent: jest.fn(),
+vi.mock( '../../../utils/tracks', async () => ( {
+	...( await vi.importActual< typeof import( '../../../utils/tracks' ) >(
+		'../../../utils/tracks'
+	) ),
+	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
 
 import { recordAgentsManagerTracksEvent } from '../../../utils/tracks';
@@ -24,9 +28,10 @@ function storedState() {
 }
 
 beforeEach( () => {
-	jest.useFakeTimers();
-	jest.clearAllMocks();
+	// Before the fake clock: clearing stored state queues a jsdom storage event timer.
 	sessionStorage.clear();
+	vi.useFakeTimers();
+	vi.clearAllMocks();
 	// A writable stub, so the redirect assignment does not hit jsdom's
 	// unimplemented navigation.
 	Reflect.deleteProperty( window, 'location' );
@@ -35,13 +40,13 @@ beforeEach( () => {
 		href: 'https://example.wordpress.com/wp-admin/index.php',
 		pathname: '/wp-admin/index.php',
 		search: '',
-		reload: jest.fn(),
+		reload: vi.fn(),
 	};
 } );
 
 afterEach( () => {
-	jest.useRealTimers();
-	jest.restoreAllMocks();
+	vi.useRealTimers();
+	vi.restoreAllMocks();
 } );
 
 describe( 'wpAdminNavigateCallback', () => {
@@ -66,7 +71,7 @@ describe( 'wpAdminNavigateCallback', () => {
 		} );
 		expect( window.location.href ).not.toBe( '/wp-admin/plugins.php' );
 
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		expect( window.location.href ).toBe( '/wp-admin/plugins.php' );
 	} );
 
@@ -74,7 +79,7 @@ describe( 'wpAdminNavigateCallback', () => {
 		const result = await wpAdminNavigateCallback( {
 			path: '/wp-admin/./edit.php?post_type=page#top',
 		} );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 
 		expect( result.result.success ).toBe( true );
 		expect( storedState().destination ).toBe( '/wp-admin/edit.php?post_type=page' );
@@ -122,20 +127,20 @@ describe( 'wpAdminNavigateCallback', () => {
 
 		expect( result.result.success ).toBe( false );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
-		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( vi.getTimerCount() ).toBe( 0 );
 		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'refuses to navigate when storing the state fails — no page could answer the call', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 			throw new Error( 'quota exceeded' );
 		} );
 
 		const result = await wpAdminNavigateCallback( { path: '/wp-admin/plugins.php' } );
 
 		expect( result.result.success ).toBe( false );
-		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( vi.getTimerCount() ).toBe( 0 );
 		expect( window.location.href ).not.toBe( '/wp-admin/plugins.php' );
 		expect( error ).toHaveBeenCalled();
 		expect( recordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
@@ -143,7 +148,7 @@ describe( 'wpAdminNavigateCallback', () => {
 
 	it( 'reloads for a same-page destination instead of a no-op assignment', async () => {
 		const result = await wpAdminNavigateCallback( { path: '/wp-admin/index.php#section' } );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 
 		expect( result.result.success ).toBe( true );
 		expect( window.location.reload ).toHaveBeenCalled();
@@ -158,7 +163,7 @@ describe( 'wpAdminNavigateCallback', () => {
 		window.addEventListener( NAVIGATION_PENDING_EVENT, onPending );
 
 		await wpAdminNavigateCallback( { path: '/wp-admin/plugins.php' } );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		window.removeEventListener( NAVIGATION_PENDING_EVENT, onPending );
 
 		expect( hrefsAtDispatch ).toEqual( [
@@ -174,7 +179,7 @@ describe( 'wpAdminNavigateCallback', () => {
 	] )( 'skips the redirect when the call was %s during the delay', async ( _case, arrange ) => {
 		await wpAdminNavigateCallback( { path: '/wp-admin/plugins.php' } );
 		arrange();
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 
 		expect( window.location.href ).toBe( 'https://example.wordpress.com/wp-admin/index.php' );
 		expect( window.location.reload ).not.toHaveBeenCalled();

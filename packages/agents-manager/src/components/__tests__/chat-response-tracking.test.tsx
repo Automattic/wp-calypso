@@ -1,13 +1,14 @@
 import { render } from '@testing-library/react';
+import { type MockInstance, vi } from 'vitest';
 import * as tracks from '../../utils/tracks';
 import ChatResponseRenderedTracker, {
 	createChatResponseActionCallback,
 } from '../chat-response-tracking';
 
-let mockRecordBigSkyTracksEvent: jest.SpiedFunction< typeof tracks.recordBigSkyTracksEvent >;
+let mockRecordBigSkyTracksEvent: MockInstance< typeof tracks.recordBigSkyTracksEvent >;
 
 beforeEach( () => {
-	mockRecordBigSkyTracksEvent = jest
+	mockRecordBigSkyTracksEvent = vi
 		.spyOn( tracks, 'recordBigSkyTracksEvent' )
 		.mockImplementation( () => undefined );
 } );
@@ -19,7 +20,7 @@ afterEach( () => {
 afterAll( () => {
 	// This suite imports the real Tracks module before spying on it. Clear that
 	// module instance so later suites can install their own module-level mocks.
-	jest.resetModules();
+	vi.resetModules();
 } );
 
 describe( 'ChatResponseRenderedTracker', () => {

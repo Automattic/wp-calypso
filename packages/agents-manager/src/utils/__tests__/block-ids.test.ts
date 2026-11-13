@@ -1,16 +1,16 @@
-import type * as BlockIds from '../block-ids';
+import { vi } from 'vitest';
 
 // The map lasts for the page load, so each test starts from a fresh module.
-function loadBlockIds() {
-	jest.resetModules();
+async function loadBlockIds() {
+	vi.resetModules();
 
-	return jest.requireActual< typeof BlockIds >( '../block-ids' );
+	return import( '../block-ids' );
 }
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
-it( 'gives a block the same short id on every lookup, and resolves it back', () => {
-	const { createShortIdLookup, resolveClientId } = loadBlockIds();
+it( 'gives a block the same short id on every lookup, and resolves it back', async () => {
+	const { createShortIdLookup, resolveClientId } = await loadBlockIds();
 
 	const hero = createShortIdLookup().toShortId( 'uuid-hero' );
 	const next = createShortIdLookup();
@@ -21,9 +21,9 @@ it( 'gives a block the same short id on every lookup, and resolves it back', () 
 } );
 
 // Digits alone would read as a page id or a menu `ref`.
-it( 'mints four characters, a letter first, past an id already taken', () => {
-	const { toShortId } = loadBlockIds().createShortIdLookup();
-	const random = jest.spyOn( Math, 'random' ).mockReturnValue( 0 );
+it( 'mints four characters, a letter first, past an id already taken', async () => {
+	const { toShortId } = ( await loadBlockIds() ).createShortIdLookup();
+	const random = vi.spyOn( Math, 'random' ).mockReturnValue( 0 );
 
 	expect( toShortId( 'uuid-taken' ) ).toBe( 'aaaa' );
 
@@ -35,8 +35,8 @@ it( 'mints four characters, a letter first, past an id already taken', () => {
 } );
 
 // A host names a block to the agent: the id must be the one the page structure lists.
-it( 'gives a host the short id the agent knows a block by', () => {
-	const { createShortIdLookup, getAgentBlockId, resolveClientId } = loadBlockIds();
+it( 'gives a host the short id the agent knows a block by', async () => {
+	const { createShortIdLookup, getAgentBlockId, resolveClientId } = await loadBlockIds();
 
 	const hero = createShortIdLookup().toShortId( 'uuid-hero' );
 	const footer = getAgentBlockId( 'uuid-footer' );
@@ -46,8 +46,8 @@ it( 'gives a host the short id the agent knows a block by', () => {
 	expect( resolveClientId( footer ) ).toBe( 'uuid-footer' );
 } );
 
-it( 'finds a short id only once the block has one', () => {
-	const { toShortId, findShortId } = loadBlockIds().createShortIdLookup();
+it( 'finds a short id only once the block has one', async () => {
+	const { toShortId, findShortId } = ( await loadBlockIds() ).createShortIdLookup();
 
 	expect( findShortId( 'uuid-hero' ) ).toBeUndefined();
 
@@ -59,15 +59,15 @@ it( 'finds a short id only once the block has one', () => {
 // `get-block-tree` and WebMCP hand out clientIds unshortened, and an id from
 // the agent is raw input: `constructor` must not read `Object.prototype`.
 it.each( [ 'uuid-hero', 'constructor' ] )(
-	'takes %p, an id it does not hold, as a clientId',
-	( id ) => {
-		expect( loadBlockIds().resolveClientId( id ) ).toBe( id );
+	'takes %o, an id it does not hold, as a clientId',
+	async ( id ) => {
+		expect( ( await loadBlockIds() ).resolveClientId( id ) ).toBe( id );
 	}
 );
 
 // A replaced block keeps the id the agent knows it by, whichever form the call used.
-it( 'repoints a short id, or every short id that stood for a replaced block', () => {
-	const { createShortIdLookup, repointBlockId, resolveClientId } = loadBlockIds();
+it( 'repoints a short id, or every short id that stood for a replaced block', async () => {
+	const { createShortIdLookup, repointBlockId, resolveClientId } = await loadBlockIds();
 	const shortId = createShortIdLookup().toShortId( 'uuid-old' );
 
 	repointBlockId( shortId, 'uuid-new' );
@@ -79,8 +79,8 @@ it( 'repoints a short id, or every short id that stood for a replaced block', ()
 	expect( resolveClientId( shortId ) ).toBe( 'uuid-newer' );
 } );
 
-it( 'keeps the menu items of the last page structure only', () => {
-	const { setMenuItemAttributes, getMenuItemAttributes } = loadBlockIds();
+it( 'keeps the menu items of the last page structure only', async () => {
+	const { setMenuItemAttributes, getMenuItemAttributes } = await loadBlockIds();
 
 	setMenuItemAttributes( new Map( [ [ 'abcd', { label: 'About' } ] ] ) );
 	setMenuItemAttributes( new Map( [ [ 'efgh', { label: 'Services' } ] ] ) );

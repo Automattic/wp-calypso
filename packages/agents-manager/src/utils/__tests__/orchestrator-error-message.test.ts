@@ -1,9 +1,10 @@
+import { vi } from 'vitest';
 import {
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
 } from '../orchestrator-error-message';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
@@ -58,7 +59,7 @@ describe( 'getOrchestratorErrorType', () => {
 	} );
 
 	it.each( [ undefined, '', 'rest_forbidden', 'xai_credit_allowance_exhausted' ] )(
-		'keeps the text-based class for the code %p',
+		'keeps the text-based class for the code %o',
 		( code ) => {
 			expect( getOrchestratorErrorType( 'HTTP 429: Too Many Requests', code ) ).toBe(
 				'rate_limit'

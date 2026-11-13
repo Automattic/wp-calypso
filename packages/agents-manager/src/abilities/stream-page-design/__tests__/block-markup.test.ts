@@ -1,14 +1,16 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn( ( name, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: 'new',
 		name,
 		attributes,
 		innerBlocks,
 	} ) ),
-	getBlockType: jest.fn( ( name: string ) => ( { name } ) ),
-	parse: jest.fn( () => [] ),
-	serialize: jest.fn( ( blocks: unknown[] ) => `<!-- ${ blocks.length } blocks -->` ),
-	validateBlock: jest.fn( ( block: { attributes?: { valid?: boolean } } ) => [
+	getBlockType: vi.fn( ( name: string ) => ( { name } ) ),
+	parse: vi.fn( () => [] ),
+	serialize: vi.fn( ( blocks: unknown[] ) => `<!-- ${ blocks.length } blocks -->` ),
+	validateBlock: vi.fn( ( block: { attributes?: { valid?: boolean } } ) => [
 		block.attributes?.valid !== false,
 		[],
 	] ),
@@ -35,7 +37,7 @@ const block = (
 	innerBlocks,
 } );
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'parseBlockComment', () => {
 	it.each( [
@@ -181,7 +183,7 @@ describe( 'sanitizeBlockTree', () => {
 } );
 
 describe( 'withSuppressedValidationLogs', () => {
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
 	/* eslint-disable no-console */
 	it.each( [
@@ -190,7 +192,7 @@ describe( 'withSuppressedValidationLogs', () => {
 	] as const )(
 		'silences validation output on console.%s only, and restores the console',
 		( method, message ) => {
-			const spy = jest.spyOn( console, method ).mockImplementation( () => {} );
+			const spy = vi.spyOn( console, method ).mockImplementation( () => {} );
 
 			withSuppressedValidationLogs( () => {
 				console[ method ]( message );
@@ -207,7 +209,7 @@ describe( 'withSuppressedValidationLogs', () => {
 describe( 'repairBlocksFromMarkup', () => {
 	it( 'rebuilds a block the editor would refuse, and parses the normalized markup', () => {
 		const invalid = block( 'core/paragraph', { valid: false, content: 'Hi' } );
-		( parse as jest.Mock )
+		( parse as Mock )
 			.mockReturnValueOnce( [ invalid ] )
 			.mockReturnValueOnce( [ block( 'core/paragraph' ) ] );
 
@@ -221,18 +223,18 @@ describe( 'repairBlocksFromMarkup', () => {
 	it( 'rebuilds the parent of a repaired child, from the repaired children', () => {
 		const invalid = block( 'core/paragraph', { valid: false } );
 		const group = block( 'core/group', {}, [ invalid ] );
-		( parse as jest.Mock ).mockReturnValueOnce( [ group ] );
+		( parse as Mock ).mockReturnValueOnce( [ group ] );
 
 		repairBlocksFromMarkup( '<!-- wp:group -->x<!-- /wp:group -->' );
 
-		const { results } = ( createBlock as jest.Mock ).mock;
+		const { results } = ( createBlock as Mock ).mock;
 		expect( results ).toHaveLength( 2 );
 		expect( createBlock ).toHaveBeenLastCalledWith( 'core/group', {}, [ results[ 0 ].value ] );
 	} );
 
 	it( 'keeps a valid block as it is', () => {
 		const valid = block( 'core/paragraph' );
-		( parse as jest.Mock ).mockReturnValueOnce( [ valid ] ).mockReturnValueOnce( [ valid ] );
+		( parse as Mock ).mockReturnValueOnce( [ valid ] ).mockReturnValueOnce( [ valid ] );
 
 		expect( repairBlocksFromMarkup( '<!-- wp:paragraph /-->' ) ).toEqual( [ valid ] );
 		expect( createBlock ).not.toHaveBeenCalled();

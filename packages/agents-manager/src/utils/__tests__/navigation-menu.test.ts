@@ -1,16 +1,18 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	dispatch: jest.fn(),
-	resolveSelect: jest.fn(),
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	dispatch: vi.fn(),
+	resolveSelect: vi.fn(),
 } ) );
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
-	parse: jest.fn( () => [] ),
-	serialize: jest.fn( () => '<serialized />' ),
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn( ( name, attributes ) => ( { name, attributes, innerBlocks: [] } ) ),
+	parse: vi.fn( () => [] ),
+	serialize: vi.fn( () => '<serialized />' ),
 } ) );
-jest.mock( '../site-metadata', () => ( { getSiteMetadata: jest.fn( () => ( {} ) ) } ) );
-jest.mock( '../editor-blocks', () => ( { getBlock: jest.fn(), getBlockParents: jest.fn() } ) );
+vi.mock( '../site-metadata', () => ( { getSiteMetadata: vi.fn( () => ( {} ) ) } ) );
+vi.mock( '../editor-blocks', () => ( { getBlock: vi.fn(), getBlockParents: vi.fn() } ) );
 
 import { parse } from '@wordpress/blocks';
 import { dispatch, resolveSelect, select } from '@wordpress/data';
@@ -27,8 +29,8 @@ import {
 } from '../navigation-menu';
 import { getSiteMetadata } from '../site-metadata';
 
-const editEntityRecord = jest.fn();
-const saveSpecifiedEntityEdits = jest.fn();
+const editEntityRecord = vi.fn();
+const saveSpecifiedEntityEdits = vi.fn();
 
 const link = (
 	id: number | string | undefined,
@@ -50,7 +52,7 @@ function withMenus(
 	rendered = Object.keys( menus ),
 	{ unsaved = [] as string[] } = {}
 ) {
-	( select as jest.Mock ).mockReturnValue( {
+	( select as Mock ).mockReturnValue( {
 		getBlocksByName: () => rendered.map( ( id ) => `client-${ id }` ),
 		getBlock: ( clientId: string ) => ( {
 			attributes: { ref: Number( clientId.replace( 'client-', '' ) ) },
@@ -58,13 +60,13 @@ function withMenus(
 		hasEditsForEntityRecord: ( _kind: string, _name: string, id: number ) =>
 			unsaved.includes( String( id ) ),
 	} );
-	( resolveSelect as jest.Mock ).mockReturnValue( {
+	( resolveSelect as Mock ).mockReturnValue( {
 		getEditedEntityRecord: ( _kind: string, _name: string, id: number ) =>
 			Promise.resolve( menus[ String( id ) ] ? { id, blocks: menus[ String( id ) ] } : null ),
 		getEntityRecords: () =>
 			Promise.resolve( Object.keys( menus ).map( ( id ) => ( { id: Number( id ) } ) ) ),
 	} );
-	( dispatch as jest.Mock ).mockReturnValue( {
+	( dispatch as Mock ).mockReturnValue( {
 		editEntityRecord,
 		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
 	} );
@@ -82,13 +84,13 @@ const expectItemsSaved = ( menuId: number ) =>
 
 /** The items the last write sent, the menu it wrote to, and its options. */
 const lastWrite = () => {
-	const call = editEntityRecord.mock.calls.at( -1 );
+	const call = editEntityRecord.mock.calls.at( -1 )!;
 	return { menuId: call[ 2 ], items: call[ 3 ].blocks, options: call[ 4 ] };
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	( getSiteMetadata as jest.Mock ).mockReturnValue( {} );
+	vi.clearAllMocks();
+	( getSiteMetadata as Mock ).mockReturnValue( {} );
 	saveSpecifiedEntityEdits.mockReset();
 } );
 
@@ -100,10 +102,8 @@ describe( 'getMenuIdAround', () => {
 	};
 
 	beforeEach( () => {
-		jest.mocked( getBlock ).mockImplementation( ( id ) => blocks[ id ] as never );
-		jest
-			.mocked( getBlockParents )
-			.mockImplementation( ( id ) => ( id === 'link' ? [ 'nav' ] : [] ) );
+		vi.mocked( getBlock ).mockImplementation( ( id ) => blocks[ id ] as never );
+		vi.mocked( getBlockParents ).mockImplementation( ( id ) => ( id === 'link' ? [ 'nav' ] : [] ) );
 	} );
 
 	it.each( [
@@ -117,8 +117,8 @@ describe( 'getMenuIdAround', () => {
 
 describe( 'getLoadedMenuItems', () => {
 	const serveMenu = ( menu: unknown ) => {
-		( select as jest.Mock ).mockReturnValue( { getEditedEntityRecord: () => menu } );
-		( resolveSelect as jest.Mock ).mockReturnValue( { getEditedEntityRecord: async () => menu } );
+		( select as Mock ).mockReturnValue( { getEditedEntityRecord: () => menu } );
+		( resolveSelect as Mock ).mockReturnValue( { getEditedEntityRecord: async () => menu } );
 	};
 
 	// Parsing mints new clientIds: parsed again, the items the page structure
@@ -156,7 +156,7 @@ describe( 'addNavigationItem', () => {
 	// The rendered list holds header and footer alike, so its first entry is
 	// not necessarily the menu a new page belongs in.
 	it( 'adds to the site menu rather than the first rendered one', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		( getSiteMetadata as Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 1, 'Footer' ) ], 99: [ link( 1, 'Home' ) ] }, [ '10' ] );
 
 		await addNavigationItem( { label: 'About', id: 7 } );
@@ -167,7 +167,7 @@ describe( 'addNavigationItem', () => {
 	// An unread site record would look like a site naming no menu, and the page
 	// would land in the first rendered one — the footer, say.
 	it( 'refuses when the site settings cannot be read', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( undefined );
+		( getSiteMetadata as Mock ).mockReturnValue( undefined );
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
 
 		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
@@ -230,7 +230,7 @@ describe( 'addNavigationItem', () => {
 
 	// A silent return would call the page created and its item never added.
 	it( 'refuses when the menu the site names cannot be read', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		( getSiteMetadata as Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 1, 'Home' ) ] }, [ '10' ] );
 
 		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
@@ -242,7 +242,7 @@ describe( 'addNavigationItem', () => {
 	// reload throws away.
 	it( 'refuses when the save action is unavailable, and puts the menu back', async () => {
 		withMenus( { 10: [ link( 1, 'Home' ) ] } );
-		( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
+		( dispatch as Mock ).mockReturnValue( { editEntityRecord } );
 
 		await expect( addNavigationItem( { label: 'About', id: 7 } ) ).rejects.toThrow(
 			'unavailable to save'
@@ -265,13 +265,13 @@ describe( 'renameNavigationItem', () => {
 	// After a reload a menu carries only its serialized `content`.
 	it( 'reads a menu the editor has not touched from its content', async () => {
 		withMenus( { 10: [] } );
-		const resolvers = ( resolveSelect as jest.Mock )();
-		( resolveSelect as jest.Mock ).mockReturnValue( {
+		const resolvers = ( resolveSelect as Mock )();
+		( resolveSelect as Mock ).mockReturnValue( {
 			...resolvers,
 			getEditedEntityRecord: () =>
 				Promise.resolve( { id: 10, content: '<!-- wp:navigation-link {"id":7} /-->' } ),
 		} );
-		( parse as jest.Mock ).mockReturnValueOnce( [ link( 7, 'About' ) ] );
+		( parse as Mock ).mockReturnValueOnce( [ link( 7, 'About' ) ] );
 
 		await renameNavigationItem( 7, 'About us' );
 
@@ -292,7 +292,7 @@ describe( 'renameNavigationItem', () => {
 	// keeps the old label: the rendered ones first, then the one the site names,
 	// then the rest — a menu off screen still holds its links.
 	it( 'reaches every menu holding the page: rendered, named by the site, then the rest', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		( getSiteMetadata as Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus(
 			{ 10: [ link( 7, 'About' ) ], 50: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] },
 			[ '50' ]
@@ -364,8 +364,8 @@ describe( 'getMenuIdsToRelabel', () => {
 describe( 'prefetchMenus', () => {
 	// The same request as the later read, so the two share one resolution.
 	it( 'requests the menu list as the reads do, and swallows a failure', async () => {
-		const getEntityRecords = jest.fn().mockRejectedValue( new Error( 'offline' ) );
-		( resolveSelect as jest.Mock ).mockReturnValue( { getEntityRecords } );
+		const getEntityRecords = vi.fn().mockRejectedValue( new Error( 'offline' ) );
+		( resolveSelect as Mock ).mockReturnValue( { getEntityRecords } );
 
 		expect( () => prefetchMenus() ).not.toThrow();
 		await Promise.resolve();
@@ -419,10 +419,10 @@ describe( 'removeNavigationItem', () => {
 	// The page is already gone, so a retry could not finish a removal that
 	// stopped part-way: nothing is written until every menu has been read.
 	it( 'writes nothing when a later menu cannot be read', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		( getSiteMetadata as Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );
-		const resolvers = ( resolveSelect as jest.Mock )();
-		( resolveSelect as jest.Mock ).mockReturnValue( {
+		const resolvers = ( resolveSelect as Mock )();
+		( resolveSelect as Mock ).mockReturnValue( {
 			...resolvers,
 			getEditedEntityRecord: ( kind: string, name: string, id: number ) =>
 				id === 99
@@ -437,7 +437,7 @@ describe( 'removeNavigationItem', () => {
 	// The page is gone either way, so every menu that can be saved is; the one
 	// that cannot has its items put back and is named for the model.
 	it( 'saves every menu it can when one save fails', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		( getSiteMetadata as Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ] );
 		saveSpecifiedEntityEdits.mockImplementation( ( _kind, _name, id ) =>
 			id === 99 ? Promise.reject( new Error( 'menu 99 is locked' ) ) : Promise.resolve()
@@ -450,7 +450,7 @@ describe( 'removeNavigationItem', () => {
 	} );
 
 	it( 'saves the menus without unsaved edits, and returns the one with', async () => {
-		( getSiteMetadata as jest.Mock ).mockReturnValue( { navigationId: 99 } );
+		( getSiteMetadata as Mock ).mockReturnValue( { navigationId: 99 } );
 		withMenus( { 10: [ link( 7, 'About' ) ], 99: [ link( 7, 'About' ) ] }, [ '10' ], {
 			unsaved: [ '99' ],
 		} );
@@ -472,7 +472,7 @@ describe( 'removeNavigationItem', () => {
 	// cleared menu, not a cue to reparse the saved content.
 	it( 'reads an emptied menu as empty', async () => {
 		withMenus( { 10: [] } );
-		( resolveSelect as jest.Mock ).mockReturnValue( {
+		( resolveSelect as Mock ).mockReturnValue( {
 			getEditedEntityRecord: () =>
 				Promise.resolve( { id: 10, blocks: [], content: '<!-- wp:navigation-link -->' } ),
 			getEntityRecords: () => Promise.resolve( [ { id: 10 } ] ),

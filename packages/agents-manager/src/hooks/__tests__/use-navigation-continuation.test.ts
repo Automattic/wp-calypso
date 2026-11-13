@@ -1,13 +1,15 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 let mockSessionId: string;
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { getTabSessionId: () => mockSessionId } ),
 } ) );
-jest.mock( '../../utils/tracks', () => ( {
-	...jest.requireActual( '../../utils/tracks' ),
-	recordAgentsManagerTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', async () => ( {
+	...( await vi.importActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' ) ),
+	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
 
 import { renderHook } from '@testing-library/react';
@@ -22,10 +24,8 @@ import { useNavigationContinuation } from '../use-navigation-continuation';
 const STORAGE_KEY = 'agents-manager-pending-navigation';
 const SENT_KEY = 'agents-manager-navigation-continuation-sent';
 
-function renderContinuation(
-	overrides: { isProcessing?: boolean; sendToolResult?: jest.Mock } = {}
-) {
-	const sendToolResult = overrides.sendToolResult ?? jest.fn().mockResolvedValue( undefined );
+function renderContinuation( overrides: { isProcessing?: boolean; sendToolResult?: Mock } = {} ) {
+	const sendToolResult = overrides.sendToolResult ?? vi.fn().mockResolvedValue( undefined );
 
 	const result = renderHook( () =>
 		useNavigationContinuation( {
@@ -58,8 +58,8 @@ function parkNavigationFromPreviousLoad( overrides: Record< string, unknown > = 
 }
 
 beforeEach( () => {
-	jest.useFakeTimers();
-	jest.clearAllMocks();
+	vi.useFakeTimers();
+	vi.clearAllMocks();
 	sessionStorage.clear();
 	mockSessionId = 'session-1';
 	window.history.replaceState( {}, '', '/wp-admin/plugins.php?paged=2' );
@@ -67,8 +67,8 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.useRealTimers();
-	jest.restoreAllMocks();
+	vi.useRealTimers();
+	vi.restoreAllMocks();
 	Reflect.deleteProperty( document, 'visibilityState' );
 } );
 
@@ -77,7 +77,7 @@ describe( 'useNavigationContinuation', () => {
 		sessionStorage.clear();
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 	} );
@@ -92,7 +92,7 @@ describe( 'useNavigationContinuation', () => {
 	it( 'sends the continuation for the stored call, then clears the state', async () => {
 		const { sendToolResult } = renderContinuation();
 
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		const params = sendToolResult.mock.calls[ 0 ][ 0 ];
@@ -117,7 +117,7 @@ describe( 'useNavigationContinuation', () => {
 		first.unmount();
 		const second = renderContinuation();
 
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( first.sendToolResult.mock.calls.length + second.sendToolResult.mock.calls.length ).toBe(
 			1
@@ -125,14 +125,14 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'does not resend while the first send is still in flight — the sent flag decides', async () => {
-		const inFlight = jest.fn().mockReturnValue( new Promise( () => {} ) );
+		const inFlight = vi.fn().mockReturnValue( new Promise( () => {} ) );
 		const first = renderContinuation( { sendToolResult: inFlight } );
-		await jest.advanceTimersByTimeAsync( 500 );
+		await vi.advanceTimersByTimeAsync( 500 );
 		expect( inFlight ).toHaveBeenCalledTimes( 1 );
 
 		first.unmount();
 		const second = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( second.sendToolResult ).not.toHaveBeenCalled();
 	} );
@@ -141,7 +141,7 @@ describe( 'useNavigationContinuation', () => {
 		window.history.replaceState( {}, '', '/wp-admin/index.php' );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -164,30 +164,30 @@ describe( 'useNavigationContinuation', () => {
 		'waits while %s, then answers once unblocked',
 		async ( _case, arrange, lift, processing ) => {
 			arrange();
-			const sendToolResult = jest.fn().mockResolvedValue( undefined );
+			const sendToolResult = vi.fn().mockResolvedValue( undefined );
 			const { rerender } = renderHook(
 				( { isProcessing }: { isProcessing: boolean } ) =>
 					useNavigationContinuation( { isProcessing, sendToolResult } ),
 				{ initialProps: { isProcessing: processing } }
 			);
 
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			expect( sendToolResult ).not.toHaveBeenCalled();
 			expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
 
 			lift();
 			rerender( { isProcessing: false } );
-			await jest.runAllTimersAsync();
+			await vi.runAllTimersAsync();
 			expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		}
 	);
 
 	it( 'drops a navigation from another session instead of splitting the chat', async () => {
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		mockSessionId = 'session-2';
 		const { sendToolResult } = renderContinuation();
 
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
@@ -198,7 +198,7 @@ describe( 'useNavigationContinuation', () => {
 		parkNavigationFromPreviousLoad( { sessionId: '' } );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -207,23 +207,23 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/plugins.php', 'session-1' );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
 	} );
 
 	it( 'ignores an expired navigation', async () => {
-		jest.setSystemTime( Date.now() + 6 * 60 * 1000 );
+		vi.setSystemTime( Date.now() + 6 * 60 * 1000 );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not delete a successor navigation saved while the send resolves', async () => {
-		const sendToolResult = jest.fn().mockImplementation( async () => {
+		const sendToolResult = vi.fn().mockImplementation( async () => {
 			savePendingNavigation(
 				'/wp-admin/options-general.php',
 				'session-1',
@@ -233,7 +233,7 @@ describe( 'useNavigationContinuation', () => {
 		} );
 
 		renderContinuation( { sendToolResult } );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) ?? 'null' );
 		expect( stored?.toolCallId ).toBe( 'call-2' );
@@ -241,9 +241,9 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'a failed send does not unmark a successor navigation’s sent flag', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const sendToolResult = jest.fn().mockImplementation( async () => {
-			jest.advanceTimersByTime( 1 );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const sendToolResult = vi.fn().mockImplementation( async () => {
+			vi.advanceTimersByTime( 1 );
 			savePendingNavigation(
 				'/wp-admin/options-general.php',
 				'session-1',
@@ -255,7 +255,7 @@ describe( 'useNavigationContinuation', () => {
 		} );
 
 		renderContinuation( { sendToolResult } );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) ?? 'null' );
 		expect( stored?.toolCallId ).toBe( 'call-2' );
@@ -263,8 +263,8 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'does not clear a successor navigation’s sent flag either', async () => {
-		const sendToolResult = jest.fn().mockImplementation( async () => {
-			jest.advanceTimersByTime( 1 );
+		const sendToolResult = vi.fn().mockImplementation( async () => {
+			vi.advanceTimersByTime( 1 );
 			savePendingNavigation(
 				'/wp-admin/options-general.php',
 				'session-1',
@@ -275,7 +275,7 @@ describe( 'useNavigationContinuation', () => {
 		} );
 
 		renderContinuation( { sendToolResult } );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		const stored = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) ?? 'null' );
 		expect( stored?.toolCallId ).toBe( 'call-2' );
@@ -287,12 +287,12 @@ describe( 'useNavigationContinuation', () => {
 		// created on this page, whose destination the current URL contains,
 		// must not be answered as an arrival before its redirect fires.
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 
-		jest.advanceTimersByTime( 1 );
+		vi.advanceTimersByTime( 1 );
 		savePendingNavigation( '/wp-admin/plugins.php', 'session-1', 'call-2', 'wp_admin__navigate' );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
@@ -307,8 +307,8 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/plugins.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.runAllTimersAsync();
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		const { message } = sendToolResult.mock.calls[ 0 ][ 0 ];
@@ -341,8 +341,8 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.runAllTimersAsync();
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
@@ -350,7 +350,7 @@ describe( 'useNavigationContinuation', () => {
 
 	it( 'without a dialog stall, leaves the decline to the flush', async () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
-		const sendToolResult = jest.fn().mockResolvedValue( undefined );
+		const sendToolResult = vi.fn().mockResolvedValue( undefined );
 		const { result, rerender } = renderHook(
 			( { isProcessing }: { isProcessing: boolean } ) =>
 				useNavigationContinuation( { isProcessing, sendToolResult } ),
@@ -359,14 +359,14 @@ describe( 'useNavigationContinuation', () => {
 
 		// On-time checks carry no dialog proof — a slow accepted navigation
 		// still committing looks identical, so nothing auto-sends.
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
 
 		// Effect re-runs must not send either.
 		rerender( { isProcessing: true } );
 		rerender( { isProcessing: false } );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).not.toHaveBeenCalled();
 
 		await result.current.flushPendingNavigation();
@@ -382,7 +382,7 @@ describe( 'useNavigationContinuation', () => {
 		sessionStorage.setItem( SENT_KEY, `${ timestamp }:other-page-load` );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		const { message } = sendToolResult.mock.calls[ 0 ][ 0 ];
@@ -399,17 +399,17 @@ describe( 'useNavigationContinuation', () => {
 		// The blocking dialog stalls timers: the probe lands well past its
 		// zero-delay schedule, proving the user dismissed a dialog.
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.advanceTimersByTimeAsync( 500 );
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.advanceTimersByTimeAsync( 500 );
 		expect( sendToolResult ).not.toHaveBeenCalled();
 
 		// Hands-off, the short delay is not enough — a slow accepted
 		// navigation may still be committing, and its reply belongs on the
 		// destination page.
-		await jest.advanceTimersByTimeAsync( 3000 );
+		await vi.advanceTimersByTimeAsync( 3000 );
 		expect( sendToolResult ).not.toHaveBeenCalled();
 
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
 	} );
@@ -424,8 +424,8 @@ describe( 'useNavigationContinuation', () => {
 		// The dialog opens right after `beforeunload`; even a sub-second
 		// dismissal stalls the zero-delay probe past its threshold.
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 700 );
-		await jest.runAllTimersAsync();
+		vi.setSystemTime( Date.now() + 700 );
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		const { message } = sendToolResult.mock.calls[ 0 ][ 0 ];
@@ -438,7 +438,7 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
@@ -450,11 +450,11 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.advanceTimersByTimeAsync( 500 );
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.advanceTimersByTimeAsync( 500 );
 		window.dispatchEvent( new Event( 'pointerdown' ) );
 
-		await jest.advanceTimersByTimeAsync( 2000 );
+		await vi.advanceTimersByTimeAsync( 2000 );
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
 	} );
@@ -466,8 +466,8 @@ describe( 'useNavigationContinuation', () => {
 
 		// A stalled probe arms the answer for the first navigation…
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.advanceTimersByTimeAsync( 500 );
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.advanceTimersByTimeAsync( 500 );
 
 		// …but a flush answers it first, and a successor gets parked.
 		await result.current.flushPendingNavigation();
@@ -480,7 +480,7 @@ describe( 'useNavigationContinuation', () => {
 		);
 
 		// The stale armed timer fires but must not answer the successor.
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
 	} );
@@ -496,7 +496,7 @@ describe( 'useNavigationContinuation', () => {
 		sessionStorage.setItem( SENT_KEY, `${ timestamp }:other-page-load` );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
@@ -511,7 +511,7 @@ describe( 'useNavigationContinuation', () => {
 		sessionStorage.setItem( SENT_KEY, `${ timestamp }:other-page-load` );
 
 		const { sendToolResult } = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		const { message } = sendToolResult.mock.calls[ 0 ][ 0 ];
@@ -520,9 +520,9 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'a flush retries a send that failed earlier', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
-		const sendToolResult = jest
+		const sendToolResult = vi
 			.fn()
 			.mockRejectedValueOnce( new Error( 'network' ) )
 			.mockResolvedValue( undefined );
@@ -559,7 +559,7 @@ describe( 'useNavigationContinuation', () => {
 	it( 'flush waits for an in-flight decline send instead of double-sending', async () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 		let resolveSend: () => void = () => {};
-		const sendToolResult = jest.fn().mockReturnValue(
+		const sendToolResult = vi.fn().mockReturnValue(
 			new Promise< void >( ( resolve ) => {
 				resolveSend = resolve;
 			} )
@@ -590,10 +590,10 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.advanceTimersByTimeAsync( 500 );
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.advanceTimersByTimeAsync( 500 );
 		unmount();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
@@ -605,16 +605,16 @@ describe( 'useNavigationContinuation', () => {
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
 
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.advanceTimersByTimeAsync( 100 );
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.advanceTimersByTimeAsync( 100 );
 		window.dispatchEvent( new Event( 'pointerdown' ) );
 
 		// A second stalled proof for the same navigation must not reset the
 		// accelerated timer back to the hands-off fallback.
 		window.dispatchEvent( new Event( NAVIGATION_PENDING_EVENT ) );
 		window.dispatchEvent( new Event( 'beforeunload' ) );
-		jest.setSystemTime( Date.now() + 3000 );
-		await jest.advanceTimersByTimeAsync( 2000 );
+		vi.setSystemTime( Date.now() + 3000 );
+		await vi.advanceTimersByTimeAsync( 2000 );
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -627,7 +627,7 @@ describe( 'useNavigationContinuation', () => {
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
 
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -635,7 +635,7 @@ describe( 'useNavigationContinuation', () => {
 		const { result, sendToolResult } = renderContinuation();
 		await result.current.flushPendingNavigation();
 
-		jest.advanceTimersByTime( 1 );
+		vi.advanceTimersByTime( 1 );
 		savePendingNavigation(
 			'/wp-admin/plugins.php?paged=2',
 			'session-1',
@@ -658,9 +658,9 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'flush never throws — a failed send re-arms for a later page load', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { result } = renderContinuation( {
-			sendToolResult: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+			sendToolResult: vi.fn().mockRejectedValue( new Error( 'network' ) ),
 		} );
 
 		await expect( result.current.flushPendingNavigation() ).resolves.toBeUndefined();
@@ -670,8 +670,8 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'does not loop retrying within the same mount after a failed send', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const sendToolResult = jest.fn().mockRejectedValue( new Error( 'network' ) );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const sendToolResult = vi.fn().mockRejectedValue( new Error( 'network' ) );
 		const { rerender } = renderHook(
 			( { isProcessing }: { isProcessing: boolean } ) =>
 				useNavigationContinuation( {
@@ -680,13 +680,13 @@ describe( 'useNavigationContinuation', () => {
 				} ),
 			{ initialProps: { isProcessing: false } }
 		);
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 
 		// The failed send flips `isProcessing`, re-running the effect.
 		rerender( { isProcessing: true } );
 		rerender( { isProcessing: false } );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( sendToolResult ).toHaveBeenCalledTimes( 1 );
 		// The unmarked flag still lets a later mount retry.
@@ -694,11 +694,11 @@ describe( 'useNavigationContinuation', () => {
 	} );
 
 	it( 'retries on a later mount after a failed send, bounded by the expiry', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const failing = renderContinuation( {
-			sendToolResult: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+			sendToolResult: vi.fn().mockRejectedValue( new Error( 'network' ) ),
 		} );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		// The failure unmarks the sent flag and keeps the state for a retry.
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).not.toBeNull();
@@ -707,7 +707,7 @@ describe( 'useNavigationContinuation', () => {
 
 		failing.unmount();
 		const retry = renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( retry.sendToolResult ).toHaveBeenCalledTimes( 1 );
 		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeNull();
@@ -717,7 +717,7 @@ describe( 'useNavigationContinuation', () => {
 describe( 'useNavigationContinuation Tracks', () => {
 	it( 'records an arrival once the continuation is delivered', async () => {
 		renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
@@ -759,7 +759,7 @@ describe( 'useNavigationContinuation Tracks', () => {
 		window.history.replaceState( {}, '', '/wp-admin/admin.php?page=wc-orders' );
 
 		renderContinuation();
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 
 		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
 			'calypso_agents_manager_wp_admin_navigate_complete',
@@ -776,9 +776,9 @@ describe( 'useNavigationContinuation Tracks', () => {
 	} );
 
 	it( 'records nothing for a failed send, and once for its successful retry', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		savePendingNavigation( '/wp-admin/edit.php', 'session-1', 'call-1', 'wp_admin__navigate' );
-		const sendToolResult = jest
+		const sendToolResult = vi
 			.fn()
 			.mockRejectedValueOnce( new Error( 'network' ) )
 			.mockResolvedValue( undefined );

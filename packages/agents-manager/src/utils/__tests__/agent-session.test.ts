@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import {
 	getActiveSessionId,
 	setSessionSiteKey,
@@ -34,7 +35,7 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 describe( 'saveSessionId / getSessionId', () => {
@@ -69,13 +70,13 @@ describe( 'saveSessionId / getSessionId', () => {
 	} );
 
 	it( 'degrades gracefully when sessionStorage is unavailable', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const throwBlocked = () => {
 			throw new Error( 'blocked' );
 		};
-		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( throwBlocked );
-		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( throwBlocked );
-		jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( throwBlocked );
+		vi.spyOn( Storage.prototype, 'getItem' ).mockImplementation( throwBlocked );
+		vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( throwBlocked );
+		vi.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( throwBlocked );
 
 		expect( getSessionId() ).toBe( '' );
 		expect( () => saveSessionId( 'session-abc' ) ).not.toThrow();
@@ -178,9 +179,9 @@ describe( 'getOrCreateSessionId', () => {
 
 	it( 'creates and persists a new UUID when no session exists', () => {
 		const mockUUID = 'crypto-uuid-5678';
-		jest
-			.spyOn( globalThis.crypto, 'randomUUID' )
-			.mockReturnValue( mockUUID as ReturnType< Crypto[ 'randomUUID' ] > );
+		vi.spyOn( globalThis.crypto, 'randomUUID' ).mockReturnValue(
+			mockUUID as ReturnType< Crypto[ 'randomUUID' ] >
+		);
 
 		expect( getOrCreateSessionId( 'reader-chat' ) ).toBe( mockUUID );
 		expect( getSessionId( 'reader-chat' ) ).toBe( mockUUID );

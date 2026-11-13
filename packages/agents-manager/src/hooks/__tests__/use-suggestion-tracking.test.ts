@@ -1,12 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 let mockSelectedBlockType: string | undefined;
 
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
 } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( select: () => object ) => unknown ) =>
 		mapSelect( () => ( {
 			getSelectedBlock: () => ( mockSelectedBlockType ? { name: mockSelectedBlockType } : null ),
@@ -43,7 +45,7 @@ const renderTracking = ( initialProps: Options ) =>
 describe( 'useSuggestionTracking', () => {
 	beforeEach( () => {
 		mockSelectedBlockType = undefined;
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 	} );
 
 	it( 'tracks the reported set with the block context when every chip is contextual', () => {
@@ -125,7 +127,7 @@ describe( 'useSuggestionTracking', () => {
 		].map( ( id ) => ( { id, label: id, prompt: id } ) );
 		const { result } = renderTracking( blockOptions() );
 		act( () => result.current.onSuggestionsRendered( design.slice( 0, 3 ) ) );
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		act( () => result.current.trackSuggestionClick( design[ 0 ], design, true ) );
 

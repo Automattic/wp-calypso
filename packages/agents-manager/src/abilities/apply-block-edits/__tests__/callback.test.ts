@@ -1,55 +1,59 @@
-jest.mock( '../../../utils/block-ids', () => ( {
-	repointBlockId: jest.fn(),
-	resolveClientId: jest.fn(),
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '../../../utils/block-ids', () => ( {
+	repointBlockId: vi.fn(),
+	resolveClientId: vi.fn(),
 } ) );
-jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
+vi.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: vi.fn() } ) );
 // The capture and the canvas measurements are stubbed; the sentences describing
 // what came back are pure and stay real, so the assertions here exercise them.
-jest.mock( '../../../utils/canvas-capture', () => ( {
-	...jest.requireActual( '../../../utils/canvas-capture' ),
-	captureCanvas: jest.fn(),
-	describeMeasuredLayout: jest.fn(),
-	describeTextContrast: jest.fn(),
-	describeUnmoved: jest.fn(),
-	snapshotLayout: jest.fn(),
+vi.mock( '../../../utils/canvas-capture', async () => ( {
+	...( await vi.importActual< typeof import( '../../../utils/canvas-capture' ) >(
+		'../../../utils/canvas-capture'
+	) ),
+	captureCanvas: vi.fn(),
+	describeMeasuredLayout: vi.fn(),
+	describeTextContrast: vi.fn(),
+	describeUnmoved: vi.fn(),
+	snapshotLayout: vi.fn(),
 } ) );
-jest.mock( '../../../utils/checkpoints', () => ( {
+vi.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks', CUSTOM_CSS: 'custom_css', NAVIGATION: 'navigation' },
-	sealCheckpointForSwap: jest.fn(),
-	withCheckpoint: jest.fn(),
+	sealCheckpointForSwap: vi.fn(),
+	withCheckpoint: vi.fn(),
 } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getPageBlocks: jest.fn(),
-	openUndoLevel: jest.fn(),
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getPageBlocks: vi.fn(),
+	openUndoLevel: vi.fn(),
 } ) );
-jest.mock( '../../../utils/global-styles', () => ( {
-	getCustomCss: jest.fn(),
-	getEditedGlobalStyles: jest.fn(),
-	setCustomCss: jest.fn(),
-	waitForEditedGlobalStyles: jest.fn(),
+vi.mock( '../../../utils/global-styles', () => ( {
+	getCustomCss: vi.fn(),
+	getEditedGlobalStyles: vi.fn(),
+	setCustomCss: vi.fn(),
+	waitForEditedGlobalStyles: vi.fn(),
 } ) );
-jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn() } ) );
-jest.mock( '../../../utils/tool-call-history', () => ( {
-	getToolCallIdFromConversationHistory: jest.fn(),
+vi.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: vi.fn() } ) );
+vi.mock( '../../../utils/tool-call-history', () => ( {
+	getToolCallIdFromConversationHistory: vi.fn(),
 } ) );
-jest.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
-jest.mock( '../already-applied', () => ( { areUpdateEditsAlreadySatisfied: jest.fn() } ) );
-jest.mock( '../apply-edits', () => ( { applyEdits: jest.fn() } ) );
-jest.mock( '../../../utils/navigation-menu', () => ( { getMenuIdAround: jest.fn() } ) );
-jest.mock( '../change-type', () => ( {
-	getChangeType: jest.fn(),
-	getEditedMenuIds: jest.fn(),
+vi.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
+vi.mock( '../already-applied', () => ( { areUpdateEditsAlreadySatisfied: vi.fn() } ) );
+vi.mock( '../apply-edits', () => ( { applyEdits: vi.fn() } ) );
+vi.mock( '../../../utils/navigation-menu', () => ( { getMenuIdAround: vi.fn() } ) );
+vi.mock( '../change-type', () => ( {
+	getChangeType: vi.fn(),
+	getEditedMenuIds: vi.fn(),
 } ) );
-jest.mock( '../normalize-edits', () => ( {
-	hasRequestedBlockEdits: jest.fn(),
-	isCssOnly: jest.fn(),
-	normalizeEdits: jest.fn(),
+vi.mock( '../normalize-edits', () => ( {
+	hasRequestedBlockEdits: vi.fn(),
+	isCssOnly: vi.fn(),
+	normalizeEdits: vi.fn(),
 } ) );
-jest.mock( '../validation-details', () => ( {
-	captureTargets: jest.fn(),
-	getEditedClientIds: jest.fn(),
-	getValidationDetails: jest.fn(),
-	haveBlocksChanged: jest.fn(),
+vi.mock( '../validation-details', () => ( {
+	captureTargets: vi.fn(),
+	getEditedClientIds: vi.fn(),
+	getValidationDetails: vi.fn(),
+	haveBlocksChanged: vi.fn(),
 } ) );
 
 import { repointBlockId, resolveClientId } from '../../../utils/block-ids';
@@ -98,62 +102,60 @@ const edits = ( overrides = {} ) => ( {
 	deletes: [],
 	...overrides,
 } );
-const recorder = { captureMenu: jest.fn(), discardMenu: jest.fn(), markWritten: jest.fn() };
-const level = { write: jest.fn(), close: jest.fn(), hasWritten: jest.fn() };
+const recorder = { captureMenu: vi.fn(), discardMenu: vi.fn(), markWritten: vi.fn() };
+const level = { write: vi.fn(), close: vi.fn(), hasWritten: vi.fn() };
 const input = { updates: [ update ], summary: 'Done.', toolCallId: 'call-1' };
 
 const parseAgentMessage = ( agentMessage?: string ) => JSON.parse( agentMessage ?? 'null' );
 
 // Every mock is armed here, so a value set in one test never leaks into the next.
 beforeEach( () => {
-	jest.resetAllMocks();
-	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-	jest.mocked( isEditorPage ).mockReturnValue( true );
-	jest.mocked( resolveClientId ).mockImplementation( ( id ) => `resolved-${ id }` );
-	jest
-		.mocked( getPageBlocks )
-		.mockReturnValue( { blocks: [ paragraph( 'Old' ) ], templateParts: [] } );
-	jest.mocked( openUndoLevel ).mockReturnValue( level );
+	vi.resetAllMocks();
+	vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+	vi.mocked( isEditorPage ).mockReturnValue( true );
+	vi.mocked( resolveClientId ).mockImplementation( ( id ) => `resolved-${ id }` );
+	vi.mocked( getPageBlocks ).mockReturnValue( {
+		blocks: [ paragraph( 'Old' ) ],
+		templateParts: [],
+	} );
+	vi.mocked( openUndoLevel ).mockReturnValue( level );
 	level.hasWritten.mockReturnValue( true );
-	jest.mocked( getCustomCss ).mockReturnValue( 'a{}' );
+	vi.mocked( getCustomCss ).mockReturnValue( 'a{}' );
 	const globalStyles = { id: 'gs', record: { settings: {}, styles: { css: 'a{}' } } };
-	jest.mocked( waitForEditedGlobalStyles ).mockResolvedValue( globalStyles );
-	jest.mocked( getEditedGlobalStyles ).mockReturnValue( globalStyles );
-	jest.mocked( normalizeEdits ).mockReturnValue( edits() );
-	jest
-		.mocked( hasRequestedBlockEdits )
-		.mockImplementation(
-			( { updates, inserts, deletes } ) => updates.length + inserts.length + deletes.length > 0
-		);
-	jest
-		.mocked( isCssOnly )
-		.mockImplementation(
-			( edits ) => edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits )
-		);
-	jest.mocked( getChangeType ).mockReturnValue( 'other' );
-	jest.mocked( getEditedMenuIds ).mockReturnValue( [] );
-	jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( false );
-	jest.mocked( captureTargets ).mockReturnValue( new Map() );
-	jest.mocked( getEditedClientIds ).mockReturnValue( [ 'resolved-a1' ] );
-	jest
-		.mocked( getValidationDetails )
-		.mockReturnValue( { appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 1 } } );
-	jest.mocked( haveBlocksChanged ).mockReturnValue( true );
-	jest
-		.mocked( applyEdits )
-		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
-	jest.mocked( captureCanvas ).mockResolvedValue( null );
-	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
-	jest.mocked( describeTextContrast ).mockReturnValue( null );
-	jest.mocked( snapshotLayout ).mockReturnValue( null );
-	jest.mocked( describeUnmoved ).mockReturnValue( '' );
+	vi.mocked( waitForEditedGlobalStyles ).mockResolvedValue( globalStyles );
+	vi.mocked( getEditedGlobalStyles ).mockReturnValue( globalStyles );
+	vi.mocked( normalizeEdits ).mockReturnValue( edits() );
+	vi.mocked( hasRequestedBlockEdits ).mockImplementation(
+		( { updates, inserts, deletes } ) => updates.length + inserts.length + deletes.length > 0
+	);
+	vi.mocked( isCssOnly ).mockImplementation(
+		( edits ) => edits.customCSS !== undefined && ! hasRequestedBlockEdits( edits )
+	);
+	vi.mocked( getChangeType ).mockReturnValue( 'other' );
+	vi.mocked( getEditedMenuIds ).mockReturnValue( [] );
+	vi.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( false );
+	vi.mocked( captureTargets ).mockReturnValue( new Map() );
+	vi.mocked( getEditedClientIds ).mockReturnValue( [ 'resolved-a1' ] );
+	vi.mocked( getValidationDetails ).mockReturnValue( {
+		appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 1 },
+	} );
+	vi.mocked( haveBlocksChanged ).mockReturnValue( true );
+	vi.mocked( applyEdits ).mockResolvedValue( {
+		recoveredTargetIds: new Set(),
+		insertedClientIds: [],
+	} );
+	vi.mocked( captureCanvas ).mockResolvedValue( null );
+	vi.mocked( describeMeasuredLayout ).mockReturnValue( [] );
+	vi.mocked( describeTextContrast ).mockReturnValue( null );
+	vi.mocked( snapshotLayout ).mockReturnValue( null );
+	vi.mocked( describeUnmoved ).mockReturnValue( '' );
 	// The checkpoint engine is exercised in its own suite; here it runs the write.
-	jest
-		.mocked( withCheckpoint )
-		.mockImplementation( ( _, write ) => Promise.resolve( write( recorder as never ) ) );
+	vi.mocked( withCheckpoint ).mockImplementation( ( _, write ) =>
+		Promise.resolve( write( recorder as never ) )
+	);
 } );
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
 describe( 'applyBlockEditsCallback', () => {
 	it( 'applies the edits under a blocks checkpoint and reports the update with its details', async () => {
@@ -202,7 +204,7 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	it( 'seals a text-only edit for the inline undo, and nothing else', async () => {
-		jest.mocked( getChangeType ).mockReturnValueOnce( 'text-content' );
+		vi.mocked( getChangeType ).mockReturnValueOnce( 'text-content' );
 
 		await applyBlockEditsCallback( input );
 		await applyBlockEditsCallback( input );
@@ -215,7 +217,7 @@ describe( 'applyBlockEditsCallback', () => {
 	it( 'resolves through a supplied reverse map first, then the page structure', async () => {
 		await applyBlockEditsCallback( { ...input, reverseMap: { a1: 'real-a1' } } );
 
-		const { resolve, onReplaced } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
+		const { resolve, onReplaced } = vi.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
 
 		expect( resolve( 'a1' ) ).toBe( 'real-a1' );
 		expect( resolve( 'other' ) ).toBe( 'resolved-other' );
@@ -230,7 +232,7 @@ describe( 'applyBlockEditsCallback', () => {
 	it( 'follows a replaced block for the rest of the call, and repoints its short id', async () => {
 		await applyBlockEditsCallback( input );
 
-		const { resolve, onReplaced } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
+		const { resolve, onReplaced } = vi.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
 
 		onReplaced( 'a1', 'new-a1' );
 		onReplaced( 'resolved-b2', 'new-b2' );
@@ -243,7 +245,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// The chat renders the agent message, so only a call the chat made gets one.
 	it( 'checkpoints under the history call id but sends no agent message for it', async () => {
-		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValue( 'call-h' );
+		vi.mocked( getToolCallIdFromConversationHistory ).mockReturnValue( 'call-h' );
 
 		const result = await applyBlockEditsCallback( { updates: [ update ] } );
 
@@ -259,8 +261,8 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	it( 'writes custom CSS that differs under its own domain', async () => {
-		jest.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'b{}' } ) );
-		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
+		vi.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'b{}' } ) );
+		vi.mocked( haveBlocksChanged ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( { customCSS: 'b{}', toolCallId: 'call-1' } );
 
@@ -276,8 +278,8 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	it( 'skips custom CSS the page already has, claiming no domain', async () => {
-		jest.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'a{}' } ) );
-		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
+		vi.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'a{}' } ) );
+		vi.mocked( haveBlocksChanged ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( { customCSS: 'a{}', toolCallId: 'call-1' } );
 
@@ -295,10 +297,10 @@ describe( 'applyBlockEditsCallback', () => {
 		[ 'nothing was requested', { summary: 'Only words.' }, 'Only words.' ],
 		[ 'the updates were already applied', input, 'Done.' ],
 	] )( 'reports no changes when %s', async ( _, request, message ) => {
-		jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
-		jest
-			.mocked( normalizeEdits )
-			.mockReturnValue( edits( { updates: 'updates' in request ? [ update ] : [] } ) );
+		vi.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
+		vi.mocked( normalizeEdits ).mockReturnValue(
+			edits( { updates: 'updates' in request ? [ update ] : [] } )
+		);
 
 		const { result } = await applyBlockEditsCallback( request );
 
@@ -311,10 +313,10 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	it( 'reports no changes when the site already holds the CSS and the updates are satisfied', async () => {
-		jest
-			.mocked( areUpdateEditsAlreadySatisfied )
-			.mockImplementation( ( { customCSS } ) => customCSS === undefined );
-		jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'a{}' } ) );
+		vi.mocked( areUpdateEditsAlreadySatisfied ).mockImplementation(
+			( { customCSS } ) => customCSS === undefined
+		);
+		vi.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'a{}' } ) );
 
 		const { result } = await applyBlockEditsCallback( { ...input, customCSS: 'a{}' } );
 
@@ -324,8 +326,8 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// Decided before the menus are looked at: a satisfied edit inside one has nothing to undo either.
 	it( 'reports no changes for a satisfied update inside a menu, capturing nothing', async () => {
-		jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
-		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+		vi.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
+		vi.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
 
 		const { result } = await applyBlockEditsCallback( input );
 
@@ -334,7 +336,7 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	it( 'fails when the edits changed nothing, without an undo', async () => {
-		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
+		vi.mocked( haveBlocksChanged ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( input );
 
@@ -349,12 +351,12 @@ describe( 'applyBlockEditsCallback', () => {
 	// A saved menu's items live in its record, which the page's blocks do not
 	// show: the menu is captured before the edit, and that is what an undo puts back.
 	it( 'captures the menu a navigation edit reaches, as the first write reaches it', async () => {
-		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
-		jest
-			.mocked( getMenuIdAround )
-			.mockImplementation( ( clientId: string ) => ( clientId === 'link' ? 19 : undefined ) );
-		jest.mocked( getChangeType ).mockReturnValue( 'text-content' );
-		jest.mocked( haveBlocksChanged ).mockReturnValue( false );
+		vi.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+		vi.mocked( getMenuIdAround ).mockImplementation( ( clientId: string ) =>
+			clientId === 'link' ? 19 : undefined
+		);
+		vi.mocked( getChangeType ).mockReturnValue( 'text-content' );
+		vi.mocked( haveBlocksChanged ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( input );
 
@@ -368,7 +370,7 @@ describe( 'applyBlockEditsCallback', () => {
 		);
 
 		// Not captured up front: a batch that fails before the menu keeps no undo for it.
-		const { beforeWrite } = jest.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
+		const { beforeWrite } = vi.mocked( applyEdits ).mock.calls[ 0 ][ 1 ];
 
 		expect( recorder.captureMenu ).not.toHaveBeenCalled();
 
@@ -382,11 +384,11 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// The snapshot is taken just before the write; a write that then fails leaves nothing to undo.
 	it( 'discards a menu captured for a batch that wrote nothing', async () => {
-		jest.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
-		jest.mocked( getMenuIdAround ).mockReturnValue( 19 );
+		vi.mocked( getEditedMenuIds ).mockReturnValue( [ 19 ] );
+		vi.mocked( getMenuIdAround ).mockReturnValue( 19 );
 		recorder.captureMenu.mockResolvedValue( true );
 		level.hasWritten.mockReturnValue( false );
-		jest.mocked( applyEdits ).mockImplementation( async ( _, { beforeWrite } ) => {
+		vi.mocked( applyEdits ).mockImplementation( async ( _, { beforeWrite } ) => {
 			await beforeWrite( 'link' );
 			throw new Error( 'Stopped' );
 		} );
@@ -398,7 +400,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// The user may be scrolled anywhere; the capture frames what the call added.
 	it( 'frames the capture on the inserted blocks too', async () => {
-		jest.mocked( applyEdits ).mockResolvedValue( {
+		vi.mocked( applyEdits ).mockResolvedValue( {
 			recoveredTargetIds: new Set(),
 			insertedClientIds: [ 'new-1' ],
 		} );
@@ -413,7 +415,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// The writes that landed stay in place, so the checkpoint is the way back.
 	it( 'keeps the checkpoint when the apply fails after editing began', async () => {
-		jest.mocked( applyEdits ).mockRejectedValue( new Error( 'Parent block not found' ) );
+		vi.mocked( applyEdits ).mockRejectedValue( new Error( 'Parent block not found' ) );
 
 		const { result } = await applyBlockEditsCallback( input );
 
@@ -431,7 +433,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 	// The page was not touched, so a picture of it would only cost time.
 	it( 'fails an invalid request before any checkpoint, capturing nothing', async () => {
-		jest.mocked( normalizeEdits ).mockImplementation( () => {
+		vi.mocked( normalizeEdits ).mockImplementation( () => {
 			throw new Error( 'Updates must be an array' );
 		} );
 
@@ -450,8 +452,8 @@ describe( 'applyBlockEditsCallback', () => {
 		[ 'keeps the blocks domain for the writes that landed', true ],
 		[ 'drops the blocks domain when nothing was written', false ],
 	] )( 'captures nothing once the canvas has moved, and %s', async ( _, written ) => {
-		jest.mocked( getBlockingMove ).mockReturnValue( { from: 'Home', to: 'About' } );
-		jest.mocked( applyEdits ).mockRejectedValue( new Error( 'Stopped' ) );
+		vi.mocked( getBlockingMove ).mockReturnValue( { from: 'Home', to: 'About' } );
+		vi.mocked( applyEdits ).mockRejectedValue( new Error( 'Stopped' ) );
 		level.hasWritten.mockReturnValue( written );
 
 		const { result } = await applyBlockEditsCallback( input );
@@ -470,7 +472,7 @@ describe( 'applyBlockEditsCallback', () => {
 	} );
 
 	it( 'refuses off the editor', async () => {
-		jest.mocked( isEditorPage ).mockReturnValue( false );
+		vi.mocked( isEditorPage ).mockReturnValue( false );
 
 		const { result } = await applyBlockEditsCallback( input );
 
@@ -528,7 +530,7 @@ describe( 'applyBlockEditsCallback', () => {
 		it( 'does not count a changed block as a reference', async () => {
 			// Naming the block being edited would have the message claim a
 			// comparison against the very thing that moved.
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -544,7 +546,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 		it( 'tells the model the reference is in the picture', async () => {
 			mountCanvasWith( [ 'resolved-ref1' ] );
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -560,12 +562,10 @@ describe( 'applyBlockEditsCallback', () => {
 			// The point of the change: distant sections get a full-size picture
 			// each instead of one scaled-down page.
 			mountCanvasWith( [ 'resolved-ref1' ] );
-			jest
-				.mocked( captureCanvas )
-				.mockResolvedValue( [
-					band( { regionIndex: 1, regionCount: 2 } ),
-					band( { regionIndex: 2, regionCount: 2 } ),
-				] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [
+				band( { regionIndex: 1, regionCount: 2 } ),
+				band( { regionIndex: 2, regionCount: 2 } ),
+			] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -582,7 +582,7 @@ describe( 'applyBlockEditsCallback', () => {
 			// Past the cap the rasterizer falls back to the whole page, and the
 			// model has to know it is reading a scaled-down sheet.
 			mountCanvasWith( [ 'resolved-ref1' ] );
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -599,7 +599,7 @@ describe( 'applyBlockEditsCallback', () => {
 			// The failure this exists for: the reference does not resolve on the
 			// canvas, the capture quietly frames the changed side alone, and it
 			// looks exactly like a picture that contains both.
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -613,7 +613,7 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'adds no notes when no reference was named', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -622,7 +622,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 		it( 'keeps the notes out of the message', async () => {
 			// The user may see the message as the reply, so it is the summary alone.
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -634,8 +634,8 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'adds the measured layout of the edited blocks', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -645,11 +645,13 @@ describe( 'applyBlockEditsCallback', () => {
 
 		it( 'puts the text contrast between the reference note and the measured layout', async () => {
 			mountCanvasWith( [ 'resolved-ref1' ] );
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest
-				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops: [] } );
-			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Text contrast too low: …' ],
+				failures: 1,
+				backdrops: [],
+			} );
+			vi.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
 
 			const result = await applyBlockEditsCallback( {
 				...input,
@@ -667,10 +669,12 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'reports the contrast failure count beside the notes', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest
-				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 2, backdrops: [] } );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Text contrast too low: …' ],
+				failures: 2,
+				backdrops: [],
+			} );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -678,10 +682,12 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'reports a count of zero when the edited text measured readable', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest
-				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0, backdrops: [] } );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Text contrast: all 1 …' ],
+				failures: 0,
+				backdrops: [],
+			} );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -693,10 +699,12 @@ describe( 'applyBlockEditsCallback', () => {
 				{ clientId: 'c25n', name: 'core/group', ownBackground: false, textClientIds: [ 'ueo8' ] },
 			];
 
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest
-				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops } );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Text contrast too low: …' ],
+				failures: 1,
+				backdrops,
+			} );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -704,10 +712,12 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'leaves the backdrops out when there are none to fix', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest
-				.mocked( describeTextContrast )
-				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0, backdrops: [] } );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Text contrast: all 1 …' ],
+				failures: 0,
+				backdrops: [],
+			} );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -716,7 +726,7 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'leaves the count out when there was no text to measure', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			const result = await applyBlockEditsCallback( input );
 
@@ -724,8 +734,8 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'leaves the count out, keeping the note, when no text could be measured', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-			jest.mocked( describeTextContrast ).mockReturnValue( {
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( describeTextContrast ).mockReturnValue( {
 				notes: [ 'Contrast could not be measured …' ],
 				failures: null,
 				backdrops: [],
@@ -741,21 +751,23 @@ describe( 'applyBlockEditsCallback', () => {
 			const headerBlock = { ...paragraph( 'Header' ), clientId: 'h1' };
 
 			beforeEach( () => {
-				jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
-				jest.mocked( getPageBlocks ).mockReturnValue( {
+				vi.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+				vi.mocked( getPageBlocks ).mockReturnValue( {
 					blocks: [ paragraph( 'Old' ) ],
 					templateParts: [ { slug: 'header', blocks: [ headerBlock ] } ],
 				} );
-				jest
-					.mocked( describeTextContrast )
-					.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops: [] } );
+				vi.mocked( describeTextContrast ).mockReturnValue( {
+					notes: [ 'Text contrast too low: …' ],
+					failures: 1,
+					backdrops: [],
+				} );
 			} );
 
 			it( 'measures the whole page when only the CSS changed, with no edited block', async () => {
 				// The case a CSS-only edit hit: no updates or inserts, so no
 				// edited block to measure, though the CSS can recolour any of them.
-				jest.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'p{}' } ) );
-				jest.mocked( getEditedClientIds ).mockReturnValue( [] );
+				vi.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'p{}' } ) );
+				vi.mocked( getEditedClientIds ).mockReturnValue( [] );
 
 				const result = await applyBlockEditsCallback( { customCSS: 'p{}', toolCallId: 'call-1' } );
 
@@ -768,7 +780,7 @@ describe( 'applyBlockEditsCallback', () => {
 
 			it( 'captures and measures the whole page for block edits with CSS, the edited blocks first', async () => {
 				// The picture has to show what the notes leave to it.
-				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+				vi.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
 
 				await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
 
@@ -783,7 +795,7 @@ describe( 'applyBlockEditsCallback', () => {
 		} );
 
 		it( 'measures only the edited blocks when no CSS changed', async () => {
-			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
 
 			await applyBlockEditsCallback( input );
 
@@ -805,13 +817,13 @@ describe( 'applyBlockEditsCallback', () => {
 			const unmoved = 'No edited block moved: group (ndP2) and its children are where they were.';
 
 			beforeEach( () => {
-				jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
-				jest.mocked( snapshotLayout ).mockReturnValue( snapshot );
-				jest.mocked( describeUnmoved ).mockReturnValue( unmoved );
+				vi.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+				vi.mocked( snapshotLayout ).mockReturnValue( snapshot );
+				vi.mocked( describeUnmoved ).mockReturnValue( unmoved );
 			} );
 
 			it( 'reads the edited blocks before the writes and compares after them', async () => {
-				jest.mocked( applyEdits ).mockImplementation( async () => {
+				vi.mocked( applyEdits ).mockImplementation( async () => {
 					expect( snapshotLayout ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
 					expect( describeUnmoved ).not.toHaveBeenCalled();
 
@@ -825,7 +837,7 @@ describe( 'applyBlockEditsCallback', () => {
 			} );
 
 			it( 'does not compare an edit that inserts or deletes', async () => {
-				jest.mocked( normalizeEdits ).mockReturnValue( edits( { deletes: [ 'b1' ] } ) );
+				vi.mocked( normalizeEdits ).mockReturnValue( edits( { deletes: [ 'b1' ] } ) );
 
 				await applyBlockEditsCallback( input );
 
@@ -834,7 +846,7 @@ describe( 'applyBlockEditsCallback', () => {
 			} );
 
 			it( 'does not compare an edit that changed nothing', async () => {
-				jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
+				vi.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
 
 				const result = await applyBlockEditsCallback( input );
 
@@ -850,7 +862,7 @@ describe( 'applyBlockEditsCallback', () => {
 		[ 'with a capture', [ { type: 'file', file: { name: 'canvas.webp' } } ], true ],
 		[ 'without one', null, undefined ],
 	] )( 'forwards visualCheckPending %s', async ( _, parts, forwarded ) => {
-		jest.mocked( captureCanvas ).mockResolvedValue( parts as never );
+		vi.mocked( captureCanvas ).mockResolvedValue( parts as never );
 
 		const result = await applyBlockEditsCallback( {
 			...input,

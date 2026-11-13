@@ -1,8 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-const mockApiFetch = jest.fn();
-jest.mock( '@wordpress/api-fetch', () => ( {
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+const mockApiFetch = vi.fn();
+vi.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockApiFetch( ...args ),
 } ) );

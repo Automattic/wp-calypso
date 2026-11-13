@@ -1,20 +1,23 @@
-jest.mock( '@wordpress/blocks', () => ( { createBlock: jest.fn() } ) );
-jest.mock( '../../../utils/canvas-guard', () => ( { assertCanvasUnmoved: jest.fn() } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlockParents: jest.fn(),
-	getBlockRootClientId: jest.fn(),
-	getBlocks: jest.fn(),
-	insertBlock: jest.fn(),
+/* eslint-disable import/order */
+import { type MockInstance, vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( { createBlock: vi.fn() } ) );
+vi.mock( '../../../utils/canvas-guard', () => ( { assertCanvasUnmoved: vi.fn() } ) );
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlockParents: vi.fn(),
+	getBlockRootClientId: vi.fn(),
+	getBlocks: vi.fn(),
+	insertBlock: vi.fn(),
 	POST_CONTENT_BLOCK: 'core/post-content',
-	removeBlock: jest.fn(),
-	replaceBlock: jest.fn(),
-	replaceInnerBlocks: jest.fn(),
-	resolveBlocksRoot: jest.fn(),
-	updateBlockAttributes: jest.fn(),
+	removeBlock: vi.fn(),
+	replaceBlock: vi.fn(),
+	replaceInnerBlocks: vi.fn(),
+	resolveBlocksRoot: vi.fn(),
+	TEMPLATE_PART_BLOCK: 'core/template-part',
+	updateBlockAttributes: vi.fn(),
 } ) );
-jest.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
-jest.mock( '../cover-image', () => ( { syncCoverWithImage: jest.fn() } ) );
+vi.mock( '../../../utils/navigation-menu', () => ( { NAVIGATION_BLOCK: 'core/navigation' } ) );
+vi.mock( '../cover-image', () => ( { syncCoverWithImage: vi.fn() } ) );
 
 import { createBlock } from '@wordpress/blocks';
 import { assertCanvasUnmoved } from '../../../utils/canvas-guard';
@@ -50,7 +53,7 @@ const block = (
 let blocks: Record< string, EditorBlock >;
 let parents: Record< string, string >;
 let controlled: Record< string, EditorBlock[] >;
-let consoleError: jest.SpyInstance;
+let consoleError: MockInstance;
 
 const useTree = ( roots: EditorBlock[] ) => {
 	const register = ( node: EditorBlock, parent?: string ) => {
@@ -77,8 +80,8 @@ const useControlledChildren = ( parent: string, children: EditorBlock[] ) => {
 
 // The agent refers to blocks by `ref-<clientId>`.
 const resolve = ( id: string ) => id.replace( /^ref-/, '' );
-const onReplaced = jest.fn();
-const beforeWrite = jest.fn( async () => {} );
+const onReplaced = vi.fn();
+const beforeWrite = vi.fn( async () => {} );
 // Every write goes through the level; which ones, in what order, is what it records.
 const writes: unknown[] = [];
 // The block list each write names as the one it changes.
@@ -91,7 +94,7 @@ const level: UndoLevel = {
 			writtenLists.push( writtenList( ...args ) );
 			write( ...args );
 		},
-	close: jest.fn(),
+	close: vi.fn(),
 	hasWritten: () => writes.length > 0,
 };
 
@@ -102,13 +105,13 @@ const run = ( edits: Partial< BlockEdits > ) => {
 	);
 
 	// Both handled at once, so a rejection reaches the test instead of the process.
-	return Promise.all( [ applied, jest.runAllTimersAsync() ] ).then( ( [ result ] ) => result );
+	return Promise.all( [ applied, vi.runAllTimersAsync() ] ).then( ( [ result ] ) => result );
 };
 
 beforeEach( () => {
-	jest.resetAllMocks();
-	jest.useFakeTimers();
-	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	vi.resetAllMocks();
+	vi.useFakeTimers();
+	consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 	blocks = {};
 	parents = {};
@@ -116,22 +119,24 @@ beforeEach( () => {
 	writes.length = 0;
 	writtenLists.length = 0;
 
-	jest.mocked( createBlock ).mockImplementation( ( name, attributes = {}, innerBlocks = [] ) => ( {
+	vi.mocked( createBlock ).mockImplementation( ( name, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: `new-${ name }`,
 		name,
 		attributes,
 		innerBlocks,
 		isValid: true,
 	} ) );
-	jest.mocked( getBlock ).mockImplementation( ( id ) => blocks[ id ] );
-	jest
-		.mocked( getBlocks )
-		.mockImplementation( ( id = '' ) => controlled[ id ] ?? blocks[ id ]?.innerBlocks ?? [] );
-	jest.mocked( getBlockRootClientId ).mockImplementation( ( id ) => parents[ id ] );
-	jest
-		.mocked( resolveBlocksRoot )
-		.mockReturnValue( { kind: 'document', clientId: '', post: { id: 1, type: 'page' } } );
-	jest.mocked( getBlockParents ).mockImplementation( ( id ) => {
+	vi.mocked( getBlock ).mockImplementation( ( id ) => blocks[ id ] );
+	vi.mocked( getBlocks ).mockImplementation(
+		( id = '' ) => controlled[ id ] ?? blocks[ id ]?.innerBlocks ?? []
+	);
+	vi.mocked( getBlockRootClientId ).mockImplementation( ( id ) => parents[ id ] );
+	vi.mocked( resolveBlocksRoot ).mockReturnValue( {
+		kind: 'document',
+		clientId: '',
+		post: { id: 1, type: 'page' },
+	} );
+	vi.mocked( getBlockParents ).mockImplementation( ( id ) => {
 		const ancestors: string[] = [];
 
 		for ( let parent = parents[ id ]; parent; parent = parents[ parent ] ) {
@@ -141,17 +146,17 @@ beforeEach( () => {
 		return ancestors;
 	} );
 	// A write that lands, as the editor's does.
-	jest.mocked( insertBlock ).mockImplementation( ( inserted ) => {
+	vi.mocked( insertBlock ).mockImplementation( ( inserted ) => {
 		blocks[ inserted.clientId ] = inserted;
 	} );
-	jest.mocked( removeBlock ).mockImplementation( ( id ) => {
+	vi.mocked( removeBlock ).mockImplementation( ( id ) => {
 		delete blocks[ id ];
 	} );
 } );
 
 afterEach( () => {
-	jest.useRealTimers();
-	jest.restoreAllMocks();
+	vi.useRealTimers();
+	vi.restoreAllMocks();
 } );
 
 describe( 'inserts', () => {
@@ -182,9 +187,10 @@ describe( 'inserts', () => {
 		[ 'the page root', { kind: 'section', clientId: 'section' }, 'section' ],
 		[ 'the document', { kind: 'document', clientId: 'document-root' }, undefined ],
 	] )( 'inserts at the top of %s when no parent is given', async ( _, root, parent ) => {
-		jest
-			.mocked( resolveBlocksRoot )
-			.mockReturnValue( { ...root, post: { id: 1, type: 'page' } } as never );
+		vi.mocked( resolveBlocksRoot ).mockReturnValue( {
+			...root,
+			post: { id: 1, type: 'page' },
+		} as never );
 
 		await run( { inserts: [ { block: paragraph } ] } );
 
@@ -192,7 +198,7 @@ describe( 'inserts', () => {
 	} );
 
 	it( 'refuses a parentless insert while the editor holds no page', async () => {
-		jest.mocked( resolveBlocksRoot ).mockReturnValue( null );
+		vi.mocked( resolveBlocksRoot ).mockReturnValue( null );
 
 		await expect( run( { inserts: [ { block: paragraph } ] } ) ).rejects.toThrow(
 			'[Edit Blocks] The editor has no page open to insert into.'
@@ -219,7 +225,7 @@ describe( 'inserts', () => {
 		beforeEach( () => {
 			useTree( [ block( 'post-content', 'core/post-content' ) ] );
 			useControlledChildren( 'post-content', paragraphs );
-			jest.mocked( insertBlock ).mockImplementation( () => {} );
+			vi.mocked( insertBlock ).mockImplementation( () => {} );
 		} );
 
 		it( 'splices the block into the existing children instead (BSKY-1992)', async () => {
@@ -234,7 +240,7 @@ describe( 'inserts', () => {
 		} );
 
 		it( 'leaves the parent alone when its list reads back empty', async () => {
-			jest.mocked( insertBlock ).mockImplementation( () => {
+			vi.mocked( insertBlock ).mockImplementation( () => {
 				controlled[ 'post-content' ] = [];
 			} );
 
@@ -436,7 +442,7 @@ describe( 'updates', () => {
 			updates: [ { clientId: 'ref-h', name: 'core/heading', attributes: { fontSize: null } } ],
 		} );
 
-		expect( jest.mocked( updateBlockAttributes ).mock.calls ).toStrictEqual( [
+		expect( vi.mocked( updateBlockAttributes ).mock.calls ).toStrictEqual( [
 			[ 'h', { content: 'Hi', level: 2, fontSize: undefined } ],
 		] );
 		expect( replaceBlock ).not.toHaveBeenCalled();
@@ -469,7 +475,7 @@ describe( 'updates', () => {
 		);
 
 		// The derived write lands in the same undo level as the edit.
-		const write = jest.mocked( syncCoverWithImage ).mock.calls[ 0 ][ 3 ];
+		const write = vi.mocked( syncCoverWithImage ).mock.calls[ 0 ][ 3 ];
 		const written = writes.length;
 
 		write( clientId, { isDark: true } );
@@ -678,7 +684,7 @@ describe( 'deletes', () => {
 	} );
 
 	describe( 'from a controlled parent that drops the removal', () => {
-		beforeEach( () => jest.mocked( removeBlock ).mockImplementation( () => {} ) );
+		beforeEach( () => vi.mocked( removeBlock ).mockImplementation( () => {} ) );
 
 		it( 'splices the block out of its siblings instead', async () => {
 			await run( { deletes: [ 'ref-p1' ] } );
@@ -690,7 +696,7 @@ describe( 'deletes', () => {
 		} );
 
 		it( 'leaves the parent alone when its list reads back empty', async () => {
-			jest.mocked( removeBlock ).mockImplementation( () => {
+			vi.mocked( removeBlock ).mockImplementation( () => {
 				controlled[ 'post-content' ] = [];
 			} );
 
@@ -704,8 +710,7 @@ describe( 'deletes', () => {
 
 // The batch yields between writes, and the user may leave the page while it does.
 it( 'stops before the next write once the canvas has moved', async () => {
-	jest
-		.mocked( assertCanvasUnmoved )
+	vi.mocked( assertCanvasUnmoved )
 		.mockImplementationOnce( () => {} )
 		.mockImplementationOnce( () => {
 			throw new Error( 'moved' );
@@ -737,13 +742,12 @@ it( 'tells the caller which block each write is about to change, before it', asy
 
 	expect( beforeWrite.mock.calls ).toEqual( [ [ 'group' ], [ 'h' ], [ 'gone' ] ] );
 	expect( beforeWrite.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-		jest.mocked( insertBlock ).mock.invocationCallOrder[ 0 ]
+		vi.mocked( insertBlock ).mock.invocationCallOrder[ 0 ]
 	);
 } );
 
 it( 'checks the canvas once more after the last write', async () => {
-	jest
-		.mocked( assertCanvasUnmoved )
+	vi.mocked( assertCanvasUnmoved )
 		.mockImplementationOnce( () => {} )
 		.mockImplementationOnce( () => {
 			throw new Error( 'moved' );
@@ -764,7 +768,7 @@ it( 'writes inserts, then updates, then deletes, all through the undo level', as
 	} );
 
 	const order = [ insertBlock, updateBlockAttributes, removeBlock ].map(
-		( write ) => jest.mocked( write ).mock.invocationCallOrder[ 0 ]
+		( write ) => vi.mocked( write ).mock.invocationCallOrder[ 0 ]
 	);
 
 	expect( writes ).toHaveLength( 3 );

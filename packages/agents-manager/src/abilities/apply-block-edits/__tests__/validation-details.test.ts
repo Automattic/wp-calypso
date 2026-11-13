@@ -1,10 +1,12 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockTypes: jest.fn( () => [
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockTypes: vi.fn( () => [
 		{ name: 'core/paragraph', attributes: { content: {} } },
 		{ name: 'core/button', attributes: { url: {}, text: {} } },
 	] ),
 } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( { getBlock: jest.fn() } ) );
+vi.mock( '../../../utils/editor-blocks', () => ( { getBlock: vi.fn() } ) );
 
 import { getBlock } from '../../../utils/editor-blocks';
 import {
@@ -47,7 +49,7 @@ const shortIds: Record< string, string > = { para: 'paragraph', btn: 'button' };
 const resolve = ( id: string ) => shortIds[ id ] ?? id;
 
 const withEditorBlocks = ( ...blocks: EditorBlock[] ) =>
-	jest
+	vi
 		.mocked( getBlock )
 		.mockImplementation( ( clientId ) => blocks.find( ( item ) => item.clientId === clientId ) );
 
@@ -89,7 +91,7 @@ function validate(
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	withEditorBlocks();
 } );
 
@@ -170,7 +172,7 @@ describe( 'getValidationDetails', () => {
 		[ 'missing-after-apply', 'Old', null, 'New' ],
 		[ 'unresolved', null, null, 'New' ],
 	] )(
-		'marks an attribute `%s` when the page had %p, shows %p and %p was requested',
+		'marks an attribute `%s` when the page had %o, shows %o and %o was requested',
 		( status, before, after, requested ) => {
 			const details = validate(
 				edits( { updates: [ contentUpdate( requested ) ] } ),

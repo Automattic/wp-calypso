@@ -1,13 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../../../utils/site-logo', () => ( {
-	hasSiteLogoBlock: jest.fn( () => true ),
-	setSiteLogo: jest.fn(),
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '../../../utils/site-logo', () => ( {
+	hasSiteLogoBlock: vi.fn( () => true ),
+	setSiteLogo: vi.fn(),
 } ) );
-jest.mock( '../../../utils/checkpoints', () => ( {
+vi.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { LOGO: 'logo' },
-	withCheckpoint: jest.fn( ( _checkpoint, write ) => write() ),
+	withCheckpoint: vi.fn( ( _checkpoint, write ) => write() ),
 } ) );
 
 import { withCheckpoint } from '../../../utils/checkpoints';
@@ -21,7 +23,7 @@ function setEditorPage( isEditor: boolean ) {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	setEditorPage( true );
 } );
 
@@ -55,7 +57,7 @@ describe( 'setSiteLogoCallback', () => {
 	} );
 
 	it( 'explains the missing Site Logo block, overriding the summary', async () => {
-		( hasSiteLogoBlock as jest.Mock ).mockReturnValueOnce( false );
+		( hasSiteLogoBlock as Mock ).mockReturnValueOnce( false );
 
 		const result = await setSiteLogoCallback( { fileObj: FILE_OBJ, summary: 'All set!' } );
 
@@ -65,7 +67,7 @@ describe( 'setSiteLogoCallback', () => {
 	} );
 
 	it( 'keeps the plain confirmation when the block count is unreadable', async () => {
-		( hasSiteLogoBlock as jest.Mock ).mockReturnValueOnce( undefined );
+		( hasSiteLogoBlock as Mock ).mockReturnValueOnce( undefined );
 
 		const result = await setSiteLogoCallback( { fileObj: FILE_OBJ } );
 
@@ -93,8 +95,8 @@ describe( 'setSiteLogoCallback', () => {
 	} );
 
 	it( 'reports an error when the site record is unavailable', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		( setSiteLogo as jest.Mock ).mockImplementationOnce( () => {
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		( setSiteLogo as Mock ).mockImplementationOnce( () => {
 			throw new Error( 'The site record is unavailable to edit.' );
 		} );
 

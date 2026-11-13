@@ -2,14 +2,16 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { DataPart, TaskState, TaskUpdate } from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { InteractiveUiPresentation } from '../../interactive-ui/use-interactive-ui';
 import type { ComponentProps } from 'react';
 
-const mockUseAgentChat = jest.fn();
-const mockUpdateSessionId = jest.fn();
+const mockUseAgentChat = vi.fn();
+const mockUpdateSessionId = vi.fn();
 let mockManagerHasAgent = true;
 let mockConversationHistory: Array< {
 	role: string;
@@ -37,11 +39,11 @@ let mockConversationConfig:
 			) => Promise< boolean >;
 	  }
 	| undefined;
-const mockUseRegenerateAction = jest.fn();
-const mockUseCheckpointAction = jest.fn();
-const mockUseConversation = jest.fn();
-const mockUseImageUpload = jest.fn();
-const mockIsReaderChatAgent = jest.fn();
+const mockUseRegenerateAction = vi.fn();
+const mockUseCheckpointAction = vi.fn();
+const mockUseConversation = vi.fn();
+const mockUseImageUpload = vi.fn();
+const mockIsReaderChatAgent = vi.fn();
 let mockAgentConfig: {
 	agentId: string;
 	sessionId?: string;
@@ -52,10 +54,10 @@ let mockAgentConfig: {
 let mockTabSessionId: string | undefined = 'session-id';
 let mockSiteKey = 'site-1';
 let mockCurrentUserId: number | undefined = 1;
-const mockInvalidateCheckpointAction = jest.fn();
+const mockInvalidateCheckpointAction = vi.fn();
 const mockInvalidatedCheckpointIds = new Set< string >();
 const mockRevertedCheckpointIds = new Set< string >();
-const mockSetCheckpointActionReverted = jest.fn(
+const mockSetCheckpointActionReverted = vi.fn(
 	( checkpointId: string, isReverted: boolean ): boolean => {
 		const wasReverted = mockRevertedCheckpointIds.has( checkpointId );
 		if ( isReverted ) {
@@ -148,7 +150,7 @@ const mockCheckpointActions = () => {
 				componentProps: {
 					initiallyReverted: isReverted,
 					...( showDisabledAction && { disabled: true } ),
-					...( canAct && { onUndo: jest.fn(), onRedo: jest.fn() } ),
+					...( canAct && { onUndo: vi.fn(), onRedo: vi.fn() } ),
 				},
 				order: 1,
 			},
@@ -166,7 +168,7 @@ const mockCheckpointActions = () => {
 	);
 };
 
-const mockAgentChat = jest.fn(
+const mockAgentChat = vi.fn(
 	( {
 		onSuggestionClick,
 		onSubmit,
@@ -329,37 +331,33 @@ const mockAgentChat = jest.fn(
 	)
 );
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		extractToolCallsFromMessage: ( message: { parts: Array< { type: string; data?: object } > } ) =>
-			message.parts.filter(
-				( { type, data } ) =>
-					type === 'data' &&
-					!! data &&
-					'toolCallId' in data &&
-					'toolId' in data &&
-					'arguments' in data
-			),
-		getAgentManager: () => ( {
-			updateSessionId: mockUpdateSessionId,
-			hasAgent: () => mockManagerHasAgent,
-			isTurnInFlight: () => false,
-			getConversationHistory: () => mockConversationHistory,
-		} ),
-		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
-			mockAgentChatConfig = config;
-			return mockUseAgentChat();
-		},
+vi.mock( '@automattic/agenttic-client', () => ( {
+	extractToolCallsFromMessage: ( message: { parts: Array< { type: string; data?: object } > } ) =>
+		message.parts.filter(
+			( { type, data } ) =>
+				type === 'data' &&
+				!! data &&
+				'toolCallId' in data &&
+				'toolId' in data &&
+				'arguments' in data
+		),
+	getAgentManager: () => ( {
+		updateSessionId: mockUpdateSessionId,
+		hasAgent: () => mockManagerHasAgent,
+		isTurnInFlight: () => false,
+		getConversationHistory: () => mockConversationHistory,
 	} ),
-	{ virtual: true }
-);
-jest.mock( '@wordpress/components', () => ( {
+	useAgentChat: ( config: typeof mockAgentChatConfig ) => {
+		mockAgentChatConfig = config;
+		return mockUseAgentChat();
+	},
+} ) );
+vi.mock( '@wordpress/components', () => ( {
 	Button: 'button',
 } ) );
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', async () => {
 	const { useEffect, useReducer, useRef } =
-		jest.requireActual< typeof import( 'react' ) >( 'react' );
+		await vi.importActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		select: ( storeName: string ) => mockSelectDataStore( storeName ),
@@ -389,13 +387,18 @@ jest.mock( '@wordpress/data', () => {
 		},
 	};
 } );
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
-jest.mock( 'react-router-dom', () => ( {
-	useNavigate: () => jest.fn(),
+vi.mock(
+	'@wordpress/element',
+	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
+);
+vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+vi.mock( 'react-router-dom', () => ( {
+	useNavigate: () => vi.fn(),
 } ) );
-jest.mock( '../../contexts', () => {
-	const { saveSessionId } = jest.requireActual( '../../utils/agent-session' );
+vi.mock( '../../contexts', async () => {
+	const { saveSessionId } = await vi.importActual< typeof import( '../../utils/agent-session' ) >(
+		'../../utils/agent-session'
+	);
 	return {
 		useAgentsManagerContext: () => ( {
 			agentConfig: {
@@ -409,20 +412,22 @@ jest.mock( '../../contexts', () => {
 	};
 } );
 const mockRegisteredActions: Record< string, unknown > = {};
-jest.mock( '../../hooks/custom-actions', () => ( {
+vi.mock( '../../hooks/custom-actions', () => ( {
 	useRegisterCustomActions: ( actions: Record< string, unknown > ) =>
 		Object.assign( mockRegisteredActions, actions ),
 } ) );
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
-	recordAgentsManagerTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
+	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
-jest.mock( '../../hooks/use-abilities-registration', () => () => {} );
-jest.mock( '../../hooks/use-conversation', () => ( config: typeof mockConversationConfig ) => {
-	mockConversationConfig = config;
-	return mockUseConversation( config );
-} );
-jest.mock( '../../hooks/use-checkpoint-action', () => ( {
+vi.mock( '../../hooks/use-abilities-registration', () => ( { default: () => {} } ) );
+vi.mock( '../../hooks/use-conversation', () => ( {
+	default: ( config: typeof mockConversationConfig ) => {
+		mockConversationConfig = config;
+		return mockUseConversation( config );
+	},
+} ) );
+vi.mock( '../../hooks/use-checkpoint-action', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseCheckpointAction( ...args ),
 	getCheckpointIdForMessage: mockGetCheckpointIdForMessage,
@@ -435,53 +440,55 @@ jest.mock( '../../hooks/use-checkpoint-action', () => ( {
 	setCheckpointActionReverted: ( checkpointId: string, isReverted: boolean ) =>
 		mockSetCheckpointActionReverted( checkpointId, isReverted ),
 } ) );
-jest.mock( '../../hooks/use-feedback-action', () => () => ( {
-	showFeedbackInput: false,
-	submitFeedbackText: jest.fn(),
-	resetFeedback: jest.fn(),
-	getFeedbackActionsForMessage: () => [],
+vi.mock( '../../hooks/use-feedback-action', () => ( {
+	default: () => ( {
+		showFeedbackInput: false,
+		submitFeedbackText: vi.fn(),
+		resetFeedback: vi.fn(),
+		getFeedbackActionsForMessage: () => [],
+	} ),
 } ) );
-jest.mock( '../../hooks/use-regenerate-action', () => ( {
+vi.mock( '../../hooks/use-regenerate-action', () => ( {
 	__esModule: true,
 	default: ( config: unknown ) => mockUseRegenerateAction( config ),
 } ) );
-jest.mock( '../../hooks/use-copy-action', () => () => () => [] );
-jest.mock( '../../hooks/use-image-upload', () => ( {
+vi.mock( '../../hooks/use-copy-action', () => ( { default: () => () => [] } ) );
+vi.mock( '../../hooks/use-image-upload', () => ( {
 	useImageUpload: () => mockUseImageUpload(),
 } ) );
-jest.mock( '../../hooks/use-sources-action', () => () => {} );
+vi.mock( '../../hooks/use-sources-action', () => ( { default: () => {} } ) );
 const noSiteSetupChecklist = {
 	isLoading: false,
 	variant: null,
 	items: [],
 	focusHeaderOnMount: false,
 };
-const mockUseSiteSetupChecklist = jest.fn( (): unknown => noSiteSetupChecklist );
-jest.mock( '../../hooks/use-site-setup-checklist', () => ( {
+const mockUseSiteSetupChecklist = vi.fn( (): unknown => noSiteSetupChecklist );
+vi.mock( '../../hooks/use-site-setup-checklist', () => ( {
 	__esModule: true,
 	default: () => mockUseSiteSetupChecklist(),
 } ) );
-jest.mock( '../site-setup-checklist', () => ( {
+vi.mock( '../site-setup-checklist', () => ( {
 	__esModule: true,
 	default: ( props: { variant: string } ) => (
 		<div data-testid={ `site-setup-checklist-${ props.variant }` } />
 	),
 } ) );
 // Returns `undefined` after a mock reset, which the wrapper reads as allowed.
-const mockCreditsBeforeSubmit = jest.fn( (): boolean | undefined => true );
-const mockCreditsVisibility = jest.fn();
-const mockCreditsNoticeVisibility = jest.fn();
-const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
-const mockCreditsNotice = jest.fn( (): unknown => undefined );
+const mockCreditsBeforeSubmit = vi.fn( (): boolean | undefined => true );
+const mockCreditsVisibility = vi.fn();
+const mockCreditsNoticeVisibility = vi.fn();
+const mockTakeRefusalCode = vi.fn( (): string | undefined => undefined );
+const mockCreditsNotice = vi.fn( (): unknown => undefined );
 let mockCreditsCommand: unknown;
-const mockRefusalNotice = jest.fn( (): unknown => undefined );
-const mockTopUpsNotice = jest.fn( (): unknown => undefined );
+const mockRefusalNotice = vi.fn( (): unknown => undefined );
+const mockTopUpsNotice = vi.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 let mockCreditsOnShowCredits: ( () => void ) | undefined;
-const mockCreditsOnTaskUpdate = jest.fn();
+const mockCreditsOnTaskUpdate = vi.fn();
 // One visit per site, as the real hook gives, each bound to its site.
 const mockCreditsVisits = new Map< string, { onTaskUpdate: ( update: TaskUpdate ) => void } >();
-jest.mock( '../../hooks/use-credits', () => ( {
+vi.mock( '../../hooks/use-credits', () => ( {
 	useCreditsVisit: () => {
 		const siteKey = mockSiteKey;
 
@@ -518,20 +525,20 @@ jest.mock( '../../hooks/use-credits', () => ( {
 		};
 	},
 } ) );
-jest.mock( '../../utils/convert-tool-messages-to-components', () => ( {
+vi.mock( '../../utils/convert-tool-messages-to-components', () => ( {
 	__esModule: true,
-	default: jest.fn( ( { messages }: { messages: unknown[] } ) => messages ),
+	default: vi.fn( ( { messages }: { messages: unknown[] } ) => messages ),
 } ) );
-jest.mock( '../../utils/external-context', () => ( {
-	consumeNextMessageExternalContextEntries: jest.fn(),
-	removeExternalContextCard: jest.fn(),
-	removeExternalContextEntry: jest.fn(),
+vi.mock( '../../utils/external-context', () => ( {
+	consumeNextMessageExternalContextEntries: vi.fn(),
+	removeExternalContextCard: vi.fn(),
+	removeExternalContextEntry: vi.fn(),
 } ) );
-jest.mock( '../../utils/is-reader-chat-agent', () => ( {
+vi.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
-jest.mock( '../agent-chat', () => {
-	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '../agent-chat', async () => {
+	const { useEffect, useRef } = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	// Report the empty-view chips the way Agenttic does: nothing behind the loading
 	// skeleton, once per distinct id set, truncated when a test simulates the
 	// floating limit.
@@ -572,6 +579,8 @@ import {
 import { bindToEditorPath } from '../../utils/canvas-guard';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
+import * as convertToolMessages from '../../utils/convert-tool-messages-to-components';
+import * as externalContext from '../../utils/external-context';
 
 const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
 	<OrchestratorChat
@@ -579,33 +588,33 @@ const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} 
 		isDocked={ false }
 		isOpen
 		suggestionsVisible
-		onClose={ jest.fn() }
-		onExpand={ jest.fn() }
+		onClose={ vi.fn() }
+		onExpand={ vi.fn() }
 		chatHeaderOptions={ [] }
 		markdownComponents={ {} }
 		markdownExtensions={ {} }
 		isCompactMode={ false }
-		onHasMessagesChange={ jest.fn() }
+		onHasMessagesChange={ vi.fn() }
 		{ ...props }
 	/>
 );
 
 const agentChatReturn = ( overrides: Record< string, unknown > = {} ) => ( {
-	addMessage: jest.fn(),
-	clearError: jest.fn(),
+	addMessage: vi.fn(),
+	clearError: vi.fn(),
 	messages: [],
 	suggestions: [],
 	isProcessing: false,
 	error: null,
-	loadMessages: jest.fn(),
-	onSubmit: jest.fn(),
-	abortCurrentRequest: jest.fn(),
-	clearSuggestions: jest.fn(),
-	registerSuggestions: jest.fn(),
-	registerMessageActions: jest.fn(),
-	unregisterMessageActions: jest.fn(),
+	loadMessages: vi.fn(),
+	onSubmit: vi.fn(),
+	abortCurrentRequest: vi.fn(),
+	clearSuggestions: vi.fn(),
+	registerSuggestions: vi.fn(),
+	registerMessageActions: vi.fn(),
+	unregisterMessageActions: vi.fn(),
 	// Mirror production: agenttic hands back a real regenerate handler.
-	getRegenerateHandler: jest.fn( () => jest.fn() ),
+	getRegenerateHandler: vi.fn( () => vi.fn() ),
 	progressMessage: null,
 	...overrides,
 } );
@@ -614,10 +623,10 @@ const createImageUpload = ( overrides: Record< string, unknown > = {} ) => ( {
 	pendingImages: [],
 	uploadingImages: [],
 	isUploadingImages: false,
-	handleFilesSelected: jest.fn(),
-	handleRemoveImage: jest.fn(),
-	uploadImagesToWordPress: jest.fn(),
-	abortUpload: jest.fn( () => false ),
+	handleFilesSelected: vi.fn(),
+	handleRemoveImage: vi.fn(),
+	uploadImagesToWordPress: vi.fn(),
+	abortUpload: vi.fn( () => false ),
 	...overrides,
 } );
 
@@ -756,18 +765,18 @@ const createTaskMessageUpdate = (
 } );
 
 const createSwappableCheckpoint = () => ( {
-	getLastEditorState: jest.fn(),
-	setCheckpoint: jest.fn(),
-	addCheckpointKeys: jest.fn(),
-	restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-	canSwapCheckpoint: jest.fn().mockReturnValue( true ),
-	swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-	addNewPageToCheckpoint: jest.fn(),
-	addPageRenameToCheckpoint: jest.fn(),
-	addPageRemovalToCheckpoint: jest.fn(),
-	getLatestUserMessageId: jest.fn(),
-	clearCheckpoint: jest.fn(),
-	hasCheckpoint: jest.fn().mockReturnValue( true ),
+	getLastEditorState: vi.fn(),
+	setCheckpoint: vi.fn(),
+	addCheckpointKeys: vi.fn(),
+	restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+	canSwapCheckpoint: vi.fn().mockReturnValue( true ),
+	swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+	addNewPageToCheckpoint: vi.fn(),
+	addPageRenameToCheckpoint: vi.fn(),
+	addPageRemovalToCheckpoint: vi.fn(),
+	getLatestUserMessageId: vi.fn(),
+	clearCheckpoint: vi.fn(),
+	hasCheckpoint: vi.fn().mockReturnValue( true ),
 } );
 
 const getDisplayedCheckpointAction = ( messageId: string ) => {
@@ -815,7 +824,7 @@ const countShowComponentMessages = () => {
 
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		takeActionOrigin( 'open' );
 		takeActionOrigin( 'send' );
 		mockUseCheckpointAction.mockReturnValue( () => [] );
@@ -895,7 +904,7 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'forwards a provider’s task observer error unchanged', async () => {
 		const error = new Error( 'provider observer failed' );
-		mockAgentConfig = { ...mockAgentConfig, onTaskUpdate: jest.fn().mockRejectedValue( error ) };
+		mockAgentConfig = { ...mockAgentConfig, onTaskUpdate: vi.fn().mockRejectedValue( error ) };
 		render( chat() );
 
 		await expect(
@@ -922,7 +931,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'keeps the live history when it is newer than the fetched conversation', () => {
-		const loadMessages = jest.fn();
+		const loadMessages = vi.fn();
 		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
 		render( chat() );
 
@@ -951,7 +960,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
 		render( chat() );
@@ -977,7 +986,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'dispatches and tracks the AI Editorial Review suggestion ID once', () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 		const suggestion = {
 			id: 'ai-editorial-review',
@@ -986,7 +995,7 @@ describe( 'OrchestratorChat', () => {
 		};
 
 		render( chat( { emptyViewSuggestions: [ suggestion ] } ) );
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Editorial Review' } ) );
 
@@ -1010,7 +1019,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'dispatches the inline suggestion event when Agenttic passes a prompt string', () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
 		render( chat() );
@@ -1027,7 +1036,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'flags auto-submit suggestions so the input is not repopulated', () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
 		render( chat() );
@@ -1053,7 +1062,7 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'records block context on a regular block suggestion', () => {
 		mockSelectedBlockType = 'core/paragraph';
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
 		render(
@@ -1070,7 +1079,7 @@ describe( 'OrchestratorChat', () => {
 				} ),
 			} )
 		);
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
@@ -1107,7 +1116,7 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'records the selected option and block context for a dropdown suggestion', () => {
 		mockSelectedBlockType = 'core/paragraph';
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
 		render(
@@ -1131,7 +1140,7 @@ describe( 'OrchestratorChat', () => {
 				} ),
 			} )
 		);
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByText( 'Click block dropdown suggestion' ) );
 
@@ -1186,7 +1195,7 @@ describe( 'OrchestratorChat', () => {
 		};
 
 		render( chat( { emptyViewSuggestions: [ feedback ] } ) );
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
 
@@ -1202,7 +1211,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'passes the floating suggestion limit to external providers', () => {
-		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+		const useSuggestions = vi.fn( () => ( { suggestions: [] } ) );
 
 		render( chat( { useSuggestions: useSuggestions } ) );
 
@@ -1210,7 +1219,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'does not limit external provider suggestions while docked', () => {
-		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+		const useSuggestions = vi.fn( () => ( { suggestions: [] } ) );
 
 		render( chat( { isDocked: true, useSuggestions: useSuggestions } ) );
 
@@ -1256,7 +1265,7 @@ describe( 'OrchestratorChat', () => {
 		const staticDefaults: Suggestion[] = [
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
-		const useSuggestions = jest.fn( () => ( { suggestions: customSuggestions } ) );
+		const useSuggestions = vi.fn( () => ( { suggestions: customSuggestions } ) );
 
 		// Store is empty (as it is right after clearSuggestions()), no messages,
 		// and the input is empty — the empty-view fallback branch.
@@ -1278,20 +1287,20 @@ describe( 'OrchestratorChat', () => {
 		const dynamicSuggestions: Suggestion[] = [
 			{ id: 'dynamic-action', label: 'Dynamic action', prompt: 'Run the dynamic action' },
 		];
-		const useSuggestions = jest.fn( () => ( { suggestions: dynamicSuggestions } ) );
+		const useSuggestions = vi.fn( () => ( { suggestions: dynamicSuggestions } ) );
 
 		mockUseAgentChat.mockReturnValue( {
-			addMessage: jest.fn(),
+			addMessage: vi.fn(),
 			messages: [],
 			suggestions: dynamicSuggestions,
 			isProcessing: false,
 			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
+			loadMessages: vi.fn(),
+			onSubmit: vi.fn(),
+			abortCurrentRequest: vi.fn(),
+			clearSuggestions: vi.fn(),
+			registerSuggestions: vi.fn(),
+			registerMessageActions: vi.fn(),
 			progressMessage: null,
 		} );
 
@@ -1301,14 +1310,14 @@ describe( 'OrchestratorChat', () => {
 				isDocked={ false }
 				isOpen
 				suggestionsVisible
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
+				onClose={ vi.fn() }
+				onExpand={ vi.fn() }
 				chatHeaderOptions={ [] }
 				markdownComponents={ {} }
 				markdownExtensions={ {} }
 				isCompactMode={ false }
 				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
+				onHasMessagesChange={ vi.fn() }
 			/>
 		);
 
@@ -1327,23 +1336,23 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
 			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
 		];
-		const useSuggestions = jest.fn( () => ( {
+		const useSuggestions = vi.fn( () => ( {
 			suggestions: blockSuggestions,
 			replaceEmptyViewSuggestions: true,
 		} ) );
 
 		mockUseAgentChat.mockReturnValue( {
-			addMessage: jest.fn(),
+			addMessage: vi.fn(),
 			messages: [],
 			suggestions: blockSuggestions,
 			isProcessing: false,
 			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
+			loadMessages: vi.fn(),
+			onSubmit: vi.fn(),
+			abortCurrentRequest: vi.fn(),
+			clearSuggestions: vi.fn(),
+			registerSuggestions: vi.fn(),
+			registerMessageActions: vi.fn(),
 			progressMessage: null,
 		} );
 
@@ -1353,14 +1362,14 @@ describe( 'OrchestratorChat', () => {
 				isDocked={ false }
 				isOpen
 				suggestionsVisible
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
+				onClose={ vi.fn() }
+				onExpand={ vi.fn() }
 				chatHeaderOptions={ [] }
 				markdownComponents={ {} }
 				markdownExtensions={ {} }
 				isCompactMode={ false }
 				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
+				onHasMessagesChange={ vi.fn() }
 			/>
 		);
 
@@ -1383,7 +1392,7 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
 			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
 		];
-		const useSuggestions = jest.fn( () => ( {
+		const useSuggestions = vi.fn( () => ( {
 			suggestions: blockSuggestions,
 			replaceEmptyViewSuggestions: true,
 		} ) );
@@ -1432,8 +1441,8 @@ describe( 'OrchestratorChat', () => {
 			const suggestions: Suggestion[] = [
 				{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
 			];
-			const useSuggestions = jest.fn( () => ( { suggestions, replaceEmptyViewSuggestions } ) );
-			const registerSuggestions = jest.fn();
+			const useSuggestions = vi.fn( () => ( { suggestions, replaceEmptyViewSuggestions } ) );
+			const registerSuggestions = vi.fn();
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { registerSuggestions } ) );
 
 			const { rerender } = render( chat( { useSuggestions } ) );
@@ -1456,7 +1465,7 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
 			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
 		];
-		const useSuggestions = jest.fn( () => ( {
+		const useSuggestions = vi.fn( () => ( {
 			suggestions: blockSuggestions,
 			replaceEmptyViewSuggestions: true,
 		} ) );
@@ -1477,7 +1486,7 @@ describe( 'OrchestratorChat', () => {
 		const staticDefaults: Suggestion[] = [
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
-		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
+		const useSuggestions = vi.fn( () => ( { suggestions: [] } ) );
 
 		render( chat( { emptyViewSuggestions: staticDefaults, useSuggestions: useSuggestions } ) );
 
@@ -1516,7 +1525,7 @@ describe( 'OrchestratorChat', () => {
 		const blockSuggestions: Suggestion[] = [
 			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
 		];
-		const useSuggestions = jest.fn( () => ( {
+		const useSuggestions = vi.fn( () => ( {
 			suggestions: blockSuggestions,
 			replaceEmptyViewSuggestions: true,
 		} ) );
@@ -1568,7 +1577,7 @@ describe( 'OrchestratorChat', () => {
 		const blockSuggestions: Suggestion[] = [
 			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
 		];
-		const useSuggestions = jest.fn( () => ( {
+		const useSuggestions = vi.fn( () => ( {
 			suggestions: blockSuggestions,
 			replaceEmptyViewSuggestions: true,
 		} ) );
@@ -1613,7 +1622,7 @@ describe( 'OrchestratorChat', () => {
 		const truncated: Suggestion = { id: 'seo-enhancer', label: 'SEO Enhancer', prompt: 'SEO' };
 
 		render( chat( { emptyViewSuggestions: [ feedback, truncated ] } ) );
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByText( 'Click feedback dropdown without context' ) );
 
@@ -1633,7 +1642,7 @@ describe( 'OrchestratorChat', () => {
 		const truncated: Suggestion = { id: 'seo-enhancer', label: 'SEO Enhancer', prompt: 'SEO' };
 
 		render( chat( { emptyViewSuggestions: [ shown, truncated ] } ) );
-		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+		vi.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		// The mock's empty view passes its whole list, like GroupedEmptyView does.
 		fireEvent.click( screen.getByText( 'Getting started' ) );
@@ -1708,7 +1717,7 @@ describe( 'OrchestratorChat', () => {
 		[ 'expands a compact chat first', { isOpen: false, isCompactMode: true }, 1 ],
 		[ 'leaves an open chat as it is', { isOpen: true }, 0 ],
 	] as const )( 'asking for /credits from the popover %s', ( _name, options, expands ) => {
-		const onExpand = jest.fn();
+		const onExpand = vi.fn();
 		mockCreditsCommand = {
 			state: 'balance',
 			answer: { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } },
@@ -1736,7 +1745,7 @@ describe( 'OrchestratorChat', () => {
 		renderWithImageUpload(
 			createImageUpload( {
 				pendingImages: [ { id: 'p1' } ],
-				uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+				uploadImagesToWordPress: vi.fn().mockRejectedValue( new Error( 'network' ) ),
 			} )
 		);
 		fireEvent.click( screen.getByText( 'Submit message' ) );
@@ -1820,7 +1829,7 @@ describe( 'OrchestratorChat', () => {
 
 		await act( async () => {} );
 		expect( mockCreditsBeforeSubmit ).toHaveBeenCalled();
-		const { removeExternalContextCard } = jest.requireMock( '../../utils/external-context' );
+		const { removeExternalContextCard } = vi.mocked( externalContext, true );
 		expect( removeExternalContextCard ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
 			'jetpack_big_sky_chat_input_send_message',
@@ -1855,9 +1864,9 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'gates a regeneration on credits', async () => {
-		const agentticRegenerate = jest.fn();
+		const agentticRegenerate = vi.fn();
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+			agentChatReturn( { getRegenerateHandler: vi.fn( () => agentticRegenerate ) } )
 		);
 		mockCreditsBeforeSubmit.mockReturnValueOnce( false );
 		render( chat() );
@@ -1878,9 +1887,9 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'records a regeneration when credits allow it', async () => {
-		const agentticRegenerate = jest.fn();
+		const agentticRegenerate = vi.fn();
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( { getRegenerateHandler: jest.fn( () => agentticRegenerate ) } )
+			agentChatReturn( { getRegenerateHandler: vi.fn( () => agentticRegenerate ) } )
 		);
 		mockCreditsBeforeSubmit.mockReturnValueOnce( true );
 		render( chat() );
@@ -1919,7 +1928,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {
-		const uploadImagesToWordPress = jest.fn().mockResolvedValue( [
+		const uploadImagesToWordPress = vi.fn().mockResolvedValue( [
 			{ id: 1, url: 'a' },
 			{ id: 2, url: 'b' },
 		] );
@@ -1946,7 +1955,7 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'keeps the message in the input while uploading and clears it on dispatch', async () => {
 		let resolveUpload!: ( media: Array< { id: number; url: string } > ) => void;
-		const uploadImagesToWordPress = jest.fn(
+		const uploadImagesToWordPress = vi.fn(
 			() =>
 				new Promise( ( resolve ) => {
 					resolveUpload = resolve;
@@ -1987,7 +1996,7 @@ describe( 'OrchestratorChat', () => {
 		renderWithImageUpload(
 			createImageUpload( {
 				pendingImages: [ { id: 'p1' } ],
-				uploadImagesToWordPress: jest.fn().mockRejectedValue( abortError ),
+				uploadImagesToWordPress: vi.fn().mockRejectedValue( abortError ),
 			} )
 		);
 
@@ -2010,7 +2019,7 @@ describe( 'OrchestratorChat', () => {
 		renderWithImageUpload(
 			createImageUpload( {
 				pendingImages: [ { id: 'p1' } ],
-				uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+				uploadImagesToWordPress: vi.fn().mockRejectedValue( new Error( 'network' ) ),
 			} )
 		);
 
@@ -2028,10 +2037,10 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'restores the message when dispatch fails after a successful upload', async () => {
-		const uploadImagesToWordPress = jest.fn().mockResolvedValue( [ { id: 1, url: 'a' } ] );
+		const uploadImagesToWordPress = vi.fn().mockResolvedValue( [ { id: 1, url: 'a' } ] );
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
-				onSubmit: jest.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
+				onSubmit: vi.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
 			} )
 		);
 
@@ -2056,7 +2065,7 @@ describe( 'OrchestratorChat', () => {
 	it( 'restores the message when a text-only dispatch fails', async () => {
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
-				onSubmit: jest.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
+				onSubmit: vi.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
 			} )
 		);
 
@@ -2074,7 +2083,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'stops the upload instead of the agent request while images are uploading', () => {
-		const abortUpload = jest.fn( () => true );
+		const abortUpload = vi.fn( () => true );
 		const { abortCurrentRequest } = mockUseAgentChat();
 
 		renderWithImageUpload(
@@ -2190,7 +2199,7 @@ describe( 'OrchestratorChat', () => {
 		}
 
 		const actionEventCalls = () =>
-			jest
+			vi
 				.mocked( recordAgentsManagerTracksEvent )
 				.mock.calls.filter(
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_interactive_ui_action'
@@ -2226,9 +2235,9 @@ describe( 'OrchestratorChat', () => {
 
 			await dispatchFormAction();
 
-			const onSubmit = jest.mocked( mockUseAgentChat.mock.results.at( -1 )!.value.onSubmit );
+			const onSubmit = vi.mocked( mockUseAgentChat.mock.results.at( -1 )!.value.onSubmit );
 
-			const recordedCall = jest
+			const recordedCall = vi
 				.mocked( recordAgentsManagerTracksEvent )
 				.mock.calls.findIndex(
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_interactive_ui_action'
@@ -2240,7 +2249,7 @@ describe( 'OrchestratorChat', () => {
 				expect.objectContaining( { type: 'context' } )
 			);
 			expect(
-				jest.mocked( recordAgentsManagerTracksEvent ).mock.invocationCallOrder[ recordedCall ]
+				vi.mocked( recordAgentsManagerTracksEvent ).mock.invocationCallOrder[ recordedCall ]
 			).toBeLessThan( onSubmit.mock.invocationCallOrder[ 0 ] );
 		} );
 
@@ -2395,7 +2404,7 @@ describe( 'OrchestratorChat', () => {
 
 	describe( 'chat error tracking', () => {
 		const chatErrorCalls = () =>
-			jest
+			vi
 				.mocked( recordAgentsManagerTracksEvent )
 				.mock.calls.filter(
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
@@ -2523,7 +2532,7 @@ describe( 'OrchestratorChat', () => {
 			renderWithImageUpload(
 				createImageUpload( {
 					pendingImages: [ { id: 'p1' } ],
-					uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+					uploadImagesToWordPress: vi.fn().mockRejectedValue( new Error( 'network' ) ),
 				} )
 			);
 
@@ -2538,14 +2547,14 @@ describe( 'OrchestratorChat', () => {
 
 	describe( 'response outcome tracking', () => {
 		const outcomeCalls = () =>
-			jest
+			vi
 				.mocked( recordAgentsManagerTracksEvent )
 				.mock.calls.filter(
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_response_completed'
 				);
 
 		beforeEach( () => {
-			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 		} );
 
 		it( 'records one completed outcome per task, with the reply message id', async () => {
@@ -2602,7 +2611,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'drops a same-tick duplicate send before upload state propagates', async () => {
-		const uploadImagesToWordPress = jest.fn(
+		const uploadImagesToWordPress = vi.fn(
 			() => new Promise( () => {} ) // stays pending
 		);
 
@@ -2626,7 +2635,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'drops sends while an upload is in flight', () => {
-		const uploadImagesToWordPress = jest.fn();
+		const uploadImagesToWordPress = vi.fn();
 
 		renderWithImageUpload(
 			createImageUpload( {
@@ -2647,7 +2656,7 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'ignores staged images on reader chat', async () => {
 		mockIsReaderChatAgent.mockReturnValue( true );
-		const uploadImagesToWordPress = jest.fn();
+		const uploadImagesToWordPress = vi.fn();
 		const { onSubmit } = mockUseAgentChat();
 
 		renderWithImageUpload(
@@ -2677,7 +2686,7 @@ describe( 'OrchestratorChat', () => {
 		const checkpointAction = {
 			id: 'checkpoint',
 			label: 'Undo',
-			onClick: jest.fn(),
+			onClick: vi.fn(),
 			order: 1,
 		};
 		const createOutcomeMessage = ( id: string, actions?: unknown[] ) => ( {
@@ -2700,7 +2709,7 @@ describe( 'OrchestratorChat', () => {
 			showIcon: true,
 			...( actions ? { actions } : {} ),
 		} );
-		const getCheckpointActions = jest.fn( ( message: { id: string } ) =>
+		const getCheckpointActions = vi.fn( ( message: { id: string } ) =>
 			message.id === 'agent-streaming-stale' ? [] : [ checkpointAction ]
 		);
 		mockUseCheckpointAction.mockReturnValue( getCheckpointActions );
@@ -2963,7 +2972,7 @@ describe( 'OrchestratorChat', () => {
 		);
 		const checkpointId = mockGetCheckpointIdForMessage( checkpointMessage )!;
 		const checkpointResult = checkpointMessage.content[ 0 ].text;
-		const loadMessages = jest.fn();
+		const loadMessages = vi.fn();
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( { loadMessages, messages: [ checkpointMessage ] } )
 		);
@@ -2998,18 +3007,18 @@ describe( 'OrchestratorChat', () => {
 		);
 		let canSwapCheckpoint = true;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
@@ -3079,18 +3088,18 @@ describe( 'OrchestratorChat', () => {
 			'pending-native-undo-checkpoint'
 		);
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn().mockReturnValue( true ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn().mockReturnValue( true ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
@@ -3154,18 +3163,18 @@ describe( 'OrchestratorChat', () => {
 		);
 		let canSwapCheckpoint = true;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
@@ -3195,18 +3204,18 @@ describe( 'OrchestratorChat', () => {
 		);
 		let canSwapCheckpoint = true;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
@@ -3245,18 +3254,18 @@ describe( 'OrchestratorChat', () => {
 		);
 		let canSwapCheckpoint = true;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
@@ -3330,16 +3339,16 @@ describe( 'OrchestratorChat', () => {
 			'unsupported-native-undo-checkpoint'
 		);
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
 		mockCheckpointActions();
@@ -3368,22 +3377,24 @@ describe( 'OrchestratorChat', () => {
 		);
 		let canSwapCheckpoint = true;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
-		const actualUseCheckpointAction = jest.requireActual(
-			'../../hooks/use-checkpoint-action'
+		const actualUseCheckpointAction = (
+			await vi.importActual< typeof import( '../../hooks/use-checkpoint-action' ) >(
+				'../../hooks/use-checkpoint-action'
+			)
 		).default;
 		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
 		mockUseAgentChat.mockReturnValue(
@@ -3438,22 +3449,24 @@ describe( 'OrchestratorChat', () => {
 		);
 		let canSwapCheckpoint = true;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
-		const actualUseCheckpointAction = jest.requireActual(
-			'../../hooks/use-checkpoint-action'
+		const actualUseCheckpointAction = (
+			await vi.importActual< typeof import( '../../hooks/use-checkpoint-action' ) >(
+				'../../hooks/use-checkpoint-action'
+			)
 		).default;
 		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
 		mockUseAgentChat.mockReturnValue(
@@ -3487,12 +3500,12 @@ describe( 'OrchestratorChat', () => {
 		let canSwapCheckpoint = true;
 		let resolveSwap: ( () => void ) | undefined;
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn( () => canSwapCheckpoint ),
-			swapCheckpoint: jest.fn(
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn( () => canSwapCheckpoint ),
+			swapCheckpoint: vi.fn(
 				() =>
 					new Promise< void >( ( resolve ) => {
 						canSwapCheckpoint = false;
@@ -3504,16 +3517,18 @@ describe( 'OrchestratorChat', () => {
 						};
 					} )
 			),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
-		const actualUseCheckpointAction = jest.requireActual(
-			'../../hooks/use-checkpoint-action'
+		const actualUseCheckpointAction = (
+			await vi.importActual< typeof import( '../../hooks/use-checkpoint-action' ) >(
+				'../../hooks/use-checkpoint-action'
+			)
 		).default;
 		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
 		mockUseAgentChat.mockReturnValue(
@@ -3560,27 +3575,29 @@ describe( 'OrchestratorChat', () => {
 			'text-content'
 		);
 		const checkpoint = {
-			getLastEditorState: jest.fn(),
-			setCheckpoint: jest.fn(),
-			addCheckpointKeys: jest.fn(),
-			restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-			canSwapCheckpoint: jest.fn().mockReturnValue( true ),
-			swapCheckpoint: jest.fn( () => {
+			getLastEditorState: vi.fn(),
+			setCheckpoint: vi.fn(),
+			addCheckpointKeys: vi.fn(),
+			restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+			canSwapCheckpoint: vi.fn().mockReturnValue( true ),
+			swapCheckpoint: vi.fn( () => {
 				mockHasEditorRedo = true;
 				mockEditorBlocks = [ { clientId: 'inline-undo-restored-block' } ];
 				mockDataStoreSubscribers.forEach( ( notify ) => notify() );
 				return Promise.resolve();
 			} ),
-			addNewPageToCheckpoint: jest.fn(),
-			addPageRenameToCheckpoint: jest.fn(),
-			addPageRemovalToCheckpoint: jest.fn(),
-			getLatestUserMessageId: jest.fn(),
-			clearCheckpoint: jest.fn(),
-			hasCheckpoint: jest.fn().mockReturnValue( true ),
+			addNewPageToCheckpoint: vi.fn(),
+			addPageRenameToCheckpoint: vi.fn(),
+			addPageRemovalToCheckpoint: vi.fn(),
+			getLatestUserMessageId: vi.fn(),
+			clearCheckpoint: vi.fn(),
+			hasCheckpoint: vi.fn().mockReturnValue( true ),
 		};
 		const useCheckpoint = () => checkpoint;
-		const actualUseCheckpointAction = jest.requireActual(
-			'../../hooks/use-checkpoint-action'
+		const actualUseCheckpointAction = (
+			await vi.importActual< typeof import( '../../hooks/use-checkpoint-action' ) >(
+				'../../hooks/use-checkpoint-action'
+			)
 		).default;
 		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
 		mockUseAgentChat.mockReturnValue(
@@ -3622,8 +3639,10 @@ describe( 'OrchestratorChat', () => {
 			return Promise.resolve();
 		} );
 		const useCheckpoint = () => checkpoint;
-		const actualUseCheckpointAction = jest.requireActual(
-			'../../hooks/use-checkpoint-action'
+		const actualUseCheckpointAction = (
+			await vi.importActual< typeof import( '../../hooks/use-checkpoint-action' ) >(
+				'../../hooks/use-checkpoint-action'
+			)
 		).default;
 		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
 		mockUseAgentChat.mockReturnValue(
@@ -3679,8 +3698,10 @@ describe( 'OrchestratorChat', () => {
 			checkpointId === 'later-native-undo-checkpoint' ? canSwapLaterCheckpoint : true
 		);
 		const useCheckpoint = () => checkpoint;
-		const actualUseCheckpointAction = jest.requireActual(
-			'../../hooks/use-checkpoint-action'
+		const actualUseCheckpointAction = (
+			await vi.importActual< typeof import( '../../hooks/use-checkpoint-action' ) >(
+				'../../hooks/use-checkpoint-action'
+			)
 		).default;
 		mockUseCheckpointAction.mockImplementation( actualUseCheckpointAction );
 		mockUseAgentChat.mockReturnValue(
@@ -3888,7 +3909,7 @@ describe( 'OrchestratorChat', () => {
 			'onUndo'
 		);
 		view.unmount();
-		const remountLoadMessages = jest.fn();
+		const remountLoadMessages = vi.fn();
 		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages: remountLoadMessages } ) );
 		const remountedView = render( chat() );
 		act( () => {
@@ -4108,8 +4129,7 @@ describe( 'OrchestratorChat', () => {
 		} as unknown as TaskUpdate;
 		// The converter is mocked, so check the retries the chat hands it.
 		const isToolCallRetried = () => {
-			const convert = jest.requireMock( '../../utils/convert-tool-messages-to-components' )
-				.default as jest.Mock;
+			const convert = vi.mocked( convertToolMessages, true ).default as Mock;
 			const { retriedToolCallIds } = convert.mock.calls.at( -1 )![ 0 ] as {
 				retriedToolCallIds?: ReadonlySet< string >;
 			};
@@ -4306,7 +4326,7 @@ describe( 'OrchestratorChat', () => {
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
 				messages: [ finalMessage ],
-				getRegenerateHandler: jest.fn( () => () => regeneration ),
+				getRegenerateHandler: vi.fn( () => () => regeneration ),
 			} )
 		);
 		remountedView.rerender( chat() );
@@ -4438,7 +4458,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'disables stale regenerate actions on older agent messages before render', () => {
-		const onRegenerate = jest.fn();
+		const onRegenerate = vi.fn();
 		// Mirror production: the getter enables regenerate only on the latest
 		// agent message and disables it on older ones.
 		mockUseRegenerateAction.mockReturnValue(
@@ -4506,7 +4526,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'tells the regenerate getter which message is latest', () => {
-		const getRegenerateActions = jest.fn( () => [] );
+		const getRegenerateActions = vi.fn( () => [] );
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
@@ -5084,8 +5104,8 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'resends a refused question through the retry path on the credits-back Continue', async () => {
-			const onSubmit = jest.fn().mockResolvedValue( undefined );
-			const uploadImagesToWordPress = jest.fn();
+			const onSubmit = vi.fn().mockResolvedValue( undefined );
+			const uploadImagesToWordPress = vi.fn();
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			renderWithImageUpload(
 				createImageUpload( { pendingImages: [ { id: 'p1' } ], uploadImagesToWordPress } )
@@ -5100,7 +5120,7 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'sends the edited draft instead on the credits-back Continue', async () => {
-			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const onSubmit = vi.fn().mockResolvedValue( undefined );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			render( chat() );
 			fireEvent.click( screen.getByText( 'Type message' ) );
@@ -5114,7 +5134,7 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'sends a padded draft as typed on Continue, so the box clears', async () => {
-			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const onSubmit = vi.fn().mockResolvedValue( undefined );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			render( chat() );
 			fireEvent.click( screen.getByText( 'Type padded message' ) );
@@ -5128,8 +5148,8 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'retries through the normal send, leaving images staged for the draft', async () => {
-			const onSubmit = jest.fn().mockResolvedValue( undefined );
-			const uploadImagesToWordPress = jest.fn();
+			const onSubmit = vi.fn().mockResolvedValue( undefined );
+			const uploadImagesToWordPress = vi.fn();
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			renderWithImageUpload(
 				createImageUpload( { pendingImages: [ { id: 'p1' } ], uploadImagesToWordPress } )
@@ -5150,7 +5170,7 @@ describe( 'OrchestratorChat', () => {
 				{ role: 'user', messageId: 'm-question', parts: [ { type: 'text', text: 'Top 5?' } ] },
 				{ role: 'agent', messageId: 'm-result', parts: [ { type: 'data', data: {} } ] },
 			];
-			const onSubmit = jest.fn( async () => {
+			const onSubmit = vi.fn( async () => {
 				mockConversationHistory = [
 					mockConversationHistory[ 0 ],
 					{
@@ -5179,7 +5199,7 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'reports no reply when the resume lost to another page', async () => {
-			const onSubmit = jest.fn().mockResolvedValue( undefined );
+			const onSubmit = vi.fn().mockResolvedValue( undefined );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			render( chat() );
 
@@ -5200,7 +5220,7 @@ describe( 'OrchestratorChat', () => {
 		it( 'renders the checklist into the empty view of a new chat, which stays empty', () => {
 			mockUseSiteSetupChecklist.mockReturnValue( { ...noSiteSetupChecklist, variant: 'empty' } );
 			mockUseAgentChat.mockReturnValue( agentChatReturn() );
-			const onHasMessagesChange = jest.fn();
+			const onHasMessagesChange = vi.fn();
 			render( chat( { onHasMessagesChange } ) );
 
 			const props = mockAgentChat.mock.calls.at( -1 )![ 0 ];
@@ -5222,7 +5242,7 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		it( 'sends a task prompt with its prompt source, and the next message without', async () => {
-			const onSubmit = jest.fn( async () => {} );
+			const onSubmit = vi.fn( async () => {} );
 			mockUseAgentChat.mockReturnValue( agentChatReturn( { onSubmit } ) );
 			render( chat() );
 			const { onSubmit: submit } = mockAgentChat.mock.calls.at( -1 )![ 0 ];

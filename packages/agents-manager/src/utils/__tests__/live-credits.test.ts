@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { getCreditsLabel, isCreditsExhausted } from '../credits';
 import {
 	buildLiveCreditsStatus,
@@ -9,8 +10,8 @@ import { creditSnapshot } from './fixtures/credit-snapshot';
 import { localNumber } from './fixtures/local-number';
 import type { CreditsPlanTier } from '../credits';
 
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, value: unknown ) => format.replace( '%s', String( value ) ),
@@ -187,7 +188,7 @@ describe( 'getCreditsPurchaseLink', () => {
 					( aiSessionId ) => [ label, aiSessionId, planTier ] as const
 				)
 			)
-		)( 'leaves %s without ai_session_id for the session %p', ( _label, aiSessionId, planTier ) => {
+		)( 'leaves %s without ai_session_id for the session %o', ( _label, aiSessionId, planTier ) => {
 			const link = getCreditsPurchaseLink(
 				statusOn( planTier ),
 				'example.wordpress.com',
@@ -220,7 +221,7 @@ it.each( [
 	} );
 } );
 it.each( [ 'wpcom-site-plan-period-v2', 'wpcom-site-monthly-v2', '', null ] )(
-	'rejects unsupported policy %p',
+	'rejects unsupported policy %o',
 	( policy_id ) => {
 		expect( parseCreditSnapshot( { ...creditSnapshot(), policy_id }, 123 ) ).toBeUndefined();
 	}
@@ -230,7 +231,7 @@ it.each( [
 	{ credits_remaining: 2400 },
 	{ resets_at: '2026-10-17T14:30:00+01:00' },
 	{ reason: 'wpcom_no_plan', eligible: false, credits_limit: 0 },
-] )( 'retains paid snapshot validation for plan-period metadata %p', ( overrides ) => {
+] )( 'retains paid snapshot validation for plan-period metadata %o', ( overrides ) => {
 	expect(
 		parseCreditSnapshot(
 			{ ...creditSnapshot(), policy_id: 'wpcom-site-plan-period-v1', ...overrides },
@@ -270,7 +271,7 @@ it.each( [
 	{},
 	[ 'personal' ],
 ] )(
-	'ignores unknown tier %p without discarding or mutating the numeric snapshot',
+	'ignores unknown tier %o without discarding or mutating the numeric snapshot',
 	( plan_tier ) => {
 		const snapshot = Object.freeze( { ...creditSnapshot(), plan_tier } );
 		const parsed = parseCreditSnapshot( snapshot, 123 );
@@ -359,7 +360,7 @@ describe( 'combined balance', () => {
 		{ ...topUpsOnly, exhausted: true },
 		{ ...topUpsOnly, credits_available: 0 },
 		{ ...topUpsOnly, blocked: true },
-	] )( 'rejects an unreadable or inconsistent combined balance %p', ( overrides ) => {
+	] )( 'rejects an unreadable or inconsistent combined balance %o', ( overrides ) => {
 		expect( parseCreditSnapshot( { ...creditSnapshot(), ...overrides }, 123 ) ).toBeUndefined();
 	} );
 } );
@@ -485,7 +486,7 @@ describe( 'top-ups', () => {
 		{ credits_available: 77799 },
 		{ credits_available: 10800 },
 		{ credits_available: undefined },
-	] )( 'drops malformed or inconsistent top-ups and keeps the plan balance %p', ( overrides ) => {
+	] )( 'drops malformed or inconsistent top-ups and keeps the plan balance %o', ( overrides ) => {
 		const snapshot = { ...withTopUps, ...overrides };
 		const parsed = parseCreditSnapshot( snapshot, 123 );
 		expect( parsed ).toEqual( withoutTopUps( snapshot ) );
@@ -497,7 +498,7 @@ describe( 'top-ups', () => {
 } );
 
 it.each( [ null, false, undefined ] )(
-	'treats missing/unreadable backend status as unknown: %p',
+	'treats missing/unreadable backend status as unknown: %o',
 	( snapshot ) => {
 		expect( parseCreditSnapshot( snapshot, 123 ) ).toBeUndefined();
 	}
@@ -525,7 +526,7 @@ it.each( [
 	{ blocked: 'false' },
 	{ resets_at: '2026-02-30T00:00:00Z' },
 	{ resets_at: null },
-] )( 'rejects wrong-site, unsupported or inconsistent snapshots %p', ( overrides ) => {
+] )( 'rejects wrong-site, unsupported or inconsistent snapshots %o', ( overrides ) => {
 	expect( parseCreditSnapshot( { ...creditSnapshot(), ...overrides }, 123 ) ).toBeUndefined();
 } );
 

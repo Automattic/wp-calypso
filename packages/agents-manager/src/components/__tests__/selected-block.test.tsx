@@ -3,6 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
 type MockBlock = {
 	clientId: string;
@@ -12,7 +13,7 @@ type MockBlock = {
 
 let mockSelectedBlock: MockBlock | null = null;
 let mockSelection: { clientId: string; attributeKey: string; offset: number }[] = [];
-const mockClearSelectedBlock = jest.fn();
+const mockClearSelectedBlock = vi.fn();
 
 const blockEditorSelectors = {
 	getSelectedBlock: () => mockSelectedBlock,
@@ -22,14 +23,14 @@ const blockEditorSelectors = {
 		mockSelectedBlock?.clientId === clientId ? mockSelectedBlock.attributes : null,
 };
 
-jest.mock( '@wordpress/block-editor', () => ( {
+vi.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	BlockIcon: () => null,
 } ) );
-jest.mock( '@wordpress/blocks', () => ( {
+vi.mock( '@wordpress/blocks', () => ( {
 	getBlockType: ( name: string ) => ( { title: `Title of ${ name }`, icon: 'icon' } ),
 } ) );
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( { label, onClick }: { label?: string; onClick?: () => void } ) => (
 		<button onClick={ onClick }>{ label }</button>
 	),
@@ -39,15 +40,15 @@ jest.mock( '@wordpress/components', () => ( {
 		),
 	},
 } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	// Runs the mapping on every render, so `rerender()` observes store changes.
 	useSelect: ( mapSelect: ( select: () => typeof blockEditorSelectors ) => unknown ) =>
 		mapSelect( () => blockEditorSelectors ),
 	useDispatch: () => ( { clearSelectedBlock: mockClearSelectedBlock } ),
 } ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
-jest.mock( '@wordpress/icons', () => ( { close: 'close' } ) );
-jest.mock( '../selected-block/style.scss', () => ( {} ) );
+vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+vi.mock( '@wordpress/icons', () => ( { close: 'close' } ) );
+vi.mock( '../selected-block/style.scss', () => ( {} ) );
 
 import SelectedBlock from '../selected-block';
 
@@ -60,7 +61,7 @@ function selectParagraph( clientId: string, text: string ): void {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockSelectedBlock = null;
 	mockSelection = [];
 } );
@@ -127,7 +128,7 @@ describe( 'SelectedBlock', () => {
 
 	it( 'clears the selection and announces it', () => {
 		selectParagraph( 'block-1', 'Hello' );
-		const onCleared = jest.fn();
+		const onCleared = vi.fn();
 		window.addEventListener( 'agents-manager-selected-block-cleared', onCleared );
 
 		render( <SelectedBlock /> );

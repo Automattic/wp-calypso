@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { setCheckpoint } from '../../utils/checkpoints';
 import ColorPicker from '../color-picker';
 
 // Mock VariationPicker
-jest.mock( '../variation-picker', () => {
+vi.mock( '../variation-picker', () => {
 	const MockVariationPicker = ( {
 		variations,
 		disabled,
@@ -24,22 +25,22 @@ jest.mock( '../variation-picker', () => {
 		/>
 	);
 	MockVariationPicker.displayName = 'MockVariationPicker';
-	return MockVariationPicker;
+	return { default: MockVariationPicker };
 } );
 
-jest.mock( '../../utils/checkpoints', () => ( {
+vi.mock( '../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
-	clearCheckpoint: jest.fn(),
-	hasCheckpoint: jest.fn(),
-	setCheckpoint: jest.fn(),
+	clearCheckpoint: vi.fn(),
+	hasCheckpoint: vi.fn(),
+	setCheckpoint: vi.fn(),
 } ) );
-jest.mock( '../../hooks/use-global-styles', () => ( {
+vi.mock( '../../hooks/use-global-styles', () => ( {
 	__esModule: true,
 	default: () => ( { globalStylesId: null, globalStyles: null } ),
 } ) );
-jest.mock( '../../hooks/use-styles', () => ( {
+vi.mock( '../../hooks/use-styles', () => ( {
 	__esModule: true,
-	default: () => jest.fn(),
+	default: () => vi.fn(),
 } ) );
 
 const defaultProps = {

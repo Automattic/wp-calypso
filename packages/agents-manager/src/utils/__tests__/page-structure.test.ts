@@ -1,21 +1,23 @@
-jest.mock( '../block-ids', () => ( {
-	createShortIdLookup: jest.fn(),
-	setMenuItemAttributes: jest.fn(),
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '../block-ids', () => ( {
+	createShortIdLookup: vi.fn(),
+	setMenuItemAttributes: vi.fn(),
 } ) );
-jest.mock( '../editor-blocks', () => ( {
+vi.mock( '../editor-blocks', () => ( {
 	TEMPLATE_PART_BLOCK: 'core/template-part',
-	getBlock: jest.fn(),
-	getBlockParents: jest.fn(),
-	getBlocks: jest.fn(),
-	getCurrentPost: jest.fn(),
-	getSectionRootClientId: jest.fn(),
-	getSelectedBlockClientId: jest.fn(),
-	getTemplatePartClientIds: jest.fn(),
-	isTemplatePartLoaded: jest.fn(),
+	getBlock: vi.fn(),
+	getBlockParents: vi.fn(),
+	getBlocks: vi.fn(),
+	getCurrentPost: vi.fn(),
+	getSectionRootClientId: vi.fn(),
+	getSelectedBlockClientId: vi.fn(),
+	getTemplatePartClientIds: vi.fn(),
+	isTemplatePartLoaded: vi.fn(),
 } ) );
-jest.mock( '../navigation-menu', () => ( {
+vi.mock( '../navigation-menu', () => ( {
 	NAVIGATION_BLOCK: 'core/navigation',
-	getLoadedMenuItems: jest.fn(),
+	getLoadedMenuItems: vi.fn(),
 	isMenuItem: ( block: { name?: string } ) =>
 		block.name === 'core/navigation-link' || block.name === 'core/navigation-submenu',
 } ) );
@@ -26,7 +28,7 @@ import { getLoadedMenuItems } from '../navigation-menu';
 import { getPageStructure, type PageStructure } from '../page-structure';
 import type { EditorBlock } from '../editor-blocks';
 
-const editor = jest.mocked( editorBlocks );
+const editor = vi.mocked( editorBlocks );
 
 const block = (
 	clientId: string,
@@ -96,11 +98,11 @@ const pageOutline = () => outline( getPageStructure()?.currentPageContent ?? [] 
 
 // Reset, not cleared: every mock here is armed by `beforeEach` or by the test.
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 
 	const shortened = new Set< string >();
 
-	jest.mocked( createShortIdLookup ).mockReturnValue( {
+	vi.mocked( createShortIdLookup ).mockReturnValue( {
 		toShortId: ( clientId ) => {
 			shortened.add( clientId );
 
@@ -362,7 +364,7 @@ describe( 'a menu', () => {
 	// kept by its attributes too.
 	it( 'lists the items of the record of a menu the view does not render', () => {
 		withEditor( page( 9 ) );
-		jest.mocked( getLoadedMenuItems ).mockReturnValue( [ link( 'about', 'About' ) ] as never );
+		vi.mocked( getLoadedMenuItems ).mockReturnValue( [ link( 'about', 'About' ) ] as never );
 
 		expect( pageOutline() ).toEqual( [ [ 's:nav', [ 's:about' ] ] ] );
 		expect( getLoadedMenuItems ).toHaveBeenCalledWith( 9 );

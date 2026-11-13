@@ -2,13 +2,15 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 const mockContext = {
 	siteKey: '111',
 	site: { ID: 111, domain: 'example.com' },
 	currentUser: { ID: 7 },
 };
 
-jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockContext } ) );
+vi.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockContext } ) );
 
 import { fireEvent, renderHook } from '@testing-library/react';
 import { getOrCreateSessionId, saveSessionId } from '../../utils/agent-session';
@@ -16,7 +18,7 @@ import { useSessionHandoffLinks } from '../use-session-handoff-links';
 
 const CALYPSO_LINK = 'https://wordpress.com/home/example.com';
 const HANDED_OFF_LINK = `${ CALYPSO_LINK }?wp-agent-chat=sess&wp-agent-site=111`;
-const assign = jest.fn();
+const assign = vi.fn();
 
 beforeAll( () => {
 	// A writable stub, so the handoff does not hit jsdom's unimplemented navigation.

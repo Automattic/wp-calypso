@@ -1,12 +1,14 @@
-const mockGetColorAsync = jest.fn();
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+const mockGetColorAsync = vi.fn();
 
-jest.mock( 'fast-average-color', () => ( {
+vi.mock( 'fast-average-color', () => ( {
 	FastAverageColor: class {
 		getColorAsync = mockGetColorAsync;
 	},
 } ) );
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn(),
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
 	getPaletteColor: ( slug: string ) => ( slug === 'vivid-red' ? '#cf2e2e' : undefined ),
 } ) );
 
@@ -23,7 +25,7 @@ const cover = ( attributes: BlockAttributes = {} ): EditorBlock => ( {
 	attributes: { url: 'old.jpg', dimRatio: 50, ...attributes },
 	innerBlocks: [],
 } );
-const write = jest.fn();
+const write = vi.fn();
 const cleared = { focalPoint: undefined, useFeaturedImage: undefined };
 const recoloured = ( color: string, isDark: boolean ) => ( {
 	...cleared,
@@ -35,15 +37,16 @@ const recoloured = ( color: string, isDark: boolean ) => ( {
 
 /** Syncs after the update landed, with the cover reading as the update left it. */
 const sync = ( before: EditorBlock, requested: BlockAttributes | null ) => {
-	jest
-		.mocked( getBlock )
-		.mockReturnValue( { ...before, attributes: { ...before.attributes, ...requested } } );
+	vi.mocked( getBlock ).mockReturnValue( {
+		...before,
+		attributes: { ...before.attributes, ...requested },
+	} );
 
 	return syncCoverWithImage( 'cover', before, requested, write );
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockGetColorAsync.mockResolvedValue( { hex: DARK } );
 } );
 
@@ -64,15 +67,15 @@ describe( 'syncCoverWithImage', () => {
 	} );
 
 	it( 'keeps the default colour when the image never loads', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockGetColorAsync.mockReturnValue( new Promise( () => {} ) );
 
 		const synced = sync( cover(), { url: 'new.jpg' } );
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		await synced;
 
 		expect( write ).toHaveBeenCalledWith( 'cover', recoloured( '#FFF', false ) );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'eases the dim ratio for a first image, which a full overlay would hide', async () => {
@@ -148,7 +151,7 @@ describe( 'syncCoverWithImage', () => {
 		[ 'the user chose an overlay', { url: 'new.jpg', isUserOverlayColor: true } ],
 		[ 'the dim ratio changed', { url: 'new.jpg', dimRatio: 80 } ],
 	] )( 'writes nothing when %s meanwhile', async ( _, meanwhile ) => {
-		jest.mocked( getBlock ).mockReturnValue( cover( meanwhile ) );
+		vi.mocked( getBlock ).mockReturnValue( cover( meanwhile ) );
 
 		await syncCoverWithImage( 'cover', cover(), { url: 'new.jpg' }, write );
 
@@ -157,13 +160,13 @@ describe( 'syncCoverWithImage', () => {
 
 	// The image is already written by then; the colour is what a failed chunk costs.
 	it( 'settles the image without a colour when the colour libraries fail to load', async () => {
-		jest.resetModules();
-		jest.doMock( 'fast-average-color', () => {
+		vi.resetModules();
+		vi.doMock( 'fast-average-color', () => {
 			throw new Error( 'chunk failed' );
 		} );
 		const editorBlocks = await import( '../../../utils/editor-blocks' );
 		const { syncCoverWithImage: isolated } = await import( '../cover-image' );
-		jest.mocked( editorBlocks.getBlock ).mockReturnValue( cover( { url: 'new.jpg' } ) );
+		vi.mocked( editorBlocks.getBlock ).mockReturnValue( cover( { url: 'new.jpg' } ) );
 
 		await isolated( 'cover', cover(), { url: 'new.jpg' }, write );
 

@@ -1,8 +1,10 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn(),
-	select: jest.fn(),
-	subscribe: jest.fn( () => () => {} ),
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn(),
+	select: vi.fn(),
+	subscribe: vi.fn( () => () => {} ),
 } ) );
 
 import { dispatch, select } from '@wordpress/data';
@@ -19,7 +21,7 @@ function mockCore( {
 	record = RECORD as unknown,
 	store = true,
 }: { globalStylesId?: string | null; record?: unknown; store?: boolean } = {} ) {
-	( select as jest.Mock ).mockReturnValue(
+	( select as Mock ).mockReturnValue(
 		store
 			? {
 					__experimentalGetCurrentGlobalStylesId: () => globalStylesId,
@@ -29,7 +31,7 @@ function mockCore( {
 	);
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'getEditedGlobalStyles', () => {
 	it( 'reads the edited record under its id', () => {
@@ -51,8 +53,8 @@ describe( 'getEditedGlobalStyles', () => {
 
 describe( 'editGlobalStyles', () => {
 	it( 'edits outside the undo stack', () => {
-		const editEntityRecord = jest.fn();
-		( dispatch as jest.Mock ).mockReturnValue( { editEntityRecord } );
+		const editEntityRecord = vi.fn();
+		( dispatch as Mock ).mockReturnValue( { editEntityRecord } );
 
 		editGlobalStyles( 'global-styles-1', RECORD );
 
@@ -66,7 +68,7 @@ describe( 'editGlobalStyles', () => {
 	} );
 
 	it( 'throws without a store', () => {
-		( dispatch as jest.Mock ).mockReturnValue( undefined );
+		( dispatch as Mock ).mockReturnValue( undefined );
 
 		expect( () => editGlobalStyles( 'global-styles-1', RECORD ) ).toThrow(
 			'Global styles are unavailable to edit.'
@@ -75,8 +77,8 @@ describe( 'editGlobalStyles', () => {
 } );
 
 describe( 'waitForEditedGlobalStyles', () => {
-	beforeEach( () => jest.useFakeTimers() );
-	afterEach( () => jest.useRealTimers() );
+	beforeEach( () => vi.useFakeTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'resolves with the record at once when it is loaded', async () => {
 		mockCore();
@@ -91,7 +93,7 @@ describe( 'waitForEditedGlobalStyles', () => {
 		mockCore( { record: false } );
 
 		const waiting = waitForEditedGlobalStyles();
-		jest.advanceTimersByTime( 10000 );
+		vi.advanceTimersByTime( 10000 );
 
 		await expect( waiting ).resolves.toBeUndefined();
 	} );

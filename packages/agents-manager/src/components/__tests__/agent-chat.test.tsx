@@ -5,196 +5,190 @@
 
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps, ReactNode, Ref } from 'react';
 
-const mockSetFloatingPosition = jest.fn();
-const mockContainerProps = jest.fn();
-const mockContainerCallbacks = jest.fn();
-const mockContainerSuggestionClick = jest.fn();
-const mockContainerErrors = jest.fn();
-const mockSuggestionsProps = jest.fn();
-const mockInputProps = jest.fn();
-const mockImageUploaderProps = jest.fn();
-const mockHasAiChatEntry = jest.fn();
+const mockSetFloatingPosition = vi.fn();
+const mockContainerProps = vi.fn();
+const mockContainerCallbacks = vi.fn();
+const mockContainerSuggestionClick = vi.fn();
+const mockContainerErrors = vi.fn();
+const mockSuggestionsProps = vi.fn();
+const mockInputProps = vi.fn();
+const mockImageUploaderProps = vi.fn();
+const mockHasAiChatEntry = vi.fn();
 
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => {
-		const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@automattic/agenttic-ui', async () => {
+	const React = await vi.importActual< typeof import( 'react' ) >( 'react' );
 
-		function MockContainer( {
-			children,
-			emptyView,
-			floatingChatState,
-			triggerTitle,
-			suggestions = [],
-			onSuggestionClick,
-			onSuggestionsRendered,
-			onTypingStatusChange,
-			error,
-			errorNotice,
-		}: {
-			children: ReactNode;
-			emptyView: ReactNode;
-			floatingChatState?: string;
-			triggerTitle?: string;
-			error?: string | null;
-			errorNotice?: unknown;
-			suggestions?: Suggestion[];
-			onSuggestionClick?: (
-				selectedSuggestion: Suggestion,
-				availableSuggestions: Suggestion[]
-			) => void;
-			onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
-			onTypingStatusChange?: ( isTyping: boolean ) => void;
-		} ) {
-			mockContainerProps( { floatingChatState, triggerTitle } );
-			mockContainerErrors( { error, errorNotice } );
-			mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
-			mockContainerSuggestionClick.mockImplementation( onSuggestionClick ?? ( () => {} ) );
-			return (
-				<div>
-					{ emptyView }
-					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
-					{ children }
-				</div>
-			);
-		}
-
-		const MockConversationView = React.forwardRef(
-			( { children }: { children: ReactNode }, ref: Ref< HTMLDivElement > ) => (
-				<div ref={ ref }>{ children }</div>
-			)
+	function MockContainer( {
+		children,
+		emptyView,
+		floatingChatState,
+		triggerTitle,
+		suggestions = [],
+		onSuggestionClick,
+		onSuggestionsRendered,
+		onTypingStatusChange,
+		error,
+		errorNotice,
+	}: {
+		children: ReactNode;
+		emptyView: ReactNode;
+		floatingChatState?: string;
+		triggerTitle?: string;
+		error?: string | null;
+		errorNotice?: unknown;
+		suggestions?: Suggestion[];
+		onSuggestionClick?: (
+			selectedSuggestion: Suggestion,
+			availableSuggestions: Suggestion[]
+		) => void;
+		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+		onTypingStatusChange?: ( isTyping: boolean ) => void;
+	} ) {
+		mockContainerProps( { floatingChatState, triggerTitle } );
+		mockContainerErrors( { error, errorNotice } );
+		mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
+		mockContainerSuggestionClick.mockImplementation( onSuggestionClick ?? ( () => {} ) );
+		return (
+			<div>
+				{ emptyView }
+				<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+				{ children }
+			</div>
 		);
-		MockConversationView.displayName = 'MockConversationView';
+	}
 
-		function MockFooter( { children }: { children: ReactNode } ) {
-			return <div>{ children }</div>;
-		}
+	const MockConversationView = React.forwardRef(
+		( { children }: { children: ReactNode }, ref: Ref< HTMLDivElement > ) => (
+			<div ref={ ref }>{ children }</div>
+		)
+	);
+	MockConversationView.displayName = 'MockConversationView';
 
-		function MockSuggestionButtons( {
-			suggestions = [],
-			onSubmit,
-		}: {
-			suggestions?: Suggestion[];
-			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
-		} ) {
-			return (
-				<div>
-					{ suggestions.flatMap( ( suggestion ) => {
-						const { options, ...suggestionWithoutOptions } = suggestion;
-						if ( ! options?.length ) {
-							return (
-								<button
-									key={ suggestion.id }
-									onClick={ () => onSubmit?.( suggestion, suggestions ) }
-								>
-									{ suggestion.label }
-								</button>
-							);
-						}
+	function MockFooter( { children }: { children: ReactNode } ) {
+		return <div>{ children }</div>;
+	}
 
-						return options.map( ( option ) => {
-							const parentPrompt = suggestion.prompt ?? suggestion.label;
-							const separator =
-								parentPrompt &&
-								option.value &&
-								! /\s$/.test( parentPrompt ) &&
-								! /^\s/.test( option.value )
-									? ' '
-									: '';
-							const selectedSuggestion = {
-								...suggestionWithoutOptions,
-								label: `${ suggestion.label } ${ option.label }`,
-								prompt: `${ parentPrompt }${ separator }${ option.value }`,
-							};
+	function MockSuggestionButtons( {
+		suggestions = [],
+		onSubmit,
+	}: {
+		suggestions?: Suggestion[];
+		onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+	} ) {
+		return (
+			<div>
+				{ suggestions.flatMap( ( suggestion ) => {
+					const { options, ...suggestionWithoutOptions } = suggestion;
+					if ( ! options?.length ) {
+						return (
+							<button key={ suggestion.id } onClick={ () => onSubmit?.( suggestion, suggestions ) }>
+								{ suggestion.label }
+							</button>
+						);
+					}
 
-							return (
-								<button
-									key={ `${ suggestion.id }-${ option.id }` }
-									onClick={ () => onSubmit?.( selectedSuggestion, suggestions ) }
-								>
-									{ suggestion.label }: { option.label }
-								</button>
-							);
-						} );
-					} ) }
-				</div>
-			);
-		}
+					return options.map( ( option ) => {
+						const parentPrompt = suggestion.prompt ?? suggestion.label;
+						const separator =
+							parentPrompt &&
+							option.value &&
+							! /\s$/.test( parentPrompt ) &&
+							! /^\s/.test( option.value )
+								? ' '
+								: '';
+						const selectedSuggestion = {
+							...suggestionWithoutOptions,
+							label: `${ suggestion.label } ${ option.label }`,
+							prompt: `${ parentPrompt }${ separator }${ option.value }`,
+						};
 
-		function MockEmptyView( {
-			help,
-			suggestions = [],
-			onSuggestionClick,
-		}: {
-			help?: string;
-			suggestions?: Suggestion[];
-			onSuggestionClick?: (
-				selectedSuggestion: Suggestion,
-				availableSuggestions: Suggestion[]
-			) => void;
-		} ) {
-			return (
-				<>
-					{ help && <p>{ help }</p> }
-					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
-				</>
-			);
-		}
+						return (
+							<button
+								key={ `${ suggestion.id }-${ option.id }` }
+								onClick={ () => onSubmit?.( selectedSuggestion, suggestions ) }
+							>
+								{ suggestion.label }: { option.label }
+							</button>
+						);
+					} );
+				} ) }
+			</div>
+		);
+	}
 
-		function MockSuggestions( {
-			className,
-			suggestions = [],
-			visible,
-			onSubmit,
-		}: {
-			className?: string;
-			suggestions?: Suggestion[];
-			visible?: boolean;
-			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
-		} ) {
-			mockSuggestionsProps( { className, visible } );
-			if ( visible === false ) {
-				return null;
-			}
-			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
-		}
+	function MockEmptyView( {
+		help,
+		suggestions = [],
+		onSuggestionClick,
+	}: {
+		help?: string;
+		suggestions?: Suggestion[];
+		onSuggestionClick?: (
+			selectedSuggestion: Suggestion,
+			availableSuggestions: Suggestion[]
+		) => void;
+	} ) {
+		return (
+			<>
+				{ help && <p>{ help }</p> }
+				<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+			</>
+		);
+	}
 
-		function MockMessageRenderer( { children }: { children: ReactNode } ) {
-			return <>{ children }</>;
-		}
-
-		const MockImageUploader = React.forwardRef( ( props: unknown ) => {
-			mockImageUploaderProps( props );
+	function MockSuggestions( {
+		className,
+		suggestions = [],
+		visible,
+		onSubmit,
+	}: {
+		className?: string;
+		suggestions?: Suggestion[];
+		visible?: boolean;
+		onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+	} ) {
+		mockSuggestionsProps( { className, visible } );
+		if ( visible === false ) {
 			return null;
-		} );
-		MockImageUploader.displayName = 'MockImageUploader';
+		}
+		return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
+	}
 
-		return {
-			AgentUI: {
-				Container: MockContainer,
-				ConversationView: MockConversationView,
-				Messages: () => null,
-				Footer: MockFooter,
-				Suggestions: () => null,
-				Notice: () => null,
-				Input: ( props: unknown ) => {
-					mockInputProps( props );
-					return null;
-				},
+	function MockMessageRenderer( { children }: { children: ReactNode } ) {
+		return <>{ children }</>;
+	}
+
+	const MockImageUploader = React.forwardRef( ( props: unknown ) => {
+		mockImageUploaderProps( props );
+		return null;
+	} );
+	MockImageUploader.displayName = 'MockImageUploader';
+
+	return {
+		AgentUI: {
+			Container: MockContainer,
+			ConversationView: MockConversationView,
+			Messages: () => null,
+			Footer: MockFooter,
+			Suggestions: () => null,
+			Notice: () => null,
+			Input: ( props: unknown ) => {
+				mockInputProps( props );
+				return null;
 			},
-			createMessageRenderer: () => MockMessageRenderer,
-			EmptyView: MockEmptyView,
-			Suggestions: MockSuggestions,
-			ImageUploader: MockImageUploader,
-		};
-	},
-	{ virtual: true }
-);
+		},
+		createMessageRenderer: () => MockMessageRenderer,
+		EmptyView: MockEmptyView,
+		Suggestions: MockSuggestions,
+		ImageUploader: MockImageUploader,
+	};
+} );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setFloatingPosition: mockSetFloatingPosition,
 	} ),
@@ -204,46 +198,46 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	isRTL: () => false,
 } ) );
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
-	recordAgentsManagerTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
+	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
-jest.mock( '../../stores', () => ( {
+vi.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
 } ) );
-jest.mock( '../chat-header', () => ( {
+vi.mock( '../chat-header', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
-jest.mock( '../context-cards', () => ( {
+vi.mock( '../context-cards', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
-jest.mock( '../feedback-input', () => ( {
+vi.mock( '../feedback-input', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
-jest.mock( '../icons', () => ( {
+vi.mock( '../icons', () => ( {
 	AI: () => null,
 } ) );
-const mockSelectedBlock = jest.fn( () => null );
-jest.mock( '../selected-block', () => ( {
+const mockSelectedBlock = vi.fn( () => null );
+vi.mock( '../selected-block', () => ( {
 	__esModule: true,
 	default: mockSelectedBlock,
 } ) );
-const mockEditorHistoryBridge = jest.fn( () => null );
-jest.mock( '../editor-history-bridge', () => ( {
+const mockEditorHistoryBridge = vi.fn( () => null );
+vi.mock( '../editor-history-bridge', () => ( {
 	__esModule: true,
 	default: mockEditorHistoryBridge,
 } ) );
-jest.mock( '../../utils/is-reader-chat-agent', () => ( {
+vi.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );
-jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+vi.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
 	default: () => mockHasAiChatEntry(),
 } ) );
@@ -262,11 +256,11 @@ function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > =
 			isLoadingConversation={ false }
 			isDocked={ false }
 			isOpen={ false }
-			onSubmit={ jest.fn() }
-			onAbort={ jest.fn() }
-			onClose={ jest.fn() }
-			onExpand={ jest.fn() }
-			onSuggestionClick={ jest.fn() }
+			onSubmit={ vi.fn() }
+			onAbort={ vi.fn() }
+			onClose={ vi.fn() }
+			onExpand={ vi.fn() }
+			onSuggestionClick={ vi.fn() }
 			{ ...props }
 		/>
 	);
@@ -274,7 +268,7 @@ function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > =
 
 describe( 'AgentChat', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/wp-admin/index.php' );
@@ -310,10 +304,10 @@ describe( 'AgentChat', () => {
 			pendingImages: [],
 			uploadingImages: isUploadingImages ? [ { id: 'p1' } ] : [],
 			isUploadingImages,
-			handleFilesSelected: jest.fn(),
-			handleRemoveImage: jest.fn(),
-			uploadImagesToWordPress: jest.fn(),
-			abortUpload: jest.fn( () => isUploadingImages ),
+			handleFilesSelected: vi.fn(),
+			handleRemoveImage: vi.fn(),
+			uploadImagesToWordPress: vi.fn(),
+			abortUpload: vi.fn( () => isUploadingImages ),
 		} ) as never;
 
 	it( 'locks the composer, the upload action, and the uploader while images upload', () => {
@@ -363,10 +357,10 @@ describe( 'AgentChat', () => {
 				pendingImages: [ { id: 'p1' } ],
 				uploadingImages: [],
 				isUploadingImages: false,
-				handleFilesSelected: jest.fn(),
-				handleRemoveImage: jest.fn(),
-				uploadImagesToWordPress: jest.fn(),
-				abortUpload: jest.fn( () => false ),
+				handleFilesSelected: vi.fn(),
+				handleRemoveImage: vi.fn(),
+				uploadImagesToWordPress: vi.fn(),
+				abortUpload: vi.fn( () => false ),
 			} as never,
 		} );
 
@@ -404,7 +398,7 @@ describe( 'AgentChat', () => {
 			label: 'Check grammar',
 			prompt: 'Check the grammar and spelling of this text',
 		};
-		const onSuggestionClick = jest.fn();
+		const onSuggestionClick = vi.fn();
 
 		renderAgentChat( { isOpen: true, emptyViewSuggestions: [ suggestion ], onSuggestionClick } );
 
@@ -418,7 +412,7 @@ describe( 'AgentChat', () => {
 		const listSuggestions = [
 			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Show me palettes' },
 		];
-		const onSuggestionClick = jest.fn();
+		const onSuggestionClick = vi.fn();
 
 		renderAgentChat( {
 			isOpen: true,
@@ -444,7 +438,7 @@ describe( 'AgentChat', () => {
 			prompt: '',
 			options: [ option ],
 		};
-		const onSuggestionClick = jest.fn();
+		const onSuggestionClick = vi.fn();
 
 		renderAgentChat( { isOpen: true, suggestions: [ suggestion ], onSuggestionClick } );
 
@@ -471,7 +465,7 @@ describe( 'AgentChat', () => {
 			prompt: '',
 			options: [ option ],
 		};
-		const onSuggestionClick = jest.fn();
+		const onSuggestionClick = vi.fn();
 
 		renderAgentChat( {
 			isOpen: true,
@@ -547,7 +541,7 @@ describe( 'AgentChat', () => {
 			},
 		];
 		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
-		const onSuggestionClick = jest.fn();
+		const onSuggestionClick = vi.fn();
 
 		renderAgentChat( {
 			isOpen: true,
@@ -654,7 +648,7 @@ describe( 'AgentChat', () => {
 			label: 'Optimize Title',
 			prompt: 'Optimize the title of this post',
 		};
-		const onSuggestionClick = jest.fn();
+		const onSuggestionClick = vi.fn();
 
 		renderAgentChat( {
 			isOpen: true,
@@ -704,7 +698,7 @@ describe( 'AgentChat', () => {
 	} );
 
 	it( 'forwards the rendered-suggestions callback to the Agenttic container', () => {
-		const onSuggestionsRendered = jest.fn();
+		const onSuggestionsRendered = vi.fn();
 
 		renderAgentChat( { onSuggestionsRendered } );
 
@@ -712,7 +706,7 @@ describe( 'AgentChat', () => {
 	} );
 
 	it( 'forwards the typing status callback to the Agenttic container', () => {
-		const onTypingStatusChange = jest.fn();
+		const onTypingStatusChange = vi.fn();
 
 		renderAgentChat( { onTypingStatusChange } );
 

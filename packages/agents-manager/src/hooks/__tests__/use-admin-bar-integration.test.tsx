@@ -2,14 +2,16 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-const mockResumeChat = jest.fn();
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+const mockResumeChat = vi.fn();
 
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => ( { resumeChat: mockResumeChat, sectionName: 'wp-admin' } ),
 } ) );
-jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
-jest.mock( '../use-ai-chat-entry-state', () => ( { useAiChatEntryState: jest.fn() } ) );
-jest.mock( '../use-has-ai-chat-entry-button', () => ( {
+vi.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: vi.fn() } ) );
+vi.mock( '../use-ai-chat-entry-state', () => ( { useAiChatEntryState: vi.fn() } ) );
+vi.mock( '../use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
 	default: () => true,
 	ADMIN_BAR_AI_CHAT_BUTTON_ID: 'wp-admin-bar-agents-manager-ai-chat',
@@ -21,10 +23,10 @@ import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import useAdminBarIntegration from '../use-admin-bar-integration';
 import { useAiChatEntryState } from '../use-ai-chat-entry-state';
 
-const mockUseAiChatEntryState = useAiChatEntryState as jest.Mock;
+const mockUseAiChatEntryState = useAiChatEntryState as Mock;
 
-const openChat = jest.fn();
-const closeChat = jest.fn();
+const openChat = vi.fn();
+const closeChat = vi.fn();
 
 // The PHP-rendered AI chat button: the row holds the icon and the label.
 const aiChatButton = document.createElement( 'li' );
@@ -40,7 +42,7 @@ const renderWithChatVisible = ( isChatVisible: boolean ) => {
 
 describe( 'useAdminBarIntegration', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		aiChatButton.className = '';
 		label.className = 'agents-manager-ai-chat-label';
 		document.body.append( aiChatButton );

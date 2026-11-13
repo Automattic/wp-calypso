@@ -1,50 +1,50 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '@wordpress/abilities', () => ( {
-	registerAbility: jest.fn(),
-	registerAbilityCategory: jest.fn(),
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@wordpress/abilities', () => ( {
+	registerAbility: vi.fn(),
+	registerAbilityCategory: vi.fn(),
 } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	select: () => undefined,
 	dispatch: () => undefined,
 	resolveSelect: () => undefined,
 } ) );
 // Reached through the checkpoint engine's navigation domain, and it registers
 // a store on import — which the mocked `@wordpress/data` above cannot serve.
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn(),
-	parse: jest.fn( () => [] ),
-	serialize: jest.fn( () => '' ),
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn(),
+	parse: vi.fn( () => [] ),
+	serialize: vi.fn( () => '' ),
 } ) );
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
-	virtual: true,
-} );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: vi.fn() } ) );
 
-const mockShowComponentCallback = jest.fn();
-jest.mock( '../show-component', () => ( {
+const mockShowComponentCallback = vi.fn();
+vi.mock( '../show-component', () => ( {
 	showComponentAbility: { name: 'big-sky/show-component', callback: mockShowComponentCallback },
 } ) );
 
-const mockShowTemplateCallback = jest.fn();
-jest.mock( '../show-template', () => ( {
+const mockShowTemplateCallback = vi.fn();
+vi.mock( '../show-template', () => ( {
 	showTemplateAbility: { name: 'big-sky/show-template', callback: mockShowTemplateCallback },
 } ) );
 
 import { executeAbilityFromList } from '../execute-ability';
 
 // Registration runs once per module instance, so each test loads fresh
-// modules (and the matching mock instances) to start clean.
+// modules to start clean.
 async function load() {
-	jest.resetModules();
-	const abilities = jest.requireMock( '@wordpress/abilities' );
+	vi.resetModules();
+	const abilities = vi.mocked( await import( '@wordpress/abilities' ) );
 	const facade = await import( '..' );
 	const editorAbilities = await import( '../editor-abilities' );
 	return { ...facade, editorAbilities, ...abilities } as typeof facade & {
 		editorAbilities: typeof editorAbilities;
-		registerAbility: jest.Mock;
-		registerAbilityCategory: jest.Mock;
+		registerAbility: Mock;
+		registerAbilityCategory: Mock;
 	};
 }
 
@@ -74,13 +74,13 @@ function setEditorPage( isEditor: boolean ) {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	document.body.className = '';
 } );
 
 describe( 'abilities facade', () => {
 	it( 'owns only the all-surface abilities off the editor', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { registerAmAbilities, amToolProvider, getAmCheckpointContext, registerAbility } =
 			await load();
 
@@ -159,18 +159,18 @@ describe( 'abilities facade', () => {
 	} );
 
 	it( 'retries the load after a failed chunk fetch', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		setEditorPage( true );
-		jest.resetModules();
+		vi.resetModules();
 		let attempt = 0;
-		jest.doMock( '../editor-abilities', () => {
+		vi.doMock( '../editor-abilities', () => {
 			attempt++;
 			if ( attempt === 1 ) {
 				throw new Error( 'Chunk failed.' );
 			}
 			return {
 				EDITOR_ABILITIES: [ { name: 'big-sky/show-component' } ],
-				registerEditorAbilities: jest.fn().mockResolvedValue( undefined ),
+				registerEditorAbilities: vi.fn().mockResolvedValue( undefined ),
 				getAvailableCheckpoints: () => [],
 			};
 		} );
@@ -186,7 +186,7 @@ describe( 'abilities facade', () => {
 			);
 			expect( error ).toHaveBeenCalled();
 		} finally {
-			jest.dontMock( '../editor-abilities' );
+			vi.doUnmock( '../editor-abilities' );
 		}
 	} );
 
@@ -216,19 +216,19 @@ describe( 'abilities facade', () => {
 	} );
 
 	// Hosts call it across bundles, with whatever they hold.
-	it.each( [ undefined, '' ] )( 'gives a host no block id for %p', async ( clientId ) => {
+	it.each( [ undefined, '' ] )( 'gives a host no block id for %o', async ( clientId ) => {
 		const { getAmAgentBlockId } = await load();
 
 		expect( getAmAgentBlockId( clientId as never ) ).toBe( '' );
 	} );
 
 	it( 'logs registration failures instead of throwing', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		setEditorPage( true );
-		jest.resetModules();
-		jest.doMock( '../editor-abilities', () => ( {
+		vi.resetModules();
+		vi.doMock( '../editor-abilities', () => ( {
 			EDITOR_ABILITIES: [],
-			registerEditorAbilities: jest.fn().mockRejectedValue( new Error( 'Registration exploded.' ) ),
+			registerEditorAbilities: vi.fn().mockRejectedValue( new Error( 'Registration exploded.' ) ),
 			getAvailableCheckpoints: () => [],
 		} ) );
 
@@ -243,15 +243,15 @@ describe( 'abilities facade', () => {
 				expect.any( Error )
 			);
 		} finally {
-			jest.dontMock( '../editor-abilities' );
+			vi.doUnmock( '../editor-abilities' );
 		}
 	} );
 
 	it( 'degrades to the all-surface abilities and no suggestions when the chunk fails to load', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		setEditorPage( true );
-		jest.resetModules();
-		jest.doMock( '../editor-abilities', () => {
+		vi.resetModules();
+		vi.doMock( '../editor-abilities', () => {
 			throw new Error( 'Chunk failed.' );
 		} );
 
@@ -268,13 +268,13 @@ describe( 'abilities facade', () => {
 				expect.any( Error )
 			);
 		} finally {
-			jest.dontMock( '../editor-abilities' );
+			vi.doUnmock( '../editor-abilities' );
 		}
 	} );
 } );
 
 describe( 'executeAbilityFromList', () => {
-	const stubAbility = ( callback: jest.Mock ) => ( {
+	const stubAbility = ( callback: Mock ) => ( {
 		name: 'big-sky/show-component',
 		label: 'Show component',
 		description: 'Stub ability',
@@ -283,7 +283,7 @@ describe( 'executeAbilityFromList', () => {
 	} );
 
 	it( 'executes an ability by its normalized name', async () => {
-		const callback = jest.fn().mockResolvedValue( { result: { success: true } } );
+		const callback = vi.fn().mockResolvedValue( { result: { success: true } } );
 
 		await expect(
 			executeAbilityFromList( [ stubAbility( callback ) ], 'big_sky__show_component', {} )
@@ -292,8 +292,8 @@ describe( 'executeAbilityFromList', () => {
 	} );
 
 	it( 'logs and rethrows when an ability fails', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const callback = jest.fn().mockRejectedValue( new Error( 'Callback exploded.' ) );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const callback = vi.fn().mockRejectedValue( new Error( 'Callback exploded.' ) );
 
 		await expect(
 			executeAbilityFromList( [ stubAbility( callback ) ], 'big_sky__show_component', {} )
@@ -305,7 +305,7 @@ describe( 'executeAbilityFromList', () => {
 	} );
 
 	it( 'logs and rethrows for an unknown ability', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		await expect( executeAbilityFromList( [], 'big-sky/unknown', {} ) ).rejects.toThrow(
 			'Agents Manager does not own the ability: big-sky/unknown'
@@ -355,7 +355,7 @@ describe( 'registerEditorAbilities', () => {
 	} );
 
 	it( 'warns and registers the rest when one registration fails', async () => {
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		const { editorAbilities, registerAbility } = await load();
 		registerAbility.mockRejectedValueOnce( new Error( 'Invalid ability definition' ) );
 

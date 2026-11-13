@@ -2,19 +2,23 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-jest.mock( '@tanstack/react-query', () => ( {
-	useQuery: jest.fn(),
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@tanstack/react-query', () => ( {
+	useQuery: vi.fn(),
 } ) );
 
-const mockIsSiteSetupChecklistEnabled = jest.fn( () => true );
-jest.mock( '../../utils/site-setup-checklist', () => ( {
-	...jest.requireActual( '../../utils/site-setup-checklist' ),
+const mockIsSiteSetupChecklistEnabled = vi.fn( () => true );
+vi.mock( '../../utils/site-setup-checklist', async () => ( {
+	...( await vi.importActual< typeof import( '../../utils/site-setup-checklist' ) >(
+		'../../utils/site-setup-checklist'
+	) ),
 	isSiteSetupChecklistEnabled: () => mockIsSiteSetupChecklistEnabled(),
 } ) );
 
-const mockFetchSiteSetupTasks = jest.fn();
-const mockGetSiteSetupSiteId = jest.fn( (): number | null => 123 );
-jest.mock( '../../utils/site-setup-tasks', () => ( {
+const mockFetchSiteSetupTasks = vi.fn();
+const mockGetSiteSetupSiteId = vi.fn( (): number | null => 123 );
+vi.mock( '../../utils/site-setup-tasks', () => ( {
 	fetchSiteSetupTasks: ( ...args: unknown[] ) => mockFetchSiteSetupTasks( ...args ),
 	getSiteSetupSiteId: () => mockGetSiteSetupSiteId(),
 } ) );
@@ -24,8 +28,8 @@ import { renderHook } from '@testing-library/react';
 import useSiteSetupChecklist from '../use-site-setup-checklist';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-const mockUseQuery = useQuery as jest.Mock;
-const mockRefetch = jest.fn();
+const mockUseQuery = useQuery as Mock;
+const mockRefetch = vi.fn();
 
 const DETAILS = {
 	eligible: true,
@@ -64,7 +68,7 @@ const NONE = { isLoading: false, variant: null, items: [], focusHeaderOnMount: f
 
 describe( 'useSiteSetupChecklist', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsSiteSetupChecklistEnabled.mockReturnValue( true );
 		mockGetSiteSetupSiteId.mockReturnValue( 123 );
 		mockUseQuery.mockReturnValue( { data: DETAILS, isLoading: false, refetch: mockRefetch } );

@@ -1,44 +1,42 @@
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 function mockEscalationButton() {
 	return null;
 }
 
-const mockResponseAction = jest.fn();
+const mockResponseAction = vi.fn();
 
 function mockCreateChatResponseActionCallback() {
 	return mockResponseAction;
 }
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
-		isOdieBotId: () => false,
-		loadAllMessagesFromServer: jest.fn(),
-	} ),
-	{ virtual: true }
-);
-jest.mock( '../../components/escalation-button', () => ( {
+vi.mock( '@automattic/agenttic-client', () => ( {
+	createOdieBotId: ( agentId: string ) => `odie-${ agentId }`,
+	isOdieBotId: () => false,
+	loadAllMessagesFromServer: vi.fn(),
+} ) );
+vi.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
-jest.mock( '../../components/button-picker', () => ( {
+vi.mock( '../../components/button-picker', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
-jest.mock( '../../components/color-picker', () => ( {
+vi.mock( '../../components/color-picker', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
-jest.mock( '../../components/font-picker', () => ( {
+vi.mock( '../../components/font-picker', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
-jest.mock( '../../components/open-help-center-button', () => ( {
+vi.mock( '../../components/open-help-center-button', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
-jest.mock( '../../components/chat-response-tracking', () => ( {
+vi.mock( '../../components/chat-response-tracking', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 	createChatResponseActionCallback: mockCreateChatResponseActionCallback,
 } ) );
 
@@ -56,7 +54,7 @@ import {
 } from '../show-component-tools';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-const MockComponent = jest.fn();
+const MockComponent = vi.fn();
 const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;
 const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 	( {
@@ -97,7 +95,7 @@ const createApplyBlockEditsMessage = (
 
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -187,7 +185,7 @@ describe( 'convertToolMessagesToComponents', () => {
 				},
 			],
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -228,7 +226,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			props: { name: 'test' },
 			isCurrent: true,
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -249,7 +247,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			summary: '   ',
 			isCurrent: true,
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -270,7 +268,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			followUpTasks: true,
 			isCurrent: true,
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -285,7 +283,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			type: 'title-picker',
 			props: { titles: [] },
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -316,7 +314,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const message = createToolMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( null );
+		const getChatComponent = vi.fn().mockReturnValue( null );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -332,9 +330,9 @@ describe( 'convertToolMessagesToComponents', () => {
 	it( 'renders consecutive follow-up pickers as components', () => {
 		const data = { type: 'my-component', followUpTasks: true, isCurrent: true };
 		const actions = [
-			{ id: 'action-1', label: 'Do something', onClick: jest.fn() },
+			{ id: 'action-1', label: 'Do something', onClick: vi.fn() },
 		] as UIMessage[ 'actions' ];
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [
@@ -1060,7 +1058,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			},
 			{ id: 'tool-2' }
 		);
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ intermediateMessage, finalMessage ],
@@ -1142,7 +1140,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			id: 'prose-1',
 			content: [ { type: 'text', text: summary } ],
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, prose ],
@@ -1194,7 +1192,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			id: 'prose-1',
 			content: [ { type: 'text', text: summary } ],
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, userMessage, prose ],
@@ -1288,7 +1286,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	it.each( stalenessCases )(
 		'the picker $name',
 		( { data, currentPostId, laterMessages = [], disabled } ) => {
-			const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+			const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 			const result = convertToolMessagesToComponents( {
 				messages: [
@@ -1326,7 +1324,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			props: { onResponseAction: 'untrusted-value' },
 			isCurrent: true,
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -1342,7 +1340,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			props: { onResponseAction: 'untrusted-value' },
 			isCurrent: false,
 		} );
-		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+		const getChatComponent = vi.fn().mockReturnValue( MockComponent );
 
 		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
@@ -1439,7 +1437,7 @@ describe( 'convertToolMessagesToComponents', () => {
 				props: { variations: [] },
 				isCurrent: true,
 			} );
-			const getChatComponent = jest.fn().mockReturnValue( jest.fn() );
+			const getChatComponent = vi.fn().mockReturnValue( vi.fn() );
 
 			convertToolMessagesToComponents( {
 				messages: [ message ],

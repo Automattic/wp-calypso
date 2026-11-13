@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { vi } from 'vitest';
 import { getEditorEmptyViewSuggestions } from '../../utils/editor-suggestions';
 import EditorEmptyViewSuggestions from '../editor-empty-view-suggestions';
 import type { Suggestion } from '@automattic/agenttic-ui';
@@ -9,54 +10,50 @@ import type { ReactNode } from 'react';
 
 const MESSAGE_ID = 'site-ready';
 const SITE_READY_MESSAGE = { id: MESSAGE_ID, role: 'agent', content: [] };
-const mockHandleSuggestionSubmit = jest.fn();
+const mockHandleSuggestionSubmit = vi.fn();
 let mockMessages: unknown[] = [];
 let mockListContext: { variant?: string; reportSuggestionsRendered?: unknown } = {};
 
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => {
-		const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
-		const Context = React.createContext( {
-			variant: 'floating',
-			// A getter, as the factory runs before `mockMessages` is set.
-			get messages() {
-				return mockMessages;
-			},
-			handleSuggestionSubmit: ( ...args: unknown[] ) => mockHandleSuggestionSubmit( ...args ),
-			reportSuggestionsRendered: () => {},
-		} );
+vi.mock( '@automattic/agenttic-ui', async () => {
+	const React = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const Context = React.createContext( {
+		variant: 'floating',
+		// A getter, as the factory runs before `mockMessages` is set.
+		get messages() {
+			return mockMessages;
+		},
+		handleSuggestionSubmit: ( ...args: unknown[] ) => mockHandleSuggestionSubmit( ...args ),
+		reportSuggestionsRendered: () => {},
+	} );
 
-		return {
-			useAgentUIContext: () => React.useContext( Context ),
-			AgentUIProvider: ( { value, children }: { value: object; children: ReactNode } ) => (
-				<Context.Provider value={ value as never }>{ children }</Context.Provider>
-			),
-			Suggestions: ( {
-				layout,
-				suggestions,
-				onSubmit,
-			}: {
-				layout: string;
-				suggestions: Suggestion[];
-				onSubmit: ( selected: Suggestion, available: Suggestion[] ) => void;
-			} ) => {
-				mockListContext = React.useContext( Context );
+	return {
+		useAgentUIContext: () => React.useContext( Context ),
+		AgentUIProvider: ( { value, children }: { value: object; children: ReactNode } ) => (
+			<Context.Provider value={ value as never }>{ children }</Context.Provider>
+		),
+		Suggestions: ( {
+			layout,
+			suggestions,
+			onSubmit,
+		}: {
+			layout: string;
+			suggestions: Suggestion[];
+			onSubmit: ( selected: Suggestion, available: Suggestion[] ) => void;
+		} ) => {
+			mockListContext = React.useContext( Context );
 
-				return (
-					<div role="list" aria-label={ `${ layout } suggestions` }>
-						{ suggestions.map( ( suggestion ) => (
-							<button key={ suggestion.id } onClick={ () => onSubmit( suggestion, suggestions ) }>
-								{ suggestion.label }
-							</button>
-						) ) }
-					</div>
-				);
-			},
-		};
-	},
-	{ virtual: true }
-);
+			return (
+				<div role="list" aria-label={ `${ layout } suggestions` }>
+					{ suggestions.map( ( suggestion ) => (
+						<button key={ suggestion.id } onClick={ () => onSubmit( suggestion, suggestions ) }>
+							{ suggestion.label }
+						</button>
+					) ) }
+				</div>
+			);
+		},
+	};
+} );
 
 describe( 'EditorEmptyViewSuggestions', () => {
 	beforeEach( () => {

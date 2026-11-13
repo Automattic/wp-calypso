@@ -1,5 +1,7 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn( ( name: string, attributes = {}, innerBlocks = [] ) => ( {
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn( ( name: string, attributes = {}, innerBlocks = [] ) => ( {
 		clientId: `new-${ name }`,
 		name,
 		attributes,
@@ -21,7 +23,7 @@ const block = (
 // The agent refers to blocks by `ref-<clientId>`.
 const resolve = ( id: string ) => id.replace( /^ref-/, '' );
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'mergeAttributes', () => {
 	const current = { content: 'Hi', style: { color: { text: '#000' }, spacing: { top: 1 } } };
