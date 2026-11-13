@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
@@ -45,6 +46,7 @@ export default function DomainSearch() {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const tldQuery = queryArguments?.tld;
+	const emailIntent = queryArguments?.emailIntent;
 
 	const config = useMemo( () => {
 		const allowedTlds = Array.isArray( tldQuery ) ? tldQuery : ( tldQuery?.split( ',' ) ?? [] );
@@ -110,13 +112,18 @@ export default function DomainSearch() {
 			},
 			onContinue: ( items: ContinuedDomainProduct[] ) => {
 				if ( items.length === 1 ) {
-					page( domainAddEmailUpsell( selectedSiteSlug, items[ 0 ].meta ) );
+					const emailUpsellUrl = domainAddEmailUpsell( selectedSiteSlug, items[ 0 ].meta );
+					page(
+						emailIntent === 'true'
+							? addQueryArgs( emailUpsellUrl, { emailIntent } )
+							: emailUpsellUrl
+					);
 				} else {
 					page( `/checkout/${ selectedSiteSlug }` );
 				}
 			},
 		};
-	}, [ selectedSiteSlug, setQuery, clearQuery ] );
+	}, [ selectedSiteSlug, setQuery, clearQuery, emailIntent ] );
 
 	const currentRoute = useSelector( getCurrentRoute );
 

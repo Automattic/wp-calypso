@@ -70,6 +70,7 @@ const professionalEmailCardInformation: ProviderCardProps = {
 
 const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const {
+		canSkip = true,
 		detailsExpanded,
 		intervalLength,
 		isDomainInCart = false,
@@ -143,7 +144,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
-			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
+			{ ...getUpsellProps( { isDomainInCart, siteSlug, canSkip } ) }
 		>
 			{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
 				<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
