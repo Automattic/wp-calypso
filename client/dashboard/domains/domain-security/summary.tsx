@@ -19,7 +19,7 @@ export default function DomainSecuritySettingsSummary( {
 		badges.push(
 			domain.is_dnssec_enabled
 				? { text: __( 'DNSSEC enabled' ), intent: 'stable' as const }
-				: { text: __( 'DNSSEC disabled' ), intent: 'draft' as const }
+				: { text: __( 'DNSSEC disabled' ), intent: 'none' as const }
 		);
 	}
 
