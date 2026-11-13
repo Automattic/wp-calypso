@@ -160,7 +160,7 @@ describe( 'useAttachmentHandler', () => {
 
 describe( 'useAttachmentHandler – attach button', () => {
 	const openPicker = ( onClick: () => void ) => {
-		const click = jest
+		const click = vi
 			.spyOn( HTMLInputElement.prototype, 'click' )
 			.mockImplementation( () => undefined );
 		onClick();
