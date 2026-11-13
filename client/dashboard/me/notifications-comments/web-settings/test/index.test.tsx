@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { InputUserNotificationSettings, UserNotificationSettings } from '@automattic/api-core';
@@ -8,6 +8,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
+import { vi } from 'vitest';
 import { WebSettings } from '..';
 import Snackbars from '../../../../app/snackbars';
 
@@ -49,7 +50,7 @@ const mockUpdateSettingsApiAndReply = ( data: InputUserNotificationSettings ) =>
 describe( 'WebSettings', () => {
 	beforeEach( () => {
 		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	test( 'renders the web settings values', async () => {
