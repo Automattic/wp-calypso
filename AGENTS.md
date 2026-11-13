@@ -109,3 +109,7 @@ Test with an account made for testing. Use your own WordPress.com account only w
 When taking over an existing PR, check whether its current changes introduce any new companion PR dependencies. Flag any potential dependencies you haven't verified yet.
 
 To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). Before marking a PR ready for review, and after each later push, run the How to Test steps the change affects, on a local dev server or on the Calypso Live build of the pushed commit, then fix whatever in the description no longer matches the code. Skipping a step is the exception, only for a step you can't run, for example because it needs access you don't have or changes something you can't undo. Keep a skipped step in the list and say after the steps why you skipped it.
+
+A failed CI status such as `Unit tests (Web app)` only says that the build failed, so find out which test failed before acting, and ask the user when you can't open the build. If the test is in a file your change doesn't touch or import, run that file locally a few times. If it passes, leave the test alone: report it as flaky and ask for the build to be re-run.
+
+A green check describes `trunk` as it was when the check ran. When a PR has waited for days, update it from the latest `trunk` and run its tests again before it merges.
