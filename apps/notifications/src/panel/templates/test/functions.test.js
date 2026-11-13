@@ -8,7 +8,10 @@ describe( 'getLinkHref', () => {
 		);
 	} );
 
-	it.each( [ 'javascript:alert(1)', undefined ] )( 'returns null for %p', ( url ) => {
-		expect( getLinkHref( url ) ).toBeNull();
-	} );
+	it.each( [ 'javascript:alert(1)', 'https://a"onmouseover="x/', undefined ] )(
+		'returns null for %p',
+		( url ) => {
+			expect( getLinkHref( url ) ).toBeNull();
+		}
+	);
 } );

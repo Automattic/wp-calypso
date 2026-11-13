@@ -275,13 +275,15 @@ export function zipWithSignature( blocks, note ) {
 }
 
 /**
- * An http(s) URL as it can go in an `href` of HTML built by hand, or null. The serialized
- * `href` percent-encodes quotes and angle brackets, so it can't break out of the attribute.
+ * An http(s) URL as it can go in a double-quoted `href` of HTML built by hand, or null. Parsing
+ * rejects `<` and `>` and percent-encodes `"` everywhere but the host, which keeps it as is.
  */
 export function getLinkHref( url ) {
 	try {
 		const { protocol, href } = new URL( url );
-		return protocol === 'http:' || protocol === 'https:' ? href : null;
+		return ( protocol === 'http:' || protocol === 'https:' ) && ! href.includes( '"' )
+			? href
+			: null;
 	} catch {
 		return null;
 	}
