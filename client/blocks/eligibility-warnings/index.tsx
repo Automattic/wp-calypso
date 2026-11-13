@@ -161,7 +161,9 @@ export const EligibilityWarnings = ( {
 		}
 		if ( listHolds.includes( 'NO_BUSINESS_PLAN' ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = shouldUpsellPersonalPlan( context ) ? PLAN_PERSONAL : PLAN_BUSINESS;
+			const planSlug = shouldUpsellPersonalPlan( context, isMarketplace )
+				? PLAN_PERSONAL
+				: PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(

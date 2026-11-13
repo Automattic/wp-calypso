@@ -6,11 +6,14 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isPremiumThemeAvailable,
+	wasAtomicTransferDialogAccepted,
 } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch } from 'calypso/state/types';
 import { AppState } from 'calypso/types';
@@ -54,6 +57,17 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		if ( ! siteSlug ) {
 			throw new Error( 'Site could not be found matching id ' + siteId );
+		}
+
+		// Purchasing the theme moves the site to Atomic, which changes its address, so
+		// the user must see and accept the transfer warnings before checkout.
+		if (
+			! isJetpackSite( state, siteId ) &&
+			! isSiteWpcomAtomic( state, siteId ) &&
+			! wasAtomicTransferDialogAccepted( state, themeId )
+		) {
+			dispatch( showAtomicTransferDialog( themeId ) );
+			return;
 		}
 
 		const products = getProductsByBillingSlug(
