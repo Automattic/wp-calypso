@@ -22,6 +22,8 @@ export type HelpCenterFeatureConfig = {
 		zendeskIntegrationKey: SmoochIntegrationKey | null;
 		/** Tags written on the Zendesk conversation at escalation, for routing triggers. */
 		zendeskConversationTags: string[];
+		/** Asks questions and routes requests for a human with this product's table. Null starts a chat. */
+		humanSupportRouting: 'woo' | null;
 	};
 	home: {
 		/** Show the recent conversations section on the home screen. */

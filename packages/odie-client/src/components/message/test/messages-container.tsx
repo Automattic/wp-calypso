@@ -266,7 +266,12 @@ describe( 'MessagesContainer routing step', () => {
 		createdFrom: 'automatic_escalation',
 		isFromError: false,
 		escalationOnSecondAttempt: true,
-		flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+		flags: {
+			isEmergency: true,
+			emergencyType: 'site_down',
+			routeToEmail: false,
+			isUnknownCharge: false,
+		},
 	};
 
 	it( 'shows the routing step for a pending request', () => {
