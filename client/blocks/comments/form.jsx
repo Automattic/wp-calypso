@@ -162,7 +162,7 @@ class PostCommentForm extends Component {
 
 	// An empty editor shrinks back to the textarea.
 	canCloseEditor() {
-		return ! this.props.parentCommentId && ! this.hasCommentText();
+		return ! this.props.parentCommentId && ! this.props.expanded && ! this.hasCommentText();
 	}
 
 	handleEditorBlur = () => {
@@ -334,7 +334,10 @@ class PostCommentForm extends Component {
 		const hasText = this.hasCommentText();
 		const showEditor =
 			this.hasEditor() &&
-			( isReply || this.state.editorOpen || isBlockMarkup( this.getCommentText() ) );
+			( isReply ||
+				this.props.expanded ||
+				this.state.editorOpen ||
+				isBlockMarkup( this.getCommentText() ) );
 
 		// Under the editor, Send shows once there's something to send.
 		const buttonClasses = clsx( {
@@ -416,6 +419,8 @@ PostCommentForm.propTypes = {
 	onUpdateCommentText: PropTypes.func.isRequired,
 	onCommentSubmit: PropTypes.func,
 	isInlineComment: PropTypes.bool,
+	// Shows the editor from the start and keeps it open when empty.
+	expanded: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
 
 	onReplyCancel: PropTypes.func,
@@ -455,7 +460,10 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 		const settled = usePageSettled();
 		// A pointer over the form, or focus in it: a writer on their way in.
 		const [ wanted, setWanted ] = useState( false );
-		const { data } = useQuery( { ...commentsEditorQuery(), enabled: settled || wanted } );
+		const { data } = useQuery( {
+			...commentsEditorQuery(),
+			enabled: settled || wanted || !! props.expanded,
+		} );
 
 		// The editor downloads ahead of the first focus, so it's ready when someone clicks in.
 		useEffect( () => {
