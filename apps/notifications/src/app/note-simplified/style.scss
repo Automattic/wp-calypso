@@ -60,15 +60,17 @@
 	}
 }
 
-// The post or site card sits 24px above what follows; the quoted comment then
-// sits closer to the reply or the people it's about.
-.wpnc-simplified__people > .wpnc-simplified__card {
-	margin-block-end: $grid-unit-10;
+// The quoted comment sits 20px from the card above it and from the reply or the
+// people below it. Without a quoted comment, the people sit 24px below the card.
+.wpnc-simplified > .wpnc-simplified__card + .wpnc-simplified__thread,
+.wpnc-simplified__people > .wpnc-simplified__card + .wpnc-simplified__thread,
+.wpnc-simplified__people > .wpnc-simplified__thread + .wpnc__note {
+	margin-block-start: $grid-unit-05;
 }
 
-.wpnc-simplified > .wpnc-simplified__card + .wpnc-simplified__thread,
+.wpnc-simplified__people > .wpnc-simplified__card + .wpnc__note,
 .wpnc-simplified__thread + .wpnc-simplified__heading {
-	margin-top: $grid-unit-10;
+	margin-block-start: $grid-unit-10;
 }
 
 // The closing "And 7 others liked your post" line carries on from the people, in
