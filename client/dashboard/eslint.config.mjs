@@ -20,7 +20,8 @@ const bannedModuleMocks = [ '@tanstack/react-query', '@automattic/api-queries' ]
 		// a literal slash, hence `\x2F`.
 		const name = `/^${ module.replace( '/', '\\x2F' ) }(\\x2F|$)/`;
 		return {
-			selector: `CallExpression[callee.object.name='jest'][callee.property.name=/^(mock|doMock|unstable_mockModule)$/][arguments.0.value=${ name }]`,
+			// `vi.mock()` and `vi.doMock()` also take the module as `import( '…' )`.
+			selector: `CallExpression[callee.object.name='vi'][callee.property.name=/^(mock|doMock|importMock)$/]:matches([arguments.0.value=${ name }], [arguments.0.source.value=${ name }])`,
 			message: `Mocking \`${ module }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
 		};
 	}
