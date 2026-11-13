@@ -41,7 +41,7 @@ const rule = ( module.exports = function ( context ) {
 	}
 
 	function validateOptions( options ) {
-		return options.properties.every( function ( property ) {
+		options.properties.forEach( function ( property ) {
 			if ( property.type === 'SpreadElement' ) {
 				return;
 			}
