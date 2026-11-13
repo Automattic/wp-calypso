@@ -380,6 +380,11 @@ describe( 'LoginForm', () => {
 			await userEvent.type( screen.getByLabelText( /username/i ), 'someone@example.com' );
 			await userEvent.click( screen.getByRole( 'button', { name: /continue$/i } ) );
 			expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 );
+			expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+				config( 'blackbox_api_key' ),
+				expect.any( AbortSignal ),
+				'login'
+			);
 			expect( screen.getByRole( 'button', { name: /continue$/i } ) ).toBeDisabled();
 			await act( async () => finish( null ) );
 			expect( screen.getByRole( 'button', { name: /continue$/i } ) ).toBeEnabled();
@@ -410,6 +415,11 @@ describe( 'LoginForm', () => {
 				} );
 			} );
 			expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 );
+			expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+				config( 'blackbox_api_key' ),
+				expect.any( AbortSignal ),
+				'login'
+			);
 			expect( requests ).toEqual( [
 				expect.objectContaining( {
 					usernameOrEmail: 'someone@example.com',
