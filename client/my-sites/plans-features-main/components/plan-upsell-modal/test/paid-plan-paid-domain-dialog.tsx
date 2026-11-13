@@ -43,4 +43,13 @@ describe( 'PaidPlanPaidDomainDialog', () => {
 		expect( defaultProps.onFreePlanSelected ).toHaveBeenCalledTimes( 1 );
 		expect( defaultProps.onFreePlanSelected ).not.toHaveBeenCalledWith( true );
 	} );
+
+	test( 'shows the connected domain move copy without the free domain year', () => {
+		renderWithProvider( <PaidPlanPaidDomainDialog { ...defaultProps } isConnectedDomainMove /> );
+
+		expect(
+			screen.getByText( "To move your connected domain to this site, you'll need a paid plan." )
+		).toBeVisible();
+		expect( screen.queryByText( /first year free/ ) ).toBeNull();
+	} );
 } );

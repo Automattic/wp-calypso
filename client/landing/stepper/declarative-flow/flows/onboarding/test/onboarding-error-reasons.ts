@@ -43,6 +43,7 @@ jest.mock( '@wordpress/data', () => ( {
 			getSignupDomainOrigin: () => undefined,
 			getPlanCartItem: () => null,
 			getDomainCartItem: () => undefined,
+			getDomainCartItems: () => undefined,
 			getBlueprint: () => undefined,
 		} ) )
 	),

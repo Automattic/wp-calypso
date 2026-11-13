@@ -1,6 +1,7 @@
 import { PlanSlug } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import { Global, css } from '@emotion/react';
+import { FreePlanDomainMoveDialog } from './free-plan-domain-move-dialog';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
 import { PaidPlanIsRequiredDialog } from './paid-plan-is-required-dialog';
@@ -11,6 +12,7 @@ export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
 export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';
 export const FREE_PLAN_FREE_DOMAIN_DIALOG = 'FREE_PLAN_FREE_DOMAIN_DIALOG';
 export const PAID_PLAN_PAID_DOMAIN_DIALOG = 'PAID_PLAN_FREE_DOMAIN_DIALOG';
+export const FREE_PLAN_DOMAIN_MOVE_DIALOG = 'FREE_PLAN_DOMAIN_MOVE_DIALOG';
 export const MODAL_LOADER = 'MODAL_LOADER';
 
 export type ModalType =
@@ -18,6 +20,7 @@ export type ModalType =
 	| typeof FREE_PLAN_PAID_DOMAIN_DIALOG
 	| typeof PAID_PLAN_PAID_DOMAIN_DIALOG
 	| typeof PAID_PLAN_IS_REQUIRED_DIALOG
+	| typeof FREE_PLAN_DOMAIN_MOVE_DIALOG
 	| typeof MODAL_LOADER;
 
 export type DomainPlanDialogProps = {
@@ -28,6 +31,7 @@ export type DomainPlanDialogProps = {
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	isDomainTransfer?: boolean;
+	isConnectedDomainMove?: boolean;
 };
 
 type ModalContainerProps = {
@@ -50,6 +54,8 @@ function getDisplayedModal( modalType: ModalType, dialogProps: DomainPlanDialogP
 			return <PaidPlanPaidDomainDialog { ...dialogProps } />;
 		case PAID_PLAN_IS_REQUIRED_DIALOG:
 			return <PaidPlanIsRequiredDialog { ...dialogProps } />;
+		case FREE_PLAN_DOMAIN_MOVE_DIALOG:
+			return <FreePlanDomainMoveDialog { ...dialogProps } />;
 		default:
 			return null;
 	}
