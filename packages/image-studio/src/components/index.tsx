@@ -26,6 +26,7 @@ import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions
 import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
+import { useTransform } from '../hooks/use-transform';
 import {
 	type CloseDialogVariant,
 	useUnsavedChangesConfirmation,
@@ -97,6 +98,14 @@ function ImageStudioAgentChat( {
 
 	const isAnnotationSaving = useSelect( ( select ) => {
 		return select( imageStudioStore ).getIsAnnotationSaving();
+	}, [] );
+
+	const isAiProcessing = useSelect( ( select ) => {
+		return select( imageStudioStore ).getImageStudioAiProcessing();
+	}, [] );
+
+	const isTransforming = useSelect( ( select ) => {
+		return select( imageStudioStore ).getIsImageStudioAiProcessingSource( 'transform' );
 	}, [] );
 
 	const entryPoint = useSelect( ( select ) => {
@@ -188,14 +197,15 @@ function ImageStudioAgentChat( {
 	useImageStudioErrorTracking( agentError, mode, attachmentId );
 	useErrorNotice( agentError, addNotice, mode );
 
-	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
+	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving || isAiProcessing;
 
 	const progressPhase = ( agentChatProps as unknown as { progressPhase?: string } ).progressPhase;
 	const isFinalizingPhase = progressPhase === 'uploading';
 	const isVideoGeneratingPhase = progressPhase === 'generating-video';
 
 	// Stop is meaningless once the video job is in flight server-side; only the SSE stream would abort.
-	const isStopDisabled = isFinalizingPhase || isAnnotationSaving || isVideoGeneratingPhase;
+	const isStopDisabled =
+		isFinalizingPhase || isAnnotationSaving || isTransforming || isVideoGeneratingPhase;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -330,6 +340,7 @@ const ImageStudioContent = withInstanceId(
 			isAnnotationMode,
 			attachmentId,
 			isCurrentAttachmentAnnotated,
+			isCurrentAttachmentTransformed,
 			hasUnsavedChanges,
 			originalAttachmentId,
 			isSidebarOpen,
@@ -339,6 +350,7 @@ const ImageStudioContent = withInstanceId(
 			const selectors = select( imageStudioStore );
 			const currentAttachmentId = selectors.getImageStudioAttachmentId();
 			const annotatedAttachmentIds = selectors.getAnnotatedAttachmentIds();
+			const transformedAttachmentIds = selectors.getTransformedAttachmentIds();
 			// Read the video URL from the dedicated video-studio store.
 			// Older bundles never registered this store, so the selector is
 			// always present in the bundle that wrote it.
@@ -353,6 +365,8 @@ const ImageStudioContent = withInstanceId(
 				isAnnotationSaving: selectors.getIsAnnotationSaving(),
 				isCurrentAttachmentAnnotated:
 					currentAttachmentId !== null && annotatedAttachmentIds.includes( currentAttachmentId ),
+				isCurrentAttachmentTransformed:
+					currentAttachmentId !== null && transformedAttachmentIds.includes( currentAttachmentId ),
 				hasUnsavedChanges: selectors.getHasUnsavedChanges(),
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
@@ -372,6 +386,8 @@ const ImageStudioContent = withInstanceId(
 		} = useAnnotation( {
 			originalImageUrl,
 		} );
+
+		const { applyImageTransform } = useTransform();
 
 		const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
 		// One balance for the chat and the sidebar's Regenerate buttons, which run their own turns.
@@ -554,7 +570,11 @@ const ImageStudioContent = withInstanceId(
 		// original attachment — and not while annotating (suggestions differ there).
 		const isOriginalImage = attachmentId !== null && attachmentId === originalAttachmentId;
 		const showFeedbackButtons =
-			! isCurrentAttachmentAnnotated && !! isAiProcessed && !! finalDisplayUrl && ! isOriginalImage;
+			! isCurrentAttachmentAnnotated &&
+			! isCurrentAttachmentTransformed &&
+			!! isAiProcessed &&
+			!! finalDisplayUrl &&
+			! isOriginalImage;
 
 		// Show actions menu only in Edit mode after AI has made changes.
 		// canRevert already checks: originalAttachmentId exists, image changed, not processing
@@ -655,6 +675,7 @@ const ImageStudioContent = withInstanceId(
 							activeToolbarOption={ activeToolbarOption }
 							onAnnotationUndo={ handleAnnotationUndo }
 							onAnnotationRedo={ handleAnnotationRedo }
+							onTransform={ applyImageTransform }
 							// Any close from Header flows into the same confirmation logic
 							onClose={ handleRequestClose }
 							hasPendingAnnotations={ hasAnnotations }
