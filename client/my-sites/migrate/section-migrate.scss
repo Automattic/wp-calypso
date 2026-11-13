@@ -1,0 +1,110 @@
+@import '@automattic/typography/styles/variables';
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
+
+.migrate__placeholder {
+	color: transparent;
+	background-color: var( --studio-gray-10 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.migrate__status {
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.is-section-migrate .card > .card-heading {
+	margin-bottom: 4px;
+}
+
+.migrate__error {
+	&.calypso-notice {
+		margin-bottom: 16px;
+	}
+	.button {
+		margin-bottom: 16px;
+	}
+	.migrate__info {
+		width: 100%;
+		margin: 10px auto 0;
+	}
+}
+
+.migrate__pane {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: inherit;
+	box-shadow: none;
+}
+
+.migrate__illustration {
+	display: block;
+	margin: auto;
+	width: 260px;
+	height: 200px;
+}
+
+.migrate__section-header {
+	.formatted-header__title {
+		font-size: $font-title-medium;
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-title-large;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+		font-size: $font-body;
+	}
+}
+
+.migrate__domain {
+	white-space: nowrap;
+}
+
+.migrate__progress {
+	max-width: 350px;
+	margin-bottom: 2rem;
+}
+
+.migrate__note {
+	text-align: center;
+	color: var( --color-text-subtle );
+}
+
+.migrate__start-time {
+	height: 1.5rem;
+	margin-bottom: 8px;
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
+}
+
+.migrate__progress-item {
+	position: relative;
+	list-style-type: none;
+	margin-left: 8px;
+	margin-bottom: 8px;
+	font-size: $font-body-small;
+	line-height: 24px;
+	display: flex;
+}
+
+.migrate__progress-item-icon {
+	display: flex;
+	width: 24px;
+	margin-right: 6px;
+	justify-content: center;
+}
+
+.migrate__progress-item-icon-success {
+	width: 22px;
+	color: var( --color-success );
+}
+
+.migrate__progress-item-icon-todo {
+	width: 20px;
+}
+
+.migrate__progress-item-text {
+	display: flex;
+}

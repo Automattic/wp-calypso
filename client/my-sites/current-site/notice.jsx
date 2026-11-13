@@ -17,6 +17,7 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { isHostingTrialSite, isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -159,7 +160,8 @@ export class SiteNotice extends Component {
 export default connect( ( state, ownProps ) => {
 	const { site } = ownProps;
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
-	const isMigrationInProgress = isSiteMigrationInProgress( state, siteId );
+	const isMigrationInProgress =
+		isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
 
 	return {
 		currentPlan: getCurrentPlan( state, siteId ),
