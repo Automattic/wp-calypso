@@ -10,7 +10,7 @@ import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
 import { getNotePreview } from '../note-simplified';
 import { getTypeIcon } from './type-icons';
-import type { LayoutStyle, Note, Range, Subject } from '../types';
+import type { Note, Range, Subject } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import './dataviews-overrides.scss';
 
@@ -48,11 +48,11 @@ const getTimeGroupKey = ( timestamp: string ): number => {
 
 const simplify = (
 	item: Note,
-	layoutStyle: LayoutStyle
+	isSimplified: boolean
 ): { action: Subject; preview?: string } | null => {
 	const summary = item.meta?.summary;
 
-	if ( layoutStyle !== 'simplified' || ! summary ) {
+	if ( ! isSimplified || ! summary ) {
 		return null;
 	}
 
@@ -102,7 +102,7 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	);
 };
 
-export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
+export function getFields( isSimplified = false ): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
@@ -119,7 +119,7 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 			id: 'title',
 			label: __( 'Title' ),
 			getValue: ( { item } ) =>
-				html( simplify( item, layoutStyle )?.action ?? item.subject[ 0 ], {
+				html( simplify( item, isSimplified )?.action ?? item.subject[ 0 ], {
 					links: false,
 				} ),
 			render: ( { field, item } ) => (
@@ -130,7 +130,7 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 			id: 'description',
 			label: __( 'Description' ),
 			render: ( { item } ) => {
-				const simplified = simplify( item, layoutStyle );
+				const simplified = simplify( item, isSimplified );
 
 				if ( simplified ) {
 					return simplified.preview ? (

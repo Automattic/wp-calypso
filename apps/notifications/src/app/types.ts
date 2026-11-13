@@ -2,8 +2,6 @@ import type { getFilters } from '../panel/templates/filters';
 
 export type FilterName = keyof ReturnType< typeof getFilters >;
 
-export type LayoutStyle = 'detailed' | 'simplified';
-
 export type Range = {
 	type: string;
 	indices: [ number, number ];

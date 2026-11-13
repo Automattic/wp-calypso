@@ -80,20 +80,13 @@ const replyNote = () => ( {
 	},
 } );
 
-const renderList = (
-	layoutStyle?: 'detailed' | 'simplified',
-	{
-		isViewSettingsEnabled = true,
-		note = noteAboutAPost(),
-	}: { isViewSettingsEnabled?: boolean; note?: ReturnType< typeof noteAboutAPost > } = {}
-) => {
+const renderList = ( {
+	isViewSettingsEnabled = true,
+	note = noteAboutAPost(),
+}: { isViewSettingsEnabled?: boolean; note?: ReturnType< typeof noteAboutAPost > } = {} ) => {
 	const store = initStore();
 	store.dispatch( actions.notes.addNotes( [ note ] ) );
 	store.dispatch( actions.ui.loadedNotes() );
-
-	if ( layoutStyle ) {
-		store.dispatch( actions.ui.setLayoutStyle( layoutStyle ) );
-	}
 
 	return render(
 		<Provider store={ store }>
@@ -120,13 +113,13 @@ describe( 'NoteList simplified layout', () => {
 	// The detailed subject is rendered through `html()`, which splits the sentence across
 	// elements for its ranges, so assert on the row's text rather than a single node.
 	it( 'shows the whole sentence and the excerpt on the detailed rows', () => {
-		const { container } = renderList( 'detailed' );
+		const { container } = renderList( { isViewSettingsEnabled: false } );
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( SENTENCE );
 		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
 	} );
 
-	it( 'leads with the simplified rows when no layout has been chosen', () => {
+	it( 'shows the simplified rows where view settings are enabled', () => {
 		const { container } = renderList();
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
@@ -134,17 +127,8 @@ describe( 'NoteList simplified layout', () => {
 		);
 	} );
 
-	// The setting is only offered where the flag is on. Somewhere it is off there is no
-	// way back to detailed, so a preference saved elsewhere must not follow the account in.
-	it( 'ignores a saved simplified layout where the setting is not offered', () => {
-		const { container } = renderList( 'simplified', { isViewSettingsEnabled: false } );
-
-		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( SENTENCE );
-		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
-	} );
-
 	it( 'keeps the reply icon and previews the reply itself, not the comment it replied to', () => {
-		const { container } = renderList( 'simplified', { note: replyNote() as never } );
+		const { container } = renderList( { note: replyNote() as never } );
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
 			'Ben Quah replied to your comment'
@@ -158,7 +142,7 @@ describe( 'NoteList simplified layout', () => {
 
 	it( 'previews the liked comment, not the post', () => {
 		const note = noteAboutAPost();
-		const { container } = renderList( 'simplified', {
+		const { container } = renderList( {
 			note: {
 				...note,
 				type: 'comment_like',
@@ -183,7 +167,8 @@ describe( 'NoteList simplified layout', () => {
 	it( 'does not render a link inside the row, so the whole row opens the note', () => {
 		const domain = 'kettleandcrust.blog';
 		const text = `Act now! ${ domain } expired`;
-		const { container } = renderList( 'detailed', {
+		const { container } = renderList( {
+			isViewSettingsEnabled: false,
 			note: {
 				...noteAboutAPost(),
 				type: 'expired_domain',
@@ -209,7 +194,7 @@ describe( 'NoteList simplified layout', () => {
 	} );
 
 	it( 'leads with the action, puts the post under it, and drops the excerpt', () => {
-		const { container } = renderList( 'simplified' );
+		const { container } = renderList();
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
 			'Somebody liked your post'

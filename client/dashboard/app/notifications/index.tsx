@@ -1,12 +1,10 @@
-import { userPreferenceQuery, userPreferencesMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { Text } from '../../components/text';
 import { dashboardLink } from '../../utils/link';
@@ -16,7 +14,6 @@ import { useLocale } from '../locale';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/notifications-node/icon-class';
 import useSubscriberAlerts from './use-subscriber-alerts';
-import type { UserPreferences } from '@automattic/api-core';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
@@ -57,29 +54,6 @@ export default function Notifications( {
 		omnibarEvents.notificationsUnseenCount.emit( count );
 	}, [] );
 	useSubscriberAlerts( onNotificationCount, isViewSettingsEnabled );
-
-	// Both share one query key, so this is a single request — and it is skipped entirely
-	// without the picker, where nothing reads either value.
-	const { data: layoutStyle } = useQuery( {
-		...userPreferenceQuery( 'notifications-layout-style' ),
-		enabled: isViewSettingsEnabled,
-	} );
-	const { data: viewSettingsSeen } = useQuery( {
-		...userPreferenceQuery( 'notifications-view-settings-seen' ),
-		enabled: isViewSettingsEnabled,
-	} );
-	const { mutateAsync: savePreferences } = useMutation( userPreferencesMutation() );
-
-	const handlePreferenceChange = useCallback(
-		( key: string, value: unknown ) =>
-			savePreferences( { [ key ]: value } as Partial< UserPreferences > ),
-		[ savePreferences ]
-	);
-
-	const notificationPreferences = useMemo(
-		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
-		[ layoutStyle, viewSettingsSeen ]
-	);
 
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
@@ -216,8 +190,6 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
-						preferences={ notificationPreferences }
-						onPreferenceChange={ handlePreferenceChange }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
