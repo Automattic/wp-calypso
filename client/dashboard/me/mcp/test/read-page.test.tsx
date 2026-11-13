@@ -65,6 +65,22 @@ function mockClipboard() {
 	return writeText;
 }
 
+// jsdom doesn't implement scrollIntoView, so define it for the test and
+// remove it again afterwards.
+function mockScrollIntoView() {
+	const scrollIntoView = vi.fn();
+	Object.defineProperty( Element.prototype, 'scrollIntoView', {
+		value: scrollIntoView,
+		configurable: true,
+		writable: true,
+	} );
+	return scrollIntoView;
+}
+
+afterEach( () => {
+	delete ( Element.prototype as Partial< Element > ).scrollIntoView;
+} );
+
 beforeEach( () => {
 	window.location.hash = '';
 	queryClient.clear();
@@ -102,6 +118,18 @@ describe( '<McpRead> search and anchors', () => {
 		expect( screen.getByRole( 'checkbox', { name: 'List pages' } ) ).toBeVisible();
 		expect( screen.getByRole( 'checkbox', { name: 'List posts' } ) ).toBeVisible();
 		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).not.toBeNull();
+	} );
+
+	test( 'a tool anchor in a collapsed group scrolls to that tool once it renders', () => {
+		const scrollIntoView = mockScrollIntoView();
+		window.location.hash = '#wpcom-mcp/pages-list';
+		seed();
+		render( <McpRead />, { queryClient } );
+
+		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
+		expect( scrollIntoView.mock.contexts[ 0 ] ).toBe(
+			document.getElementById( 'wpcom-mcp/pages-list' )
+		);
 	} );
 
 	test( 'an anchor copy button copies that tool’s anchor URL', async () => {
