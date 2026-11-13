@@ -56,7 +56,9 @@ const student: FlowV2< typeof initialize > = {
 				}
 
 				setPlanCartItem( { product_slug: STUDENT_PLAN_SLUG } );
-				return navigate( STEPS.DOMAIN_SEARCH.slug );
+				// Replace the history entry: going back to the eligibility step would send an
+				// eligible account straight forward again.
+				return navigate( STEPS.DOMAIN_SEARCH.slug, undefined, true );
 			}
 
 			return submitEducationStep?.(

@@ -42,7 +42,7 @@ const StudentPlanEligibility: StepType< {
 	const dispatch = useDispatch();
 	const locale = useFlowLocale();
 	const email = useSelector( getCurrentUserEmail ) ?? '';
-	const { data, isError, isFetching, refetch } = useStudentPlanEligibility();
+	const { data, isError, isFetching, isRefetchError, refetch } = useStudentPlanEligibility();
 	const reason = data?.reason;
 
 	useEffect( () => {
@@ -81,6 +81,11 @@ const StudentPlanEligibility: StepType< {
 				<Step.PrimaryButton onClick={ () => refetch() } isBusy={ isFetching }>
 					{ __( 'I’ve confirmed my email' ) }
 				</Step.PrimaryButton>
+				{ isRefetchError && ! isFetching && (
+					<p className="student-plan-eligibility__error" role="alert">
+						{ __( 'We couldn’t check your email. Please try again.' ) }
+					</p>
+				) }
 			</Screen>
 		);
 	}

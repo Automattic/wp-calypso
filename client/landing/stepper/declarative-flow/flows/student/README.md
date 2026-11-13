@@ -4,7 +4,7 @@ Self-serve signup flow for the WordPress.com Student plan: checks that the accou
 
 ## Testing instructions
 
-1. Go to `/setup/student` and create an account (or log in) with a verified `.edu`, `.ac.uk` or `.ac.jp` email — you land on the domain step and the Student plan is added to the cart.
+1. Go to `/setup/student` and log in with an account whose `.edu`, `.ac.uk` or `.ac.jp` email is already confirmed — you land on the domain step and the Student plan is added to the cart. A new account starts unconfirmed and sees the step 3 screen first.
 2. Pick a domain (or "Use a domain I own") and continue — a site is created and you're redirected to checkout with the Student plan (and domain) in the cart.
 3. With an unverified academic email — you see "Confirm your email to get the Student plan".
 4. With a non-academic email (for example Gmail) — you see "The Student plan needs a school email", with links to sign up again, wp.com/education, `/setup/education` and `/setup/onboarding`.

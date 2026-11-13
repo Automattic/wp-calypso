@@ -16,6 +16,11 @@
 		margin: 0;
 	}
 
+	.student-plan-eligibility__error {
+		color: var( --color-error );
+		margin: 0;
+	}
+
 	.student-plan-eligibility__links {
 		display: flex;
 		flex-wrap: wrap;

@@ -25,4 +25,6 @@ export const useStudentPlanEligibility = () =>
 		staleTime: 0,
 		gcTime: 0,
 		refetchOnWindowFocus: 'always',
+		// The endpoint is rate limited; a failed check shows a retry button instead.
+		retry: false,
 	} );

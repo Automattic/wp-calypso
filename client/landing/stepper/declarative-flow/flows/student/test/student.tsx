@@ -3,6 +3,7 @@
  */
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
+import { MemoryRouter } from 'react-router';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
@@ -72,6 +73,33 @@ describe( 'Student Flow', () => {
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toEqual( {
 			product_slug: STUDENT_PLAN_SLUG,
 		} );
+	} );
+
+	/**
+	 * Going back from the domain step must not land on the eligibility step, which would
+	 * send an eligible account forward again.
+	 */
+	it( 'replaces the eligibility step in the history when it continues', () => {
+		const navigate = jest.fn();
+		const Navigation = () => {
+			const { submit } = studentFlow.useStepNavigation(
+				STEPS.STUDENT_PLAN_ELIGIBILITY.slug,
+				navigate
+			);
+			submit?.( {
+				slug: STEPS.STUDENT_PLAN_ELIGIBILITY.slug,
+				providedDependencies: { eligible: true },
+			} );
+			return null;
+		};
+
+		renderWithProvider(
+			<MemoryRouter>
+				<Navigation />
+			</MemoryRouter>
+		);
+
+		expect( navigate ).toHaveBeenCalledWith( STEPS.DOMAIN_SEARCH.slug, undefined, true );
 	} );
 
 	it( 'does not advance past the eligibility step without an eligible account', () => {

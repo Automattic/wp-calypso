@@ -13,6 +13,7 @@ import type { StudentPlanEligibilityReason } from '../hooks/use-student-plan-eli
 
 // The real action sends the browser to the logout page.
 jest.mock( 'calypso/state/current-user/actions', () => ( {
+	...jest.requireActual( 'calypso/state/current-user/actions' ),
 	redirectToLogout: jest.fn( () => ( { type: 'TEST_REDIRECT_TO_LOGOUT' } ) ),
 } ) );
 
@@ -61,6 +62,7 @@ describe( 'StudentPlanEligibility', () => {
 		render( { navigation: { submit } } );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	/**
@@ -81,6 +83,27 @@ describe( 'StudentPlanEligibility', () => {
 			)
 		).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	/**
+	 * A failed re-check keeps the previous answer on screen, so the failure must be shown.
+	 */
+	it( 'says so when re-checking an unverified account fails', async () => {
+		mockEligibility( 'unverified' );
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( ELIGIBILITY_PATH )
+			.query( true )
+			.reply( 429, { code: 'rate_limit_exceeded' } );
+
+		render();
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } )
+		);
+
+		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+			'We couldn’t check your email. Please try again.'
+		);
 	} );
 
 	it( 'explains the options to an account without a school email', async () => {
