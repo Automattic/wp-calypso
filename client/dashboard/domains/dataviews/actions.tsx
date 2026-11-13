@@ -1,4 +1,4 @@
-import { DomainSubtype, DomainStatus } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { userPurchasesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -7,12 +7,7 @@ import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import {
-	domainOverviewRoute,
-	domainDnsRoute,
-	domainConnectionSetupRoute,
-	domainTransferRoute,
-} from '../../app/router/domains';
+import { domainOverviewRoute, domainDnsRoute, domainTransferRoute } from '../../app/router/domains';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable } from '../../utils/domain';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
@@ -88,30 +83,6 @@ export const useActions = ( {
 				label: __( 'Renew' ),
 				callback: renewDomain,
 				isEligible: ( item: DomainSummary ) => isDomainRenewable( item ) && item.expired,
-			},
-			{
-				id: 'setup',
-				isPrimary: true,
-				label: __( 'Set up' ),
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-
-					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
-						action: 'setup',
-						layout,
-						domain: domain.domain,
-					} );
-
-					router.navigate( {
-						to: domainConnectionSetupRoute.fullPath,
-						params: {
-							domainName: domain.domain,
-						},
-					} );
-				},
-				isEligible: ( item: DomainSummary ) =>
-					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
-					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
 			},
 			{
 				id: 'change-primary-domain',

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -25,6 +25,7 @@ import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import nock from 'nock';
 import { Suspense } from 'react';
+import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../../app/analytics';
 import { AuthContext } from '../../../app/auth';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
@@ -309,7 +310,7 @@ describe( '<SiteLogs> feature callouts', () => {
 
 describe( '<SiteLogs> live site calendar ranges', () => {
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		MockDate.reset();
 	} );
 
@@ -378,8 +379,8 @@ describe( '<SiteLogs> live site calendar ranges', () => {
 			const checkbox = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 			await waitFor( () => expect( search().has( 'to' ) ).toBe( true ) );
 			// Let the initial network/suspense work settle before controlling the refresh timer.
-			jest.useFakeTimers( { now: Date.parse( now ), doNotFake: [ 'nextTick', 'setImmediate' ] } );
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			vi.useFakeTimers( { now: Date.parse( now ), toNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 			const length = window.history.length;
 			const index = window.history.state.__TSR_index;
 			await user.click( checkbox );
@@ -407,7 +408,7 @@ describe( '<SiteLogs> live site calendar ranges', () => {
 			};
 			await assertLiveRange( Date.parse( start ) / 1000, Date.parse( now ) / 1000 );
 			const previousEnd = Number( search().get( 'to' ) );
-			await act( async () => jest.advanceTimersByTimeAsync( 10_000 ) );
+			await act( async () => vi.advanceTimersByTimeAsync( 10_000 ) );
 			expect( Number( search().get( 'to' ) ) ).toBeGreaterThanOrEqual( previousEnd + 10 );
 			await assertLiveRange(
 				startAfterTick ? Date.parse( startAfterTick ) / 1000 : Date.parse( start ) / 1000 + 10,
@@ -532,8 +533,8 @@ describe( '<SiteLogs> site switches', () => {
 				client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
 			>
 				<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
-					<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
-						<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: jest.fn() } }>
+					<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
+						<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: vi.fn() } }>
 							<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
 						</AuthContext.Provider>
 					</AnalyticsProvider>

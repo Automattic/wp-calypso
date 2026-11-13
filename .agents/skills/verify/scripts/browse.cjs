@@ -18,6 +18,7 @@ const {
 	PORT,
 	REPO_ROOT,
 	UserActionRequired,
+	devServerCheckouts,
 	isLoginUrl,
 	launchBrowser,
 	logInTestAccount,
@@ -99,6 +100,31 @@ function isCalypsoLiveTarget( url ) {
 	return hostname === 'calypso.live' || hostname.endsWith( '.calypso.live' );
 }
 
+function devServerDownMessage() {
+	const down = `The dev server isn't running on port ${ PORT }.`;
+	const start =
+		'Start it with `yarn start-dashboard` (Dashboard only) or `yarn start` (all of Calypso).';
+	const checkouts = devServerCheckouts();
+	if ( ! checkouts ) {
+		return `${ down } ${ start }`;
+	}
+	const root = fs.realpathSync( REPO_ROOT );
+	if ( checkouts.includes( root ) ) {
+		return (
+			`${ down } One is running or still starting in this checkout: wait for its build, then ` +
+			'run this again. If it was started with another `PORT`, put the same one in front of this command.'
+		);
+	}
+	if ( checkouts.length ) {
+		return (
+			`${ down } Another checkout's dev server is running, but it doesn't serve this checkout. ` +
+			'Each takes several GB of memory, so ask before starting a second one here, unless no ' +
+			`one can answer:\n  ${ checkouts.join( '\n  ' ) }`
+		);
+	}
+	return `${ down } No other checkout's dev server is running either. ${ start }`;
+}
+
 /**
  * Until the first webpack build finishes, the dev server answers `/` with a "please wait"
  * page and holds every other request.
@@ -111,10 +137,7 @@ async function waitForDevServer() {
 		try {
 			body = await ( await fetch( `http://127.0.0.1:${ PORT }/` ) ).text();
 		} catch {
-			throw new UserActionRequired(
-				`The dev server isn't running on port ${ PORT }. Start it with ` +
-					'`yarn start-dashboard` (Dashboard only) or `yarn start` (all of Calypso).'
-			);
+			throw new UserActionRequired( devServerDownMessage() );
 		}
 		if ( ! body.includes( 'webpack has finished compiling' ) ) {
 			return;

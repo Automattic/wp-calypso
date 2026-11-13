@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewRegistration from '../registration';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 afterEach( () => {
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
 } );
 
 function renderRegistration( customProps: Partial< Domain > = {} ) {
@@ -94,7 +95,7 @@ describe( 'DomainOverviewRegistration', () => {
 	} );
 
 	test( 'opens contact details in a support session', async () => {
-		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		( isSupportSession as Mock ).mockReturnValue( true );
 		renderRegistration( { current_user_can_manage: false } );
 
 		await screen.findByText( CONTACT );

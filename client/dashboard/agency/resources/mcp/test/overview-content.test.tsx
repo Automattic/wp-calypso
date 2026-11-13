@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import McpOverview from '../overview-content';
 import type { McpAvailableAbility, McpSettings } from '@automattic/api-core';
@@ -22,7 +23,7 @@ function settings( enabled: boolean, abilities: McpAvailableAbility[] = [] ): Mc
 
 describe( '<McpOverview>', () => {
 	test( 'toggling MCP access saves the new value', async () => {
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render( <McpOverview settings={ settings( false ) } onSave={ onSave } /> );
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable MCP access' } ) );
@@ -38,7 +39,7 @@ describe( '<McpOverview>', () => {
 					ability( 'list-invoices', true ),
 					ability( 'get-billing-summary', false ),
 				] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -49,7 +50,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -60,7 +61,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', false ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -71,7 +72,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -88,7 +89,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( false, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -103,7 +104,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'submit-feedback', true, false ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -121,7 +122,7 @@ describe( '<McpOverview>', () => {
 					ability( 'list-invoices', false ),
 					ability( 'submit-feedback', true, false ),
 				] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -133,7 +134,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -146,7 +147,7 @@ describe( '<McpOverview>', () => {
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -157,11 +158,11 @@ describe( '<McpOverview>', () => {
 	} );
 
 	test( 'navigates via onNavigate instead of the href when provided', async () => {
-		const onNavigate = jest.fn();
+		const onNavigate = vi.fn();
 		render(
 			<McpOverview
 				settings={ settings( true, [ ability( 'get-site-health', true ) ] ) }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 				onNavigate={ onNavigate }
 			/>
 		);

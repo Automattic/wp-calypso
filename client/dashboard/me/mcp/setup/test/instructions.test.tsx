@@ -1,6 +1,7 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { MCP_SERVER_NAME, MCP_SERVER_URL } from '../../connect-agents';
 import McpSetupInstructions from '../instructions';
@@ -64,7 +65,7 @@ describe( '<McpSetupInstructions />', () => {
 	} );
 
 	test( 'copies the config', async () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( navigator, 'clipboard', { value: { writeText }, configurable: true } );
 		render( <McpSetupInstructions /> );
 
