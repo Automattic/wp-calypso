@@ -1,3 +1,4 @@
+import { omit } from '@automattic/js-utils';
 import { combineReducers } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,
@@ -23,15 +24,18 @@ const list = ( state = {}, action ) => {
 			};
 			break;
 		case MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS: {
-			const ownerships = Object.values( state?.[ action.siteId ]?.ownerships ?? {} ).filter(
-				( { id } ) => id !== action.subscriptionId
-			);
+			const siteState = state[ action.siteId ];
+			if ( ! siteState?.ownerships.hasOwnProperty( action.subscriptionId ) ) {
+				return state;
+			}
+
 			state = {
 				...state,
 
 				[ action.siteId ]: {
-					total: ownerships.length,
-					ownerships: { ...ownerships },
+					...siteState,
+					total: Math.max( 0, siteState.total - 1 ),
+					ownerships: omit( siteState.ownerships, action.subscriptionId ),
 				},
 			};
 		}
