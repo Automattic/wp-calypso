@@ -71,7 +71,7 @@ export function WooHumanSupportRouteOutcome( {
 					<p className="help-center-woo-routing-step__intro">
 						{ createInterpolateElement(
 							__(
-								'We support WooCommerce, our free core plugin, in public spaces: our <docs>docs</docs> and <forums>forums</forums>. If the answer above doesn’t help, ask in the forums.',
+								'We support WooCommerce, our free core plugin, in public spaces: our <docs>docs</docs> and <forums>forums</forums>. If you still need help, ask in the forums.',
 								__i18n_text_domain__
 							),
 							links
