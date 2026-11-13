@@ -1,5 +1,7 @@
 /**
- * Checks that the Vite dev server can still serve the client: `yarn vite-check`.
+ * Checks for drift between the webpack and Vite configurations: `yarn vite-check`. Webpack builds
+ * production and Vite serves the Dashboard in development, so code can work with one and not the
+ * other. This check is needed for as long as the repo has both bundlers.
  *
  * With the dev server's config, it pre-bundles the dependencies Vite's scanner finds from the
  * entries, then transforms every first-party module reachable from them, and fails on any error.

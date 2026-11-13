@@ -135,7 +135,8 @@ const testPackagesVitest = withVitestInfo(
 );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
 
-// Fails when the Vite dev server can no longer serve the Dashboard, which webpack builds don't notice.
+// Checks for drift between the webpack and Vite configurations while both bundlers live in the repo:
+// fails when the Vite dev server can no longer serve the Dashboard, which webpack builds don't notice.
 const viteCheck = {
 	name: 'yarn',
 	args: 'vite-check',
