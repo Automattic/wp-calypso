@@ -34,21 +34,18 @@
 	list-style: none;
 	overflow-wrap: anywhere;
 
-	&.is-reply > li > :last-child {
-		padding-inline-start: 48px;
-	}
+	// The comment a reply answers, or that someone liked, sits as a smaller quote on
+	// a gray panel, so what happened to it leads and a reply's own quotes can't be
+	// mistaken for it.
+	.wpnc-simplified__thread-parent.is-compact {
+		padding: $grid-unit-15 $grid-unit-20;
+		border-radius: $radius-large;
+		background: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
 
-	&.is-reply .wpnc-simplified__thread-parent {
-		position: relative;
-
-		&::before {
-			content: "";
-			position: absolute;
-			inset-block: 48px -4px;
-			inset-inline-start: 17px;
-			width: 2px;
-			border-radius: 2px;
-			background: var(--wp-components-color-gray-300, #{$gray-300});
+		// The token isn't remapped for the dark theme, so recess the panel into the
+		// page's darker background, as the light theme does.
+		@include ui-mixins.when-dark-theme {
+			background: var(--dashboard__background-color);
 		}
 
 		.wpnc-simplified__author,
@@ -59,14 +56,41 @@
 
 		.wpnc-simplified__parent-text {
 			@extend .wpnc-simplified__quiet-links;
-			color: var(--wp-components-color-gray-700, #{$gray-700});
 		}
 	}
 }
 
-.wpnc-simplified__card + .wpnc-simplified__thread,
+// The post or site card sits 24px above what follows; the quoted comment then
+// sits closer to the reply or the people it's about.
+.wpnc-simplified__people > .wpnc-simplified__card {
+	margin-block-end: $grid-unit-10;
+}
+
+.wpnc-simplified > .wpnc-simplified__card + .wpnc-simplified__thread,
 .wpnc-simplified__thread + .wpnc-simplified__heading {
 	margin-top: $grid-unit-10;
+}
+
+// The closing "And 7 others liked your post" line carries on from the people, in
+// gray as a footnote, with its link reading like Subscribe beside them. With the
+// last row's bottom padding, it sits 24px below it.
+.wpnc-simplified__more-people {
+	margin: 0;
+	color: var(--wpds-color-foreground-content-neutral-weak, #707070);
+	line-height: 20px;
+
+	@include ui-mixins.when-dark-theme {
+		color: var(--wp-components-color-gray-700, #{$gray-700});
+	}
+
+	a {
+		color: var(--wp-admin-theme-color);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 .wpnc-simplified__photo {
@@ -84,6 +108,24 @@
 	img:not(.emoji) {
 		display: none;
 	}
+}
+
+// Quoted text in the comment takes a thin bar, upright so longer quotes stay easy
+// to read.
+.wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content blockquote {
+	padding-inline: $grid-unit-20 0;
+	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-200, #{$gray-200});
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+	font-style: normal;
+}
+
+// Text quoted inside the quoted comment takes the same thin bar, indented less to
+// suit the smaller text, and no gap below so the two-line preview isn't half blank.
+.wpnc-simplified__thread-parent.is-compact .wpnc-simplified__parent-text blockquote {
+	margin: 0;
+	padding-inline: $grid-unit-15 0;
+	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-300, #{$gray-300});
+	font-style: normal;
 }
 
 .wpnc-simplified__parent-text.is-excerpt img:not(.emoji) {
