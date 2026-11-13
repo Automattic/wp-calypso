@@ -28,7 +28,7 @@ const mockEligibility = ( reason: StudentPlanEligibilityReason, emailDomain = 'm
 const render = ( props?: Partial< StepProps >, email = 'student@mit.edu' ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-	return renderStep(
+	renderStep(
 		<QueryClientProvider client={ queryClient }>
 			<StudentPlanEligibility
 				{ ...mockStepProps( {
@@ -43,6 +43,8 @@ const render = ( props?: Partial< StepProps >, email = 'student@mit.edu' ) => {
 			initialState: { currentUser: { user: { email } } },
 		}
 	);
+
+	return queryClient;
 };
 
 describe( 'StudentPlanEligibility', () => {
@@ -63,6 +65,21 @@ describe( 'StudentPlanEligibility', () => {
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
 		expect( submit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	/**
+	 * Calypso restores persisted queries on page load, so a stale "eligible" from an earlier
+	 * visit would skip the check for an account that has since bought the plan.
+	 */
+	it( 'keeps the eligibility answer out of the persisted query cache', async () => {
+		mockEligibility( 'not_academic' );
+
+		const queryClient = render();
+
+		await screen.findByRole( 'heading', { name: 'The Student plan needs a school email' } );
+		expect(
+			queryClient.getQueryCache().find( { queryKey: [ 'student-plan-eligibility' ] } )?.meta
+		).toEqual( { persist: false } );
 	} );
 
 	/**

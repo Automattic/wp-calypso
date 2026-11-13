@@ -25,6 +25,9 @@ export const useStudentPlanEligibility = () =>
 		staleTime: 0,
 		gcTime: 0,
 		refetchOnWindowFocus: 'always',
+		// A persisted answer would be restored on the next page load and could move an account
+		// forward before the fresh check comes back.
+		meta: { persist: false },
 		// The endpoint is rate limited; a failed check shows a retry button instead.
 		retry: false,
 	} );
