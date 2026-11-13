@@ -25,8 +25,16 @@ export const getTemporaryNoteTitle = ( note: Note ) => {
 				count
 			);
 		}
-		case 'follow':
-			return __( 'Subscribers' );
+		case 'follow': {
+			const count = note.meta?.actor_count;
+			return count
+				? sprintf(
+						/* translators: %d is the number of people who subscribed to the site. */
+						_n( '%d person subscribed', '%d people subscribed', count ),
+						count
+					)
+				: __( 'Subscribers' );
+		}
 		case 'activitypub_followed_note':
 			return __( 'Followers' );
 		case 'activitypub_interaction_note':

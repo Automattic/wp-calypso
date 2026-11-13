@@ -74,6 +74,61 @@ describe( 'ThreadParent', () => {
 	} );
 } );
 
+describe( 'People lists', () => {
+	const person = ( name: string, site: string ) => ( {
+		type: 'user',
+		text: name,
+		ranges: [ { type: 'user', indices: [ 0, name.length ], id: 1 } ],
+		meta: {
+			ids: { user: 1 },
+			links: { home: `https://${ site.toLowerCase().replace( / /g, '' ) }.example` },
+			titles: { home: site },
+		},
+	} );
+
+	it( 'counts the people the server leaves out', () => {
+		render(
+			panel(
+				reply( 7, {
+					type: 'like',
+					body: [
+						person( 'Mia Chen', 'Octagonal' ),
+						person( 'Ben Ito', 'Willow' ),
+						{
+							text: 'View likes on your post.',
+							ranges: [ { type: 'post', indices: [ 14, 23 ], url: 'https://site.example/post/' } ],
+						},
+					] as Note[ 'body' ],
+					meta: { ids: { site: 10, post: 20 }, actor_count: 9 },
+				} )
+			)
+		);
+
+		expect( screen.getByText( /liked your post/ ) ).toHaveTextContent(
+			'And 7 others liked your post.'
+		);
+		expect( screen.getByRole( 'link', { name: '7 others' } ) ).toHaveAttribute(
+			'href',
+			'https://site.example/post/'
+		);
+		expect( screen.queryByText( /View likes/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows the site’s address when its title repeats the person’s name', () => {
+		render(
+			panel(
+				reply( 8, {
+					type: 'like',
+					body: [ person( 'Mia Chen', 'Mia Chen' ) ] as Note[ 'body' ],
+					meta: { ids: { site: 10, post: 20 }, actor_count: 1 },
+				} )
+			)
+		);
+
+		expect( screen.getByText( 'miachen.example' ) ).toBeInTheDocument();
+	} );
+} );
+
 describe( 'getTemporaryNoteTitle', () => {
 	it( 'counts the likes on a comment or a post', () => {
 		const meta = { actor_count: 5 } as Note[ 'meta' ];
@@ -84,5 +139,18 @@ describe( 'getTemporaryNoteTitle', () => {
 		expect( getTemporaryNoteTitle( reply( 6, { type: 'like', meta } ) ) ).toBe(
 			'5 likes on your post'
 		);
+	} );
+
+	it( 'counts the people who subscribed', () => {
+		expect(
+			getTemporaryNoteTitle(
+				reply( 9, { type: 'follow', meta: { actor_count: 17 } as Note[ 'meta' ] } )
+			)
+		).toBe( '17 people subscribed' );
+		expect(
+			getTemporaryNoteTitle(
+				reply( 10, { type: 'follow', meta: { actor_count: 1 } as Note[ 'meta' ] } )
+			)
+		).toBe( '1 person subscribed' );
 	} );
 } );

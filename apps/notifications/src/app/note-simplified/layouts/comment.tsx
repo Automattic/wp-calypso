@@ -14,7 +14,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 	return (
 		<>
 			{ post && <PostCard post={ post } site={ site } url={ note.url } /> }
-			<Thread spacing={ 4 }>
+			<Thread spacing={ 6 }>
 				{ repliedTo && (
 					<ThreadParent
 						comment={ repliedTo }
