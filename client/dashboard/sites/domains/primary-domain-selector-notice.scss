@@ -1,12 +1,9 @@
 .primary-domain-selector-notice__message {
-	max-width: var( --wpds-dimension-surface-width-xl, 720px );
-}
+	max-inline-size: var( --wpds-dimension-surface-width-xl, 720px );
 
-// `NoticeActionLink` styles an anchor; this one renders as a button because it opens a modal.
-.primary-domain-selector-notice__change {
-	padding: 0;
-	border: 0;
-	background: none;
-	cursor: pointer;
-	text-decoration-line: underline;
+	// Below the cap, balance the lines so "Learn more" never wraps onto a line of its own.
+	// 774px is the cap plus the notice's padding and icon; container queries can't read the token.
+	@container (width < 774px) {
+		text-wrap: balance;
+	}
 }

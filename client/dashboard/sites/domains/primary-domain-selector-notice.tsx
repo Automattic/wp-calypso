@@ -1,8 +1,14 @@
+import {
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
-import { Notice, NoticeActionLink } from '../../components/notice';
+import { Notice } from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { canUserSetPrimaryDomain, isPrimaryDomainCandidate } from '../../utils/domain';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
@@ -73,23 +79,19 @@ const PrimaryDomainSelectorNotice = ( {
 	};
 
 	return (
-		<Notice
-			variant="info"
-			title={ __( 'Primary site address' ) }
-			actions={
-				canUserSetPrimaryDomainOnThisSite &&
-				domainsList.length > 0 && (
-					<NoticeActionLink
-						className="primary-domain-selector-notice__change"
-						render={ <button type="button" /> }
-						onClick={ () => setIsModalOpen( true ) }
-					>
-						{ __( 'Change primary site address' ) }
-					</NoticeActionLink>
-				)
-			}
-		>
-			<div className="primary-domain-selector-notice__message">{ renderMessage() }</div>
+		<Notice variant="info" title={ __( 'Primary site address' ) }>
+			<VStack spacing={ 4 }>
+				<Text as="p" className="primary-domain-selector-notice__message">
+					{ renderMessage() }
+				</Text>
+				{ canUserSetPrimaryDomainOnThisSite && domainsList.length > 0 && (
+					<HStack justify="flex-start">
+						<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
+							{ __( 'Change primary site address' ) }
+						</Button>
+					</HStack>
+				) }
+			</VStack>
 			{ isModalOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }
