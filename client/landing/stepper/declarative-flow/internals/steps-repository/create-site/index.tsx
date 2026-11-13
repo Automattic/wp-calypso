@@ -8,6 +8,7 @@ import {
 	ENTREPRENEUR_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	SITE_MIGRATION_FLOW,
+	STUDENT_FLOW,
 	StepContainer,
 	addProductsToCart,
 	createSite,
@@ -256,6 +257,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		flow === AI_SITE_BUILDER_FLOW ||
 		isAIBuilderOnboardingFlow( flow ) ||
 		flow === EDUCATION_FLOW ||
+		flow === STUDENT_FLOW ||
 		flow === STATIC_SITE_IMPORT_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
