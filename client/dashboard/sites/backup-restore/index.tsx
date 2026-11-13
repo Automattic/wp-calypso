@@ -18,7 +18,11 @@ function SiteBackupRestore() {
 				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Site restore' ) } />
 			}
 		>
-			<BackupRestoreFlow site={ site } rewindId={ rewindId } />
+			<BackupRestoreFlow
+				site={ site }
+				rewindId={ rewindId }
+				restoreLinkTo={ siteBackupRestoreRoute.fullPath }
+			/>
 		</PageLayout>
 	);
 }

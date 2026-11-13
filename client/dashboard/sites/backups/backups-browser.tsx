@@ -57,6 +57,7 @@ interface BackupsBrowserProps {
 	gmtOffset?: number;
 	searchParams?: Record< string, unknown >;
 	onSelectBackup: ( backup: ActivityLogEntry | null ) => void;
+	restoreLinkTo?: string;
 	onRequestRestore?: ( backup: ActivityLogEntry ) => void;
 	onRequestDownload?: ( backup: ActivityLogEntry ) => void;
 	onGranularDownloadReady?: ( backup: ActivityLogEntry, downloadId: number ) => void;
@@ -73,6 +74,7 @@ export function BackupsBrowser( {
 	gmtOffset,
 	searchParams,
 	onSelectBackup,
+	restoreLinkTo,
 	onRequestRestore,
 	onRequestDownload,
 	onGranularDownloadReady,
@@ -81,6 +83,7 @@ export function BackupsBrowser( {
 		<BackupDetails
 			backup={ backup }
 			site={ site }
+			restoreLinkTo={ restoreLinkTo }
 			timezoneString={ timezoneString }
 			gmtOffset={ gmtOffset }
 			onRequestRestore={ onRequestRestore ? () => onRequestRestore( backup ) : undefined }

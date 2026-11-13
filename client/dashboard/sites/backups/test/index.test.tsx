@@ -159,6 +159,7 @@ vi.mock( '../../../app/router/sites', () => ( {
 	siteBackupsIndexRoute: {
 		fullPath: '/sites/$siteSlug/backups/',
 	},
+	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
 } ) );
 
 function renderBackupsListPage(

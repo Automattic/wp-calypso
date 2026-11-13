@@ -1,3 +1,4 @@
+import { getKnownThreatsForRewindId, isFlagged } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -6,8 +7,9 @@ import { useLocale } from '../../../app/locale';
 import { ActivityActor } from '../../../components/logs-activity/activity-actor';
 import { ActivityEvent } from '../../../components/logs-activity/activity-event';
 import { Activity } from '../../../components/logs-activity/types';
+import { KnownThreatsBadge } from '../../backups/known-threats/known-threats-badge';
 import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
-import type { ActivityLogGroupCountResponse } from '@automattic/api-core';
+import type { ActivityLogGroupCountResponse, BackupsKnownThreatsPage } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 export type ActivityLogTypeOption = {
@@ -20,11 +22,13 @@ type UseActivityFieldsArgs =
 			timezoneString: string;
 			gmtOffset?: number;
 			activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined;
+			knownThreatsPage?: BackupsKnownThreatsPage;
 	  }
 	| {
 			timezoneString?: undefined;
 			gmtOffset: number;
 			activityLogTypes?: ActivityLogGroupCountResponse[ 'groups' ] | undefined;
+			knownThreatsPage?: BackupsKnownThreatsPage;
 	  };
 
 const getActivityLogTypeSlugFromName = ( name?: string ): string => {
@@ -49,10 +53,14 @@ const getActivityLogTypeDescriptionFromName = (
 	return activityLogTypes?.[ slug ]?.name ?? slug;
 };
 
+const isBackupCompleteRow = ( item: Activity ): boolean =>
+	item.activityIsRewindable && /^rewind__backup(_only)?_complete/.test( item.activityName ?? '' );
+
 export function useActivityFields( {
 	timezoneString,
 	gmtOffset,
 	activityLogTypes,
+	knownThreatsPage,
 }: UseActivityFieldsArgs ): Field< Activity >[] {
 	const locale = useLocale();
 	const isLargeScreen = useViewportMatch( 'huge', '>=' );
@@ -119,7 +127,21 @@ export function useActivityFields( {
 					return `${ item.activityTitle }: ${ item.activityDescription.textDescription }`;
 				},
 				render: ( { item } ) => {
-					return <ActivityEvent activity={ item } />;
+					// Only the backup's own row is marked, not every restore point after it.
+					const knownThreats =
+						knownThreatsPage && item.rewindId && isBackupCompleteRow( item )
+							? getKnownThreatsForRewindId( knownThreatsPage, item.rewindId )
+							: null;
+					return (
+						<ActivityEvent
+							activity={ item }
+							badge={
+								knownThreats && isFlagged( knownThreats ) ? (
+									<KnownThreatsBadge count={ knownThreats.flagged } showWarning />
+								) : null
+							}
+						/>
+					);
 				},
 				filterBy: { operators: [] },
 			},
@@ -148,5 +170,13 @@ export function useActivityFields( {
 				filterBy: { operators: [ 'isAny' as Operator ] },
 			},
 		];
-	}, [ timezoneString, gmtOffset, locale, dateTimeLabel, activityLogTypes, localIsUTC ] );
+	}, [
+		timezoneString,
+		gmtOffset,
+		locale,
+		dateTimeLabel,
+		activityLogTypes,
+		localIsUTC,
+		knownThreatsPage,
+	] );
 }

@@ -32,6 +32,7 @@ interface FileBrowserNodeProps {
 	siteSlug: string;
 	hasCredentials?: boolean;
 	isRestoreEnabled?: boolean;
+	restoreDisabledHint?: string;
 	onTrackEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	source: 'calypso' | 'dashboard';
 	onRequestGranularRestore: ( siteSlug: string, rewindId: number ) => void;
@@ -50,6 +51,7 @@ function FileBrowserNode( {
 	siteSlug,
 	hasCredentials,
 	isRestoreEnabled,
+	restoreDisabledHint,
 	onTrackEvent,
 	source,
 	onRequestGranularRestore,
@@ -317,6 +319,7 @@ function FileBrowserNode( {
 							siteSlug={ siteSlug }
 							hasCredentials={ hasCredentials }
 							isRestoreEnabled={ isRestoreEnabled }
+							restoreDisabledHint={ restoreDisabledHint }
 							onTrackEvent={ onTrackEvent }
 							source={ source }
 							onRequestGranularRestore={ onRequestGranularRestore }
@@ -444,6 +447,7 @@ function FileBrowserNode( {
 					siteSlug={ siteSlug }
 					hasCredentials={ hasCredentials }
 					isRestoreEnabled={ isRestoreEnabled }
+					restoreDisabledHint={ restoreDisabledHint }
 					onTrackEvent={ onTrackEvent }
 					source={ source }
 					onRequestGranularRestore={ onRequestGranularRestore }
