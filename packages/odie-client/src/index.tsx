@@ -17,7 +17,7 @@ import {
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { trackEvent, currentUser, chat, productName } = useOdieAssistantContext();
+	const { trackEvent, currentUser, chat, aiDisclosureLine } = useOdieAssistantContext();
 	const aiDisclosureId = useId();
 	useRefreshChatOnFocus();
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
@@ -61,7 +61,7 @@ export const OdieAssistant: React.FC = () => {
 	return (
 		<div className="chatbox">
 			{ showAiDisclosureLine && (
-				<AiDisclosureLine id={ aiDisclosureId } productName={ productName } />
+				<AiDisclosureLine id={ aiDisclosureId } line={ aiDisclosureLine } />
 			) }
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />

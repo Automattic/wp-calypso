@@ -5,6 +5,7 @@
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useEffect } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
@@ -41,6 +42,7 @@ export function HelpCenterChat( {
 		launcherContext,
 	} = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
+	const { __ } = useI18n();
 	const { search } = useLocation();
 	const { data } = useSupportStatus( ! featureConfig.chat.skipSupportStatus );
 	const params = new URLSearchParams( search );
@@ -97,7 +99,7 @@ export function HelpCenterChat( {
 			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			isChatRestricted={ Boolean( isChatRestricted ) }
 			launcherContext={ launcherContext }
-			productName={ featureConfig.productName }
+			aiDisclosureLine={ featureConfig.aiDisclosureLine?.( __ ) }
 		>
 			<div className="help-center__container-chat">
 				<OdieAssistant />

@@ -51,7 +51,7 @@ function setUp( {
 		trackEvent: vi.fn(),
 		currentUser: { display_name: 'Me' },
 		chat: { messages: [], conversationId: null, provider, status: chatStatus } as Chat,
-		productName: 'WordPress.com',
+		aiDisclosureLine: 'You’re chatting with AI from WordPress.com Support.',
 	} as unknown as ReturnType< typeof useOdieAssistantContext > );
 	vi.mocked( useCurrentSupportInteraction ).mockReturnValue( {
 		data: {

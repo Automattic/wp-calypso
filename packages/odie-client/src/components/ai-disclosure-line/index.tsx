@@ -1,19 +1,12 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { getAiDisclosureLine } from '../../utils/ai-disclosure-line';
 import './style.scss';
 
-export const AiDisclosureLine = ( { id, productName }: { id: string; productName?: string } ) => {
-	const { __, hasTranslation } = useI18n();
-	const { text, isEnglish } = getAiDisclosureLine( productName, { __, hasTranslation } );
+export const AiDisclosureLine = ( { id, line }: { id: string; line?: string } ) => {
+	const { __ } = useI18n();
 
 	return (
-		<p
-			id={ id }
-			className="odie-ai-disclosure-line"
-			lang={ isEnglish ? 'en' : undefined }
-			dir={ isEnglish ? 'ltr' : undefined }
-		>
-			{ text }
+		<p id={ id } className="odie-ai-disclosure-line">
+			{ line || __( 'You’re chatting with AI.', __i18n_text_domain__ ) }
 		</p>
 	);
 };

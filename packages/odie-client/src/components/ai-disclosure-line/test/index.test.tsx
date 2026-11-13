@@ -9,59 +9,40 @@ describe( 'AiDisclosureLine', () => {
 		resetLocaleData( undefined, 'default' );
 	} );
 
-	it( 'shows the line with the product, marked as English', () => {
-		render( <AiDisclosureLine id="x" productName="WordPress.com" /> );
-
-		const line = screen.getByText( 'You’re chatting with AI from WordPress.com Support.' );
-		expect( line ).toHaveAttribute( 'id', 'x' );
-		expect( line ).toHaveAttribute( 'lang', 'en' );
-	} );
-
-	it( 'marks the English line as left to right', () => {
-		render( <AiDisclosureLine id="x" productName="WordPress.com" /> );
+	it( 'shows the product’s line as is', () => {
+		render(
+			<AiDisclosureLine id="x" line="You’re chatting with AI from WordPress.com Support." />
+		);
 
 		expect(
 			screen.getByText( 'You’re chatting with AI from WordPress.com Support.' )
-		).toHaveAttribute( 'dir', 'ltr' );
+		).toHaveAttribute( 'id', 'x' );
 	} );
 
-	it( 'has no lang attribute when translated', () => {
-		setLocaleData(
-			{
-				'You’re chatting with AI from %s Support.': [
-					'Estás chateando con la IA del soporte de %s.',
-				],
-			},
-			'default'
-		);
-		render( <AiDisclosureLine id="x" productName="Woo" /> );
+	it( 'shows the generic line without a product line', () => {
+		render( <AiDisclosureLine id="x" /> );
 
-		const line = screen.getByText( 'Estás chateando con la IA del soporte de Woo.' );
-		expect( line ).not.toHaveAttribute( 'lang' );
-		expect( line ).not.toHaveAttribute( 'dir' );
+		expect( screen.getByText( 'You’re chatting with AI.' ) ).toBeInTheDocument();
 	} );
 
-	it( 'updates when the translation arrives after the first render', () => {
+	it( 'shows the generic line when the product line is empty', () => {
+		render( <AiDisclosureLine id="x" line="" /> );
+
+		expect( screen.getByText( 'You’re chatting with AI.' ) ).toBeInTheDocument();
+	} );
+
+	it( 'updates the generic line when its translation arrives after the first render', () => {
 		render(
 			<I18nProvider i18n={ defaultI18n }>
-				<AiDisclosureLine id="x" productName="Woo" />
+				<AiDisclosureLine id="x" />
 			</I18nProvider>
 		);
-		expect( screen.getByText( 'You’re chatting with AI from Woo Support.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'You’re chatting with AI.' ) ).toBeInTheDocument();
 
 		act( () => {
-			setLocaleData(
-				{
-					'You’re chatting with AI from %s Support.': [
-						'Estás chateando con la IA del soporte de %s.',
-					],
-				},
-				'default'
-			);
+			setLocaleData( { 'You’re chatting with AI.': [ 'Estás chateando con la IA.' ] }, 'default' );
 		} );
 
-		expect(
-			screen.getByText( 'Estás chateando con la IA del soporte de Woo.' )
-		).toBeInTheDocument();
+		expect( screen.getByText( 'Estás chateando con la IA.' ) ).toBeInTheDocument();
 	} );
 } );

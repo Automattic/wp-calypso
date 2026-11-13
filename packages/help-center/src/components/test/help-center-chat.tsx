@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
+import { defaultI18n, resetLocaleData, setLocaleData } from '@wordpress/i18n';
+import { I18nProvider } from '@wordpress/react-i18n';
 import { HelpCenterChat } from '../help-center-chat';
 
 const mockNavigate = jest.fn();
@@ -30,7 +32,11 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useFeatureConfig: () => ( { chat: {}, productName: 'Woo' } ),
+	useFeatureConfig: () => ( {
+		chat: {},
+		aiDisclosureLine: ( __: ( text: string, domain?: string ) => string ) =>
+			__( 'You’re chatting with AI from Woo Support.', 'default' ),
+	} ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
@@ -125,10 +131,36 @@ describe( 'HelpCenterChat Zendesk loading', () => {
 	} );
 } );
 
-describe( 'HelpCenterChat product name', () => {
-	it( 'passes the product name on to the Odie client', () => {
+describe( 'HelpCenterChat AI disclosure line', () => {
+	it( 'passes the product’s line on to the Odie client', () => {
 		renderChat();
 
-		expect( lastProviderProps().productName ).toBe( 'Woo' );
+		expect( lastProviderProps().aiDisclosureLine ).toBe(
+			'You’re chatting with AI from Woo Support.'
+		);
+	} );
+
+	it( 'updates the product’s line when its translation loads after the first render', () => {
+		render(
+			<I18nProvider i18n={ defaultI18n }>
+				<HelpCenterChat isLoadingStatus={ false } isUserEligibleForPaidSupport={ false } />
+			</I18nProvider>
+		);
+
+		act( () => {
+			setLocaleData(
+				{
+					'You’re chatting with AI from Woo Support.': [
+						'Estás chateando con la IA del soporte de Woo.',
+					],
+				},
+				'default'
+			);
+		} );
+
+		expect( lastProviderProps().aiDisclosureLine ).toBe(
+			'Estás chateando con la IA del soporte de Woo.'
+		);
+		resetLocaleData( undefined, 'default' );
 	} );
 } );

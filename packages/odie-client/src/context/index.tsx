@@ -88,7 +88,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	forceEmailSupport = false,
 	isChatRestricted = false,
 	launcherContext,
-	productName,
+	aiDisclosureLine,
 	children,
 } ) => {
 	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded, checkoutSupportVariation } =
@@ -242,7 +242,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				forceEmailSupport,
 				isChatRestricted,
 				launcherContext,
-				productName,
+				aiDisclosureLine,
 				checkoutSupportVariation,
 			} }
 		>
