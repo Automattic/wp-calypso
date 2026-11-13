@@ -8,11 +8,28 @@ import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/co
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import {
+	BLACK_FRIDAY_2026_COUPON,
+	BLACK_FRIDAY_2026_START,
+} from 'calypso/lib/promotions/black-friday-2026';
 import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useStepNavigationWithTracking } from '../../../internals/hooks/use-step-navigation-with-tracking';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
+jest.mock( '@automattic/calypso-config', () => {
+	const actualModule = jest.requireActual( '@automattic/calypso-config' );
+	const actual = actualModule.default ?? actualModule;
+	const bf = { env: undefined as string | undefined, flag: true };
+	const config = Object.assign(
+		( key: string ) => ( 'env' === key && bf.env ? bf.env : actual( key ) ),
+		actual
+	);
+	config.isEnabled = ( flag: string ) =>
+		'black-friday-2026' === flag ? bf.flag : actual.isEnabled( flag );
+	return { __esModule: true, default: config, isEnabled: config.isEnabled, bf };
+} );
+const { bf: mockBf } = jest.requireMock( '@automattic/calypso-config' );
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
 } ) );
@@ -270,6 +287,53 @@ describe( 'onboarding flow post-checkout processing', () => {
 
 		expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.com?ref=onboarding' );
 		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'onboarding' );
+	} );
+
+	describe( 'Black Friday 2026 coupon at checkout', () => {
+		const getCheckoutCoupon = () => {
+			const checkoutUrl = ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			return new URL( checkoutUrl, 'https://wordpress.com' ).searchParams.get( 'coupon' );
+		};
+		let nowSpy: jest.SpyInstance;
+
+		beforeEach( () => {
+			mockBf.env = 'production';
+			mockBf.flag = true;
+		} );
+
+		afterEach( () => {
+			nowSpy.mockRestore();
+			mockBf.env = undefined;
+		} );
+
+		it( 'adds the sale coupon during the sale when none is given', async () => {
+			nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
+			await submitProcessing( '', { goToCheckout: true } );
+
+			expect( getCheckoutCoupon() ).toBe( BLACK_FRIDAY_2026_COUPON );
+		} );
+
+		it( 'keeps an explicit coupon during the sale', async () => {
+			nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
+			await submitProcessing( '?coupon=OTHER', { goToCheckout: true } );
+
+			expect( getCheckoutCoupon() ).toBe( 'OTHER' );
+		} );
+
+		it( 'adds no coupon during the sale when the flag is off', async () => {
+			mockBf.flag = false;
+			nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
+			await submitProcessing( '', { goToCheckout: true } );
+
+			expect( getCheckoutCoupon() ).not.toBe( BLACK_FRIDAY_2026_COUPON );
+		} );
+
+		it( 'adds no coupon outside the sale', async () => {
+			nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START - 1 );
+			await submitProcessing( '', { goToCheckout: true } );
+
+			expect( getCheckoutCoupon() ).not.toBe( BLACK_FRIDAY_2026_COUPON );
+		} );
 	} );
 } );
 

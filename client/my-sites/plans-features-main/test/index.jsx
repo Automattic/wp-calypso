@@ -2,6 +2,19 @@
  * @jest-environment jsdom
  */
 
+jest.mock( '@automattic/calypso-config', () => {
+	const actualModule = jest.requireActual( '@automattic/calypso-config' );
+	const actual = actualModule.default ?? actualModule;
+	const bf = { env: undefined, flag: true };
+	const config = Object.assign(
+		( key ) => ( 'env' === key && bf.env ? bf.env : actual( key ) ),
+		actual
+	);
+	config.isEnabled = ( flag ) =>
+		'black-friday-2026' === flag ? bf.flag : actual.isEnabled( flag );
+	return { __esModule: true, default: config, isEnabled: config.isEnabled, bf };
+} );
+const { bf: mockBf } = jest.requireMock( '@automattic/calypso-config' );
 jest.mock( 'calypso/components/marketing-message', () => () => null );
 jest.mock( '@automattic/plans-grid-next', () => ( {
 	...jest.requireActual( '@automattic/plans-grid-next' ),
@@ -60,6 +73,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
+jest.mock( 'calypso/blocks/black-friday-2026-banner', () => () => (
+	<div data-testid="black-friday-2026-banner" />
+) );
 
 import {
 	PLAN_FREE,
@@ -78,7 +94,11 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
+import {
+	BLACK_FRIDAY_2026_COUPON,
+	BLACK_FRIDAY_2026_START,
+} from 'calypso/lib/promotions/black-friday-2026';
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -560,6 +580,53 @@ describe( 'PlansFeaturesMain', () => {
 			);
 
 			expect( onIntentResolved ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'PlansFeaturesMain. Black Friday 2026 bar', () => {
+		let nowSpy;
+
+		beforeEach( () => {
+			nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
+			mockBf.env = 'production';
+			mockBf.flag = true;
+		} );
+
+		afterEach( () => {
+			nowSpy.mockRestore();
+			mockBf.env = undefined;
+		} );
+
+		test( 'renders when the grid prices the sale coupon', async () => {
+			renderWithProvider( <PlansFeaturesMain { ...props } coupon={ BLACK_FRIDAY_2026_COUPON } /> );
+
+			expect( await screen.findByTestId( 'black-friday-2026-banner' ) ).toBeVisible();
+		} );
+
+		test.each( [
+			[ 'a different coupon', 'OTHER' ],
+			[ 'no coupon', undefined ],
+		] )( 'does not render with %s', async ( _, coupon ) => {
+			renderWithProvider( <PlansFeaturesMain { ...props } coupon={ coupon } /> );
+			await act( async () => {} );
+
+			expect( screen.queryByTestId( 'black-friday-2026-banner' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not render inside the sale when the flag is off', async () => {
+			mockBf.flag = false;
+			renderWithProvider( <PlansFeaturesMain { ...props } coupon={ BLACK_FRIDAY_2026_COUPON } /> );
+			await act( async () => {} );
+
+			expect( screen.queryByTestId( 'black-friday-2026-banner' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not render outside the sale even with the sale coupon', async () => {
+			nowSpy.mockReturnValue( BLACK_FRIDAY_2026_START - 1 );
+			renderWithProvider( <PlansFeaturesMain { ...props } coupon={ BLACK_FRIDAY_2026_COUPON } /> );
+			await act( async () => {} );
+
+			expect( screen.queryByTestId( 'black-friday-2026-banner' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

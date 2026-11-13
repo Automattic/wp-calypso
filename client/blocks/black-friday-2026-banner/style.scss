@@ -1,0 +1,69 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// Fixed to the bottom of the screen; the spacer keeps the page's last row, buttons and CTAs above it.
+.black-friday-2026-banner {
+	position: fixed;
+	inset-inline: 0;
+	inset-block-end: 0;
+	// Above the grid's sticky headers, below modals and popovers.
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	padding-block: 12px;
+	padding-inline: 16px 56px;
+	background: var( --color-neutral-100 );
+	color: var( --color-text-inverted );
+
+	@include break-small {
+		padding-inline-start: 56px;
+	}
+
+	// Start after the logged-in sidebar instead of under it.
+	.layout:not( .has-no-sidebar ) .layout__secondary:not( :empty ) ~ .layout__primary & {
+		inset-inline-start: var( --sidebar-width-max );
+	}
+
+	@media ( max-width: 781px ) {
+		.layout.focus-content:not( .has-no-sidebar )
+			.layout__secondary:not( :empty )
+			~ .layout__primary
+			& {
+			inset-inline-start: 0;
+		}
+	}
+}
+
+.black-friday-2026-banner__content {
+	display: flex;
+	flex: 1;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px 16px;
+}
+
+.black-friday-2026-banner__title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.5;
+	color: var( --color-text-inverted );
+
+	@include break-small {
+		font-size: 16px;
+	}
+}
+
+.black-friday-2026-banner .black-friday-2026-banner__close {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-end: 8px;
+	transform: translateY( -50% );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		color: var( --color-text-inverted );
+	}
+}
