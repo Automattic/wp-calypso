@@ -169,6 +169,69 @@ describe( '<Emails>', () => {
 		).toBeVisible();
 	} );
 
+	describe( 'with a mailbox whose domain is no longer on WordPress.com', () => {
+		const disconnectedAccount = ( warnings: { warning_slug: string }[] ) =>
+			( {
+				account_type: EmailProvider.Google,
+				can_user_add_email: false,
+				status: 'active',
+				maximum_mailboxes: 1,
+				warnings: warnings.map( ( w ) => ( {
+					warning_type: 'action_required',
+					message: '',
+					...w,
+				} ) ),
+				domains: [ { domain: 'removed.example', is_primary: true } ],
+				emails: [
+					{
+						mailbox: 'hello',
+						domain: 'removed.example',
+						email_type: 'email',
+						role: 'standard',
+						warnings: [],
+					},
+				],
+			} ) as unknown as EmailAccount;
+
+		test( 'shows the mailbox as not connected', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [ disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ) ],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'hello@removed.example' ) ).toBeVisible();
+			expect( screen.getByText( 'Disconnected' ) ).toBeVisible();
+		} );
+
+		test( 'prefers the not connected status over pending Google terms', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [
+					disconnectedAccount( [
+						{ warning_slug: 'google_pending_tos_acceptance' },
+						{ warning_slug: 'domain_not_connected' },
+					] ),
+				],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'Disconnected' ) ).toBeVisible();
+			expect( screen.queryByText( 'Action required' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'lists the mailbox instead of the no-domain state when the user has no domains', async () => {
+			mockApi( {
+				domains: [],
+				accounts: [ disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ) ],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'hello@removed.example' ) ).toBeVisible();
+			expect( screen.queryByText( 'You need a domain to set up email' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'with Titan tiers', () => {
 		const titanAccountWithSlug = ( productSlug: string ) =>
 			( {

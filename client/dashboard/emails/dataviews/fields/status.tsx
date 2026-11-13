@@ -1,3 +1,4 @@
+import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
@@ -13,6 +14,24 @@ export const statusField: Field< Email > = {
 
 		if ( item.status === 'unverified_forwards' ) {
 			return <Text intent="warning">{ __( 'Pending verification' ) }</Text>;
+		}
+
+		if ( item.status === 'domain_not_connected' ) {
+			return (
+				<Tooltip
+					text={ __(
+						'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
+					) }
+				>
+					<Text
+						intent="error"
+						tabIndex={ 0 }
+						style={ { textDecoration: 'underline', textDecorationStyle: 'dotted' } }
+					>
+						{ __( 'Disconnected' ) }
+					</Text>
+				</Tooltip>
+			);
 		}
 
 		if ( item.status === 'google_pending_tos_acceptance' ) {
@@ -45,5 +64,6 @@ export const statusField: Field< Email > = {
 		{ value: 'unverified_forwards', label: __( 'Pending verification' ) },
 		{ value: 'google_pending_tos_acceptance', label: __( 'Finish setup' ) },
 		{ value: 'suspended', label: __( 'Expired' ) },
+		{ value: 'domain_not_connected', label: __( 'Disconnected' ) },
 	],
 };

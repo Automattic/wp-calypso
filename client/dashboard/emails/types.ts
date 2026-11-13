@@ -18,6 +18,7 @@ export interface Email {
 		| 'active'
 		| 'pending'
 		| 'suspended'
+		| 'domain_not_connected'
 		| 'google_pending_tos_acceptance'
 		| 'unverified_forwards'
 		| 'no_subscription'
