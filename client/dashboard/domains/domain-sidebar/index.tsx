@@ -20,7 +20,7 @@ import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../component
 import DomainSwitcherItem from './domain-switcher-item';
 import type { AnyRouteMatch } from '@tanstack/react-router';
 
-// Not a pathname, so breadcrumbs don't append it to their links.
+// Not a pathname, so breadcrumbs ignore it.
 const EMAILS_ORIGIN_KEY = 'domain-sidebar-emails-origin';
 
 function getOriginDomainName() {
@@ -32,10 +32,7 @@ function forgetOriginDomain( domainName: string ) {
 	setTransientQueryParamsAtPathname( EMAILS_ORIGIN_KEY, {} );
 }
 
-/**
- * Whether the match is an Emails screen for the domain the user came from.
- * Screens that name no domain count, except the unfiltered list.
- */
+// An Emails screen for the origin domain, or one naming no domain other than the unfiltered list.
 function isOriginDomainEmailsMatch( { routeId, params, search }: AnyRouteMatch ) {
 	const originDomainName = getOriginDomainName();
 	if ( ! originDomainName || ! routeId.startsWith( `${ emailsRoute.fullPath }/` ) ) {
@@ -45,9 +42,6 @@ function isOriginDomainEmailsMatch( { routeId, params, search }: AnyRouteMatch )
 	return domainName ? domainName === originDomainName : routeId !== emailsIndexRoute.id;
 }
 
-/**
- * Links back to the domain from the Emails screens the user reached from it.
- */
 export function DomainEmailsBackButton() {
 	const router = useRouter();
 	const location = useRouterState( { select: ( state ) => state.location } );
@@ -98,12 +92,11 @@ export default function DomainSidebar() {
 		}
 	}, [ overviewPath, backToParam ] );
 
-	// Forget the domain only once the user leaves it and its Emails screens, as the sidebar
-	// also unmounts on slow navigations and viewport changes.
+	// Keep the origin while the user stays in the domain or its Emails screens.
 	useEffect( () => {
 		setTransientQueryParamsAtPathname( EMAILS_ORIGIN_KEY, { domainName } );
 		return () => {
-			// `router.state.matches` lags during pending navigations.
+			// `state.matches` lags during pending navigations.
 			const matches = router.matchRoutes( router.state.location );
 			const match = matches[ matches.length - 1 ];
 			if (
