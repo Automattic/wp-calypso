@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { getSolutionsReason } from '../get-solutions-for-reason';
+import { getSolutionsForReason, getSolutionsReason } from '../get-solutions-for-reason';
 
 describe( 'getSolutionsReason', () => {
 	test.each( [ [ 'otherPriceValue', 'price/budget' ] ] )(
@@ -22,5 +22,15 @@ describe( 'getSolutionsReason', () => {
 		expect( getSolutionsReason( 'test reason', 'otherNoLongerNeedSite', 'noLongerNeedSite' ) ).toBe(
 			'test reason'
 		);
+	} );
+} );
+
+describe( 'getSolutionsForReason', () => {
+	test( 'shows support, then WordPress Agent, then guides for "Could not easily reach a human support agent"', () => {
+		expect( getSolutionsForReason( 'noHumanSupport' )?.map( ( { id } ) => id ) ).toEqual( [
+			'speak-with-support',
+			'ask-ai-assistant',
+			'find-guides',
+		] );
 	} );
 } );
