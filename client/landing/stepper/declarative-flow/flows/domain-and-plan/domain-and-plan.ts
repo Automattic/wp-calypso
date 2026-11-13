@@ -23,12 +23,12 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PLANS ];
 
 /**
- * The `domainConnectionSetupUrl` template arrives via the query string and ends up in
- * `window.location.replace()`, so resolve it the way the browser will and accept only
- * this origin and the dashboard's. Substring checks are bypassable
+ * `back_to` and the `domainConnectionSetupUrl` template arrive via the query string and end
+ * up in `window.location`, so resolve them the way the browser will and accept only this
+ * origin and the dashboard's. Substring checks are bypassable
  * (`https://my.wordpress.com.evil.example`, `/\evil.example`), hence parsed origins.
  */
-function isSafeDomainConnectionSetupUrl( value: string ) {
+function isSafeRedirectUrl( value: string ) {
 	try {
 		const resolvedOrigin = new URL( value, window.location.origin ).origin;
 
@@ -49,7 +49,8 @@ const domainUpsell: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const backTo = useQuery().get( 'back_to' );
+		const backToParam = useQuery().get( 'back_to' );
+		const backTo = backToParam && isSafeRedirectUrl( backToParam ) ? backToParam : null;
 		const flowName = this.name;
 		const siteSlug = useSiteSlug()!;
 		const site = useSite();
@@ -62,8 +63,7 @@ const domainUpsell: Flow = {
 
 		const domainConnectionSetupUrlParam = useQuery().get( 'domainConnectionSetupUrl' );
 		const domainConnectionSetupUrl =
-			domainConnectionSetupUrlParam &&
-			isSafeDomainConnectionSetupUrl( domainConnectionSetupUrlParam )
+			domainConnectionSetupUrlParam && isSafeRedirectUrl( domainConnectionSetupUrlParam )
 				? domainConnectionSetupUrlParam
 				: null;
 		const { getDomainCartItems, getPlanCartItem } = useSelect(
