@@ -3,9 +3,10 @@ import { ADDING_TITAN_TO_YOUR_SITE } from '@automattic/urls';
 import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import { Notice, NoticeActionButton } from '../../components/notice';
 import { Text } from '../../components/text';
-import { DnsRecordFields } from './titan-dns-records';
+import DkimRecordsModal from './dkim-records-modal';
 import type { DkimMissingEntry } from '../hooks/use-dkim-record-checks';
 
 interface DkimMissingNoticeProps {
@@ -21,6 +22,8 @@ const DkimMissingNotice = ( {
 	showTryLater,
 	onCheckAgain,
 }: DkimMissingNoticeProps ) => {
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
 	if ( ! entries.length ) {
 		return null;
 	}
@@ -56,14 +59,19 @@ const DkimMissingNotice = ( {
 			variant="warning"
 			title={ title }
 			actions={
-				<NoticeActionButton
-					variant="solid"
-					onClick={ onCheckAgain }
-					disabled={ isChecking }
-					loading={ isChecking }
-				>
-					{ __( 'Check again' ) }
-				</NoticeActionButton>
+				<>
+					<NoticeActionButton variant="solid" onClick={ () => setIsModalOpen( true ) }>
+						{ _n( 'View record', 'View records', entries.length ) }
+					</NoticeActionButton>
+					<NoticeActionButton
+						variant="outline"
+						onClick={ onCheckAgain }
+						disabled={ isChecking }
+						loading={ isChecking }
+					>
+						{ __( 'Check again' ) }
+					</NoticeActionButton>
+				</>
 			}
 		>
 			<VStack spacing={ 3 }>
@@ -72,9 +80,6 @@ const DkimMissingNotice = ( {
 						learnMoreLink: <ExternalLink href={ ADDING_TITAN_TO_YOUR_SITE } children={ null } />,
 					} ) }
 				</Text>
-				{ entries.map( ( { domain, record } ) => (
-					<DnsRecordFields key={ domain } name={ record.name } value={ record.data } />
-				) ) }
 				{ showTryLater && (
 					<Text as="p">
 						{ _n(
@@ -85,6 +90,9 @@ const DkimMissingNotice = ( {
 					</Text>
 				) }
 			</VStack>
+			{ isModalOpen && (
+				<DkimRecordsModal entries={ entries } onClose={ () => setIsModalOpen( false ) } />
+			) }
 		</Notice>
 	);
 };

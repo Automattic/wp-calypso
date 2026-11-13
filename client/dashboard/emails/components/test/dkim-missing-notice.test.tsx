@@ -45,10 +45,13 @@ const mockForce = ( body: TitanDkimStatus[] ) =>
 
 const checkAgainButton = () => screen.getByRole( 'button', { name: 'Check again' } );
 
-const fieldValues = ( name: 'Name' | 'Value' ) =>
+const recordRows = () =>
 	screen
-		.getAllByRole( 'textbox', { name } )
-		.map( ( input ) => ( input as HTMLInputElement ).value );
+		.getAllByRole( 'row' )
+		.slice( 1 )
+		.map( ( row ) =>
+			Array.from( row.querySelectorAll( 'td' ) ).map( ( cell ) => cell.textContent )
+		);
 
 // Wires the hook to the notice the way the Emails page does.
 function DkimNotice( { enabled = true }: { enabled?: boolean } ) {
@@ -72,26 +75,41 @@ describe( '<DkimMissingNotice>', () => {
 		expect( screen.queryByText( /found\.com|wpcom\.com|failed\.com/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the record from the response', async () => {
+	test( 'shows the record in a modal', async () => {
+		const user = userEvent.setup();
 		mockStatus( [ entry() ] );
 		render( <DkimNotice /> );
 
-		await screen.findByText( TITLE );
-		expect( fieldValues( 'Name' ) ).toEqual( [ record( DOMAIN ).name ] );
-		expect( fieldValues( 'Value' ) ).toEqual( [ record( DOMAIN ).data ] );
-		expect( screen.getByRole( 'button', { name: 'Copy Value' } ) ).toBeVisible();
+		await user.click( await screen.findByRole( 'button', { name: 'View record' } ) );
+		expect( screen.getByRole( 'dialog', { name: 'DKIM record' } ) ).toBeVisible();
+		expect( recordRows() ).toEqual( [ [ DOMAIN, record( DOMAIN ).name, record( DOMAIN ).data ] ] );
+	} );
+
+	test( 'copies the record value', async () => {
+		const user = userEvent.setup();
+		mockStatus( [ entry() ] );
+		render( <DkimNotice /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'View record' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: `Copy the record value for ${ DOMAIN }` } )
+		);
+		expect( await navigator.clipboard.readText() ).toBe( record( DOMAIN ).data );
+		expect( screen.getByRole( 'button', { name: 'Copied' } ) ).toBeVisible();
 	} );
 
 	test( 'lists every domain with a missing record in one notice', async () => {
+		const user = userEvent.setup();
 		mockStatus( [ entry(), entry( { domain: 'other.com' } ) ] );
 		render( <DkimNotice /> );
 
 		expect( await screen.findByText( 'Add the DKIM records for 2 domains' ) ).toBeVisible();
-		expect( fieldValues( 'Name' ) ).toEqual( [
-			record( DOMAIN ).name,
-			record( 'other.com' ).name,
-		] );
 		expect( screen.getAllByRole( 'button', { name: 'Check again' } ) ).toHaveLength( 1 );
+		await user.click( screen.getByRole( 'button', { name: 'View records' } ) );
+		expect( recordRows() ).toEqual( [
+			[ DOMAIN, record( DOMAIN ).name, record( DOMAIN ).data ],
+			[ 'other.com', record( 'other.com' ).name, record( 'other.com' ).data ],
+		] );
 	} );
 
 	test( 'shows nothing when the request fails', async () => {
