@@ -123,9 +123,12 @@ describe( '<NewsCard>', () => {
 			announcement_type: 'announcement',
 		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
-			event_id: '2',
-			cta_id: 'primary',
+			announcement_id: '2',
 			announcement_type: 'announcement',
+			cta_id: 'primary',
+			cta_url: '/hosting/pressable',
+			cta_label: 'View promo details',
+			cta_is_external: false,
 		} );
 	} );
 

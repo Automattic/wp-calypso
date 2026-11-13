@@ -140,12 +140,16 @@ export function AnnouncementDescription( { announcement }: { announcement: Annou
 function trackCta(
 	recordTracksEvent: RecordTracksEvent | undefined,
 	announcement: Announcement,
+	cta: AnnouncementCta,
 	ctaId: 'primary' | 'secondary'
 ) {
 	recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
-		event_id: announcement.id,
-		cta_id: ctaId,
+		announcement_id: announcement.id,
 		announcement_type: announcement.type,
+		cta_id: ctaId,
+		cta_url: cta.url,
+		cta_label: cta.label,
+		cta_is_external: cta.isExternal === true,
 	} );
 }
 
@@ -203,14 +207,14 @@ export function AnnouncementCtas( {
 				cta={ primaryCta }
 				variant="secondary"
 				shouldUseRouterLink={ shouldUseRouterLink }
-				onClick={ () => trackCta( recordTracksEvent, announcement, 'primary' ) }
+				onClick={ () => trackCta( recordTracksEvent, announcement, primaryCta, 'primary' ) }
 			/>
 			{ secondaryCta && (
 				<CtaButton
 					cta={ secondaryCta }
 					variant="tertiary"
 					shouldUseRouterLink={ shouldUseRouterLink }
-					onClick={ () => trackCta( recordTracksEvent, announcement, 'secondary' ) }
+					onClick={ () => trackCta( recordTracksEvent, announcement, secondaryCta, 'secondary' ) }
 				/>
 			) }
 		</ButtonStack>
