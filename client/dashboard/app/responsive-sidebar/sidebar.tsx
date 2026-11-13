@@ -14,6 +14,7 @@ import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import AgencySidebar, { AgencySidebarPromo } from './agency';
 import AgencyClientSidebar from './agency-client';
+import { BlackFridaySidebarPromo } from './black-friday-sidebar-promo';
 import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
@@ -62,6 +63,7 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
 			<AgencySidebarPromo />
+			<BlackFridaySidebarPromo />
 		</div>
 	);
 }

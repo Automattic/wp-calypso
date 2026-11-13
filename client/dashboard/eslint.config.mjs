@@ -40,6 +40,8 @@ export default defineConfig( [
 								'!calypso/lib/use-site-launch-gating-variant',
 								'!calypso/lib/load-dev-helpers',
 								'!calypso/lib/logstash',
+								// Allowed: calypso/lib/promotions (temporary, Black Friday 2026)
+								'!calypso/lib/promotions',
 								'!calypso/lib/version-compare',
 								'!calypso/lib/wp',
 								// Allowed: calypso/assets/icons
