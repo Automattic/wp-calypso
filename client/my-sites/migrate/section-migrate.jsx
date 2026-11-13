@@ -232,30 +232,6 @@ export class SectionMigrate extends Component {
 		);
 	}
 
-	renderMigrationComplete() {
-		const { targetSite, translate } = this.props;
-		const viewSiteURL = targetSite?.URL;
-
-		return (
-			<>
-				<FormattedHeader
-					className="migrate__section-header"
-					headerText={ translate( 'Congratulations!' ) }
-					align="left"
-				/>
-				<CompactCard>
-					<div className="migrate__status">
-						{ translate( 'Your import has completed successfully.' ) }
-					</div>
-					<Button primary href={ viewSiteURL }>
-						{ translate( 'View site' ) }
-					</Button>
-					<Button onClick={ this.resetMigration }>Start over</Button>
-				</CompactCard>
-			</>
-		);
-	}
-
 	renderMigrationError() {
 		const { translate } = this.props;
 
