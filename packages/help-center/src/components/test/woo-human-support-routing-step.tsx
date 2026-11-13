@@ -97,10 +97,8 @@ describe( 'WooHumanSupportRoutingStep', () => {
 			screen.getByText( /You no longer have access to our direct support channels/ )
 		).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Done' } ) );
-
-		expect( dismiss ).toHaveBeenCalled();
+		expect( screen.queryByRole( 'button', { name: 'Done' } ) ).not.toBeInTheDocument();
+		expect( dismiss ).not.toHaveBeenCalled();
 		expect( startChat ).not.toHaveBeenCalled();
 	} );
 

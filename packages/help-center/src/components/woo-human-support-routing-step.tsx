@@ -116,7 +116,8 @@ export function WooHumanSupportRoutingStep( {
 		startChat();
 	};
 
-	// The support form turns these merchants away too, with the same message.
+	// The support form turns these merchants away too, with the same message. It's the answer, so
+	// there's no Done: that would put the chat's "connect me" buttons back for the same request.
 	if ( handoff?.isSupportBlocked ) {
 		return (
 			<div className="help-center-woo-routing-step" ref={ stepRef }>
@@ -132,11 +133,6 @@ export function WooHumanSupportRoutingStep( {
 						}
 					) }
 				</p>
-				<div className="help-center-woo-routing-step__actions">
-					<Button __next40pxDefaultSize variant="tertiary" onClick={ dismiss }>
-						{ __( 'Done', __i18n_text_domain__ ) }
-					</Button>
-				</div>
 			</div>
 		);
 	}
