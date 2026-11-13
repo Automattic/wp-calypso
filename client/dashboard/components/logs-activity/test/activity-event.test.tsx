@@ -1,20 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
 import type { Activity, ActivityDescription } from '../types';
 
-jest.mock( '@automattic/calypso-config', () =>
-	jest.fn( ( key ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : '' ) )
-);
-jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
-jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn( () => false ) );
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: vi.fn( ( key ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : '' ) ),
+} ) );
+vi.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn( () => false ) } ) );
+vi.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => ( {
+	default: vi.fn( () => false ),
+} ) );
 
-const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
-const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
+const mockedIsJetpackCloud = isJetpackCloud as MockedFunction< typeof isJetpackCloud >;
+const mockedIsA8CForAgencies = isA8CForAgencies as MockedFunction< typeof isA8CForAgencies >;
 
 const createActivity = ( {
 	title = 'Summary',

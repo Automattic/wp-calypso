@@ -26,9 +26,10 @@ const fakeRequest = ( { method, url, ip, httpVersion, headers = {} } = {} ) => {
 	return req;
 };
 
-const fakeResponse = ( { statusCode, headers = {} } = {} ) => {
+const fakeResponse = ( { statusCode, headers = {}, locals = {} } = {} ) => {
 	const res = new EventEmitter();
 	res.headersSent = true;
+	res.locals = locals;
 	res.get = ( header ) => headers[ header.toLowerCase() ];
 	res.statusCode = statusCode;
 	return res;
@@ -186,6 +187,19 @@ describe( 'Logger middleware', () => {
 				url: '/calypso/abc',
 			} ),
 			res: fakeResponse(),
+		} );
+		process.env.NODE_ENV = oldNodeEnv;
+		expect( requestLogger.info ).not.toHaveBeenCalled();
+	} );
+
+	it( 'Does not log requests the bundler serves in dev mode', () => {
+		const oldNodeEnv = process.env.NODE_ENV;
+		process.env.NODE_ENV = 'development';
+		simulateRequest( {
+			req: fakeRequest( {
+				url: '/client/dashboard/app-dotcom/index.ts',
+			} ),
+			res: fakeResponse( { locals: { servedByBundler: true } } ),
 		} );
 		process.env.NODE_ENV = oldNodeEnv;
 		expect( requestLogger.info ).not.toHaveBeenCalled();

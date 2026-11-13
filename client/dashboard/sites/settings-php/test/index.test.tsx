@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { sitePHPVersionQuery } from '@automattic/api-queries';

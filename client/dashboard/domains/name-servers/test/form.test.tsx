@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import NameServersForm from '../form';
 
 // Mock InlineSupportLink to render a simple link
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( { supportContext }: { supportContext: string } ) => (
 		// eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -17,9 +18,11 @@ jest.mock( '../../../components/inline-support-link', () => ( {
 	),
 } ) );
 
-const mockHasEnTranslation = jest.fn( () => true );
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+const mockHasEnTranslation = vi.fn( () => true );
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => mockHasEnTranslation,
 } ) );
 
@@ -30,7 +33,7 @@ describe( 'NameServersForm', () => {
 		nameServers: [],
 		isUsingDefaultNameServers: false,
 		isBusy: false,
-		onSubmit: jest.fn(),
+		onSubmit: vi.fn(),
 		defaultNameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 	};
 
@@ -257,7 +260,7 @@ describe( 'NameServersForm', () => {
 	describe( 'Form Submission', () => {
 		test( 'calls onSubmit with correct data when form is submitted', async () => {
 			const user = userEvent.setup();
-			const mockOnSubmit = jest.fn();
+			const mockOnSubmit = vi.fn();
 
 			render( <NameServersForm { ...defaultProps } onSubmit={ mockOnSubmit } /> );
 
@@ -280,7 +283,7 @@ describe( 'NameServersForm', () => {
 
 		test( 'calls onSubmit with WPCOM nameservers when they are selected', async () => {
 			const user = userEvent.setup();
-			const mockOnSubmit = jest.fn();
+			const mockOnSubmit = vi.fn();
 
 			render( <NameServersForm { ...defaultProps } onSubmit={ mockOnSubmit } /> );
 

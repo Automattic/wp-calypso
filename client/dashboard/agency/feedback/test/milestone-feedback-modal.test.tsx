@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { activeAgencyQuery, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import MilestoneFeedbackModal from '../milestone-feedback-modal';
@@ -61,7 +62,7 @@ function capturePreference() {
 }
 
 function renderModal( { withSnackbars = false }: { withSnackbars?: boolean } = {} ) {
-	const onClose = jest.fn();
+	const onClose = vi.fn();
 	const result = render(
 		<>
 			<MilestoneFeedbackModal
@@ -88,7 +89,7 @@ describe( '<MilestoneFeedbackModal>', () => {
 
 	test( 'files the answer against the agency and closes', async () => {
 		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 		mockAgency();
 		mockPreferences();
 		const survey = captureSurvey();
@@ -164,7 +165,7 @@ describe( '<MilestoneFeedbackModal>', () => {
 			'a4a-feedback': { 'referral-completed': { lastSubmittedAt: 1757000000000 } },
 		} );
 
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render(
 			<MilestoneFeedbackModal
 				type="team-member-invite-sent"
@@ -249,7 +250,7 @@ describe( '<MilestoneFeedbackModal>', () => {
 	} );
 
 	test( 'tells the partner when their answer could not be remembered', async () => {
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 		mockAgency();
 		mockPreferences();
 		captureSurvey();

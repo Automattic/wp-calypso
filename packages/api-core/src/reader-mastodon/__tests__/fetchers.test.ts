@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import { wpcom } from '../../wpcom-fetcher';
 import {
 	authorizeMastodonConnection,
@@ -605,7 +606,7 @@ describe( 'createMastodonPost', () => {
 	} );
 
 	it( 'includes media_ids and sensitive when supplied', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			url: 'https://i.example/1',
 			in_reply_to_id: null,
@@ -625,7 +626,7 @@ describe( 'createMastodonPost', () => {
 	} );
 
 	it( 'omits media_ids and sensitive when not supplied', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			url: 'u',
 			in_reply_to_id: null,
@@ -636,7 +637,7 @@ describe( 'createMastodonPost', () => {
 	} );
 
 	it( 'omits media_ids when an empty array is supplied', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			url: 'u',
 			in_reply_to_id: null,
@@ -651,7 +652,7 @@ describe( 'createMastodonPost', () => {
 	} );
 
 	it( 'forwards `visibility` and `spoiler_text` when supplied (CM-710)', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			url: 'u',
 			in_reply_to_id: null,
@@ -671,7 +672,7 @@ describe( 'createMastodonPost', () => {
 	} );
 
 	it( 'omits `spoiler_text` when an empty string is supplied', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			url: 'u',
 			in_reply_to_id: null,
@@ -697,7 +698,7 @@ describe( 'uploadMastodonMedia', () => {
 	// `source.on is not a function`. Spying on `wpcom.req.post` keeps the
 	// fetcher contract under test (path, namespace, formData envelope shape).
 	it( 'sends a multipart POST with file + description envelope', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '789',
 			type: 'image',
 			url: 'https://files.example/789.jpg',
@@ -725,7 +726,7 @@ describe( 'uploadMastodonMedia', () => {
 	} );
 
 	it( 'omits description from formData when undefined', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			type: 'image',
 			url: null,
@@ -742,7 +743,7 @@ describe( 'uploadMastodonMedia', () => {
 	} );
 
 	it( 'falls back to "blob" when file.name is empty', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '1',
 			type: 'image',
 			url: 'u',
@@ -759,7 +760,7 @@ describe( 'uploadMastodonMedia', () => {
 	} );
 
 	it( 'surfaces 202-processing result with null url/preview_url', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			id: '999',
 			type: 'image',
 			url: null,
@@ -779,7 +780,7 @@ describe( 'uploadMastodonMedia', () => {
 	} );
 
 	it( 'classifies wpcom errors via classifyMastodonError', async () => {
-		const post = jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+		const post = vi.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
 			error: 'mastodon_media_too_large',
 			message: 'image too large',
 			statusCode: 400,
