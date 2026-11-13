@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, search, globe } from '@wordpress/icons';
@@ -9,6 +9,7 @@ import OfferCard from '../../components/offer-card';
 function EmailActions() {
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate();
+	const { domainName } = useSearch( { strict: false } );
 
 	const trackEmptyStateActionClick = ( action: string ) => {
 		recordTracksEvent( 'calypso_emails_dashboard_empty_mailboxes_state_action_click', {
@@ -18,12 +19,12 @@ function EmailActions() {
 
 	const handleAddMailboxClick = () => {
 		trackEmptyStateActionClick( 'add-mailbox' );
-		navigate( { to: '/emails/choose-domain' } );
+		navigate( { to: '/emails/choose-domain', search: { domainName } } );
 	};
 
 	const handleAddForwarderClick = () => {
 		trackEmptyStateActionClick( 'add-forwarder' );
-		navigate( { to: '/emails/add-forwarder' } );
+		navigate( { to: '/emails/add-forwarder', search: { domainName } } );
 	};
 
 	return (

@@ -36,10 +36,7 @@ vi.mock( '../../../app/router/sites', () => ( {
 	siteOverviewRoute: { fullPath: '/sites/$siteSlug' },
 	siteDomainsRoute: { fullPath: '/sites/$siteSlug/domains' },
 } ) );
-vi.mock( '../../../app/router/emails', () => ( {
-	emailsRoute: { fullPath: '/emails' },
-	emailsIndexRoute: { id: '/emails/' },
-} ) );
+vi.mock( '../../../app/router/emails', () => ( { emailsRoute: { fullPath: '/emails' } } ) );
 vi.mock( '../domain-switcher-item', () => ( { default: () => null } ) );
 
 const domain = {
@@ -87,7 +84,11 @@ function renderAt( url: string ) {
 			page( 'domains/$domainName/dns' ),
 			page( 'domains/$domainName/no-sidebar' ),
 			page( 'sites/$siteSlug/domains', () => <ViewSettings siteList={ site } /> ),
-			emailsRoute.addChildren( [ emailsPage( '/' ), emailsPage( 'choose-domain' ) ] ),
+			emailsRoute.addChildren( [
+				emailsPage( '/' ),
+				emailsPage( 'choose-domain' ),
+				emailsPage( 'choose-email-solution/$domain' ),
+			] ),
 		] ),
 	} );
 
@@ -180,8 +181,8 @@ describe( 'DomainSidebar', () => {
 		}
 	);
 
-	test( 'links back to the domain from its Emails screens until the user leaves them', async () => {
-		const goTo = renderAt( '/domains/example.com?back_to=site-domains' );
+	test( 'links back to the domain from its Emails screens', async () => {
+		renderAt( '/domains/example.com' );
 
 		await userEvent.click( await screen.findByRole( 'link', { name: 'Emails' } ) );
 
@@ -189,22 +190,30 @@ describe( 'DomainSidebar', () => {
 			'href',
 			'/domains/example.com'
 		);
+	} );
 
-		await goTo( '/emails/choose-domain' );
+	test.each( [
+		'/emails/choose-domain?domainName=example.com',
+		'/emails/choose-email-solution/example.com',
+	] )( 'shows "Back to domain" on %s', async ( url ) => {
+		renderAt( url );
 
 		expect( await findBackLink( 'Back to domain' ) ).toBeVisible();
-
-		await userEvent.click( screen.getByRole( 'link', { name: 'Back to domain' } ) );
-
-		expect( await findBackLink( 'Back to site' ) ).toBeVisible();
-
-		await goTo( '/emails?domainName=example.com' );
-		await findBackLink( 'Back to domain' );
-		await goTo( '/sites/site-slug.com/domains' );
-		await goTo( '/emails?domainName=example.com' );
-
-		expect( screen.queryByRole( 'link', { name: 'Back to domain' } ) ).not.toBeInTheDocument();
 	} );
+
+	test.each( [ '/emails', '/emails/choose-domain' ] )(
+		'hides "Back to domain" on %s',
+		async ( url ) => {
+			const goTo = renderAt( '/emails/choose-domain?domainName=example.com' );
+			await findBackLink( 'Back to domain' );
+
+			await goTo( url );
+
+			await waitFor( () =>
+				expect( screen.queryByRole( 'link', { name: 'Back to domain' } ) ).not.toBeInTheDocument()
+			);
+		}
+	);
 
 	test.each( [
 		[ '/sites/site-slug.com/domains', 'Back to site' ],

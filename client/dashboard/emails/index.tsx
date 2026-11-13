@@ -171,14 +171,24 @@ function Emails() {
 									className="emails__add-email-forwarder"
 									variant="secondary"
 									__next40pxDefaultSize
-									onClick={ () => navigate( { to: addEmailForwarderRoute.to } ) }
+									onClick={ () =>
+										navigate( {
+											to: addEmailForwarderRoute.to,
+											search: { domainName: domainNameFilter },
+										} )
+									}
 								>
 									{ __( 'Add email forwarder' ) }
 								</Button>
 								<Button
 									variant="primary"
 									__next40pxDefaultSize
-									onClick={ () => navigate( { to: chooseDomainRoute.to } ) }
+									onClick={ () =>
+										navigate( {
+											to: chooseDomainRoute.to,
+											search: { domainName: domainNameFilter },
+										} )
+									}
 								>
 									{ __( 'Add mailbox' ) }
 								</Button>
