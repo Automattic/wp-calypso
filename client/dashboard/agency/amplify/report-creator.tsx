@@ -62,16 +62,26 @@ function RadioIndicator( { isSelected }: { isSelected: boolean } ) {
 		<svg width={ 16 } height={ 20 } viewBox="0 -2 16 20" aria-hidden="true" focusable="false">
 			{ isSelected ? (
 				<>
-					<circle cx={ 8 } cy={ 8 } r={ 8 } fill="var( --color-primary )" />
-					<circle cx={ 8 } cy={ 8 } r={ 4 } fill="var( --color-surface )" />
+					<circle
+						cx={ 8 }
+						cy={ 8 }
+						r={ 8 }
+						fill="var( --wpds-color-background-interactive-brand-strong )"
+					/>
+					<circle
+						cx={ 8 }
+						cy={ 8 }
+						r={ 4 }
+						fill="var( --wpds-color-background-surface-neutral-strong )"
+					/>
 				</>
 			) : (
 				<circle
 					cx={ 8 }
 					cy={ 8 }
 					r={ 7.25 }
-					fill="var( --color-surface )"
-					stroke="var( --color-text )"
+					fill="var( --wpds-color-background-surface-neutral-strong )"
+					stroke="var( --wpds-color-foreground-content-neutral )"
 					strokeWidth={ 1.5 }
 				/>
 			) }

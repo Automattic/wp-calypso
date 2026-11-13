@@ -5,7 +5,7 @@
 	height: 8px;
 	overflow: hidden;
 	border-radius: 4px;
-	background: var( --color-border-subtle );
+	background: var( --wpds-color-stroke-surface-neutral );
 }
 
 .dashboard-amplify-usage__fill {
@@ -13,16 +13,16 @@
 	inset-block: 0;
 	inset-inline-start: 0;
 	border-radius: inherit;
-	background: var( --color-primary );
+	background: var( --wpds-color-background-interactive-brand-strong );
 	transition: width 0.3s ease;
 }
 
 .dashboard-amplify-usage[data-status='low'] .dashboard-amplify-usage__fill {
-	background: var( --studio-yellow-20 );
+	background: var( --wpds-color-stroke-surface-warning-strong );
 }
 
 .dashboard-amplify-usage[data-status='cap'] .dashboard-amplify-usage__fill {
-	background: var( --color-error );
+	background: var( --wpds-color-stroke-surface-error-strong );
 }
 
 .dashboard-amplify-limit-reached {
@@ -31,7 +31,7 @@
 	box-sizing: border-box;
 	width: min( 100%, 680px );
 	padding: 24px;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 8px;
 	text-align: center;
 	text-wrap: pretty;

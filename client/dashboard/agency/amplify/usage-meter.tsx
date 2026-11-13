@@ -57,7 +57,11 @@ function TierBars( {
 			width={ 16 }
 			height={ 12 }
 			viewBox={ `0 0 ${ levels * 4 - 1 } 12` }
-			fill={ isCurrent ? 'var( --color-primary )' : 'var( --color-text-subtle )' }
+			fill={
+				isCurrent
+					? 'var( --wpds-color-foreground-interactive-brand )'
+					: 'var( --wpds-color-foreground-content-neutral-weak )'
+			}
 			aria-hidden="true"
 			focusable="false"
 		>
@@ -170,7 +174,7 @@ function LimitsExplainer( {
 												padding: '6px 8px',
 												borderRadius: '4px',
 												background: isCurrent
-													? 'color-mix( in srgb, var( --color-primary ) 8%, transparent )'
+													? 'color-mix( in srgb, var( --wpds-color-background-interactive-brand-strong ) 8%, transparent )'
 													: undefined,
 											} }
 										>
@@ -188,7 +192,7 @@ function LimitsExplainer( {
 														size={ 11 }
 														lineHeight="14px"
 														weight={ 500 }
-														color="var( --color-primary )"
+														color="var( --wpds-color-foreground-interactive-brand )"
 													>
 														{ __( 'Your tier' ) }
 													</Text>

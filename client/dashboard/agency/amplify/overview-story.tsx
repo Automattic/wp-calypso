@@ -122,7 +122,7 @@ function ScoreCategories() {
 					className="dashboard-amplify-story__rubric-intro"
 					size={ 16 }
 					lineHeight="1.6"
-					color="var( --color-text-subtle )"
+					color="var( --wpds-color-foreground-content-neutral-weak )"
 				>
 					{ __(
 						'Each lens looks at eight categories. Together, they show where a homepage is doing well and where it needs improvements.'
@@ -145,7 +145,7 @@ function ScoreCategories() {
 								className="dashboard-amplify-story__rubric-perspective-text"
 								size={ 14 }
 								lineHeight="1.5"
-								color="var( --color-text-subtle )"
+								color="var( --wpds-color-foreground-content-neutral-weak )"
 							>
 								<span>
 									{ type === 'human'
@@ -202,7 +202,7 @@ export default function AmplifyOverviewStory() {
 							className="dashboard-amplify-story__copy-text"
 							size={ 16 }
 							lineHeight="1.6"
-							color="var( --color-text-subtle )"
+							color="var( --wpds-color-foreground-content-neutral-weak )"
 						>
 							{ __(
 								'A detailed PDF of everything holding the site back. Bring prospects proof of the problems, and a clear plan for how you’ll fix them once they hire you.'
@@ -237,7 +237,7 @@ export default function AmplifyOverviewStory() {
 						className="dashboard-amplify-story__copy-text"
 						size={ 16 }
 						lineHeight="1.6"
-						color="var( --color-text-subtle )"
+						color="var( --wpds-color-foreground-content-neutral-weak )"
 					>
 						{ __(
 							'Each finding names the problem, explains why it costs the business customers, and shows how to fix it. You walk into the pitch with specifics, not opinions.'
@@ -259,7 +259,7 @@ export default function AmplifyOverviewStory() {
 						className="dashboard-amplify-story__copy-text"
 						size={ 16 }
 						lineHeight="1.6"
-						color="var( --color-text-subtle )"
+						color="var( --wpds-color-foreground-content-neutral-weak )"
 					>
 						{ __(
 							'Feed the PDF into your AI tool of choice to turn it into a branded report or pitch deck in your agency’s voice.'
@@ -284,7 +284,7 @@ export default function AmplifyOverviewStory() {
 						className="dashboard-amplify-story__copy-text"
 						size={ 16 }
 						lineHeight="1.6"
-						color="var( --color-text-subtle )"
+						color="var( --wpds-color-foreground-content-neutral-weak )"
 					>
 						{ __(
 							'Run one on a current client’s site to plan their next round of work, or on your own homepage to see it the way prospects do.'
@@ -305,7 +305,7 @@ export default function AmplifyOverviewStory() {
 						className="dashboard-amplify-story__faq-intro"
 						size={ 16 }
 						lineHeight="1.6"
-						color="var( --color-text-subtle )"
+						color="var( --wpds-color-foreground-content-neutral-weak )"
 					>
 						{ __( 'A few things to know before you create or share a report.' ) }
 					</Text>
@@ -321,7 +321,7 @@ export default function AmplifyOverviewStory() {
 								className="dashboard-amplify-story__faq-answer"
 								size={ 16 }
 								lineHeight="1.6"
-								color="var( --color-text-subtle )"
+								color="var( --wpds-color-foreground-content-neutral-weak )"
 							>
 								{ faq.answer }
 							</Text>
