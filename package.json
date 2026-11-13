@@ -133,7 +133,6 @@
 		"test-apps": "jest -c=test/apps/jest.config.js",
 		"test-apps:watch": "yarn run test-apps --watch",
 		"test-packages": "vitest run",
-		"test-packages:vitest": "vitest run",
 		"test-packages:watch": "vitest",
 		"test-server": "jest -c=test/server/jest.config.js",
 		"test-server:coverage": "yarn run test-server --coverage",
