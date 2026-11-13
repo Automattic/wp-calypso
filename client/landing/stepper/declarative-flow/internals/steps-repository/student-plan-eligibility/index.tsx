@@ -44,6 +44,9 @@ const StudentPlanEligibility: StepType< {
 	const email = useSelector( getCurrentUserEmail ) ?? '';
 	const { data, isError, isFetching, isRefetchError, refetch } = useStudentPlanEligibility();
 	const reason = data?.reason;
+	// `isBusy` doesn't disable the button, so a click during a check joins it instead of
+	// sending another request to the rate-limited endpoint.
+	const checkAgain = () => refetch( { cancelRefetch: false } );
 
 	useEffect( () => {
 		if ( reason === 'eligible' ) {
@@ -57,7 +60,7 @@ const StudentPlanEligibility: StepType< {
 				title={ __( 'We couldn’t check your email' ) }
 				subText={ __( 'Something went wrong. Please try again.' ) }
 			>
-				<Step.PrimaryButton onClick={ () => refetch() } isBusy={ isFetching }>
+				<Step.PrimaryButton onClick={ checkAgain } isBusy={ isFetching }>
 					{ __( 'Try again' ) }
 				</Step.PrimaryButton>
 			</Screen>
@@ -78,7 +81,7 @@ const StudentPlanEligibility: StepType< {
 					email
 				) }
 			>
-				<Step.PrimaryButton onClick={ () => refetch() } isBusy={ isFetching }>
+				<Step.PrimaryButton onClick={ checkAgain } isBusy={ isFetching }>
 					{ __( 'I’ve confirmed my email' ) }
 				</Step.PrimaryButton>
 				{ isRefetchError && ! isFetching && (

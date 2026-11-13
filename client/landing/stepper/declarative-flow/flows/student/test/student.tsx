@@ -179,4 +179,27 @@ describe( 'Student Flow', () => {
 			expect( renderSideEffect( STEPS.STUDENT_PLAN_ELIGIBILITY.slug ) ).not.toHaveBeenCalled();
 		} );
 	} );
+
+	/**
+	 * A localized root such as `/setup/student/es` arrives with the locale as the step slug.
+	 */
+	it.each( [
+		[ 'the flow root', '' ],
+		[ 'a localized flow root', 'es' ],
+	] )( 'starts with a clean slate at %s', ( _name, currentStepSlug ) => {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).setPlanCartItem( {
+			product_slug: STUDENT_PLAN_SLUG,
+		} );
+		const SideEffect = () => {
+			studentFlow.useSideEffect?.(
+				currentStepSlug as Parameters< NonNullable< typeof studentFlow.useSideEffect > >[ 0 ],
+				jest.fn()
+			);
+			return null;
+		};
+
+		renderWithProvider( <SideEffect /> );
+
+		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toBeFalsy();
+	} );
 } );

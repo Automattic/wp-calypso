@@ -26,7 +26,8 @@ const mockEligibility = ( reason: StudentPlanEligibilityReason, emailDomain = 'm
 		.reply( 200, { eligible: reason === 'eligible', reason, email_domain: emailDomain } );
 
 const render = ( props?: Partial< StepProps >, email = 'student@mit.edu' ) => {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	// No test defaults: the hook's own options (no retries included) are under test.
+	const queryClient = new QueryClient();
 
 	renderStep(
 		<QueryClientProvider client={ queryClient }>
@@ -100,6 +101,43 @@ describe( 'StudentPlanEligibility', () => {
 			)
 		).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'continues once a re-check finds the email confirmed', async () => {
+		const submit = jest.fn();
+		mockEligibility( 'unverified' );
+		mockEligibility( 'eligible' );
+
+		render( { navigation: { submit } } );
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } )
+		);
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	/**
+	 * The endpoint is rate limited, so a click during a check must not send another request.
+	 */
+	it( 'does not send a second request when the button is clicked during a check', async () => {
+		mockEligibility( 'unverified' );
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( ELIGIBILITY_PATH )
+			.query( true )
+			.delay( 200 )
+			.reply( 200, { eligible: false, reason: 'unverified', email_domain: 'mit.edu' } );
+		const extraRequest = mockEligibility( 'unverified' );
+
+		render();
+
+		const button = await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } );
+		await userEvent.click( button );
+		await userEvent.click( button );
+
+		await waitFor( () => expect( button ).not.toHaveClass( 'is-busy' ) );
+		expect( extraRequest.isDone() ).toBe( false );
 	} );
 
 	/**

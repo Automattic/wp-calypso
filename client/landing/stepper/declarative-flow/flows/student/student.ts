@@ -1,3 +1,4 @@
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, STUDENT_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -77,8 +78,10 @@ const student: FlowV2< typeof initialize > = {
 		);
 
 		// Reset only at the flow root, not in `initialize`, which also runs on a mid-flow refresh.
+		// The route match is `/:flow/:step?/:lang?`, so `/setup/student/es` arrives with the
+		// locale in place of a step.
 		useEffect( () => {
-			if ( ! currentStepSlug ) {
+			if ( ! currentStepSlug || getLanguageSlugs().includes( currentStepSlug ) ) {
 				resetOnboardStore();
 				reduxDispatch( setSelectedSiteId( null ) );
 				clearStepPersistedState( STUDENT_FLOW );
