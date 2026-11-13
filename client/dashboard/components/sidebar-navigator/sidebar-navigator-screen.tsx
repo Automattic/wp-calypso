@@ -17,10 +17,7 @@ const transition = {
 
 export interface SidebarNavigatorScreenProps {
 	path: string;
-	/**
-	 * Also shows the screen on routes outside `path` when this returns true for
-	 * the deepest route match.
-	 */
+	/** Shows the screen on other routes when it returns true for the deepest match. */
 	alsoMatches?: ( match: AnyRouteMatch ) => boolean;
 	children: React.ReactNode;
 }

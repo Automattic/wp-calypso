@@ -19,7 +19,7 @@ import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../component
 import DomainSwitcherItem from './domain-switcher-item';
 import type { AnyRouteMatch } from '@tanstack/react-router';
 
-// Not a pathname, so breadcrumbs never add it to a link.
+// Not a pathname, so breadcrumbs don't append it to their links.
 const EMAILS_ORIGIN_KEY = 'domain-sidebar-emails-origin';
 
 function getOpenDomainName() {
@@ -27,9 +27,8 @@ function getOpenDomainName() {
 }
 
 /**
- * Whether the match is an email screen reached from the domain whose sidebar is
- * open, so the sidebar stays there. Screens that name no domain, such as
- * choosing one, count; the unfiltered list and other domains don't.
+ * Whether the match is an Emails screen for the domain whose sidebar is open.
+ * Screens that name no domain count, except the unfiltered list.
  */
 export function isOpenDomainEmailsMatch( { routeId, params, search }: AnyRouteMatch ) {
 	const openDomainName = getOpenDomainName();
@@ -66,11 +65,12 @@ export default function DomainSidebar() {
 		}
 	}, [ overviewPath, backToParam ] );
 
-	// The sidebar also unmounts inside the domain, on very slow navigations and viewport changes.
+	// Forget the domain only once the user leaves it and its Emails screens, as the sidebar
+	// also unmounts on slow navigations and viewport changes.
 	useEffect( () => {
 		setTransientQueryParamsAtPathname( EMAILS_ORIGIN_KEY, { domainName } );
 		return () => {
-			// Matched from the location, as `router.state.matches` lags during pending navigations.
+			// `router.state.matches` lags during pending navigations.
 			const matches = router.matchRoutes( router.state.location );
 			const match = matches[ matches.length - 1 ];
 			if (
