@@ -1,7 +1,7 @@
 /**
  * Checks for drift between the webpack and Vite configurations: `yarn vite-check`. Webpack builds
- * production and Vite serves the Dashboard in development, so code can work with one and not the
- * other. This check is needed for as long as the repo has both bundlers.
+ * production and Vite serves `yarn start-dashboard:vite` in development, so code can work with one
+ * and not the other. This check is needed for as long as the repo has both bundlers.
  *
  * With the dev server's config, it pre-bundles the dependencies Vite's scanner finds from the
  * entries, then transforms every first-party module reachable from them, and fails on any error.
@@ -11,7 +11,9 @@
 import path from 'node:path';
 import { createServer, optimizeDeps, resolveConfig } from 'vite';
 import { root } from './base.mjs';
-import { dashboardDevConfig, dashboardEntries } from './dev.mjs';
+import { startDashboardDevConfig, startDashboardEntries } from './dev.mjs';
+
+process.env.CALYPSO_ENV ??= 'dashboard-development';
 
 // Webpack-only code that Vite passes through unchanged.
 const LEFTOVERS = [
@@ -25,13 +27,14 @@ const LEFTOVERS = [
 // Files where a leftover is guarded or deliberate, and the reason.
 const ALLOWED = {
 	'client/components/async-load/index.tsx': '`require` is a prop',
+	'client/sections-middleware.js': 'guarded by `typeof module`, for webpack hot reloading',
 	'packages/create-calypso-config/src/index.ts': 'guarded by `typeof process`, for the server',
 };
 
 const STYLE = /\.(s?css|sass)(\?|$)/;
 const ASSET = /\.(png|jpe?g|gif|svg|webp|woff2?|ttf|eot|mp4|webm|ico)(\?|$)/;
 
-const config = dashboardDevConfig();
+const config = startDashboardDevConfig();
 config.logLevel = 'error';
 config.cacheDir = path.join( root, '.cache/vite-check' );
 // Let the leftover scan see every `process.env.X`, which the define would otherwise replace.
@@ -57,7 +60,7 @@ started = performance.now();
 config.optimizeDeps = { ...config.optimizeDeps, noDiscovery: true };
 const server = await createServer( config );
 const environment = server.environments.client;
-const seen = new Set( Object.values( dashboardEntries ).map( ( file ) => '/' + file ) );
+const seen = new Set( Object.values( startDashboardEntries ).map( ( file ) => '/' + file ) );
 const queue = [ ...seen ];
 
 async function visit( url ) {

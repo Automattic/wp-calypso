@@ -10,22 +10,44 @@ const runtimeRequire = createRequire( path.join( process.cwd(), 'package.json' )
  */
 module.exports = function viteBundler( app ) {
 	const { createServer } = runtimeRequire( 'vite' );
-	const { dashboardDevConfig, dashboardEntries } = runtimeRequire( './build-tools/vite/dev.mjs' );
+	const { enabledSections, startDashboardDevConfig, startDashboardEntries } = runtimeRequire(
+		'./build-tools/vite/dev.mjs'
+	);
 
 	app.set( 'bundler', 'vite' );
 
+	// Stylesheets the server-rendered page needs before the scripts run. Sections load with
+	// `import()`, so their chunk groups have no scripts.
+	const direct = ( file ) => `/${ file }?direct`;
+	const globalStyles = [ direct( 'client/assets/stylesheets/style.scss' ) ];
+	const placeholderStyles = [
+		'client/components/loading/style.scss',
+		'packages/onboarding/src/step-container-v2/wireframes/Loading/style.scss',
+		'packages/onboarding/src/step-container-v2/components/StepContainerV2/style.scss',
+		'packages/onboarding/src/step-container-v2/components/TopBar/style.scss',
+		'packages/onboarding/src/step-container-v2/components/Heading/style.scss',
+	].map( direct );
 	const omnibarStyles = [
-		'/packages/omnibar/src/style.scss?direct',
-		'/client/dashboard/app/omnibar/style.scss?direct',
+		direct( 'packages/omnibar/src/style.scss' ),
+		direct( 'client/dashboard/app/omnibar/style.scss' ),
 	];
+	const entryStyles = {
+		'entry-main': globalStyles,
+		'entry-stepper': [ ...globalStyles, ...placeholderStyles ],
+		'entry-dashboard-dotcom': omnibarStyles,
+		'entry-dashboard-a4a': omnibarStyles,
+	};
 	const assets = { manifests: [], assets: {} };
-	for ( const [ name, file ] of Object.entries( dashboardEntries ) ) {
-		assets.assets[ name ] = [ ...omnibarStyles, '/' + file ];
+	for ( const [ name, file ] of Object.entries( startDashboardEntries ) ) {
+		assets.assets[ name ] = [ ...entryStyles[ name ], '/' + file ];
+	}
+	for ( const { name } of enabledSections() ) {
+		assets.assets[ name ] = [ 'checkout', 'signup' ].includes( name ) ? placeholderStyles : [];
 	}
 	app.set( 'assets-provider', () => assets );
 
 	const vite = new Promise( ( resolve ) => app.once( 'http-server-created', resolve ) )
-		.then( ( httpServer ) => createServer( dashboardDevConfig( { httpServer } ) ) )
+		.then( ( httpServer ) => createServer( startDashboardDevConfig( { httpServer } ) ) )
 		.catch( ( error ) => {
 			console.error( 'The Vite dev server failed to start:', error );
 			process.exit( 1 );
