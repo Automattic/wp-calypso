@@ -4,12 +4,10 @@
 import { renderHook } from '@testing-library/react';
 import { resolveSelect, useSelect } from '@wordpress/data';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
-import { useStepNavigationWithTracking } from '../../../internals/hooks/use-step-navigation-with-tracking';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
@@ -101,6 +99,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 } ) );
 
 jest.mock( '@automattic/onboarding', () => ( {
+	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: jest.fn(),
@@ -337,6 +336,16 @@ describe( 'onboarding flow use-my-domain navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'plans' );
 		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
 	} );
+
+	it( 'keeps a Playground store on Commerce after a connected domain', () => {
+		const { navigate } = submitUseMyDomain(
+			{ domainCartItem: { product_slug: 'domain_map', meta: 'example.com' } },
+			'intent=woocommerce&playground=abc'
+		);
+
+		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+	} );
 } );
 
 describe( 'onboarding flow domains navigation', () => {
@@ -468,6 +477,25 @@ describe( 'onboarding flow plan preselection', () => {
 
 		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
 	} );
+
+	// A stale flag would create an unrelated site as a Playground store.
+	it( 'clears a Playground store flag left by an earlier run', () => {
+		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+
+		enterFlowAt( '', null );
+
+		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBeNull();
+	} );
+
+	// The login fallback re-enters a store run at the flow's root.
+	it( 'keeps the flag and seeds Commerce when a Playground store run re-enters', () => {
+		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+
+		enterFlowAt( '?intent=woocommerce&playground=abc', null );
+
+		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBe( '1' );
+		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
+	} );
 } );
 
 describe( 'onboarding flow tracks event props', () => {
@@ -513,6 +541,24 @@ describe( 'onboarding flow tracks event props', () => {
 			from_flow: 'import',
 		} );
 	} );
+
+	// The Playground adds its ID to the URL once it boots; a change here records a second start.
+	it( 'keeps the props when the Playground adds its ID to a store run', () => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'intent=woocommerce' ) );
+
+		const { result, rerender } = renderHook( () =>
+			onboarding.useTracksEventProps?.call( onboarding )
+		);
+		const first = result.current;
+
+		( useQuery as jest.Mock ).mockReturnValue(
+			new URLSearchParams( 'intent=woocommerce&playground=abc' )
+		);
+		rerender();
+
+		expect( result.current ).toBe( first );
+		expect( first?.eventsProperties ).toEqual( {} );
+	} );
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {
@@ -552,94 +598,102 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 } );
 
 describe( 'onboarding flow playground navigation', () => {
-	const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
-	const assign = jest.fn();
-
-	const mockLocation = ( search: string ) => {
-		window.history.replaceState( null, '', `/setup/onboarding/playground${ search }` );
-		Object.defineProperty( window, 'location', {
-			configurable: true,
-			value: { ...window.location, assign },
-		} );
-	};
-
-	const submitPlayground = ( search: string ) => {
-		mockLocation( search );
+	const renderFlowAt = ( step: string, search: string ) => {
+		window.history.replaceState( null, '', `/setup/onboarding/${ step }${ search }` );
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+		( useSelect as jest.Mock ).mockReturnValue( {} );
 
 		const navigate = jest.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 			onboarding.useStepNavigation.call(
 				onboarding,
-				'playground' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				step as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
 				navigate
 			)
 		);
 
-		result.current.submit?.( {
+		return { navigate, submit: result.current.submit };
+	};
+
+	const submitPlayground = ( search: string ) => {
+		const { navigate, submit } = renderFlowAt( 'playground', search );
+
+		submit?.( {
 			slug: 'playground',
 			providedDependencies: {},
-		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+		} as Parameters< NonNullable< typeof submit > >[ 0 ] );
 
-		return { navigate };
+		return navigate;
+	};
+
+	const submitDomains = ( search: string ) => {
+		const { navigate, submit } = renderFlowAt( 'domains', search );
+
+		submit?.( {
+			slug: 'domains',
+			providedDependencies: { siteUrl: 'example.wordpress.com' },
+		} as Parameters< NonNullable< typeof submit > >[ 0 ] );
+
+		return navigate;
 	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.useFakeTimers();
+		sessionStorage.clear();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
-		Object.defineProperty( window, 'location', locationDescriptor as PropertyDescriptor );
 		window.history.replaceState( null, '', '/' );
 	} );
 
-	it( 'leaves for the entrepreneur flow only once Tracks has had time to send the submit events', () => {
-		const { navigate } = submitPlayground( '?intent=woocommerce&playground=abc' );
+	// The domain step's progress counts the plans step only while the cart lacks the plan.
+	it( 'sends a store to the domains step with Commerce in the cart and the run marked', () => {
+		const navigate = submitPlayground( '?intent=woocommerce&playground=abc' );
 
-		expect( assign ).not.toHaveBeenCalled();
-		jest.advanceTimersByTime( 249 );
-		expect( assign ).not.toHaveBeenCalled();
-
-		jest.advanceTimersByTime( 1 );
-		expect( assign ).toHaveBeenCalledTimes( 1 );
-		expect( assign ).toHaveBeenCalledWith(
-			'/setup/entrepreneur?from=playground-publish&playground=abc'
+		expect( navigate ).toHaveBeenCalledWith(
+			'domains?back_to=%2Fsetup%2Fonboarding%2Fplayground%3Fintent%3Dwoocommerce%26playground%3Dabc'
 		);
-		expect( navigate ).not.toHaveBeenCalled();
+		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
+		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
+		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBe( '1' );
 	} );
 
-	it( 'records the Stepper submit event before leaving for the entrepreneur flow', () => {
-		mockLocation( '?intent=woocommerce&playground=abc' );
+	it( 'goes to the domains step without marking the run when the WooCommerce intent is missing', () => {
+		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
 
-		const { result } = renderHook( () =>
-			useStepNavigationWithTracking( {
-				flow: onboarding,
-				currentStepRoute: 'playground',
-				navigate: jest.fn(),
-			} )
-		);
-		result.current.submit?.();
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-			expect.objectContaining( { flow: 'onboarding', step: 'playground' } )
-		);
-		expect( assign ).not.toHaveBeenCalled();
-
-		jest.advanceTimersByTime( 250 );
-		expect( assign ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'stays in Stepper and goes to the domains step straight away without the WooCommerce intent', () => {
-		const { navigate } = submitPlayground( '?playground=abc' );
+		const navigate = submitPlayground( '?playground=abc' );
 
 		expect( navigate ).toHaveBeenCalledWith(
 			'domains?back_to=%2Fsetup%2Fonboarding%2Fplayground%3Fplayground%3Dabc'
 		);
-		jest.runAllTimers();
-		expect( assign ).not.toHaveBeenCalled();
+		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBeNull();
+	} );
+
+	// The import needs a plan that runs Woo. The flag covers a run continued in another tab.
+	it( 'puts Commerce in the cart for a store and skips the plans step', () => {
+		const navigate = submitDomains( '?intent=woocommerce&playground=abc' );
+
+		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
+		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
+		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBe( '1' );
+		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'onboarding' );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+	} );
+
+	it( 'shows the plans step to a Playground site without the WooCommerce intent', () => {
+		const navigate = submitDomains( '?playground=abc' );
+
+		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
+		expect( navigate ).toHaveBeenCalledWith( 'plans' );
+	} );
+
+	// Other entries also use `intent=woocommerce`; only a Playground store buys Commerce here.
+	it( 'shows the plans step for the WooCommerce intent without a Playground', () => {
+		const navigate = submitDomains( '?intent=woocommerce' );
+
+		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
+		expect( navigate ).toHaveBeenCalledWith( 'plans' );
 	} );
 } );
 

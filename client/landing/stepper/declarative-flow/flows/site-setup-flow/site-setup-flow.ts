@@ -23,6 +23,7 @@ import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
 import { redirect } from '../../internals/steps-repository/import/util';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import {
 	type AssertConditionResult,
@@ -344,6 +345,12 @@ const siteSetupFlow: Flow = {
 
 				case 'importerPlayground': {
 					// The step waits for the import, so the site is ready here.
+					if ( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1' ) {
+						sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
+						// A store lands in wp-admin. Leaving without exitFlow keeps the Sell intent the
+						// Commerce site was created with.
+						return window.location.assign( adminUrl ?? `/home/${ siteId ?? siteSlug }` );
+					}
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
