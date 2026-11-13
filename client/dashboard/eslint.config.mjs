@@ -1,5 +1,7 @@
 import { fixupRule } from '@eslint/compat';
+import vitest from '@vitest/eslint-plugin';
 import { defineConfig } from 'eslint/config';
+import jest from 'eslint-plugin-jest';
 import reactPlugin from 'eslint-plugin-react';
 import parent from '../eslint.config.mjs';
 
@@ -247,6 +249,24 @@ export default defineConfig( [
 			'dashboard-react/jsx-filename-extension': [
 				'error',
 				{ extensions: [ '.tsx' ], allow: 'as-needed' },
+			],
+		},
+	},
+	{
+		name: 'calypso/dashboard/vitest',
+		files: [ '**/test/**/*.{js,jsx,ts,tsx}', 'test-utils.tsx' ],
+		plugins: { vitest },
+		rules: {
+			...Object.fromEntries(
+				Object.keys( jest.rules ).map( ( rule ) => [ `jest/${ rule }`, 'off' ] )
+			),
+			...vitest.configs.recommended.rules,
+			'no-restricted-globals': [
+				'error',
+				{
+					name: 'jest',
+					message: 'The Dashboard tests run on Vitest. Use `vi` from `vitest` instead.',
+				},
 			],
 		},
 	},

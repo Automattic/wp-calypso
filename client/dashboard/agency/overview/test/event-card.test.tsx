@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import EventCard, { SingleEventCard } from '../event-card';
 import { getLeadMatchingContactAnnouncement } from '../events';
 
 describe( '<EventCard>', () => {
 	beforeEach( () => {
-		jest.useFakeTimers( { now: new Date( '2026-09-01T00:00:00Z' ) } );
+		vi.useFakeTimers( { now: new Date( '2026-09-01T00:00:00Z' ) } );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'keeps internal announcement CTAs and tracking after dated events expire', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		const recordTracksEvent = jest.fn();
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
+		const recordTracksEvent = vi.fn();
 		const events = () => (
 			<>
 				<SingleEventCard
@@ -53,7 +54,7 @@ describe( '<EventCard>', () => {
 			cta_id: 'update-details',
 		} );
 
-		jest.setSystemTime( new Date( '2027-01-01T00:00:00Z' ) );
+		vi.setSystemTime( new Date( '2027-01-01T00:00:00Z' ) );
 		view.rerender( events() );
 		expect( screen.getByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Enable MCP' } ) ).not.toBeInTheDocument();

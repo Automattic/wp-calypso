@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { PaymentMethodEditDialog } from '../payment-method-edit-dialog';
 import type { StoredPaymentMethod, StoredPaymentMethodTaxLocation } from '@automattic/api-core';
@@ -76,7 +77,7 @@ describe( '<PaymentMethodEditDialog>', () => {
 	} );
 
 	test( 'saves a new declaration', async () => {
-		const onConfirm = jest.fn();
+		const onConfirm = vi.fn();
 		renderDialog( { onConfirm } );
 
 		await userEvent.click(

@@ -322,7 +322,7 @@ async function goToOwnPreviewSiteLaunch( reduxStore: Store ): Promise< boolean >
 	}
 
 	window.location.assign(
-		addQueryArgs( '/setup/launch-site', { siteSlug: previewSite, ...args } )
+		addQueryArgs( '/setup/launch-site', { siteSlug: previewSite, hide_free_plan: 1, ...args } )
 	);
 	return true;
 }
