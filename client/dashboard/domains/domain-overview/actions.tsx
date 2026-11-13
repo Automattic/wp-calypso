@@ -144,7 +144,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 						}
 					/>
 				) }
-				{ availableActions.remove && purchase && (
+				{ ( availableActions.remove || availableActions.cancel ) && purchase && (
 					<ActionList.ActionItem
 						title={ <ActionTitle>{ getDeleteTitle( domain ) }</ActionTitle> }
 						description={ getDeleteDescription( domain ) }
@@ -157,25 +157,6 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								onClick={ () => trackItem( 'action-remove' ) }
 								params={ { purchaseId: purchase.ID } }
 								search={ { intent: 'remove', ...cancelPurchaseSearch } }
-							>
-								{ getDeleteLabel( domain ) }
-							</RouterLinkButton>
-						}
-					/>
-				) }
-				{ availableActions.cancel && purchase && (
-					<ActionList.ActionItem
-						title={ <ActionTitle>{ getDeleteTitle( domain ) }</ActionTitle> }
-						description={ getDeleteDescription( domain ) }
-						actions={
-							<RouterLinkButton
-								size="compact"
-								variant="secondary"
-								isDestructive
-								to={ cancelPurchaseRoute.fullPath }
-								onClick={ () => trackItem( 'action-cancel' ) }
-								params={ { purchaseId: purchase.ID } }
-								search={ cancelPurchaseSearch }
 							>
 								{ getDeleteLabel( domain ) }
 							</RouterLinkButton>
