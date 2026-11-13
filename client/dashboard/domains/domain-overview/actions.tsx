@@ -1,12 +1,7 @@
 import { DomainSubtype } from '@automattic/api-core';
-import {
-	domainQuery,
-	disconnectDomainMutation,
-	removePurchaseMutation,
-	purchaseQuery,
-} from '@automattic/api-queries';
+import { domainQuery, disconnectDomainMutation, purchaseQuery } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -17,12 +12,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
-import { useAuth } from '../../app/auth';
-import { domainRoute, domainsIndexRoute, domainTransferRoute } from '../../app/router/domains';
-import { purchaseSettingsRoute, cancelPurchaseRoute } from '../../app/router/me';
+import { domainRoute, domainTransferRoute } from '../../app/router/domains';
+import { cancelPurchaseRoute } from '../../app/router/me';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
-import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import {
@@ -35,6 +28,7 @@ import {
 	getDeleteDescription,
 } from './actions.utils';
 import { useTrackOverviewItem } from './use-track-overview-item';
+import type { SnackbarBackTo } from '../../app/snackbar-back-button';
 
 import './style.scss';
 
@@ -43,9 +37,10 @@ function ActionTitle( { children }: { children: string } ) {
 }
 
 export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
-	const router = useRouter();
-	const { user } = useAuth();
 	const { domainName } = domainRoute.useParams();
+	const { back_to: domainBackTo } = useSearch( { strict: false } ) as {
+		back_to?: SnackbarBackTo;
+	};
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const trackItem = useTrackOverviewItem( domain );
 	const { data: purchase } = useQuery( {
@@ -55,11 +50,8 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
 		disconnectDomainMutation( domainName )
 	);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { mutate: deleteDomain, isPending: isDeleting } = useMutation( removePurchaseMutation() );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isDisconnectDialogOpen, setIsDisconnectDialogOpen ] = useState( false );
-	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
 
 	const onDisconnectConfirm = useCallback(
 		() =>
@@ -79,29 +71,18 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
 	);
 
-	const onDeleteConfirm = useCallback(
-		() =>
-			purchase &&
-			deleteDomain( purchase.ID, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'The domain deletion has been completed.' ), {
-						type: 'snackbar',
-					} );
-					router.navigate( { to: domainsIndexRoute.fullPath } );
-				},
-				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
-				onSettled: () => {
-					setIsDeleteDialogOpen( false );
-				},
-			} ),
-		[ purchase, deleteDomain, createSuccessNotice, createErrorNotice, router ]
-	);
-
 	const availableActions = {
 		transfer: shouldShowTransferAction( domain ),
 		disconnect: shouldShowDisconnectAction( domain ),
 		remove: shouldShowRemoveAction( domain, purchase ),
 		cancel: shouldShowCancelAction( domain, purchase ),
+	};
+
+	const cancelPurchaseSearch = {
+		back_to: 'domain' as const,
+		...( domainBackTo === 'site-overview' || domainBackTo === 'site-domains'
+			? { domain_back_to: domainBackTo }
+			: {} ),
 	};
 
 	// If none of the actions are available, don't render the actions section
@@ -172,9 +153,10 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								size="compact"
 								variant="secondary"
 								isDestructive
-								to={ purchaseSettingsRoute.fullPath }
+								to={ cancelPurchaseRoute.fullPath }
 								onClick={ () => trackItem( 'action-remove' ) }
 								params={ { purchaseId: purchase.ID } }
+								search={ { intent: 'remove', ...cancelPurchaseSearch } }
 							>
 								{ getDeleteLabel( domain ) }
 							</RouterLinkButton>
@@ -193,6 +175,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								to={ cancelPurchaseRoute.fullPath }
 								onClick={ () => trackItem( 'action-cancel' ) }
 								params={ { purchaseId: purchase.ID } }
+								search={ cancelPurchaseSearch }
 							>
 								{ getDeleteLabel( domain ) }
 							</RouterLinkButton>
@@ -230,14 +213,6 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 					) }
 				/>
 			</ConfirmDialog>
-
-			<RemoveDomainDialog
-				isOpen={ isDeleteDialogOpen }
-				user={ user }
-				domain={ domain }
-				closeDialog={ () => setIsDeleteDialogOpen( false ) }
-				onConfirm={ onDeleteConfirm }
-			/>
 		</VStack>
 	);
 }

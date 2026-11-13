@@ -3,6 +3,7 @@
  */
 
 import {
+	domainQuery,
 	hasPurchaseBeenExtendedQuery,
 	plansQuery,
 	productsQuery,
@@ -18,7 +19,12 @@ import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
-import type { Purchase } from '@automattic/api-core';
+import KeepSubscriptionButton from '../keep-subscription-button';
+import type { Domain, Purchase } from '@automattic/api-core';
+
+vi.mock( '../../../../app/router/domains', () => ( {
+	domainRoute: { fullPath: '/domains/$domainName' },
+} ) );
 
 vi.mock( '../../../../app/router/me', () => ( {
 	cancelPurchaseRoute: { fullPath: '__root__', useParams: () => ( { purchaseId: '123' } ) },
@@ -83,6 +89,11 @@ function renderRemoveFlow( {
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+	if ( testPurchase.meta ) {
+		queryClient.setQueryData( domainQuery( testPurchase.meta ).queryKey, {
+			domain: testPurchase.meta,
+		} as Domain );
+	}
 	if ( seedHasExtended ) {
 		queryClient.setQueryData( hasPurchaseBeenExtendedQuery( purchase.ID ).queryKey, false );
 	}
@@ -181,6 +192,82 @@ describe( '<CancelPurchase />', () => {
 					solution_ids: 'ask-ai-assistant,speak-with-support',
 					cancellation_reason: 'otherPriceValue',
 				} )
+			);
+		} );
+	} );
+
+	describe( 'domain removal', () => {
+		const domainPurchase = {
+			...purchase,
+			product_name: 'Domain Registration',
+			product_slug: 'dotblog_domain',
+			meta: 'example.blog',
+			is_plan: false,
+			is_domain: true,
+			is_domain_registration: true,
+			is_refundable: false,
+		} as Purchase;
+
+		test( 'returns to the domain when it was opened from the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+		} );
+
+		test( 'keeps where the domain was opened from when returning to it', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/?intent=remove&back_to=domain&domain_back_to=site-domains'
+			);
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+			expect( router.state.location.search ).toEqual( { back_to: 'site-domains' } );
+		} );
+
+		test( 'Keep subscription returns a domain connection to the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = render(
+				<KeepSubscriptionButton
+					purchase={ {
+						...domainPurchase,
+						product_slug: 'domain_map',
+						product_type: 'domain_map',
+						is_domain_registration: false,
+					} }
+					intent="remove"
+					onKeepSubscriptionClick={ vi.fn() }
+				/>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Keep subscription' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+		} );
+
+		test( 'returns to purchases when it was opened from billing', async () => {
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
 			);
 		} );
 	} );
