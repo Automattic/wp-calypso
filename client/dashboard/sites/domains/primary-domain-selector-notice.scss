@@ -1,0 +1,12 @@
+.primary-domain-selector-notice__message {
+	max-width: var( --wpds-dimension-surface-width-xl, 720px );
+}
+
+// `NoticeActionLink` styles an anchor; this one renders as a button because it opens a modal.
+.primary-domain-selector-notice__change {
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	text-decoration-line: underline;
+}

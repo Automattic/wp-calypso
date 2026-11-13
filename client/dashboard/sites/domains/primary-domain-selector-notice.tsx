@@ -1,14 +1,14 @@
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
-import { Notice, NoticeActionButton } from '../../components/notice';
+import { Notice, NoticeActionLink } from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { canUserSetPrimaryDomain, isPrimaryDomainCandidate } from '../../utils/domain';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
+import './primary-domain-selector-notice.scss';
 
 interface PrimaryDomainSelectorNoticeProps {
 	domains: DomainSummary[];
@@ -21,7 +21,6 @@ const PrimaryDomainSelectorNotice = ( {
 	site,
 	user,
 }: PrimaryDomainSelectorNoticeProps ) => {
-	const hasEnTranslation = useHasEnTranslation();
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const canUserSetPrimaryDomainOnThisSite = canUserSetPrimaryDomain( site, user );
 	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
@@ -31,15 +30,9 @@ const PrimaryDomainSelectorNotice = ( {
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
 			const message = createInterpolateElement(
-				hasEnTranslation(
-					'Your site plan doesn’t allow you to set a custom domain as a primary site address. <upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>'
-				)
-					? __(
-							'Your site plan doesn’t allow you to set a custom domain as a primary site address. <upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>'
-						)
-					: __(
-							'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>'
-						),
+				__(
+					'Your site plan doesn’t allow you to set a custom domain as a primary site address.<br/><upgradeLink>Upgrade to an annual paid plan</upgradeLink> and get a free one-year domain name registration or transfer. <learnMoreLink/>'
+				),
 				{
 					upgradeLink: (
 						<UpsellCTAButton
@@ -86,13 +79,17 @@ const PrimaryDomainSelectorNotice = ( {
 			actions={
 				canUserSetPrimaryDomainOnThisSite &&
 				domainsList.length > 0 && (
-					<NoticeActionButton variant="outline" onClick={ () => setIsModalOpen( true ) }>
+					<NoticeActionLink
+						className="primary-domain-selector-notice__change"
+						render={ <button type="button" /> }
+						onClick={ () => setIsModalOpen( true ) }
+					>
 						{ __( 'Change primary site address' ) }
-					</NoticeActionButton>
+					</NoticeActionLink>
 				)
 			}
 		>
-			{ renderMessage() }
+			<div className="primary-domain-selector-notice__message">{ renderMessage() }</div>
 			{ isModalOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }

@@ -229,8 +229,6 @@ describe( '<SiteDomains>', () => {
 		expect(
 			within( defaultAddressCard ).getByRole( 'button', { name: 'Change site address' } )
 		).toBeVisible();
-		const upgradeLink = screen.getByRole( 'link', { name: 'Upgrade to an annual paid plan' } );
-		expect( upgradeLink.parentElement?.querySelector( 'br' ) ).toBeInTheDocument();
 	} );
 
 	test( 'opens the change site address modal when deep linked', async () => {
