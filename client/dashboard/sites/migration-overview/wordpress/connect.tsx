@@ -58,6 +58,11 @@ export function Connect( {
 	const run = useMutation( withSnackbar( siteWordPressMigrationRunMutation( site.ID ), snackbar ) );
 	const isStarting = configure.isPending || run.isPending;
 	const isConnected = !! connectionOption?.connected;
+	// A source that refused our key has the plugin, and its step has no install button to point to.
+	const isOnDestinationOnly =
+		!! connectionOption?.installed_on_destination &&
+		! isConnected &&
+		failure?.code !== 'source_connection_failed';
 
 	const startMigration = () =>
 		configure.mutate(
@@ -129,6 +134,20 @@ export function Connect( {
 					}
 				>
 					{ __( 'We couldn’t load your site’s details.' ) }
+				</Notice>
+			) }
+			{ isOnDestinationOnly && (
+				<Notice
+					variant="warning"
+					title={ __( 'Install the plugin on the site you’re migrating from' ) }
+				>
+					{ withDomain(
+						/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+						__(
+							'The Migrate to WordPress.com plugin is active on your WordPress.com site, but it needs to be on <domain />. Click the button below to install it.'
+						),
+						sourceHost
+					) }
 				</Notice>
 			) }
 			{ connected === 'notice' && (

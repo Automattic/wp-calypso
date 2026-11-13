@@ -219,6 +219,39 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
 	} );
 
+	test( 'warns when the plugin is active on the WordPress.com site, until the source is connected', async () => {
+		const onDestination = ( connected: boolean ) => ( {
+			...configuration,
+			available_source_connections: [
+				{
+					...configuration.available_source_connections[ 0 ],
+					connected,
+					installed_on_destination: true,
+				},
+			],
+		} );
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, onDestination( false ) );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect(
+			await screen.findByText( 'Install the plugin on the site you’re migrating from' )
+		).toBeVisible();
+		expect( screen.getByText( /active on your WordPress.com site/ ) ).toHaveTextContent(
+			'The Migrate to WordPress.com plugin is active on your WordPress.com site, but it needs to be on example.com. Click the button below to install it.'
+		);
+
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, onDestination( true ) );
+		act( () => focusManager.setFocused( true ) );
+
+		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
+		expect(
+			screen.queryByText( 'Install the plugin on the site you’re migrating from' )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'keeps an unreachable plugin up on its own until the next run, but offers to start once connected', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, unreachable() );
 		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
