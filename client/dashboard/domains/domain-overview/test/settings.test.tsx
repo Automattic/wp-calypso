@@ -107,7 +107,7 @@ describe( 'DomainOverviewSettings', () => {
 
 	describe( 'when eligible for inbound transfer', () => {
 		const eligible = { ...connected, is_eligible_for_inbound_transfer: true };
-		const name = 'Bring your domain to WordPress.com Manage your site and domain all in one place.';
+		const name = 'Bring your domain to WordPress.com';
 
 		test( 'links to the transfer flow and tracks the click', async () => {
 			const { recordTracksEvent } = renderDomainSettings( eligible );
