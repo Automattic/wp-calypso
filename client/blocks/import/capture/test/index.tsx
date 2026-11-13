@@ -186,6 +186,33 @@ describe( 'CaptureInput', () => {
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'explains a WordPress.com page from the address straight away', () => {
+		const onInputEnter = jest.fn();
+		renderWithProvider(
+			<MemoryRouter initialEntries={ [ '/?from=wordpress.com/log-in' ] }>
+				<CaptureInput onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		expect( onInputEnter ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'wordpress.com/log-in' );
+		expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+	} );
+
+	it( 'explains why an address from the address bar is invalid on Continue', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=myblog' ] }>
+				<CaptureInput onInputEnter={ jest.fn() } />
+			</MemoryRouter>
+		);
+
+		expect( screen.queryByText( /missing its domain extension/ ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
 	it( 'waits for Continue before explaining other handed-over addresses', async () => {
 		render(
 			<MemoryRouter initialEntries={ [ '/?from=myblog' ] }>

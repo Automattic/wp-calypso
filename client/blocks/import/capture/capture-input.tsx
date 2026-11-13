@@ -68,12 +68,15 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 
 		if ( urlValue ) {
-			const isValid = ! getUrlValidationError( urlValue );
-			if ( isValid && ! hasError ) {
+			const error = getUrlValidationError( urlValue );
+			if ( ! error && ! hasError ) {
 				onInputEnter( urlValue );
 				setSubmitted( true );
 			} else {
 				setUrlValue( urlValue );
+				if ( error && validateUrl( urlValue ) === 'wordpress_com_page' ) {
+					setSubmitted( true );
+				}
 			}
 		}
 	}
