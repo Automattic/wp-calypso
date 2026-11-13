@@ -452,6 +452,24 @@ describe( 'logout', () => {
 		expect( window.location.href ).toBe( 'https://wordpress.com/?apppromo' );
 	} );
 
+	test( 'still leaves when the local cleanup fails', async () => {
+		nock( 'https://wordpress.com' )
+			.post( '/wp-login.php' )
+			.query( { action: 'logout-endpoint' } )
+			.reply( 200, { success: true, data: { redirect_to: 'https://wordpress.com/?apppromo' } } );
+		const removeItem = jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
+			throw new Error( 'storage is unavailable' );
+		} );
+
+		try {
+			await logout( user );
+		} finally {
+			removeItem.mockRestore();
+		}
+
+		expect( window.location.href ).toBe( 'https://wordpress.com/?apppromo' );
+	} );
+
 	test( 'falls back to logout_URL when the logout endpoint fails', async () => {
 		const scope = nock( 'https://wordpress.com' )
 			.post( '/wp-login.php' )

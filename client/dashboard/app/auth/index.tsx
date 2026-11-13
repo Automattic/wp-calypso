@@ -373,19 +373,32 @@ async function endWpcomSession( logoutUrl: string ): Promise< string > {
 	}
 }
 
-export async function logout( user: User ): Promise< void > {
-	const destination = await endSession( user );
+/**
+ * Leaves the dashboard once the session is over, dropping what this browser stored for
+ * the user. The dashboard cannot render without a session, so this is a full page load.
+ *
+ * It never rejects and always navigates: someone whose session has already ended must
+ * not be left on a page they cannot use because the cleanup failed.
+ */
+export async function redirectAfterSessionEnd( destination: string ): Promise< void > {
+	try {
+		disablePersistQueryClient();
+		clearQueryClient();
 
-	disablePersistQueryClient();
-	clearQueryClient();
-
-	// Dynamically import Calypso v1 cleanup code because it includes a number
-	// of dependencies we don't want included in the Hosting Dashboard bundle.
-	const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
-	disablePersistence();
-	clearStore();
+		// Dynamically import Calypso v1 cleanup code because it includes a number
+		// of dependencies we don't want included in the Hosting Dashboard bundle.
+		const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
+		disablePersistence();
+		await clearStore();
+	} catch {
+		// Leaving matters more than what is left behind.
+	}
 
 	window.location.href = destination;
+}
+
+export async function logout( user: User ): Promise< void > {
+	await redirectAfterSessionEnd( await endSession( user ) );
 }
 
 /**
