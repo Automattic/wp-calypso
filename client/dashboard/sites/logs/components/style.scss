@@ -7,3 +7,21 @@
 		text-wrap: wrap;
 	}
 }
+
+/* A value limited to two lines, with a button to show the rest in place. */
+.site-logs-long-value {
+	display: block;
+	white-space: normal;
+}
+
+.site-logs-long-value__text {
+	display: -webkit-box;
+	overflow: hidden;
+	overflow-wrap: anywhere;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+
+	&.is-expanded {
+		display: block;
+	}
+}
