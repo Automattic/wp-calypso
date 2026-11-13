@@ -22,6 +22,8 @@ export type HelpCenterFeatureConfig = {
 		zendeskIntegrationKey: SmoochIntegrationKey | null;
 		/** Tags written on the Zendesk conversation at escalation, for routing triggers. */
 		zendeskConversationTags: string[];
+		/** Open the sources of a chat answer in a new browser tab instead of the article view. */
+		openSourcesInNewTab: boolean;
 	};
 	home: {
 		/** Show the recent conversations section on the home screen. */

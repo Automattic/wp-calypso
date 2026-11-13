@@ -16,7 +16,7 @@ export const Sources = ( {
 	isMessageShowingDisclaimer: boolean;
 } ) => {
 	const navigate = useNavigate();
-	const { trackEvent } = useOdieAssistantContext();
+	const { trackEvent, openSourcesInNewTab } = useOdieAssistantContext();
 	const sources = useMemo( () => {
 		const messageLength = message?.context?.sources?.length ?? 0;
 		if ( messageLength > 0 ) {
@@ -100,6 +100,7 @@ export const Sources = ( {
 						<SupportDocLink
 							key={ index }
 							link={ source.url }
+							openInNewTab={ openSourcesInNewTab }
 							onLinkClickHandler={ () => {
 								trackEvent( 'chat_message_action_click', {
 									action: 'link',
@@ -111,7 +112,9 @@ export const Sources = ( {
 									action: 'click',
 									href: source.url,
 								} );
-								navigate( `/post?link=${ source.url }` );
+								if ( ! openSourcesInNewTab ) {
+									navigate( `/post?link=${ source.url }` );
+								}
 							} }
 							title={ source.title }
 						/>
