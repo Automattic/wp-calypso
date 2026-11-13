@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Clean up all definitions and usages of CSS variables ending with -rgb.
+- Removed `--color-twitter`. Use `--color-x` instead.
 - Updated dependencies:
   - postcss-custom-properties to ^12.0.0
 
