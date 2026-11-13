@@ -175,6 +175,8 @@ export const getDeleteDescription = ( domain: Domain ) => {
 		case DomainSubtype.DOMAIN_TRANSFER:
 			return __( 'Cancel this domain transfer.' );
 		default:
-			return __( 'Remove this domain permanently.' );
+			return __(
+				'Remove this domain name permanently. It becomes available for anyone to register.'
+			);
 	}
 };

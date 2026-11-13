@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainForwardingForm from '../form';
 import type { FormData } from '../form';
@@ -21,7 +22,7 @@ interface TestFormProps {
 function renderForm( props: TestFormProps = {} ) {
 	const defaultProps = {
 		domainName,
-		onSubmit: jest.fn(),
+		onSubmit: vi.fn(),
 		isSubmitting: false,
 		submitButtonText: 'Add',
 		forceSubdomain: false,
@@ -68,7 +69,7 @@ test( 'shows both root domain and subdomain options when forceSubdomain is false
 
 test( 'selects the root domain as source when defaultSourceType is root', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	renderForm( { defaultSourceType: 'root', onSubmit: mockOnSubmit } );
 
@@ -109,7 +110,7 @@ test( 'ignores defaultSourceType and keeps subdomain mode when forceSubdomain is
 
 test( 'calls onSubmit with correct data when form is submitted', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	renderForm( { onSubmit: mockOnSubmit } );
 
@@ -170,7 +171,7 @@ test( 'shows redirect options panel', async () => {
 	await user.click( advancedPanel );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'How permanent is this forward?' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Where visitors land' ) ).toBeInTheDocument();
 	} );
 } );
@@ -191,7 +192,7 @@ test( 'updates the redirect summary and examples as the options change', async (
 		screen.getByText( 'shop.example.com/prices goes to https://newsite.com/prices.' )
 	).toBeVisible();
 
-	await user.click( screen.getByRole( 'radio', { name: /permanent \(301\)/i } ) );
+	await user.click( screen.getByRole( 'radio', { name: /permanent redirect \(301\)/i } ) );
 	await user.click( screen.getByRole( 'radio', { name: /the matching page/i } ) );
 
 	expect(
@@ -298,7 +299,7 @@ test( 'shows validation error when target URL redirects to same domain without p
 
 test( 'allows target URL that redirects to same domain with path', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	renderForm( { onSubmit: mockOnSubmit } );
 
@@ -332,7 +333,7 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 
 test( 'submits a root domain forward to its www subdomain', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	renderForm( { defaultSourceType: 'root', onSubmit: mockOnSubmit } );
 
@@ -347,7 +348,7 @@ test( 'submits a root domain forward to its www subdomain', async () => {
 
 test( 'allows target URL without protocol (normalizes input)', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	renderForm( { onSubmit: mockOnSubmit } );
 

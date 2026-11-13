@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	followReadTagMutation,
 	readTagQuery,
@@ -204,7 +205,7 @@ describe( 'followReadTagMutation', () => {
 			.reply( 403, { error: 'already_subscribed', message: 'You are already subscribed' } );
 
 		const client = newClient();
-		const spy = jest.spyOn( client, 'invalidateQueries' );
+		const spy = vi.spyOn( client, 'invalidateQueries' );
 		const { result } = renderHook( () => useMutation( followReadTagMutation( client ) ), {
 			wrapper: makeWrapper( client ),
 		} );

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -43,11 +43,6 @@ const notificationSnackBar = () => {
 describe( '<EmailVerificationBanner>', () => {
 	// Both outlive a render, so one case's announcement would otherwise be found by the next:
 	// snackbars are their own notice type, and `@wordpress/a11y` keeps a live region on the body.
-	beforeEach( () => {
-		// Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	afterEach( () => {
 		Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 		// Snackbars are their own notice type, so the default clear leaves them behind for the

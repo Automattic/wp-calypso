@@ -1,18 +1,15 @@
 import { fetchWordPressTrackVersions, fetchWpOrgCoreVersion } from '@automattic/api-core';
+import { vi } from 'vitest';
 import { siteWordPressTrackVersionsQuery } from '../site-wordpress-version';
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	fetchWordPressTrackVersions: jest.fn(),
-	fetchWpOrgCoreVersion: jest.fn(),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/api-core' ) >() ),
+	fetchWordPressTrackVersions: vi.fn(),
+	fetchWpOrgCoreVersion: vi.fn(),
 } ) );
 
-const mockFetchWordPressTrackVersions = fetchWordPressTrackVersions as jest.MockedFunction<
-	typeof fetchWordPressTrackVersions
->;
-const mockFetchWpOrgCoreVersion = fetchWpOrgCoreVersion as jest.MockedFunction<
-	typeof fetchWpOrgCoreVersion
->;
+const mockFetchWordPressTrackVersions = vi.mocked( fetchWordPressTrackVersions );
+const mockFetchWpOrgCoreVersion = vi.mocked( fetchWpOrgCoreVersion );
 
 describe( 'siteWordPressTrackVersionsQuery', () => {
 	const queryFn = siteWordPressTrackVersionsQuery( 123 ).queryFn!;

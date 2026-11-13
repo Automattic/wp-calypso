@@ -41,7 +41,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 
 ## Development
 
-> **Note**: The Calypso dev server listens on the `PORT` set in the repo-root `.env`, or `3000`. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
+> **Note**: The Calypso dev server listens on the `PORT` set in the environment or the repo-root `.env`. Without one it uses `3000` in the main checkout and, in a linked git worktree, a port derived from the worktree's path (`client/server/config/default-port.js`), which it prints when it starts. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
 
 > **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
 
@@ -64,9 +64,10 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 
 ```bash
 # JavaScript tests
-yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps)
+yarn test                                       # Run unit tests for client, Dashboard, packages, server, and build-tools (CI also runs apps)
 yarn test-build-tools                           # Run unit tests for build-tools
-yarn test-client                                # Run unit tests for client
+yarn test-client                                # Run unit tests for client, except the Dashboard
+yarn test-dashboard [path]                      # Run Dashboard unit tests (on Vitest)
 yarn test-apps                                  # Run apps unit tests
 yarn test-packages                              # Run packages unit tests (arguments go to Jest only)
 yarn test-packages:vitest [path]                # Run unit tests for packages on Vitest
@@ -77,6 +78,7 @@ yarn test-server:coverage                       # Run server unit tests with cov
 yarn test-client:watch                          # Run unit tests for client in watch mode
 yarn test-client <path_to_test_directory>       # Run client unit tests from a specific directory
 yarn test-client --testNamePattern="<TestName>" # Run a specific client unit test
+yarn test-dashboard:watch                       # Run Dashboard unit tests in watch mode
 
 # E2E tests - refer to: test/e2e/AGENTS.md
 

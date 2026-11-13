@@ -1,33 +1,33 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { OdieAssistant } from '..';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import type { Chat, SupportInteraction } from '../types';
 
-const mockSendMessageButtonProps = jest.fn();
+const mockSendMessageButtonProps = vi.hoisted( () => vi.fn() );
 
-jest.mock( '@automattic/zendesk-client', () => ( { zendeskMessageConverter: jest.fn() } ) );
-jest.mock( '../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '@automattic/zendesk-client', () => ( { zendeskMessageConverter: vi.fn() } ) );
+vi.mock( 'smooch', () => ( { default: {} } ) );
+vi.mock( '../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 	OdieAssistantProvider: () => null,
 } ) );
-jest.mock( '../data/use-current-support-interaction', () => ( {
-	useCurrentSupportInteraction: jest.fn(),
+vi.mock( '../data/use-current-support-interaction', () => ( {
+	useCurrentSupportInteraction: vi.fn(),
 } ) );
-jest.mock( '../hooks/use-open-interaction-status-map', () => ( {
+vi.mock( '../hooks/use-open-interaction-status-map', () => ( {
 	useOpenLiveInteractions: () => ( { mostRecentSupportInteractionId: null, openCount: 0 } ),
 } ) );
-jest.mock( '../hooks/use-refresh-chat-on-focus', () => ( { useRefreshChatOnFocus: jest.fn() } ) );
-jest.mock( '../components/message/messages-container', () => ( {
+vi.mock( '../hooks/use-refresh-chat-on-focus', () => ( { useRefreshChatOnFocus: vi.fn() } ) );
+vi.mock( '../components/message/messages-container', () => ( {
 	MessagesContainer: () => <div>Messages</div>,
 } ) );
-jest.mock( '../components/closed-conversation-footer', () => ( {
+vi.mock( '../components/closed-conversation-footer', () => ( {
 	ClosedConversationFooter: () => null,
 } ) );
-jest.mock( '../components/send-message-input', () => ( {
+vi.mock( '../components/send-message-input', () => ( {
 	OdieSendMessageButton: ( props: { aiDisclosureId?: string } ) => {
 		mockSendMessageButtonProps( props );
 		return null;
@@ -47,13 +47,13 @@ function setUp( {
 	status?: string;
 	chatStatus?: Chat[ 'status' ];
 } = {} ) {
-	jest.mocked( useOdieAssistantContext ).mockReturnValue( {
-		trackEvent: jest.fn(),
+	vi.mocked( useOdieAssistantContext ).mockReturnValue( {
+		trackEvent: vi.fn(),
 		currentUser: { display_name: 'Me' },
 		chat: { messages: [], conversationId: null, provider, status: chatStatus } as Chat,
 		productName: 'WordPress.com',
 	} as unknown as ReturnType< typeof useOdieAssistantContext > );
-	jest.mocked( useCurrentSupportInteraction ).mockReturnValue( {
+	vi.mocked( useCurrentSupportInteraction ).mockReturnValue( {
 		data: {
 			uuid: 'interaction-1',
 			status,
@@ -67,7 +67,7 @@ const LINE = 'You’re chatting with AI from WordPress.com Support.';
 
 describe( 'OdieAssistant AI disclosure line', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'shows the line with the product above the messages', () => {

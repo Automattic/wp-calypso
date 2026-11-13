@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient } from '@tanstack/react-query';
@@ -110,8 +110,11 @@ describe( 'StagingSiteSyncDropdown', () => {
 			const user = userEvent.setup();
 			await user.click( await screen.findByRole( 'button', { name: 'Sync' } ) );
 
-			expect( await screen.findByRole( 'menuitem', { name: 'Pull from Staging' } ) ).toBeVisible();
-			expect( await screen.findByRole( 'menuitem', { name: 'Push to Staging' } ) ).toBeVisible();
+			// The menu fades in, so it only becomes visible after the items are in the document.
+			await waitFor( () =>
+				expect( screen.getByRole( 'menuitem', { name: 'Pull from Staging' } ) ).toBeVisible()
+			);
+			expect( screen.getByRole( 'menuitem', { name: 'Push to Staging' } ) ).toBeVisible();
 		} );
 
 		test( 'displays correct menu items for staging site', async () => {
@@ -122,10 +125,10 @@ describe( 'StagingSiteSyncDropdown', () => {
 			const user = userEvent.setup();
 			await user.click( await screen.findByRole( 'button', { name: 'Sync' } ) );
 
-			expect(
-				await screen.findByRole( 'menuitem', { name: 'Pull from Production' } )
-			).toBeVisible();
-			expect( await screen.findByRole( 'menuitem', { name: 'Push to Production' } ) ).toBeVisible();
+			await waitFor( () =>
+				expect( screen.getByRole( 'menuitem', { name: 'Pull from Production' } ) ).toBeVisible()
+			);
+			expect( screen.getByRole( 'menuitem', { name: 'Push to Production' } ) ).toBeVisible();
 		} );
 	} );
 } );

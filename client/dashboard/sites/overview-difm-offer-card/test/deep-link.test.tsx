@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
 import DifmOfferDeepLink from '../deep-link';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
@@ -70,7 +71,8 @@ describe( 'DifmOfferDeepLink', () => {
 		window.history.replaceState( null, '', '/?difmOffer=open&source=site-setup' );
 
 		render( <DifmOfferDeepLink site={ mockSite } /> );
-		await act( () => Promise.resolve() );
+		// Long enough for a removal to have run.
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 20 ) ) );
 
 		expect( window.location.search ).toBe( '?difmOffer=open&source=site-setup' );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
@@ -87,6 +89,7 @@ describe( 'DifmOfferDeepLink', () => {
 			'calypso_dashboard_upsell_impression',
 			expect.objectContaining( { source: 'site-overview' } )
 		);
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'does not open the offer for a user in control, and clears the params', async () => {
@@ -96,6 +99,17 @@ describe( 'DifmOfferDeepLink', () => {
 		render( <DifmOfferDeepLink site={ mockSite } /> );
 
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'leaves the purchased param to the thank-you modal', async () => {
+		assignExperiment( 'no_time_to_build' );
+		window.history.replaceState( null, '', '/?difmOffer=purchased' );
+
+		render( <DifmOfferDeepLink site={ mockSite } /> );
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 20 ) ) );
+
+		expect( window.location.search ).toBe( '?difmOffer=purchased' );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 

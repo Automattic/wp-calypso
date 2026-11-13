@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { siteBySlugQuery } from '@automattic/api-queries';
@@ -7,32 +7,35 @@ import { useQuery } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { StartedDIFMContentInfo } from '../started-difm-content-info';
 import type { Site } from '@automattic/api-core';
 
-const mockNavigate = jest.fn();
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
+const mockNavigate = vi.fn();
+const mockCreateSuccessNotice = vi.fn();
+const mockCreateErrorNotice = vi.fn();
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
+	combineReducers: vi.fn( ( reducers ) => reducers ),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: jest.fn() } ) );
+vi.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: vi.fn() } ) );
 
 const site = {
 	ID: 123,
@@ -60,9 +63,9 @@ function mockTicket( ticketId: number | null ) {
 		.reply( 200, { ticket_id: ticketId } );
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
-it( 'keeps the existing cancellation message when a ticket exists', async () => {
+test( 'keeps the existing cancellation message when a ticket exists', async () => {
 	mockTicket( 456 );
 	render( <StartedDIFMContentInfo site={ site } /> );
 
@@ -73,7 +76,7 @@ it( 'keeps the existing cancellation message when a ticket exists', async () => 
 	).toBeVisible();
 } );
 
-it( 'waits for fresh site data before navigating after cancelling a ticketless migration', async () => {
+test( 'waits for fresh site data before navigating after cancelling a ticketless migration', async () => {
 	mockTicket( null );
 	const cancellation = nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -93,7 +96,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 	const { queryClient } = render( <MigrationOverview /> );
 	const siteQueryKey = siteBySlugQuery( site.slug ).queryKey;
 	queryClient.setQueryData( siteQueryKey, site );
-	const siteAtNavigation = jest.fn();
+	const siteAtNavigation = vi.fn();
 	mockNavigate.mockImplementationOnce( () => {
 		siteAtNavigation( queryClient.getQueryData( siteQueryKey ) );
 	} );
@@ -123,7 +126,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 	} );
 } );
 
-it( 'does not navigate if refreshing the site fails', async () => {
+test( 'does not navigate if refreshing the site fails', async () => {
 	mockTicket( null );
 	nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -151,7 +154,7 @@ it( 'does not navigate if refreshing the site fails', async () => {
 	expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 } );
 
-it( 'requests support cancellation for an active transfer with a ticket', async () => {
+test( 'requests support cancellation for an active transfer with a ticket', async () => {
 	mockTicket( 456 );
 	const cancellation = nock( 'https://public-api.wordpress.com' )
 		.post( '/wpcom/v2/sites/123/automated-migration/cancel-migration' )
@@ -180,7 +183,7 @@ it( 'requests support cancellation for an active transfer with a ticket', async 
 	expect( mockNavigate ).not.toHaveBeenCalled();
 } );
 
-it( 'does not offer cancellation for an active transfer without a ticket', async () => {
+test( 'does not offer cancellation for an active transfer without a ticket', async () => {
 	const ticket = mockTicket( null );
 	render(
 		<StartedDIFMContentInfo
@@ -192,7 +195,7 @@ it( 'does not offer cancellation for an active transfer without a ticket', async
 	expect( screen.queryByRole( 'button', { name: /cancellation/i } ) ).toBeNull();
 } );
 
-it( 'does not offer cancellation for a completed migration', async () => {
+test( 'does not offer cancellation for a completed migration', async () => {
 	render(
 		<StartedDIFMContentInfo
 			site={ { ...site, site_migration: { ...site.site_migration, is_complete: true } } }

@@ -27,6 +27,46 @@ import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
+import './style.scss';
+
+function getStorageKey( domainName: string ) {
+	return `dashboard-domain-overview-show-advanced:${ domainName }`;
+}
+
+function readShowAdvanced( domainName: string ) {
+	try {
+		return window.sessionStorage.getItem( getStorageKey( domainName ) ) === 'true';
+	} catch {
+		return false;
+	}
+}
+
+// Kept for the session so the advanced rows stay open after visiting one of them and coming back.
+function useShowAdvanced( domainName: string ) {
+	const [ state, setState ] = useState( () => ( {
+		domainName,
+		showAdvanced: readShowAdvanced( domainName ),
+	} ) );
+
+	// The overview stays mounted when switching domains.
+	if ( state.domainName !== domainName ) {
+		setState( { domainName, showAdvanced: readShowAdvanced( domainName ) } );
+	}
+
+	const setShowAdvanced = ( showAdvanced: boolean ) => {
+		setState( { domainName, showAdvanced } );
+		try {
+			if ( showAdvanced ) {
+				window.sessionStorage.setItem( getStorageKey( domainName ), 'true' );
+			} else {
+				window.sessionStorage.removeItem( getStorageKey( domainName ) );
+			}
+		} catch {}
+	};
+
+	return [ state.domainName === domainName && state.showAdvanced, setShowAdvanced ] as const;
+}
+
 // A component of its own because `SummaryButtonList` overrides the density of its direct
 // children, which would hide the description.
 function TransferInSummary( {
@@ -68,7 +108,7 @@ export default function DomainOverviewSettings( {
 	isDisabled?: boolean;
 } ) {
 	const trackItem = useTrackOverviewItem( domain );
-	const [ showAdvanced, setShowAdvanced ] = useState( false );
+	const [ showAdvanced, setShowAdvanced ] = useShowAdvanced( domain.domain );
 	const buttonListItems = [
 		<DomainSiteSettingsSummary
 			key="site"
@@ -190,6 +230,7 @@ export default function DomainOverviewSettings( {
 			<SectionHeader
 				title={ __( 'Settings' ) }
 				level={ 3 }
+				className="domain-overview-section-header"
 				actions={
 					advancedButtonListItems.length > 0 && (
 						<Button

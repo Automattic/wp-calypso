@@ -1,55 +1,52 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-import { useQueryClient } from '@tanstack/react-query';
+import { MutationObserver, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import Snackbars from '../index';
+import type { MutationMeta } from '@tanstack/react-query';
 
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
-const mockRemoveNotice = jest.fn();
-type MutationEvent = {
-	type: 'updated';
-	action: {
-		type: 'success' | 'error';
-		error?: Error;
-	};
-	mutation: {
-		meta?: {
-			snackbar?: {
-				success?: string;
-				error?: string | { source: 'server' };
-			};
-		};
-	};
-};
+const mockCreateSuccessNotice = vi.fn();
+const mockCreateErrorNotice = vi.fn();
+const mockRemoveNotice = vi.fn();
 
-let subscriptionCallback: ( event: MutationEvent ) => void;
-let hasSubscription = false;
-
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
-	useDispatch: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	useQueryClient: jest.fn(),
+vi.mock( '@wordpress/components', () => ( {
+	SnackbarList: vi.fn( () => null ),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
-	SnackbarList: jest.fn( () => null ),
-} ) );
-
-jest.mock( '@wordpress/notices', () => ( {
+vi.mock( '@wordpress/notices', () => ( {
 	store: {},
 } ) );
 
-const mockedUseSelect = useSelect as jest.Mock;
-const mockedUseDispatch = useDispatch as jest.Mock;
-const mockedUseQueryClient = useQueryClient as jest.Mock;
+const mockedUseSelect = useSelect as Mock;
+const mockedUseDispatch = useDispatch as Mock;
+
+function renderSnackbars() {
+	const queryClient = new QueryClient();
+	render(
+		<QueryClientProvider client={ queryClient }>
+			<Snackbars />
+		</QueryClientProvider>
+	);
+	return queryClient;
+}
+
+function runMutation( queryClient: QueryClient, meta: MutationMeta, error?: Error ) {
+	const observer = new MutationObserver( queryClient, {
+		mutationFn: () => ( error ? Promise.reject( error ) : Promise.resolve() ),
+		meta,
+	} );
+	return act( () => observer.mutate().catch( () => {} ) );
+}
 
 describe( 'Snackbars', () => {
 	let currentNotices: Array< {
@@ -58,11 +55,8 @@ describe( 'Snackbars', () => {
 		status?: string;
 		content?: string;
 	} >;
-	let mockSubscribe: jest.Mock;
 
 	beforeEach( () => {
-		hasSubscription = false;
-
 		currentNotices = [
 			{
 				id: 'existing-snackbar',
@@ -79,43 +73,16 @@ describe( 'Snackbars', () => {
 			createSuccessNotice: mockCreateSuccessNotice,
 			createErrorNotice: mockCreateErrorNotice,
 		} ) );
-
-		mockSubscribe = jest.fn( ( callback: ( event: MutationEvent ) => void ) => {
-			subscriptionCallback = callback;
-			hasSubscription = true;
-			return jest.fn();
-		} );
-
-		mockedUseQueryClient.mockReturnValue( {
-			getMutationCache: () => ( {
-				subscribe: mockSubscribe,
-			} ),
-		} );
 	} );
 
-	test( 'creates success snackbar when mutation meta includes a success message', () => {
-		render( <Snackbars /> );
+	test( 'creates success snackbar when mutation meta includes a success message', async () => {
+		const queryClient = renderSnackbars();
 
-		expect( mockSubscribe ).toHaveBeenCalledTimes( 1 );
-		if ( ! hasSubscription ) {
-			throw new Error( 'Expected mutation cache subscription callback to be registered.' );
-		}
-
-		const successEvent: MutationEvent = {
-			type: 'updated',
-			action: { type: 'success' },
-			mutation: {
-				meta: {
-					// Testing the underlying snackbar behaviour, so don't use withSnackbar() here.
-					// eslint-disable-next-line no-restricted-syntax
-					snackbar: {
-						success: 'Operation completed.',
-					},
-				},
-			},
-		};
-
-		act( () => subscriptionCallback( successEvent ) );
+		await runMutation( queryClient, {
+			// Testing the underlying snackbar behaviour, so don't use withSnackbar() here.
+			// eslint-disable-next-line no-restricted-syntax
+			snackbar: { success: 'Operation completed.' },
+		} );
 
 		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Operation completed.', {
 			type: 'snackbar',
@@ -139,9 +106,9 @@ describe( 'Snackbars', () => {
 			},
 		];
 
-		render( <Snackbars /> );
+		renderSnackbars();
 
-		const [ props ] = ( SnackbarList as jest.Mock ).mock.calls[ 0 ];
+		const [ props ] = ( SnackbarList as Mock ).mock.calls[ 0 ];
 
 		expect( props.notices ).toEqual(
 			expect.arrayContaining( [
@@ -157,32 +124,17 @@ describe( 'Snackbars', () => {
 		);
 	} );
 
-	test( 'surfaces server error messages when requested by mutation meta', () => {
-		render( <Snackbars /> );
+	test( 'surfaces server error messages when requested by mutation meta', async () => {
+		const queryClient = renderSnackbars();
 
-		expect( mockSubscribe ).toHaveBeenCalledTimes( 1 );
-		if ( ! hasSubscription ) {
-			throw new Error( 'Expected mutation cache subscription callback to be registered.' );
-		}
-
-		const serverError = new Error( 'Server rejected the request.' );
-		const errorEvent: MutationEvent = {
-			type: 'updated',
-			action: {
-				type: 'error',
-				error: serverError,
+		await runMutation(
+			queryClient,
+			{
+				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+				snackbar: { error: { source: 'server' } },
 			},
-			mutation: {
-				meta: {
-					// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
-					snackbar: {
-						error: { source: 'server' },
-					},
-				},
-			},
-		};
-
-		act( () => subscriptionCallback( errorEvent ) );
+			new Error( 'Server rejected the request.' )
+		);
 
 		expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Server rejected the request.', {
 			type: 'snackbar',
@@ -190,31 +142,17 @@ describe( 'Snackbars', () => {
 		expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 	} );
 
-	test( 'uses snackbar error string when provided directly by mutation meta', () => {
-		render( <Snackbars /> );
+	test( 'uses snackbar error string when provided directly by mutation meta', async () => {
+		const queryClient = renderSnackbars();
 
-		expect( mockSubscribe ).toHaveBeenCalledTimes( 1 );
-		if ( ! hasSubscription ) {
-			throw new Error( 'Expected mutation cache subscription callback to be registered.' );
-		}
-
-		const errorEvent: MutationEvent = {
-			type: 'updated',
-			action: {
-				type: 'error',
-				error: new Error( 'Server rejected the request.' ),
+		await runMutation(
+			queryClient,
+			{
+				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+				snackbar: { error: 'Custom snackbar error.' },
 			},
-			mutation: {
-				meta: {
-					// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
-					snackbar: {
-						error: 'Custom snackbar error.',
-					},
-				},
-			},
-		};
-
-		act( () => subscriptionCallback( errorEvent ) );
+			new Error( 'Server rejected the request.' )
+		);
 
 		expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Custom snackbar error.', {
 			type: 'snackbar',

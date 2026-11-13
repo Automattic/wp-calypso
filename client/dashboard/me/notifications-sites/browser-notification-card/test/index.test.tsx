@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import {
 	notificationDeviceQuery,
 	notificationPushPermissionStateQuery,
@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { BrowserNotificationCard } from '../index';
 
 describe( 'BrowserNotificationCard', () => {
@@ -24,14 +25,12 @@ describe( 'BrowserNotificationCard', () => {
 	};
 
 	beforeEach( () => {
-		window.scrollTo = jest.fn();
-
 		Object.defineProperty( window, 'navigator', {
 			value: {
 				serviceWorker: {
-					register: jest.fn(),
-					ready: jest.fn(),
-					getSubscription: jest.fn(),
+					register: vi.fn(),
+					ready: vi.fn(),
+					getSubscription: vi.fn(),
 				},
 			},
 		} );
@@ -47,7 +46,7 @@ describe( 'BrowserNotificationCard', () => {
 		return render( ui, { wrapper: Wrapper( queryClient || new QueryClient() ) } );
 	};
 
-	it( 'renders the option to enable browser notifications', async () => {
+	test( 'renders the option to enable browser notifications', async () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'granted' );
 		renderWithProvider( <BrowserNotificationCard />, queryClient );
@@ -59,7 +58,7 @@ describe( 'BrowserNotificationCard', () => {
 		} );
 	} );
 
-	it( 'renders the option to disable browser notification when status is denied', () => {
+	test( 'renders the option to disable browser notification when status is denied', () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'denied' );
 		renderWithProvider( <BrowserNotificationCard />, queryClient );
@@ -69,7 +68,7 @@ describe( 'BrowserNotificationCard', () => {
 		).toBeDisabled();
 	} );
 
-	it( 'renders the option to disable browser notification when status is not supported', () => {
+	test( 'renders the option to disable browser notification when status is not supported', () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'not-supported' );
 
@@ -80,7 +79,7 @@ describe( 'BrowserNotificationCard', () => {
 		).toBeDisabled();
 	} );
 
-	it( 'registers a device when the feature is enabled', async () => {
+	test( 'registers a device when the feature is enabled', async () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'granted' );
 
@@ -95,9 +94,9 @@ describe( 'BrowserNotificationCard', () => {
 		Object.defineProperty( window.navigator.serviceWorker, 'ready', {
 			value: {
 				pushManager: {
-					permissionState: jest.fn().mockResolvedValue( 'granted' ),
-					getSubscription: jest.fn().mockResolvedValue( null ),
-					subscribe: jest.fn().mockResolvedValue( browserSubscription ),
+					permissionState: vi.fn().mockResolvedValue( 'granted' ),
+					getSubscription: vi.fn().mockResolvedValue( null ),
+					subscribe: vi.fn().mockResolvedValue( browserSubscription ),
 				},
 			},
 		} );
@@ -127,7 +126,7 @@ describe( 'BrowserNotificationCard', () => {
 		} );
 	} );
 
-	it( 'removes a device when the checkbox is unchecked', async () => {
+	test( 'removes a device when the checkbox is unchecked', async () => {
 		const queryClient = new QueryClient();
 		const deviceId = 'device_id_2';
 
@@ -152,9 +151,9 @@ describe( 'BrowserNotificationCard', () => {
 		Object.defineProperty( window.navigator.serviceWorker, 'ready', {
 			value: {
 				pushManager: {
-					permissionState: jest.fn().mockResolvedValue( 'granted' ),
-					getSubscription: jest.fn().mockResolvedValue( browserSubscription ),
-					subscribe: jest.fn().mockResolvedValue( null ),
+					permissionState: vi.fn().mockResolvedValue( 'granted' ),
+					getSubscription: vi.fn().mockResolvedValue( browserSubscription ),
+					subscribe: vi.fn().mockResolvedValue( null ),
 				},
 			},
 		} );

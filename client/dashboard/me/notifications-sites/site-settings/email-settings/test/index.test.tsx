@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -101,13 +101,7 @@ const buildEmailNotificationSettings = (
 };
 
 describe( 'EmailSettings', () => {
-	beforeEach( () => {
-		// nock.ls
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
-	it( 'renders the email settings values', async () => {
+	test( 'renders the email settings values', async () => {
 		mockGetSettingsApiAndReply(
 			buildEmailNotificationSettings( 1, {
 				comment_like: true,
@@ -128,7 +122,7 @@ describe( 'EmailSettings', () => {
 		).not.toBeChecked();
 	} );
 
-	it( 'updates the settings when the checkbox is changed', async () => {
+	test( 'updates the settings when the checkbox is changed', async () => {
 		const blogId = 3;
 		const settings = buildEmailNotificationSettings( blogId, {
 			comment_like: false,
@@ -168,7 +162,7 @@ describe( 'EmailSettings', () => {
 		} );
 	} );
 
-	it( 'closes the modal when the the apply all modal is called', async () => {
+	test( 'closes the modal when the the apply all modal is called', async () => {
 		const blogId = 4;
 		const settings = buildEmailNotificationSettings( blogId, {
 			comment_like: false,
@@ -198,7 +192,7 @@ describe( 'EmailSettings', () => {
 		} );
 	} );
 
-	it( 'updates all settings when the apply all button is clicked', async () => {
+	test( 'updates all settings when the apply all button is clicked', async () => {
 		const blogId = 4;
 		const settings = buildEmailNotificationSettings( blogId, {
 			comment_like: false,

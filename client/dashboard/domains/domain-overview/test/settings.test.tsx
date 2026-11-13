@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 afterEach( () => {
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
+	window.sessionStorage.clear();
 } );
 
 const connected = { subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' } };
@@ -21,14 +24,13 @@ const connected = { subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Doma
 const NAME_SERVERS = 'Name servers';
 const DNS = 'DNS records';
 const FORWARDING = 'Domain forwarding';
-const SECURITY = 'DNSSEC';
-const CONNECTED_SECURITY = 'Domain security';
+const SECURITY = 'Domain security';
 const GLUE = 'Glue records';
-const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, CONNECTED_SECURITY, GLUE ];
+const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ];
 const SHOW_ADVANCED = { name: 'Show advanced settings' };
 
-function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled = false ) {
-	const domain = {
+function getDomain( customProps: Partial< Domain > = {} ) {
+	return {
 		domain: 'example.com',
 		blog_id: 123,
 		site_slug: 'example.wordpress.com',
@@ -37,10 +39,12 @@ function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled =
 		subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
 		...customProps,
 	} as Domain;
+}
 
+function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled = false ) {
 	return render(
 		<DomainOverviewSettings
-			domain={ domain }
+			domain={ getDomain( customProps ) }
 			domainDiagnostics={ undefined }
 			isDisabled={ isDisabled }
 		/>
@@ -81,11 +85,11 @@ describe( 'DomainOverviewSettings', () => {
 			{ current_user_can_manage: false },
 			[ NAME_SERVERS, DNS, FORWARDING, SECURITY ],
 		],
-		[ 'a connected domain', connected, [ DNS, FORWARDING, CONNECTED_SECURITY ] ],
+		[ 'a connected domain', connected, [ DNS, FORWARDING, SECURITY ] ],
 		[
 			'a connected domain whose DNS cannot be managed',
 			{ ...connected, can_manage_dns_records: false },
-			[ CONNECTED_SECURITY ],
+			[ SECURITY ],
 		],
 	] )( 'shows the right rows for %s', async ( _, customProps, expected ) => {
 		renderDomainSettings( customProps );
@@ -94,7 +98,7 @@ describe( 'DomainOverviewSettings', () => {
 	} );
 
 	test( 'shows glue records in a support session even when the user cannot manage', async () => {
-		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		( isSupportSession as Mock ).mockReturnValue( true );
 		renderDomainSettings( { current_user_can_manage: false } );
 		await showAdvanced();
 
@@ -135,7 +139,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 	} );
 
-	test( 'keeps only Site, Professional email and DNSSEC for a partially restricted domain', async () => {
+	test( 'keeps only Site, Professional email and Domain security for a partially restricted domain', async () => {
 		renderDomainSettings( {
 			current_user_can_manage: false,
 			can_manage_dns_records: false,
@@ -171,6 +175,56 @@ describe( 'DomainOverviewSettings', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Hide advanced settings' } ) );
 		expect( visibleRows() ).toEqual( defaultRows );
 		trackedToggle( false );
+	} );
+
+	test( 'keeps the advanced rows open after the settings remount', async () => {
+		const { unmount } = renderDomainSettings();
+		await showAdvanced();
+		await screen.findByText( GLUE );
+		unmount();
+
+		renderDomainSettings();
+		expect( await screen.findByText( GLUE ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Hide advanced settings' } ) ).toBeVisible();
+	} );
+
+	test( 'keeps the advanced rows closed after the settings remount once hidden', async () => {
+		const { unmount } = renderDomainSettings();
+		await showAdvanced();
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Hide advanced settings' } )
+		);
+		unmount();
+
+		renderDomainSettings();
+		expect( await screen.findByRole( 'button', SHOW_ADVANCED ) ).toBeVisible();
+		expect( screen.queryByText( GLUE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the advanced rows open for each domain separately', async () => {
+		function DomainSwitcher() {
+			const [ domain, setDomain ] = useState( 'example.com' );
+			return (
+				<>
+					<button onClick={ () => setDomain( 'example.com' ) }>example.com</button>
+					<button onClick={ () => setDomain( 'example.org' ) }>example.org</button>
+					<DomainOverviewSettings
+						domain={ getDomain( { domain } ) }
+						domainDiagnostics={ undefined }
+					/>
+				</>
+			);
+		}
+		render( <DomainSwitcher /> );
+		await showAdvanced();
+		await screen.findByText( GLUE );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'example.org' } ) );
+		expect( await screen.findByRole( 'button', SHOW_ADVANCED ) ).toBeVisible();
+		expect( screen.queryByText( GLUE ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'example.com' } ) );
+		expect( await screen.findByText( GLUE ) ).toBeVisible();
 	} );
 
 	test( 'hides the toggle when there are no advanced rows', async () => {

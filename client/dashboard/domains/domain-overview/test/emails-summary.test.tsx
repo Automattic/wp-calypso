@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { type Domain, type EmailAccount } from '@automattic/api-core';
 import { mailboxAccountsQuery } from '@automattic/api-queries';

@@ -9,6 +9,7 @@
  * - Double-click guard prevents concurrent calls
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { trackImageStudioError, trackImageStudioImageDeletedPermanently } from '../utils/tracking';
 import { useDeletePermanently } from './use-delete-permanently';
 
@@ -24,12 +25,12 @@ let mockSelectorState: {
 	hasUnsavedChanges: boolean;
 };
 
-const mockResetCanvasHistory = jest.fn();
-const mockAddNotice = jest.fn();
-const mockSetIsExitConfirmed = jest.fn();
-const mockDeleteEntityRecord = jest.fn();
-const mockOnExit = jest.fn();
-const mockSetIsExiting = jest.fn();
+const mockResetCanvasHistory = vi.fn();
+const mockAddNotice = vi.fn();
+const mockSetIsExitConfirmed = vi.fn();
+const mockDeleteEntityRecord = vi.fn();
+const mockOnExit = vi.fn();
+const mockSetIsExiting = vi.fn();
 
 // Create mock selectors object for both useSelect and select
 const createMockSelectors = () => ( {
@@ -43,11 +44,11 @@ const createMockSelectors = () => ( {
 	getHasUnsavedChanges: () => mockSelectorState.hasUnsavedChanges,
 } );
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( ( selector ) => {
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( ( selector ) => {
 		return selector( () => createMockSelectors() );
 	} ),
-	useDispatch: jest.fn( ( storeName ) => {
+	useDispatch: vi.fn( ( storeName ) => {
 		if ( storeName === 'core' ) {
 			return {
 				deleteEntityRecord: mockDeleteEntityRecord,
@@ -59,47 +60,47 @@ jest.mock( '@wordpress/data', () => ( {
 			setIsExitConfirmed: mockSetIsExitConfirmed,
 		};
 	} ),
-	select: jest.fn( () => createMockSelectors() ),
+	select: vi.fn( () => createMockSelectors() ),
 } ) );
 
-jest.mock( '@wordpress/core-data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
+vi.mock( '@wordpress/element', () => ( {
 	useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
 	useRef: ( initial: unknown ) => ( { current: initial } ),
-	useState: ( initial: unknown ) => [ initial, jest.fn() ],
+	useState: ( initial: unknown ) => [ initial, vi.fn() ],
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '../types', () => ( {
+vi.mock( '../types', () => ( {
 	ImageStudioMode: { Edit: 'edit', Generate: 'generate' },
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioImageDeletedPermanently: jest.fn(),
-	trackImageStudioError: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioImageDeletedPermanently: vi.fn(),
+	trackImageStudioError: vi.fn(),
 } ) );
 
-const mockDeleteDraftsExcept = jest.fn();
-jest.mock( './use-draft-cleanup', () => ( {
+const mockDeleteDraftsExcept = vi.fn();
+vi.mock( './use-draft-cleanup', () => ( {
 	useDraftCleanup: () => ( {
 		deleteDraftsExcept: mockDeleteDraftsExcept,
-		cleanupOnExit: jest.fn(),
+		cleanupOnExit: vi.fn(),
 	} ),
 } ) );
 
 describe( 'useDeletePermanently', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSelectorState = {
 			attachmentId: 42,
 			isAiProcessing: false,
@@ -459,7 +460,7 @@ describe( 'useDeletePermanently', () => {
 		it( 'shows error notice on deletion failure', async () => {
 			mockDeleteEntityRecord.mockRejectedValue( new Error( 'Network error' ) );
 
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useDeletePermanently( {
@@ -529,7 +530,7 @@ describe( 'useDeletePermanently', () => {
 		it( 'tracks error on deletion failure', async () => {
 			mockDeleteEntityRecord.mockRejectedValue( new Error( 'Network error' ) );
 
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useDeletePermanently( {
@@ -554,7 +555,7 @@ describe( 'useDeletePermanently', () => {
 		} );
 
 		it( 'calls onCloseCallback with null before onExit', async () => {
-			const mockOnCloseCallback = jest.fn();
+			const mockOnCloseCallback = vi.fn();
 			mockSelectorState.onCloseCallback = mockOnCloseCallback;
 
 			const callOrder: string[] = [];
@@ -603,10 +604,10 @@ describe( 'useDeletePermanently', () => {
 		} );
 
 		it( 'continues deletion flow even when onCloseCallback throws', async () => {
-			const mockOnCloseCallback = jest.fn().mockRejectedValue( new Error( 'Callback error' ) );
+			const mockOnCloseCallback = vi.fn().mockRejectedValue( new Error( 'Callback error' ) );
 			mockSelectorState.onCloseCallback = mockOnCloseCallback;
 
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 			const { result } = renderHook( () =>
 				useDeletePermanently( {

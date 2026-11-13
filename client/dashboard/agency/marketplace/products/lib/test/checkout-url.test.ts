@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	getCheckoutUrl,
@@ -44,7 +44,7 @@ describe( 'getCheckoutUrl', () => {
 		window.history.replaceState( {}, '', '/products?category=jetpack#cart' );
 	} );
 
-	it( 'sends a regular cart to the agency checkout on the dashboard with every line and the term', () => {
+	test( 'sends a regular cart to the agency checkout on the dashboard with every line and the term', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'yearly' } ) );
 		expect( url.origin ).toBe( window.location.origin );
 		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
@@ -54,7 +54,7 @@ describe( 'getCheckoutUrl', () => {
 		expect( url.searchParams.get( 'term' ) ).toBe( 'yearly' );
 	} );
 
-	it( 'names the site a PHP memory add-on applies to', () => {
+	test( 'names the site a PHP memory add-on applies to', () => {
 		const memoryAddon = {
 			slug: 'pressable-addon-php-memory-512',
 			product_id: 4001,
@@ -74,27 +74,27 @@ describe( 'getCheckoutUrl', () => {
 		);
 	} );
 
-	it( 'leaves the agency and the billing products out of the link', () => {
+	test( 'leaves the agency and the billing products out of the link', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'monthly' } ) );
 		expect( url.searchParams.has( 'agency_id' ) ).toBe( false );
 		expect( url.search ).not.toMatch( /1010|1011|2010/ );
 	} );
 
-	it( 'returns to Purchases with the receipt marker after payment', () => {
+	test( 'returns to Purchases with the receipt marker after payment', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'yearly' } ) );
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			`${ window.location.origin }/purchases?receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
 		);
 	} );
 
-	it( 'returns to the WordPress.com licenses waiting for a site when the cart holds a WordPress.com plan', () => {
+	test( 'returns to the WordPress.com licenses waiting for a site when the cart holds a WordPress.com plan', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'yearly', hasWpcomHostingPlan: true } ) );
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			`${ window.location.origin }/purchases?status=unassigned&search=WordPress.com&receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
 		);
 	} );
 
-	it( 'comes back to the current page, without its hash, on Back', () => {
+	test( 'comes back to the current page, without its hash, on Back', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'yearly' } ) );
 		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
 			`${ window.location.origin }/products?category=jetpack`
@@ -103,7 +103,7 @@ describe( 'getCheckoutUrl', () => {
 } );
 
 describe( 'getTermProductId', () => {
-	it( 'picks the product of the chosen term, falling back to the base product', () => {
+	test( 'picks the product of the chosen term, falling back to the base product', () => {
 		expect( getTermProductId( wpcomPlan, 'monthly' ) ).toBe( 1009 );
 		expect( getTermProductId( wpcomPlan, 'yearly' ) ).toBe( 1008 );
 		expect( getTermProductId( pressable, 'monthly' ) ).toBe( 3001 );
@@ -115,7 +115,7 @@ describe( 'getSiteLaunchCheckoutUrl', () => {
 		window.history.replaceState( {}, '', '/sites/example.wordpress.com/settings/site-visibility' );
 	} );
 
-	it( 'opens the agency checkout for the site and the WordPress.com plan, returning to the site', () => {
+	test( 'opens the agency checkout for the site and the WordPress.com plan, returning to the site', () => {
 		const url = new URL( getSiteLaunchCheckoutUrl( 'example.wordpress.com' ) );
 		expect( url.origin ).toBe( window.location.origin );
 		expect( url.pathname ).toBe(

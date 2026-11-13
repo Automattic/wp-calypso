@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -139,12 +139,7 @@ const mockGetDevicesApiAndReply = ( devices: UserNotificationDevice[] ) => {
 };
 
 describe( 'DevicesSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
-	it( 'renders a list of devices names', async () => {
+	test( 'renders a list of devices names', async () => {
 		const devices = [
 			buildDevice( {
 				device_id: '1',
@@ -176,7 +171,7 @@ describe( 'DevicesSettings', () => {
 		expect( await screen.findByRole( 'option', { name: 'Device 2' } ) ).toBeVisible();
 	} );
 
-	it( 'renders the device settings values', async () => {
+	test( 'renders the device settings values', async () => {
 		const blogId = 2;
 
 		const devices = [
@@ -213,7 +208,7 @@ describe( 'DevicesSettings', () => {
 		).not.toBeChecked();
 	} );
 
-	it( 'shows new settings state when the device is changed', async () => {
+	test( 'shows new settings state when the device is changed', async () => {
 		const devices = [
 			buildDevice( {
 				device_id: '1',
@@ -257,7 +252,7 @@ describe( 'DevicesSettings', () => {
 		).not.toBeChecked();
 	} );
 
-	it( 'closes the modal when the the apply all modal is called', async () => {
+	test( 'closes the modal when the the apply all modal is called', async () => {
 		const blogId = 4;
 
 		const devices = [
@@ -301,7 +296,7 @@ describe( 'DevicesSettings', () => {
 		} );
 	} );
 
-	it( 'updates all settings when the apply the `Apply to all sites` button is clicked', async () => {
+	test( 'updates all settings when the apply the `Apply to all sites` button is clicked', async () => {
 		const blogId = 4;
 
 		const devices = [
@@ -358,7 +353,7 @@ describe( 'DevicesSettings', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'updates the selected device settings when the option is changed', async () => {
+	test( 'updates the selected device settings when the option is changed', async () => {
 		const blogId = 4;
 
 		const devices = [

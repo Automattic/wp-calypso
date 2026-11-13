@@ -1,11 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ReelShareConfirmationDialog } from './index';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '../confirmation-dialog', () => ( {
+vi.mock( '../confirmation-dialog', () => ( {
 	ConfirmationDialog: ( {
 		isOpen,
 		title,
@@ -37,12 +38,12 @@ describe( '<ReelShareConfirmationDialog />', () => {
 	const baseProps = {
 		isOpen: true,
 		igDisplayName: null as string | null,
-		onConfirm: jest.fn(),
-		onCancel: jest.fn(),
+		onConfirm: vi.fn(),
+		onCancel: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders nothing when isOpen is false', () => {
@@ -80,7 +81,7 @@ describe( '<ReelShareConfirmationDialog />', () => {
 	} );
 
 	it( 'invokes onConfirm when Share is clicked', () => {
-		const onConfirm = jest.fn();
+		const onConfirm = vi.fn();
 		render(
 			<ReelShareConfirmationDialog
 				{ ...baseProps }
@@ -93,7 +94,7 @@ describe( '<ReelShareConfirmationDialog />', () => {
 	} );
 
 	it( 'invokes onCancel when Cancel is clicked', () => {
-		const onCancel = jest.fn();
+		const onCancel = vi.fn();
 		render(
 			<ReelShareConfirmationDialog
 				{ ...baseProps }

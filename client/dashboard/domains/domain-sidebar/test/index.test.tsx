@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery, siteByIdQuery } from '@automattic/api-queries';
@@ -15,26 +15,28 @@ import {
 } from '@tanstack/react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../../app/analytics';
 import { setTransientQueryParamsAtPathname } from '../../../app/transient-query-params';
 import { useActions } from '../../dataviews/actions';
 import DomainSidebar from '../index';
-import type { DomainSummary, Site, User } from '@automattic/api-core';
+import type { DomainSummary, Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/router/domains', () => {
-	const { useParams } = jest.requireActual( '@tanstack/react-router' );
+vi.mock( '../../../app/router/domains', async () => {
+	const { useParams } =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
 	return {
 		domainRoute: { useParams: () => useParams( { strict: false } ) },
 		domainOverviewRoute: { fullPath: '/domains/$domainName' },
 		domainTransferRoute: { fullPath: '/domains/$domainName/transfer' },
 	};
 } );
-jest.mock( '../../../app/router/sites', () => ( {
+vi.mock( '../../../app/router/sites', () => ( {
 	siteOverviewRoute: { fullPath: '/sites/$siteSlug' },
 	siteDomainsRoute: { fullPath: '/sites/$siteSlug/domains' },
 } ) );
-jest.mock( '../../../app/router/emails', () => ( { emailsRoute: { fullPath: '/emails' } } ) );
-jest.mock( '../domain-switcher-item', () => () => null );
+vi.mock( '../../../app/router/emails', () => ( { emailsRoute: { fullPath: '/emails' } } ) );
+vi.mock( '../domain-switcher-item', () => ( { default: () => null } ) );
 
 const domain = {
 	domain: 'example.com',
@@ -45,7 +47,7 @@ const domain = {
 const site = { ID: 123, slug: 'site-slug.com' } as Site;
 
 function ViewSettings( { siteList }: { siteList?: Site } ) {
-	const actions = useActions( { user: {} as User, site: siteList, layout: 'table' } );
+	const actions = useActions( { site: siteList, layout: 'table' } );
 	const viewSettings = actions.find( ( { id } ) => id === 'manage-domain' ) as unknown as {
 		callback: ( items: DomainSummary[] ) => void;
 	};
@@ -89,7 +91,7 @@ function renderAt( url: string ) {
 
 	render(
 		<QueryClientProvider client={ queryClient }>
-			<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
+			<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
 				<RouterProvider router={ router } />
 			</AnalyticsProvider>
 		</QueryClientProvider>

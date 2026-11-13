@@ -16,7 +16,7 @@ export default function NameServersSettingsSummary( {
 			text: domain.has_wpcom_nameservers
 				? __( 'Using WordPress.com name servers' )
 				: __( 'Using custom name servers' ),
-			intent: 'draft' as const,
+			intent: 'none' as const,
 		},
 	];
 

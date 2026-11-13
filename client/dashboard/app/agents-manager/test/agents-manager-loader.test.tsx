@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	omnibarAgentsManagerEnabledQuery,
@@ -8,18 +8,19 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AgentsManagerLoader from '../agents-manager-loader';
 import useShouldLoadAgentsManager from '../use-should-load-agents-manager';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../use-should-load-agents-manager' );
-jest.mock( '@automattic/agents-manager', () => ( {
+vi.mock( '../use-should-load-agents-manager' );
+vi.mock( '@automattic/agents-manager', () => ( {
 	__esModule: true,
 	default: () => <div role="region" aria-label="Agents Manager" />,
 } ) );
 
-const mockedUseShouldLoadAgentsManager = jest.mocked( useShouldLoadAgentsManager );
+const mockedUseShouldLoadAgentsManager = vi.mocked( useShouldLoadAgentsManager );
 const siteId = 123;
 const site = {
 	ID: siteId,
@@ -33,10 +34,10 @@ describe( '<AgentsManagerLoader />', () => {
 		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, siteId );
 		queryClient.setQueryData( siteByIdQuery( siteId ).queryKey, site );
 	} );
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
-	it( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
-		const cancelQueries = jest.spyOn( queryClient, 'cancelQueries' );
+	test( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
+		const cancelQueries = vi.spyOn( queryClient, 'cancelQueries' );
 		mockedUseShouldLoadAgentsManager.mockReturnValue( {
 			routeIsEnabled: true,
 			isInternalOnly: true,
@@ -55,7 +56,7 @@ describe( '<AgentsManagerLoader />', () => {
 		} );
 	} );
 
-	it( 'publishes disabled eligibility outside the allowlist', async () => {
+	test( 'publishes disabled eligibility outside the allowlist', async () => {
 		mockedUseShouldLoadAgentsManager.mockReturnValue( {
 			routeIsEnabled: false,
 			isInternalOnly: false,

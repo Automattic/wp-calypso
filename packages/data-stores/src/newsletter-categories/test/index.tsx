@@ -4,12 +4,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import request from '../../wpcom-request';
 import { useNewsletterCategories } from '../index';
 
-jest.mock( '../../wpcom-request', () => ( {
+vi.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 describe( 'useNewsletterCategories', () => {
@@ -17,7 +18,7 @@ describe( 'useNewsletterCategories', () => {
 	let wrapper: React.FC< { children: React.ReactNode } >;
 
 	beforeEach( () => {
-		jest.mocked( request ).mockReset();
+		vi.mocked( request ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -33,11 +34,11 @@ describe( 'useNewsletterCategories', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return expected data when successful', async () => {
-		jest.mocked( request ).mockResolvedValue( {
+		vi.mocked( request ).mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [
 				{ id: 1, name: 'Category 1', slug: 'Slug 1', description: 'Description 1', parent: 1 },
@@ -59,7 +60,7 @@ describe( 'useNewsletterCategories', () => {
 	} );
 
 	it( 'should handle empty response', async () => {
-		jest.mocked( request ).mockResolvedValue( {
+		vi.mocked( request ).mockResolvedValue( {
 			enabled: false,
 			newsletter_categories: [],
 		} );
@@ -72,7 +73,7 @@ describe( 'useNewsletterCategories', () => {
 	} );
 
 	it( 'should call request with correct arguments', async () => {
-		jest.mocked( request ).mockResolvedValue( {
+		vi.mocked( request ).mockResolvedValue( {
 			enabled: true,
 			newsletter_categories: [],
 		} );
@@ -91,7 +92,7 @@ describe( 'useNewsletterCategories', () => {
 
 	it( 'should handle error response', async () => {
 		const errorMessage = 'API Error';
-		jest.mocked( request ).mockRejectedValue( new Error( errorMessage ) );
+		vi.mocked( request ).mockRejectedValue( new Error( errorMessage ) );
 
 		const { result } = renderHook( () => useNewsletterCategories( { siteId: 123 } ), { wrapper } );
 

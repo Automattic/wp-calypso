@@ -1,4 +1,4 @@
-import { vi, type Mock } from 'vitest';
+import { vi } from 'vitest';
 import { createSsrSafeDummyExPlatClient } from '../create-explat-client';
 import * as Timing from '../internal/timing';
 import type { Config } from '../types';
@@ -31,9 +31,9 @@ describe( 'loadExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.getAnonId as Mock ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.getAnonId ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -59,9 +59,9 @@ describe( 'dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.getAnonId as Mock ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.getAnonId ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {

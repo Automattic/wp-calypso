@@ -45,7 +45,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
-import { ConversationContentPlaceholder } from './placeholder';
+import { ConversationCommentsPlaceholder, ConversationContentPlaceholder } from './placeholder';
 import type {
 	ReadConversationPostAuthor,
 	ReadConversationPostDiscussion,
@@ -407,12 +407,14 @@ export function ConversationDetail( {
 
 							<Comments
 								key={ startingComment.key }
+								loadingPlaceholder={ <ConversationCommentsPlaceholder /> }
 								useBlockEditor
 								showNestingReplyArrow
 								post={ post }
 								initialSize={ commentCount || 10 }
 								pageSize={ 25 }
 								startingCommentId={ startingComment.id }
+								latestCommentId={ conversation?.latestCommentId }
 								commentCount={ commentCount }
 								maxDepth={ 1 }
 								commentsFilterDisplay={ COMMENTS_FILTER_ALL }

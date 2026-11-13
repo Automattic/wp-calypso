@@ -19,6 +19,16 @@ Consider a lighter, less abstracted way of writing tests, without page objects. 
 
 ## Unit Testing
 
+The unit tests run on [Vitest](https://vitest.dev/):
+
+```bash
+yarn test-dashboard                      # Run every Dashboard test
+yarn test-dashboard client/dashboard/me  # Run the tests whose paths match
+yarn test-dashboard:watch                # Re-run the tests affected by each change
+```
+
+Vitest's globals (`describe`, `test`, `expect`) are available without an import; import `vi` from `vitest`.
+
 ### File Naming
 
 A file in a `test/` folder that contains `describe`/`it`/`test` blocks must be named `*.test.ts` or `*.test.tsx`. Unsuffixed files in `test/` are reserved for fixtures and helpers.
@@ -85,13 +95,13 @@ nock( 'https://public-api.wordpress.com' )
 
 **Tips:**
 
-- Avoid `nock.delay()` — it leaves open handles causing "Jest did not exit" warnings.
+- Avoid `nock.delay()` — it leaves open handles that keep the test run from exiting.
 - Use `scope.isDone()` to assert the request was actually made.
 - Use `.query( true )` when you don't care about specific query string values.
 
 #### Asserting the request body
 
-Assert the request body inside nock's body callback using Jest matchers, then use
+Assert the request body inside nock's body callback using `expect` matchers, then use
 `scope.isDone()` to verify the request was actually made.
 
 ```tsx
@@ -131,39 +141,55 @@ queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
 render( <MyComponent />, { queryClient } );
 ```
 
-### Mocking Modules: use ES imports, not `require()`
+### Mocking Modules
 
-Do not use inline `require()` to load a mocked module "after" `jest.mock()` is set up. Jest hoists `jest.mock()` calls above all imports, so a top-level ES import already receives the mocked version. Inline `require()` is also an ESLint error (`@typescript-eslint/no-require-imports`).
+Mock a module only for what a test can't run or control any other way:
+
+- A service that reaches outside the app, e.g. analytics, error and log reporting, surveys.
+- A switch the code reads from the environment, e.g. a feature flag from `@automattic/calypso-config`.
+
+Don't mock the dashboard's own components, hooks, or router to make a test pass. Data from the API is mocked at the network level (see above).
+
+#### Use ES imports, not `require()`
+
+Do not use inline `require()` to load a mocked module "after" `vi.mock()` is set up. Vitest hoists `vi.mock()` calls above all imports, so a top-level ES import already receives the mocked version. Inline `require()` is also an ESLint error (`@typescript-eslint/no-require-imports`).
 
 ```tsx
 // ❌ Bad: lazy require to "get the mock"
-test( 'saves preferences', () => {
+test( 'shows the banner when the flag is on', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	userPreferencesMutation.mockReturnValue( /* … */ );
+	const { isEnabled } = require( '@automattic/calypso-config' );
+	isEnabled.mockReturnValue( true );
 } );
 ```
 
 ```tsx
-// ✅ Good: top-level import + cast
-import { userPreferencesMutation } from '@automattic/api-queries';
+// ✅ Good: top-level import + `vi.mocked()`
+import { isEnabled } from '@automattic/calypso-config';
+import { vi } from 'vitest';
 
-jest.mock( '@automattic/api-queries' );
+vi.mock( '@automattic/calypso-config', () => ( { isEnabled: vi.fn() } ) );
 
-test( 'saves preferences', () => {
-	( userPreferencesMutation as jest.Mock ).mockReturnValue( /* … */ );
+test( 'shows the banner when the flag is on', () => {
+	vi.mocked( isEnabled ).mockReturnValue( true );
 } );
 ```
 
-Deferred loading is only genuinely needed with `jest.resetModules()`, `jest.isolateModules()`, or `jest.doMock()` — and even then prefer `await import()` over `require()`.
+Deferred loading is only genuinely needed with `vi.resetModules()` or `vi.doMock()` — and even then use `await import()`, not `require()`.
 
-One exception: a `jest.mock()` factory runs before imports are initialized, so it cannot reference top-level imports. Inside a factory, use `jest.requireActual()`:
+One exception: a `vi.mock()` factory runs before imports are initialized, so it cannot reference top-level imports. Inside a factory, use `await vi.importActual()`:
 
 ```tsx
-jest.mock( 'some-module', () => {
-	const { createElement } = jest.requireActual( 'react' );
+vi.mock( 'some-module', async () => {
+	const { createElement } = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	// …
 } );
+```
+
+A factory returns the module's ES exports, so a default export goes under `default`:
+
+```tsx
+vi.mock( '../use-some-hook', () => ( { default: vi.fn() } ) );
 ```
 
 ### Utility Function Tests

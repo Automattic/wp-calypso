@@ -5,6 +5,8 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import { useShoppingCart } from '../src/index';
 import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';
@@ -14,14 +16,14 @@ import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './
 const emptyResponseCart = getEmptyResponseCart();
 
 describe( 'useShoppingCart', () => {
-	const mockGetCart = jest.fn();
-	const markUpdateComplete = jest.fn();
+	const mockGetCart = vi.fn();
+	const markUpdateComplete = vi.fn();
 	let testRunErrors = [];
 
 	beforeEach( () => {
 		mockGetCart.mockReset();
 		markUpdateComplete.mockClear();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		testRunErrors = [];
 	} );
 
@@ -854,7 +856,7 @@ describe( 'useShoppingCart', () => {
 
 			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
 
-			jest.spyOn( navigator, 'onLine', 'get' ).mockReturnValueOnce( false );
+			vi.spyOn( navigator, 'onLine', 'get' ).mockReturnValueOnce( false );
 			fireEvent( window, new Event( 'focus' ) );
 
 			await verifyThatTextNeverAppears( planTwo.product_name );
