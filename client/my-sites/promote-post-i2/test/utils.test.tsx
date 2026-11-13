@@ -3,7 +3,12 @@
  */
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
-import { getShortDateString, isRunningInWpAdmin } from '../utils';
+import {
+	campaignStatus,
+	canPromoteAgainCampaign,
+	getShortDateString,
+	isRunningInWpAdmin,
+} from '../utils';
 
 describe( 'Promote Post Utils', () => {
 	const timestamp = 1687521600000; // 2023-06-23 12:00:00 GMT+0000
@@ -57,4 +62,20 @@ describe( 'isRunningInWpAdmin', () => {
 		( config.isEnabled as jest.Mock ).mockReturnValue( false ) as unknown as SiteDetails;
 		expect( isRunningInWpAdmin( null ) ).toBe( false );
 	} );
+} );
+
+describe( 'canPromoteAgainCampaign', () => {
+	test.each( [ campaignStatus.ACTIVE, campaignStatus.FINISHED, campaignStatus.CANCELED ] )(
+		'allows promoting a %s campaign again',
+		( status ) => {
+			expect( canPromoteAgainCampaign( status ) ).toBe( true );
+		}
+	);
+
+	test.each( [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ] )(
+		"doesn't allow promoting a %s campaign again",
+		( status ) => {
+			expect( canPromoteAgainCampaign( status ) ).toBe( false );
+		}
+	);
 } );
