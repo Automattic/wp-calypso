@@ -5,6 +5,15 @@
 
 import { vi } from 'vitest';
 
+beforeEach( () => {
+	vi.resetModules();
+} );
+
+afterEach( () => {
+	vi.doUnmock( '@automattic/calypso-config' );
+	vi.unstubAllGlobals();
+} );
+
 test.each( [
 	{ envId: 'dashboard-production', desktop: true, backport: false },
 	{ envId: 'dashboard-horizon', desktop: true, backport: false },
@@ -12,13 +21,12 @@ test.each( [
 	{ envId: 'dashboard-horizon', desktop: false, backport: false },
 	{ envId: 'wpcalypso', desktop: false, backport: true },
 ] )( 'classifies $envId with desktop=$desktop', async ( { envId, desktop, backport } ) => {
-	vi.resetModules();
-	window.configData = {
+	vi.stubGlobal( 'configData', {
 		env_id: envId,
 		calypso_live_image: 'test-image',
 		calypso_live_envs: { wpcom: 'calypso', dashboard: 'dashboard' },
-	};
-	window.electron = desktop ? {} : undefined;
+	} );
+	vi.stubGlobal( 'electron', desktop ? {} : undefined );
 
 	vi.doMock(
 		'@automattic/calypso-config',

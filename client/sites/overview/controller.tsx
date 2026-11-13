@@ -71,7 +71,7 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard
 	// fires its own page view events.
-	context.primary = <DashboardBackportSiteOverview store={ context.store } siteSlug={ siteSlug } />;
+	context.primary = <DashboardBackportSiteOverview siteSlug={ siteSlug } />;
 
 	next();
 }

@@ -7,17 +7,9 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useAnalyticsClient } from '../hooks/use-analytics-client';
 import Layout from './layout';
 import router from './router';
-import type { Store } from 'redux';
-
 import './style.scss';
 
-export default function DashboardBackportSiteOverview( {
-	store,
-	siteSlug,
-}: {
-	store: Store;
-	siteSlug?: string;
-} ) {
+export default function DashboardBackportSiteOverview( { siteSlug }: { siteSlug?: string } ) {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const user = useSelector( ( state ) => getCurrentUser( state ) );
@@ -52,10 +44,10 @@ export default function DashboardBackportSiteOverview( {
 			} ),
 		] ).then( () => {
 			rootInstanceRef.current?.render(
-				<Layout store={ store } analyticsClient={ analyticsClient } siteSlug={ siteSlug } />
+				<Layout analyticsClient={ analyticsClient } siteSlug={ siteSlug } />
 			);
 		} );
-	}, [ store, analyticsClient, user, siteSlug ] );
+	}, [ analyticsClient, user, siteSlug ] );
 
 	// Use data already available in Redux to seed the React Query cache and avoid redundant data fetching.
 	useEffect( () => {
