@@ -1,7 +1,7 @@
 import pagejs from '@automattic/calypso-router';
 import { createMemoryHistory } from '@tanstack/react-router';
 import UnknownError from '../components/500';
-import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
+import type { AnyRoute, AnyRouter, RouterHistory } from '@tanstack/react-router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
 export function getRouterOptions( config: AppConfig ) {
@@ -21,6 +21,8 @@ export function getRouterOptions( config: AppConfig ) {
 		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
 	};
 }
+
+type MemoryHistoryUpdate = Parameters< Parameters< RouterHistory[ 'subscribe' ] >[ 0 ] >[ 0 ];
 
 export function createBrowserHistoryAndMemoryRouterSync( {
 	compatibilityRoutes,
@@ -67,7 +69,7 @@ export function createBrowserHistoryAndMemoryRouterSync( {
 
 	const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 		// Sync TanStack Router's history to the browser history (pagejs).
-		return router.history.subscribe( ( { location }: { location: Location } ) => {
+		return router.history.subscribe( ( { location, action }: MemoryHistoryUpdate ) => {
 			const { pathname, search } = location;
 			const newUrl = `${ pathname }${ search }`;
 
@@ -78,12 +80,22 @@ export function createBrowserHistoryAndMemoryRouterSync( {
 
 			const externalUrl = getExternalUrl?.( newUrl );
 			if ( externalUrl ) {
-				window.location.assign( externalUrl );
+				if ( action.type === 'REPLACE' ) {
+					window.location.replace( externalUrl );
+				} else {
+					window.location.assign( externalUrl );
+				}
 				return;
 			}
 
 			if ( window.location.pathname + window.location.search !== newUrl ) {
-				pagejs.show( newUrl );
+				// Pushing for a replace would keep the replaced URL in the browser history, and Back
+				// would sync it into the router again.
+				if ( action.type === 'REPLACE' ) {
+					pagejs.replace( newUrl );
+				} else {
+					pagejs.show( newUrl );
+				}
 				lastPath = newUrl;
 			}
 		} );
