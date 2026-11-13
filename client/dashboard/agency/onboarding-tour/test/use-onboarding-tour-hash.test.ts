@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
 import { useOnboardingTourHash } from '../use-onboarding-tour-hash';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -16,6 +16,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
 import type { Domain, Purchase } from '@automattic/api-core';
@@ -24,7 +25,7 @@ jest.mock( '../../../../app/router/domains', () => ( {
 	domainRoute: { fullPath: '/domains/$domainName' },
 } ) );
 
-jest.mock( '../../../../app/router/me', () => ( {
+vi.mock( '../../../../app/router/me', () => ( {
 	cancelPurchaseRoute: { fullPath: '__root__', useParams: () => ( { purchaseId: '123' } ) },
 	purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },
 	purchasesRoute: { to: '/me/billing/purchases' },

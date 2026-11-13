@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import IcannSuspensionNotice from '../icann-suspension-notice';
 import type { Domain } from '@automattic/api-core';
@@ -21,11 +22,11 @@ const getMockedDomain = ( customProps: Partial< Domain > = {} ): Domain => {
 describe( '<IcannSuspensionNotice>', () => {
 	describe( 'pending verification', () => {
 		beforeEach( () => {
-			jest.useFakeTimers( { now: new Date( '2026-09-24T10:00:00+00:00' ) } );
+			vi.useFakeTimers( { now: new Date( '2026-09-24T10:00:00+00:00' ) } );
 		} );
 
 		afterEach( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		test( 'shows the registrant email and the deadline', () => {

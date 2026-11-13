@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import { Modal } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
+import { vi } from 'vitest';
 import Snackbars from '../index';
 
 describe( 'Snackbars with an open modal', () => {
@@ -17,7 +18,7 @@ describe( 'Snackbars with an open modal', () => {
 		render(
 			<QueryClientProvider client={ new QueryClient() }>
 				<Snackbars />
-				<Modal title="Change site address" onRequestClose={ jest.fn() }>
+				<Modal title="Change site address" onRequestClose={ vi.fn() }>
 					Modal content
 				</Modal>
 			</QueryClientProvider>

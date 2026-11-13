@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import ChangePrimaryDomainModal from '../change-primary-domain-modal';
@@ -16,17 +17,17 @@ const currentPrimaryDomain = { domain: 'primary-domain-test.wordpress.com' } as 
 const domains = [ { domain: 'example.com' } ] as DomainSummary[];
 
 beforeEach( () => {
-	jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+	vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 	for ( const notice of select( noticesStore ).getNotices() ) {
 		dispatch( noticesStore ).removeNotice( notice.id );
 	}
 } );
 
-async function submitChange( onClose = jest.fn() ) {
+async function submitChange( onClose = vi.fn() ) {
 	const user = userEvent.setup();
 	render(
 		<>

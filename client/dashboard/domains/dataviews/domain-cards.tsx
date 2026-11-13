@@ -46,11 +46,10 @@ function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) 
 }
 
 /*
- * The second link is the domain's next step: "Renew" once it has expired, "Set up" while its connection is broken,
- * otherwise "DNS". Renew only applies to registrations and Set up only to connections, so at most one of them is
- * eligible. If that ever changes, Renew wins: nothing else works on an expired domain until it's renewed.
+ * The second link is the domain's next step: "Renew" once it has expired, otherwise "DNS".
+ * Renew wins: nothing else works on an expired domain until it's renewed.
  */
-const NEXT_STEP_ACTION_IDS = [ 'renew', 'setup', 'manage-dns-settings' ];
+const NEXT_STEP_ACTION_IDS = [ 'renew', 'manage-dns-settings' ];
 
 function getFooterActions( eligibleActions: Action< DomainSummary >[] ) {
 	const findAction = ( id: string ) => eligibleActions.find( ( action ) => action.id === id );
