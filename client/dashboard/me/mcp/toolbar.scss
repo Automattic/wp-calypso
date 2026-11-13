@@ -38,4 +38,25 @@
 // target lands below the sticky toolbar instead of under it.
 .mcp-tools-anchor {
 	scroll-margin-block-start: calc( var( --mcp-tools-toolbar-bottom, 0px ) + 16px );
+	border-radius: 2px;
+	transition: opacity 0.2s ease-out;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+
+	// Only an anchor link focuses a target (see use-anchor-scroll.ts), so this
+	// outlines the linked tool or group until focus moves on.
+	&:focus {
+		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --color-primary );
+		outline-offset: 8px;
+	}
+}
+
+// While the linked target has focus, fade every other tool and group. Skip the
+// target's own group card (it has focus within) and, for a linked group, the
+// tools inside it.
+.mcp-tools-page:has( .mcp-tools-anchor:focus )
+	.mcp-tools-anchor:not( :focus-within, .mcp-tools-anchor:focus .mcp-tools-anchor ) {
+	opacity: 0.4;
 }

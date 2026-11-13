@@ -1,7 +1,8 @@
 import { useEffect, useRef, type RefObject } from 'react';
 
 /**
- * Scrolls an anchored tool or group into view on the MCP read/write pages.
+ * Scrolls an anchored tool or group into view on the MCP read/write pages,
+ * and focuses it so the linked target stands out.
  *
  * A tool row only renders once its group is open, so the scroll waits for the
  * render that adds the target. Before scrolling, the page gets the bottom edge
@@ -34,6 +35,17 @@ export default function useAnchorScroll(
 			);
 		}
 		target.scrollIntoView?.( { block: 'start' } );
+
+		// Focus the target so it's outlined, and so Tab continues from it. It
+		// is focusable only until focus moves on, so a later click inside it
+		// doesn't outline it again.
+		if ( ! target.hasAttribute( 'tabindex' ) ) {
+			target.setAttribute( 'tabindex', '-1' );
+			target.addEventListener( 'blur', () => target.removeAttribute( 'tabindex' ), {
+				once: true,
+			} );
+		}
+		target.focus( { preventScroll: true } );
 	} );
 
 	return ( anchor: string ) => {
