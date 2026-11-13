@@ -10,13 +10,11 @@ export type WooHumanSupportOutcome =
 	| { route: 'forums' | 'ai-reply-then-forums' }
 	| { route: 'link-out'; productName: string; url: string };
 
-export function WooHumanSupportRouteOutcome( {
-	outcome,
-	onDone,
-}: {
-	outcome: WooHumanSupportOutcome;
-	onDone: () => void;
-} ) {
+/**
+ * The card is the answer, so there's no Done: that would put the chat's "connect me" buttons back
+ * for the same request. It stays until the merchant writes to the bot again.
+ */
+export function WooHumanSupportRouteOutcome( { outcome }: { outcome: WooHumanSupportOutcome } ) {
 	const links = {
 		// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
 		docs: <ExternalLink href={ WOO_DOCS_URL } />,
@@ -79,11 +77,8 @@ export function WooHumanSupportRouteOutcome( {
 					</p>
 				</>
 			) }
-			<div className="help-center-woo-routing-step__actions">
-				<Button __next40pxDefaultSize variant="tertiary" onClick={ onDone }>
-					{ __( 'Done', __i18n_text_domain__ ) }
-				</Button>
-				{ outcome.route === 'link-out' && (
+			{ outcome.route === 'link-out' && (
+				<div className="help-center-woo-routing-step__actions">
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
@@ -97,8 +92,8 @@ export function WooHumanSupportRouteOutcome( {
 							outcome.productName
 						) }
 					</Button>
-				) }
-			</div>
+				</div>
+			) }
 		</>
 	);
 }
