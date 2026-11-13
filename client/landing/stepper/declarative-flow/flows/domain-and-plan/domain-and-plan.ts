@@ -7,6 +7,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import wpcom from 'calypso/lib/wp';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
@@ -23,12 +24,12 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PLANS ];
 
 /**
- * `back_to` and the `domainConnectionSetupUrl` template arrive via the query string and end
- * up in `window.location`, so resolve them the way the browser will and accept only this
- * origin and the dashboard's. Substring checks are bypassable
+ * The `domainConnectionSetupUrl` template arrives via the query string and ends up in
+ * `window.location.replace()`, so resolve it the way the browser will and accept only
+ * this origin and the dashboard's. Substring checks are bypassable
  * (`https://my.wordpress.com.evil.example`, `/\evil.example`), hence parsed origins.
  */
-function isSafeRedirectUrl( value: string ) {
+function isSafeDomainConnectionSetupUrl( value: string ) {
 	try {
 		const resolvedOrigin = new URL( value, window.location.origin ).origin;
 
@@ -49,11 +50,10 @@ const domainUpsell: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const backToParam = useQuery().get( 'back_to' );
-		const backTo = backToParam && isSafeRedirectUrl( backToParam ) ? backToParam : null;
 		const flowName = this.name;
 		const siteSlug = useSiteSlug()!;
 		const site = useSite();
+		const backTo = getSafeUrl( useQuery().get( 'back_to' ), site?.URL );
 		const hasQualifyingPlan =
 			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
 		// Connecting a domain is bundled with every paid plan, so there is nothing left to buy.
@@ -63,7 +63,8 @@ const domainUpsell: Flow = {
 
 		const domainConnectionSetupUrlParam = useQuery().get( 'domainConnectionSetupUrl' );
 		const domainConnectionSetupUrl =
-			domainConnectionSetupUrlParam && isSafeRedirectUrl( domainConnectionSetupUrlParam )
+			domainConnectionSetupUrlParam &&
+			isSafeDomainConnectionSetupUrl( domainConnectionSetupUrlParam )
 				? domainConnectionSetupUrlParam
 				: null;
 		const { getDomainCartItems, getPlanCartItem } = useSelect(
