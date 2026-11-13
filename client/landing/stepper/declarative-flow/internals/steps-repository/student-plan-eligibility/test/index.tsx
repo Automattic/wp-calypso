@@ -122,19 +122,29 @@ describe( 'StudentPlanEligibility', () => {
 	 * The endpoint is rate limited, so a click during a check must not send another request.
 	 */
 	it( 'does not send a second request when the button is clicked during a check', async () => {
+		let respond: () => void = () => {};
 		mockEligibility( 'unverified' );
-		nock( 'https://public-api.wordpress.com:443' )
+		const heldRequest = nock( 'https://public-api.wordpress.com:443' )
 			.get( ELIGIBILITY_PATH )
 			.query( true )
-			.delay( 200 )
-			.reply( 200, { eligible: false, reason: 'unverified', email_domain: 'mit.edu' } );
+			.reply( ( _uri, _body, callback ) => {
+				respond = () =>
+					callback( null, [
+						200,
+						{ eligible: false, reason: 'unverified', email_domain: 'mit.edu' },
+					] );
+			} );
 		const extraRequest = mockEligibility( 'unverified' );
 
 		render();
 
 		const button = await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } );
 		await userEvent.click( button );
+		await waitFor( () => expect( heldRequest.isDone() ).toBe( true ) );
+		expect( button ).toHaveClass( 'is-busy' );
+
 		await userEvent.click( button );
+		respond();
 
 		await waitFor( () => expect( button ).not.toHaveClass( 'is-busy' ) );
 		expect( extraRequest.isDone() ).toBe( false );
