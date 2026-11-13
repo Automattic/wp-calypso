@@ -4,7 +4,7 @@ import { useOdieAssistantContext } from '../../../context';
 import { useAttachmentHandler } from '../use-attachment-handler';
 
 const mockAddMessage = vi.fn();
-const mockAttachFileToConversation = vi.fn().mockResolvedValue( undefined );
+const mockAttachFileToConversation = vi.fn().mockResolvedValue( { ok: true, status: 201 } );
 const mockTrackEvent = vi.fn();
 // Arguments: whether the token may be fetched, and the token type.
 const mockUseAuthenticateZendeskMessaging = vi.fn< ( ...args: [ boolean, string ] ) => object >(
@@ -15,7 +15,10 @@ const mockUseAuthenticateZendeskMessaging = vi.fn< ( ...args: [ boolean, string 
 
 vi.mock( '@wordpress/i18n', () => {
 	Object.assign( globalThis, { __i18n_text_domain__: 'default' } );
-	return { __: ( text: string ) => text };
+	return {
+		__: ( text: string ) => text,
+		_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
+	};
 } );
 
 vi.mock( '@wordpress/components', () => ( {
@@ -155,6 +158,98 @@ describe( 'useAttachmentHandler', () => {
 				} )
 			);
 		} );
+	} );
+} );
+
+describe( 'useAttachmentHandler – failed uploads', () => {
+	const statusFile = new File( [ 'status' ], 'system-status.txt', { type: 'text/plain' } );
+	const logFile = new File( [ 'debug' ], 'debug.log', { type: 'text/plain' } );
+
+	const sendFiles = async ( files: File[] ) => {
+		const { result } = renderHook( () => useAttachmentHandler() );
+		await act( async () => result.current.handleFileUpload( files ) );
+		await act( async () => result.current.sendAttachments() );
+		return result;
+	};
+
+	it( 'keeps a file Zendesk turns down out of the chat and in the previews', async () => {
+		mockAttachFileToConversation.mockResolvedValueOnce( { ok: false, status: 413 } );
+
+		const result = await sendFiles( [ statusFile ] );
+
+		expect( mockAddMessage ).not.toHaveBeenCalled();
+		expect( mockTrackEvent ).not.toHaveBeenCalledWith(
+			'send_message_attachment',
+			expect.anything()
+		);
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'send_message_attachment_failed', {
+			type: 'text/plain',
+			status: 413,
+		} );
+		expect( getPreviewFiles( result.current.attachmentPreviews ) ).toEqual( [ statusFile ] );
+		expect( result.current.uploadErrorNotice?.message ).toBe(
+			"We couldn't send this file. Please try again."
+		);
+	} );
+
+	it( 'keeps a file whose upload never reaches Zendesk', async () => {
+		mockAttachFileToConversation.mockRejectedValueOnce( new TypeError( 'Failed to fetch' ) );
+
+		const result = await sendFiles( [ statusFile ] );
+
+		expect( mockAddMessage ).not.toHaveBeenCalled();
+		expect( mockTrackEvent ).toHaveBeenCalledWith( 'send_message_attachment_failed', {
+			type: 'text/plain',
+		} );
+		expect( getPreviewFiles( result.current.attachmentPreviews ) ).toEqual( [ statusFile ] );
+		expect( result.current.uploadErrorNotice ).toBeDefined();
+	} );
+
+	it( 'sends the files Zendesk accepts and keeps only the others', async () => {
+		mockAttachFileToConversation
+			.mockResolvedValueOnce( { ok: true, status: 201 } )
+			.mockResolvedValueOnce( { ok: false, status: 500 } );
+
+		const result = await sendFiles( [ statusFile, logFile ] );
+
+		expect( mockAddMessage ).toHaveBeenCalledTimes( 1 );
+		expect( mockAddMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { altText: 'system-status.txt' } )
+		);
+		expect( getPreviewFiles( result.current.attachmentPreviews ) ).toEqual( [ logFile ] );
+		expect( result.current.uploadErrorNotice?.message ).toBe(
+			"We couldn't send this file. Please try again."
+		);
+	} );
+
+	it( 'says "these files" when more than one fails', async () => {
+		mockAttachFileToConversation
+			.mockResolvedValueOnce( { ok: false, status: 401 } )
+			.mockResolvedValueOnce( { ok: false, status: 401 } );
+
+		const result = await sendFiles( [ statusFile, logFile ] );
+
+		expect( getPreviewFiles( result.current.attachmentPreviews ) ).toEqual( [
+			statusFile,
+			logFile,
+		] );
+		expect( result.current.uploadErrorNotice?.message ).toBe(
+			"We couldn't send these files. Please try again."
+		);
+	} );
+
+	it( 'clears the notice once the file goes through', async () => {
+		mockAttachFileToConversation.mockResolvedValueOnce( { ok: false, status: 401 } );
+		const result = await sendFiles( [ statusFile ] );
+		expect( result.current.uploadErrorNotice ).toBeDefined();
+
+		await act( async () => result.current.sendAttachments() );
+
+		expect( result.current.uploadErrorNotice ).toBeUndefined();
+		expect( result.current.attachmentPreviews ).toBeNull();
+		expect( mockAddMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { altText: 'system-status.txt' } )
+		);
 	} );
 } );
 
