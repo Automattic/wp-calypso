@@ -1,3 +1,4 @@
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { translate } from 'i18n-calypso';
 import {
 	ACTIVATE_PLUGIN,
@@ -202,6 +203,7 @@ export function activatePlugin( siteId, plugin ) {
 					plugin: plugin.slug,
 				} )
 			);
+			invokeSurvicateEvent( 'pluginActivated' );
 		};
 
 		const successCallback = ( data ) => {
@@ -259,6 +261,7 @@ export function deactivatePlugin( siteId, plugin ) {
 					plugin: plugin.slug,
 				} )
 			);
+			invokeSurvicateEvent( 'pluginDeactivated' );
 		};
 
 		const successCallback = ( data ) => {
@@ -315,6 +318,7 @@ export function updatePlugin( siteId, plugin ) {
 			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
 			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId ) );
 			dispatch( sitePluginUpdated( siteId ) );
+			invokeSurvicateEvent( 'pluginUpdated' );
 		} catch ( error ) {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
 			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
