@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { getLinkHtml } from '../functions';
 
 describe( 'getLinkHtml', () => {
