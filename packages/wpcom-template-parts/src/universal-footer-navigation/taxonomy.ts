@@ -90,7 +90,7 @@ export function getFooterColumns( {
 				{
 					slug: 'wp-studio',
 					label: __( 'WordPress Studio', __i18n_text_domain__ ),
-					url: 'https://developer.wordpress.com/studio/',
+					url: 'https://wordpress.studio/',
 					chevron: true,
 				},
 				{
@@ -382,8 +382,8 @@ export function getFooterColumns2026( {
 				},
 				{
 					slug: 'wp-studio',
-					label: __( 'Studio', __i18n_text_domain__ ),
-					url: 'https://developer.wordpress.com/studio/',
+					label: __( 'WordPress Studio', __i18n_text_domain__ ),
+					url: 'https://wordpress.studio/',
 					chevron: true,
 				},
 			],
