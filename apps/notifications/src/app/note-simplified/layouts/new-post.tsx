@@ -32,7 +32,7 @@ export default function NewPostNote( { note }: { note: Note } ) {
 				<Headline note={ note } />
 			) }
 			{ post && (
-				<Text className="wpnc-simplified__quiet-links" size={ 15 } weight={ 600 }>
+				<Text className="wpnc-simplified__quiet-links" size={ 14 } weight={ 600 } lineHeight="22px">
 					<a href={ post.url } target="_blank" rel="noreferrer">
 						{ post.title }
 					</a>

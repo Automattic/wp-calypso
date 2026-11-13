@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
- * @jest-environment-options { "url": "https://my.localhost/" }
+ * @vitest-environment jsdom
+ * @vitest-environment-options { "url": "https://my.localhost/" }
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import Notice from '../../components/notice';
 import { useSiteExpiryNoticeCandidate } from '../../components/site-expiry-notice';
 import { render } from '../../test-utils';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 
-jest.mock( '../../components/site-expiry-notice', () => ( {
-	useSiteExpiryNoticeCandidate: jest.fn( () => null ),
+vi.mock( '../../components/site-expiry-notice', () => ( {
+	useSiteExpiryNoticeCandidate: vi.fn( () => null ),
 } ) );
-const mockCandidate = jest.mocked( useSiteExpiryNoticeCandidate );
+const mockCandidate = vi.mocked( useSiteExpiryNoticeCandidate );
 
 afterEach( () => mockCandidate.mockReturnValue( null ) );
 

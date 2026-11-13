@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	queryClient,
@@ -11,6 +11,7 @@ import { focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { WordPressMigration } from '../index';
 import type { Site } from '@automattic/api-core';
@@ -89,7 +90,7 @@ describe( 'WordPressMigration', () => {
 	// The site only reads as locked by its own state while the flow is switched on.
 	beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		config.disable( 'migration/reprint-flow' );
 		queryClient.clear();
 		// After clearing: going back to the default focus state refetches every query it finds, and a refetch still in
@@ -101,7 +102,7 @@ describe( 'WordPressMigration', () => {
 	} );
 
 	test( 'asks for the migration survey once per migration, even when the run is resumed', async () => {
-		const invokeEvent = jest.fn();
+		const invokeEvent = vi.fn();
 		Object.assign( window, { _sva: { invokeEvent } } );
 		const started = { ...running, started_at: '2026-11-05T10:00:00+00:00' };
 		mockApi().get( statusPath ).query( true ).reply( 200, started );
@@ -573,9 +574,9 @@ describe( 'WordPressMigration', () => {
 
 	test( 'waits on a completed migration whose site is still locked, then offers a way out', async () => {
 		// Only the clock: faking the queues a request goes through holds the mocked replies back.
-		jest.useFakeTimers( {
-			advanceTimers: true,
-			doNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
+		vi.useFakeTimers( {
+			shouldAdvanceTime: true,
+			toNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
 		} );
 		// Waiting on the site reloads the migration too.
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) ).persist();
@@ -589,7 +590,7 @@ describe( 'WordPressMigration', () => {
 		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
 		expect( router.state.location.pathname ).toBe( '/' );
 
-		act( () => jest.advanceTimersByTime( 30000 ) );
+		act( () => vi.advanceTimersByTime( 30000 ) );
 
 		expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();

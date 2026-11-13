@@ -1,6 +1,7 @@
 // Rewrites the Dashboard's Jest tests for Vitest: `jest.*` calls and types become Vitest's,
 // `jest.requireActual()` becomes `await vi.importActual()` (making its mock factory async), and
-// `@jest-environment` comments become `@vitest-environment`. Safe to re-run on converted files.
+// `@jest-environment` and `@jest-environment-options` comments become their `@vitest-` forms. Safe
+// to re-run on converted files.
 //
 //   node test/dashboard/jest-to-vitest-codemod.mjs [files…]
 //
@@ -244,6 +245,14 @@ for ( const file of files ) {
 				start: at,
 				end: at + match[ 0 ].length,
 				text: `@vitest-environment${ match[ 1 ] }${ environment }`,
+			} );
+		}
+		for ( const match of text.matchAll( /@jest-environment-options\b/g ) ) {
+			const at = comment.pos + match.index;
+			edits.push( {
+				start: at,
+				end: at + match[ 0 ].length,
+				text: '@vitest-environment-options',
 			} );
 		}
 	}
