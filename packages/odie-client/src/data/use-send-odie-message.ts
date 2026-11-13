@@ -423,8 +423,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			} );
 		},
 		onSettled: () => {
+			// Match on the chat id alone: `useOdieChat` keys it as a number, after a bot slug with
+			// its own fallbacks.
 			queryClient.invalidateQueries( {
-				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
+				queryKey: [ 'odie-chat' ],
+				predicate: ( { queryKey } ) => !! odieId && String( queryKey[ 2 ] ) === odieId,
 			} );
 		},
 		onError: ( error ) => {
