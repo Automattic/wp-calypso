@@ -32,3 +32,10 @@
 	margin-inline: -3px;
 	padding-inline: 3px;
 }
+
+// Tool rows and groups that a URL anchor can point at. The page sets
+// --mcp-tools-toolbar-bottom (see use-anchor-scroll.ts) so a scrolled-to
+// target lands below the sticky toolbar instead of under it.
+.mcp-tools-anchor {
+	scroll-margin-block-start: calc( var( --mcp-tools-toolbar-bottom, 0px ) + 16px );
+}
