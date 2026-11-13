@@ -42,7 +42,14 @@ function createState( {
 	siteId = 1,
 	siteUrl = 'https://example.wordpress.com',
 	warnings = [],
-}: { holds?: string[]; siteId?: number; siteUrl?: string; warnings?: unknown[] } = {} ) {
+	features = [],
+}: {
+	holds?: string[];
+	siteId?: number;
+	siteUrl?: string;
+	warnings?: unknown[];
+	features?: string[];
+} = {} ) {
 	return {
 		automatedTransfer: {
 			[ siteId ]: {
@@ -53,7 +60,10 @@ function createState( {
 				},
 			},
 		},
-		sites: { items: { [ siteId ]: { URL: siteUrl } } },
+		sites: {
+			items: { [ siteId ]: { URL: siteUrl } },
+			features: { [ siteId ]: { data: { active: features } } },
+		},
 		ui: { selectedSiteId: siteId },
 		siteSettings: {
 			saveRequests: {},
@@ -282,6 +292,34 @@ describe( '<EligibilityWarnings>', () => {
 		expect( page.redirect ).toHaveBeenCalledWith(
 			expect.stringContaining( '/checkout/example.wordpress.com/personal-bundle' )
 		);
+	} );
+
+	it( 'upsells the Personal plan for a partner theme', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings context="themes" isMarketplace onProceed={ noop } />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a Personal plan' ) ).toBeVisible();
+		expect( queryByText( 'Upgrade to a Business plan' ) ).not.toBeInTheDocument();
+		expect( queryByText( /install custom plugins/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'skips the plan upgrade for a partner theme when the plan already includes partner themes', () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			features: [ 'partner-themes' ],
+		} );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings context="themes" isMarketplace onProceed={ noop } />,
+			state
+		);
+
+		expect( queryByText( /Upgrade to a/ ) ).not.toBeInTheDocument();
+		expect( getByText( 'Continue' ) ).toBeEnabled();
 	} );
 
 	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {
