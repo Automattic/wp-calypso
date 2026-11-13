@@ -1,27 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { rawUserPreferencesQuery, userPurchasesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import PurchasesList from '../index';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	return Object.assign( fn, {
-		__esModule: true,
-		default: fn,
-		isEnabled: jest.fn( ( flag: string ) => flag === 'purchases/split-cancel-remove' ),
-	} );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	return {
+		...Object.assign( fn, {
+			__esModule: true,
+			default: fn,
+			isEnabled: vi.fn( ( flag: string ) => flag === 'purchases/split-cancel-remove' ),
+		} ),
+	};
 } );
 
-jest.mock( '../../../app/router/me', () => {
-	const { useRouterState } = jest.requireActual( '@tanstack/react-router' );
-	const actual = jest.requireActual( '../../../app/router/me' );
+vi.mock( '../../../app/router/me', async () => {
+	const { useRouterState } =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
+	const actual =
+		await vi.importActual< typeof import( '../../../app/router/me' ) >( '../../../app/router/me' );
 	return {
 		...actual,
 		purchasesRoute: {

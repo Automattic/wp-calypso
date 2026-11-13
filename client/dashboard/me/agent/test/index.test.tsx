@@ -1,30 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import WordPressAgent from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	return Object.assign( fn, {
-		__esModule: true,
-		default: fn,
-		isEnabled: jest.fn( () => true ),
-	} );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	return {
+		...Object.assign( fn, {
+			__esModule: true,
+			default: fn,
+			isEnabled: vi.fn( () => true ),
+		} ),
+	};
 } );
 
-jest.mock( '../../../../me/mcp/tracks', () => ( {
+vi.mock( '../../../../me/mcp/tracks', () => ( {
 	useMcpTracksAudienceProps: () => ( {} ),
 } ) );
-jest.mock( '../../../components/component-view-tracker', () => () => null );
-jest.mock( '../../mcp/wordpress-agent-email', () => () => null );
-jest.mock( '../../mcp/wordpress-agent-telegram', () => ( props: object ) => (
-	<p>{ `telegram ${ JSON.stringify( props ) }` }</p>
-) );
-jest.mock( '../../mcp/wordpress-agent-slack', () => ( props: object ) => (
-	<p>{ `slack ${ JSON.stringify( props ) }` }</p>
-) );
+vi.mock( '../../../components/component-view-tracker', () => ( { default: () => null } ) );
+vi.mock( '../../mcp/wordpress-agent-email', () => ( { default: () => null } ) );
+vi.mock( '../../mcp/wordpress-agent-telegram', () => ( {
+	default: ( props: object ) => <p>{ `telegram ${ JSON.stringify( props ) }` }</p>,
+} ) );
+vi.mock( '../../mcp/wordpress-agent-slack', () => ( {
+	default: ( props: object ) => <p>{ `slack ${ JSON.stringify( props ) }` }</p>,
+} ) );
 
 test( 'passes the connection callbacks on as written, then removes them from the URL', async () => {
 	window.history.replaceState(

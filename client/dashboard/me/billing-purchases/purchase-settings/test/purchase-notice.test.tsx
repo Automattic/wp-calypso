@@ -1,26 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { PurchaseNotice } from '../purchase-notice';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	return Object.assign( fn, {
-		__esModule: true,
-		default: fn,
-		isEnabled: jest.fn( () => false ),
-	} );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	return {
+		...Object.assign( fn, {
+			__esModule: true,
+			default: fn,
+			isEnabled: vi.fn( () => false ),
+		} ),
+	};
 } );
 
-jest.mock( '../../../../app/router/me', () => {
-	const { useRouterState } = jest.requireActual( '@tanstack/react-router' );
-	const actual = jest.requireActual( '../../../../app/router/me' );
+vi.mock( '../../../../app/router/me', async () => {
+	const { useRouterState } =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
+	const actual = await vi.importActual< typeof import( '../../../../app/router/me' ) >(
+		'../../../../app/router/me'
+	);
 	return {
 		...actual,
 		purchaseSettingsRoute: {
