@@ -41,6 +41,8 @@ export type OdieAssistantContextInterface = {
 	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
+	// Rebuilds the chat from fresh data while it stays on show and usable, without the loading state.
+	refreshChatInBackground: () => void;
 	setChatStatus: ( status: ChatStatus ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
