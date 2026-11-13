@@ -33,12 +33,15 @@ const migration = ( status: string, extra = {} ) => ( {
 	started_at: null,
 	completed_at: null,
 	notification_emails: [],
+	handed_off: false,
 	...extra,
 } );
 
 const finding = ( code: string, severity: string ) => ( {
 	code,
 	severity,
+	resolution: severity === 'warning' ? 'accept' : 'retry',
+	suggested_action: null,
 	label: `${ code } label`,
 	message: `${ code } message`,
 } );
@@ -67,9 +70,16 @@ const unreachable = ( extra = {} ) =>
 	migration( 'failed', {
 		phase: 'preflight',
 		findings: [
-			{ ...finding( 'source_plugin_unreachable', 'failure' ), resolution: 'assisted_handoff' },
+			{ ...finding( 'source_plugin_unreachable', 'failure' ), suggested_action: 'connect_source' },
 		],
 		...extra,
+	} );
+
+// A run stopped by an address that may not be the site being migrated.
+const wrongAddress = ( code: string, data = {} ) =>
+	migration( 'failed', {
+		phase: 'preflight',
+		findings: [ { ...finding( code, 'failure' ), suggested_action: 'change_source', data } ],
 	} );
 
 const lastAttempt = ( code: string ) => `The last attempt ran into a problem: ${ code } label`;
@@ -256,6 +266,133 @@ describe( 'WordPressMigration', () => {
 		expect( run.isDone() ).toBe( true );
 	} );
 
+	test( 'offers to change the address of a source whose plugin can’t be reached', async () => {
+		mockApi().get( statusPath ).query( true ).reply( 200, unreachable() );
+		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		const back = await screen.findByRole( 'link', {
+			name: 'Change the address of the site you’re migrating from',
+		} );
+		const url = new URL( back.getAttribute( 'href' ) ?? '' );
+		expect( url.pathname ).toBe( '/setup/site-migration/site-migration-identify' );
+		expect( Object.fromEntries( url.searchParams ) ).toMatchObject( {
+			siteId: '42',
+			siteSlug: 'example.wordpress.com',
+			from: 'https://www.example.com',
+		} );
+		// Filled in, not checked again straight away.
+		expect( url.searchParams.has( 'start' ) ).toBe( false );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Having trouble/ } ) );
+
+		expect( screen.getByRole( 'link', { name: 'Change the address' } ) ).toHaveAttribute(
+			'href',
+			back.getAttribute( 'href' )
+		);
+	} );
+
+	test( 'sends an address that may not be the site being migrated to changing it, or back to setup', async () => {
+		mockApi().get( statusPath ).query( true ).reply( 200, wrongAddress( 'source_not_wordpress' ) );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Your migration stopped' } )
+		).toBeVisible();
+		expect( screen.getByText( 'source_not_wordpress label' ) ).toBeVisible();
+		const change = screen.getByRole( 'link', { name: 'Change the address or platform' } );
+		const url = new URL( change.getAttribute( 'href' ) ?? '' );
+		expect( url.pathname ).toBe( '/setup/site-migration/site-migration-identify' );
+		expect( url.searchParams.get( 'from' ) ).toBe( 'https://www.example.com' );
+		// Changing it comes first, ahead of trying the same address again.
+		expect(
+			change.compareDocumentPosition( screen.getByRole( 'button', { name: 'Try again' } ) )
+		).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+
+		// If it's the right address after all, the plugin still gets set up there.
+		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Back to setup' } ) );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
+		).toBeVisible();
+		expect( screen.getByText( lastAttempt( 'source_not_wordpress' ) ) ).toBeVisible();
+	} );
+
+	test.each( [
+		[ 'source_not_wordpress', {}, 'Change the address or platform', 'Try again' ],
+		[
+			'source_not_wordpress',
+			{ platform: 'parked' },
+			'Change the address',
+			'The site is live now, try again',
+		],
+		[ 'source_unreachable', {}, 'Change the address', 'The site is online now, try again' ],
+	] )(
+		'names the way back and what was fixed after %s %j',
+		async ( code, data, changeLabel, runLabel ) => {
+			mockApi().get( statusPath ).query( true ).reply( 200, wrongAddress( code, data ) );
+
+			render( <WordPressMigration site={ site } />, { queryClient } );
+
+			expect( await screen.findByRole( 'link', { name: changeLabel } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: runLabel } ) ).toBeVisible();
+		}
+	);
+
+	test( 'lays out an unreachable plugin as installing it, or checking what’s in the way', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply(
+				200,
+				unreachable( {
+					findings: [
+						{
+							...finding( 'source_plugin_unreachable', 'failure' ),
+							suggested_action: 'connect_source',
+							data: { address: 'www.example.com' },
+						},
+					],
+				} )
+			);
+		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( /plugin on/ ) ).toHaveTextContent(
+			'Install and activate the latest version of the Migrate to WordPress.com plugin on www.example.com.'
+		);
+		expect( screen.getByText( /If the plugin is active and up to date/ ) ).toBeVisible();
+		expect( screen.queryByText( 'source_plugin_unreachable message' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'reads the site again once our team has the migration, and only then', async () => {
+		const refetchQueries = vi.spyOn( queryClient, 'refetchQueries' );
+		mockApi().get( statusPath ).query( true ).reply( 200, unreachable() );
+		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+
+		const { unmount } = render( <WordPressMigration site={ site } />, { queryClient } );
+		await screen.findByText( lastAttempt( 'source_plugin_unreachable' ) );
+		expect( refetchQueries ).not.toHaveBeenCalled();
+		unmount();
+		queryClient.clear();
+
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply( 200, unreachable( { handed_off: true } ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		await waitFor( () =>
+			expect( refetchQueries ).toHaveBeenCalledWith( expect.objectContaining( { type: 'active' } ) )
+		);
+		refetchQueries.mockRestore();
+	} );
+
 	test( 'starts over from an unreachable plugin without checking once the source is connected', async () => {
 		mockApi()
 			.get( statusPath )
@@ -266,9 +403,9 @@ describe( 'WordPressMigration', () => {
 					findings: [
 						{
 							...finding( 'source_plugin_unreachable', 'failure' ),
-							resolution: 'assisted_handoff',
+							suggested_action: 'connect_source',
 						},
-						{ ...finding( 'source_redirect_invalid', 'failure' ), resolution: 'retry' },
+						finding( 'source_redirect_invalid', 'failure' ),
 					],
 				} )
 			);
@@ -330,7 +467,9 @@ describe( 'WordPressMigration', () => {
 				200,
 				migration( 'failed', {
 					phase: 'prepare-destination',
-					findings: [ { ...finding( 'destination_needs_plan', 'failure' ), resolution: 'retry' } ],
+					findings: [
+						{ ...finding( 'destination_needs_plan', 'failure' ), suggested_action: 'upgrade_plan' },
+					],
 				} )
 			);
 
@@ -346,13 +485,15 @@ describe( 'WordPressMigration', () => {
 		expect( choosePlan.searchParams.get( 'redirect_to' ) ).toBeTruthy();
 
 		// Coming back with a plan, the stored finding is still there, so trying again has to stay on offer.
-		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeEnabled();
+		expect(
+			screen.getByRole( 'button', { name: 'I’ve purchased a plan, continue' } )
+		).toBeEnabled();
 	} );
 
 	test( 'takes a stopped migration back to setup, and leaves once it starts again', async () => {
 		const stopped = migration( 'failed', {
 			phase: 'preflight',
-			findings: [ { ...finding( 'migration_failed', 'failure' ), resolution: 'retry' } ],
+			findings: [ finding( 'migration_failed', 'failure' ) ],
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, stopped );
 		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
@@ -415,7 +556,7 @@ describe( 'WordPressMigration', () => {
 				200,
 				migration( 'failed', {
 					phase: 'migration',
-					findings: [ { ...finding( 'generic_failure', 'failure' ), resolution: 'retry' } ],
+					findings: [ finding( 'generic_failure', 'failure' ) ],
 				} )
 			);
 		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() ).persist();
@@ -433,41 +574,69 @@ describe( 'WordPressMigration', () => {
 		expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeVisible();
 	} );
 
-	// A finding our team takes over too: a customer who took their migration back can still try again.
-	test.each( [ 'retry', 'assisted_handoff' ] as const )(
-		'offers to try again when a finding resolves by %s',
-		async ( resolution ) => {
-			const failed = migration( 'failed', {
-				phase: 'preflight',
-				findings: [
-					finding( 'source_woocommerce_active', 'warning' ),
-					{ ...finding( 'source_redirect_invalid', 'failure' ), resolution },
-				],
-			} );
-			mockApi().get( statusPath ).query( true ).reply( 200, failed );
-
-			render( <WordPressMigration site={ site } />, { queryClient } );
-
-			expect( await screen.findByText( 'source_redirect_invalid label' ) ).toBeVisible();
-			expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
-
-			const run = mockApi()
-				.post( runPath, {
-					accept_findings: [ 'source_woocommerce_active', 'source_redirect_invalid' ],
+	test( 'offers a plan upgrade ahead of continuing past a storage warning', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply(
+				200,
+				migration( 'paused', {
+					phase: 'preflight',
+					findings: [
+						{
+							...finding( 'destination_storage_insufficient', 'warning' ),
+							suggested_action: 'upgrade_plan',
+						},
+					],
 				} )
-				.reply( 202, running );
-			mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
+			);
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		render( <WordPressMigration site={ site } />, { queryClient } );
 
-			await waitFor( () => expect( run.isDone() ).toBe( true ) );
-		}
-	);
+		const upgrade = await screen.findByRole( 'link', { name: 'Upgrade your plan' } );
+		const continueButton = screen.getByRole( 'button', { name: 'Continue' } );
+		expect( upgrade.compareDocumentPosition( continueButton ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
+		expect( screen.queryByRole( 'link', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
+		// Only a suggestion, so continuing stays the main action.
+		expect( upgrade ).toHaveClass( 'is-secondary' );
+		expect( continueButton ).toHaveClass( 'is-primary' );
+	} );
+
+	test( 'offers to try again when a finding has to be fixed first', async () => {
+		const failed = migration( 'failed', {
+			phase: 'preflight',
+			findings: [
+				finding( 'source_woocommerce_active', 'warning' ),
+				finding( 'source_redirect_invalid', 'failure' ),
+			],
+		} );
+		mockApi().get( statusPath ).query( true ).reply( 200, failed );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( 'source_redirect_invalid label' ) ).toBeVisible();
+		expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
+
+		const run = mockApi()
+			.post( runPath, {
+				accept_findings: [ 'source_woocommerce_active', 'source_redirect_invalid' ],
+			} )
+			.reply( 202, running );
+		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		await waitFor( () => expect( run.isDone() ).toBe( true ) );
+	} );
 
 	test( 'sends a refused connection to adding the key by hand, then runs again without configuring', async () => {
 		const failed = migration( 'failed', {
 			phase: 'preflight',
-			findings: [ { ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' } ],
+			findings: [
+				{ ...finding( 'source_connection_failed', 'failure' ), suggested_action: 'connect_source' },
+			],
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, failed );
 		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
