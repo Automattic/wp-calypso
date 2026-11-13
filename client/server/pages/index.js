@@ -997,6 +997,31 @@ function getLegacyFlowLocale( requestPath ) {
 }
 
 /**
+ * wpcom sets `m1-` for a management session and `u1-<blogId>-` for one site's unsubscribe session.
+ * Only the prefix is matched here; the API checks the rest of the value on every request.
+ * @param {string} [subkey] The `subkey` cookie value
+ * @param {string} requestPath Request path under /subscriptions
+ * @returns {boolean} Whether a logged-out visitor with this cookie can open the path
+ */
+function canSubkeyOpenSubscriptionsPath( subkey, requestPath ) {
+	if ( ! subkey ) {
+		return false;
+	}
+
+	if ( subkey.startsWith( 'm1-' ) ) {
+		return true;
+	}
+
+	const blogId = /^u1-(\d+)-/.exec( subkey )?.[ 1 ];
+	if ( ! blogId ) {
+		return false;
+	}
+
+	const sitePath = `/subscriptions/site/${ blogId }`;
+	return requestPath === sitePath || requestPath.startsWith( `${ sitePath }/` );
+}
+
+/**
  * Defines wordpress.com (Calypso blue) routes only
  * @param {express.Application} app Express application
  */
@@ -1196,13 +1221,14 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( ( req.cookies.subkey || calypsoEnv !== 'production' ) && ! req.context.isLoggedIn ) {
-			// If the user is not logged in but has a subkey cookie, they are authorized to view old portal
-			return next();
-		}
-
-		// For users not logged in, redirect to the email login link page.
 		if ( ! req.context.isLoggedIn ) {
+			if (
+				calypsoEnv !== 'production' ||
+				canSubkeyOpenSubscriptionsPath( req.cookies.subkey, req.path )
+			) {
+				return next();
+			}
+
 			return res.redirect( 'https://wordpress.com/email-subscriptions' );
 		}
 

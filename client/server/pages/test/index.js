@@ -1451,6 +1451,66 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /subscriptions', () => {
+		const emailSubscriptionsUrl = 'https://wordpress.com/email-subscriptions';
+		const managementSubkey = 'm1-1700000000-abcdef0123456789.reader@example.com';
+		const siteSubkey = 'u1-123-1700000000-abcdef0123456789.reader@example.com';
+		const staticSubkey = '0123456789abcdef0123456789abcdef.reader@example.com';
+
+		const runLoggedOut = ( url, subkey ) =>
+			app.run( { request: { url, cookies: subkey ? { subkey } : {} } } );
+
+		it.each( [ '/subscriptions', '/subscriptions/sites', '/subscriptions/site/456' ] )(
+			'lets a management session open %s',
+			async ( url ) => {
+				const { response } = await runLoggedOut( url, managementSubkey );
+				expect( response.redirect ).not.toHaveBeenCalled();
+				expect( app.getMocks().serverRender ).toHaveBeenCalled();
+			}
+		);
+
+		it.each( [
+			'/subscriptions/site/123',
+			'/subscriptions/site/123/',
+			'/subscriptions/site/123/foo',
+		] )( "lets an unsubscribe session open its site's page at %s", async ( url ) => {
+			const { response } = await runLoggedOut( url, siteSubkey );
+			expect( response.redirect ).not.toHaveBeenCalled();
+			expect( app.getMocks().serverRender ).toHaveBeenCalled();
+		} );
+
+		it.each( [
+			'/subscriptions',
+			'/subscriptions/sites',
+			'/subscriptions/site/456',
+			'/subscriptions/site/1234',
+			'/subscriptions/site/12',
+		] )( 'sends an unsubscribe session for site 123 away from %s', async ( url ) => {
+			const { response } = await runLoggedOut( url, siteSubkey );
+			expect( response.redirect ).toHaveBeenCalledWith( emailSubscriptionsUrl );
+		} );
+
+		it.each( [
+			[ 'a static key', staticSubkey ],
+			[ 'an unknown prefix', 'x1-123-1700000000-abcdef.reader@example.com' ],
+			[ 'an unsubscribe session without a site ID', 'u1-abc-1700000000-abcdef.reader@example.com' ],
+			[ 'no cookie', undefined ],
+		] )( 'redirects a visitor with %s', async ( label, subkey ) => {
+			const { response } = await runLoggedOut( '/subscriptions/site/123', subkey );
+			expect( response.redirect ).toHaveBeenCalledWith( emailSubscriptionsUrl );
+		} );
+
+		it.each( [
+			[ '/subscriptions/sites', 'https://wordpress.com/reader/subscriptions' ],
+			[ '/subscriptions/site/456', 'https://wordpress.com/reader/site/subscription/456' ],
+		] )( 'sends logged-in visitors from %s to the Reader', async ( url, destination ) => {
+			const { response } = await app.run( {
+				request: { url, cookies: { wordpress_logged_in: true, subkey: siteSubkey } },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( destination );
+		} );
+	} );
+
 	describe( 'Route /start/domain-transfer', () => {
 		it( 'redirects to /setup/domain-transfer', async () => {
 			const { response } = await app.run( { request: { url: '/start/domain-transfer' } } );
@@ -1882,6 +1942,38 @@ describe( 'main app', () => {
 
 			expect( request.logger.error ).toHaveBeenCalledWith( { error: 'fake error' } );
 		} );
+	} );
+} );
+
+describe( 'main app outside production', () => {
+	let app;
+
+	beforeAll( () => {
+		app = buildApp( 'wpcalypso' );
+	} );
+
+	beforeEach( () => {
+		app.withConfigEnabled( { 'use-translation-chunks': true } );
+		app.withServerRender( '' );
+		app.withMockFilesystem();
+		app.withEvergreenBrowser();
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+		app.reset();
+	} );
+
+	it.each( [
+		[ 'no cookie', undefined ],
+		[ 'a static key', '0123456789abcdef0123456789abcdef.reader@example.com' ],
+		[ 'an unsubscribe session', 'u1-123-1700000000-abcdef0123456789.reader@example.com' ],
+	] )( 'lets logged-out visitors with %s open /subscriptions/sites', async ( label, subkey ) => {
+		const { response } = await app.run( {
+			request: { url: '/subscriptions/sites', cookies: subkey ? { subkey } : {} },
+		} );
+		expect( response.redirect ).not.toHaveBeenCalled();
+		expect( app.getMocks().serverRender ).toHaveBeenCalled();
 	} );
 } );
 
