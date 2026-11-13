@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
@@ -188,6 +188,29 @@ describe( 'Onboarding Flow', () => {
 					domains: DOMAINS_STEP,
 				} );
 				expect( retrieveSignupDestination() ).toContain( '/setup/site-setup/importerPlayground' );
+			} );
+
+			// Back on a step without these, the run would forget its plan and the store it imports.
+			it( 'keeps a Playground store run, on the domains step, when leaving checkout', async () => {
+				dispatch( ONBOARD_STORE ).setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
+				const processingUrl = '/setup/onboarding/processing?intent=woocommerce&playground=abc';
+				const { href } = window.location;
+				// Checkout's return to the importer reads the Playground from the page URL.
+				window.location.href = `http://wordpress.com${ processingUrl }`;
+
+				try {
+					expect( await getCheckoutBackUrls( processingUrl ) ).toEqual( {
+						plans: `${ DOMAINS_STEP }&playground=abc&intent=woocommerce`,
+						domains: `${ DOMAINS_STEP }&playground=abc&intent=woocommerce`,
+					} );
+
+					const checkoutUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
+					expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe(
+						'/setup/site-setup/importerPlayground?siteSlug=test-site.wordpress.com&siteId=123&playground=abc'
+					);
+				} finally {
+					window.location.href = href;
+				}
 			} );
 
 			it( 'goes back to the domains step when the plans step was skipped', async () => {

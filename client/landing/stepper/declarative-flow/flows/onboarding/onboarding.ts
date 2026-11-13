@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
@@ -62,6 +62,7 @@ import {
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { isPlaygroundStoreRun } from '../../../utils/playground-woo-intent';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
@@ -92,7 +93,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
 	ProcessingResult,
@@ -366,7 +367,9 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useTracksEventProps() {
 		const query = useQuery();
-		const preselectedPlan = getPreselectedPlan( query );
+		// A Playground store's plan isn't reported: the Playground adds its ID to the URL after
+		// it boots, which would change these props and record a second signup start.
+		const preselectedPlan = isPlaygroundStoreRun( query ) ? null : getPreselectedPlan( query );
 		// Reported raw, as the legacy flows reported their declared query dependencies. The
 		// coupon stands alone too: WordCamp coupon links name no plan.
 		const couponParam = query.get( 'coupon' );
@@ -437,6 +440,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+		const isPlaygroundStore = isPlaygroundStoreRun( queryParams );
+		const playgroundStoreQueryArgs =
+			isPlaygroundStore && playgroundId ? { playground: playgroundId, intent: 'woocommerce' } : {};
 		const buildDest = queryParams.get( 'build_dest' );
 		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
 			blueprint,
@@ -597,11 +603,30 @@ const onboarding: FlowV2< typeof initialize > = {
 		};
 
 		/**
+		 * A Playground store buys Commerce, which the import needs. Its run starts on the Playground
+		 * step, so the entry reset doesn't seed the cart, and the cart can still hold an earlier
+		 * run's items. Site creation and the importer read the session flag after checkout.
+		 */
+		const startPlaygroundStoreRun = () => {
+			sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+			setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
+			setProductCartItems( [] );
+		};
+
+		/**
 		 * With a plan already in the cart the plans step has nothing left to ask, so the flow
 		 * goes straight to site creation. The free-plan branch in the plans handler below only
 		 * applies when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
+			// Set again here: a run continued in another tab starts without the session flag.
+			if ( isPlaygroundStore ) {
+				startPlaygroundStoreRun();
+				setSignupCompleteFlowName( flowName );
+
+				return navigate( 'create-site', undefined, false );
+			}
+
 			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
 			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
 			// below. A connected or transferred domain is the exception: it needs a paid plan, so
@@ -887,6 +912,8 @@ const onboarding: FlowV2< typeof initialize > = {
 								...persistedQueryArgs,
 								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
+								// Without these, the domain step loses the store's plan and its import.
+								...playgroundStoreQueryArgs,
 							};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
@@ -973,17 +1000,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'playground':
 				case 'blueprint': {
-					const locationParams = new URLSearchParams( window.location.search );
-					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
-						const playgroundId = locationParams.get( 'playground' );
-						const destination = addQueryArgs( '/setup/entrepreneur', {
-							from: 'playground-publish',
-							...( playgroundId ? { playground: playgroundId } : {} ),
-						} );
-						// This leaves Stepper with a full page load, so give Tracks time to send the
-						// step's events and Stepper's submit event first.
-						setTimeout( () => window.location.assign( destination ), TRACKS_FLUSH_DELAY );
-						return;
+					if ( isPlaygroundStore ) {
+						startPlaygroundStoreRun();
+					} else {
+						sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
 					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
@@ -1057,6 +1077,12 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				// Must follow the reset above, not precede it.
 				const query = getCurrentQueryParams();
+
+				// Only a Playground store run may carry the flag, or a later run in this tab would create
+				// its site as one. Keyed on the URL: the login fallback re-enters a store run here.
+				if ( ! isPlaygroundStoreRun( query ) ) {
+					sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
+				}
 				const preselectedPlan = getPreselectedPlan( query );
 				const storageAddOn = getPreselectedStorageAddOn( query );
 
