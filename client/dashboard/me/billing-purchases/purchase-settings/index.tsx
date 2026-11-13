@@ -9,9 +9,7 @@ import {
 	domainQuery,
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
-	queryClient,
 	userPurchaseSetAutoRenewQuery,
-	userPurchasesQuery,
 	siteDifmWebsiteContentQuery,
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
@@ -1114,12 +1112,7 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		error,
 		isPending: isMutationPending,
 		variables: pendingAutoRenew,
-	} = useMutation( {
-		...userPurchaseSetAutoRenewQuery(),
-		// Stay pending until the purchase is refetched, so the toggle doesn't flip back to
-		// its old state in between.
-		onSuccess: () => queryClient.invalidateQueries( userPurchasesQuery() ),
-	} );
+	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
 	const navigate = useNavigate();
