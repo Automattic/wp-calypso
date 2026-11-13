@@ -1940,6 +1940,24 @@ describe( 'dashboard app', () => {
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
 	} );
 
+	it( 'serves /signup/finish from the A4A dashboard, not the classic signup section', async () => {
+		app.withAuthenticatedUser();
+		const { request } = await app.run( {
+			request: { url: '/signup/finish', hostname: 'agencies-beta.automattic.com' },
+		} );
+
+		expect( request.context.sectionName ).toBe( 'dashboard-a4a' );
+	} );
+
+	it( 'keeps /signup on the classic A4A signup section', async () => {
+		app.withAuthenticatedUser();
+		const { request } = await app.run( {
+			request: { url: '/signup', hostname: 'agencies-beta.automattic.com' },
+		} );
+
+		expect( request.context.sectionName ).toBe( 'a8c-for-agencies-signup' );
+	} );
+
 	// Logged-out requests skip the dashboard `/start` route anyway, since signup is isomorphic.
 	it( 'redirects legacy /start/launch-site ahead of the dashboard signup route', async () => {
 		app.withAuthenticatedUser();

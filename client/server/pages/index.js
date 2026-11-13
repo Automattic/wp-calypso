@@ -30,7 +30,7 @@ import {
 	DOTCOM_DASHBOARD_SECTION_DEFINITION,
 	DOTCOM_DASHBOARD_SECTION_PATHS,
 } from 'calypso/dashboard/app-dotcom/section';
-import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
+import { A4A_DASHBOARD_SIGNUP_PATHS, A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { A4A_SIGNUP_URL, JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -1466,8 +1466,15 @@ export default function pages() {
 			( s ) => s.name === 'a8c-for-agencies-signup'
 		);
 		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
-			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
+			handleSectionPath(
+				a4aSignupSectionDefinition,
+				a4aSignupPath,
+				undefined,
+				( req ) =>
+					isAllowedA4ADashboardHostname( req.hostname ) &&
+					! A4A_DASHBOARD_SIGNUP_PATHS.some( ( dashboardPath ) =>
+						pathToRegExp( dashboardPath ).test( req.path )
+					)
 			);
 		} );
 	}
