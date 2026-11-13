@@ -26,13 +26,24 @@ export const WarningList = ( {
 	transferAction,
 }: Props ) => {
 	const transferIntro = getAtomicTransferIntro( transferAction, translate );
+	const hasAddressChange = warnings.some( ( { domainNames } ) => !! domainNames );
 
 	return (
 		<div>
-			{ transferIntro && (
+			{ hasAddressChange && (
+				<div className="eligibility-warnings__address-heading">
+					{ translate( 'Your site’s address will change' ) }
+				</div>
+			) }
+			{ ( transferIntro || hasAddressChange ) && (
 				<div className="eligibility-warnings__warning eligibility-warnings__intro">
 					<div className="eligibility-warnings__message">
-						<span className="eligibility-warnings__message-description">{ transferIntro }</span>
+						<span className="eligibility-warnings__message-description">
+							{ transferIntro }
+							{ transferIntro && hasAddressChange && ' ' }
+							{ hasAddressChange &&
+								translate( 'Links to your old address will redirect automatically.' ) }
+						</span>
 					</div>
 				</div>
 			) }
@@ -47,20 +58,22 @@ export const WarningList = ( {
 						<span className="eligibility-warnings__message-description">
 							{ domainNames ? (
 								<>
-									{ translate(
-										'{{strong}}Your site’s address will change{{/strong}} to the one below, and links to your old address will redirect automatically. The new address is intended for temporary use and isn’t indexed by search engines. Once the move is complete, {{strong}}add a custom domain so your site can be indexed{{/strong}}.',
-										{ components: { strong: <strong /> } }
-									) }{ ' ' }
-									<InlineSupportLink
-										supportPostId={ 11280 }
-										showIcon={ false }
-										supportLink={ localizeUrl(
-											'https://wordpress.com/support/changing-site-address/#change-a-wpcomstaging-com-address'
-										) }
-									>
-										{ translate( 'Learn more' ) }
-									</InlineSupportLink>
-									.{ displayDomainNames( domainNames ) }
+									{ displayDomainNames( domainNames ) }
+									<span className="eligibility-warnings__address-note">
+										{ translate(
+											'Search engines don’t index the new address. To keep your site in search results, add a custom domain after the move.'
+										) }{ ' ' }
+										<InlineSupportLink
+											supportPostId={ 11280 }
+											showIcon={ false }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/changing-site-address/#change-a-wpcomstaging-com-address'
+											) }
+										>
+											{ translate( 'Learn more' ) }
+										</InlineSupportLink>
+										.
+									</span>
 								</>
 							) : (
 								<>
@@ -150,14 +163,14 @@ function displayDomainNames( domainNames: DomainNames ) {
 					<span className="eligibility-warnings__address-first">{ firstPartCurrent }</span>
 					<span className="eligibility-warnings__address-second">{ secondPartCurrent }</span>
 				</span>
-				<Badge type="info">{ translate( 'current' ) }</Badge>
+				<Badge type="info">{ translate( 'Current' ) }</Badge>
 			</Card>
 			<Card compact>
 				<span className="eligibility-warnings__address">
 					<span className="eligibility-warnings__address-first">{ firstPartNew }</span>
 					<span className="eligibility-warnings__address-second">{ secondPartNew }</span>
 				</span>
-				<Badge type="success">{ translate( 'new' ) }</Badge>
+				<Badge type="success">{ translate( 'New' ) }</Badge>
 			</Card>
 		</div>
 	);

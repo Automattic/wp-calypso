@@ -1,3 +1,4 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import "@automattic/typography/styles/variables";
 @import "calypso/assets/stylesheets/shared/mixins/placeholder";
 
@@ -6,7 +7,7 @@
 	// 24px from card padding + 24 = 48 gap from left|right
 	padding: 0;
 	overflow-wrap: anywhere;
-	background: #fff;
+	background: var(--color-surface);
 	font-size: $font-body-small;
 	margin: 0;
 
@@ -58,21 +59,23 @@
 	}
 
 	.eligibility-warnings__hold-list {
-		background: #fff;
-		border: 1px solid var(--studio-gray-5);
-		border-radius: 4px;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		padding: 24px;
 		margin-bottom: 24px;
-		gap: 10px;
+
+		.eligibility-warnings__paid-plan-note {
+			margin: 0;
+			font-size: 13px;
+			line-height: 20px;
+		}
 
 		h1.card-heading.card-heading-20 {
-			font-size: unset;
-			font-weight: 600;
-			margin: unset;
-			color: unset;
+			font-size: 13px;
+			font-weight: 400;
+			line-height: 20px;
+			margin: 0 0 4px;
+			color: var(--color-text-subtle);
 		}
 
 		.eligibility-warnings__hold {
@@ -81,13 +84,25 @@
 			width: 100%;
 		}
 
-		.eligibility-warnings__message {
-			padding: 16px 0;
-			margin: unset;
-			border-top: 1px solid var(--studio-gray-5);
+		.eligibility-warnings__hold + .eligibility-warnings__hold {
+			margin-block-start: 16px;
 		}
-		.eligibility-warnings__message:last-of-type {
-			padding-bottom: 0;
+
+		.eligibility-warnings__message {
+			padding: 0;
+			margin: unset;
+		}
+
+		.eligibility-warnings__message-title {
+			font-size: $font-body-small;
+			font-weight: 600;
+			line-height: 20px;
+			color: var(--color-text);
+		}
+
+		.eligibility-warnings__message-description {
+			margin-block-start: 2px;
+			color: var(--color-text-subtle);
 		}
 	}
 
@@ -245,17 +260,34 @@
 	max-width: 300px;
 }
 
+.eligibility-warnings__address-heading {
+	font-size: $font-body-small;
+	font-weight: 600;
+	line-height: 20px;
+	margin-bottom: 4px;
+	color: var(--color-text);
+}
+
+.eligibility-warnings__address-note {
+	display: block;
+	margin-bottom: 24px;
+}
+
 .eligibility-warnings__domain-names {
 	margin: 24px 0;
 
 	// Specificity bump to override the default styles that may get loaded later.
 	.card.card {
-		background-color: #f6f7f7;
+		background-color: var(--studio-gray-0);
 		padding: 12px 16px;
 		margin-bottom: 8px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
+
+		@include ui-mixins.when-dark-theme {
+			background-color: var(--color-surface-backdrop);
+		}
 
 		&::after {
 			content: none;

@@ -36,7 +36,11 @@ import HoldList, {
 	getBlockingMessages,
 } from './hold-list';
 import SupportLink from './support-link';
-import { isAtomicSiteWithoutBusinessPlan, shouldUpsellPersonalPlan } from './utils';
+import {
+	isAtomicSiteWithoutBusinessPlan,
+	shouldUpsellAnyPaidPlan,
+	shouldUpsellPersonalPlan,
+} from './utils';
 import WarningList, { type AtomicTransferAction } from './warning-list';
 import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
@@ -323,7 +327,9 @@ function getProceedButtonText(
 ) {
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
 		if ( context === 'plugin-details' ) {
-			return translate( 'Upgrade and activate plugin' );
+			return shouldUpsellAnyPaidPlan( context )
+				? translate( 'Choose a plan' )
+				: translate( 'Upgrade and activate plugin' );
 		}
 		if ( showFreeTrial ) {
 			return translate( 'Start your free trial' );

@@ -13,7 +13,11 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { useSelector } from 'calypso/state';
 import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { isAtomicSiteWithoutBusinessPlan, shouldUpsellPersonalPlan } from './utils';
+import {
+	isAtomicSiteWithoutBusinessPlan,
+	shouldUpsellAnyPaidPlan,
+	shouldUpsellPersonalPlan,
+} from './utils';
 import type { EligibilityContext } from './index';
 
 const displayableHolds = [
@@ -316,14 +320,28 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		isMarketplace,
 		hasEnTranslation,
 	} );
+	const showsPaidPlanNote =
+		! isPlaceholder && shouldUpsellAnyPaidPlan( context ) && holds.includes( 'NO_BUSINESS_PLAN' );
+	const listedHolds = showsPaidPlanNote
+		? holds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' )
+		: holds;
 
 	return (
 		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
-			<CardHeading>
-				<span className="eligibility-warnings__hold-heading">
-					{ getCardHeading( context, translate ) }
-				</span>
-			</CardHeading>
+			{ showsPaidPlanNote && (
+				<p className="eligibility-warnings__paid-plan-note">
+					{ translate(
+						'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
+					) }
+				</p>
+			) }
+			{ ( isPlaceholder || listedHolds.some( isDisplayableHoldType ) ) && (
+				<CardHeading>
+					<span className="eligibility-warnings__hold-heading">
+						{ getCardHeading( context, translate ) }
+					</span>
+				</CardHeading>
+			) }
 			{ isPlaceholder && (
 				<div>
 					<div className="eligibility-warnings__hold">
@@ -337,7 +355,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				</div>
 			) }
 			{ ! isPlaceholder &&
-				holds.map( ( hold ) =>
+				listedHolds.map( ( hold ) =>
 					! isDisplayableHoldType( hold ) ? null : (
 						<div className="eligibility-warnings__hold" key={ hold }>
 							<div className="eligibility-warnings__message">
