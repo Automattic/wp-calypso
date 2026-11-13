@@ -3,9 +3,11 @@
 /**
  * Default mock implementations
  */
-jest.mock( '@automattic/data-stores', () => ( {
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( '@automattic/data-stores', () => ( {
 	Plans: {
-		usePricingMetaForGridPlans: jest.fn(),
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 } ) );
 
@@ -28,7 +30,7 @@ describe( '<PlanTypeSelector />', () => {
 				kind="interval"
 				plans={ [] }
 				selectedPlan={ PLAN_FREE }
-				useCheckPlanAvailabilityForPurchase={ jest.fn() }
+				useCheckPlanAvailabilityForPurchase={ vi.fn() }
 			/>
 		);
 

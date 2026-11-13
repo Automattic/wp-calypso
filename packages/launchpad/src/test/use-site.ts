@@ -4,17 +4,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { useSite } from '../use-site';
 import wpcomRequest, { canAccessWpcomApis } from '../wpcom-request';
 
-jest.mock( '../wpcom-request', () => ( {
+vi.mock( '../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn(),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn(),
 } ) );
 
-const request = wpcomRequest as jest.Mock;
-const canAccess = canAccessWpcomApis as jest.Mock;
+const request = wpcomRequest as Mock;
+const canAccess = canAccessWpcomApis as Mock;
 
 const render = () => {
 	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -24,7 +25,7 @@ const render = () => {
 };
 
 describe( 'useSite', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'keeps only the fields Launchpad reads, so the rest of the site is never cached', async () => {
 		canAccess.mockReturnValue( true );

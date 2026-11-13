@@ -4,16 +4,16 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { SUGGESTION_ACTION_COMPLETE_EVENT } from '../utils/suggestion-events';
 import TitlePicker from './title-picker';
 
-const mockEditPost = jest.fn();
+const mockEditPost = vi.fn();
 let mockCurrentTitle: string | undefined;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
 		if ( store === 'core/editor' ) {
 			return { editPost: mockEditPost };
@@ -56,14 +56,14 @@ describe( 'TitlePicker', () => {
 	} );
 
 	it( 'calls onComplete when an option is applied', () => {
-		const onComplete = jest.fn();
+		const onComplete = vi.fn();
 		render( <TitlePicker titles={ titles } onComplete={ onComplete } /> );
 		fireEvent.click( screen.getByText( titles[ 1 ].title ) );
 		expect( onComplete ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'notifies the sidebar when a title is applied', () => {
-		const handleComplete = jest.fn();
+		const handleComplete = vi.fn();
 		window.addEventListener( SUGGESTION_ACTION_COMPLETE_EVENT, handleComplete );
 		try {
 			render( <TitlePicker titles={ titles } /> );

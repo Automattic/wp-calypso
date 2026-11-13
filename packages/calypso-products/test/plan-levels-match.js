@@ -28,8 +28,8 @@ import {
 describe( 'planLevelsMatch', () => {
 	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>
 		plansArray.forEach( ( [ slugA, slugB ] ) => {
-			expect( planLevelsMatch( slugA, slugB ) ).toBe[ result ];
-			expect( planLevelsMatch( slugB, slugA ) ).toBe[ result ];
+			expect( planLevelsMatch( slugA, slugB ) ).toBe( result );
+			expect( planLevelsMatch( slugB, slugA ) ).toBe( result );
 		} );
 
 	test( 'should return true for identical plans', () => {
@@ -56,7 +56,7 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_PREMIUM_3_YEARS, PLAN_PREMIUM_3_YEARS ],
 			[ PLAN_STUDENT, PLAN_STUDENT ],
 		];
-		testPlansArrayIndependentOfOrder( identicalPlans, 'true' );
+		testPlansArrayIndependentOfOrder( identicalPlans, true );
 	} );
 
 	test( 'should return true for matching plans', () => {
@@ -67,7 +67,7 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
 			[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
 		];
-		testPlansArrayIndependentOfOrder( matchingPlans, 'true' );
+		testPlansArrayIndependentOfOrder( matchingPlans, true );
 	} );
 
 	test( 'should return false for non-matching plans', () => {
@@ -107,6 +107,6 @@ describe( 'planLevelsMatch', () => {
 			[ PLAN_STUDENT, PLAN_PREMIUM ],
 			[ PLAN_STUDENT, PLAN_BUSINESS ],
 		];
-		testPlansArrayIndependentOfOrder( nonMatchingPlans, 'false' );
+		testPlansArrayIndependentOfOrder( nonMatchingPlans, false );
 	} );
 } );

@@ -2,11 +2,13 @@
  * @jest-environment jsdom
  */
 
-const mockComboboxClick = jest.fn();
-const mockSetSelectedStorageOptionForPlan = jest.fn();
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+const mockComboboxClick = vi.fn();
+const mockSetSelectedStorageOptionForPlan = vi.fn();
 
-jest.mock( '@wordpress/components', () => {
-	const ReactActual = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@wordpress/components', async () => {
+	const ReactActual = await vi.importActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		CustomSelectControl: ( { label }: { label: string } ) =>
@@ -22,7 +24,7 @@ jest.mock( '@wordpress/components', () => {
 			),
 	};
 } );
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	FEATURE_1GB_STORAGE: '1gb-storage',
 	FEATURE_6GB_STORAGE: '6gb-storage',
 	FEATURE_13GB_STORAGE: '13gb-storage',
@@ -35,25 +37,25 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	PLAN_ECOMMERCE: 'ecommerce-bundle',
 	PRODUCT_1GB_SPACE: '1gb-space',
 } ) );
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn( () => ( {
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn( () => ( {
 		setSelectedStorageOptionForPlan: mockSetSelectedStorageOptionForPlan,
 	} ) ),
-	useSelect: jest.fn(),
+	useSelect: vi.fn(),
 } ) );
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	AddOns: {
-		useAvailableStorageAddOns: jest.fn(),
-		useStorageAddOns: jest.fn(),
+		useAvailableStorageAddOns: vi.fn(),
+		useStorageAddOns: vi.fn(),
 	},
 	Purchases: {
-		useSitePurchasesByProductSlug: jest.fn(),
+		useSitePurchasesByProductSlug: vi.fn(),
 	},
 	WpcomPlansUI: {
 		store: {},
 	},
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
 
 import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { AddOns, Purchases } from '@automattic/data-stores';
@@ -65,18 +67,18 @@ import StorageDropdown from '../shared/storage/components/storage-dropdown';
 
 describe( 'StorageDropdown', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( AddOns.useStorageAddOns as jest.Mock ).mockReturnValue( [] );
-		( AddOns.useAvailableStorageAddOns as jest.Mock ).mockReturnValue( [
+		vi.clearAllMocks();
+		( AddOns.useStorageAddOns as Mock ).mockReturnValue( [] );
+		( AddOns.useAvailableStorageAddOns as Mock ).mockReturnValue( [
 			{
 				addOnSlug: 'add-on-100gb-storage',
 				prices: { formattedMonthlyPrice: '$10' },
 				quantity: 100,
 			},
 		] );
-		( Purchases.useSitePurchasesByProductSlug as jest.Mock ).mockReturnValue( null );
-		( useSelect as jest.Mock ).mockReturnValue( FEATURE_50GB_STORAGE );
-		( usePlansGridContext as jest.Mock ).mockReturnValue( {
+		( Purchases.useSitePurchasesByProductSlug as Mock ).mockReturnValue( null );
+		( useSelect as Mock ).mockReturnValue( FEATURE_50GB_STORAGE );
+		( usePlansGridContext as Mock ).mockReturnValue( {
 			gridPlansIndex: {
 				[ PLAN_BUSINESS ]: {
 					features: {

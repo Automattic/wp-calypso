@@ -4,21 +4,27 @@
 /**
  * Default mock implementations
  */
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 } ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn( ( selector ) => selector() ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useSelector: vi.fn( ( selector ) => selector() ),
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+vi.mock( '@automattic/data-stores', async () => ( {
 	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 	AddOns: {
-		useStorageAddOns: jest.fn(),
+		useStorageAddOns: vi.fn(),
 	},
 } ) );
 
@@ -46,7 +52,7 @@ describe( 'BillingTimeframe', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should show savings with yearly when plan is monthly', () => {

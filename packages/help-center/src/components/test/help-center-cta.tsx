@@ -2,16 +2,18 @@
  * @jest-environment jsdom
  */
 
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { HelpCenterCTA } from '../help-center-cta';
 import type { HelpCenterCTAVariant } from '../help-center-cta';
 
-const mockRecordTracksEvent = jest.fn();
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
+const mockRecordTracksEvent = vi.fn();
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
@@ -263,16 +265,16 @@ describe( 'HelpCenterCTA', () => {
 
 	describe( 'day-of-window and campaign properties', () => {
 		beforeEach( () => {
-			jest.useFakeTimers();
-			jest.setSystemTime( new Date( '2026-07-29T00:00:00Z' ) );
+			vi.useFakeTimers();
+			vi.setSystemTime( new Date( '2026-07-29T00:00:00Z' ) );
 		} );
 
 		afterEach( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		function setupUserEvent() {
-			return userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			return userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		}
 
 		it( 'includes days_since_purchase, plan_family, and locale on the impression', () => {
@@ -339,7 +341,7 @@ describe( 'HelpCenterCTA', () => {
 			);
 			mockRecordTracksEvent.mockClear();
 
-			jest.setSystemTime( new Date( Date.now() + 3 * 86400 * 1000 ) );
+			vi.setSystemTime( new Date( Date.now() + 3 * 86400 * 1000 ) );
 			await user.click( screen.getByRole( 'link' ) );
 
 			const [ , clickProps ] = mockRecordTracksEvent.mock.calls.find(

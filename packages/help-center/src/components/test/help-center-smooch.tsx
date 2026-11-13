@@ -2,60 +2,51 @@
  * @jest-environment jsdom
  */
 
-// babel-jest.  Assigning into a `var` (which is also hoisted) avoids the
-// TDZ error while still letting the factory populate the object at
-// require-time. `mockSmooch` prefix satisfies Jest's "mock" naming rule.
-// eslint-disable-next-line no-var
-var mockSmooch: {
-	init: jest.Mock;
-	destroy: jest.Mock;
-	render: jest.Mock;
-	on: jest.Mock;
-	off: jest.Mock;
-	getConversationById: jest.Mock;
-};
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 
-jest.mock( 'smooch', () => {
-	mockSmooch = {
-		init: jest.fn(),
-		destroy: jest.fn(),
-		render: jest.fn(),
-		on: jest.fn(),
-		off: jest.fn(),
-		getConversationById: jest.fn().mockResolvedValue( {} ),
-	};
-	return mockSmooch;
-} );
-
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
+const mockSmooch = vi.hoisted( () => ( {
+	init: vi.fn(),
+	destroy: vi.fn(),
+	render: vi.fn(),
+	on: vi.fn(),
+	off: vi.fn(),
+	getConversationById: vi.fn().mockResolvedValue( {} ),
 } ) );
 
-jest.mock( '@automattic/odie-client/src/data', () => ( {
-	useGetUnreadConversations: () => jest.fn(),
+vi.mock( 'smooch', () => ( { default: mockSmooch } ) );
+
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/odie-client/src/utils/csat', () => ( {
-	isZendeskIntroMessage: jest.fn().mockReturnValue( false ),
+vi.mock( '@automattic/odie-client/src/data', () => ( {
+	useGetUnreadConversations: () => vi.fn(),
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/odie-client/src/utils/csat', () => ( {
+	isZendeskIntroMessage: vi.fn().mockReturnValue( false ),
+} ) );
+
+vi.mock( '@automattic/zendesk-client', () => ( {
 	// Like the real hook, only load the script when chat is allowed.
 	useLoadZendeskMessaging: ( allowChat: boolean ) => ( { isMessagingScriptLoaded: allowChat } ),
 	useAuthenticateZendeskMessaging: () => ( {
 		data: { jwt: 'test-jwt', externalId: 'test-ext-id', isLoggedIn: true },
 	} ),
-	fetchMessagingAuth: jest.fn(),
-	isTestModeEnvironment: jest.fn().mockReturnValue( false ),
+	fetchMessagingAuth: vi.fn(),
+	isTestModeEnvironment: vi.fn().mockReturnValue( false ),
 	getSmoochIntegrationId: ( key?: string | null ) =>
 		key ? `integration-id-${ key }` : 'integration-id',
 	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: {
-		register: jest.fn().mockReturnValue( 'help-center' ),
+		register: vi.fn().mockReturnValue( 'help-center' ),
 		store: { name: 'help-center' },
 	},
 } ) );
@@ -68,45 +59,45 @@ let mockZendeskIntegrationKey: string | null = null;
 // Mock the real on-disk modules that are transitively loaded via src/hooks.
 // Without these, the entire dependency graph tries to load, pulling in
 // @wordpress/components, @wordpress/rich-text, etc., which fail in jsdom.
-jest.mock( '../../hooks', () => ( {
+vi.mock( '../../hooks', () => ( {
 	useChatStatus: () => ( { isEligibleForChat: mockIsEligibleForChat } ),
 } ) );
 
-jest.mock( '../../stores', () => ( {
+vi.mock( '../../stores', () => ( {
 	HELP_CENTER_STORE: 'help-center',
 } ) );
 
-jest.mock( '../../contexts/HelpCenterContext', () => ( {
+vi.mock( '../../contexts/HelpCenterContext', () => ( {
 	useFeatureConfig: () => ( {
 		chat: { hasPremiumSupport: false, zendeskIntegrationKey: mockZendeskIntegrationKey },
 	} ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
-jest.mock( '../../components/utils', () => ( {
-	getClientId: jest.fn().mockReturnValue( 'client-id' ),
-	getZendeskConversations: jest.fn().mockReturnValue( [] ),
+vi.mock( '../../components/utils', () => ( {
+	getClientId: vi.fn().mockReturnValue( 'client-id' ),
+	getZendeskConversations: vi.fn().mockReturnValue( [] ),
 } ) );
 
 // eslint-disable-next-line no-var
-var mockInvalidateQueries: jest.Mock;
+var mockInvalidateQueries: Mock;
 // eslint-disable-next-line no-var
-var mockFetchQuery: jest.Mock;
-jest.mock( '@tanstack/react-query', () => {
-	mockInvalidateQueries = jest.fn().mockResolvedValue( undefined );
-	mockFetchQuery = jest.fn();
+var mockFetchQuery: Mock;
+vi.mock( '@tanstack/react-query', () => {
+	mockInvalidateQueries = vi.fn().mockResolvedValue( undefined );
+	mockFetchQuery = vi.fn();
 	return {
 		useQueryClient: () => ( {
 			invalidateQueries: mockInvalidateQueries,
 			fetchQuery: mockFetchQuery,
 		} ),
-		QueryClient: jest.fn(),
+		QueryClient: vi.fn(),
 	};
 } );
 
-const mockSetIsChatLoaded = jest.fn();
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( ( selector: ( s: unknown ) => unknown ) =>
+const mockSetIsChatLoaded = vi.fn();
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( ( selector: ( s: unknown ) => unknown ) =>
 		selector( () => ( {
 			isHelpCenterShown: () => false,
 			getIsChatLoaded: () => false,
@@ -117,17 +108,16 @@ jest.mock( '@wordpress/data', () => ( {
 	),
 	useDispatch: () => ( {
 		setIsChatLoaded: mockSetIsChatLoaded,
-		setZendeskClientId: jest.fn(),
-		setZendeskConnectionStatus: jest.fn(),
-		setSupportTypingStatus: jest.fn(),
+		setZendeskClientId: vi.fn(),
+		setZendeskConnectionStatus: vi.fn(),
+		setSupportTypingStatus: vi.fn(),
 	} ),
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 } ) );
 
-import '@testing-library/jest-dom';
 import { fetchMessagingAuth } from '@automattic/zendesk-client';
 import { act, render } from '@testing-library/react';
 import HelpCenterSmooch from '../help-center-smooch';
@@ -136,7 +126,7 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 	const destroyError = new Error( 'SDK not fully initialized' );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSmooch.render.mockImplementation( () => {} );
 	} );
 
@@ -203,7 +193,7 @@ describe( 'HelpCenterSmooch – Smooch.destroy() error handling (regression)', (
 
 describe( 'HelpCenterSmooch – onInvalidAuth refreshes the messenger auth (regression)', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSmooch.render.mockImplementation( () => {} );
 		mockSmooch.destroy.mockResolvedValue( undefined );
 		mockSmooch.init.mockResolvedValue( undefined );
@@ -249,7 +239,7 @@ describe( 'HelpCenterSmooch – onInvalidAuth refreshes the messenger auth (regr
 
 describe( 'HelpCenterSmooch – open human chats', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSmooch.render.mockImplementation( () => {} );
 		mockSmooch.init.mockResolvedValue( undefined );
 		mockIsEligibleForChat = false;
@@ -280,7 +270,7 @@ describe( 'HelpCenterSmooch – open human chats', () => {
 
 describe( 'HelpCenterSmooch – messaging integration', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSmooch.render.mockImplementation( () => {} );
 		mockSmooch.init.mockResolvedValue( undefined );
 	} );

@@ -5,21 +5,22 @@
 import { PlanSlug } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import PlansGridContextProvider from '../../grid-context';
 import { GridPlan } from '../../types';
 import { useVisibleGridPlans } from '../use-visible-grid-plans';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Mock the hooks we're using
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Plans: {
-		useCurrentPlanTerm: jest.fn(),
+		useCurrentPlanTerm: vi.fn(),
 	},
 } ) );
 
-jest.mock( '../../hooks/data-store/use-plan-billing-period', () => ( {
+vi.mock( '../../hooks/data-store/use-plan-billing-period', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 // Helper to create a mock GridPlan

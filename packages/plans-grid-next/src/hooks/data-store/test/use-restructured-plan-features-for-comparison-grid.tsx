@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'i18n-calypso', () => ( {
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 	translate: ( text: string ) => text,
 	// requireActual( calypso-products ) below reaches @automattic/components, which localizes a
@@ -11,8 +13,10 @@ jest.mock( 'i18n-calypso', () => ( {
 	useRtl: () => false,
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => {
-	const actual = jest.requireActual( '@automattic/calypso-products' );
+vi.mock( '@automattic/calypso-products', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-products' ) >(
+		'@automattic/calypso-products'
+	);
 
 	return {
 		...actual,

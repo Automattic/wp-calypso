@@ -1,10 +1,12 @@
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 // This copy is the only place the grid states what a shopper will actually be
 // charged. It shipped without an "excl. taxes" note in #107817 (MARTECH-3020),
 // so pin the suffix on both strings.
 
 // Only the billing-period constants are needed here; mocking them keeps
 // calypso-config (and its browser-context requirement) out of the test.
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	PLAN_MONTHLY_PERIOD: 31,
 	PLAN_ANNUAL_PERIOD: 365,
 	PLAN_BIENNIAL_PERIOD: 730,

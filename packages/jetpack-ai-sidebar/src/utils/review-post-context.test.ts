@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 let mockCurrentPostId: number | string | null = 1;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( s: unknown ) => unknown ) =>
 		mapSelect( ( store: string ) =>
 			store === 'core/editor' ? { getCurrentPostId: () => mockCurrentPostId } : {}

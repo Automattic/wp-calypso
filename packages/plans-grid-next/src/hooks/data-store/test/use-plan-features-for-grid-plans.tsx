@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'i18n-calypso', () => ( {
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 	translate: ( text: string ) => text,
 	// requireActual( calypso-products ) below reaches @automattic/components, which localizes a
@@ -13,8 +15,10 @@ jest.mock( 'i18n-calypso', () => ( {
 
 // Only the plan-constants lookup is stubbed; the FEATURE_* constants and helpers stay real so the
 // branch under test is the real one.
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-products' ) >(
+		'@automattic/calypso-products'
+	) ),
 	applyTestFiltersToPlansList: () => ( {
 		getVar42NoAiSignupWpcomFeatures: () => [ 'differentiation-feature' ],
 		getNewsletterSignupFeatures: () => [ 'newsletter-feature' ],

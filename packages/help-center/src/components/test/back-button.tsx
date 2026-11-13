@@ -2,16 +2,16 @@
  * @jest-environment jsdom
  */
 
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { BackButton } from '../back-button';
 
-const mockNavigate = jest.fn();
-jest.mock( 'react-router-dom', () => ( {
-	...jest.requireActual( 'react-router-dom' ),
+const mockNavigate = vi.fn();
+vi.mock( 'react-router-dom', async () => ( {
+	...( await vi.importActual< typeof import( 'react-router-dom' ) >( 'react-router-dom' ) ),
 	useNavigate: () => mockNavigate,
 } ) );
 

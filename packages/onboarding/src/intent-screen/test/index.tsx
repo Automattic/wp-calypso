@@ -6,11 +6,12 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import IntentScreen from '../';
 import { SelectItem } from '../../select-items';
 import { SelectItemAlt } from '../../select-items-alt';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: () => false,
 	__esModule: true,
 	default: function config( key: string ) {
@@ -19,12 +20,12 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 afterEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 } );
 
 const icon = <svg />;
-const onSelect = jest.fn();
-const preventWidow = jest.fn();
+const onSelect = vi.fn();
+const preventWidow = vi.fn();
 
 const intents: SelectItem< string >[] = [
 	{

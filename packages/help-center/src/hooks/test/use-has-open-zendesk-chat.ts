@@ -2,15 +2,16 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useGetSupportInteractions } from '../use-get-support-interactions';
 import { useHasOpenZendeskChat } from '../use-has-open-zendesk-chat';
 
-jest.mock( '../use-get-support-interactions', () => ( {
-	useGetSupportInteractions: jest.fn(),
+vi.mock( '../use-get-support-interactions', () => ( {
+	useGetSupportInteractions: vi.fn(),
 } ) );
 
 const withInteractions = ( data: Array< { status: string } > | undefined, isLoading = false ) =>
-	( useGetSupportInteractions as jest.Mock ).mockReturnValue( { data, isLoading } );
+	( useGetSupportInteractions as Mock ).mockReturnValue( { data, isLoading } );
 
 describe( 'useHasOpenZendeskChat', () => {
 	it( 'is true when one of the Zendesk interactions is open', () => {

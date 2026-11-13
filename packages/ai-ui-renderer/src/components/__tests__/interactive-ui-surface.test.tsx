@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { BASIC_CATALOG_ID } from '../../capabilities';
 import { createInteractiveUiCatalog } from '../../utils/catalog';
 import { createInteractiveUiRuntime } from '../../utils/runtime';
@@ -17,8 +18,8 @@ const crashingCatalog = createInteractiveUiCatalog( {
 } );
 
 let runtime: InteractiveUiRuntime;
-let onAction: jest.Mock;
-let onError: jest.Mock;
+let onAction: Mock;
+let onError: Mock;
 
 // JSDOM lacks PointerEvent, which UI uses when activating choice controls.
 beforeAll( () => {
@@ -26,8 +27,8 @@ beforeAll( () => {
 } );
 
 beforeEach( () => {
-	onAction = jest.fn();
-	onError = jest.fn();
+	onAction = vi.fn();
+	onError = vi.fn();
 
 	runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog(), crashingCatalog ],
@@ -99,7 +100,7 @@ function createSurface(
 it.each( [
 	[ undefined, 'ai-ui-renderer' ],
 	[ 'host a2ui-dark', 'ai-ui-renderer host a2ui-dark' ],
-] )( 'adds className %p to the surface', ( className, expectedClassName ) => {
+] )( 'adds className %o to the surface', ( className, expectedClassName ) => {
 	const surface = createSurface( [ { id: 'root', component: 'Text', text: 'Hello' } ] );
 
 	render( <InteractiveUiSurface surface={ surface } className={ className } /> );
@@ -114,7 +115,7 @@ it.each( [
 	[ undefined, 'is-outline' ],
 	[ 'primary', 'is-solid' ],
 	[ 'borderless', 'is-minimal' ],
-] )( 'renders a Button with variant %p as WordPress’s %s Button', ( variant, className ) => {
+] )( 'renders a Button with variant %o as WordPress’s %s Button', ( variant, className ) => {
 	const surface = createSurface( [
 		{ id: 'root', component: 'Button', child: 'label', action: { event: { name: 'go' } }, variant },
 		{ id: 'label', component: 'Text', text: 'Go' },
@@ -294,7 +295,7 @@ it( 'shows the fallback instead of a surface with a component its catalog lacks'
 } );
 
 it( 'shows the fallback when a surface fails to render, and reports it', async () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	const surface = createSurface( [ { id: 'root', component: 'Crashing' } ], CRASHING_CATALOG_ID );
 
 	render( <InteractiveUiSurface surface={ surface } fallback="Couldn’t show this." /> );

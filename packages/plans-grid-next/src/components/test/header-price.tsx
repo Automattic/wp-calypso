@@ -4,31 +4,35 @@
 /**
  * Default mock implementations
  */
-const mockUseHeaderPriceContext = jest.fn();
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+const mockUseHeaderPriceContext = vi.fn();
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
-	useCallback: jest.fn(),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
+	useCallback: vi.fn(),
 } ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn(),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useSelector: vi.fn(),
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
 	AddOns: {
-		useStorageAddOns: jest.fn(),
+		useStorageAddOns: vi.fn(),
 	},
 	Plans: {
-		usePricingMetaForGridPlans: jest.fn(),
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 } ) );
-jest.mock( '../../lib/touch-detect', () => ( {
+vi.mock( '../../lib/touch-detect', () => ( {
 	hasTouch: () => false,
 } ) );
 
-jest.mock( '../shared/header-price/header-price-context', () => ( {
+vi.mock( '../shared/header-price/header-price-context', () => ( {
 	useHeaderPriceContext: () => mockUseHeaderPriceContext(),
 } ) );
 
@@ -78,12 +82,12 @@ describe( 'HeaderPrice', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: false,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {} );
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {} );
 	} );
 
 	test( 'should render raw and discounted prices when discount exists', () => {
@@ -227,9 +231,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
@@ -270,9 +274,9 @@ describe( 'HeaderPrice', () => {
 
 			mockUseHeaderPriceContext.mockReturnValue( {
 				isAnyPlanPriceDiscounted: true,
-				setIsAnyPlanPriceDiscounted: jest.fn(),
+				setIsAnyPlanPriceDiscounted: vi.fn(),
 			} );
-			( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+			( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 				[ PLAN_PERSONAL_MONTHLY ]: {
 					originalPrice: { monthly: 2000, full: 24000 },
 					discountedPrice: { monthly: null, full: null },
@@ -329,9 +333,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 1800, full: 21600 },
 				discountedPrice: { monthly: null, full: null },
@@ -408,9 +412,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
@@ -447,9 +451,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
@@ -485,9 +489,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
@@ -521,9 +525,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 10, full: 120 },
 				discountedPrice: { monthly: null, full: null },
@@ -564,9 +568,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
@@ -604,9 +608,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
@@ -701,9 +705,9 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
+			setIsAnyPlanPriceDiscounted: vi.fn(),
 		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 10, full: 120 },
 				discountedPrice: { monthly: null, full: null },

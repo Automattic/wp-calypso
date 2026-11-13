@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { key, clear, setItem, getItem, removeItem, length } from '../bypass-local-storage';
 
 describe( 'localstorage-bypass', () => {
 	// Spy on the original localStorage functions
-	const _setItem = jest.fn();
-	const _getItem = jest.fn( ( x ) => x );
-	const _removeItem = jest.fn();
+	const _setItem = vi.fn();
+	const _getItem = vi.fn( ( x ) => x );
+	const _removeItem = vi.fn();
 	let db: Record< string, string >;
 
 	beforeEach( () => {

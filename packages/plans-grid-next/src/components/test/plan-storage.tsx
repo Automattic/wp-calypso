@@ -4,14 +4,16 @@
 /**
  * Default mock implementations
  */
-jest.mock( '@automattic/data-stores', () => ( {
+/* eslint-disable import/order */
+import { type Mock, vi } from 'vitest';
+vi.mock( '@automattic/data-stores', () => ( {
 	AddOns: {
-		useAvailableStorageAddOns: jest.fn(),
+		useAvailableStorageAddOns: vi.fn(),
 	},
 } ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-jest.mock( '../shared/storage/components/storage-dropdown', () => {
-	const ReactActual = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+vi.mock( '../shared/storage/components/storage-dropdown', async () => {
+	const ReactActual = await vi.importActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		__esModule: true,
@@ -22,8 +24,8 @@ jest.mock( '../shared/storage/components/storage-dropdown', () => {
 			} ),
 	};
 } );
-jest.mock( '../shared/storage/components/storage-feature-label', () => {
-	const ReactActual = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '../shared/storage/components/storage-feature-label', async () => {
+	const ReactActual = await vi.importActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		__esModule: true,
@@ -43,7 +45,7 @@ import PlanStorage from '../shared/storage/components/plan-storage';
 
 describe( 'PlanStorage', () => {
 	const mockPlansGridContext = ( showFeatureCheckmarks: boolean ) => {
-		( usePlansGridContext as jest.Mock ).mockReturnValue( {
+		( usePlansGridContext as Mock ).mockReturnValue( {
 			gridPlansIndex: {
 				[ PLAN_BUSINESS ]: {
 					availableForPurchase: true,
@@ -57,8 +59,8 @@ describe( 'PlanStorage', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( AddOns.useAvailableStorageAddOns as jest.Mock ).mockReturnValue( [
+		vi.clearAllMocks();
+		( AddOns.useAvailableStorageAddOns as Mock ).mockReturnValue( [
 			{ addOnSlug: 'add-on-100gb-storage' },
 		] );
 	} );
