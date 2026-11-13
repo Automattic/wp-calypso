@@ -36,6 +36,12 @@ export function getDataFormCountryCodes( countries: CountryListItem[] ): Country
 	return codes.flat();
 }
 
+const MANUAL_TAX_VERIFICATION_COUNTRIES = [ 'CA', 'US' ];
+
+export function isManualTaxVerificationCountry( countryCode: string ): boolean {
+	return MANUAL_TAX_VERIFICATION_COUNTRIES.includes( countryCode );
+}
+
 export function getTaxName(
 	countryList: CountryListItem[],
 	countryCode: string
