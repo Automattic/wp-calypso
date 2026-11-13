@@ -10,7 +10,7 @@ import { wpcom } from '../rest-client/wpcom';
 import actions from '../state/actions';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
 import Suggestions from '../suggestions';
-import { formatString, validURL } from './functions';
+import { getLinkHtml } from './functions';
 import Spinner from './spinner';
 
 const debug = debugFactory( 'notifications:reply' );
@@ -231,16 +231,8 @@ class CommentReplyInput extends Component {
 			// shortcuts without typing in the field
 			this.replyInput.current.blur();
 
-			if ( data.URL && validURL.test( data.URL ) ) {
-				statusMessage = formatString(
-					'{0} <a target="_blank" href="{1}">{2}</a>',
-					successMessage,
-					data.URL,
-					linkMessage
-				);
-			} else {
-				statusMessage = successMessage;
-			}
+			const replyLink = getLinkHtml( data.URL, linkMessage );
+			statusMessage = replyLink ? `${ successMessage } ${ replyLink }` : successMessage;
 
 			this.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
 
