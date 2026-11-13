@@ -9,7 +9,7 @@ import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
 import { getDomainTypeLabel } from '../../utils/domain';
 import { useIsDomainActivating } from './use-domain-activation';
-import { stackedLinesStyles, textOverflowStyles } from './utils';
+import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 export function PrimaryDomainBadge() {
@@ -75,7 +75,7 @@ export const DomainNameField = ( {
 			: domainOverviewRoute.fullPath;
 
 	const content = (
-		<VStack spacing={ 0 } style={ stackedLinesStyles }>
+		<VStack spacing={ 0 }>
 			<span style={ { ...textOverflowStyles, fontWeight: 500 } }>
 				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
 				<Text variant="muted" weight="inherit">

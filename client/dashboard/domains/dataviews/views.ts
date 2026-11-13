@@ -5,7 +5,7 @@ import type { SupportedLayouts, View } from '@wordpress/dataviews';
 const BASE_VIEW_PROPS: View = {
 	type: 'table',
 	layout: {
-		density: 'comfortable',
+		density: 'balanced',
 	},
 	sort: {
 		field: 'domain',
@@ -42,7 +42,7 @@ const DOMAINS_LIST_GRID_LAYOUT = {
 export const DOMAINS_LIST_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
-			density: 'comfortable',
+			density: 'balanced',
 		},
 		showLevels: false,
 		showMedia: false,
