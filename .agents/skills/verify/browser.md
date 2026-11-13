@@ -133,3 +133,11 @@ When you drive a browser yourself (Claude in Chrome, Playwright MCP, an automate
 - Sign in on `wordpress.com/log-in`, then open `calypso.localhost:<port>/read?flags=oauth` once, with the port the dev server printed when it started (3000 in the main checkout). Signing in on the calypso.localhost form doesn't stick: the cookie is refused as cross-site.
 - An automated Chrome profile or an incognito window blocks third-party cookies by default; allow them, or the login loops (see [Gotchas](#gotchas)).
 - Playwright MCP's browser starts logged out, so it doesn't help when `browse.cjs` can't log in.
+
+On Calypso Live, check what `browse.cjs` would have checked for you:
+
+- Read `window.COMMIT_SHA` and confirm it's the PR head before running any step. Moving a tab to another build's image can take two navigations.
+- The Dashboard container can answer `504 Gateway Time-out` while it boots. Reload after a few seconds; it isn't a PR failure.
+- To check Back, start in a fresh tab, open a previous page first, then the page under test, and go back with `history.back()` from inside the page. `history.length` stops at 50 in a long-lived tab, and login redirects leave extra entries behind.
+- Count snackbars by `.components-snackbar__content`, not by page text: the screen-reader live region repeats the same text.
+- In the Dashboard, `history.state` should keep the router's `key` and `__TSR_index` after a step. `{}` or `null` means code wrote `window.history` directly (see `client/dashboard/AGENTS.md`).
