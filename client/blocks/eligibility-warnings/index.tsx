@@ -253,13 +253,6 @@ export const EligibilityWarnings = ( {
 						warnings={ warnings }
 						showContact={ false }
 						transferAction={ atomicTransferAction }
-						showTransferIntro={
-							! (
-								shouldUpsellAnyPaidPlan( context ) &&
-								listHolds.includes( 'NO_BUSINESS_PLAN' ) &&
-								! showFreeTrial
-							)
-						}
 					/>
 				</CompactCard>
 			) }
@@ -334,7 +327,9 @@ function getProceedButtonText(
 ) {
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
 		if ( context === 'plugin-details' ) {
-			return translate( 'Upgrade and activate plugin' );
+			return shouldUpsellAnyPaidPlan( context )
+				? translate( 'Choose a plan' )
+				: translate( 'Upgrade and activate plugin' );
 		}
 		if ( showFreeTrial ) {
 			return translate( 'Start your free trial' );

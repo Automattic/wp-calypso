@@ -160,7 +160,11 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			{ showEligibility && (
 				<Modal
 					className="plugin-details-cta__dialog-content"
-					title={ translate( 'One more step' ) }
+					title={
+						shouldUpgrade && isEnabled( 'hosting/dev-tools-all-paid-plans' )
+							? translate( 'Upgrade to install plugins' )
+							: translate( 'One more step' )
+					}
 					onRequestClose={ () => setShowEligibility( false ) }
 					size="medium"
 				>

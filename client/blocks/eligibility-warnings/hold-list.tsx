@@ -49,27 +49,20 @@ function getHoldMessages( {
 	billingPeriod,
 	isMarketplace,
 	hasEnTranslation,
-	holds,
 }: {
 	context: EligibilityContext | null;
 	translate: LocalizeProps[ 'translate' ];
 	billingPeriod?: string;
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
-	holds: EligibilityHold[];
 } ): HoldMessages {
 	const upsellPersonalPlan =
 		shouldUpsellPersonalPlan( context ) ||
 		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
-	const upsellAnyPaidPlan = shouldUpsellAnyPaidPlan( context );
 
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( upsellAnyPaidPlan ) {
-					return translate( 'Upgrade to a paid plan' );
-				}
-
 				if ( upsellPersonalPlan ) {
 					return translate( 'Upgrade to a %(personalPlanName)s plan', {
 						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
@@ -81,12 +74,6 @@ function getHoldMessages( {
 				} );
 			} )(),
 			description: ( function () {
-				if ( upsellAnyPaidPlan && ! isAtomicSiteWithoutBusinessPlan( holds ) ) {
-					return translate(
-						'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
-					);
-				}
-
 				if ( context === 'themes' ) {
 					return hasEnTranslation(
 						"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
@@ -332,16 +319,29 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		billingPeriod,
 		isMarketplace,
 		hasEnTranslation,
-		holds,
 	} );
+	const showsPaidPlanNote =
+		! isPlaceholder && shouldUpsellAnyPaidPlan( context ) && holds.includes( 'NO_BUSINESS_PLAN' );
+	const listedHolds = showsPaidPlanNote
+		? holds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' )
+		: holds;
 
 	return (
 		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
-			<CardHeading>
-				<span className="eligibility-warnings__hold-heading">
-					{ getCardHeading( context, translate ) }
-				</span>
-			</CardHeading>
+			{ showsPaidPlanNote && (
+				<p className="eligibility-warnings__paid-plan-note">
+					{ translate(
+						'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
+					) }
+				</p>
+			) }
+			{ ( isPlaceholder || listedHolds.some( isDisplayableHoldType ) ) && (
+				<CardHeading>
+					<span className="eligibility-warnings__hold-heading">
+						{ getCardHeading( context, translate ) }
+					</span>
+				</CardHeading>
+			) }
 			{ isPlaceholder && (
 				<div>
 					<div className="eligibility-warnings__hold">
@@ -355,7 +355,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				</div>
 			) }
 			{ ! isPlaceholder &&
-				holds.map( ( hold ) =>
+				listedHolds.map( ( hold ) =>
 					! isDisplayableHoldType( hold ) ? null : (
 						<div className="eligibility-warnings__hold" key={ hold }>
 							<div className="eligibility-warnings__message">

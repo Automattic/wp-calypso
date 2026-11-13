@@ -185,10 +185,14 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
-		expect( getByText( 'Upgrade to a paid plan' ) ).toBeVisible();
+		expect(
+			getByText(
+				'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
+			)
+		).toBeVisible();
 	} );
 
-	it( 'mentions the site move in the plugin upgrade step instead of a separate intro', () => {
+	it( 'asks to choose any paid plan in the plugin modal and keeps the site move intro', () => {
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN' ],
 			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
@@ -206,10 +210,16 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect(
 			getByText(
-				'Your site will move to WordPress.com’s managed cloud hosting, and you’ll also get custom themes, more storage, and fast support.'
+				'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
 			)
 		).toBeVisible();
-		expect( queryByText( /^To install plugins, we’ll need to move your site/ ) ).toBeNull();
+		expect( queryByText( "To continue you'll need to:" ) ).toBeNull();
+		expect(
+			getByText(
+				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			)
+		).toBeVisible();
+		expect( getByText( 'Choose a plan' ) ).toBeVisible();
 	} );
 
 	it( 'keeps the Business plan wording in the plugin modal when not all paid plans qualify', () => {
@@ -235,7 +245,8 @@ describe( '<EligibilityWarnings>', () => {
 				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
 			)
 		).toBeVisible();
-		expect( queryByText( /^Your site will move/ ) ).toBeNull();
+		expect( queryByText( /^You can install plugins on any paid plan/ ) ).toBeNull();
+		expect( getByText( 'Upgrade and activate plugin' ) ).toBeVisible();
 	} );
 
 	it( 'keeps the plan perks and the site move intro outside the plugin modal', () => {
@@ -260,7 +271,7 @@ describe( '<EligibilityWarnings>', () => {
 				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
 			)
 		).toBeVisible();
-		expect( queryByText( /^Your site will move/ ) ).toBeNull();
+		expect( queryByText( /^You can install plugins on any paid plan/ ) ).toBeNull();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {
@@ -301,14 +312,24 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context="hosting-features" inModal />,
+			<EligibilityWarnings
+				onProceed={ noop }
+				context="hosting-features"
+				atomicTransferAction="hosting-features"
+				inModal
+			/>,
 			state
 		);
 
-		expect( getByText( /isn’t indexed by search engines/ ) ).toBeVisible();
-		expect( getByText( 'add a custom domain so your site can be indexed' ).tagName ).toBe(
-			'STRONG'
-		);
+		expect( getByText( 'Your site’s address will change' ) ).toBeVisible();
+		expect(
+			getByText(
+				'To turn hosting features on, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting. Links to your old address will redirect automatically.'
+			)
+		).toBeVisible();
+		expect( getByText( /^Search engines don’t index the new address\./ ) ).toBeVisible();
+		expect( getByText( 'Current' ) ).toBeVisible();
+		expect( getByText( 'New' ) ).toBeVisible();
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {

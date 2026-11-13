@@ -64,6 +64,12 @@
 		align-items: flex-start;
 		margin-bottom: 24px;
 
+		.eligibility-warnings__paid-plan-note {
+			margin: 0;
+			font-size: 13px;
+			line-height: 20px;
+		}
+
 		h1.card-heading.card-heading-20 {
 			font-size: 13px;
 			font-weight: 400;
@@ -252,6 +258,19 @@
 	margin-top: 20px;
 	margin-bottom: 20px;
 	max-width: 300px;
+}
+
+.eligibility-warnings__address-heading {
+	font-size: $font-body-small;
+	font-weight: 600;
+	line-height: 20px;
+	margin-bottom: 4px;
+	color: var(--color-text);
+}
+
+.eligibility-warnings__address-note {
+	display: block;
+	margin-bottom: 24px;
 }
 
 .eligibility-warnings__domain-names {
