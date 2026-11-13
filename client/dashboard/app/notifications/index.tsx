@@ -53,7 +53,7 @@ export default function Notifications( {
 		setHasUnseenNotifications( count > 0 );
 		omnibarEvents.notificationsUnseenCount.emit( count );
 	}, [] );
-	useSubscriberAlerts( onNotificationCount );
+	useSubscriberAlerts( onNotificationCount, isViewSettingsEnabled );
 
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
