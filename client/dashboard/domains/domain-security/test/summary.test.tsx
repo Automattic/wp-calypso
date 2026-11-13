@@ -17,15 +17,14 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 };
 
 describe( '<DomainSecuritySettingsSummary>', () => {
-	test( 'does not show an SSL badge when the certificate is active', async () => {
+	test( 'shows the Domain security title and DNSSEC status for a registration', async () => {
 		render( <DomainSecuritySettingsSummary domain={ getMockedDomainData() } /> );
 
-		expect( await screen.findByText( 'DNSSEC' ) ).toBeVisible();
-		expect( screen.getByText( 'Disabled' ) ).toBeVisible();
-		expect( screen.queryByText( /SSL/ ) ).not.toBeInTheDocument();
+		expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
+		expect( screen.getByText( 'DNSSEC disabled' ) ).toBeVisible();
 	} );
 
-	test( 'keeps the Domain security title where DNSSEC does not apply', async () => {
+	test( 'shows the Domain security title without a badge for a connection', async () => {
 		render(
 			<DomainSecuritySettingsSummary
 				domain={ getMockedDomainData( {
@@ -35,21 +34,23 @@ describe( '<DomainSecuritySettingsSummary>', () => {
 		);
 
 		expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
+		expect( screen.queryByText( /DNSSEC/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows a pending badge when the certificate is pending', async () => {
-		render(
-			<DomainSecuritySettingsSummary domain={ getMockedDomainData( { ssl_status: 'pending' } ) } />
-		);
+	test.each( [ 'pending', 'inactive' ] as const )(
+		'does not show an SSL badge when the certificate is %s',
+		async ( sslStatus ) => {
+			render(
+				<DomainSecuritySettingsSummary
+					domain={ getMockedDomainData( {
+						subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
+						ssl_status: sslStatus,
+					} ) }
+				/>
+			);
 
-		expect( await screen.findByText( 'SSL pending' ) ).toBeVisible();
-	} );
-
-	test( 'shows a disabled badge when the certificate is inactive', async () => {
-		render(
-			<DomainSecuritySettingsSummary domain={ getMockedDomainData( { ssl_status: 'inactive' } ) } />
-		);
-
-		expect( await screen.findByText( 'SSL disabled' ) ).toBeVisible();
-	} );
+			expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
+			expect( screen.queryByText( /SSL/ ) ).not.toBeInTheDocument();
+		}
+	);
 } );
