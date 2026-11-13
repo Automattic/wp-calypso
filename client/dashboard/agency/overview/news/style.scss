@@ -4,6 +4,13 @@
 	--wp-dataviews-color-background: transparent;
 }
 
+// Calypso's global `hr` rule gives dividers a height and background, which doubles
+// the row dividers on the classic dashboard.
+.a4a-news .components-card__divider {
+	height: 0;
+	background: none;
+}
+
 .a4a-news-logo {
 	flex-shrink: 0;
 	display: block;
