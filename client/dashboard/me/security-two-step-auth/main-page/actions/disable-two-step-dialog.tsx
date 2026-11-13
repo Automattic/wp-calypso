@@ -171,7 +171,7 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 					</Text>
 					<Text as="p">
 						{ __(
-							'To verify that you wish to disable two-step authentication, enter the verification code from your device or a backup code.'
+							'To verify that you wish to disable two-step authentication, enter the verification code from your device.'
 						) }
 					</Text>
 
