@@ -30,11 +30,13 @@ function mockAgency( startDate?: string ) {
 		] );
 }
 
-async function renderLoadedHook() {
+async function renderLoadedHook( agency: nock.Scope ) {
 	const { result } = renderHook( () => useCanTagSitesForCommission(), {
 		wrapper: createWrapper(),
 	} );
 	await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+	// A failed request also leaves the agency undefined, which most cases read as eligible.
+	expect( agency.isDone() ).toBe( true );
 	return result;
 }
 
@@ -44,7 +46,7 @@ describe( 'useCanTagSitesForCommission', () => {
 	} );
 
 	test( 'returns false and omits the incentive tag while the agency is still loading', async () => {
-		mockAgency();
+		const agency = mockAgency();
 
 		const { result } = renderHook( () => useCanTagSitesForCommission(), {
 			wrapper: createWrapper(),
@@ -55,12 +57,11 @@ describe( 'useCanTagSitesForCommission', () => {
 		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( agency.isDone() ).toBe( true );
 	} );
 
 	test( 'returns canTagSitesForCommission true and includes incentive tag when no start_date', async () => {
-		mockAgency();
-
-		const result = await renderLoadedHook();
+		const result = await renderLoadedHook( mockAgency() );
 
 		expect( result.current.canTagSitesForCommission ).toBe( true );
 		expect( result.current.migrationTags ).toEqual( [
@@ -70,9 +71,7 @@ describe( 'useCanTagSitesForCommission', () => {
 	} );
 
 	test( 'returns true and includes incentive tag when start_date is empty string', async () => {
-		mockAgency( '' );
-
-		const result = await renderLoadedHook();
+		const result = await renderLoadedHook( mockAgency( '' ) );
 
 		expect( result.current.canTagSitesForCommission ).toBe( true );
 		expect( result.current.migrationTags ).toEqual( [
@@ -82,9 +81,7 @@ describe( 'useCanTagSitesForCommission', () => {
 	} );
 
 	test( 'returns true when start_date is on or before cutoff (2025-08-10)', async () => {
-		mockAgency( '2025-08-10' );
-
-		const result = await renderLoadedHook();
+		const result = await renderLoadedHook( mockAgency( '2025-08-10' ) );
 
 		expect( result.current.canTagSitesForCommission ).toBe( true );
 		expect( result.current.migrationTags ).toEqual( [
@@ -94,18 +91,14 @@ describe( 'useCanTagSitesForCommission', () => {
 	} );
 
 	test( 'returns false when start_date is in gap (2025-08-11 to 2026-02-10)', async () => {
-		mockAgency( '2025-08-11' );
-
-		const result = await renderLoadedHook();
+		const result = await renderLoadedHook( mockAgency( '2025-08-11' ) );
 
 		expect( result.current.canTagSitesForCommission ).toBe( false );
 		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
 	} );
 
 	test( 'returns true when start_date is on or after promo start (2026-02-11)', async () => {
-		mockAgency( '2026-02-11' );
-
-		const result = await renderLoadedHook();
+		const result = await renderLoadedHook( mockAgency( '2026-02-11' ) );
 
 		expect( result.current.canTagSitesForCommission ).toBe( true );
 		expect( result.current.migrationTags ).toContain(

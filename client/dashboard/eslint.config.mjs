@@ -240,12 +240,9 @@ export default defineConfig( [
 	},
 	{
 		name: 'calypso/dashboard/tests',
-		// Includes helpers and fixtures next to the tests.
-		files: [ '**/test/**/*.ts', '**/test/**/*.tsx', '**/*.test.ts', '**/*.test.tsx' ],
+		files: [ '**/*.test.ts', '**/*.test.tsx' ],
 		rules: {
 			'jest/consistent-test-it': [ 'error', { fn: 'test', withinDescribe: 'test' } ],
-			// Replaces the rule's options above, so the snackbar restriction is repeated.
-			'no-restricted-syntax': [ 'error', snackbarMetaRestriction, ...bannedModuleMocks ],
 		},
 	},
 	{
@@ -284,6 +281,8 @@ export default defineConfig( [
 					message: 'The Dashboard tests run on Vitest. Use `vi` from `vitest` instead.',
 				},
 			],
+			// Replaces the rule's options above, so the snackbar restriction is repeated.
+			'no-restricted-syntax': [ 'error', snackbarMetaRestriction, ...bannedModuleMocks ],
 		},
 	},
 ] );
