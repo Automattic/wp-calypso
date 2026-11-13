@@ -4,6 +4,10 @@ on:
   pull_request:
     types: ['opened']
 
+permissions:
+  pull-requests: write
+  statuses: read
+
 jobs:
   calypso-live:
     name: 'Links to a calypso.live instance for your branch'
@@ -30,10 +34,6 @@ jobs:
             const hasComment = existingComment ? "true" : "false";
             console.log( `Has existing comment: ${ hasComment }` );
             return hasComment;
-      - name: Build calypso.live link
-        run: |
-          echo "QUERY=image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
-        id: build_link
       - name: Post comment on PR
         uses: actions/github-script@v6
         if: steps.has_comment.outputs.result == 'false'
@@ -41,9 +41,20 @@ jobs:
           # Skip adding a comment if we already have one.
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const link = `https://calypso.live?${{steps.build_link.outputs.QUERY}}`;
-            const readerLink = `https://calypso.live/reader?${{steps.build_link.outputs.QUERY}}`;
+            // Link only to an image that is already built. Otherwise the Docker image build adds the links.
+            const sha = context.payload.pull_request.head.sha;
+            const { data: status } = await github.rest.repos.getCombinedStatusForRef( {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: sha,
+              per_page: 100,
+            } );
+            const imageIsBuilt = status.statuses.some(
+              ( { context: name, state } ) => name === 'Docker image (Web app)' && state === 'success'
+            );
 
+            const link = `https://calypso.live?image=registry.a8c.com/calypso/app:commit-${ sha }`;
+            const readerLink = `https://calypso.live/reader?image=registry.a8c.com/calypso/app:commit-${ sha }`;
             const environments = [
               { label: 'WordPress.com Dashboard', url: `${link}&env=dashboard` },
               { label: 'WordPress.com (/reader)', url: readerLink },
@@ -56,9 +67,16 @@ jobs:
               '<!--calypso-live-watermark:apr@v1-->',
               '<h2>🧐 Test on Calypso Live ⛅</h2>',
               '',
-              '| Environment | 🔗 |',
-              '| - | - |',
-              ...environments.map( env => `| ${ env.label } | [live link](${ env.url }) |` ),
+              ...( imageIsBuilt
+                ? [
+                    '| Environment | 🔗 |',
+                    '| - | - |',
+                    ...environments.map( env => `| ${ env.label } | [live link](${ env.url }) |` ),
+                  ]
+                : [
+                    'Calypso Live links are being generated...',
+                    'Please wait a few minutes until the Docker image is built.',
+                  ] ),
             ].join( '\n' );
 
             github.rest.issues.createComment({

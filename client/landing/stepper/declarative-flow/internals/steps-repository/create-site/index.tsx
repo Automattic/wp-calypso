@@ -1,5 +1,6 @@
+import { transferDomainToSite } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { isEcommerce } from '@automattic/calypso-products';
+import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
@@ -7,6 +8,7 @@ import {
 	ENTREPRENEUR_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	SITE_MIGRATION_FLOW,
+	STUDENT_FLOW,
 	StepContainer,
 	addProductsToCart,
 	createSite,
@@ -45,6 +47,7 @@ import {
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
 	getSignupCompleteSlug,
+	getSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
@@ -60,6 +63,7 @@ import {
 import type { FlowStateManifest } from '../../state-manager/stepper-state-manifest';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './styles.scss';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
@@ -137,6 +141,40 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 	return result;
 }
 
+// The domain search records the site a moved domain is on now. The move call needs it.
+function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
+	const extra = item.extra;
+	return extra && 'move_source_site_id' in extra && typeof extra.move_source_site_id === 'number'
+		? extra.move_source_site_id
+		: undefined;
+}
+
+/**
+ * Moves registered domains to the new site directly. A move on the Free plan costs nothing, so a
+ * checkout only adds a step. A failed move does not stop the signup: the site works without the
+ * domain, and the user can move it later from domain management.
+ */
+async function moveDomainsToSite(
+	domainMoves: MinimalRequestCartProduct[],
+	siteId: number,
+	flow: string
+) {
+	for ( const domainMove of domainMoves ) {
+		const sourceSiteId = getMoveSourceSiteId( domainMove );
+		try {
+			if ( ! domainMove.meta || ! sourceSiteId ) {
+				throw new Error( 'missing_move_source' );
+			}
+			await transferDomainToSite( domainMove.meta, sourceSiteId, siteId );
+		} catch ( error ) {
+			recordTracksEvent( 'calypso_signup_free_plan_domain_move_failed', {
+				flow,
+				error: ( error as { error?: string } )?.error ?? ( error as Error )?.message,
+			} );
+		}
+	}
+}
+
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -182,6 +220,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
+	// On the Free plan a registered domain moves without checkout. It stays out of the cart.
+	const freePlanDomainMoves = planCartItem
+		? []
+		: mergedDomainCartItems.filter( isDomainMoveInternal );
+	const cartDomainItems = mergedDomainCartItems.filter(
+		( item ) => ! freePlanDomainMoves.includes( item )
+	);
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const flowState = useFlowState();
@@ -212,6 +257,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		flow === AI_SITE_BUILDER_FLOW ||
 		isAIBuilderOnboardingFlow( flow ) ||
 		flow === EDUCATION_FLOW ||
+		flow === STUDENT_FLOW ||
 		flow === STATIC_SITE_IMPORT_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -243,10 +289,15 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			const manageFlowCartItems = [
 				...( planCartItem ? [ planCartItem ] : [] ),
 				...( productCartItems ?? [] ),
-				...mergedDomainCartItems,
+				...cartDomainItems,
 			];
 			if ( manageFlowCartItems.length > 0 && slug ) {
 				await addProductsToCart( slug, flow, manageFlowCartItems );
+			}
+
+			const signupCompleteSiteId = getSignupCompleteSiteID();
+			if ( freePlanDomainMoves.length > 0 && signupCompleteSiteId ) {
+				await moveDomainsToSite( freePlanDomainMoves, Number( signupCompleteSiteId ), flow );
 			}
 
 			return {
@@ -434,12 +485,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			const additionalCartItems = [
 				...( planCartItem ? [ planCartItem ] : [] ),
 				...( productCartItems ?? [] ),
-				...mergedDomainCartItems,
+				...cartDomainItems,
 			];
 
 			if ( additionalCartItems.length > 0 ) {
 				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
 			}
+
+			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
 
 			// Poll for garden provisioning status if this is a garden site
 			if ( gardenName ) {

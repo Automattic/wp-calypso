@@ -16,10 +16,12 @@
 	.site-activity-logs__actor-icon-server,
 	.site-activity-logs__actor-icon-default {
 		background-color: var( --wp-components-color-gray-300, $gray-300 );
+		color: var( --dashboard__text-muted-color );
 		fill: var( --dashboard__text-muted-color );
 	}
 
 	.site-activity-logs__actor-icon-wordpress {
+		color: var( --dashboard__text-muted-color );
 		fill: var( --dashboard__text-muted-color );
 	}
 

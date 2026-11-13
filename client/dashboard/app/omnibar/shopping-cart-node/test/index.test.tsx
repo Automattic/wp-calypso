@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { fetchShoppingCart, updateShoppingCart } from '@automattic/api-core';
@@ -72,6 +72,10 @@ function renderNode() {
 }
 
 describe( '<Omnibar> shopping cart node', () => {
+	// The cart panel is lazy-loaded when the node is clicked. Load it before the tests, so the
+	// click test doesn't time out waiting for it.
+	beforeAll( () => import( '../panel' ) );
+
 	test( 'shows the node', async () => {
 		mockCart( cartWithProduct );
 

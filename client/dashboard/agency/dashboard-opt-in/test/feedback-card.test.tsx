@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,8 +23,6 @@ function captureSurvey( { success = true }: { success?: boolean } = {} ) {
 }
 
 function renderCard() {
-	// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-	window.scrollTo = jest.fn();
 	return render(
 		<>
 			<DashboardFeedbackCard agencyId={ AGENCY_ID } />

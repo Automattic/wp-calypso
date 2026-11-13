@@ -83,7 +83,8 @@ const markdownProcessor = {
 		codeBlocks.preprocess( text.replace( /^(\s*```)typescript\b/gm, '$1snippet-ts' ), filename ),
 };
 
-// `flatNodeConfig` without its top-level `return` support: every file here is an ES module.
+// `flatNodeConfig` without its top-level `return` support: the files it covers here are ES
+// modules, or CommonJS scripts that don't use it.
 export const nodeConfig = {
 	languageOptions: { globals: flatNodeConfig.languageOptions.globals },
 	rules: flatNodeConfig.rules,
@@ -101,8 +102,10 @@ function build( rootDir ) {
 		includeIgnoreFile( path.join( rootDir, '.prettierignore' ) ),
 		{
 			name: 'calypso/ignores',
-			// Like `.eslintrc` lookups, skip dotfiles and dot-directories.
-			ignores: [ '**/.*' ],
+			// Like `.eslintrc` lookups, skip dotfiles and dot-directories, except `.agents`, whose
+			// code agents run and copy from. Its Markdown stays skipped: some code blocks there
+			// are fragments that don't parse.
+			ignores: [ '**/.*', '!.agents', '.agents/**/*.md' ],
 		},
 
 		{
@@ -197,10 +200,18 @@ function build( rootDir ) {
 					},
 				],
 
-				// Only use known tag names plus `jest-environment`.
+				// Only use known tag names plus the test environment ones.
 				'jsdoc/check-tag-names': [
 					'error',
-					{ definedTags: [ 'jest-environment', 'jest-environment-options', 'jsxImportSource' ] },
+					{
+						definedTags: [
+							'jest-environment',
+							'jest-environment-options',
+							'vitest-environment',
+							'vitest-environment-options',
+							'jsxImportSource',
+						],
+					},
 				],
 
 				// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
@@ -372,7 +383,13 @@ function build( rootDir ) {
 		},
 		{
 			...nodeConfig,
-			files: [ '**/bin/**', '**/test/**', '**/webpack.config.js', '**/eslint.config.mjs' ],
+			files: [
+				'**/bin/**',
+				'**/test/**',
+				'**/webpack.config.js',
+				'**/eslint.config.mjs',
+				'.agents/**',
+			],
 		},
 		{
 			files: [ '**/test/**' ],

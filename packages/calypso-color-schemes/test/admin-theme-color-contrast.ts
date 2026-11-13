@@ -1,10 +1,6 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import chroma from 'chroma-js';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { getAdminSchemes } = require( '../bin/prepare-sass-assets' );
+import { getAdminSchemes } from '../bin/prepare-sass-assets';
 
 const MIN_RATIO = 4.5;
 

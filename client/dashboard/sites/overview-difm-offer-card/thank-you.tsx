@@ -26,6 +26,7 @@ export default function DifmOfferThankYou() {
 			to: '.',
 			search: ( prev: Record< string, unknown > ) => ( { ...prev, difmOffer: undefined } ),
 			replace: true,
+			resetScroll: false,
 		} );
 
 	return <DifmOfferThankYouModal onClose={ handleClose } />;

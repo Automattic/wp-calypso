@@ -242,12 +242,18 @@ class PostComment extends PureComponent {
 		if ( canCollapse && this.state.isCollapsed ) {
 			const count = this.getAllChildrenIds( commentId ).length;
 			return (
-				<p className="comments__collapsed-replies">
+				<Button
+					__next40pxDefaultSize
+					variant="link"
+					className="comments__collapsed-replies"
+					aria-expanded={ false }
+					onClick={ this.handleToggleCollapsedClick }
+				>
 					{ translate( '%(count)s reply', '%(count)s replies', {
 						count,
 						args: { count: formatNumber( count ) },
 					} ) }
-				</p>
+				</Button>
 			);
 		}
 

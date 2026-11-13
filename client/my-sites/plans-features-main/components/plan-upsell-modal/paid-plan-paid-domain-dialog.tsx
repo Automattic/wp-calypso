@@ -22,6 +22,7 @@ export function PaidPlanPaidDomainDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 	isDomainTransfer,
+	isConnectedDomainMove,
 }: DomainPlanDialogProps ) {
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
@@ -50,6 +51,9 @@ export function PaidPlanPaidDomainDialog( {
 	}
 
 	const getSubHeadingText = () => {
+		if ( isConnectedDomainMove ) {
+			return translate( "To move your connected domain to this site, you'll need a paid plan." );
+		}
 		if ( isDomainTransfer ) {
 			return translate(
 				"To transfer your domain, you'll need a paid plan. Choose annual billing and get the domain free for a year."
@@ -72,6 +76,7 @@ export function PaidPlanPaidDomainDialog( {
 						paidDomainName={ paidDomainName }
 						isBusy={ isBusy }
 						onPlanSelected={ handlePlanSelected }
+						hideFreeDomainText={ isConnectedDomainMove }
 					/>
 				</RowWithBorder>
 				<Row>

@@ -63,7 +63,7 @@ jest.mock( 'calypso/server/state-cache', () => new Map() );
 
 jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 
-jest.mock( 'calypso/state', () => ( {
+jest.mock( 'calypso/state/create-store', () => ( {
 	createReduxStore: jest.fn(),
 } ) );
 
@@ -158,7 +158,7 @@ const buildApp = ( environment ) => {
 			serverRender,
 		};
 		mocks.sanitize = require( 'calypso/server/sanitize' );
-		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
+		mocks.createReduxStore = require( 'calypso/state/create-store' ).createReduxStore;
 		mocks.createReduxStore.mockImplementation( createMockStore );
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
@@ -167,6 +167,7 @@ const buildApp = ( environment ) => {
 		mocks.analytics = require( 'calypso/server/lib/analytics' );
 
 		// Set the environment. This has to be done before requiring `../index.js`
+		mocks.config.serverEnvId = environment;
 		mocks.config.mockImplementation(
 			( key ) =>
 				( {

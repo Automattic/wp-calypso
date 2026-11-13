@@ -13,6 +13,11 @@ export interface LaunchParams {
 	ref?: string | null;
 	coupon?: string | null;
 	dashboard?: string | null;
+	// Purchase attribution, such as what built a preview site: checkout reads it from its own URL as
+	// `source`. The launch flow's own `source` names where the launch started, so it isn't this.
+	checkoutSource?: string | null;
+	// Offer only paid plans, for a site that can't launch on Free, such as a preview site.
+	hideFreePlan?: boolean;
 }
 
 const DASHBOARDS: DashboardType[] = [ 'a4a', 'dotcom' ];
@@ -145,6 +150,7 @@ export function getLaunchCheckoutUrl(
 			signup: 1,
 			ref: params.ref ?? undefined,
 			...( params.coupon && { coupon: params.coupon } ),
+			...( params.checkoutSource && { source: params.checkoutSource } ),
 			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, backUrl ),
 			redirect_to: destination,
 			...( dashboard && { dashboard } ),

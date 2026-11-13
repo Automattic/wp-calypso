@@ -1,4 +1,4 @@
-const { cssNameFromFilename } = require( '../util' );
+import { cssNameFromFilename } from '../util';
 
 describe( 'cssNameFromFilename()', () => {
 	test( 'Transforms static string', () => {
@@ -18,6 +18,6 @@ describe( 'cssNameFromFilename()', () => {
 	} );
 
 	test( 'Returns other extensions untouched 😬', () => {
-		expect( 'static.jsx' ).toBe( 'static.jsx' );
+		expect( cssNameFromFilename( 'static.jsx' ) ).toBe( 'static.jsx' );
 	} );
 } );

@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	isDomainMapping,
+	isDomainMoveInternal,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
@@ -301,7 +305,7 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
 }
 
 /**
- * Send a preview site's owner, arriving from the badge on their own share link, to the site's plans.
+ * Send a preview site's owner, arriving from the badge on their own share link, to launch it.
  *
  * The badge can't tell the owner from a visitor: being signed in to WordPress.com doesn't sign
  * them in to the preview's own domain, so every share-link viewer is sent here with the site in
@@ -309,7 +313,7 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
  * @param reduxStore The Calypso store, for the logged-in check.
  * @returns True when the owner is being redirected and the flow should not render.
  */
-async function goToOwnPreviewSitePlans( reduxStore: Store ): Promise< boolean > {
+async function goToOwnPreviewSiteLaunch( reduxStore: Store ): Promise< boolean > {
 	const { preview_site: previewSite, ...args } = getQueryArgs( window.location.href );
 	if ( typeof previewSite !== 'string' || ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return false;
@@ -321,12 +325,39 @@ async function goToOwnPreviewSitePlans( reduxStore: Store ): Promise< boolean > 
 		return false;
 	}
 
-	window.location.assign( addQueryArgs( `/plans/${ encodeURIComponent( previewSite ) }`, args ) );
+	window.location.assign(
+		addQueryArgs( '/setup/launch-site', { siteSlug: previewSite, hide_free_plan: 1, ...args } )
+	);
 	return true;
 }
 
+// The domain search marks this move on the cart item. The server refuses it without a paid plan.
+function isConnectedDomainMove( item: MinimalRequestCartProduct | null | undefined ): boolean {
+	const extra = item?.extra;
+	return (
+		!! item &&
+		isDomainMoveInternal( item ) &&
+		!! extra &&
+		'is_connected_domain_move' in extra &&
+		!! extra.is_connected_domain_move
+	);
+}
+
+// The domain items a run on the Free plan keeps. The server rejects a connected move without a
+// plan. The Free plan move dialog promises a run on the Free plan, so with a registered move
+// no paid registration stays either.
+function getFreePlanDomainCartItems(
+	domainCartItems: MinimalRequestCartProduct[]
+): MinimalRequestCartProduct[] {
+	const allowedItems = domainCartItems.filter( ( item ) => ! isConnectedDomainMove( item ) );
+
+	return allowedItems.some( isDomainMoveInternal )
+		? allowedItems.filter( isDomainMoveInternal )
+		: allowedItems;
+}
+
 async function initialize( reduxStore: Store ) {
-	if ( await goToOwnPreviewSitePlans( reduxStore ) ) {
+	if ( await goToOwnPreviewSiteLaunch( reduxStore ) ) {
 		return false as const;
 	}
 
@@ -414,15 +445,17 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem, domainCartItem, blueprint } = useSelect(
-			( select ) => ( {
-				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
-			} ),
-			[]
-		);
+		const { signupDomainOrigin, planCartItem, domainCartItem, domainCartItems, blueprint } =
+			useSelect(
+				( select ) => ( {
+					signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+					planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+					domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+					domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
+					blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
+				} ),
+				[]
+			);
 		const queryParams = useQuery();
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
@@ -650,7 +683,11 @@ const onboarding: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					return navigateAfterDomain();
+					return navigateAfterDomain( {
+						requiresPaidPlan: isConnectedDomainMove(
+							providedDependencies.domainItem as MinimalRequestCartProduct | undefined
+						),
+					} );
 				case 'use-my-domain': {
 					if (
 						providedDependencies &&
@@ -691,6 +728,15 @@ const onboarding: FlowV2< typeof initialize > = {
 							setSignupDomainOrigin( signupDomainOrigin );
 						} else {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
+						}
+
+						const freePlanDomainCartItems = getFreePlanDomainCartItems( domainCartItems ?? [] );
+						if ( freePlanDomainCartItems.length !== ( domainCartItems?.length ?? 0 ) ) {
+							setDomainCartItems( freePlanDomainCartItems );
+							// The domain step makes the first cart item the selected domain.
+							setDomainCartItem( freePlanDomainCartItems[ 0 ] );
+						} else if ( isConnectedDomainMove( domainCartItem ) ) {
+							setDomainCartItem( undefined );
 						}
 					}
 

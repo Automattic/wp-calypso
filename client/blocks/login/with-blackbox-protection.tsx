@@ -5,6 +5,8 @@ import type { ComponentType } from 'react';
 interface WithBlackboxProtectionOptions {
 	/** Feature flag gating Blackbox for this surface. */
 	feature: string;
+	/** Collect flow sent as `X-Blackbox-Flow`. */
+	flow: 'login' | 'signup';
 }
 
 interface WithBlackboxProtectionProps {

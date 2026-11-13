@@ -1,5 +1,4 @@
-const { app, shell } = require( 'electron' );
-const fetch = require( 'electron-fetch' ).default;
+const { app, net, shell } = require( 'electron' );
 const yaml = require( 'js-yaml' );
 const semver = require( 'semver' );
 const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
@@ -42,7 +41,7 @@ class ManualUpdater extends Updater {
 				}, Version: ${ app.getVersion() }, Update URL: ${ url }`
 			);
 
-			const releaseResp = await fetch( url, requestOptions );
+			const releaseResp = await net.fetch( url, requestOptions );
 
 			if ( releaseResp.status !== 200 ) {
 				return;
@@ -151,7 +150,7 @@ class ManualUpdater extends Updater {
 
 	async getReleaseVersion( url ) {
 		try {
-			const resp = await fetch( url, requestOptions );
+			const resp = await net.fetch( url, requestOptions );
 
 			if ( resp.status !== 200 ) {
 				return null;

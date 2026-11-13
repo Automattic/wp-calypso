@@ -93,6 +93,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useCancelOptionsExperiment } from './use-cancel-options-experiment';
+import { useDomainReturnLocation } from './use-domain-return-location';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
@@ -277,7 +278,7 @@ function CancelPurchaseInner() {
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( {
-		...hasPurchaseBeenExtendedQuery( purchase.blog_id ),
+		...hasPurchaseBeenExtendedQuery( purchase.ID ),
 		enabled: purchaseHasQueryableSite,
 	} );
 	const {
@@ -337,7 +338,13 @@ function CancelPurchaseInner() {
 	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
+	const domainReturnLocation = useDomainReturnLocation( purchase );
 	const redirectBack = useCallback( () => {
+		if ( domainReturnLocation ) {
+			navigate( domainReturnLocation );
+			return;
+		}
+
 		if (
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
@@ -348,7 +355,7 @@ function CancelPurchaseInner() {
 		}
 
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate ] );
+	}, [ purchase, domainReturnLocation, navigate ] );
 
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
@@ -500,17 +507,6 @@ function CancelPurchaseInner() {
 	const atomicRevertOnClickCheckTwo = ( isChecked: boolean ) =>
 		setState( ( state ) => ( { ...state, atomicRevertCheckTwo: isChecked } ) );
 
-	const setStateBasedOnExtendedStatus = useCallback( async () => {
-		const newState: Partial< CancelPurchaseState > = {};
-		if ( hasBeenExtended && newState.upsell === 'free-month-offer' ) {
-			newState.upsell = '';
-		}
-		setState( ( state ) => ( {
-			...state,
-			...newState,
-		} ) );
-	}, [ hasBeenExtended ] );
-
 	const recordEvent = useCallback(
 		( name: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent( name, {
@@ -629,7 +625,7 @@ function CancelPurchaseInner() {
 				},
 				onError: ( error ) => {
 					createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-					setState( ( state ) => ( { ...state, isLoading: false } ) );
+					setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 				},
 			} );
 			recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
@@ -864,7 +860,9 @@ function CancelPurchaseInner() {
 		}
 
 		const upsellType = getUpsellType( value, purchase, {
-			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
+			// Offer only when the check answers false. It stays undefined while loading, on error, or with no site.
+			canOfferFreeMonth:
+				!! freeMonthOfferClick && hasBeenExtended === false && ! purchase.is_refundable,
 		} );
 		const solutionsReason = getSolutionsReason( value, detailsValue, state.questionOneRadio );
 		const hasSolutionsCards =
@@ -1349,25 +1347,13 @@ function CancelPurchaseInner() {
 		if ( didRunEffect.current ) {
 			return;
 		}
-		if ( purchase.ID && purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
-			setStateBasedOnExtendedStatus();
-		}
 		if ( ! isDataValid() ) {
 			redirectBack();
 			return;
 		}
 		track();
 		didRunEffect.current = true;
-	}, [
-		setStateBasedOnExtendedStatus,
-		isDataValid,
-		purchase.ID,
-		purchase.bill_period_days,
-		purchase.product_slug,
-		redirectBack,
-		track,
-		createErrorNotice,
-	] );
+	}, [ isDataValid, purchase.product_slug, redirectBack, track, createErrorNotice ] );
 
 	// componentDidUpdate
 	useEffect( () => {

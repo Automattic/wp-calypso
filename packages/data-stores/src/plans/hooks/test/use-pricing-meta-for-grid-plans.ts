@@ -1,36 +1,38 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 
 /**
  * Default mock implementations
  */
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	createSelector: jest.fn(),
-	register: jest.fn(),
-	useDispatch: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	createSelector: vi.fn(),
+	register: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
-jest.mock( '../../', () => ( {
-	usePlans: jest.fn(),
-	useSitePlans: jest.fn(),
-	useIntroOffers: jest.fn(),
-	useCurrentPlan: jest.fn(),
+vi.mock( '../../', () => ( {
+	usePlans: vi.fn(),
+	useSitePlans: vi.fn(),
+	useIntroOffers: vi.fn(),
+	useCurrentPlan: vi.fn(),
 } ) );
-jest.mock( '../../../add-ons', () => ( {
-	useStorageAddOns: jest.fn(),
+vi.mock( '../../../add-ons', () => ( {
+	useStorageAddOns: vi.fn(),
 } ) );
-jest.mock( '../../../purchases', () => ( {
-	useSitePurchaseById: jest.fn(),
+vi.mock( '../../../purchases', () => ( {
+	useSitePurchaseById: vi.fn(),
 } ) );
-jest.mock( '../../../wpcom-plans-ui', () => ( {
+vi.mock( '../../../wpcom-plans-ui', () => ( {
 	store: 'wpcom-plans-ui',
 } ) );
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	logToLogstash: jest.fn().mockResolvedValue( undefined ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	logToLogstash: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
 import { logToLogstash } from '@automattic/api-core';
@@ -98,7 +100,7 @@ const useCheckPlanAvailabilityForPurchase = () => {
 
 describe( 'usePricingMetaForGridPlans', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.useIntroOffers.mockImplementation( () => ( {
 			[ PLAN_BUSINESS ]: null,
@@ -116,7 +118,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return the original price as the site plan price and discounted price as Null for the current plan', () => {

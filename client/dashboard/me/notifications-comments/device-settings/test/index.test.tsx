@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -58,12 +58,7 @@ const mockGetDevicesApiAndReply = ( data: Partial< UserNotificationDevice[] > ) 
 };
 
 describe( 'DevicesSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
-	it( 'shows a message when there are no devices', async () => {
+	test( 'shows a message when there are no devices', async () => {
 		mockGetDevicesApiAndReply( [] );
 		mockGetDevicesApiAndReply( [] );
 		mockGetSettingsApiAndReply( {
@@ -89,7 +84,7 @@ describe( 'DevicesSettings', () => {
 		} );
 	} );
 
-	it( 'renders a list of devices', async () => {
+	test( 'renders a list of devices', async () => {
 		mockGetDevicesApiAndReply( [
 			{
 				device_id: '123',
@@ -139,7 +134,7 @@ describe( 'DevicesSettings', () => {
 		} );
 	} );
 
-	it( 'renders the devices settings values', async () => {
+	test( 'renders the devices settings values', async () => {
 		const device1 = {
 			device_id: '123',
 			device_name: 'Device 1',
@@ -177,7 +172,7 @@ describe( 'DevicesSettings', () => {
 		} );
 	} );
 
-	it( 'updates the settings when a new device is selected', async () => {
+	test( 'updates the settings when a new device is selected', async () => {
 		const device1 = {
 			device_id: '123',
 			device_name: 'Device 1',
@@ -239,7 +234,7 @@ describe( 'DevicesSettings', () => {
 		} );
 	} );
 
-	it( 'updates the settings when the toggle is changed', async () => {
+	test( 'updates the settings when the toggle is changed', async () => {
 		const device1 = {
 			device_id: '123',
 			device_name: 'Device 1',

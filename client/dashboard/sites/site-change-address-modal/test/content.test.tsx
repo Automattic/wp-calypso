@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
@@ -7,14 +7,17 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SiteChangeAddressContent from '../content';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 let mockHasEnTranslation = true;
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 
@@ -44,9 +47,7 @@ function renderContent() {
 		.query( true )
 		.reply( 200, { domains: [ domain ] } );
 
-	return render(
-		<SiteChangeAddressContent site={ site } domain={ domain } onClose={ jest.fn() } />
-	);
+	return render( <SiteChangeAddressContent site={ site } domain={ domain } onClose={ vi.fn() } /> );
 }
 
 async function submitAddress( value: string ) {
@@ -65,9 +66,20 @@ describe( '<SiteChangeAddressContent>', () => {
 		renderContent();
 
 		expect(
-			await screen.findByText( /A custom domain is easier to share and remember/ )
+			await screen.findByText(
+				'A custom domain is easier to share and remember than a wordpress.com address. You will also keep this one.'
+			)
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Add a custom domain' } ) ).toBeVisible();
+	} );
+
+	test( 'shows the current address as the placeholder of the new address', async () => {
+		renderContent();
+
+		expect( await screen.findByRole( 'textbox', { name: 'New site address' } ) ).toHaveAttribute(
+			'placeholder',
+			'test-site'
+		);
 	} );
 
 	test( 'falls back to the previous custom domain suggestion until it is translated', async () => {

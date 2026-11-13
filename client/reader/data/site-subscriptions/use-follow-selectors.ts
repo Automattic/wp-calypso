@@ -32,16 +32,6 @@ export const useIsSubscribed = ( args: IsFollowingArgs ) => {
 	return getIsSubscribedFromData( data, args );
 };
 
-export const useIsSubscribedStatus = ( args: IsFollowingArgs ) => {
-	const { data, isError, isLoading } = useSiteSubscriptions();
-
-	return {
-		isSubscribed: getIsSubscribedFromData( data, args ),
-		isError,
-		isLoading,
-	};
-};
-
 export const useAliasedSiteSubscriptionFeedUrl = ( feedUrl: string ) => {
 	const { data } = useSiteSubscriptions();
 

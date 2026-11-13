@@ -2,20 +2,22 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import PostComments from '..';
 
-jest.mock( '../form-root', () => () => null );
+jest.mock( '../form-root', () => () => <textarea aria-label="Add a comment" /> );
 
 jest.mock( '../post-comment', () => ( props ) => (
 	<li data-testid="post-comment">{ props.commentId }</li>
 ) );
 
 const BASE = 'https://public-api.wordpress.com';
+
+const loadingPlaceholder = <p>Loading comments</p>;
 
 const post = {
 	ID: 456,
@@ -51,6 +53,7 @@ const renderComments = ( props = {} ) => {
 
 	return {
 		...result,
+		queryClient,
 		rerenderComments: ( nextProps ) => result.rerender( renderElement( nextProps ) ),
 	};
 };
@@ -62,6 +65,102 @@ describe( 'PostComments', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
+	} );
+
+	it( 'shows the loading placeholder until the first comments page resolves', async () => {
+		let releaseResponse;
+		const responseReady = new Promise( ( resolve ) => {
+			releaseResponse = resolve;
+		} );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( {
+				number: '50',
+				status: 'approved',
+				order: 'DESC',
+				author_wpcom_data: 'true',
+				force: 'wpcom',
+			} )
+			.reply( 200, async () => {
+				await responseReady;
+				return {
+					comments: [
+						{
+							ID: 2,
+							content: 'Second',
+							date: '2026-05-02T00:00:00.000Z',
+							parent: false,
+							author: { ID: 10, name: 'Second Author' },
+							status: 'approved',
+						},
+						{
+							ID: 1,
+							content: 'First',
+							date: '2026-05-01T00:00:00.000Z',
+							parent: false,
+							author: { ID: 10, name: 'First Author' },
+							status: 'approved',
+						},
+					],
+					found: 2,
+				};
+			} );
+
+		renderComments( { loadingPlaceholder } );
+
+		try {
+			expect( screen.getByText( 'Loading comments' ) ).toBeVisible();
+			expect( screen.queryByText( 'No comments' ) ).not.toBeInTheDocument();
+			expect( screen.queryAllByTestId( 'post-comment' ) ).toHaveLength( 0 );
+			expect( screen.queryByRole( 'textbox', { name: 'Add a comment' } ) ).not.toBeInTheDocument();
+
+			releaseResponse();
+
+			const comments = await screen.findAllByTestId( 'post-comment' );
+			expect( comments.map( ( comment ) => comment.textContent ) ).toEqual( [ '2', '1' ] );
+			comments.forEach( ( comment ) => expect( comment ).toBeVisible() );
+			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( '2 comments' ) ).toBeVisible();
+			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBeVisible();
+		} finally {
+			releaseResponse();
+		}
+	} );
+
+	it( 'keeps the comments list mounted while a failed first page refetches', async () => {
+		let releaseRetry;
+		const retryResponse = new Promise( ( resolve ) => {
+			releaseRetry = resolve;
+		} );
+		const onRequest = jest.fn();
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( true )
+			.reply( 500, { error: 'server_error', message: 'Failed to load comments' } )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( true )
+			.reply( 500, async () => {
+				await retryResponse;
+				return { error: 'server_error', message: 'Failed to load comments' };
+			} )
+			.on( 'request', onRequest );
+
+		const { queryClient } = renderComments( { loadingPlaceholder } );
+
+		try {
+			await waitFor( () => expect( screen.getByText( 'No comments' ) ).toBeVisible() );
+			const editor = screen.getByRole( 'textbox', { name: 'Add a comment' } );
+
+			act( () => {
+				queryClient.refetchQueries();
+			} );
+			await waitFor( () => expect( onRequest ).toHaveBeenCalledTimes( 2 ) );
+
+			expect( screen.queryByText( 'Loading comments' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'textbox', { name: 'Add a comment' } ) ).toBe( editor );
+		} finally {
+			releaseRetry();
+		}
 	} );
 
 	it( 'renders comments from React Query without requiring Redux comment state', async () => {
@@ -346,6 +445,73 @@ describe( 'PostComments', () => {
 		} );
 
 		expect( startingCommentRequest.isDone() ).toBe( false );
+	} );
+
+	const comment = ( ID, date ) => ( {
+		ID,
+		content: `Comment ${ ID }`,
+		date,
+		parent: false,
+		author: { ID: 10, name: 'Author' },
+		status: 'approved',
+	} );
+
+	const replyWithNewestPage = () =>
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'DESC' )
+			.reply( 200, {
+				comments: [
+					comment( 2, '2026-05-02T00:00:00.000Z' ),
+					comment( 1, '2026-05-01T00:00:00.000Z' ),
+				],
+				found: 3,
+			} );
+
+	const replyWithLaterPage = () =>
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' )
+			.reply( 200, { comments: [ comment( 3, '2026-05-03T00:00:00.000Z' ) ], found: 3 } );
+
+	it( 'does not request later comments when a thread opens at its newest comment', async () => {
+		replyWithNewestPage();
+		const laterRequest = replyWithLaterPage();
+
+		renderComments( { startingCommentId: 2 } );
+
+		await waitFor( () => expect( screen.getAllByTestId( 'post-comment' ) ).toHaveLength( 2 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+		expect( laterRequest.isDone() ).toBe( false );
+	} );
+
+	it( 'requests later comments when the latest one the caller knows of is missing', async () => {
+		replyWithNewestPage();
+		const laterRequest = replyWithLaterPage();
+
+		renderComments( { startingCommentId: 2, latestCommentId: 3 } );
+
+		await waitFor( () => expect( laterRequest.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect(
+				screen.getAllByTestId( 'post-comment' ).map( ( item ) => item.textContent )
+			).toContain( '3' )
+		);
+	} );
+
+	it( 'requests later comments once when the latest one never loads', async () => {
+		replyWithNewestPage();
+		const laterRequests = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' )
+			.times( 3 )
+			.reply( 200, { comments: [], found: 2 } );
+
+		renderComments( { startingCommentId: 2, latestCommentId: 3 } );
+
+		await waitFor( () => expect( laterRequests.pendingMocks() ).toHaveLength( 1 ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
+		expect( laterRequests.pendingMocks() ).toHaveLength( 1 );
 	} );
 
 	it( 'resets inline expansion when the post changes', async () => {

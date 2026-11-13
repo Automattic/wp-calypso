@@ -15,13 +15,13 @@ function license( overrides: Partial< JetpackLicense > ): JetpackLicense {
 }
 
 describe( 'getAgencyPlanLicenses', () => {
-	it( 'keeps Pressable plan licenses the agency bought for itself', () => {
+	test( 'keeps Pressable plan licenses the agency bought for itself', () => {
 		const licenses = [ license( { license_key: 'pressable-signature-1_abc' } ) ];
 
 		expect( getAgencyPlanLicenses( licenses ) ).toEqual( licenses );
 	} );
 
-	it( 'drops addon, referral, and non-Pressable licenses', () => {
+	test( 'drops addon, referral, and non-Pressable licenses', () => {
 		const licenses = [
 			license( { license_key: 'pressable-addon-storage_abc' } ),
 			license( { referral: { id: 1 } as JetpackLicense[ 'referral' ] } ),
@@ -33,11 +33,11 @@ describe( 'getAgencyPlanLicenses', () => {
 } );
 
 describe( 'hasBenefitedFromIntroductoryOffer', () => {
-	it( 'returns null when the agency has no plan license', () => {
+	test( 'returns null when the agency has no plan license', () => {
 		expect( hasBenefitedFromIntroductoryOffer( [] ) ).toBeNull();
 	} );
 
-	it( 'returns false when the earliest plan license predates the offer', () => {
+	test( 'returns false when the earliest plan license predates the offer', () => {
 		const licenses = [
 			license( { issued_at: '2026-01-15 10:00:00' } ),
 			license( { issued_at: '2026-08-20 10:00:00' } ),
@@ -46,13 +46,13 @@ describe( 'hasBenefitedFromIntroductoryOffer', () => {
 		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( false );
 	} );
 
-	it( 'returns true when the earliest plan license was issued within the offer window', () => {
+	test( 'returns true when the earliest plan license was issued within the offer window', () => {
 		const licenses = [ license( { issued_at: '2026-11-10 10:00:00' } ) ];
 
 		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( true );
 	} );
 
-	it( 'counts a license issued exactly on the offer start date as benefited', () => {
+	test( 'counts a license issued exactly on the offer start date as benefited', () => {
 		const licenses = [ license( { issued_at: '2026-11-09 00:00:00' } ) ];
 
 		expect( hasBenefitedFromIntroductoryOffer( licenses ) ).toBe( true );
@@ -60,13 +60,13 @@ describe( 'hasBenefitedFromIntroductoryOffer', () => {
 } );
 
 describe( 'hasPlanEligibleForExpansionOffer', () => {
-	it( 'accepts Signature and Premium tier plans', () => {
+	test( 'accepts Signature and Premium tier plans', () => {
 		expect(
 			hasPlanEligibleForExpansionOffer( [ license( { license_key: 'pressable-premium-2_abc' } ) ] )
 		).toBe( true );
 	} );
 
-	it( 'rejects legacy plans with no upgrade path in the offer', () => {
+	test( 'rejects legacy plans with no upgrade path in the offer', () => {
 		expect(
 			hasPlanEligibleForExpansionOffer( [ license( { license_key: 'pressable-premium_abc' } ) ] )
 		).toBe( false );

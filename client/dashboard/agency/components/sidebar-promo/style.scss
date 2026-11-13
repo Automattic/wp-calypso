@@ -1,0 +1,65 @@
+@import '@wordpress/base-styles/variables';
+
+// Sits at the bottom of the sidebar column. a8c-for-agencies restyles it to
+// match its own sidebar. A promo themes its icon tile through the custom
+// properties below, with an `-on-dark` pair for dark sidebars.
+.a4a-sidebar-promo-card {
+	--a4a-sidebar-promo-icon-color: var(
+		--a4a-sidebar-promo-icon-color-on-light,
+		var( --dashboard__text-color )
+	);
+	--a4a-sidebar-promo-icon-background: var(
+		--a4a-sidebar-promo-icon-background-on-light,
+		var( --dashboard-header__border-color )
+	);
+	display: block;
+	// Pinned to the bottom of the sidebar, with a divider above it.
+	margin-block: auto $grid-unit-20;
+	margin-inline: 0;
+	padding-block: $grid-unit-20 0;
+	padding-inline: $grid-unit-20;
+	border: 0;
+	border-block-start: $border-width solid var( --dashboard-header__border-color );
+	color: var( --dashboard__text-color );
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		color: var( --dashboard__text-color );
+	}
+
+	// The label only, so the new-tab arrow beside it stays clean.
+	&:hover .a4a-sidebar-promo-card__link-label {
+		text-decoration: underline;
+	}
+
+	&:focus-visible {
+		outline: var( --wp-admin-border-width-focus ) solid var( --wp-admin-theme-color );
+		outline-offset: 2px;
+	}
+
+	&.is-tone-dark {
+		--a4a-sidebar-promo-icon-color: var( --a4a-sidebar-promo-icon-color-on-dark, currentColor );
+		--a4a-sidebar-promo-icon-background: var(
+			--a4a-sidebar-promo-icon-background-on-dark,
+			transparent
+		);
+	}
+}
+
+.a4a-sidebar-promo-card__icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: $radius-small;
+	color: var( --a4a-sidebar-promo-icon-color );
+	background-color: var( --a4a-sidebar-promo-icon-background );
+
+	svg {
+		inline-size: 20px;
+		block-size: 20px;
+	}
+}

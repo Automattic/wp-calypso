@@ -5,16 +5,17 @@
 
 // Mutable mocks that tests can override
 // Default implementations return empty objects so tests can use mockImplementation
-export const dispatch = jest.fn( () => ( {} ) );
-export const select = jest.fn( () => ( {} ) );
-export const resolveSelect = jest.fn( () => ( {} ) );
+import { vi } from 'vitest';
+export const dispatch = vi.fn( () => ( {} ) );
+export const select = vi.fn( () => ( {} ) );
+export const resolveSelect = vi.fn( () => ( {} ) );
 
 // Function mocks
-export const createReduxStore = jest.fn( () => ( {} ) );
-export const createSelector = jest.fn( ( fn ) => fn );
-export const register = jest.fn();
-export const useDispatch = jest.fn( () => ( {} ) );
-export const useSelect = jest.fn( () => ( {} ) );
-export const combineReducers = jest.fn( ( reducers ) => reducers );
-export const createRegistrySelector = jest.fn( ( fn ) => fn );
-export const createRegistryControl = jest.fn( ( fn ) => fn );
+export const createReduxStore = vi.fn( () => ( {} ) );
+export const createSelector = vi.fn( ( fn ) => fn );
+export const register = vi.fn();
+export const useDispatch = vi.fn( () => ( {} ) );
+export const useSelect = vi.fn( () => ( {} ) );
+export const combineReducers = vi.fn( ( reducers ) => reducers );
+export const createRegistrySelector = vi.fn( ( fn ) => fn );
+export const createRegistryControl = vi.fn( ( fn ) => fn );

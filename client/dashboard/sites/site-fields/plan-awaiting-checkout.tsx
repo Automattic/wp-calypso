@@ -99,6 +99,19 @@ export function useSiteIsPreview( site: Site ): {
 }
 
 /**
+ * Where the owner of a preview site buys it: the launch flow, which picks a domain and a paid plan
+ * and goes on to checkout, where buying the plan launches the site. It offers only paid plans.
+ * @param site The preview.
+ * @returns The URL to send the owner to.
+ */
+export function getPreviewLaunchUrl( site: Site ): string {
+	return addQueryArgs( wpcomLink( '/setup/launch-site' ), {
+		siteSlug: site.slug,
+		hide_free_plan: 1,
+	} );
+}
+
+/**
  * Where the owner of a preview site buys it: any plan that includes Atomic keeps the site.
  * @param site The preview.
  * @returns The URL to send the owner to.
@@ -133,7 +146,7 @@ export function PlanPreview( { site }: { site: Site } ) {
 	return (
 		<Text>
 			<ExternalLink
-				href={ getPreviewPlansUrl( site ) }
+				href={ getPreviewLaunchUrl( site ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_dashboard_sites_plan_preview_click', {
 						surface: 'dashboard-sites-list',

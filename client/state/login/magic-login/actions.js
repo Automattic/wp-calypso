@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { BLACKBOX_KEY_VERSION } from 'calypso/blocks/login/utils/blackbox-sdk';
 import {
 	LOGIN_REQUEST_SUCCESS,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
@@ -88,7 +89,9 @@ export const fetchMagicLoginAuthenticate =
 			token,
 			redirect_to: redirectTo,
 			flow,
-			...( blackboxSessionId ? { blackbox_session_id: blackboxSessionId } : {} ),
+			...( blackboxSessionId
+				? { blackbox_session_id: blackboxSessionId, blackbox_key_version: BLACKBOX_KEY_VERSION }
+				: {} ),
 		} )
 			.then( ( json ) => {
 				// Track successful authentication

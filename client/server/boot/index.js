@@ -3,7 +3,6 @@ import chalk from 'chalk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import { express as userAgentMiddleware } from 'express-useragent';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import api from 'calypso/server/api';
 import config from 'calypso/server/config';
 import analytics from 'calypso/server/lib/analytics';
@@ -41,7 +40,11 @@ export default function setup() {
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		require( 'calypso/server/bundler' )( app );
+		if ( process.env.CALYPSO_BUNDLER === 'vite' ) {
+			require( 'calypso/server/bundler/vite' )( app );
+		} else {
+			require( 'calypso/server/bundler' )( app );
+		}
 
 		// Production servers forward a request header with the user's country code. To ensure a
 		// consistent experience, we simulate this in local development with a custom middleware.
@@ -51,9 +54,13 @@ export default function setup() {
 		// redirect traffic to de.wordpress.com to hit the real backend and prevent a loop.
 		// `de.wordpress.com` accepts POST requests to `/wp-login.php` exactly like `wordpress.com`.
 		if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
+			const { createProxyMiddleware } = require( 'http-proxy-middleware' );
+			// Not mounted on the path: the proxy would forward `/wp-login.php/?…`, which de.wordpress.com rejects.
 			app.use(
-				'/wp-login.php',
-				createProxyMiddleware( { target: 'https://de.wordpress.com/wp-login.php' } )
+				createProxyMiddleware( {
+					target: 'https://de.wordpress.com',
+					pathFilter: ( pathname ) => pathname === '/wp-login.php',
+				} )
 			);
 		}
 

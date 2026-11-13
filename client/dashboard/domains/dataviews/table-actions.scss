@@ -1,0 +1,33 @@
+// DataViews hides inline row actions until hover. Keep them visible, styled as links.
+.domains-table
+	.dataviews-view-table
+	tr
+	.dataviews-item-actions
+	.components-button:not( .dataviews-all-actions-button ) {
+	opacity: 1;
+	font-weight: var( --wpds-typography-font-weight-default );
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+	text-decoration-thickness: from-font;
+
+	&:not( :disabled, [aria-disabled='true'] ) {
+		color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+
+	&:focus:not( :active ) {
+		text-decoration: none;
+	}
+}
+
+// DataViews aligns cells to the top, which leaves single-line cells above two-line ones.
+.domains-table .dataviews-view-table tbody td {
+	vertical-align: middle;
+}
+
+// DataViews shrinks every non-primary column to fit, leaving all spare width to the domain name.
+// Let the columns share it instead.
+.domains-table
+	.dataviews-view-table
+	col[class^='dataviews-view-table__col-']:not( .dataviews-view-table__col-actions ) {
+	width: auto;
+}

@@ -1,6 +1,7 @@
 export * from './query-client';
 
 export * from './agency';
+export * from './agency-amplify';
 export * from './agency-products';
 export * from './agency-referrals';
 export * from './agency-team';
@@ -106,7 +107,6 @@ export * from './read-saved';
 export * from './read-seen-posts';
 export * from './read-site-recommendations';
 export * from './read-site';
-export * from './read-shelves';
 export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';

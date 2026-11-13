@@ -1,21 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fixThreats, fetchFixThreatsStatus } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useState, type ReactNode } from 'react';
+import { type MockedFunction, vi } from 'vitest';
 import { useFixThreats } from '../hooks/use-fix-threats';
 import type { FixThreatsStatusResponse } from '@automattic/api-core';
 
 // Mock the API core functions
-jest.mock( '@automattic/api-core', () => ( {
-	fixThreats: jest.fn(),
-	fetchFixThreatsStatus: jest.fn(),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	fixThreats: vi.fn(),
+	fetchFixThreatsStatus: vi.fn(),
 } ) );
 
-const mockFixThreats = fixThreats as jest.MockedFunction< typeof fixThreats >;
-const mockFetchFixThreatsStatus = fetchFixThreatsStatus as jest.MockedFunction<
+const mockFixThreats = fixThreats as MockedFunction< typeof fixThreats >;
+const mockFetchFixThreatsStatus = fetchFixThreatsStatus as MockedFunction<
 	typeof fetchFixThreatsStatus
 >;
 
@@ -50,7 +52,7 @@ describe( 'useFixThreats', () => {
 	} );
 
 	describe( 'initial state', () => {
-		it( 'should return initial state when not fixing', () => {
+		test( 'should return initial state when not fixing', () => {
 			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
 				wrapper: TestWrapper,
 			} );
@@ -63,7 +65,7 @@ describe( 'useFixThreats', () => {
 	} );
 
 	describe( 'startFix', () => {
-		it( 'should set isFixing to true when startFix is called', () => {
+		test( 'should set isFixing to true when startFix is called', () => {
 			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
 				wrapper: TestWrapper,
 			} );
@@ -73,7 +75,7 @@ describe( 'useFixThreats', () => {
 			expect( result.current.isFixing ).toBe( true );
 		} );
 
-		it( 'should call mutation with correct threat IDs', async () => {
+		test( 'should call mutation with correct threat IDs', async () => {
 			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
 				wrapper: TestWrapper,
 			} );
@@ -87,7 +89,7 @@ describe( 'useFixThreats', () => {
 	} );
 
 	describe( 'status calculation', () => {
-		it( 'should return isComplete false when threats are in progress', async () => {
+		test( 'should return isComplete false when threats are in progress', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue(
 				createFixThreatsStatusResponse( {
 					100001: { status: 'in_progress' },
@@ -110,7 +112,7 @@ describe( 'useFixThreats', () => {
 			expect( result.current.status.allFixed ).toBe( false );
 		} );
 
-		it( 'should return isComplete true and allFixed true when all threats are fixed', async () => {
+		test( 'should return isComplete true and allFixed true when all threats are fixed', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue(
 				createFixThreatsStatusResponse( {
 					100001: { status: 'fixed' },
@@ -133,7 +135,7 @@ describe( 'useFixThreats', () => {
 			expect( result.current.status.allFixed ).toBe( true );
 		} );
 
-		it( 'should return isComplete true and allFixed false when some threats are not fixed', async () => {
+		test( 'should return isComplete true and allFixed false when some threats are not fixed', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue(
 				createFixThreatsStatusResponse( {
 					100001: { status: 'fixed' },
@@ -156,7 +158,7 @@ describe( 'useFixThreats', () => {
 			expect( result.current.status.allFixed ).toBe( false );
 		} );
 
-		it( 'should return isComplete true and allFixed false when all threats are not fixed', async () => {
+		test( 'should return isComplete true and allFixed false when all threats are not fixed', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue(
 				createFixThreatsStatusResponse( {
 					100001: { status: 'not_fixed' },
@@ -179,7 +181,7 @@ describe( 'useFixThreats', () => {
 			expect( result.current.status.allFixed ).toBe( false );
 		} );
 
-		it( 'should return isComplete false when threats are not started', async () => {
+		test( 'should return isComplete false when threats are not started', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue(
 				createFixThreatsStatusResponse( {
 					100001: { status: 'not_started' },
@@ -204,7 +206,7 @@ describe( 'useFixThreats', () => {
 	} );
 
 	describe( 'completion handling', () => {
-		it( 'should stop fixing when all threats are complete', async () => {
+		test( 'should stop fixing when all threats are complete', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue(
 				createFixThreatsStatusResponse( {
 					100001: { status: 'fixed' },
@@ -232,7 +234,7 @@ describe( 'useFixThreats', () => {
 	} );
 
 	describe( 'polling behavior', () => {
-		it( 'should call fetchFixThreatsStatus when fixing is in progress', async () => {
+		test( 'should call fetchFixThreatsStatus when fixing is in progress', async () => {
 			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
 				wrapper: TestWrapper,
 			} );
@@ -244,7 +246,7 @@ describe( 'useFixThreats', () => {
 			} );
 		} );
 
-		it( 'should not call fetchFixThreatsStatus when not fixing', () => {
+		test( 'should not call fetchFixThreatsStatus when not fixing', () => {
 			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
 				wrapper: TestWrapper,
 			} );
@@ -255,7 +257,7 @@ describe( 'useFixThreats', () => {
 	} );
 
 	describe( 'error handling', () => {
-		it( 'should reset to idle state when mutation fails', async () => {
+		test( 'should reset to idle state when mutation fails', async () => {
 			mockFixThreats.mockRejectedValue( new Error( 'API Error' ) );
 
 			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
@@ -272,7 +274,7 @@ describe( 'useFixThreats', () => {
 			} );
 		} );
 
-		it( 'should handle malformed API response', async () => {
+		test( 'should handle malformed API response', async () => {
 			mockFetchFixThreatsStatus.mockResolvedValue( {
 				ok: true,
 				threats: null,

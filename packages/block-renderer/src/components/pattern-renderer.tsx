@@ -48,9 +48,6 @@ const PatternRenderer = ( {
 
 	const patternScripts = [ pattern?.scripts ?? '', scripts ];
 
-	// React 19 reassigns `innerHTML` whenever the `dangerouslySetInnerHTML` object identity
-	// changes, even when `__html` holds the same string. An inline object here would wipe and
-	// re-parse the pattern on every render, re-fetching all of its images in a loop.
 	const patternHtmlMarkup = useMemo( () => ( { __html: patternHtml } ), [ patternHtml ] );
 
 	return (
