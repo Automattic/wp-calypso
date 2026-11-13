@@ -22,6 +22,7 @@ import {
 	WRITE_ON_FLOW,
 	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
+	STUDENT_FLOW,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
@@ -37,6 +38,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ EDUCATION_FLOW ]: () =>
 		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
+
+	[ STUDENT_FLOW ]: () =>
+		import( /* webpackChunkName: "student-flow" */ './flows/student/student' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
