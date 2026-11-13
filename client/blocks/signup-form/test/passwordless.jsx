@@ -330,3 +330,52 @@ describe( 'email domain validation', () => {
 		expect( submitForm.mock.calls[ 0 ][ 0 ].email ).toBe( 'user@example.com' );
 	} );
 } );
+
+describe( 'activation email source', () => {
+	const mockStore = configureStore( [ thunk ] );
+
+	const submitAndCaptureRequest = async ( props = {} ) => {
+		let requestBody;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/users/new', ( body ) => {
+				requestBody = body;
+				return true;
+			} )
+			.reply( 403, { error: 'throttled' } );
+
+		render(
+			<Provider store={ mockStore( {} ) }>
+				<PasswordlessSignupForm { ...props } />
+			</Provider>
+		);
+
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: 'test@example.com' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+
+		await waitFor( () => expect( requestBody ).toBeTruthy() );
+		return requestBody;
+	};
+
+	afterEach( () => nock.cleanAll() );
+
+	/**
+	 * The backend picks the activation email, and where its link goes, from this source.
+	 */
+	it( 'sends the activation email source when the caller names one', async () => {
+		const body = await submitAndCaptureRequest( {
+			activationEmailFrom: 'student-with-email-verification',
+		} );
+
+		expect( body.extra ).toEqual(
+			expect.objectContaining( { from: 'student-with-email-verification' } )
+		);
+	} );
+
+	it( 'sends no activation email source by default', async () => {
+		const body = await submitAndCaptureRequest();
+
+		expect( body.extra ).not.toHaveProperty( 'from' );
+	} );
+} );
