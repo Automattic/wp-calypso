@@ -167,6 +167,7 @@ const buildApp = ( environment ) => {
 		mocks.analytics = require( 'calypso/server/lib/analytics' );
 
 		// Set the environment. This has to be done before requiring `../index.js`
+		mocks.config.serverEnvId = environment;
 		mocks.config.mockImplementation(
 			( key ) =>
 				( {

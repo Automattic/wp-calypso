@@ -95,11 +95,6 @@ function mockPhpLogs( logs: unknown[], siteId = mockSiteId ) {
 	return queries;
 }
 
-// jsdom has no element scrolling API used by Activity pagination.
-beforeAll( () => {
-	HTMLElement.prototype.scrollTo = () => {};
-} );
-
 beforeEach( () => {
 	window.history.replaceState( { key: 'logs-test', __TSR_index: 3 }, '', '/' );
 	mockUserPreferences();

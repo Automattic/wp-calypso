@@ -12,13 +12,13 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, closeSmall } from '@wordpress/icons';
+import { check, closeSmall, globe } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { Text } from '../../components/text';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { parseHtmlMessage } from '../../utils/html-message';
@@ -50,12 +50,61 @@ const SubdomainInputControlEdit = < Item, >( {
 		<SuffixInputControl
 			customValidity={ validity?.custom }
 			label={ field.label }
+			placeholder={ field.placeholder }
 			value={ getValue( { item: data } ) }
 			suffix={ DOMAIN_SUFFIX }
 			onChange={ ( newValue: string ) => {
 				onChange( { [ id ]: newValue } as Partial< Item > );
 			} }
 		/>
+	);
+};
+
+const CustomDomainSuggestion = ( { site }: { site: Site } ) => {
+	const hasEnTranslation = useHasEnTranslation();
+	const addSiteDomainUrl = getAddSiteDomainUrl( site.slug );
+
+	if (
+		hasEnTranslation(
+			'A custom domain is easier to share and remember than a wordpress.com address. You will also keep this one.'
+		)
+	) {
+		return (
+			<Notice
+				variant="info"
+				icon={ globe }
+				actions={
+					<NoticeActionLinkButton href={ addSiteDomainUrl } variant="solid">
+						{ __( 'Add a custom domain' ) }
+					</NoticeActionLinkButton>
+				}
+			>
+				{ __(
+					'A custom domain is easier to share and remember than a wordpress.com address. You will also keep this one.'
+				) }
+			</Notice>
+		);
+	}
+
+	return (
+		<Notice variant="info">
+			<Text>
+				{ createInterpolateElement(
+					hasEnTranslation(
+						'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+					)
+						? __(
+								'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+							)
+						: __(
+								'Before changing site address, consider <link>adding a custom domain</link> instead?'
+							),
+					{
+						link: <a href={ addSiteDomainUrl } />,
+					}
+				) }
+			</Text>
+		</Notice>
 	);
 };
 
@@ -71,7 +120,6 @@ const NewSiteAddressForm = ( {
 	onCancel: () => void;
 } ) => {
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const hasEnTranslation = useHasEnTranslation();
 	const { data: siteDomains } = useQuery( {
 		...domainsQuery(),
 		select: ( data ) => {
@@ -167,26 +215,7 @@ const NewSiteAddressForm = ( {
 
 	return (
 		<VStack spacing={ 4 }>
-			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="info">
-					<Text>
-						{ createInterpolateElement(
-							hasEnTranslation(
-								'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
-							)
-								? __(
-										'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
-									)
-								: __(
-										'Before changing site address, consider <link>adding a custom domain</link> instead?'
-									),
-							{
-								link: <a href={ getAddSiteDomainUrl( site.slug ) } />,
-							}
-						) }
-					</Text>
-				</Notice>
-			) }
+			{ !! siteDomains && ! hasCustomDomain && <CustomDomainSuggestion site={ site } /> }
 			<Text as="p">
 				{ createInterpolateElement(
 					sprintf(

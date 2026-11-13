@@ -5,6 +5,28 @@ import jest from 'eslint-plugin-jest';
 import reactPlugin from 'eslint-plugin-react';
 import parent from '../eslint.config.mjs';
 
+const snackbarMetaRestriction = {
+	// Spreading an api-queries factory and then setting `meta` replaces the
+	// whole object, dropping the factory's `meta.statId`.
+	selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
+	message:
+		'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
+};
+
+const bannedModuleMocks = [ '@tanstack/react-query', '@automattic/api-queries' ].map(
+	( module ) => {
+		// Matches the module and its subpaths, but not sibling packages such as
+		// `@tanstack/react-query-persist-client`. Selector regexes can't contain
+		// a literal slash, hence `\x2F`.
+		const name = `/^${ module.replace( '/', '\\x2F' ) }(\\x2F|$)/`;
+		return {
+			// `vi.mock()` and `vi.doMock()` also take the module as `import( '…' )`.
+			selector: `CallExpression[callee.object.name='vi'][callee.property.name=/^(mock|doMock|importMock)$/]:matches([arguments.0.value=${ name }], [arguments.0.source.value=${ name }])`,
+			message: `Mocking \`${ module }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
+		};
+	}
+);
+
 export default defineConfig( [
 	...parent,
 	{
@@ -213,16 +235,7 @@ export default defineConfig( [
 				},
 			],
 			'@tanstack/query/exhaustive-deps': 'error',
-			'no-restricted-syntax': [
-				'error',
-				{
-					// Spreading an api-queries factory and then setting `meta` replaces the
-					// whole object, dropping the factory's `meta.statId`.
-					selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
-					message:
-						'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
-				},
-			],
+			'no-restricted-syntax': [ 'error', snackbarMetaRestriction ],
 		},
 	},
 	{
@@ -268,6 +281,8 @@ export default defineConfig( [
 					message: 'The Dashboard tests run on Vitest. Use `vi` from `vitest` instead.',
 				},
 			],
+			// Replaces the rule's options above, so the snackbar restriction is repeated.
+			'no-restricted-syntax': [ 'error', snackbarMetaRestriction, ...bannedModuleMocks ],
 		},
 	},
 ] );

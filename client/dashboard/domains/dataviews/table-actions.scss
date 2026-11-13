@@ -19,16 +19,15 @@
 	}
 }
 
-// Wider gaps between columns: 32px instead of DataViews' 24px, except in the compact density.
-.domains-table .dataviews-view-table:where( :not( .has-compact-density ) ) {
-	:is( td, th ):not( :first-child, .dataviews-view-table__checkbox-column + * ) {
-		padding-inline-start: var( --wpds-dimension-padding-xl );
-	}
+// DataViews aligns cells to the top, which leaves single-line cells above two-line ones.
+.domains-table .dataviews-view-table tbody td {
+	vertical-align: middle;
+}
 
-	// The header button adds its own 8px, so this keeps the labels in line with the values.
-	th:not( :first-child, .dataviews-view-table__checkbox-column + * ):has(
-			.dataviews-view-table-header-button
-		) {
-		padding-inline-start: var( --wpds-dimension-padding-md );
-	}
+// DataViews shrinks every non-primary column to fit, leaving all spare width to the domain name.
+// Let the columns share it instead.
+.domains-table
+	.dataviews-view-table
+	col[class^='dataviews-view-table__col-']:not( .dataviews-view-table__col-actions ) {
+	width: auto;
 }

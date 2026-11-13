@@ -27,6 +27,8 @@ import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
+import './style.scss';
+
 function getStorageKey( domainName: string ) {
 	return `dashboard-domain-overview-show-advanced:${ domainName }`;
 }
@@ -63,35 +65,6 @@ function useShowAdvanced( domainName: string ) {
 	};
 
 	return [ state.domainName === domainName && state.showAdvanced, setShowAdvanced ] as const;
-}
-
-// A component of its own because `SummaryButtonList` overrides the density of its direct
-// children, which would hide the description.
-function TransferInSummary( {
-	domain,
-	isDisabled,
-	onClick,
-}: {
-	domain: Domain;
-	isDisabled?: boolean;
-	onClick: () => void;
-} ) {
-	return (
-		<SummaryButton
-			title={ __( 'Bring your domain to WordPress.com' ) }
-			description={ __( 'Manage your site and domain all in one place.' ) }
-			density="medium-low"
-			href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-				initialQuery: domain.domain,
-				initialMode: 'transfer-domain',
-				siteSlug: domain.site_slug,
-				dashboard: getCurrentDashboard(),
-				back_to: redirectToDashboardLink(),
-			} ) }
-			disabled={ isDisabled }
-			onClick={ onClick }
-		/>
-	);
 }
 
 export default function DomainOverviewSettings( {
@@ -214,10 +187,17 @@ export default function DomainOverviewSettings( {
 
 	if ( shouldShowTransferInAction( domain ) ) {
 		buttonListItems.push(
-			<TransferInSummary
+			<SummaryButton
 				key="transfer-in"
-				domain={ domain }
-				isDisabled={ isDisabled }
+				title={ __( 'Bring your domain to WordPress.com' ) }
+				href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+					initialQuery: domain.domain,
+					initialMode: 'transfer-domain',
+					siteSlug: domain.site_slug,
+					dashboard: getCurrentDashboard(),
+					back_to: redirectToDashboardLink(),
+				} ) }
+				disabled={ isDisabled }
 				onClick={ () => trackItem( 'transfer-in' ) }
 			/>
 		);
@@ -228,6 +208,7 @@ export default function DomainOverviewSettings( {
 			<SectionHeader
 				title={ __( 'Settings' ) }
 				level={ 3 }
+				className="domain-overview-section-header"
 				actions={
 					advancedButtonListItems.length > 0 && (
 						<Button

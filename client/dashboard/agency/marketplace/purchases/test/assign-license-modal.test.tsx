@@ -32,8 +32,6 @@ function mockAssignError( code: string, message: string ) {
 }
 
 async function assign() {
-	// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-	window.scrollTo = vi.fn();
 	Element.prototype.scrollIntoView = vi.fn();
 	render(
 		<>
