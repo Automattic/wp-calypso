@@ -58,6 +58,7 @@ class PostCommentList extends Component {
 		// To show only the most recent comment by default, and allow expanding to see the longer
 		// list.
 		expandableView: PropTypes.bool,
+		expandedCommentForm: PropTypes.bool,
 		openPostPageAtComments: PropTypes.func,
 
 		// To display comments with a different status but not fetch them
@@ -623,6 +624,7 @@ class PostCommentList extends Component {
 				onUpdateCommentText={ this.onUpdateCommentText }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
 				isInlineComment={ this.props.expandableView }
+				expanded={ this.props.expandedCommentForm }
 			/>
 		);
 
