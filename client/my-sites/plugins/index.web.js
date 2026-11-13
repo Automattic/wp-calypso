@@ -14,7 +14,7 @@ import {
 	renderPluginsDashboard,
 	browsePlugins,
 	browsePluginsOrPlugin,
-	renderProvisionPlugins,
+	redirectLegacyPluginsSetup,
 	jetpackCanUpdate,
 	plugins,
 	scheduledUpdates,
@@ -33,28 +33,7 @@ import { maybeShowUpgradeSuccessNotice, plans, upload } from './controller-logge
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
-	router(
-		`/${ langParam }/plugins/setup`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		renderProvisionPlugins,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		`/${ langParam }/plugins/setup/:site`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		renderProvisionPlugins,
-		redirectTrialSites,
-		makeLayout,
-		clientRender
-	);
+	router( `/${ langParam }/plugins/setup/:site?`, redirectLegacyPluginsSetup );
 
 	router(
 		`/${ langParam }/plugins/browse/:category/:site?`,
