@@ -60,7 +60,7 @@ started = performance.now();
 config.optimizeDeps = { ...config.optimizeDeps, noDiscovery: true };
 const server = await createServer( config );
 const environment = server.environments.client;
-const seen = new Set( Object.values( startDashboardEntries ).map( ( file ) => '/' + file ) );
+const seen = new Set( Object.values( startDashboardEntries ).map( ( { file } ) => '/' + file ) );
 const queue = [ ...seen ];
 
 async function visit( url ) {

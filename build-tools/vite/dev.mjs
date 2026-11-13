@@ -192,15 +192,46 @@ export function devOverlay( { entries, sections = [], httpServer } ) {
 	};
 }
 
+const globalStyles = [ 'client/assets/stylesheets/style.scss' ];
+// The loading placeholder the server renders for Stepper, signup and checkout.
+const placeholderStyles = [
+	'client/components/loading/style.scss',
+	'packages/onboarding/src/step-container-v2/wireframes/Loading/style.scss',
+	'packages/onboarding/src/step-container-v2/components/StepContainerV2/style.scss',
+	'packages/onboarding/src/step-container-v2/components/TopBar/style.scss',
+	'packages/onboarding/src/step-container-v2/components/Heading/style.scss',
+];
+const omnibarStyles = [
+	'packages/omnibar/src/style.scss',
+	'client/dashboard/app/omnibar/style.scss',
+];
+
 /**
- * The entries `yarn start-dashboard:vite` serves: chunk group name → source file, relative to the
- * repo root. The Dashboard, and the classic flows it links into.
+ * The entries `yarn start-dashboard:vite` serves, as in `entry` in `client/webpack.config.js`: the
+ * Dashboard, and the classic flows it links into. Each has its source file and the stylesheets the
+ * server-rendered page needs before the scripts run, relative to the repo root.
+ * @type {Record<string, { file: string, styles: string[] }>}
  */
 export const startDashboardEntries = {
-	'entry-main': 'client/boot/app.js',
-	'entry-stepper': 'client/landing/stepper/index.tsx',
-	'entry-dashboard-dotcom': 'client/dashboard/app-dotcom/index.ts',
-	'entry-dashboard-a4a': 'client/dashboard/app-a4a/index.ts',
+	'entry-main': { file: 'client/boot/app.js', styles: globalStyles },
+	'entry-stepper': {
+		file: 'client/landing/stepper/index.tsx',
+		styles: [ ...globalStyles, ...placeholderStyles ],
+	},
+	'entry-dashboard-dotcom': {
+		file: 'client/dashboard/app-dotcom/index.ts',
+		styles: omnibarStyles,
+	},
+	'entry-dashboard-a4a': { file: 'client/dashboard/app-a4a/index.ts', styles: omnibarStyles },
+};
+
+/**
+ * The stylesheets a section's server-rendered page needs before the scripts run.
+ * @type {Record<string, string[]>}
+ */
+export const sectionStyles = {
+	checkout: placeholderStyles,
+	signup: placeholderStyles,
 };
 
 /**
@@ -213,7 +244,7 @@ export function startDashboardDevConfig( options = {} ) {
 	return mergeConfig(
 		calypsoBase(),
 		devOverlay( {
-			entries: Object.values( startDashboardEntries ),
+			entries: Object.values( startDashboardEntries ).map( ( entry ) => entry.file ),
 			sections: enabledSections(),
 			...options,
 		} )
