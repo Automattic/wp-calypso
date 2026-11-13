@@ -103,7 +103,7 @@ export const PlaygroundSetupStep: Step< {
 		setFailureReason( null );
 		setProgress( null );
 
-		// The Playground publish flow (entrepreneur) exports a WooCommerce sandbox
+		// A store saved from the WooCommerce Playground exports a sandbox
 		// that carries sandbox-only plugins.
 		const isPublishFlow = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 		const eventPrefix = isPublishFlow

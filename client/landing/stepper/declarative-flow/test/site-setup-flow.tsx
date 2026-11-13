@@ -7,6 +7,7 @@ import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { useFlowState } from '../internals/state-manager/store';
 import { STEPS } from '../internals/steps';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../internals/steps-repository/playground/lib/constants';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
@@ -191,6 +192,41 @@ describe( 'Site Setup Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				expect.stringContaining( '/setup/some-flow/some-step' )
 			);
+		} );
+	} );
+
+	describe( 'when the Playground import finishes', () => {
+		const finishImport = () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.IMPORTER_PLAYGROUND.slug,
+				currentURL: `/setup/site-setup/${ STEPS.IMPORTER_PLAYGROUND.slug }?siteSlug=example.wordpress.com&siteId=123`,
+				dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
+			} );
+		};
+
+		beforeEach( () => {
+			sessionStorage.clear();
+		} );
+
+		// Going through exitFlow would replace the Sell intent the Commerce site was created with.
+		it( 'leaves a store straight away and clears its session flag', () => {
+			sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+
+			finishImport();
+
+			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
+			expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBeNull();
+			expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
+		} );
+
+		it( 'exits the flow for any other Playground site', () => {
+			finishImport();
+
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( getFlowLocation().path ).toContain( 'processing' );
 		} );
 	} );
 
