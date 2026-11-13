@@ -10,7 +10,7 @@ This is the new hosting dashboard for WordPress.com.
 ## Conventions
 
 - Use TanStack Query and TanStack Router.
-- Parse and normalize search params in `validateSearch`, write them with `router.navigate`, and avoid `history.replaceState` in components.
+- Declare the search params a page keeps (filters, date ranges, page numbers) in the route's `validateSearch`, and change them with `router.navigate`. Read and remove one-shot params (flash ids, callbacks, notice flags) with `useConsumeSearchParams` from `app/hooks/use-consume-search-params`. Remove any other param in the one `router.navigate( { search, replace: true } )` its event makes: the app always registers a navigation blocker, which defers history writes, so a second navigation in the same task starts from the old search and puts the param back. Don't write the URL with `window.history`: a write without the entry's state drops the router's key and index, which `useCanGoBack` and scroll restoration read, and a router navigation in progress overwrites it. The exceptions are code that runs before the router is created and components that also render outside the dashboard router, like `sites/site-launch-modal/celebration-modal`. Some older code still writes `window.history` directly; don't copy it.
 - Don't use Redux and `calypso/state`.
 - **Never branch on `appConfig.name`** (e.g. `if (appConfig.name === 'dotcom')`). The dashboard has many variants; hardcoding behavior per variant doesn't scale. Some alternatives:
   1. If the behavior depends on the **site** (e.g. available features, capabilities), use `siteTypeSupportsFeature()` or extend `SiteTypeFeatureSupports` in `utils/site-type-feature-support.ts`.
