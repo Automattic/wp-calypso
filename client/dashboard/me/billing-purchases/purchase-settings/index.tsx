@@ -1118,14 +1118,18 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+
 	// Auto-renew and the payment method are the partner's to manage rather than
 	// the customer's, so the whole card goes for a partner-managed subscription.
 	// The classic purchases page hides its equivalent block for the same reason.
-	if (
-		String( user.ID ) !== String( purchase.user_id ) ||
-		isIncludedWithPlan( purchase ) ||
-		purchase.is_partner_managed
-	) {
+	if ( purchase.is_partner_managed ) {
+		return null;
+	}
+
+	if ( isIncludedWithPlan( purchase ) || isOneTimePurchase( purchase ) ) {
 		return null;
 	}
 
