@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -8,6 +8,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DoNotSellCard from '../do-not-sell-card';
 
@@ -44,7 +45,7 @@ const originalFetch = global.fetch;
 // nock can't intercept the geo lookup because it passes JSDOM's `AbortSignal`, which Node's
 // `fetch()` rejects.
 function mockGeoLookup( countryCode: string, region: string ) {
-	global.fetch = jest.fn().mockResolvedValue( {
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: () => Promise.resolve( { country_short: countryCode, region } ),
 	} );

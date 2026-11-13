@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 afterEach( () => {
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
 	window.sessionStorage.clear();
 } );
 
@@ -98,7 +99,7 @@ describe( 'DomainOverviewSettings', () => {
 	} );
 
 	test( 'shows glue records in a support session even when the user cannot manage', async () => {
-		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		( isSupportSession as Mock ).mockReturnValue( true );
 		renderDomainSettings( { current_user_can_manage: false } );
 		await showAdvanced();
 

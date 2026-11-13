@@ -57,7 +57,7 @@ Start a step with `🤖☑️` only when you ran it on the commit you're pushing
 
 After How to Test, add a `## Agent Report` heading with "🤖☑️ Tested by the agent on <where> at commit <hash>." and, if any step is unmarked, "⚠️ The agent didn't run testing <steps>: <why>.", with <steps> such as `step 3` or `steps 2 and 3`. Leave out the first line when you ran no step.
 
-Then add a collapsed `<details>` block whose `<summary>` is `Pattern consistency report`, formatted like the one under Details. In it, list places where the code you touched showed more than one way to do the same thing, used a deprecated pattern, or disagreed with the docs: at most the two that cost you the most time or would most likely mislead the next change. Name the files, and say which way you followed and why. When you found none, write "No conflicting patterns found." instead of the list. Leave out the block only when you wrote no code that could follow a pattern, such as a dependency bump, a docs-only change, a config value or feature flag toggle, a revert, or regenerated files.
+Then add a collapsed `<details>` block whose `<summary>` is `<strong>Self-improvement report</strong>`, formatted like the one under Details. In it, under a `#### 🤯 Inconsistent patterns` heading, list places where the code you touched showed more than one way to do the same thing, used a deprecated pattern, or disagreed with the docs: at most the two that cost you the most time or would most likely mislead the next change. Name the files, and say which way you followed and why. When you found none, write "No inconsistent patterns found." instead of the list. Leave out the block only when you wrote no code that could follow a pattern, such as a dependency bump, a docs-only change, a config value or feature flag toggle, a revert, or regenerated files.
 
 Example:
 
@@ -101,7 +101,9 @@ The Sites list and site overview showed `-` for the PHP version of Simple sites,
 ⚠️ The agent didn't run testing step 3: it needs an Atomic site, and none was available.
 
 <details>
-<summary>Pattern consistency report</summary>
+<summary><strong>Self-improvement report</strong></summary>
+
+#### 🤯 Inconsistent patterns
 
 - Some Sites list fields check access through helpers in `client/dashboard/sites/features.ts`, while others check it inline in their field definitions. Followed `features.ts`, which the site overview also uses.
 

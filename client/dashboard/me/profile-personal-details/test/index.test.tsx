@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
@@ -74,7 +75,7 @@ function mockAccountRecovery( {
 
 describe( '<PersonalDetailsSection>', () => {
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		act( () => {
 			dispatch( noticesStore ).removeAllNotices( 'snackbar' );
 		} );
@@ -323,8 +324,8 @@ describe( '<PersonalDetailsSection>', () => {
 
 			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
 
-			jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			vi.useFakeTimers( { toNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
@@ -333,7 +334,7 @@ describe( '<PersonalDetailsSection>', () => {
 			await user.type( confirmInput, 'newusername' );
 
 			await act( async () => {
-				jest.advanceTimersByTime( 600 );
+				vi.advanceTimersByTime( 600 );
 			} );
 
 			await waitFor( () => {
@@ -351,9 +352,9 @@ describe( '<PersonalDetailsSection>', () => {
 			// must run on real timers to finish within the test. Flush first: React's scheduler
 			// queues its work on a timer, and work left on a fake one never runs.
 			await act( async () => {
-				jest.runOnlyPendingTimers();
+				vi.runOnlyPendingTimers();
 			} );
-			jest.useRealTimers();
+			vi.useRealTimers();
 
 			return { user: userEvent.setup(), recordTracksEvent, dialog };
 		}

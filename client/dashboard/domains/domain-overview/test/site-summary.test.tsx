@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type Site } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';

@@ -1,22 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fetchSitePurchases } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { type MockedFunction, vi } from 'vitest';
 import { AuthContext } from '../../../app/auth';
 import { useOtherUsersSitePurchases } from '../use-other-users-site-purchases';
 import type { Purchase, Site, User } from '@automattic/api-core';
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	fetchSitePurchases: jest.fn(),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	fetchSitePurchases: vi.fn(),
 } ) );
 
-const mockFetchSitePurchases = fetchSitePurchases as jest.MockedFunction<
-	typeof fetchSitePurchases
->;
+const mockFetchSitePurchases = fetchSitePurchases as MockedFunction< typeof fetchSitePurchases >;
 
 const VIEWER_ID = 1;
 const OTHER_USER_ID = 2;
@@ -33,7 +32,7 @@ function makeWrapper() {
 	return function Wrapper( { children }: { children: ReactNode } ) {
 		return (
 			<QueryClientProvider client={ queryClient }>
-				<AuthContext.Provider value={ { user: { ID: VIEWER_ID } as User, logout: jest.fn() } }>
+				<AuthContext.Provider value={ { user: { ID: VIEWER_ID } as User, logout: vi.fn() } }>
 					{ children }
 				</AuthContext.Provider>
 			</QueryClientProvider>

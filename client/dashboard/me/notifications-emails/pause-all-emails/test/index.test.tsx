@@ -1,9 +1,10 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { PropsWithChildren, Suspense } from 'react';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { PauseAllEmails } from '../index';
 
@@ -32,7 +33,7 @@ const pauseCheckbox = () => {
 describe( 'PauseAllEmails', () => {
 	beforeAll( () => {
 		// Snackbar component requires it to work and jest doesn't mock it
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	const Wrapper = ( { children }: PropsWithChildren ) => {
