@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { isPeopleListNote } from '../../panel/helpers/notes';
@@ -59,10 +60,15 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 	// Display the user's URL instead of the site title when:
 	// 1. No site title is provided.
 	// 2. The comment is unapproved, making potential spam easier to identify.
+	// 3. The site title only repeats the user's name.
+	const siteTitle = block.meta?.titles?.home;
 	const homeTitle =
-		homeLink && ( ! block.meta?.titles?.home || ( note.type === 'comment' && ! isApproved ) )
+		homeLink &&
+		( ! siteTitle ||
+			( note.type === 'comment' && ! isApproved ) ||
+			siteTitle.trim().toLowerCase() === block.text?.trim().toLowerCase() )
 			? getDisplayURL( homeLink )
-			: block.meta?.titles?.home;
+			: siteTitle;
 
 	// Build the present description items, then interleave a single separator
 	// between them — so there's never a leading, trailing, or doubled separator
@@ -98,39 +104,64 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 	].filter( ( part ): part is ReactElement => Boolean( part ) );
 
 	const isListItem = isPeopleListNote( note );
+	// A list offers Subscribe only for sites you don't subscribe to yet.
+	const isFollowing = !! block.actions && 'follow' in block.actions && !! block.actions.follow;
+	const follow = ! isFollowing && descriptionParts.find( ( { key } ) => key === 'follow' );
 
 	return (
 		<HStack
-			className="wpnc__user"
+			className={ clsx( 'wpnc__user', { 'is-list-item': isListItem } ) }
 			justify="flex-start"
 			alignment={ isListItem ? 'center' : 'flex-start' }
-			spacing={ 4 }
+			spacing={ isListItem ? 3 : 4 }
 		>
 			<a className="wpnc__user-icon" href={ readerProfileUrl } target="_blank" rel="noreferrer">
 				<NoteIcon icon={ media?.url } alt={ block.text } size={ 36 } />
 			</a>
 			{ isListItem ? (
 				<>
-					<VStack spacing={ 0.5 } style={ { flex: 1, minWidth: 0 } }>
+					<VStack
+						className="wpnc__user-text"
+						justify="center"
+						spacing={ 0 }
+						style={ { flex: 1, minWidth: 0 } }
+					>
 						<a
 							className="wpnc__user-title"
 							href={ readerProfileUrl }
 							target="_blank"
 							rel="noreferrer"
 						>
-							<Text truncate numberOfLines={ 1 }>
+							<Text className="wpnc__user-name" truncate numberOfLines={ 1 }>
 								{ block.text }
 							</Text>
 						</a>
-						{ homeTitle && (
-							<a href={ homeLink } target="_blank" rel="noopener noreferrer">
-								<Text className="wpnc__user-site" variant="muted" truncate numberOfLines={ 1 }>
-									{ homeTitle }
-								</Text>
-							</a>
+						{ ( homeTitle || follow ) && (
+							<HStack className="wpnc__user-meta" justify="flex-start" spacing={ 1 }>
+								{ homeTitle && (
+									<a
+										href={ homeLink }
+										target="_blank"
+										rel="noopener noreferrer"
+										style={ { minWidth: 0 } }
+									>
+										<Text
+											className="wpnc__user-site"
+											color="var(--wpnc-user-meta-color)"
+											truncate
+											numberOfLines={ 1 }
+										>
+											{ homeTitle }
+										</Text>
+									</a>
+								) }
+								{ homeTitle && follow && (
+									<span className="wpnc__user-description-separator">·</span>
+								) }
+								{ follow }
+							</HStack>
 						) }
 					</VStack>
-					{ descriptionParts.find( ( { key } ) => key === 'follow' ) }
 				</>
 			) : (
 				<VStack alignment="flex-start" spacing={ 0 }>

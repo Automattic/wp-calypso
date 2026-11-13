@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { omnibarAgentsManagerEnabledQuery, omnibarSiteIdQuery } from '@automattic/api-queries';
