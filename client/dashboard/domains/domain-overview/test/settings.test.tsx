@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 afterEach( () => {
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
 	window.sessionStorage.clear();
 } );
 
@@ -23,10 +24,9 @@ const connected = { subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Doma
 const NAME_SERVERS = 'Name servers';
 const DNS = 'DNS records';
 const FORWARDING = 'Domain forwarding';
-const SECURITY = 'DNSSEC';
-const CONNECTED_SECURITY = 'Domain security';
+const SECURITY = 'Domain security';
 const GLUE = 'Glue records';
-const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, CONNECTED_SECURITY, GLUE ];
+const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ];
 const SHOW_ADVANCED = { name: 'Show advanced settings' };
 
 function getDomain( customProps: Partial< Domain > = {} ) {
@@ -85,11 +85,11 @@ describe( 'DomainOverviewSettings', () => {
 			{ current_user_can_manage: false },
 			[ NAME_SERVERS, DNS, FORWARDING, SECURITY ],
 		],
-		[ 'a connected domain', connected, [ DNS, FORWARDING, CONNECTED_SECURITY ] ],
+		[ 'a connected domain', connected, [ DNS, FORWARDING, SECURITY ] ],
 		[
 			'a connected domain whose DNS cannot be managed',
 			{ ...connected, can_manage_dns_records: false },
-			[ CONNECTED_SECURITY ],
+			[ SECURITY ],
 		],
 	] )( 'shows the right rows for %s', async ( _, customProps, expected ) => {
 		renderDomainSettings( customProps );
@@ -98,7 +98,7 @@ describe( 'DomainOverviewSettings', () => {
 	} );
 
 	test( 'shows glue records in a support session even when the user cannot manage', async () => {
-		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		( isSupportSession as Mock ).mockReturnValue( true );
 		renderDomainSettings( { current_user_can_manage: false } );
 		await showAdvanced();
 
@@ -139,7 +139,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 	} );
 
-	test( 'keeps only Site, Professional email and DNSSEC for a partially restricted domain', async () => {
+	test( 'keeps only Site, Professional email and Domain security for a partially restricted domain', async () => {
 		renderDomainSettings( {
 			current_user_can_manage: false,
 			can_manage_dns_records: false,

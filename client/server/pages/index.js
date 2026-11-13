@@ -303,6 +303,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: entrypointFiles,
 		manifests,
+		useViteDevServer: request.app.get( 'bundler' ) === 'vite',
 		reactQueryDevtoolsHelper,
 		accountSettingsHelper,
 		authHelper,

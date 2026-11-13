@@ -1,24 +1,24 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom';
 import { press, click } from '@ariakit/test';
 import { render } from '@ariakit/test/react';
 import { screen, waitFor } from '@testing-library/react';
 import { isRTL } from '@wordpress/i18n';
 import React, { useEffect, useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import { Tabs } from '..';
 import type { TabsProps } from '../types';
 
 // Setup mocking the `isRTL` function to test arrow key navigation behavior.
-jest.mock( '@wordpress/i18n', () => {
-	const original = jest.requireActual( '@wordpress/i18n' );
+vi.mock( '@wordpress/i18n', async () => {
+	const original = await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' );
 	return {
 		...original,
-		isRTL: jest.fn( () => false ),
+		isRTL: vi.fn( () => false ),
 	};
 } );
-const mockedIsRTL = isRTL as jest.Mock;
+const mockedIsRTL = isRTL as Mock;
 
 type Tab = {
 	tabId: string;
@@ -343,7 +343,7 @@ describe( 'Tabs', () => {
 
 	describe( 'pointer interactions', () => {
 		it( 'should select a tab when clicked', async () => {
-			const mockOnSelect = jest.fn();
+			const mockOnSelect = vi.fn();
 
 			await render( <UncontrolledTabs tabs={ TABS } onSelect={ mockOnSelect } /> );
 
@@ -391,7 +391,7 @@ describe( 'Tabs', () => {
 		} );
 
 		it( 'should not select a disabled tab when clicked', async () => {
-			const mockOnSelect = jest.fn();
+			const mockOnSelect = vi.fn();
 
 			await render(
 				<UncontrolledTabs tabs={ TABS_WITH_BETA_DISABLED } onSelect={ mockOnSelect } />
@@ -593,7 +593,7 @@ describe( 'Tabs', () => {
 				} );
 
 				it( 'should ignore any changes to the `defaultTabId` prop after the first render', async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const { rerender } = await render(
 						<UncontrolledTabs tabs={ TABS } defaultTabId="beta" onSelect={ mockOnSelect } />
@@ -829,7 +829,7 @@ describe( 'Tabs', () => {
 			} );
 
 			it( 'should select tabs in the tablist when using the left and right arrow keys by default (automatic tab activation)', async () => {
-				const mockOnSelect = jest.fn();
+				const mockOnSelect = vi.fn();
 
 				await render( <Component tabs={ TABS } onSelect={ mockOnSelect } /> );
 
@@ -906,7 +906,7 @@ describe( 'Tabs', () => {
 			} );
 
 			it( 'should not automatically select tabs in the tablist when pressing the left and right arrow keys if the `selectOnMove` prop is set to `false` (manual tab activation)', async () => {
-				const mockOnSelect = jest.fn();
+				const mockOnSelect = vi.fn();
 
 				await render(
 					<Component tabs={ TABS } onSelect={ mockOnSelect } selectOnMove={ false } />
@@ -975,7 +975,7 @@ describe( 'Tabs', () => {
 			} );
 
 			it( 'should not select tabs in the tablist when using the up and down arrow keys, unless the `orientation` prop is set to `vertical`', async () => {
-				const mockOnSelect = jest.fn();
+				const mockOnSelect = vi.fn();
 
 				const { rerender } = await render( <Component tabs={ TABS } onSelect={ mockOnSelect } /> );
 
@@ -1073,7 +1073,7 @@ describe( 'Tabs', () => {
 			} );
 
 			it( 'should loop tab focus at the end of the tablist when using arrow keys', async () => {
-				const mockOnSelect = jest.fn();
+				const mockOnSelect = vi.fn();
 
 				await render( <Component tabs={ TABS } onSelect={ mockOnSelect } /> );
 
@@ -1136,7 +1136,7 @@ describe( 'Tabs', () => {
 				// For this test only, mock the writing direction to RTL.
 				mockedIsRTL.mockImplementation( () => true );
 
-				const mockOnSelect = jest.fn();
+				const mockOnSelect = vi.fn();
 
 				await render( <Component tabs={ TABS } onSelect={ mockOnSelect } /> );
 
@@ -1216,7 +1216,7 @@ describe( 'Tabs', () => {
 			} );
 
 			it( 'should focus tabs in the tablist even if disabled', async () => {
-				const mockOnSelect = jest.fn();
+				const mockOnSelect = vi.fn();
 
 				await render( <Component tabs={ TABS_WITH_BETA_DISABLED } onSelect={ mockOnSelect } /> );
 
@@ -1387,7 +1387,7 @@ describe( 'Tabs', () => {
 		describe( 'removing a tab', () => {
 			describe( 'with no explicitly set initial tab', () => {
 				it( 'should not select a new tab when the selected tab is removed', async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const { rerender } = await render(
 						<UncontrolledTabs tabs={ TABS } onSelect={ mockOnSelect } />
@@ -1439,7 +1439,7 @@ describe( 'Tabs', () => {
 				[ 'selectedTabId', 'Controlled', ControlledTabs ],
 			] )( 'when using the `%s` prop [%s]', ( propName, _mode, Component ) => {
 				it( 'should not select a new tab when the selected tab is removed', async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const initialComponentProps = {
 						tabs: TABS,
@@ -1482,7 +1482,7 @@ describe( 'Tabs', () => {
 				} );
 
 				it( `should not select the tab matching the \`${ propName }\` prop as a fallback when the selected tab is removed`, async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const initialComponentProps = {
 						tabs: TABS,
@@ -1552,7 +1552,7 @@ describe( 'Tabs', () => {
 				[ 'selectedTabId', 'Controlled', ControlledTabs ],
 			] )( 'when using the `%s` prop [%s]', ( propName, _mode, Component ) => {
 				it( `should select a newly added tab if it matches the \`${ propName }\` prop`, async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const initialComponentProps = {
 						tabs: TABS,
@@ -1594,7 +1594,7 @@ describe( 'Tabs', () => {
 				[ 'selectedTabId', 'Controlled', ControlledTabs ],
 			] )( 'when using the `%s` prop [%s]', ( propName, _mode, Component ) => {
 				it( `should keep the initial tab matching the \`${ propName }\` prop as selected even if it becomes disabled`, async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const initialComponentProps = {
 						tabs: TABS,
@@ -1647,7 +1647,7 @@ describe( 'Tabs', () => {
 				} );
 
 				it( 'should keep the current tab selected by the user as selected even if it becomes disabled', async () => {
-					const mockOnSelect = jest.fn();
+					const mockOnSelect = vi.fn();
 
 					const { rerender } = await render(
 						<Component tabs={ TABS } onSelect={ mockOnSelect } />

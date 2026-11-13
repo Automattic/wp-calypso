@@ -1,10 +1,11 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import { validateUsernameInternal } from '../username-validation-utils';
 
 describe( 'Username Validation Utils', () => {
 	describe( 'validateUsernameInternal', () => {
 		test( 'skips validation when username matches current username', async () => {
-			const setValidationResult = jest.fn();
+			const setValidationResult = vi.fn();
 
 			await validateUsernameInternal( 'sameusername', 'sameusername', setValidationResult );
 
@@ -12,7 +13,7 @@ describe( 'Username Validation Utils', () => {
 		} );
 
 		test( 'validates minimum length requirement', async () => {
-			const setValidationResult = jest.fn();
+			const setValidationResult = vi.fn();
 
 			await validateUsernameInternal( 'ab', 'oldusername', setValidationResult );
 
@@ -23,7 +24,7 @@ describe( 'Username Validation Utils', () => {
 		} );
 
 		test( 'validates allowed characters', async () => {
-			const setValidationResult = jest.fn();
+			const setValidationResult = vi.fn();
 
 			await validateUsernameInternal( 'user@name', 'oldusername', setValidationResult );
 
@@ -41,7 +42,7 @@ describe( 'Username Validation Utils', () => {
 					allowed_actions: { none: 'Just change username' },
 				} );
 
-			const setValidationResult = jest.fn();
+			const setValidationResult = vi.fn();
 
 			await validateUsernameInternal( 'newusername', 'oldusername', setValidationResult );
 
@@ -61,7 +62,7 @@ describe( 'Username Validation Utils', () => {
 					message: 'Username is already taken',
 				} );
 
-			const setValidationResult = jest.fn();
+			const setValidationResult = vi.fn();
 
 			await validateUsernameInternal( 'takenusername', 'oldusername', setValidationResult );
 

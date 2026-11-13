@@ -36,6 +36,12 @@ import {
 } from './actions.utils';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
+import './style.scss';
+
+function ActionTitle( { children }: { children: string } ) {
+	return <span className="domain-overview-action-title">{ children }</span>;
+}
+
 export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const router = useRouter();
 	const { user } = useAuth();
@@ -105,11 +111,15 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader level={ 3 } title={ __( 'Danger zone' ) } />
+			<SectionHeader
+				level={ 3 }
+				title={ __( 'Danger zone' ) }
+				className="domain-overview-section-header"
+			/>
 			<ActionList>
 				{ availableActions.transfer && (
 					<ActionList.ActionItem
-						title={ __( 'Transfer' ) }
+						title={ <ActionTitle>{ __( 'Transfer' ) }</ActionTitle> }
 						description={
 							domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION
 								? __( 'Transfer this domain connection to another site or WordPress.com user.' )
@@ -131,7 +141,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 				) }
 				{ availableActions.disconnect && (
 					<ActionList.ActionItem
-						title={ __( 'Detach' ) }
+						title={ <ActionTitle>{ __( 'Detach' ) }</ActionTitle> }
 						description={ sprintf(
 							/* translators: %s is the site slug, e.g. "mysite.wordpress.com" */
 							__( 'Detach this domain from %s.' ),
@@ -155,7 +165,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 				) }
 				{ availableActions.remove && purchase && (
 					<ActionList.ActionItem
-						title={ getDeleteTitle( domain ) }
+						title={ <ActionTitle>{ getDeleteTitle( domain ) }</ActionTitle> }
 						description={ getDeleteDescription( domain ) }
 						actions={
 							<RouterLinkButton
@@ -173,7 +183,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 				) }
 				{ availableActions.cancel && purchase && (
 					<ActionList.ActionItem
-						title={ getDeleteTitle( domain ) }
+						title={ <ActionTitle>{ getDeleteTitle( domain ) }</ActionTitle> }
 						description={ getDeleteDescription( domain ) }
 						actions={
 							<RouterLinkButton

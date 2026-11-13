@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype } from '@automattic/api-core';
 import { domainQuery, siteByIdQuery } from '@automattic/api-queries';
@@ -15,6 +15,7 @@ import {
 } from '@tanstack/react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../../app/analytics';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
 import { setTransientQueryParamsAtPathname } from '../../../app/transient-query-params';
@@ -23,22 +24,22 @@ import { useActions } from '../../dataviews/actions';
 import DomainSidebar, { isOpenDomainEmailsMatch } from '../index';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/router/domains', () => ( {
+vi.mock( '../../../app/router/domains', () => ( {
 	domainOverviewRoute: { fullPath: '/domains/$domainName' },
 	domainTransferRoute: { fullPath: '/domains/$domainName/transfer' },
 } ) );
-jest.mock( '../../../app/router/sites', () => ( {
+vi.mock( '../../../app/router/sites', () => ( {
 	siteOverviewRoute: { fullPath: '/sites/$siteSlug' },
 	siteDomainsRoute: { fullPath: '/sites/$siteSlug/domains' },
 } ) );
-jest.mock( '../../../app/router/emails', () => ( {
+vi.mock( '../../../app/router/emails', () => ( {
 	emailsRoute: { fullPath: '/emails' },
 	emailsIndexRoute: { id: '/emails/' },
 } ) );
-jest.mock( '../domain-switcher-item', () => () => null );
+vi.mock( '../domain-switcher-item', () => ( { default: () => null } ) );
 // Screens fade in, which never finishes in jsdom.
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
 	useReducedMotion: () => true,
 } ) );
 
@@ -117,7 +118,7 @@ function renderAt( url: string ) {
 					supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, emails: true },
 				} }
 			>
-				<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
+				<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
 					<RouterProvider router={ router } />
 				</AnalyticsProvider>
 			</AppProvider>

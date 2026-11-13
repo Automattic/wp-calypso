@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Run: yarn test-client client/a8c-for-agencies/sections/migrations/hooks/test/use-can-tag-sites-for-commission.test.ts
  */
 
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import {
 	A4A_MIGRATED_SITE_TAG,
 	A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
@@ -13,12 +14,14 @@ import {
 import useCanTagSitesForCommission from '../use-can-tag-sites-for-commission';
 import type { UseQueryResult } from '@tanstack/react-query';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
+const mockUseQuery = useQuery as MockedFunction< typeof useQuery >;
 
 function mockActiveAgency( startDate?: string | null ) {
 	return {
@@ -40,7 +43,7 @@ function mockAgencyQuery( agency: ReturnType< typeof mockActiveAgency > | null )
 
 describe( 'useCanTagSitesForCommission', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'returns false and omits the incentive tag while the agency is still loading', () => {

@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
+import { type MockedFunction, vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { bumpStat } from '../../analytics';
 import { useAuth } from '../../auth';
@@ -19,12 +20,12 @@ type Candidate = {
 	wasVisibleAtReceipt: boolean;
 };
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
-const mockUseAuth = useAuth as jest.MockedFunction< typeof useAuth >;
-const mockSitesQuery = jest.fn();
-const mockSubscribeSubscriberNotifications = jest.fn();
-const mockSubscribeUnseenCount = jest.fn();
-const mockUnsubscribe = jest.fn();
+const mockUseQuery = useQuery as MockedFunction< typeof useQuery >;
+const mockUseAuth = useAuth as MockedFunction< typeof useAuth >;
+const mockSitesQuery = vi.fn();
+const mockSubscribeSubscriberNotifications = vi.fn();
+const mockSubscribeUnseenCount = vi.fn();
+const mockUnsubscribe = vi.fn();
 const mockUser = { ID: 1, has_unseen_notes: false };
 let mockOnNotificationCount: ( count: number ) => void = () => {};
 let mockOnConfirmed: ( candidate: Candidate ) => boolean | void = () => {};
@@ -32,71 +33,74 @@ let mockAlertCallbacks: {
 	onSound: ( result: string, candidate: Candidate ) => void;
 	onError: ( error: unknown, stage: string ) => void;
 };
-const mockRecordTracksEvent = jest.fn();
+const mockRecordTracksEvent = vi.fn();
+const mockCreateNotice = vi.fn();
+const mockSavePreference = vi.fn();
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: Object.assign(
-		jest.fn( () => 'test-env' ),
-		{ isEnabled: jest.fn() }
+		vi.fn( () => 'test-env' ),
+		{ isEnabled: vi.fn() }
 	),
 } ) );
-jest.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( '@automattic/calypso-sentry', () => ( { captureException: vi.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
-jest.mock( '../../analytics', () => ( {
-	bumpStat: jest.fn(),
+vi.mock( '../../analytics', () => ( {
+	bumpStat: vi.fn(),
 	useAnalytics: () => ( { recordTracksEvent: mockRecordTracksEvent } ),
 } ) );
-jest.mock( '@tanstack/react-query', () => ( {
-	useMutation: jest.fn( () => ( { mutateAsync: jest.fn() } ) ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', () => ( {
+	useMutation: vi.fn( () => ( { mutate: mockSavePreference, mutateAsync: vi.fn() } ) ),
+	useQuery: vi.fn(),
 } ) );
-jest.mock( '@automattic/api-queries', () => ( {
-	userPreferenceQuery: jest.fn( ( key ) => ( { queryKey: [ key ] } ) ),
-	userPreferencesMutation: jest.fn( () => ( {} ) ),
+vi.mock( '@automattic/api-queries', () => ( {
+	userPreferenceQuery: vi.fn( ( key ) => ( { queryKey: [ key ] } ) ),
+	userPreferenceMutation: vi.fn( () => ( {} ) ),
+	userPreferencesMutation: vi.fn( () => ( {} ) ),
 	sitesQuery: ( ...args: unknown[] ) => mockSitesQuery( ...args ),
 } ) );
-jest.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
-jest.mock( '../../help-center', () => ( {
-	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( { createNotice: mockCreateNotice } ),
 } ) );
-jest.mock( '../../locale', () => ( { useLocale: jest.fn( () => 'en' ) } ) );
-jest.mock( '../../omnibar/events', () => ( {
+vi.mock( '@wordpress/notices', () => ( { store: 'core/notices' } ) );
+vi.mock( '../../auth', () => ( { useAuth: vi.fn() } ) );
+vi.mock( '../../help-center', () => ( {
+	useHelpCenter: vi.fn( () => ( { isShown: false, setShowHelpCenter: vi.fn() } ) ),
+} ) );
+vi.mock( '../../locale', () => ( { useLocale: vi.fn( () => 'en' ) } ) );
+vi.mock( '../../omnibar/events', () => ( {
 	omnibarEvents: {
-		notificationsOpen: { emit: jest.fn() },
-		notificationsUnseenCount: { emit: jest.fn() },
-		notificationsSubscriberReceived: { emit: jest.fn() },
+		notificationsOpen: { emit: vi.fn() },
+		notificationsUnseenCount: { emit: vi.fn() },
+		notificationsSubscriberReceived: { emit: vi.fn() },
 	},
-	useOmnibarEvent: jest.fn(),
+	useOmnibarEvent: vi.fn(),
 } ) );
-jest.mock( '@wordpress/components', () => ( {
-	Button: jest.fn( () => null ),
-	Dropdown: jest.fn( () => null ),
+vi.mock( '@wordpress/components', () => ( {
+	Button: vi.fn( () => null ),
+	Dropdown: vi.fn( () => null ),
 } ) );
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( component: unknown ) => component,
-	useViewportMatch: jest.fn( () => false ),
+	useViewportMatch: vi.fn( () => false ),
 } ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
-jest.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
-jest.mock( 'calypso/lib/wp', () => ( { __esModule: true, default: {} } ) );
-jest.mock(
-	'@automattic/notifications/src/app/subscriber-notifications',
-	() => ( { subscribeSubscriberNotifications: mockSubscribeSubscriberNotifications } ),
-	{ virtual: true }
-);
-jest.mock(
-	'@automattic/notifications/src/app/client',
-	() => ( { subscribeUnseenCount: mockSubscribeUnseenCount } ),
-	{ virtual: true }
-);
+vi.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
+vi.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
+vi.mock( 'calypso/lib/wp', () => ( { __esModule: true, default: {} } ) );
+vi.mock( '@automattic/notifications/src/app/subscriber-notifications', () => ( {
+	subscribeSubscriberNotifications: mockSubscribeSubscriberNotifications,
+} ) );
+vi.mock( '@automattic/notifications/src/app/client', () => ( {
+	subscribeUnseenCount: mockSubscribeUnseenCount,
+} ) );
 
 const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
-	jest
-		.mocked( config.isEnabled )
-		.mockImplementation( ( key ) => key === 'notifications/subscriber-alerts' && featureEnabled );
+	vi.mocked( config.isEnabled ).mockImplementation(
+		( key ) => key === 'notifications/subscriber-alerts' && featureEnabled
+	);
 	mockUseQuery.mockImplementation( ( options ) => {
 		const queryOptions = options as { queryKey?: string[] };
 		if ( queryOptions.queryKey?.[ 0 ] === 'notifications-subscriber-alerts-enabled' ) {
@@ -133,7 +137,7 @@ const candidate = (): Candidate => ( {
 
 describe( 'Notifications subscriber alerts', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUser.ID = 1;
 		mockOnNotificationCount = () => {};
 		mockOnConfirmed = () => {};
@@ -193,6 +197,57 @@ describe( 'Notifications subscriber alerts', () => {
 			'calypso_dashboard_notifications_subscriber_alert',
 			{ sound_result: 'played' }
 		);
+	} );
+
+	test( 'offers to turn alerts off in a snackbar when the sound plays', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		act( () => mockAlertCallbacks.onSound( 'played', candidate() ) );
+
+		expect( mockCreateNotice ).toHaveBeenCalledTimes( 1 );
+		const [ status, message, options ] = mockCreateNotice.mock.calls[ 0 ];
+		expect( status ).toBe( 'info' );
+		expect( message ).toBe( 'You have a new subscriber.' );
+		expect( options ).toMatchObject( {
+			id: 'dashboard-subscriber-alert-sound',
+			type: 'snackbar',
+			actions: [ { label: 'Turn off alerts' } ],
+		} );
+
+		act( () => options.actions[ 0 ].onClick() );
+
+		expect( mockSavePreference ).toHaveBeenCalledWith( false, expect.any( Object ) );
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
+			expect.anything()
+		);
+
+		act( () => mockSavePreference.mock.calls[ 0 ][ 1 ].onSuccess() );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
+			{ setting_value: false, source: 'alert_snackbar' }
+		);
+	} );
+
+	test( 'shows no snackbar when the sound did not play', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		act( () => {
+			mockAlertCallbacks.onSound( 'not_activated', candidate() );
+			mockAlertCallbacks.onSound( 'hidden', candidate() );
+			mockAlertCallbacks.onSound( 'cooldown', candidate() );
+		} );
+
+		expect( mockCreateNotice ).not.toHaveBeenCalled();
 	} );
 
 	test( 'logs sound errors to logstash', async () => {
