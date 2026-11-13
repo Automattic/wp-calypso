@@ -1,5 +1,5 @@
+import { saveSiteMigrationApplicationPassword } from '@automattic/api-core';
 import { useMutation } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
 import { ApiError } from '../../site-migration-credentials/types';
 
 interface StoreApplicationPasswordResponse {
@@ -15,20 +15,8 @@ interface StoreApplicationPasswordPayload {
 const useStoreApplicationPassword = ( siteSlug: string ) => {
 	return useMutation< StoreApplicationPasswordResponse, ApiError, StoreApplicationPasswordPayload >(
 		{
-			mutationFn: ( { password, username, source } ) => {
-				return wpcom.req.post(
-					{
-						path: `/sites/${ siteSlug }/automated-migration/application-passwords`,
-						apiNamespace: 'wpcom/v2',
-					},
-					{},
-					{
-						password,
-						username,
-						from_url: source,
-					}
-				);
-			},
+			mutationFn: ( { password, username, source } ) =>
+				saveSiteMigrationApplicationPassword( siteSlug, { password, username, from_url: source } ),
 		}
 	);
 };

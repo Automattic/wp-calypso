@@ -1,5 +1,19 @@
 import { wpcom } from '../wpcom-fetcher';
 
+type MigrationSource = {
+	platform?: string;
+	platform_data?: { is_wpcom?: boolean };
+};
+
+export function analyzeSiteMigrationSource< Source extends MigrationSource = MigrationSource >(
+	source: string
+): Promise< Source > {
+	return wpcom.req.get( {
+		path: `/imports/analyze-url?site_url=${ encodeURIComponent( source ) }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
 export async function fetchSiteMigrationKey( siteId: number ): Promise< string > {
 	const { migration_key } = await wpcom.req.get( {
 		path: `/sites/${ siteId }/atomic-migration-status/wpcom-migration-key`,

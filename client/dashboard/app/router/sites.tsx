@@ -80,6 +80,7 @@ import { isInJetpackCriticalErrorState } from '../../utils/site-jetpack-critical
 import { getSiteDisplayName } from '../../utils/site-name';
 import {
 	getSiteMigrationState,
+	isAssistedWordPressMigration,
 	isSiteMigrationInProgress,
 	isWordPressMigration,
 } from '../../utils/site-status';
@@ -1884,6 +1885,34 @@ export const siteMigrationAssistedIntroRoute = createRoute( {
 	)
 );
 
+export const siteMigrationShareAccessRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Share access' ) } ] } ),
+	getParentRoute: () => siteRoute,
+	path: 'migration-overview/share-access',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const site = await queryClient
+			.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 0 } )
+			.catch( () => undefined );
+		if (
+			! site ||
+			! isAssistedWordPressMigration( site ) ||
+			site.site_migration.status_v2 !== 'pending'
+		) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-overview/share-access' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-share-access' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSSHMigrationFailedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1962,6 +1991,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
 		siteMigrationAssistedIntroRoute,
+		siteMigrationShareAccessRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),

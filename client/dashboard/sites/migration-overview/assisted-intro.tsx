@@ -11,7 +11,6 @@ import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isWordPressMigration } from '../../utils/site-status';
-import { getShareAccessUrl } from './assisted-wordpress';
 import { IconList, MigrationCard, StatusIcon } from './wordpress/migration-card';
 
 const WHAT_OUR_TEAM_DOES = [
@@ -44,20 +43,24 @@ export default function AssistedIntro( { siteSlug }: { siteSlug: string } ) {
 	// Once the site reads as handed off (like after coming back from sharing access), this page has nothing to offer.
 	const isOfferable = isWordPressMigration( site ) && site.site_migration.status_v2 !== 'completed';
 	useEffect( () => {
-		if ( ! isOfferable ) {
+		if ( ! isOfferable && ! handOff.isPending && ! handOff.isSuccess ) {
 			navigate( {
 				to: '/sites/$siteSlug/migration-overview',
 				params: { siteSlug },
 				replace: true,
 			} );
 		}
-	}, [ isOfferable, navigate, siteSlug ] );
+	}, [ isOfferable, handOff.isPending, handOff.isSuccess, navigate, siteSlug ] );
 
 	// Straight on to sharing access, so getting our team started takes one click.
 	const handOffToOurTeam = () =>
 		handOff.mutate( undefined, {
-			onSuccess: ( migration ) =>
-				window.location.replace( getShareAccessUrl( site, migration.source_url ) ),
+			onSuccess: () =>
+				navigate( {
+					to: '/sites/$siteSlug/migration-overview/share-access',
+					params: { siteSlug },
+					replace: true,
+				} ),
 		} );
 
 	return (

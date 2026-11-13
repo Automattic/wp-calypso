@@ -1,3 +1,4 @@
+import { analyzeSiteMigrationSource, setupSiteMigrationAuthorization } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,10 +23,7 @@ import { useRequestAutomatedMigration } from './use-request-automated-migration'
 
 export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined > => {
 	try {
-		return await wp.req.get( {
-			path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
-			apiNamespace: 'wpcom/v2',
-		} );
+		return await analyzeSiteMigrationSource< UrlData >( domain );
 	} catch ( error ) {
 		return undefined;
 	}
@@ -48,13 +46,7 @@ export const getApplicationPasswordsInfo = async (
 	from: string
 ): Promise< ApplicationPasswordsInfo | undefined > => {
 	try {
-		return await wp.req.post( {
-			path: `/sites/${ siteId }/automated-migration/application-passwords/setup`,
-			apiNamespace: 'wpcom/v2',
-			body: {
-				source: from,
-			},
-		} );
+		return await setupSiteMigrationAuthorization( siteId, from );
 	} catch ( error ) {
 		const code = getErrorCode( error );
 		if ( code === 'failed_to_get_authorization_path' ) {

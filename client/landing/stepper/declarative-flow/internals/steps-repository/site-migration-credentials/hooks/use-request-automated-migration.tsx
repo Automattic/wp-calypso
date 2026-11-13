@@ -1,42 +1,13 @@
+import { shareSiteMigrationAccess } from '@automattic/api-core';
 import { useLocale } from '@automattic/i18n-utils';
-import { useMutation, UseMutationOptions } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
+import { useMutation } from '@tanstack/react-query';
 import { ApiError, CredentialsFormData } from '../types';
 
 interface AutomatedMigrationAPIResponse {
 	success: boolean;
 }
 
-interface AutomatedMigration {
-	migration_type: 'credentials' | 'backup';
-	blog_url: string;
-	from_url?: string;
-	username?: string;
-	password?: string;
-	backup_file_location?: string;
-	notes?: string;
-	bypass_verification?: boolean;
-}
-
-const requestAutomatedMigration = async (
-	siteSlug: string,
-	payload: AutomatedMigration,
-	locale: string
-): Promise< AutomatedMigrationAPIResponse > => {
-	return wpcom.req.post(
-		{
-			path: `/sites/${ siteSlug }/automated-migration?_locale=${ locale }`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		payload
-	);
-};
-
-export const useRequestAutomatedMigration = (
-	siteSlug?: string | null,
-	options: UseMutationOptions< AutomatedMigrationAPIResponse, ApiError, CredentialsFormData > = {}
-) => {
+export const useRequestAutomatedMigration = ( siteSlug?: string | null ) => {
 	const locale = useLocale();
 	return useMutation< AutomatedMigrationAPIResponse, ApiError, CredentialsFormData >( {
 		mutationFn: ( {
@@ -52,30 +23,21 @@ export const useRequestAutomatedMigration = (
 				throw new Error( 'Site slug is required' );
 			}
 
-			let body: AutomatedMigration = {
-				migration_type: migrationType,
-				blog_url: siteSlug ?? '',
-				notes,
-			};
-
-			if ( migrationType === 'credentials' ) {
-				body = {
-					...body,
-					from_url,
-					username,
-					password,
-					bypass_verification: bypassVerification,
-				};
-			} else {
-				// In case of backup, we need to send the backup file location.
-				body = {
-					...body,
-					from_url: backupFileLocation,
-				};
-			}
-
-			return requestAutomatedMigration( siteSlug, body, locale );
+			return shareSiteMigrationAccess(
+				siteSlug,
+				siteSlug,
+				locale,
+				migrationType === 'credentials'
+					? {
+							migration_type: migrationType,
+							from_url,
+							username,
+							password,
+							notes,
+							bypass_verification: bypassVerification,
+						}
+					: { migration_type: migrationType, from_url: backupFileLocation, notes }
+			);
 		},
-		...options,
 	} );
 };
