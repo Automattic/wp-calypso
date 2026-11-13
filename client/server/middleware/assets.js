@@ -8,10 +8,12 @@ const ASSETS_FILE = path.join( ASSETS_PATH, `assets.json` );
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
 
 const getAssetType = ( asset ) => {
-	if ( asset.endsWith( '.rtl.css' ) ) {
+	// Vite serves stylesheets from their source, e.g. `/client/foo/style.scss?direct`.
+	const [ file ] = asset.split( '?' );
+	if ( file.endsWith( '.rtl.css' ) ) {
 		return 'css.rtl';
 	}
-	if ( asset.endsWith( '.css' ) ) {
+	if ( file.endsWith( '.css' ) || file.endsWith( '.scss' ) ) {
 		return 'css.ltr';
 	}
 

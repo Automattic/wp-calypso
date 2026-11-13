@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { withFullPlanName, withPressablePlan } from '../plan-field';
 import type { AgencySite, Site } from '@automattic/api-core';
@@ -26,7 +27,7 @@ const signature4License = {
 	quantity: null,
 };
 
-const renderSharedPlan = jest.fn( () => <span>Jetpack Complete</span> );
+const renderSharedPlan = vi.fn( () => <span>Jetpack Complete</span> );
 
 const sharedPlanField: Field< AgencySite > = {
 	id: 'plan',

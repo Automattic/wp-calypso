@@ -72,4 +72,21 @@ describe( 'assets middleware', () => {
 			entryMain: { js: [ '/client/boot/app.js' ], 'css.ltr': [], 'css.rtl': [] },
 		} );
 	} );
+
+	test( 'treats stylesheets served from source, with a query, as CSS', async () => {
+		mockFs( {} );
+		const app = express();
+		app.set( 'assets-provider', () => ( {
+			manifests: [],
+			assets: { 'entry-main': [ '/client/style.scss?direct', '/client/boot/app.js' ] },
+		} ) );
+
+		const { body } = await requestAssets( app );
+
+		expect( body.entryMain ).toEqual( {
+			js: [ '/client/boot/app.js' ],
+			'css.ltr': [ '/client/style.scss?direct' ],
+			'css.rtl': [],
+		} );
+	} );
 } );

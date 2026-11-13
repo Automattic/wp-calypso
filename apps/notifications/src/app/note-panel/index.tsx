@@ -110,7 +110,11 @@ const NotePanel = ( {
 				<VStack>
 					<HStack>
 						<HStack justify="flex-start">
-							<Heading level={ 3 } size={ 15 } weight={ 500 }>
+							<Heading
+								level={ 3 }
+								size={ 15 }
+								weight="var(--wpds-typography-font-weight-emphasis, 600)"
+							>
 								{ __( 'Notifications' ) }
 							</Heading>
 							{ isSimplified && (

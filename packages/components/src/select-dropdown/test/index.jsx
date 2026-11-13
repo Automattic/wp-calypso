@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import SelectDropdown from '../index';
 
 const DROPDOWN_OPTIONS = [
@@ -119,7 +120,7 @@ describe( 'selected items', () => {
 
 describe( 'selectItem', () => {
 	test( 'should run the `onSelect` hook, and then update the state', async () => {
-		const onSelectSpy = jest.fn();
+		const onSelectSpy = vi.fn();
 
 		renderDropdown( { onSelect: onSelectSpy } );
 
@@ -149,7 +150,7 @@ describe( 'navigateItem', () => {
 	} );
 
 	test( 'permits to select an option by pressing ENTER', async () => {
-		const onSelectSpy = jest.fn();
+		const onSelectSpy = vi.fn();
 		renderDropdown( { onSelect: onSelectSpy } );
 
 		const btn = screen.getByRole( 'button' );
@@ -162,7 +163,7 @@ describe( 'navigateItem', () => {
 	} );
 
 	test( 'permits to select an option by pressing SPACE', async () => {
-		const onSelectSpy = jest.fn();
+		const onSelectSpy = vi.fn();
 		renderDropdown( { onSelect: onSelectSpy } );
 
 		const btn = screen.getByRole( 'button' );

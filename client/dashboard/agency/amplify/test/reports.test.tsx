@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import AmplifyReportsList from '../reports';
@@ -58,8 +59,8 @@ function findSnackbar( text: string ) {
 
 describe( '<AmplifyReportsList>', () => {
 	test( 'downloads a completed report’s PDF', async () => {
-		URL.createObjectURL = jest.fn( () => 'blob:report' );
-		URL.revokeObjectURL = jest.fn();
+		URL.createObjectURL = vi.fn( () => 'blob:report' );
+		URL.revokeObjectURL = vi.fn();
 		const scope = nock( API )
 			.get( `/wpcom/v2/agency/${ AGENCY_ID }/amplify/reports/1/pdf` )
 			.reply( 200, { filename: 'amplify-report-1.pdf', data: btoa( '%PDF-1.4' ) } );

@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../../../test-utils';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
 import type { Purchase } from '@automattic/api-core';
 
-const mockSetNewMessagingChat = jest.fn();
-const mockSetNavigateToRoute = jest.fn();
-const mockSetShowHelpCenter = jest.fn();
-const mockSetOpenOdieWithContext = jest.fn();
+const mockSetNewMessagingChat = vi.fn();
+const mockSetNavigateToRoute = vi.fn();
+const mockSetShowHelpCenter = vi.fn();
+const mockSetOpenOdieWithContext = vi.fn();
 
-jest.mock( '../../../../../../app/help-center', () => ( {
+vi.mock( '../../../../../../app/help-center', () => ( {
 	useHelpCenter: () => ( {
 		setNewMessagingChat: mockSetNewMessagingChat,
 		setNavigateToRoute: mockSetNavigateToRoute,
@@ -23,7 +24,7 @@ jest.mock( '../../../../../../app/help-center', () => ( {
 
 let mockCanConnectToZendesk = true;
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: mockCanConnectToZendesk } ),
 } ) );
 
@@ -46,20 +47,20 @@ const premiumAnnual = {
 
 describe( '<SolutionsCardsUpsellStep />', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockCanConnectToZendesk = true;
 	} );
 
 	test( 'speak-with-support calls setNewMessagingChat when Zendesk eligible', async () => {
 		const user = userEvent.setup();
-		const closeDialog = jest.fn();
+		const closeDialog = vi.fn();
 
 		render(
 			<SolutionsCardsUpsellStep
 				cancellationReason="noLongerNeedSite"
 				purchase={ purchase }
 				closeDialog={ closeDialog }
-				onDeclineUpsell={ jest.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
@@ -102,7 +103,7 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 	] )(
 		'fires view event on mount with visible card IDs %s %s',
 		( cancellationReason, productSlug, billPeriodDays, solutionIds ) => {
-			const recordEvent = jest.fn();
+			const recordEvent = vi.fn();
 
 			render(
 				<SolutionsCardsUpsellStep
@@ -110,8 +111,8 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 					purchase={
 						{ ...purchase, product_slug: productSlug, bill_period_days: billPeriodDays } as Purchase
 					}
-					closeDialog={ jest.fn() }
-					onDeclineUpsell={ jest.fn() }
+					closeDialog={ vi.fn() }
+					onDeclineUpsell={ vi.fn() }
 					recordEvent={ recordEvent }
 				/>
 			);
@@ -126,14 +127,14 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 
 	test( 'fires click event when a solution card is clicked', async () => {
 		const user = userEvent.setup();
-		const recordEvent = jest.fn();
+		const recordEvent = vi.fn();
 
 		render(
 			<SolutionsCardsUpsellStep
 				cancellationReason="noLongerNeedSite"
 				purchase={ purchase }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
 				recordEvent={ recordEvent }
 			/>
 		);
@@ -156,8 +157,8 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			<SolutionsCardsUpsellStep
 				cancellationReason="noLongerNeedSite"
 				purchase={ purchase }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
@@ -173,14 +174,14 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 	test( 'speak-with-support opens Odie fallback when not Zendesk eligible', async () => {
 		mockCanConnectToZendesk = false;
 		const user = userEvent.setup();
-		const closeDialog = jest.fn();
+		const closeDialog = vi.fn();
 
 		render(
 			<SolutionsCardsUpsellStep
 				cancellationReason="noLongerNeedSite"
 				purchase={ purchase }
 				closeDialog={ closeDialog }
-				onDeclineUpsell={ jest.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
@@ -206,8 +207,8 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			<SolutionsCardsUpsellStep
 				cancellationReason="tooExpensive"
 				purchase={ purchase }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
@@ -240,14 +241,14 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		'$card opens the plans page and records the click',
 		async ( { card, solutionId, ref, intervalType } ) => {
 			const user = userEvent.setup();
-			const recordEvent = jest.fn();
+			const recordEvent = vi.fn();
 
 			render(
 				<SolutionsCardsUpsellStep
 					cancellationReason="tooExpensive"
 					purchase={ premiumAnnual }
-					closeDialog={ jest.fn() }
-					onDeclineUpsell={ jest.fn() }
+					closeDialog={ vi.fn() }
+					onDeclineUpsell={ vi.fn() }
 					recordEvent={ recordEvent }
 				/>
 			);
@@ -289,8 +290,8 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			<SolutionsCardsUpsellStep
 				cancellationReason="tooExpensive"
 				purchase={ p2PlusMonthly }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
