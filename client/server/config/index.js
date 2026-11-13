@@ -17,3 +17,4 @@ const { serverData, clientData } = parser( configPath, {
 
 module.exports = createConfig( serverData );
 module.exports.clientData = resolveTemplates( clientData );
+module.exports.serverEnvId = clientData.env_id;

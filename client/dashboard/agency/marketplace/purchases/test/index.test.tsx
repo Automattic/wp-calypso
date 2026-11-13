@@ -153,7 +153,7 @@ describe( '<MarketplacePurchases>', () => {
 
 		// The app shell renders the checkout success message, which removes `flash` and
 		// `purchased_plan`.
-		render(
+		const { recordTracksEvent } = render(
 			<>
 				<CheckoutSuccessFlashMessage />
 				<MarketplacePurchases />
@@ -161,6 +161,11 @@ describe( '<MarketplacePurchases>', () => {
 		);
 
 		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_marketplace_cart_cleared_on_checkout_success',
+			{ receipt_id: '123' }
+		);
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
 		expect(
 			select( noticesStore )
@@ -302,8 +307,6 @@ describe( '<MarketplacePurchases>', () => {
 	} );
 
 	test( 'does not ask a partner who already answered', async () => {
-		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = vi.fn();
 		mockAgency();
 		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
 		mockAssignableLicense();

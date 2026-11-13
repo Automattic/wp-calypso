@@ -60,7 +60,7 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 
 ## Testing instructions
 
-> **Note**: E2E tests require a local Calypso development instance to be running.
+> **Note**: E2E tests require a local Calypso development instance to be running, started with `yarn start`: `yarn start-dashboard` doesn't serve the login page they use.
 
 ```bash
 # JavaScript tests

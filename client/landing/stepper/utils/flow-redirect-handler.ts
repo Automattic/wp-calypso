@@ -1,17 +1,27 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	BLOG_FLOW,
 	BUILD_FLOW,
+	ENTREPRENEUR_FLOW,
+	NEW_HOSTED_SITE_FLOW,
 	WRITE_FLOW,
 } from '@automattic/onboarding';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type RedirectRule = {
 	flow: string;
 	to: string | ( ( searchParams: URLSearchParams ) => string );
-	shouldRedirect?: ( searchParams: URLSearchParams ) => boolean;
+	shouldRedirect?: ( searchParams: URLSearchParams, pathname: string ) => boolean;
+	// Query args set on the destination, replacing any incoming value of the same name.
+	query?: Record< string, string >;
+	// For links to a live flow: keep any supported locale, including ones like sr_latin that
+	// `langPattern` misses.
+	keepAnyLocale?: boolean;
 	replace?: boolean;
 };
 
@@ -28,6 +38,41 @@ const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 const WRITE_REDIRECT: RedirectRule = {
 	flow: WRITE_FLOW,
 	to: `/setup/${ BUILD_FLOW }/launchpad:lang?`,
+	keepAnyLocale: true,
+	replace: true,
+};
+
+// A trial started before the redirect went live is still being set up on these steps,
+// so they stay reachable. The slugs are literals because importing the `STEPS` registry here
+// would pull it into every bundle that imports `isRemovedFlow`, such as My Home.
+const ENTREPRENEUR_POST_SITE_CREATION_STEPS = [
+	'processing',
+	'waitForAtomic',
+	'waitForPluginInstall',
+	'importerPlayground',
+	'error',
+];
+
+// The Commerce free trial is closed, so new visitors buy the plan instead (DOTPM-571).
+const ENTREPRENEUR_REDIRECT: RedirectRule = {
+	flow: ENTREPRENEUR_FLOW,
+	to: `/setup/${ NEW_HOSTED_SITE_FLOW }:lang?`,
+	query: { plan: PLAN_ECOMMERCE },
+	keepAnyLocale: true,
+	shouldRedirect: ( searchParams, pathname ) => {
+		if ( ! isEnabled( 'entrepreneur/redirect-to-commerce-purchase' ) ) {
+			return false;
+		}
+
+		// The Woo Playground A/B test still creates trials until it ends (DOTPM-565). The session
+		// flag covers the login round trip, which can drop the query string.
+		const isPlaygroundPublish =
+			searchParams.get( 'from' ) === 'playground-publish' ||
+			window.sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
+		const step = pathname.split( '/' )[ 3 ] ?? '';
+
+		return ! isPlaygroundPublish && ! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( step );
+	},
 	replace: true,
 };
 
@@ -62,7 +107,12 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'woo-hosted-plans', to: '/setup/plan-upgrade', replace: true },
 ];
 
-const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, WRITE_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
+const FLOW_REDIRECTS = [
+	AI_SITE_BUILDER_REDIRECT,
+	WRITE_REDIRECT,
+	ENTREPRENEUR_REDIRECT,
+	...REMOVED_TAILORED_FLOWS,
+];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>
 	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
@@ -80,7 +130,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	const route = FLOW_REDIRECTS.find(
 		( { flow, shouldRedirect } ) =>
 			normalizedPathname.startsWith( `/setup/${ flow }/` ) &&
-			( shouldRedirect?.( searchParams ) ?? true )
+			( shouldRedirect?.( searchParams, normalizedPathname ) ?? true )
 	);
 
 	// If no route is found we don't redirect and return false
@@ -91,9 +141,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	// Find the language code in the pathname if present
 	let lang: string | undefined = normalizedPathname.match( langPattern )?.[ 1 ];
 
-	// Write links lead to a live flow, so keep any supported locale, including ones like sr_latin
-	// that the pattern misses.
-	if ( route === WRITE_REDIRECT ) {
+	if ( route.keepAnyLocale ) {
 		const lastSegment = normalizedPathname.split( '/' ).at( -2 ) ?? '';
 		lang = getLanguageSlugs().includes( lastSegment ) ? lastSegment : undefined;
 	}
@@ -103,7 +151,15 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	const redirectUrl = to.replace( ':lang?', lang ? `/${ lang }` : '' );
 
 	// Construct the final URL with search parameters if present
-	const finalUrl = `${ redirectUrl }${ search }`;
+	let finalSearch = search;
+	if ( route.query ) {
+		const finalSearchParams = new URLSearchParams( search );
+		Object.entries( route.query ).forEach( ( [ key, value ] ) =>
+			finalSearchParams.set( key, value )
+		);
+		finalSearch = `?${ finalSearchParams }`;
+	}
+	const finalUrl = `${ redirectUrl }${ finalSearch }`;
 
 	if ( route.flow === AI_SITE_BUILDER_FLOW ) {
 		const legacyStep =

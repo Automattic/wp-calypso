@@ -13792,14 +13792,12 @@ __metadata:
     cross-env: "npm:^7.0.3"
     electron: "npm:42.11.18"
     electron-builder: "npm:26.15.0"
-    electron-fetch: "npm:^1.7.4"
     electron-store: "npm:^8.1.0"
     electron-updater: "npm:6.8.11"
     jest: "npm:^30.5.2"
     js-yaml: "npm:5.4.1"
     playwright: "npm:1.57.0"
     semver: "npm:^7.7.2"
-    superagent: "npm:^3.8.3"
     webpack: "npm:^5.111.1"
     webpack-cli: "npm:^7.2.3"
     winston: "npm:^3.3.3"
@@ -17872,15 +17870,6 @@ __metadata:
     electron-builder: ./cli.js
     install-app-deps: ./install-app-deps.js
   checksum: 994b3fa3acbec42f9802642f92cc06e60bf374b782eab7d69c78dd6d7f04747473048fec4cf2b5b730fac0dfe68e17cb4d1791f834ade9b9c26a7a4a39f751da
-  languageName: node
-  linkType: hard
-
-"electron-fetch@npm:^1.7.4":
-  version: 1.7.4
-  resolution: "electron-fetch@npm:1.7.4"
-  dependencies:
-    encoding: "npm:^0.1.13"
-  checksum: 67b4497d6b02449f24f2e776c367944696ad83fe5c6827c43bf96a92453d71dccef6ca0cfe9607d202f5fdf49c0fdf90533d4188fbbce72c823b90df12ba4d54
   languageName: node
   linkType: hard
 

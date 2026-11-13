@@ -1,4 +1,4 @@
-const fetch = require( 'electron-fetch' ).default;
+const { net } = require( 'electron' );
 const log = require( '../../lib/logger' )( 'desktop:analytics' );
 
 function buildQuerystring( group, name ) {
@@ -29,7 +29,7 @@ async function bumpStat( group, name ) {
 	const uriComponent = buildQuerystring( group, name );
 	const url = `https://pixel.wp.com/g.gif?v=wpcom-no-pv${ uriComponent }&t=${ Math.random() }`;
 
-	const resp = await fetch( url );
+	const resp = await net.fetch( url );
 	if ( resp.status !== 200 ) {
 		log.warn( `Analytics ping failed (${ resp.status }): `, resp.statusText );
 	}
