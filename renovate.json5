@@ -84,6 +84,7 @@
 				'@electron/notarize',
 				'cross-env',
 				'electron',
+				'electron-builder',
 				'electron-fetch',
 				'electron-store',
 				'electron-updater',
@@ -102,8 +103,6 @@
 		},
 	],
 	ignoreDeps: [
-		'electron-builder',
-
 		// The current latest version of TraceKit (0.4.7) creates a lot of noise due to mishandling
 		// of nullish unhandled rejected promise values.
 		// See: https://github.com/csnover/TraceKit/issues/86
