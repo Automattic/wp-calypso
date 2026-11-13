@@ -65,6 +65,7 @@ import clsx from 'clsx';
 import { localize, useTranslate, type TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -74,6 +75,10 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	BLACK_FRIDAY_2026_COUPON,
+	isBlackFriday2026Active,
+} from 'calypso/lib/promotions/black-friday-2026';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -131,6 +136,12 @@ import type {
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { IAppState } from 'calypso/state/types';
 import './style.scss';
+
+const loadBlackFriday2026Banner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-black-friday-2026-banner" */ 'calypso/blocks/black-friday-2026-banner'
+	);
+
 const PlanComparisonHeader = styled.h1`
 	.plans .step-container .step-container__content &&,
 	&& {
@@ -1809,6 +1820,10 @@ const PlansFeaturesMain = ( {
 					</>
 				) }
 			</div>
+			{ /* Only where the grid prices the sale coupon, so the bar never promises a discount it doesn't show. */ }
+			{ isPlansGridReady && isBlackFriday2026Active() && coupon === BLACK_FRIDAY_2026_COUPON && (
+				<AsyncLoad require={ loadBlackFriday2026Banner } placeholder={ null } />
+			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
 	);

@@ -25,6 +25,7 @@ import { getLaunchpadDestination } from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { getCouponWithBlackFriday2026Default } from 'calypso/lib/promotions/black-friday-2026-coupon';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
@@ -427,7 +428,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		);
 		const queryParams = useQuery();
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
-		const coupon = queryParams.get( 'coupon' );
+		// Matches the coupon the plans step prices, so checkout applies the same discount.
+		const coupon = getCouponWithBlackFriday2026Default( queryParams.get( 'coupon' ) ) ?? null;
 		const refParameter = queryParams.get( 'ref' );
 		// A site-selected purchase finishes in this flow, but lands and completes as that flow.
 		const postCheckoutFlowName = refParameter === SITE_SELECTED_REF ? SITE_SELECTED_REF : flowName;

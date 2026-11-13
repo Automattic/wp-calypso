@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_100_YEARS, isValidFeatureKey } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { getCouponWithBlackFriday2026Default } from 'calypso/lib/promotions/black-friday-2026-coupon';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import { PLAN } from 'calypso/sites/components/site-preview-pane/constants';
@@ -44,7 +45,9 @@ export function plans( context, next ) {
 	// same purpose. We handle both coupon and discount here for the time
 	// being to avoid confusion and to continue support for legacy
 	// coupons. We'll consolidate to just `coupon` in the future.
-	const coupon = context.query.coupon || context.query.discount;
+	const coupon = getCouponWithBlackFriday2026Default(
+		context.query.coupon || context.query.discount
+	);
 
 	context.primary = (
 		<Plans

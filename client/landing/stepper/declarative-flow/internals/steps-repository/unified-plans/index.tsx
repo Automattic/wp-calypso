@@ -18,6 +18,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsVisualSplitEnabled } from 'calypso/lib/plans/use-visual-split-experiment';
+import { getCouponWithBlackFriday2026Default } from 'calypso/lib/promotions/black-friday-2026-coupon';
 import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -128,7 +129,12 @@ const PlansStepAdaptor: StepType< {
 		[]
 	);
 	const username = useSelector( getCurrentUserName );
-	const coupon = useQuery().get( 'coupon' ) ?? undefined;
+	const couponParam = useQuery().get( 'coupon' ) ?? undefined;
+	// Only onboarding also defaults the sale coupon on its way to checkout (onboarding.ts).
+	const coupon =
+		props.flow === ONBOARDING_FLOW
+			? getCouponWithBlackFriday2026Default( couponParam )
+			: couponParam;
 	const { setSiteUrl } = useWPDispatch( ONBOARD_STORE );
 
 	const theme = useSelector( ( state ) =>
