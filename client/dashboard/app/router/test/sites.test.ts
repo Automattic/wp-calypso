@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';

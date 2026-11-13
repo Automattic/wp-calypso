@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import useRewindableActivityLogQuery from '../../../../data/activity-log/use-rewindable-activity-log-query';
 import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () =>
-	jest.fn( () => ( {
+vi.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () => ( {
+	default: vi.fn( () => ( {
 		data: [
 			{
 				rewindId: 12345,
@@ -19,25 +20,26 @@ jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', ()
 			},
 		],
 		isLoading: false,
-	} ) )
-);
+	} ) ),
+} ) );
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
 
-jest.mock( '../../../components/inline-support-link', () => {
-	return jest.fn( ( { children } ) => <button>{ children }</button> );
+vi.mock( '../../../components/inline-support-link', () => {
+	return { default: vi.fn( ( { children } ) => <button>{ children }</button> ) };
 } );
 
 // Mock file browser context with a real Provider using state so updates re-render the tree
-jest.mock(
+vi.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
-	() => {
-		const { createContext, useContext, createElement, useState } = jest.requireActual( 'react' );
+	async () => {
+		const { createContext, useContext, createElement, useState } =
+			await vi.importActual< typeof import( 'react' ) >( 'react' );
 
-		const FileBrowserContext = createContext( null );
+		const FileBrowserContext = createContext< unknown >( null );
 
 		const FileBrowserProvider = ( { children }: { children: React.ReactNode } ) => {
 			const [ sqlState, setSqlState ] = useState( 'unchecked' );
@@ -110,12 +112,12 @@ const createMockStagingSite = ( options = {} ): Site =>
 	} ) as Site;
 
 const defaultProps = {
-	onClose: jest.fn(),
+	onClose: vi.fn(),
 	syncType: 'pull' as const,
 	environment: 'production' as const,
 	productionSiteId: 1,
 	stagingSiteId: 2,
-	onSyncStart: jest.fn(),
+	onSyncStart: vi.fn(),
 };
 
 function mockSite( site: Site ) {
@@ -286,7 +288,7 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'submit button is enabled when domain confirmation matches', async () => {
-		( useRewindableActivityLogQuery as jest.Mock ).mockReturnValue( {
+		( useRewindableActivityLogQuery as Mock ).mockReturnValue( {
 			data: undefined,
 			isLoading: false,
 		} );
@@ -327,7 +329,7 @@ describe( 'Form Submission', () => {
 	} );
 
 	test( 'submits with expected options on push to production', async () => {
-		( useRewindableActivityLogQuery as jest.Mock ).mockReturnValue( {
+		( useRewindableActivityLogQuery as Mock ).mockReturnValue( {
 			data: undefined,
 			isLoading: false,
 		} );
@@ -361,7 +363,7 @@ describe( 'Form Submission', () => {
 
 describe( 'Modal Actions', () => {
 	test( 'calls onClose when cancel button is clicked', async () => {
-		const onCloseMock = jest.fn();
+		const onCloseMock = vi.fn();
 
 		mockSite( createMockSite() );
 		mockSite( createMockStagingSite() );
