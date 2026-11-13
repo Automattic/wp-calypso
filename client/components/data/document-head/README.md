@@ -2,6 +2,8 @@
 
 `<DocumentHead />` is a React component used in assigning a title, unread count, link, or meta to the global application state. It also sets `document.title` on the client, based on those parameters.
 
+On the client, its meta and link tags are rendered into the document head. On the server, those tags are rendered by `Document` instead. Server tags supplied by the component are replaced on mount; other tags, such as route-specific robots metadata, viewport settings, and stylesheets, are left alone.
+
 ## Usage
 
 Render the component, passing `title`, `skipTitleFormatting`, `unreadCount`, `link` or `meta`. It does not accept any children, nor does it render any elements to the page.

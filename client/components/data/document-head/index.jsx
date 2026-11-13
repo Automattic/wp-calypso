@@ -15,6 +15,7 @@ import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selec
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 import { gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import DocumentHeadElements from './head-elements';
 
 const isServer = typeof document === 'undefined';
 
@@ -75,7 +76,7 @@ class DocumentHead extends Component {
 	}, 0 );
 
 	render() {
-		return null;
+		return <DocumentHeadElements meta={ this.props.meta } link={ this.props.link } />;
 	}
 }
 
