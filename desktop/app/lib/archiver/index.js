@@ -1,6 +1,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const archiver = require( 'archiver' );
+const { ZipArchive } = require( 'archiver' );
 const log = require( '../../lib/logger' )( 'desktop:lib:archiver' );
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
 	 */
 	zipContents: ( contents, dst, onZipped ) => {
 		const output = fs.createWriteStream( dst );
-		const archive = archiver( 'zip', {
+		const archive = new ZipArchive( {
 			zlib: { level: 9 },
 		} );
 
