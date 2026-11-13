@@ -50,6 +50,8 @@ class PasswordlessSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		termsAfterActions: PropTypes.bool,
 		useConnectScreenActions: PropTypes.bool,
+		// Names the signup's origin to the backend, which picks the activation email and its link.
+		activationEmailFrom: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -107,7 +109,7 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
-		const { flowName, queryArgs = {} } = this.props;
+		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -176,7 +178,10 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
-				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
+				extra: {
+					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
+					...( activationEmailFrom && { from: activationEmailFrom } ),
+				},
 				...( blackboxSessionId && {
 					blackbox_session_id: blackboxSessionId,
 					blackbox_key_version: BLACKBOX_KEY_VERSION,
