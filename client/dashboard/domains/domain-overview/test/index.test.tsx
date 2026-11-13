@@ -39,5 +39,6 @@ test( 'shows an SSL problem in the header without opening advanced settings', as
 
 	render( <DomainOverview />, { queryClient } );
 
-	expect( await screen.findByRole( 'link', { name: 'View SSL details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'SSL disabled' ) ).toBeVisible();
+	expect( screen.queryByRole( 'link', { name: 'View SSL details' } ) ).not.toBeInTheDocument();
 } );

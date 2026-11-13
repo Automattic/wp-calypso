@@ -11,14 +11,15 @@ import { render } from '../../../test-utils';
 import PurchasesList from '../index';
 import type { Purchase } from '@automattic/api-core';
 
-vi.mock( '@automattic/calypso-config', () => {
-	const fn = vi.fn( () => '' );
+vi.mock( '@automattic/calypso-config', async ( importOriginal ) => {
+	const isEnabled = vi.fn( ( flag: string ) => flag === 'purchases/split-cancel-remove' );
 	return {
-		...Object.assign( fn, {
-			__esModule: true,
-			default: fn,
-			isEnabled: vi.fn( ( flag: string ) => flag === 'purchases/split-cancel-remove' ),
-		} ),
+		...( await importOriginal< typeof import( '@automattic/calypso-config' ) >() ),
+		default: Object.assign(
+			vi.fn( () => '' ),
+			{ isEnabled }
+		),
+		isEnabled,
 	};
 } );
 

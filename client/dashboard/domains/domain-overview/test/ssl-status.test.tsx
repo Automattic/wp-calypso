@@ -3,7 +3,6 @@
  */
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewSslStatus from '../ssl-status';
@@ -37,29 +36,25 @@ function renderStatus( props: object ) {
 }
 
 describe( 'DomainOverviewSslStatus', () => {
-	test( 'shows the active badge without a link', async () => {
-		renderStatus( { ssl_status: 'active' } );
+	test.each( [
+		[ 'active', 'SSL active' ],
+		[ 'pending', 'SSL pending' ],
+		[ 'newly_registered', 'SSL pending' ],
+		[ 'inactive', 'SSL disabled' ],
+	] )( 'shows a badge without a link for %s certificates', async ( ssl_status, badge ) => {
+		renderStatus( { ssl_status } );
 
-		expect( await screen.findByText( 'SSL active' ) ).toBeVisible();
+		expect( await screen.findByText( badge ) ).toBeVisible();
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
 	test.each( [
-		[ 'pending', 'SSL pending' ],
-		[ 'newly_registered', 'SSL pending' ],
-		[ 'inactive', 'SSL disabled' ],
-	] )( 'links %s certificates to the security page', async ( ssl_status, badge ) => {
-		const { recordTracksEvent } = renderStatus( { ssl_status } );
+		[ 'connected', { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' } ],
+		[ 'registered', registered ],
+	] )( 'shows the certificate of a %s domain not pointing here', async ( _, subtype ) => {
+		renderStatus( { ssl_status: 'pending', points_to_wpcom: false, subtype } );
 
-		expect( await screen.findByText( badge ) ).toBeVisible();
-		const link = screen.getByRole( 'link', { name: 'View SSL details' } );
-		expect( link ).toHaveAttribute( 'href', '/domains/example.com/security' );
-
-		await userEvent.click( link );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_domain_overview_item_click',
-			expect.objectContaining( { item: 'ssl-status' } )
-		);
+		expect( await screen.findByText( 'SSL pending' ) ).toBeVisible();
 	} );
 
 	test.each( [
@@ -75,16 +70,16 @@ describe( 'DomainOverviewSslStatus', () => {
 		}
 	);
 
-	test( 'keeps the badge but not the link during TLD maintenance', async () => {
-		renderStatus( { ssl_status: 'inactive', tld_maintenance_end_time: 1 } );
-
-		expect( await screen.findByText( 'SSL disabled' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
-	} );
-
 	test.each( [
 		[ 'a null status', { ssl_status: null } ],
-		[ 'a domain not pointing here', { ssl_status: 'inactive', points_to_wpcom: false } ],
+		[
+			'a completed transfer not pointing here',
+			{
+				ssl_status: 'inactive',
+				points_to_wpcom: false,
+				transfer_status: DomainTransferStatus.COMPLETED,
+			},
+		],
 		[
 			'a transfer',
 			{
