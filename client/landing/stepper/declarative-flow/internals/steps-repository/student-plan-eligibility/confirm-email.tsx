@@ -1,12 +1,13 @@
 import { Step } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { formatCooldown } from 'calypso/dashboard/utils/email-verification-resend';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { CONFIRMED_RECHECK_DELAYS_MS } from './constants';
 import { useBackoffPoll } from './hooks/use-backoff-poll';
 import { useResendVerificationEmail } from './hooks/use-resend-verification-email';
 import { Screen } from './screen';
@@ -33,11 +34,21 @@ const ConfirmEmail = ( { email, onConfirmed, isChecking, checkFailed }: Props ) 
 	);
 	const { status, secondsUntilResend, resend } = useResendVerificationEmail( restartPoll );
 
+	// This screen stays up while the endpoint answers `unverified`, so a confirmed email gets a few
+	// spaced checks and then a manual retry, instead of a page that waits for nothing.
+	const [ recheckCount, setRecheckCount ] = useState( 0 );
+	const rechecksExhausted = recheckCount >= CONFIRMED_RECHECK_DELAYS_MS.length;
+
 	useEffect( () => {
-		if ( isVerified ) {
-			onConfirmed();
+		if ( ! isVerified || isChecking || checkFailed || rechecksExhausted ) {
+			return;
 		}
-	}, [ isVerified ] ); // eslint-disable-line react-hooks/exhaustive-deps
+		const timer = setTimeout( () => {
+			setRecheckCount( ( count ) => count + 1 );
+			onConfirmed();
+		}, CONFIRMED_RECHECK_DELAYS_MS[ recheckCount ] );
+		return () => clearTimeout( timer );
+	}, [ isVerified, isChecking, checkFailed, rechecksExhausted, recheckCount ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const resendLabel =
 		secondsUntilResend > 0
@@ -82,7 +93,7 @@ const ConfirmEmail = ( { email, onConfirmed, isChecking, checkFailed }: Props ) 
 					{ __( 'Too many attempts. Please wait before trying again.' ) }
 				</p>
 			) }
-			{ isVerified && checkFailed && ! isChecking && (
+			{ isVerified && ( checkFailed || rechecksExhausted ) && ! isChecking && (
 				<div className="student-plan-eligibility__actions">
 					<p className="student-plan-eligibility__error" role="alert">
 						{ __( 'Your email is confirmed, but we couldn’t continue. Please try again.' ) }

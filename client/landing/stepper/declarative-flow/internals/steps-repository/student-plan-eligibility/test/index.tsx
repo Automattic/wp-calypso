@@ -18,6 +18,9 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 	fetchCurrentUser: jest.fn( () => ( { type: 'TEST_FETCH_CURRENT_USER' } ) ),
 } ) );
 
+// Short waits between the checks after a confirmation, so the tests don't sit through seconds.
+jest.mock( '../constants', () => ( { CONFIRMED_RECHECK_DELAYS_MS: [ 0, 10, 20, 30 ] } ) );
+
 const ELIGIBILITY_PATH = '/wpcom/v2/me/student-plan-eligibility';
 const SEND_VERIFICATION_EMAIL_PATH = '/rest/v1.1/me/send-verification-email';
 
@@ -195,7 +198,31 @@ describe( 'StudentPlanEligibility', () => {
 			expect( fetchCurrentUser ).toHaveBeenCalled();
 		} );
 
-		it( 'continues once the account reports the email as confirmed', async () => {
+		/**
+		 * The confirmation arrives while the screen is up: `/me` turns verified, and the polling stops.
+		 */
+		it( 'continues once `/me` reports the email as confirmed', async () => {
+			const submit = jest.fn();
+			mockEligibility( 'unverified' );
+			mockEligibility( 'eligible' );
+
+			render( { props: { navigation: { submit } } } );
+
+			await screen.findByRole( 'heading', { name: 'Confirm your email to get the Student plan' } );
+			jest.mocked( fetchCurrentUser ).mockReturnValueOnce( {
+				type: 'CURRENT_USER_SET_EMAIL_VERIFIED',
+				verified: true,
+			} as never );
+
+			act( () => {
+				window.dispatchEvent( new Event( 'focus' ) );
+			} );
+
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'checks eligibility on arrival when `/me` already reports the email as confirmed', async () => {
 			const submit = jest.fn();
 			mockEligibility( 'unverified' );
 			mockEligibility( 'eligible' );
@@ -204,6 +231,46 @@ describe( 'StudentPlanEligibility', () => {
 
 			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
 			expect( submit ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		/**
+		 * The endpoint can lag behind `/me` for a moment after the confirmation.
+		 */
+		it( 'checks again while a confirmed email still reads as unverified', async () => {
+			const submit = jest.fn();
+			mockEligibility( 'unverified' );
+			mockEligibility( 'unverified' );
+			mockEligibility( 'unverified' );
+			mockEligibility( 'eligible' );
+
+			render( { props: { navigation: { submit } }, emailVerified: true } );
+
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'offers a retry, and stops polling, when a confirmed email keeps reading as unverified', async () => {
+			const submit = jest.fn();
+			// The first answer, then one for each of the four checks after the confirmation.
+			for ( let i = 0; i < 5; i++ ) {
+				mockEligibility( 'unverified' );
+			}
+			mockEligibility( 'eligible' );
+
+			render( { props: { navigation: { submit } }, emailVerified: true } );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Your email is confirmed, but we couldn’t continue. Please try again.'
+			);
+			jest.mocked( fetchCurrentUser ).mockClear();
+			act( () => {
+				window.dispatchEvent( new Event( 'focus' ) );
+			} );
+			expect( fetchCurrentUser ).not.toHaveBeenCalled();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
 		} );
 
 		it( 'offers a retry when the check after the confirmation fails', async () => {
