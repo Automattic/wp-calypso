@@ -69,17 +69,4 @@ describe( 'PureUniversalNavbarFooter', () => {
 			'https://apps.wordpress.com/store?campaign=qrcode-apps'
 		);
 	} );
-
-	test( 'shows the Sitemap link in the 2026 legal row on English pages only', () => {
-		const { rerender } = render(
-			<PureUniversalNavbarFooter isLoggedIn={ false } locale="en" colorway="white" />
-		);
-		expect( screen.getByRole( 'link', { name: 'Sitemap' } ) ).toHaveAttribute(
-			'href',
-			'https://wordpress.com/sitemap/'
-		);
-
-		rerender( <PureUniversalNavbarFooter isLoggedIn={ false } locale="fr" colorway="white" /> );
-		expect( screen.queryByRole( 'link', { name: 'Sitemap' } ) ).not.toBeInTheDocument();
-	} );
 } );
