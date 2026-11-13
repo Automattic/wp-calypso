@@ -1,0 +1,27 @@
+.student-plan-eligibility {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	text-align: center;
+
+	.student-plan-eligibility__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+	}
+
+	.student-plan-eligibility__note,
+	.student-plan-eligibility__footer {
+		margin: 0;
+	}
+
+	.student-plan-eligibility__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 24px;
+		justify-content: center;
+		list-style: none;
+		margin: 0;
+	}
+}
