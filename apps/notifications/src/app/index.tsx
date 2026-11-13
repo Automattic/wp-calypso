@@ -19,24 +19,11 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
-import type { FilterName, LayoutStyle } from './types';
+import type { FilterName } from './types';
 
 import './style.scss';
 
 repliesCache.cleanup();
-
-export type NotificationPreferences = {
-	layoutStyle?: LayoutStyle | null;
-};
-
-let hasResolvedPreferences = false;
-
-const applyPreferences = ( { layoutStyle }: NotificationPreferences ) => {
-	// Unset means never chosen, and those people get the simplified rows. Where the picker
-	// is missing the note list renders the detailed ones whatever this says, so there is
-	// nothing here to ask about the flag.
-	store.dispatch( actions.ui.setLayoutStyle( layoutStyle ?? 'simplified' ) );
-};
 
 /**
  * Force a manual refresh of the notes data
@@ -151,8 +138,6 @@ const NotificationApp = ( {
 	isDismissible = false,
 	constrainTabbing = false,
 	isViewSettingsEnabled = false,
-	preferences,
-	onPreferenceChange,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -160,8 +145,6 @@ const NotificationApp = ( {
 	isDismissible?: boolean;
 	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
-	preferences?: NotificationPreferences;
-	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -180,17 +163,6 @@ const NotificationApp = ( {
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
 	}, [ wpcom ] );
-
-	// Seeded once, whenever the host resolves them. A later value would overwrite
-	// whatever the picker has since saved.
-	useEffect( () => {
-		if ( ! preferences || hasResolvedPreferences ) {
-			return;
-		}
-
-		hasResolvedPreferences = true;
-		applyPreferences( preferences );
-	}, [ preferences ] );
 
 	useEffect( () => {
 		getClient()?.setLocale( locale );
@@ -268,7 +240,6 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
-					onPreferenceChange={ onPreferenceChange }
 				>
 					<NotificationContent
 						isDismissible={ isDismissible }

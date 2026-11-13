@@ -3,10 +3,9 @@ import { setLocaleData } from '@wordpress/i18n';
 import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import NotificationApp, { refreshNotes } from '../app';
-import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
@@ -100,7 +99,6 @@ const NotesWrapper = ( { wpcom } ) => {
 	useEnableWpCompatOverlaySlot();
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
-	const [ preferences, setPreferences ] = useState();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	if ( locale && 'en' !== locale ) {
@@ -202,27 +200,6 @@ const NotesWrapper = ( { wpcom } ) => {
 		sendMessage( { action: 'widescreen', widescreen: true } );
 	}, [] );
 
-	useEffect( () => {
-		if ( ! isViewSettingsEnabled ) {
-			return;
-		}
-
-		wpcom.req
-			.get( '/me/preferences' )
-			.then( ( { calypso_preferences } ) =>
-				setPreferences( {
-					layoutStyle: calypso_preferences?.[ 'notifications-layout-style' ],
-				} )
-			)
-			.catch( logError );
-	}, [ wpcom ] );
-
-	const handlePreferenceChange = useCallback(
-		( key, value ) =>
-			wpcom.req.post( '/me/preferences', { calypso_preferences: { [ key ]: value } } ),
-		[ wpcom ]
-	);
-
 	if ( ! isShowing ) {
 		return null;
 	}
@@ -235,8 +212,6 @@ const NotesWrapper = ( { wpcom } ) => {
 			isDismissible={ isMobileViewport }
 			constrainTabbing
 			isViewSettingsEnabled={ isViewSettingsEnabled }
-			preferences={ preferences }
-			onPreferenceChange={ handlePreferenceChange }
 		/>
 	);
 };

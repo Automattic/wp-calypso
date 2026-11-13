@@ -253,22 +253,3 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		box-shadow: none;
 	}
 }
-
-// Marks the gear while the simplified layout is the one in use.
-.wpnc-app__settings-toggle.is-simplified {
-	position: relative;
-}
-
-.wpnc-app__settings-toggle.is-simplified::after {
-	content: "";
-	position: absolute;
-	inset-block-start: -2px;
-	inset-inline-end: -2px;
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: var(--color-accent);
-	// A ring in the panel's own background colour, so the dot reads against the gear
-	// rather than disappearing into its strokes.
-	box-shadow: 0 0 0 1px var(--color-surface);
-}

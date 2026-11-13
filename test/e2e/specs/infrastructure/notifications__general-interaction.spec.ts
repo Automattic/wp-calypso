@@ -87,12 +87,6 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 				commentToTrash
 			);
 
-			// Both comments are on the same post, so the simplified rows would read
-			// identically — it drops the excerpt, which is the only part that differs.
-			await notificationUserRestAPIClient.setCalypsoPreferences( {
-				'notifications-layout-style': 'detailed',
-			} );
-
 			await notificationsUser.authenticate( page );
 		} );
 

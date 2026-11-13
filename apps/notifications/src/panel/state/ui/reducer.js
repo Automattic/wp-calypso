@@ -5,7 +5,6 @@ import {
 	SELECT_NOTE,
 	SET_IS_SHOWING,
 	SET_FILTER,
-	SET_LAYOUT_STYLE,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
 } from '../action-types';
@@ -45,9 +44,6 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 
 	return state;
 };
-
-export const layoutStyle = ( state = 'simplified', action ) =>
-	SET_LAYOUT_STYLE === action.type ? action.layoutStyle : state;
 
 export const isPanelOpen = ( state = false, { type, isShowing } ) =>
 	SET_IS_SHOWING === type ? isShowing : state;
@@ -95,7 +91,6 @@ export default combineReducers( {
 	isLoading,
 	filteredLoading,
 	isPanelOpen,
-	layoutStyle,
 	selectedNoteId,
 	filterName,
 	keyboardShortcutsAreEnabled,

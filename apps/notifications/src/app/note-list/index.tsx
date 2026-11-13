@@ -12,7 +12,6 @@ import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
-import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, SelectedNoteIdContext } from './dataviews';
@@ -144,12 +143,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	};
 
 	// Field identities must stay stable or DataViews remounts every cell per re-render.
-	// The setting is only offered where the flag is on, so only honour it there. A host
-	// without the flag has no way to change it back, and a preference saved from one that
-	// does would otherwise follow the account into it.
-	const storedLayoutStyle = useSelector( getLayoutStyle );
-	const layoutStyle = isViewSettingsEnabled ? storedLayoutStyle : 'detailed';
-	const fields = useMemo( () => getFields( layoutStyle ), [ layoutStyle ] );
+	const fields = useMemo( () => getFields( isViewSettingsEnabled ), [ isViewSettingsEnabled ] );
 
 	const { data, paginationInfo } = filterSortAndPaginate( visibleNotes, view, fields );
 
