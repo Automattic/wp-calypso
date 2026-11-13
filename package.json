@@ -315,7 +315,7 @@
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.4.0",
 		"tslib": "^2.8.1",
-		"typescript": "6.0.3",
+		"typescript": "7.0.2",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0",
 		"vitest-canvas-mock": "^1.2.0",

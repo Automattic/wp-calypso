@@ -73,7 +73,7 @@
 		"stylelint": "^17.16.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^9.0.0",
-		"typescript": "^6.0.3",
+		"typescript": "^7.0.2",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0"
 	},
