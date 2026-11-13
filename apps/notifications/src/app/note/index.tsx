@@ -17,7 +17,7 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import SimplifiedNote, { hasNoteContext } from '../note-simplified';
+import SimplifiedNote from '../note-simplified';
 import { getTemporaryNoteTitle } from '../note-simplified/labels';
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
@@ -84,7 +84,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 		( state ) => !! note && getIsNotePendingApproval( state, note )
 	);
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
-	const isSimplified = useIsSimplifiedNote();
+	const isSimplifiedNote = useIsSimplifiedNote();
 
 	useEffect( () => {
 		if ( note?.id ) {
@@ -95,8 +95,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	if ( ! note ) {
 		return null;
 	}
-
-	const isSimplifiedNote = isSimplified && hasNoteContext( note );
 
 	return (
 		<>

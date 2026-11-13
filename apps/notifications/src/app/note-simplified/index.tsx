@@ -30,8 +30,6 @@ const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 	new_post: { Layout: NewPostNote },
 };
 
-export const hasNoteContext = ( note: Note ) => !! note.meta?.actor;
-
 export const getNotePreview = ( note: Note ) => {
 	const getPreview = NOTE_TYPES[ note.type ]?.getPreview;
 
