@@ -1,8 +1,12 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import { mergeConfig } from 'vite';
 import { CALYPSO_SRC, calypsoBase, client, root } from './base.mjs';
+
+const require = createRequire( import.meta.url );
+const sectionsFile = path.join( client, 'sections.js' );
 
 /**
  * Sass resolves `@import '@automattic/foo/src/styles/bar'` without Vite's conditions, so deep
@@ -63,13 +67,60 @@ function reactPreamble() {
 }
 
 /**
+ * The sections the server config of `CALYPSO_ENV` enables, as `calypso/sections-filter` decides.
+ * It reads the config files directly, so it works before the packages are built.
+ * @returns {Object[]}
+ */
+export function enabledSections() {
+	const parse = require( path.join( client, 'server/config/parser.js' ) );
+	const { serverData } = parse( path.join( root, 'config' ), {
+		env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
+	} );
+	delete require.cache[ sectionsFile ];
+	return require( sectionsFile ).filter(
+		( section ) => serverData.sections?.[ section.name ] ?? serverData.enable_all_sections
+	);
+}
+
+/**
+ * Like `build-tools/webpack/sections-loader.js` for the browser: each section loads with `import()`.
+ * @param {Object[]} sections
+ * @returns {import('vite').Plugin}
+ */
+function sectionsPlugin( sections ) {
+	return {
+		name: 'calypso-sections',
+		enforce: 'pre',
+		transform( code, id ) {
+			if ( id !== sectionsFile ) {
+				return;
+			}
+			const list = sections.map( ( section ) =>
+				JSON.stringify( section ).replace(
+					/}$/,
+					`, "load": () => import( ${ JSON.stringify( section.module ) } ) }`
+				)
+			);
+			return { code: `export default [\n${ list.join( ',\n' ) }\n];`, map: null };
+		},
+	};
+}
+
+/**
  * The browser side of `client/webpack.config.js`, for Vite in middleware mode inside Express.
  * @param {Object}   options
  * @param {string[]} options.entries      Entry files, relative to the repo root, for the deps scan.
+ * @param {Object[]} [options.sections]   The sections `client/sections.js` loads.
  * @param {import('node:http').Server} [options.httpServer] Express's server, so HMR shares its port.
  * @returns {import('vite').UserConfig}
  */
-export function devOverlay( { entries, httpServer } ) {
+export function devOverlay( { entries, sections = [], httpServer } ) {
+	// The deps scanner doesn't run plugins, so it can't see the sections' `import()`s. Without
+	// these, Vite finds a section's dependencies on its first visit, then re-optimizes and reloads.
+	const sectionEntries = sections.map(
+		( section ) =>
+			section.module.replace( /^calypso\//, 'client/' ) + '/index.{web.js,js,jsx,ts,tsx}'
+	);
 	const nodeDebug = JSON.stringify( process.env.NODE_DEBUG || false );
 	return {
 		cacheDir: path.join( root, '.cache/vite' ),
@@ -77,6 +128,7 @@ export function devOverlay( { entries, httpServer } ) {
 		plugins: [
 			react( { jsxImportSource: '@emotion/react', include: /\.(m?[jt]sx?)$/ } ),
 			reactPreamble(),
+			sectionsPlugin( sections ),
 		],
 		// Classic Calypso has JSX in .js files.
 		oxc: { include: /\.(m?[jt]sx?)$/, exclude: /node_modules/ },
@@ -101,6 +153,11 @@ export function devOverlay( { entries, httpServer } ) {
 					replacement: `${ client }/components/empty-component`,
 				},
 				{ find: /^path$/, replacement: 'path-browserify' },
+				// Sass doesn't resolve a package's `main`.
+				{
+					find: /^@automattic\/calypso-color-schemes$/,
+					replacement: path.join( root, 'packages/calypso-color-schemes/css/index.css' ),
+				},
 			],
 		},
 		css: {
@@ -118,7 +175,7 @@ export function devOverlay( { entries, httpServer } ) {
 			},
 		},
 		optimizeDeps: {
-			entries,
+			entries: [ ...entries, ...sectionEntries ],
 			rolldownOptions: {
 				transform: {
 					define: { global: 'globalThis', 'process.env.NODE_DEBUG': nodeDebug },
@@ -135,20 +192,61 @@ export function devOverlay( { entries, httpServer } ) {
 	};
 }
 
-/** The Dashboard entries: chunk group name → source file, relative to the repo root. */
-export const dashboardEntries = {
-	'entry-dashboard-dotcom': 'client/dashboard/app-dotcom/index.ts',
-	'entry-dashboard-a4a': 'client/dashboard/app-a4a/index.ts',
+const globalStyles = [ 'client/assets/stylesheets/style.scss' ];
+// The loading placeholder the server renders for Stepper, signup and checkout.
+const placeholderStyles = [
+	'client/components/loading/style.scss',
+	'packages/onboarding/src/step-container-v2/wireframes/Loading/style.scss',
+	'packages/onboarding/src/step-container-v2/components/StepContainerV2/style.scss',
+	'packages/onboarding/src/step-container-v2/components/TopBar/style.scss',
+	'packages/onboarding/src/step-container-v2/components/Heading/style.scss',
+];
+const omnibarStyles = [
+	'packages/omnibar/src/style.scss',
+	'client/dashboard/app/omnibar/style.scss',
+];
+
+/**
+ * The entries `yarn start-dashboard:vite` serves, as in `entry` in `client/webpack.config.js`: the
+ * Dashboard, and the classic flows it links into. Each has its source file and the stylesheets the
+ * server-rendered page needs before the scripts run, relative to the repo root.
+ * @type {Record<string, { file: string, styles: string[] }>}
+ */
+export const startDashboardEntries = {
+	'entry-main': { file: 'client/boot/app.js', styles: globalStyles },
+	'entry-stepper': {
+		file: 'client/landing/stepper/index.tsx',
+		styles: [ ...globalStyles, ...placeholderStyles ],
+	},
+	'entry-dashboard-dotcom': {
+		file: 'client/dashboard/app-dotcom/index.ts',
+		styles: omnibarStyles,
+	},
+	'entry-dashboard-a4a': { file: 'client/dashboard/app-a4a/index.ts', styles: omnibarStyles },
 };
 
 /**
+ * The stylesheets a section's server-rendered page needs before the scripts run.
+ * @type {Record<string, string[]>}
+ */
+export const sectionStyles = {
+	checkout: placeholderStyles,
+	signup: placeholderStyles,
+};
+
+/**
+ * Must run after `CALYPSO_ENV` is set: it reads the server config.
  * @param {Object} [options]
  * @param {import('node:http').Server} [options.httpServer]
  * @returns {import('vite').UserConfig}
  */
-export function dashboardDevConfig( options = {} ) {
+export function startDashboardDevConfig( options = {} ) {
 	return mergeConfig(
 		calypsoBase(),
-		devOverlay( { entries: Object.values( dashboardEntries ), ...options } )
+		devOverlay( {
+			entries: Object.values( startDashboardEntries ).map( ( entry ) => entry.file ),
+			sections: enabledSections(),
+			...options,
+		} )
 	);
 }
