@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	Outlet,
@@ -12,13 +12,14 @@ import {
 } from '@tanstack/react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { StrictMode, useEffect, useState } from 'react';
+import { vi } from 'vitest';
 import { dashboardRedirect } from '../../router/redirect';
 import { useConsumeSearchParams } from '../use-consume-search-params';
 import type { AnyRoute } from '@tanstack/react-router';
 
-const onConsume = jest.fn();
+const onConsume = vi.fn();
 let blockerAnswersLater = false;
-const shouldBlock = jest.fn( (): boolean | Promise< boolean > =>
+const shouldBlock = vi.fn( (): boolean | Promise< boolean > =>
 	blockerAnswersLater
 		? new Promise( ( resolve ) => setTimeout( () => resolve( false ), 30 ) )
 		: false
