@@ -21,7 +21,7 @@ import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
 import type { Domain, Purchase } from '@automattic/api-core';
 
-jest.mock( '../../../../app/router/domains', () => ( {
+vi.mock( '../../../../app/router/domains', () => ( {
 	domainRoute: { fullPath: '/domains/$domainName' },
 } ) );
 
