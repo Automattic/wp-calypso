@@ -258,6 +258,12 @@ Applies to the generic V1 `StepContainer` / `Loading` and V2 `Step.Loading` path
 tailored (`TailoredFlowPreCheckoutScreen`, newsletter / update-design) and hundred-year
 processing screens short-circuit earlier and keep their own dedicated copy.
 
+#### `STEPS.POST_CHECKOUT_ONBOARDING` (slug: `'post-checkout-onboarding'`)
+
+| Prop                | Type      | What it does                                                                             |
+| ------------------- | --------- | ---------------------------------------------------------------------------------------- |
+| `enableAiLaunchpad` | `boolean` | Turns on the AI Launchpad (Site Setup) for the site checkout created, after any transfer |
+
 #### The register / user step (slug: `'user'`, auto-injected)
 
 Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `initialize()` array,
