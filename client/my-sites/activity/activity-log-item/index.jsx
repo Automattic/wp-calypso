@@ -260,13 +260,11 @@ class ActivityLogItem extends Component {
 	renderRewindAction = () => {
 		const {
 			activity,
-			canAutoconfigure,
 			createBackup,
 			createRewind,
 			disableBackup,
 			disableRestore,
 			enableClone,
-			siteId,
 			siteSlug,
 			trackAddCreds,
 			translate,
@@ -290,11 +288,7 @@ class ActivityLogItem extends Component {
 				{ showCredentialsButton && (
 					<Button
 						compact={ isCompact }
-						href={
-							canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `${ settingsPath( siteSlug ) }#credentials`
-						}
+						href={ `${ settingsPath( siteSlug ) }#credentials` }
 						onClick={ trackAddCreds }
 					>
 						<Gridicon icon="plus" size={ 18 } />{ ' ' }
@@ -321,17 +315,13 @@ class ActivityLogItem extends Component {
 		if ( this.props.rewindIsActive ) {
 			return null;
 		}
-		const { siteId, siteSlug, trackFixCreds, translate, canAutoconfigure } = this.props;
+		const { siteId, siteSlug, trackFixCreds, translate } = this.props;
 		return (
 			<Button
 				className="activity-log-item__quick-action"
 				primary
 				compact
-				href={
-					canAutoconfigure
-						? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-						: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
-				}
+				href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }` }
 				onClick={ trackFixCreds }
 			>
 				{ translate( 'Fix credentials' ) }
@@ -439,7 +429,6 @@ const mapStateToProps = ( state, { className, activity, siteId } ) => {
 		siteSlug: site.slug,
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
 		missingRewindCredentials: rewindState.state === 'awaitingCredentials',
-		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
 	};
 };

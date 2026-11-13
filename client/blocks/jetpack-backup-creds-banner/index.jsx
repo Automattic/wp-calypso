@@ -39,11 +39,7 @@ class JetpackBackupCredsBanner extends Component {
 						event={ event }
 						className="jetpack-backup-creds-banner"
 						iconPath={ jetpackCredentials }
-						href={
-							rewindState.canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `${ settingsPath( siteSlug ) }#credentials`
-						}
+						href={ `${ settingsPath( siteSlug ) }#credentials` }
 						title={ translate( 'Add your server credentials' ) }
 						description={ translate(
 							'Enter your SSH, SFTP or FTP credentials to enable one-click site restores and faster backups.'
