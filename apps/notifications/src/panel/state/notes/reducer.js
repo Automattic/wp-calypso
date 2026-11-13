@@ -77,6 +77,10 @@ export const noteReads = ( state = {}, { type, noteId } ) => {
 		return { ...state, [ noteId ]: true };
 	}
 
+	if ( types.UNREAD_NOTE === type && noteId ) {
+		return { ...state, [ noteId ]: false };
+	}
+
 	return state;
 };
 
