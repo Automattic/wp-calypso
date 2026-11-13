@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { omnibarEvents } from '../../events';
 import { useNotificationsNodeBuilder } from '../index';
@@ -39,7 +40,7 @@ describe( '<Omnibar> notifications node', () => {
 
 	test( 'asks the host app to toggle the notifications panel when clicking the node', async () => {
 		const user = userEvent.setup();
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		const unsubscribe = omnibarEvents.notifications.subscribe( onToggle );
 
 		render( <NotificationsNodeOmnibar /> );

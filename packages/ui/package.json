@@ -63,7 +63,7 @@
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@testing-library/user-event": "^14.6.8",
-		"esbuild": "^0.27.0",
+		"esbuild": "^0.28.2",
 		"esbuild-sass-plugin": "^3.1.0",
 		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
@@ -72,7 +72,7 @@
 		"storybook": "^10.6.5",
 		"stylelint": "^17.16.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
-		"tsup": "^8.5.1",
+		"tsup": "^9.0.0",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0"

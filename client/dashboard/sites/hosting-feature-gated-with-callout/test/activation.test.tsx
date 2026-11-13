@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
- * @jest-environment-options {"url":"https://container-test.calypso.live"}
+ * @vitest-environment jsdom
+ * @vitest-environment-options { "url": "https://container-test.calypso.live" }
  */
 
 import { HostingFeatures, type Site } from '@automattic/api-core';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ActivationCallout from '../activation';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	globalThis.window.configData = { env_id: 'dashboard-horizon' };
 	globalThis.window.electron = {};
-	return jest.requireActual( '../../../../../packages/calypso-config/src' );
+	return import( '../../../../../packages/calypso-config/src' );
 } );
 
 test( 'shows hosting eligibility in the standalone Desktop Dashboard without Redux', async () => {

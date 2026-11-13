@@ -119,7 +119,11 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 								onClick={ goBack }
 							/>
 						) }
-						<Heading level={ 3 } size={ 15 } weight={ 500 }>
+						<Heading
+							level={ 3 }
+							size={ 15 }
+							weight="var(--wpds-typography-font-weight-emphasis, 600)"
+						>
 							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
 						</Heading>
 					</HStack>

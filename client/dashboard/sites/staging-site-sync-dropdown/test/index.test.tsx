@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
- * @jest-environment-options {"url":"https://my.wordpress.com"}
+ * @vitest-environment jsdom
+ * @vitest-environment-options { "url": "https://my.wordpress.com" }
  */
 
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	globalThis.window.configData = {
 		env_id: 'dashboard-production',
 		calypso_live_image: false,
@@ -19,7 +20,7 @@ jest.mock( '@automattic/calypso-config', () => {
 		wpcom_url: 'https://wordpress.com',
 	};
 	globalThis.window.electron = {};
-	return jest.requireActual( '../../../../../packages/calypso-config/src' );
+	return import( '../../../../../packages/calypso-config/src' );
 } );
 
 const createMockSite = ( options = {} ): Site =>
