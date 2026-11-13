@@ -93,6 +93,13 @@
 .wpnc-simplified__card {
 	display: block;
 	overflow-wrap: anywhere;
+	// The design system's surface border, which Card doesn't take yet. The token
+	// isn't remapped for the dark theme, so the dashboard's border takes over there.
+	box-shadow: 0 0 0 1px var(--wpds-color-stroke-surface-neutral, #dbdbdb);
+
+	@include ui-mixins.when-dark-theme {
+		box-shadow: 0 0 0 1px var(--dashboard-surface__border-color, #4a4a4a);
+	}
 	transition:
 		background-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease),
 		box-shadow var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
@@ -159,8 +166,8 @@
 .wpnc-simplified .wpnc__reply {
 	// Adds to the body stack's 8px gap for 12px above the line.
 	margin-block-start: $grid-unit-05;
-	font-size: 15px;
-	line-height: 24px;
+	font-size: 14px;
+	line-height: 22px;
 
 	.wpnc__gridicon {
 		margin-inline-end: 2px;
@@ -181,6 +188,23 @@
 .wpnc-simplified .wpnc__body-content > .wpnc__comment,
 .wpnc-simplified .wpnc__body-content > .wpnc__post,
 .wpnc-simplified .wpnc-simplified__parent-text {
-	font-size: 15px;
-	line-height: 24px;
+	font-size: 14px;
+	line-height: 22px;
+}
+
+// Headings in a post take the body's size, set apart by their weight and more
+// space above them than between paragraphs, so each starts a section.
+.wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content :is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
+	font-size: 14px;
+	line-height: 22px;
+
+	&:not(:first-child) {
+		margin-block-start: $grid-unit-30;
+	}
+}
+
+// List items wrap over several of the taller lines, so they need more room
+// between them than in the detailed layout.
+.wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content li + li {
+	margin-block-start: $grid-unit-10;
 }

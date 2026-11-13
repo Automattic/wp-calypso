@@ -69,7 +69,7 @@ const ThreadItem = ( {
 		<NoteIcon className="wpnc-simplified__photo" icon={ avatar ?? undefined } size={ 36 } />
 	);
 	const name = author && (
-		<Text className="wpnc-simplified__author" size={ 15 } weight={ 600 }>
+		<Text className="wpnc-simplified__author" size={ 14 } weight={ 600 } lineHeight="20px">
 			{ authorUrl ? (
 				<a href={ authorUrl } target="_blank" rel="noreferrer">
 					{ author }
