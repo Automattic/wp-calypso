@@ -68,3 +68,100 @@ a.dataviews-url-field {
 .dataviews-view-table tbody .dataviews-item-actions .components-button.is-compact {
 	height: var( --wpds-dimension-size-sm, 24px );
 }
+
+// A table wider than its card scrolls sideways, and touch browsers hide the scrollbar. DataViews
+// only hints at it with a 1px line on the sticky actions column, and tables without actions get
+// no hint at all. Draw a shadow on every edge that still hides columns.
+//
+// The shadows are pseudo-elements stacked on the table in a single grid cell and pinned to the
+// scroll area with `position: sticky`. A scroll timeline shows and hides them along the scroll
+// range. It stays inactive when nothing overflows, which leaves them at `opacity: 0`. Browsers
+// without scroll timelines skip the whole block and keep the DataViews default.
+@supports ( animation-timeline: scroll() ) {
+	.dataviews-layout__container:has( > .dataviews-view-table ) {
+		display: grid;
+		grid-template-columns: minmax( 0, 1fr );
+		align-content: start;
+
+		> .dataviews-view-table,
+		> .dataviews-view-table__bulk-actions-overlay {
+			grid-area: 1 / 1;
+		}
+
+		> .dataviews-view-table__bulk-actions-overlay {
+			align-self: start;
+		}
+
+		&::before,
+		&::after {
+			content: "";
+			grid-area: 1 / 1;
+			position: sticky;
+			z-index: 2;
+			width: 20px;
+			opacity: 0;
+			pointer-events: none;
+			animation: linear both;
+			animation-timeline: scroll( nearest inline );
+		}
+
+		&::before {
+			inset-inline-start: 0;
+			justify-self: start;
+			background: linear-gradient( to right, rgba( 0, 0, 0, 0.13 ), transparent );
+			animation-name: dashboard-dataviews-overflow-start;
+		}
+
+		&::after {
+			inset-inline-end: 0;
+			justify-self: end;
+			background: linear-gradient( to left, rgba( 0, 0, 0, 0.13 ), transparent );
+			animation-name: dashboard-dataviews-overflow-end;
+		}
+
+		// The sticky actions column carries the trailing shadow itself, see below.
+		&:has( .dataviews-view-table__actions-column--sticky )::after {
+			display: none;
+		}
+	}
+}
+
+@keyframes dashboard-dataviews-overflow-start {
+	0% {
+		opacity: 0;
+	}
+	8%,
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes dashboard-dataviews-overflow-end {
+	0%,
+	92% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+// Turn the 1px line DataViews draws on the sticky actions column into the same shadow. A single
+// element, from the header cell down, draws it for the whole column: one piece per row lets the
+// row borders show through between the pieces. The table clips it at its bottom edge.
+.dataviews-view-table td.dataviews-view-table__actions-column--stuck::after {
+	display: none;
+}
+
+.dataviews-view-table th.dataviews-view-table__actions-column--stuck::after {
+	inset-block: 0 auto;
+	inset-inline-start: -16px;
+	width: 17px;
+	height: 100000px;
+	background: linear-gradient( to left, var( --wpds-color-stroke-surface-neutral, #dcdcdc ) 1px, rgba( 0, 0, 0, 0.13 ) 1px, transparent );
+	pointer-events: none;
+}
+
+.dataviews-view-table:has( th.dataviews-view-table__actions-column--stuck ) {
+	clip-path: inset( -100vh -100vw 0 );
+}
