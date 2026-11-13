@@ -73,4 +73,14 @@ describe( 'domain overview actions', () => {
 			expect.stringContaining( 'intent=remove&back_to=domain' )
 		);
 	} );
+
+	test( 'passes on where the domain was opened from to the remove screen', async () => {
+		window.history.replaceState( {}, '', '/?back_to=site-domains' );
+		renderActions( {}, { ID: 456, is_auto_renew_enabled: false } as Partial< Purchase > );
+
+		expect( await screen.findByRole( 'link', { name: 'Delete' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'back_to=domain&domain_back_to=site-domains' )
+		);
+	} );
 } );

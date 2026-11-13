@@ -39,7 +39,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
-import { domainRoute } from '../../../app/router/domains';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -94,6 +93,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useCancelOptionsExperiment } from './use-cancel-options-experiment';
+import { useDomainReturnLocation } from './use-domain-return-location';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
@@ -338,10 +338,10 @@ function CancelPurchaseInner() {
 	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
-	const { back_to: backTo } = useSearch( { from: cancelPurchaseRoute.fullPath } );
+	const domainReturnLocation = useDomainReturnLocation( purchase );
 	const redirectBack = useCallback( () => {
-		if ( purchase && backTo === 'domain' && purchase.is_domain_registration ) {
-			navigate( { to: domainRoute.fullPath, params: { domainName: purchase.meta } } );
+		if ( domainReturnLocation ) {
+			navigate( domainReturnLocation );
 			return;
 		}
 
@@ -355,7 +355,7 @@ function CancelPurchaseInner() {
 		}
 
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, backTo, navigate ] );
+	}, [ purchase, domainReturnLocation, navigate ] );
 
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 

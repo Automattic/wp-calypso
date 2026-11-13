@@ -19,6 +19,7 @@ import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
+import KeepSubscriptionButton from '../keep-subscription-button';
 import type { Domain, Purchase } from '@automattic/api-core';
 
 vi.mock( '../../../../app/router/domains', () => ( {
@@ -202,6 +203,7 @@ describe( '<CancelPurchase />', () => {
 			product_slug: 'dotblog_domain',
 			meta: 'example.blog',
 			is_plan: false,
+			is_domain: true,
 			is_domain_registration: true,
 			is_refundable: false,
 		} as Purchase;
@@ -212,6 +214,46 @@ describe( '<CancelPurchase />', () => {
 			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
 
 			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+		} );
+
+		test( 'keeps where the domain was opened from when returning to it', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/?intent=remove&back_to=domain&domain_back_to=site-domains'
+			);
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+			expect( router.state.location.search ).toEqual( { back_to: 'site-domains' } );
+		} );
+
+		test( 'Keep subscription returns a domain connection to the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = render(
+				<KeepSubscriptionButton
+					purchase={ {
+						...domainPurchase,
+						product_slug: 'domain_map',
+						product_type: 'domain_map',
+						is_domain_registration: false,
+					} }
+					intent="remove"
+					onKeepSubscriptionClick={ vi.fn() }
+				/>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Keep subscription' } ) );
 
 			await waitFor( () =>
 				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
