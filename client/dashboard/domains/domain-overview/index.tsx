@@ -61,12 +61,9 @@ export default function DomainOverview() {
 		const tld = tlds.join( '.' );
 
 		return (
-			<span
-				className="domain-overview-title"
-				style={ { wordBreak: 'break-word', hyphens: 'none' } }
-			>
+			<span className="domain-overview-title">
 				{ domainName }
-				<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
+				<span className="domain-overview-title-tld">.{ tld }</span>
 			</span>
 		);
 	}, [ domain.domain ] );
