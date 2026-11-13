@@ -6,7 +6,7 @@ import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
-import { AUTH_QUERY_KEY, loadInitialUser } from './auth';
+import { AUTH_QUERY_KEY, getOAuthToken, loadInitialUser, requestOAuthToken } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
@@ -27,7 +27,15 @@ function boot( config: AppConfig ) {
 		return;
 	}
 
+	const token = getOAuthToken();
+	if ( ! token && requestOAuthToken() ) {
+		return;
+	}
+
 	maybeInitializeSupportSession( wpcom );
+	if ( token ) {
+		wpcom.loadToken( token );
+	}
 	loadDevHelpers();
 	loadPreferencesHelper();
 	limitTotalSnackbars();
