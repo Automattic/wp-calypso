@@ -1,4 +1,4 @@
-import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { DomainSubtype, type Domain, type Purchase } from '@automattic/api-core';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
@@ -11,9 +11,11 @@ import './style.scss';
 
 export default function DomainOverviewRegistration( {
 	domain,
+	purchase,
 	isDisabled,
 }: {
 	domain: Domain;
+	purchase?: Purchase;
 	isDisabled?: boolean;
 } ) {
 	const trackItem = useTrackOverviewItem( domain );
@@ -36,6 +38,7 @@ export default function DomainOverviewRegistration( {
 				{ showRenewal ? (
 					<DomainRenewalSettingsSummary
 						domain={ domain }
+						purchase={ purchase }
 						purchaseId={ purchaseId }
 						onClick={ () => trackItem( 'renew' ) }
 					/>

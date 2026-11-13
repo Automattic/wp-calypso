@@ -39,12 +39,12 @@ export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
-	const renewalNote = useRenewalNote( domain );
 
 	const { data: purchase } = useQuery( {
 		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
 		enabled: !! domain.subscription_id,
 	} );
+	const renewalNote = useRenewalNote( domain, purchase );
 
 	const { data: domainMappingStatus } = useQuery( {
 		...domainMappingStatusQuery( domain.domain ),
@@ -154,6 +154,7 @@ export default function DomainOverview() {
 					<>
 						<DomainOverviewRegistration
 							domain={ domain }
+							purchase={ purchase }
 							isDisabled={ isTldInMaintenance( domain ) }
 						/>
 						<DomainOverviewSettings
