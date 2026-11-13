@@ -10,7 +10,7 @@ steps:
     key: desktop-build-mac
     # FIXME: Not running on trunk at the moment because of recurring CI load issues.
     # See AINFRA-3515 for the followup work to re-enable and improve.
-    branches: release/* desktop/* desktop-v*
+    branches: release/* desktop/* desktop-v* renovate/desktop-*
     notify:
       - github_commit_status:
           context: Desktop / Build (mac)
@@ -37,7 +37,7 @@ steps:
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     key: desktop-build-linux
-    branches: release/* desktop/* desktop-v*
+    branches: release/* desktop/* desktop-v* renovate/desktop-*
     notify:
       - github_commit_status:
           context: Desktop / Build (linux, unsigned)
@@ -62,7 +62,7 @@ steps:
 
   - label: ":windows: Build desktop (windows store, unsigned)"
     key: desktop-build-windows-store
-    branches: release/* desktop/* desktop-v*
+    branches: release/* desktop/* desktop-v* renovate/desktop-*
     notify:
       - github_commit_status:
           context: Desktop / Build (windows store, unsigned)
@@ -76,7 +76,7 @@ steps:
   # updater stays enabled). Signs via Azure Artifact Signing.
   - label: ":windows: Build desktop (windows nsis, signed)"
     key: desktop-build-windows-nsis
-    branches: release/* desktop/* desktop-v*
+    branches: release/* desktop/* desktop-v* renovate/desktop-*
     notify:
       - github_commit_status:
           context: Desktop / Build (windows nsis, signed)

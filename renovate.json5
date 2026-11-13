@@ -75,6 +75,31 @@
 			matchFileNames: [ 'packages/wp-babel-makepot/**' ],
 			enabled: false,
 		},
+		// Packages only the desktop app uses. The `desktop-` branch prefix runs the
+		// desktop builds in Buildkite (see `.buildkite/pipeline.yml`). Packages shared
+		// with other workspaces stay out, so their updates aren't split per workspace.
+		{
+			matchFileNames: [ 'desktop/**' ],
+			matchPackageNames: [
+				'@electron/notarize',
+				'cross-env',
+				'electron',
+				'electron-fetch',
+				'electron-store',
+				'electron-updater',
+				'js-yaml',
+				'winston',
+				'ws',
+			],
+			additionalBranchPrefix: 'desktop-',
+			reviewers: [ 'team:@automattic/yolo' ],
+		},
+		{
+			matchFileNames: [ 'desktop/**' ],
+			matchManagers: [ 'bundler', 'ruby-version' ],
+			additionalBranchPrefix: 'desktop-',
+			reviewers: [ 'team:@automattic/yolo' ],
+		},
 	],
 	ignoreDeps: [
 		'electron-builder',
