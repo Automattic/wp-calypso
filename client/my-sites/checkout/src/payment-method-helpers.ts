@@ -1,7 +1,7 @@
 import { createUser } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
-import { BLACKBOX_KEY_VERSION, getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
@@ -115,7 +115,6 @@ export async function createAccount( {
 			tos: getToSAcceptancePayload(),
 			...( blackboxSessionId && {
 				blackbox_session_id: blackboxSessionId,
-				blackbox_key_version: BLACKBOX_KEY_VERSION,
 			} ),
 		} );
 
