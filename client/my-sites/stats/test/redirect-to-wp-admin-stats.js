@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { SESSION_ACTIVE } from 'calypso/state/support/constants';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import redirectToWpAdminStats from '../redirect-to-wp-admin-stats';
 
 jest.mock( '@automattic/calypso-router', () => ( { current: '' } ) );
+jest.mock( 'calypso/lib/user/support-user-interop', () => ( { isSupportSession: jest.fn() } ) );
 jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 	fetchModuleList: ( siteId ) => ( { type: 'FETCH_MODULE_LIST', siteId } ),
 } ) );
@@ -18,7 +19,6 @@ const ADMIN_URL = 'https://example.com/wp-admin/';
 const STATS_URL = `${ ADMIN_URL }admin.php?page=stats`;
 
 function makeState( {
-	support,
 	siteLoaded = true,
 	jetpack,
 	statsModuleActive,
@@ -27,7 +27,6 @@ function makeState( {
 	siteProps,
 } ) {
 	return {
-		support,
 		sites: {
 			items: siteLoaded
 				? {
@@ -58,7 +57,6 @@ function makeContext( {
 	pathname = '/stats/day/example.com',
 	querystring = '',
 	site = 'example.com',
-	support = null,
 	siteLoaded = true,
 	siteLoadable = true,
 	jetpack = false,
@@ -68,7 +66,7 @@ function makeContext( {
 	siteOptions,
 	siteProps,
 } = {} ) {
-	const siteState = { support, jetpack, adminUrl, siteOptions, siteProps };
+	const siteState = { jetpack, adminUrl, siteOptions, siteProps };
 	let state = makeState( { ...siteState, siteLoaded, statsModuleActive } );
 
 	page.current = pathname;
@@ -101,6 +99,7 @@ describe( 'redirectToWpAdminStats()', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		isSupportSession.mockReturnValue( false );
 		replace = jest.fn();
 		next = jest.fn();
 		Object.defineProperty( window, 'location', { value: { replace }, writable: true } );
@@ -140,7 +139,9 @@ describe( 'redirectToWpAdminStats()', () => {
 	} );
 
 	test( 'leaves support sessions on the classic page', async () => {
-		await redirectToWpAdminStats( makeContext( { support: SESSION_ACTIVE } ), next );
+		isSupportSession.mockReturnValue( true );
+
+		await redirectToWpAdminStats( makeContext(), next );
 
 		expect( next ).toHaveBeenCalled();
 		expect( replace ).not.toHaveBeenCalled();

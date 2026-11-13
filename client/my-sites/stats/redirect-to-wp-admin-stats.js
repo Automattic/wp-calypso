@@ -1,5 +1,6 @@
 import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -15,7 +16,6 @@ import {
 	isJetpackModuleActive as isJetpackModuleActiveViaSiteOption,
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
-import { isSupportSession } from 'calypso/state/support/selectors';
 
 /**
  * Whether `siteSelection` keeps the site on a Calypso screen of its own whatever the route: an
@@ -48,7 +48,9 @@ function isHeldOnOwnScreen( state, siteId ) {
 export default async function redirectToWpAdminStats( context, next ) {
 	const { getState, dispatch } = context.store;
 
-	if ( isSupportSession( getState() ) ) {
+	// Read from boot rather than state: on a fresh load state learns of the session only after
+	// this has run.
+	if ( isSupportSession() ) {
 		next();
 		return;
 	}
