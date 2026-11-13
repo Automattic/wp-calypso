@@ -59,6 +59,12 @@ function mockIsAutomattician( isAutomattician: boolean ) {
 		} );
 }
 
+function mockReminderPreferences() {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: { 'account-email-recovery-snoozed-until': 0 } } );
+}
+
 function mockAccountRecovery( {
 	email = '',
 	phone = null,
@@ -562,6 +568,7 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 
 		test( 'warns when the account email uses a custom domain and no recovery method is set', async () => {
+			mockReminderPreferences();
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -571,10 +578,11 @@ describe( '<PersonalDetailsSection>', () => {
 
 			render( <PersonalDetailsSection /> );
 
-			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+			expect( await screen.findByText( /protect access to your account/i ) ).toBeVisible();
 		} );
 
 		test( 'shows a CTA linking to the account recovery settings page', async () => {
+			mockReminderPreferences();
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -589,7 +597,8 @@ describe( '<PersonalDetailsSection>', () => {
 			).toHaveAttribute( 'href', '/me/security/account-recovery' );
 		} );
 
-		test( 'does not warn when a recovery email is already set', async () => {
+		test( 'warns when the backup email is unverified', async () => {
+			mockReminderPreferences();
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -599,11 +608,11 @@ describe( '<PersonalDetailsSection>', () => {
 
 			render( <PersonalDetailsSection /> );
 
-			await screen.findByRole( 'textbox', { name: 'Email address' } );
-			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+			expect( await screen.findByText( /protect access to your account/i ) ).toBeVisible();
 		} );
 
-		test( 'does not warn when a recovery phone is already set', async () => {
+		test( 'warns when the backup phone is unverified', async () => {
+			mockReminderPreferences();
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mycustomdomain.com',
@@ -620,8 +629,7 @@ describe( '<PersonalDetailsSection>', () => {
 
 			render( <PersonalDetailsSection /> );
 
-			await screen.findByRole( 'textbox', { name: 'Email address' } );
-			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+			expect( await screen.findByText( /protect access to your account/i ) ).toBeVisible();
 		} );
 
 		test( 'does not warn for a free email provider', async () => {
@@ -635,10 +643,11 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			await screen.findByRole( 'textbox', { name: 'Email address' } );
-			expect( screen.queryByText( /lose access to account recovery/i ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /protect access to your account/i ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'warns for a subdomain of a free email provider', async () => {
+			mockReminderPreferences();
 			mockUserSettings( {
 				...settings,
 				user_email: 'jane@mail.gmail.com',
@@ -648,7 +657,30 @@ describe( '<PersonalDetailsSection>', () => {
 
 			render( <PersonalDetailsSection /> );
 
-			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+			expect( await screen.findByText( /protect access to your account/i ) ).toBeVisible();
+		} );
+
+		test( 'shows conditional guidance and saves when recovery settings cannot be read', async () => {
+			const user = userEvent.setup();
+			const saved = { ...settings, user_email: 'student@gmail.com' };
+			const draft = 'student@college.edu';
+			mockUserSettings( saved );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me/account-recovery' )
+				.reply( 403 );
+			const save = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', { user_email: draft } )
+				.reply( 200, { ...saved, user_email_change_pending: true, new_user_email: draft } );
+
+			render( <PersonalDetailsSection /> );
+			const input = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( input );
+			await user.type( input, draft );
+
+			expect( screen.getByText( /if you don’t have a verified recovery/i ) ).toBeVisible();
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+			await waitFor( () => expect( save.isDone() ).toBe( true ) );
 		} );
 
 		test( 'shows an email address error from the server on the field', async () => {

@@ -2,7 +2,6 @@ import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automat
 import {
 	getEmailAddressError,
 	getEmailDomain,
-	isValidEmailAddress,
 } from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, privateApis } from '@wordpress/components';
@@ -13,9 +12,8 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { createContext, useMemo, useEffect, useCallback, useContext, useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import Notice, { RouterNoticeActionLinkButton } from '../../components/notice';
-import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
-import { isCustomDomainEmail } from './email-utils';
+import { hasVerifiedAccountRecovery, isAccountEmailAtRisk } from './account-email-recovery';
+import AccountEmailRecoveryNotice from './account-email-recovery-notice';
 import { useIsEmailWritePending } from './use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
@@ -24,6 +22,7 @@ interface EmailSectionProps {
 	value: string;
 	onChange: ( value: string ) => void;
 	disabled?: boolean;
+	hasUnsavedChanges?: boolean;
 	userSettings: UserSettings;
 	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
@@ -113,6 +112,7 @@ export default function EmailSection( {
 	value,
 	onChange,
 	disabled = false,
+	hasUnsavedChanges = false,
 	userSettings,
 	isEmailVerified,
 	onValidationChange,
@@ -153,23 +153,28 @@ export default function EmailSection( {
 	}, [ isEmailValid, onValidationChange ] );
 
 	const { user } = useAuth();
-	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
-	const isAccountRecoveryReady = accountRecovery !== undefined;
-	const hasUsableRecoveryEmail =
-		!! accountRecovery?.email &&
-		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
-	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
+	const { data: recovery, refetch: refetchRecovery } = useQuery( accountRecoveryQuery() );
+	useEffect( () => {
+		const refreshRecovery = () => {
+			// A window can regain focus without a visibility change.
+			void refetchRecovery( { cancelRefetch: false } );
+		};
+		window.addEventListener( 'focus', refreshRecovery );
+		return () => window.removeEventListener( 'focus', refreshRecovery );
+	}, [ refetchRecovery ] );
+	const verifiedRecovery = recovery && {
+		verifiedEmail: recovery.email_validated === true ? recovery.email : undefined,
+		hasVerifiedPhone: !! recovery.phone?.number && recovery.phone_validated === true,
+	};
+	const draftEmail = ! isEmailPending && value !== userSettings.user_email ? value : undefined;
+	const showDraftRecoveryWarning =
+		draftEmail !== undefined &&
+		! serverError &&
+		isAccountEmailAtRisk( draftEmail ) &&
+		! hasVerifiedAccountRecovery( draftEmail, verifiedRecovery );
 
 	const showBouncingEmailError =
 		! isEmailPending && !! user.email_bouncing && value === userSettings.user_email;
-
-	const showCustomDomainWarning =
-		! isEmailPending &&
-		!! value &&
-		isValidEmailAddress( value ) &&
-		isCustomDomainEmail( value ) &&
-		isAccountRecoveryReady &&
-		! hasRecoveryMethod;
 
 	const validity = useMemo( (): FormValidity => {
 		if ( isEmailPending ) {
@@ -197,7 +202,8 @@ export default function EmailSection( {
 			return undefined;
 		}
 
-		if ( emailValidationState === 'valid' ) {
+		// The success message appears on blur and would move the warning's link during a click.
+		if ( emailValidationState === 'valid' && ! showDraftRecoveryWarning ) {
 			return {
 				user_email: {
 					custom: { type: 'valid', message: __( 'Email address looks good!' ) },
@@ -233,6 +239,7 @@ export default function EmailSection( {
 		isEmailPending,
 		serverError,
 		showBouncingEmailError,
+		showDraftRecoveryWarning,
 		value,
 		currentEmail,
 		emailValidationState,
@@ -312,21 +319,14 @@ export default function EmailSection( {
 					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
 				/>
 			</HasEmailSaveErrorContext.Provider>
-			{ showCustomDomainWarning && (
-				<Notice
-					variant="warning"
-					title={ __( 'Protect access to your account' ) }
-					actions={
-						<RouterNoticeActionLinkButton variant="outline" to="/me/security/account-recovery">
-							{ __( 'Set up account recovery' ) }
-						</RouterNoticeActionLinkButton>
-					}
-				>
-					{ __(
-						'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Add a recovery email or phone number to keep access to your account.'
-					) }
-				</Notice>
-			) }
+			<AccountEmailRecoveryNotice
+				savedEmail={ userSettings.user_email ?? '' }
+				isDraft={ draftEmail !== undefined }
+				showDraftRecoveryWarning={ showDraftRecoveryWarning }
+				isPending={ !! isEmailPending }
+				hasUnsavedChanges={ hasUnsavedChanges }
+				verifiedRecovery={ verifiedRecovery }
+			/>
 		</VStack>
 	);
 }
