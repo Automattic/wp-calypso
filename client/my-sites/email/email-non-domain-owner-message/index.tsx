@@ -91,7 +91,16 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	let reasonText: TranslateResult | null;
 
-	if ( ownerUserName ) {
+	if (
+		domain?.currentUserIsOwner &&
+		domain.currentUserCannotAddEmailReason?.code === 'domain-expired'
+	) {
+		reasonText = translate(
+			'Email services cannot be purchased for {{strong}}%(selectedDomainName)s{{/strong}} because the domain has expired. ' +
+				'Please {{contactSupportLink}}contact support{{/contactSupportLink}} for help renewing it.',
+			translateOptions
+		);
+	} else if ( ownerUserName ) {
 		reasonText = translate(
 			'Email service can only be purchased by {{strong}}%(ownerUserName)s{{/strong}}, ' +
 				'who is the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
