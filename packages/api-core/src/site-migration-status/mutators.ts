@@ -1,10 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
 
-type MigrationSource = {
-	platform?: string;
-	platform_data?: { is_wpcom?: boolean };
-};
-
 type MigrationAccess =
 	| { migration_type: 'backup'; from_url: string; notes?: string }
 	| {
@@ -15,15 +10,6 @@ type MigrationAccess =
 			notes?: string;
 			bypass_verification?: boolean;
 	  };
-
-export function analyzeSiteMigrationSource< Source extends MigrationSource = MigrationSource >(
-	source: string
-): Promise< Source > {
-	return wpcom.req.get( {
-		path: `/imports/analyze-url?site_url=${ encodeURIComponent( source ) }`,
-		apiNamespace: 'wpcom/v2',
-	} );
-}
 
 export function setupSiteMigrationAuthorization(
 	siteId: number,

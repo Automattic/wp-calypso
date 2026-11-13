@@ -1861,8 +1861,14 @@ export const siteMigrationShareAccessRoute = createRoute( {
 			return;
 		}
 
-		const site = await queryClient.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 0 } );
-		if ( ! isAssistedWordPressMigration( site ) || site.site_migration.status_v2 !== 'pending' ) {
+		const site = await queryClient
+			.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 0 } )
+			.catch( () => undefined );
+		if (
+			! site ||
+			! isAssistedWordPressMigration( site ) ||
+			site.site_migration.status_v2 !== 'pending'
+		) {
 			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
 		}
 	},
