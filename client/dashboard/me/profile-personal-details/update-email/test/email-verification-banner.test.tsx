@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
-import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import EmailVerificationBanner from '../email-verification-banner';
@@ -44,11 +43,6 @@ const notificationSnackBar = () => {
 describe( '<EmailVerificationBanner>', () => {
 	// Both outlive a render, so one case's announcement would otherwise be found by the next:
 	// snackbars are their own notice type, and `@wordpress/a11y` keeps a live region on the body.
-	beforeEach( () => {
-		// Snackbar requires window.scrollTo to be defined
-		window.scrollTo = vi.fn();
-	} );
-
 	afterEach( () => {
 		Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 		// Snackbars are their own notice type, so the default clear leaves them behind for the

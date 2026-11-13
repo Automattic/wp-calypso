@@ -4,7 +4,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import DashboardFeedbackCard from '../feedback-card';
@@ -24,8 +23,6 @@ function captureSurvey( { success = true }: { success?: boolean } = {} ) {
 }
 
 function renderCard() {
-	// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-	window.scrollTo = vi.fn();
 	return render(
 		<>
 			<DashboardFeedbackCard agencyId={ AGENCY_ID } />

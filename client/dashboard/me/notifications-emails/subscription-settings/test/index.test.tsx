@@ -112,8 +112,6 @@ describe( 'SubscriptionSettings', () => {
 		};
 
 	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = vi.fn();
 		// Default to UTC so the existing tests keep their identity behavior.
 		( useDeliveryWindowTimezone as Mock ).mockReturnValue( {
 			timezone: 'UTC',

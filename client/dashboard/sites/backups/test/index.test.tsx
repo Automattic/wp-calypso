@@ -278,7 +278,6 @@ test.each( [
 );
 
 test( 'replaces Backups page 2 and dates together without a follow-up history push', async () => {
-	HTMLElement.prototype.scrollTo = () => {};
 	window.history.replaceState( { __TSR_index: 3 }, '', '/?keep=present' );
 	const backupEntries = Array.from( { length: 21 }, ( _, index ) => ( {
 		...mockBackupEntries[ 0 ],
