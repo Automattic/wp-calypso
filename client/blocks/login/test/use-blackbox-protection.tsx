@@ -84,6 +84,41 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		);
 	}
 
+	it( 'resets only the expected session after a response', async () => {
+		const { result } = renderProtection( { resetOnError: null } );
+		await act( async () => {} );
+		act( () => result.current.reset( 'sid' ) );
+		expect( reset ).toHaveBeenCalledTimes( 1 );
+		act( () => result.current.reset( 'sid' ) );
+		expect( reset ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps a replacement session when an earlier response arrives', async () => {
+		const { result } = renderProtection( { resetOnError: null } );
+		await act( async () => {} );
+		act( () => sdk.setState( { status: 'ready', sessionId: 'replacement' } ) );
+		act( () => result.current.reset( 'sid' ) );
+		expect( reset ).not.toHaveBeenCalled();
+	} );
+
+	it( 'ignores a response after its form unmounts', async () => {
+		const { result, unmount } = renderProtection( { resetOnError: null } );
+		await act( async () => {} );
+		const resetAfterResponse = result.current.reset;
+		unmount();
+		resetAfterResponse( 'sid' );
+		expect( reset ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not reset another active form even with the same session ID', async () => {
+		const first = renderProtection( { resetOnError: null } );
+		await act( async () => {} );
+		renderProtection( { resetOnError: null } );
+		await act( async () => {} );
+		act( () => first.result.current.reset( 'sid' ) );
+		expect( reset ).not.toHaveBeenCalled();
+	} );
+
 	it( 'resets the session when an active form receives a failed redeem', async () => {
 		const { rerender } = renderProtection( { resetOnError: null } );
 
@@ -186,17 +221,20 @@ describe( 'useBlackboxProtection key', () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 	} );
 
-	it( 'collects with the login key', async () => {
-		const { result } = renderHook( () =>
-			useBlackboxProtection( { feature: 'blackbox-signup', flow: 'signup' } )
-		);
+	it.each( [ 'login', 'signup' ] as const )(
+		'collects the %s flow with the shared key',
+		async ( flow ) => {
+			const { result } = renderHook( () =>
+				useBlackboxProtection( { feature: `blackbox-${ flow }`, flow } )
+			);
 
-		await result.current.getSessionId();
+			await result.current.getSessionId();
 
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith(
-			'login-key',
-			expect.any( AbortSignal ),
-			'signup'
-		);
-	} );
+			expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+				'login-key',
+				expect.any( AbortSignal ),
+				flow
+			);
+		}
+	);
 } );
