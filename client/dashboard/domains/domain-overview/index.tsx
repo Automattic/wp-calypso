@@ -33,6 +33,8 @@ import DomainOverviewSettings from './settings';
 import DomainOverviewSslStatus from './ssl-status';
 import TransferredDomainDetails from './transferred-domain-details';
 
+import './style.scss';
+
 export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
@@ -59,9 +61,9 @@ export default function DomainOverview() {
 		const tld = tlds.join( '.' );
 
 		return (
-			<span style={ { wordBreak: 'break-word', hyphens: 'none' } }>
+			<span className="domain-overview-title">
 				{ domainName }
-				<span style={ { whiteSpace: 'nowrap' } }>.{ tld }</span>
+				<span className="domain-overview-title-tld">.{ tld }</span>
 			</span>
 		);
 	}, [ domain.domain ] );

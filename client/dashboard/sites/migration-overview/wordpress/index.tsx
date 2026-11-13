@@ -24,8 +24,6 @@ const UNLOCK_GRACE_PERIOD = 30000;
 
 const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed' ];
 
-const CONNECTION_FAILURES = [ 'source_connection_failed', 'source_plugin_unreachable' ];
-
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -36,14 +34,10 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetch,
 	} = useQuery( {
 		...siteWordPressMigrationStatusQuery( site.ID ),
-		// Refetch the main site query if the migration state comes back as failed w/ a handoff finding.
+		// Once our team has the migration, read the site again: its migration state takes this page over.
 		queryFn: async () => {
 			const status = await fetchWordPressMigrationStatus( site.ID );
-			const mayBeHandedOff =
-				status.status === 'failed' &&
-				status.findings.some( ( { resolution } ) => resolution === 'assisted_handoff' );
-			if ( mayBeHandedOff ) {
-				// Get the higher-level migration status again, in case it was handed off.
+			if ( status.handed_off ) {
 				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
 			}
 			return status;
@@ -65,11 +59,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
 
-	// A refused connection, or a plugin we can't reach, takes setting the source up again, so go straight back to that step.
-	const connectionFailure =
-		migration?.status === 'failed'
-			? migration.findings.find( ( { code } ) => CONNECTION_FAILURES.includes( code ) )
-			: undefined;
+	// What's fixed by setting the source up again goes straight back to that step.
+	let connectionFailure = undefined;
+	if ( migration?.status === 'failed' ) {
+		connectionFailure = migration.findings.find(
+			( { suggested_action } ) => suggested_action === 'connect_source'
+		);
+	}
 
 	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
