@@ -23,3 +23,11 @@
 .domains-table .dataviews-view-table tbody td {
 	vertical-align: middle;
 }
+
+// DataViews shrinks every non-primary column to fit, leaving all spare width to the domain name.
+// Let the columns share it instead.
+.domains-table
+	.dataviews-view-table
+	col[class^='dataviews-view-table__col-']:not( .dataviews-view-table__col-actions ) {
+	width: auto;
+}
