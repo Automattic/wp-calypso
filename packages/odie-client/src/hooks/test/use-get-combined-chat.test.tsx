@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { vi } from 'vitest';
-import { useGetCombinedChat } from '../use-get-combined-chat';
+import { deduplicateZDMessages, useGetCombinedChat } from '../use-get-combined-chat';
 import type { Message } from '../../types';
 
 /**
@@ -681,5 +681,115 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 				}
 			);
 		} );
+	} );
+} );
+
+describe( 'deduplicateZDMessages — uploaded attachments', () => {
+	const fileName = 'import-export-suite-for-woocommerce (4).zip';
+
+	// What the composer adds to the chat once a file is uploaded.
+	const uploadPlaceholder = ( temporaryId: string, altText = fileName ): Message => ( {
+		content: `📎 ${ altText }`,
+		role: 'user',
+		type: 'file-placeholder',
+		id: '1794000000000',
+		received: 1794000000000,
+		mediaUrl: 'blob:https://example.com/1f0e',
+		altText,
+		metadata: { temporary_id: temporaryId, local_timestamp: 1794000000 },
+	} );
+
+	// What Zendesk returns for that file: its own id, and no temporary id.
+	const uploadedFile = ( id: string, altText = fileName ): Message => ( {
+		content: `[${ altText }](https://example.zendesk.com/attachments/${ id })`,
+		role: 'user',
+		type: 'file',
+		id,
+		received: 1793999999,
+		mediaUrl: `https://example.zendesk.com/attachments/${ id }`,
+		altText,
+	} );
+
+	it( 'replaces the placeholder of an uploaded file with the message Zendesk returns for it', () => {
+		const reply = agentMessage( 1, 'Happiness Engineer here' );
+		const file = uploadedFile( 'file-1' );
+
+		expect( deduplicateZDMessages( [ uploadPlaceholder( 'temp-1' ), reply, file ] ) ).toEqual( [
+			reply,
+			file,
+		] );
+	} );
+
+	it( 'replaces one placeholder for each file Zendesk returns', () => {
+		const secondPlaceholder = uploadPlaceholder( 'temp-2' );
+		const file = uploadedFile( 'file-1' );
+
+		expect(
+			deduplicateZDMessages( [ uploadPlaceholder( 'temp-1' ), secondPlaceholder, file ] )
+		).toEqual( [ secondPlaceholder, file ] );
+	} );
+
+	it( 'keeps the placeholder of a file whose name matches one sent earlier', () => {
+		const earlierFile = uploadedFile( 'file-1' );
+		const placeholder = uploadPlaceholder( 'temp-2' );
+
+		expect( deduplicateZDMessages( [ earlierFile, placeholder ] ) ).toEqual( [
+			earlierFile,
+			placeholder,
+		] );
+	} );
+
+	it( 'keeps the placeholder when Zendesk returns a file with another name', () => {
+		const placeholder = uploadPlaceholder( 'temp-1' );
+		const otherFile = uploadedFile( 'file-1', 'woocommerce-payments.11.2.0.zip' );
+
+		expect( deduplicateZDMessages( [ placeholder, otherFile ] ) ).toEqual( [
+			placeholder,
+			otherFile,
+		] );
+	} );
+
+	it( 'shows an uploaded file once after the conversation is re-fetched', async () => {
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+		mockConversation = { id: 'conv-1', messages: [ agentMessage( 1, 'Happiness Engineer here' ) ] };
+
+		const { result, rerender } = renderCombinedChat();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.messages.some( ( m ) => m.message_id === 1 ) ).toBe(
+				true
+			);
+		} );
+
+		act( () => {
+			result.current.setMainChatState( ( chat ) => ( {
+				...chat,
+				messages: [ ...chat.messages, uploadPlaceholder( 'temp-1' ) ],
+			} ) );
+		} );
+
+		mockConversation = {
+			id: 'conv-1',
+			messages: [ agentMessage( 1, 'Happiness Engineer here' ), uploadedFile( 'file-1' ) ],
+		};
+		act( () => {
+			mockConnectionStatus = 'connected';
+		} );
+		rerender();
+
+		await waitFor( () => {
+			expect( result.current.mainChatState.messages.some( ( m ) => m.id === 'file-1' ) ).toBe(
+				true
+			);
+		} );
+
+		expect(
+			result.current.mainChatState.messages.filter( ( m ) => m.altText === fileName )
+		).toHaveLength( 1 );
 	} );
 } );

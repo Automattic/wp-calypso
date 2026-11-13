@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { getFileNameFromMediaUrl } from '../util';
 import './attachment-message.scss';
 
 export type AttachmentMessageType = 'file' | 'image' | 'image-placeholder';
@@ -23,7 +24,7 @@ export const AttachmentMessage = ( {
 	altText,
 	className,
 }: AttachmentMessageProps ) => {
-	const fileName = altText || mediaUrl.split( '/' ).pop()?.split( '?' )[ 0 ] || 'file';
+	const fileName = altText || getFileNameFromMediaUrl( mediaUrl ) || 'file';
 
 	if ( isImageType( type ) ) {
 		return (
