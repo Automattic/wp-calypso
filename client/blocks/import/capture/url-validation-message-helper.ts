@@ -31,6 +31,7 @@ function isIDN( url: string ): boolean {
 const WORDPRESS_COM_PAGE_HOSTS = [
 	'wordpress.com',
 	'www.wordpress.com',
+	'my.wordpress.com',
 	'public-api.wordpress.com',
 	'wp.com',
 	'www.wp.com',

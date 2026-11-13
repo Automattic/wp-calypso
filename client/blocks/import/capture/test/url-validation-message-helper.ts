@@ -29,6 +29,7 @@ describe( 'getUrlValidationError', () => {
 		[ 'https://wordpress.com/home/example.com', 'wordpress_com_page' ],
 		[ 'WordPress.com', 'wordpress_com_page' ],
 		[ 'https://www.wordpress.com/setup/site-migration', 'wordpress_com_page' ],
+		[ 'https://my.wordpress.com/sites/example.com', 'wordpress_com_page' ],
 		[ 'wordpress.com:443/log-in', 'wordpress_com_page' ],
 		[ 'http://public-api.wordpress.com/wp-json/', 'wordpress_com_page' ],
 		[ 'wp.com', 'wordpress_com_page' ],
