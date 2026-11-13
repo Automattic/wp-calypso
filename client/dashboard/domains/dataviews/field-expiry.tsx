@@ -6,6 +6,7 @@ import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
 import { canEnableAutoRenew } from '../../utils/domain';
+import { stackedLinesStyles } from './utils';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainExpiryField = ( {
@@ -54,7 +55,7 @@ export const DomainExpiryField = ( {
 			);
 
 	return (
-		<VStack justify="flex-start" alignment="left" spacing={ 0 }>
+		<VStack justify="flex-start" alignment="left" spacing={ 0 } style={ stackedLinesStyles }>
 			<Text intent={ domain.expired ? 'error' : undefined }>
 				{ domain.expired
 					? sprintf(

@@ -15,6 +15,7 @@ import {
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
 import { useDomainSslDetails, useIsDomainActivating } from './use-domain-activation';
+import { stackedLinesStyles } from './utils';
 import type { DomainSummary } from '@automattic/api-core';
 
 const getCtaLink = ( domain: DomainSummary ) => {
@@ -74,7 +75,7 @@ export const DomainStatusField = ( {
 	const activationTime = __( 'Can take up to 15 minutes' );
 
 	return (
-		<VStack spacing={ 0 }>
+		<VStack spacing={ 0 } style={ stackedLinesStyles }>
 			<Tooltip text={ isActivating ? activationTime : undefined }>
 				<HStack
 					spacing={ 1 }
