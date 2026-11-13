@@ -135,6 +135,14 @@ const testPackagesVitest = withVitestInfo(
 );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
 
+// Checks for drift between the webpack and Vite configurations while both bundlers live in the repo:
+// fails when the Vite dev server can no longer serve the Dashboard, which webpack builds don't notice.
+const viteCheck = {
+	name: 'yarn',
+	args: 'vite-check',
+	testId: 'vite_check',
+};
+
 const testWorkspaces = {
 	name: 'yarn',
 	args: 'workspaces foreach -A --verbose --parallel run storybook:start --ci --smoke-test',
@@ -172,6 +180,7 @@ try {
 		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
+		await runTask( viteCheck );
 		await runVitestTask( testPackagesVitest );
 		await runTask( testWorkspaces );
 		await runTask( testApps );
