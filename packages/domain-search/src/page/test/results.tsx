@@ -1976,6 +1976,62 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'bundle card when the typed domain is taken', () => {
+		const mockTakenTulipsDotCom = () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'tulips.com' },
+				availability: buildAvailability( {
+					domain_name: 'tulips.com',
+					status: DomainAvailabilityStatus.NOT_AVAILABLE,
+				} ),
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'tulips.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'gettulips.com' } ),
+					buildSuggestion( { domain_name: 'tulips.net' } ),
+					buildSuggestion( { domain_name: 'tulips.org' } ),
+				],
+			} );
+		};
+
+		it( 'renders the card beside the recommended suggestion when the bundle primary is featured', async () => {
+			mockTakenTulipsDotCom();
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: buildBundleSuggestion( 'gettulips' ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleCta() ).toBeInTheDocument();
+			expect( await screen.findByTitle( 'gettulips.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+			expect( await screen.findByTitle( 'tulips.net' ) ).toBeInTheDocument();
+		} );
+
+		it( 'hides the card when the bundle primary is not a featured suggestion', async () => {
+			mockTakenTulipsDotCom();
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: buildBundleSuggestion( 'mytulips' ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Best alternative' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'tracking', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
 			const onSuggestionsReceive = vi.fn();
