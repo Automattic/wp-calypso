@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	brush,
 	category,
 	currencyDollar,
 	home,
@@ -37,6 +38,7 @@ import {
 	A4A_MIGRATIONS_LINK,
 	A4A_SETTINGS_LINK,
 	A4A_PLUGINS_LINK,
+	A4A_THEMES_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
@@ -152,6 +154,19 @@ const useMainMenuItems = ( path: string ) => {
 							},
 						},
 					]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-themes' )
+				? [
+						{
+							icon: brush,
+							path: '/',
+							link: A4A_THEMES_LINK,
+							title: translate( 'Themes' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Themes',
+							},
+						},
+				  ]
 				: [] ),
 			{
 				icon: tag,
