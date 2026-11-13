@@ -7,3 +7,73 @@
 		text-wrap: wrap;
 	}
 }
+
+/* A value kept on one line. The trigger is a button only so that hover, focus and
+   press can open the panel; it is disabled, and looks like plain text, when the
+   value fits. */
+.site-logs-long-value {
+	display: block;
+	width: 100%;
+	max-width: min( 480px, 40vw );
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+
+	&:disabled {
+		cursor: auto;
+	}
+
+	&:not( :disabled ):hover,
+	&[data-popup-open] {
+		color: var( --wpds-color-foreground-content-neutral, #1e1e1e );
+		text-decoration: underline dotted;
+		text-underline-offset: 3px;
+	}
+
+	&:focus-visible {
+		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+}
+
+.site-logs-long-value__text {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.site-logs-long-value__panel {
+	box-sizing: border-box;
+	width: min( 560px, calc( 100vw - 32px ) );
+	// Stay under (or above) the value and scroll only when the screen is too short for it.
+	max-height: var( --available-height, 80vh );
+	overflow: auto;
+}
+
+.site-logs-long-value__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.site-logs-long-value__panel .site-logs-long-value__title {
+	margin: 0;
+	color: var( --wpds-color-foreground-content-neutral-weak, #757575 );
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.site-logs-long-value__full {
+	overflow-wrap: anywhere;
+	user-select: text;
+}
