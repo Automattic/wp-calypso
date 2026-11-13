@@ -32,6 +32,7 @@
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
 		"a4a-dashboard-opt-in": true,
+		"a4a-spacefast-promo": true,
 		"bilmur-script": true,
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
@@ -53,7 +54,7 @@
 		"me/legacy-contact": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
-		"notifications/subscriber-alerts-default-on": false,
+		"notifications/subscriber-alerts-default-on": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
 		"plans/migration-trial": true,

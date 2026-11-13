@@ -7,6 +7,8 @@ import DomainContactDetailsSettingsSummary from '../domain-contact-details/summa
 import DomainRenewalSettingsSummary, { getRenewalDate } from './renewal-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
+import './style.scss';
+
 export default function DomainOverviewRegistration( {
 	domain,
 	isDisabled,
@@ -25,7 +27,11 @@ export default function DomainOverviewRegistration( {
 
 	return (
 		<VStack spacing={ 3 }>
-			<SectionHeader title={ __( 'Registration' ) } level={ 3 } />
+			<SectionHeader
+				title={ __( 'Registration' ) }
+				level={ 3 }
+				className="domain-overview-section-header"
+			/>
 			<SummaryButtonList>
 				{ showRenewal ? (
 					<DomainRenewalSettingsSummary

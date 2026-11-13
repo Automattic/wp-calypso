@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import TimeSince from '..';
 
 // Mock useTranslate from i18n-calypso
-jest.mock( 'i18n-calypso', () => ( {
+vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => {
 		const t = (
 			str: string,
@@ -36,11 +37,11 @@ jest.mock( 'i18n-calypso', () => ( {
 // Helper to freeze time
 const FIXED_NOW = new Date( '2024-06-12T12:00:00Z' );
 beforeAll( () => {
-	jest.useFakeTimers();
-	jest.setSystemTime( FIXED_NOW );
+	vi.useFakeTimers();
+	vi.setSystemTime( FIXED_NOW );
 } );
 afterAll( () => {
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 describe( 'TimeSince', () => {

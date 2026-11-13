@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainPropagationStatus } from '@automattic/api-core';
 import { domainPropagationStatusQuery } from '@automattic/api-queries';
 import { onlineManager, QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainPropagationStatusComponent from '../components/domain-propagation-status';
 
 // Mock the useTimeSince hook
-jest.mock( '../../../components/time-since', () => ( {
-	useTimeSince: jest.fn( () => '2m ago' ),
+vi.mock( '../../../components/time-since', () => ( {
+	useTimeSince: vi.fn( () => '2m ago' ),
 } ) );
 
 const createMockPropagationStatus = (

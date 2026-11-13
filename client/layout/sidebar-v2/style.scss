@@ -1,14 +1,16 @@
 .sidebar-v2 {
+	--sidebar-v2-gap: 16px;
+	--sidebar-v2-padding: 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: var(--sidebar-v2-gap);
 
 	height: 100vh;
 	background-color: var(--color-sidebar-background);
 	color: var(--color-sidebar-text);
 
 	margin: 0;
-	padding: 16px;
+	padding: var(--sidebar-v2-padding);
 	box-sizing: border-box;
 }
 

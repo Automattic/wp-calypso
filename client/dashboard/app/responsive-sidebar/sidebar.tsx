@@ -12,7 +12,7 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
-import AgencySidebar from './agency';
+import AgencySidebar, { AgencySidebarPromo } from './agency';
 import AgencyClientSidebar from './agency-client';
 import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
@@ -61,6 +61,7 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 					<MeSidebar />
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
+			<AgencySidebarPromo />
 		</div>
 	);
 }

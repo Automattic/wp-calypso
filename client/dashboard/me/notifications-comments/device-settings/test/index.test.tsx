@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -12,6 +12,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
+import { vi } from 'vitest';
 import { DevicesSettings } from '..';
 import Snackbars from '../../../../app/snackbars';
 
@@ -60,7 +61,7 @@ const mockGetDevicesApiAndReply = ( data: Partial< UserNotificationDevice[] > ) 
 describe( 'DevicesSettings', () => {
 	beforeEach( () => {
 		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	test( 'shows a message when there are no devices', async () => {

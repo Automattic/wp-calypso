@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "8.2.5-beta1",
+	"version": "8.2.5",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/",
@@ -32,19 +32,13 @@
 		"test:unit": "jest -c test/unit/jest.config.js"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@electron/notarize": "^2.5.0",
-		"@electron/rebuild": "4.0.4",
-		"@playwright/browser-chromium": "1.57.0",
 		"copy-webpack-plugin": "^14.0.0",
 		"electron": "42.11.18",
 		"electron-builder": "26.15.0",
 		"jest": "^30.5.2",
 		"playwright": "1.57.0",
-		"postcss": "^8.5.32",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
 		"webpack": "^5.111.1",
 		"webpack-cli": "^7.2.3"
 	},
@@ -58,7 +52,6 @@
 		"semver": "^7.7.2",
 		"superagent": "^3.8.3",
 		"winston": "^3.3.3",
-		"wpcom-xhr-request": "workspace:^",
 		"ws": "^7.5.10"
 	}
 }

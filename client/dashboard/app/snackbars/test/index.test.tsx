@@ -1,33 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { MutationObserver, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import Snackbars from '../index';
 import type { MutationMeta } from '@tanstack/react-query';
 
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
-const mockRemoveNotice = jest.fn();
+const mockCreateSuccessNotice = vi.fn();
+const mockCreateErrorNotice = vi.fn();
+const mockRemoveNotice = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
-	useDispatch: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
-	SnackbarList: jest.fn( () => null ),
+vi.mock( '@wordpress/components', () => ( {
+	SnackbarList: vi.fn( () => null ),
 } ) );
 
-jest.mock( '@wordpress/notices', () => ( {
+vi.mock( '@wordpress/notices', () => ( {
 	store: {},
 } ) );
 
-const mockedUseSelect = useSelect as jest.Mock;
-const mockedUseDispatch = useDispatch as jest.Mock;
+const mockedUseSelect = useSelect as Mock;
+const mockedUseDispatch = useDispatch as Mock;
 
 function renderSnackbars() {
 	const queryClient = new QueryClient();
@@ -107,7 +108,7 @@ describe( 'Snackbars', () => {
 
 		renderSnackbars();
 
-		const [ props ] = ( SnackbarList as jest.Mock ).mock.calls[ 0 ];
+		const [ props ] = ( SnackbarList as Mock ).mock.calls[ 0 ];
 
 		expect( props.notices ).toEqual(
 			expect.arrayContaining( [
