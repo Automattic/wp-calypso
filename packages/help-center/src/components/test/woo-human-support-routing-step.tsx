@@ -386,7 +386,9 @@ describe( 'WooHumanSupportRoutingStep', () => {
 			await userEvent.click( continueButton() );
 
 			expect( lastDecision() ).toMatchObject( { route: 'ai-reply-then-forums', row_id: 11 } );
-			expect( screen.getByText( /If the answer above doesn’t help/ ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /If you still need help, ask in the forums\./ )
+			).toBeInTheDocument();
 			expect( startChat ).not.toHaveBeenCalled();
 		} );
 	} );
