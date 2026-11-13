@@ -39,7 +39,6 @@
 		"cross-env": "^7.0.3",
 		"electron": "42.11.18",
 		"electron-builder": "26.15.0",
-		"electron-fetch": "^1.7.4",
 		"jest": "^30.5.2",
 		"js-yaml": "5.4.1",
 		"playwright": "1.57.0",
@@ -51,7 +50,6 @@
 	"dependencies": {
 		"electron-store": "^8.1.0",
 		"electron-updater": "6.8.11",
-		"superagent": "^3.8.3",
 		"ws": "^7.5.10"
 	}
 }
