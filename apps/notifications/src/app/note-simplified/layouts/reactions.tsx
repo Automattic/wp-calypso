@@ -60,7 +60,7 @@ export default function ReactionsNote( { note, header }: { note: Note; header?: 
 				?.url ?? note.url;
 
 		return (
-			<VStack spacing={ 6 }>
+			<VStack className="wpnc-simplified__people" spacing={ 4 }>
 				{ header }
 				<Context note={ note } quote />
 				<Body note={ note } hidePost={ !! note.meta?.post } hideText={ others > 0 } />

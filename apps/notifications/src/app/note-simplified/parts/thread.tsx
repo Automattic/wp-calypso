@@ -80,8 +80,9 @@ const ThreadItem = ( {
 	const name = author && (
 		<Text
 			className="wpnc-simplified__author"
-			size={ compact ? 13 : 15 }
+			size={ compact ? 13 : 14 }
 			weight={ compact ? 500 : 600 }
+			lineHeight="20px"
 		>
 			{ authorUrl ? (
 				<a href={ authorUrl } target="_blank" rel="noreferrer">
