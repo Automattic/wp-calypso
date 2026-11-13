@@ -9,7 +9,7 @@ import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import Emails from '../index';
-import type { DomainSummary, EmailAccount } from '@automattic/api-core';
+import type { DomainSummary, EmailAccount, TitanDkimStatus } from '@automattic/api-core';
 
 vi.mock( '@automattic/calypso-config', async () => {
 	const { default: actual, serverEnvId } = await vi.importActual<
@@ -65,7 +65,15 @@ const forwardingAccount = {
 	],
 } as unknown as EmailAccount;
 
-function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: EmailAccount[] } ) {
+function mockApi( {
+	domains,
+	accounts,
+	dkimStatus = [],
+}: {
+	domains: DomainSummary[];
+	accounts: EmailAccount[];
+	dkimStatus?: TitanDkimStatus[];
+} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/me/preferences' )
@@ -83,6 +91,10 @@ function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: E
 		.get( '/rest/v1/me/mailboxes' )
 		.query( ( q ) => q.include_all_managed_domains === 'true' )
 		.reply( 200, accounts );
+
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/emails/titan/dkim-status' )
+		.reply( 200, dkimStatus );
 }
 
 describe( '<Emails>', () => {
@@ -144,6 +156,44 @@ describe( '<Emails>', () => {
 		expect(
 			await screen.findByText( 'You have 2 free mailboxes waiting to be set up.' )
 		).toBeVisible();
+	} );
+
+	test( 'shows the free mailbox notice instead of the missing DKIM record notice', async () => {
+		const titanAccount = {
+			account_type: EmailProvider.Titan,
+			maximum_mailboxes: 2,
+			warnings: [ { warning_slug: 'unused_mailboxes', message: '' } ],
+			domains: [ { domain: DOMAIN, is_primary: true } ],
+			emails: [
+				{ mailbox: 'hello', domain: DOMAIN, email_type: 'email', role: 'standard', warnings: [] },
+			],
+		} as unknown as EmailAccount;
+		mockApi( {
+			domains: [ nonOwnedDomain ],
+			accounts: [ titanAccount ],
+			dkimStatus: [
+				{
+					domain: DOMAIN,
+					status: 'missing',
+					checked_at: '2026-11-10T21:00:00+00:00',
+					record: { name: `titan1._domainkey.${ DOMAIN }`, type: 'TXT', data: 'v=DKIM1; k=rsa' },
+				},
+			],
+		} );
+		render( <Emails /> );
+
+		expect(
+			await screen.findByText( 'You have 1 free mailbox waiting to be set up.' )
+		).toBeVisible();
+		expect( screen.queryByText( `Add the DKIM record for ${ DOMAIN }` ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not check DKIM records without a Professional Email domain', async () => {
+		const dkimStatus = mockApi( { domains: [ nonOwnedDomain ], accounts: [ forwardingAccount ] } );
+		render( <Emails /> );
+
+		expect( await screen.findByText( `yea@${ DOMAIN }` ) ).toBeVisible();
+		expect( dkimStatus.isDone() ).toBe( false );
 	} );
 
 	test( 'opens the DNS records from a Titan mailbox row action', async () => {

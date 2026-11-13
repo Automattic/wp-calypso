@@ -1,0 +1,38 @@
+.dkim-records-modal__records {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding-block: 8px;
+		padding-inline-end: 16px;
+		text-align: start;
+		vertical-align: top;
+		overflow-wrap: anywhere;
+	}
+
+	th {
+		font-weight: 500;
+	}
+
+	th:first-child {
+		width: 20%;
+	}
+
+	th:nth-child( 2 ) {
+		width: 30%;
+	}
+}
+
+.dkim-records-modal__copyable {
+	display: flex;
+	align-items: flex-start;
+	gap: 4px;
+}
+
+.dkim-records-modal__copyable-text {
+	flex: 1;
+	min-width: 0;
+	font-family: monospace;
+}
