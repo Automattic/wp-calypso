@@ -29,11 +29,7 @@ export function DomainEmailsBackButton() {
 		return null;
 	}
 
-	return (
-		<SidebarBackButton to={ `/domains/${ domainName }` }>
-			{ __( 'Back to domain' ) }
-		</SidebarBackButton>
-	);
+	return <SidebarBackButton to="/domains">{ __( 'Back to Domains' ) }</SidebarBackButton>;
 }
 
 export default function DomainSidebar() {

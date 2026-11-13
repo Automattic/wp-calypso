@@ -181,36 +181,33 @@ describe( 'DomainSidebar', () => {
 		}
 	);
 
-	test( 'links back to the domain from its Emails screens', async () => {
+	test( "links back to Domains from a domain's Emails screens", async () => {
 		renderAt( '/domains/example.com' );
 
 		await userEvent.click( await screen.findByRole( 'link', { name: 'Emails' } ) );
 
-		expect( await findBackLink( 'Back to domain' ) ).toHaveAttribute(
-			'href',
-			'/domains/example.com'
-		);
+		expect( await findBackLink( 'Back to Domains' ) ).toHaveAttribute( 'href', '/domains' );
 	} );
 
 	test.each( [
 		'/emails/choose-domain?domainName=example.com',
 		'/emails/choose-email-solution/example.com',
-	] )( 'shows "Back to domain" on %s', async ( url ) => {
+	] )( 'shows "Back to Domains" on %s', async ( url ) => {
 		renderAt( url );
 
-		expect( await findBackLink( 'Back to domain' ) ).toBeVisible();
+		expect( await findBackLink( 'Back to Domains' ) ).toBeVisible();
 	} );
 
 	test.each( [ '/emails', '/emails/choose-domain' ] )(
-		'hides "Back to domain" on %s',
+		'hides "Back to Domains" on %s',
 		async ( url ) => {
 			const goTo = renderAt( '/emails/choose-domain?domainName=example.com' );
-			await findBackLink( 'Back to domain' );
+			await findBackLink( 'Back to Domains' );
 
 			await goTo( url );
 
 			await waitFor( () =>
-				expect( screen.queryByRole( 'link', { name: 'Back to domain' } ) ).not.toBeInTheDocument()
+				expect( screen.queryByRole( 'link', { name: 'Back to Domains' } ) ).not.toBeInTheDocument()
 			);
 		}
 	);
