@@ -8,9 +8,16 @@
 		flex-flow: nowrap;
 		align-items: center;
 	}
-	// Override the default minimum width.
+	.highlight-cards-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+		grid-auto-rows: 1fr;
+		gap: 24px;
+	}
+
 	.highlight-card {
-		min-width: 240px;
+		min-width: 0;
+		margin-inline: 0;
 
 		// make it more compact for is-compact
 		&.is-compact {
