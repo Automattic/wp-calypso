@@ -32739,6 +32739,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.72.1"
     "@vgs/collect-js": "npm:^0.7.2"
     "@vgs/collect-js-react": "npm:^2.1.1"
+    "@vitejs/plugin-react": "npm:^6.2.1"
     "@vitest/eslint-plugin": "npm:^1.6.28"
     "@wordpress/admin-ui": "npm:^3.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
