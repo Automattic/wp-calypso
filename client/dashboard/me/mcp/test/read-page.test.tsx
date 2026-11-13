@@ -132,6 +132,24 @@ describe( '<McpRead> search and anchors', () => {
 		);
 	} );
 
+	test( 'a tool anchor focuses the linked tool, and Tab moves to its toggle', async () => {
+		const user = userEvent.setup();
+		mockScrollIntoView();
+		window.location.hash = '#wpcom-mcp/pages-list';
+		seed();
+		render( <McpRead />, { queryClient } );
+
+		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).toHaveFocus();
+
+		await user.tab();
+
+		expect( screen.getByRole( 'checkbox', { name: 'List pages' } ) ).toHaveFocus();
+
+		await user.click( screen.getByText( 'List pages on your sites.' ) );
+
+		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).not.toHaveFocus();
+	} );
+
 	test( 'an anchor copy button copies that tool’s anchor URL', async () => {
 		const user = userEvent.setup();
 		const writeText = mockClipboard();

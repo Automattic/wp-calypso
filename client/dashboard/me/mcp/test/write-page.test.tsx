@@ -90,4 +90,13 @@ describe( '<McpWrite> anchors', () => {
 			document.getElementById( 'wpcom-mcp/post-delete' )
 		);
 	} );
+
+	test( 'a tool anchor focuses the linked tool', () => {
+		mockScrollIntoView();
+		window.location.hash = '#wpcom-mcp/post-delete';
+		seed();
+		render( <McpWrite />, { queryClient } );
+
+		expect( document.getElementById( 'wpcom-mcp/post-delete' ) ).toHaveFocus();
+	} );
 } );
