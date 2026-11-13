@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import AgencySiteHeaderActions from '../header-actions';
 import type { AgencySite, Site } from '@automattic/api-core';
@@ -85,7 +86,7 @@ describe( '<AgencySiteHeaderActions>', () => {
 
 	test( 'opens Settings under an admin URL without a trailing slash', async () => {
 		mockAgency();
-		const open = jest.spyOn( window, 'open' ).mockReturnValue( null );
+		const open = vi.spyOn( window, 'open' ).mockReturnValue( null );
 
 		render(
 			<AgencySiteHeaderActions

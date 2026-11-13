@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { NameServersLayout } from '../layout';
 
-jest.mock( '../../../app/breadcrumbs', () => ( {
+vi.mock( '../../../app/breadcrumbs', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: () => <span>Learn more</span>,
 } ) );

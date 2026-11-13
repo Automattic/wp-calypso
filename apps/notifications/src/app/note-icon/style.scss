@@ -12,6 +12,11 @@
 	overflow: hidden;
 }
 
+// A list row centers the icon on its name and site instead.
+.wpnc__user.is-list-item .wpnc__user-icon {
+	margin-block: 0;
+}
+
 .wpnc__note-icon {
 	position: relative;
 	height: 100%;
