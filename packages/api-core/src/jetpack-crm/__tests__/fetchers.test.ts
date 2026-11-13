@@ -1,9 +1,10 @@
+import { vi } from 'vitest';
 import { fetchJetpackCrmExtensionDownload, JetpackCrmRequestError } from '../fetchers';
 
 const originalFetch = global.fetch;
 
 function mockResponse( body: object ) {
-	global.fetch = jest.fn().mockResolvedValue( {
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		status: 200,
 		json: async () => body,

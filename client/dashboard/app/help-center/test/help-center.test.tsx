@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
+import { vi } from 'vitest';
 import { HELP_CENTER_STORE, type HelpCenterDispatch } from '..';
 import { render } from '../../../test-utils';
 import HelpCenter from '../help-center';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '@automattic/help-center', () => ( {
+vi.mock( '@automattic/help-center', () => ( {
 	__esModule: true,
 	default: ( { site }: { site?: { ID: number } | null } ) => (
 		<div role="region" aria-label="Help Center">
@@ -87,7 +88,7 @@ describe( '<HelpCenter />', () => {
 		render( <HelpCenter product="a4a" /> );
 
 		const { HelpCenter: HelpCenterStore, setRequester } = await import( '@automattic/data-stores' );
-		const requester = jest.fn( async () => ( { calypso_preferences: {} } ) );
+		const requester = vi.fn( async () => ( { calypso_preferences: {} } ) );
 		setRequester( requester as Parameters< typeof setRequester >[ 0 ] );
 		HelpCenterStore.register();
 		await act( () =>

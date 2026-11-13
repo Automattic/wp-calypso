@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { AGENT_CONFIGS, DEFAULT_AGENT_ID } from '../agent-configs';
 import McpConnectAgent from '../connect-agent-content';
 
-let clipboardWriteText: jest.Mock;
+let clipboardWriteText: Mock;
 
 beforeEach( () => {
-	clipboardWriteText = jest.fn().mockResolvedValue( undefined );
+	clipboardWriteText = vi.fn().mockResolvedValue( undefined );
 	Object.defineProperty( window.navigator, 'clipboard', {
 		value: { writeText: clipboardWriteText },
 		configurable: true,
@@ -43,7 +44,7 @@ describe( '<McpConnectAgent>', () => {
 	} );
 
 	test( 'switching assistants swaps the instructions and records the choice', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		const other = AGENT_CONFIGS.find( ( agent ) => agent.id !== DEFAULT_AGENT_ID )!;
 		render( <McpConnectAgent recordTracksEvent={ recordTracksEvent } /> );
 
@@ -59,7 +60,7 @@ describe( '<McpConnectAgent>', () => {
 	} );
 
 	test( 'copies the fallback configuration and records a tracks event', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render( <McpConnectAgent recordTracksEvent={ recordTracksEvent } /> );
 
 		expect(

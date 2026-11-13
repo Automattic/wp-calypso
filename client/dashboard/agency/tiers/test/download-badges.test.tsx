@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DownloadBadges, { getBadgeDownloads } from '../download-badges';
 
@@ -42,7 +43,7 @@ describe( '<DownloadBadges>', () => {
 	} );
 
 	test( 'opens a modal listing the badge downloads and records the Tracks events', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render(
 			<DownloadBadges
 				directories={ [ 'pressable' ] }

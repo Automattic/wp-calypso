@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { isWithinFeedbackWindow, useMilestoneFeedback } from '../use-milestone-feedback';
 import type { A4AFeedbackEntry } from '@automattic/api-core';
@@ -86,8 +87,8 @@ describe( 'useMilestoneFeedback', () => {
 } );
 
 describe( 'isWithinFeedbackWindow', () => {
-	beforeEach( () => jest.useFakeTimers( { now: new Date( '2026-10-13T12:00:00Z' ) } ) );
-	afterEach( () => jest.useRealTimers() );
+	beforeEach( () => vi.useFakeTimers( { now: new Date( '2026-10-13T12:00:00Z' ) } ) );
+	afterEach( () => vi.useRealTimers() );
 
 	test( 'asks about a milestone with no date', () => {
 		expect( isWithinFeedbackWindow( null ) ).toBe( true );
