@@ -2,11 +2,10 @@ import { purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/ui';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionButton } from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import type { DomainSummary } from '@automattic/api-core';
@@ -33,8 +32,8 @@ export default function ExpiredDomainNotice( { domain }: { domain: DomainSummary
 			title={ __( 'Expired domain' ) }
 			onClose={ () => setIsDismissed( true ) }
 			actions={
-				<Button
-					tone="neutral"
+				<NoticeActionButton
+					variant="solid"
 					disabled={ ! purchase }
 					onClick={ () => {
 						if ( ! purchase ) {
@@ -47,7 +46,7 @@ export default function ExpiredDomainNotice( { domain }: { domain: DomainSummary
 					} }
 				>
 					{ __( 'Renew domain' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ createInterpolateElement(

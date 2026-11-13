@@ -65,4 +65,4 @@ yarn test-dashboard <file>                  # Run specific Dashboard test (Vites
 ### Testing
 
 - Prefer `userEvent` over `fireEvent` in tests.
-- Prefer `toBeVisible()` over `toBeInTheDocument()`.
+- Prefer `toBeVisible()` over `toBeInTheDocument()`. To assert that an element is absent, use `.not.toBeInTheDocument()`.
