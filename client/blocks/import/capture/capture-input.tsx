@@ -11,7 +11,9 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getUrlValidationError, getValidationMessage } from './url-validation-message-helper';
+import WordPressComPageMessage from './wordpress-com-page-message';
 import type { OnInputChange, OnInputEnter } from './types';
+import type { UrlValidationErrorReason } from './url-validation-message-helper';
 import type { FunctionComponent, ReactNode } from 'react';
 
 interface Props {
@@ -46,7 +48,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
-	const [ validationMessage, setValidationMessage ] = useState( '' );
+	const [ validationError, setValidationError ] = useState< UrlValidationErrorReason | null >(
+		null
+	);
 	const lastInvalidValue = useRef< string | undefined >( undefined );
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
@@ -57,19 +61,22 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( skipInitialChecking ) {
 			setUrlValue( urlValue );
-			if ( urlValue ) {
-				validateUrl( urlValue );
+			if ( urlValue && validateUrl( urlValue ) === 'wordpress_com_page' ) {
+				setSubmitted( true );
 			}
 			return;
 		}
 
 		if ( urlValue ) {
-			const isValid = ! getUrlValidationError( urlValue );
-			if ( isValid && ! hasError ) {
+			const error = getUrlValidationError( urlValue );
+			if ( ! error && ! hasError ) {
 				onInputEnter( urlValue );
 				setSubmitted( true );
 			} else {
 				setUrlValue( urlValue );
+				if ( error && validateUrl( urlValue ) === 'wordpress_com_page' ) {
+					setSubmitted( true );
+				}
 			}
 		}
 	}
@@ -77,7 +84,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	function validateUrl( url: string ) {
 		const error = getUrlValidationError( url );
 		setIsValid( ! error );
-		setValidationMessage( error ? getValidationMessage( error, translate ) : '' );
+		setValidationError( error );
+		return error;
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
@@ -106,6 +114,16 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	function renderValidationMessage() {
+		if ( validationError === 'wordpress_com_page' ) {
+			return <WordPressComPageMessage />;
+		}
+
+		return validationError
+			? getValidationMessage( validationError, translate )
+			: translate( 'Please enter a valid website address. You can copy and paste.' );
+	}
+
 	return (
 		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
@@ -131,10 +149,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
 						{ showValidationMsg && (
 							<>
-								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{ validationMessage
-									? validationMessage
-									: translate( 'Please enter a valid website address. You can copy and paste.' ) }
+								<Icon icon={ info } size={ 20 } /> { renderValidationMessage() }
 							</>
 						) }
 					</span>

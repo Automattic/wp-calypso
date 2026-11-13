@@ -670,6 +670,66 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 
+		it( 'asks for the site address instead of checking a WordPress.com page', async () => {
+			const submit = jest.fn();
+			const analysis = mockAnalysis( { platform: 'unknown' }, 200, 'wordpress.com/log-in' );
+			render( { navigation: { submit } } );
+
+			await checkSite( 'wordpress.com/log-in' );
+
+			expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveClass( 'is-busy' );
+			await act( async () => {
+				jest.advanceTimersByTime( 2000 );
+				await realTick();
+			} );
+			expect( submit ).not.toHaveBeenCalled();
+			expect( analysis.isDone() ).toBe( false );
+		} );
+
+		it( 'explains a handed-over WordPress.com page without checking it', async () => {
+			const submit = jest.fn();
+			const analysis = mockAnalysis(
+				{ platform: 'unknown' },
+				200,
+				'https://wordpress.com/home/example.com'
+			);
+			renderStep(
+				<SiteMigrationIdentify { ...mockStepProps( { navigation: { submit } } ) } checkOnArrival />,
+				{
+					initialEntry: `/some-path?from=${ encodeURIComponent(
+						'https://wordpress.com/home/example.com'
+					) }&start=true`,
+				}
+			);
+
+			expect( screen.getByRole( 'heading', { name: "Let's find your site" } ) ).toBeVisible();
+			expect( getInput() ).toHaveValue( 'https://wordpress.com/home/example.com' );
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveClass( 'is-busy' );
+			expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+			await act( async () => {
+				jest.advanceTimersByTime( 2000 );
+				await realTick();
+			} );
+			expect( submit ).not.toHaveBeenCalled();
+			expect( analysis.isDone() ).toBe( false );
+		} );
+
+		it( 'does not continue a hand-picked WordPress source that is a WordPress.com page', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=wordpress.com%2Flog-in&manualPlatform=wordpress' }
+			);
+
+			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
 		it( 'explains generic analysis failures and allows retrying the same address', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } }, { initialEntry: '/some-path?hide_importer_link=true' } );
