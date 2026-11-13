@@ -66,7 +66,7 @@ describe( 'sanitizeDomainsListLayout', () => {
 				filters,
 				perPage: 24,
 			} )
-		).toEqual( { type: 'table', layout: { density: 'balanced' }, sort, filters, perPage: 24 } );
+		).toEqual( { type: 'table', layout: { density: 'comfortable' }, sort, filters, perPage: 24 } );
 	} );
 } );
 
