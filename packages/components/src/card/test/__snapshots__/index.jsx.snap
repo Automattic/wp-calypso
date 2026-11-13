@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Card should be linkable 1`] = `
+exports[`Card > should be linkable 1`] = `
 <a
   class="card is-card-link"
   href="/test"
@@ -20,13 +20,13 @@ exports[`Card should be linkable 1`] = `
 </a>
 `;
 
-exports[`Card should have custom class of \`test__ace\` 1`] = `
+exports[`Card > should have custom class of \`test__ace\` 1`] = `
 <div
   class="card test__ace"
 />
 `;
 
-exports[`Card should render as a clickable button which looks like a link 1`] = `
+exports[`Card > should render as a clickable button which looks like a link 1`] = `
 <button
   class="card is-card-link is-clickable"
 >
@@ -45,7 +45,7 @@ exports[`Card should render as a clickable button which looks like a link 1`] = 
 </button>
 `;
 
-exports[`Card should render children 1`] = `
+exports[`Card > should render children 1`] = `
 <div
   class="card"
 >
@@ -53,25 +53,25 @@ exports[`Card should render children 1`] = `
 </div>
 `;
 
-exports[`Card should render properly and match snapshot 1`] = `
+exports[`Card > should render properly and match snapshot 1`] = `
 <div
   class="card"
 />
 `;
 
-exports[`CompactCard should have \`compact\` prop 1`] = `
+exports[`CompactCard > should have \`compact\` prop 1`] = `
 <div
   class="card is-compact"
 />
 `;
 
-exports[`CompactCard should have custom class of \`test__ace\` 1`] = `
+exports[`CompactCard > should have custom class of \`test__ace\` 1`] = `
 <div
   class="card test__ace is-compact"
 />
 `;
 
-exports[`CompactCard should render children 1`] = `
+exports[`CompactCard > should render children 1`] = `
 <div
   class="card is-compact"
 >
@@ -79,7 +79,7 @@ exports[`CompactCard should render children 1`] = `
 </div>
 `;
 
-exports[`CompactCard should use the card component 1`] = `
+exports[`CompactCard > should use the card component 1`] = `
 <div
   class="card is-compact"
 />

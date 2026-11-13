@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import AssignLicenseModal from '../assign-license-modal';
@@ -31,14 +32,14 @@ function mockAssignError( code: string, message: string ) {
 }
 
 async function assign() {
-	Element.prototype.scrollIntoView = jest.fn();
+	Element.prototype.scrollIntoView = vi.fn();
 	render(
 		<>
 			<AssignLicenseModal
 				licenseKey={ LICENSE_KEY }
 				productName="Gift Cards"
 				issuedAt="2026-01-01 00:00:00"
-				closeModal={ jest.fn() }
+				closeModal={ vi.fn() }
 			/>
 			<Snackbars />
 		</>

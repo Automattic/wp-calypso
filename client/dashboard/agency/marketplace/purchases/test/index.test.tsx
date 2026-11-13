@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CrossoverModalHost from '../../../crossover';
@@ -325,7 +326,7 @@ describe( '<MarketplacePurchases>', () => {
 			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
 			mockPendingSites( 'pending' );
 
-			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 			render(
 				<>
 					<MarketplacePurchases />

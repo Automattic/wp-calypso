@@ -127,6 +127,19 @@ function e2eSetupError( reason ) {
 	);
 }
 
+// WordPress.com's human check answers the login page with HTTP 403 on some networks, e.g. a
+// cloud sandbox, and no login can succeed there.
+function watchForRefusedLogin( page ) {
+	let refused = false;
+	page.on( 'response', ( response ) => {
+		refused ||=
+			response.status() === 403 &&
+			response.request().isNavigationRequest() &&
+			isLoginUrl( response.url() );
+	} );
+	return () => refused;
+}
+
 async function logInTestAccount( account ) {
 	// Logging in on calypso.localhost can't set the wordpress.com session cookie (it would
 	// be a cross-site cookie), so log in on wordpress.com itself.
@@ -159,11 +172,23 @@ async function logInTestAccount( account ) {
 		// a killed login leaves that lock behind, and every later login waits on it forever.
 		// logInViaLoginPage() also returns when the password is rejected, so wait to leave the
 		// login page, as its confirmLoggedIn() does, before saving the session.
-		await testAccount.logInViaLoginPage( page );
-		await page.waitForURL( ( url ) => ! isLoginUrl( url.toString() ), {
-			waitUntil: 'commit',
-			timeout: 60 * 1000,
-		} );
+		const loginWasRefused = watchForRefusedLogin( page );
+		try {
+			await testAccount.logInViaLoginPage( page );
+			await page.waitForURL( ( url ) => ! isLoginUrl( url.toString() ), {
+				waitUntil: 'commit',
+				timeout: 60 * 1000,
+			} );
+		} catch ( error ) {
+			if ( loginWasRefused() ) {
+				throw new UserActionRequired(
+					'WordPress.com refused the login page with HTTP 403, as its human check does on some ' +
+						`networks, so ${ account } can't log in from here. ` +
+						'Skip the browser check and report it as not done, with this reason.'
+				);
+			}
+			throw error;
+		}
 		await saveState( context, account );
 	} finally {
 		await browser.close();

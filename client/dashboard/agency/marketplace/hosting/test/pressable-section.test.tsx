@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import PressableSection from '../pressable-section';
 import type { PressablePlanCategory } from '../lib/pressable-plans';
 import type { AgencyProduct } from '@automattic/api-core';
 
-jest.mock( '../pressable-usage-card', () => ( {
+vi.mock( '../pressable-usage-card', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="usage-card" />,
 } ) );
@@ -55,7 +56,7 @@ function renderSection( props: Partial< React.ComponentProps< typeof PressableSe
 			ownership="none"
 			term="yearly"
 			isReferralMode={ false }
-			onAddToCart={ jest.fn() }
+			onAddToCart={ vi.fn() }
 			{ ...props }
 		/>
 	);

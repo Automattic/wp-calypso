@@ -1,21 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainPropagationStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainPropagationStatusComponent from '../components/domain-propagation-status';
 
 // Mock the useQuery hook from React Query
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
 // Mock the useTimeSince hook
-jest.mock( '../../../components/time-since', () => ( {
-	useTimeSince: jest.fn( () => '2m ago' ),
+vi.mock( '../../../components/time-since', () => ( {
+	useTimeSince: vi.fn( () => '2m ago' ),
 } ) );
 
 const createMockPropagationStatus = (
@@ -34,7 +37,7 @@ const createMockPropagationStatus = (
 } );
 
 describe( 'DomainPropagationStatus', () => {
-	const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
+	const mockUseQuery = useQuery as MockedFunction< typeof useQuery >;
 
 	describe( 'Successful data loading', () => {
 		test( 'renders component with title when data is loaded', () => {

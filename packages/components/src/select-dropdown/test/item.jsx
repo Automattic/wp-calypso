@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import SelectDropdownItem from '../item';
 
 describe( 'item', () => {
@@ -46,7 +47,7 @@ describe( 'item', () => {
 
 	describe( 'when the component is clicked', () => {
 		test( 'should do nothing when is disabled', async () => {
-			const onClickSpy = jest.fn();
+			const onClickSpy = vi.fn();
 			render(
 				<SelectDropdownItem disabled onClick={ onClickSpy }>
 					Published
@@ -60,7 +61,7 @@ describe( 'item', () => {
 		} );
 
 		test( 'should run the `onClick` hook', async () => {
-			const onClickSpy = jest.fn();
+			const onClickSpy = vi.fn();
 			render( <SelectDropdownItem onClick={ onClickSpy }>Published</SelectDropdownItem> );
 
 			const link = screen.getByRole( 'menuitem', { name: /published/i } );

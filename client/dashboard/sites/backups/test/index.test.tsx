@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -8,6 +8,7 @@ import { useSearch } from '@tanstack/react-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { BackupsPage } from '../backups-page';
 import { BackupsListPage } from '../index';
@@ -17,37 +18,38 @@ import type { ReactElement } from 'react';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: jest.fn(),
+vi.mock( '@wordpress/react-i18n', () => ( {
+	useI18n: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
 // Mock scrollIntoView for JSDOM compatibility
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', async () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
 	isRTL: () => false,
-	sprintf: jest.requireActual( '@wordpress/i18n' ).sprintf,
+	sprintf: ( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) )
+		.sprintf,
 } ) );
 
-jest.mock(
+vi.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => ( {
 		useFileBrowserContext: () => ( {
@@ -60,8 +62,8 @@ jest.mock(
 			},
 			locale: 'en',
 			notices: {
-				showError: jest.fn(),
-				showSuccess: jest.fn(),
+				showError: vi.fn(),
+				showSuccess: vi.fn(),
 			},
 		} ),
 	} )
@@ -69,12 +71,13 @@ jest.mock(
 
 const mockRouterParams = { siteSlug: 'test-site', rewindId: 'rewind-123' };
 
-jest.mock( '@tanstack/react-router', () => {
-	const actual = jest.requireActual( '@tanstack/react-router' );
+vi.mock( '@tanstack/react-router', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
 
 	return {
 		...actual,
-		useParams: jest.fn( () => {
+		useParams: vi.fn( () => {
 			return mockRouterParams;
 		} ),
 	};
@@ -146,7 +149,7 @@ const summaryTestCases: ReadonlyArray< readonly [ string, string ] > = [
 	[ 'rewind-456', 'Third backup completed successfully' ],
 ];
 
-jest.mock( '../../../app/router/sites', () => ( {
+vi.mock( '../../../app/router/sites', () => ( {
 	siteRoute: {
 		useParams: () => ( { siteSlug: 'test-site' } ),
 	},

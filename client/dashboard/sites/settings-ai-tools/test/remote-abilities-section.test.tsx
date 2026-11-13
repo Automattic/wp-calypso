@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -12,6 +12,7 @@ import '@testing-library/jest-dom';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import RemoteAbilitiesSection from '../remote-abilities-section';
 import type { Site, SiteAbility, UserSettings } from '@automattic/api-core';
@@ -369,7 +370,7 @@ describe( '<RemoteAbilitiesSection>', () => {
 	} );
 
 	test( 'an ability anchor button copies that ability’s anchor URL', () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( window.navigator, 'clipboard', {
 			value: { writeText },
 			configurable: true,

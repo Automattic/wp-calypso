@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { InputUserNotificationSettings, UserNotificationSettings } from '@automattic/api-core';
