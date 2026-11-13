@@ -16,9 +16,20 @@ import './style.scss';
 interface OfferCardProps {
 	onClick?: () => void;
 	layout?: 'inline' | 'stacked';
+	title?: string;
+	description?: string;
+	ctaLabel?: string;
+	href?: string;
 }
 
-export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProps ) {
+export default function OfferCard( {
+	onClick,
+	layout = 'inline',
+	title,
+	description: descriptionOverride,
+	ctaLabel,
+	href: hrefOverride,
+}: OfferCardProps ) {
 	const isSmallViewport = useViewportMatch( 'small', '<' );
 	const isStacked = layout === 'stacked';
 	const isInlineCollapsed = ! isStacked && isSmallViewport;
@@ -43,7 +54,7 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 
 	const Stack = isStacked || isInlineCollapsed ? VStack : HStack;
 	const image = isStacked ? devSiteBanner : abstractDotsSvg;
-	const href = wpcomLink( '/setup/onboarding' );
+	const href = hrefOverride ?? wpcomLink( '/setup/onboarding' );
 
 	const getStackProps = () => {
 		if ( isStacked ) {
@@ -67,10 +78,10 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 			) }
 			<VStack spacing={ 1 }>
 				<Text weight={ isStacked ? undefined : 500 } size={ isStacked ? 'title' : undefined }>
-					{ offer }
+					{ title ?? offer }
 				</Text>
 				<Text variant="muted" as="p">
-					{ description }
+					{ descriptionOverride ?? description }
 				</Text>
 			</VStack>
 			<div style={ { flexShrink: 0 } }>
@@ -81,7 +92,7 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 					size="compact"
 					__next40pxDefaultSize
 				>
-					{ __( 'Unlock offer' ) }
+					{ ctaLabel ?? __( 'Unlock offer' ) }
 				</Button>
 			</div>
 		</Stack>

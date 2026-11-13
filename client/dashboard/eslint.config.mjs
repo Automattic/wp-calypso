@@ -33,6 +33,8 @@ export default defineConfig( [
 								// Allowed: calypso/lib/wp
 								'!calypso/lib',
 								'calypso/lib/*',
+								// Temporary, Black Friday 2026
+								'!calypso/lib/promotions',
 								'!calypso/lib/color-scheme',
 								'!calypso/lib/explat',
 								'!calypso/lib/interval',
