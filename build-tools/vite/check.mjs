@@ -49,7 +49,7 @@ try {
 	);
 	optimized = Object.keys( metadata.optimized ).length;
 } catch ( error ) {
-	fail( '(pre-bundling)', String( error.message ).split( '\n' )[ 0 ] );
+	fail( '(pre-bundling)', String( error.message ) );
 }
 const optimizeMs = performance.now() - started;
 
