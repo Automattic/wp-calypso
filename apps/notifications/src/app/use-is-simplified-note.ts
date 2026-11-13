@@ -1,10 +1,6 @@
-import { useSelector } from 'react-redux';
-import getLayoutStyle from '../panel/state/selectors/get-layout-style';
 import { useAppContext } from './context';
 
-export const useIsSimplifiedNote = (): boolean => {
-	const { isSimplifiedNoteEnabled, isViewSettingsEnabled } = useAppContext();
-	const layoutStyle = useSelector( getLayoutStyle );
-
-	return isSimplifiedNoteEnabled && isViewSettingsEnabled && layoutStyle === 'simplified';
-};
+/**
+ * Returns whether the panel shows the simplified note layout, which follows the view settings flag.
+ */
+export const useIsSimplifiedNote = (): boolean => useAppContext().isViewSettingsEnabled;
