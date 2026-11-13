@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment <rootDir>/../test/client/jest-environment-timezone.js
  */
 
 import config from '@automattic/calypso-config';
@@ -235,5 +235,103 @@ describe( 'ProductsAndCostOverridesList', () => {
 		expect( screen.queryByText( 'Domain Bundle' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'Intro offer due date', () => {
+	const originalTZ = process.env.TZ;
+
+	beforeAll( () => {
+		// A UTC-midnight date renders a day early behind UTC unless parsed as a calendar date.
+		process.env.TZ = 'America/New_York';
+	} );
+
+	afterAll( () => {
+		if ( originalTZ === undefined ) {
+			delete process.env.TZ;
+		} else {
+			process.env.TZ = originalTZ;
+		}
+	} );
+
+	afterEach( () => {
+		mockConfig.isEnabled.mockRestore();
+	} );
+
+	function buildCartWithTrial(): ResponseCart {
+		return {
+			...getEmptyResponseCart(),
+			currency: 'USD',
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_id: 401,
+					product_slug: 'wp_titan_mail_yearly',
+					product_name: 'Professional Email',
+					meta: 'example.com',
+					uuid: 'titan',
+					months_per_bill_period: 12,
+					item_subtotal_integer: 0,
+					item_original_subtotal_integer: 3500,
+					introductory_offer_terms: {
+						enabled: true,
+						interval_unit: 'month',
+						interval_count: 3,
+						transition_after_renewal_count: 0,
+						should_prorate_when_offer_ends: false,
+					},
+					cost_overrides: [
+						{
+							human_readable_reason: 'Introductory offer',
+							override_code: 'introductory-offer',
+							old_subtotal_integer: 3500,
+							new_subtotal_integer: 0,
+							does_override_original_cost: false,
+							percentage: 100,
+							first_unit_only: false,
+						},
+					],
+				},
+			],
+			terms_of_service: [
+				{
+					key: 'product_id:401,meta:example.com',
+					code: 'introductory_offer_trial',
+					args: {
+						product_id: 401,
+						product_meta: 'example.com',
+						product_name: 'Professional Email',
+						renewal_price: '$35',
+						regular_renewal_price: '$35',
+						is_renewal: false,
+						subscription_start_date: '2026-10-22T00:00:00+00:00',
+						subscription_end_of_promotion_date: '2027-01-22T00:00:00+00:00',
+						subscription_auto_renew_date: '2027-01-22T00:00:00+00:00',
+						subscription_regular_auto_renew_date: '2028-01-22T00:00:00+00:00',
+						subscription_expiry_date: '2027-01-22T00:00:00+00:00',
+						subscription_pre_renew_reminder_days: 7,
+						subscription_pre_renew_reminders_count: 1,
+						renewal_price_integer: 3500,
+						regular_renewal_price_integer: 3500,
+						maybe_prorated_regular_renewal_price_integer: 3500,
+						subscription_maybe_prorated_regular_auto_renew_date: '2027-01-22T00:00:00+00:00',
+						remaining_promotional_auto_renewals: 0,
+					},
+				},
+			],
+		};
+	}
+
+	it( 'shows the billed date on the right calendar day', async () => {
+		mockConfig.isEnabled.mockImplementation( () => false );
+		const responseCart = buildCartWithTrial();
+
+		render(
+			<TestWrapper initialCart={ responseCart }>
+				<ProductsAndCostOverridesList responseCart={ responseCart } />
+			</TestWrapper>
+		);
+
+		expect( await screen.findByText( /Billed Jan 22, 2027/ ) ).toBeVisible();
 	} );
 } );

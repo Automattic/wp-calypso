@@ -1,3 +1,6 @@
+/**
+ * @jest-environment <rootDir>/../test/client/jest-environment-timezone.js
+ */
 import { formatDate } from '../additional-terms-of-service-in-cart';
 
 describe( 'formatDate', () => {
