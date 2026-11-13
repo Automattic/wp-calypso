@@ -5,6 +5,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -35,6 +36,10 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 
 // These tests seem to be particularly slow (it might be because of using
 // it.each; it's not clear but the timeout might apply to the whole loop
@@ -59,6 +64,7 @@ describe( 'Checkout contact step', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
+		( recordTracksEvent as jest.Mock ).mockClear();
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
@@ -96,6 +102,44 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByLabelText( 'Postal code' ) ).toHaveValue( '10001' );
 
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+	} );
+
+	it( 'records the first step complete event when autocompleting the contact step', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: '10001',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await screen.findByTestId( 'payment-method-step--visible' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_checkout_composite_first_step_complete',
+			{ payment_method: 'WPCOM_Billing_PayPal_Express' }
+		);
+	} );
+
+	it( 'records the first step complete event when the contact step is completed manually', async () => {
+		const user = userEvent.setup();
+		mockCachedContactDetailsEndpoint( {} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		await user.type( await screen.findByLabelText( 'Postal code' ), '10001' );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_checkout_composite_first_step_complete',
+			expect.anything()
+		);
+
+		await user.click( screen.getByLabelText( 'Continue with the entered contact details' ) );
+		await screen.findByTestId( 'payment-method-step--visible' );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_checkout_composite_first_step_complete',
+			{ payment_method: 'WPCOM_Billing_PayPal_Express' }
+		);
 	} );
 
 	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
