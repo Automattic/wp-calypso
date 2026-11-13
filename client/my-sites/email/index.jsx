@@ -66,7 +66,7 @@ export default function () {
 	page(
 		paths.getEmailManagementPath( ':site' ),
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/emails' ),
+		maybeRedirectToMultiSiteDashboard( ( params ) => paths.getDashboardEmailsPath( params.site ) ),
 		...commonHandlers,
 		controller.emailManagement,
 		makeLayout,

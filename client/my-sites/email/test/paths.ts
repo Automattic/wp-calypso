@@ -21,6 +21,7 @@ import {
 	getMailboxesPath,
 	isUnderEmailManagementAll,
 	getEmailCheckoutPath,
+	getDashboardEmailsPath,
 } from '../paths';
 
 const siteName = 'hello.wordpress.com';
@@ -250,5 +251,16 @@ describe( 'path helper functions', () => {
 		[ '/email/all/', true ],
 	] )( 'isUnderEmailManagement %s', ( path, expectedResult ) => {
 		expect( isUnderEmailManagementAll( path ) ).toEqual( expectedResult );
+	} );
+
+	it.each( [
+		[ 'hello.com', '/emails?domainName=hello.com' ],
+		[ 'hello.wordpress.com', '/emails' ],
+		[ 'hello.wpcomstaging.com', '/emails' ],
+		[ 'hello.art.blog', '/emails' ],
+		[ 'hello.com::blog', '/emails' ],
+		[ '12345', '/emails' ],
+	] )( 'getDashboardEmailsPath %s', ( siteSlug, expectedPath ) => {
+		expect( getDashboardEmailsPath( siteSlug ) ).toEqual( expectedPath );
 	} );
 } );
