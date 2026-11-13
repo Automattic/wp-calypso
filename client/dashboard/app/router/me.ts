@@ -486,8 +486,11 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+	validateSearch: (
+		search
+	): { intent?: CancelIntent; additionalPurchaseIds?: string; back_to?: 'domain' } => {
 		return {
+			...( search.back_to === 'domain' ? { back_to: search.back_to } : {} ),
 			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
 			search.intent === 'auto-renew'

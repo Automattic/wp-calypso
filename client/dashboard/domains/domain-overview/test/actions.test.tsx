@@ -67,7 +67,7 @@ describe( 'domain overview actions', () => {
 
 		expect( await screen.findByRole( 'link', { name: 'Delete' } ) ).toHaveAttribute(
 			'href',
-			expect.stringContaining( 'intent=remove' )
+			expect.stringContaining( 'intent=remove&back_to=domain' )
 		);
 	} );
 } );

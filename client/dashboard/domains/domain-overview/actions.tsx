@@ -165,7 +165,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								to={ cancelPurchaseRoute.fullPath }
 								onClick={ () => trackItem( 'action-remove' ) }
 								params={ { purchaseId: purchase.ID } }
-								search={ { intent: 'remove' } }
+								search={ { intent: 'remove', back_to: 'domain' } }
 							>
 								{ getDeleteLabel( domain ) }
 							</RouterLinkButton>
@@ -184,6 +184,7 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 								to={ cancelPurchaseRoute.fullPath }
 								onClick={ () => trackItem( 'action-cancel' ) }
 								params={ { purchaseId: purchase.ID } }
+								search={ { back_to: 'domain' } }
 							>
 								{ getDeleteLabel( domain ) }
 							</RouterLinkButton>

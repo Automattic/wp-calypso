@@ -39,6 +39,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
+import { domainRoute } from '../../../app/router/domains';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -337,7 +338,13 @@ function CancelPurchaseInner() {
 	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
+	const { back_to: backTo } = useSearch( { from: cancelPurchaseRoute.fullPath } );
 	const redirectBack = useCallback( () => {
+		if ( purchase && backTo === 'domain' && purchase.is_domain_registration ) {
+			navigate( { to: domainRoute.fullPath, params: { domainName: purchase.meta } } );
+			return;
+		}
+
 		if (
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
@@ -348,7 +355,7 @@ function CancelPurchaseInner() {
 		}
 
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate ] );
+	}, [ purchase, backTo, navigate ] );
 
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
