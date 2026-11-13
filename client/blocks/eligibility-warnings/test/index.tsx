@@ -42,14 +42,7 @@ function createState( {
 	siteId = 1,
 	siteUrl = 'https://example.wordpress.com',
 	warnings = [],
-	features = [],
-}: {
-	holds?: string[];
-	siteId?: number;
-	siteUrl?: string;
-	warnings?: unknown[];
-	features?: string[];
-} = {} ) {
+}: { holds?: string[]; siteId?: number; siteUrl?: string; warnings?: unknown[] } = {} ) {
 	return {
 		automatedTransfer: {
 			[ siteId ]: {
@@ -60,10 +53,7 @@ function createState( {
 				},
 			},
 		},
-		sites: {
-			items: { [ siteId ]: { URL: siteUrl } },
-			features: { [ siteId ]: { data: { active: features } } },
-		},
+		sites: { items: { [ siteId ]: { URL: siteUrl } } },
 		ui: { selectedSiteId: siteId },
 		siteSettings: {
 			saveRequests: {},
@@ -304,22 +294,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( getByText( 'Upgrade to a Personal plan' ) ).toBeVisible();
 		expect( queryByText( 'Upgrade to a Business plan' ) ).not.toBeInTheDocument();
-		expect( queryByText( /install custom plugins/ ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'skips the plan upgrade for a partner theme when the plan already includes partner themes', () => {
-		const state = createState( {
-			holds: [ 'NO_BUSINESS_PLAN' ],
-			features: [ 'partner-themes' ],
-		} );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings context="themes" isMarketplace onProceed={ noop } />,
-			state
-		);
-
-		expect( queryByText( /Upgrade to a/ ) ).not.toBeInTheDocument();
-		expect( getByText( 'Continue' ) ).toBeEnabled();
+		expect( getByText( /install custom plugins/ ) ).toBeVisible();
 	} );
 
 	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {

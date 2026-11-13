@@ -70,14 +70,6 @@ function getHoldMessages( {
 				} );
 			} )(),
 			description: ( function () {
-				if ( upsellPersonalPlan ) {
-					return hasEnTranslation(
-						"You'll also get a free domain for one year, and access fast support."
-					)
-						? translate( "You'll also get a free domain for one year, and access fast support." )
-						: translate( "You'll also get a free domain for one year, and access email support." );
-				}
-
 				if ( context === 'themes' ) {
 					return hasEnTranslation(
 						"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
@@ -88,6 +80,14 @@ function getHoldMessages( {
 						: translate(
 								"You'll also get to install custom plugins, have more storage, and access live support."
 							);
+				}
+
+				if ( upsellPersonalPlan ) {
+					return hasEnTranslation(
+						"You'll also get a free domain for one year, and access fast support."
+					)
+						? translate( "You'll also get a free domain for one year, and access fast support." )
+						: translate( "You'll also get a free domain for one year, and access email support." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {

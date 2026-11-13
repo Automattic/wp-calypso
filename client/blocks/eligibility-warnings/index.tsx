@@ -7,7 +7,6 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PERSONAL,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
-	WPCOM_FEATURES_PARTNER_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -367,17 +366,14 @@ function isProceedButtonDisabled( isEligible: boolean, holds: EligibilityHold[] 
 }
 
 /**
- * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the site
- * can buy the marketplace product (INSTALL_PURCHASED_PLUGINS for plugins,
- * PARTNER_THEMES for themes) or is onboarding flow.
+ * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
+ * INSTALL_PURCHASED_PLUGINS feature is present or is onboarding flow.
  *
  * Starter plans do not have the ATOMIC feature, but they have the
  * INSTALL_PURCHASED_PLUGINS feature which allows them to buy marketplace
- * addons (which do have the ATOMIC feature). Likewise, plans below Business
- * have the PARTNER_THEMES feature, and a partner theme subscription carries
- * the ATOMIC feature.
+ * addons (which do have the ATOMIC feature).
  *
- * This means a site about to purchase a marketplace addon might get a
+ * This means a starter plan about to purchase a marketplace addon might get a
  * 'NO_BUSINESS_PLAN' hold on atomic transfer; however, if we're about to buy a
  * marketplace addon which provides the ATOMIC feature, then we can ignore this
  * hold.
@@ -389,7 +385,6 @@ const processMarketplaceExceptions = (
 	state: AppState,
 	eligibilityData: EligibilityData,
 	isEligible: boolean,
-	context: EligibilityContext | null,
 	isOnboarding?: boolean
 ) => {
 	// If no eligibilityHolds are defined, skip.
@@ -397,11 +392,12 @@ const processMarketplaceExceptions = (
 		return { eligibilityData, isEligible };
 	}
 
-	// If is not Onboarding flow and missing the feature to buy the product, skip.
+	// If is not Onboarding flow and missing INSTALL_PURCHASED_PLUGINS feature, skip.
 	const siteId = getSelectedSiteId( state );
-	const purchaseFeature =
-		context === 'themes' ? WPCOM_FEATURES_PARTNER_THEMES : WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS;
-	if ( ! isOnboarding && ! siteHasFeature( state, siteId, purchaseFeature ) ) {
+	if (
+		! isOnboarding &&
+		! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	) {
 		return { eligibilityData, isEligible };
 	}
 
@@ -426,7 +422,6 @@ const mapStateToProps = ( state: AppState, ownProps: ExternalProps ) => {
 			state,
 			eligibilityData,
 			isEligible,
-			ownProps.context,
 			ownProps.isOnboarding
 		) );
 	}
