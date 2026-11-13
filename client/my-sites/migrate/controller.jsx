@@ -17,14 +17,9 @@ export function redirectToMigrationFlow( context ) {
 	goToMigrationFlow( context.params.site );
 }
 
-function showNotice( context, next, { title, line, action } ) {
+function showNotice( context, next, { title, line, action, onAction } ) {
 	context.primary = (
-		<EmptyContent
-			title={ title }
-			line={ line }
-			action={ action }
-			actionCallback={ () => window.location.reload() }
-		/>
+		<EmptyContent title={ title } line={ line } action={ action } actionCallback={ onAction } />
 	);
 	next();
 }
@@ -52,6 +47,7 @@ export async function closeLegacyMigration( context, next ) {
 		showNotice( context, next, {
 			title: translate( 'We couldn’t check your site’s migration' ),
 			action: translate( 'Try again' ),
+			onAction: () => window.location.reload(),
 		} );
 		return;
 	}
@@ -61,6 +57,9 @@ export async function closeLegacyMigration( context, next ) {
 			title: translate( 'Your site is still being migrated' ),
 			line: translate( 'This can take a while.' ),
 			action: translate( 'Check again' ),
+			// Home, not a reload: a migration that ended as `inactive` is finished too, and the
+			// classic-page lock sends a still-running one back here.
+			onAction: () => window.location.replace( `/home/${ site.slug }` ),
 		} );
 		return;
 	}

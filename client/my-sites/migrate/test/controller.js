@@ -11,10 +11,12 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 
 describe( 'closeLegacyMigration', () => {
 	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
-	const context = { params: { site: 'example.com' }, store: { getState: () => ( {} ) } };
+	let context;
+	const baseContext = { params: { site: 'example.com' }, store: { getState: () => ( {} ) } };
 	let locationReplace;
 
 	beforeEach( () => {
+		context = { ...baseContext };
 		jest.clearAllMocks();
 		wpcom.req.post.mockResolvedValue( {} );
 		locationReplace = jest.fn();
@@ -34,7 +36,7 @@ describe( 'closeLegacyMigration', () => {
 		[ 'error', '/setup/site-migration?siteSlug=example.com' ],
 	] )( 'resets a %s migration and leaves for %s', async ( status, destination ) => {
 		wpcom.req.get.mockResolvedValue( { status } );
-		await closeLegacyMigration( { ...context }, jest.fn() );
+		await closeLegacyMigration( context, jest.fn() );
 		expect( wpcom.req.post ).toHaveBeenCalledWith( {
 			path: '/sites/123/reset-migration',
 			apiNamespace: 'wpcom/v2',
@@ -47,17 +49,20 @@ describe( 'closeLegacyMigration', () => {
 		async ( status ) => {
 			wpcom.req.get.mockResolvedValue( { status } );
 			const next = jest.fn();
-			await closeLegacyMigration( { ...context }, next );
+			await closeLegacyMigration( context, next );
 			expect( wpcom.req.post ).not.toHaveBeenCalled();
 			expect( locationReplace ).not.toHaveBeenCalled();
 			expect( next ).toHaveBeenCalled();
+
+			context.primary.props.actionCallback();
+			expect( locationReplace ).toHaveBeenCalledWith( '/home/example.com' );
 		}
 	);
 
 	it( 'stays put without resetting when the status request fails', async () => {
 		wpcom.req.get.mockRejectedValue( new Error( 'Service unavailable' ) );
 		const next = jest.fn();
-		await closeLegacyMigration( { ...context }, next );
+		await closeLegacyMigration( context, next );
 		expect( wpcom.req.post ).not.toHaveBeenCalled();
 		expect( locationReplace ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
