@@ -110,7 +110,7 @@ class Updater extends EventEmitter {
 
 	sanitizeButtonLabel( value ) {
 		if ( platform.isWindows() ) {
-			return value.replace( '&', '&&' );
+			return value.replaceAll( '&', '&&' );
 		}
 
 		return value;
