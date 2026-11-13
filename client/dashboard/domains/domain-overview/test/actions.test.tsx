@@ -74,6 +74,19 @@ describe( 'domain overview actions', () => {
 		);
 	} );
 
+	test( 'links Delete to the remove screen when auto-renew is on', async () => {
+		renderActions( {}, {
+			ID: 456,
+			is_auto_renew_enabled: true,
+			subscription_status: 'active',
+		} as Partial< Purchase > );
+
+		expect( await screen.findByRole( 'link', { name: 'Delete' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'intent=remove&back_to=domain' )
+		);
+	} );
+
 	test( 'passes on where the domain was opened from to the remove screen', async () => {
 		window.history.replaceState( {}, '', '/?back_to=site-domains' );
 		renderActions( {}, { ID: 456, is_auto_renew_enabled: false } as Partial< Purchase > );
