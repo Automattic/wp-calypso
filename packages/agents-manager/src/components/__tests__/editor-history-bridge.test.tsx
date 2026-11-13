@@ -19,11 +19,13 @@ vi.mock( '@wordpress/router', () => ( { privateApis: 'router-private-apis' } ) )
 // needs its own copy of it. React and the history module stay shared: a second
 // React leaves the component's hooks without a dispatcher, and a second history
 // module would publish where these assertions cannot see it.
-const sharedElement =
-	await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
-const sharedEditorHistory = await vi.importActual< typeof import( '../../utils/editor-history' ) >(
-	'../../utils/editor-history'
-);
+let sharedElement: typeof import( '@wordpress/element' );
+let sharedEditorHistory: typeof import( '../../utils/editor-history' );
+
+beforeAll( async () => {
+	sharedElement = await vi.importActual( '@wordpress/element' );
+	sharedEditorHistory = await vi.importActual( '../../utils/editor-history' );
+} );
 
 async function renderBridge() {
 	vi.resetModules();
