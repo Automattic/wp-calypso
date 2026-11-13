@@ -44,6 +44,8 @@ Use the `render()` function from `client/dashboard/test-utils.tsx`, which will r
 - It only reads a param or search value: pass the value in as a prop and test the component with `render()`.
 - It reads or writes route search, or builds links from route objects: build the real route tree and a test router, as `domains/dataviews/test/field-domain-name.test.tsx` does. Prefer this over mocking `app/router/*` modules, whose mocks break whenever the code reads a route object they don't define.
 
+The test router reports `idle` right after `render()`. To test a component that mounts while a navigation is still pending, as a page does on a route change, render a wrapper that shows it once the location changes, then navigate with `act( () => router.history.push( … ) )`, as `me/billing-purchases/test/purchase-removed-notice.test.tsx` does.
+
 ### Mocking Network Requests
 
 Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.
@@ -98,6 +100,8 @@ nock( 'https://public-api.wordpress.com' )
 - Avoid `nock.delay()` — it leaves open handles that keep the test run from exiting.
 - Use `scope.isDone()` to assert the request was actually made.
 - Use `.query( true )` when you don't care about specific query string values.
+- A component that uses `usePersistentView` suspends until the user's preferences load, so mock `GET /rest/v1.1/me/preferences` too.
+- `invalidateQueries()` during a query's first fetch doesn't send a second request: with no data yet, TanStack Query keeps the fetch that is in flight. Wait for the first load to settle before you swap in the response the refetch should get.
 
 #### Asserting the request body
 
