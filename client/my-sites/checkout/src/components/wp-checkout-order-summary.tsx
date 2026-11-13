@@ -36,6 +36,7 @@ import {
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
+import { __, _x } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
@@ -132,20 +133,17 @@ export function CheckoutSummaryFeaturedList( {
 	);
 }
 
-const TaxNotCalculatedLineItemWrapper = styled.div`
-	font-size: 14px;
-	text-wrap: pretty;
-	line-height: 1em;
+const PendingTaxAmount = styled.em`
+	margin-inline-start: auto;
+	text-align: end;
 `;
 
 function TaxNotCalculatedLineItem() {
-	const translate = useTranslate();
 	return (
-		<TaxNotCalculatedLineItemWrapper className="wp-checkout-order-summary__tax-not-calculated">
-			{ translate( 'Tax: to be calculated', {
-				textOnly: true,
-			} ) }
-		</TaxNotCalculatedLineItemWrapper>
+		<CheckoutSummaryLineItem className="wp-checkout-order-summary__tax-not-calculated">
+			<span>{ _x( 'Tax', "Shortened form of 'Sales Tax', not a country-specific tax name" ) }</span>
+			<PendingTaxAmount>{ __( 'To be calculated' ) }</PendingTaxAmount>
+		</CheckoutSummaryLineItem>
 	);
 }
 

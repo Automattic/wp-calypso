@@ -165,6 +165,43 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
+	it( 'shows pending tax as a separate value in the order summary before billing details are set', async () => {
+		const user = userEvent.setup();
+		const { container } = render(
+			<MockCheckout
+				initialCart={ initialCart }
+				cartChanges={ { tax: { display_taxes: false, location: {} }, total_tax_integer: 0 } }
+				setCart={ mockSetCartEndpoint }
+			/>
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /Purchase Details/ } ) );
+		const pendingTax = await screen.findByText( 'To be calculated' );
+		const summary = container.querySelector( '.checkout__summary-card' );
+		expect( summary ).toContainElement( pendingTax );
+		expect( within( pendingTax.parentElement ).getByText( 'Tax' ) ).toBeVisible();
+		expect( pendingTax ).toBeVisible();
+	} );
+
+	it.each( [ 0, 700 ] )(
+		'omits pending tax when billing details are set and tax is %i',
+		async ( tax ) => {
+			render(
+				<MockCheckout
+					initialCart={ initialCart }
+					cartChanges={ {
+						tax: { display_taxes: true, location: { country_code: 'US', postal_code: '90210' } },
+						total_tax_integer: tax,
+					} }
+					setCart={ mockSetCartEndpoint }
+				/>
+			);
+
+			await screen.findByText( 'Summary' );
+			expect( screen.queryByText( /to be calculated/i ) ).not.toBeInTheDocument();
+		}
+	);
+
 	it( 'renders the total estimated amount when no billing info has been added', async () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		await waitFor( () => {
