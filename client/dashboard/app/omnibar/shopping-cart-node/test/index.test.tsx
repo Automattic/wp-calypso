@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { fetchShoppingCart, updateShoppingCart } from '@automattic/api-core';

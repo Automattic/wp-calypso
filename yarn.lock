@@ -11679,7 +11679,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.6.27":
+"@vitest/eslint-plugin@npm:^1.6.27, @vitest/eslint-plugin@npm:^1.6.28":
   version: 1.6.28
   resolution: "@vitest/eslint-plugin@npm:1.6.28"
   dependencies:
@@ -33014,6 +33014,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.72.1"
     "@vgs/collect-js": "npm:^0.7.2"
     "@vgs/collect-js-react": "npm:^2.1.1"
+    "@vitest/eslint-plugin": "npm:^1.6.28"
     "@wordpress/admin-ui": "npm:^3.1.0"
     "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/block-editor": "npm:^20.0.0"
