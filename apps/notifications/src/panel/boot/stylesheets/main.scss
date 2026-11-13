@@ -326,6 +326,18 @@ $with-sidebar-min-page-width: 1114px;
 		background-color: var(--color-neutral-0);
 	}
 
+	.wpnc__storage-access {
+		height: 100vh;
+	}
+
+	.wpnc__storage-access-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		margin-top: $wpnc__padding-large;
+	}
+
 	.wpnc__empty-notes {
 		text-align: center;
 		position: relative;
