@@ -5,9 +5,7 @@ import {
 } from 'calypso/dashboard/utils/email-verification-resend';
 import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
-
-// wpcom sends the confirmation link for this source back to `/setup/student`.
-export const STUDENT_ACTIVATION_EMAIL_SOURCE = 'student-with-email-verification';
+import { STUDENT_ACTIVATION_EMAIL_SOURCE } from '../../../../flows/student/constants';
 
 // `throttled` is a refusal, not a failure: the countdown says how long to wait.
 export type ResendStatus = 'idle' | 'sending' | 'sent' | 'error' | 'throttled';
