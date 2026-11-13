@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
@@ -6,6 +5,7 @@ import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const MIGRATION_FLOW = '/setup/site-migration';
+const RUNNING_STATUSES = [ 'new', 'backing-up', 'backing-up-queued', 'restoring', 'in-progress' ];
 
 function goToMigrationFlow( siteSlug ) {
 	window.location.replace(
@@ -15,6 +15,18 @@ function goToMigrationFlow( siteSlug ) {
 
 export function redirectToMigrationFlow( context ) {
 	goToMigrationFlow( context.params.site );
+}
+
+function showNotice( context, next, { title, line, action } ) {
+	context.primary = (
+		<EmptyContent
+			title={ title }
+			line={ line }
+			action={ action }
+			actionCallback={ () => window.location.reload() }
+		/>
+	);
+	next();
 }
 
 /**
@@ -28,19 +40,28 @@ export async function closeLegacyMigration( context, next ) {
 		return;
 	}
 
-	const status = await wpcom.req
-		.get( { path: `/sites/${ site.ID }/migration-status`, apiNamespace: 'wpcom/v2' } )
-		.then( ( response ) => response?.status )
-		.catch( () => undefined );
+	let status;
+	try {
+		const response = await wpcom.req.get( {
+			path: `/sites/${ site.ID }/migration-status`,
+			apiNamespace: 'wpcom/v2',
+		} );
+		status = response?.status;
+	} catch {
+		// Not treated as `error`: resetting on a transient failure could cut a running restore short.
+		showNotice( context, next, {
+			title: translate( 'We couldn’t check your site’s migration' ),
+			action: translate( 'Try again' ),
+		} );
+		return;
+	}
 
-	if ( [ 'new', 'backing-up', 'restoring' ].includes( status ) ) {
-		context.primary = (
-			<EmptyContent
-				title={ translate( 'Your site is still being migrated' ) }
-				line={ translate( 'Check back in a few minutes.' ) }
-			/>
-		);
-		next();
+	if ( RUNNING_STATUSES.includes( status ) ) {
+		showNotice( context, next, {
+			title: translate( 'Your site is still being migrated' ),
+			line: translate( 'This can take a while.' ),
+			action: translate( 'Check again' ),
+		} );
 		return;
 	}
 
@@ -51,7 +72,8 @@ export async function closeLegacyMigration( context, next ) {
 	}
 
 	if ( status === 'done' ) {
-		page.redirect( `/home/${ site.slug }` );
+		// A full load, so the classic-page lock reads the reset status rather than the stale one in Redux.
+		window.location.replace( `/home/${ site.slug }` );
 		return;
 	}
 
