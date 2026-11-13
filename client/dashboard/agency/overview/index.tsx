@@ -15,7 +15,10 @@ import MissingPaymentSettingsNotice, {
 	useMissingPaymentSettings,
 } from '../earn/missing-payment-settings-notice';
 import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
-import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import {
+	getMarketplaceHostingSectionRoute,
+	getMarketplaceReferHostingRoute,
+} from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from '../partner-directory/lead-matching/form-data';
@@ -24,7 +27,7 @@ import {
 	PARTNER_DIRECTORY_ROUTE,
 } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
-import { isProPartnerOrHigher } from '../tiers/get-current-agency-tier';
+import { isProPartnerOrHigher, isVipProPartnerOrHigher } from '../tiers/get-current-agency-tier';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import { getAnsweredMatchingProfileCount } from './matching-profile-visibility';
@@ -162,6 +165,15 @@ export default function AgencyOverview() {
 							label: __( 'Contact sales & support' ),
 							onClick: () => openContactForm(),
 						},
+						...( isVipProPartnerOrHigher( agency.tier?.id )
+							? [
+									{
+										id: 'refer-enterprise-hosting',
+										label: __( 'Refer your client to VIP hosting' ),
+										href: getMarketplaceReferHostingRoute( 'enterprise' ),
+									},
+								]
+							: [] ),
 						{
 							id: 'relaunch-welcome-tour',
 							label: __( 'Take the full tour' ),
