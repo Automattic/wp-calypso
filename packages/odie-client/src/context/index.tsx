@@ -4,11 +4,14 @@ import { createContext, useCallback, useContext, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {
 	HELP_CENTER_STORE,
+	ODIE_CALL_AN_HE_BOT_SLUG,
+	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 } from '../constants';
+import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { useGetCombinedChat } from '../hooks';
-import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
+import { isOdieAllowedBot, getIsRequestingHumanSupport, isCallAnHESampledUser } from '../utils';
 import type {
 	Chat,
 	HumanSupportRequest,
@@ -99,14 +102,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
 					: newInteractionsBotSlug;
 
+				const replacedBotSlug =
+					isCallAnHESampledUser( currentUser ) && odieBotNameSlug === ODIE_NEW_INTERACTIONS_BOT_SLUG
+						? ODIE_CALL_AN_HE_BOT_SLUG
+						: odieBotNameSlug;
+
 				return {
-					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					dynamicNewInteractionsBotSlug: replacedBotSlug,
 					isMinimized: store.getIsMinimized(),
 					isChatLoaded: store.getIsChatLoaded(),
 					checkoutSupportVariation: store.getCheckoutSupportVariation(),
 				};
 			},
-			[ newInteractionsBotSlug ]
+			[ newInteractionsBotSlug, currentUser ]
 		);
 
 	const navigate = useNavigate();
@@ -131,6 +139,13 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		getIsRequestingHumanSupport( message )
 	);
 
+	// The bot an event belongs to: the chat's own once there is one, since the bot for new chats
+	// can differ from it (a store override, or the user being sampled for a pilot).
+	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
+	const botNameSlug = currentSupportInteraction
+		? currentSupportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY
+		: dynamicNewInteractionsBotSlug;
+
 	/**
 	 * Tracking event.
 	 * Handler to make sure all requests are the same.
@@ -143,8 +158,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 					{
 						...properties,
 						chat_id: mainChatState?.odieId,
-						// The bot in use, which the Help Center store can override.
-						bot_name_slug: dynamicNewInteractionsBotSlug,
+						bot_name_slug: botNameSlug,
 						// Only set when support was opened from checkout in the checkout support experiment.
 						...( checkoutSupportVariation && {
 							checkout_support_variation: checkoutSupportVariation,
@@ -155,7 +169,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				)
 			);
 		},
-		[ dynamicNewInteractionsBotSlug, checkoutSupportVariation, mainChatState, selectedSiteId ]
+		[ botNameSlug, checkoutSupportVariation, mainChatState, selectedSiteId ]
 	);
 
 	// A pending request for a human belongs to the chat it was made in.

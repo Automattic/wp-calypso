@@ -7,6 +7,7 @@ import type { CheckoutSupportVariation } from '@automattic/data-stores';
 
 let mockCheckoutSupportVariation: CheckoutSupportVariation | undefined;
 let mockOdieBotNameSlug: string | undefined;
+let mockSupportInteraction: { bot_slug: string } | undefined;
 
 vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
@@ -33,6 +34,10 @@ vi.mock( '@wordpress/data', () => ( {
 
 vi.mock( 'react-router-dom', () => ( {
 	useNavigate: () => vi.fn(),
+} ) );
+
+jest.mock( '../../data/use-current-support-interaction', () => ( {
+	useCurrentSupportInteraction: () => ( { data: mockSupportInteraction } ),
 } ) );
 
 // Arguments: whether Zendesk chats can be loaded, and whether that is still being checked.
@@ -110,6 +115,7 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 	afterEach( () => {
 		mockCheckoutSupportVariation = undefined;
 		mockOdieBotNameSlug = undefined;
+		mockSupportInteraction = undefined;
 	} );
 
 	it( 'adds the checkout support variation to events from a checkout support chat', () => {
@@ -140,6 +146,92 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 			'calypso_odie_test_event',
 			expect.objectContaining( { bot_name_slug: 'automattic-chat-support_a4a' } )
 		);
+	} );
+
+	it( "records the chat's own bot, not the one new chats would get", () => {
+		mockSupportInteraction = { bot_slug: 'wpcom-workflow-support_chat' };
+
+		render(
+			<OdieAssistantProvider
+				newInteractionsBotSlug="wpcom-workflow-support_chat"
+				newLoggedOutInteractionsBotSlug="wpcom-workflow-chat_loggedout"
+				currentUser={ { display_name: 'Me', ID: 20 } }
+			>
+				<EventSender />
+			</OdieAssistantProvider>
+		);
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_odie_test_event',
+			expect.objectContaining( { bot_name_slug: 'wpcom-workflow-support_chat' } )
+		);
+	} );
+
+	it( 'records the legacy bot for an interaction without a slug', () => {
+		mockSupportInteraction = { bot_slug: '' };
+
+		renderAndSendEvent();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_odie_test_event',
+			expect.objectContaining( { bot_name_slug: 'wpcom-support-chat' } )
+		);
+	} );
+} );
+
+describe( 'OdieAssistantProvider – bot for new chats', () => {
+	const SlugReader = () => {
+		const { newInteractionsBotSlug } = useOdieAssistantContext();
+		return <span data-testid="slug">{ newInteractionsBotSlug }</span>;
+	};
+
+	const renderFor = ( currentUser: { display_name: string; ID?: number; email?: string } ) =>
+		render(
+			<OdieAssistantProvider
+				newInteractionsBotSlug="wpcom-workflow-support_chat"
+				newLoggedOutInteractionsBotSlug="wpcom-workflow-chat_loggedout"
+				currentUser={ currentUser }
+			>
+				<SlugReader />
+			</OdieAssistantProvider>
+		);
+
+	const slugInUse = () => screen.getByTestId( 'slug' ).textContent;
+
+	afterEach( () => {
+		mockOdieBotNameSlug = undefined;
+	} );
+
+	it( 'sends a sampled user to the Call an HE bot', () => {
+		renderFor( { display_name: 'Me', ID: 20 } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat_call_an_he' );
+	} );
+
+	it( 'sends an Automattician to the Call an HE bot', () => {
+		renderFor( { display_name: 'Me', ID: 21, email: 'someone@automattic.com' } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat_call_an_he' );
+	} );
+
+	it( 'keeps everyone else on the normal bot', () => {
+		renderFor( { display_name: 'Me', ID: 21, email: 'someone@example.com' } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat' );
+	} );
+
+	it( 'keeps a logged-out user on the normal bot', () => {
+		renderFor( { display_name: 'Me' } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat' );
+	} );
+
+	it( 'leaves a bot the Help Center chose alone, even for a sampled user', () => {
+		mockOdieBotNameSlug = 'automattic-chat-support_a4a';
+
+		renderFor( { display_name: 'Me', ID: 20 } );
+
+		expect( slugInUse() ).toBe( 'automattic-chat-support_a4a' );
 	} );
 } );
 
