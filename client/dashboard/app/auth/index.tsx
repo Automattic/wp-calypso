@@ -14,10 +14,10 @@ import {
 	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
-import store from 'store';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
+import { getSavedToken, markOAuthFlow } from './token-storage';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -52,7 +52,6 @@ interface AuthBounceRecord {
 // successful auth, because how do we know when it is safe to clear the count?
 // It could be that immediately after successful auth, the very next API returns
 // 401 and causes a bounce, yet we would have already cleared the count.
-// Returns the number of bounces in the current window, this one included.
 function trackAuthBounceLoop(): number {
 	try {
 		const now = Date.now();
@@ -162,6 +161,7 @@ function getOAuthAuthorizeUrl( {
 function redirectToOAuth() {
 	const state = crypto.randomUUID();
 	sessionStorage.setItem( 'wpcom_oauth_state', state );
+	markOAuthFlow();
 
 	window.location.replace(
 		getOAuthAuthorizeUrl( {
@@ -172,16 +172,22 @@ function redirectToOAuth() {
 }
 
 /**
- * Sends an OAuth dashboard that has no token to get one. Returns true when it redirects.
+ * The token an OAuth dashboard sends with every request. Must run before the support session
+ * replaces localStorage, which would hide a saved token.
+ */
+export function getOAuthToken(): string | undefined {
+	return config.isEnabled( 'oauth' ) ? getSavedToken() : undefined;
+}
+
+/**
+ * Sends an OAuth dashboard to get a token. Returns true when it redirects.
  *
  * A support session can load the user without a token, so a failed user request can't be the
  * only thing that starts the OAuth flow: endpoints that only accept OAuth requests would then
  * refuse a session that otherwise looks signed in.
- *
- * Must run before the support session replaces localStorage, which would hide a saved token.
  */
-export function requestOAuthTokenIfMissing(): boolean {
-	if ( ! config.isEnabled( 'oauth' ) || store.get( 'wpcom_token' ) ) {
+export function requestOAuthToken(): boolean {
+	if ( ! config.isEnabled( 'oauth' ) ) {
 		return false;
 	}
 
@@ -190,8 +196,13 @@ export function requestOAuthTokenIfMissing(): boolean {
 		return false;
 	}
 
-	bumpStat( 'dashboard-auth', 'bounce:no-token' );
-	redirectToOAuth();
+	try {
+		redirectToOAuth();
+		bumpStat( 'dashboard-auth', 'bounce:no-token' );
+	} catch {
+		// Storage can be unavailable; the user fetch below reports the problem instead.
+		return false;
+	}
 
 	return true;
 }
@@ -382,6 +393,7 @@ async function endSession( user: User ): Promise< string > {
 	if ( config.isEnabled( 'oauth' ) && ! configLogoutUrl ) {
 		const state = crypto.randomUUID();
 		sessionStorage.setItem( 'wpcom_oauth_state', state );
+		markOAuthFlow();
 
 		return getOAuthAuthorizeUrl( { state, isLogout: true } );
 	}

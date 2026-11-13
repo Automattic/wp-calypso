@@ -14,8 +14,9 @@ import {
 	AUTH_QUERY_KEY,
 	AuthProvider,
 	authQueryFn,
+	getOAuthToken,
 	logout,
-	requestOAuthTokenIfMissing,
+	requestOAuthToken,
 	sessionStateQuery,
 	updateCurrentUser,
 	useAuth,
@@ -211,7 +212,7 @@ describe( '<AuthProvider> stats', () => {
 	} );
 } );
 
-describe( 'requestOAuthTokenIfMissing', () => {
+describe( 'requestOAuthToken', () => {
 	const replace = vi.fn();
 
 	beforeEach( () => {
@@ -233,15 +234,15 @@ describe( 'requestOAuthTokenIfMissing', () => {
 
 	afterEach( () => {
 		config.disable( 'oauth' );
-		store.remove( 'wpcom_token' );
 		window.sessionStorage.clear();
 		replace.mockClear();
+		delete window.isSupportSession;
 	} );
 
-	test( 'sends an OAuth dashboard without a token to get one', () => {
+	test( 'sends an OAuth dashboard to get a token', () => {
 		config.enable( 'oauth' );
 
-		expect( requestOAuthTokenIfMissing() ).toBe( true );
+		expect( requestOAuthToken() ).toBe( true );
 
 		const authorizeUrl = new URL( replace.mock.calls[ 0 ][ 0 ] );
 		expect( authorizeUrl.origin + authorizeUrl.pathname ).toBe(
@@ -254,6 +255,15 @@ describe( 'requestOAuthTokenIfMissing', () => {
 			window.sessionStorage.getItem( 'wpcom_oauth_state' )
 		);
 		expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:no-token' );
+		expect( window.sessionStorage.getItem( 'wpcom_oauth_support_session' ) ).toBeNull();
+	} );
+
+	test( 'records that the flow started inside a support session', () => {
+		config.enable( 'oauth' );
+		window.isSupportSession = true;
+
+		expect( requestOAuthToken() ).toBe( true );
+		expect( window.sessionStorage.getItem( 'wpcom_oauth_support_session' ) ).toBe( '1' );
 	} );
 
 	test( 'does not redirect again when the last trip through OAuth came back without a token', () => {
@@ -263,21 +273,51 @@ describe( 'requestOAuthTokenIfMissing', () => {
 			JSON.stringify( { count: 1, at: Date.now() } )
 		);
 
-		expect( requestOAuthTokenIfMissing() ).toBe( false );
+		expect( requestOAuthToken() ).toBe( false );
 		expect( replace ).not.toHaveBeenCalled();
-	} );
-
-	test( 'does nothing when a token is saved', () => {
-		config.enable( 'oauth' );
-		store.set( 'wpcom_token', 'token' );
-
-		expect( requestOAuthTokenIfMissing() ).toBe( false );
-		expect( replace ).not.toHaveBeenCalled();
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth', 'bounce:no-token' );
 	} );
 
 	test( 'does nothing on a dashboard that does not use OAuth', () => {
-		expect( requestOAuthTokenIfMissing() ).toBe( false );
+		expect( requestOAuthToken() ).toBe( false );
 		expect( replace ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getOAuthToken', () => {
+	afterEach( () => {
+		config.disable( 'oauth' );
+		store.remove( 'wpcom_token' );
+		window.sessionStorage.clear();
+		delete window.isSupportSession;
+	} );
+
+	test( 'returns the saved token', () => {
+		config.enable( 'oauth' );
+		store.set( 'wpcom_token', 'token' );
+
+		expect( getOAuthToken() ).toBe( 'token' );
+	} );
+
+	test( 'returns nothing on a dashboard that does not use OAuth', () => {
+		store.set( 'wpcom_token', 'token' );
+
+		expect( getOAuthToken() ).toBeUndefined();
+	} );
+
+	test( 'uses the token a support session saved for the tab', () => {
+		config.enable( 'oauth' );
+		window.isSupportSession = true;
+		window.sessionStorage.setItem( 'wpcom_token', 'customer-token' );
+
+		expect( getOAuthToken() ).toBe( 'customer-token' );
+	} );
+
+	test( 'ignores a tab token once the support session is over', () => {
+		config.enable( 'oauth' );
+		window.sessionStorage.setItem( 'wpcom_token', 'customer-token' );
+
+		expect( getOAuthToken() ).toBeUndefined();
 	} );
 } );
 
