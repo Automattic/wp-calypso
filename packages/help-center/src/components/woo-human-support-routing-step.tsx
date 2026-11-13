@@ -154,7 +154,7 @@ export function WooHumanSupportRoutingStep( {
 	if ( outcome ) {
 		return (
 			<div className="help-center-woo-routing-step" ref={ stepRef }>
-				<WooHumanSupportRouteOutcome outcome={ outcome } onDone={ dismiss } />
+				<WooHumanSupportRouteOutcome outcome={ outcome } />
 			</div>
 		);
 	}
