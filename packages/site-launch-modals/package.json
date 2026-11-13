@@ -81,7 +81,7 @@
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.2"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0",

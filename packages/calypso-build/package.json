@@ -60,7 +60,7 @@
 		"terser-webpack-plugin": "^5.6.1",
 		"thread-loader": "^4.0.4",
 		"typescript": "^6.0.3",
-		"webpack-cli": "^7.2.3",
+		"webpack-cli": "^7.3.1",
 		"yargs": "^17.7.2"
 	},
 	"devDependencies": {

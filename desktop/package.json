@@ -43,8 +43,8 @@
 		"js-yaml": "5.4.1",
 		"playwright": "1.57.0",
 		"semver": "^7.7.2",
-		"webpack": "^5.111.1",
-		"webpack-cli": "^7.2.3",
+		"webpack": "^5.112.2",
+		"webpack-cli": "^7.3.1",
 		"winston": "^3.3.3"
 	},
 	"dependencies": {

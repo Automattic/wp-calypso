@@ -50,7 +50,7 @@
 		"copy-webpack-plugin": "^14.0.0",
 		"postcss-prefix-selector": "^1.16.1",
 		"sass": "1.77.8",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.2"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
