@@ -1,14 +1,9 @@
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { isTldInMaintenance } from '../../utils/domain';
 import { useSslStatusLabels } from '../domain-security/use-ssl-status-labels';
 import { isCompletedTransferNotPointingToWpcom } from './point-to-wpcom-notice';
-import { useTrackOverviewItem } from './use-track-overview-item';
 
 export default function DomainOverviewSslStatus( { domain }: { domain: Domain } ) {
-	const trackItem = useTrackOverviewItem( domain );
 	const sslStatusLabels = useSslStatusLabels();
 
 	if (
@@ -23,8 +18,8 @@ export default function DomainOverviewSslStatus( { domain }: { domain: Domain } 
 		return <Badge intent="stable">{ sslStatusLabels.active }</Badge>;
 	}
 
-	// Other subtypes have no certificate to fix, the security route rejects pending registrations,
-	// and PointToWpcomNotice already covers completed transfers that don't point here.
+	// Other subtypes and pending registrations have no certificate to fix, and PointToWpcomNotice
+	// already covers completed transfers that don't point here.
 	if (
 		isCompletedTransferNotPointingToWpcom( domain ) ||
 		( domain.subtype.id !== DomainSubtype.DOMAIN_CONNECTION &&
@@ -38,18 +33,8 @@ export default function DomainOverviewSslStatus( { domain }: { domain: Domain } 
 	const isPending = domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending';
 
 	return (
-		<>
-			<Badge intent={ isPending ? 'low' : 'high' }>
-				{ isPending ? sslStatusLabels.pending : sslStatusLabels.disabled }
-			</Badge>
-			{ ! isTldInMaintenance( domain ) && (
-				<Link
-					to={ `/domains/${ domain.domain }/security` }
-					onClick={ () => trackItem( 'ssl-status' ) }
-				>
-					{ __( 'View SSL details' ) }
-				</Link>
-			) }
-		</>
+		<Badge intent={ isPending ? 'low' : 'high' }>
+			{ isPending ? sslStatusLabels.pending : sslStatusLabels.disabled }
+		</Badge>
 	);
 }
