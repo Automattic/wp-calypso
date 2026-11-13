@@ -20,4 +20,12 @@ describe( 'resolveWindowOpen', () => {
 		const url = 'https://accounts.google.com/o/oauth2/auth?client_id=abc';
 		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'allow' } );
 	} );
+
+	it.each( [
+		'https://example.com/?next=https://accounts.google.com/o/oauth2/auth',
+		'https://accounts.google.com.example.com/o/oauth2/auth',
+		'https://example.com/https://accounts.google.com/o/oauth2/auth',
+	] )( 'loads look-alike Google login URLs in the main view: %p', ( url ) => {
+		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'deny', urlToLoad: url } );
+	} );
 } );
