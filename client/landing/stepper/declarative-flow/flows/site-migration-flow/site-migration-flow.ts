@@ -505,6 +505,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
+		// The identify step prefers the saved address over `from`, so forget it when `from` is reset.
+		const clearSavedSourceAddress = () =>
+			queryClient.setQueryData< Partial< FlowStateManifest > >( queryKey, ( state ) => ( {
+				...state,
+				migrationSourceUrl: undefined,
+			} ) );
+
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
@@ -545,6 +552,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							if ( ! copySourceSite || ! canUseAsMigrationDestination( copySourceSite ) ) {
 								return;
 							}
+							clearSavedSourceAddress();
 							return navigate(
 								paths.identifyPath( {
 									siteId: copySourceSite.ID,
@@ -579,6 +587,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						action === 'back' &&
 						isSiteAddress( fromQueryParam || '', getSiteAddresses( siteSlug, site ) )
 					) {
+						clearSavedSourceAddress();
 						return replace( paths.identifyPath( { from: '', host: '' } ) );
 					}
 					if (
