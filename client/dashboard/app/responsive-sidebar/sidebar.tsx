@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
@@ -6,7 +7,7 @@ import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
-import DomainSidebar from '../../domains/domain-sidebar';
+import DomainSidebar, { DomainEmailsBackButton } from '../../domains/domain-sidebar';
 import MeSidebar from '../../me/me-sidebar';
 import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
@@ -43,7 +44,10 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 			) }
 			<SidebarNavigator ref={ navigatorRef }>
 				<SidebarNavigator.Screen path="/">
-					<PrimaryMenuSidebar />
+					<VStack spacing={ 2 }>
+						<DomainEmailsBackButton />
+						<PrimaryMenuSidebar />
+					</VStack>
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
 					<SiteSidebar />

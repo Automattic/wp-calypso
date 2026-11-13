@@ -1,13 +1,13 @@
 import { domainQuery, siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter, useSearch } from '@tanstack/react-router';
+import { useRouter, useRouterState, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { category, envelope } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useAppContext } from '../../app/context';
 import { domainRoute } from '../../app/router/domains';
-import { emailsRoute } from '../../app/router/emails';
+import { emailsIndexRoute, emailsRoute } from '../../app/router/emails';
 import {
 	getSnackbarBackButtonNavigateOptions,
 	type SnackbarBackTo,
@@ -18,6 +18,60 @@ import {
 } from '../../app/transient-query-params';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import DomainSwitcherItem from './domain-switcher-item';
+import type { AnyRouteMatch } from '@tanstack/react-router';
+
+// Not a pathname, so breadcrumbs don't append it to their links.
+const EMAILS_ORIGIN_KEY = 'domain-sidebar-emails-origin';
+
+function getOriginDomainName() {
+	return getTransientQueryParamsAtPathname( EMAILS_ORIGIN_KEY )?.domainName as string | undefined;
+}
+
+function forgetOriginDomain( domainName: string ) {
+	setTransientQueryParamsAtPathname( `/domains/${ domainName }`, {} );
+	setTransientQueryParamsAtPathname( EMAILS_ORIGIN_KEY, {} );
+}
+
+/**
+ * Whether the match is an Emails screen for the domain the user came from.
+ * Screens that name no domain count, except the unfiltered list.
+ */
+function isOriginDomainEmailsMatch( { routeId, params, search }: AnyRouteMatch ) {
+	const originDomainName = getOriginDomainName();
+	if ( ! originDomainName || ! routeId.startsWith( `${ emailsRoute.fullPath }/` ) ) {
+		return false;
+	}
+	const domainName = params.domain ?? search.domainName;
+	return domainName ? domainName === originDomainName : routeId !== emailsIndexRoute.id;
+}
+
+/**
+ * Links back to the domain from the Emails screens the user reached from it.
+ */
+export function DomainEmailsBackButton() {
+	const router = useRouter();
+	const location = useRouterState( { select: ( state ) => state.location } );
+	// `state.matches` lags during pending navigations.
+	const match = router.matchRoutes( location ).at( -1 );
+	const originDomainName = getOriginDomainName();
+	const isOriginMatch = !! match && isOriginDomainEmailsMatch( match );
+
+	useEffect( () => {
+		if ( originDomainName && ! isOriginMatch ) {
+			forgetOriginDomain( originDomainName );
+		}
+	}, [ originDomainName, isOriginMatch ] );
+
+	if ( ! originDomainName || ! isOriginMatch ) {
+		return null;
+	}
+
+	return (
+		<SidebarBackButton to={ `/domains/${ originDomainName }` }>
+			{ __( 'Back to domain' ) }
+		</SidebarBackButton>
+	);
+}
 
 export default function DomainSidebar() {
 	const { domainName } = domainRoute.useParams();
@@ -44,16 +98,22 @@ export default function DomainSidebar() {
 		}
 	}, [ overviewPath, backToParam ] );
 
-	// The sidebar also unmounts inside the domain, on very slow navigations and viewport changes.
-	useEffect(
-		() => () => {
-			const { pathname } = router.state.location;
-			if ( pathname !== overviewPath && ! pathname.startsWith( `${ overviewPath }/` ) ) {
-				setTransientQueryParamsAtPathname( overviewPath, {} );
+	// Forget the domain only once the user leaves it and its Emails screens, as the sidebar
+	// also unmounts on slow navigations and viewport changes.
+	useEffect( () => {
+		setTransientQueryParamsAtPathname( EMAILS_ORIGIN_KEY, { domainName } );
+		return () => {
+			// `router.state.matches` lags during pending navigations.
+			const matches = router.matchRoutes( router.state.location );
+			const match = matches[ matches.length - 1 ];
+			if (
+				match?.params.domainName !== domainName &&
+				! ( match && isOriginDomainEmailsMatch( match ) )
+			) {
+				forgetOriginDomain( domainName );
 			}
-		},
-		[ router, overviewPath ]
-	);
+		};
+	}, [ router, domainName ] );
 
 	if ( ! domain ) {
 		return null;
@@ -87,7 +147,6 @@ function DomainMenuSidebar( {
 	overviewSearch?: Record< string, string >;
 } ) {
 	const { supports } = useAppContext();
-	const router = useRouter();
 
 	return (
 		<SidebarMenu>
@@ -102,12 +161,9 @@ function DomainMenuSidebar( {
 			{ supports.emails && (
 				<SidebarMenuItem
 					icon={ envelope }
-					to={
-						router.buildLocation( {
-							to: emailsRoute.fullPath,
-							search: { domainName },
-						} ).href
-					}
+					to={ emailsRoute.fullPath }
+					search={ { domainName } }
+					activeOptions={ { includeSearch: false } }
 				>
 					{ __( 'Emails' ) }
 				</SidebarMenuItem>

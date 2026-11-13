@@ -17,9 +17,10 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../../app/analytics';
+import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
 import { setTransientQueryParamsAtPathname } from '../../../app/transient-query-params';
 import { useActions } from '../../dataviews/actions';
-import DomainSidebar from '../index';
+import DomainSidebar, { DomainEmailsBackButton } from '../index';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 vi.mock( '../../../app/router/domains', async () => {
@@ -35,7 +36,10 @@ vi.mock( '../../../app/router/sites', () => ( {
 	siteOverviewRoute: { fullPath: '/sites/$siteSlug' },
 	siteDomainsRoute: { fullPath: '/sites/$siteSlug/domains' },
 } ) );
-vi.mock( '../../../app/router/emails', () => ( { emailsRoute: { fullPath: '/emails' } } ) );
+vi.mock( '../../../app/router/emails', () => ( {
+	emailsRoute: { fullPath: '/emails' },
+	emailsIndexRoute: { id: '/emails/' },
+} ) );
 vi.mock( '../domain-switcher-item', () => ( { default: () => null } ) );
 
 const domain = {
@@ -60,8 +64,10 @@ function renderAt( url: string ) {
 			const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
 			return (
 				<>
-					{ pathname.startsWith( '/domains/' ) && ! pathname.endsWith( '/no-sidebar' ) && (
-						<DomainSidebar />
+					{ pathname.startsWith( '/domains/' ) ? (
+						! pathname.endsWith( '/no-sidebar' ) && <DomainSidebar />
+					) : (
+						<DomainEmailsBackButton />
 					) }
 					<Outlet />
 				</>
@@ -70,6 +76,9 @@ function renderAt( url: string ) {
 	} );
 	const page = ( path: string, component: () => React.ReactNode = () => null ) =>
 		createRoute( { getParentRoute: () => rootRoute, path, component } );
+	const emailsRoute = page( 'emails', () => <Outlet /> );
+	const emailsPage = ( path: string ) =>
+		createRoute( { getParentRoute: () => emailsRoute, path, component: () => null } );
 	const router = createRouter( {
 		history: createMemoryHistory( { initialEntries: [ url ] } ),
 		routeTree: rootRoute.addChildren( [
@@ -78,6 +87,7 @@ function renderAt( url: string ) {
 			page( 'domains/$domainName/dns' ),
 			page( 'domains/$domainName/no-sidebar' ),
 			page( 'sites/$siteSlug/domains', () => <ViewSettings siteList={ site } /> ),
+			emailsRoute.addChildren( [ emailsPage( '/' ), emailsPage( 'choose-domain' ) ] ),
 		] ),
 	} );
 
@@ -91,9 +101,16 @@ function renderAt( url: string ) {
 
 	render(
 		<QueryClientProvider client={ queryClient }>
-			<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
-				<RouterProvider router={ router } />
-			</AnalyticsProvider>
+			<AppProvider
+				config={ {
+					...APP_CONTEXT_DEFAULT_CONFIG,
+					supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, emails: true },
+				} }
+			>
+				<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
+					<RouterProvider router={ router } />
+				</AnalyticsProvider>
+			</AppProvider>
 		</QueryClientProvider>
 	);
 
@@ -162,6 +179,32 @@ describe( 'DomainSidebar', () => {
 			expect( await findBackLink( 'Back to Domains' ) ).toBeVisible();
 		}
 	);
+
+	test( 'links back to the domain from its Emails screens until the user leaves them', async () => {
+		const goTo = renderAt( '/domains/example.com?back_to=site-domains' );
+
+		await userEvent.click( await screen.findByRole( 'link', { name: 'Emails' } ) );
+
+		expect( await findBackLink( 'Back to domain' ) ).toHaveAttribute(
+			'href',
+			'/domains/example.com'
+		);
+
+		await goTo( '/emails/choose-domain' );
+
+		expect( await findBackLink( 'Back to domain' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'link', { name: 'Back to domain' } ) );
+
+		expect( await findBackLink( 'Back to site' ) ).toBeVisible();
+
+		await goTo( '/emails?domainName=example.com' );
+		await findBackLink( 'Back to domain' );
+		await goTo( '/sites/site-slug.com/domains' );
+		await goTo( '/emails?domainName=example.com' );
+
+		expect( screen.queryByRole( 'link', { name: 'Back to domain' } ) ).not.toBeInTheDocument();
+	} );
 
 	test.each( [
 		[ '/sites/site-slug.com/domains', 'Back to site' ],
