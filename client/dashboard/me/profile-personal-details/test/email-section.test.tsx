@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { ACCOUNT_EMAIL_RECOVERY_SNOOZE } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -31,7 +30,7 @@ function mockPreferences( until = 0 ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
 		.query( true )
-		.reply( 200, { calypso_preferences: { [ ACCOUNT_EMAIL_RECOVERY_SNOOZE ]: until } } );
+		.reply( 200, { calypso_preferences: { 'account-email-recovery-snoozed-until': until } } );
 }
 
 const userSettings = { user_email: ACCOUNT_EMAIL } as UserSettings;
@@ -267,7 +266,8 @@ describe( 'Account email recovery reminder', () => {
 		const save = nock( 'https://public-api.wordpress.com' )
 			.post(
 				'/rest/v1.1/me/preferences',
-				( body ) => body.calypso_preferences?.[ ACCOUNT_EMAIL_RECOVERY_SNOOZE ] > Date.now() / 1000
+				( body ) =>
+					body.calypso_preferences?.[ 'account-email-recovery-snoozed-until' ] > Date.now() / 1000
 			)
 			.query( true )
 			.reply( 200, ( _uri, body ) => body );

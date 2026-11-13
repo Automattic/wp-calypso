@@ -683,9 +683,6 @@ class Account extends Component {
 						this.setState( { emailValidationError: ! isEmailValid } )
 					}
 					isEmailControlDisabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
-					hasUnsavedChanges={ this.hasUnsavedUserSettings(
-						ACCOUNT_FIELDS.concat( INTERFACE_FIELDS )
-					) }
 					onFocus={ this.getFocusHandler( 'Email Address Field' ) }
 					unsavedUserSettings={ this.props.unsavedUserSettings }
 					userSettings={ this.props.userSettings }

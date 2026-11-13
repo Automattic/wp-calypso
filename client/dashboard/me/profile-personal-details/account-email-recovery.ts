@@ -1,4 +1,7 @@
-import { getEmailDomain, isValidEmailAddress } from './email-validation';
+import {
+	getEmailDomain,
+	isValidEmailAddress,
+} from '@automattic/onboarding/src/utils/email-validation';
 
 // Match complete domains so a domain like yahoo.school.edu still receives the warning.
 const WEBMAIL_DOMAINS = new Set( [

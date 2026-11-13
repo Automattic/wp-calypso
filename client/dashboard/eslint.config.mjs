@@ -92,7 +92,6 @@ export default defineConfig( [
 								'!@automattic/onboarding/src/utils',
 								'@automattic/onboarding/src/utils/*',
 								'!@automattic/onboarding/src/utils/email-validation',
-								'!@automattic/onboarding/src/utils/account-email-recovery',
 								'!@automattic/search',
 								'!@automattic/calypso-stripe',
 								'!@automattic/calypso-url',
@@ -137,7 +136,7 @@ export default defineConfig( [
 						{
 							name: '@automattic/onboarding',
 							message:
-								'Do not import from the barrel file. Only the shared email utilities are allowed in the dashboard; the rest of the package carries Calypso onboarding concepts.',
+								'Do not import from the barrel file. Only @automattic/onboarding/src/utils/email-validation is allowed in the dashboard; the rest of the package carries Calypso onboarding concepts.',
 						},
 						{
 							name: 'i18n-calypso',

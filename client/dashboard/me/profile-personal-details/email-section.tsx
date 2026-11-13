@@ -1,9 +1,5 @@
 import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
 import {
-	hasVerifiedAccountRecovery,
-	isAccountEmailAtRisk,
-} from '@automattic/onboarding/src/utils/account-email-recovery';
-import {
 	getEmailAddressError,
 	getEmailDomain,
 } from '@automattic/onboarding/src/utils/email-validation';
@@ -16,6 +12,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { createContext, useMemo, useEffect, useCallback, useContext, useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { hasVerifiedAccountRecovery, isAccountEmailAtRisk } from './account-email-recovery';
 import AccountEmailRecoveryNotice from './account-email-recovery-notice';
 import { useIsEmailWritePending } from './use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';

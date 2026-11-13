@@ -3,7 +3,6 @@
  */
 
 import '@testing-library/jest-dom';
-import { ACCOUNT_EMAIL_RECOVERY_SNOOZE } from '@automattic/api-core';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -62,7 +61,7 @@ function mockIsAutomattician( isAutomattician: boolean ) {
 function mockReminderPreferences() {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
-		.reply( 200, { calypso_preferences: { [ ACCOUNT_EMAIL_RECOVERY_SNOOZE ]: 0 } } );
+		.reply( 200, { calypso_preferences: { 'account-email-recovery-snoozed-until': 0 } } );
 }
 
 function mockAccountRecovery( {

@@ -1,40 +1,27 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import {
-	getEmailAddressError,
-	hasVerifiedAccountRecovery,
-	isAccountEmailAtRisk,
-} from '@automattic/onboarding';
+import { getEmailAddressError } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import wpcom from 'calypso/lib/wp';
-import { useDispatch, useSelector, useStore } from 'calypso/state';
-import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
-	isAccountRecoveryEmailValidated,
-	isAccountRecoveryPhoneValidated,
 	isAccountRecoverySettingsReady,
 } from 'calypso/state/account-recovery/settings/selectors';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import {
 	cancelPendingEmailChange,
-	fetchUserSettingsSuccess,
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
-import {
-	isFetchingUserSettings,
-	isUpdatingUserSettings,
-} from 'calypso/state/user-settings/selectors';
-import AccountEmailRecoveryNotice from './account-email-recovery-notice';
 import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
 
@@ -43,7 +30,6 @@ import './account-email-field.scss';
 export type AccountEmailFieldProps = {
 	emailInputId?: string;
 	emailInputName?: string;
-	hasUnsavedChanges?: boolean;
 	emailValidationHandler?: ( isEmailValid: boolean ) => void;
 	isEmailControlDisabled?: boolean;
 	onEmailChange?: ( isEmailModified: boolean ) => void;
@@ -128,6 +114,99 @@ const AccountEmailValidationNotice = ( {
 	return <FormInputValidation isError text={ noticeText } />;
 };
 
+/**
+ * Well-known free email providers whose addresses are not at risk of expiry.
+ * Anything not on this list is treated as a custom domain that could expire.
+ */
+const FREE_EMAIL_PROVIDERS = new Set( [
+	'gmail.com',
+	'googlemail.com',
+	'yahoo.com',
+	'yahoo.co.uk',
+	'yahoo.fr',
+	'yahoo.de',
+	'yahoo.es',
+	'yahoo.it',
+	'yahoo.ca',
+	'yahoo.com.au',
+	'hotmail.com',
+	'hotmail.co.uk',
+	'hotmail.fr',
+	'hotmail.de',
+	'hotmail.es',
+	'hotmail.it',
+	'outlook.com',
+	'outlook.co.uk',
+	'outlook.fr',
+	'outlook.de',
+	'live.com',
+	'live.co.uk',
+	'live.fr',
+	'live.de',
+	'msn.com',
+	'icloud.com',
+	'me.com',
+	'mac.com',
+	'aol.com',
+	'protonmail.com',
+	'proton.me',
+	'tutanota.com',
+	'tutamail.com',
+	'zoho.com',
+	'fastmail.com',
+	'fastmail.fm',
+	'yandex.com',
+	'yandex.ru',
+	'mail.ru',
+	'gmx.com',
+	'gmx.de',
+	'gmx.net',
+	'web.de',
+	'wp.pl',
+] );
+
+/**
+ * Returns true if the email domain is a custom domain (i.e. not a well-known
+ * free email provider), meaning it is subject to expiry risk.
+ */
+const isCustomDomainEmail = ( email: string ): boolean => {
+	const domain = getEmailDomain( email );
+	return domain !== null && ! FREE_EMAIL_PROVIDERS.has( domain );
+};
+
+const AccountEmailCustomDomainNotice = ( { email }: { email: string } ) => {
+	const translate = useTranslate();
+	const isSettingsReady = useSelector( isAccountRecoverySettingsReady );
+	const recoveryEmail = useSelector( getAccountRecoveryEmail );
+	const recoveryPhone = useSelector( getAccountRecoveryPhone );
+
+	if ( ! isCustomDomainEmail( email ) ) {
+		return null;
+	}
+
+	const hasRecoveryMethod = !! recoveryEmail || !! recoveryPhone;
+
+	return (
+		<>
+			<QueryAccountRecoverySettings />
+			{ isSettingsReady && ! hasRecoveryMethod && (
+				<FormInputValidation
+					isError={ false }
+					isWarning
+					text={ translate(
+						"This email uses a custom domain. If your domain expires, you'd lose access to account recovery. {{a}}Set up a recovery email or phone number{{/a}} to keep access to your account.",
+						{
+							components: {
+								a: <a href="/me/security/account-recovery" />,
+							},
+						}
+					) }
+				/>
+			) }
+		</>
+	);
+};
+
 const EmailFieldExplanationText = ( {
 	unlockRef,
 }: {
@@ -177,7 +256,6 @@ const AccountEmailField = ( {
 	emailInputId = 'user_email',
 	emailInputName = 'user_email',
 	emailValidationHandler,
-	hasUnsavedChanges = false,
 	isEmailControlDisabled = false,
 	onEmailChange,
 	onFocus,
@@ -189,13 +267,6 @@ const AccountEmailField = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
-	const store = useStore();
-	const userId = useSelector( getCurrentUserId );
-	const recoveryIsReady = useSelector( isAccountRecoverySettingsReady );
-	const recoveryEmail = useSelector( getAccountRecoveryEmail );
-	const recoveryPhone = useSelector( getAccountRecoveryPhone );
-	const recoveryEmailVerified = useSelector( isAccountRecoveryEmailValidated );
-	const recoveryPhoneVerified = useSelector( isAccountRecoveryPhoneValidated );
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
@@ -213,77 +284,6 @@ const AccountEmailField = ( {
 		unsavedUserSettings,
 		userSettings,
 	} );
-
-	const savedEmail = String( userSettings.user_email ?? '' );
-	const isDraft = ! isEmailChangePending && String( emailAddress ) !== savedEmail;
-	const warningEmail = isDraft ? String( emailAddress ) : savedEmail;
-	const verifiedRecovery = recoveryIsReady
-		? {
-				verifiedEmail: recoveryEmailVerified ? recoveryEmail : undefined,
-				hasVerifiedPhone: !! recoveryPhone?.number && recoveryPhoneVerified === true,
-			}
-		: undefined;
-	const showRecoveryWarning =
-		isAccountEmailAtRisk( warningEmail ) &&
-		( isDraft || recoveryIsReady ) &&
-		! hasVerifiedAccountRecovery( warningEmail, verifiedRecovery );
-
-	useEffect( () => {
-		dispatch( accountRecoverySettingsFetch( { quiet: true } ) );
-
-		let active = true;
-		let isRefreshingPendingEmail = false;
-		const refreshOnFocus = async () => {
-			if ( document.visibilityState !== 'visible' ) {
-				return;
-			}
-
-			dispatch( accountRecoverySettingsFetch( { quiet: true } ) );
-			const state = store.getState();
-			const pendingEmail = isPendingEmailChange( state );
-			if (
-				! pendingEmail ||
-				isRefreshingPendingEmail ||
-				isFetchingUserSettings( state ) ||
-				isUpdatingUserSettings( state )
-			) {
-				return;
-			}
-
-			isRefreshingPendingEmail = true;
-			try {
-				const { user_email, new_user_email, user_email_change_pending } = await wpcom.req.get(
-					'/me/settings',
-					{ fields: 'user_email,new_user_email,user_email_change_pending' }
-				);
-				const latestState = store.getState();
-				// A cancel or a newer email change may have completed while this read was in flight.
-				if (
-					active &&
-					typeof user_email === 'string' &&
-					new_user_email === '' &&
-					user_email_change_pending === false &&
-					isPendingEmailChange( latestState ) === pendingEmail &&
-					! isFetchingUserSettings( latestState ) &&
-					! isUpdatingUserSettings( latestState )
-				) {
-					dispatch(
-						fetchUserSettingsSuccess( { user_email, new_user_email, user_email_change_pending } )
-					);
-				}
-			} catch {
-				// The next focus or page load can retry.
-			} finally {
-				isRefreshingPendingEmail = false;
-			}
-		};
-
-		window.addEventListener( 'focus', refreshOnFocus );
-		return () => {
-			active = false;
-			window.removeEventListener( 'focus', refreshOnFocus );
-		};
-	}, [ dispatch, store, userId ] );
 
 	const onEmailAddressChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
 		const { value } = event.target;
@@ -363,15 +363,9 @@ const AccountEmailField = ( {
 					userSettings={ userSettings }
 				/>
 
-				<AccountEmailRecoveryNotice
-					key={ userId }
-					savedEmail={ savedEmail }
-					show={ showRecoveryWarning }
-					isDraft={ isDraft }
-					isPending={ !! isEmailChangePending }
-					recoveryIsReady={ recoveryIsReady }
-					openInNewTab={ hasUnsavedChanges || isDraft }
-				/>
+				{ emailInvalidReason === EMAIL_VALIDATION_REASON_IS_VALID && (
+					<AccountEmailCustomDomainNotice email={ String( emailAddress ) } />
+				) }
 
 				<FormSettingExplanation>
 					<EmailFieldExplanationText unlockRef={ unlockRef } />

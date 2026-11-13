@@ -3,12 +3,6 @@ import {
 	accountEmailRecoverySnoozeQuery,
 } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import {
-	getAccountEmailRecoverySnoozeUntil,
-	hasVerifiedAccountRecovery,
-	isAccountEmailAtRisk,
-	isAccountEmailRecoverySnoozed,
-} from '@automattic/onboarding/src/utils/account-email-recovery';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
@@ -17,7 +11,13 @@ import Notice, {
 	NoticeActionLinkButton,
 	RouterNoticeActionLinkButton,
 } from '../../components/notice';
-import type { VerifiedAccountRecovery } from '@automattic/onboarding/src/utils/account-email-recovery';
+import {
+	getAccountEmailRecoverySnoozeUntil,
+	hasVerifiedAccountRecovery,
+	isAccountEmailAtRisk,
+	isAccountEmailRecoverySnoozed,
+} from './account-email-recovery';
+import type { VerifiedAccountRecovery } from './account-email-recovery';
 
 interface Props {
 	savedEmail: string;
