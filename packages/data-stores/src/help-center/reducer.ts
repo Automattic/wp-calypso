@@ -99,7 +99,7 @@ const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( 
 	return state;
 };
 
-const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+const isMinimized: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
 			return action.minimized;

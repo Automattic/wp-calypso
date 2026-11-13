@@ -77,11 +77,16 @@ export function getHelpCenterRouterHistory() {
 }
 
 export function getIsMinimized() {
-	return async ( { dispatch }: HelpCenterThunkProps ) => {
+	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
 		const minimized = await getPersistedPreference( 'help_center_minimized' );
-		dispatch( {
-			type: 'HELP_CENTER_SET_MINIMIZED',
-			minimized: minimized ?? false,
-		} as const );
+
+		// Like the open state, this only restores. A page can open the Help Center before the
+		// Help Center knows the user, and that choice stands when the preference loads later.
+		if ( minimized && typeof select.getIsMinimized() === 'undefined' ) {
+			dispatch( {
+				type: 'HELP_CENTER_SET_MINIMIZED',
+				minimized: true,
+			} as const );
+		}
 	};
 }
