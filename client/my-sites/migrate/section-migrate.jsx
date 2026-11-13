@@ -64,7 +64,7 @@ export class SectionMigrate extends Component {
 
 		// New migrations start in the site migration flow.
 		if ( 'inactive' === this.state.migrationStatus && prevState.migrationStatus !== 'inactive' ) {
-			goToMigrationFlow( this.props.targetSiteSlug, this.props.fromSite );
+			goToMigrationFlow( this.props.targetSiteSlug, this.getSourceUrl() );
 		}
 	}
 
@@ -91,11 +91,13 @@ export class SectionMigrate extends Component {
 		} );
 	};
 
+	getSourceUrl = () => this.props.fromSite ?? this.props.sourceSite?.URL;
+
 	resetMigration = () => {
-		const { targetSiteId, targetSiteSlug, fromSite } = this.props;
+		const { targetSiteId, targetSiteSlug } = this.props;
 
 		this.requestMigrationReset( targetSiteId ).finally( () =>
-			goToMigrationFlow( targetSiteSlug, fromSite )
+			goToMigrationFlow( targetSiteSlug, this.getSourceUrl() )
 		);
 	};
 
@@ -496,7 +498,7 @@ const navigateToSelectedSourceSite = ( sourceSiteId ) => ( dispatch, getState ) 
 	const sourceSiteSlug = sourceSite?.slug ?? sourceSiteId;
 	const targetSiteSlug = getSelectedSiteSlug( state );
 
-	page( `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
+	page.replace( `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
 };
 
 export const connector = connect(
