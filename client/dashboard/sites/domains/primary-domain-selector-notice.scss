@@ -1,8 +1,7 @@
 .primary-domain-selector-notice__message {
 	max-inline-size: var( --wpds-dimension-surface-width-xl, 720px );
 
-	// Below the cap, balance the lines so "Learn more" never wraps onto a line of its own.
-	// 774px is the cap plus the notice's padding and icon; container queries can't read the token.
+	// The 720px cap plus the notice's padding.
 	@container (width < 774px) {
 		text-wrap: balance;
 	}
