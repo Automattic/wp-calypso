@@ -62,10 +62,12 @@ const setContext = ( {
 	isChatLoaded,
 	forceEmailSupport = false,
 	provider = 'odie',
+	pendingHumanSupportRequest = null,
 }: {
 	isChatLoaded: boolean;
 	forceEmailSupport?: boolean;
 	provider?: string;
+	pendingHumanSupportRequest?: { createdFrom: string } | null;
 } ) => {
 	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		chat: { provider, status: 'loaded' },
@@ -74,6 +76,7 @@ const setContext = ( {
 		trackEvent: vi.fn(),
 		isChatLoaded,
 		forceEmailSupport,
+		pendingHumanSupportRequest,
 	} );
 };
 
@@ -128,6 +131,19 @@ describe( 'GetSupport', () => {
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( {
 			createdFrom: 'chat_support_button',
 		} );
+	} );
+
+	it( 'offers nothing while a routing step has the request', () => {
+		setContext( {
+			isChatLoaded: true,
+			pendingHumanSupportRequest: { createdFrom: 'chat_support_button' },
+		} );
+		const onShow = vi.fn();
+
+		render( <GetSupport onShow={ onShow } /> );
+
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( onShow ).not.toHaveBeenCalled();
 	} );
 
 	// The escalation button is only offered once the Smooch SDK has loaded: until then the
