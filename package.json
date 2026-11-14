@@ -211,7 +211,7 @@
 		"@zip.js/zip.js": "2.8.17",
 		"animate.css": "^4.1.1",
 		"calypso": "workspace:^",
-		"d3-time-format": "^4.1.0",
+		"d3-time-format": "^4.1.1",
 		"debug": "^4.4.3",
 		"enhanced-resolve": "5.9.3",
 		"http-proxy-middleware": "^4.2.1",
