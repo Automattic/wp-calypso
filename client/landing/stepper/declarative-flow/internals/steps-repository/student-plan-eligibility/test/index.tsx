@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -196,6 +196,27 @@ describe( 'StudentPlanEligibility', () => {
 			} );
 
 			expect( fetchCurrentUser ).toHaveBeenCalled();
+		} );
+
+		it( 'leaves the rate-limited eligibility check alone when the person comes back to the tab', async () => {
+			mockEligibility( 'unverified' );
+			const checkOnReturn = mockEligibility( 'unverified' );
+
+			render();
+
+			await screen.findByRole( 'heading', { name: 'Confirm your email to get the Student plan' } );
+
+			try {
+				act( () => {
+					focusManager.setFocused( false );
+					focusManager.setFocused( true );
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+			} finally {
+				focusManager.setFocused( undefined );
+			}
+
+			expect( checkOnReturn.isDone() ).toBe( false );
 		} );
 
 		/**
