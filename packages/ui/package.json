@@ -70,7 +70,7 @@
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
 		"storybook": "^10.6.5",
-		"stylelint": "^17.16.0",
+		"stylelint": "^18.0.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^9.0.0",
 		"typescript": "^6.0.3",
