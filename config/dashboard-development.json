@@ -32,6 +32,7 @@
 	"features": {
 		"a4a-dashboard-opt-in": true,
 		"a4a-spacefast-promo": true,
+		"black-friday-2026": true,
 		"calypso/ai-site-builder-flow": true,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,
