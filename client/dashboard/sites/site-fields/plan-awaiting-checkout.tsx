@@ -78,11 +78,13 @@ export function useSiteAwaitingCheckout( site: Site ): WowFunnelPendingSite | un
  * buying a plan is what keeps it. Asked from the same lookup as useSiteAwaitingCheckout(), with
  * the same gate.
  * @param site The site to check.
- * @returns Whether the answer is still loading, and whether the site is a standing preview.
+ * @returns Whether the answer is still loading, whether the site is a standing preview, and the
+ *          share link the server gives it once it is built.
  */
 export function useSiteIsPreview( site: Site ): {
 	isLoading: boolean;
 	isPreview: boolean;
+	shareUrl?: string;
 } {
 	const couldBePreview = couldBeUnpaidFunnelSite( site );
 
@@ -91,10 +93,14 @@ export function useSiteIsPreview( site: Site ): {
 		enabled: couldBePreview,
 	} );
 
+	const preview = couldBePreview
+		? data?.preview_sites?.find( ( { blog_id } ) => blog_id === site.ID )
+		: undefined;
+
 	return {
 		isLoading: couldBePreview && isLoading,
-		isPreview:
-			couldBePreview && !! data?.preview_sites?.some( ( preview ) => preview.blog_id === site.ID ),
+		isPreview: !! preview,
+		shareUrl: preview?.share_url || undefined,
 	};
 }
 
