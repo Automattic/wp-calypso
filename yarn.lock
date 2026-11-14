@@ -15379,7 +15379,7 @@ __metadata:
     cronstrue: "npm:^3.11.0"
     d3-array: "npm:^2.12.1"
     d3-axis: "npm:^1.0.12"
-    d3-scale: "npm:^4.0.2"
+    d3-scale: "npm:^4.0.3"
     d3-selection: "npm:^1.4.2"
     d3-shape: "npm:^1.3.7"
     date-fns: "npm:^4.4.0"
@@ -17061,7 +17061,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-scale@npm:4.0.2, d3-scale@npm:^4.0.2":
+"d3-scale@npm:4.0.2":
   version: 4.0.2
   resolution: "d3-scale@npm:4.0.2"
   dependencies:
@@ -17071,6 +17071,19 @@ __metadata:
     d3-time: "npm:2.1.1 - 3"
     d3-time-format: "npm:2 - 4"
   checksum: 65d9ad8c2641aec30ed5673a7410feb187a224d6ca8d1a520d68a7d6eac9d04caedbff4713d1e8545be33eb7fec5739983a7ab1d22d4e5ad35368c6729d362f1
+  languageName: node
+  linkType: hard
+
+"d3-scale@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "d3-scale@npm:4.0.3"
+  dependencies:
+    d3-array: "npm:2.10.0 - 3"
+    d3-format: "npm:1 - 3"
+    d3-interpolate: "npm:1.2.0 - 3"
+    d3-time: "npm:2.1.1 - 3"
+    d3-time-format: "npm:2 - 4"
+  checksum: 8166ddf0a7ed7d2bcc5a7166ac910a0b6b8bdc899c4bc24d7d9537aeee0c3024e7d3ab8d1849c5ef51f7fdcba9f74998458842b552718a9609a74dfcd4f2538f
   languageName: node
   linkType: hard
 
