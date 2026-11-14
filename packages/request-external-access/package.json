@@ -43,7 +43,7 @@
 	},
 	"dependencies": {
 		"@automattic/popup-monitor": "workspace:^",
-		"@babel/runtime": "^8.0.10",
+		"@babel/runtime": "^8.1.0",
 		"debug": "^4.4.3"
 	},
 	"devDependencies": {
