@@ -328,7 +328,7 @@
 		"@storybook/addon-webpack5-compiler-babel/@babel/core": "^8.0.10",
 		"jest-environment-jsdom/jsdom": "^20.0.3",
 		"@tanstack/history": "1.162.5",
-		"@tanstack/react-router": "1.170.42",
+		"@tanstack/react-router": "1.170.46",
 		"@tanstack/react-store": "0.11.2",
 		"@tanstack/router-core": "1.171.35",
 		"@tanstack/store": "0.11.2",
