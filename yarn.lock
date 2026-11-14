@@ -2584,7 +2584,7 @@ __metadata:
     jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
     postcss-modules: "npm:^6.0.1"
-    react-day-picker: "npm:^9.7.0"
+    react-day-picker: "npm:^9.14.0"
     sass-embedded: "npm:^1.89.0"
     storybook: "npm:^10.6.5"
     stylelint: "npm:^17.16.0"
@@ -27350,7 +27350,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-day-picker@npm:^9.7.0":
+"react-day-picker@npm:^9.14.0":
   version: 9.14.0
   resolution: "react-day-picker@npm:9.14.0"
   dependencies:
