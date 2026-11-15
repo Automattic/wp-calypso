@@ -55,6 +55,7 @@
 				'@tanstack/router-core',
 				'@tanstack/store',
 			],
+			reviewers: [ 'team:@automattic/lego' ],
 		},
 		{
 			groupName: 'webpack packages',
