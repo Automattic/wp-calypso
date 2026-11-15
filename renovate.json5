@@ -45,6 +45,18 @@
 			prPriority: 2,
 		},
 		{
+			// react-router depends on exact router-core and history versions, so
+			// separate PRs would install a pair it doesn't ask for.
+			groupName: 'TanStack Router packages',
+			matchPackageNames: [
+				'@tanstack/history',
+				'@tanstack/react-router',
+				'@tanstack/react-store',
+				'@tanstack/router-core',
+				'@tanstack/store',
+			],
+		},
+		{
 			groupName: 'webpack packages',
 			extends: [ ':widenPeerDependencies' ],
 			matchPackageNames: [ 'html-loader', 'postcss-loader', 'css-loader' ],
