@@ -1,6 +1,6 @@
 /**
  * Starts the Calypso server with the client served by Vite, in one process: `yarn start-dashboard:vite`.
- * It does the part of `yarn start` the Dashboard needs, and builds the server with Vite, not webpack.
+ * It serves what `yarn start-dashboard` does, and builds the server with Vite, not webpack.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';

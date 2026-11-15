@@ -10,22 +10,24 @@ const runtimeRequire = createRequire( path.join( process.cwd(), 'package.json' )
  */
 module.exports = function viteBundler( app ) {
 	const { createServer } = runtimeRequire( 'vite' );
-	const { dashboardDevConfig, dashboardEntries } = runtimeRequire( './build-tools/vite/dev.mjs' );
+	const { enabledSections, sectionStyles, startDashboardDevConfig, startDashboardEntries } =
+		runtimeRequire( './build-tools/vite/dev.mjs' );
 
 	app.set( 'bundler', 'vite' );
 
-	const omnibarStyles = [
-		'/packages/omnibar/src/style.scss?direct',
-		'/client/dashboard/app/omnibar/style.scss?direct',
-	];
+	const direct = ( file ) => `/${ file }?direct`;
 	const assets = { manifests: [], assets: {} };
-	for ( const [ name, file ] of Object.entries( dashboardEntries ) ) {
-		assets.assets[ name ] = [ ...omnibarStyles, '/' + file ];
+	for ( const [ name, { file, styles } ] of Object.entries( startDashboardEntries ) ) {
+		assets.assets[ name ] = [ ...styles.map( direct ), '/' + file ];
+	}
+	// Sections load with `import()`, so their chunk groups have no scripts.
+	for ( const { name } of enabledSections() ) {
+		assets.assets[ name ] = ( sectionStyles[ name ] ?? [] ).map( direct );
 	}
 	app.set( 'assets-provider', () => assets );
 
 	const vite = new Promise( ( resolve ) => app.once( 'http-server-created', resolve ) )
-		.then( ( httpServer ) => createServer( dashboardDevConfig( { httpServer } ) ) )
+		.then( ( httpServer ) => createServer( startDashboardDevConfig( { httpServer } ) ) )
 		.catch( ( error ) => {
 			console.error( 'The Vite dev server failed to start:', error );
 			process.exit( 1 );
