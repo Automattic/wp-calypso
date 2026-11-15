@@ -105,10 +105,8 @@
 		// workspaces stay out, so repo-wide updates keep the default reviewers.
 		{
 			matchFileNames: [
-				'apps/agents-manager/**',
 				'packages/agents-manager/**',
 				'packages/agenttic-client/**',
-				'packages/agenttic-demo/**',
 				'packages/agenttic-ui/**',
 			],
 			matchPackageNames: [
@@ -120,7 +118,6 @@
 				'class-variance-authority',
 				'fast-average-color',
 				'history',
-				'marked',
 				'react-textarea-autosize',
 				'remark-gfm',
 				'unified',
