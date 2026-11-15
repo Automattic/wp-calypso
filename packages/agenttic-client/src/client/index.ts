@@ -1080,6 +1080,7 @@ export function createClient( config: ClientConfig ): Client {
 		contextProvider,
 		enableStreaming = false,
 		credentials,
+		extensions,
 	} = config;
 
 	// Create request configuration
@@ -1089,6 +1090,7 @@ export function createClient( config: ClientConfig ): Client {
 		authProvider,
 		timeout,
 		credentials,
+		extensions,
 	};
 
 	return {

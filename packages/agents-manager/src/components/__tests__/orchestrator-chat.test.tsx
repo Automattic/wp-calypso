@@ -192,6 +192,7 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions?: Suggestion[];
 		onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
 		isLoadingConversation?: boolean;
+		alternativeFooter?: unknown;
 		onContextCardAction?: (
 			card: { id: string },
 			action: { label: string; prompt: string; type: 'submit' }
@@ -529,6 +530,10 @@ jest.mock( '../../utils/external-context', () => ( {
 } ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatAgent: () => mockIsReaderChatAgent(),
+} ) );
+// Agenttic UI is ESM-only, so Jest can't load the footer's `AgentUI` parts.
+jest.mock( '../action-approval-footer', () => ( {
+	ActionApprovalFooter: () => null,
 } ) );
 jest.mock( '../agent-chat', () => {
 	const { useEffect, useRef } = jest.requireActual< typeof import( 'react' ) >( 'react' );
@@ -2598,6 +2603,133 @@ describe( 'OrchestratorChat', () => {
 			} );
 
 			expect( outcomeCalls() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'action approvals', () => {
+		const heldCallUpdate = () =>
+			( {
+				id: 'task-approval',
+				kind: 'status',
+				final: true,
+				status: {
+					state: 'auth-required',
+					final: true,
+					message: {
+						role: 'agent',
+						messageId: 'approval-message',
+						parts: [
+							{ type: 'text', text: 'This action needs your approval: Uninstall plugin.' },
+							{
+								type: 'data',
+								data: {
+									approvalRequest: {
+										proposalId: 123,
+										toolCallId: 'toolu_abc',
+										toolId: 'wpcom__plugin_uninstall',
+										ability: 'wpcom/plugin-uninstall',
+										label: 'Uninstall plugin',
+										arguments: { slug: 'hello-dolly' },
+										origin: 'execute',
+										siteId: 1,
+									},
+								},
+							},
+						],
+					},
+				},
+			} ) as unknown as TaskUpdate;
+		const declinedUpdate = {
+			id: 'task-decision',
+			kind: 'status',
+			final: false,
+			status: {
+				state: 'running',
+				message: {
+					role: 'agent',
+					parts: [
+						{
+							type: 'data',
+							data: {
+								toolCallId: 'toolu_abc',
+								toolId: 'wpcom__plugin_uninstall',
+								result: { status: 'declined' },
+							},
+						},
+					],
+				},
+			},
+		} as unknown as TaskUpdate;
+		type ApprovalCardMessage = {
+			id: string;
+			content: Array< { componentProps?: { approval?: { status: string } } } >;
+		};
+		const lastAgentChatProps = () =>
+			mockAgentChat.mock.calls[ mockAgentChat.mock.calls.length - 1 ][ 0 ];
+		const shownMessages = () => lastAgentChatProps().messages as ApprovalCardMessage[];
+		const approvalStatus = () =>
+			shownMessages()?.find( ( message ) => message.id === 'action-approval-toolu_abc' )
+				?.content[ 0 ].componentProps?.approval?.status;
+
+		it( 'hides the composer while a held call waits, and brings it back once answered', async () => {
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( heldCallUpdate() );
+			} );
+
+			expect( lastAgentChatProps().alternativeFooter ).toBeTruthy();
+			expect( approvalStatus() ).toBe( 'pending' );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( declinedUpdate );
+			} );
+
+			expect( lastAgentChatProps().alternativeFooter ).toBeUndefined();
+			expect( approvalStatus() ).toBe( 'declined' );
+		} );
+
+		it( 'shows the card in place of the fallback text that asked for the approval', async () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( {
+					messages: [
+						{
+							id: 'approval-message',
+							role: 'agent',
+							content: [
+								{ type: 'text', text: 'This action needs your approval: Uninstall plugin.' },
+							],
+							timestamp: Date.now() + 1000,
+							archived: false,
+							showIcon: true,
+						},
+					],
+				} )
+			);
+			render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( heldCallUpdate() );
+			} );
+
+			expect( shownMessages().map( ( message ) => message.id ) ).toEqual( [
+				'action-approval-toolu_abc',
+			] );
+		} );
+
+		it( 'cancels a waiting card when the user sends something else', async () => {
+			const { rerender } = render( chat() );
+
+			await act( async () => {
+				await mockAgentChatConfig?.onTaskUpdate?.( heldCallUpdate() );
+			} );
+			expect( approvalStatus() ).toBe( 'pending' );
+
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			rerender( chat() );
+
+			expect( approvalStatus() ).toBe( 'cancelled' );
+			expect( lastAgentChatProps().alternativeFooter ).toBeUndefined();
 		} );
 	} );
 

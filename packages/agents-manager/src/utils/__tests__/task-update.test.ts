@@ -26,6 +26,13 @@ describe( 'task update outcomes', () => {
 			isSuccessful: true,
 			outcome: 'completed',
 		},
+		{
+			state: 'auth-required',
+			final: true,
+			isTerminal: true,
+			isSuccessful: true,
+			outcome: 'awaiting_approval',
+		},
 		{ state: 'canceled', final: true, isTerminal: true, isSuccessful: false, outcome: 'canceled' },
 		{ state: 'failed', final: undefined, isTerminal: true, isSuccessful: false, outcome: 'failed' },
 	] )(

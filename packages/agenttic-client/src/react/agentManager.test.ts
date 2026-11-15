@@ -520,6 +520,82 @@ describe( 'agentManager', () => {
 			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
 		} );
 
+		it( 'sends an excluded message with the history but leaves it out of the history', async () => {
+			const earlierMessage = {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'Uninstall Hello Dolly' } ],
+				messageId: 'm1',
+			} as Message;
+			await agentManager.replaceMessages( 'test-key', [ earlierMessage ] );
+			const decisionPart = {
+				type: 'data' as const,
+				data: { approvalDecision: { proposalId: 123, decision: 'allow' } },
+			};
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', '', {
+				message: { role: 'user', kind: 'message', parts: [ decisionPart ], messageId: 'decision' },
+				excludeFromHistory: true,
+			} ) ) {
+				void update;
+			}
+
+			const sentParts = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts;
+			expect( sentParts ).toContainEqual( decisionPart );
+			expect( sentParts ).toContainEqual( {
+				type: 'data',
+				data: { role: 'user', text: 'Uninstall Hello Dolly' },
+			} );
+			expect( sentParts.filter( ( part: any ) => part.type === 'text' ) ).toEqual( [] );
+			expect( mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ] ).not.toHaveProperty(
+				'excludeFromHistory'
+			);
+			expect( agentManager.getConversationHistory( 'test-key' ) ).toEqual( [ earlierMessage ] );
+		} );
+
+		it( 'ends the turn at a held call, leaving its request for approval out of the history', async () => {
+			vi.mocked( createTextMessage ).mockReturnValueOnce( {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'Uninstall Hello Dolly' } ],
+				messageId: 'user-1',
+			} );
+			mockClient.sendMessageStream.mockImplementation( async function* () {
+				yield {
+					id: 'task-1',
+					status: {
+						state: 'auth-required',
+						final: true,
+						message: {
+							role: 'agent',
+							kind: 'message',
+							messageId: 'approval-message',
+							parts: [
+								{ type: 'text', text: 'This action needs your approval: Uninstall plugin.' },
+								{ type: 'data', data: { approvalRequest: { proposalId: 123 } } },
+							],
+						},
+					},
+					final: true,
+					text: 'This action needs your approval: Uninstall plugin.',
+					kind: 'status',
+				};
+			} );
+
+			for await ( const update of agentManager.sendMessageStream(
+				'test-key',
+				'Uninstall Hello Dolly'
+			) ) {
+				void update;
+			}
+
+			expect(
+				agentManager.getConversationHistory( 'test-key' ).map( ( message ) => message.messageId )
+			).toEqual( [ 'user-1' ] );
+			expect( agentManager.isTurnInFlight( 'test-key' ) ).toBe( false );
+		} );
+
 		it( 'sendToolResults pairs every call of a turn this page never saw', async () => {
 			// A turn resumed after a page change: this page only has the question.
 			await agentManager.replaceMessages( 'test-key', [

@@ -24,7 +24,14 @@ export interface JsonRpcError {
 }
 
 export type TaskState =
-	'submitted' | 'working' | 'running' | 'input-required' | 'completed' | 'canceled' | 'failed';
+	| 'submitted'
+	| 'working'
+	| 'running'
+	| 'input-required'
+	| 'auth-required'
+	| 'completed'
+	| 'canceled'
+	| 'failed';
 
 /**
  * Content type for text parts
@@ -240,6 +247,7 @@ export interface Message {
 	metadata?: Record< string, unknown >;
 	messageId: string;
 	kind: 'message';
+	extensions?: string[]; // A2A extension URIs the message declares
 }
 
 export interface TaskStatus {
@@ -320,6 +328,7 @@ export interface ClientConfig {
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	extensions?: string[]; // A2A extension URIs declared on every request's message, for features the client supports.
 }
 
 // Image data with optional metadata (e.g., WordPress attachment ID)
@@ -334,6 +343,7 @@ export interface SendMessageParams {
 	sessionId?: string;
 	metadata?: Record< string, unknown >;
 	withHistory?: boolean; // Default: true - whether to include conversation history
+	excludeFromHistory?: boolean; // Default: false - send this message with the history as usual, but leave it out of the local history later turns send (e.g. a command the server drops)
 	abortSignal?: AbortSignal; // Optional: abort signal for canceling inflight requests
 	enableStreaming?: boolean; // Override client's default streaming setting for this request
 	imageUrls?: ( string | ImageData )[]; // Optional: array of image URLs or image objects with metadata

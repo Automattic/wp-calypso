@@ -24,9 +24,14 @@ export function isSuccessfulTaskUpdate( update: TaskUpdate ): boolean {
 	return state === 'completed' || ( update.final === true && ! isUnsuccessfulTaskState( state ) );
 }
 
-/** How a terminal task update ended. */
-export function getTaskUpdateOutcome( update: TaskUpdate ): UnsuccessfulTaskState | 'completed' {
+/** How a terminal task update ended: `awaiting_approval` when a held call waits for the user. */
+export function getTaskUpdateOutcome(
+	update: TaskUpdate
+): UnsuccessfulTaskState | 'awaiting_approval' | 'completed' {
 	const { state } = update.status;
+	if ( state === 'auth-required' ) {
+		return 'awaiting_approval';
+	}
 	return isUnsuccessfulTaskState( state ) ? state : 'completed';
 }
 
