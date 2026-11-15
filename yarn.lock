@@ -735,7 +735,7 @@ __metadata:
     recursive-copy: "npm:^2.0.14"
     sass: "npm:1.77.8"
     sass-loader: "npm:^16.0.8"
-    semver: "npm:^7.7.2"
+    semver: "npm:^7.8.6"
     terser-webpack-plugin: "npm:^5.6.1"
     thread-loader: "npm:^4.0.4"
     typescript: "npm:^6.0.3"
@@ -2695,7 +2695,7 @@ __metadata:
   resolution: "@automattic/webpack-extensive-lodash-replacement-plugin@workspace:packages/webpack-extensive-lodash-replacement-plugin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    semver: "npm:^7.7.2"
+    semver: "npm:^7.8.6"
   peerDependencies:
     webpack: ^5.99.8
   languageName: unknown
@@ -13797,7 +13797,7 @@ __metadata:
     jest: "npm:^30.5.2"
     js-yaml: "npm:5.4.1"
     playwright: "npm:1.57.0"
-    semver: "npm:^7.7.2"
+    semver: "npm:^7.8.6"
     webpack: "npm:^5.111.1"
     webpack-cli: "npm:^7.2.3"
     winston: "npm:^3.3.3"
