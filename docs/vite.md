@@ -14,8 +14,6 @@ yarn start-dashboard:vite
 - Logged-out, server-rendered pages such as `/themes` show unstyled content for a moment: the server links the global stylesheet, and the section's styles arrive with its JavaScript.
 - Jetpack Cloud and A4A have no Vite script yet; use `yarn start-jetpack-cloud` and `yarn start-a8c-for-agencies`.
 
-If something works under `yarn start` but not under the Vite scripts, open a GitHub issue and mention the Lego team (`@Automattic/lego`).
-
 ## How it works
 
 - `build-tools/vite/start.mjs` takes the config env (`development` or `dashboard-development`), checks the Node version, builds the workspace packages and `public/` when they're missing, builds the Node server with Vite (`build/server-vite.cjs`) and starts it. It skips the rest of `yarn start`, e.g. `build-css` and `calypso-doctor`.
