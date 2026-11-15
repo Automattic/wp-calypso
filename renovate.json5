@@ -48,13 +48,14 @@
 			// react-router depends on exact router-core and history versions, so
 			// separate PRs would install a pair it doesn't ask for.
 			groupName: 'TanStack Router packages',
-			matchPackageNames: [
-				'@tanstack/history',
-				'@tanstack/react-router',
-				'@tanstack/react-store',
-				'@tanstack/router-core',
-				'@tanstack/store',
-			],
+			matchPackageNames: [ '@tanstack/history', '@tanstack/react-router', '@tanstack/router-core' ],
+			reviewers: [ 'team:@automattic/lego' ],
+		},
+		{
+			// react-store depends on an exact store version. react-router only accepts a
+			// range of react-store, so store updates stay out of the router group.
+			groupName: 'TanStack Store packages',
+			matchPackageNames: [ '@tanstack/react-store', '@tanstack/store' ],
 			reviewers: [ 'team:@automattic/lego' ],
 		},
 		{
