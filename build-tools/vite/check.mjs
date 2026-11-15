@@ -11,7 +11,7 @@
 import path from 'node:path';
 import { createServer, optimizeDeps, resolveConfig } from 'vite';
 import { root } from './base.mjs';
-import { startDashboardDevConfig, startDashboardEntries } from './dev.mjs';
+import { devConfig, devEntries } from './dev.mjs';
 
 process.env.CALYPSO_ENV ??= 'dashboard-development';
 
@@ -34,7 +34,7 @@ const ALLOWED = {
 const STYLE = /\.(s?css|sass)(\?|$)/;
 const ASSET = /\.(png|jpe?g|gif|svg|webp|woff2?|ttf|eot|mp4|webm|ico)(\?|$)/;
 
-const config = startDashboardDevConfig();
+const config = devConfig();
 config.logLevel = 'error';
 config.cacheDir = path.join( root, '.cache/vite-check' );
 // Let the leftover scan see every `process.env.X`, which the define would otherwise replace.
@@ -60,7 +60,7 @@ started = performance.now();
 config.optimizeDeps = { ...config.optimizeDeps, noDiscovery: true };
 const server = await createServer( config );
 const environment = server.environments.client;
-const seen = new Set( Object.values( startDashboardEntries ).map( ( { file } ) => '/' + file ) );
+const seen = new Set( Object.values( devEntries() ).map( ( { file } ) => '/' + file ) );
 const queue = [ ...seen ];
 
 async function visit( url ) {
