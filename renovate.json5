@@ -101,7 +101,8 @@
 			additionalBranchPrefix: 'desktop-',
 			reviewers: [ 'team:@automattic/yolo' ],
 		},
-		// `additionalReviewers`, not `reviewers`, so repo-wide updates keep the default reviewers.
+		// Packages only Agents Manager and agenttic use. Packages shared with other
+		// workspaces stay out, so repo-wide updates keep the default reviewers.
 		{
 			matchFileNames: [
 				'apps/agents-manager/**',
@@ -110,7 +111,22 @@
 				'packages/agenttic-demo/**',
 				'packages/agenttic-ui/**',
 			],
-			additionalReviewers: [ 'team:@automattic/agent' ],
+			matchPackageNames: [
+				'@mdx-js/react',
+				'@radix-ui/react-popover',
+				'@radix-ui/react-scroll-area',
+				'@radix-ui/react-slot',
+				'@radix-ui/react-tooltip',
+				'class-variance-authority',
+				'fast-average-color',
+				'history',
+				'marked',
+				'react-textarea-autosize',
+				'remark-gfm',
+				'unified',
+				'vite-plugin-lib-inject-css',
+			],
+			reviewers: [ 'team:@automattic/agent' ],
 		},
 	],
 	ignoreDeps: [
