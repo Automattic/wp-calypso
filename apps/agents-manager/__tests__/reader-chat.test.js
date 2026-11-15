@@ -297,6 +297,15 @@ describe( 'getReaderEmptyViewHeading', () => {
 			} )
 		).toBe( 'Ask me anything about this blog.' );
 	} );
+
+	it( 'uses the site-provided override when present, regardless of post context', () => {
+		expect(
+			getReaderEmptyViewHeading( {
+				display: { emptyViewHeading: 'Ask me anything about this site.' },
+				currentPost: { id: 1 },
+			} )
+		).toBe( 'Ask me anything about this site.' );
+	} );
 } );
 
 // ---------------------------------------------------------------------------
