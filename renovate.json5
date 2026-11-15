@@ -101,6 +101,17 @@
 			additionalBranchPrefix: 'desktop-',
 			reviewers: [ 'team:@automattic/yolo' ],
 		},
+		// `additionalReviewers`, not `reviewers`, so repo-wide updates keep the default reviewers.
+		{
+			matchFileNames: [
+				'apps/agents-manager/**',
+				'packages/agents-manager/**',
+				'packages/agenttic-client/**',
+				'packages/agenttic-demo/**',
+				'packages/agenttic-ui/**',
+			],
+			additionalReviewers: [ 'team:@automattic/agent' ],
+		},
 	],
 	ignoreDeps: [
 		// The current latest version of TraceKit (0.4.7) creates a lot of noise due to mishandling
