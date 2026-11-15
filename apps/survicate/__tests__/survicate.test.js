@@ -6,12 +6,14 @@ const mockShouldLoadSurvicate = jest.fn();
 const mockLoadSurvicateScript = jest.fn();
 const mockSetSurvicateVisitorTraits = jest.fn();
 const mockIsMobile = jest.fn();
+const mockRegisterSurveySuppressor = jest.fn();
 
 jest.mock( '@automattic/survicate', () => ( {
 	SURVICATE_WORKSPACE_ID: 'workspace-id',
 	shouldLoadSurvicate: mockShouldLoadSurvicate,
 	loadSurvicateScript: mockLoadSurvicateScript,
 	setSurvicateVisitorTraits: mockSetSurvicateVisitorTraits,
+	registerSurveySuppressor: mockRegisterSurveySuppressor,
 } ) );
 
 jest.mock( '@automattic/viewport', () => ( {
@@ -49,10 +51,12 @@ describe( 'wp-admin Survicate entry', () => {
 		mockLoadSurvicateScript.mockReset().mockResolvedValue( undefined );
 		mockSetSurvicateVisitorTraits.mockReset();
 		mockIsMobile.mockReset().mockReturnValue( false );
+		mockRegisterSurveySuppressor.mockReset();
 	} );
 
 	afterEach( () => {
 		delete window.wpcomSurvicateConfig;
+		document.body.innerHTML = '';
 	} );
 
 	it( 'does nothing when PHP emitted no config', () => {
@@ -114,5 +118,73 @@ describe( 'wp-admin Survicate entry', () => {
 		} finally {
 			process.off( 'unhandledRejection', onUnhandledRejection );
 		}
+	} );
+
+	describe( 'notifications panel', () => {
+		function renderNotesMenuItem() {
+			const item = document.createElement( 'li' );
+			item.id = 'wp-admin-bar-notes';
+			item.className = 'menupop';
+			document.body.appendChild( item );
+			return item;
+		}
+
+		function getSuppressor() {
+			return mockRegisterSurveySuppressor.mock.calls[ 0 ]?.[ 0 ];
+		}
+
+		it( 'registers a notifications suppressor when the admin bar has the notes menu', () => {
+			renderNotesMenuItem();
+
+			boot( CONFIG );
+
+			expect( mockRegisterSurveySuppressor ).toHaveBeenCalledTimes( 1 );
+			expect( getSuppressor().reason ).toBe( 'notifications' );
+		} );
+
+		it( 'is active only while the panel is shown', () => {
+			const item = renderNotesMenuItem();
+			boot( CONFIG );
+			const suppressor = getSuppressor();
+
+			expect( suppressor.isActive() ).toBe( false );
+
+			item.classList.add( 'wpnt-show' );
+			expect( suppressor.isActive() ).toBe( true );
+
+			item.classList.remove( 'wpnt-show' );
+			expect( suppressor.isActive() ).toBe( false );
+		} );
+
+		it( 'notifies subscribers when the menu item class changes, until unsubscribed', async () => {
+			const item = renderNotesMenuItem();
+			boot( CONFIG );
+			const onChange = jest.fn();
+			const unsubscribe = getSuppressor().subscribe( onChange );
+
+			item.classList.add( 'wpnt-show' );
+			await flushPromises();
+			expect( onChange ).toHaveBeenCalledTimes( 1 );
+
+			unsubscribe();
+			item.classList.remove( 'wpnt-show' );
+			await flushPromises();
+			expect( onChange ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not register a suppressor when the notes menu is absent', () => {
+			boot( CONFIG );
+
+			expect( mockRegisterSurveySuppressor ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not register a suppressor when Survicate will not load', () => {
+			renderNotesMenuItem();
+			mockShouldLoadSurvicate.mockReturnValue( false );
+
+			boot( CONFIG );
+
+			expect( mockRegisterSurveySuppressor ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
