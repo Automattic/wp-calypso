@@ -26,7 +26,7 @@ describe( 'generateUUID', () => {
 		);
 	} );
 
-	it( 'uses crypto.getRandomValues for fallback randomness when available', () => {
+	it( 'uses crypto.getRandomValues for fallback randomness', () => {
 		// @ts-expect-error - Simulating an older browser.
 		delete globalThis.crypto.randomUUID;
 		const getRandomValuesSpy = jest.spyOn( globalThis.crypto, 'getRandomValues' );
