@@ -10,8 +10,10 @@ function getSafeHref( href: string ): string | undefined {
 
 function renderInlineMarkdown( text: string ): React.ReactNode[] {
 	const nodes: React.ReactNode[] = [];
-	// Link text and URLs exclude `[`, so a failed link can't rescan the rest of the text.
-	const pattern = /(\[[^[\]]+\]\([^)[]+\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_)/g;
+	// Link text can't contain brackets and URLs only balanced parentheses, so a
+	// failed link can't rescan the rest of the text.
+	const pattern =
+		/\[([^[\]]+)\]\(((?:[^()]|\([^()]*\))+)\)|`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_/g;
 	let lastIndex = 0;
 	let match: RegExpExecArray | null;
 
@@ -20,15 +22,14 @@ function renderInlineMarkdown( text: string ): React.ReactNode[] {
 			nodes.push( text.slice( lastIndex, match.index ) );
 		}
 
-		const token = match[ 0 ];
+		const [ token, linkText, linkUrl ] = match;
 		const key = `${ match.index }-${ token }`;
-		const link = token.match( /^\[([^\]]+)\]\(([^)]+)\)$/ );
-		if ( link ) {
-			const href = getSafeHref( link[ 2 ] );
+		if ( linkUrl ) {
+			const href = getSafeHref( linkUrl );
 			nodes.push(
 				href ? (
 					<a key={ key } href={ href } rel="noreferrer" target="_blank">
-						{ link[ 1 ] }
+						{ linkText }
 					</a>
 				) : (
 					token
@@ -97,9 +98,10 @@ export function LightweightMarkdownRenderer( { children }: { children: string } 
 			return;
 		}
 
-		// `\s(.+)`, not `\s+(.+)`: the overlap backtracks polynomially on long whitespace runs.
-		const unordered = line.match( /^\s*[-*]\s(.+)$/ );
-		const ordered = line.match( /^\s*\d+\.\s(.+)$/ );
+		// Content starts at `\S`: if it could start with whitespace too, long runs of
+		// whitespace would backtrack polynomially.
+		const unordered = line.match( /^\s*[-*]\s+(\S.*)$/ );
+		const ordered = line.match( /^\s*\d+\.\s+(\S.*)$/ );
 		if ( unordered || ordered ) {
 			const nextOrdered = !! ordered;
 			if ( listItems.length && listOrdered !== nextOrdered ) {
@@ -116,12 +118,12 @@ export function LightweightMarkdownRenderer( { children }: { children: string } 
 			return;
 		}
 
-		const heading = line.match( /^(#{1,3})\s(.+)$/ );
+		const heading = line.match( /^(#{1,3})\s+(\S.*)$/ );
 		if ( heading ) {
 			const level = heading[ 1 ].length;
 			const Tag = `h${ level }` as 'h1' | 'h2' | 'h3';
 			blocks.push(
-				<Tag key={ `heading-${ index }` }>{ renderInlineMarkdown( heading[ 2 ].trimStart() ) }</Tag>
+				<Tag key={ `heading-${ index }` }>{ renderInlineMarkdown( heading[ 2 ] ) }</Tag>
 			);
 			return;
 		}

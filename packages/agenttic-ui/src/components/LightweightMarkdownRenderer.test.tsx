@@ -83,6 +83,17 @@ describe( 'LightweightMarkdownRenderer', () => {
 		expect( container.querySelector( 'ol li' )?.textContent ).toBe( 'first' );
 	} );
 
+	it( 'links URLs with brackets or balanced parentheses', async () => {
+		await renderMarkdown(
+			'[Edit](https://example.com/wp-admin/edit.php?ids[]=1) [Foo](https://en.wikipedia.org/wiki/Foo_(bar))'
+		);
+
+		expect( Array.from( container.querySelectorAll( 'a' ), ( link ) => link.href ) ).toEqual( [
+			'https://example.com/wp-admin/edit.php?ids[]=1',
+			'https://en.wikipedia.org/wiki/Foo_(bar)',
+		] );
+	} );
+
 	it( 'links only the innermost bracket text', async () => {
 		await renderMarkdown( 'a [b [c](https://example.com) d' );
 
