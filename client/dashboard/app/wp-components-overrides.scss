@@ -61,3 +61,15 @@
 	color: var(--wpds-color-foreground-interactive-brand-strong-disabled);
 	background: var(--wpds-color-background-interactive-brand-strong-disabled);
 }
+
+.components-button.is-destructive:not(.is-primary):not(.is-secondary):not(.is-tertiary):not(.is-link):not(:disabled, [aria-disabled="true"]) {
+	color: var(--wpds-color-foreground-interactive-error);
+
+	&:hover {
+		color: var(--wpds-color-foreground-interactive-error-active);
+	}
+}
+
+.components-dropdown__content .components-menu-group + .components-menu-group {
+	border-top-color: var(--wpds-color-stroke-surface-neutral);
+}
