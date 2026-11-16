@@ -3,6 +3,7 @@
  */
 import { waitFor } from '@testing-library/react';
 import { resolveSelect } from '@wordpress/data';
+import { clearSignupCompleteFlowName, clearSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import { runFlowNavigation } from '../../../test/helpers';
@@ -54,6 +55,8 @@ describe( 'Newsletter Flow', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		clearSignupCompleteSlug();
+		clearSignupCompleteFlowName();
 	} );
 
 	describe( 'after creating the site', () => {

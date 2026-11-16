@@ -12,6 +12,8 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	getSignupCompleteSlug,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -149,10 +151,25 @@ const newsletter: Flow = {
 				case 'processing': {
 					const processingResult = providedDependencies.processingResult as
 						ProcessingResult | undefined;
-					const newSite = ( providedDependencies.siteSlug ?? providedDependencies.siteId ) as
-						string | number | undefined;
+					const isSuccess = processingResult === ProcessingResult.SUCCESS;
+					// With nothing to process (Back from checkout, or a reload), the site is the one in the URL,
+					// or the one this flow sent to checkout.
+					const knownSite =
+						processingResult === ProcessingResult.NO_ACTION
+							? ( siteSlug ??
+								siteId ??
+								( getSignupCompleteFlowName() === flowName ? getSignupCompleteSlug() : undefined ) )
+							: undefined;
+					const newSite = (
+						isSuccess ? ( providedDependencies.siteSlug ?? providedDependencies.siteId ) : knownSite
+					) as string | number | undefined;
 
-					if ( processingResult !== ProcessingResult.SUCCESS || ! newSite ) {
+					// The legacy launchpad's launch task has already sent the user to checkout.
+					if ( isSuccess && providedDependencies.goToCheckout && ! newSite ) {
+						return;
+					}
+
+					if ( ! newSite ) {
 						return navigate( 'error', {
 							errorReason: getProcessingErrorReason( processingResult ),
 						} );
@@ -169,9 +186,11 @@ const newsletter: Flow = {
 
 					// AI Launchpad and no-guidance sites land in wp-admin instead of My Home.
 					const site = await resolveSelect( SITE_STORE ).getSite( newSite );
-					const adminUrl = site?.options?.admin_url;
+					const adminUrl =
+						site?.options?.admin_url ??
+						( typeof newSite === 'string' ? `https://${ newSite }/wp-admin/` : undefined );
 					const destination =
-						( adminUrl && getLaunchpadDestination( site.options, adminUrl ) ) ||
+						( adminUrl && getLaunchpadDestination( site?.options, adminUrl ) ) ||
 						`/home/${ newSite }`;
 
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
