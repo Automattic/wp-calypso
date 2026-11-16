@@ -5,3 +5,29 @@
 	--dashboard__foreground-color-success: var( --color-success );
 	--dashboard__foreground-color-error: var( --color-error );
 }
+
+.static-site-import-progress-step__logo {
+	display: flex;
+	overflow: hidden;
+	border-radius: 8px;
+
+	.importer__service-icon {
+		width: 56px;
+		min-width: 56px;
+		height: 56px;
+		padding: 4px;
+	}
+}
+
+.static-site-import-progress-step__logo-fallback {
+	box-sizing: border-box;
+	width: 56px;
+	height: 56px;
+	padding: 12px;
+	background: var( --color-neutral-70 );
+	fill: var( --color-text-inverted );
+}
+
+.static-site-import-progress-step__arrow {
+	fill: var( --color-text-subtle );
+}

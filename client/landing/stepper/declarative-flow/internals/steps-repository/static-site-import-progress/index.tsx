@@ -1,11 +1,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { StaticSiteImportProgress } from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
 import { useStaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import { MoveLogos } from './move-logos';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -100,13 +102,16 @@ const StaticSiteImportProgressStep: StepType< {
 					/>
 				}
 			>
-				{ siteImport && (
-					<StaticSiteImportProgress
-						siteImport={ siteImport }
-						search={ { importSessionId, from, platform } }
-						locale={ locale }
-					/>
-				) }
+				<VStack spacing={ 8 }>
+					<MoveLogos platform={ platform } />
+					{ siteImport && (
+						<StaticSiteImportProgress
+							siteImport={ siteImport }
+							search={ { importSessionId, from, platform } }
+							locale={ locale }
+						/>
+					) }
+				</VStack>
 			</Step.WideLayout>
 		</>
 	);
