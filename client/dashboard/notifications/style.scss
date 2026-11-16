@@ -42,6 +42,7 @@ $pane-height: calc(
 		padding-block: $grid-unit-30;
 	}
 
+	.components-card__header > *,
 	.components-card__body > *,
 	.components-card__footer > * {
 		width: 100%;
