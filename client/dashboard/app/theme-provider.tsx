@@ -4,7 +4,7 @@ import { useColorScheme } from 'calypso/lib/color-scheme/shared';
 import type { ReactNode } from 'react';
 
 const DARK_SEEDS = {
-	background: '#17181a',
+	background: '#181818',
 	primary: '#93aef8',
 };
 
