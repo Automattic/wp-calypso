@@ -121,4 +121,24 @@ export class ImageBlock {
 			await page.waitForSelector( selectors.image( content ) );
 		}
 	}
+
+	/**
+	 * Returns every URL a published image can be loaded from: its `src` and each `srcset` candidate.
+	 *
+	 * @param {Page} page Page on which the image is published.
+	 * @param {string} filename Name of the uploaded file, without the extension.
+	 * @returns {Promise<string[]>} Absolute URLs, without duplicates.
+	 */
+	static async getPublishedImageURLs( page: Page, filename: string ): Promise< string[] > {
+		const image = page.locator( selectors.image( filename ) );
+		const src = await image.getAttribute( 'src' );
+		const srcset = ( await image.getAttribute( 'srcset' ) ) ?? '';
+		// Candidates are split on a comma followed by a space, because a URL may hold a comma.
+		const candidates = srcset
+			.split( /,\s+/ )
+			.map( ( candidate ) => candidate.trim().split( /\s+/ )[ 0 ] );
+		const urls = [ src, ...candidates ].filter( ( url ): url is string => !! url );
+
+		return [ ...new Set( urls.map( ( url ) => new URL( url, page.url() ).href ) ) ];
+	}
 }
