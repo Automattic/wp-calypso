@@ -2644,7 +2644,6 @@ __metadata:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@types/wordpress__block-editor": "npm:^11.5.16"
     "@typescript-eslint/eslint-plugin": "npm:^8.72.1"
     "@typescript-eslint/parser": "npm:^8.72.1"
     "@wordpress/block-editor": "npm:^20.0.0"
@@ -10726,13 +10725,6 @@ __metadata:
   version: 1.18.8
   resolution: "@types/webpack-env@npm:1.18.8"
   checksum: 527a5d1eb75c5243e4f3665d956c7c340f899955dd25d16c9fd9750406f32e95a3a17d207640295038e8235c0c2a2daf084f420e088e58b965d82fc74f6012d7
-  languageName: node
-  linkType: hard
-
-"@types/wordpress__block-editor@npm:noop-package@1.0.0":
-  version: 1.0.0
-  resolution: "noop-package@npm:1.0.0"
-  checksum: f53edc897025b1c2c6d084607ec6588718ff5fc92b1549e97f87453b0404fa15acc12f3b1c7b4fa144f376b73b3bd40e3fe8da4fa89a944dfeb33343afbcf5b4
   languageName: node
   linkType: hard
 
@@ -32655,7 +32647,6 @@ __metadata:
     "@types/store": "npm:^2.0.5"
     "@types/superagent": "npm:^4.1.24"
     "@types/webpack-env": "npm:^1.18.8"
-    "@types/wordpress__block-editor": "npm:^11.5.16"
     "@typescript-eslint/eslint-plugin": "npm:^8.72.1"
     "@typescript-eslint/parser": "npm:^8.72.1"
     "@vgs/collect-js": "npm:^0.7.2"
