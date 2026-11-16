@@ -15,7 +15,6 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	Button,
-	RadioControl,
 	TextControl,
 	TextareaControl,
 } from '@wordpress/components';
@@ -33,8 +32,6 @@ import { getMigrationAuthorizationUrl, takeMigrationAuthorization } from './auth
 import type { Site } from '@automattic/api-core';
 import type { FormEvent } from 'react';
 
-type AccessStep = 'details' | 'authorize' | 'credentials';
-
 function parseAccessUrl( value: string ) {
 	try {
 		const address = value.trim();
@@ -45,7 +42,7 @@ function parseAccessUrl( value: string ) {
 			! url.username &&
 			! url.password
 		) {
-			return url.href;
+			return url;
 		}
 	} catch {
 		return null;
@@ -65,10 +62,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	const locale = useLocale();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const [ step, setStep ] = useState< AccessStep >( 'details' );
-	const [ method, setMethod ] = useState( 'site-address' );
-	const [ address, setAddress ] = useState( sourceUrl );
-	const [ backupUrl, setBackupUrl ] = useState( '' );
+	const [ manual, setManual ] = useState( false );
 	const [ notes, setNotes ] = useState( '' );
 	const [ username, setUsername ] = useState( '' );
 	const [ password, setPassword ] = useState( '' );
@@ -78,9 +72,9 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	const [ busy, setBusy ] = useState( false );
 	const pending = useRef( false );
 	const leaving = useRef( false );
-	const manual = step === 'credentials';
-	const choosing = step === 'details';
-	const isBackup = choosing && method === 'backup';
+	const verifiedSource = useRef< string | null >( null );
+	const sourceAddress = parseAccessUrl( sourceUrl );
+	const source = sourceAddress?.href;
 
 	const returnToOverview = useCallback( async () => {
 		if ( leaving.current ) {
@@ -159,12 +153,12 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 
 	useEffect( () => {
 		const result = takeMigrationAuthorization( site.ID );
-		if ( ! result || leaving.current ) {
+		if ( ! result || leaving.current || result.source !== source ) {
 			return;
 		}
-		setAddress( result.source );
+		verifiedSource.current = result.source;
 		setAuthorizationUrl( result.authorizationUrl );
-		setStep( 'authorize' );
+		setManual( false );
 		const { credentials } = result;
 		if ( ! credentials ) {
 			setError( __( 'Authorize WordPress.com in your WP Admin or share your credentials.' ) );
@@ -184,7 +178,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 			}
 			await finish();
 		}, __( 'We couldn’t connect to your site. Try authorizing again or share your credentials.' ) );
-	}, [ ensurePending, finish, run, site.ID ] );
+	}, [ ensurePending, finish, run, site.ID, source ] );
 
 	const openTicket = async ( source: string, context?: string ) => {
 		const { success } = await requestSiteMigrationHelp( {
@@ -198,95 +192,83 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 		}
 	};
 
+	const ensureSupportedSource = async ( address: string ) => {
+		const info =
+			verifiedSource.current === address ? null : await analyzeSiteMigrationSource( address );
+		if ( ! ( await ensurePending() ) ) {
+			return false;
+		}
+		const isWpcom = info?.platform_data?.is_wpcom;
+		if ( isWpcom || ( info?.platform && info.platform !== 'wordpress' ) ) {
+			await openTicket( address, isWpcom ? undefined : 'site_is_not_wordpress' );
+			setError(
+				isWpcom
+					? __( 'This site is already on WordPress.com. Ask our team for help.' )
+					: __( 'Our migration service is for WordPress sites. Ask our team for help.' )
+			);
+			return false;
+		}
+		verifiedSource.current = address;
+		return true;
+	};
+
+	const chooseAccess = ( useAuthorization: boolean ) =>
+		void run( async () => {
+			if ( ! source || ! ( await ensureSupportedSource( source ) ) ) {
+				return;
+			}
+			if ( useAuthorization ) {
+				let nextAuthorizationUrl = authorizationUrl;
+				if ( ! nextAuthorizationUrl ) {
+					try {
+						nextAuthorizationUrl =
+							( await setupSiteMigrationAuthorization( site.ID, source ) ).authorization_url ?? '';
+					} catch ( reason ) {
+						if (
+							( reason as { code?: string } | undefined )?.code !==
+							'failed_to_get_authorization_path'
+						) {
+							throw reason;
+						}
+					}
+				}
+				if ( nextAuthorizationUrl ) {
+					try {
+						const url = getMigrationAuthorizationUrl( site.ID, source, nextAuthorizationUrl );
+						if ( url ) {
+							window.location.assign( url.href );
+							return;
+						}
+					} catch {
+						// If authorization cannot start, the customer can share credentials instead.
+					}
+				}
+				setAuthorizationUrl( '' );
+			}
+			setManual( true );
+		} );
+
 	const submit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		void run( async () => {
-			const source = parseAccessUrl( isBackup ? backupUrl : address );
-			if ( ! source ) {
-				setError( __( 'Please enter a valid URL.' ) );
+			if ( ! source || ! ( await ensureSupportedSource( source ) ) ) {
 				return;
 			}
-
-			if ( isBackup || manual ) {
-				if ( ! ( await ensurePending() ) ) {
-					return;
-				}
-				const { success } = await shareSiteMigrationAccess(
-					site.ID,
-					site.slug,
-					locale,
-					isBackup
-						? { migration_type: 'backup', from_url: source, notes }
-						: {
-								migration_type: 'credentials',
-								from_url: source,
-								username,
-								password,
-								notes,
-								bypass_verification: loginFailed,
-							}
-				);
-				if ( ! success ) {
-					throw new Error();
-				}
-				setPassword( '' );
-				await finish();
-				return;
+			const { success } = await shareSiteMigrationAccess( site.ID, site.slug, locale, {
+				migration_type: 'credentials',
+				from_url: source,
+				username,
+				password,
+				notes,
+				bypass_verification: loginFailed,
+			} );
+			if ( ! success ) {
+				throw new Error();
 			}
-
-			const info = await analyzeSiteMigrationSource( source );
-			if ( ! ( await ensurePending() ) ) {
-				return;
-			}
-			const isWpcom = info.platform_data?.is_wpcom;
-			if ( isWpcom || ( info.platform && info.platform !== 'wordpress' ) ) {
-				await openTicket( source, isWpcom ? undefined : 'site_is_not_wordpress' );
-				setError(
-					isWpcom
-						? __(
-								'This site is already on WordPress.com. Enter a different site address or ask our team for help.'
-							)
-						: __(
-								'Our migration service is for WordPress sites. Enter a different site address or ask our team for help.'
-							)
-				);
-				return;
-			}
-
-			setAddress( source );
-			let nextAuthorizationUrl;
-			try {
-				nextAuthorizationUrl = ( await setupSiteMigrationAuthorization( site.ID, source ) )
-					.authorization_url;
-			} catch ( reason ) {
-				if (
-					( reason as { code?: string } | undefined )?.code !== 'failed_to_get_authorization_path'
-				) {
-					throw reason;
-				}
-			}
-			setAuthorizationUrl( nextAuthorizationUrl ?? '' );
-			setStep( nextAuthorizationUrl ? 'authorize' : 'credentials' );
+			setPassword( '' );
+			await finish();
 		} );
 	};
-
-	const authorize = () =>
-		void run( async () => {
-			if ( ! ( await ensurePending() ) ) {
-				return;
-			}
-			try {
-				const url = getMigrationAuthorizationUrl( site.ID, address, authorizationUrl );
-				if ( url ) {
-					window.location.assign( url.href );
-					return;
-				}
-			} catch {
-				// If authorization cannot start, the customer can share credentials instead.
-			}
-			setAuthorizationUrl( '' );
-			setStep( 'credentials' );
-		} );
 
 	const resetCredentialError = () => {
 		setError( '' );
@@ -296,38 +278,36 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	const goBack = () => {
 		resetCredentialError();
 		setPassword( '' );
-		if ( choosing ) {
-			void returnToOverview();
+		if ( manual ) {
+			setManual( false );
 		} else {
-			setStep( manual && authorizationUrl ? 'authorize' : 'details' );
+			void returnToOverview();
 		}
 	};
 
-	const source = choosing ? null : new URL( address );
-	const sourceLabel = source ? source.host + source.pathname.replace( /\/$/, '' ) : '';
-	const copy = {
-		details: {
-			title: __( 'Tell us about your WordPress site' ),
-			description: __( 'Provide the following details to get your migration started.' ),
-		},
-		authorize: {
-			title: __( 'Authorize access to your WordPress site' ),
-			description: sprintf(
-				/* translators: %s is the address of the site being migrated. */
-				__( 'Authorize WordPress.com in the WordPress admin for %s.' ),
-				sourceLabel
-			),
-		},
-		credentials: {
-			title: __( 'Securely share your credentials' ),
-			description: sprintf(
-				/* translators: %s is the address of the site being migrated. */
-				__( 'Enter your WordPress admin login details so our team can temporarily access %s.' ),
-				sourceLabel
-			),
-		},
-	}[ step ];
-	const help = (
+	const sourceLabel = sourceAddress
+		? sourceAddress.host + sourceAddress.pathname.replace( /\/$/, '' )
+		: '';
+	const copy = manual
+		? {
+				title: __( 'Securely share your credentials' ),
+				description: sprintf(
+					/* translators: %s is the address of the site being migrated. */
+					__( 'Enter your WordPress admin login details so our team can temporarily access %s.' ),
+					sourceLabel
+				),
+			}
+		: {
+				title: __( 'Authorize access to your WordPress site' ),
+				description: sourceLabel
+					? sprintf(
+							/* translators: %s is the address of the site being migrated. */
+							__( 'Authorize WordPress.com in the WordPress admin for %s.' ),
+							sourceLabel
+						)
+					: undefined,
+			};
+	const help = source && (
 		<Button
 			__next40pxDefaultSize
 			variant="link"
@@ -337,7 +317,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 					if ( ! ( await ensurePending() ) ) {
 						return;
 					}
-					await openTicket( parseAccessUrl( address ) ?? sourceUrl, 'help_requested' );
+					await openTicket( source, 'help_requested' );
 					await finish();
 				} )
 			}
@@ -352,20 +332,30 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 			back={ { label: __( 'Back' ), onClick: goBack, disabled: busy } }
 			note={ help }
 		>
+			{ ! source && (
+				<Notice
+					variant="error"
+					title={ __(
+						'We couldn’t find a valid source site for this migration. Return to the migration overview for help.'
+					) }
+				/>
+			) }
 			{ error && <Notice variant="error" title={ error } /> }
-			{ step === 'authorize' ? (
+			{ ! manual ? (
 				<ButtonStack justify="flex-start" wrap>
-					<Button __next40pxDefaultSize variant="primary" onClick={ authorize } disabled={ busy }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						onClick={ () => chooseAccess( true ) }
+						disabled={ busy || ! source }
+					>
 						{ __( 'Authorize access' ) }
 					</Button>
 					<Button
 						__next40pxDefaultSize
 						variant="link"
-						disabled={ busy }
-						onClick={ () => {
-							setError( '' );
-							setStep( 'credentials' );
-						} }
+						disabled={ busy || ! source }
+						onClick={ () => chooseAccess( false ) }
 					>
 						{ __( 'Share credentials instead' ) }
 					</Button>
@@ -373,85 +363,45 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 			) : (
 				<form onSubmit={ submit }>
 					<VStack spacing={ 4 }>
-						{ choosing && (
-							<RadioControl
-								label={ __( 'How can we access your site?' ) }
-								selected={ method }
-								options={ [
-									{ label: __( 'Site address' ), value: 'site-address' },
-									{ label: __( 'Backup file' ), value: 'backup' },
-								] }
-								onChange={ ( value ) => {
-									setError( '' );
-									setMethod( value );
-								} }
+						<TextControl
+							__next40pxDefaultSize
+							label={ __( 'WordPress admin username' ) }
+							value={ username }
+							onChange={ ( value ) => {
+								setUsername( value );
+								resetCredentialError();
+							} }
+							disabled={ busy }
+							required
+						/>
+						<TextControl
+							__next40pxDefaultSize
+							label={ __( 'Password' ) }
+							type="password"
+							autoComplete="off"
+							value={ password }
+							onChange={ ( value ) => {
+								setPassword( value );
+								resetCredentialError();
+							} }
+							disabled={ busy }
+							required
+						/>
+						<details>
+							<summary>{ __( 'Special instructions' ) }</summary>
+							<TextareaControl
+								label={ __(
+									'Share any other details that will help us access your site for the migration.'
+								) }
+								help={ __(
+									"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
+								) }
+								maxLength={ 1000 }
+								value={ notes }
+								onChange={ setNotes }
 								disabled={ busy }
 							/>
-						) }
-						{ choosing && (
-							<TextControl
-								__next40pxDefaultSize
-								label={
-									isBackup ? __( 'Backup file location' ) : __( 'Current WordPress site address' )
-								}
-								value={ isBackup ? backupUrl : address }
-								onChange={ isBackup ? setBackupUrl : setAddress }
-								disabled={ busy }
-								required
-								help={
-									isBackup
-										? __(
-												'Upload your backup file to a file sharing service and make sure anyone with the link can access it.'
-											)
-										: undefined
-								}
-							/>
-						) }
-						{ manual && (
-							<>
-								<TextControl
-									__next40pxDefaultSize
-									label={ __( 'WordPress admin username' ) }
-									value={ username }
-									onChange={ ( value ) => {
-										setUsername( value );
-										resetCredentialError();
-									} }
-									disabled={ busy }
-									required
-								/>
-								<TextControl
-									__next40pxDefaultSize
-									label={ __( 'Password' ) }
-									type="password"
-									autoComplete="off"
-									value={ password }
-									onChange={ ( value ) => {
-										setPassword( value );
-										resetCredentialError();
-									} }
-									disabled={ busy }
-									required
-								/>
-							</>
-						) }
-						{ ( manual || isBackup ) && (
-							<details>
-								<summary>{ __( 'Special instructions' ) }</summary>
-								<TextareaControl
-									label={ __(
-										'Share any other details that will help us access your site for the migration.'
-									) }
-									help={ __(
-										"Please don't share any passwords or secure information in this field. We'll reach out to collect that information if you have any additional credentials to access your site."
-									) }
-									maxLength={ 1000 }
-									value={ notes }
-									onChange={ setNotes }
-									disabled={ busy }
-								/>
-							</details>
-						) }
+						</details>
 						<Button
 							__next40pxDefaultSize
 							type="submit"
@@ -464,9 +414,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 					</VStack>
 				</form>
 			) }
-			{ busy && step === 'authorize' && (
-				<Text role="status">{ __( 'Connecting to your site…' ) }</Text>
-			) }
+			{ busy && ! manual && <Text role="status">{ __( 'Connecting to your site…' ) }</Text> }
 		</MigrationCard>
 	);
 }
@@ -476,7 +424,11 @@ export default function ShareAccess( { siteSlug }: { siteSlug: string } ) {
 	const { data: migration } = useSuspenseQuery( siteWordPressMigrationStatusQuery( site.ID ) );
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ getSiteDisplayName( site ) } /> }>
-			<ShareAccessForm key={ site.ID } site={ site } sourceUrl={ migration.source_url ?? '' } />
+			<ShareAccessForm
+				key={ `${ site.ID }:${ migration.source_url }` }
+				site={ site }
+				sourceUrl={ migration.source_url ?? '' }
+			/>
 		</PageLayout>
 	);
 }
