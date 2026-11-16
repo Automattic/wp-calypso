@@ -42,6 +42,7 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	authorize as authorizeAction,
+	getRetryAuthUrl,
 	retryAuth as retryAuthAction,
 } from 'calypso/state/jetpack-connect/actions';
 import {
@@ -79,12 +80,7 @@ import {
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import { getConnectorBranding } from './connector-branding-config';
-import {
-	JPC_A4A_PATH,
-	JPC_JETPACK_MANAGE_PATH,
-	JPC_PATH_PLANS,
-	REMOTE_PATH_AUTH,
-} from './constants';
+import { JPC_A4A_PATH, JPC_JETPACK_MANAGE_PATH, JPC_PATH_PLANS } from './constants';
 import Disclaimer from './disclaimer';
 import { isStandardEntryPoint, isUnifiedFlow } from './entry-points';
 import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
@@ -96,6 +92,7 @@ import {
 	clearPlan,
 	isCalypsoStartedConnection,
 	isSsoApproved,
+	persistSession,
 	retrieveMobileRedirect,
 	retrievePlan,
 	retrieveSource,
@@ -156,11 +153,12 @@ export class JetpackAuthorize extends Component {
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const { from, clientId, closeWindowAfterLogin } = this.props.authQuery;
+		const { from, clientId, closeWindowAfterLogin, plugins } = this.props.authQuery;
 		const tracksProperties = {
 			from,
 			is_mobile_app_flow: isMobileAppFlow,
 			site: clientId,
+			plugins: plugins?.length ? plugins.join( ',' ) : undefined,
 			is_secondary_connection: this.isSecondaryConnection(),
 			is_admin_connection: this.isAdminConnection(),
 		};
@@ -602,13 +600,16 @@ export class JetpackAuthorize extends Component {
 	};
 
 	handleResolve = () => {
-		const { site, recordTracksEvent } = this.props;
+		const { recordTracksEvent } = this.props;
+		const { site, from, redirectAfterAuth } = this.props.authQuery;
 		this.retryingAuth = false;
 		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			this.externalRedirectOnce( site + REMOTE_PATH_AUTH );
+			// The user already approved, so authorize as soon as the site sends them back.
+			persistSession( site );
+			this.externalRedirectOnce( getRetryAuthUrl( site, from, redirectAfterAuth ) );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
@@ -621,7 +622,7 @@ export class JetpackAuthorize extends Component {
 	handleSubmit = () => {
 		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
-		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
+		const { alreadyAuthorized, clientId, from, plugins, redirectAfterAuth } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
@@ -647,6 +648,9 @@ export class JetpackAuthorize extends Component {
 		}
 
 		recordTracksEvent( 'calypso_jpc_approve_click', {
+			from,
+			site: clientId,
+			plugins: plugins?.length ? plugins.join( ',' ) : undefined,
 			is_secondary_connection: this.isSecondaryConnection(),
 			is_admin_connection: this.isAdminConnection(),
 		} );

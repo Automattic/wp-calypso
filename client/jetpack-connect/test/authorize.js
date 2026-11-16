@@ -14,6 +14,7 @@ import { renderWithProvider } from '../../../client/test-helpers/testing-library
 import { JetpackAuthorize } from '../authorize';
 import { JPC_A4A_PATH, JPC_PATH_PLANS } from '../constants';
 import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
+import { isCalypsoStartedConnection } from '../persistence-utils';
 
 const noop = () => {};
 const CLIENT_ID = 98765;
@@ -1106,6 +1107,117 @@ describe( 'JetpackAuthorize', () => {
 			expect( global.window.location.href ).toBe(
 				'https://example.com/log-in/jetpack?redirect_to=http%3A%2F%2Fwwww.example.com&from=woocommerce-core-profiler'
 			);
+		} );
+	} );
+
+	describe( 'Tracks', () => {
+		const authQuery = {
+			...DEFAULT_PROPS.authQuery,
+			from: 'my_jetpack_header',
+			plugins: [ 'jetpack', 'woocommerce' ],
+		};
+
+		test( "the screen views carry the site's plugins", () => {
+			const recordTracksEvent = jest.fn();
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ authQuery }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			);
+
+			for ( const event of [ 'calypso_jpc_authorize_form_view', 'calypso_jpc_auth_view' ] ) {
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					event,
+					expect.objectContaining( { from: 'my_jetpack_header', plugins: 'jetpack,woocommerce' } )
+				);
+			}
+		} );
+
+		test( 'the approve click carries from, site and plugins', async () => {
+			const recordTracksEvent = jest.fn();
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ authQuery }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Connect account' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_jpc_approve_click',
+				expect.objectContaining( {
+					from: 'my_jetpack_header',
+					site: CLIENT_ID,
+					plugins: 'jetpack,woocommerce',
+				} )
+			);
+		} );
+
+		test( 'leaves plugins out when the site sent none', async () => {
+			const recordTracksEvent = jest.fn();
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ { ...authQuery, plugins: [] } }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Connect account' } ) );
+
+			const approve = recordTracksEvent.mock.calls.find(
+				( [ event ] ) => event === 'calypso_jpc_approve_click'
+			);
+			expect( approve[ 1 ].plugins ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'expired secret', () => {
+		afterEach( () => {
+			document.cookie = 'jetpack_connect_session_url=; max-age=0; path=/';
+		} );
+
+		test( '"Try again" re-issues the secret on the site, keeping from and the return URL', async () => {
+			const redirectAfterAuth = `http://${ SITE_SLUG }/wp-admin/admin.php?page=my-jetpack&step=onboarding`;
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorizationData={ {
+						...DEFAULT_PROPS.authorizationData,
+						authorizeError: { message: 'expired_secret' },
+					} }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'my_jetpack_onboarding',
+						redirectAfterAuth,
+					} }
+					hasExpiredSecretError
+					site={ null }
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			expect( windowOpenSpy ).toHaveBeenCalledTimes( 1 );
+			const url = new URL( windowOpenSpy.mock.calls[ 0 ][ 0 ] );
+			expect( url.origin + url.pathname ).toBe( `http://${ SITE_SLUG }/wp-admin/admin.php` );
+			expect( url.searchParams.get( 'connect_url_redirect' ) ).toBe( 'true' );
+			expect( url.searchParams.get( 'from' ) ).toBe( 'my_jetpack_onboarding' );
+			expect( url.searchParams.get( 'redirect_after_auth' ) ).toBe( redirectAfterAuth );
+			expect( isCalypsoStartedConnection( `http://${ SITE_SLUG }` ) ).toBe( true );
+		} );
+
+		test( 'authorizes on its own when the site sends the user back', () => {
+			const authorize = jest.fn();
+			renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } authorize={ authorize } calypsoStartedConnection />
+			);
+
+			expect( authorize ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

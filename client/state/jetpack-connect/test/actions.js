@@ -46,6 +46,28 @@ describe( '#dismissUrl()', () => {
 	} );
 } );
 
+describe( '#getRetryAuthUrl()', () => {
+	test( 'points at the site and keeps from and the return URL', () => {
+		const redirectAfterAuth = 'http://example.com/wp-admin/admin.php?page=my-jetpack#/connection';
+		const url = new URL(
+			actions.getRetryAuthUrl( 'http://example.com', 'my_jetpack_header', redirectAfterAuth )
+		);
+
+		expect( url.origin + url.pathname ).toBe( 'http://example.com/wp-admin/admin.php' );
+		expect( url.searchParams.get( 'connect_url_redirect' ) ).toBe( 'true' );
+		expect( url.searchParams.get( 'auth_type' ) ).toBe( 'jetpack' );
+		expect( url.searchParams.get( 'from' ) ).toBe( 'my_jetpack_header' );
+		expect( url.searchParams.get( 'redirect_after_auth' ) ).toBe( redirectAfterAuth );
+	} );
+
+	test( 'leaves out from and the return URL when there are none', () => {
+		const url = new URL( actions.getRetryAuthUrl( 'http://example.com' ) );
+
+		expect( url.searchParams.has( 'from' ) ).toBe( false );
+		expect( url.searchParams.has( 'redirect_after_auth' ) ).toBe( false );
+	} );
+} );
+
 describe( '#retryAuth()', () => {
 	test( 'should dispatch redirect action when called', () => {
 		const spy = jest.fn();
