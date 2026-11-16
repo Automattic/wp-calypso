@@ -3,6 +3,7 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import { Component, Suspense } from '@wordpress/element';
+import { vi } from 'vitest';
 import lazyComponent, { lazyWithRetry } from '../lazy-component';
 
 // The failure paths wait on the helper's real retry delay, so they need more
@@ -37,7 +38,7 @@ describe( 'lazyComponent', () => {
 	} );
 
 	it( 'renders nothing and logs when the chunk fails to load', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const Lazy = lazyComponent( () => Promise.reject( new Error( 'Chunk failed.' ) ) );
 
 		const { container } = render( <Lazy /> );
@@ -68,8 +69,8 @@ describe( 'lazyWithRetry', () => {
 	}
 
 	it( 'throws to the boundary around it when the chunk fails twice', async () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const load = jest.fn( () => Promise.reject( new Error( 'Chunk failed.' ) ) );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const load = vi.fn( () => Promise.reject( new Error( 'Chunk failed.' ) ) );
 		const Lazy = lazyWithRetry( load );
 
 		render(

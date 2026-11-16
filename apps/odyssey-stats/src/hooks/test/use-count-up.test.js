@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useCountUp from '../use-count-up';
 
 describe( 'useCountUp', () => {
@@ -11,17 +12,17 @@ describe( 'useCountUp', () => {
 	beforeEach( () => {
 		now = 0;
 		callbacks = [];
-		jest.spyOn( performance, 'now' ).mockImplementation( () => now );
-		jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {
+		vi.spyOn( performance, 'now' ).mockImplementation( () => now );
+		vi.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {
 			callbacks.push( callback );
 			return callbacks.length;
 		} );
-		jest.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( () => {} );
-		window.matchMedia = jest.fn().mockReturnValue( { matches: false } );
+		vi.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( () => {} );
+		window.matchMedia = vi.fn().mockReturnValue( { matches: false } );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	const advanceTo = ( time ) => {
@@ -74,7 +75,7 @@ describe( 'useCountUp', () => {
 	} );
 
 	it( 'jumps straight to the target when reduced motion is preferred', () => {
-		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		window.matchMedia = vi.fn().mockReturnValue( { matches: true } );
 		const { result } = renderHook( () => useCountUp( 1000 ) );
 		expect( result.current ).toBe( 1000 );
 	} );

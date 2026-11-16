@@ -4,13 +4,13 @@ import { defineConfig } from 'vite';
 
 export default defineConfig( {
 	plugins: [ react() ],
-	root: __dirname,
+	root: import.meta.dirname,
 	build: {
-		outDir: resolve( __dirname, 'dist-dev' ),
+		outDir: resolve( import.meta.dirname, 'dist-dev' ),
 	},
 	resolve: {
 		alias: {
-			'@': resolve( __dirname, 'src' ),
+			'@': resolve( import.meta.dirname, 'src' ),
 		},
 	},
 	server: {

@@ -2,14 +2,13 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import { useAiChatEntryState } from '../../hooks/use-ai-chat-entry-state';
 import AiChatEntryLabel from '../ai-chat-entry-label';
 
-jest.mock( '../../hooks/use-ai-chat-entry-state', () => ( { useAiChatEntryState: jest.fn() } ) );
+vi.mock( '../../hooks/use-ai-chat-entry-state', () => ( { useAiChatEntryState: vi.fn() } ) );
 
-const mockUseAiChatEntryState = useAiChatEntryState as jest.MockedFunction<
-	typeof useAiChatEntryState
->;
+const mockUseAiChatEntryState = useAiChatEntryState as MockedFunction< typeof useAiChatEntryState >;
 
 describe( 'AiChatEntryLabel', () => {
 	it( 'shows the Agent label while the chat is hidden', () => {

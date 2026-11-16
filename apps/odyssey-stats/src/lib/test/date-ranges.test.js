@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	DATE_RANGE_LAST_7_DAYS,
 	DATE_RANGE_LAST_30_DAYS,
@@ -25,7 +26,7 @@ describe( 'isDateRangeId', () => {
 
 describe( 'getSiteToday', () => {
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it.each( [
@@ -33,7 +34,7 @@ describe( 'getSiteToday', () => {
 		[ 0, '2026-10-01' ],
 		[ -12, '2026-09-30' ],
 	] )( 'should date 11:00 UTC on Oct 1 by the site offset %s', ( gmtOffset, expected ) => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-01T11:00:00Z' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2026-10-01T11:00:00Z' ) );
 		expect( getSiteToday( gmtOffset ) ).toBe( expected );
 	} );
 } );
@@ -99,11 +100,11 @@ describe( 'getBucketDays', () => {
 
 describe( 'resolveDateRange', () => {
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( "should end on the site's today and start where the range does", () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
 		expect( resolveDateRange( DATE_RANGE_LAST_7_DAYS, 2 ) ).toEqual( {
 			id: DATE_RANGE_LAST_7_DAYS,
 			unit: 'day',
@@ -114,7 +115,7 @@ describe( 'resolveDateRange', () => {
 	} );
 
 	it( 'should bucket the last 90 days by week, as Stats v2 does', () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
 		expect( resolveDateRange( DATE_RANGE_LAST_90_DAYS, 2 ) ).toEqual( {
 			id: DATE_RANGE_LAST_90_DAYS,
 			unit: 'week',
