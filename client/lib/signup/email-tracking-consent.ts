@@ -1,10 +1,12 @@
 import config from '@automattic/calypso-config';
-import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 
 const STORAGE_KEY = 'signup_email_tracking_consent';
 
 // French and Italian signup pages ask before tracking email opens and clicks.
 const LANGUAGES = [ 'fr', 'it' ];
+
+// The answer on the signup form that is open now, or null when no form is asking.
+let currentAnswer: boolean | null = null;
 
 export function shouldAskEmailTrackingConsent( locale: string | null | undefined ): boolean {
 	return (
@@ -13,39 +15,55 @@ export function shouldAskEmailTrackingConsent( locale: string | null | undefined
 	);
 }
 
-function readStoredAnswer(): string | null {
+export function setEmailTrackingConsent( agreed: boolean | null ): void {
+	currentAnswer = agreed;
+}
+
+function readSavedAnswer(): boolean | null {
 	try {
-		return window.sessionStorage.getItem( STORAGE_KEY );
+		const answer = window.sessionStorage.getItem( STORAGE_KEY );
+		return answer === null ? null : answer === 'true';
 	} catch {
 		return null;
 	}
 }
 
-export function getStoredEmailTrackingConsent(): boolean {
-	return readStoredAnswer() === 'true';
-}
-
-// Kept in sessionStorage so the answer survives a social login that reloads the page.
-export function storeEmailTrackingConsent( agreed: boolean ): void {
+/**
+ * Saves the answer before a social login leaves the page. The login can return to another page,
+ * which has no form to ask again.
+ */
+export function saveEmailTrackingConsentForSocialLogin(): void {
+	if ( currentAnswer === null ) {
+		return;
+	}
 	try {
-		window.sessionStorage.setItem( STORAGE_KEY, String( agreed ) );
+		window.sessionStorage.setItem( STORAGE_KEY, String( currentAnswer ) );
 	} catch {}
 }
 
-export function clearEmailTrackingConsent(): void {
-	try {
-		window.sessionStorage.removeItem( STORAGE_KEY );
-	} catch {}
+export function getSavedEmailTrackingConsent(): boolean {
+	return readSavedAnswer() === true;
 }
 
 /**
- * The answer to send with an account creation request. Empty unless the signup form asked, so an
- * answer left over from another page in the same tab is not sent.
+ * The answer to send with an email signup. Empty unless the open form asked.
  */
 export function getEmailTrackingConsentPayload(): { email_tracking?: boolean } {
-	const answer = readStoredAnswer();
-	if ( answer === null || ! shouldAskEmailTrackingConsent( getLocaleSlug() ) ) {
-		return {};
-	}
-	return { email_tracking: answer === 'true' };
+	return currentAnswer === null ? {} : { email_tracking: currentAnswer };
+}
+
+/**
+ * The answer to send with a social signup: the open form's, or the one saved before the social
+ * login left the page.
+ */
+export function getEmailTrackingConsentPayloadForSocialLogin(): { email_tracking?: boolean } {
+	const answer = currentAnswer ?? readSavedAnswer();
+	return answer === null ? {} : { email_tracking: answer };
+}
+
+// Called once the social signup went through, so the saved answer is not reused.
+export function forgetSavedEmailTrackingConsent(): void {
+	try {
+		window.sessionStorage.removeItem( STORAGE_KEY );
+	} catch {}
 }

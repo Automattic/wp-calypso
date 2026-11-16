@@ -3,26 +3,26 @@ import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import {
-	clearEmailTrackingConsent,
-	getStoredEmailTrackingConsent,
+	getSavedEmailTrackingConsent,
+	setEmailTrackingConsent,
 	shouldAskEmailTrackingConsent,
-	storeEmailTrackingConsent,
 } from 'calypso/lib/signup/email-tracking-consent';
 
 /**
  * The email tracking answer for the signup form, unticked by default. `isAsked` is false on pages
- * that don't ask, and nothing is stored for them.
+ * that don't ask, and they send no answer.
  */
 export function useEmailTrackingConsent() {
 	const isAsked = shouldAskEmailTrackingConsent( useTranslate().localeSlug );
-	const [ hasAgreed, setHasAgreed ] = useState( getStoredEmailTrackingConsent );
+	// A social login that came back to this form keeps the answer it left with.
+	const [ hasAgreed, setHasAgreed ] = useState( getSavedEmailTrackingConsent );
 
 	useEffect( () => {
 		if ( ! isAsked ) {
 			return;
 		}
-		storeEmailTrackingConsent( hasAgreed );
-		return clearEmailTrackingConsent;
+		setEmailTrackingConsent( hasAgreed );
+		return () => setEmailTrackingConsent( null );
 	}, [ isAsked, hasAgreed ] );
 
 	return { isAsked, hasAgreed, setHasAgreed };
