@@ -189,15 +189,21 @@ describe( 'Static site import flow', () => {
 	} );
 
 	describe( 'destination checks', () => {
-		it( 'sends users who cannot manage the destination site to the start page', () => {
+		it( 'moves the site into a new one when the user cannot manage the destination site', () => {
 			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
 
 			renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
 				currentStep: STEPS.STATIC_SITE_IMPORT_READING.slug,
-				currentURL: `${ readingPath }?siteId=42`,
+				currentURL: `${ readingPath }?${ new URLSearchParams( {
+					...SOURCE,
+					siteId: '42',
+					siteSlug: 'example.wordpress.com',
+					importSessionId: 'abc',
+				} ) }`,
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+			expect( window.location.assign ).not.toHaveBeenCalledWith( '/start' );
+			expect( lastExit() ).toEqual( { path: plansPath, query: SOURCE } );
 		} );
 
 		it.each( [

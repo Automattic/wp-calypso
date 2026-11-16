@@ -52,6 +52,20 @@ const BASE_STEPS = [ STEPS.UNIFIED_PLANS, STEPS.STATIC_SITE_IMPORT_READING, STEP
 const hasDestinationSite = ( query: URLSearchParams ) =>
 	Boolean( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
 
+// The flow's own steps carry these, and they belong to the destination the customer can't use.
+const DESTINATION_PARAMS = [ 'siteId', 'siteSlug', 'newSite', 'importSessionId', 'checkoutExit' ];
+
+const newSitePlansUrl = ( query: URLSearchParams, locale: string ) => {
+	const params = new URLSearchParams( query );
+	DESTINATION_PARAMS.forEach( ( param ) => params.delete( param ) );
+	const path = withLocale(
+		`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`,
+		locale
+	);
+	const search = params.toString();
+	return search ? `${ path }?${ search }` : path;
+};
+
 // Sources are identified by site-migration, which hands eligible ones here with `from` and `platform`.
 function initialize() {
 	const { pathname, search } = window.location;
@@ -118,12 +132,16 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 	useAssertConditions(): AssertConditionResult {
 		const { isAdmin, isFetching } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
-		const checksDestination = hasDestinationSite( useQuery() ) && userIsLoggedIn;
+		const query = useQuery();
+		const locale = useFlowLocale();
+		const checksDestination = hasDestinationSite( query ) && userIsLoggedIn;
 		useEffect( () => {
 			if ( checksDestination && isAdmin === false ) {
-				window.location.assign( '/start' );
+				// Only an admin can import into a site. Rather than drop the customer on /start,
+				// keep the move going into a new site, which checkout creates for them.
+				window.location.replace( newSitePlansUrl( query, locale ) );
 			}
-		}, [ checksDestination, isAdmin ] );
+		}, [ checksDestination, isAdmin, query, locale ] );
 
 		return {
 			state:
