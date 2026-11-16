@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
-import { useUnsubscribeUndoNotice } from 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo';
 import {
 	recordFollow as recordFollowTracks,
 	recordUnfollow as recordUnfollowTracks,
@@ -26,31 +25,18 @@ interface ReaderFollowButtonProps {
 	onFollowToggle?: ( isFollowing: boolean ) => void;
 	onFollowSuccess?: ( isFollowing: boolean ) => void;
 	railcar?: Railcar;
-	showUnsubscribeUndo?: boolean;
 	siteId?: number;
-	siteName?: string;
 	siteUrl: string;
 }
 
 export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JSX.Element {
-	const {
-		onFollowToggle,
-		onFollowSuccess,
-		railcar,
-		followSource,
-		hasButtonStyle,
-		showUnsubscribeUndo,
-		siteName,
-		siteUrl,
-		iconSize,
-		className,
-	} = props;
+	const { onFollowToggle, railcar, followSource, hasButtonStyle, siteUrl, iconSize, className } =
+		props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	// We use the previous path to detect how the user arrived on the follow button.
 	// It is important to understand our post suggestions strategies.
 	const pathnameOverride = useSelector( getPreviousPath );
-	const showUnsubscribeUndoNotice = useUnsubscribeUndoNotice();
 
 	function recordFollowToggle( isFollowing: boolean ): void {
 		if ( isLoggedIn ) {
@@ -64,13 +50,6 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 		if ( onFollowToggle ) {
 			onFollowToggle( isFollowing );
 		}
-	}
-
-	function handleFollowSuccess( isFollowing: boolean ): void {
-		if ( ! isFollowing && showUnsubscribeUndo ) {
-			showUnsubscribeUndoNotice( { feedUrl: siteUrl, siteName, source: followSource } );
-		}
-		onFollowSuccess?.( isFollowing );
 	}
 
 	// FollowButton renders icons as an array child; React requires keys on array
@@ -89,7 +68,6 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 			{ ...props }
 			className={ className }
 			onFollowToggle={ recordFollowToggle }
-			onFollowSuccess={ handleFollowSuccess }
 			followIcon={ followIcon }
 			followingIcon={ followingIcon }
 			hasButtonStyle={ hasButtonStyle }
