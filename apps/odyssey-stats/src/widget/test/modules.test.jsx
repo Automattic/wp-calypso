@@ -16,7 +16,9 @@ vi.mock( '../../lib/config-api', () => {
 	return { __esModule: true, default: configApi, optionalConfig: vi.fn() };
 } );
 vi.mock( '../../hooks/use-module-data-query' );
-vi.mock( 'calypso/lib/wp', () => ( { req: { post: vi.fn( () => Promise.resolve( {} ) ) } } ) );
+vi.mock( 'calypso/lib/wp', () => ( {
+	default: { req: { post: vi.fn( () => Promise.resolve( {} ) ) } },
+} ) );
 vi.mock( '../../lib/selectors/can-current-user' );
 
 const SITE_ID = 123;

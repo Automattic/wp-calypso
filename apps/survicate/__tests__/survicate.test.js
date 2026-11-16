@@ -31,15 +31,14 @@ const CONFIG = {
 };
 
 // The entry runs on import, so each test re-imports it in isolation.
-function boot( config ) {
+async function boot( config ) {
 	if ( config === undefined ) {
 		delete window.wpcomSurvicateConfig;
 	} else {
 		window.wpcomSurvicateConfig = config;
 	}
-	vi.isolateModules( () => {
-		require( '../survicate' );
-	} );
+	vi.resetModules();
+	await import( '../survicate' );
 }
 
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
@@ -56,45 +55,45 @@ describe( 'wp-admin Survicate entry', () => {
 		delete window.wpcomSurvicateConfig;
 	} );
 
-	it( 'does nothing when PHP emitted no config', () => {
-		boot( undefined );
+	it( 'does nothing when PHP emitted no config', async () => {
+		await boot( undefined );
 
 		expect( mockShouldLoadSurvicate ).not.toHaveBeenCalled();
 		expect( mockLoadSurvicateScript ).not.toHaveBeenCalled();
 	} );
 
-	it( 'gates on the locale PHP sent and a desktop viewport', () => {
-		boot( CONFIG );
+	it( 'gates on the locale PHP sent and a desktop viewport', async () => {
+		await boot( CONFIG );
 
 		expect( mockShouldLoadSurvicate ).toHaveBeenCalledWith( { locale: 'en_US', isMobile: false } );
 	} );
 
-	it( 'uses the shared Calypso mobile breakpoint', () => {
+	it( 'uses the shared Calypso mobile breakpoint', async () => {
 		mockIsMobile.mockReturnValue( true );
 
-		boot( CONFIG );
+		await boot( CONFIG );
 
 		expect( mockShouldLoadSurvicate ).toHaveBeenCalledWith( { locale: 'en_US', isMobile: true } );
 	} );
 
-	it( 'treats an undetermined viewport as desktop', () => {
+	it( 'treats an undetermined viewport as desktop', async () => {
 		mockIsMobile.mockReturnValue( undefined );
 
-		boot( CONFIG );
+		await boot( CONFIG );
 
 		expect( mockShouldLoadSurvicate ).toHaveBeenCalledWith( { locale: 'en_US', isMobile: false } );
 	} );
 
-	it( 'does not load the SDK when the load gate says no', () => {
+	it( 'does not load the SDK when the load gate says no', async () => {
 		mockShouldLoadSurvicate.mockReturnValue( false );
 
-		boot( CONFIG );
+		await boot( CONFIG );
 
 		expect( mockLoadSurvicateScript ).not.toHaveBeenCalled();
 	} );
 
 	it( 'loads the SDK for the shared workspace and pushes the PHP traits', async () => {
-		boot( CONFIG );
+		await boot( CONFIG );
 		await flushPromises();
 
 		expect( mockLoadSurvicateScript ).toHaveBeenCalledWith( 'workspace-id' );
@@ -107,7 +106,7 @@ describe( 'wp-admin Survicate entry', () => {
 		mockLoadSurvicateScript.mockRejectedValue( new Error( 'blocked' ) );
 
 		try {
-			expect( () => boot( CONFIG ) ).not.toThrow();
+			await expect( boot( CONFIG ) ).resolves.toBeUndefined();
 			await flushPromises();
 
 			expect( onUnhandledRejection ).not.toHaveBeenCalled();

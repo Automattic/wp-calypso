@@ -9,7 +9,9 @@ import useReferrersQuery from '../use-referrers-query';
 import useTopPostsQuery from '../use-top-posts-query';
 
 vi.mock( 'calypso/lib/wp', () => ( {
-	req: { get: vi.fn( () => Promise.resolve( { summary: { postviews: [], groups: [] } } ) ) },
+	default: {
+		req: { get: vi.fn( () => Promise.resolve( { summary: { postviews: [], groups: [] } } ) ) },
+	},
 } ) );
 
 const SITE_ID = 123;

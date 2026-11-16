@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  *
- * Tests for the pure helper functions exported from reader-chat.js.
+ * Tests for the pure helper functions exported from reader-chat.jsx.
  *
  * The file is an entry point with heavy side-effecting top-level code
  * (DOM mounting, global mutation). We mock all heavy imports and the
@@ -10,39 +10,32 @@
 
 // Mock the side-effecting imports before any module load.
 import { vi } from 'vitest';
-vi.mock( '../config', () => {} );
-vi.mock( '@automattic/agents-manager', () => ( { default: () => null } ) );
-vi.mock(
-	'@automattic/agents-manager/src/auth/calypso-auth-provider',
-	() => ( {
-		createCalypsoAuthProvider: vi.fn( ( siteId ) => async () => ( {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer test-token-${ siteId }`,
-		} ) ),
-	} )
-);
-vi.mock(
-	'@tanstack/react-query',
-	() => ( {
-		QueryClient: vi.fn( () => ( {} ) ),
-		QueryClientProvider: ( { children } ) => children,
-	} )
-);
-vi.mock(
-	'@wordpress/element',
-	async () => {
-		const element = ( await vi.importActual( '@wordpress/element' ) );
-		return {
-			...element,
-			useState: ( await vi.importActual( 'react' ) ).useState,
-			useEffect: ( await vi.importActual( 'react' ) ).useEffect,
-		};
-	}
-);
-vi.mock(
-	'react-dom/client',
-	() => ( { createRoot: vi.fn( () => ( { render: vi.fn() } ) ) } )
-);
+vi.mock( '../config', () => ( {} ) );
+vi.mock( '@automattic/agents-manager', () => ( {
+	default: () => null,
+	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
+} ) );
+vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
+	createCalypsoAuthProvider: vi.fn( ( siteId ) => async () => ( {
+		'Content-Type': 'application/json',
+		Authorization: `Bearer test-token-${ siteId }`,
+	} ) ),
+} ) );
+vi.mock( '@tanstack/react-query', () => ( {
+	QueryClient: vi.fn( function () {
+		return {};
+	} ),
+	QueryClientProvider: ( { children } ) => children,
+} ) );
+vi.mock( '@wordpress/element', async () => {
+	const element = await vi.importActual( '@wordpress/element' );
+	return {
+		...element,
+		useState: ( await vi.importActual( 'react' ) ).useState,
+		useEffect: ( await vi.importActual( 'react' ) ).useEffect,
+	};
+} );
+vi.mock( 'react-dom/client', () => ( { createRoot: vi.fn( () => ( { render: vi.fn() } ) ) } ) );
 
 // Provide a minimal JetpackReaderChatConfig so the module-level readerConfig
 // is safe to read (no currentPost by default — exercises the no-post branch).
@@ -57,9 +50,8 @@ beforeAll( () => {
 } );
 
 // Import after mocks are registered.
-const {
-	createCalypsoAuthProvider,
-} = require( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
+const { createCalypsoAuthProvider } =
+	await import( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
 const {
 	parseAgentSseResponse,
 	slugify,
@@ -74,7 +66,7 @@ const {
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
 	watchFirstChatOpen,
-} = require( '../reader-chat' );
+} = await import( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
 // injectScopedReset

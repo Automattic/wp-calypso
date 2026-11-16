@@ -69,7 +69,9 @@ describe( 'createNotificationSound', () => {
 			),
 			close: vi.fn().mockResolvedValue( undefined ),
 		};
-		audioContextConstructor = vi.fn( () => audioContext );
+		audioContextConstructor = vi.fn( function () {
+			return audioContext;
+		} );
 		Object.defineProperty( window, 'AudioContext', {
 			configurable: true,
 			value: audioContextConstructor,
@@ -305,7 +307,7 @@ describe( 'createNotificationSound', () => {
 
 	it( 'reports a failure to create the audio context and stops trying', async () => {
 		const error = new Error( 'Too many audio contexts' );
-		audioContextConstructor.mockImplementation( () => {
+		audioContextConstructor.mockImplementation( function () {
 			throw error;
 		} );
 		const onError = vi.fn();

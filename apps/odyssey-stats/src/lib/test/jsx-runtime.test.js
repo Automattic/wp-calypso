@@ -9,7 +9,7 @@ import { vi } from 'vitest';
  * Loads the module fresh, since it picks its runtime from the page's globals once, at load time.
  * @param {Object|undefined} wpRuntime What WordPress registered as `window.ReactJSXRuntime`.
  */
-function loadRuntime( wpRuntime ) {
+async function loadRuntime( wpRuntime ) {
 	window.React = React;
 	if ( wpRuntime ) {
 		window.ReactJSXRuntime = wpRuntime;
@@ -17,11 +17,8 @@ function loadRuntime( wpRuntime ) {
 		delete window.ReactJSXRuntime;
 	}
 
-	let runtime;
-	vi.isolateModules( () => {
-		runtime = require( '../jsx-runtime' );
-	} );
-	return runtime;
+	vi.resetModules();
+	return await import( '../jsx-runtime' );
 }
 
 describe( 'jsx-runtime', () => {
@@ -30,18 +27,18 @@ describe( 'jsx-runtime', () => {
 		delete window.ReactJSXRuntime;
 	} );
 
-	it( "uses WordPress's runtime on WordPress 6.6+ instead of building elements itself", () => {
+	it( "uses WordPress's runtime on WordPress 6.6+ instead of building elements itself", async () => {
 		const wpRuntime = { jsx: vi.fn(), jsxs: vi.fn(), Fragment: Symbol( 'wp-fragment' ) };
 
-		const runtime = loadRuntime( wpRuntime );
+		const runtime = await loadRuntime( wpRuntime );
 
 		expect( runtime.jsx ).toBe( wpRuntime.jsx );
 		expect( runtime.jsxs ).toBe( wpRuntime.jsxs );
 		expect( runtime.Fragment ).toBe( wpRuntime.Fragment );
 	} );
 
-	it( 'still renders elements on WordPress < 6.6, where window.ReactJSXRuntime is missing', () => {
-		const { jsx, Fragment } = loadRuntime( undefined );
+	it( 'still renders elements on WordPress < 6.6, where window.ReactJSXRuntime is missing', async () => {
+		const { jsx, Fragment } = await loadRuntime( undefined );
 
 		const element = jsx( 'p', { className: 'stats', children: 'Views' } );
 
@@ -51,8 +48,8 @@ describe( 'jsx-runtime', () => {
 		expect( Fragment ).toBe( React.Fragment );
 	} );
 
-	it( 'keeps the key passed as the third argument, so list items are not remounted', () => {
-		const { jsx } = loadRuntime( undefined );
+	it( 'keeps the key passed as the third argument, so list items are not remounted', async () => {
+		const { jsx } = await loadRuntime( undefined );
 
 		const element = jsx( 'li', { children: 'Views' }, 'views' );
 
@@ -60,16 +57,16 @@ describe( 'jsx-runtime', () => {
 		expect( element.props ).toEqual( { children: 'Views' } );
 	} );
 
-	it( 'lets a spread key win over the explicit one, as React does for <Row key="a" {...props} />', () => {
-		const { jsx } = loadRuntime( undefined );
+	it( 'lets a spread key win over the explicit one, as React does for <Row key="a" {...props} />', async () => {
+		const { jsx } = await loadRuntime( undefined );
 
 		const element = jsx( 'li', { key: 'spread', children: 'Views' }, 'explicit' );
 
 		expect( element.key ).toBe( 'spread' );
 	} );
 
-	it( 'renders literal siblings without "unique key" warnings', () => {
-		const { jsx, jsxs } = loadRuntime( undefined );
+	it( 'renders literal siblings without "unique key" warnings', async () => {
+		const { jsx, jsxs } = await loadRuntime( undefined );
 		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		const element = jsxs( 'p', {

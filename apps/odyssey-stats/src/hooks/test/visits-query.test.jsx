@@ -8,10 +8,12 @@ import wpcom from 'calypso/lib/wp';
 import useVisitsQuery from '../use-visits-query';
 
 vi.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: vi.fn( () =>
-			Promise.resolve( { unit: 'week', fields: [ 'period', 'views', 'visitors' ], data: [] } )
-		),
+	default: {
+		req: {
+			get: vi.fn( () =>
+				Promise.resolve( { unit: 'week', fields: [ 'period', 'views', 'visitors' ], data: [] } )
+			),
+		},
 	},
 } ) );
 

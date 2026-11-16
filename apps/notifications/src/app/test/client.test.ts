@@ -2,9 +2,11 @@ import { vi } from 'vitest';
 import { store, init as initState } from '../../panel/state';
 import { subscribeUnseenCount } from '../client';
 
-vi.mock( '../../panel/rest-client', () =>
-	( { default: vi.fn().mockImplementation( () => ( { setVisibility: vi.fn() } ) ) } )
-);
+vi.mock( '../../panel/rest-client', () => ( {
+	default: vi.fn( function () {
+		return { setVisibility: vi.fn() };
+	} ),
+} ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( { init: vi.fn() } ) );
 
 describe( 'subscribeUnseenCount', () => {

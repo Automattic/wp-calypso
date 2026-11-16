@@ -16,9 +16,9 @@ moment.locale( 'en' );
 let mockChartEmit = null;
 let mockChartTooltip = null;
 
-vi.mock( '@automattic/charts', () => {
-	const { useContext } = require( 'react' );
-	const { TooltipContext, useEventEmitter } = require( '@visx/xychart' );
+vi.mock( '@automattic/charts', async () => {
+	const { useContext } = await import( 'react' );
+	const { TooltipContext, useEventEmitter } = await import( '@visx/xychart' );
 	const Chart = () => {
 		mockChartEmit = useEventEmitter();
 		mockChartTooltip = useContext( TooltipContext );

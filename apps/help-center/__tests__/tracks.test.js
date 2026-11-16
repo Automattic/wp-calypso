@@ -3,14 +3,14 @@
  */
 
 import { vi } from 'vitest';
-const mockRecordTracksEvent = vi.fn();
+import { recordDisconnectedHostTracksEvent, recordHostTracksEvent } from '../tracks';
+
+const mockRecordTracksEvent = vi.hoisted( () => vi.fn() );
 
 vi.mock( '@automattic/calypso-analytics', async () => ( {
 	...( await vi.importActual( '@automattic/calypso-analytics' ) ),
 	recordTracksEvent: mockRecordTracksEvent,
 } ) );
-
-const { recordDisconnectedHostTracksEvent, recordHostTracksEvent } = require( '../tracks' );
 
 describe( 'recordHostTracksEvent', () => {
 	beforeEach( () => {
