@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { BLACKBOX_KEY_VERSION } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -127,7 +126,6 @@ class PasswordlessSignupForm extends Component {
 					is_passwordless: true,
 					...( blackboxSessionId && {
 						blackbox_session_id: blackboxSessionId,
-						blackbox_key_version: BLACKBOX_KEY_VERSION,
 					} ),
 				},
 				( error ) => {
@@ -184,7 +182,6 @@ class PasswordlessSignupForm extends Component {
 				},
 				...( blackboxSessionId && {
 					blackbox_session_id: blackboxSessionId,
-					blackbox_key_version: BLACKBOX_KEY_VERSION,
 				} ),
 			};
 

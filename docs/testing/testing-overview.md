@@ -44,22 +44,16 @@ _Check also how to write [unit tests](unit-tests.md) and [component tests](compo
 
 ## Package tests
 
-This test configuration contains unit tests for the packages in the `packages` top level folder. Packages are moving from Jest to Vitest one batch at a time: a package with a `vitest.config.*` runs on Vitest, and one with a `jest.config.js` runs on Jest. Test files go in a `test` subfolder, as in `client`.
+This test configuration contains unit tests for the packages in the `packages` top level folder. They run on Vitest: each package with tests has a `vitest.config.*`. Test files go in a `test` subfolder, as in `client`.
 
 ```bash
-> # run every package's tests, on Jest and then on Vitest
-> yarn run test-packages
-> # run the packages on Jest; arguments are Jest's
-> yarn run test-packages:jest [ path ]
-> # run the packages on Vitest; arguments are Vitest's, for example a path
-> yarn run test-packages:vitest [ path ]
-> # watch the packages on Vitest
-> yarn run test-packages:vitest --watch [ path ]
-> # run one package's tests on whichever runner it uses, if it has a `test` script
+> # run every package's tests; arguments are Vitest's, for example a path
+> yarn run test-packages [ path ]
+> # watch the packages' tests
+> yarn run test-packages:watch [ path ]
+> # run one package's tests, if it has a `test` script
 > yarn workspace <package name> test
 ```
-
-`yarn run test-packages` passes any arguments to Jest only, so `yarn run test-packages:watch` watches only the Jest packages.
 
 ## Integration tests
 

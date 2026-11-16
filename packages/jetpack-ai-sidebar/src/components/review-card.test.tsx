@@ -2,19 +2,19 @@
  * @jest-environment jsdom
  */
 
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import ReviewCard, { type ReviewCardProps, type ReviewCardRow } from './review-card';
 
 // Mock the block registry + icon renderer so BlockRef's lookups are
 // deterministic and don't pull in the full editor.
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockType: jest.fn(),
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockType: vi.fn(),
 } ) );
-jest.mock( '@wordpress/icons', () => {
+vi.mock( '@wordpress/icons', async () => {
 	const { createElement: mockCreateElement } =
-		jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 
 	return {
 		check: 'check',
@@ -32,10 +32,10 @@ jest.mock( '@wordpress/icons', () => {
 		},
 	};
 } );
-jest.mock( '@wordpress/block-editor', () => {
-	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@wordpress/block-editor', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	const { RawHTML } =
-		jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 	return {
 		BlockIcon: () => react.createElement( 'span', { 'data-testid': 'block-icon' } ),
 		RichText: {
@@ -65,11 +65,11 @@ function renderCard( bodyRows: ReviewCardRow[], overrides: Partial< ReviewCardPr
 		copied: false,
 		disabled: false,
 		failureMessage: '',
-		onApply: jest.fn(),
-		onGoToSection: jest.fn(),
-		onCopy: jest.fn(),
-		onDismiss: jest.fn(),
-		onUndo: jest.fn(),
+		onApply: vi.fn(),
+		onGoToSection: vi.fn(),
+		onCopy: vi.fn(),
+		onDismiss: vi.fn(),
+		onUndo: vi.fn(),
 		...overrides,
 	};
 	return render( <ReviewCard { ...props } /> );

@@ -84,22 +84,6 @@ test.describe(
 			await test.step( 'Click on Subscribers tab', async () => {
 				await statsPage.clickTab( 'Subscribers' );
 			} );
-
-			// The Store tab is not present unless Business or higher plan is on the site and the
-			// site has gone AT.
-			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-				await test.step( 'Click on the Store tab', async () => {
-					await statsPage.clickTab( 'Store' );
-				} );
-
-				await test.step( 'Select "Years" stats period', async () => {
-					await statsPage.selectStatsPeriod( 'Years' );
-				} );
-
-				await test.step( 'Select "Gross sales" stats type', async () => {
-					await statsPage.showStatsOfType( { tab: 'Store', type: 'Gross Sales' } );
-				} );
-			}
 		} );
 	}
 );

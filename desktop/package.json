@@ -34,7 +34,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@electron/notarize": "^2.5.0",
-		"archiver": "^3.1.1",
+		"archiver": "^8.0.0",
 		"copy-webpack-plugin": "^14.0.0",
 		"cross-env": "^7.0.3",
 		"electron": "42.11.18",
@@ -42,7 +42,7 @@
 		"jest": "^30.5.2",
 		"js-yaml": "5.4.1",
 		"playwright": "1.57.0",
-		"semver": "^7.7.2",
+		"semver": "^7.8.6",
 		"webpack": "^5.111.1",
 		"webpack-cli": "^7.2.3",
 		"winston": "^3.3.3"
@@ -50,6 +50,6 @@
 	"dependencies": {
 		"electron-store": "^8.1.0",
 		"electron-updater": "6.8.11",
-		"ws": "^7.5.10"
+		"ws": "^8.23.0"
 	}
 }
