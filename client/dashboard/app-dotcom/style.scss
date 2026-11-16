@@ -21,8 +21,11 @@
 	--dashboard__background-color-success: #3ca758;
 	--dashboard__background-color-warning: #d47608;
 	--dashboard__background-color-error: #{$alert-red};
-	--dashboard__foreground-color-success: #21873b;
-	--dashboard__foreground-color-warning: #b36100;
+	--dashboard__foreground-color-success: var( --wpds-color-foreground-content-success-weak );
+	--dashboard__foreground-color-warning: var( --wpds-color-foreground-content-warning-weak );
+	--dashboard-danger__color: var( --wpds-color-foreground-interactive-error );
+	--dashboard-danger__color-hover: var( --wpds-color-foreground-interactive-error-active );
+	--dashboard-danger__color-active: var( --wpds-color-foreground-interactive-error-active );
 	--dashboard__foreground-color-error: var( --wpds-color-foreground-content-error-weak );
 	--dashboard-inline-code__background-color: #{$gray-100};
 	--dashboard__text-color: var( --wpds-color-foreground-content-neutral );
