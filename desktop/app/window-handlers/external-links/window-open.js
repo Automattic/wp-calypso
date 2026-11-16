@@ -6,7 +6,7 @@
  */
 function resolveWindowOpen( url, targetURL ) {
 	// If the URL trying to open a new window is the Google Social login link, allow new window to open
-	if ( url.includes( 'https://accounts.google.com/o/oauth2/auth' ) ) {
+	if ( isUrlUnder( url, 'https://accounts.google.com', '/o/oauth2/auth' ) ) {
 		return { action: 'allow' };
 	}
 	// Check if the incoming URL is blank and if it is send to the targetURL instead
@@ -14,4 +14,20 @@ function resolveWindowOpen( url, targetURL ) {
 	return { action: 'deny', urlToLoad };
 }
 
-module.exports = { resolveWindowOpen };
+/**
+ * Whether a URL is on the given origin and its path starts with the given prefix.
+ * @param {string} url
+ * @param {string} origin e.g. 'https://wordpress.com'
+ * @param {string} pathPrefix e.g. '/log-in/apple/callback'
+ * @returns {boolean}
+ */
+function isUrlUnder( url, origin, pathPrefix ) {
+	try {
+		const parsed = new URL( url );
+		return parsed.origin === origin && parsed.pathname.startsWith( pathPrefix );
+	} catch {
+		return false;
+	}
+}
+
+module.exports = { resolveWindowOpen, isUrlUnder };

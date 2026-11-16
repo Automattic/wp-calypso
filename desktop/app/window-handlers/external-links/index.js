@@ -1,7 +1,7 @@
 const assets = require( '../../lib/assets' );
 const Config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:external-links' );
-const { resolveWindowOpen } = require( './window-open' );
+const { isUrlUnder, resolveWindowOpen } = require( './window-open' );
 
 let targetURL = '';
 
@@ -38,7 +38,7 @@ module.exports = function ( { view } ) {
 	} );
 
 	view.webContents.on( 'will-redirect', function ( _, url ) {
-		if ( url.includes( 'https://wordpress.com/log-in/apple/callback' ) ) {
+		if ( isUrlUnder( url, 'https://wordpress.com', '/log-in/apple/callback' ) ) {
 			log.info( 'Redirecting to URL: ', url );
 			view.webContents.loadURL( url );
 		}

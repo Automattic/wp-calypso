@@ -677,7 +677,7 @@ function UnifiedPlansStep( {
 	const intervalTypeValue = intervalType || getIntervalType( path );
 
 	let freeWPComSubdomain: string | undefined;
-	if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
+	if ( typeof siteUrl === 'string' && siteUrl.endsWith( '.wordpress.com' ) ) {
 		freeWPComSubdomain = siteUrl;
 	}
 

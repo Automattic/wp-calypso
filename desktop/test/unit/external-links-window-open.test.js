@@ -20,4 +20,9 @@ describe( 'resolveWindowOpen', () => {
 		const url = 'https://accounts.google.com/o/oauth2/auth?client_id=abc';
 		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'allow' } );
 	} );
+
+	it( 'keeps other sites that mention the Google login URL in the main view', () => {
+		const url = 'https://example.com/?next=https://accounts.google.com/o/oauth2/auth';
+		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'deny', urlToLoad: url } );
+	} );
 } );
