@@ -114,7 +114,7 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 		} );
 
 		await test.step( 'Approve comment', async () => {
-			await notificationsComponent.approveNotification();
+			await notificationsComponent.clickNotificationAction( 'Approve' );
 		} );
 
 		await test.step( 'Like comment', async () => {
@@ -122,7 +122,7 @@ test.describe( 'Notifications: General Interactions', { tag: [ tags.CALYPSO_PR ]
 		} );
 
 		await test.step( 'Mark comment as spam', async () => {
-			await notificationsComponent.spamNotification();
+			await notificationsComponent.clickNotificationAction( 'Spam' );
 		} );
 
 		await test.step( 'Trash comment', async () => {
