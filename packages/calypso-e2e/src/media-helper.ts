@@ -63,9 +63,8 @@ export async function createTestFile(
 }
 
 /**
- * Tells whether an image's XMP metadata includes the given text.
- *
- * Only `<x:xmpmeta>` elements are searched, so the same text elsewhere in the file does not count.
+ * Tells whether an uncompressed `<x:xmpmeta>` element in an image file includes the given text,
+ * so the same text elsewhere in the file does not count.
  *
  * @param {Buffer} bytes Contents of the image file.
  * @param {string} text Text to look for.

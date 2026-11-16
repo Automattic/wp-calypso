@@ -17,6 +17,10 @@ interface ServedCopy {
 	outcome: 'marker' | 'no marker' | 'no XMP' | 'not fetched';
 	contentType: string;
 	detail: string;
+	fetchedURL?: string;
+	attempts?: number;
+	status?: number;
+	bytes?: number;
 }
 
 /**
@@ -27,7 +31,13 @@ async function fetchImage(
 	request: APIRequestContext,
 	url: string,
 	accept: string
-): Promise< { status: number; contentType: string; body: Buffer } > {
+): Promise< {
+	fetchedURL: string;
+	attempts: number;
+	status: number;
+	contentType: string;
+	body: Buffer;
+} > {
 	for ( let attempt = 1; ; attempt++ ) {
 		// The first attempt uses the URL as published; a retry adds an arg the edge cache has not seen.
 		const attemptURL = new URL( url );
@@ -44,7 +54,8 @@ async function fetchImage(
 			const status = response.status();
 			const contentType = ( response.headers()[ 'content-type' ] ?? '' ).split( ';' )[ 0 ];
 			if ( response.ok() && contentType.startsWith( 'image/' ) ) {
-				return { status, contentType, body: await response.body() };
+				const body = await response.body();
+				return { fetchedURL: attemptURL.href, attempts: attempt, status, contentType, body };
 			}
 			failure = `responded ${ status } ${ contentType }`;
 			retryable = response.ok() || status === 404 || status === 429 || status >= 500;
@@ -68,20 +79,23 @@ async function checkServedCopy(
 	url: string,
 	accept: string
 ): Promise< ServedCopy > {
+	let fetched: Awaited< ReturnType< typeof fetchImage > >;
 	try {
-		const { status, contentType, body } = await fetchImage( request, url, accept );
-		let outcome: ServedCopy[ 'outcome' ] = 'no XMP';
-		if ( MediaHelper.xmpIncludes( body, AI_DIGITAL_SOURCE_TYPE ) ) {
-			outcome = 'marker';
-		} else if ( MediaHelper.xmpIncludes( body, '<x:xmpmeta' ) ) {
-			outcome = 'no marker';
-		}
-		const detail = `${ url } (Accept: ${ accept }, ${ status } ${ contentType }, ${ body.length } bytes, ${ outcome })`;
-		return { url, accept, outcome, contentType, detail };
+		fetched = await fetchImage( request, url, accept );
 	} catch ( error ) {
 		const detail = ( error as Error ).message;
 		return { url, accept, outcome: 'not fetched', contentType: '', detail };
 	}
+	const { fetchedURL, attempts, status, contentType, body } = fetched;
+	let outcome: ServedCopy[ 'outcome' ] = 'no XMP';
+	if ( MediaHelper.xmpIncludes( body, AI_DIGITAL_SOURCE_TYPE ) ) {
+		outcome = 'marker';
+	} else if ( MediaHelper.xmpIncludes( body, '<x:xmpmeta' ) ) {
+		outcome = 'no marker';
+	}
+	const bytes = body.length;
+	const detail = `${ fetchedURL } (Accept: ${ accept }, attempt ${ attempts }, ${ status } ${ contentType }, ${ bytes } bytes, ${ outcome })`;
+	return { url, accept, outcome, contentType, detail, fetchedURL, attempts, status, bytes };
 }
 
 /**
@@ -97,7 +111,7 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 		request,
 		accountGivenByEnvironment,
 	}, testInfo ) => {
-		// Two uploads, a publish round-trip and the image fetches exceed the default 2-minute budget.
+		// Two uploads, a publish round-trip and the image fetches can exceed the default 2-minute budget.
 		test.setTimeout( 240 * 1000 );
 
 		let imageFiles: TestFile[];
@@ -114,12 +128,16 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 					} )
 				)
 			);
-			const markedFiles = await Promise.all(
-				imageFiles.map( async ( { fullpath } ) =>
-					MediaHelper.xmpIncludes( await fs.readFile( fullpath ), AI_DIGITAL_SOURCE_TYPE )
-				)
+			const files = await Promise.all(
+				imageFiles.map( async ( { fullpath, basename } ) => ( {
+					basename,
+					marked: MediaHelper.xmpIncludes( await fs.readFile( fullpath ), AI_DIGITAL_SOURCE_TYPE ),
+				} ) )
 			);
-			expect( markedFiles, 'Files to upload that carry the AI marker' ).toEqual( [ true, true ] );
+			expect(
+				files.filter( ( file ) => ! file.marked ).map( ( file ) => file.basename ),
+				'Files to upload without the AI marker'
+			).toEqual( [] );
 		} );
 
 		await test.step( 'When I go to the new post page', async () => {
@@ -152,7 +170,6 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 				const { filename } = imageFiles[ index ];
 				await ImageBlock.validatePublishedContent( page, [ filename ] );
 				const urls = await ImageBlock.getPublishedImageURLs( page, filename );
-				expect( urls.length, 'URLs in src and srcset' ).toBeGreaterThan( 1 );
 
 				// The request fixture holds no cookies, so each copy is fetched as a logged-out reader gets it.
 				const copies = await Promise.all(
@@ -164,7 +181,16 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 					body: JSON.stringify( { post: page.url(), copies }, null, 2 ),
 					contentType: 'application/json',
 				} );
+				testInfo.annotations.push( {
+					type: 'served-copies',
+					description: `${ path.extname( imagePath ) }: ${ copies.length } copies of ${
+						urls.length
+					} URLs`,
+				} );
 
+				expect
+					.soft( urls.length, `URLs in src and srcset: ${ urls.join( ', ' ) }` )
+					.toBeGreaterThan( 1 );
 				expect
 					.soft(
 						copies
@@ -185,6 +211,7 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 					.soft(
 						copies
 							.filter( ( copy ) => copy.accept === 'image/webp' )
+							.filter( ( copy ) => copy.outcome !== 'not fetched' )
 							.map( ( copy ) => copy.contentType ),
 						'Content types served for Accept: image/webp'
 					)
