@@ -10,6 +10,7 @@ import type { Activity, ActivityDescription } from '../types';
 
 vi.mock( '@automattic/calypso-config', () => ( {
 	default: vi.fn( ( key ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : '' ) ),
+	serverEnvId: undefined,
 } ) );
 vi.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn( () => false ) } ) );
 vi.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => ( {

@@ -1,7 +1,8 @@
-jest.mock( '../global-styles', () => ( { editGlobalStyles: jest.fn() } ) );
-
+import { type Mock, vi } from 'vitest';
 import { editGlobalStyles } from '../global-styles';
 import { applyThemeUpdate, normalizeThemeUpdate } from '../update-theme';
+
+vi.mock( '../global-styles', () => ( { editGlobalStyles: vi.fn() } ) );
 
 const ACCENT = { slug: 'accent', name: 'Accent', color: '#ff0000' };
 const SERIF = { slug: 'serif', name: 'Serif', fontFamily: 'Georgia, serif' };
@@ -24,10 +25,10 @@ function applyOverCurrent( input: Parameters< typeof normalizeThemeUpdate >[ 0 ]
 	}
 	applyThemeUpdate( GLOBAL_STYLES, update );
 
-	return ( editGlobalStyles as jest.Mock ).mock.calls[ 0 ][ 1 ];
+	return ( editGlobalStyles as Mock ).mock.calls[ 0 ][ 1 ];
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'normalizeThemeUpdate', () => {
 	it( 'keeps the subtrees that carry a change', () => {

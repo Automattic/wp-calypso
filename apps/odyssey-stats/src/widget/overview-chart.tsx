@@ -371,9 +371,6 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 				data={ nestSeries( drawn ) }
 				withTooltips
 				animation
-				// A zero-value bar has no height, so a quiet day would otherwise read as missing
-				// data. This draws it as a hairline stub instead.
-				showZeroValues
 				height={ height }
 				renderTooltip={ renderTooltipForRange }
 				margin={ MARGIN }

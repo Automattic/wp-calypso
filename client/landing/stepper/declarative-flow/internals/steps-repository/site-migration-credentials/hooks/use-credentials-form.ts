@@ -1,7 +1,7 @@
 import { analyzeSiteMigrationSource, setupSiteMigrationAuthorization } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
 import {
@@ -16,6 +16,7 @@ import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-subm
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
+import { useFlowState, type AnyFlowInitialize } from '../../../state-manager/store';
 import { isHostingSupportedForSSHMigration } from '../../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
@@ -94,6 +95,8 @@ export const useCredentialsForm = (
 ) => {
 	const siteSlug = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
+	const lastSubmittedUrl = useRef( removeEndingSlash( fromUrl ) );
+	const { set } = useFlowState< AnyFlowInitialize >();
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );
@@ -223,6 +226,10 @@ export const useCredentialsForm = (
 
 	const submitHandler = handleSubmit( async ( data: CredentialsFormData ) => {
 		clearErrors();
+		if ( accessMethod === 'credentials' && data.from_url !== lastSubmittedUrl.current ) {
+			set( 'migrationSourceUrl', data.from_url );
+			lastSubmittedUrl.current = data.from_url;
+		}
 
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );

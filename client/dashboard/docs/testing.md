@@ -44,6 +44,8 @@ Use the `render()` function from `client/dashboard/test-utils.tsx`, which will r
 - It only reads a param or search value: pass the value in as a prop and test the component with `render()`.
 - It reads or writes route search, or builds links from route objects: build the real route tree and a test router, as `domains/dataviews/test/field-domain-name.test.tsx` does. Prefer this over mocking `app/router/*` modules, whose mocks break whenever the code reads a route object they don't define.
 
+Under `render()`, a component's first render sees the router as `idle`, so `useConsumeSearchParams` consumes on mount. A route's component mounts while its navigation is still `pending`, unless it suspends first. To get that in a test, seed the query cache so the component doesn't suspend, render a wrapper that shows it once `state.location.pathname` changes, then navigate with `await act( async () => router.history.push( … ) )`. A `usePersistentView` list suspends on the user's preferences, so seed `rawUserPreferencesQuery()` too: with only the request mocked, the list mounts after the navigation settles.
+
 ### Mocking Network Requests
 
 Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.
@@ -98,6 +100,7 @@ nock( 'https://public-api.wordpress.com' )
 - Avoid `nock.delay()` — it leaves open handles that keep the test run from exiting.
 - Use `scope.isDone()` to assert the request was actually made.
 - Use `.query( true )` when you don't care about specific query string values.
+- To test a refetch, wait until the screen shows data from the first response, then replace the mock and call `invalidateQueries()`. While a query has no data, TanStack Query keeps the fetch that is in flight instead of sending a second request.
 
 #### Asserting the request body
 
@@ -141,28 +144,37 @@ queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
 render( <MyComponent />, { queryClient } );
 ```
 
-### Mocking Modules: use ES imports, not `require()`
+### Mocking Modules
+
+Mock a module only for what a test can't run or control any other way:
+
+- A service that reaches outside the app, e.g. analytics, error and log reporting, surveys.
+- A switch the code reads from the environment, e.g. a feature flag from `@automattic/calypso-config`.
+
+Don't mock the dashboard's own components, hooks, or router to make a test pass. Data from the API is mocked at the network level (see above).
+
+#### Use ES imports, not `require()`
 
 Do not use inline `require()` to load a mocked module "after" `vi.mock()` is set up. Vitest hoists `vi.mock()` calls above all imports, so a top-level ES import already receives the mocked version. Inline `require()` is also an ESLint error (`@typescript-eslint/no-require-imports`).
 
 ```tsx
 // ❌ Bad: lazy require to "get the mock"
-test( 'saves preferences', () => {
+test( 'shows the banner when the flag is on', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	userPreferencesMutation.mockReturnValue( /* … */ );
+	const { isEnabled } = require( '@automattic/calypso-config' );
+	isEnabled.mockReturnValue( true );
 } );
 ```
 
 ```tsx
 // ✅ Good: top-level import + `vi.mocked()`
-import { userPreferencesMutation } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { vi } from 'vitest';
 
-vi.mock( '@automattic/api-queries' );
+vi.mock( '@automattic/calypso-config', () => ( { isEnabled: vi.fn() } ) );
 
-test( 'saves preferences', () => {
-	vi.mocked( userPreferencesMutation ).mockReturnValue( /* … */ );
+test( 'shows the banner when the flag is on', () => {
+	vi.mocked( isEnabled ).mockReturnValue( true );
 } );
 ```
 

@@ -312,6 +312,12 @@ const Footer2026Bottom = ( {
 					{ __( 'Privacy policy', __i18n_text_domain__ ) }
 				</a>
 			</li>
+			{ /* The sitemap page is English-only. */ }
+			{ locale === 'en' && (
+				<li className="x-nav-footer--sitemap">
+					<a href="https://wordpress.com/sitemap/">{ __( 'Sitemap', __i18n_text_domain__ ) }</a>
+				</li>
+			) }
 			{ showCaliforniaNotice && (
 				<li className="x-nav-footer--ccpa-privacy">
 					<a

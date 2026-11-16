@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, act, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';

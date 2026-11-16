@@ -2,12 +2,16 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useCopyAction from '../use-copy-action';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( '../../components/copy-action-button', () => () => null );
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+vi.mock(
+	'@wordpress/element',
+	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
+);
+vi.mock( '../../components/copy-action-button', () => ( { default: () => null } ) );
+vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 
 const createMessage = ( id: string, role: 'user' | 'agent', text: string ): UIMessage => ( {
 	id,

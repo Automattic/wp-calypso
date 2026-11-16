@@ -7,7 +7,7 @@ import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useLocale } from '@automattic/i18n-utils';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { act, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import nock from 'nock';
 import { MemoryRouter, useLocation, useNavigate, useNavigationType } from 'react-router';
@@ -18,6 +18,11 @@ import { useStepNavigationWithTracking } from 'calypso/landing/stepper/declarati
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
+import SiteMigrationIdentify from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
+import {
+	mockStepProps,
+	renderStep,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/test/helpers';
 import {
 	getAssertionConditionResult,
 	getFlowLocation,
@@ -2314,6 +2319,72 @@ describe( 'Site Migration Flow', () => {
 				} );
 				expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE } );
 				expect( window.location.assign ).not.toHaveBeenCalled();
+			} );
+
+			describe( 'saved source address', () => {
+				const savedAddress = 'source.wordpress.com';
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				const renderIdentify = ( query: URLSearchParams ) =>
+					renderStep( <SiteMigrationIdentify { ...mockStepProps() } />, {
+						initialEntry: `/site-migration/site-migration-identify?${ query }`,
+						queryClient: recoveryClient,
+					} );
+
+				beforeEach( () => {
+					recoveryClient.setQueryData( useFlowState().queryKey, {
+						migrationSourceUrl: savedAddress,
+					} );
+				} );
+
+				it( 'starts empty after using the entered WordPress.com site as the destination', () => {
+					jest.mocked( useSiteQuery ).mockReturnValue( {
+						data: {
+							ID: 456,
+							slug: savedAddress,
+							jetpack: false,
+							capabilities: { manage_options: true },
+						},
+						isLoading: false,
+					} );
+					const result = runNavigation( {
+						from: STEPS.SITE_MIGRATION_CHECK,
+						query: { ...context, from: `https://${ savedAddress }`, isWpcom: 'true' },
+						dependencies: {
+							action: 'use-as-destination',
+							from: `https://${ savedAddress }`,
+							platform: 'wordpress',
+						},
+					} );
+					expect( result.step ).toBe( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+					expect( result.query.get( 'siteSlug' ) ).toBe( savedAddress );
+
+					renderIdentify( result.query );
+
+					expect( screen.getByLabelText( /Site address/ ) ).toHaveValue( '' );
+				} );
+
+				it.each( [
+					[ 'starts empty', `https://${ savedAddress }`, '' ],
+					[ 'keeps the saved address', 'https://destination.example.com', savedAddress ],
+				] )(
+					'%s after Back from a result for the destination site %s',
+					( _name, destinationUrl, expectedValue ) => {
+						jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+							...destination,
+							site: { URL: destinationUrl },
+						} );
+						const result = runNavigation( {
+							from: STEPS.SITE_MIGRATION_CHECK,
+							query: { ...context, ...destination, from: `https://${ savedAddress }` },
+							dependencies: { action: 'back' },
+						} );
+						expect( result.step ).toBe( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+
+						renderIdentify( result.query );
+
+						expect( screen.getByLabelText( /Site address/ ) ).toHaveValue( expectedValue );
+					}
+				);
 			} );
 		} );
 

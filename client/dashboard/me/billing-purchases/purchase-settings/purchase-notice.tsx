@@ -15,9 +15,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { differenceInCalendarDays } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice, {
@@ -61,50 +62,36 @@ import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-exp
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
+// One-shot flags from the redirects that land here. They leave the URL on arrival, so a refresh or
+// Back doesn't show their notices again.
+const NOTICE_FLAGS = [
+	'upgraded',
+	'cancelled',
+	'downgraded',
+	'plan_changed',
+	'delayed_downgrade_scheduled',
+] as const;
+const NOTICE_PARAMS = [ ...NOTICE_FLAGS, 'intent' ] as const;
+
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
-	const {
-		refunded,
-		upgraded,
-		cancelled,
-		downgraded,
-		plan_changed,
-		delayed_downgrade_scheduled,
-		intent,
-	} = purchaseSettingsRoute.useSearch();
-	const navigate = purchaseSettingsRoute.useNavigate();
+	const { refunded } = purchaseSettingsRoute.useSearch();
 	const router = useRouter();
+	const { upgraded, cancelled, downgraded, plan_changed, delayed_downgrade_scheduled, intent } =
+		useConsumeSearchParams( NOTICE_PARAMS, {
+			when: ( params ) => NOTICE_FLAGS.some( ( flag ) => params[ flag ] === 'true' ),
+		} );
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
-	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
-	const [ cancelledIntent ] = useState( () => ( cancelled ? intent : undefined ) );
-	useEffect( () => {
-		if ( cancelled ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { cancelled: _cancelled, intent: _intent, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ cancelled, navigate ] );
-	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( Boolean( downgraded ) );
-	useEffect( () => {
-		if ( downgraded ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { downgraded: _downgraded, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ downgraded, navigate ] );
+	const [ showCancelledNotice, setShowCancelledNotice ] = useState( cancelled === 'true' );
+	const [ cancelledIntent ] = useState( () =>
+		cancelled === 'true' && intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined
+	);
+	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( downgraded === 'true' );
 	// Transient success notice shown after a change-plan checkout (upgrade or
 	// downgrade) redirects back here with `?plan_changed=true`. The param is
 	// stripped immediately so it doesn't survive a refresh or back navigation.
@@ -112,32 +99,8 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	// present: plan_changed=true comes from the redirect_to template and is a
 	// red herring in that flow — the delayed-downgrade notice is the right one.
 	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState(
-		Boolean( plan_changed ) && ! delayed_downgrade_scheduled
+		plan_changed === 'true' && delayed_downgrade_scheduled !== 'true'
 	);
-	useEffect( () => {
-		if ( plan_changed ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { plan_changed: _plan_changed, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ plan_changed, navigate ] );
-	// Strip ?delayed_downgrade_scheduled from the URL on mount so refresh
-	// doesn't re-trigger anything; the persistent warning notice handles display.
-	useEffect( () => {
-		if ( delayed_downgrade_scheduled ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { delayed_downgrade_scheduled: _delayed_downgrade_scheduled, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ delayed_downgrade_scheduled, navigate ] );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
 		setDelayedDowngradeMutation()
@@ -173,17 +136,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		/>
 	) : null;
 
-	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
-
-	useEffect( () => {
-		if ( upgraded ) {
-			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
-			navigate( {
-				search: { refunded },
-				replace: true,
-			} );
-		}
-	}, [ upgraded, refunded, navigate ] );
+	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( upgraded === 'true' );
 
 	// Transient cancelled success notice — suppresses every other notice until
 	// dismissed, refreshed, or navigated-away-and-back. Gated on the

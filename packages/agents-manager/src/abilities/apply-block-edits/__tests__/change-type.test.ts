@@ -1,25 +1,26 @@
-jest.mock( '../../../utils/editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlockParents: jest.fn(),
-} ) );
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	dispatch: jest.fn(),
-	resolveSelect: jest.fn(),
-} ) );
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn(),
-	getBlockTypes: jest.fn( () => [] ),
-	parse: jest.fn(),
-	serialize: jest.fn(),
-} ) );
-jest.mock( '../../../utils/site-metadata', () => ( { getSiteMetadata: jest.fn( () => ( {} ) ) } ) );
-
+import { vi } from 'vitest';
 import { getBlock, getBlockParents } from '../../../utils/editor-blocks';
 import { getChangeType, getEditedMenuIds } from '../change-type';
 import type { EditorBlock } from '../../../utils/editor-blocks';
 import type { BlockEdits, BlockUpdate } from '../types';
+
+vi.mock( '../../../utils/editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlockParents: vi.fn(),
+} ) );
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	dispatch: vi.fn(),
+	resolveSelect: vi.fn(),
+} ) );
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn(),
+	getBlockTypes: vi.fn( () => [] ),
+	parse: vi.fn(),
+	serialize: vi.fn(),
+} ) );
+vi.mock( '../../../utils/site-metadata', () => ( { getSiteMetadata: vi.fn( () => ( {} ) ) } ) );
 
 const edits = ( partial: Partial< BlockEdits > ): BlockEdits => ( {
 	updates: [],
@@ -34,7 +35,7 @@ const contentUpdate: BlockUpdate = {
 	attributes: { content: 'After' },
 };
 
-beforeEach( () => jest.resetAllMocks() );
+beforeEach( () => vi.resetAllMocks() );
 
 describe( 'getChangeType', () => {
 	it.each( [
@@ -86,8 +87,8 @@ describe( 'getEditedMenuIds', () => {
 	const resolve = ( id: string ) => ( id === 'short-link' ? 'link' : id );
 
 	beforeEach( () => {
-		jest.mocked( getBlock ).mockImplementation( ( clientId ) => blocks[ clientId ] );
-		jest.mocked( getBlockParents ).mockImplementation( ( clientId ) => parents[ clientId ] ?? [] );
+		vi.mocked( getBlock ).mockImplementation( ( clientId ) => blocks[ clientId ] );
+		vi.mocked( getBlockParents ).mockImplementation( ( clientId ) => parents[ clientId ] ?? [] );
 	} );
 
 	// The menu's record holds its items, so each target is traced to the

@@ -51,7 +51,6 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		const settings: {
 			blogname: string;
 			blogdescription: string;
-			launchpad_screen?: string;
 			site_goals?: Array< string >;
 			site_intent?: string;
 		} = {
@@ -63,7 +62,6 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 		if ( isNewsletterFlow( flowName ) ) {
 			settings.site_intent = flowName;
-			settings.launchpad_screen = 'full';
 		}
 
 		// Newsletter flow sets "paid-newsletter" goal as an indication to setup paid newsletter later on

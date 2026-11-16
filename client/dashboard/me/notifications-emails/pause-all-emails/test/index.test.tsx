@@ -4,7 +4,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { PropsWithChildren, Suspense } from 'react';
-import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { PauseAllEmails } from '../index';
 
@@ -31,11 +30,6 @@ const pauseCheckbox = () => {
 };
 
 describe( 'PauseAllEmails', () => {
-	beforeAll( () => {
-		// Snackbar component requires it to work and jest doesn't mock it
-		window.scrollTo = vi.fn();
-	} );
-
 	const Wrapper = ( { children }: PropsWithChildren ) => {
 		const queryClient = new QueryClient();
 		return (

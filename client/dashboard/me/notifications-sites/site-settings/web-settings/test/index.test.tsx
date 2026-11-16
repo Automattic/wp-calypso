@@ -12,7 +12,6 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { vi } from 'vitest';
 import { WebSettings } from '..';
 import Snackbars from '../../../../../app/snackbars';
 import { getFieldLabel } from '../../../utils/translations';
@@ -102,11 +101,6 @@ const buildWebNotificationSettings = (
 };
 
 describe( 'WebSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = vi.fn();
-	} );
-
 	test( 'renders the web settings values', async () => {
 		mockGetSettingsApiAndReply(
 			buildWebNotificationSettings( 1, {

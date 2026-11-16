@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, render, renderHook, waitFor } from '@testing-library/react';
+import { act, render, renderHook } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
 import { type Mock, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
@@ -31,13 +31,17 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'returns the new locale when it changes', () => {
+		let localeSlug = 'en';
 		const { result, rerender } = renderHook( () => useLocale(), {
-			wrapper: ( props ) => <LocaleProvider localeSlug="en" { ...props } />,
+			wrapper: ( props ) => <LocaleProvider localeSlug={ localeSlug } { ...props } />,
 		} );
 
-		rerender( { localeSlug: 'ar' } );
+		expect( result.current ).toBe( 'en' );
 
-		waitFor( () => expect( result.current ).toBe( 'ar' ) );
+		localeSlug = 'ar';
+		rerender();
+
+		expect( result.current ).toBe( 'ar' );
 	} );
 
 	it( "uses locale data from @wordpress/i18n if <LocaleProvider> isn't present", () => {

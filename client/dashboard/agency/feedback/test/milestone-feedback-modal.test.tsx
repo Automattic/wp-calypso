@@ -88,8 +88,6 @@ describe( '<MilestoneFeedbackModal>', () => {
 	beforeEach( () => nock.cleanAll() );
 
 	test( 'files the answer against the agency and closes', async () => {
-		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = vi.fn();
 		mockAgency();
 		mockPreferences();
 		const survey = captureSurvey();
@@ -250,7 +248,6 @@ describe( '<MilestoneFeedbackModal>', () => {
 	} );
 
 	test( 'tells the partner when their answer could not be remembered', async () => {
-		window.scrollTo = vi.fn();
 		mockAgency();
 		mockPreferences();
 		captureSurvey();

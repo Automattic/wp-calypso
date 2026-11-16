@@ -60,7 +60,7 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 
 ## Testing instructions
 
-> **Note**: E2E tests require a local Calypso development instance to be running.
+> **Note**: E2E tests require a local Calypso development instance to be running, started with `yarn start`: `yarn start-dashboard` doesn't serve the login page they use.
 
 ```bash
 # JavaScript tests
@@ -69,8 +69,7 @@ yarn test-build-tools                           # Run unit tests for build-tools
 yarn test-client                                # Run unit tests for client, except the Dashboard
 yarn test-dashboard [path]                      # Run Dashboard unit tests (on Vitest)
 yarn test-apps                                  # Run apps unit tests
-yarn test-packages                              # Run packages unit tests (arguments go to Jest only)
-yarn test-packages:vitest [path]                # Run unit tests for packages on Vitest
+yarn test-packages [path]                       # Run packages unit tests on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
@@ -109,3 +108,7 @@ Test with an account made for testing. Use your own WordPress.com account only w
 When taking over an existing PR, check whether its current changes introduce any new companion PR dependencies. Flag any potential dependencies you haven't verified yet.
 
 To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). Before marking a PR ready for review, and after each later push, run the How to Test steps the change affects, on a local dev server or on the Calypso Live build of the pushed commit, then fix whatever in the description no longer matches the code. Skipping a step is the exception, only for a step you can't run, for example because it needs access you don't have or changes something you can't undo. Keep a skipped step in the list and say after the steps why you skipped it.
+
+A failed CI status such as `Unit tests (Web app)` doesn't say what failed: find out before acting, and ask the user if you can't open the build. If a test failed in a file you didn't change, and that file imports nothing you changed, run that file locally a few times. If it passes each time, report it as flaky and ask for a re-run. If it also fails without your change, report that it comes from `trunk`, and update your branch once `trunk` is fixed. Either way, leave the test alone.
+
+`Unit tests (Web app)` runs on the branch as pushed, without merging `trunk`, so a green status can be out of date. When a PR is days behind `trunk`, update it and wait for the new checks before merging.

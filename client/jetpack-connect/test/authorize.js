@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
 import { translate } from 'i18n-calypso';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
+import * as isUserConnectedActions from 'calypso/state/jetpack-connect/actions/is-user-connected';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -54,6 +55,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	hasExpiredSecretError: false,
 	hasXmlrpcError: false,
 	isAlreadyOnSitesList: false,
+	isCheckingUserConnection: false,
 	isFetchingAuthorizationSite: false,
 	isFetchingSites: false,
 	recordTracksEvent: noop,
@@ -827,6 +829,46 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isFromJetpackBoost( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'user connection check', () => {
+		test( 'should not offer "Return to your site" for a listed site until the check confirms the connection', () => {
+			renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } isAlreadyOnSitesList isCheckingUserConnection />
+			);
+
+			expect( screen.getByText( 'Preparing authorization' ) ).toBeVisible();
+			expect( screen.queryByText( 'Return to your site' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Approve' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'should offer "Return to your site" once the check confirms the connection', () => {
+			renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } isAlreadyOnSitesList /> );
+
+			expect( screen.getByText( 'Return to your site' ) ).toBeVisible();
+		} );
+
+		test( 'should check the user connection again when the authorize step restarts', () => {
+			const isUserConnectedSpy = jest
+				.spyOn( isUserConnectedActions, 'isUserConnected' )
+				.mockReturnValue( { type: 'TEST_IS_USER_CONNECTED' } );
+
+			const { rerender } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
+			expect( isUserConnectedSpy ).toHaveBeenCalledTimes( 1 );
+
+			rerender(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorizationData={ {
+						...DEFAULT_PROPS.authorizationData,
+						timestamp: DEFAULT_PROPS.authorizationData.timestamp + 1,
+					} }
+				/>
+			);
+			expect( isUserConnectedSpy ).toHaveBeenCalledTimes( 2 );
+
+			isUserConnectedSpy.mockRestore();
 		} );
 	} );
 

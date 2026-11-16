@@ -95,11 +95,6 @@ function mockPhpLogs( logs: unknown[], siteId = mockSiteId ) {
 	return queries;
 }
 
-// jsdom has no element scrolling API used by Activity pagination.
-beforeAll( () => {
-	HTMLElement.prototype.scrollTo = () => {};
-} );
-
 beforeEach( () => {
 	window.history.replaceState( { key: 'logs-test', __TSR_index: 3 }, '', '/' );
 	mockUserPreferences();
@@ -379,7 +374,11 @@ describe( '<SiteLogs> live site calendar ranges', () => {
 			const checkbox = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
 			await waitFor( () => expect( search().has( 'to' ) ).toBe( true ) );
 			// Let the initial network/suspense work settle before controlling the refresh timer.
-			vi.useFakeTimers( { now: Date.parse( now ), toNotFake: [ 'nextTick', 'setImmediate' ] } );
+			vi.useFakeTimers( {
+				now: Date.parse( now ),
+				shouldAdvanceTime: true,
+				toNotFake: [ 'nextTick', 'setImmediate' ],
+			} );
 			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 			const length = window.history.length;
 			const index = window.history.state.__TSR_index;

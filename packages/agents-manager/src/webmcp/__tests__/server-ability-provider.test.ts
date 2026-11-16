@@ -1,9 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
+import { vi } from 'vitest';
 import { createWebMcpToolProvider } from '../server-ability-provider';
 import type { ToolProvider } from '../../extension-types';
 import type { Ability } from '@wordpress/abilities';
 
-jest.mock( '@wordpress/api-fetch' );
+vi.mock( '@wordpress/api-fetch' );
 
 const clientAbility: Ability = {
 	name: 'agents-manager/get-block-tree',
@@ -34,16 +35,17 @@ const mutatingServerAbility: Ability = {
 
 describe( 'WebMCP server ability provider', () => {
 	beforeEach( () => {
-		jest.mocked( apiFetch ).mockReset();
+		vi.mocked( apiFetch ).mockReset();
 	} );
 
 	it( 'adds only allowlisted REST abilities and marks their provenance', async () => {
-		jest
-			.mocked( apiFetch )
-			.mockResolvedValueOnce( [ serverAbility, { ...serverAbility, name: 'wpcom/delete-site' } ] );
+		vi.mocked( apiFetch ).mockResolvedValueOnce( [
+			serverAbility,
+			{ ...serverAbility, name: 'wpcom/delete-site' },
+		] );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ clientAbility ] ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( async () => [ clientAbility ] ),
+			executeAbility: vi.fn(),
 		};
 
 		const provider = createWebMcpToolProvider( toolProvider );
@@ -66,16 +68,16 @@ describe( 'WebMCP server ability provider', () => {
 	} );
 
 	it( 'prefers the REST definition when the provider already advertises the ability', async () => {
-		jest.mocked( apiFetch ).mockResolvedValueOnce( [ serverAbility ] );
+		vi.mocked( apiFetch ).mockResolvedValueOnce( [ serverAbility ] );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [
+			getAbilities: vi.fn( async () => [
 				clientAbility,
 				{
 					...serverAbility,
 					meta: { annotations: { readonly: true } },
 				},
 			] ),
-			executeAbility: jest.fn(),
+			executeAbility: vi.fn(),
 		};
 
 		const abilities = await createWebMcpToolProvider( toolProvider ).getAbilities();
@@ -91,13 +93,12 @@ describe( 'WebMCP server ability provider', () => {
 	} );
 
 	it( 'executes server abilities through the read-only REST route', async () => {
-		jest
-			.mocked( apiFetch )
+		vi.mocked( apiFetch )
 			.mockResolvedValueOnce( [ serverAbility ] )
 			.mockResolvedValueOnce( { posts: [] } );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ clientAbility ] ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( async () => [ clientAbility ] ),
+			executeAbility: vi.fn(),
 		};
 		const provider = createWebMcpToolProvider( toolProvider );
 
@@ -112,13 +113,12 @@ describe( 'WebMCP server ability provider', () => {
 	} );
 
 	it( 'executes mutating server abilities through POST with a JSON body', async () => {
-		jest
-			.mocked( apiFetch )
+		vi.mocked( apiFetch )
 			.mockResolvedValueOnce( [ mutatingServerAbility ] )
 			.mockResolvedValueOnce( { data: { id: 123, source_url: 'https://example.com/image.jpg' } } );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ clientAbility ] ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( async () => [ clientAbility ] ),
+			executeAbility: vi.fn(),
 		};
 		const provider = createWebMcpToolProvider( toolProvider );
 		const input = {
@@ -142,10 +142,10 @@ describe( 'WebMCP server ability provider', () => {
 	} );
 
 	it( 'keeps client ability execution on the existing provider', async () => {
-		jest.mocked( apiFetch ).mockResolvedValueOnce( [ serverAbility ] );
+		vi.mocked( apiFetch ).mockResolvedValueOnce( [ serverAbility ] );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ clientAbility ] ),
-			executeAbility: jest.fn( async () => ( { ok: true } ) ),
+			getAbilities: vi.fn( async () => [ clientAbility ] ),
+			executeAbility: vi.fn( async () => ( { ok: true } ) ),
 		};
 		const provider = createWebMcpToolProvider( toolProvider );
 
@@ -156,12 +156,12 @@ describe( 'WebMCP server ability provider', () => {
 	} );
 
 	it( 'keeps client abilities available when the REST request fails', async () => {
-		jest.mocked( apiFetch ).mockRejectedValueOnce( new Error( 'Request failed' ) );
+		vi.mocked( apiFetch ).mockRejectedValueOnce( new Error( 'Request failed' ) );
 		// eslint-disable-next-line no-console
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation();
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		const toolProvider: ToolProvider = {
-			getAbilities: jest.fn( async () => [ clientAbility ] ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( async () => [ clientAbility ] ),
+			executeAbility: vi.fn(),
 		};
 
 		await expect( createWebMcpToolProvider( toolProvider ).getAbilities() ).resolves.toEqual( [

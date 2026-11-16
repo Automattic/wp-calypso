@@ -111,17 +111,10 @@ export function useSiteLaunch(
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
-	const redirectAfterLaunch = ( options: { celebrate?: boolean } = {} ) => {
-		const targetUrl = addQueryArgs( postLaunchUrl ?? window.location.href, {
-			...( options.celebrate ? { celebrateLaunch: 'true' } : {} ),
-		} );
-
+	const redirectAfterLaunch = () => {
 		if ( postLaunchUrl ) {
-			window.location.assign( targetUrl );
-			return;
+			window.location.assign( postLaunchUrl );
 		}
-
-		window.history.replaceState( null, '', targetUrl );
 	};
 
 	const launchForModal = () => {
