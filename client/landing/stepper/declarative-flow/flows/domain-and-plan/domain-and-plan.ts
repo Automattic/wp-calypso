@@ -185,10 +185,11 @@ const domainUpsell: Flow = {
 						return navigate( destination as typeof currentStep );
 					}
 
-					// The step verified domain ownership and created the mapping itself, so all
-					// that is left is to walk the user through pointing the domain at the site.
+					// The mapping exists, either created by the step after ownership verification or
+					// already there before, so all that is left is to walk the user through pointing
+					// the domain at the site.
 					if (
-						'ownershipVerificationCompleted' in providedDependencies &&
+						'isDomainConnected' in providedDependencies &&
 						providedDependencies.domain
 					) {
 						submittedDomains.current = true;

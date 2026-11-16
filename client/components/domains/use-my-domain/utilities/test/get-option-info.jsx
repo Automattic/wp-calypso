@@ -10,12 +10,15 @@ import { getOptionInfo } from '../get-option-info';
 const DOMAIN = 'example.com';
 const ELIGIBLE_DATE = '2026-12-01T00:00:00+00:00';
 
+const onConnected = jest.fn();
+
 const getCards = ( status, domainInboundTransferStatusInfo ) => {
 	const [ transfer, connect ] = getOptionInfo( {
 		availability: { status, mappable: 'not_mappable' },
 		domain: DOMAIN,
 		domainInboundTransferStatusInfo,
 		onConnect: jest.fn(),
+		onConnected,
 		onTransfer: jest.fn(),
 	} );
 	return { transfer, connect };
@@ -149,5 +152,29 @@ describe( 'getOptionInfo() for other availability statuses', () => {
 		expect( renderTopText( transfer ) ).toHaveTextContent(
 			`${ DOMAIN } can't be transferred because it was registered less than 60 days ago, but you can connect it instead.`
 		);
+	} );
+} );
+
+describe( 'getOptionInfo() Connect card for a domain already connected to the site', () => {
+	test.each( [
+		[
+			domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
+			'This domain is already connected to your site, but you can still transfer it.',
+		],
+		[
+			domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE,
+			'This domain is already connected to your site.',
+		],
+	] )( 'leads on to the existing connection when the status is %s', ( status, text ) => {
+		const { connect } = getCards( status );
+
+		expect( connect.onSelect ).toBe( onConnected );
+		expect( renderTopText( connect ) ).toHaveTextContent( text );
+	} );
+
+	test( 'stays disabled for a domain connected to another site', () => {
+		const { connect } = getCards( domainAvailability.MAPPED_OTHER_SITE_SAME_USER );
+
+		expect( connect.onSelect ).toBeUndefined();
 	} );
 } );

@@ -55,7 +55,7 @@ const UseMyDomain: StepType< {
 				skipToPlan: true;
 		  }
 		| {
-				ownershipVerificationCompleted: true;
+				isDomainConnected: true;
 				domain: string;
 		  }
 		| undefined;
@@ -132,7 +132,7 @@ const UseMyDomain: StepType< {
 						...verificationData,
 					} );
 					clearQueryParams();
-					submit( { ownershipVerificationCompleted: true, domain } );
+					submit( { isDomainConnected: true, domain } );
 
 					// Early return: the default handler below would re-submit a domainCartItem.
 					return;
@@ -153,6 +153,11 @@ const UseMyDomain: StepType< {
 
 		clearQueryParams();
 		submit?.( { domainCartItem } );
+	};
+
+	const handleOnConnected = ( { domain }: { domain: string } ) => {
+		clearQueryParams();
+		submit?.( { isDomainConnected: true, domain } );
 	};
 
 	const getInitialQuery = function () {
@@ -188,6 +193,7 @@ const UseMyDomain: StepType< {
 					isSignupStep
 					onTransfer={ handleOnTransfer }
 					onConnect={ handleOnConnect }
+					onConnected={ handleOnConnected }
 					onSkip={ handleOnSkip }
 					useMyDomainMode={ useMyDomainMode }
 					setUseMyDomainMode={ setUseMyDomainMode }

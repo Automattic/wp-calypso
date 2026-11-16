@@ -195,7 +195,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	it( 'lands on the connection setup page when the step already created the mapping after ownership verification', async () => {
 		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
-		await submitUseMyDomain( { ownershipVerificationCompleted: true, domain: 'example.com' } );
+		await submitUseMyDomain( { isDomainConnected: true, domain: 'example.com' } );
 
 		expect( wpcom.req.post ).not.toHaveBeenCalled();
 		expect( window.location.replace ).toHaveBeenCalledWith(
