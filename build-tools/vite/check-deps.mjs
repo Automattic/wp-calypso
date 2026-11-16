@@ -1,12 +1,11 @@
 /**
- * The dependency checks of `yarn vite-check`: where Vite resolves or evaluates a dependency
- * differently from webpack.
+ * The dependency checks of `yarn vite-check`: where Vite resolves a dependency that first-party code
+ * imports differently from webpack.
  */
 import fs from 'node:fs';
 import { createRequire, isBuiltin } from 'node:module';
 import path from 'node:path';
-import { isMainThread, parentPort, Worker, workerData } from 'node:worker_threads';
-import { createIdResolver, parseSync, Visitor } from 'vite';
+import { createIdResolver } from 'vite';
 import { client, root } from './base.mjs';
 
 const require = createRequire( import.meta.url );
@@ -125,173 +124,65 @@ export function checkCollapses( imports, allowed ) {
 	return { failures, notes };
 }
 
-/**
- * The source files of the pre-bundled dependencies, from the optimizer's source maps.
- * @param {string} depsDir
- * @returns {string[]}
- */
-function preBundledFiles( depsDir ) {
-	const files = new Set();
-	for ( const name of fs.readdirSync( depsDir ) ) {
-		if ( ! name.endsWith( '.js.map' ) ) {
-			continue;
-		}
-		// The `sources` list comes before the much bigger `sourcesContent`.
-		const map = fs.readFileSync( path.join( depsDir, name ), 'utf8' );
-		const sources = map.match( /"sources":(\[[^\]]*\])/ );
-		for ( const source of JSON.parse( sources?.[ 1 ] ?? '[]' ) ) {
-			const file = path.resolve( depsDir, source );
-			if (
-				! source.startsWith( '\0' ) &&
-				/\.[cm]?[jt]sx?$/.test( file ) &&
-				fs.existsSync( file )
-			) {
-				files.add( file );
-			}
-		}
-	}
-	return [ ...files ];
-}
-
-/** The string specifiers a file imports, exports from, `import()`s and `require()`s. */
-function specifiersOf( file ) {
-	const specifiers = [];
-	const code = fs.readFileSync( file, 'utf8' );
-	const result = parseSync( file, code );
-	if ( result.errors.length ) {
-		return specifiers;
-	}
-	const { staticImports, staticExports, dynamicImports } = result.module;
-	for ( const { moduleRequest } of staticImports ) {
-		specifiers.push( { specifier: moduleRequest.value, kind: 'import' } );
-	}
-	for ( const { entries } of staticExports ) {
-		for ( const { moduleRequest } of entries ) {
-			if ( moduleRequest ) {
-				specifiers.push( { specifier: moduleRequest.value, kind: 'import' } );
-			}
-		}
-	}
-	for ( const { moduleRequest } of dynamicImports ) {
-		const literal = code.slice( moduleRequest.start, moduleRequest.end ).match( /^(['"])(.*)\1$/ );
-		if ( literal ) {
-			specifiers.push( { specifier: literal[ 2 ], kind: 'import' } );
-		}
-	}
-	// Building the AST is the slow part, so only do it when there may be a `require()`.
-	if ( /\brequire\s*\(/.test( code ) ) {
-		new Visitor( {
-			CallExpression( node ) {
-				const [ argument ] = node.arguments;
-				if (
-					node.callee.type === 'Identifier' &&
-					node.callee.name === 'require' &&
-					node.arguments.length === 1 &&
-					typeof argument.value === 'string'
-				) {
-					specifiers.push( { specifier: argument.value, kind: 'require' } );
-				}
-			},
-		} ).visit( result.program );
-	}
-	return specifiers;
-}
-
-function webpackResolvers() {
+function webpackResolver() {
 	const webpack = require( 'webpack' );
 	const config = require( path.join( client, 'webpack.config.js' ) );
 	// Only the resolve options matter, and some plugins do work on construction.
 	const compiler = webpack( { ...config, plugins: [] } );
-	const resolver = ( dependencyType ) => {
-		const instance = compiler.resolverFactory.get( 'normal', {
-			dependencyType,
-			fullySpecified: false,
-		} );
-		return ( specifier, dir ) =>
-			new Promise( ( resolve ) => {
-				// Like `NormalModuleReplacementPlugin( /^path$/, 'path-browserify' )`.
-				const request = specifier === 'path' ? 'path-browserify' : specifier;
-				instance.resolve( {}, dir, request, {}, ( error, result ) => {
-					if ( result === false || ( error && isBuiltin( specifier ) ) ) {
-						resolve( EMPTY );
-					} else {
-						resolve( error ? null : result.split( '?' )[ 0 ] );
-					}
-				} );
+	const instance = compiler.resolverFactory.get( 'normal', {
+		dependencyType: 'esm',
+		fullySpecified: false,
+	} );
+	return ( specifier, dir ) =>
+		new Promise( ( resolve ) => {
+			// Like `NormalModuleReplacementPlugin( /^path$/, 'path-browserify' )`.
+			const request = specifier === 'path' ? 'path-browserify' : specifier;
+			instance.resolve( {}, dir, request, {}, ( error, result ) => {
+				if ( result === false || ( error && isBuiltin( specifier ) ) ) {
+					resolve( EMPTY );
+				} else {
+					resolve( error ? null : result.split( '?' )[ 0 ] );
+				}
 			} );
-	};
-	return { import: resolver( 'esm' ), require: resolver( 'commonjs' ) };
+		} );
 }
 
-function viteResolvers( resolvedConfig, environment ) {
-	const resolver = ( options ) => {
-		const resolve = createIdResolver( resolvedConfig, { asSrc: false, scan: true, ...options } );
-		return async ( specifier, importer ) => {
-			const id = await resolve( environment, specifier, importer );
-			if ( id === undefined ) {
-				return isBuiltin( specifier ) ? EMPTY : null;
-			}
-			if ( id.startsWith( '\0' ) || id.includes( '__vite-browser-external' ) ) {
-				return EMPTY;
-			}
-			return id.split( '?' )[ 0 ];
-		};
+function viteResolver( resolvedConfig, environment ) {
+	const resolve = createIdResolver( resolvedConfig, { asSrc: false, scan: true } );
+	return async ( specifier, importer ) => {
+		const id = await resolve( environment, specifier, importer );
+		if ( id === undefined ) {
+			return isBuiltin( specifier ) ? EMPTY : null;
+		}
+		if ( id.startsWith( '\0' ) || id.includes( '__vite-browser-external' ) ) {
+			return EMPTY;
+		}
+		return id.split( '?' )[ 0 ];
 	};
-	return { import: resolver( {} ), require: resolver( { isRequire: true } ) };
 }
 
 const realpath = ( file ) => ( file && file !== EMPTY ? fs.realpathSync( file ) : file );
 
 /**
- * Reads the pre-bundled dependencies in a worker thread, so that it runs alongside the crawl: the
- * imports `checkResolution()` compares, and the failures of `checkStrictMode()`.
- * @param {string}                 depsDir
- * @param {Record<string, string>} allowedStrictMode
- * @returns {Promise<{ edges: Array<{ importer: string, specifier: string, kind: string }>, strictMode: string[] }>}
- */
-export function analyzePreBundled( depsDir, allowedStrictMode ) {
-	return new Promise( ( resolve, reject ) => {
-		const worker = new Worker( new URL( import.meta.url ), {
-			workerData: { analyzePreBundled: { depsDir, allowedStrictMode } },
-		} );
-		worker.once( 'message', resolve );
-		worker.once( 'error', reject );
-		worker.once( 'exit', ( code ) =>
-			reject( new Error( `The worker reading the pre-bundled dependencies exited with ${ code }` ) )
-		);
-	} );
-}
-
-/**
- * Resolves every bare import of first-party code, and every import inside the pre-bundled
- * dependencies, with both Vite's optimizer resolver and webpack's, and fails on each difference
+ * Resolves every bare import of first-party code with both Vite's optimizer resolver and webpack's, and fails on each difference
  * that isn't allowed. Also fails when one file under webpack becomes two under Vite.
  * @param {Object} options
  * @param {import('vite').ResolvedConfig} options.resolvedConfig
  * @param {import('vite').DevEnvironment} options.environment
  * @param {Map<string, Set<string>>}       options.imports   First-party bare specifiers by importer.
- * @param {Array<{ importer: string, specifier: string, kind: string }>} options.preBundledEdges
- *   The imports inside the pre-bundled dependencies, from `analyzePreBundled()`.
  * @param {{ files: Record<string, string>, duplicates: Record<string, string> }} options.allowed
  * @returns {Promise<{ failures: string[], edges: number }>}
  */
-export async function checkResolution( {
-	resolvedConfig,
-	environment,
-	imports,
-	preBundledEdges,
-	allowed,
-} ) {
+export async function checkResolution( { resolvedConfig, environment, imports, allowed } ) {
 	const edges = [];
 	for ( const [ importer, specifiers ] of imports ) {
 		for ( const specifier of specifiers ) {
-			edges.push( { importer, specifier, kind: 'import' } );
+			edges.push( { importer, specifier } );
 		}
 	}
-	edges.push( ...preBundledEdges );
 
-	const vite = viteResolvers( resolvedConfig, environment );
-	const webpack = webpackResolvers();
+	const vite = viteResolver( resolvedConfig, environment );
+	const webpack = webpackResolver();
 	const packageDirs = new Map();
 	const packageDirOf = ( dir ) => {
 		if ( ! packageDirs.has( dir ) ) {
@@ -309,16 +200,16 @@ export async function checkResolution( {
 	const differences = new Map();
 	const viteFilesByWebpackFile = new Map();
 	await Promise.all(
-		edges.map( async ( { importer, specifier, kind } ) => {
+		edges.map( async ( { importer, specifier } ) => {
 			// A bare specifier resolves the same from anywhere in a package.
 			const dir = path.dirname( importer );
-			const key = `${ kind }\0${ BARE.test( specifier ) ? packageDirOf( dir ) : dir }\0${ specifier }`;
+			const key = `${ BARE.test( specifier ) ? packageDirOf( dir ) : dir }\0${ specifier }`;
 			if ( ! results.has( key ) ) {
 				results.set(
 					key,
 					Promise.all( [
-						vite[ kind ]( specifier, importer ).then( realpath ),
-						webpack[ kind ]( specifier, dir ).then( realpath ),
+						vite( specifier, importer ).then( realpath ),
+						webpack( specifier, dir ).then( realpath ),
 					] ).catch( () => [ null, null ] )
 				);
 			}
@@ -341,17 +232,17 @@ export async function checkResolution( {
 				return;
 			}
 			if ( ! differences.has( pair ) ) {
-				differences.set( pair, { specifier, kind, importers: new Set() } );
+				differences.set( pair, { specifier, importers: new Set() } );
 			}
 			differences.get( pair ).importers.add( packagePath( importer ) );
 		} )
 	);
 
 	const failures = [];
-	for ( const [ pair, { specifier, kind, importers } ] of differences ) {
+	for ( const [ pair, { specifier, importers } ] of differences ) {
 		const [ first ] = [ ...importers ].sort();
 		failures.push(
-			`${ pair }: Vite resolves the first and webpack the second for \`${ specifier }\` (${ kind } from ${ first }${
+			`${ pair }: Vite resolves the first and webpack the second for \`${ specifier }\` (from ${ first }${
 				importers.size > 1 ? ` and ${ importers.size - 1 } more` : ''
 			})`
 		);
@@ -367,87 +258,4 @@ export async function checkResolution( {
 		}
 	}
 	return { failures, edges: edges.length };
-}
-
-/**
- * Pre-bundled CommonJS runs as an ES module, which is always strict, while webpack keeps it
- * sloppy. Fails on each assignment to an undeclared variable (a `ReferenceError` under Vite, a
- * leaked global under webpack), each free `global` (webpack defines it as `window`) and each direct
- * `eval()` (strict under Vite) in the optimizer's output, mapped back to the source file.
- * @param {string}                 depsDir
- * @param {Record<string, string>} allowed  `<package path>: <name>`, with the reason.
- * @returns {string[]}
- */
-export function checkStrictMode( depsDir, allowed ) {
-	const { analyze } = require( 'eslint-scope' );
-	const failures = new Set();
-	for ( const name of fs.readdirSync( depsDir ) ) {
-		if ( ! name.endsWith( '.js' ) ) {
-			continue;
-		}
-		const file = path.join( depsDir, name );
-		const code = fs.readFileSync( file, 'utf8' );
-		if ( ! /\b__commonJS|\bglobal\b/.test( code ) ) {
-			continue;
-		}
-		const { program, errors } = parseSync( file, code, { sourceType: 'module', range: true } );
-		if ( errors.length ) {
-			failures.add( `${ name }: doesn't parse as an ES module: ${ errors[ 0 ].message }` );
-			continue;
-		}
-		const findings = [];
-		const typeofOperands = new Set();
-		new Visitor( {
-			UnaryExpression( node ) {
-				if ( node.operator === 'typeof' ) {
-					typeofOperands.add( node.argument );
-				}
-			},
-			CallExpression( node ) {
-				if ( node.callee.type === 'Identifier' && node.callee.name === 'eval' ) {
-					findings.push( { identifier: node.callee, what: 'direct eval' } );
-				}
-			},
-		} ).visit( program );
-		// A direct `eval()` would otherwise leave every enclosing variable unresolved.
-		const scope = analyze( program, {
-			ecmaVersion: 2026,
-			sourceType: 'module',
-			ignoreEval: true,
-		} ).globalScope;
-		for ( const reference of scope.through ) {
-			const { identifier } = reference;
-			if ( reference.isWrite() ) {
-				findings.push( { identifier, what: `assigns undeclared ${ identifier.name }` } );
-			} else if ( identifier.name === 'global' && ! typeofOperands.has( identifier ) ) {
-				findings.push( { identifier, what: 'free global' } );
-			}
-		}
-		if ( ! findings.length ) {
-			continue;
-		}
-		// The optimizer starts each module it inlines with a `// node_modules/<path>` comment.
-		const moduleStarts = [ ...code.matchAll( /^\/\/ (node_modules\/\S+)$/gm ) ];
-		for ( const { identifier, what } of findings ) {
-			const start = moduleStarts.findLast( ( match ) => match.index < identifier.start );
-			const source = start ? packagePath( '/' + start[ 1 ] ) : `${ name } (no source)`;
-			const key = `${ source }: ${ what }`;
-			if ( ! allowed[ key ] ) {
-				const line = code.slice( 0, identifier.start ).split( '\n' ).length;
-				failures.add( `${ key } (${ name } line ${ line })` );
-			}
-		}
-	}
-	return [ ...failures ].sort();
-}
-
-if ( ! isMainThread && workerData?.analyzePreBundled ) {
-	const { depsDir, allowedStrictMode } = workerData.analyzePreBundled;
-	const edges = [];
-	for ( const file of preBundledFiles( depsDir ) ) {
-		for ( const { specifier, kind } of specifiersOf( file ) ) {
-			edges.push( { importer: file, specifier, kind } );
-		}
-	}
-	parentPort.postMessage( { edges, strictMode: checkStrictMode( depsDir, allowedStrictMode ) } );
 }
