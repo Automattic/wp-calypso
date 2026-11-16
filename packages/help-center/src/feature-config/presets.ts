@@ -12,7 +12,7 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		skipSupportStatus: false,
 		zendeskIntegrationKey: null,
 		zendeskConversationTags: [],
-		openSourcesInNewTab: false,
+		openLinksInNewTab: false,
 	},
 	home: {
 		recentConversations: true,
@@ -44,7 +44,7 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		skipSupportStatus: false,
 		zendeskIntegrationKey: null,
 		zendeskConversationTags: [],
-		openSourcesInNewTab: false,
+		openLinksInNewTab: false,
 	},
 	home: {
 		recentConversations: false,
@@ -79,7 +79,7 @@ const wooPreset: HelpCenterFeatureConfig = {
 		// Routes the conversation to the Woo queue (Zendesk trigger, WOOPUBR-2382).
 		zendeskConversationTags: [ 'woo_support_flow_help_center' ],
 		// The article view can't load WooCommerce.com docs yet (WOOPUBR-2241).
-		openSourcesInNewTab: true,
+		openLinksInNewTab: true,
 	},
 	home: {
 		recentConversations: true,

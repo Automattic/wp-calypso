@@ -55,7 +55,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
-	openSourcesInNewTab: false,
+	openLinksInNewTab: false,
 	pendingHumanSupportRequest: null,
 	setPendingHumanSupportRequest: noop,
 } );
@@ -88,7 +88,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	currentUser,
 	forceEmailSupport = false,
 	isChatRestricted = false,
-	openSourcesInNewTab = false,
+	openLinksInNewTab = false,
 	launcherContext,
 	children,
 } ) => {
@@ -242,7 +242,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				version: overriddenVersion,
 				forceEmailSupport,
 				isChatRestricted,
-				openSourcesInNewTab,
+				openLinksInNewTab,
 				launcherContext,
 				checkoutSupportVariation,
 			} }

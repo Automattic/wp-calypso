@@ -36,7 +36,7 @@ export type OdieAssistantContextInterface = {
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
-	openSourcesInNewTab: boolean;
+	openLinksInNewTab: boolean;
 	launcherContext?: string;
 	// Set while the Help Center is open from checkout as part of the checkout support experiment.
 	checkoutSupportVariation?: CheckoutSupportVariation;
@@ -70,8 +70,8 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
-	// Open the sources of an answer in a new browser tab instead of the article view.
-	openSourcesInNewTab?: boolean;
+	// Open the links and sources of an answer in a new browser tab.
+	openLinksInNewTab?: boolean;
 	launcherContext?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;

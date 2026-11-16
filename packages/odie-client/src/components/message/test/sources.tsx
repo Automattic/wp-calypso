@@ -1,28 +1,27 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { useOdieAssistantContext } from '../../../context';
 import { Sources } from '../sources';
 import type { Message } from '../../../types';
 import type { ReactNode } from 'react';
 
-const mockNavigate = jest.fn();
-const mockTrackEvent = jest.fn();
+const mockNavigate = vi.fn();
+const mockTrackEvent = vi.fn();
 
 const SOURCE_URL = 'https://woocommerce.com/document/managing-orders/';
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	FoldableCard: ( { children }: { children: ReactNode } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '../../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
 const message: Message = {
@@ -45,11 +44,11 @@ const message: Message = {
 	},
 };
 
-const renderSources = ( { openSourcesInNewTab }: { openSourcesInNewTab: boolean } ) => {
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+const renderSources = ( { openLinksInNewTab }: { openLinksInNewTab: boolean } ) => {
+	vi.mocked( useOdieAssistantContext ).mockReturnValue( {
 		trackEvent: mockTrackEvent,
-		openSourcesInNewTab,
-	} );
+		openLinksInNewTab,
+	} as unknown as ReturnType< typeof useOdieAssistantContext > );
 
 	return render( <Sources message={ message } isMessageShowingDisclaimer={ false } /> );
 };
@@ -61,7 +60,7 @@ describe( 'Sources', () => {
 	} );
 
 	it( 'opens a source in the Help Center article view', async () => {
-		renderSources( { openSourcesInNewTab: false } );
+		renderSources( { openLinksInNewTab: false } );
 
 		const link = screen.getByRole( 'link', { name: 'Managing Orders' } );
 		await userEvent.click( link );
@@ -71,7 +70,7 @@ describe( 'Sources', () => {
 	} );
 
 	it( 'opens a source in a new tab when the Help Center asks for it', async () => {
-		renderSources( { openSourcesInNewTab: true } );
+		renderSources( { openLinksInNewTab: true } );
 
 		const link = screen.getByRole( 'link', { name: 'Managing Orders (opens in a new tab)' } );
 		await userEvent.click( link );
@@ -83,7 +82,7 @@ describe( 'Sources', () => {
 	} );
 
 	it( 'records the click on a source that opens in a new tab', async () => {
-		renderSources( { openSourcesInNewTab: true } );
+		renderSources( { openLinksInNewTab: true } );
 
 		await userEvent.click( screen.getByRole( 'link', { name: /Managing Orders/ } ) );
 
