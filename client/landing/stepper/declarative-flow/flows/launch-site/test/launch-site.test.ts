@@ -496,7 +496,7 @@ describe( 'launch-site flow', () => {
 			[
 				'offers the paid plans again for a preview nobody has bought',
 				'preview_site_unpaid',
-				`${ STEPS.UNIFIED_PLANS.slug }?hide_free_plan=1`,
+				`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=example.wordpress.com&hide_free_plan=1`,
 			],
 		] )( 'when the launch fails, %s', ( _name, error, destination ) => {
 			setFlowSteps( ALL_STEPS );
