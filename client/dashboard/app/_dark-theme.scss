@@ -144,15 +144,6 @@
 	}
 }
 
-/* Destructive Secondary Button */
-@mixin dashboard-dark-theme-destructive-secondary-button {
-	.components-button.is-secondary.is-destructive:not( :disabled ) {
-		--wp-components-color-accent: var( --dashboard-danger__color );
-		--wp-components-color-accent-darker-10: var( --dashboard-danger__color-hover );
-		--wp-components-color-accent-darker-20: var( --dashboard-danger__color-active );
-	}
-}
-
 /* Breadcrumbs */
 @mixin dashboard-dark-theme-breadcrumbs {
 	.a8c-components-breadcrumbs {
@@ -472,7 +463,6 @@
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-dataviews;
-	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-domain-upsell-illustration;

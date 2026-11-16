@@ -43,3 +43,21 @@
 	--wpds-color-background-interactive-brand-strong-active: color-mix(in oklch, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 93%, #000);
 	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);
 }
+
+.components-button.is-destructive {
+	--wp-components-color-accent: var(--wpds-color-foreground-interactive-error);
+	--wp-components-color-accent-darker-10: var(--wpds-color-foreground-interactive-error-active);
+	--wp-components-color-accent-darker-20: var(--wpds-color-foreground-interactive-error-active);
+
+	&.is-primary {
+		--wp-components-color-accent: var(--wpds-color-background-interactive-error-strong);
+		--wp-components-color-accent-darker-10: var(--wpds-color-background-interactive-error-strong-active);
+		--wp-components-color-accent-darker-20: var(--wpds-color-background-interactive-error-strong-active);
+		--wp-components-color-accent-inverted: var(--wpds-color-foreground-interactive-error-strong);
+	}
+}
+
+.components-button.is-primary:is(:disabled, [aria-disabled="true"]):not(.is-busy) {
+	color: var(--wpds-color-foreground-interactive-brand-strong-disabled);
+	background: var(--wpds-color-background-interactive-brand-strong-disabled);
+}
