@@ -12,13 +12,14 @@
 	z-index: -1;
 	overflow: hidden;
 	pointer-events: none;
+	// On the wrapper: MShotsImage fades the image itself in from 0 to 1, which would override it.
+	opacity: 0.15;
 
 	img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		object-position: top;
-		opacity: 0.15;
 		filter: blur(8px);
 		// The blur fades the edges in, so spread past them.
 		transform: scale( 1.1 );
