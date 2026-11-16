@@ -189,15 +189,13 @@ describe( 'redactUrl', () => {
 
 describe( 'makeLogstashTransport', () => {
 	let fetchMock: Mock;
-	const originalFetch = global.fetch;
-
 	beforeEach( () => {
 		fetchMock = vi.fn().mockResolvedValue( {} );
-		global.fetch = fetchMock;
+		vi.stubGlobal( 'fetch', fetchMock );
 	} );
 
 	afterEach( () => {
-		global.fetch = originalFetch;
+		vi.unstubAllGlobals();
 		vi.restoreAllMocks();
 		vi.useRealTimers();
 	} );
@@ -270,11 +268,11 @@ describe( 'makeLogstashTransport', () => {
 	it( 'resolves without throwing when logstash can’t be reached', async () => {
 		const envelope = envelopeWith( [ 'event', exceptionEvent ] );
 
-		// @ts-expect-error Simulating an environment without fetch.
-		delete global.fetch;
+		// Simulates an environment without fetch.
+		vi.stubGlobal( 'fetch', undefined );
 		await expect( makeLogstashTransport().send( envelope ) ).resolves.toEqual( {} );
 
-		global.fetch = fetchMock;
+		vi.stubGlobal( 'fetch', fetchMock );
 		fetchMock.mockRejectedValue( new Error( 'network down' ) );
 		await expect( makeLogstashTransport().send( envelope ) ).resolves.toEqual( {} );
 

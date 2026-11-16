@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockInstance, vi } from 'vitest';
 import { validateDateRangeSearch } from '../../../utils/date-range-search';
 import { formatSiteYmd } from '../../../utils/datetime';
 import { useDateRange } from '../use-date-range';
@@ -112,9 +113,9 @@ describe( 'useDateRange', () => {
 	} );
 
 	test( 'writes the refreshed range without a view transition, and a pick with one', async () => {
-		let navigate: jest.SpyInstance | undefined;
+		let navigate: MockInstance | undefined;
 		await restoreRange( '?from=1735689600&to=1735775999', { autoRefresh: true }, ( router ) => {
-			navigate = jest.spyOn( router, 'navigate' );
+			navigate = vi.spyOn( router, 'navigate' );
 		} );
 		await waitFor( () =>
 			expect( navigate ).toHaveBeenCalledWith(

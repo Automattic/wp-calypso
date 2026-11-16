@@ -1,7 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-import { act, render, renderHook, waitFor } from '@testing-library/react';
+// @vitest-environment jsdom
+import { act, render, renderHook } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';
 import { type Mock, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
@@ -13,8 +11,8 @@ vi.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 beforeEach( () => {
-	( getLocaleData as Mock ).mockReset();
-	( subscribe as Mock ).mockReset();
+	vi.mocked( getLocaleData ).mockReset();
+	vi.mocked( subscribe ).mockReset();
 } );
 
 describe( 'useLocale', () => {
@@ -33,17 +31,21 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'returns the new locale when it changes', () => {
+		let localeSlug = 'en';
 		const { result, rerender } = renderHook( () => useLocale(), {
-			wrapper: ( props ) => <LocaleProvider localeSlug="en" { ...props } />,
+			wrapper: ( props ) => <LocaleProvider localeSlug={ localeSlug } { ...props } />,
 		} );
 
-		rerender( { localeSlug: 'ar' } );
+		expect( result.current ).toBe( 'en' );
 
-		waitFor( () => expect( result.current ).toBe( 'ar' ) );
+		localeSlug = 'ar';
+		rerender();
+
+		expect( result.current ).toBe( 'ar' );
 	} );
 
 	it( "uses locale data from @wordpress/i18n if <LocaleProvider> isn't present", () => {
-		( getLocaleData as Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'ar' },
 		} ) );
 
@@ -53,7 +55,7 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'prefers <LocaleProvider> if both are present', () => {
-		( getLocaleData as Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'he' },
 		} ) );
 
@@ -65,7 +67,7 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'subscribes to changes to @wordpress/i18n data', () => {
-		( getLocaleData as Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'es' },
 		} ) );
 
@@ -79,7 +81,7 @@ describe( 'useLocale', () => {
 		expect( subscribe ).toHaveBeenCalledWith( expect.any( Function ) );
 		expect( result.current ).toBe( 'es' );
 
-		( getLocaleData as Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'ja' },
 		} ) );
 		act( () => subscribeCallback() );
@@ -88,12 +90,12 @@ describe( 'useLocale', () => {
 	} );
 
 	it( 'unsubscribes from @wordpress/i18n when <LocaleProvider> starts to provide a value', async () => {
-		( getLocaleData as Mock ).mockImplementation( () => ( {
+		vi.mocked( getLocaleData ).mockImplementation( () => ( {
 			'': { language: 'es' },
 		} ) );
 
 		const unsubscribe = vi.fn();
-		( subscribe as Mock ).mockImplementation( () => {
+		vi.mocked( subscribe ).mockImplementation( () => {
 			return unsubscribe();
 		} );
 

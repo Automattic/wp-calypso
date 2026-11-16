@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getTurnId, startTurn } from '../turn-id';
 
 describe( 'turn id', () => {
@@ -26,10 +27,10 @@ describe( 'turn id', () => {
 	} );
 
 	it( 'still names the turn for this page load when storage throws', () => {
-		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		const setItem = vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 			throw new Error( 'blocked' );
 		} );
-		const getItem = jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
+		const getItem = vi.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
 			throw new Error( 'blocked' );
 		} );
 

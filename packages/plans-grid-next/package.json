@@ -65,7 +65,7 @@
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
-		"@wordpress/icons": "^15.5.0",
+		"@wordpress/icons": "^20.0.0",
 		"@wordpress/primitives": "^4.56.0",
 		"@wordpress/url": "^4.48.0",
 		"@wordpress/warning": "^3.48.0",
@@ -96,6 +96,8 @@
 		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	},
 	"msw": {

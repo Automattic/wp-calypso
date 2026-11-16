@@ -64,6 +64,7 @@ $newsletter_importer_line-height: 20px;
 		}
 		svg {
 			fill: var( --studio-gray-50 );
+			color: var( --studio-gray-50 );
 		}
 	}
 
@@ -112,6 +113,7 @@ $newsletter_importer_line-height: 20px;
 		color: var( --studio-gray-50 );
 		svg {
 			fill: var( --studio-gray-50 );
+			color: var( --studio-gray-50 );
 		}
 		.summary__content-stats-count {
 			font-weight: 400;
@@ -216,6 +218,7 @@ $newsletter_importer_line-height: 20px;
 	height: 48px;
 	text-align: center;
 	fill: var(--studio-gray-20);
+	color: var(--studio-gray-20);
 }
 
 .importer-loading .is-loading {

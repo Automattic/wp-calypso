@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
@@ -414,7 +414,7 @@ describe( '<Plan>', () => {
 		expect( link ).toHaveTextContent( 'Choose a plan' );
 		expect( link ).toHaveAttribute(
 			'href',
-			wpcomLink( '/setup/launch-site?siteSlug=test.wordpress.com' )
+			wpcomLink( '/setup/launch-site?siteSlug=test.wordpress.com&hide_free_plan=1' )
 		);
 		expect( container.textContent ).toContain( 'Preview' );
 		expect( container.textContent ).not.toContain( 'Free' );

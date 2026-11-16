@@ -68,6 +68,7 @@ $redesign-table-cell-max-width: 280px;
 			.foldable-card__expand .gridicon {
 				width: 14px;
 				fill: currentColor;
+				color: inherit;
 			}
 		}
 
@@ -304,6 +305,13 @@ $redesign-table-cell-max-width: 280px;
 		// use a table layout, but borders are only appropriate in table layout.
 		&:is(td, th) {
 			border-left: solid 1px #e0e0e0;
+		}
+
+		// The first column has no left border, so its feature titles get 1px more width than the other
+		// columns'. Take that 1px back, so titles wrap at the same viewport widths in every column
+		// without moving any content.
+		&:first-of-type:is(td, th) .plan-features-2023-grid__item-title-label {
+			margin-inline-end: 1px;
 		}
 	}
 }

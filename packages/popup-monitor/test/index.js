@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import PopupMonitor from '../src';
 
 describe( 'PopupMonitor', () => {

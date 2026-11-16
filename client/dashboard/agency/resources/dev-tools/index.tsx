@@ -4,6 +4,7 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import CertificationDevToolsSection from '../../certification/dev-tools-section';
 import DevToolsContent from './dev-tools-content';
+import SpacefastDevToolsSection from './spacefast-section';
 
 export default function DevTools() {
 	const { recordTracksEvent } = useAnalytics();
@@ -14,11 +15,12 @@ export default function DevTools() {
 				<PageHeader
 					title={ __( 'Developer tools' ) }
 					description={ __(
-						'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments that need no cleanup.'
+						'Build and ship client work faster with local development and automated deploys. Test ideas and demo progress to clients with disposable environments.'
 					) }
 				/>
 			}
 		>
+			<SpacefastDevToolsSection recordTracksEvent={ recordTracksEvent } />
 			<CertificationDevToolsSection recordTracksEvent={ recordTracksEvent } />
 			<DevToolsContent recordTracksEvent={ recordTracksEvent } />
 		</PageLayout>

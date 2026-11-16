@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import chroma from 'chroma-js';
 import { getAdminSchemes } from '../bin/prepare-sass-assets';

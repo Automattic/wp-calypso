@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import * as sass from 'sass';
 import { getAdminSchemes, buildAdminThemeColors } from '../bin/prepare-sass-assets';

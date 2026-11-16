@@ -19,6 +19,7 @@
 
 	svg {
 		fill: var(--color-neutral-40);
+		color: var(--color-neutral-40);
 	}
 }
 
@@ -27,5 +28,6 @@
 .horizontal-bar-list .horizontal-bar-list-item:focus {
 	.stats-list__video-thumbnail svg {
 		fill: var(--color-neutral-40);
+		color: var(--color-neutral-40);
 	}
 }

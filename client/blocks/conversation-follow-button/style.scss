@@ -32,6 +32,7 @@ button.conversation-follow-button {
 
 			.gridicon {
 				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
 				g {
 					fill: var(--studio-white);
 					stroke: var(--color-success);
@@ -91,6 +92,7 @@ button.conversation-follow-button {
 
 				svg.reader-following-conversation {
 					fill: var(--color-text-inverted);
+					color: var(--color-text-inverted);
 				}
 
 				svg.reader-external path {

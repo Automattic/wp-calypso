@@ -1,20 +1,20 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
+import useTitleBadges from '../use-title-badges';
+import type { PlanSlug } from '@automattic/calypso-products';
 
-jest.mock( 'i18n-calypso', () => ( {
+vi.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
 // isWooHostedBasicPlan drives the only built-in title badge; mock it so we can
 // exercise the "override wins over the computed default" path without pulling
 // the heavy calypso-products chain into the test.
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	isWooHostedBasicPlan: ( planSlug: string ) => planSlug === 'business-bundle',
 } ) );
-
-import useTitleBadges from '../use-title-badges';
-import type { PlanSlug } from '@automattic/calypso-products';
 
 const BUSINESS = 'business-bundle' as PlanSlug;
 const PREMIUM = 'value_bundle' as PlanSlug;

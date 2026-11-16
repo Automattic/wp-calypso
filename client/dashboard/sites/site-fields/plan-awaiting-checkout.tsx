@@ -100,12 +100,15 @@ export function useSiteIsPreview( site: Site ): {
 
 /**
  * Where the owner of a preview site buys it: the launch flow, which picks a domain and a paid plan
- * and goes on to checkout, where buying the plan launches the site.
+ * and goes on to checkout, where buying the plan launches the site. It offers only paid plans.
  * @param site The preview.
  * @returns The URL to send the owner to.
  */
 export function getPreviewLaunchUrl( site: Site ): string {
-	return addQueryArgs( wpcomLink( '/setup/launch-site' ), { siteSlug: site.slug } );
+	return addQueryArgs( wpcomLink( '/setup/launch-site' ), {
+		siteSlug: site.slug,
+		hide_free_plan: 1,
+	} );
 }
 
 /**

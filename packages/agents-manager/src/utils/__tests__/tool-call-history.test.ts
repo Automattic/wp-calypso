@@ -1,13 +1,12 @@
 import { getAgentManager } from '@automattic/agenttic-client';
+import { type Mock, vi } from 'vitest';
 import { DOLLY_AGENT_ID } from '../../constants';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../show-component-tools';
 import { getToolCallIdFromConversationHistory } from '../tool-call-history';
 
-jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
-	virtual: true,
-} );
+vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: vi.fn() } ) );
 
-const mockGetAgentManager = getAgentManager as jest.Mock;
+const mockGetAgentManager = getAgentManager as Mock;
 
 function toolCallMessage( toolId: string, toolCallId: string ) {
 	return {
@@ -22,7 +21,7 @@ function setHistory( history: unknown[], agentKey = 'wp-orchestrator' ) {
 	} );
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'getToolCallIdFromConversationHistory', () => {
 	it( 'returns null when no agent manager exists', () => {

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { vi } from 'vitest';
 let viewport;
 
@@ -23,7 +19,7 @@ const matchMediaMock = vi.fn( ( query ) => {
 
 describe( 'viewport', () => {
 	beforeAll( async () => {
-		window.matchMedia = matchMediaMock;
+		vi.stubGlobal( 'matchMedia', matchMediaMock );
 		viewport = await import( '../src' );
 		// Disable console warnings.
 		vi.spyOn( console, 'warn' ).mockImplementation( () => '' );
@@ -37,6 +33,7 @@ describe( 'viewport', () => {
 
 	afterAll( () => {
 		vi.restoreAllMocks();
+		vi.unstubAllGlobals();
 	} );
 
 	describe( 'isWithinBreakpoint', () => {

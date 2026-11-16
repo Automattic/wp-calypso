@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { queryClient } from '@automattic/api-queries';
 import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import { APP_CONTEXT_DEFAULT_CONFIG, type AppConfig } from '../../context';
 import {
@@ -18,11 +19,11 @@ import {
 } from '../me';
 import { rootRoute } from '../root';
 
-jest.mock( '../../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn( () => false ),
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
+	isDashboardBackport: vi.fn( () => false ),
 } ) );
 
-const mockIsDashboardBackport = jest.mocked( isDashboardBackport );
+const mockIsDashboardBackport = vi.mocked( isDashboardBackport );
 
 const dashboardConfig: AppConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
@@ -73,6 +74,9 @@ function hasRoutePath( routes: unknown[], path: string ): boolean {
 				( 'children' in route && hasRoutePath( getRouteChildren( route ), path ) ) )
 	);
 }
+
+// The notifications screen is a lazy route, so load it up front for the tests that navigate there.
+beforeAll( () => import( '../../../me/notifications' ) );
 
 beforeEach( () => {
 	mockIsDashboardBackport.mockReturnValue( false );

@@ -3,30 +3,31 @@
  */
 
 // Mock @wordpress/hooks
-const mockAddFilter = jest.fn();
-jest.mock( '@wordpress/hooks', () => ( {
+import { vi } from 'vitest';
+const mockAddFilter = vi.fn();
+vi.mock( '@wordpress/hooks', () => ( {
 	addFilter: mockAddFilter,
 } ) );
 
 // Mock extension modules
-const mockAddImageStudioMediaSource = jest.fn();
-const mockWithImageStudioGenerateButton = jest.fn();
-const mockWithImageStudioToolbarButton = jest.fn();
-const mockAddImageStudioHandler = jest.fn();
+const mockAddImageStudioMediaSource = vi.fn();
+const mockWithImageStudioGenerateButton = vi.fn();
+const mockWithImageStudioToolbarButton = vi.fn();
+const mockAddImageStudioHandler = vi.fn();
 
-jest.mock( './external-media-source-extension', () => ( {
+vi.mock( './external-media-source-extension', () => ( {
 	addImageStudioMediaSource: mockAddImageStudioMediaSource,
 } ) );
 
-jest.mock( './generate-button-extension', () => ( {
+vi.mock( './generate-button-extension', () => ( {
 	withImageStudioGenerateButton: mockWithImageStudioGenerateButton,
 } ) );
 
-jest.mock( './image-toolbar-extension', () => ( {
+vi.mock( './image-toolbar-extension', () => ( {
 	withImageStudioToolbarButton: mockWithImageStudioToolbarButton,
 } ) );
 
-jest.mock( './image-generation-handler-extension', () => ( {
+vi.mock( './image-generation-handler-extension', () => ( {
 	addImageStudioHandler: mockAddImageStudioHandler,
 } ) );
 
@@ -37,13 +38,12 @@ describe( 'Extension Registration', () => {
 		mockWithImageStudioGenerateButton.mockClear();
 		mockWithImageStudioToolbarButton.mockClear();
 		// Reset module to clear filtersRegistered flag
-		jest.resetModules();
+		vi.resetModules();
 	} );
 
 	describe( 'registerBlockEditorFilters', () => {
-		it( 'should register all three filters when called', () => {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const { registerBlockEditorFilters } = require( './index' );
+		it( 'should register all three filters when called', async () => {
+			const { registerBlockEditorFilters } = await import( './index' );
 
 			registerBlockEditorFilters();
 
@@ -78,9 +78,8 @@ describe( 'Extension Registration', () => {
 			);
 		} );
 
-		it( 'should only register filters once (idempotency)', () => {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const { registerBlockEditorFilters } = require( './index' );
+		it( 'should only register filters once (idempotency)', async () => {
+			const { registerBlockEditorFilters } = await import( './index' );
 
 			registerBlockEditorFilters();
 			registerBlockEditorFilters();
@@ -90,9 +89,8 @@ describe( 'Extension Registration', () => {
 			expect( mockAddFilter ).toHaveBeenCalledTimes( 4 );
 		} );
 
-		it( 'should use correct namespace for filters', () => {
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const { registerBlockEditorFilters } = require( './index' );
+		it( 'should use correct namespace for filters', async () => {
+			const { registerBlockEditorFilters } = await import( './index' );
 			registerBlockEditorFilters();
 
 			const calls = mockAddFilter.mock.calls;

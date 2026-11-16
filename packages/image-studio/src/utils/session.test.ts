@@ -1,20 +1,21 @@
 /**
  * Tests for session utilities
  */
+import { vi } from 'vitest';
 import { getSessionId } from './session';
 
 // Mock localStorage
 const localStorageMock = ( () => {
 	let store: Record< string, string > = {};
 	return {
-		getItem: jest.fn( ( key: string ) => store[ key ] || null ),
-		setItem: jest.fn( ( key: string, value: string ) => {
+		getItem: vi.fn( ( key: string ) => store[ key ] || null ),
+		setItem: vi.fn( ( key: string, value: string ) => {
 			store[ key ] = value;
 		} ),
-		removeItem: jest.fn( ( key: string ) => {
+		removeItem: vi.fn( ( key: string ) => {
 			delete store[ key ];
 		} ),
-		clear: jest.fn( () => {
+		clear: vi.fn( () => {
 			store = {};
 		} ),
 	};
@@ -28,7 +29,7 @@ Object.defineProperty( window, 'localStorage', {
 // Helper to reset all mocks and storage
 function resetMocks() {
 	localStorageMock.clear();
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	delete ( window as any ).agentsManager;
 }
 

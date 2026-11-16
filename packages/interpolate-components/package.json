@@ -36,7 +36,7 @@
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
-		"@types/react": ">=16.14.65",
+		"@types/react": ">=16.14.70",
 		"react": ">=16.2.0"
 	},
 	"peerDependenciesMeta": {

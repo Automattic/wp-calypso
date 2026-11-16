@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 /**
@@ -18,11 +18,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
+import { vi } from 'vitest';
 import OverviewCard from '../../overview-card';
 import { Stat } from '../../stat';
 import { TextBlur } from '../index';
 
-jest.mock( '../../../app/analytics', () => ( {
+vi.mock( '../../../app/analytics', () => ( {
 	useAnalytics: () => ( { recordTracksEvent: () => {} } ),
 } ) );
 
@@ -51,7 +52,7 @@ function resolve() {
 }
 
 describe( 'TextBlur survives page translation', () => {
-	it( 'updates text in place when the blurred span was reparented', async () => {
+	test( 'updates text in place when the blurred span was reparented', async () => {
 		render(
 			<Harness
 				render={ ( isLoading ) => (
@@ -70,7 +71,7 @@ describe( 'TextBlur survives page translation', () => {
 		expect( screen.getByText( '$1,234' ) ).toBeVisible();
 	} );
 
-	it( 'survives translation inside OverviewCard', async () => {
+	test( 'survives translation inside OverviewCard', async () => {
 		render(
 			<Harness
 				render={ ( isLoading ) => (
@@ -92,7 +93,7 @@ describe( 'TextBlur survives page translation', () => {
 		expect( screen.getByText( 'Renews next year' ) ).toBeVisible();
 	} );
 
-	it( 'survives translation inside Stat', async () => {
+	test( 'survives translation inside Stat', async () => {
 		render( <Harness render={ ( isLoading ) => <Stat metric="99%" isLoading={ isLoading } /> } /> );
 
 		reparentLikeATranslator( screen.getByText( 'XXXXX' ) );

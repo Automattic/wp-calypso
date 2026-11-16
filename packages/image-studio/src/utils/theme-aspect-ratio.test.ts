@@ -48,13 +48,17 @@ describe( 'normalizeThemeAspectRatio', () => {
 		[ '16:9', '16:9' ],
 		[ ' 4 / 3 ', '4:3' ],
 		[ '8/6', '4:3' ],
+		[ '3/2', '3:2' ],
+		[ '3:2', '3:2' ],
+		[ '6/4', '3:2' ],
 	] )( 'maps %s to the picker value %s', ( input, expected ) => {
 		expect( normalizeThemeAspectRatio( input ) ).toBe( expected );
 	} );
 
 	it.each( [
-		[ '3/2', 'landscape ratio the picker and the model fallbacks lack' ],
 		[ '1/1', 'square' ],
+		[ '21/9', 'landscape ratio the picker lacks' ],
+		[ '2/3', 'portrait, picker only' ],
 		[ '3/4', 'portrait' ],
 		[ '9/16', 'portrait' ],
 		[ 'auto', 'natural image shape' ],

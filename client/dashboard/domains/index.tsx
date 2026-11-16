@@ -2,8 +2,8 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { useAnalytics } from '../app/analytics';
-import { useAuth } from '../app/auth';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
@@ -14,9 +14,11 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	getDomainId,
+	getTableActions,
 	useActions,
 	useDomainsListLayouts,
 	useFields,
@@ -44,7 +46,6 @@ const defaultView = {
 };
 
 function Domains() {
-	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
@@ -73,7 +74,8 @@ function Domains() {
 		resetView: resetViewAndLayoutChoice,
 	} = useDomainsListLayouts( { slug: 'domains', domainCount: domains.length, view, resetView } );
 
-	const actions = useActions( { user, sites, domains, layout: view.type } );
+	const actions = useActions( { sites, layout: view.type } );
+	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
@@ -104,7 +106,7 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard>
+					<DataViewsCard className={ DOMAINS_TABLE_CLASS_NAME }>
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }
@@ -116,7 +118,7 @@ function Domains() {
 							onReset={ resetViewAndLayoutChoice }
 							view={ view }
 							// The cards render their own actions.
-							actions={ isCardsLayout ? undefined : actions }
+							actions={ isCardsLayout ? undefined : tableActions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }

@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';

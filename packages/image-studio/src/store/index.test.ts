@@ -1,20 +1,18 @@
-/**
- * @jest-environment jsdom
- */
 /* eslint-disable import/order */
+import { vi } from 'vitest';
 import type { ImageStudioState, ImageStudioEntryPoint, AnnotationCanvasRef } from './index';
 // Mock localStorage
 const localStorageMock = ( () => {
 	let store: Record< string, string > = {};
 	return {
-		getItem: jest.fn( ( key: string ) => store[ key ] || null ),
-		setItem: jest.fn( ( key: string, value: string ) => {
+		getItem: vi.fn( ( key: string ) => store[ key ] || null ),
+		setItem: vi.fn( ( key: string, value: string ) => {
 			store[ key ] = value;
 		} ),
-		removeItem: jest.fn( ( key: string ) => {
+		removeItem: vi.fn( ( key: string ) => {
 			delete store[ key ];
 		} ),
-		clear: jest.fn( () => {
+		clear: vi.fn( () => {
 			store = {};
 		} ),
 	};
@@ -26,16 +24,16 @@ Object.defineProperty( window, 'localStorage', {
 } );
 
 // Mock console.warn to avoid noise in tests
-const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+const consoleWarnSpy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 // Mock @wordpress/data
-jest.mock( '@wordpress/data', () => ( {
-	createReduxStore: jest.fn( ( storeName: string, config: Record< string, unknown > ) => ( {
+vi.mock( '@wordpress/data', () => ( {
+	createReduxStore: vi.fn( ( storeName: string, config: Record< string, unknown > ) => ( {
 		name: storeName,
 		...config,
 	} ) ),
-	register: jest.fn(),
-	select: jest.fn( () => null ),
+	register: vi.fn(),
+	select: vi.fn( () => null ),
 } ) );
 
 // Import store module after mocks are set up — must come after jest.mock
@@ -53,7 +51,7 @@ describe( 'Image Studio Store', () => {
 
 	beforeEach( () => {
 		localStorageMock.clear();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterAll( () => {
@@ -125,7 +123,7 @@ describe( 'Image Studio Store', () => {
 	describe( 'Actions', () => {
 		describe( 'openImageStudio', () => {
 			it( 'creates action with all parameters', () => {
-				const callback = jest.fn();
+				const callback = vi.fn();
 				const action = actions.openImageStudio(
 					123,
 					callback,
@@ -802,12 +800,12 @@ describe( 'Image Studio Store', () => {
 
 			it( 'SET_ANNOTATION_CANVAS_REF', () => {
 				const mockRef: AnnotationCanvasRef = {
-					clear: jest.fn(),
-					undo: jest.fn(),
-					redo: jest.fn(),
-					getBlob: jest.fn(),
-					hasAnnotations: jest.fn(),
-					hasUndoneAnnotations: jest.fn(),
+					clear: vi.fn(),
+					undo: vi.fn(),
+					redo: vi.fn(),
+					getBlob: vi.fn(),
+					hasAnnotations: vi.fn(),
+					hasUndoneAnnotations: vi.fn(),
 				};
 
 				const state = reducer( getInitialState(), actions.setAnnotationCanvasRef( mockRef ) );
@@ -981,12 +979,12 @@ describe( 'Image Studio Store', () => {
 
 		it( 'getAnnotationCanvasRef', () => {
 			const mockRef: AnnotationCanvasRef = {
-				clear: jest.fn(),
-				undo: jest.fn(),
-				redo: jest.fn(),
-				getBlob: jest.fn(),
-				hasAnnotations: jest.fn(),
-				hasUndoneAnnotations: jest.fn(),
+				clear: vi.fn(),
+				undo: vi.fn(),
+				redo: vi.fn(),
+				getBlob: vi.fn(),
+				hasAnnotations: vi.fn(),
+				hasUndoneAnnotations: vi.fn(),
 			};
 			const state: ImageStudioState = { ...getInitialState(), annotationCanvasRef: mockRef };
 			expect( selectors.getAnnotationCanvasRef( state ) ).toBe( mockRef );
@@ -1058,7 +1056,7 @@ describe( 'Image Studio Store', () => {
 		} );
 
 		it( 'getOnCloseCallback', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const state: ImageStudioState = { ...getInitialState(), onCloseCallback: callback };
 			expect( selectors.getOnCloseCallback( state ) ).toBe( callback );
 		} );

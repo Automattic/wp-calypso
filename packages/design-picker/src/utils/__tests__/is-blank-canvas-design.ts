@@ -1,6 +1,7 @@
+import { vi } from 'vitest';
 import { isBlankCanvasDesign } from '../available-designs';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: () => false,
 } ) );
 

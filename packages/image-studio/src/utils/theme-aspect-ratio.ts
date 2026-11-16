@@ -13,9 +13,9 @@ const QUERY_BLOCK = 'core/query';
 
 const RATIO_PATTERN = /^\s*(\d+)\s*[/:]\s*(\d+)\s*$/;
 
-// Landscape ratios the picker offers and the image model fallbacks all accept. A
-// theme ratio outside this set (3:2, portrait, "auto") falls back to the 16:9 default.
-export const THEME_ASPECT_RATIOS = [ '16:9', '4:3' ];
+// Landscape ratios the picker offers and every image model accepts; any other theme
+// ratio (portrait, square, "auto") falls back to the 16:9 default.
+export const THEME_ASPECT_RATIOS = [ '16:9', '4:3', '3:2' ];
 
 /**
  * Maps a `core/post-featured-image` `aspectRatio` attribute ("4/3") to a picker value, else null.

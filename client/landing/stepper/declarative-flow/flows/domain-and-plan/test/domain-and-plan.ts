@@ -375,4 +375,20 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 			) }`
 		);
 	} );
+
+	it( 'returns to the back_to path when the plans step is left without checkout', async () => {
+		mockQueryArgs = `back_to=${ encodeURIComponent( '/setup/newsletter/launchpad' ) }`;
+
+		await submitStep( 'plans' );
+
+		expect( window.location.assign ).toHaveBeenCalledWith( '/setup/newsletter/launchpad' );
+	} );
+
+	it( 'returns to the site home when back_to points outside WordPress.com', async () => {
+		mockQueryArgs = `back_to=${ encodeURIComponent( 'https://example.com/' ) }`;
+
+		await submitStep( 'plans' );
+
+		expect( window.location.assign ).toHaveBeenCalledWith( '/home/example.wordpress.com' );
+	} );
 } );

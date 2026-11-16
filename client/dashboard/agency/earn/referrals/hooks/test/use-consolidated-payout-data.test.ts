@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { getEstimatedCommission } from '../../lib/get-estimated-commission';
 import useGetConsolidatedPayoutData from '../use-consolidated-payout-data';
 import type { Referral } from '@automattic/api-core';
 
-jest.mock( '../../lib/get-estimated-commission' );
+vi.mock( '../../lib/get-estimated-commission' );
 
-const mockGetEstimatedCommission = getEstimatedCommission as jest.Mock;
+const mockGetEstimatedCommission = getEstimatedCommission as Mock;
 
 describe( 'useGetConsolidatedPayoutData', () => {
 	const mockReferrals: Referral[] = [
@@ -32,13 +33,13 @@ describe( 'useGetConsolidatedPayoutData', () => {
 	] as never;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Default mock — `getEstimatedCommission` is dispatched on
 		// `usePreviousQuarter` so individual tests can override per-flag.
 		mockGetEstimatedCommission.mockReturnValue( 50 );
 	} );
 
-	it( 'calls getEstimatedCommission once for each quarter flag', () => {
+	test( 'calls getEstimatedCommission once for each quarter flag', () => {
 		renderHook( () => useGetConsolidatedPayoutData( mockReferrals ) );
 
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledTimes( 2 );
@@ -46,7 +47,7 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( mockGetEstimatedCommission ).toHaveBeenCalledWith( mockReferrals, false );
 	} );
 
-	it( 'returns the previous-quarter and current-quarter commissions from getEstimatedCommission', () => {
+	test( 'returns the previous-quarter and current-quarter commissions from getEstimatedCommission', () => {
 		mockGetEstimatedCommission.mockImplementation( ( _referrals, usePreviousQuarter ) =>
 			usePreviousQuarter ? 75 : 50
 		);
@@ -57,13 +58,13 @@ describe( 'useGetConsolidatedPayoutData', () => {
 		expect( result.current.currentQuarterExpectedCommission ).toBe( 50 );
 	} );
 
-	it( 'counts pending referral statuses as pendingOrders', () => {
+	test( 'counts pending referral statuses as pendingOrders', () => {
 		const { result } = renderHook( () => useGetConsolidatedPayoutData( mockReferrals ) );
 
 		expect( result.current.pendingOrders ).toBe( 1 );
 	} );
 
-	it( 'sums pendingOrders across multiple referrals', () => {
+	test( 'sums pendingOrders across multiple referrals', () => {
 		const multipleReferrals: Referral[] = [
 			{
 				referralStatuses: [ 'active', 'pending' ],

@@ -1,7 +1,10 @@
-import { userPreferenceQuery } from '@automattic/api-queries';
+import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -9,6 +12,11 @@ import { bumpStat, useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { isChunkLoadError } from '../chunk-load-recovery';
 import { omnibarEvents } from '../omnibar/events';
+import { withSnackbar } from '../snackbars/with-snackbar';
+
+const preference = 'notifications-subscriber-alerts-enabled';
+// One id, so a burst of alerts replaces the snackbar instead of stacking copies.
+const soundSnackbarId = 'dashboard-subscriber-alert-sound';
 
 function toError( error: unknown ) {
 	return error instanceof Error ? error : new Error( String( error ) );
@@ -58,10 +66,40 @@ export default function useSubscriberAlerts(
 	useEffect( () => {
 		recordTracksEventRef.current = recordTracksEvent;
 	}, [ recordTracksEvent ] );
+	const { createNotice } = useDispatch( noticesStore );
+	const { mutate: savePreference } = useMutation(
+		withSnackbar( userPreferenceMutation( preference ), {
+			success: __( 'Subscriber alerts turned off. Turn them back on in Notifications settings.' ),
+			error: __( 'Failed to save subscriber alerts.' ),
+		} )
+	);
+	// The alert callbacks outlive renders, so they read the latest handler from a ref.
+	const showSoundSnackbarRef = useRef< () => void >( () => {} );
+	useEffect( () => {
+		showSoundSnackbarRef.current = () =>
+			createNotice( 'info', __( 'You have a new subscriber.' ), {
+				id: soundSnackbarId,
+				type: 'snackbar',
+				actions: [
+					{
+						label: __( 'Turn off alerts' ),
+						onClick: () => {
+							savePreference( false, {
+								onSuccess: () =>
+									recordTracksEventRef.current(
+										'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
+										{ setting_value: false, source: 'alert_snackbar' }
+									),
+							} );
+						},
+					},
+				],
+			} );
+	}, [ createNotice, savePreference ] );
 	const isSubscriberAlertsFeatureEnabled = config.isEnabled( 'notifications/subscriber-alerts' );
 	const subscriberAlerts = useQuery( {
 		...userPreferenceQuery(
-			'notifications-subscriber-alerts-enabled',
+			preference,
 			config.isEnabled( 'notifications/subscriber-alerts-default-on' )
 		),
 		enabled: isSubscriberAlertsFeatureEnabled,
@@ -100,13 +138,20 @@ export default function useSubscriberAlerts(
 							{
 								includeNoteContext,
 								onSound: ( result ) => {
-									if ( isCurrent() && ! untrackedSoundResults.has( result ) ) {
+									if ( ! isCurrent() ) {
+										return;
+									}
+
+									if ( ! untrackedSoundResults.has( result ) ) {
 										recordTracksEventRef.current(
 											'calypso_dashboard_notifications_subscriber_alert',
 											{
 												sound_result: result,
 											}
 										);
+									}
+									if ( result === 'played' ) {
+										showSoundSnackbarRef.current();
 									}
 								},
 								onError: ( error, stage ) => logSoundError( error, stage ),

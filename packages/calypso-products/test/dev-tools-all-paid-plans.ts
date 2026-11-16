@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	FEATURE_DEV_TOOLS,
 	FEATURE_DEV_TOOLS_GIT,
@@ -16,7 +17,7 @@ import {
 import type { WPComPlan } from '../src';
 
 let mockFlagEnabled = false;
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => '';
 	config.isEnabled = ( flag: string ) =>
 		flag === 'hosting/dev-tools-all-paid-plans' && mockFlagEnabled;

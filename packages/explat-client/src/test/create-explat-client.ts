@@ -1,4 +1,4 @@
-import { vi, type Mock } from 'vitest';
+import { vi } from 'vitest';
 import { createExPlatClient } from '../create-explat-client';
 import localStorage from '../internal/local-storage';
 import {
@@ -27,7 +27,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 	experimentAssignment: ExperimentAssignment
 ) {
 	spiedMonotonicNow.mockImplementationOnce( () => experimentAssignment.retrievedTimestamp );
-	( config.fetchExperimentAssignment as Mock ).mockImplementationOnce( () =>
+	vi.mocked( config.fetchExperimentAssignment ).mockImplementationOnce( () =>
 		delayedValue(
 			{
 				ttl: experimentAssignment.ttl,
@@ -80,7 +80,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( 'should return a fallback for a disabled Experiment', async () => {
 		const mockedConfig = createMockedConfig();
@@ -88,7 +88,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		const timestamp1 = 1;
 		spiedMonotonicNow.mockImplementationOnce( () => timestamp0 );
 		spiedMonotonicNow.mockImplementationOnce( () => timestamp1 );
-		( mockedConfig.fetchExperimentAssignment as Mock ).mockImplementationOnce( () =>
+		vi.mocked( mockedConfig.fetchExperimentAssignment ).mockImplementationOnce( () =>
 			delayedValue(
 				{
 					ttl: 60,
@@ -106,11 +106,11 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			retrievedTimestamp: timestamp1,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( '[anonId] should successfully load an ExperimentAssignment', async () => {
 		const mockedConfig = createMockedConfig();
-		( mockedConfig.getAnonId as Mock ).mockImplementationOnce( () =>
+		vi.mocked( mockedConfig.getAnonId ).mockImplementationOnce( () =>
 			delayedValue( 'the-anon-id-123', ZERO_DELAY )
 		);
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(
@@ -127,11 +127,11 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );
-		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls.length ).toBe( 1 );
-		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls[ 0 ][ 0 ].anonId ).toBe(
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls.length ).toBe( 1 );
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls[ 0 ][ 0 ].anonId ).toBe(
 			'the-anon-id-123'
 		);
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 	it( 'Invalid experimentName: should return fallback and log', async () => {
 		const mockedConfig = createMockedConfig();
@@ -150,7 +150,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -171,7 +171,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	} );
 	it( 'Could not fetch ExperimentAssignment: should store and return fallback, and log', async () => {
 		const mockedConfig = createMockedConfig();
-		( mockedConfig.fetchExperimentAssignment as Mock ).mockImplementationOnce(
+		vi.mocked( mockedConfig.fetchExperimentAssignment ).mockImplementationOnce(
 			() => new Promise( ( _res, rej ) => rej( new Error( 'some-error-123' ) ) )
 		);
 		const client = createExPlatClient( mockedConfig );
@@ -188,7 +188,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -205,7 +205,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		vi.useFakeTimers();
 
 		const mockedConfig = createMockedConfig();
-		( mockedConfig.fetchExperimentAssignment as Mock ).mockImplementationOnce(
+		vi.mocked( mockedConfig.fetchExperimentAssignment ).mockImplementationOnce(
 			() => new Promise( () => undefined )
 		);
 		const client = createExPlatClient( mockedConfig );
@@ -225,7 +225,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		vi.advanceTimersByTime( 10 * 1000 );
 		await expectationPromise;
 		// Temporary hack for the A/B experiment, see https://github.com/Automattic/wp-calypso/pull/54507
-		const error = ( mockedConfig.logError as Mock ).mock.calls[ 0 ][ 0 ];
+		const error = vi.mocked( mockedConfig.logError ).mock.calls[ 0 ][ 0 ];
 		expect( error ).toEqual(
 			expect.objectContaining( {
 				experimentName: 'experiment_name_a',
@@ -242,7 +242,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			mockedConfig,
 			validExperimentAssignment
 		);
-		( mockedConfig.logError as Mock ).mockImplementation( () => {
+		vi.mocked( mockedConfig.logError ).mockImplementation( () => {
 			throw new Error( 'Error logging.' );
 		} );
 		spiedMonotonicNow.mockImplementationOnce(
@@ -256,7 +256,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -306,8 +306,8 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
 			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
 			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
-			expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 1 );
-			expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
+			expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 1 );
+			expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( '[]' );
 
 			const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 1;
 			const refreshedValidExperimentAssignment = {
@@ -335,11 +335,11 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentF );
 			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentG );
 			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentH );
-			expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 2 );
+			expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 2 );
 			expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
 				( await experimentAssignmentE ).retrievedTimestamp
 			);
-			expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
+			expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( '[]' );
 		} );
 
 		await runTest();
@@ -376,8 +376,8 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
 		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
 		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
-		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 1 );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 1 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -443,8 +443,8 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
 			( await experimentAssignmentE ).retrievedTimestamp
 		);
-		expect( ( mockedConfig.fetchExperimentAssignment as Mock ).mock.calls ).toHaveLength( 1 );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( '[]' );
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 1 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( '[]' );
 	} );
 } );
 
@@ -461,7 +461,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -486,7 +486,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -515,7 +515,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -562,7 +562,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		);
 		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
 		client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -589,7 +589,7 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 			variationName: null,
 			isFallbackExperimentAssignment: true,
 		} );
-		expect( ( mockedConfig.logError as Mock ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
 			[
 			  [
 			    {
@@ -610,7 +610,7 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 		expect(
 			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
 		).toBeNull();
-		expect( ( mockedConfig.logError as Mock ).mock.calls.length ).toEqual( 0 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls.length ).toEqual( 0 );
 	} );
 
 	it( "return null when the matching experiment hasn't loaded yet but is currently loading", async () => {
@@ -625,7 +625,7 @@ describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
 		expect(
 			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
 		).toBeNull();
-		expect( ( mockedConfig.logError as Mock ).mock.calls.length ).toEqual( 0 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls.length ).toEqual( 0 );
 		vi.runAllTimers();
 		await promise;
 		vi.useRealTimers();

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import TitanControlPanelModal from '../titan-control-panel-modal';
 
@@ -37,18 +38,18 @@ function mockAutoLoginUrl( expectedContext?: string ) {
 const mediaQueryLists = new Map< string, MediaQueryList >();
 
 function mockViewport( matches: boolean ) {
-	( window.matchMedia as jest.Mock ).mockImplementation( ( query: string ) => {
+	( window.matchMedia as Mock ).mockImplementation( ( query: string ) => {
 		let mediaQueryList = mediaQueryLists.get( query );
 		if ( ! mediaQueryList ) {
 			mediaQueryList = {
 				matches,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(),
-				removeListener: jest.fn(),
-				addEventListener: jest.fn(),
-				removeEventListener: jest.fn(),
-				dispatchEvent: jest.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				dispatchEvent: vi.fn(),
 			} as unknown as MediaQueryList;
 			mediaQueryLists.set( query, mediaQueryList );
 		}
@@ -73,16 +74,16 @@ async function findEnabledButton( name: RegExp ) {
 }
 
 describe( '<TitanControlPanelModal>', () => {
-	let openedWindow: { location: { href: string }; close: jest.Mock };
+	let openedWindow: { location: { href: string }; close: Mock };
 
 	beforeEach( () => {
 		mockViewport( false );
-		openedWindow = { location: { href: '' }, close: jest.fn() };
-		jest.spyOn( window, 'open' ).mockReturnValue( openedWindow as unknown as Window );
+		openedWindow = { location: { href: '' }, close: vi.fn() };
+		vi.spyOn( window, 'open' ).mockReturnValue( openedWindow as unknown as Window );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test( 'lists every control panel destination from the classic Manage all mailboxes page', async () => {

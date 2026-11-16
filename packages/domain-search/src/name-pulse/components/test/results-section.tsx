@@ -1,29 +1,27 @@
-/**
- * @jest-environment jsdom
- */
 import { act, render, screen } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
+import { vi } from 'vitest';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 import { NAME_PULSE_SKELETON_TIMEOUT_MS } from '../../helpers';
 import { NamePulseResultsSection } from '../results-section';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
-const mockUseViewportMatch = jest.mocked( useViewportMatch );
+const mockUseViewportMatch = vi.mocked( useViewportMatch );
 
 const skeletonCount = () => document.querySelectorAll( '.name-pulse-row--skeleton' ).length;
 
 describe( 'NamePulseResultsSection', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockUseViewportMatch.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'shows skeleton slots while loading and drops them after the timeout', () => {
@@ -43,12 +41,12 @@ describe( 'NamePulseResultsSection', () => {
 		expect( skeletonCount() ).toBe( 3 );
 
 		act( () => {
-			jest.advanceTimersByTime( NAME_PULSE_SKELETON_TIMEOUT_MS - 1 );
+			vi.advanceTimersByTime( NAME_PULSE_SKELETON_TIMEOUT_MS - 1 );
 		} );
 		expect( skeletonCount() ).toBe( 3 );
 
 		act( () => {
-			jest.advanceTimersByTime( 1 );
+			vi.advanceTimersByTime( 1 );
 		} );
 
 		// Nothing left to show: the whole section unmounts.

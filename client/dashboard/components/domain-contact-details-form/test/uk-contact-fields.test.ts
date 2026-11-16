@@ -32,21 +32,21 @@ describe( 'isUkDomain', () => {
 } );
 
 describe( 'hasUkDomain', () => {
-	it( 'is true when any selected domain is a .uk one', () => {
+	test( 'is true when any selected domain is a .uk one', () => {
 		expect( hasUkDomain( [ 'example.com', 'philemon.co.uk' ] ) ).toBe( true );
 	} );
 
-	it( 'is false when none are', () => {
+	test( 'is false when none are', () => {
 		expect( hasUkDomain( [ 'example.com', 'example.fr' ] ) ).toBe( false );
 	} );
 
-	it( 'is false for an empty selection', () => {
+	test( 'is false for an empty selection', () => {
 		expect( hasUkDomain( [] ) ).toBe( false );
 	} );
 } );
 
 describe( 'getUkContactFormFields', () => {
-	it( 'always requires a registrant type and offers no pre-selected value', () => {
+	test( 'always requires a registrant type and offers no pre-selected value', () => {
 		const registrantType = fieldById(
 			getUkContactFormFields( undefined ),
 			UK_FIELD_IDS.registrantType
@@ -62,7 +62,7 @@ describe( 'getUkContactFormFields', () => {
 		expect( registrantType?.getValue?.( { item: { optOutTransferLock: false } } ) ).toBe( '' );
 	} );
 
-	it( 'omits the conditional fields for a registrant type that needs neither', () => {
+	test( 'omits the conditional fields for a registrant type that needs neither', () => {
 		const fields = getUkContactFormFields( 'IND' );
 
 		expect( fieldById( fields, UK_FIELD_IDS.tradingName ) ).toBeUndefined();
@@ -70,7 +70,7 @@ describe( 'getUkContactFormFields', () => {
 		expect( getUkContactFormLayout( 'IND' ) ).toEqual( [ UK_FIELD_IDS.registrantType ] );
 	} );
 
-	it( 'adds both conditional fields for a corporate registrant type', () => {
+	test( 'adds both conditional fields for a corporate registrant type', () => {
 		const fields = getUkContactFormFields( 'LTD' );
 
 		expect( fieldById( fields, UK_FIELD_IDS.tradingName )?.isValid?.required ).toBe( true );
@@ -82,21 +82,21 @@ describe( 'getUkContactFormFields', () => {
 		] );
 	} );
 
-	it( 'adds only the trading name for a sole trader', () => {
+	test( 'adds only the trading name for a sole trader', () => {
 		expect( getUkContactFormLayout( 'STRA' ) ).toEqual( [
 			UK_FIELD_IDS.registrantType,
 			UK_FIELD_IDS.tradingName,
 		] );
 	} );
 
-	it( 'adds only the registration number for a school', () => {
+	test( 'adds only the registration number for a school', () => {
 		expect( getUkContactFormLayout( 'SCH' ) ).toEqual( [
 			UK_FIELD_IDS.registrantType,
 			UK_FIELD_IDS.registrationNumber,
 		] );
 	} );
 
-	it( 'reads nested values out of extra.uk', () => {
+	test( 'reads nested values out of extra.uk', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: { uk: { registrantType: 'LTD', tradingName: 'Stuart Lee Therapy' } },
@@ -112,7 +112,7 @@ describe( 'getUkContactFormFields', () => {
 		);
 	} );
 
-	it( 'returns the whole extra object on edit so sibling values survive the shallow merge', () => {
+	test( 'returns the whole extra object on edit so sibling values survive the shallow merge', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: {
@@ -135,7 +135,7 @@ describe( 'getUkContactFormFields', () => {
 		} );
 	} );
 
-	it( 'drops the conditional values a newly picked registrant type does not ask for', () => {
+	test( 'drops the conditional values a newly picked registrant type does not ask for', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: {
@@ -161,7 +161,7 @@ describe( 'getUkContactFormFields', () => {
 		} );
 	} );
 
-	it( 'keeps a conditional value the new registrant type still asks for', () => {
+	test( 'keeps a conditional value the new registrant type still asks for', () => {
 		const item: DomainContactDetails = {
 			optOutTransferLock: false,
 			extra: {
@@ -183,7 +183,7 @@ describe( 'getUkContactFormFields', () => {
 		} );
 	} );
 
-	it( 'rejects a registration number that does not match the registrar format', () => {
+	test( 'rejects a registration number that does not match the registrar format', () => {
 		const field = fieldById( getUkContactFormFields( 'LTD' ), UK_FIELD_IDS.registrationNumber );
 
 		const pattern = new RegExp( field?.isValid?.pattern ?? '' );
@@ -197,7 +197,7 @@ describe( 'getUkContactFormFields', () => {
 } );
 
 describe( 'mapWhoisExtraToUkContactExtra', () => {
-	it( 'converts the registrar snake_case keys to the form shape', () => {
+	test( 'converts the registrar snake_case keys to the form shape', () => {
 		expect(
 			mapWhoisExtraToUkContactExtra( {
 				registrant_type: 'LTD',
@@ -211,13 +211,13 @@ describe( 'mapWhoisExtraToUkContactExtra', () => {
 		} );
 	} );
 
-	it( 'omits conditional values the registrar has not stored', () => {
+	test( 'omits conditional values the registrar has not stored', () => {
 		expect( mapWhoisExtraToUkContactExtra( { registrant_type: 'IND' } ) ).toEqual( {
 			registrantType: 'IND',
 		} );
 	} );
 
-	it( 'returns undefined when there is no stored registrant type, rather than guessing one', () => {
+	test( 'returns undefined when there is no stored registrant type, rather than guessing one', () => {
 		expect( mapWhoisExtraToUkContactExtra( undefined ) ).toBeUndefined();
 		expect( mapWhoisExtraToUkContactExtra( {} ) ).toBeUndefined();
 		expect( mapWhoisExtraToUkContactExtra( { registrant_type: '' } ) ).toBeUndefined();

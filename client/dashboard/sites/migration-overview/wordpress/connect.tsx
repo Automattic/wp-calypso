@@ -20,13 +20,18 @@ import ClipboardInputControl from '../../../components/clipboard-input-control';
 import ConfirmModal from '../../../components/confirm-modal';
 import Notice, { NoticeActionButton } from '../../../components/notice';
 import { Text } from '../../../components/text';
-import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
+import {
+	AssistedHandoffLink,
+	MigrationCard,
+	StatusIcon,
+	getChangeSourceUrl,
+} from './migration-card';
 import type {
 	Site,
 	WordPressMigrationFinding,
 	WordPressMigrationSourceConnectionOption,
 } from '@automattic/api-core';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 const MANUAL_INSTALL = 'manual-wpcom-install';
 
@@ -58,6 +63,7 @@ export function Connect( {
 	const run = useMutation( withSnackbar( siteWordPressMigrationRunMutation( site.ID ), snackbar ) );
 	const isStarting = configure.isPending || run.isPending;
 	const isConnected = !! connectionOption?.connected;
+	const changeSourceUrl = getChangeSourceUrl( site, configuration?.source_url );
 
 	const startMigration = () =>
 		configure.mutate(
@@ -84,6 +90,7 @@ export function Connect( {
 		failure,
 		isConnected,
 		sourceHost,
+		changeSourceUrl,
 		connectionOption,
 		isStarting,
 		onRun: () => run.mutate( {} ),
@@ -102,6 +109,11 @@ export function Connect( {
 		<MigrationCard
 			title={ title }
 			decoration={ <StatusIcon status="pending" /> }
+			back={ {
+				label: __( 'Change the address of the site you’re migrating from' ),
+				href: changeSourceUrl,
+				disabled: isStarting,
+			} }
 			actions={ actions }
 			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
@@ -115,7 +127,7 @@ export function Connect( {
 						failure.label
 					) }
 				>
-					{ failure.message }
+					<div className="wordpress-migration__message">{ getFailureMessage( failure ) }</div>
 				</Notice>
 			) }
 			{ /* Only when there's nothing to show: a failed refresh leaves what was last read on screen. */ }
@@ -232,6 +244,7 @@ function getConnectStep( {
 	failure,
 	isConnected,
 	sourceHost,
+	changeSourceUrl,
 	connectionOption,
 	isStarting,
 	onRun,
@@ -240,6 +253,7 @@ function getConnectStep( {
 	failure?: WordPressMigrationFinding;
 	isConnected: boolean;
 	sourceHost: string;
+	changeSourceUrl: string;
 	connectionOption?: WordPressMigrationSourceConnectionOption;
 	isStarting: boolean;
 	onRun: () => void;
@@ -352,6 +366,12 @@ function getConnectStep( {
 				),
 				{ link: linkTo( connectionOption?.manual_url ) }
 			),
+			withDomain(
+				/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+				__( 'Is <domain /> not the site you’re migrating from? <link>Change the address</link>' ),
+				sourceHost,
+				{ link: <a href={ changeSourceUrl } /> }
+			),
 		],
 	};
 
@@ -373,10 +393,37 @@ function getConnectStep( {
 	return install;
 }
 
+// The most common failure, laid out as its two ways forward rather than the server's one paragraph.
+function getFailureMessage( { code, message, data }: WordPressMigrationFinding ) {
+	if ( code !== 'source_plugin_unreachable' || typeof data?.address !== 'string' ) {
+		return message;
+	}
+
+	return (
+		<VStack spacing={ 2 }>
+			<span>
+				{ withDomain(
+					/* translators: <domain /> is the address of the site being migrated, e.g. example.com. */
+					__(
+						'Install and activate the latest version of the Migrate to WordPress.com plugin on <domain />.'
+					),
+					data.address
+				) }
+			</span>
+			<span>
+				{ __(
+					'If the plugin is active and up to date, make sure the site isn’t behind a maintenance page, password protection, or a security plugin that blocks outside requests.'
+				) }
+			</span>
+		</VStack>
+	);
+}
+
 // The source's domain, set apart from the words around it so it reads as the address it is.
-function withDomain( text: string, sourceHost: string ) {
+function withDomain( text: string, sourceHost: string, elements?: Record< string, ReactElement > ) {
 	return createInterpolateElement( text, {
 		domain: <code className="wordpress-migration__domain">{ sourceHost }</code>,
+		...elements,
 	} );
 }
 

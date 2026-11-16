@@ -5,10 +5,6 @@ import { resolveBlackboxApiKey } from 'calypso/lib/blackbox-helper/api-key';
 
 let loadPromise = null;
 
-// Sent with a signup session so wpcom verifies it with `blackbox_api_key`.
-// A signup that sends no version is verified with `blackbox_signup_api_key`.
-export const BLACKBOX_KEY_VERSION = 2;
-
 /**
  * Public key for Blackbox collects.
  * @returns {string|undefined} Configured public key.

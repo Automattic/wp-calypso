@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { queryClient } from '@automattic/api-queries';
@@ -19,7 +19,7 @@ describe( 'agencySitesRoute loader', () => {
 		queryClient.clear();
 	} );
 
-	it( 'resolves when the pending sites request fails', async () => {
+	test( 'resolves when the pending sites request fails', async () => {
 		nock( API_ROOT )
 			.get( '/wpcom/v2/agency' )
 			.query( true )

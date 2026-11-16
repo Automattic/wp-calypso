@@ -85,12 +85,11 @@ describe( 'index', () => {
 		} );
 
 		test( 'should not throw an error in production for missing args', () => {
-			const prevEnv = process.env.NODE_ENV;
-			process.env.NODE_ENV = 'production';
+			vi.stubEnv( 'NODE_ENV', 'production' );
 
 			expect( () => treeSelect() ).not.toThrow();
 
-			process.env.NODE_ENV = prevEnv;
+			vi.unstubAllEnvs();
 		} );
 
 		test( 'should throw an error in development when given object arguments', () => {
@@ -102,15 +101,14 @@ describe( 'index', () => {
 		} );
 
 		test( 'should not throw an error in production even when given object arguments', () => {
-			const prevEnv = process.env.NODE_ENV;
-			process.env.NODE_ENV = 'production';
+			vi.stubEnv( 'NODE_ENV', 'production' );
 
 			const state = { posts: [] };
 			expect( () => getSitePosts( state, {} ) ).not.toThrow();
 			expect( () => getSitePosts( state, [] ) ).not.toThrow();
 			expect( () => getSitePosts( state, 1, [] ) ).not.toThrow();
 
-			process.env.NODE_ENV = prevEnv;
+			vi.unstubAllEnvs();
 		} );
 
 		test( 'should not throw an error in development when given primitives', () => {

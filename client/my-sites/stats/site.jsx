@@ -5,7 +5,7 @@ import { Icon, people, starEmpty, commentContent, settings, chartBar } from '@wo
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, useStore } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -34,11 +34,7 @@ import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zo
 import usePremiumAnalyticsPreviewInvitation from 'calypso/my-sites/stats/hooks/use-premium-analytics-preview-invitation';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
-import {
-	recordGoogleEvent,
-	recordTracksEvent,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -823,18 +819,23 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 const EnableStatsModule = ( props ) => {
 	const dispatch = useDispatch();
+	const store = useStore();
 	const path = useSelector( ( state ) => getCurrentRouteParameterized( state, props.siteId ) );
-	const enableStatsModule = () => {
+	const enableStatsModule = async () => {
 		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_jetpack_module_toggle', {
-					module: 'stats',
-					path,
-					toggled: 'on',
-				} ),
-				activateModule( props.siteId, 'stats' )
-			)
+			recordTracksEvent( 'calypso_jetpack_module_toggle', {
+				module: 'stats',
+				path,
+				toggled: 'on',
+			} )
 		);
+		await dispatch( activateModule( props.siteId, 'stats' ) );
+
+		// Run the route again so that it can send the user on to the wp-admin Stats page that
+		// switching the module on has made.
+		if ( isJetpackModuleActive( store.getState(), props.siteId, 'stats' ) ) {
+			page.replace( page.current );
+		}
 	};
 
 	return (

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	recordDomainViewChanges,
 	sanitizeDomainFields,
@@ -71,7 +72,7 @@ describe( 'sanitizeDomainsListLayout', () => {
 
 describe( 'recordDomainViewChanges', () => {
 	test( 'layout change records the type change', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'table', fields: [ 'blog_name' ] };
 		const newView: View = { type: 'grid', fields: [ 'blog_name' ] };
 
@@ -84,7 +85,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'nothing relevant changed', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			page: 1,
@@ -104,7 +105,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'add new field', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'table' };
 		const newView: View = {
 			type: 'table',
@@ -124,7 +125,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'add multiple new fields', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'table', fields: [ 'blog_name' ] };
 		const newView: View = {
 			type: 'table',
@@ -151,7 +152,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'remove field', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			fields: [ 'blog_name' ],
@@ -171,7 +172,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'remove multiple fields', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			fields: [ 'blog_name', 'ssl_status', 'expiry' ],
@@ -198,7 +199,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'add/remove fields', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			fields: [ 'blog_name', 'ssl_status' ],
@@ -228,7 +229,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'add new filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'table' };
 		const newView: View = {
 			type: 'table',
@@ -245,7 +246,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'add multiple new filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			filters: [ { field: 'domain_status', value: 'active', operator: 'is' } ],
@@ -273,7 +274,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'remove filter', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			filters: [ { field: 'domain_status', value: 'active', operator: 'is' } ],
@@ -290,7 +291,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'remove multiple filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			filters: [
@@ -318,7 +319,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'add/remove filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			filters: [
@@ -348,7 +349,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'sort direction change', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			sort: { field: 'domain', direction: 'asc' },
@@ -367,7 +368,7 @@ describe( 'recordDomainViewChanges', () => {
 	} );
 
 	test( 'sort field change', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'table',
 			sort: { field: 'expiry', direction: 'asc' },

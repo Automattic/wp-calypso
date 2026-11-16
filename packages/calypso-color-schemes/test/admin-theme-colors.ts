@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import { parseAdminSchemes, getAdminSchemes } from '../bin/prepare-sass-assets';
 

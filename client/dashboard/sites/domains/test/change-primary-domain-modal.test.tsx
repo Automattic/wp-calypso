@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import ChangePrimaryDomainModal from '../change-primary-domain-modal';
@@ -15,18 +16,13 @@ const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;
 const currentPrimaryDomain = { domain: 'primary-domain-test.wordpress.com' } as DomainSummary;
 const domains = [ { domain: 'example.com' } ] as DomainSummary[];
 
-beforeEach( () => {
-	jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
-} );
-
 afterEach( () => {
-	jest.restoreAllMocks();
 	for ( const notice of select( noticesStore ).getNotices() ) {
 		dispatch( noticesStore ).removeNotice( notice.id );
 	}
 } );
 
-async function submitChange( onClose = jest.fn() ) {
+async function submitChange( onClose = vi.fn() ) {
 	const user = userEvent.setup();
 	render(
 		<>
@@ -45,7 +41,7 @@ async function submitChange( onClose = jest.fn() ) {
 }
 
 describe( 'ChangePrimaryDomainModal', () => {
-	it.each( [
+	test.each( [
 		[
 			'atomic_primary_domain_change_failed',
 			"We couldn't make this domain your primary domain. Please try again in a few minutes, or contact support if it keeps happening.",
@@ -70,7 +66,7 @@ describe( 'ChangePrimaryDomainModal', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
-	it( 'closes and shows success after a successful change', async () => {
+	test( 'closes and shows success after a successful change', async () => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/sites/123/domains/primary', { domain: 'example.com' } )
 			.reply( 200, { success: true } );

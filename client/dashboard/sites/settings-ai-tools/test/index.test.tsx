@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -16,6 +16,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AIToolsSettings, { getAgentEmailAddress, getAgentEmailVCard } from '../index';
 import type { Site, UserSettings } from '@automattic/api-core';
@@ -48,7 +49,7 @@ const jetpackSite = {
 	jetpack: true,
 } as Site;
 
-let clipboardWriteText: jest.Mock;
+let clipboardWriteText: Mock;
 
 beforeAll( () => {
 	enable( 'dolly/telegram' );
@@ -186,7 +187,7 @@ function mockClipboard() {
 }
 
 beforeEach( () => {
-	clipboardWriteText = jest.fn().mockResolvedValue( undefined );
+	clipboardWriteText = vi.fn().mockResolvedValue( undefined );
 	queryClient.clear();
 	queryClient.setDefaultOptions( {
 		queries: {

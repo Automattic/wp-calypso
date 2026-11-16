@@ -110,23 +110,23 @@ export function ConversationDetail( {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const listDetails = conversation?.postDetails;
-	const { data: fetchedPost, isLoading } = usePost(
-		listDetails ? null : { blogId: siteId, postId }
-	);
+	const { data: fetchedPost, isLoading, isFetching } = usePost( { blogId: siteId, postId } );
 	const isPostError = !! fetchedPost?.is_error;
 	const details =
 		listDetails ?? ( fetchedPost && ! isPostError ? getPostDetails( fetchedPost ) : undefined );
 	const postUrl = conversation?.url;
 	const post = useMemo(
 		() =>
-			fetchedPost ??
-			( listDetails && {
-				ID: postId,
-				site_ID: siteId,
-				URL: postUrl,
-				discussion: listDetails.discussion,
-			} ),
-		[ fetchedPost, listDetails, postId, siteId, postUrl ]
+			listDetails && ( ! fetchedPost || isPostError || isFetching )
+				? {
+						ID: postId,
+						site_ID: siteId,
+						URL: postUrl,
+						discussion: listDetails.discussion,
+						sharing_enabled: false,
+					}
+				: fetchedPost,
+		[ fetchedPost, isPostError, isFetching, listDetails, postId, siteId, postUrl ]
 	);
 	const currentUserId = useSelector( getCurrentUserId );
 	const showWelcome = useSelector(
@@ -285,7 +285,7 @@ export function ConversationDetail( {
 						</Notice>
 					) }
 					{ isLoading && ! post && <ConversationContentPlaceholder /> }
-					{ isPostError && (
+					{ isPostError && ! listDetails && (
 						<Text as="p" color="var(--color-text-subtle)">
 							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
 							{ conversation?.url && (

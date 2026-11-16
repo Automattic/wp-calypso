@@ -2,23 +2,24 @@
  * @jest-environment jsdom
  */
 import { dispatch, select } from '@wordpress/data';
+import { vi } from 'vitest';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import { saveChanges, saveChangesCallback } from '../callback';
 import type { SaveChangesIO } from '../callback';
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	dispatch: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	dispatch: vi.fn(),
 } ) );
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '../../../utils/is-editor-page', () => ( {
-	isEditorPage: jest.fn( () => true ),
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '../../../utils/is-editor-page', () => ( {
+	isEditorPage: vi.fn( () => true ),
 } ) );
 
-const editEntityRecord = jest.fn();
-const saveEditedEntityRecord = jest.fn( () => Promise.resolve( {} ) );
-const saveSpecifiedSiteEdits = jest.fn( () => Promise.resolve( {} ) );
-const markLastChangeAsPersistent = jest.fn();
+const editEntityRecord = vi.fn();
+const saveEditedEntityRecord = vi.fn( () => Promise.resolve( {} ) );
+const saveSpecifiedSiteEdits = vi.fn( () => Promise.resolve( {} ) );
+const markLastChangeAsPersistent = vi.fn();
 
 function makeIO( overrides: Partial< SaveChangesIO > = {} ): SaveChangesIO {
 	return {
@@ -35,8 +36,8 @@ function makeIO( overrides: Partial< SaveChangesIO > = {} ): SaveChangesIO {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	jest.mocked( isEditorPage ).mockReturnValue( true );
+	vi.clearAllMocks();
+	vi.mocked( isEditorPage ).mockReturnValue( true );
 	saveEditedEntityRecord.mockResolvedValue( {} );
 	saveSpecifiedSiteEdits.mockResolvedValue( {} );
 } );
@@ -194,7 +195,7 @@ describe( 'saveChanges', () => {
 
 describe( 'saveChangesCallback', () => {
 	it( 'refuses outside an editor', async () => {
-		jest.mocked( isEditorPage ).mockReturnValue( false );
+		vi.mocked( isEditorPage ).mockReturnValue( false );
 
 		const result = await saveChangesCallback();
 
@@ -203,13 +204,13 @@ describe( 'saveChangesCallback', () => {
 	} );
 
 	it( 'connects the ability to the registered editor stores', async () => {
-		jest.mocked( select ).mockReturnValue( {
+		vi.mocked( select ).mockReturnValue( {
 			__experimentalGetDirtyEntityRecords: () => [ { kind: 'postType', name: 'page', key: 12 } ],
 			getEntityRecordEdits: () => ( {} ),
 			isSavingEntityRecord: () => true,
 			isAutosavingEntityRecord: () => true,
 		} as never );
-		jest.mocked( dispatch ).mockImplementation( ( store ) => {
+		vi.mocked( dispatch ).mockImplementation( ( store ) => {
 			if ( store === 'core/block-editor' ) {
 				return { __unstableMarkLastChangeAsPersistent: markLastChangeAsPersistent } as never;
 			}

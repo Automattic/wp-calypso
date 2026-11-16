@@ -3,6 +3,6 @@
 	"exclude": [ "node_modules" ],
 	"compilerOptions": {
 		"allowJs": true,
-		"types": [ "jest" ]
+		"types": [ "vitest/globals", "@testing-library/jest-dom/vitest" ]
 	}
 }
