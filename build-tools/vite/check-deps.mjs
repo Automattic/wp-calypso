@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import { createRequire, isBuiltin } from 'node:module';
 import path from 'node:path';
+import { isMainThread, parentPort, Worker, workerData } from 'node:worker_threads';
 import { createIdResolver, parseSync, Visitor } from 'vite';
 import { client, root } from './base.mjs';
 
@@ -242,22 +243,43 @@ function viteResolvers( resolvedConfig, environment ) {
 const realpath = ( file ) => ( file && file !== EMPTY ? fs.realpathSync( file ) : file );
 
 /**
+ * Reads the pre-bundled dependencies in a worker thread, so that it runs alongside the crawl: the
+ * imports `checkResolution()` compares, and the failures of `checkStrictMode()`.
+ * @param {string}                 depsDir
+ * @param {Record<string, string>} allowedStrictMode
+ * @returns {Promise<{ edges: Array<{ importer: string, specifier: string, kind: string }>, strictMode: string[] }>}
+ */
+export function analyzePreBundled( depsDir, allowedStrictMode ) {
+	return new Promise( ( resolve, reject ) => {
+		const worker = new Worker( new URL( import.meta.url ), {
+			workerData: { analyzePreBundled: { depsDir, allowedStrictMode } },
+		} );
+		worker.once( 'message', resolve );
+		worker.once( 'error', reject );
+		worker.once( 'exit', ( code ) =>
+			reject( new Error( `The worker reading the pre-bundled dependencies exited with ${ code }` ) )
+		);
+	} );
+}
+
+/**
  * Resolves every bare import of first-party code, and every import inside the pre-bundled
  * dependencies, with both Vite's optimizer resolver and webpack's, and fails on each difference
  * that isn't allowed. Also fails when one file under webpack becomes two under Vite.
  * @param {Object} options
  * @param {import('vite').ResolvedConfig} options.resolvedConfig
  * @param {import('vite').DevEnvironment} options.environment
- * @param {string}                         options.depsDir   The optimizer's output folder.
  * @param {Map<string, Set<string>>}       options.imports   First-party bare specifiers by importer.
+ * @param {Array<{ importer: string, specifier: string, kind: string }>} options.preBundledEdges
+ *   The imports inside the pre-bundled dependencies, from `analyzePreBundled()`.
  * @param {{ files: Record<string, string>, duplicates: Record<string, string> }} options.allowed
  * @returns {Promise<{ failures: string[], edges: number }>}
  */
 export async function checkResolution( {
 	resolvedConfig,
 	environment,
-	depsDir,
 	imports,
+	preBundledEdges,
 	allowed,
 } ) {
 	const edges = [];
@@ -266,11 +288,7 @@ export async function checkResolution( {
 			edges.push( { importer, specifier, kind: 'import' } );
 		}
 	}
-	for ( const file of preBundledFiles( depsDir ) ) {
-		for ( const { specifier, kind } of specifiersOf( file ) ) {
-			edges.push( { importer: file, specifier, kind } );
-		}
-	}
+	edges.push( ...preBundledEdges );
 
 	const vite = viteResolvers( resolvedConfig, environment );
 	const webpack = webpackResolvers();
@@ -421,4 +439,15 @@ export function checkStrictMode( depsDir, allowed ) {
 		}
 	}
 	return [ ...failures ].sort();
+}
+
+if ( ! isMainThread && workerData?.analyzePreBundled ) {
+	const { depsDir, allowedStrictMode } = workerData.analyzePreBundled;
+	const edges = [];
+	for ( const file of preBundledFiles( depsDir ) ) {
+		for ( const { specifier, kind } of specifiersOf( file ) ) {
+			edges.push( { importer: file, specifier, kind } );
+		}
+	}
+	parentPort.postMessage( { edges, strictMode: checkStrictMode( depsDir, allowedStrictMode ) } );
 }

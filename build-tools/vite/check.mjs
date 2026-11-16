@@ -15,9 +15,9 @@ import { createServer, optimizeDeps, resolveConfig } from 'vite';
 import { root } from './base.mjs';
 import { allowed } from './check-allowed.mjs';
 import {
+	analyzePreBundled,
 	checkCollapses,
 	checkResolution,
-	checkStrictMode,
 	recordBareImports,
 } from './check-deps.mjs';
 import { devConfig, devEntries } from './dev.mjs';
@@ -62,6 +62,9 @@ try {
 	fail( '(pre-bundling)', String( error.message ) );
 }
 const optimizeMs = performance.now() - started;
+const depsDir = path.join( config.cacheDir, 'deps' );
+const preBundled = analyzePreBundled( depsDir, allowed.strictMode );
+preBundled.catch( () => {} );
 
 started = performance.now();
 config.optimizeDeps = { ...config.optimizeDeps, noDiscovery: true };
@@ -121,17 +124,16 @@ await new Promise( ( resolve ) => {
 const crawlMs = performance.now() - started;
 
 started = performance.now();
+const { edges: preBundledEdges, strictMode } = await preBundled;
 const resolution = await checkResolution( {
 	resolvedConfig,
 	environment,
-	depsDir: path.join( config.cacheDir, 'deps' ),
 	imports,
+	preBundledEdges,
 	allowed: { files: allowed.resolvedFiles, duplicates: allowed.duplicates },
 } );
 await server.close();
-failures.push( ...resolution.failures );
-const strict = checkStrictMode( path.join( config.cacheDir, 'deps' ), allowed.strictMode );
-failures.push( ...strict );
+failures.push( ...resolution.failures, ...strictMode );
 const collapses = checkCollapses( imports, allowed.collapses );
 failures.push( ...collapses.failures );
 const depsMs = performance.now() - started;
