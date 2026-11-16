@@ -1,5 +1,5 @@
 const { EventEmitter } = require( 'events' );
-const { app, dialog, BrowserWindow } = require( 'electron' );
+const { app, dialog, shell, BrowserWindow } = require( 'electron' );
 const config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:updater' );
 const platform = require( '../../lib/platform' );
@@ -84,6 +84,36 @@ class Updater extends EventEmitter {
 		};
 
 		dialog.showMessageBox( mainWindow, notAvailableDialogOptions );
+	}
+
+	notifyDownloading() {
+		const mainWindow = BrowserWindow.getFocusedWindow();
+
+		dialog.showMessageBox( mainWindow, {
+			buttons: [ 'OK' ],
+			message: this.expandMacros( '{name} {newVersion} is available.' ),
+			detail: 'It’s downloading in the background. You’ll be asked to restart once it’s ready.',
+		} );
+	}
+
+	async notifyError() {
+		const mainWindow = BrowserWindow.getFocusedWindow();
+		const downloadUrl = config.updater && config.updater.downloadUrl;
+
+		const errorDialogOptions = {
+			type: 'error',
+			buttons: downloadUrl ? [ 'Download', 'Cancel' ] : [ 'OK' ],
+			message: this.expandMacros( '{name} couldn’t be updated.' ),
+			detail: downloadUrl
+				? 'Please download and install the latest version manually.'
+				: 'Please try again later.',
+		};
+
+		const selected = await dialog.showMessageBox( mainWindow, errorDialogOptions );
+
+		if ( downloadUrl && selected.response === 0 ) {
+			shell.openExternal( downloadUrl );
+		}
 	}
 
 	setVersion( version ) {
