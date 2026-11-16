@@ -119,12 +119,6 @@ This mixin generates alias variables for a color palette. For example, the
 	--dashboard-warning__action-color: var( --dashboard__text-color );
 	--dashboard-warning__action-color-hover: #f0f0f0;
 	--dashboard-warning__action-color-active: #fff;
-	--dashboard__foreground-color-success: #75d488;
-	--dashboard__foreground-color-warning: #f5c15c;
-	--dashboard-danger__color: #ff8080;
-
-	--dashboard-danger__color-hover: #ff9b9b;
-	--dashboard-danger__color-active: #ffb3b3;
 
 	// Secondary menu
 	--dashboard-secondary-menu-item__color: #e0e0e0;
@@ -235,6 +229,11 @@ This mixin generates alias variables for a color palette. For example, the
 	--dashboard-overview__divider-color: #2f2f2f;
 	--dashboard-header__divider-color: #3a3a3a;
 	--dashboard-surface__border-color: #4a4a4a;
+	--dashboard__foreground-color-success: #75d488;
+	--dashboard__foreground-color-warning: #f5c15c;
+	--dashboard-danger__color: #ff8080;
+	--dashboard-danger__color-hover: #ff9b9b;
+	--dashboard-danger__color-active: #ffb3b3;
 }
 
 @mixin color-scheme-dark-theme-calypso-tokens {
