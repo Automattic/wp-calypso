@@ -1,5 +1,7 @@
 ## next
 
+- Make the cookie banner more compact on desktop and mobile: smaller text and buttons, less padding, and an inset floating card on small screens.
+
 ## 2.1.1
 
 - Declare React 19 compatibility for package consumers (#111721).
