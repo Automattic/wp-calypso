@@ -34,7 +34,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { formatPluginNames } from 'calypso/lib/login';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
 import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -208,7 +208,7 @@ export class JetpackAuthorize extends Component {
 			this.props.isVip
 		) {
 			if ( authorizeSuccess ) {
-				return this.externalRedirectOnce( redirectAfterAuth );
+				return this.externalRedirectOnce( this.getReturnUrl( nextProps ) );
 			}
 		} else if ( siteReceived ) {
 			return this.redirect();
@@ -244,6 +244,21 @@ export class JetpackAuthorize extends Component {
 			secret: this.props.authQuery.secret,
 			state: this.props.authQuery.state,
 		} );
+	}
+
+	/**
+	 * Where to send the user after connecting: the site's return URL, or its wp-admin when the
+	 * return URL was missing or relative (the query parser drops those).
+	 * @param {Object} props Component props.
+	 * @returns {?string} The URL.
+	 */
+	getReturnUrl( props = this.props ) {
+		const { redirectAfterAuth, siteUrl, homeUrl } = props.authQuery;
+		if ( redirectAfterAuth ) {
+			return redirectAfterAuth;
+		}
+		const base = siteUrl || homeUrl;
+		return base ? `${ untrailingslashit( base ) }/wp-admin/` : null;
 	}
 
 	externalRedirectOnce( url ) {
@@ -338,13 +353,13 @@ export class JetpackAuthorize extends Component {
 				'SSO found:',
 				this.isSso()
 			);
-			this.externalRedirectOnce( redirectAfterAuth );
+			this.externalRedirectOnce( this.getReturnUrl() );
 		} else if ( this.isFromJetpackOnboarding() ) {
 			debug( `Redirecting to My Jetpack page with 'from' url query arg: ${ redirectAfterAuth }` );
-			this.externalRedirectOnce( addQueryArgs( { from }, redirectAfterAuth ) );
+			this.externalRedirectOnce( addQueryArgs( { from }, this.getReturnUrl() ) );
 		} else if ( this.isFromJetpackConnector() ) {
 			debug( `Redirecting with 'from' url query arg: ${ redirectAfterAuth }` );
-			this.externalRedirectOnce( addQueryArgs( { from }, redirectAfterAuth ) );
+			this.externalRedirectOnce( addQueryArgs( { from }, this.getReturnUrl() ) );
 		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
 			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
 			navigate(
@@ -622,11 +637,11 @@ export class JetpackAuthorize extends Component {
 	handleSubmit = () => {
 		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
-		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
+		const { alreadyAuthorized, from } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
-			return this.externalRedirectOnce( redirectAfterAuth );
+			return this.externalRedirectOnce( this.getReturnUrl() );
 		}
 
 		if ( this.props.isAlreadyOnSitesList && alreadyAuthorized ) {
