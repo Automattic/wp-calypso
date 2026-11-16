@@ -65,11 +65,11 @@ export async function createTestFile(
 /**
  * Tells whether an image's XMP metadata includes the given text.
  *
- * Only XMP packets are searched, so the same text elsewhere in the file does not count.
+ * Only `<x:xmpmeta>` elements are searched, so the same text elsewhere in the file does not count.
  *
  * @param {Buffer} bytes Contents of the image file.
  * @param {string} text Text to look for.
- * @returns {boolean} True if an XMP packet in the file includes the text.
+ * @returns {boolean} True if an `<x:xmpmeta>` element in the file includes the text.
  */
 export function xmpIncludes( bytes: Buffer, text: string ): boolean {
 	const packets = bytes.toString( 'latin1' ).match( /<x:xmpmeta[\s\S]*?<\/x:xmpmeta>/g ) ?? [];

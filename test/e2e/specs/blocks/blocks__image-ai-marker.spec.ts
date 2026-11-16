@@ -1,33 +1,41 @@
+import fs from 'fs/promises';
 import path from 'path';
 import { DataHelper, ImageBlock, MediaHelper, TestFile } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { TEST_AI_MARKER_IMAGE_PATHS } from '../constants';
 import type { APIRequestContext } from '@playwright/test';
 
 const AI_DIGITAL_SOURCE_TYPE =
 	'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia';
 
-// AVIF is left out because the image service answers an AVIF request with WebP.
-const ACCEPT_HEADERS = [ '*/*', 'image/webp' ];
+// The last value stands in for a browser, which asks for AVIF first.
+const ACCEPT_VALUES = [ '*/*', 'image/webp', 'image/avif,image/webp,*/*' ];
+
+interface ServedCopy {
+	url: string;
+	accept: string;
+	outcome: 'marker' | 'no marker' | 'no XMP' | 'not fetched';
+	contentType: string;
+	detail: string;
+}
 
 /**
- * Fetches an image, retrying a network error, a 404, a 429, a 5xx or a 200 that is not an
- * image, so a brief outage or a file that is still propagating does not read as a missing
- * marker.
+ * Fetches an image, retrying a network error, a 404, a 429, a 5xx or a 2xx that is not an
+ * image, so a brief outage or a file that is still propagating does not fail the test.
  */
 async function fetchImage(
 	request: APIRequestContext,
 	url: string,
 	accept: string
-): Promise< { body: Buffer; contentType: string } > {
+): Promise< { status: number; contentType: string; body: Buffer } > {
 	for ( let attempt = 1; ; attempt++ ) {
-		let failure: string;
-		let retry = attempt < 3;
-		// The first attempt uses the URL as published; a retry adds an arg to get past a cached error.
+		// The first attempt uses the URL as published; a retry adds an arg the edge cache has not seen.
 		const attemptURL = new URL( url );
 		if ( attempt > 1 ) {
 			attemptURL.searchParams.set( 'retry', `${ attempt }` );
 		}
+		let failure: string;
+		let retryable = true;
 		try {
 			const response = await request.get( attemptURL.href, {
 				headers: { Accept: accept },
@@ -36,37 +44,69 @@ async function fetchImage(
 			const status = response.status();
 			const contentType = ( response.headers()[ 'content-type' ] ?? '' ).split( ';' )[ 0 ];
 			if ( response.ok() && contentType.startsWith( 'image/' ) ) {
-				return { body: await response.body(), contentType };
+				return { status, contentType, body: await response.body() };
 			}
 			failure = `responded ${ status } ${ contentType }`;
-			retry &&= response.ok() || status === 404 || status === 429 || status >= 500;
+			retryable = response.ok() || status === 404 || status === 429 || status >= 500;
 		} catch ( error ) {
 			failure = `failed: ${ ( error as Error ).message }`;
 		}
-		if ( ! retry ) {
-			throw new Error( `${ url } ${ failure }` );
+		if ( ! retryable || attempt === 3 ) {
+			throw new Error(
+				`${ attemptURL.href } (Accept: ${ accept }) ${ failure } on attempt ${ attempt }`
+			);
 		}
 		await new Promise( ( resolve ) => setTimeout( resolve, 2_000 * attempt ) );
 	}
 }
 
 /**
- * An image marked as AI-generated has to reach readers with that marker, whatever size or
- * format they are served. Only the XMP marker is asserted here; a C2PA manifest check
- * belongs in this spec once PERFOPS-326 settles what a resized image carries.
+ * Fetches one served copy of an image and reports whether its XMP carries the AI marker.
+ */
+async function checkServedCopy(
+	request: APIRequestContext,
+	url: string,
+	accept: string
+): Promise< ServedCopy > {
+	try {
+		const { status, contentType, body } = await fetchImage( request, url, accept );
+		let outcome: ServedCopy[ 'outcome' ] = 'no XMP';
+		if ( MediaHelper.xmpIncludes( body, AI_DIGITAL_SOURCE_TYPE ) ) {
+			outcome = 'marker';
+		} else if ( MediaHelper.xmpIncludes( body, '<x:xmpmeta' ) ) {
+			outcome = 'no marker';
+		}
+		const detail = `${ url } (Accept: ${ accept }, ${ status } ${ contentType }, ${ body.length } bytes, ${ outcome })`;
+		return { url, accept, outcome, contentType, detail };
+	} catch ( error ) {
+		const detail = ( error as Error ).message;
+		return { url, accept, outcome: 'not fetched', contentType: '', detail };
+	}
+}
+
+/**
+ * An image marked as AI-generated has to reach readers with its XMP marker in each size and
+ * format the post serves; a C2PA manifest check waits on PERFOPS-326.
  */
 test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
+	skipIfNotTrunk();
+
 	test( 'As a user, I can publish AI-generated images that keep their XMP marker', async ( {
 		page,
 		pageEditor,
 		request,
 		accountGivenByEnvironment,
-	} ) => {
+	}, testInfo ) => {
+		// Two uploads, a publish round-trip and the image fetches exceed the default 2-minute budget.
 		test.setTimeout( 240 * 1000 );
 
 		let imageFiles: TestFile[];
 
-		await test.step( 'Given I have image files marked as AI-generated', async () => {
+		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async () => {
+			await accountGivenByEnvironment.authenticate( page );
+		} );
+
+		await test.step( 'And I have image files marked as AI-generated', async () => {
 			imageFiles = await Promise.all(
 				TEST_AI_MARKER_IMAGE_PATHS.map( ( imagePath ) =>
 					MediaHelper.createTestFile( imagePath, {
@@ -74,6 +114,12 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 					} )
 				)
 			);
+			const markedFiles = await Promise.all(
+				imageFiles.map( async ( { fullpath } ) =>
+					MediaHelper.xmpIncludes( await fs.readFile( fullpath ), AI_DIGITAL_SOURCE_TYPE )
+				)
+			);
+			expect( markedFiles, 'Files to upload that carry the AI marker' ).toEqual( [ true, true ] );
 		} );
 
 		await test.step( 'When I go to the new post page', async () => {
@@ -111,30 +157,38 @@ test.describe( 'Blocks: Image (AI marker)', { tag: [ tags.GUTENBERG ] }, () => {
 				// The request fixture holds no cookies, so each copy is fetched as a logged-out reader gets it.
 				const copies = await Promise.all(
 					urls.flatMap( ( url ) =>
-						ACCEPT_HEADERS.map( async ( accept ) => {
-							const { body, contentType } = await fetchImage( request, url, accept );
-							return {
-								description: `${ url } (Accept: ${ accept }, served as ${ contentType })`,
-								accept,
-								contentType,
-								marked: MediaHelper.xmpIncludes( body, AI_DIGITAL_SOURCE_TYPE ),
-							};
-						} )
+						ACCEPT_VALUES.map( ( accept ) => checkServedCopy( request, url, accept ) )
 					)
 				);
+				await testInfo.attach( `served-copies${ path.extname( imagePath ) }.json`, {
+					body: JSON.stringify( { post: page.url(), copies }, null, 2 ),
+					contentType: 'application/json',
+				} );
 
 				expect
 					.soft(
-						copies.filter( ( copy ) => ! copy.marked ).map( ( copy ) => copy.description ),
+						copies
+							.filter( ( copy ) => copy.outcome === 'not fetched' )
+							.map( ( copy ) => copy.detail ),
+						'Served copies that could not be fetched'
+					)
+					.toEqual( [] );
+				expect
+					.soft(
+						copies
+							.filter( ( copy ) => [ 'no marker', 'no XMP' ].includes( copy.outcome ) )
+							.map( ( copy ) => copy.detail ),
 						'Served copies without the AI marker'
 					)
 					.toEqual( [] );
-				expect(
-					copies
-						.filter( ( copy ) => copy.accept === 'image/webp' )
-						.map( ( copy ) => copy.contentType ),
-					'Content types served for Accept: image/webp'
-				).toContain( 'image/webp' );
+				expect
+					.soft(
+						copies
+							.filter( ( copy ) => copy.accept === 'image/webp' )
+							.map( ( copy ) => copy.contentType ),
+						'Content types served for Accept: image/webp'
+					)
+					.toContain( 'image/webp' );
 			} );
 		}
 	} );

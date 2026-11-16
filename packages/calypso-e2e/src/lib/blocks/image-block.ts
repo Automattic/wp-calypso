@@ -123,7 +123,7 @@ export class ImageBlock {
 	}
 
 	/**
-	 * Returns every URL a published image can be loaded from: its `src` and each `srcset` candidate.
+	 * Returns the URLs in a published image's `src` and `srcset`.
 	 *
 	 * @param {Page} page Page on which the image is published.
 	 * @param {string} filename Name of the uploaded file, without the extension.
