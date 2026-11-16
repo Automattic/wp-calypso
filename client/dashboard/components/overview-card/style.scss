@@ -6,7 +6,7 @@
 .dashboard-overview-card {
 	&--disabled {
 		background-color: transparent !important;
-		box-shadow: 0 0 0 1px $gray-100 !important;
+		box-shadow: 0 0 0 1px var( --wpds-color-stroke-surface-neutral-weak ) !important;
 		cursor: default;
 	}
 
