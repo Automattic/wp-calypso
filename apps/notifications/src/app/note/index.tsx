@@ -8,13 +8,12 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight, arrowUp, arrowDown, bellUnread } from '@wordpress/icons';
+import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
-import { markUnread } from '../../panel/state/notes/thunks';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
@@ -23,12 +22,11 @@ import SimplifiedNote, { hasNoteContext } from '../note-simplified';
 import { getTemporaryNoteTitle, toSentenceCase } from '../note-simplified/labels';
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
+import MarkUnreadButton from '../templates/mark-unread-button';
 import NoteSummary from '../templates/note-summary';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
 import type { Note as NoteObject, Block } from '../types';
-import type { UnknownAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
 
 const hasBadge = ( body: NoteObject[ 'body' ] ) =>
 	body.some(
@@ -76,9 +74,8 @@ type NoteProps = {
 };
 
 const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: NoteProps ) => {
-	const dispatch = useDispatch< ThunkDispatch< unknown, unknown, UnknownAction > >();
+	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
-	const { client } = useAppContext();
 	const goBack = () => setSelectedNoteId( undefined );
 
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
@@ -101,11 +98,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	}
 
 	const isSimplifiedNote = isSimplified && hasNoteContext( note );
-
-	const markAsUnread = () => {
-		dispatch( markUnread( note, client ) );
-		goBack();
-	};
 
 	return (
 		<>
@@ -142,13 +134,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
-						<Button
-							size="small"
-							className="wpnc__mark-unread"
-							icon={ bellUnread }
-							label={ __( 'Mark as unread' ) }
-							onClick={ markAsUnread }
-						/>
+						<MarkUnreadButton note={ note } goBack={ goBack } />
 						{ ! isLargeScreen && (
 							<>
 								<Button

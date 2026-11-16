@@ -143,6 +143,7 @@
 		"me/email-tracking-consent": true,
 		"me/legacy-contact": true,
 		"migration/non-wordpress-source": true,
+		"notifications/mark-as-unread": true,
 		"notifications/redesign": true,
 		"notifications/subscriber-alerts": true,
 		"notifications/subscriber-alerts-default-on": true,

@@ -138,6 +138,7 @@ const NotificationApp = ( {
 	isDismissible = false,
 	constrainTabbing = false,
 	isViewSettingsEnabled = false,
+	isMarkAsUnreadEnabled = false,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -145,6 +146,7 @@ const NotificationApp = ( {
 	isDismissible?: boolean;
 	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
+	isMarkAsUnreadEnabled?: boolean;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -240,6 +242,7 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
+					isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 				>
 					<NotificationContent
 						isDismissible={ isDismissible }

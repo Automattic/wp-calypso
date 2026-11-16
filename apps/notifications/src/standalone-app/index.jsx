@@ -22,6 +22,7 @@ const locale = match ? match[ 1 ] : 'en';
 const features =
 	new URLSearchParams( document.location.search ).get( 'features' )?.split( ',' ) ?? [];
 const isViewSettingsEnabled = features.includes( 'view-settings' );
+const isMarkAsUnreadEnabled = features.includes( 'mark-as-unread' );
 
 const fetchLocale = async ( localeSlug ) => {
 	try {
@@ -212,6 +213,7 @@ const NotesWrapper = ( { wpcom } ) => {
 			isDismissible={ isMobileViewport }
 			constrainTabbing
 			isViewSettingsEnabled={ isViewSettingsEnabled }
+			isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 		/>
 	);
 };

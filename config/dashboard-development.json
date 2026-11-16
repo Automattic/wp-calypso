@@ -54,6 +54,7 @@
 		"mcp-settings": true,
 		"me/email-tracking-consent": true,
 		"me/legacy-contact": true,
+		"notifications/mark-as-unread": true,
 		"notifications/subscriber-alerts": true,
 		"notifications/subscriber-alerts-default-on": true,
 		"notifications/view-settings": true,

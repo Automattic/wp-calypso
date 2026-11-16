@@ -1,3 +1,4 @@
+import { reportError, reportRequestError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { markReadStatus } from '../../../rest-client/wpcom';
 import { readNote, unreadNote } from '../actions';
@@ -18,6 +19,11 @@ const markUnread = ( note, restClient ) => ( dispatch ) => {
 
 	markReadStatus( note.id, false, ( error, response ) => {
 		if ( error || ! response.success ) {
+			if ( error ) {
+				reportRequestError( 'unread', error );
+			} else {
+				reportError( 'unread', response );
+			}
 			try {
 				localStorage.setItem( `note_read_status_${ note.id }`, '1' );
 			} catch ( e ) {}
