@@ -32606,7 +32606,6 @@ __metadata:
     "@eslint/compat": "npm:^2.1.1"
     "@eslint/markdown": "npm:^8.0.3"
     "@gravatar-com/quick-editor": "npm:^0.8.0"
-    "@jridgewell/trace-mapping": "npm:^0.3.31"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/react": "npm:^10.6.5"

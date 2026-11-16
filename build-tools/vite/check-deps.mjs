@@ -362,7 +362,6 @@ export async function checkResolution( {
  */
 export function checkStrictMode( depsDir, allowed ) {
 	const { analyze } = require( 'eslint-scope' );
-	const { TraceMap, originalPositionFor } = require( '@jridgewell/trace-mapping' );
 	const failures = new Set();
 	for ( const name of fs.readdirSync( depsDir ) ) {
 		if ( ! name.endsWith( '.js' ) ) {
@@ -409,24 +408,15 @@ export function checkStrictMode( depsDir, allowed ) {
 		if ( ! findings.length ) {
 			continue;
 		}
-		const map = new TraceMap( fs.readFileSync( file + '.map', 'utf8' ) );
-		const lineStarts = [ 0 ];
-		for ( let i = code.indexOf( '\n' ); i !== -1; i = code.indexOf( '\n', i + 1 ) ) {
-			lineStarts.push( i + 1 );
-		}
+		// The optimizer starts each module it inlines with a `// node_modules/<path>` comment.
+		const moduleStarts = [ ...code.matchAll( /^\/\/ (node_modules\/\S+)$/gm ) ];
 		for ( const { identifier, what } of findings ) {
-			let line = lineStarts.findLastIndex( ( start ) => start <= identifier.start );
-			const original = originalPositionFor( map, {
-				line: line + 1,
-				column: identifier.start - lineStarts[ line ],
-			} );
-			const source = original.source
-				? packagePath( path.resolve( depsDir, original.source ) )
-				: `${ name } (no source)`;
-			line = original.line ?? line + 1;
+			const start = moduleStarts.findLast( ( match ) => match.index < identifier.start );
+			const source = start ? packagePath( '/' + start[ 1 ] ) : `${ name } (no source)`;
 			const key = `${ source }: ${ what }`;
 			if ( ! allowed[ key ] ) {
-				failures.add( `${ key } (line ${ line })` );
+				const line = code.slice( 0, identifier.start ).split( '\n' ).length;
+				failures.add( `${ key } (${ name } line ${ line })` );
 			}
 		}
 	}
