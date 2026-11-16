@@ -308,6 +308,12 @@ $redesign-table-cell-max-width: 280px;
 	}
 }
 
+.plan-features-2023-grid__table tr:has(.plans-grid-next-action-button__playground-warning) {
+	> .is-top-buttons {
+		vertical-align: bottom;
+	}
+}
+
 .plan-features-2023-grid__desktop-view,
 .plan-features-2023-grid__tablet-view {
 	.plan-features-2023-grid__table-item {
@@ -504,17 +510,6 @@ $redesign-table-cell-max-width: 280px;
 
 .plan-features-2023-grid__item-checkmark.is-placeholder {
 	visibility: hidden;
-}
-
-.plan-features-2023-grid__playground-warning {
-	display: flex;
-	align-items: flex-start;
-	gap: 6px;
-
-	.gridicon {
-		fill: var( --studio-red-50 );
-		flex: 0 0 16px;
-	}
 }
 
 .plan-features-2023-grid__feature-badge.is-placeholder {
