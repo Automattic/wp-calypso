@@ -3,9 +3,11 @@ import { generateUUID } from '../generate-uuid';
 
 describe( 'generateUUID', () => {
 	const savedRandomUUID = globalThis.crypto.randomUUID;
+	const savedGetRandomValues = globalThis.crypto.getRandomValues;
 
 	afterEach( () => {
 		globalThis.crypto.randomUUID = savedRandomUUID;
+		globalThis.crypto.getRandomValues = savedGetRandomValues;
 		vi.restoreAllMocks();
 	} );
 
@@ -27,7 +29,7 @@ describe( 'generateUUID', () => {
 		);
 	} );
 
-	it( 'uses crypto.getRandomValues for fallback randomness when available', () => {
+	it( 'uses crypto.getRandomValues for fallback randomness', () => {
 		// @ts-expect-error - Simulating an older browser.
 		globalThis.crypto.randomUUID = undefined;
 		const getRandomValuesSpy = vi.spyOn( globalThis.crypto, 'getRandomValues' );
@@ -35,6 +37,17 @@ describe( 'generateUUID', () => {
 		generateUUID();
 
 		expect( getRandomValuesSpy ).toHaveBeenCalled();
+	} );
+
+	it( 'never falls back to Math.random', () => {
+		// @ts-expect-error - Simulating a browser without Web Crypto.
+		globalThis.crypto.randomUUID = undefined;
+		// @ts-expect-error - Simulating a browser without Web Crypto.
+		globalThis.crypto.getRandomValues = undefined;
+		const mathRandomSpy = vi.spyOn( Math, 'random' );
+
+		expect( () => generateUUID() ).toThrow();
+		expect( mathRandomSpy ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps fallback UUIDs valid when getRandomValues returns the maximum byte', () => {
