@@ -929,6 +929,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							// The plans grid prices a coupon only from the URL.
 							const checkoutBackQueryArgs = {
 								...persistedQueryArgs,
+								...( playgroundId ? { playground: playgroundId } : {} ),
 								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
 							};

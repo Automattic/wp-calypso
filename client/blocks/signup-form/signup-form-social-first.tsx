@@ -65,6 +65,10 @@ interface SignupFormSocialFirst {
 	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
+	/**
+	 * Names the signup's origin to the backend, which picks the activation email and its link.
+	 */
+	activationEmailFrom?: string;
 }
 
 const options = {
@@ -126,6 +130,7 @@ const SignupFormSocialFirst = ( {
 	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
+	activationEmailFrom,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -207,6 +212,7 @@ const SignupFormSocialFirst = ( {
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
+		activationEmailFrom,
 		goToNextStep,
 		logInUrl,
 		queryArgs,

@@ -434,6 +434,10 @@ flows keep working unchanged:
   succeeds, for a run whose completion was already recorded elsewhere (e.g. the legacy
   `site-selected` signup flow handing its purchase to onboarding's post-checkout steps). See
   [`steps-repository/processing-step/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/processing-step/index.tsx).
+- The `post-checkout-onboarding` (`post-checkout`) step exposes `enableAiLaunchpad`, which turns
+  on the AI Launchpad (Site Setup) for a site created by checkout, once any Atomic transfer is
+  done. Optional, off by default. See
+  [`steps-repository/post-checkout/post-checkout-onboarding.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/post-checkout/post-checkout-onboarding.tsx).
 
 #### Renaming steps
 
