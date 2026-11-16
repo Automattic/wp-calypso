@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useInlineSuggestionClick } from '../use-inline-suggestion-click';
 
 function renderInlineSuggestionClick() {
-	const setChatInput = jest.fn();
+	const setChatInput = vi.fn();
 	const { result, unmount } = renderHook( () => useInlineSuggestionClick( setChatInput ) );
 
 	return { setChatInput, dispatchSuggestionClick: result.current, unmount };

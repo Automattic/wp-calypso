@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { shouldSuppressJetpackAiSidebarPreview } from '../jetpack-ai-sidebar-preview-gate';

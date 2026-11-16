@@ -1,13 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useTracking } from '..';
 import { buildTask } from '../../test/lib/fixtures';
 import type { LaunchpadSiteDetails } from '../../site-type';
 
-jest.mock( '@automattic/calypso-analytics' );
+vi.mock( '@automattic/calypso-analytics' );
 
 describe( 'useTracking', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	const buildDefaultProps = ( options = {} ) => ( {
 		checklistSlug: 'site-setup-checklist',
@@ -37,7 +38,7 @@ describe( 'useTracking', () => {
 	it( 'use comma as prefix and suffix for the task names to simplify queries on the logs tool', () => {
 		renderHook( () => useTracking( buildDefaultProps() ) );
 
-		const tasks = jest.mocked( recordTracksEvent ).mock.calls[ 0 ][ 1 ].tasks;
+		const tasks = vi.mocked( recordTracksEvent ).mock.calls[ 0 ][ 1 ].tasks;
 		expect( tasks ).toBe( ',task-1,task-2,' );
 	} );
 
@@ -99,7 +100,7 @@ describe( 'useTracking', () => {
 			buildTask( { id: 'task-2', completed: false, order: 4 } ),
 		];
 
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		const { result } = renderHook( () => useTracking( buildDefaultProps() ) );
 
 		result.current.trackTaskClick( tasks[ 1 ] );
