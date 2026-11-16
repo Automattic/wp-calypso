@@ -1,13 +1,16 @@
-import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { domainsQuery, userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { invokeSurvicateEventOnce } from '@automattic/survicate';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { domainOverviewRoute } from '../../app/router/domains';
 import { getCurrentDashboard } from '../../app/routing';
 import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { isWordPressMigration } from '../../utils/site-status';
 import type { Site } from '@automattic/api-core';
@@ -54,6 +57,7 @@ export function useShouldShowMigrationCompletedNotice( site: Site ) {
 
 export function MigrationCompletedNotice( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const router = useRouter();
 	const { mutate: updateDismissed } = useMutation(
 		userPreferenceMutation( `site-migration-completed-notice-dismissed-${ site.ID }` )
 	);
@@ -73,14 +77,31 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 	const sourceDomain = site.site_migration.source_domain ?? '';
 	const isSourceDomainPrimary = getPrimaryDomain( site ) === sourceDomain;
 
-	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceDomain,
-		step: 'transfer-or-connect',
-		siteSlug: site.slug,
-		domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
-		dashboard: getCurrentDashboard(),
-		back_to: redirectToDashboardLink(),
+	// Once the domain is on the site, the use-my-domain flow refuses it as already taken.
+	const { data: isSourceDomainOnSite } = useQuery( {
+		...domainsQuery(),
+		select: ( domains ) =>
+			domains.some( ( domain ) => domain.domain === sourceDomain && domain.blog_id === site.ID ),
 	} );
+
+	let connectDomainUrl;
+	if ( ! isSourceDomainOnSite ) {
+		connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+			initialQuery: sourceDomain,
+			step: 'transfer-or-connect',
+			siteSlug: site.slug,
+			domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
+			dashboard: getCurrentDashboard(),
+			back_to: redirectToDashboardLink(),
+		} );
+	} else if ( isDashboardBackport() ) {
+		connectDomainUrl = `/domains/manage/${ sourceDomain }/edit/${ site.slug }`;
+	} else {
+		connectDomainUrl = router.buildLocation( {
+			to: domainOverviewRoute.fullPath,
+			params: { domainName: sourceDomain },
+		} ).href;
+	}
 
 	return (
 		<Notice

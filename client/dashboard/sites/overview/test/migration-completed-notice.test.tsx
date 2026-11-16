@@ -28,6 +28,13 @@ function mockPreferences() {
 		.reply( 200, ( _uri, body ) => body );
 }
 
+function mockDomains( domains: { domain: string; blog_id: number }[] = [] ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/all-domains' )
+		.query( true )
+		.reply( 200, { domains } );
+}
+
 function completedSite( {
 	hoursAgo,
 	url = 'https://example.wpcomstaging.com',
@@ -67,12 +74,26 @@ afterEach( () => {
 
 test( 'confirms a migration that just finished, with a link to connect its domain', async () => {
 	mockPreferences();
+	mockDomains();
 	render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
 
 	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeInTheDocument() );
 	const link = screen.getByRole( 'link', { name: 'Connect example.com' } );
 	expect( link.getAttribute( 'href' ) ).toContain( 'initialQuery=example.com' );
 	expect( link.getAttribute( 'href' ) ).toContain( 'step=transfer-or-connect' );
+} );
+
+test( 'links to the domain settings once the domain is on the site', async () => {
+	mockPreferences();
+	mockDomains( [ { domain: 'example.com', blog_id: siteId } ] );
+	render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
+
+	await waitFor( () =>
+		expect( screen.getByRole( 'link', { name: 'Connect example.com' } ) ).toHaveAttribute(
+			'href',
+			'/domains/example.com'
+		)
+	);
 } );
 
 test( 'confirms a migration that just finished even when its domain is already primary', async () => {
