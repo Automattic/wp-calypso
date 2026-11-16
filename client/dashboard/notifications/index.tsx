@@ -25,7 +25,11 @@ export default function Notifications() {
 
 	const setSelectedNoteId = ( selectedNoteId: string | undefined ) => {
 		if ( selectedNoteId ) {
-			navigate( { to: '/notifications/$noteId', params: { noteId: selectedNoteId } } );
+			navigate( {
+				to: '/notifications/$noteId',
+				params: { noteId: selectedNoteId },
+				replace: !! noteId,
+			} );
 		} else {
 			navigate( { to: '/notifications' } );
 		}
