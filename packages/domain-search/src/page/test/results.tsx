@@ -1976,7 +1976,7 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
-	describe( 'bundle card when the typed domain is taken', () => {
+	describe( 'bundle card when the queried FQDN is taken', () => {
 		const mockTakenTulipsDotCom = () => {
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'tulips.com' },
