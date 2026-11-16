@@ -20,6 +20,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getEmailTrackingConsentPayload } from 'calypso/lib/signup/email-tracking-consent';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { isThrottledError, getThrottledErrorMessage } from 'calypso/lib/signup/is-throttled-error';
 import wpcom from 'calypso/lib/wp';
@@ -175,6 +176,7 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
+				...getEmailTrackingConsentPayload(),
 				...( blackboxSessionId && {
 					blackbox_session_id: blackboxSessionId,
 				} ),

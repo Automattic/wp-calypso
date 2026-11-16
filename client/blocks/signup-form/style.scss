@@ -410,3 +410,14 @@ body.is-section-accept-invite {
 	margin: auto;
 	margin-bottom: 16px;
 }
+
+.signup-form__email-tracking-consent {
+	margin-bottom: 24px;
+	text-align: left;
+
+	.components-checkbox-control__label {
+		color: var(--studio-gray-60, #50575e);
+		font-size: 0.875rem;
+		line-height: 20px;
+	}
+}

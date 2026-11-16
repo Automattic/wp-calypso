@@ -2,6 +2,7 @@ import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getEmailTrackingConsentPayload } from 'calypso/lib/signup/email-tracking-consent';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
@@ -56,6 +57,7 @@ function createSocialAccount( {
 		...userData,
 		tos: getToSAcceptancePayload(),
 		anon_id: getTracksAnonymousUserId(),
+		...getEmailTrackingConsentPayload(),
 	} );
 }
 
@@ -81,6 +83,7 @@ function createNewAccount( {
 				client_secret: config( 'wpcom_signup_key' ),
 				tos: getToSAcceptancePayload(),
 				anon_id: getTracksAnonymousUserId(),
+				...getEmailTrackingConsentPayload(),
 			},
 			recaptchaDidntLoad ? { 'g-recaptcha-error': 'recaptcha_didnt_load' } : null,
 			recaptchaFailed ? { 'g-recaptcha-error': 'recaptcha_failed' } : null,
