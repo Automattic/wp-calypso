@@ -371,6 +371,36 @@ export function StaticSiteImportProgress( {
 	);
 }
 
+/**
+ * What the ready notice says about the moved site: live, or kept hidden until its owner launches it.
+ * @param sourceHost The domain of the site that was moved, or empty when the move named none.
+ * @param isHidden   Whether the site is Coming Soon or private.
+ */
+function getReadyMessage( sourceHost: string, isHidden: boolean ) {
+	if ( isHidden ) {
+		return sourceHost
+			? sprintf(
+					/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+					__( '%s is copied and running on WordPress.com. It stays private until you launch it.' ),
+					sourceHost
+				)
+			: __(
+					'Your site is copied and running on WordPress.com. It stays private until you launch it.'
+				);
+	}
+	return sourceHost
+		? sprintf(
+				/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+				__(
+					'%s is copied and live on WordPress.com. Its visitors see your old site until you connect your domain.'
+				),
+				sourceHost
+			)
+		: __(
+				'Your site is copied and live on WordPress.com. Visitors see your old site until you connect your domain.'
+			);
+}
+
 /** Tops the regular overview once the move has finished or failed. */
 export function StaticSiteImportNotice( {
 	site,
@@ -416,8 +446,10 @@ export function StaticSiteImportNotice( {
 			action,
 		} );
 
-	// A moved site stays Coming Soon, which lets in visitors logged in to the site itself. The owner
-	// isn't until they first visit WP Admin, so open the site through SSO to log them in on the way.
+	// A bought site is launched as its move finishes. One kept hidden lets in only visitors logged
+	// in to the site itself, which the owner isn't until they first visit WP Admin, so it opens
+	// through SSO to log them in on the way.
+	const isHidden = site.is_coming_soon || site.is_private;
 	const previewUrl =
 		site.is_coming_soon && site.is_wpcom_atomic ? withJetpackSso( site.URL ) : site.URL;
 
@@ -558,7 +590,7 @@ export function StaticSiteImportNotice( {
 								rel="noopener noreferrer"
 								onClick={ () => recordClick( 'preview_site' ) }
 							>
-								{ __( 'Preview site' ) }
+								{ __( 'View site' ) }
 							</NoticeActionLinkButton>
 							{ canRequestHandoff && (
 								<NoticeActionButton
@@ -577,19 +609,7 @@ export function StaticSiteImportNotice( {
 					}
 				>
 					<VStack spacing={ 2 }>
-						<span>
-							{ sourceHost
-								? sprintf(
-										/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-										__(
-											'%s is copied and running on WordPress.com. It stays private until you launch it.'
-										),
-										sourceHost
-									)
-								: __(
-										'Your site is copied and running on WordPress.com. It stays private until you launch it.'
-									) }
-						</span>
+						<span>{ getReadyMessage( sourceHost, isHidden ) }</span>
 						{ reviewNote && <span>{ reviewNote }</span> }
 						{ handoff.isError && <span>{ getHandoffErrorMessage( handoff.error ) }</span> }
 						{ handoff.isSuccess && (
