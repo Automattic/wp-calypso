@@ -792,7 +792,7 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 			if ( ! freshSiteId ) {
 				const wpcomStagingFragment = siteFragment
 					.toString()
-					.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+					.replace( '.wordpress.com', '.wpcomstaging.com' );
 				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 			}
 
