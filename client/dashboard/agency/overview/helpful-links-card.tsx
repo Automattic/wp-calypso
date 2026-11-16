@@ -39,9 +39,14 @@ function HelpfulLinkTitle( { link }: { link: HelpfulLink } ) {
 interface HelpfulLinksCardProps {
 	links: HelpfulLink[];
 	recordTracksEvent?: RecordTracksEvent;
+	shouldUseRouterLink?: boolean;
 }
 
-export default function HelpfulLinksCard( { links, recordTracksEvent }: HelpfulLinksCardProps ) {
+export default function HelpfulLinksCard( {
+	links,
+	recordTracksEvent,
+	shouldUseRouterLink = true,
+}: HelpfulLinksCardProps ) {
 	return (
 		<SummaryButtonList title={ __( 'Helpful links' ) }>
 			{ links.map( ( link ) => {
@@ -56,7 +61,7 @@ export default function HelpfulLinksCard( { links, recordTracksEvent }: HelpfulL
 					},
 				};
 				// In-app links go through the router, so they don't reload the dashboard.
-				if ( link.href && ! link.isExternal ) {
+				if ( shouldUseRouterLink && link.href && ! link.isExternal ) {
 					return <RouterLinkSummaryButton key={ link.id } to={ link.href } { ...props } />;
 				}
 				return (
