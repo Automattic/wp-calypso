@@ -1059,6 +1059,15 @@ describe( 'JetpackAuthorize', () => {
 			);
 		} );
 
+		test( 'SSO without its approval cookie still returns to the site', async () => {
+			await approve( { authQuery: { from: 'sso', redirectAfterAuth: null } } );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`http://${ SITE_SLUG }/wp-admin/`,
+				expect.any( String )
+			);
+		} );
+
 		test( 'a standard entry-point name does not pre-empt the A4A source redirect', async () => {
 			global.window.location.search = '?source=a8c-for-agencies';
 

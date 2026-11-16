@@ -330,7 +330,8 @@ export class JetpackAuthorize extends Component {
 			debug( `Jetpack Partner Coupon Redirecting to: ${ redirectionTarget }` );
 			navigate( redirectionTarget );
 		} else if (
-			this.isSso() ||
+			// SSO goes back to the site even when its approval cookie, which only lasts five minutes, is gone.
+			this.props.authQuery.from === 'sso' ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
 			this.isFromJetpackBoost() ||
