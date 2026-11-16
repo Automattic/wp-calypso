@@ -15,7 +15,7 @@ import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-subm
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
-import { useFlowState } from '../../../state-manager/store';
+import { useFlowState, type AnyFlowInitialize } from '../../../state-manager/store';
 import { isHostingSupportedForSSHMigration } from '../../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
@@ -104,7 +104,7 @@ export const useCredentialsForm = (
 	const siteSlug = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const lastSubmittedUrl = useRef( removeEndingSlash( fromUrl ) );
-	const { set } = useFlowState();
+	const { set } = useFlowState< AnyFlowInitialize >();
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );

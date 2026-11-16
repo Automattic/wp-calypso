@@ -193,7 +193,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [ resetOnboardStore, setIntent ] );
-		const { set, get } = useFlowState();
+		const { set, get } = useFlowState< typeof initialize >();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
 
@@ -218,7 +218,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { siteId, siteSlug, site } = useSiteData();
 		const { isError: hasSiteError, refetch: refetchSite } = useSiteQuery();
 		const query = useQuery();
-		const flowState = useFlowState();
+		const flowState = useFlowState< typeof initialize >();
 		const handoff = flowState.get( 'migrationHandoff' );
 		const { hostname, protocol } = getUrlParts( query.get( 'from' ) || '' );
 		const checkSourceEligibility =
@@ -331,7 +331,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
 		const hostQueryParam = urlQueryParams.get( 'host' ) || undefined;
-		const { get, sessionId, queryKey } = useFlowState();
+		const { get, sessionId, queryKey } = useFlowState< typeof initialize >();
 		const queryClient = useQueryClient();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
 		const shouldPickDestination = ! isLoggedIn || userHasOtherWPComSites;
