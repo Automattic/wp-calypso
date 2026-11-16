@@ -1,8 +1,8 @@
 /**
  * Starts the Calypso server with the client served by Vite, in one process, for the config env
- * given as the argument: `yarn start:vite` (`development`) and `yarn start-dashboard:vite`
- * (`dashboard-development`). It serves what `yarn start` and `yarn start-dashboard` do, and builds
- * the server with Vite, not webpack.
+ * given as the argument: `yarn start:vite` (`development`), `yarn start-dashboard:vite`
+ * (`dashboard-development`) and `yarn start-a8c-for-agencies:vite` (`a8c-for-agencies-development`).
+ * It serves what the webpack scripts of the same names do, and builds the server with Vite.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';

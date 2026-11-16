@@ -262,6 +262,7 @@ export const startEntries = {
 export const entriesByEnv = {
 	development: startEntries,
 	'dashboard-development': startDashboardEntries,
+	'a8c-for-agencies-development': startEntries,
 };
 
 /**
