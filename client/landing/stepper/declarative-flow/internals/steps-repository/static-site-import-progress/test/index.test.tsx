@@ -44,6 +44,14 @@ describe( 'StaticSiteImportProgressStep', () => {
 	it( 'shows the dashboard’s progress while the site moves', () => {
 		const submit = render( { status: 'moving' } );
 
+		expect(
+			screen.getByRole( 'heading', { name: 'We’re bringing your site to WordPress.com' } )
+		).toBeVisible();
+		expect(
+			screen.getByText(
+				'This can take 5 to 20 minutes. You don’t need to wait here: we’ll email you as soon as your site is ready.'
+			)
+		).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 		expect(
 			screen.getByText(
