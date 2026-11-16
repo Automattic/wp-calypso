@@ -40,6 +40,7 @@ const handFixes = [];
 for ( const file of files ) {
 	const src = fs.readFileSync( file, 'utf8' );
 	const kind = file.endsWith( 'x' ) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+	const isTypeScript = /\.tsx?$/.test( file );
 	const sf = ts.createSourceFile( file, src, ts.ScriptTarget.Latest, true, kind );
 	const edits = [];
 	const vitestImports = new Set();
@@ -148,7 +149,7 @@ for ( const file of files ) {
 
 	const typeByPath = ( call ) => {
 		const [ arg ] = call.arguments;
-		if ( ! call.typeArguments && arg && ts.isStringLiteral( arg ) ) {
+		if ( isTypeScript && ! call.typeArguments && arg && ts.isStringLiteral( arg ) ) {
 			const at = call.expression.end;
 			edits.push( { start: at, end: at, text: `< typeof import( '${ arg.text }' ) >` } );
 		}
