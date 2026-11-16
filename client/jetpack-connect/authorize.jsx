@@ -129,6 +129,7 @@ export class JetpackAuthorize extends Component {
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
+		isCheckingUserConnection: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
@@ -827,7 +828,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Try again' );
 		}
 
-		if ( this.props.isFetchingAuthorizationSite ) {
+		if ( this.isPreparingAuthorization ) {
 			return translate( 'Preparing authorization' );
 		}
 
@@ -875,7 +876,7 @@ export class JetpackAuthorize extends Component {
 			return;
 		}
 
-		if ( this.props.isFetchingAuthorizationSite ) {
+		if ( this.isPreparingAuthorization ) {
 			return translate( 'Preparing authorization' );
 		}
 
@@ -1235,6 +1236,10 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	get isPreparingAuthorization() {
+		return this.props.isFetchingAuthorizationSite || this.props.isCheckingUserConnection;
+	}
+
 	/**
 	 * True while the connection is mid-handshake (or already succeeded),
 	 * matching the gate used by both the action button and the
@@ -1244,7 +1249,7 @@ export class JetpackAuthorize extends Component {
 	get isInFlight() {
 		const { authorizeSuccess } = this.props.authorizationData;
 		return (
-			this.props.isFetchingAuthorizationSite ||
+			this.isPreparingAuthorization ||
 			this.props.isRequestingSitePurchases ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
@@ -1456,7 +1461,9 @@ export class JetpackAuthorize extends Component {
 					<div>
 						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
+						{ /* Starting the authorize step again resets userAlreadyConnected, so check again. */ }
 						<QueryUserConnection
+							key={ this.props.authorizationData.timestamp }
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
@@ -1510,6 +1517,8 @@ const connectComponent = connect(
 		const isMobileAppFlow = !! mobileAppRedirect;
 		const selectedPlanSlug = retrievePlan();
 		const fromSource = retrieveSource();
+		const isAlreadyOnSitesList = isRemoteSiteOnSitesList( state, authQuery.site );
+		const userAlreadyConnected = getUserAlreadyConnected( state );
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -1518,7 +1527,11 @@ const connectComponent = connect(
 			canManageOptions: canCurrentUser( state, authQuery.clientId, 'manage_options' ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
+			isAlreadyOnSitesList,
+			// A listed site only proves membership, not a connection. The check in
+			// QueryUserConnection settles this: success sets userAlreadyConnected,
+			// failure sets clientNotResponding, which takes the site off the list.
+			isCheckingUserConnection: isAlreadyOnSitesList && ! userAlreadyConnected,
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
@@ -1534,7 +1547,7 @@ const connectComponent = connect(
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
+			userAlreadyConnected,
 			fromSource,
 		};
 	},
