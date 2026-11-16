@@ -109,6 +109,13 @@ export default function ChangePrimaryDomainModal( {
 			www: selected.www,
 		} );
 
+		if ( selected.www ) {
+			recordTracksEvent( 'calypso_dashboard_domains_www_primary_confirm', {
+				domain,
+				enabled: true,
+			} );
+		}
+
 		setWwwError( null );
 
 		if ( domain === primaryAddress ) {

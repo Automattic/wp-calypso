@@ -774,11 +774,21 @@ describe( '<SiteDomains>', () => {
 		} );
 
 		test.each( [
-			{ primary_is_www: false, value: 'www.test-site.com', enabled: true },
-			{ primary_is_www: true, value: 'test-site.com', enabled: false },
+			{
+				primary_is_www: false,
+				value: 'www.test-site.com',
+				enabled: true,
+				wwwConfirmCalls: [
+					[
+						'calypso_dashboard_domains_www_primary_confirm',
+						{ domain: 'test-site.com', enabled: true },
+					],
+				],
+			},
+			{ primary_is_www: true, value: 'test-site.com', enabled: false, wwwConfirmCalls: [] },
 		] )(
 			'sends enabled: $enabled when $value is submitted',
-			async ( { primary_is_www, value, enabled } ) => {
+			async ( { primary_is_www, value, enabled, wwwConfirmCalls } ) => {
 				const { submit, recordTracksEvent } = await openModal( [
 					primaryCandidateDomain,
 					{ ...domain, primary_is_www },
@@ -795,11 +805,18 @@ describe( '<SiteDomains>', () => {
 					'calypso_dashboard_site_domains_primary_domain_selector_submit',
 					{ site: site.slug, domain: 'test-site.com', www: enabled }
 				);
+				expect(
+					vi
+						.mocked( recordTracksEvent )
+						.mock.calls.filter(
+							( [ name ] ) => name === 'calypso_dashboard_domains_www_primary_confirm'
+						)
+				).toEqual( wwwConfirmCalls );
 			}
 		);
 
 		test( 'still sets another domain as primary', async () => {
-			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			const { submit, recordTracksEvent } = await openModal( [ primaryCandidateDomain, domain ] );
 			const primaryRequest = nock( 'https://public-api.wordpress.com' )
 				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
 				.reply( 200, {} );
@@ -807,10 +824,14 @@ describe( '<SiteDomains>', () => {
 			await submit( 'candidate.com' );
 
 			await waitFor( () => expect( primaryRequest.isDone() ).toBe( true ) );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_domains_www_primary_confirm',
+				expect.anything()
+			);
 		} );
 
 		test( 'sets another domain as primary, then turns www on, for its www address', async () => {
-			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			const { submit, recordTracksEvent } = await openModal( [ primaryCandidateDomain, domain ] );
 			const requests: string[] = [];
 			nock( 'https://public-api.wordpress.com' )
 				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
@@ -828,6 +849,10 @@ describe( '<SiteDomains>', () => {
 
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( requests ).toEqual( [ 'primary', 'www' ] );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domains_www_primary_confirm',
+				{ domain: 'candidate.com', enabled: true }
+			);
 		} );
 
 		test( 'explains that the primary changed when turning www on fails, and retries only www', async () => {
