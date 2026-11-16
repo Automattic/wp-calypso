@@ -33,7 +33,7 @@ function WindowsPlatform( appWindow ) {
 
 	app.on( 'before-quit', function () {
 		log.info( "Responding to app event 'before-quit', destroying tray" );
-		if ( tray ) {
+		if ( tray && ! tray.isDestroyed() ) {
 			tray.destroy();
 		}
 	} );
