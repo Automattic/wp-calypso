@@ -13,7 +13,6 @@ import { addListeners, removeListeners } from '../panel/state/create-listener-mi
 import getAllNotes from '../panel/state/selectors/get-all-notes';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
-import NoteActions, { type InboxUser } from './note-actions';
 import type { FilterName, Note as NoteObject } from '../app/types';
 
 type InboxPaneElements = {
@@ -24,7 +23,6 @@ type InboxPaneElements = {
 type NotificationsInboxProps = {
 	wpcom: unknown;
 	locale: string;
-	currentUser: InboxUser;
 	filterName: FilterName;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
@@ -74,7 +72,6 @@ function useInboxClient( wpcom: unknown, locale: string ): boolean {
 }
 
 function InboxPanes( {
-	currentUser,
 	filterName,
 	selectedNoteId,
 	setSelectedNoteId,
@@ -124,9 +121,6 @@ function InboxPanes( {
 							noteId={ selectedNoteId }
 							setSelectedNoteId={ setSelectedNoteId }
 							noteNavigation={ noteNavigation }
-							renderActions={ ( note, goBack ) => (
-								<NoteActions note={ note } goBack={ goBack } currentUser={ currentUser } />
-							) }
 						/>
 					</ErrorBoundary>
 				),
@@ -151,12 +145,7 @@ export default function NotificationsInbox( {
 
 	return (
 		<Provider store={ store }>
-			<AppProvider
-				client={ getClient() }
-				locale={ locale }
-				isViewSettingsEnabled
-				isSimplifiedNoteEnabled
-			>
+			<AppProvider client={ getClient() } locale={ locale } isViewSettingsEnabled>
 				<InboxPanes { ...paneProps } />
 			</AppProvider>
 		</Provider>

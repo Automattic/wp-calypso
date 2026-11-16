@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
 import { Suspense, lazy, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useAuth } from '../app/auth';
 import { useLocale } from '../app/locale';
 import { Card } from '../components/card';
 import { PageHeader } from '../components/page-header';
@@ -20,7 +19,6 @@ type ReadFilter = 'all' | 'unread';
 export default function Notifications() {
 	const navigate = useNavigate();
 	const locale = useLocale();
-	const { user } = useAuth();
 	const { noteId } = useParams( { strict: false } );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	const [ readFilter, setReadFilter ] = useState< ReadFilter >( 'all' );
@@ -40,7 +38,7 @@ export default function Notifications() {
 				value={ readFilter }
 				onValueChange={ ( value ) => setReadFilter( value === 'unread' ? 'unread' : 'all' ) }
 			>
-				<Tabs.List className="dashboard-notifications__tab-list">
+				<Tabs.List className="dashboard-notifications__tab-list" variant="minimal">
 					<Tabs.Tab value="all">{ __( 'All' ) }</Tabs.Tab>
 					<Tabs.Tab value="unread">{ __( 'Unread' ) }</Tabs.Tab>
 				</Tabs.List>
@@ -65,7 +63,6 @@ export default function Notifications() {
 				<NotificationsInbox
 					wpcom={ wpcom }
 					locale={ locale }
-					currentUser={ { name: user.display_name, avatarUrl: user.avatar_URL } }
 					filterName={ readFilter }
 					selectedNoteId={ noteId }
 					setSelectedNoteId={ setSelectedNoteId }
