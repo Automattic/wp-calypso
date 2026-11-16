@@ -3,6 +3,7 @@ import { matchers } from '@emotion/jest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { BundleLineItem } from '../src/checkout-line-items';
 import { buildDomainProduct } from './fixtures/bundle-cart';
 import type { CartBundleLineItem } from '../src/group-bundle-line-items';
@@ -143,7 +144,7 @@ describe( 'BundleLineItem', () => {
 	} );
 
 	test( 'shows the renewal disclosure between the term row and the remove button', () => {
-		renderBundle( { hasDeleteButton: true, removeProductFromCart: jest.fn() } );
+		renderBundle( { hasDeleteButton: true, removeProductFromCart: vi.fn() } );
 
 		const termRow = screen.getByText( 'One year' );
 		const renewalNote = screen.getByText( 'Auto-renews at $40/year.' );
@@ -158,14 +159,14 @@ describe( 'BundleLineItem', () => {
 	} );
 
 	test( 'shows no remove button without hasDeleteButton', () => {
-		renderBundle( { removeProductFromCart: jest.fn() } );
+		renderBundle( { removeProductFromCart: vi.fn() } );
 
 		expect( screen.queryByRole( 'button', { name: /Remove/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'removes every bundle member when the removal is confirmed', async () => {
 		const user = userEvent.setup();
-		const removeProductFromCart = jest.fn();
+		const removeProductFromCart = vi.fn();
 
 		renderBundle( { hasDeleteButton: true, removeProductFromCart } );
 
@@ -179,11 +180,11 @@ describe( 'BundleLineItem', () => {
 
 	test( 'fires onRemoveBundle once with the group id and member count on confirmed removal', async () => {
 		const user = userEvent.setup();
-		const onRemoveBundle = jest.fn();
+		const onRemoveBundle = vi.fn();
 
 		renderBundle( {
 			hasDeleteButton: true,
-			removeProductFromCart: jest.fn(),
+			removeProductFromCart: vi.fn(),
 			onRemoveBundle,
 		} );
 
@@ -196,11 +197,11 @@ describe( 'BundleLineItem', () => {
 
 	test( 'does not fire onRemoveBundle when the removal is cancelled', async () => {
 		const user = userEvent.setup();
-		const onRemoveBundle = jest.fn();
+		const onRemoveBundle = vi.fn();
 
 		renderBundle( {
 			hasDeleteButton: true,
-			removeProductFromCart: jest.fn(),
+			removeProductFromCart: vi.fn(),
 			onRemoveBundle,
 		} );
 

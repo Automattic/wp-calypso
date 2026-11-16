@@ -4,20 +4,20 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import SeoDescriptionPicker from './seo-description-picker';
 
-const mockEditPost = jest.fn();
-const mockRevealSidebarField = jest.fn().mockResolvedValue( true );
+const mockEditPost = vi.fn();
+const mockRevealSidebarField = vi.fn().mockResolvedValue( true );
 let mockCurrentMeta: Record< string, string > | undefined;
 
-jest.mock( '../utils/reveal-sidebar-field', () => ( {
+vi.mock( '../utils/reveal-sidebar-field', () => ( {
 	revealSidebarField: ( ...args: unknown[] ) => mockRevealSidebarField( ...args ),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: ( store: string ) => {
 		if ( store === 'core/editor' ) {
 			return { editPost: mockEditPost };
@@ -77,7 +77,7 @@ describe( 'SeoDescriptionPicker', () => {
 	} );
 
 	it( 'highlights the applied option and calls onComplete', () => {
-		const onComplete = jest.fn();
+		const onComplete = vi.fn();
 		render( <SeoDescriptionPicker descriptions={ descriptions } onComplete={ onComplete } /> );
 		const button = screen
 			.getByText( descriptions[ 1 ].description )

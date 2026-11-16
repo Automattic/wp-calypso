@@ -10,6 +10,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render, renderHook } from '@testing-library/react';
 import React from 'react';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import AiEditorialReview from './components/ai-editorial-review';
 import ExcerptPicker from './components/excerpt-picker';
 import ImageAltTextPicker from './components/image-alt-text-picker';
@@ -33,34 +34,32 @@ import {
 	useSuggestions,
 } from './index';
 
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( './extensions', () => ( {
-	registerBlockEditorFilters: jest.fn(),
+vi.mock( './extensions', () => ( {
+	registerBlockEditorFilters: vi.fn(),
 } ) );
 
-const mockSetIsSplitScreen = jest.fn();
+const mockSetIsSplitScreen = vi.fn();
 let mockSelectedBlockClientId: string | null = null;
-const mockSelectBlock = jest.fn( ( clientId?: string | null ) => {
+const mockSelectBlock = vi.fn( ( clientId?: string | null ) => {
 	mockSelectedBlockClientId = clientId ?? null;
 } );
-const mockClearSelectedBlock = jest.fn( () => {
+const mockClearSelectedBlock = vi.fn( () => {
 	mockSelectedBlockClientId = null;
 } );
-const mockEditPost = jest.fn();
-const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
-	typeof recordTracksEvent
->;
+const mockEditPost = vi.fn();
+const mockedRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
-let mockImageStudioActions: { openImageStudio: jest.Mock } | null = null;
-const mockGetBlockEditorSettings = jest.fn();
+let mockImageStudioActions: { openImageStudio: Mock } | null = null;
+const mockGetBlockEditorSettings = vi.fn();
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
@@ -85,7 +84,7 @@ function appendBlockInRootLayout(
 	return { layout, block };
 }
 
-const mockSerializeBlocks = jest.fn( ( blocks: any[] ) => {
+const mockSerializeBlocks = vi.fn( ( blocks: any[] ) => {
 	const normalize = ( block: any ): any => ( {
 		name: block.name,
 		attributes: block.attributes,
@@ -94,34 +93,36 @@ const mockSerializeBlocks = jest.fn( ( blocks: any[] ) => {
 	return JSON.stringify( blocks.map( normalize ) );
 } );
 
-jest.mock( '@wordpress/block-editor', () => ( {
-	store: 'core/block-editor',
-	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
-	// tests focused on the card structure rather than icon rendering.
-	BlockIcon: () => null,
-	RichText: {
-		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
-			const { RawHTML } =
-				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
-			return react.createElement(
-				tagName as string,
-				props,
-				react.createElement( RawHTML, null, value as string )
-			);
+vi.mock( '@wordpress/block-editor', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const { RawHTML } =
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+	return {
+		store: 'core/block-editor',
+		// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
+		// tests focused on the card structure rather than icon rendering.
+		BlockIcon: () => null,
+		RichText: {
+			Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+				return react.createElement(
+					tagName as string,
+					props,
+					react.createElement( RawHTML, null, value as string )
+				);
+			},
 		},
-	},
-} ) );
+	};
+} );
 
-jest.mock( '@wordpress/blocks', () => ( {
+vi.mock( '@wordpress/blocks', () => ( {
 	// Nothing is registered in the test env, so block chips fall back to their
 	// prettified slug — which is all these tests assert about the block ref.
 	getBlockType: () => undefined,
 	serialize: ( blocks: any[] ) => mockSerializeBlocks( blocks ),
 } ) );
 
-jest.mock( '@wordpress/components', () => {
-	const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@wordpress/components', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			react.createElement(
@@ -146,8 +147,8 @@ jest.mock( '@wordpress/components', () => {
 	};
 } );
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( ( store: string ) => {
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn( ( store: string ) => {
 		if ( store === 'automattic/agents-manager' ) {
 			return { setIsSplitScreen: mockSetIsSplitScreen };
 		}
@@ -165,7 +166,7 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	} ),
-	select: jest.fn( ( store: string ) => {
+	select: vi.fn( ( store: string ) => {
 		if ( store === 'core/block-editor' ) {
 			const windowStore = ( globalThis as any ).wp?.data?.select?.( store );
 			if ( windowStore ) {
@@ -178,7 +179,7 @@ jest.mock( '@wordpress/data', () => ( {
 		return {};
 	} ),
 	useDispatch: () => ( {
-		editPost: jest.fn(),
+		editPost: vi.fn(),
 		selectBlock: mockSelectBlock,
 	} ),
 	useSelect: ( fn: any ) =>
@@ -325,7 +326,7 @@ function installPostTypeMock(
 				if ( store === 'core/block-editor' ) {
 					return {
 						getSettings: () => ( {
-							mediaUpload: 'mediaUpload' in options ? options.mediaUpload : jest.fn(),
+							mediaUpload: 'mediaUpload' in options ? options.mediaUpload : vi.fn(),
 						} ),
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
@@ -697,7 +698,7 @@ describe( 'PostFeedback', () => {
 	} );
 
 	it( 'copies the Suggestion text and confirms with Copied on an advisory card', async () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( globalThis.navigator, 'clipboard', {
 			configurable: true,
 			value: { writeText },
@@ -736,7 +737,7 @@ describe( 'PostFeedback', () => {
 	} );
 
 	it( 'copies the replacement text (not the action) on a card that can no longer be applied', async () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( globalThis.navigator, 'clipboard', {
 			configurable: true,
 			value: { writeText },
@@ -822,7 +823,7 @@ describe( 'PostFeedback', () => {
 	];
 
 	it( 'reverts a previous Copied when a different item is copied', async () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( globalThis.navigator, 'clipboard', {
 			configurable: true,
 			value: { writeText },
@@ -858,8 +859,8 @@ describe( 'PostFeedback', () => {
 	} );
 
 	it( 'reverts Copied back to Copy after the reset delay', async () => {
-		jest.useFakeTimers();
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		vi.useFakeTimers();
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( globalThis.navigator, 'clipboard', {
 			configurable: true,
 			value: { writeText },
@@ -888,10 +889,10 @@ describe( 'PostFeedback', () => {
 		expect( copyButtons( container ) ).toEqual( [ 'Copied', 'Copy' ] );
 
 		await act( async () => {
-			jest.advanceTimersByTime( 2500 );
+			vi.advanceTimersByTime( 2500 );
 		} );
 		expect( copyButtons( container ) ).toEqual( [ 'Copy', 'Copy' ] );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'shows Go to section but disables it for a post-wide advisory item', () => {
@@ -1121,7 +1122,7 @@ describe( 'PostFeedback', () => {
 	} );
 
 	it( 'keeps the header and shows an undoable Applied row after applying, then restores on Undo', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockEditorBlocks = [
 			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
 		];
@@ -1151,7 +1152,7 @@ describe( 'PostFeedback', () => {
 		} );
 		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
 		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
 
 		const item = container.querySelector( '.jetpack-ai-feedback-list__item' );
@@ -1171,7 +1172,7 @@ describe( 'PostFeedback', () => {
 		} );
 		expect( findButton( container, 'Apply change' ) ).toBeDefined();
 		expect( container.querySelector( '.jetpack-ai-feedback-list__resolution' ) ).toBeNull();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'collapses to an undoable Dismissed row on Dismiss and restores on Undo', () => {
@@ -1506,7 +1507,7 @@ describe( 'PostFeedback', () => {
 	} );
 
 	it( 'applies pending one-click rewrites and marks them Applied on Apply all', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockEditorBlocks = [
 			{
 				clientId: 'block-1',
@@ -1544,7 +1545,7 @@ describe( 'PostFeedback', () => {
 		} );
 		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
 		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
 
 		expect( blockUpdates ).toEqual( [
@@ -1554,7 +1555,7 @@ describe( 'PostFeedback', () => {
 			},
 		] );
 		expect( container.textContent ).toContain( 'Applied' );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 } );
 
@@ -1728,7 +1729,7 @@ describe( 'Proofread', () => {
 		) as HTMLButtonElement | undefined;
 
 	it( 'applies pending one-click items and marks them Applied on Apply all', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockEditorBlocks = [
 			{
 				clientId: 'block-1',
@@ -1766,7 +1767,7 @@ describe( 'Proofread', () => {
 		} );
 		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
 		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
 
 		expect( blockUpdates ).toEqual( [
@@ -1777,11 +1778,11 @@ describe( 'Proofread', () => {
 		] );
 		expect( container.textContent ).toContain( 'Applied' );
 		expect( findButtonByText( container, 'Retry' ) ).toBeUndefined();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'shows a steady Applying state while the bulk run is in progress', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockEditorBlocks = [
 			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
 		];
@@ -1818,16 +1819,16 @@ describe( 'Proofread', () => {
 		expect( container.textContent ).not.toContain( 'Apply all (' );
 
 		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
 
 		expect( container.textContent ).toContain( 'Applied' );
 		expect( findApplyAllButton( container ) ).toBeUndefined();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'disables Undo on applied items during a bulk run', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockEditorBlocks = [
 			{ clientId: 'block-a', name: 'core/paragraph', attributes: { content: 'aa..' } },
 			{ clientId: 'block-b', name: 'core/paragraph', attributes: { content: 'bb..' } },
@@ -1867,7 +1868,7 @@ describe( 'Proofread', () => {
 			fireEvent.click( findButtonByText( container, 'Apply change' ) as HTMLButtonElement );
 		} );
 		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
 		const undoSelector = '.jetpack-ai-feedback-list__action-button.is-undo';
 		const undoBeforeRun = container.querySelector< HTMLButtonElement >( undoSelector );
@@ -1884,9 +1885,9 @@ describe( 'Proofread', () => {
 		expect( undoDuringRun?.hasAttribute( 'disabled' ) ).toBe( true );
 
 		await act( async () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 } );
 
@@ -1955,7 +1956,7 @@ describe( 'empty post gating', () => {
 
 	it( 'leaves generate-featured-image enabled, since the user types their own prompt', () => {
 		// The chip only appears when Image Studio is available.
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 		const suggestion = suggestionsFor( { isPostEmpty: true } ).find(
 			( s ) => s.id === 'generate-featured-image'
 		);
@@ -2252,7 +2253,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Featured Image when Image Studio and uploads are available', () => {
 		installPostTypeMock( 'post' );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const chip = getEmptyViewSuggestions().find(
 			( suggestion ) => suggestion.id === 'generate-featured-image'
@@ -2267,7 +2268,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		'hides Generate Featured Image when mediaUpload is %s',
 		( mediaUpload ) => {
 			installPostTypeMock( 'post', 123, { mediaUpload } );
-			mockImageStudioActions = { openImageStudio: jest.fn() };
+			mockImageStudioActions = { openImageStudio: vi.fn() };
 
 			const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2278,12 +2279,12 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'checks upload permission each time featured image suggestions are requested', () => {
 		const options: PostTypeMockOptions = { mediaUpload: undefined };
 		installPostTypeMock( 'post', 123, options );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 		const ids = () => getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
 		expect( ids() ).not.toContain( 'generate-featured-image' );
 
-		options.mediaUpload = jest.fn();
+		options.mediaUpload = vi.fn();
 		expect( ids() ).toContain( 'generate-featured-image' );
 
 		options.mediaUpload = false;
@@ -2301,7 +2302,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Featured Image for unsupported post-level entities', () => {
 		installPostTypeMock( 'wp_template', 123 );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2311,7 +2312,7 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides Generate Featured Image when the post type has no thumbnail support', () => {
 		// What remove_post_type_support leaves behind: the key is gone.
 		installPostTypeMock( 'post', 123, { supportsThumbnail: undefined } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2320,7 +2321,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Featured Image on pages that dropped thumbnail support', () => {
 		installPostTypeMock( 'page', 123, { supportsThumbnail: undefined } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2329,7 +2330,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Featured Image on pages that support featured images', () => {
 		installPostTypeMock( 'page', 123, { supportsThumbnail: true } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2340,7 +2341,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		// add_post_type_support( 'post', 'thumbnail', $args ) stores the arguments,
 		// so the REST route reports an array. The editor treats that as supported.
 		installPostTypeMock( 'post', 123, { supportsThumbnail: [ [ 'custom' ] ] } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2350,7 +2351,7 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides Generate Featured Image when the theme does not support post thumbnails', () => {
 		// The post type keeps thumbnail support; the theme is what is missing.
 		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: false } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2360,7 +2361,7 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides Generate Featured Image when the theme limits thumbnails to other post types', () => {
 		// add_theme_support( 'post-thumbnails', array( 'post' ) ) leaves pages out.
 		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post' ] } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2369,7 +2370,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Featured Image when the theme lists this post type', () => {
 		installPostTypeMock( 'page', 123, { themeSupportsThumbnails: [ 'post', 'page' ] } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2378,7 +2379,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'hides Generate Featured Image when the theme lists no post types', () => {
 		installPostTypeMock( 'post', 123, { themeSupportsThumbnails: [] } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2387,7 +2388,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Featured Image while the post type record is still resolving', () => {
 		installPostTypeMock( 'post', 123, { postTypeRecordResolved: false } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2398,7 +2399,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		// core-data always returns an object, but the chip reads whichever store
 		// the page registered as 'core', so reading the key must not throw.
 		installPostTypeMock( 'post', 123, { themeSupportsReturnValue: true } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2407,7 +2408,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Generate Featured Image while the theme supports are still resolving', () => {
 		installPostTypeMock( 'post', 123, { themeSupportsResolved: false } );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
@@ -2416,7 +2417,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( "invoking the suggestion's action opens Image Studio and does not submit a prompt", () => {
 		installPostTypeMock( 'post' );
-		const openImageStudio = jest.fn();
+		const openImageStudio = vi.fn();
 		mockImageStudioActions = { openImageStudio };
 
 		const chip = getEmptyViewSuggestions().find(
@@ -2501,7 +2502,7 @@ describe( 'getEmptyViewSuggestions', () => {
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
-		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: vi.fn() } );
 		mockImageStudioActions = null;
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
@@ -2517,7 +2518,7 @@ describe( 'useSuggestions', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		mockImageStudioActions = null;
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
@@ -2528,7 +2529,7 @@ describe( 'useSuggestions', () => {
 		( mediaUpload ) => {
 			installAiEditorialReviewData();
 			mockGetBlockEditorSettings.mockReturnValue( { mediaUpload } );
-			mockImageStudioActions = { openImageStudio: jest.fn() };
+			mockImageStudioActions = { openImageStudio: vi.fn() };
 			mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
 
 			const { result } = renderHook( () => useSuggestions() );
@@ -2544,7 +2545,7 @@ describe( 'useSuggestions', () => {
 		[ {}, [ 'generate-alt-text', 'generate-image' ] ],
 	] )( 'shows permitted Image Studio suggestions for image attributes %j', ( attributes, ids ) => {
 		installAiEditorialReviewData();
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes };
 
 		const { result } = renderHook( () => useSuggestions() );
@@ -2555,7 +2556,7 @@ describe( 'useSuggestions', () => {
 	it( 'updates Image Studio suggestions when the editor upload setting changes', () => {
 		installAiEditorialReviewData();
 		mockGetBlockEditorSettings.mockReturnValue( {} );
-		mockImageStudioActions = { openImageStudio: jest.fn() };
+		mockImageStudioActions = { openImageStudio: vi.fn() };
 		mockSelectedBlock = { clientId: 'image-1', name: 'core/image', attributes: { id: 42 } };
 		const { result, rerender } = renderHook( () => useSuggestions() );
 
@@ -2563,7 +2564,7 @@ describe( 'useSuggestions', () => {
 			'generate-alt-text',
 		] );
 
-		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		mockGetBlockEditorSettings.mockReturnValue( { mediaUpload: vi.fn() } );
 		rerender();
 
 		expect( result.current.suggestions.map( ( suggestion ) => suggestion.id ) ).toEqual( [
@@ -2583,7 +2584,7 @@ describe( 'useSuggestions', () => {
 	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2601,7 +2602,7 @@ describe( 'useSuggestions', () => {
 	it( 'replaces editor-level empty-view suggestions when a block is selected', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		mockSelectedBlock = { clientId: 'b-context', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2618,7 +2619,7 @@ describe( 'useSuggestions', () => {
 	it( 'does not fall back to editor-level suggestions for unsupported selected blocks', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		mockSelectedBlock = { clientId: 'b-unsupported', name: 'core/list' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2636,7 +2637,7 @@ describe( 'useSuggestions', () => {
 				seoSuggestions: true,
 			} );
 			mockCurrentPostType = postType;
-			const onSuggestions = jest.fn();
+			const onSuggestions = vi.fn();
 
 			render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2649,7 +2650,7 @@ describe( 'useSuggestions', () => {
 	it( 'keeps post-level suggestions in the empty view only', () => {
 		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
 		installPostTypeMock( 'post' );
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2669,7 +2670,7 @@ describe( 'useSuggestions', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'wp_template';
 		mockSelectedBlock = { clientId: 'template-paragraph', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2686,7 +2687,7 @@ describe( 'useSuggestions', () => {
 	it( 'limits block-specific suggestions to maxSuggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render(
 			React.createElement( SuggestionsProbe, {
@@ -2709,7 +2710,7 @@ describe( 'useSuggestions', () => {
 		const block = { clientId: 'b-clear', name: 'core/paragraph' };
 		mockSelectedBlock = block;
 		mockBlocksByClientId[ block.clientId ] = block;
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		const { rerender } = render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2735,7 +2736,7 @@ describe( 'useSuggestions', () => {
 	it( 'tracks rendered image block transformation suggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b2', name: 'core/image' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2749,7 +2750,7 @@ describe( 'useSuggestions', () => {
 	it( 'hides review suggestions when a block is selected and block transformations are disabled', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2767,7 +2768,7 @@ describe( 'useSuggestions', () => {
 		};
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = null;
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2783,8 +2784,8 @@ describe( 'useSuggestions', () => {
 	it( 'keeps Simple Review on the backend path without opening split-screen when clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
-		const addMessage = jest.fn();
-		const clearSuggestions = jest.fn();
+		const addMessage = vi.fn();
+		const clearSuggestions = vi.fn();
 		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 
 		expect( feedbackPrompt ).toContain( 'saved title and saved block content' );
@@ -2794,7 +2795,7 @@ describe( 'useSuggestions', () => {
 			addMessage,
 			clearSuggestions,
 		} as any );
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -2814,7 +2815,7 @@ describe( 'useSuggestions', () => {
 		installPostTypeMock( 'post' );
 		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -2830,7 +2831,7 @@ describe( 'useSuggestions', () => {
 	it( 'does not open split-screen when the AI Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -2847,7 +2848,7 @@ describe( 'useSuggestions', () => {
 	it( 'exposes tone and language dropdown options on the block suggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b-options', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2907,7 +2908,7 @@ describe( 'useSuggestions', () => {
 		mockCurrentPostType = 'product';
 		installPostTypeMock( 'product' );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -2923,7 +2924,7 @@ describe( 'useSuggestions', () => {
 	it( 're-shows block suggestions when a block action completes', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2955,7 +2956,7 @@ describe( 'useSuggestions', () => {
 
 	it( 'keeps hook suggestions empty at post level after a generated title is applied', () => {
 		installAiEditorialReviewData( { optimizeTitleSuggestion: true } );
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -2985,7 +2986,7 @@ describe( 'useSuggestions', () => {
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = { clientId: 'b-proofread', name: 'core/paragraph' };
 		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
-		const onSuggestions = jest.fn();
+		const onSuggestions = vi.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
 
@@ -3013,17 +3014,17 @@ describe( 'useSuggestions', () => {
 	} );
 
 	it( 'starts block suggestion shimmer without duplicating concrete completion', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
-		const blockActionComplete = jest.fn();
+		const blockActionComplete = vi.fn();
 		window.addEventListener( 'jetpack-ai-sidebar-block-action-complete', blockActionComplete );
 		const blockEl = document.createElement( 'div' );
 		blockEl.setAttribute( 'data-block', 'b1' );
 		document.body.appendChild( blockEl );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -3060,8 +3061,8 @@ describe( 'useSuggestions', () => {
 		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
 		expect( blockActionComplete ).toHaveBeenCalledTimes( 1 );
 		window.removeEventListener( 'jetpack-ai-sidebar-block-action-complete', blockActionComplete );
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		vi.runOnlyPendingTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'does not start the selected block shimmer when AM starts processing', () => {
@@ -3108,7 +3109,7 @@ describe( 'contextProvider', () => {
 		installContextProviderMock();
 		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -3130,7 +3131,7 @@ describe( 'contextProvider', () => {
 		installContextProviderMock();
 		const proofreadPrompt = feedbackOptionPrompt( 'proofread-content' );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -3156,7 +3157,7 @@ describe( 'contextProvider', () => {
 		};
 		installPostTypeMock( 'post' );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -3181,7 +3182,7 @@ describe( 'contextProvider', () => {
 		const feedbackPrompt = feedbackOptionPrompt( 'generate-feedback' );
 		const aiEditorialReviewPrompt = feedbackOptionPrompt( 'ai-editorial-review' );
 
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		render( React.createElement( SuggestionsProbe, { onSuggestions: vi.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
@@ -3213,7 +3214,7 @@ describe( 'toolProvider', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
 	} );
@@ -3244,7 +3245,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'emits an updated outcome with a restorable block checkpoint', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3259,7 +3260,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-update-block',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			const result = await pending;
 
 			expect( result ).toMatchObject( {
@@ -3299,7 +3300,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'checkpoints the re-resolved clientId after a delayed block reparse', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
 				'first-live-client-id': {
 					name: 'core/paragraph',
@@ -3307,7 +3308,7 @@ describe( 'toolProvider', () => {
 				},
 			} );
 			const checkpoint = useCheckpoint();
-			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 			const abilities = await toolProvider.getAbilities();
 			const updateBlock = abilities.find(
 				( ability: any ) => ability.name === 'wpcom/update-block-content'
@@ -3325,7 +3326,7 @@ describe( 'toolProvider', () => {
 				attributes: { ...blocks[ 'first-live-client-id' ].attributes },
 			};
 			delete blocks[ 'first-live-client-id' ];
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			const result = await pending;
 
 			expect( result ).toMatchObject( {
@@ -3352,7 +3353,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'swaps a block checkpoint between the updated and original content', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3366,7 +3367,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-swap-block',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			await pending;
 
 			expect( checkpoint.canSwapCheckpoint( 'call-swap-block' ) ).toBe( true );
@@ -3384,7 +3385,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'does not swap a block checkpoint after a later edit', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3398,7 +3399,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-stale-swap',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			await pending;
 
 			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later edit.';
@@ -3411,7 +3412,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'does not swap a block checkpoint after another block is added', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3425,7 +3426,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-block-added-after-edit',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			await pending;
 
 			blocks[ 'new-paragraph-client-id' ] = {
@@ -3448,7 +3449,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'does not swap a block checkpoint without a safe editor signature', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3465,7 +3466,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-unsafe-editor-signature',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			await pending;
 
 			expect( checkpoint.canSwapCheckpoint( 'call-unsafe-editor-signature' ) ).toBe( false );
@@ -3480,7 +3481,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'does not redo a reverted block checkpoint after another block is added', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3494,7 +3495,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-block-added-after-undo',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			await pending;
 			await checkpoint.swapCheckpoint( 'call-block-added-after-undo' );
 
@@ -3517,7 +3518,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'surfaces a failed block checkpoint restore', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates, blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3532,7 +3533,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-update-block',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			await pending;
 
 			blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content = 'A later block edit.';
@@ -3553,7 +3554,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'emits a no-change outcome without mutating or checkpointing the block', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blockUpdates } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3568,7 +3569,7 @@ describe( 'toolProvider', () => {
 				toolCallId: 'call-no-block-change',
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			const result = await pending;
 			const agentMessage = JSON.parse( result.agentMessage );
 
@@ -3589,7 +3590,7 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'surfaces a delayed block update failure without checkpointing', async () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			const { blocks } = installWpDataMockWithBlockEditor();
 			const checkpoint = useCheckpoint();
 			const abilities = await toolProvider.getAbilities();
@@ -3605,7 +3606,7 @@ describe( 'toolProvider', () => {
 				toolId: UPDATE_BLOCK_CONTENT_TOOL_ID,
 			} );
 			delete blocks[ '550e8400-e29b-41d4-a716-446655440000' ];
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			const result = await pending;
 
 			expect( result ).toMatchObject( {
@@ -3673,12 +3674,12 @@ describe( 'toolProvider', () => {
 				type: 'color-picker',
 				props: { colors: [] },
 			};
-			const executeAbility = jest.fn().mockResolvedValue( {
+			const executeAbility = vi.fn().mockResolvedValue( {
 				result: 'Big Sky component displayed successfully',
 				returnToAgent: false,
 			} );
 			( window as any ).wp.abilities = {
-				getAbilities: jest.fn().mockResolvedValue( [] ),
+				getAbilities: vi.fn().mockResolvedValue( [] ),
 				executeAbility,
 			};
 
@@ -3699,9 +3700,9 @@ describe( 'toolProvider', () => {
 			[ 'empty', '' ],
 			[ 'whitespace-only', '   ' ],
 		] )( 'does not delegate %s legacy show-component callbacks', async ( _label, type ) => {
-			const executeAbility = jest.fn();
+			const executeAbility = vi.fn();
 			( window as any ).wp.abilities = {
-				getAbilities: jest.fn().mockResolvedValue( [] ),
+				getAbilities: vi.fn().mockResolvedValue( [] ),
 				executeAbility,
 			};
 
@@ -3720,9 +3721,9 @@ describe( 'toolProvider', () => {
 		} );
 
 		it( 'omits server-registered abilities from the registry', async () => {
-			const clientCallback = jest.fn();
+			const clientCallback = vi.fn();
 			( window as any ).wp.abilities = {
-				getAbilities: jest.fn().mockResolvedValue( [
+				getAbilities: vi.fn().mockResolvedValue( [
 					{ name: 'big-sky/capture-canvas', category: 'big-sky' },
 					{
 						name: 'big-sky/stream-page-design',
@@ -3736,7 +3737,7 @@ describe( 'toolProvider', () => {
 					{ name: 'wpcom/get-posts', meta: { show_in_rest: true, public: false } },
 					{ name: 'core/get-site-info', meta: { show_in_rest: true, public: true } },
 				] ),
-				executeAbility: jest.fn(),
+				executeAbility: vi.fn(),
 			};
 
 			const abilities = await toolProvider.getAbilities();
@@ -4076,7 +4077,7 @@ describe( 'toolProvider', () => {
 				type: 'color-picker',
 				props: { colors: [] },
 			};
-			const executeAbility = jest.fn().mockResolvedValue( {
+			const executeAbility = vi.fn().mockResolvedValue( {
 				result: 'Big Sky component displayed successfully',
 				returnToAgent: false,
 			} );
@@ -4095,7 +4096,7 @@ describe( 'toolProvider', () => {
 			[ 'empty', '' ],
 			[ 'whitespace-only', '   ' ],
 		] )( 'does not delegate %s legacy show-component calls to Big Sky', async ( _label, type ) => {
-			const executeAbility = jest.fn();
+			const executeAbility = vi.fn();
 			( window as any ).wp.abilities = { executeAbility };
 
 			const { result } = await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
@@ -4408,18 +4409,18 @@ function installWpDataMockWithBlockEditor(
 
 describe( 'applyReviewEdit', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		document.body.innerHTML = '';
 		delete ( window as any ).wp;
 	} );
 
 	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor();
-		const addMessage = jest.fn();
+		const addMessage = vi.fn();
 		useAbilitiesSetup( {
 			addMessage,
 			clearSuggestions: () => undefined,
@@ -4427,7 +4428,7 @@ describe( 'applyReviewEdit', () => {
 
 		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
 		// handleUpdateBlockContent uses an 800ms setTimeout before committing.
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4458,7 +4459,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'online by 1 May'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4489,7 +4490,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'Outdoor map activity'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4525,7 +4526,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'citation'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4579,7 +4580,7 @@ describe( 'applyReviewEdit', () => {
 		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
 
 		shouldApply = false;
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4592,7 +4593,7 @@ describe( 'applyReviewEdit', () => {
 
 	it( 'returns the rationale as an agent message so AM can attach feedback actions', async () => {
 		installWpDataMockWithBlockEditor();
-		const addMessage = jest.fn();
+		const addMessage = vi.fn();
 		useAbilitiesSetup( {
 			addMessage,
 			clearSuggestions: () => undefined,
@@ -4603,7 +4604,7 @@ describe( 'applyReviewEdit', () => {
 			'new text',
 			'Follows Copy guideline on specific dates.'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( addMessage ).not.toHaveBeenCalled();
@@ -4612,14 +4613,14 @@ describe( 'applyReviewEdit', () => {
 
 	it( 'does not emit a chat message when summary is omitted', async () => {
 		installWpDataMockWithBlockEditor();
-		const addMessage = jest.fn();
+		const addMessage = vi.fn();
 		useAbilitiesSetup( {
 			addMessage,
 			clearSuggestions: () => undefined,
 		} as any );
 
 		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'only-content' );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		await promise;
 
 		expect( addMessage ).not.toHaveBeenCalled();
@@ -4640,7 +4641,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'hello world this is my firsst post'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		await first;
 
 		const second = applyReviewEdit(
@@ -4649,7 +4650,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'Hello world, this is my first post.'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await second;
 
 		expect( result ).toMatchObject( {
@@ -4695,7 +4696,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'voted last Tuesday'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4726,7 +4727,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			"With every bite, you'll taste joyful memories. sss"
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4752,7 +4753,7 @@ describe( 'applyReviewEdit', () => {
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
 
 		const promise = applyReviewEdit( 'WJZs', '', undefined, 'sss' );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4776,7 +4777,7 @@ describe( 'applyReviewEdit', () => {
 			},
 		} );
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		const promise = applyReviewEdit(
 			'stale-client-id',
@@ -4784,7 +4785,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'hello world this is my firsst post'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4823,7 +4824,7 @@ describe( 'applyReviewEdit', () => {
 			}
 		);
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		const promise = applyReviewEdit(
 			'stale-page-client-id',
@@ -4831,7 +4832,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			"I write this blog. If you're a soul-search like me, read on. aaaa bbbb cccc ddd"
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4864,7 +4865,7 @@ describe( 'applyReviewEdit', () => {
 		);
 		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
 			'Updated intro. The board voted last Tuesday on the proposal.';
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4888,7 +4889,7 @@ describe( 'applyReviewEdit', () => {
 			},
 		} );
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		const promise = applyReviewEdit(
 			'550e8400-e29b-41d4-a716-446655440000',
@@ -4898,7 +4899,7 @@ describe( 'applyReviewEdit', () => {
 		);
 		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
 			'The board voted yesterday on the proposal.';
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4920,7 +4921,7 @@ describe( 'applyReviewEdit', () => {
 			},
 		} );
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		const promise = applyReviewEdit(
 			'550e8400-e29b-41d4-a716-446655440000',
@@ -4928,7 +4929,7 @@ describe( 'applyReviewEdit', () => {
 			undefined,
 			'span that is not in the block'
 		);
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
@@ -4959,7 +4960,7 @@ describe( 'applyReviewEdit', () => {
 				addMessage: () => undefined,
 				clearSuggestions: () => undefined,
 			} as any );
-			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+			const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 			const promise = applyReviewEdit(
 				'550e8400-e29b-41d4-a716-446655440000',
@@ -4967,7 +4968,7 @@ describe( 'applyReviewEdit', () => {
 				undefined,
 				currentText
 			);
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 			const result = await promise;
 
 			expect( result ).toMatchObject( {
@@ -4993,7 +4994,7 @@ describe( 'applyReviewEdit', () => {
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
 
 		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( { success: false } );
@@ -5008,14 +5009,14 @@ describe( 'applyReviewEdit', () => {
 		} as any );
 
 		const promise = applyReviewEdit( '', 'new text' );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( { success: false } );
 	} );
 
 	it( 'returns a failed result when block editor dispatch throws', async () => {
-		const select = jest.fn();
+		const select = vi.fn();
 		( window as any ).wp = {
 			data: {
 				select,
@@ -5039,7 +5040,7 @@ describe( 'applyReviewEdit', () => {
 	} );
 
 	it( 'returns a failed result when block editor select throws during snapshot lookup', async () => {
-		const updateBlockAttributes = jest.fn();
+		const updateBlockAttributes = vi.fn();
 		( window as any ).wp = {
 			data: {
 				select: ( store: string ) => {
@@ -5069,7 +5070,7 @@ describe( 'applyReviewEdit', () => {
 	} );
 
 	it( 'returns a failed result when block editor mutation throws', async () => {
-		const updateBlockAttributes = jest.fn( () => {
+		const updateBlockAttributes = vi.fn( () => {
 			throw new Error( 'mutation failed' );
 		} );
 		( window as any ).wp = {
@@ -5092,7 +5093,7 @@ describe( 'applyReviewEdit', () => {
 		};
 
 		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		const result = await promise;
 
 		expect( result ).toMatchObject( {
