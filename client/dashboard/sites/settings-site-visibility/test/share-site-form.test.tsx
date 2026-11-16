@@ -19,8 +19,6 @@ const site = {
 } as unknown as Site;
 
 describe( '<ShareSiteForm>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	// A free preview has no preview-links plan feature: its link is the one the server reports for it.
 	test.each( [
 		{ isPreview: true, features: [], hasToggle: false },
@@ -48,7 +46,7 @@ describe( '<ShareSiteForm>', () => {
 				/>
 			);
 
-			expect( await screen.findByDisplayValue( /share=abc/ ) ).toBeInTheDocument();
+			expect( await screen.findByDisplayValue( /share=abc/ ) ).toBeVisible();
 			expect( !! screen.queryByRole( 'checkbox', { name: 'Enable preview link' } ) ).toBe(
 				hasToggle
 			);

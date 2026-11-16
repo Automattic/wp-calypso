@@ -114,7 +114,7 @@ describe( '<PlanCard>', () => {
 
 		render( <PlanCard site={ preview } /> );
 
-		expect( await screen.findByText( /deleted on December 16, 2026/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( /deleted on December 16, 2026/ ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Preview/ } ) ).toHaveAttribute(
 			'href',
 			expect.stringContaining( '/setup/launch-site' )
