@@ -29,14 +29,14 @@
 	--dashboard__text-muted-color: #757575;
 	--dashboard-subtle__color: var( --dashboard__text-muted-color );
 	--dashboard-surface__background-color: var( --wpds-color-background-surface-neutral-strong );
-	--dashboard-surface__border-color: #{$gray-200};
+	--dashboard-surface__border-color: var( --wpds-color-stroke-surface-neutral );
 
 	// Header bar
 	--dashboard-header__background-color: color-mix( in srgb, var( --wpds-color-background-surface-neutral ) 90%, transparent );
 	--dashboard-header__support-background-color: rgba(252, 165, 0, 0.5);
 	--dashboard-header__color: var( --wpds-color-foreground-content-neutral );
 	--dashboard-header__border-color: var( --wpds-color-stroke-surface-neutral-weak );
-	--dashboard-header__divider-color: #{$gray-200};
+	--dashboard-header__divider-color: var( --wpds-color-stroke-surface-neutral );
 
 	// Menu
 	--dashboard-menu-item__color: var( --wpds-color-foreground-interactive-neutral-weak );
