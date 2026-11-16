@@ -1,5 +1,11 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { EmailAccount, Mailbox, TitanControlPanelContext, TitanDkimRecord } from './types';
+import type {
+	EmailAccount,
+	Mailbox,
+	TitanControlPanelContext,
+	TitanDkimRecord,
+	TitanDkimStatus,
+} from './types';
 
 export function fetchMailboxes( siteId: number ): Promise< Mailbox[] > {
 	return wpcom.req
@@ -47,4 +53,14 @@ export function fetchTitanDkimRecord( domain: string ): Promise< TitanDkimRecord
 		path: `/emails/titan/${ encodeURIComponent( domain ) }/dkim-record`,
 		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export function fetchTitanDkimStatus( { force = false } = {} ): Promise< TitanDkimStatus[] > {
+	return wpcom.req.get(
+		{
+			path: '/emails/titan/dkim-status',
+			apiNamespace: 'wpcom/v2',
+		},
+		force ? { force: 'true' } : {}
+	);
 }
