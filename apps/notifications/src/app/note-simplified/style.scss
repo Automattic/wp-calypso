@@ -342,7 +342,7 @@
 
 // A post's headings step down from its 17px title: h1 and h2 a size above the
 // body, h3 and h4 at the body's size, and h5 and h6 a size below, in gray.
-.wpnc-simplified .wpnc-simplified__post-body.wpnc__note .wpnc__body .wpnc__body-content {
+.wpnc-simplified .wpnc__note.wpnc__new_post .wpnc__body .wpnc__body-content {
 	:is(h1, h2, .wpnc__h1, .wpnc__h2) {
 		font-size: 15px;
 		line-height: 22px;
@@ -356,10 +356,6 @@
 		@include ui-mixins.when-dark-theme {
 			color: var(--wp-components-color-gray-700, #{$gray-700});
 		}
-	}
-
-	p {
-		text-wrap: pretty;
 	}
 
 	// A thinner, lower underline, so a paragraph full of links stays readable.
@@ -377,8 +373,7 @@
 
 	// Spacer blocks are sized for the post's page, so they leave large gaps here.
 	// The separator takes the space above a heading on each side instead.
-	.wp-block-spacer,
-	p:empty {
+	.wp-block-spacer {
 		display: none;
 	}
 

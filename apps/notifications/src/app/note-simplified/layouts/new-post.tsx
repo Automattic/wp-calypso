@@ -48,7 +48,7 @@ export default function NewPostNote( { note }: { note: Note } ) {
 					</a>
 				</Text>
 			) }
-			<Body className="wpnc-simplified__post-body" note={ note } hidePeople={ actorCount === 1 } />
+			<Body note={ note } hidePeople={ actorCount === 1 } />
 		</>
 	);
 }

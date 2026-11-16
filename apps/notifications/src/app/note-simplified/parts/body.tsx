@@ -9,10 +9,8 @@ export default function Body( {
 	hidePeople = false,
 	hidePost = false,
 	hideText = false,
-	className,
 }: {
 	note: Note;
-	className?: string;
 	hidePeople?: boolean;
 	hidePost?: boolean;
 	hideText?: boolean;
@@ -37,11 +35,7 @@ export default function Body( {
 		// Every type class but the comment's, which would bring in the detailed layout's
 		// comment bar.
 		<div
-			className={ clsx(
-				'wpnc__note',
-				{ [ `wpnc__${ note.type }` ]: note.type !== 'comment' },
-				className
-			) }
+			className={ clsx( 'wpnc__note', { [ `wpnc__${ note.type }` ]: note.type !== 'comment' } ) }
 		>
 			<NoteBody note={ bodyNote } hidePendingApproval />
 		</div>
