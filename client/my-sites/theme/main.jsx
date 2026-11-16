@@ -1228,7 +1228,7 @@ class ThemeSheet extends Component {
 
 			const { isAtomic, siteSlug, themeId } = this.props;
 			if ( ! isAtomic ) {
-				const newSiteSlug = siteSlug.replace( /\.wordpress\.com/, '.wpcomstaging.com' );
+				const newSiteSlug = siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' );
 				return page( `/theme/${ themeId }/${ newSiteSlug }` );
 			}
 		}
