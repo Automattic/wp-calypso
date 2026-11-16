@@ -122,7 +122,7 @@ const testBuildTools = withUnitTestInfo(
 	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
 );
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
-const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
+const testApps = withVitestInfo( 'test-apps --maxWorkers=4', 'test_apps' );
 
 const testPackagesVitest = withVitestInfo( 'test-packages --maxWorkers=4', 'test_packages_vitest' );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
@@ -174,7 +174,7 @@ try {
 		await runTask( viteCheck );
 		await runVitestTask( testPackagesVitest );
 		await runTask( testWorkspaces );
-		await runTask( testApps );
+		await runVitestTask( testApps );
 	} )();
 
 	await completeTasks( [ testClientTask, testDashboardTask, tscTasks, otherTestTasks ] );

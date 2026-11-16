@@ -40,6 +40,7 @@ const handFixes = [];
 for ( const file of files ) {
 	const src = fs.readFileSync( file, 'utf8' );
 	const kind = file.endsWith( 'x' ) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+	const isTypeScript = /\.tsx?$/.test( file );
 	const sf = ts.createSourceFile( file, src, ts.ScriptTarget.Latest, true, kind );
 	const edits = [];
 	const vitestImports = new Set();
@@ -148,13 +149,33 @@ for ( const file of files ) {
 
 	const typeByPath = ( call ) => {
 		const [ arg ] = call.arguments;
-		if ( ! call.typeArguments && arg && ts.isStringLiteral( arg ) ) {
+		if ( isTypeScript && ! call.typeArguments && arg && ts.isStringLiteral( arg ) ) {
 			const at = call.expression.end;
 			edits.push( { start: at, end: at, text: `< typeof import( '${ arg.text }' ) >` } );
 		}
 	};
 
 	const visit = ( node ) => {
+		// Vitest has no `%p` in `.each` titles; `%o` formats values the same way.
+		if (
+			ts.isCallExpression( node ) &&
+			ts.isCallExpression( node.expression ) &&
+			ts.isPropertyAccessExpression( node.expression.expression ) &&
+			node.expression.expression.name.text === 'each'
+		) {
+			const [ title ] = node.arguments;
+			if (
+				title &&
+				( ts.isStringLiteral( title ) || ts.isNoSubstitutionTemplateLiteral( title ) ) &&
+				title.text.includes( '%p' )
+			) {
+				edits.push( {
+					start: title.getStart( sf ),
+					end: title.end,
+					text: title.getText( sf ).replaceAll( '%p', '%o' ),
+				} );
+			}
+		}
 		if ( isMockCall( node ) ) {
 			wrapNonObjectFactory( node );
 			// Vitest has no virtual mocks; it mocks any specifier it's given.

@@ -13,7 +13,7 @@ describe( 'getLinkHtml', () => {
 		expect( link.textContent ).toBe( 'View <b>"it"</b>' );
 	} );
 
-	it.each( [ 'javascript:alert(1)', undefined ] )( 'returns null for %p', ( url ) => {
+	it.each( [ 'javascript:alert(1)', undefined ] )( 'returns null for %o', ( url ) => {
 		expect( getLinkHtml( url, 'View' ) ).toBeNull();
 	} );
 } );
