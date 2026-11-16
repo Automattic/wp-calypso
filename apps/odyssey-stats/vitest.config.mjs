@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { calypsoTestConfig } from '../../build-tools/vite/test.mjs';
 
 export default calypsoTestConfig( {
@@ -8,10 +7,10 @@ export default calypsoTestConfig( {
 		alias: [
 			{
 				find: /^odyssey-wp-components-style$/,
-				replacement: path.join(
-					import.meta.dirname,
-					'../../node_modules/@wordpress/components/build-style/style.css'
-				),
+				replacement: new URL(
+					'../../node_modules/@wordpress/components/build-style/style.css',
+					import.meta.url
+				).pathname,
 			},
 		],
 	},
