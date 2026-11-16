@@ -1,5 +1,6 @@
 import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { lock, published } from '@wordpress/icons';
@@ -108,30 +109,34 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 }
 
 // A preview is shared, not set up: it stays Coming Soon until it is bought, and visitors reach it
-// through the share link the server gives it once it is built. The card copies that link.
+// through the share link the server gives it once it is built.
 function VisibilityCardPreview( { site, shareUrl }: { site: Site; shareUrl?: string } ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
-
-	if ( ! shareUrl ) {
-		return (
-			<OverviewCard
-				{ ...CARD_PROPS }
-				heading={ __( 'Coming soon' ) }
-				description={ __( 'Share it with a preview link.' ) }
-				link={ getSiteVisibilityURL( site ) }
-			/>
-		);
-	}
 
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Coming soon' ) }
-			description={ __( 'Visitors see a Coming Soon page. Click to copy your share link.' ) }
-			onClick={ () => {
-				navigator.clipboard.writeText( shareUrl );
-				createSuccessNotice( __( 'Copied the share link to clipboard.' ), { type: 'snackbar' } );
-			} }
+			description={
+				shareUrl ? __( 'Visitors see a Coming Soon page.' ) : __( 'Share it with a preview link.' )
+			}
+			link={ getSiteVisibilityURL( site ) }
+			action={
+				shareUrl && (
+					<Button
+						variant="primary"
+						size="compact"
+						onClick={ () => {
+							navigator.clipboard.writeText( shareUrl );
+							createSuccessNotice( __( 'Copied the share link to clipboard.' ), {
+								type: 'snackbar',
+							} );
+						} }
+					>
+						{ __( 'Copy share link' ) }
+					</Button>
+				)
+			}
 		/>
 	);
 }

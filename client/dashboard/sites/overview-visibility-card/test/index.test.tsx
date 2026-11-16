@@ -22,7 +22,7 @@ const preview = {
 describe( '<VisibilityCard>', () => {
 	afterEach( () => nock.cleanAll() );
 
-	test( 'a built preview site copies the share link the server gives it', async () => {
+	test( 'a built preview site links to its visibility settings and copies the share link the server gives it', async () => {
 		const shareUrl = 'https://test.wordpress.com/?share=abc';
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/wow-funnel/pending' )
@@ -34,10 +34,14 @@ describe( '<VisibilityCard>', () => {
 		const user = userEvent.setup();
 		const writeText = vi.spyOn( navigator.clipboard, 'writeText' );
 
-		const { findByText, queryByText } = render( <VisibilityCard site={ preview } /> );
+		const { findByRole, getByRole, queryByText } = render( <VisibilityCard site={ preview } /> );
 
-		await user.click( await findByText( /Click to copy your share link/ ) );
+		await user.click( await findByRole( 'button', { name: 'Copy share link' } ) );
 		expect( writeText ).toHaveBeenCalledWith( shareUrl );
+		expect( getByRole( 'link' ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'site-visibility' )
+		);
 		expect( queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
 	} );
 } );
