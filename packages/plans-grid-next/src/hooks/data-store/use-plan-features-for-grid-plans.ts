@@ -1,11 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_ADVANCED_SEO_TOOLS,
 	FEATURE_BLAZE_AD_CREDITS,
 	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_DEV_TOOLS,
 	FEATURE_EARLY_ONBOARDING_CALLS,
 	FEATURE_EMAIL_MARKETING,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
@@ -70,14 +68,6 @@ function getPricingDifferentiationFeatureBadgeText(
 	return undefined;
 }
 
-// Dev tools no longer set Business apart once they're on every paid plan, so lead with the
-// staging site instead.
-function getDevToolsPromoFeature(): Feature {
-	return isEnabled( 'hosting/dev-tools-all-paid-plans' )
-		? FEATURE_SITE_STAGING_SITES
-		: FEATURE_DEV_TOOLS;
-}
-
 function getPlansGridRedesignFeatureSlugsForPlan(
 	planSlug: string,
 	defaultFeatureSlugs: Feature[]
@@ -115,7 +105,7 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 			FEATURE_EMAIL_MARKETING,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_REALTIME_BACKUPS_JP,
-			getDevToolsPromoFeature(),
+			FEATURE_SITE_STAGING_SITES,
 			FEATURE_EARLY_ONBOARDING_CALLS,
 		];
 	}
@@ -137,7 +127,7 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 			FEATURE_EMAIL_MARKETING,
 			FEATURE_BLAZE_AD_CREDITS,
 			FEATURE_REALTIME_BACKUPS_JP,
-			getDevToolsPromoFeature(),
+			FEATURE_SITE_STAGING_SITES,
 			FEATURE_EARLY_ONBOARDING_CALLS,
 			FEATURE_WOOCOMMERCE_HOSTING,
 			FEATURE_SELL_60_COUNTRIES,
