@@ -4,7 +4,9 @@
 @import "@wordpress/base-styles/mixins";
 
 .dashboard-overview-card {
-	position: relative;
+	&--has-action {
+		position: relative;
+	}
 
 	&--disabled {
 		background-color: transparent !important;

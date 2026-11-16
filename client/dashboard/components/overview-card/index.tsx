@@ -283,6 +283,7 @@ export default function OverviewCard( {
 				[ `dashboard-overview-card--${ intent }` ]: intent,
 				'dashboard-overview-card--disabled': isLoading || disabled,
 				'dashboard-overview-card--has-bottom': bottom,
+				'dashboard-overview-card--has-action': action,
 			} ) }
 		>
 			<CardBody>
