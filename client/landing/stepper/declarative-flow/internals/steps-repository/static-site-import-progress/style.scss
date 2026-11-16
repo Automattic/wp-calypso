@@ -18,8 +18,8 @@
 		height: 100%;
 		object-fit: cover;
 		object-position: top;
-		opacity: 0.3;
-		filter: blur( 16px );
+		opacity: 0.15;
+		filter: blur(8px);
 		// The blur fades the edges in, so spread past them.
 		transform: scale( 1.1 );
 	}
