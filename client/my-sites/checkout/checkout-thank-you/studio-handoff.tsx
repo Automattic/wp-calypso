@@ -16,7 +16,7 @@ interface StudioHandoffProps {
 /**
  * Hands the user back to the Studio app after a purchase they started there.
  *
- * Renders nothing at all unless the thank-you URL carries a valid `studioSiteId`, so ordinary
+ * Renders nothing at all unless the thank-you URL carries valid Studio params, so ordinary
  * checkouts are unaffected.
  *
  * The surrounding page waits for the receipt to load, so the handoff fires after that rather than

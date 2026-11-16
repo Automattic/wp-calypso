@@ -13,7 +13,7 @@ import type { FunctionComponent } from 'react';
 import './style.scss';
 
 interface StudioReturnProps {
-	studioSiteId: string;
+	studioSiteId?: string;
 	studioReturnTo?: string;
 }
 

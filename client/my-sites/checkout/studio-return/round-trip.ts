@@ -14,31 +14,35 @@ function isUsableStudioId( value: unknown ): value is string {
 }
 
 export interface StudioCheckoutParams {
-	studioSiteId: string;
+	studioSiteId?: string;
 	studioReturnTo?: string;
 }
 
 /**
  * Reads the Studio params off a checkout URL, or returns null if this is not a Studio checkout.
  *
- * `studioSiteId` alone is the trigger. It is deliberately not gated on `ref=studio`: `ref` is a
- * generic attribution param that a dozen unrelated features also read, whereas `studioSiteId`
- * appears only in the two Studio integrations.
+ * Either `studioSiteId` or `studioReturnTo` is the trigger: Studio omits the site id when it sends
+ * the user to checkout from outside any site, such as its settings. It is deliberately not gated on
+ * `ref=studio`: `ref` is a generic attribution param that a dozen unrelated features also read,
+ * whereas the Studio params appear only in the Studio integrations.
  */
 export function getStudioCheckoutParams(
 	query: Record< string, unknown > | undefined
 ): StudioCheckoutParams | null {
 	const studioSiteId = query?.studioSiteId;
-
-	if ( ! isUsableStudioId( studioSiteId ) ) {
-		return null;
-	}
-
 	const studioReturnTo = query?.studioReturnTo;
-
-	return {
-		studioSiteId,
+	const params = {
+		...( isUsableStudioId( studioSiteId ) ? { studioSiteId } : {} ),
 		...( isUsableStudioId( studioReturnTo ) ? { studioReturnTo } : {} ),
+	};
+
+	return Object.keys( params ).length > 0 ? params : null;
+}
+
+function toStudioQueryArgs( { studioSiteId, studioReturnTo }: StudioCheckoutParams ) {
+	return {
+		...( studioSiteId ? { studioSiteId } : {} ),
+		...( studioReturnTo ? { studioReturnTo } : {} ),
 	};
 }
 
@@ -51,12 +55,12 @@ export function getStudioCheckoutParams(
  */
 export function buildStudioRedirectTo(
 	siteSlug: string | undefined,
-	{ studioSiteId, studioReturnTo }: StudioCheckoutParams
+	studioCheckoutParams: StudioCheckoutParams
 ): string {
-	return addQueryArgs( `/checkout/thank-you/${ siteSlug || 'no-site' }/:receiptId`, {
-		studioSiteId,
-		...( studioReturnTo ? { studioReturnTo } : {} ),
-	} );
+	return addQueryArgs(
+		`/checkout/thank-you/${ siteSlug || 'no-site' }/:receiptId`,
+		toStudioQueryArgs( studioCheckoutParams )
+	);
 }
 
 /**
@@ -64,12 +68,6 @@ export function buildStudioRedirectTo(
  *
  * A dedicated page rather than the thank-you page, because there is no receipt to show.
  */
-export function buildStudioCancelTo( {
-	studioSiteId,
-	studioReturnTo,
-}: StudioCheckoutParams ): string {
-	return addQueryArgs( STUDIO_RETURN_PATH, {
-		studioSiteId,
-		...( studioReturnTo ? { studioReturnTo } : {} ),
-	} );
+export function buildStudioCancelTo( studioCheckoutParams: StudioCheckoutParams ): string {
+	return addQueryArgs( STUDIO_RETURN_PATH, toStudioQueryArgs( studioCheckoutParams ) );
 }
