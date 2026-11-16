@@ -117,11 +117,6 @@ const tscCommands = [
 //
 // --workerIdleMemoryLimit=512MB is added because of https://github.com/jestjs/jest/issues/11956
 const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB' );
-// Keeps the `test-packages` testId so the packages' Jest test names in TeamCity stay the same.
-const testPackages = {
-	...withUnitTestInfo( 'test-packages:jest --maxWorkers=4 --workerIdleMemoryLimit=1GB' ),
-	testId: 'test-packages',
-};
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testBuildTools = withUnitTestInfo(
 	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
@@ -129,10 +124,7 @@ const testBuildTools = withUnitTestInfo(
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
-const testPackagesVitest = withVitestInfo(
-	'test-packages:vitest --maxWorkers=4',
-	'test_packages_vitest'
-);
+const testPackagesVitest = withVitestInfo( 'test-packages --maxWorkers=4', 'test_packages_vitest' );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
 
 // Checks for drift between the webpack and Vite configurations while both bundlers live in the repo:
@@ -177,7 +169,6 @@ try {
 
 	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
 	const otherTestTasks = ( async () => {
-		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
 		await runTask( viteCheck );
