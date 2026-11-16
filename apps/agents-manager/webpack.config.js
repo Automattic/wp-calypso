@@ -151,7 +151,7 @@ function getReaderConfig( options = {} ) {
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
-		entry: { 'reader-chat': path.join( __dirname, 'reader-chat.js' ) },
+		entry: { 'reader-chat': path.join( __dirname, 'reader-chat.jsx' ) },
 		output: {
 			...webpackConfig.output,
 			path: outputPath,

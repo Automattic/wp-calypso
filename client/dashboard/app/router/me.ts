@@ -60,8 +60,11 @@ import {
 import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
+import type { SnackbarBackTo } from '../snackbar-back-button';
 import type { Purchase } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
+
+type DomainBackTo = Extract< SnackbarBackTo, 'site-overview' | 'site-domains' >;
 
 export const meRoute = createRoute( {
 	head: () => ( {
@@ -486,8 +489,20 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+	validateSearch: (
+		search
+	): {
+		intent?: CancelIntent;
+		additionalPurchaseIds?: string;
+		back_to?: 'domain';
+		domain_back_to?: DomainBackTo;
+	} => {
 		return {
+			...( search.back_to === 'domain' ? { back_to: search.back_to } : {} ),
+			...( search.back_to === 'domain' &&
+			( search.domain_back_to === 'site-overview' || search.domain_back_to === 'site-domains' )
+				? { domain_back_to: search.domain_back_to }
+				: {} ),
 			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
 			search.intent === 'auto-renew'

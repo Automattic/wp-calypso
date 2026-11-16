@@ -1,27 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Default mock implementations
- */
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-} ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn( ( selector ) => selector() ),
-} ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
-	},
-	AddOns: {
-		useStorageAddOns: jest.fn(),
-	},
-} ) );
-
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -37,8 +16,34 @@ import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { render } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import BillingTimeframe from '../shared/billing-timeframe';
+
+/**
+ * Default mock implementations
+ */
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
+} ) );
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useSelector: vi.fn( ( selector ) => selector() ),
+} ) );
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	Plans: {
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
+	},
+	AddOns: {
+		useStorageAddOns: vi.fn(),
+	},
+} ) );
 
 describe( 'BillingTimeframe', () => {
 	const defaultProps = {
@@ -46,7 +51,7 @@ describe( 'BillingTimeframe', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should show savings with yearly when plan is monthly', () => {

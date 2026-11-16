@@ -35,3 +35,23 @@ export const Default: Story = {
 		),
 	},
 };
+
+export const TopAlignedToggle: Story = {
+	args: {
+		header: (
+			<SectionHeader
+				level={ 3 }
+				title="Get up to 6 months of free Pressable hosting on new Signature and Premium plans"
+				description="Automattic for Agencies & Pressable"
+			/>
+		),
+		toggleLabel: 'Toggle card content visibility',
+		toggleAlignment: 'top',
+		children: (
+			<Text>
+				A header that wraps keeps the small toggle level with its first line instead of centred on
+				the whole header.
+			</Text>
+		),
+	},
+};

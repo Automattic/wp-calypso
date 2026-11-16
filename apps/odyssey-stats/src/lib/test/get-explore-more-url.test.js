@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import getExploreMoreUrl from '../get-explore-more-url';
 

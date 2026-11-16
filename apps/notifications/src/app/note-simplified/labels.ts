@@ -4,6 +4,20 @@ import type { Note } from '../types';
 const STAR_NOTICON = '\uf408';
 const REBLOG_NOTICON = '\uf805';
 
+/**
+ * Sets a title the server sends in title case, like "New Post" or "On This Day", in the
+ * panel's sentence case. Only English titles are changed, since other languages have
+ * their own rules, and words with capitals inside them, like "WordPress", are kept.
+ */
+export const toSentenceCase = ( title: string, locale: string ) => {
+	if ( ! locale.startsWith( 'en' ) || ! /^[A-Z][a-z]*( [A-Z][a-z]*)+$/.test( title ) ) {
+		return title;
+	}
+
+	const [ first, ...rest ] = title.split( ' ' );
+	return [ first, ...rest.map( ( word ) => word.toLowerCase() ) ].join( ' ' );
+};
+
 export const getTemporaryNoteTitle = ( note: Note ) => {
 	switch ( note.type ) {
 		case 'like':

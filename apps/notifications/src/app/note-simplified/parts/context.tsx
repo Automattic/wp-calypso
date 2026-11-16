@@ -7,7 +7,7 @@ export default function Context( { note, quote = false }: { note: Note; quote?: 
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } url={ comment?.url } /> }
+			{ post && <PostCard post={ post } site={ site } /> }
 			{ comment && (
 				<Thread>
 					{ quote ? (

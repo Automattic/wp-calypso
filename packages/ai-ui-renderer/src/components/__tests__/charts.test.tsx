@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { BASIC_CATALOG_ID, CHARTS_CATALOG_ID } from '../../capabilities';
 import { CHARTS_CATALOG, createInteractiveUiCatalog } from '../../utils/catalog';
 import { createInteractiveUiRuntime } from '../../utils/runtime';
@@ -6,7 +7,7 @@ import { InteractiveUiSurface } from '../interactive-ui-surface';
 import type { InteractiveUiRuntime } from '../../utils/runtime';
 
 let runtime: InteractiveUiRuntime;
-let onError: jest.Mock;
+let onError: Mock;
 
 const CHART_MODULES_LOAD_TIMEOUT_MS = 30000;
 
@@ -21,11 +22,11 @@ beforeAll( async () => {
 beforeEach( () => {
 	// Dates follow the page's language, so the tests don't depend on the machine's.
 	document.documentElement.lang = 'en-US';
-	onError = jest.fn();
+	onError = vi.fn();
 
 	runtime = createInteractiveUiRuntime( {
 		catalogs: [ createInteractiveUiCatalog(), createInteractiveUiCatalog( CHARTS_CATALOG ) ],
-		onAction: jest.fn(),
+		onAction: vi.fn(),
 		onError,
 	} );
 } );
@@ -33,7 +34,7 @@ beforeEach( () => {
 afterEach( () => {
 	runtime.dispose();
 	document.documentElement.lang = '';
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 // A Basic surface whose root is a chart titled "Stats", as the agent composes one.
@@ -172,7 +173,7 @@ it.each( [
 	],
 	[ 'a pie of zeros', { component: 'PieChart', data: [ { label: 'Search', value: 0 } ] } ],
 ] )( 'reports a chart with %s instead of drawing it', async ( _case, chart ) => {
-	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	showChart( chart );
 
 	render( <InteractiveUiSurface surface={ runtime.getSurface( 'chart' )! } /> );

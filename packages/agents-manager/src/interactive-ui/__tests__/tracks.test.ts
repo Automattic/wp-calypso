@@ -1,4 +1,5 @@
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
+import { type MockInstance, vi } from 'vitest';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { applyInteractiveUiBatch } from '../messages';
 import { disposeInteractiveUiRuntime, getInteractiveUiSession } from '../session';
@@ -11,9 +12,9 @@ import { createBatch, createRuntime, operations } from './fixtures/surface';
 import type { InteractiveUiBatch } from '../messages';
 import type { InteractiveUiSession } from '../session';
 
-jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+vi.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: vi.fn() } ) );
 
-beforeEach( () => jest.mocked( recordAgentsManagerTracksEvent ).mockClear() );
+beforeEach( () => vi.mocked( recordAgentsManagerTracksEvent ).mockClear() );
 
 const batch = createBatch( operations, 'agent' );
 
@@ -29,7 +30,7 @@ function createSession( batches: InteractiveUiBatch[] = [], runtime = createRunt
 }
 
 describe( 'reportInteractiveUiError', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 
 	const renderFailed = {
 		code: 'RENDER_FAILED',
@@ -38,7 +39,7 @@ describe( 'reportInteractiveUiError', () => {
 	};
 
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => consoleError.mockRestore() );

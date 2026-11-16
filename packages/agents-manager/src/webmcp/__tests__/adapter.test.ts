@@ -1,13 +1,14 @@
 import * as blocks from '@wordpress/blocks';
+import { type Mock, vi } from 'vitest';
 import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
 import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpModelContext, WebMcpTool } from '../types';
 import type { Ability } from '@wordpress/abilities';
 
-jest.mock( '@wordpress/blocks', () => ( {
-	...jest.requireActual( '@wordpress/blocks' ),
-	parse: jest.fn(),
+vi.mock( '@wordpress/blocks', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/blocks' ) >( '@wordpress/blocks' ) ),
+	parse: vi.fn(),
 } ) );
 
 const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
@@ -70,11 +71,11 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 	const tools = new Map< string, WebMcpTool >();
 	const signals = new Map< string, AbortSignal | undefined >();
 	const toolProvider: ToolProvider = {
-		getAbilities: jest.fn( async () => abilities ),
-		executeAbility: jest.fn( async ( _name, input ) => ( { input } ) ),
+		getAbilities: vi.fn( async () => abilities ),
+		executeAbility: vi.fn( async ( _name, input ) => ( { input } ) ),
 	};
 	const modelContext: WebMcpModelContext = {
-		registerTool: jest.fn( async ( tool, options ) => {
+		registerTool: vi.fn( async ( tool, options ) => {
 			tools.set( tool.name, tool );
 			signals.set( tool.name, options?.signal );
 		} ),
@@ -95,7 +96,7 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 
 describe( 'WebMCP adapter', () => {
 	beforeEach( () => {
-		jest.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
+		vi.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
 	} );
 
 	it( 'normalizes missing and malformed input schemas', () => {
@@ -122,7 +123,7 @@ describe( 'WebMCP adapter', () => {
 			expect( shouldExposeWebMcpAbility( createServerAbility( name ) ) ).toBe( true );
 		}
 		expect(
-			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: jest.fn() } ) )
+			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: vi.fn() } ) )
 		).toBe( true );
 		expect( shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/save-post' } ) ) ).toBe(
 			false
@@ -187,7 +188,7 @@ describe( 'WebMCP adapter', () => {
 
 	it( 'maps show-template guidance to the WebMCP block reader', async () => {
 		const harness = createHarness( [ createShowTemplateAbility() ] );
-		( harness.toolProvider.executeAbility as jest.Mock ).mockResolvedValue( {
+		( harness.toolProvider.executeAbility as Mock ).mockResolvedValue( {
 			result: {
 				success: true,
 				message: 'The template is showing.',
@@ -267,7 +268,7 @@ describe( 'WebMCP adapter', () => {
 
 	it( 'pairs the block-tree IDs with the edit bridge', async () => {
 		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
-		( harness.toolProvider.executeAbility as jest.Mock ).mockImplementation(
+		( harness.toolProvider.executeAbility as Mock ).mockImplementation(
 			async ( name: string, input: unknown ) => {
 				if ( name === 'agents-manager/get-block-tree' ) {
 					return {
@@ -318,7 +319,7 @@ describe( 'WebMCP adapter', () => {
 	} );
 
 	it( 'turns pattern markup into ordered block insertions', async () => {
-		jest.mocked( blocks.parse ).mockReturnValue( [
+		vi.mocked( blocks.parse ).mockReturnValue( [
 			{
 				clientId: 'parsed-heading',
 				name: 'core/heading',
@@ -392,7 +393,7 @@ describe( 'WebMCP adapter', () => {
 	it( 'returns structured provider results without double encoding', async () => {
 		const harness = createHarness();
 		const result = { result: { success: true }, returnToAgent: true };
-		( harness.toolProvider.executeAbility as jest.Mock ).mockResolvedValue( result );
+		( harness.toolProvider.executeAbility as Mock ).mockResolvedValue( result );
 		await harness.adapter.sync();
 
 		await expect( harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {} ) ).resolves.toBe(
@@ -403,7 +404,7 @@ describe( 'WebMCP adapter', () => {
 	it( 'preserves provider execution rejections', async () => {
 		const harness = createHarness();
 		const error = new Error( 'Canvas rejected the edit' );
-		( harness.toolProvider.executeAbility as jest.Mock ).mockRejectedValue( error );
+		( harness.toolProvider.executeAbility as Mock ).mockRejectedValue( error );
 		await harness.adapter.sync();
 
 		await expect( harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {} ) ).rejects.toBe(
@@ -450,7 +451,7 @@ describe( 'WebMCP adapter', () => {
 	it( 'serializes overlapping synchronization', async () => {
 		const harness = createHarness();
 		let releaseFirst: () => void = () => {};
-		( harness.toolProvider.getAbilities as jest.Mock )
+		( harness.toolProvider.getAbilities as Mock )
 			.mockImplementationOnce(
 				() =>
 					new Promise< Ability[] >(
@@ -481,7 +482,7 @@ describe( 'WebMCP adapter', () => {
 
 	it( 'surfaces registration failures and can retry them', async () => {
 		const harness = createHarness();
-		( harness.modelContext.registerTool as jest.Mock )
+		( harness.modelContext.registerTool as Mock )
 			.mockRejectedValueOnce( new Error( 'Invalid WebMCP schema' ) )
 			.mockResolvedValueOnce( undefined );
 
