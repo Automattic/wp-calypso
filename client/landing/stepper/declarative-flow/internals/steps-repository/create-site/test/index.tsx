@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { transferDomainToSite } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { createSite } from '@automattic/onboarding';
+import { addProductsToCart, createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFlowState } from '../../../state-manager/store';
 import CreateSite from '../index';
 
@@ -16,11 +18,25 @@ let mockBlueprint: string | null = null;
 let mockSiteUrl = 'my-site.wordpress.com';
 let mockQueryParams = new URLSearchParams( '' );
 let mockIsSimplifiedOnboarding = false;
+let mockDomainCartItems: Record< string, unknown >[] = [];
+let mockPlanCartItem: Record< string, unknown > | null = null;
+
+const registeredMove = {
+	product_slug: 'domain_move_internal',
+	meta: 'owned-domain.com',
+	extra: { move_source_site_id: 555 },
+};
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
 const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
 
-jest.mock( '@automattic/calypso-products', () => ( { isEcommerce: () => false } ) );
+jest.mock( '@automattic/calypso-products', () => ( {
+	isEcommerce: () => false,
+	isDomainMoveInternal: ( { product_slug }: { product_slug: string } ) =>
+		product_slug === 'domain_move_internal',
+} ) );
+
+jest.mock( '@automattic/api-core', () => ( { transferDomainToSite: jest.fn() } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
 	Site: { Visibility: { PublicIndexed: 1, PublicNotIndexed: 0 } },
@@ -64,8 +80,8 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: () => ( {
 		domainItem: undefined,
 		domainCartItem: undefined,
-		domainCartItems: [],
-		planCartItem: null,
+		domainCartItems: mockDomainCartItems,
+		planCartItem: mockPlanCartItem,
 		productCartItems: [],
 		selectedSiteTitle: 'My site',
 		siteUrl: mockSiteUrl,
@@ -142,6 +158,8 @@ describe( 'create-site', () => {
 		mockSiteUrl = 'my-site.wordpress.com';
 		mockQueryParams = new URLSearchParams( '' );
 		mockIsSimplifiedOnboarding = false;
+		mockDomainCartItems = [];
+		mockPlanCartItem = null;
 		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
@@ -277,6 +295,54 @@ describe( 'create-site', () => {
 			siteSlug: 'brand-new.wordpress.com',
 		} );
 		expect( createSite ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	// A move on the Free plan costs nothing, so the step moves the domain without a checkout.
+	it( 'moves a registered domain to the new site on the Free plan, without checkout', async () => {
+		mockDomainCartItems = [ registeredMove ];
+
+		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: false } );
+
+		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
+		expect( addProductsToCart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'leaves a domain move in the cart when a plan is in the cart', async () => {
+		mockDomainCartItems = [ registeredMove ];
+		mockPlanCartItem = { product_slug: 'personal-bundle' };
+
+		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
+
+		expect( transferDomainToSite ).not.toHaveBeenCalled();
+		expect( addProductsToCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', 'onboarding', [
+			mockPlanCartItem,
+			registeredMove,
+		] );
+	} );
+
+	// The site works without the domain, so a failed move must not stop the signup.
+	it( 'finishes the signup and records the failure when the move fails', async () => {
+		mockDomainCartItems = [ registeredMove ];
+		( transferDomainToSite as jest.Mock ).mockRejectedValueOnce( { error: 'dispute_flag' } );
+
+		await expect( runStep() ).resolves.toMatchObject( { siteCreated: true } );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_free_plan_domain_move_failed',
+			{ flow: 'onboarding', error: 'dispute_flag' }
+		);
+	} );
+
+	it( 'does not call the move without the site the domain is on now', async () => {
+		mockDomainCartItems = [ { ...registeredMove, extra: {} } ];
+
+		await expect( runStep() ).resolves.toMatchObject( { siteCreated: true } );
+
+		expect( transferDomainToSite ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_free_plan_domain_move_failed',
+			{ flow: 'onboarding', error: 'missing_move_source' }
+		);
 	} );
 
 	it( 'rejects with "Failed to create site" when /sites/new returns nothing', async () => {

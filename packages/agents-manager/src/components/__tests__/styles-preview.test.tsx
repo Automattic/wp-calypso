@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import StylesPreview from '../styles-preview';
 
-jest.mock( '../../hooks/use-global-styles', () => ( {
+vi.mock( '../../hooks/use-global-styles', () => ( {
 	__esModule: true,
 	default: () => ( {
 		globalStylesId: 'global-styles-1',
@@ -40,11 +41,11 @@ jest.mock( '../../hooks/use-global-styles', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../utils/font-families-to-css', () => ( {
+vi.mock( '../../utils/font-families-to-css', () => ( {
 	fontFamiliesToCSS: () => '',
 } ) );
 
-jest.mock( '@wordpress/block-editor', () => ( {
+vi.mock( '@wordpress/block-editor', () => ( {
 	__unstableEditorStyles: ( { styles }: { styles: unknown[] } ) => (
 		<div data-testid="mock-editor-styles" data-styles={ JSON.stringify( styles ) } />
 	),
@@ -61,7 +62,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalHStack: ( {
 		children,
 		className,
@@ -77,7 +78,7 @@ jest.mock( '@wordpress/components', () => ( {
 	__experimentalVStack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	useResizeObserver:
 		( callback: ( entries: { contentRect: { width: number } }[] ) => void ) =>
 		( element: Element | null ) => {

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { vi } from 'vitest';
 import Client from '../../../panel/rest-client';
 import { init as initWpcom } from '../../../panel/rest-client/wpcom';
 import { init as initStore } from '../../../panel/state';
@@ -40,7 +41,7 @@ describe( 'load-more after a tab switch (integration)', () => {
 	} );
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		store = initStore();
 		getCalls = [];
 		initWpcom( {
@@ -57,8 +58,8 @@ describe( 'load-more after a tab switch (integration)', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllTimers();
-		jest.useRealTimers();
+		vi.clearAllTimers();
+		vi.useRealTimers();
 	} );
 
 	const list = ( filterName: FilterName ) => (

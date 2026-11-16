@@ -21,12 +21,9 @@ vi.mock( '@automattic/calypso-config', () => {
 	};
 } );
 
-type Search = Record< string, unknown >;
-
-let mockSearch: Search = {};
-
 vi.mock( '../../../../app/router/me', async () => {
-	const { useReducer } = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const { useRouterState } =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
 	const actual = await vi.importActual< typeof import( '../../../../app/router/me' ) >(
 		'../../../../app/router/me'
 	);
@@ -34,18 +31,18 @@ vi.mock( '../../../../app/router/me', async () => {
 		...actual,
 		purchaseSettingsRoute: {
 			...actual.purchaseSettingsRoute,
-			useSearch: () => mockSearch,
-			// Updates the search and re-renders, like the real router.
-			useNavigate: () => {
-				const [ , rerender ] = useReducer( ( count: number ) => count + 1, 0 );
-				return ( { search }: { search: ( prev: Search ) => Search } ) => {
-					mockSearch = search( mockSearch );
-					rerender();
-				};
-			},
+			// The test router has only a root route, so read its parsed search directly.
+			useSearch: () =>
+				useRouterState( {
+					select: ( state: { location: { search: unknown } } ) => state.location.search,
+				} ),
 		},
 	};
 } );
+
+function setSearch( search: string ) {
+	window.history.replaceState( null, '', `/me/billing/purchases/1245242${ search }` );
+}
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
@@ -74,12 +71,12 @@ function mockRequests() {
 
 describe( '<PurchaseNotice />', () => {
 	beforeEach( () => {
-		mockSearch = {};
+		setSearch( '' );
 		mockRequests();
 	} );
 
 	test( 'shows the cancelled notice with the expiry date after a cancel', async () => {
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		expect(
@@ -87,10 +84,11 @@ describe( '<PurchaseNotice />', () => {
 				'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the plan until April 6, 2027.'
 			)
 		).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'shows the backup link in the cancelled notice for an Atomic site', async () => {
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render(
 			<PurchaseNotice purchase={ makePurchase( { will_atomic_revert_after_removal: true } ) } />
 		);
@@ -108,26 +106,37 @@ describe( '<PurchaseNotice />', () => {
 			'target',
 			'_blank'
 		);
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'shows the cancelled notice after the param is cleared from the URL', async () => {
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		await screen.findByText( /Your subscription is cancelled/ );
-		await waitFor( () => expect( mockSearch ).toEqual( {} ) );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 
 		expect( screen.getByText( /Your subscription is cancelled/ ) ).toBeVisible();
 	} );
 
 	test( 'hides the cancelled notice when it is dismissed', async () => {
 		const user = userEvent.setup();
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		await screen.findByText( /Your subscription is cancelled/ );
 		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( /Your subscription is cancelled/ ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+	} );
+
+	test( 'removes the notice params it shows and keeps the rest', async () => {
+		setSearch(
+			'?cancelled=true&intent=auto-renew&downgraded=true&plan_changed=true&delayed_downgrade_scheduled=true&upgraded=true&keep=1'
+		);
+		render( <PurchaseNotice purchase={ makePurchase() } /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
 	} );
 } );

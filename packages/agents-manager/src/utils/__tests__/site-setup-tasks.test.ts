@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-const mockApiFetch = jest.fn();
-jest.mock( '@wordpress/api-fetch', () => ( {
+import { vi } from 'vitest';
+import { fetchSiteSetupTasks, getSiteSetupSiteId } from '../site-setup-tasks';
+
+const mockApiFetch = vi.fn();
+vi.mock( '@wordpress/api-fetch', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockApiFetch( ...args ),
 } ) );
-
-import { fetchSiteSetupTasks, getSiteSetupSiteId } from '../site-setup-tasks';
 
 type WindowWithInlineData = Window & { agentsManagerData?: { site?: { ID?: number } } };
 

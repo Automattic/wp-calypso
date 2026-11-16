@@ -1,0 +1,238 @@
+/**
+ * @jest-environment jsdom
+ */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import StudentPlanEligibility from '..';
+import { StepProps } from '../../../types';
+import { mockStepProps, renderStep } from '../../test/helpers';
+import type { StudentPlanEligibilityReason } from '../hooks/use-student-plan-eligibility';
+
+// The real action sends the browser to the logout page.
+jest.mock( 'calypso/state/current-user/actions', () => ( {
+	...jest.requireActual( 'calypso/state/current-user/actions' ),
+	redirectToLogout: jest.fn( () => ( { type: 'TEST_REDIRECT_TO_LOGOUT' } ) ),
+} ) );
+
+const ELIGIBILITY_PATH = '/wpcom/v2/me/student-plan-eligibility';
+
+const mockEligibility = ( reason: StudentPlanEligibilityReason, emailDomain = 'mit.edu' ) =>
+	nock( 'https://public-api.wordpress.com:443' )
+		.get( ELIGIBILITY_PATH )
+		.query( true )
+		.reply( 200, { eligible: reason === 'eligible', reason, email_domain: emailDomain } );
+
+const render = ( props?: Partial< StepProps >, email = 'student@mit.edu' ) => {
+	// No test defaults: the hook's own options (no retries included) are under test.
+	const queryClient = new QueryClient();
+
+	renderStep(
+		<QueryClientProvider client={ queryClient }>
+			<StudentPlanEligibility
+				{ ...mockStepProps( {
+					stepName: 'student-plan-eligibility',
+					flow: 'student',
+					...props,
+				} ) }
+			/>
+		</QueryClientProvider>,
+		{
+			initialEntry: '/setup/student/student-plan-eligibility',
+			initialState: { currentUser: { user: { email } } },
+		}
+	);
+
+	return queryClient;
+};
+
+describe( 'StudentPlanEligibility', () => {
+	beforeAll( () => nock.disableNetConnect() );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+		nock.cleanAll();
+	} );
+
+	afterAll( () => nock.enableNetConnect() );
+
+	it( 'continues the flow when the account is eligible', async () => {
+		const submit = jest.fn();
+		mockEligibility( 'eligible' );
+
+		render( { navigation: { submit } } );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	/**
+	 * Calypso restores persisted queries on page load, so a stale "eligible" from an earlier
+	 * visit would skip the check for an account that has since bought the plan.
+	 */
+	it( 'keeps the eligibility answer out of the persisted query cache', async () => {
+		mockEligibility( 'not_academic' );
+
+		const queryClient = render();
+
+		await screen.findByRole( 'heading', { name: 'The Student plan needs a school email' } );
+		expect(
+			queryClient.getQueryCache().find( { queryKey: [ 'student-plan-eligibility' ] } )?.meta
+		).toEqual( { persist: false } );
+	} );
+
+	/**
+	 * A supported but unconfirmed email must never reach the not-supported screen.
+	 */
+	it( 'asks an unverified academic account to confirm its email', async () => {
+		const submit = jest.fn();
+		mockEligibility( 'unverified' );
+
+		render( { navigation: { submit } } );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Confirm your email to get the Student plan' } )
+		).toBeVisible();
+		expect(
+			screen.getByText(
+				'Open the confirmation link we sent to student@mit.edu, then come back to this page.'
+			)
+		).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'continues once a re-check finds the email confirmed', async () => {
+		const submit = jest.fn();
+		mockEligibility( 'unverified' );
+		mockEligibility( 'eligible' );
+
+		render( { navigation: { submit } } );
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } )
+		);
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	/**
+	 * The endpoint is rate limited, so a click during a check must not send another request.
+	 */
+	it( 'does not send a second request when the button is clicked during a check', async () => {
+		let respond: () => void = () => {};
+		mockEligibility( 'unverified' );
+		const heldRequest = nock( 'https://public-api.wordpress.com:443' )
+			.get( ELIGIBILITY_PATH )
+			.query( true )
+			.reply( ( _uri, _body, callback ) => {
+				respond = () =>
+					callback( null, [
+						200,
+						{ eligible: false, reason: 'unverified', email_domain: 'mit.edu' },
+					] );
+			} );
+		const extraRequest = mockEligibility( 'unverified' );
+
+		render();
+
+		const button = await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } );
+		await userEvent.click( button );
+		await waitFor( () => expect( heldRequest.isDone() ).toBe( true ) );
+		expect( button ).toHaveClass( 'is-busy' );
+
+		await userEvent.click( button );
+		respond();
+
+		await waitFor( () => expect( button ).not.toHaveClass( 'is-busy' ) );
+		expect( extraRequest.isDone() ).toBe( false );
+	} );
+
+	/**
+	 * A failed re-check keeps the previous answer on screen, so the failure must be shown.
+	 */
+	it( 'says so when re-checking an unverified account fails', async () => {
+		mockEligibility( 'unverified' );
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( ELIGIBILITY_PATH )
+			.query( true )
+			.reply( 429, { code: 'rate_limit_exceeded' } );
+
+		render();
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'I’ve confirmed my email' } )
+		);
+
+		expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+			'We couldn’t check your email. Please try again.'
+		);
+	} );
+
+	it( 'explains the options to an account without a school email', async () => {
+		const submit = jest.fn();
+		mockEligibility( 'not_academic', 'gmail.com' );
+
+		render( { navigation: { submit } }, 'student@gmail.com' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'The Student plan needs a school email' } )
+		).toBeVisible();
+		expect(
+			screen.getByText(
+				'Your account uses student@gmail.com. To get the Student plan on your own, sign up with a school email ending in .edu, .ac.uk or .ac.jp.'
+			)
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Share with your teacher' } ) ).toHaveAttribute(
+			'href',
+			'https://wp.com/education'
+		);
+		expect( screen.getByRole( 'link', { name: 'Have an invitation code?' } ) ).toHaveAttribute(
+			'href',
+			'/setup/education'
+		);
+		expect(
+			screen.getByRole( 'link', { name: 'Continue with other WordPress.com plans' } )
+		).toHaveAttribute( 'href', '/setup/onboarding' );
+		expect( submit ).not.toHaveBeenCalled();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Sign up with my school email' } ) );
+
+		expect( redirectToLogout ).toHaveBeenCalledWith( `${ window.location.origin }/setup/student` );
+	} );
+
+	it( 'tells an account that already has the plan where to find it', async () => {
+		mockEligibility( 'already_owned' );
+
+		render();
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'You already have the Student plan' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Go to my sites' } ) ).toHaveAttribute(
+			'href',
+			'/sites'
+		);
+		expect( screen.getByRole( 'link', { name: 'View purchases' } ) ).toHaveAttribute(
+			'href',
+			'/me/purchases'
+		);
+	} );
+
+	it( 'offers a retry when the check fails', async () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( ELIGIBILITY_PATH )
+			.query( true )
+			.reply( 500, { code: 'internal_server_error' } );
+		mockEligibility( 'eligible' );
+		const submit = jest.fn();
+
+		render( { navigation: { submit } } );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
+	} );
+} );

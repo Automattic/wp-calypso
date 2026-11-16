@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, fireEvent, render } from '@testing-library/react';
 import GrowHeight from '../grow-height';

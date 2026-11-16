@@ -141,28 +141,37 @@ queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
 render( <MyComponent />, { queryClient } );
 ```
 
-### Mocking Modules: use ES imports, not `require()`
+### Mocking Modules
+
+Mock a module only for what a test can't run or control any other way:
+
+- A service that reaches outside the app, e.g. analytics, error and log reporting, surveys.
+- A switch the code reads from the environment, e.g. a feature flag from `@automattic/calypso-config`.
+
+Don't mock the dashboard's own components, hooks, or router to make a test pass. Data from the API is mocked at the network level (see above).
+
+#### Use ES imports, not `require()`
 
 Do not use inline `require()` to load a mocked module "after" `vi.mock()` is set up. Vitest hoists `vi.mock()` calls above all imports, so a top-level ES import already receives the mocked version. Inline `require()` is also an ESLint error (`@typescript-eslint/no-require-imports`).
 
 ```tsx
 // ❌ Bad: lazy require to "get the mock"
-test( 'saves preferences', () => {
+test( 'shows the banner when the flag is on', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const { userPreferencesMutation } = require( '@automattic/api-queries' );
-	userPreferencesMutation.mockReturnValue( /* … */ );
+	const { isEnabled } = require( '@automattic/calypso-config' );
+	isEnabled.mockReturnValue( true );
 } );
 ```
 
 ```tsx
 // ✅ Good: top-level import + `vi.mocked()`
-import { userPreferencesMutation } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { vi } from 'vitest';
 
-vi.mock( '@automattic/api-queries' );
+vi.mock( '@automattic/calypso-config', () => ( { isEnabled: vi.fn() } ) );
 
-test( 'saves preferences', () => {
-	vi.mocked( userPreferencesMutation ).mockReturnValue( /* … */ );
+test( 'shows the banner when the flag is on', () => {
+	vi.mocked( isEnabled ).mockReturnValue( true );
 } );
 ```
 

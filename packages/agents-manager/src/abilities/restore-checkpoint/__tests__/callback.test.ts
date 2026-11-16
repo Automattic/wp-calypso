@@ -1,3 +1,4 @@
+import { type Mock, type MockInstance, vi } from 'vitest';
 import {
 	RESTORE_CHECKPOINT_TOOL_ID,
 	clearCheckpoint,
@@ -12,25 +13,25 @@ import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-h
 import { recordBigSkyTracksEvent } from '../../../utils/tracks';
 import { restoreCheckpointCallback } from '../callback';
 
-jest.mock( '../../../utils/checkpoints', () => ( {
+vi.mock( '../../../utils/checkpoints', () => ( {
 	RESTORE_CHECKPOINT_TOOL_ID: 'big_sky__restore_checkpoint',
-	clearCheckpoint: jest.fn(),
-	getCheckpoint: jest.fn(),
-	getCheckpoints: jest.fn( () => [] ),
-	hasCheckpoint: jest.fn(),
-	restoreCheckpoint: jest.fn(),
-	setReciprocalCheckpoint: jest.fn(),
+	clearCheckpoint: vi.fn(),
+	getCheckpoint: vi.fn(),
+	getCheckpoints: vi.fn( () => [] ),
+	hasCheckpoint: vi.fn(),
+	restoreCheckpoint: vi.fn(),
+	setReciprocalCheckpoint: vi.fn(),
 } ) );
-jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
-jest.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
-jest.mock( '../../../utils/tool-call-history', () => ( {
-	getToolCallIdFromConversationHistory: jest.fn( () => null ),
+vi.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: vi.fn( () => true ) } ) );
+vi.mock( '../../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
+vi.mock( '../../../utils/tool-call-history', () => ( {
+	getToolCallIdFromConversationHistory: vi.fn( () => null ),
 } ) );
 
-const mockGetCheckpoint = getCheckpoint as jest.Mock;
-const mockGetCheckpoints = getCheckpoints as jest.Mock;
-const mockHasCheckpoint = hasCheckpoint as jest.Mock;
-const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
+const mockGetCheckpoint = getCheckpoint as Mock;
+const mockGetCheckpoints = getCheckpoints as Mock;
+const mockHasCheckpoint = hasCheckpoint as Mock;
+const mockGetToolCallId = getToolCallIdFromConversationHistory as Mock;
 
 const RESTORE_CALL_ID = 'toolu_restore';
 const RESTORE_SUMMARY = 'I undid the color change.';
@@ -49,12 +50,12 @@ const makeInput = ( overrides = {} ) => ( {
 } );
 
 // The callback logs a failed restore; the spy keeps the run quiet and pins the message.
-let consoleError: jest.SpyInstance;
+let consoleError: MockInstance;
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-	( isEditorPage as jest.Mock ).mockReturnValue( true );
+	vi.clearAllMocks();
+	consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+	( isEditorPage as Mock ).mockReturnValue( true );
 	mockHasCheckpoint.mockReturnValue( false );
 	mockGetCheckpoint.mockImplementation( ( id: string ) =>
 		id === TARGET_CHECKPOINT.id ? TARGET_CHECKPOINT : undefined
@@ -67,7 +68,7 @@ afterEach( () => consoleError.mockRestore() );
 
 describe( 'restoreCheckpointCallback', () => {
 	it( 'refuses outside the editor', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		( isEditorPage as Mock ).mockReturnValue( false );
 
 		const result = await restoreCheckpointCallback( makeInput() );
 
@@ -175,7 +176,7 @@ describe( 'restoreCheckpointCallback', () => {
 	// fail the restore part-way, leaving the site half-restored with no redo.
 	it( 'refuses the restore when the reciprocal cannot be recorded', async () => {
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		( setReciprocalCheckpoint as jest.Mock ).mockRejectedValueOnce(
+		( setReciprocalCheckpoint as Mock ).mockRejectedValueOnce(
 			new Error( 'Navigation menu not found: 9' )
 		);
 
@@ -223,7 +224,7 @@ describe( 'restoreCheckpointCallback', () => {
 
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( ( clearCheckpoint as jest.Mock ).mock.calls.flat() ).toEqual( [
+		expect( ( clearCheckpoint as Mock ).mock.calls.flat() ).toEqual( [
 			'toolu_old_redo',
 			'toolu_legacy',
 		] );
@@ -233,7 +234,7 @@ describe( 'restoreCheckpointCallback', () => {
 	// part-way leaves the site changed and the reciprocal is the way back.
 	it( 'reports a failed restore and keeps the reciprocal', async () => {
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
-		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
+		( restoreCheckpoint as Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 
 		const result = await restoreCheckpointCallback( makeInput() );
 

@@ -66,6 +66,12 @@
 	// DataViews paints the row hover with this token. Keep it neutral so blue only means unread.
 	--wpds-color-background-interactive-neutral-weak-active: color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 2%, transparent);
 
+	// The widget build replaces DataViews' `var( --token, #ededed )` with its fallback,
+	// so paint the hover here too, with no fallback for the build to swap in.
+	div[role="article"]:not(.is-selected):is(:hover, .is-hovered, :focus-within) {
+		background-color: var(--wpds-color-background-interactive-neutral-weak-active);
+	}
+
 	// One shared line between rows: each row's background reaches under its
 	// neighbour's top border, so a hovered or unread row tints both of its edges.
 	div[role="article"] {

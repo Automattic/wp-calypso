@@ -84,7 +84,7 @@ import enrichedSurveyData from './enriched-survey-data';
 import { getAllSurveySteps } from './get-all-survey-steps';
 import { getDowngradePlanForPurchase } from './get-downgrade-plan-for-purchase';
 import { getOfferDiscountBasedOnPurchasePrice } from './get-offer-discount-based-on-purchase-price';
-import { getSolutionsForReason, getSolutionsReason } from './get-solutions-for-reason';
+import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
@@ -93,6 +93,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useCancelOptionsExperiment } from './use-cancel-options-experiment';
+import { useDomainReturnLocation } from './use-domain-return-location';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
@@ -337,7 +338,13 @@ function CancelPurchaseInner() {
 	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
+	const domainReturnLocation = useDomainReturnLocation( purchase );
 	const redirectBack = useCallback( () => {
+		if ( domainReturnLocation ) {
+			navigate( domainReturnLocation );
+			return;
+		}
+
 		if (
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
@@ -348,7 +355,7 @@ function CancelPurchaseInner() {
 		}
 
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate ] );
+	}, [ purchase, domainReturnLocation, navigate ] );
 
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
@@ -467,7 +474,6 @@ function CancelPurchaseInner() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
-			solutionsReason: '',
 			surveyShown: surveyShownInitial,
 			surveyStep: firstStep,
 			upsell: '',
@@ -597,7 +603,6 @@ function CancelPurchaseInner() {
 			...state,
 			questionOneRadio: value,
 			questionOneText: '',
-			solutionsReason: '',
 			upsell: '',
 		} ) );
 	};
@@ -857,15 +862,13 @@ function CancelPurchaseInner() {
 			canOfferFreeMonth:
 				!! freeMonthOfferClick && hasBeenExtended === false && ! purchase.is_refundable,
 		} );
-		const solutionsReason = getSolutionsReason( value, detailsValue, state.questionOneRadio );
 		const hasSolutionsCards =
-			showCancelOptionsCards && ( getSolutionsForReason( solutionsReason )?.length ?? 0 ) > 0;
+			showCancelOptionsCards && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 
 		setState( ( state ) => ( {
 			...state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
-			solutionsReason,
 			upsell: upsellType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		} ) );
 	};
@@ -1452,7 +1455,7 @@ function CancelPurchaseInner() {
 	const isSolutionsStep =
 		state.surveyStep === UPSELL_STEP &&
 		showCancelOptionsCards &&
-		( getSolutionsForReason( state.solutionsReason ?? '' )?.length ?? 0 ) > 0;
+		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
 	// `surveyShown` gate.
@@ -1509,7 +1512,6 @@ function CancelPurchaseInner() {
 			refundAmount={ getDowngradeRefundAmount( purchase, downgradePlan?.product_id ) }
 			siteSlug={ siteSlug }
 			solution={ state.solution }
-			solutionsReason={ state.solutionsReason }
 			surveyStep={ state.surveyStep }
 			allSteps={ allSteps }
 			upsell={ state.upsell }

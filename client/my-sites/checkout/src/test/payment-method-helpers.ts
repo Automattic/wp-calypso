@@ -9,8 +9,7 @@ import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-se
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
-	BLACKBOX_KEY_VERSION: 2,
-	getBlackboxApiKey: jest.fn( () => 'signup-key' ),
+	getBlackboxApiKey: jest.fn( () => 'blackbox-api-key' ),
 } ) );
 
 jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
@@ -40,7 +39,7 @@ describe( 'createAccount', () => {
 		config.enable( 'blackbox' );
 		config.enable( 'blackbox-userless-checkout' );
 		( getBlackboxApiKey as jest.Mock ).mockReset();
-		( getBlackboxApiKey as jest.Mock ).mockReturnValue( 'signup-key' );
+		( getBlackboxApiKey as jest.Mock ).mockReturnValue( 'blackbox-api-key' );
 		( getBlackboxSessionId as jest.Mock ).mockReset();
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
 		delete window.Blackbox;
@@ -62,12 +61,11 @@ describe( 'createAccount', () => {
 
 		await createAccount( createAccountArgs );
 
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key', undefined, 'signup' );
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'blackbox-api-key', undefined, 'signup' );
 		expect( getRequestBody()?.blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
-		expect( getRequestBody()?.blackbox_key_version ).toBe( 2 );
 	} );
 
-	it( 'omits blackbox_session_id when the signup api key is missing', async () => {
+	it( 'omits blackbox_session_id when the Blackbox api key is missing', async () => {
 		( getBlackboxApiKey as jest.Mock ).mockReturnValue( '' );
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();

@@ -1,10 +1,8 @@
-import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { marketplacePurchasesRoute } from '../../../app/router/agency';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
+import { CHECKOUT_CART_PARAM, RECEIPT_ID_PARAM } from '../products/lib/checkout-url';
 import { clearStoredCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
-
-type PurchasesSearch = typeof marketplacePurchasesRoute.types.fullSearchSchema;
 
 /**
  * Finishes a purchase returning from the WordPress.com checkout. Its pending
@@ -15,28 +13,21 @@ type PurchasesSearch = typeof marketplacePurchasesRoute.types.fullSearchSchema;
  */
 export function useCheckoutReturn() {
 	const { recordTracksEvent } = useAnalytics();
-	const navigate = marketplacePurchasesRoute.useNavigate();
-	const { receipt_id: receiptId, cart } = marketplacePurchasesRoute.useSearch();
 	const { updateMarketplaceType } = useMarketplaceType();
 
-	useEffect( () => {
-		if ( ! receiptId ) {
-			return;
-		}
-		if ( cart === 'referral' ) {
-			clearStoredCart( 'referral' );
-			updateMarketplaceType( 'regular' );
-		} else {
-			clearStoredCart( 'regular' );
-		}
-		recordTracksEvent( 'calypso_a4a_marketplace_cart_cleared_on_checkout_success', {
-			receipt_id: receiptId,
-		} );
-		navigate( {
-			// Keep `flash` and `purchased_plan`: the app shell's checkout success
-			// message reads them once the router is idle, then removes them.
-			search: ( { receipt_id: _receiptId, cart: _cart, ...rest }: PurchasesSearch ) => rest,
-			replace: true,
-		} );
-	}, [ receiptId, cart, navigate, updateMarketplaceType, recordTracksEvent ] );
+	// `flash` and `purchased_plan` are left to the app shell's checkout success message.
+	useConsumeSearchParams( [ RECEIPT_ID_PARAM, CHECKOUT_CART_PARAM ], {
+		when: ( params ) => Boolean( params.receipt_id ),
+		onConsume: ( { receipt_id: receiptId, cart } ) => {
+			if ( cart === 'referral' ) {
+				clearStoredCart( 'referral' );
+				updateMarketplaceType( 'regular' );
+			} else {
+				clearStoredCart( 'regular' );
+			}
+			recordTracksEvent( 'calypso_a4a_marketplace_cart_cleared_on_checkout_success', {
+				receipt_id: receiptId,
+			} );
+		},
+	} );
 }

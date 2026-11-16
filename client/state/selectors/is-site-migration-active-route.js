@@ -12,5 +12,5 @@ export default function isSiteMigrationActiveRoute( state ) {
 		return false;
 	}
 
-	return route.match( /\/migrate\/(upgrade\/)?from\/[^/]+\/to\// );
+	return route.match( /\/migrate\/from\/[^/]+\/to\// );
 }

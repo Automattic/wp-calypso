@@ -12,12 +12,12 @@ import Emails from '../index';
 import type { DomainSummary, EmailAccount } from '@automattic/api-core';
 
 vi.mock( '@automattic/calypso-config', async () => {
-	const { default: actual } = await vi.importActual<
+	const { default: actual, serverEnvId } = await vi.importActual<
 		typeof import( '@automattic/calypso-config' )
 	>( '@automattic/calypso-config' );
 	const isEnabled = ( flag: string ) => flag === 'emails/titan-tiers' || actual.isEnabled( flag );
 	const config = Object.assign( ( key: string ) => actual( key ), actual, { isEnabled } );
-	return { ...config, default: config };
+	return { ...config, default: config, serverEnvId };
 } );
 
 vi.mock( '../../app/router/emails', async () => {

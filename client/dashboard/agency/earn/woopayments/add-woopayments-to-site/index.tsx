@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApprovalGate } from '../../../approval-gate';
 import AddWooPaymentsToSiteModal from './modal';
 import type { RecordTracksEvent } from '../types';
@@ -14,6 +13,9 @@ interface AddWooPaymentsToSiteProps {
 	shouldUseRouterLink?: boolean;
 	/** Shows the approval gate in place of the site picker. */
 	isApprovalGated?: boolean;
+	/** Opens the modal, as when a link asks for it. Set it back to false in `onAutoOpen`. */
+	autoOpen?: boolean;
+	onAutoOpen?: () => void;
 }
 
 export default function AddWooPaymentsToSite( {
@@ -23,10 +25,12 @@ export default function AddWooPaymentsToSite( {
 	onSelectSite,
 	shouldUseRouterLink,
 	isApprovalGated,
+	autoOpen,
+	onAutoOpen,
 }: AddWooPaymentsToSiteProps ) {
-	const showModal = getQueryArg( window.location.href, 'add-woopayments-to-site' ) === 'true';
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isGateOpen, setIsGateOpen ] = useState( false );
+	const hasAutoOpened = useRef( false );
 
 	const handleOpenModal = useCallback( () => {
 		if ( isApprovalGated ) {
@@ -38,18 +42,16 @@ export default function AddWooPaymentsToSite( {
 	}, [ isApprovalGated, recordTracksEvent ] );
 
 	useEffect( () => {
-		if ( showModal ) {
-			handleOpenModal();
-			window.history.replaceState(
-				null,
-				'',
-				removeQueryArgs(
-					window.location.pathname + window.location.search,
-					'add-woopayments-to-site'
-				)
-			);
+		if ( ! autoOpen ) {
+			hasAutoOpened.current = false;
+			return;
 		}
-	}, [ handleOpenModal, showModal ] );
+		if ( ! hasAutoOpened.current ) {
+			hasAutoOpened.current = true;
+			handleOpenModal();
+			onAutoOpen?.();
+		}
+	}, [ autoOpen, onAutoOpen, handleOpenModal ] );
 
 	return (
 		<>

@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-const mockRecordTracksEvent = jest.fn();
+import { vi } from 'vitest';
+import { recordDisconnectedHostTracksEvent, recordHostTracksEvent } from '../tracks';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
+const mockRecordTracksEvent = vi.hoisted( () => vi.fn() );
+
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-analytics' ) ),
 	recordTracksEvent: mockRecordTracksEvent,
 } ) );
-
-const { recordDisconnectedHostTracksEvent, recordHostTracksEvent } = require( '../tracks' );
 
 describe( 'recordHostTracksEvent', () => {
 	beforeEach( () => {
