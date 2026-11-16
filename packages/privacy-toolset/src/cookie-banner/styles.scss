@@ -52,7 +52,7 @@ $cookie-banner-font-family:
 	transform: translate( -50% );
 	max-width: $granular-banner-max-width;
 	width: 100%;
-	bottom: 16px;
+	inset-block-end: 16px;
 	margin: 0;
 	max-height: 90vh;
 	z-index: 50001;
