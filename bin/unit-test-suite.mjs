@@ -164,13 +164,14 @@ try {
 		// This task is a prerequisite for the other tsc tasks, so it must run separately.
 		await runTask( checkPackagesReferences );
 		await runTask( tscPackages );
-		await completeTasks( [ ...tscCommands.map( runTask ), runTask( viteCheck ) ] );
+		await completeTasks( tscCommands.map( runTask ) );
 	} )();
 
 	// Run these smaller tasks in serial to keep a healthy amount of CPU available for the other tasks.
 	const otherTestTasks = ( async () => {
 		await runTask( testServer );
 		await runTask( testBuildTools );
+		await runTask( viteCheck );
 		await runVitestTask( testPackagesVitest );
 		await runTask( testWorkspaces );
 		await runVitestTask( testApps );
