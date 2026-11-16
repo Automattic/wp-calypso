@@ -1,7 +1,9 @@
 /**
  * @vitest-environment jsdom
  */
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import VisibilityCard from '../index';
 import type { Site } from '@automattic/api-core';
@@ -20,29 +22,22 @@ const preview = {
 describe( '<VisibilityCard>', () => {
 	afterEach( () => nock.cleanAll() );
 
-	test.each( [
-		{ shareUrl: 'https://test.wordpress.com/?share=abc', description: /Share this link/ },
-		{ shareUrl: undefined, description: /Share it with a preview link/ },
-	] )(
-		'a preview site offers the share link the server gives it ($shareUrl)',
-		async ( { shareUrl, description } ) => {
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/wow-funnel/pending' )
-				.query( true )
-				.reply( 200, {
-					pending: false,
-					preview_sites: [ { blog_id: preview.ID, site_slug: preview.slug, share_url: shareUrl } ],
-				} );
+	test( 'a built preview site copies the share link the server gives it', async () => {
+		const shareUrl = 'https://test.wordpress.com/?share=abc';
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/wow-funnel/pending' )
+			.query( true )
+			.reply( 200, {
+				pending: false,
+				preview_sites: [ { blog_id: preview.ID, site_slug: preview.slug, share_url: shareUrl } ],
+			} );
+		const user = userEvent.setup();
+		const writeText = vi.spyOn( navigator.clipboard, 'writeText' );
 
-			const { findByText, queryByDisplayValue, queryByText } = render(
-				<VisibilityCard site={ preview } />
-			);
+		const { findByText, queryByText } = render( <VisibilityCard site={ preview } /> );
 
-			expect( await findByText( description ) ).toBeInTheDocument();
-			expect( !! queryByDisplayValue( 'https://test.wordpress.com/?share=abc' ) ).toBe(
-				!! shareUrl
-			);
-			expect( queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
-		}
-	);
+		await user.click( await findByText( /Click to copy your share link/ ) );
+		expect( writeText ).toHaveBeenCalledWith( shareUrl );
+		expect( queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
+	} );
 } );

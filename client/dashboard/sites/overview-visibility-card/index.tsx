@@ -4,7 +4,6 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { lock, published } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import ClipboardInputControl from '../../components/clipboard-input-control';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
@@ -109,35 +108,30 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 }
 
 // A preview is shared, not set up: it stays Coming Soon until it is bought, and visitors reach it
-// through the share link the server gives it once it is built.
+// through the share link the server gives it once it is built. The card copies that link.
 function VisibilityCardPreview( { site, shareUrl }: { site: Site; shareUrl?: string } ) {
 	const { createSuccessNotice } = useDispatch( noticesStore );
+
+	if ( ! shareUrl ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'Coming soon' ) }
+				description={ __( 'Share it with a preview link.' ) }
+				link={ getSiteVisibilityURL( site ) }
+			/>
+		);
+	}
 
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Coming soon' ) }
-			description={
-				shareUrl
-					? __( 'Visitors see a Coming Soon page. Share this link so anyone can view it.' )
-					: __( 'Share it with a preview link.' )
-			}
-			link={ getSiteVisibilityURL( site ) }
-			bottom={
-				shareUrl && (
-					<ClipboardInputControl
-						label={ __( 'Preview link' ) }
-						hideLabelFromVision
-						value={ shareUrl }
-						readOnly
-						onCopy={ () =>
-							createSuccessNotice( __( 'Copied the preview link to clipboard.' ), {
-								type: 'snackbar',
-							} )
-						}
-					/>
-				)
-			}
+			description={ __( 'Visitors see a Coming Soon page. Click to copy your share link.' ) }
+			onClick={ () => {
+				navigator.clipboard.writeText( shareUrl );
+				createSuccessNotice( __( 'Copied the share link to clipboard.' ), { type: 'snackbar' } );
+			} }
 		/>
 	);
 }
