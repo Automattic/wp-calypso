@@ -256,12 +256,29 @@ export const startEntries = {
 };
 
 /**
+ * Adds the stylesheet of the environment badge, which the server renders in these envs.
+ * `calypso/lib/load-dev-helpers` only imports it once the app boots, so it would be unstyled
+ * until then.
+ * @param {Record<string, { file: string, styles: string[] }>} entries
+ * @returns {Record<string, { file: string, styles: string[] }>}
+ */
+function withEnvironmentBadge( entries ) {
+	return Object.fromEntries(
+		Object.entries( entries ).map( ( [ name, entry ] ) => [
+			name,
+			{ ...entry, styles: [ ...entry.styles, 'client/components/environment-badge/style.scss' ] },
+		] )
+	);
+}
+
+/**
  * The config envs the Vite dev server supports, and the entries each serves.
  * @type {Record<string, Record<string, { file: string, styles: string[] }>>}
  */
 export const entriesByEnv = {
-	development: startEntries,
+	development: withEnvironmentBadge( startEntries ),
 	'dashboard-development': startDashboardEntries,
+	'a8c-for-agencies-development': withEnvironmentBadge( startEntries ),
 };
 
 /**
