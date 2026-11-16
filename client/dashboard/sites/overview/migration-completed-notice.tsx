@@ -86,7 +86,14 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 	const isSourceDomainPrimary = getPrimaryDomain( site ) === sourceDomain;
 
 	let connectDomainUrl;
-	if ( ! isSourceDomainOnSite ) {
+	if ( isSourceDomainOnSite && isDashboardBackport() ) {
+		connectDomainUrl = `/domains/manage/${ sourceDomain }/edit/${ site.slug }`;
+	} else if ( isSourceDomainOnSite && domainOverviewRoute.fullPath ) {
+		connectDomainUrl = router.buildLocation( {
+			to: domainOverviewRoute.fullPath,
+			params: { domainName: sourceDomain },
+		} ).href;
+	} else {
 		connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
 			initialQuery: sourceDomain,
 			step: 'transfer-or-connect',
@@ -95,13 +102,6 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 			dashboard: getCurrentDashboard(),
 			back_to: redirectToDashboardLink(),
 		} );
-	} else if ( isDashboardBackport() ) {
-		connectDomainUrl = `/domains/manage/${ sourceDomain }/edit/${ site.slug }`;
-	} else {
-		connectDomainUrl = router.buildLocation( {
-			to: domainOverviewRoute.fullPath,
-			params: { domainName: sourceDomain },
-		} ).href;
 	}
 
 	return (

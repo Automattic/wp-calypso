@@ -15,6 +15,11 @@ import {
 } from '../migration-completed-notice';
 import type { Site } from '@automattic/api-core';
 
+vi.mock( '../../../app/router/domains', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	domainOverviewRoute: { fullPath: '/domains/$domainName' },
+} ) );
+
 let mockIsBackport = false;
 vi.mock( '../../../utils/is-dashboard-backport', () => ( {
 	isDashboardBackport: () => mockIsBackport,
