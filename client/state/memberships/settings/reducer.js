@@ -15,7 +15,7 @@ export default ( state = {}, action ) => {
 					membershipsSandboxStatus: action?.data?.store_context ?? null,
 					connectUrl: action?.data?.connect_url ?? null,
 					couponsAndGiftsEnabled: action?.data?.coupons_and_gifts_enabled ?? null,
-					connectedAccountAcceptsCharges: action?.data?.connected_account_accepts_charges ?? true,
+					connectedAccountAcceptsCharges: action?.data?.connected_account_accepts_charges ?? null,
 				},
 			};
 	}
