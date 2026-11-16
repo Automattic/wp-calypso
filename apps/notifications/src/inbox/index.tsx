@@ -112,6 +112,7 @@ function InboxPanes( {
 							filterName={ filterName }
 							selectedNoteId={ selectedNoteId }
 							setSelectedNoteId={ setSelectedNoteId }
+							openNoteOnArrowKeys
 						/>
 					</ErrorBoundary>
 				),

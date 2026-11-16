@@ -40,9 +40,17 @@ type NoteListProps = {
 	filterName: FilterName;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	openNoteOnArrowKeys?: boolean;
 };
 
-const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
+const ARROW_KEYS = [ 'ArrowUp', 'ArrowDown' ];
+
+const NoteList = ( {
+	filterName,
+	selectedNoteId,
+	setSelectedNoteId,
+	openNoteOnArrowKeys = false,
+}: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
@@ -103,6 +111,18 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	}, [ client, filterName ] );
 
 	const isModifierClickRef = useRef( false );
+	const isArrowKeyNavigationRef = useRef( false );
+
+	const openFocusedNote = ( event: React.FocusEvent< HTMLDivElement > ) => {
+		if ( ! openNoteOnArrowKeys || ! isArrowKeyNavigationRef.current ) {
+			return;
+		}
+		isArrowKeyNavigationRef.current = false;
+		const noteId = event.target.id.match( /-(\d+)-item-wrapper$/ )?.[ 1 ];
+		if ( noteId && noteId !== selectedNoteId ) {
+			setSelectedNoteId( noteId );
+		}
+	};
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
@@ -235,6 +255,10 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 			onClickCapture={ ( event ) => {
 				isModifierClickRef.current = event.metaKey || event.ctrlKey || event.shiftKey;
 			} }
+			onKeyDownCapture={ ( event ) => {
+				isArrowKeyNavigationRef.current = ARROW_KEYS.includes( event.key );
+			} }
+			onFocus={ openFocusedNote }
 		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>
 				<DataViews< Note >
