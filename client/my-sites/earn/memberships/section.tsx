@@ -14,6 +14,7 @@ import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earn
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
+	getConnectedAccountAcceptsChargesForSiteId,
 	getConnectedAccountDescriptionForSiteId,
 	getConnectUrlForSiteId,
 	getMembershipsSandboxStatusForSiteId,
@@ -45,6 +46,10 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 
 	const hasConnectedAccount = useSelector( ( state ) =>
 		getIsConnectedForSiteId( state, site?.ID )
+	);
+
+	const connectedAccountAcceptsCharges = useSelector( ( state ) =>
+		getConnectedAccountAcceptsChargesForSiteId( state, site?.ID )
 	);
 
 	const isMembershipsSandboxed = useSelector( ( state ) =>
@@ -116,6 +121,19 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 						</Button>
 					) }
 				</SectionHeader>
+				{ hasConnectedAccount && ! connectedAccountAcceptsCharges && (
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text={ translate(
+							'Your Stripe account can’t accept payments right now, so new and renewing subscriptions will fail. Resolve the issue in your Stripe dashboard.'
+						) }
+					>
+						<NoticeAction href="https://dashboard.stripe.com/" external>
+							{ translate( 'Open Stripe' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				{ hasConnectedAccount ? (
 					<Card
 						onClick={ () => setShowDisconnectStripeDialog( true ) }
