@@ -6,7 +6,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { StaticSiteImportProgress } from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
 import { useStaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
-import { SourceBackdrop } from './source-backdrop';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -89,7 +88,6 @@ const StaticSiteImportProgressStep: StepType< {
 	return (
 		<>
 			<DocumentHead title={ __( 'We’re moving your site' ) } />
-			<SourceBackdrop from={ from } />
 			<Step.WideLayout
 				className="static-site-import-progress-step"
 				topBar={ <Step.TopBar /> }
