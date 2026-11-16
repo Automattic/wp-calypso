@@ -284,6 +284,7 @@
 		"eslint-plugin-react": "^7.37.5",
 		"eslint-plugin-react-hooks": "^7.1.1",
 		"eslint-plugin-wpcalypso": "workspace:^",
+		"eslint-scope": "^9.1.2",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.2.3",
 		"globals": "^14.0.0",

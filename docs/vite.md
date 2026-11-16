@@ -23,4 +23,11 @@ yarn start-dashboard:vite
 
 ## Checking for drift from webpack
 
-While the repo has both webpack and Vite, their configurations have to resolve modules the same way, and code that only works with one of them can slip in. `yarn vite-check`, part of the "Unit tests" build, transforms every module the entries and sections of `yarn start-dashboard:vite` reach with the Vite configuration and fails on errors and on webpack-only code such as `require.context()`, `module.hot`, `require()` in ES modules, `import()` of a template literal and `process.env.X` without a define. If a change trips it on purpose, add the file to `ALLOWED` in `build-tools/vite/check.mjs`, with the reason.
+While the repo has both webpack and Vite, their configurations have to resolve modules the same way, and code that only works with one of them can slip in. `yarn vite-check`, part of the "Unit tests" build, uses the Vite configuration of `yarn start:vite`, so every entry and section. It fails on:
+
+- a module that doesn't transform, and webpack-only code that survives the transform: `require.context()`, `module.hot`, `require()` in ES modules, `import()` of a template literal and `process.env.X` without a define;
+- an import, in first-party code or in a pre-bundled dependency, that Vite resolves to a different file than webpack's resolver, and a file webpack loads once that Vite loads as two modules;
+- a package that first-party code imports at more than one version. Vite's dependency optimizer gives every importer the same install, where webpack resolves the nearest one;
+- pre-bundled CommonJS that breaks in strict mode, which Vite's ES module output always is: an assignment to an undeclared variable, a free `global` or a direct `eval()`.
+
+If a change trips it on purpose, add the file, package or finding to `build-tools/vite/check-allowed.mjs`, with the reason.
