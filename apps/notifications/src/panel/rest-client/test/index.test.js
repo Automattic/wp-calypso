@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { store, init as initState } from '../../state';
 import actions from '../../state/actions';
 import { addListeners, removeListeners } from '../../state/create-listener-middleware';
@@ -56,7 +57,7 @@ describe( 'RestClient', () => {
 	let pinghubCallback;
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		// The redux store is a shared singleton; re-init it so each test starts empty,
 		// including the per-tab cached filtered id lists.
@@ -83,8 +84,8 @@ describe( 'RestClient', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllTimers();
-		jest.useRealTimers();
+		vi.clearAllTimers();
+		vi.useRealTimers();
 	} );
 
 	// Seed the first window via the polling path and return its callback's notes.
@@ -838,7 +839,7 @@ describe( 'RestClient', () => {
 
 		const receiveMessagesTogether = ( ...messages ) => {
 			const main = client.main;
-			client.main = jest.fn();
+			client.main = vi.fn();
 			messages.forEach( receiveMessage );
 			client.main = main;
 		};
@@ -850,7 +851,7 @@ describe( 'RestClient', () => {
 			const subscriberActionListener = listenForRenderNotes();
 			const receivedAt = Date.now();
 			receivePush( 99001 );
-			jest.setSystemTime( receivedAt + 1000 );
+			vi.setSystemTime( receivedAt + 1000 );
 
 			client.main();
 			expect( getCalls ).toHaveLength( 1 );
@@ -920,9 +921,9 @@ describe( 'RestClient', () => {
 			const subscriberActionListener = listenForRenderNotes();
 			const firstReceivedAt = Date.now();
 			const main = client.main;
-			client.main = jest.fn();
+			client.main = vi.fn();
 			receivePush( 99001 );
-			jest.setSystemTime( firstReceivedAt + 1000 );
+			vi.setSystemTime( firstReceivedAt + 1000 );
 			receivePush( 99001 );
 			client.main = main;
 
@@ -959,7 +960,7 @@ describe( 'RestClient', () => {
 			const firstReceivedAt = Date.now();
 			receivePush( 99001 );
 			client.main();
-			jest.setSystemTime( firstReceivedAt + 1000 );
+			vi.setSystemTime( firstReceivedAt + 1000 );
 			const secondReceivedAt = Date.now();
 			receivePush( 99001 );
 			client.main();

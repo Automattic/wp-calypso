@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -71,6 +71,68 @@ describe( 'ThreadParent', () => {
 
 		expect( container.querySelector( '.wpnc-simplified__thread-parent.is-compact' ) ).toBeTruthy();
 		expect( screen.queryByText( /In reply to/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'previews the replied-to comment’s own words, without what it quotes', () => {
+		const quote = 'Someone else said this.';
+		const text = `${ quote }\nI think so too.`;
+		const { container } = render(
+			panel(
+				reply( 5, {
+					meta: {
+						ids: { site: 10, post: 20, comment: 5, parent_comment: 1 },
+						parent_comment: comment( {
+							text,
+							content: {
+								text,
+								ranges: [
+									{ type: 'blockquote', id: 1, parent: null, indices: [ 0, quote.length ] },
+									{
+										type: 'strong',
+										id: 2,
+										parent: null,
+										indices: [ text.length - 4, text.length - 1 ],
+									},
+								],
+							},
+						} ),
+						actor: { name: 'Ben', avatar: '' },
+					},
+				} )
+			)
+		);
+		const preview = container.querySelector( '.wpnc-simplified__parent-text' );
+
+		expect( preview ).toHaveTextContent( /^I think so too\.$/ );
+		expect( preview?.querySelector( 'blockquote' ) ).toBeNull();
+		expect( preview?.querySelector( 'strong' ) ).toHaveTextContent( /^too$/ );
+	} );
+
+	it( 'previews a replied-to comment that only quotes', () => {
+		const text = 'Someone else said this.';
+		const { container } = render(
+			panel(
+				reply( 6, {
+					meta: {
+						ids: { site: 10, post: 20, comment: 6, parent_comment: 1 },
+						parent_comment: comment( {
+							text,
+							content: {
+								text,
+								ranges: [
+									{ type: 'blockquote', id: 1, parent: null, indices: [ 0, text.length ] },
+								],
+							},
+						} ),
+						actor: { name: 'Ben', avatar: '' },
+					},
+				} )
+			)
+		);
+
+		expect(
+			container.querySelector( '.wpnc-simplified__parent-text blockquote' )
+		).toHaveTextContent( text );
 	} );
 } );
 

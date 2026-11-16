@@ -11,11 +11,6 @@ if ( isJsdom ) {
 	await import( 'vitest-canvas-mock' );
 }
 
-// React Testing Library's `waitFor` only advances fake timers when it finds a global `jest`.
-testGlobals.jest = {
-	advanceTimersByTime: ( ms: number ) => vi.advanceTimersByTime( ms ),
-};
-
 testGlobals.google = {};
 
 // @wordpress/components calls `CSS.supports()`, which jsdom lacks. Keep `CSS.escape`, which

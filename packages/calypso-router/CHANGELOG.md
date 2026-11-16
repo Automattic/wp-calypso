@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Expose the matched route pattern through the read-only `page.currentRoutePattern` getter.
+- Treat a backslash before a closing parenthesis in a route group as escaping it, as path-to-regexp does, so parsing a route can no longer backtrack exponentially.
 
 ## 0.7.0
 

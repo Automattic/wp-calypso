@@ -44,6 +44,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/education-student-validation' ),
 	},
 
+	STUDENT_PLAN_ELIGIBILITY: {
+		slug: 'student-plan-eligibility',
+		asyncComponent: () => import( './steps-repository/student-plan-eligibility' ),
+	},
+
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	NEWSLETTER_SETUP: {

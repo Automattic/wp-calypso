@@ -10,8 +10,15 @@ export function isAtomicSiteWithoutBusinessPlan( holds: EligibilityHold[] ): boo
  * Whether the `NO_BUSINESS_PLAN` hold should upsell the Personal plan instead of Business,
  * because Personal is the lowest plan that unlocks what the context needs.
  */
-export function shouldUpsellPersonalPlan( context: EligibilityContext | null ): boolean {
+export function shouldUpsellPersonalPlan(
+	context: EligibilityContext | null,
+	isMarketplace = false
+): boolean {
 	if ( context === 'plugins-upload' ) {
+		return true;
+	}
+	// Partner themes are available from the Personal plan.
+	if ( context === 'themes' && isMarketplace ) {
 		return true;
 	}
 	return (

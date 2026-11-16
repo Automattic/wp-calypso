@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import { ValidationError, validator } from './types';
 
 const filePathRegExp = /^\/$|^(\/[^/]+)+\/?$/;
-const filePathBackSlashRegExp = /^\\$|^(\\[^/]+)+\\?$/;
+const filePathBackSlashRegExp = /^\\[^/]*$/;
 const filePathMultiSlashRegExp = /^\/+$|^(\/+[^/]+)+\/*$/;
 
 const validateFilePath: validator< string > = (

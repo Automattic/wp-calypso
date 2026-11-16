@@ -1,20 +1,36 @@
 # Vite dev server
 
-`yarn start-dashboard:vite` starts the same Express server as `yarn start-dashboard-only`, but Vite serves the Dashboard's JavaScript and CSS in place of webpack. Vite doesn't bundle in development: it transforms each module when the browser asks for it, so the server is ready in seconds and edits show up without a rebuild. Production builds still use webpack.
+`yarn start:vite`, `yarn start-dashboard:vite` and `yarn start-a8c-for-agencies:vite` start the same Express server as `yarn start`, `yarn start-dashboard` and `yarn start-a8c-for-agencies`, but Vite serves the JavaScript and CSS in place of webpack. Vite doesn't bundle in development: it transforms each module when the browser asks for it, so the server is ready in seconds and edits show up without a rebuild. Production builds still use webpack, and `yarn start` stays on webpack.
 
 ```bash
+yarn start:vite
 yarn start-dashboard:vite
+yarn start-a8c-for-agencies:vite
 ```
 
-It serves the dotcom Dashboard on `http://my.localhost:<port>` and the A4A Dashboard on `http://my.a4a.localhost:<port>`. Classic Calypso routes aren't served yet; use `yarn start` for those.
+`yarn start:vite` serves all of Calypso, like `yarn start`. `yarn start-dashboard:vite` serves the dotcom Dashboard on `http://my.localhost:<port>` and the A4A Dashboard on `http://my.a4a.localhost:<port>`, plus the classic flows the Dashboard links into: Stepper (`/setup`), signup (`/start`), checkout and A4A signup. A4A sign-in only works on port 3000.
+
+`yarn start-a8c-for-agencies:vite` serves A4A on `http://agencies.localhost:3000`. Like A4A on webpack, it needs port 3000 for sign-in: run it with `PORT=3000` in a worktree, which otherwise gets a port of its own.
+
+### Known differences
+
+- Logged-out, server-rendered pages such as `/themes` show unstyled content for a moment: the server links the global stylesheet, and the section's styles arrive with its JavaScript.
+- Jetpack Cloud has no Vite script yet; use `yarn start-jetpack-cloud`.
 
 ## How it works
 
-- `build-tools/vite/start.mjs` checks the Node version, builds the workspace packages and `public/` when they're missing, builds the Node server with Vite (`build/server-vite.cjs`) and starts it. It skips the rest of `yarn start`, e.g. `build-css` and `calypso-doctor`.
-- `client/server/bundler/vite.js` runs Vite in middleware mode inside Express, sharing its HTTP server for hot updates, and tells the server which files each Dashboard entry loads.
-- The Vite configuration lives in `build-tools/vite/`: `base.mjs` is shared with Vitest, `dev.mjs` mirrors the browser side of `client/webpack.config.js`, and `server.mjs` mirrors `client/webpack.config.node.js`.
-- The first page load after a dependency change takes longer while Vite pre-bundles dependencies into `.cache/vite`. Delete that folder if a dependency looks stale.
+- `build-tools/vite/start.mjs` takes the config env (`development`, `dashboard-development` or `a8c-for-agencies-development`), checks the Node version, builds the workspace packages and `public/` when they're missing, builds the Node server with Vite (`build/server-vite.cjs`) and starts it. It skips the rest of `yarn start`, e.g. `build-css` and `calypso-doctor`.
+- `client/server/bundler/vite.js` runs Vite in middleware mode inside Express, sharing its HTTP server for hot updates, and tells the server which files each entry loads, including the `?direct` stylesheets a server-rendered page needs before its scripts run.
+- The Vite configuration lives in `build-tools/vite/`: `base.mjs` is shared with Vitest, `dev.mjs` mirrors the browser side of `client/webpack.config.js` (including the sections loader, with the sections the server config enables), and `server.mjs` mirrors `client/webpack.config.node.js`.
+- The first page load after a dependency change takes longer while Vite pre-bundles dependencies into `.cache/vite/<config env>`. Delete that folder if a dependency looks stale.
 
 ## Checking for drift from webpack
 
-While the repo has both webpack and Vite, their configurations have to resolve modules the same way, and code that only works with one of them can slip in. `yarn vite-check`, part of the "Unit tests" build, transforms every module the Dashboard entries reach with the Vite configuration and fails on errors and on webpack-only code such as `require.context()`, `module.hot`, `require()` in ES modules, `import()` of a template literal and `process.env.X` without a define. If a change trips it on purpose, add the file to `ALLOWED` in `build-tools/vite/check.mjs`, with the reason.
+While the repo has both webpack and Vite, their configurations have to resolve modules the same way, and code that only works with one of them can slip in. `yarn vite-check`, part of the "Unit tests" build, uses the Vite configuration of `yarn start:vite`, so every entry and section. It fails on:
+
+- a module that doesn't transform, and webpack-only code that survives the transform: `require.context()`, `module.hot`, `require()` in ES modules, `import()` of a template literal and `process.env.X` without a define;
+- an import, in first-party code or in a pre-bundled dependency, that Vite resolves to a different file than webpack's resolver, and a file webpack loads once that Vite loads as two modules;
+- a package that first-party code imports at more than one version. Vite's dependency optimizer gives every importer the same install, where webpack resolves the nearest one;
+- pre-bundled CommonJS that breaks in strict mode, which Vite's ES module output always is: an assignment to an undeclared variable, a free `global` or a direct `eval()`.
+
+If a change trips it on purpose, add the file, package or finding to `build-tools/vite/check-allowed.mjs`, with the reason.

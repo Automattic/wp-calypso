@@ -254,6 +254,12 @@ body.is-section-promote-post-i2 {
 	position: static;
 }
 
+// The header visual slot is a fixed 24px grid cell, so the 20px Jetpack logo
+// would sit in its top-left corner. Same CSS Modules caveat as above.
+.promote-post-i2__page > :first-child div:has(> .jetpack-logo) {
+	place-items: center;
+}
+
 // On mobile the admin-ui Page header keeps its desktop padding (16px 24px), so
 // it sits inset from the 16px card gutters below, and its title row and
 // subtitle are separated only by the subtitle's tight 4px gap — cramped and

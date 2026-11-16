@@ -2,38 +2,39 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import usePickerVariations from '../use-picker-variations';
 import type { GlobalStyles, StyleVariation } from '../../components/styles-preview';
 
-const mockSetStyles = jest.fn( () => true );
-jest.mock( '../use-styles', () => ( {
+const mockSetStyles = vi.fn( () => true );
+vi.mock( '../use-styles', () => ( {
 	__esModule: true,
 	default: () => mockSetStyles,
 } ) );
 
 let mockGlobalStyles: GlobalStyles | null = null;
-jest.mock( '../use-global-styles', () => ( {
+vi.mock( '../use-global-styles', () => ( {
 	__esModule: true,
 	default: () => ( { globalStylesId: null, globalStyles: mockGlobalStyles } ),
 } ) );
 
-const mockSetSiteEditorAction = jest.fn();
-jest.mock( '../../utils/site-editor-context', () => ( {
+const mockSetSiteEditorAction = vi.fn();
+vi.mock( '../../utils/site-editor-context', () => ( {
 	setSiteEditorAction: ( name: string, value: unknown ) => mockSetSiteEditorAction( name, value ),
 } ) );
 
-const mockSetCheckpoint = jest.fn();
-const mockClearCheckpoint = jest.fn();
-const mockHasCheckpoint = jest.fn< boolean, [ string ] >( () => false );
-jest.mock( '../../utils/checkpoints', () => ( {
+const mockSetCheckpoint = vi.fn();
+const mockClearCheckpoint = vi.fn();
+const mockHasCheckpoint = vi.fn< ( ...args: [ string ] ) => boolean >( () => false );
+vi.mock( '../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
 	clearCheckpoint: ( id: string ) => mockClearCheckpoint( id ),
 	hasCheckpoint: ( id: string ) => mockHasCheckpoint( id ),
 	setCheckpoint: ( ...args: unknown[] ) => mockSetCheckpoint( ...args ),
 } ) );
 
-const mockRecordBigSkyTracksEvent = jest.fn();
-jest.mock( '../../utils/tracks', () => ( {
+const mockRecordBigSkyTracksEvent = vi.fn();
+vi.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: ( name: string, props: unknown ) =>
 		mockRecordBigSkyTracksEvent( name, props ),
 } ) );
@@ -53,7 +54,7 @@ const makeOptions = ( overrides = {} ) => ( {
 } );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockGlobalStyles = null;
 } );
 

@@ -11,11 +11,16 @@ export default function NewPostNote( { note }: { note: Note } ) {
 	const author = actor?.name && (
 		<Author avatar={ actor.avatar }>
 			{ actor.url ? (
-				<a href={ actor.url } target="_blank" rel="noreferrer">
+				<a
+					className="wpnc-simplified__card-author"
+					href={ actor.url }
+					target="_blank"
+					rel="noreferrer"
+				>
 					{ actor.name }
 				</a>
 			) : (
-				actor.name
+				<span className="wpnc-simplified__card-author">{ actor.name }</span>
 			) }
 		</Author>
 	);
