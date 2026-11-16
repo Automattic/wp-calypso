@@ -151,22 +151,6 @@
 	}
 }
 
-/* Destructive Secondary Button */
-@mixin dashboard-dark-theme-destructive-secondary-button {
-	// Destructive buttons read the error tokens, which stay at their light-mode reds.
-	.components-button.is-destructive:is( .is-secondary, .is-tertiary ):not( :disabled ) {
-		--wpds-color-foreground-interactive-error: var( --dashboard-danger__color );
-		--wpds-color-foreground-interactive-error-active: var( --dashboard-danger__color-active );
-		--wpds-color-stroke-interactive-error: var( --dashboard-danger__color );
-		--wpds-color-stroke-interactive-error-active: var( --dashboard-danger__color-active );
-		--wpds-color-background-interactive-error-weak-active: color-mix(
-			in srgb,
-			var( --dashboard-danger__color ) 4%,
-			transparent
-		);
-	}
-}
-
 /* Breadcrumbs */
 @mixin dashboard-dark-theme-breadcrumbs {
 	.a8c-components-breadcrumbs {
@@ -486,7 +470,6 @@
 	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-dataviews;
-	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-domain-upsell-illustration;
