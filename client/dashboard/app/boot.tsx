@@ -1,6 +1,9 @@
 import { getPersistQueryClientPromise, queryClient } from '@automattic/api-queries';
 import { captureException, initSentry } from '@automattic/calypso-sentry';
-import { maybeInitializeSupportSession } from '@automattic/calypso-support-session';
+import {
+	isSupportSession,
+	maybeInitializeSupportSession,
+} from '@automattic/calypso-support-session';
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
@@ -33,7 +36,8 @@ function boot( config: AppConfig ) {
 	}
 
 	maybeInitializeSupportSession( wpcom );
-	if ( token ) {
+	// Outside a session the client already read the token when it was created.
+	if ( token && isSupportSession() ) {
 		wpcom.loadToken( token );
 	}
 	loadDevHelpers();

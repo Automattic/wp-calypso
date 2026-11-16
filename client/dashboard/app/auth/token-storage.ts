@@ -69,19 +69,16 @@ export function saveToken( token: string, expiresIn?: string | null ): void {
 /**
  * The saved token, if any.
  *
- * Inside a support session a token the session obtained wins; the user's own token in localStorage
- * still counts, since the session header decides who a request acts as and the token only has to
- * come from an allowed client. Outside a session a token an earlier session left in the tab is
- * dropped.
- *
- * Must run before the support session replaces localStorage, which would hide a saved token.
+ * Inside a support session only a token the session obtained counts: `/me` answers as the token's
+ * user, so a token saved outside the session would show the wrong person. Outside a session a token
+ * an earlier session left in the tab is dropped.
  */
 export function getSavedToken(): string | undefined {
 	const tabToken = readTab( TOKEN_KEY );
+	if ( isSupportNextSession() ) {
+		return tabToken || undefined;
+	}
 	if ( tabToken ) {
-		if ( isSupportNextSession() ) {
-			return tabToken;
-		}
 		removeTab( TOKEN_KEY );
 		removeTab( EXPIRES_IN_KEY );
 	}

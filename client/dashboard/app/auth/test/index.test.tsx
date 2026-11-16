@@ -258,6 +258,16 @@ describe( 'requestOAuthToken', () => {
 		expect( window.sessionStorage.getItem( 'wpcom_oauth_support_session' ) ).toBeNull();
 	} );
 
+	test( 'records the trip as a bounce', () => {
+		config.enable( 'oauth' );
+
+		requestOAuthToken();
+
+		const record = JSON.parse( window.sessionStorage.getItem( 'wpcom_auth_bounce_count' ) ?? '' );
+		expect( record.count ).toBe( 1 );
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
+	} );
+
 	test( 'records that the flow started inside a support session', () => {
 		config.enable( 'oauth' );
 		window.isSupportSession = true;
@@ -276,6 +286,19 @@ describe( 'requestOAuthToken', () => {
 		expect( requestOAuthToken() ).toBe( false );
 		expect( replace ).not.toHaveBeenCalled();
 		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth', 'bounce:no-token' );
+	} );
+
+	test( 'does not count a skipped redirect as a bounce', () => {
+		config.enable( 'oauth' );
+		const record = { count: 1, at: Date.now() };
+		window.sessionStorage.setItem( 'wpcom_auth_bounce_count', JSON.stringify( record ) );
+
+		requestOAuthToken();
+
+		expect( window.sessionStorage.getItem( 'wpcom_auth_bounce_count' ) ).toBe(
+			JSON.stringify( record )
+		);
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth-loop', expect.anything() );
 	} );
 
 	test( 'does nothing on a dashboard that does not use OAuth', () => {

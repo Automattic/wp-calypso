@@ -52,15 +52,11 @@ interface AuthBounceRecord {
 // successful auth, because how do we know when it is safe to clear the count?
 // It could be that immediately after successful auth, the very next API returns
 // 401 and causes a bounce, yet we would have already cleared the count.
-function trackAuthBounceLoop(): number {
+function trackAuthBounceLoop() {
 	try {
 		const now = Date.now();
-		const storedRecord: unknown = JSON.parse(
-			window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ?? 'null'
-		);
-		const previousRecord = isAuthBounceRecord( storedRecord ) ? storedRecord : null;
-		const withinWindow = previousRecord !== null && now - previousRecord.at < AUTH_LOOP_WINDOW_MS;
-		const count = withinWindow ? previousRecord.count + 1 : 1;
+		const previousRecord = readRecentAuthBounce( now );
+		const count = previousRecord ? previousRecord.count + 1 : 1;
 
 		window.sessionStorage.setItem(
 			AUTH_BOUNCE_COUNT_KEY,
@@ -71,11 +67,24 @@ function trackAuthBounceLoop(): number {
 			const value = count >= AUTH_LOOP_MAX_COUNT ? `${ AUTH_LOOP_MAX_COUNT }+` : String( count );
 			bumpStat( 'dashboard-auth-loop', value );
 		}
-
-		return count;
 	} catch {
 		// sessionStorage can be unavailable in private contexts or JSON.parse may fail.
-		return 1;
+	}
+}
+
+function readRecentAuthBounce( now: number ): AuthBounceRecord | null {
+	const storedRecord: unknown = JSON.parse(
+		window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ?? 'null'
+	);
+	const record = isAuthBounceRecord( storedRecord ) ? storedRecord : null;
+	return record !== null && now - record.at < AUTH_LOOP_WINDOW_MS ? record : null;
+}
+
+function hasRecentAuthBounce(): boolean {
+	try {
+		return readRecentAuthBounce( Date.now() ) !== null;
+	} catch {
+		return false;
 	}
 }
 
@@ -191,19 +200,20 @@ export function requestOAuthToken(): boolean {
 		return false;
 	}
 
-	// A repeat means the last trip through OAuth came back without a token, so another one would loop.
-	if ( trackAuthBounceLoop() > 1 ) {
+	// A recent bounce means the last trip through OAuth came back without a token, so another one would loop.
+	if ( hasRecentAuthBounce() ) {
 		return false;
 	}
 
 	try {
 		redirectToOAuth();
-		bumpStat( 'dashboard-auth', 'bounce:no-token' );
 	} catch {
 		// Storage can be unavailable; the user fetch below reports the problem instead.
 		return false;
 	}
 
+	trackAuthBounceLoop();
+	bumpStat( 'dashboard-auth', 'bounce:no-token' );
 	return true;
 }
 

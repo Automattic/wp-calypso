@@ -54,14 +54,14 @@ describe( 'token storage', () => {
 		expect( window.sessionStorage.getItem( 'wpcom_token' ) ).toBeNull();
 	} );
 
-	test( "the user's own token still counts in a support session", () => {
+	test( "ignores the user's own token in a support session", () => {
 		store.set( 'wpcom_token', 'own-token' );
 		window.isSupportSession = true;
 
-		expect( getSavedToken() ).toBe( 'own-token' );
+		expect( getSavedToken() ).toBeUndefined();
 	} );
 
-	test( 'the tab token wins over the saved one in a support session', () => {
+	test( 'uses the tab token in a support session', () => {
 		store.set( 'wpcom_token', 'own-token' );
 		window.isSupportSession = true;
 		window.sessionStorage.setItem( 'wpcom_token', 'customer-token' );
