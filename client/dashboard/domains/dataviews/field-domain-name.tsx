@@ -75,8 +75,8 @@ export const DomainNameField = ( {
 			: domainOverviewRoute.fullPath;
 
 	const content = (
-		<VStack spacing={ 1 }>
-			<span style={ textOverflowStyles }>
+		<VStack spacing={ 0 }>
+			<span style={ { ...textOverflowStyles, fontWeight: 500 } }>
 				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
 				<Text variant="muted" weight="inherit">
 					{ showWwwPrefix ? 'www.' : '' }

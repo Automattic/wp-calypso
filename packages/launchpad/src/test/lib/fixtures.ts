@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Task } from '../../types';
 
 export const defaultSiteDetails = {
@@ -321,6 +322,6 @@ export const MOCK_USE_QUERY_RESULT = {
 	isStale: false,
 	isSuccess: true,
 	status: 'success',
-	refetch: jest.fn(),
-	remove: jest.fn(),
+	refetch: vi.fn(),
+	remove: vi.fn(),
 };

@@ -37,6 +37,8 @@ if ( ! window.configData ) {
 	window.configData = {};
 }
 
+export const serverEnvId: string | undefined = window.configData.env_id;
+
 const isDesktop = window.electron !== undefined;
 
 let configData: ConfigData;

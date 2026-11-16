@@ -4,6 +4,7 @@
 import { render, renderHook, act } from '@testing-library/react';
 import { Action, type Location } from 'history';
 import { createElement, useLayoutEffect } from 'react';
+import { vi } from 'vitest';
 import { usePersistedHistory } from '../use-persisted-history';
 
 const STORAGE_KEY = 'agents-manager-router-history';
@@ -18,7 +19,7 @@ function storeHistory( siteKey: string, entries: ReturnType< typeof entry >[], i
 
 describe( 'usePersistedHistory', () => {
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		sessionStorage.clear();
 	} );
 
@@ -192,7 +193,7 @@ describe( 'usePersistedHistory', () => {
 	} );
 
 	it( 'keeps navigating when persisting fails', () => {
-		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 			throw new Error( 'quota exceeded' );
 		} );
 

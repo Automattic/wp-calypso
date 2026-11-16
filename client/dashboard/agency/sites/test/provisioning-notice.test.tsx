@@ -172,7 +172,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 	} );
 
 	test( 'gives up on a site that never reports ready', async () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers( { shouldAdvanceTime: true } );
 		mockAgencySites( [ provisionedSite( 7, 'provisioning' ) ] );
 		trackProvisioningSite( 7 );
 
@@ -191,7 +191,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 	} );
 
 	test( 'keeps reporting a site that reported ready before the TTL passed', async () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers( { shouldAdvanceTime: true } );
 		mockAgencySites( [ provisionedSite( 7, 'active' ) ] );
 		trackProvisioningSite( 7 );
 

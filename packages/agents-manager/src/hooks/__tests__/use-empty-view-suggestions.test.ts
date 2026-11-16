@@ -1,8 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
-const mockUseSelect = jest.fn();
+import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import { hideTopLevelDescriptions, useEmptyViewSuggestions } from '../use-empty-view-suggestions';
+import type { LoadedProviders } from '../../utils/load-external-providers';
+
+const mockUseSelect = vi.fn();
 let mockContext = {
 	sectionName: 'gutenberg',
 	currentRoute: undefined as string | undefined,
@@ -10,24 +14,20 @@ let mockContext = {
 let mockCurrentPostType: string | undefined;
 let mockIsEditedPostEmpty = false;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: (
 		mapSelect: ( select: ( storeName: string ) => unknown ) => unknown,
 		deps: unknown[]
 	) => mockUseSelect( mapSelect, deps ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
 } ) );
-
-import { renderHook, waitFor } from '@testing-library/react';
-import { hideTopLevelDescriptions, useEmptyViewSuggestions } from '../use-empty-view-suggestions';
-import type { LoadedProviders } from '../../utils/load-external-providers';
 
 const readerSuggestion = {
 	id: 'reader-summary',
@@ -93,7 +93,7 @@ function setReaderSuggestions( readerSuggestions: unknown ) {
 
 describe( 'useEmptyViewSuggestions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.history.pushState( {}, '', '/' );
 		mockContext = {
 			sectionName: 'gutenberg',
@@ -112,7 +112,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	it( 'uses Reader Chat overrides before waiting for the core store', async () => {
 		mockCoreStoreReady( false );
 		setReaderSuggestions( [ readerSuggestion ] );
-		const getEmptyViewSuggestions = jest.fn( () => [ bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -124,7 +124,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	it( 'keeps an empty Reader Chat override as an explicit no-suggestions state', async () => {
 		mockCoreStoreReady( false );
 		setReaderSuggestions( [] );
-		const getEmptyViewSuggestions = jest.fn( () => [ bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -140,7 +140,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			{ id: 'bad-prompt', label: 'Label must not be enough.', prompt: null },
 			readerSuggestion,
 		] );
-		const getEmptyViewSuggestions = jest.fn( () => [ bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -150,7 +150,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	} );
 
 	it( 'filters site-editor-only provider suggestions outside Site Editor', async () => {
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -159,7 +159,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	} );
 
 	it( 'returns no provider suggestions when all suggestions are site-editor-only outside Site Editor', async () => {
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -173,7 +173,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'site-editor',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
 		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -190,7 +190,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	} );
 
 	it( 'suppresses default suggestions when provider opts in and getEmptyViewSuggestions returns empty', async () => {
-		const getEmptyViewSuggestions = jest.fn( () => [] );
+		const getEmptyViewSuggestions = vi.fn( () => [] );
 		const loadedProviders = {
 			getEmptyViewSuggestions,
 			suppressEmptyViewDefaults: true,
@@ -207,7 +207,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
 		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -223,7 +223,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
 		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -236,7 +236,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
 		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result, rerender } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -256,7 +256,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'site-editor',
 			currentRoute: undefined,
 		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -272,7 +272,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: undefined,
 		};
-		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -290,7 +290,7 @@ describe( 'useEmptyViewSuggestions', () => {
 				sectionName: 'site-editor',
 				currentRoute: `/wp-admin/site-editor.php?postType=${ postType }`,
 			};
-			const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+			const getEmptyViewSuggestions = vi.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
 			const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
 
 			const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
@@ -310,7 +310,7 @@ describe( 'useEmptyViewSuggestions', () => {
 				currentRoute: '/wp-admin/site-editor.php',
 			};
 			mockCurrentPostType = 'page';
-			const getEmptyViewSuggestions = jest.fn( () => [
+			const getEmptyViewSuggestions = vi.fn( () => [
 				siteEditorSuggestion,
 				...( mockCurrentPostType === 'page' ? [ jetpackSuggestion ] : [] ),
 			] );
@@ -351,7 +351,7 @@ describe( 'hideTopLevelDescriptions', () => {
 	} );
 
 	it( 'keeps the rest of the suggestion intact', () => {
-		const action = jest.fn();
+		const action = vi.fn();
 		const [ formatted ] = hideTopLevelDescriptions( [ { ...featuredImage, action } ] );
 
 		expect( formatted.id ).toBe( featuredImage.id );
@@ -369,7 +369,7 @@ describe( 'hideTopLevelDescriptions', () => {
 
 describe( 'useEmptyViewSuggestions post content changes', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockContext = { sectionName: 'gutenberg', currentRoute: undefined };
 		mockCurrentPostType = 'post';
 		mockIsEditedPostEmpty = true;
@@ -383,7 +383,7 @@ describe( 'useEmptyViewSuggestions post content changes', () => {
 
 	// The list is cached in state, so it has to be rebuilt when emptiness flips.
 	it( 'refreshes the suggestions when the post gains content', async () => {
-		const getEmptyViewSuggestions = jest.fn( () => [
+		const getEmptyViewSuggestions = vi.fn( () => [
 			{ ...jetpackSuggestion, disabled: mockIsEditedPostEmpty },
 		] );
 		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;

@@ -4,16 +4,17 @@
 import { act, render } from '@testing-library/react';
 import { defaultI18n, resetLocaleData, setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
+import { vi } from 'vitest';
 import { HelpCenterChat } from '../help-center-chat';
 
-const mockNavigate = jest.fn();
-const mockProviderProps = jest.fn();
+const mockNavigate = vi.fn();
+const mockProviderProps = vi.fn();
 
 // Changed by each test.
 let mockShouldUseWapuu = false;
 let mockOpenZendeskChat = { hasOpenZendeskChat: false, isLoading: false };
 
-jest.mock( '@automattic/odie-client', () => ( {
+vi.mock( '@automattic/odie-client', () => ( {
 	__esModule: true,
 	default: ( { children, ...props }: { children: React.ReactNode } ) => {
 		mockProviderProps( props );
@@ -22,16 +23,16 @@ jest.mock( '@automattic/odie-client', () => ( {
 	OdieAssistant: () => null,
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: true, isLoading: false } ),
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: '' } ),
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '../../contexts/HelpCenterContext', () => ( {
+vi.mock( '../../contexts/HelpCenterContext', () => ( {
 	useFeatureConfig: () => ( {
 		chat: {},
 		aiDisclosureLine: ( __: ( text: string, domain?: string ) => string ) =>
@@ -40,22 +41,22 @@ jest.mock( '../../contexts/HelpCenterContext', () => ( {
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
-jest.mock( '../../data/use-support-status', () => ( {
+vi.mock( '../../data/use-support-status', () => ( {
 	useSupportStatus: () => ( { data: undefined } ),
 } ) );
 
 // Mock the hooks index, so its whole dependency graph doesn't load in jsdom.
-jest.mock( '../../hooks', () => ( {
+vi.mock( '../../hooks', () => ( {
 	useChatStatus: () => ( { forceEmailSupport: false, isChatRestricted: false } ),
 	useShouldUseWapuu: () => mockShouldUseWapuu,
 } ) );
 
-jest.mock( '../../hooks/use-has-open-zendesk-chat', () => ( {
+vi.mock( '../../hooks/use-has-open-zendesk-chat', () => ( {
 	useHasOpenZendeskChat: () => mockOpenZendeskChat,
 } ) );
 
-jest.mock( '../../hooks/use-help-center-tracks-event', () => ( {
-	useHelpCenterTracksEvent: () => jest.fn(),
+vi.mock( '../../hooks/use-help-center-tracks-event', () => ( {
+	useHelpCenterTracksEvent: () => vi.fn(),
 } ) );
 
 const renderChat = ( isUserEligibleForPaidSupport = false ) =>
@@ -69,7 +70,7 @@ const renderChat = ( isUserEligibleForPaidSupport = false ) =>
 const lastProviderProps = () => mockProviderProps.mock.calls.at( -1 )?.[ 0 ];
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockShouldUseWapuu = false;
 	mockOpenZendeskChat = { hasOpenZendeskChat: false, isLoading: false };
 } );

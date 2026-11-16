@@ -1,7 +1,8 @@
+import { vi } from 'vitest';
 import { getApiPath } from '../get-api';
 
 const config = {
-	isEnabled: jest.fn(),
+	isEnabled: vi.fn(),
 };
 
 describe( 'getApiPath for jetpack/atomic sites', () => {
@@ -9,7 +10,7 @@ describe( 'getApiPath for jetpack/atomic sites', () => {
 		config.isEnabled.mockReturnValue( true );
 	} );
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 	it( 'should return the passed in jetpackPath', () => {
 		config.isEnabled.mockReturnValue( true );
@@ -27,7 +28,7 @@ describe( 'getApiPath for simple sites', () => {
 		config.isEnabled.mockReturnValue( false );
 	} );
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 	it( '/site/purchases', () => {
 		const jetpackPath = '/site/purchases';

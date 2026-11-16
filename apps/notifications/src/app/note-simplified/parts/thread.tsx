@@ -20,6 +20,54 @@ function toPreview( block: Block ): Block {
 }
 
 /**
+ * Removes the text a comment quotes, so a short preview shows the author's own words.
+ * A comment that is only quotes is kept whole.
+ */
+function withoutQuotes( block: Block ): Block {
+	const quotes = block.ranges?.filter( ( range ) => range.type === 'blockquote' );
+	if ( ! quotes?.length ) {
+		return block;
+	}
+
+	const isQuoted: boolean[] = new Array( block.text.length ).fill( false );
+	for ( const { indices } of quotes ) {
+		const [ start, end ] = indices;
+		isQuoted.fill( true, start, block.text[ end ] === '\n' ? end + 1 : end );
+	}
+
+	const text = block.text
+		.split( '' )
+		.filter( ( _, index ) => ! isQuoted[ index ] )
+		.join( '' );
+	if ( ! text.trim() ) {
+		return block;
+	}
+
+	// The number of characters kept before each index, which is where that index moves to.
+	const keptBefore = [ 0 ];
+	isQuoted.forEach( ( quoted, index ) =>
+		keptBefore.push( keptBefore[ index ] + ( quoted ? 0 : 1 ) )
+	);
+
+	const shiftIndices = < T extends { indices: [ number, number ] } >( items?: T[] ) =>
+		items
+			?.filter( ( { indices: [ start, end ] } ) =>
+				end > start ? keptBefore[ end ] > keptBefore[ start ] : ! isQuoted[ start ]
+			)
+			.map( ( item ): T => ( {
+				...item,
+				indices: [ keptBefore[ item.indices[ 0 ] ], keptBefore[ item.indices[ 1 ] ] ],
+			} ) );
+
+	return {
+		...block,
+		text,
+		ranges: shiftIndices( block.ranges ),
+		media: shiftIndices( block.media ),
+	};
+}
+
+/**
  * Shortens a block to at most `maxLength` characters at a word boundary, ending it with an ellipsis.
  */
 function truncateBlock( block: Block, maxLength: number ): Block {
@@ -56,6 +104,7 @@ const ThreadItem = ( {
 	meta,
 	status,
 	label,
+	url,
 	compact = false,
 	className,
 	children,
@@ -64,6 +113,7 @@ const ThreadItem = ( {
 	author?: string;
 	authorUrl?: string | null;
 	meta?: ReactNode;
+	url?: string | null;
 	status?: ReactNode;
 	label?: string;
 	compact?: boolean;
@@ -92,6 +142,20 @@ const ThreadItem = ( {
 				author
 			) }
 		</Text>
+	);
+
+	// The link to the comment, stretched over the whole panel for the pointer. The time's
+	// link goes to the same comment, so this one stays out of the tab order and the
+	// accessibility tree.
+	const link = url && (
+		<a
+			className="wpnc-simplified__item-link"
+			href={ url }
+			target="_blank"
+			rel="noreferrer"
+			tabIndex={ -1 }
+			aria-hidden="true"
+		/>
 	);
 
 	return (
@@ -130,6 +194,7 @@ const ThreadItem = ( {
 					{ meta }
 				</HStack>
 				{ status }
+				{ link }
 			</HStack>
 			{ children }
 		</VStack>
@@ -158,12 +223,13 @@ export function ThreadParent( {
 			avatar={ comment.author_avatar }
 			author={ comment.author_name }
 			authorUrl={ comment.author_url }
+			url={ compact ? comment.url : undefined }
 			compact={ compact }
 			label={ label }
 			meta={
 				comment.date && (
 					<Text className="wpnc-simplified__quiet-links" size={ 12 } variant="muted">
-						<NoteTime timestamp={ comment.date } url={ comment.url } />
+						<NoteTime timestamp={ comment.date } url={ comment.url } isComment={ compact } />
 					</Text>
 				)
 			}
@@ -174,7 +240,7 @@ export function ThreadParent( {
 					'is-excerpt': maxLength,
 				} ) }
 			>
-				{ p( html( truncate ? toPreview( content ) : content ) ) }
+				{ p( html( truncate ? toPreview( withoutQuotes( content ) ) : content ) ) }
 			</div>
 		</ThreadItem>
 	);

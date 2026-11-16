@@ -117,6 +117,7 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
 - **The local Dashboard (`my.localhost`) keeps returning to the wordpress.com “Continue as …” login screen after you sign in** when the browser blocks third-party cookies for the local origin, as incognito windows and automated Chrome profiles do by default. Allow them for the origin, e.g. `http://my.localhost:3000`, or for `https://public-api.wordpress.com` (see `docs/install.md`).
 - **Don't wait for `networkidle`.** The dashboard keeps polling. Wait for a visible element.
 - **Tour popovers** can cover parts of a screenshot. Dismiss them in `--eval` if they get in the way.
+- **Don't count Dashboard snackbars by page text.** A hidden screen-reader region repeats the message and keeps it after the snackbar closes. Count `.components-snackbar` elements right after the action: most snackbars close after 6 seconds.
 - **Sandboxes.** Headless Chromium can reach production even when `/etc/hosts` points at a sandbox. Responses from the edge have an `x-ac` header; sandbox responses don't. To reach the sandbox, start the `--eval` with:
 
   ```js
@@ -133,3 +134,5 @@ When you drive a browser yourself (Claude in Chrome, Playwright MCP, an automate
 - Sign in on `wordpress.com/log-in`, then open `calypso.localhost:<port>/read?flags=oauth` once, with the port the dev server printed when it started (3000 in the main checkout). Signing in on the calypso.localhost form doesn't stick: the cookie is refused as cross-site.
 - An automated Chrome profile or an incognito window blocks third-party cookies by default; allow them, or the login loops (see [Gotchas](#gotchas)).
 - Playwright MCP's browser starts logged out, so it doesn't help when `browse.cjs` can't log in.
+
+On Calypso Live, make the checks in [Calypso Live](#calypso-live) by hand. Read the preview commit from `window.COMMIT_SHA` while the tab is still on the preview host. If the container answers `502` or `504 Gateway Time-out` while it starts, reload after a few seconds.

@@ -9,6 +9,7 @@ import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { useSelector } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
@@ -144,6 +145,9 @@ export default function SubscribersChartSection( {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const subscribersUrl = useSelector( ( state ) => getSubscribersUrl( state, siteId ) );
+	const canUserManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
 		day: 30,
@@ -243,11 +247,13 @@ export default function SubscribersChartSection( {
 			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
 					{ translate( 'Subscribers' ) }{ ' ' }
-					<small>
-						<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
-							{ translate( 'View all subscribers' ) }
-						</a>
-					</small>
+					{ canUserManageOptions && (
+						<small>
+							<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
+								{ translate( 'View all subscribers' ) }
+							</a>
+						</small>
+					) }
 				</h1>
 				<div className="subscribers-section-heading__chart-controls">
 					<SubscribersNavigationArrows
