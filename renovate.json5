@@ -115,6 +115,31 @@
 			additionalBranchPrefix: 'desktop-',
 			reviewers: [ 'team:@automattic/yolo' ],
 		},
+		// Packages only Agents Manager and agenttic use. Packages shared with other
+		// workspaces, or updated in a repo-wide group such as Storybook's, stay out,
+		// so repo-wide updates keep the default reviewers.
+		{
+			matchFileNames: [
+				'packages/agents-manager/**',
+				'packages/agenttic-client/**',
+				'packages/agenttic-ui/**',
+			],
+			matchPackageNames: [
+				'@mdx-js/react',
+				'@radix-ui/react-popover',
+				'@radix-ui/react-scroll-area',
+				'@radix-ui/react-slot',
+				'@radix-ui/react-tooltip',
+				'class-variance-authority',
+				'fast-average-color',
+				'history',
+				'react-textarea-autosize',
+				'remark-gfm',
+				'unified',
+				'vite-plugin-lib-inject-css',
+			],
+			reviewers: [ 'team:@automattic/agent' ],
+		},
 	],
 	ignoreDeps: [
 		// The current latest version of TraceKit (0.4.7) creates a lot of noise due to mishandling
