@@ -379,6 +379,7 @@ class PostCommentForm extends Component {
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
 							// Settings that arrive after a focus keep it.
 							takeFocus={ isReply || this.state.haveFocus }
+							open={ this.props.expanded }
 							openFrom={ this.state.openFrom }
 							closing={ this.state.editorClosing }
 							onClosed={ this.handleEditorClosed }
@@ -419,7 +420,7 @@ PostCommentForm.propTypes = {
 	onUpdateCommentText: PropTypes.func.isRequired,
 	onCommentSubmit: PropTypes.func,
 	isInlineComment: PropTypes.bool,
-	// Shows the editor from the start and keeps it open when empty.
+	// Shows the editor and its toolbar from the start, and keeps them when empty.
 	expanded: PropTypes.bool,
 	isLogedIn: PropTypes.bool,
 

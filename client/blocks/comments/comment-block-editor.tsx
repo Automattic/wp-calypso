@@ -13,6 +13,8 @@ type Props = {
 	placeholder: string;
 	label: string;
 	takeFocus?: boolean;
+	/** Loads the editor and shows its toolbar without waiting for focus. */
+	open?: boolean;
 	/** The height of the form row before this box replaced its textarea, which the row grows from and shrinks back to. */
 	openFrom?: number;
 	/** Shrinks the row back to `openFrom`, then calls `onClosed`. */
@@ -38,6 +40,7 @@ export default function CommentBlockEditor( {
 	placeholder,
 	label,
 	takeFocus,
+	open,
 	openFrom,
 	closing,
 	onClosed,
@@ -124,6 +127,7 @@ export default function CommentBlockEditor( {
 					},
 					placeholder,
 					fetchEmbed,
+					showToolbar: open,
 					focus: focus
 						? () => ( clicked.current ? ( textarea.current?.selectionStart ?? -1 ) : -1 )
 						: undefined,
@@ -169,7 +173,7 @@ export default function CommentBlockEditor( {
 		document.addEventListener( 'pointerdown', pointerdown );
 
 		// A draft from the editor is block markup, which only the editor shows.
-		if ( isBlockMarkup( latest.current.value ) ) {
+		if ( open || isBlockMarkup( latest.current.value ) ) {
 			openEditor( false );
 		}
 
@@ -193,7 +197,7 @@ export default function CommentBlockEditor( {
 			ref={ box }
 			className={ clsx( 'comments__block-editor jetpack-comments jetpack-comments__box', {
 				// Closing folds the toolbar too, so the words slide up to where the textarea shows them.
-				'is-open': active && ! closing,
+				'is-open': ( open || active ) && ! closing,
 				'is-closing': closing,
 			} ) }
 		>
