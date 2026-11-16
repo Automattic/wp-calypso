@@ -1,6 +1,7 @@
 import * as renderer from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID, CHARTS_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
 import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import * as tracks from '../../utils/tracks';
@@ -12,12 +13,12 @@ import {
 } from '../catalogs';
 import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 
-jest.mock( '../../components/style-pickers', () => ( {
-	ButtonPicker: jest.fn( () => null ),
-	ColorPicker: jest.fn( () => null ),
-	FontPicker: jest.fn( () => null ),
+vi.mock( '../../components/style-pickers', () => ( {
+	ButtonPicker: vi.fn( () => null ),
+	ColorPicker: vi.fn( () => null ),
+	FontPicker: vi.fn( () => null ),
 } ) );
-jest.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: jest.fn() } ) );
+vi.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: vi.fn() } ) );
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
 
@@ -31,11 +32,11 @@ function createCatalog(
 	};
 }
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
 afterAll( () => {
 	// The real Tracks module was spied on; let later suites install their own mocks.
-	jest.resetModules();
+	vi.resetModules();
 } );
 
 it( 'builds the Basic catalog, the charts catalog, Agents Manager’s and each provider’s', () => {
@@ -50,7 +51,7 @@ it( 'builds the Basic catalog, the charts catalog, Agents Manager’s and each p
 } );
 
 it( 'records the shared response event when a provider’s component renders', async () => {
-	const recordBigSkyTracksEvent = jest
+	const recordBigSkyTracksEvent = vi
 		.spyOn( tracks, 'recordBigSkyTracksEvent' )
 		.mockImplementation( () => undefined );
 	const catalogs = createInteractiveUiCatalogs( renderer, [
@@ -58,8 +59,8 @@ it( 'records the shared response event when a provider’s component renders', a
 	] );
 	const runtime = renderer.createInteractiveUiRuntime( {
 		catalogs,
-		onAction: jest.fn(),
-		onError: jest.fn(),
+		onAction: vi.fn(),
+		onError: vi.fn(),
 	} );
 
 	runtime.processMessages(
@@ -95,11 +96,11 @@ it( 'records the shared response event when a provider’s component renders', a
 } );
 
 it( 'renders the style pickers with the props their abilities send', async () => {
-	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
-	const onError = jest.fn();
+	vi.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = vi.fn();
 	const runtime = renderer.createInteractiveUiRuntime( {
 		catalogs: createInteractiveUiCatalogs( renderer ),
-		onAction: jest.fn(),
+		onAction: vi.fn(),
 		onError,
 	} );
 	const variations = [ { title: 'Bold', settings: { color: { palette: { theme: [] } } } } ];
@@ -137,15 +138,15 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 
 	await waitFor( () => expect( ButtonPicker ).toHaveBeenCalled() );
 
-	expect( jest.mocked( ColorPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+	expect( vi.mocked( ColorPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 		variations,
 		surfaceId: 'pickers',
 	} );
-	expect( jest.mocked( FontPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+	expect( vi.mocked( FontPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 		themeVariations: variations,
 		dynamicVariations: variations,
 	} );
-	expect( jest.mocked( ButtonPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+	expect( vi.mocked( ButtonPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 		buttonVariations: variations,
 		maxButtonsToShow: 6,
 	} );
@@ -153,11 +154,11 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 } );
 
 it( 'renders the Help Center button the support hand-off sends', async () => {
-	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
-	const onError = jest.fn();
+	vi.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = vi.fn();
 	const runtime = renderer.createInteractiveUiRuntime( {
 		catalogs: createInteractiveUiCatalogs( renderer ),
-		onAction: jest.fn(),
+		onAction: vi.fn(),
 		onError,
 	} );
 
@@ -190,7 +191,7 @@ it( 'renders the Help Center button the support hand-off sends', async () => {
 } );
 
 it( 'skips a catalog that fails to build, and keeps the others', () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 	const catalogs = createInteractiveUiCatalogs( renderer, [
 		createCatalog( 'urn:broken:v1', {} ),
@@ -210,7 +211,7 @@ it( 'skips a catalog that fails to build, and keeps the others', () => {
 } );
 
 it( 'keeps only valid provider catalogs, the first with each ID', () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	const first = createCatalog( WOO_CATALOG_ID );
 
 	const catalogs = filterInteractiveUiCatalogs( [

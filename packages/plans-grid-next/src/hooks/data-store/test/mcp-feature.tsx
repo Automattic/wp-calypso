@@ -19,12 +19,13 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from '../use-restructured-plan-features-for-comparison-grid';
 import type { GridPlan } from '../../../types';
 
 let mockFlagEnabled = false;
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => '';
 	config.isEnabled = ( flag: string ) =>
 		flag === 'hosting/dev-tools-all-paid-plans' && mockFlagEnabled;

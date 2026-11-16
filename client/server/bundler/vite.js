@@ -10,14 +10,15 @@ const runtimeRequire = createRequire( path.join( process.cwd(), 'package.json' )
  */
 module.exports = function viteBundler( app ) {
 	const { createServer } = runtimeRequire( 'vite' );
-	const { enabledSections, sectionStyles, startDashboardDevConfig, startDashboardEntries } =
-		runtimeRequire( './build-tools/vite/dev.mjs' );
+	const { devConfig, devEntries, enabledSections, sectionStyles } = runtimeRequire(
+		'./build-tools/vite/dev.mjs'
+	);
 
 	app.set( 'bundler', 'vite' );
 
 	const direct = ( file ) => `/${ file }?direct`;
 	const assets = { manifests: [], assets: {} };
-	for ( const [ name, { file, styles } ] of Object.entries( startDashboardEntries ) ) {
+	for ( const [ name, { file, styles } ] of Object.entries( devEntries() ) ) {
 		assets.assets[ name ] = [ ...styles.map( direct ), '/' + file ];
 	}
 	// Sections load with `import()`, so their chunk groups have no scripts.
@@ -27,7 +28,7 @@ module.exports = function viteBundler( app ) {
 	app.set( 'assets-provider', () => assets );
 
 	const vite = new Promise( ( resolve ) => app.once( 'http-server-created', resolve ) )
-		.then( ( httpServer ) => createServer( startDashboardDevConfig( { httpServer } ) ) )
+		.then( ( httpServer ) => createServer( devConfig( { httpServer } ) ) )
 		.catch( ( error ) => {
 			console.error( 'The Vite dev server failed to start:', error );
 			process.exit( 1 );

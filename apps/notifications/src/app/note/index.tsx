@@ -23,7 +23,6 @@ import { getTemporaryNoteTitle, toSentenceCase } from '../note-simplified/labels
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
-import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
 import type { Note as NoteObject, Block } from '../types';
@@ -85,8 +84,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 		( state ) => !! note && getIsNotePendingApproval( state, note )
 	);
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
-	const isSimplified = useIsSimplifiedNote();
-	const { locale } = useAppContext();
+	const { isViewSettingsEnabled: isSimplified, locale } = useAppContext();
 
 	useEffect( () => {
 		if ( note?.id ) {

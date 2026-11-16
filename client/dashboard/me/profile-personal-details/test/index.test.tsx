@@ -324,7 +324,7 @@ describe( '<PersonalDetailsSection>', () => {
 
 			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
 
-			vi.useFakeTimers( { toNotFake: [ 'nextTick', 'setImmediate' ] } );
+			vi.useFakeTimers( { shouldAdvanceTime: true, toNotFake: [ 'nextTick', 'setImmediate' ] } );
 			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 
 			await user.clear( usernameInput );

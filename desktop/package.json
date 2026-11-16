@@ -42,7 +42,7 @@
 		"jest": "^30.5.2",
 		"js-yaml": "5.4.1",
 		"playwright": "1.57.0",
-		"semver": "^7.7.2",
+		"semver": "^7.8.6",
 		"webpack": "^5.111.1",
 		"webpack-cli": "^7.2.3",
 		"winston": "^3.3.3"

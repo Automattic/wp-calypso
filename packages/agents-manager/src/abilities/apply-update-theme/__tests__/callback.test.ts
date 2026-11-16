@@ -1,36 +1,39 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../../../utils/global-styles', () => ( {
-	waitForEditedGlobalStyles: jest.fn( () =>
-		Promise.resolve( { id: 'global-styles-1', record: { settings: {}, styles: {} } } )
-	),
-} ) );
-jest.mock( '../../../utils/update-theme', () => ( {
-	...jest.requireActual( '../../../utils/update-theme' ),
-	applyThemeUpdate: jest.fn(),
-} ) );
-jest.mock( '../../../utils/checkpoints', () => ( {
-	THEME_CHECKPOINT_KEYS: [ 'color', 'font', 'button' ],
-	withCheckpoint: jest.fn( ( _checkpoint, write ) => write() ),
-} ) );
-
+import { type Mock, vi } from 'vitest';
 import { THEME_CHECKPOINT_KEYS, withCheckpoint } from '../../../utils/checkpoints';
 import { waitForEditedGlobalStyles } from '../../../utils/global-styles';
 import { applyThemeUpdate } from '../../../utils/update-theme';
 import { applyUpdateThemeCallback } from '../callback';
 
+vi.mock( '../../../utils/global-styles', () => ( {
+	waitForEditedGlobalStyles: vi.fn( () =>
+		Promise.resolve( { id: 'global-styles-1', record: { settings: {}, styles: {} } } )
+	),
+} ) );
+vi.mock( '../../../utils/update-theme', async () => ( {
+	...( await vi.importActual< typeof import( '../../../utils/update-theme' ) >(
+		'../../../utils/update-theme'
+	) ),
+	applyThemeUpdate: vi.fn(),
+} ) );
+vi.mock( '../../../utils/checkpoints', () => ( {
+	THEME_CHECKPOINT_KEYS: [ 'color', 'font', 'button' ],
+	withCheckpoint: vi.fn( ( _checkpoint, write ) => write() ),
+} ) );
+
 const SETTINGS = { color: { palette: [ { name: 'Sky', slug: 'sky', color: '#0000ff' } ] } };
 const STYLES = { elements: { button: { color: { background: 'var:preset|color|sky' } } } };
 
-const callOrder = ( fn: unknown ) => ( fn as jest.Mock ).mock.invocationCallOrder[ 0 ];
+const callOrder = ( fn: unknown ) => ( fn as Mock ).mock.invocationCallOrder[ 0 ];
 
 function setEditorPage( isEditor: boolean ) {
 	document.body.className = isEditor ? 'site-editor-php' : '';
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	setEditorPage( true );
 } );
 
@@ -103,7 +106,7 @@ describe( 'applyUpdateThemeCallback', () => {
 	} );
 
 	it( 'refuses when the global styles never load', async () => {
-		( waitForEditedGlobalStyles as jest.Mock ).mockResolvedValueOnce( undefined );
+		( waitForEditedGlobalStyles as Mock ).mockResolvedValueOnce( undefined );
 
 		const result = await applyUpdateThemeCallback( { settings: SETTINGS } );
 
@@ -115,8 +118,8 @@ describe( 'applyUpdateThemeCallback', () => {
 	} );
 
 	it( 'reports an error when the write fails', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		( applyThemeUpdate as jest.Mock ).mockImplementationOnce( () => {
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		( applyThemeUpdate as Mock ).mockImplementationOnce( () => {
 			throw new Error( 'Global styles are unavailable to edit.' );
 		} );
 
