@@ -17,8 +17,9 @@ import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
+import { useAppContext } from '../context';
 import SimplifiedNote, { hasNoteContext } from '../note-simplified';
-import { getTemporaryNoteTitle } from '../note-simplified/labels';
+import { getTemporaryNoteTitle, toSentenceCase } from '../note-simplified/labels';
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
@@ -85,6 +86,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	);
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
 	const isSimplified = useIsSimplifiedNote();
+	const { locale } = useAppContext();
 
 	useEffect( () => {
 		if ( note?.id ) {
@@ -124,7 +126,12 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							size={ 15 }
 							weight="var(--wpds-typography-font-weight-emphasis, 600)"
 						>
-							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
+							{ isSimplified
+								? toSentenceCase(
+										isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title,
+										locale
+									)
+								: note.title }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>

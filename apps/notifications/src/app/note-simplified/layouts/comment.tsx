@@ -13,7 +13,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } url={ note.url } /> }
+			{ post && <PostCard post={ post } site={ site } /> }
 			<Thread spacing={ 5 }>
 				{ repliedTo && (
 					<ThreadParent
@@ -30,7 +30,7 @@ export default function CommentNote( { note }: { note: Note } ) {
 				{ actor && (
 					<ThreadReply
 						commenter={ actor }
-						meta={ <NoteMeta note={ note } /> }
+						meta={ <NoteMeta note={ note } isComment /> }
 						status={ isPendingApproval && <PendingApproval /> }
 					>
 						<Body note={ note } hidePeople />
