@@ -3,6 +3,7 @@
  *
  * Provides session ID management with fallback support for different environments.
  */
+import { generateUUID } from '@automattic/agents-manager/src/utils/generate-uuid';
 
 // Type definition for window with potential agents-manager session
 declare global {
@@ -19,18 +20,6 @@ const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 interface StoredSession {
 	sessionId: string;
 	timestamp: number;
-}
-
-/**
- * Generate a simple UUID v4
- * @returns Generated UUID string
- */
-function generateSessionId(): string {
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
-		const r = ( Math.random() * 16 ) | 0;
-		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
-		return v.toString( 16 );
-	} );
 }
 
 /**
@@ -66,7 +55,7 @@ export function getSessionId(): string {
 	}
 
 	// Generate a new session ID
-	const newSessionId = generateSessionId();
+	const newSessionId = generateUUID();
 	try {
 		const session: StoredSession = {
 			sessionId: newSessionId,

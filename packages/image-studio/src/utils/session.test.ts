@@ -193,6 +193,21 @@ describe( 'Session Utilities', () => {
 				expect( sessionId ).toMatch( uuidRegex );
 			} );
 
+			it( 'should generate valid UUID v4 format when crypto.randomUUID is unavailable', () => {
+				vi.stubGlobal( 'crypto', {
+					getRandomValues: globalThis.crypto.getRandomValues.bind( globalThis.crypto ),
+					randomUUID: undefined,
+				} );
+
+				try {
+					expect( getSessionId() ).toMatch(
+						/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+					);
+				} finally {
+					vi.unstubAllGlobals();
+				}
+			} );
+
 			it( 'should generate unique session IDs', () => {
 				resetMocks();
 
