@@ -13,7 +13,7 @@ export const CAPTURE_URL_RGX =
  * - http://somecampaing#withhash?andquery
  */
 export const CAPTURE_URL_RGX_SOFT =
-	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
+	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*)?(:[0-9/a-z-#]*)?$/i;
 
 const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',

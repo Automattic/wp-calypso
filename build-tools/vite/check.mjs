@@ -30,7 +30,10 @@ const LEFTOVERS = [
 	[ /\brequire\.context\s*\(/, 'require.context()' ],
 	[ /\bmodule\.hot\b/, 'module.hot' ],
 	[ /(?<![.\w$])require\s*\(/, 'require() in an ES module' ],
-	[ /\bimport\s*\(\s*(?:\/\*[\s\S]*?\*\/\s*)*`[^`]*\$\{/, 'import() of a template literal' ],
+	[
+		/\bimport\s*\(\s*(?:\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\/\s*)*`[^`]*\$\{/,
+		'import() of a template literal',
+	],
 	[ /\bprocess\.env(?:\?\.|\.)(?!NODE_ENV\b)\w+/, 'process.env without a define' ],
 ];
 
