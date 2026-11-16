@@ -1,7 +1,10 @@
-import { siteLaunchpadQuery, sitePreviewLinksQuery } from '@automattic/api-queries';
+import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { lock, published } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
+import ClipboardInputControl from '../../components/clipboard-input-control';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
@@ -106,20 +109,35 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 }
 
 // A preview is shared, not set up: it stays Coming Soon until it is bought, and visitors reach it
-// through a preview link.
-function VisibilityCardPreview( { site }: { site: Site } ) {
-	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
+// through the share link the server gives it once it is built.
+function VisibilityCardPreview( { site, shareUrl }: { site: Site; shareUrl?: string } ) {
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Coming soon' ) }
 			description={
-				links.length > 0
-					? __( 'Anyone with the preview link can view it.' )
+				shareUrl
+					? __( 'Visitors see a Coming Soon page. Share this link so anyone can view it.' )
 					: __( 'Share it with a preview link.' )
 			}
 			link={ getSiteVisibilityURL( site ) }
+			bottom={
+				shareUrl && (
+					<ClipboardInputControl
+						label={ __( 'Preview link' ) }
+						hideLabelFromVision
+						value={ shareUrl }
+						readOnly
+						onCopy={ () =>
+							createSuccessNotice( __( 'Copied the preview link to clipboard.' ), {
+								type: 'snackbar',
+							} )
+						}
+					/>
+				)
+			}
 		/>
 	);
 }
@@ -154,14 +172,14 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 }
 
 export default function VisibilityCard( { site }: { site: Site } ) {
-	const { isPreview } = useSiteIsPreview( site );
+	const { isPreview, shareUrl } = useSiteIsPreview( site );
 
 	if ( site.__inaccessible_jetpack_error ) {
 		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
 	}
 
 	if ( isPreview ) {
-		return <VisibilityCardPreview site={ site } />;
+		return <VisibilityCardPreview site={ site } shareUrl={ shareUrl } />;
 	}
 
 	if ( site.launch_status === 'unlaunched' ) {

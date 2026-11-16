@@ -20,22 +20,29 @@ const preview = {
 describe( '<VisibilityCard>', () => {
 	afterEach( () => nock.cleanAll() );
 
-	test( 'a preview site offers its preview link instead of setup', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/wow-funnel/pending' )
-			.query( true )
-			.reply( 200, {
-				pending: false,
-				preview_sites: [ { blog_id: preview.ID, site_slug: preview.slug } ],
-			} );
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/${ preview.ID }/preview-links` )
-			.query( true )
-			.reply( 200, [ { code: 'abc', created_at: '2026-10-29', is_expired: false } ] );
+	test.each( [
+		{ shareUrl: 'https://test.wordpress.com/?share=abc', description: /Share this link/ },
+		{ shareUrl: undefined, description: /Share it with a preview link/ },
+	] )(
+		'a preview site offers the share link the server gives it ($shareUrl)',
+		async ( { shareUrl, description } ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/wow-funnel/pending' )
+				.query( true )
+				.reply( 200, {
+					pending: false,
+					preview_sites: [ { blog_id: preview.ID, site_slug: preview.slug, share_url: shareUrl } ],
+				} );
 
-		const { findByText, queryByText } = render( <VisibilityCard site={ preview } /> );
+			const { findByText, queryByDisplayValue, queryByText } = render(
+				<VisibilityCard site={ preview } />
+			);
 
-		expect( await findByText( 'Anyone with the preview link can view it.' ) ).toBeInTheDocument();
-		expect( queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
-	} );
+			expect( await findByText( description ) ).toBeInTheDocument();
+			expect( !! queryByDisplayValue( 'https://test.wordpress.com/?share=abc' ) ).toBe(
+				!! shareUrl
+			);
+			expect( queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
+		}
+	);
 } );
