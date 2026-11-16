@@ -3,7 +3,11 @@
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
 import { type Mock, vi } from 'vitest';
-import { registerUpdateCanvasImageAbility, registerUpdateCanvasVideoAbility } from '../abilities';
+import {
+	registerNavigateRevisionAbility,
+	registerUpdateCanvasImageAbility,
+	registerUpdateCanvasVideoAbility,
+} from '../abilities';
 import {
 	ALLOWED_ABILITIES,
 	initializeAbilities,
@@ -22,6 +26,7 @@ vi.mock( '@wordpress/abilities', () => ( {
 vi.mock( '../abilities', () => ( {
 	registerUpdateCanvasImageAbility: vi.fn(),
 	registerUpdateCanvasVideoAbility: vi.fn(),
+	registerNavigateRevisionAbility: vi.fn(),
 } ) );
 
 // Mock console methods
@@ -44,6 +49,7 @@ describe( 'Tool Provider', () => {
 				'image-studio/update-canvas-image',
 				'image-studio/update-canvas-video',
 				'image-studio/render-images',
+				'image-studio/navigate-revision',
 			] );
 		} );
 	} );
@@ -54,6 +60,7 @@ describe( 'Tool Provider', () => {
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
 			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
+			expect( registerNavigateRevisionAbility ).toHaveBeenCalledTimes( 1 );
 			expect( consoleLogSpy ).toHaveBeenCalledWith( '[Image Studio] Abilities registered' );
 
 			// Call again - should not register again
@@ -62,6 +69,7 @@ describe( 'Tool Provider', () => {
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
 			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
+			expect( registerNavigateRevisionAbility ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
