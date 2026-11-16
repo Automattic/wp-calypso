@@ -31,14 +31,14 @@ describe( 'photon()', function () {
 		const url = 'http://example.com/image.png';
 
 		expect( photon( url ) ).toEqual(
-			expect.stringMatching( /^https:\/\/i[0-2].wp.com\/example.com\/image.png$/ )
+			expect.stringMatching( /^https:\/\/i[0-2]\.wp\.com\/example\.com\/image\.png$/ )
 		);
 	} );
 
 	test( 'should Photon-ify a secure image URL', function () {
 		const url = 'https://example.com/image.png';
 		expect( photon( url ) ).toEqual(
-			expect.stringMatching( /^https:\/\/i[0-2].wp.com\/example.com\/image.png\?ssl=1$/ )
+			expect.stringMatching( /^https:\/\/i[0-2]\.wp\.com\/example\.com\/image\.png\?ssl=1$/ )
 		);
 	} );
 
