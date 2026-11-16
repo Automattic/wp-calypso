@@ -20,12 +20,12 @@ describe( 'subscribeSubscriberNotifications', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
 		vi.mocked( createNotificationSound ).mockReturnValue( sound );
-		vi
-			.mocked( subscribeUnseenCount )
-			.mockImplementation( ( _wpcom, _onCount, onSubscriberNotification ) => {
+		vi.mocked( subscribeUnseenCount ).mockImplementation(
+			( _wpcom, _onCount, onSubscriberNotification ) => {
 				onLiveNotification = onSubscriberNotification!;
 				return unsubscribe;
-			} );
+			}
+		);
 	} );
 
 	it( 'plays and confirms a visible live follow note', () => {

@@ -16,12 +16,18 @@ vi.mock( '../../lib/set-locale', () => ( { default: () => Promise.resolve() } ) 
 vi.mock( '../../lib/load-wp-components-style', () => ( {
 	loadWpComponentsStyleForWidget: () => Promise.resolve(),
 } ) );
-vi.mock( '../../lib/selectors/get-site-stats-base-url', () => ( { default: () => 'https://example.com/stats' } ) );
-vi.mock( '../../lib/selectors/get-site-admin-url', () => ( { default: () => 'https://example.com/wp-admin/' } ) );
+vi.mock( '../../lib/selectors/get-site-stats-base-url', () => ( {
+	default: () => 'https://example.com/stats',
+} ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
 vi.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => ( { default: () => null } ) );
 const mockStatsLink = vi.fn( ( url ) => url );
 vi.mock( '../use-stats-link', () => ( { default: () => mockStatsLink } ) );
-vi.mock( '../mini-chart', () => ( { default: ( { range } ) => <p>{ `Chart of ${ range.id }` }</p> } ) );
+vi.mock( '../mini-chart', () => ( {
+	default: ( { range } ) => <p>{ `Chart of ${ range.id }` }</p>,
+} ) );
 vi.mock( '../highlights', () => ( { default: () => null } ) );
 vi.mock( '../modules', () => ( { default: () => null } ) );
 vi.mock( '../record-widget-event', () => ( {

@@ -13,7 +13,9 @@ vi.mock( '../../lib/jetpack-connection', async () => ( {
 	isOfflineMode: () => false,
 	getSiteSuffix: () => 'example.com',
 } ) );
-vi.mock( '../../lib/selectors/get-wp-admin-url', () => ( { default: () => 'https://example.com/wp-admin/' } ) );
+vi.mock( '../../lib/selectors/get-wp-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
 vi.mock( 'calypso/state', () => ( {
 	useSelector: vi.fn( ( selector ) => selector( {} ) ),
 } ) );

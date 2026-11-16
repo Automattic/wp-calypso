@@ -12,12 +12,16 @@ import recordWidgetEvent, { recordWidgetEventThenFollow } from '../record-widget
 vi.mock( '../../hooks/use-top-posts-query' );
 vi.mock( '../../hooks/use-referrers-query' );
 // Premium Analytics off, so the links are the classic Stats ones; highlights.test.tsx covers it on.
-vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( { default: () => ( {
-	data: false,
-} ) } ) );
+vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
+	default: () => ( {
+		data: false,
+	} ),
+} ) );
 vi.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
 vi.mock( '../../lib/selectors/can-current-user', () => ( { default: () => true } ) );
-vi.mock( '../../lib/selectors/get-site-admin-url', () => ( { default: () => 'https://example.com/wp-admin/' } ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
 vi.mock( '../record-widget-event', () => ( {
 	__esModule: true,
 	default: vi.fn(),

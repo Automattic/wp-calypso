@@ -8,10 +8,14 @@ import { optionalConfig } from '../../lib/config-api';
 import canCurrentUser from '../../lib/selectors/can-current-user';
 import useStatsLink from '../use-stats-link';
 
-vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
+	default: vi.fn(),
+} ) );
 vi.mock( '../../lib/config-api', () => ( { optionalConfig: vi.fn() } ) );
 vi.mock( '../../lib/selectors/can-current-user', () => ( { default: vi.fn() } ) );
-vi.mock( '../../lib/selectors/get-site-admin-url', () => ( { default: () => 'https://example.com/wp-admin/' } ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
 
 const STATS_URL = 'https://example.com/wp-admin/admin.php?page=stats#!/stats/post/12/1';
 const DASHBOARD_URL =
@@ -23,11 +27,9 @@ const DASHBOARD_URL =
  */
 function mockSite( enabled: boolean | undefined, canManageOptions = true ) {
 	( canCurrentUser as Mock ).mockReturnValue( canManageOptions );
-	( usePremiumAnalyticsStatusQuery as Mock ).mockImplementation(
-		( _siteId, queryEnabled ) => ( {
-			data: queryEnabled ? enabled : undefined,
-		} )
-	);
+	( usePremiumAnalyticsStatusQuery as Mock ).mockImplementation( ( _siteId, queryEnabled ) => ( {
+		data: queryEnabled ? enabled : undefined,
+	} ) );
 }
 
 function statsLink(

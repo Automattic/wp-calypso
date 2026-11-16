@@ -5,25 +5,33 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import Highlights from '../highlights';
 
-vi.mock( '../../hooks/use-top-posts-query', () => ( { default: () => ( {
-	data: [
-		{ id: 328, title: 'Monitor a running process', views: 1 },
-		{ id: 0, title: 'Home page / Archives', views: 17 },
-	],
-	isPending: false,
-	isError: false,
-} ) } ) );
-vi.mock( '../../hooks/use-referrers-query', () => ( { default: () => ( {
-	data: [],
-	isPending: false,
-	isError: false,
-} ) } ) );
-vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( { default: () => ( {
-	data: true,
-} ) } ) );
+vi.mock( '../../hooks/use-top-posts-query', () => ( {
+	default: () => ( {
+		data: [
+			{ id: 328, title: 'Monitor a running process', views: 1 },
+			{ id: 0, title: 'Home page / Archives', views: 17 },
+		],
+		isPending: false,
+		isError: false,
+	} ),
+} ) );
+vi.mock( '../../hooks/use-referrers-query', () => ( {
+	default: () => ( {
+		data: [],
+		isPending: false,
+		isError: false,
+	} ),
+} ) );
+vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
+	default: () => ( {
+		data: true,
+	} ),
+} ) );
 vi.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
 vi.mock( '../../lib/selectors/can-current-user', () => ( { default: () => true } ) );
-vi.mock( '../../lib/selectors/get-site-admin-url', () => ( { default: () => 'https://example.com/wp-admin/' } ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
 
 const RANGE = {
 	id: 'last_12_months',
