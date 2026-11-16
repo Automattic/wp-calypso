@@ -262,9 +262,11 @@ describe( 'abilities facade', () => {
 				ALL_SURFACE_ABILITY_NAMES
 			);
 			await expect( loadAmEditorSuggestions() ).resolves.toBeNull();
+			// Vitest wraps the factory's error in one from outside the test's VM context, which
+			// `expect.any( Error )` doesn't recognize.
 			expect( error ).toHaveBeenCalledWith(
 				'[AgentsManager] Failed to load the editor abilities:',
-				expect.any( Error )
+				expect.objectContaining( { message: expect.any( String ) } )
 			);
 		} finally {
 			vi.doUnmock( '../editor-abilities' );
