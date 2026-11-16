@@ -4,6 +4,9 @@ import { type Mock, vi } from 'vitest';
 import * as editorBlocksModule from '../editor-blocks';
 import * as toolCallHistory from '../tool-call-history';
 import * as tracksModule from '../tracks';
+// Loads the module while the file is collected, which has no timeout, so the fresh copy each
+// test imports only re-runs it: its first load can outlast a test's timeout on a busy CI agent.
+import '../checkpoints';
 
 vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 vi.mock( '../tool-call-history', () => ( {
