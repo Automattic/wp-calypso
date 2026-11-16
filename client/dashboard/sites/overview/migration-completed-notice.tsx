@@ -70,19 +70,20 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 		[ site.ID, completedAt ]
 	);
 
-	if ( isDismissed ) {
-		return null;
-	}
-
 	const sourceDomain = site.site_migration.source_domain ?? '';
-	const isSourceDomainPrimary = getPrimaryDomain( site ) === sourceDomain;
 
-	// Once the domain is on the site, the use-my-domain flow refuses it as already taken.
+	// Once the domain is on the site, the use-my-domain flow has nothing left to choose.
 	const { data: isSourceDomainOnSite } = useQuery( {
 		...domainsQuery(),
 		select: ( domains ) =>
 			domains.some( ( domain ) => domain.domain === sourceDomain && domain.blog_id === site.ID ),
 	} );
+
+	if ( isDismissed ) {
+		return null;
+	}
+
+	const isSourceDomainPrimary = getPrimaryDomain( site ) === sourceDomain;
 
 	let connectDomainUrl;
 	if ( ! isSourceDomainOnSite ) {

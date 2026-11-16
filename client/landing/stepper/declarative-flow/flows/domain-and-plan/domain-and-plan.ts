@@ -188,10 +188,7 @@ const domainUpsell: Flow = {
 					// The mapping exists, either created by the step after ownership verification or
 					// already there before, so all that is left is to walk the user through pointing
 					// the domain at the site.
-					if (
-						'isDomainConnected' in providedDependencies &&
-						providedDependencies.domain
-					) {
+					if ( 'isDomainConnected' in providedDependencies && providedDependencies.domain ) {
 						submittedDomains.current = true;
 
 						// replace() rather than assign(): Back must not land on a submit step
