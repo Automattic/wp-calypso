@@ -161,7 +161,6 @@ This mixin generates alias variables for a color palette. For example, the
 		--wp-components-color-accent: #{$studio-blue-50};
 		--wp-components-color-accent-darker-10: #{$studio-blue-60};
 		--wp-components-color-accent-darker-20: #{$studio-blue-70};
-		--wp-components-color-accent-inverted: #fff;
 		--wp-components-color-accent-disabled: color-mix(
 			in srgb,
 			var( --wp-components-color-accent ) 35%,
