@@ -65,7 +65,6 @@ describe( 'StatsSettingsPage', () => {
 			admin_bar: true,
 			roles: [ 'administrator' ],
 			count_roles: [ 'administrator' ],
-			wpcom_reader_views_enabled: true,
 		};
 	} );
 
@@ -101,17 +100,16 @@ describe( 'StatsSettingsPage', () => {
 		} );
 	} );
 
-	it.each( [
-		[ 'admin_bar', 'Put a chart showing 48 hours of views in the admin bar' ],
-		[ 'wpcom_reader_views_enabled', 'Show post views for this site.' ],
-	] )( 'records the %s setting turning off', async ( setting, label ) => {
+	it( 'records the admin bar setting turning off', async () => {
 		render( <StatsSettingsPage /> );
 
-		await userEvent.click( screen.getByLabelText( label ) );
+		await userEvent.click(
+			screen.getByLabelText( 'Put a chart showing 48 hours of views in the admin bar' )
+		);
 
 		expect( mockTrack ).toHaveBeenCalledWith( 'stats_settings_changed', {
 			blog_id: 123,
-			setting,
+			setting: 'admin_bar',
 			enabled: false,
 		} );
 	} );
