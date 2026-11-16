@@ -40,22 +40,6 @@
 # Staging sites - interim dashboard
 /client/sites/staging-site @Automattic/yolo
 
-# Hosting: deployments, GitHub, crontab and SSH
-/packages/api-core/src/site-hosting-code-deployments @Automattic/yolo
-/packages/api-queries/src/site-deployments.ts @Automattic/yolo
-/packages/api-core/src/hosting-github @Automattic/yolo
-/packages/api-queries/src/github.ts @Automattic/yolo
-/packages/api-core/src/site-hosting-crontab @Automattic/yolo
-/packages/api-queries/src/site-crontab.ts @Automattic/yolo
-/packages/api-core/src/me-ssh @Automattic/yolo
-/packages/api-queries/src/me-ssh.ts @Automattic/yolo
-/client/dashboard/sites/deployments @Automattic/yolo @Automattic/lego
-/client/dashboard/sites/deployments-list @Automattic/yolo @Automattic/lego
-
-# Domain search: Name Pulse
-/packages/api-core/src/name-pulse @Automattic/yolo
-/packages/api-queries/src/name-pulse.ts @Automattic/yolo
-
 # Payments
 /client/lib/checkout/ @Automattic/shilling
 /client/me/purchases/add-new-payment-method/ @Automattic/shilling
