@@ -11,10 +11,13 @@ import PostCheckoutOnboarding from '../post-checkout-onboarding';
 
 const mockGetSite = jest.fn();
 const mockSetPendingAction = jest.fn();
+const mockSetTransferTimedOut = jest.fn();
 const mockSetIntentOnSite = jest.fn();
 const mockSetGoalsOnSite = jest.fn();
 const mockOnboardState = { intent: '', goals: [] as string[] };
 const mockSiteTransferStatus = { isTransferring: false };
+const mockWaitForTransfer = jest.fn( async () => {} );
+const mockWaitForLatestSiteData = jest.fn( async () => {} );
 
 // A spread would read every export while these modules are still loading (both are required back
 // through their own dependencies), so override the exports lazily.
@@ -48,6 +51,7 @@ jest.mock( '@wordpress/data', () =>
 			),
 		useDispatch: () => ( {
 			setPendingAction: mockSetPendingAction,
+			setTransferTimedOut: mockSetTransferTimedOut,
 			setIntentOnSite: mockSetIntentOnSite,
 			setGoalsOnSite: mockSetGoalsOnSite,
 		} ),
@@ -77,9 +81,9 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () =>
 
 jest.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
 	useWaitForAtomic: () => ( {
-		waitForTransfer: async () => {},
+		waitForTransfer: mockWaitForTransfer,
 		waitForFeature: async () => {},
-		waitForLatestSiteData: async () => {},
+		waitForLatestSiteData: mockWaitForLatestSiteData,
 	} ),
 } ) );
 
@@ -89,6 +93,10 @@ jest.mock( 'calypso/landing/stepper/utils/wait-for-plugins-active', () => ( {
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
 } ) );
 
 const siteWithPlan = ( product_slug: string, active: string[] = [] ) => ( {
@@ -103,6 +111,8 @@ describe( 'PostCheckoutOnboarding', () => {
 		mockOnboardState.intent = '';
 		mockOnboardState.goals = [];
 		mockSiteTransferStatus.isTransferring = false;
+		mockWaitForTransfer.mockResolvedValue( undefined );
+		mockWaitForLatestSiteData.mockResolvedValue( undefined );
 	} );
 
 	const renderWithFreshSite = ( site: unknown, flow = 'onboarding' ) => {
@@ -236,6 +246,82 @@ describe( 'PostCheckoutOnboarding', () => {
 
 			expect( mockSetIntentOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', 'build' );
 			expect( mockSetGoalsOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', [ 'write' ] );
+		} );
+	} );
+	describe( 'when the Atomic wait runs long', () => {
+		const slowSiteDataError = new Error( 'Setting up your site is taking longer than expected.' );
+
+		beforeEach( () => {
+			mockSiteTransferStatus.isTransferring = true;
+		} );
+
+		const runPendingAction = async ( site: unknown, flow = 'onboarding' ) => {
+			const props = renderWithFreshSite( site, flow );
+			await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+			return mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+		};
+
+		it( 'keeps watching a slow transfer on a Commerce site headed for the chooser', async () => {
+			await runPendingAction( siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ) );
+
+			expect( mockWaitForTransfer ).toHaveBeenCalledWith(
+				expect.objectContaining( { onDeadlineExceeded: expect.any( Function ) } )
+			);
+		} );
+
+		it( 'tells the processing step the transfer is running long once the deadline passes', async () => {
+			await runPendingAction( siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ) );
+			const [ { onDeadlineExceeded } ] = mockWaitForTransfer.mock.calls[ 0 ] as unknown as [
+				{ onDeadlineExceeded: () => void },
+			];
+
+			onDeadlineExceeded();
+
+			expect( mockSetTransferTimedOut ).toHaveBeenCalledWith( true );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_post_checkout_setup_error',
+				{ flow: 'onboarding', error_transfer_deadline: true, recoverable: true }
+			);
+		} );
+
+		it( 'still reaches the chooser when the site data is slow to show the transfer', async () => {
+			mockWaitForLatestSiteData.mockRejectedValue( slowSiteDataError );
+
+			const dependencies = await runPendingAction(
+				siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] )
+			);
+
+			expect( dependencies ).toMatchObject( { postCheckoutBigSky: true } );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_post_checkout_setup_error',
+				{ flow: 'onboarding', error_site_data_timeout: true, recoverable: true }
+			);
+		} );
+
+		it( 'skips the chooser when the site data and WooCommerce are both slow', async () => {
+			mockWaitForLatestSiteData.mockRejectedValue( slowSiteDataError );
+			( waitForPluginsActive as jest.Mock ).mockRejectedValueOnce( new Error( 'timeout' ) );
+
+			const dependencies = await runPendingAction(
+				siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] )
+			);
+
+			expect( dependencies ).not.toHaveProperty( 'postCheckoutBigSky' );
+		} );
+
+		it.each( [
+			[ 'a Business site', siteWithPlan( 'business-bundle', [ FEATURE_BIG_SKY ] ), 'onboarding' ],
+			[ 'a Commerce site without Big Sky', siteWithPlan( 'ecommerce-bundle' ), 'onboarding' ],
+			[
+				'a Commerce site in a flow without the chooser',
+				siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ),
+				'onboarding-unified',
+			],
+		] )( 'still fails a slow site data wait on %s', async ( _label, site, flow ) => {
+			mockWaitForLatestSiteData.mockRejectedValue( slowSiteDataError );
+
+			await expect( runPendingAction( site, flow ) ).rejects.toThrow( slowSiteDataError );
+			expect( mockWaitForTransfer ).toHaveBeenCalledWith( {} );
 		} );
 	} );
 } );
