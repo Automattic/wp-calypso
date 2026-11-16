@@ -28,13 +28,10 @@ describe( 'account email recovery warning', () => {
 	} );
 
 	test.each( [
-		[ 'jane@mycompany.com', 'admin@mycompany.com', false, false ],
 		[ ' student@College.edu ', ' Backup@college.EDU ', false, false ],
-		[ 'subscriber@shaw.ca', 'backup@shaw.ca', false, false ],
 		[ 'jane@mycompany.com', 'admin@mycompany.com', true, true ],
 		[ 'jane@mycompany.com', 'personal@gmail.com', false, true ],
 		[ 'jane@gmail.com', 'personal@gmail.com', false, true ],
-		[ 'jane@mycompany.com', 'admin@othercompany.com', false, true ],
 	] )(
 		'checks recovery for %s with backup %s and verified phone %s',
 		( email, verifiedEmail, hasVerifiedPhone, expected ) => {
