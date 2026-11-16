@@ -103,10 +103,8 @@ This mixin generates alias variables for a color palette. For example, the
 
 	// Layout
 	--dashboard-inline-code__background-color: #3a3a3a;
-	--dashboard-header__divider-color: #3a3a3a;
 
 	// Shared surfaces and controls
-	--dashboard-surface__border-color: #4a4a4a;
 	--dashboard-field__border-color: #949494;
 	--dashboard__text-muted-color: #bdbdbd;
 	--dashboard-subtle__color: #bdbdbd;
@@ -235,6 +233,8 @@ This mixin generates alias variables for a color palette. For example, the
 	--dashboard-menu-item__color: #bdbdbd;
 	--dashboard-menu-item-active__color: #fff;
 	--dashboard-overview__divider-color: #2f2f2f;
+	--dashboard-header__divider-color: #3a3a3a;
+	--dashboard-surface__border-color: #4a4a4a;
 }
 
 @mixin color-scheme-dark-theme-calypso-tokens {
