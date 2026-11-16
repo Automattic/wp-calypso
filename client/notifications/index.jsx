@@ -55,8 +55,6 @@ const isDesktop = config.isEnabled( 'desktop' );
 
 const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
 
-const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
-
 let notificationAppModule;
 
 const loadNotificationApp = () => {
@@ -123,9 +121,7 @@ const RedesignedNotifications = ( {
 
 		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
 			if ( ! cancelled ) {
-				unsubscribe = subscribeUnseenCount( wpcom, updateUnseenCount, undefined, {
-					includeNoteContext: isViewSettingsEnabled,
-				} );
+				unsubscribe = subscribeUnseenCount( wpcom, updateUnseenCount );
 			}
 		} );
 
@@ -151,7 +147,6 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
-						isViewSettingsEnabled={ isViewSettingsEnabled }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -194,7 +189,6 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
-						isViewSettingsEnabled={ isViewSettingsEnabled }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -527,7 +521,6 @@ export class Notifications extends Component {
 							actionHandlers={ this.actionHandlers }
 							isShowing={ this.props.isShowing }
 							isVisible={ this.state.isVisible }
-							isViewSettingsEnabled={ config.isEnabled( 'notifications/view-settings' ) }
 							locale={ localeSlug }
 							wpcom={ wpcom }
 						/>
