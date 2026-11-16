@@ -74,7 +74,7 @@ export const DomainStatusField = ( {
 	const activationTime = __( 'Can take up to 15 minutes' );
 
 	return (
-		<VStack spacing={ 1 }>
+		<VStack spacing={ 0 }>
 			<Tooltip text={ isActivating ? activationTime : undefined }>
 				<HStack
 					spacing={ 1 }
@@ -96,7 +96,7 @@ export const DomainStatusField = ( {
 							tabIndex={ 0 }
 							style={ { display: 'flex' } }
 						>
-							<Icon icon={ info } style={ { fill: 'currentColor' } } />
+							<Icon icon={ info } />
 						</Text>
 					) }
 				</HStack>

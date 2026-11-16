@@ -10,7 +10,7 @@ import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';

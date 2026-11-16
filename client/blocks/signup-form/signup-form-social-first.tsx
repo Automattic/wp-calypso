@@ -64,12 +64,16 @@ interface SignupFormSocialFirst {
 	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
+	/**
+	 * Names the signup's origin to the backend, which picks the activation email and its link.
+	 */
+	activationEmailFrom?: string;
 }
 
 const options = {
 	tosLink: (
 		<a
-			href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+			href={ localizeUrl( 'https://automattic.com/tos/' ) }
 			onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
 			target="_blank"
 			rel="noopener noreferrer"
@@ -125,6 +129,7 @@ const SignupFormSocialFirst = ( {
 	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
+	activationEmailFrom,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -198,6 +203,7 @@ const SignupFormSocialFirst = ( {
 	const passwordlessFormProps = {
 		stepName,
 		flowName,
+		activationEmailFrom,
 		goToNextStep,
 		logInUrl,
 		queryArgs,

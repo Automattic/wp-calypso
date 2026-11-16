@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
+	domainQuery,
 	hasPurchaseBeenExtendedQuery,
 	plansQuery,
 	productsQuery,
@@ -12,14 +13,20 @@ import {
 } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
-import type { Purchase } from '@automattic/api-core';
+import KeepSubscriptionButton from '../keep-subscription-button';
+import type { Domain, Purchase } from '@automattic/api-core';
 
-jest.mock( '../../../../app/router/me', () => ( {
+vi.mock( '../../../../app/router/domains', () => ( {
+	domainRoute: { fullPath: '/domains/$domainName' },
+} ) );
+
+vi.mock( '../../../../app/router/me', () => ( {
 	cancelPurchaseRoute: { fullPath: '__root__', useParams: () => ( { purchaseId: '123' } ) },
 	purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },
 	purchasesRoute: { to: '/me/billing/purchases' },
@@ -82,6 +89,11 @@ function renderRemoveFlow( {
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+	if ( testPurchase.meta ) {
+		queryClient.setQueryData( domainQuery( testPurchase.meta ).queryKey, {
+			domain: testPurchase.meta,
+		} as Domain );
+	}
 	if ( seedHasExtended ) {
 		queryClient.setQueryData( hasPurchaseBeenExtendedQuery( purchase.ID ).queryKey, false );
 	}
@@ -114,8 +126,6 @@ async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > 
 
 const optionsListName = 'Before canceling, you can consider these options:';
 
-const findOptions = () => screen.findByRole( 'list', { name: optionsListName } );
-
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/?intent=remove' );
@@ -130,7 +140,7 @@ describe( '<CancelPurchase />', () => {
 			disable( 'purchases/cancel-options-cards' );
 		} );
 
-		test( 'shows Ask AI and Support for "Another reason" with text typed', async () => {
+		test( 'shows no options for "Another reason" with text typed', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = renderRemoveFlow();
 			await startSurvey( user );
@@ -142,44 +152,91 @@ describe( '<CancelPurchase />', () => {
 			);
 			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 
-			const options = await findOptions();
 			expect(
-				within( options ).getByRole( 'button', { name: /Ask WordPress Agent/ } )
-			).toBeVisible();
-			expect(
-				within( options ).getByRole( 'button', { name: /Speak with our support team/ } )
-			).toBeVisible();
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_cancellation_solution_cards_view',
-				expect.objectContaining( {
-					solution_ids: 'ask-ai-assistant,speak-with-support',
-					cancellation_reason: 'anotherReasonOne',
+				await screen.findByRole( 'radiogroup', {
+					name: 'Where is your next adventure taking you?',
 				} )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: optionsListName } ) ).not.toBeInTheDocument();
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.anything()
+			);
+		} );
+	} );
+
+	describe( 'domain removal', () => {
+		const domainPurchase = {
+			...purchase,
+			product_name: 'Domain Registration',
+			product_slug: 'dotblog_domain',
+			meta: 'example.blog',
+			is_plan: false,
+			is_domain: true,
+			is_domain_registration: true,
+			is_refundable: false,
+		} as Purchase;
+
+		test( 'returns to the domain when it was opened from the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
 			);
 		} );
 
-		test( 'shows Ask AI and Support for a "Something else" answer with text typed', async () => {
+		test( 'keeps where the domain was opened from when returning to it', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/?intent=remove&back_to=domain&domain_back_to=site-domains'
+			);
 			const user = userEvent.setup();
-			const { recordTracksEvent } = renderRemoveFlow();
-			await startSurvey( user );
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
 
-			await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
-			await user.click(
-				screen.getByRole( 'radio', { name: 'Something else related to price/value' } )
-			);
-			await user.type(
-				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
-				'test reason'
-			);
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
 
-			expect( await findOptions() ).toBeVisible();
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_cancellation_solution_cards_view',
-				expect.objectContaining( {
-					solution_ids: 'ask-ai-assistant,speak-with-support',
-					cancellation_reason: 'otherPriceValue',
-				} )
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+			expect( router.state.location.search ).toEqual( { back_to: 'site-domains' } );
+		} );
+
+		test( 'Keep subscription returns a domain connection to the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = render(
+				<KeepSubscriptionButton
+					purchase={ {
+						...domainPurchase,
+						product_slug: 'domain_map',
+						product_type: 'domain_map',
+						is_domain_registration: false,
+					} }
+					intent="remove"
+					onKeepSubscriptionClick={ vi.fn() }
+				/>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Keep subscription' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+		} );
+
+		test( 'returns to purchases when it was opened from billing', async () => {
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
 			);
 		} );
 	} );

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainGlueRecordsForm from '../form';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -20,7 +21,7 @@ interface RenderFormProps {
 function renderForm( props: RenderFormProps = {} ) {
 	const defaultProps = {
 		domainName,
-		onSubmit: jest.fn(),
+		onSubmit: vi.fn(),
 		isSubmitting: false,
 		isEdit: false,
 		submitButtonText: 'Add record',
@@ -54,7 +55,7 @@ test( 'pre-fills form with initial data when provided', async () => {
 
 test( 'calls onSubmit with correct data when form is submitted', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	renderForm( { onSubmit: mockOnSubmit } );
 

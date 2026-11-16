@@ -119,6 +119,7 @@
 
 			.dashboard-overview-card__icon,
 			.dashboard-overview-card__link-icon {
+				color: var( --wp-admin-theme-color );
 				fill: var( --wp-admin-theme-color );
 				background-color: transparent;
 			}

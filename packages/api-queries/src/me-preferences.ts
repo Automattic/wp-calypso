@@ -38,8 +38,6 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-referrals-bank-details-success-notice-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
 	'a4a-feedback': {},
-	'notifications-layout-style': 'simplified',
-	'notifications-view-settings-seen': false,
 	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
@@ -88,6 +86,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-dataviews-view': 'dvview',
+	'hosting-dashboard-dataviews-layout-chosen': 'dvlyt',
 	'hosting-dashboard-visit-count': 'visits',
 	'hosting-dashboard-overview-storage-notice-dismissed': 'storage',
 	'hosting-dashboard-tours': 'tours',

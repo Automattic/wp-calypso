@@ -99,8 +99,6 @@ const ScaledBlockRendererContainer = ( {
 
 	const scriptAssets = useParsedAssets( scripts );
 
-	// Memoized so the `dangerouslySetInnerHTML` objects keep a stable identity; React 19
-	// reassigns `innerHTML` whenever that object identity changes, even for identical markup.
 	const svgFilters = useMemo( () => {
 		const presets = [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
 		return presets.map( ( preset ) => ( {

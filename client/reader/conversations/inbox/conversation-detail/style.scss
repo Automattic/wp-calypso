@@ -10,7 +10,8 @@ $conversations-inbox-easing: var( --wpds-motion-easing-balanced, cubic-bezier( 0
 	min-width: 0;
 }
 
-.conversations-inbox__detail-header {
+// Through the pane, so VStack's `> * { min-height: 0 }` doesn't win.
+.conversations-inbox__detail-pane > .conversations-inbox__detail-header {
 	box-sizing: border-box;
 	min-height: 64px;
 	padding: 0 24px;
@@ -131,6 +132,7 @@ $conversations-inbox-post-card-shadow:
 .conversations-inbox__post-arrow {
 	flex-shrink: 0;
 	fill: var( --color-text );
+	color: var( --color-text );
 	opacity: 0;
 	transition: opacity $conversations-inbox-duration $conversations-inbox-easing;
 
@@ -296,9 +298,24 @@ $conversations-inbox-post-card-shadow:
 		gap: 12px;
 		margin-block-start: 16px;
 
-		.components-button {
+		.components-button,
+		.reader-share__button {
 			font-size: 13px;
 			line-height: 20px;
+		}
+
+		// ReaderShare is the older Button, so it lacks the reset the others get.
+		.reader-share__button {
+			height: auto;
+			padding: 0;
+
+			svg {
+				opacity: 1;
+			}
+
+			&:hover {
+				color: var( --color-link );
+			}
 		}
 
 		svg {
@@ -307,16 +324,6 @@ $conversations-inbox-post-card-shadow:
 		}
 
 		// The design's reply arrow is the return icon, mirrored.
-		// Its 24-unit outline renders 1.25px wide at 20px; a 0.3-unit stroke brings it
-		// to the 1.5px of the star beside it.
-		.comments__comment-actions-reply-icon,
-		.comments__comment-actions-cancel-icon {
-			fill: currentcolor;
-			stroke: currentcolor;
-			stroke-width: 0.3;
-			stroke-linejoin: round;
-		}
-
 		.comments__comment-actions-reply-icon {
 			transform: scaleX( -1 );
 
@@ -400,8 +407,35 @@ $conversations-inbox-post-card-shadow:
 	}
 
 	// Next to the time, not pushed to the far edge.
+	// Collapsed, it also counts the replies, set like the time beside it.
 	.comments__comment-author .comments__comment-collapse-toggle {
 		margin-inline-start: 4px;
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 20px;
+
+		// Keeps the chevron where it sits without the count.
+		&.has-text {
+			padding-inline: 0;
+		}
+
+		.comments__collapsed-replies {
+			color: var( --color-neutral-40 );
+		}
+
+		&:hover .comments__collapsed-replies {
+			color: inherit;
+		}
+
+		// Optically centers the chevrons on the time. The up chevron sits 2px
+		// higher in its box than the down one.
+		svg {
+			transform: translateY( 0.5px );
+		}
+
+		&[aria-expanded="true"] svg {
+			transform: translateY( 1.5px );
+		}
 	}
 
 	// Replies spell out their actions too, like top-level comments.
@@ -419,19 +453,6 @@ $conversations-inbox-post-card-shadow:
 
 	> .comments__form {
 		margin-block-start: 32px;
-	}
-
-	.comments__collapsed-replies.components-button.is-link {
-		margin-block-start: 8px;
-		color: var( --color-text-subtle );
-		font-size: 13px;
-		line-height: 20px;
-		text-decoration: none;
-
-		&:hover {
-			color: var( --color-text );
-			text-decoration: underline;
-		}
 	}
 
 	// Quotes get more room than paragraphs, to set them apart.

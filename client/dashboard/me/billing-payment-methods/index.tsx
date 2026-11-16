@@ -434,7 +434,7 @@ function getFields( {
 						target="_blank"
 						rel="noreferrer"
 					>
-						<Icon icon={ info } size={ 24 } style={ { fill: 'currentColor' } } />
+						<Icon icon={ info } size={ 24 } />
 					</a>
 				</>
 			),
@@ -492,7 +492,7 @@ function getFields( {
 					</Text>
 				) : (
 					<HStack justify="flex-start">
-						<Icon icon={ warning } size={ 16 } style={ { fill: 'currentColor' } } />
+						<Icon icon={ warning } size={ 16 } />
 						<Text intent="warning">{ __( 'Missing information' ) }</Text>
 					</HStack>
 				);

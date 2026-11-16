@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import NewReferralFeedback from '../new-referral-feedback';
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
 
-const mockUseSearch = jest.fn();
-jest.mock( '../../../../app/router/agency', () => ( {
+const mockUseSearch = vi.fn();
+vi.mock( '../../../../app/router/agency', () => ( {
 	earnReferralsRoute: { useSearch: () => mockUseSearch() },
 } ) );
 

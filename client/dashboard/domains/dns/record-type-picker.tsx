@@ -38,12 +38,12 @@ interface RecordTypePickerProps {
 export default function RecordTypePicker( { value, disabled, onChange }: RecordTypePickerProps ) {
 	const [ showAllTypes, setShowAllTypes ] = useState( ! COMMON_RECORD_TYPES.includes( value ) );
 
-	const types = [
-		...COMMON_RECORD_TYPES,
-		...( showAllTypes
-			? DNS_RECORD_TYPES.filter( ( type ) => ! COMMON_RECORD_TYPES.includes( type ) )
-			: [] ),
-	];
+	const types = showAllTypes
+		? [
+				...COMMON_RECORD_TYPES,
+				...DNS_RECORD_TYPES.filter( ( type ) => ! COMMON_RECORD_TYPES.includes( type ) ),
+			]
+		: [ ...COMMON_RECORD_TYPES, ...( COMMON_RECORD_TYPES.includes( value ) ? [] : [ value ] ) ];
 	const hint = getVerificationHint( value );
 
 	return (
@@ -60,17 +60,16 @@ export default function RecordTypePicker( { value, disabled, onChange }: RecordT
 					description: DNS_RECORD_CONFIGS[ type ].description,
 				} ) ) }
 			/>
-			{ ! showAllTypes && (
-				<Button
-					variant="tertiary"
-					size="compact"
-					onClick={ () => setShowAllTypes( true ) }
-					disabled={ disabled }
-					__next40pxDefaultSize
-				>
-					{ __( 'Show all record types' ) }
-				</Button>
-			) }
+			<Button
+				variant="tertiary"
+				size="compact"
+				aria-expanded={ showAllTypes }
+				onClick={ () => setShowAllTypes( ! showAllTypes ) }
+				disabled={ disabled }
+				__next40pxDefaultSize
+			>
+				{ showAllTypes ? __( 'Show fewer record types' ) : __( 'Show all record types' ) }
+			</Button>
 			{ hint && (
 				<Text variant="muted" as="p">
 					{ hint }

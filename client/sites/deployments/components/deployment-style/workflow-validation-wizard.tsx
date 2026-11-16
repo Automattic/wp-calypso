@@ -51,7 +51,7 @@ export const WorkflowValidationWizard = ( {
 
 		const workflowPath = `https://github.com/${ repository.owner }/${ repository.name }/blob/${ branchName }/${ workflow.workflow_path }`;
 		const description =
-			workflowCheckResult.conclusion === 'error'
+			workflowCheckResult.conclusion === 'success'
 				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
 						filename: <ExternalLink href={ workflowPath }>{ workflow.file_name }</ExternalLink>,
 					} )

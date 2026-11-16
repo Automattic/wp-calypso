@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { StepContainerV2Provider } from '../../../contexts/StepContainerV2Context';
 import { TopBar } from '../TopBar';
 import '@testing-library/jest-dom';
@@ -18,7 +19,7 @@ describe( 'TopBar', () => {
 	} );
 
 	test( 'calls onLogoClick when the logo link is clicked', () => {
-		const onLogoClick = jest.fn();
+		const onLogoClick = vi.fn();
 		render( <TopBar logoHref="#home" onLogoClick={ onLogoClick } /> );
 		fireEvent.click( screen.getByRole( 'link', { name: 'WordPress.com home' } ) );
 		expect( onLogoClick ).toHaveBeenCalledTimes( 1 );

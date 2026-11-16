@@ -6,6 +6,7 @@ import HotkeyContainer from './container-hotkey';
 const getVariant = ( isActive ) => ( isActive ? 'primary' : 'secondary' );
 
 const ActionButton = ( {
+	className,
 	icon,
 	isActive,
 	isBusy,
@@ -18,7 +19,7 @@ const ActionButton = ( {
 } ) => (
 	<HotkeyContainer shortcuts={ hotkey ? [ { hotkey, action: onToggle } ] : null }>
 		<Button
-			className={ clsx( 'wpnc__action-link', {
+			className={ clsx( 'wpnc__action-link', className, {
 				'active-action': isActive,
 				'inactive-action': ! isActive,
 			} ) }
@@ -42,6 +43,7 @@ const ActionButton = ( {
 );
 
 ActionButton.propTypes = {
+	className: PropTypes.string,
 	isActive: PropTypes.bool.isRequired,
 	hotkey: PropTypes.string,
 	isDestructive: PropTypes.bool,

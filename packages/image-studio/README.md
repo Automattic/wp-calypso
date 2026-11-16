@@ -86,7 +86,7 @@ Or from the repo root:
 
 ```bash
 yarn workspace @automattic/image-studio build
-yarn test-packages packages/image-studio
+yarn workspace @automattic/image-studio test
 ```
 
 Test files go alongside source: `use-foo.ts` → `use-foo.test.ts`.

@@ -8,7 +8,7 @@ const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
 // WPCS < 3.4.1 passes untrusted code through eval() in this sniff (GHSA-3pwp-g2mj-5p3v).
 // --no-cache is load-bearing: PHPCS discards all --exclude restrictions when caching is on.
-// Remove both once wp-coding-standards/wpcs >= 3.4.1 is installable.
+// Composer doesn't reinstall when the lockfile changes, so older checkouts keep WPCS < 3.4.1.
 const phpcsExclusions = [ '--exclude=WordPress.WP.EnqueuedResourceParameters', '--no-cache' ];
 
 // Groups an array's items into an object keyed by the iteratee's return value.

@@ -1,9 +1,10 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DEFAULT_GENERATE_SUGGESTIONS } from './suggestions-data';
 import { useAsyncSuggestionsLoader } from './use-async-suggestions-loader';
 
 // Mock crypto.randomUUID for Node.js test environment
-const mockRandomUUID = jest.fn( () => 'test-uuid-1234' );
+const mockRandomUUID = vi.fn( () => 'test-uuid-1234' );
 Object.defineProperty( globalThis, 'crypto', {
 	value: {
 		randomUUID: mockRandomUUID,
@@ -11,39 +12,35 @@ Object.defineProperty( globalThis, 'crypto', {
 } );
 
 // Mock response from agent
-const mockSendMessage = jest.fn();
-const mockCreateClient = jest.fn( () => ( {
+const mockSendMessage = vi.fn();
+const mockCreateClient = vi.fn( () => ( {
 	sendMessage: mockSendMessage,
 } ) );
-const mockCreateTextMessage = jest.fn( ( _text: string ) => ( {
+const mockCreateTextMessage = vi.fn( ( _text: string ) => ( {
 	text: _text,
 } ) );
 
-const mockCreateAgentConfig = jest.fn( ( _sessionId: string ) =>
+const mockCreateAgentConfig = vi.fn( ( _sessionId: string ) =>
 	Promise.resolve( { agentId: 'test-agent', sessionId: _sessionId } )
 );
-const mockExtractJsonFromModelResponse = jest.fn();
+const mockExtractJsonFromModelResponse = vi.fn();
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		createClient: () => mockCreateClient(),
-		createTextMessage: ( text: string ) => mockCreateTextMessage( text ),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-client', () => ( {
+	createClient: () => mockCreateClient(),
+	createTextMessage: ( text: string ) => mockCreateTextMessage( text ),
+} ) );
 
-jest.mock( '../utils/agent-config', () => ( {
+vi.mock( '../utils/agent-config', () => ( {
 	createDefaultAgentConfig: ( sessionId: string ) => mockCreateAgentConfig( sessionId ),
 } ) );
 
-jest.mock( '../utils/extract-json', () => ( {
+vi.mock( '../utils/extract-json', () => ( {
 	extractJsonFromModelResponse: ( text: string ) => mockExtractJsonFromModelResponse( text ),
 } ) );
 
 describe( 'useAsyncSuggestionsLoader', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockCreateAgentConfig.mockResolvedValue( { agentId: 'test-agent' } );
 		mockSendMessage.mockResolvedValue( {
@@ -235,7 +232,7 @@ describe( 'useAsyncSuggestionsLoader', () => {
 				text: 'invalid response',
 			} );
 
-			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 			const { result } = renderHook( () =>
 				useAsyncSuggestionsLoader( {
@@ -260,7 +257,7 @@ describe( 'useAsyncSuggestionsLoader', () => {
 			const networkError = new Error( 'Network error' );
 			mockSendMessage.mockRejectedValue( networkError );
 
-			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+			const consoleWarnSpy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 			const { result } = renderHook( () =>
 				useAsyncSuggestionsLoader( {

@@ -1,9 +1,10 @@
+import { vi } from 'vitest';
 import { recordViewChanges } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
 
 describe( 'recordViewChanges', () => {
 	test( 'nothing relevant changed', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			page: 1,
@@ -23,7 +24,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'records search started when search goes from empty to non-empty', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'grid' };
 		const newView: View = { type: 'grid', search: 'hello' };
 
@@ -34,7 +35,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'does not record search when search term changes between non-empty values', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'grid', search: 'hel' };
 		const newView: View = { type: 'grid', search: 'hello' };
 
@@ -44,7 +45,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'add new field', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'grid' };
 		const newView: View = {
 			type: 'grid',
@@ -64,7 +65,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'add multiple new fields', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'grid', fields: [ 'name' ] };
 		const newView: View = {
 			type: 'grid',
@@ -91,7 +92,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'remove field', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name' ],
@@ -111,7 +112,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'remove multiple fields', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name', 'url', 'status' ],
@@ -138,7 +139,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'add/remove fields', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name', 'url' ],
@@ -168,7 +169,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'add new filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = { type: 'grid' };
 		const newView: View = {
 			type: 'grid',
@@ -185,7 +186,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'add multiple new filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			filters: [ { field: 'status', value: 'active', operator: 'is' } ],
@@ -213,7 +214,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'remove filter', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			filters: [ { field: 'status', value: 'active', operator: 'is' } ],
@@ -230,7 +231,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'remove multiple filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			filters: [
@@ -258,7 +259,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'add/remove filters', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			filters: [
@@ -288,7 +289,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'view type change', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			fields: [ 'name', 'status' ],
@@ -310,7 +311,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'sort direction change', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			sort: { field: 'name', direction: 'asc' },
@@ -329,7 +330,7 @@ describe( 'recordViewChanges', () => {
 	} );
 
 	test( 'sort field change', () => {
-		const tracks = jest.fn();
+		const tracks = vi.fn();
 		const oldView: View = {
 			type: 'grid',
 			sort: { field: 'status', direction: 'asc' },

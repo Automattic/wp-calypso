@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { EmailProvider } from '@automattic/api-core';
 import { screen } from '@testing-library/react';

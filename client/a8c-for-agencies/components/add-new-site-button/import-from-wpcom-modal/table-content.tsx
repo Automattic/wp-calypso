@@ -1,4 +1,5 @@
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useEffect } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function WPCOMSitesTableContent( { items, fields }: Props ) {
+	const translate = useTranslate();
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		fields: [ 'site', 'date', 'type' ],
@@ -71,7 +73,7 @@ export default function WPCOMSitesTableContent( { items, fields }: Props ) {
 				fields,
 				getItemId: ( item ) => `${ item.id }`,
 				pagination: paginationInfo,
-				enableSearch: false,
+				searchLabel: translate( 'Search sites' ),
 				actions: [],
 				dataViewsState: dataViewsState,
 				setDataViewsState: setDataViewsState,

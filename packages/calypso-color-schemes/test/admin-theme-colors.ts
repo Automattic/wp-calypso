@@ -1,9 +1,5 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { parseAdminSchemes, getAdminSchemes } = require( '../bin/prepare-sass-assets' );
+import { parseAdminSchemes, getAdminSchemes } from '../bin/prepare-sass-assets';
 
 // Pinned, not shape-matched: which colours ship is the substance of this package, and a shape assertion passes just as happily when every scheme comes back the same wrong hex. A base-styles bump that changes one of these should fail here and be read as news, not noise.
 const EXPECTED_SCHEMES: Record< string, string > = {

@@ -188,6 +188,16 @@ describe( 'Blackbox integration', () => {
 		await waitFor( () => expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
+	it( 'cancels signup without sending a request when its form becomes inactive', async () => {
+		getBlackboxSessionId.mockResolvedValue( null );
+		const getRequestBody = interceptUsersNew( 403, { error: 'throttled' } );
+		renderFormAndSubmit();
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled()
+		);
+		expect( getRequestBody() ).toBeUndefined();
+	} );
+
 	it( 'resets Blackbox when the signup request fails', async () => {
 		window.Blackbox = { reset: jest.fn() };
 		interceptUsersNew( 500, { error: 'internal_server_error' } );
@@ -221,7 +231,9 @@ describe( 'Blackbox integration', () => {
 
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
 			expect( submitForm ).toHaveBeenCalledWith(
-				expect.objectContaining( { blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv' } ),
+				expect.objectContaining( {
+					blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv',
+				} ),
 				expect.any( Function )
 			);
 		} );
@@ -313,5 +325,54 @@ describe( 'email domain validation', () => {
 
 		await waitFor( () => expect( submitForm ).toHaveBeenCalled() );
 		expect( submitForm.mock.calls[ 0 ][ 0 ].email ).toBe( 'user@example.com' );
+	} );
+} );
+
+describe( 'activation email source', () => {
+	const mockStore = configureStore( [ thunk ] );
+
+	const submitAndCaptureRequest = async ( props = {} ) => {
+		let requestBody;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/users/new', ( body ) => {
+				requestBody = body;
+				return true;
+			} )
+			.reply( 403, { error: 'throttled' } );
+
+		render(
+			<Provider store={ mockStore( {} ) }>
+				<PasswordlessSignupForm { ...props } />
+			</Provider>
+		);
+
+		fireEvent.change( screen.getByRole( 'textbox', { name: /email/i } ), {
+			target: { value: 'test@example.com' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
+
+		await waitFor( () => expect( requestBody ).toBeTruthy() );
+		return requestBody;
+	};
+
+	afterEach( () => nock.cleanAll() );
+
+	/**
+	 * The backend picks the activation email, and where its link goes, from this source.
+	 */
+	it( 'sends the activation email source when the caller names one', async () => {
+		const body = await submitAndCaptureRequest( {
+			activationEmailFrom: 'student-with-email-verification',
+		} );
+
+		expect( body.extra ).toEqual(
+			expect.objectContaining( { from: 'student-with-email-verification' } )
+		);
+	} );
+
+	it( 'sends no activation email source by default', async () => {
+		const body = await submitAndCaptureRequest();
+
+		expect( body.extra ).not.toHaveProperty( 'from' );
 	} );
 } );

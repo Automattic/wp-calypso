@@ -81,6 +81,7 @@ class Document extends Component {
 			useTranslationChunks,
 			showStepContainerV2Loader,
 			isPlaygroundWoo,
+			useViteDevServer,
 		} = this.props;
 
 		const theme = config( 'theme' );
@@ -292,7 +293,7 @@ class Document extends Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && (
+					{ env === 'development' && ! useViteDevServer && (
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
@@ -327,8 +328,19 @@ class Document extends Component {
 						<script key={ translationChunk } nonce={ inlineScriptNonce } src={ translationChunk } />
 					) ) }
 
+					{ useViteDevServer && (
+						<script nonce={ inlineScriptNonce } type="module" src="/@vite/client" />
+					) }
+					{ useViteDevServer && (
+						<script nonce={ inlineScriptNonce } type="module" src="/@calypso/react-preamble.js" />
+					) }
 					{ entrypoint.js.map( ( asset ) => (
-						<script key={ asset } nonce={ inlineScriptNonce } src={ asset } />
+						<script
+							key={ asset }
+							nonce={ inlineScriptNonce }
+							type={ useViteDevServer ? 'module' : undefined }
+							src={ asset }
+						/>
 					) ) }
 					<script
 						nonce={ inlineScriptNonce }

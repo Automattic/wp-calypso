@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';

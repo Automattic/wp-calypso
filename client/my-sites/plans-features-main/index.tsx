@@ -168,6 +168,8 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	isDomainTransfer?: boolean;
+	isDomainMove?: boolean;
+	isConnectedDomainMove?: boolean;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
@@ -246,6 +248,8 @@ const PlansFeaturesMain = ( {
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
 	isDomainTransfer,
+	isDomainMove,
+	isConnectedDomainMove,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
@@ -640,6 +644,8 @@ const PlansFeaturesMain = ( {
 		paidDomainName,
 		intent: intentFromProps,
 		selectedThemeType,
+		isDomainMove,
+		isConnectedDomainMove,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -1109,6 +1115,7 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignNewDescription,
 		useMcpFeature,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		hideFreeDomainBadge: isDomainMove,
 	} );
 
 	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
@@ -1549,6 +1556,7 @@ const PlansFeaturesMain = ( {
 					generatedWPComSubdomain={ resolvedSubdomainName }
 					selectedThemeType={ selectedThemeType }
 					isDomainTransfer={ isDomainTransfer || false }
+					isConnectedDomainMove={ isConnectedDomainMove || false }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {

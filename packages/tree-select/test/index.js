@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import treeSelect from '../src';
 
 describe( 'index', () => {
@@ -11,10 +12,10 @@ describe( 'index', () => {
 		let getDependents;
 
 		beforeEach( () => {
-			selector = jest.fn( ( [ posts ], siteId ) =>
+			selector = vi.fn( ( [ posts ], siteId ) =>
 				Object.values( posts ).filter( ( p ) => p.siteId === siteId )
 			);
-			getDependents = jest.fn( ( state ) => [ state.posts ] );
+			getDependents = vi.fn( ( state ) => [ state.posts ] );
 			getSitePosts = treeSelect( getDependents, selector );
 		} );
 
@@ -60,11 +61,11 @@ describe( 'index', () => {
 				},
 			};
 
-			const takeOne = jest.fn( ( [ posts, sites ] ) => [
+			const takeOne = vi.fn( ( [ posts, sites ] ) => [
 				Object.values( posts )[ 0 ],
 				Object.values( sites )[ 0 ],
 			] );
-			const getDeps = jest.fn( ( state ) => [ state.posts, state.sites ] );
+			const getDeps = vi.fn( ( state ) => [ state.posts, state.sites ] );
 			const arborealTakeOne = treeSelect( getDeps, takeOne );
 
 			arborealTakeOne( reduxState, 42 );
@@ -84,12 +85,11 @@ describe( 'index', () => {
 		} );
 
 		test( 'should not throw an error in production for missing args', () => {
-			const prevEnv = process.env.NODE_ENV;
-			process.env.NODE_ENV = 'production';
+			vi.stubEnv( 'NODE_ENV', 'production' );
 
 			expect( () => treeSelect() ).not.toThrow();
 
-			process.env.NODE_ENV = prevEnv;
+			vi.unstubAllEnvs();
 		} );
 
 		test( 'should throw an error in development when given object arguments', () => {
@@ -101,15 +101,14 @@ describe( 'index', () => {
 		} );
 
 		test( 'should not throw an error in production even when given object arguments', () => {
-			const prevEnv = process.env.NODE_ENV;
-			process.env.NODE_ENV = 'production';
+			vi.stubEnv( 'NODE_ENV', 'production' );
 
 			const state = { posts: [] };
 			expect( () => getSitePosts( state, {} ) ).not.toThrow();
 			expect( () => getSitePosts( state, [] ) ).not.toThrow();
 			expect( () => getSitePosts( state, 1, [] ) ).not.toThrow();
 
-			process.env.NODE_ENV = prevEnv;
+			vi.unstubAllEnvs();
 		} );
 
 		test( 'should not throw an error in development when given primitives', () => {
@@ -159,7 +158,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should maintain the cache for unique dependents simultaneously', () => {
-			const getPostByIdWithDataSpy = jest.fn( ( [ post ] ) => {
+			const getPostByIdWithDataSpy = vi.fn( ( [ post ] ) => {
 				return {
 					...post,
 					withData: true,

@@ -17,6 +17,35 @@ describe( 'get-new-site-params', () => {
 		expect( options ).not.toHaveProperty( 'site_segment' );
 	} );
 
+	test( 'should ask for the AI Launchpad on the new site', () => {
+		const { options } = getNewSiteParams( {
+			dependencies: {},
+			flowToCheck: 'free',
+		} );
+
+		expect( options ).toHaveProperty( 'wpcom_ai_launchpad_enabled', true );
+	} );
+
+	test( 'should ask for the AI Launchpad when the flow is unknown, as in /start/domain', () => {
+		const { options } = getNewSiteParams( {
+			dependencies: {},
+		} );
+
+		expect( options ).toHaveProperty( 'wpcom_ai_launchpad_enabled', true );
+	} );
+
+	test.each( [ 'do-it-for-me', 'do-it-for-me-store', 'onboarding-with-email' ] )(
+		'should not ask for the AI Launchpad in the %s flow',
+		( flowToCheck ) => {
+			const { options } = getNewSiteParams( {
+				dependencies: {},
+				flowToCheck,
+			} );
+
+			expect( options ).not.toHaveProperty( 'wpcom_ai_launchpad_enabled' );
+		}
+	);
+
 	describe( 'For preselected url', () => {
 		test( 'and a free domain it should generate the correct payload', () => {
 			const result = getNewSiteParams( {

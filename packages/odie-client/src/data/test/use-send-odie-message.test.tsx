@@ -1,84 +1,81 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../../context';
 import { useSendOdieMessage } from '../use-send-odie-message';
 import type { Message } from '../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( select: unknown ) => unknown ) =>
 		selector( () => ( { getCurrentUser: () => ( { ID: 1 } ) } ) ),
-	useDispatch: () => ( { setLoggedOutOdieChat: jest.fn() } ),
+	useDispatch: () => ( { setLoggedOutOdieChat: vi.fn() } ),
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: '', pathname: '/odie' } ),
-	useNavigate: () => jest.fn(),
+	useNavigate: () => vi.fn(),
 } ) );
 
-jest.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+vi.mock( 'wpcom-proxy-request', () => ( {
+	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );
 
-jest.mock( '../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-const mockRequestHumanSupport = jest.fn();
+const mockRequestHumanSupport = vi.fn();
 
-jest.mock( '../../hooks', () => ( {
-	useCreateZendeskConversation: () => jest.fn(),
+vi.mock( '../../hooks', () => ( {
+	useCreateZendeskConversation: () => vi.fn(),
 	useRequestHumanSupport: () => mockRequestHumanSupport,
 } ) );
 
-jest.mock( '../../hooks/use-logged-out-session', () => ( {
+vi.mock( '../../hooks/use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( { isLoggedOutSession: false } ),
 } ) );
 
-jest.mock( '../../hooks/use-open-interaction-status-map', () => ( {
+vi.mock( '../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenInteractionStatusMap: () => ( {} ),
 } ) );
 
-const mockGetOpenLiveInteractions = jest.fn( () => ( {
+const mockGetOpenLiveInteractions = vi.fn( () => ( {
 	mostRecentSupportInteractionId: null as string | null,
 	hasReachedLimit: false,
 } ) );
 
-jest.mock( '../../utils/get-open-live-interactions', () => ( {
+vi.mock( '../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
 } ) );
 
-jest.mock( '../../utils/is-agents-manager-available', () => ( {
+vi.mock( '../../utils/is-agents-manager-available', () => ( {
 	getIsAgentsManagerAvailable: () => false,
 } ) );
 
-jest.mock( '../use-current-support-interaction', () => ( {
+vi.mock( '../use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: undefined } ),
 } ) );
 
-jest.mock( '../request-logged-out-wpcom-odie', () => ( {
-	requestLoggedOutWpcomOdie: jest.fn(),
+vi.mock( '../request-logged-out-wpcom-odie', () => ( {
+	requestLoggedOutWpcomOdie: vi.fn(),
 } ) );
 
 // The hook imports useManageSupportInteraction from the data barrel.
-jest.mock( '../index', () => ( {
+vi.mock( '../index', () => ( {
 	useManageSupportInteraction: () => ( {
-		addEventToInteraction: jest.fn(),
-		startNewInteraction: jest.fn().mockResolvedValue( { uuid: 'interaction-1' } ),
+		addEventToInteraction: vi.fn(),
+		startNewInteraction: vi.fn().mockResolvedValue( { uuid: 'interaction-1' } ),
 	} ),
 } ) );
 
@@ -88,22 +85,22 @@ const userMessage: Message = {
 	type: 'message',
 };
 
-const mockSetChat = jest.fn();
-const mockSetPendingHumanSupportRequest = jest.fn();
+const mockSetChat = vi.fn();
+const mockSetPendingHumanSupportRequest = vi.fn();
 
 const mockContext = ( overrides: Record< string, unknown > = {} ) =>
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		selectedSiteId: 1,
 		version: null,
 		setChat: mockSetChat,
 		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
-		setChatStatus: jest.fn(),
-		setExperimentVariationName: jest.fn(),
+		setChatStatus: vi.fn(),
+		setExperimentVariationName: vi.fn(),
 		chat: { odieId: null, conversationId: null, messages: [], provider: 'odie', status: 'loaded' },
 		isUserEligibleForPaidSupport: false,
 		canConnectToZendesk: false,
 		forceEmailSupport: false,
-		trackEvent: jest.fn(),
+		trackEvent: vi.fn(),
 		newInteractionsBotSlug: 'wpcom-workflow-support_chat',
 		newLoggedOutInteractionsBotSlug: 'wpcom-workflow-chat_loggedout',
 		externalChatProvider: null,
@@ -124,13 +121,13 @@ const sendMessage = async () => {
 		await result.current.mutateAsync( userMessage );
 	} );
 
-	return ( wpcomRequest as jest.Mock ).mock.calls[ 0 ][ 0 ].body;
+	return ( wpcomRequest as Mock ).mock.calls[ 0 ][ 0 ].body;
 };
 
 describe( 'useSendOdieMessage – checkout support variation', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+		vi.clearAllMocks();
+		( wpcomRequest as Mock ).mockResolvedValue( {
 			chat_id: 5,
 			messages: [ { message_id: 1, content: 'Yes, PayPal works.', role: 'bot', type: 'message' } ],
 		} );
@@ -159,8 +156,8 @@ describe( 'useSendOdieMessage – checkout support variation', () => {
 
 describe( 'useSendOdieMessage – asking for a human', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+		vi.clearAllMocks();
+		( wpcomRequest as Mock ).mockResolvedValue( {
 			chat_id: 5,
 			messages: [
 				{

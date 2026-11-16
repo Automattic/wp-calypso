@@ -1,11 +1,11 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 	TextareaControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { send } from '@wordpress/icons';
+import { IconButton } from '@wordpress/ui';
 import debugModule from 'debug';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -228,18 +228,16 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						onBlur={ handleBlur }
 						onChange={ handleChange }
 					/>
-					<Button
+					<IconButton
 						ref={ submitButtonRef }
 						type="submit"
-						variant="primary"
-						title={
+						tone={ value.length ? 'brand' : 'neutral' }
+						label={
 							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
 						}
 						icon={ send }
-						isBusy={ isSubmitting }
+						loading={ isSubmitting }
 						disabled={ ! value.length }
-						accessibleWhenDisabled
-						__next40pxDefaultSize
 					/>
 				</HStack>
 			</form>

@@ -1,20 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { userPurchasesQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { type Mock, vi } from 'vitest';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { useCancelMutationOnConfirm } from '../use-cancel-mutation-on-confirm';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/api-core', () => ( {} ) );
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+} ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 } ) );
 
@@ -29,8 +32,8 @@ const mockPurchase = {
 } as Purchase;
 
 function makeMutation() {
-	const mutateAsync = jest.fn( () => Promise.resolve() );
-	return { mutateAsync } as unknown as { mutateAsync: jest.Mock };
+	const mutateAsync = vi.fn( () => Promise.resolve() );
+	return { mutateAsync } as unknown as { mutateAsync: Mock };
 }
 
 function makeMutations() {
@@ -197,13 +200,13 @@ describe( 'useCancelMutationOnConfirm', () => {
 	test( 'isPending is true while the mutation is in flight, false after it resolves', async () => {
 		let resolveMutation: ( value?: unknown ) => void = () => {};
 		const cancelAndRefundMutation = {
-			mutateAsync: jest.fn(
+			mutateAsync: vi.fn(
 				() =>
 					new Promise( ( resolve ) => {
 						resolveMutation = resolve;
 					} )
 			),
-		} as unknown as { mutateAsync: jest.Mock };
+		} as unknown as { mutateAsync: Mock };
 		const setPurchaseAutoRenewMutation = makeMutation();
 		const queryClient = makeQueryClient();
 

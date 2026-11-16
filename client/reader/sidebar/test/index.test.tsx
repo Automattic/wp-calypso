@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn();
-	const isEnabledMock = jest.fn( ( feature: string ) => feature === 'reader/shelves' );
+	const isEnabledMock = jest.fn( () => false );
 	return {
 		__esModule: true,
 		default: Object.assign( config, { isEnabled: isEnabledMock } ),
@@ -20,9 +20,6 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/reader/components/app-title', () => () => <div>Reader</div> );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-recent', () => () => <div>Following</div> );
-jest.mock( 'calypso/reader/sidebar/shelves', () => ( {
-	ReaderSidebarShelves: () => <li>Shelves</li>,
-} ) );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-lists', () => () => <li>Lists</li> );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-tags', () => () => <li>Tags</li> );
 jest.mock( 'calypso/reader/sidebar/reader-sidebar-connections', () => () => <li>Connections</li> );
@@ -65,9 +62,7 @@ describe( 'ReaderSidebar', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest
-			.mocked( isEnabled )
-			.mockImplementation( ( feature: string ) => feature === 'reader/shelves' );
+		jest.mocked( isEnabled ).mockImplementation( () => false );
 	} );
 
 	it( 'renders the four section labels as presentational headings', () => {

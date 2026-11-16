@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ContentInfo from '../content-info';
 import type { Site } from '@automattic/api-core';
@@ -13,7 +14,7 @@ import type { Site } from '@automattic/api-core';
 // test-utils renders a bare root route, so those hrefs never resolve.
 let mockIsBackport = true;
 
-jest.mock( '../../../utils/is-dashboard-backport', () => ( {
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
 	isDashboardBackport: () => mockIsBackport,
 } ) );
 
@@ -44,7 +45,7 @@ function purchase( overrides: object = {} ) {
 	};
 }
 
-const renderContent = () => render( <ContentInfo site={ site } onClose={ jest.fn() } /> );
+const renderContent = () => render( <ContentInfo site={ site } onClose={ vi.fn() } /> );
 
 const findManagePurchases = () => screen.findByRole( 'link', { name: 'Manage purchases' } );
 

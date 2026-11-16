@@ -42,6 +42,9 @@
 		"events": "^3.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"jsdom": "^20.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

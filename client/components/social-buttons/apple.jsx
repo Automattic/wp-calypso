@@ -89,7 +89,7 @@ export class AppleLoginButton extends Component {
 			await loadScript( appleClientUrl );
 		}
 
-		const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
+		const oauth2State = crypto.randomUUID();
 		window.sessionStorage.setItem( 'siwa_state', oauth2State );
 
 		window.AppleID.auth.init( {

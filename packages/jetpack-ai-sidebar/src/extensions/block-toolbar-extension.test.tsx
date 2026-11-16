@@ -2,18 +2,18 @@
  * @jest-environment jsdom
  */
 
-import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	BigSkyLogo: {
 		CentralLogo: () => <svg data-testid="big-sky-logo" />,
 	},
 } ) );
 
-jest.mock( '@wordpress/block-editor', () => ( {
+vi.mock( '@wordpress/block-editor', () => ( {
 	BlockControls: ( { children, group }: { children: React.ReactNode; group?: string } ) => (
 		<div data-group={ group } data-testid="block-controls">
 			{ children }
@@ -21,7 +21,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	ToolbarButton: ( {
 		icon,
 		label,
@@ -45,7 +45,7 @@ jest.mock( '@wordpress/components', () => ( {
 	ToolbarGroup: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( fn: ( component: React.ComponentType ) => React.ComponentType ) =>
 		fn,
 } ) );
@@ -54,7 +54,7 @@ jest.mock( '@wordpress/compose', () => ( {
 // models the store not being registered yet.
 let mockChatState: { isOpen?: boolean; isMinimized?: boolean } | undefined;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( select: ( store: string ) => unknown ) => unknown ) =>
 		mapSelect( ( store: string ) =>
 			store === 'automattic/agents-manager' && mockChatState
@@ -63,11 +63,11 @@ jest.mock( '@wordpress/data', () => ( {
 		),
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
@@ -110,7 +110,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 		delete window.__agentsManagerActions;
 		mockChatState = undefined;
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'returns a component compatible with class extends', () => {
@@ -177,7 +177,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 	);
 
 	it( 'opens Agents Manager when the chat is not visible and actions are ready', () => {
-		const setChatOpen = jest.fn();
+		const setChatOpen = vi.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
 			setChatOpen,
@@ -193,7 +193,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 	} );
 
 	it( 'closes Agents Manager when the chat is already visible', () => {
-		const setChatOpen = jest.fn();
+		const setChatOpen = vi.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
 			setChatOpen,
@@ -209,7 +209,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 	} );
 
 	it( 'opens Agents Manager when actions are ready but expose no visibility state', () => {
-		const setChatOpen = jest.fn();
+		const setChatOpen = vi.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
 			setChatOpen,
@@ -224,8 +224,8 @@ describe( 'withJetpackAiToolbarButton', () => {
 	} );
 
 	it( 'opens Agents Manager once the ready event fires', () => {
-		const setChatOpen = jest.fn();
-		const addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
+		const setChatOpen = vi.fn();
+		const addEventListenerSpy = vi.spyOn( window, 'addEventListener' );
 
 		enableToolbarButton();
 		renderToolbar();
@@ -248,7 +248,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 	} );
 
 	it( 'applies the queued click as a toggle when the ready event fires', () => {
-		const setChatOpen = jest.fn();
+		const setChatOpen = vi.fn();
 
 		enableToolbarButton();
 		renderToolbar();
@@ -269,9 +269,9 @@ describe( 'withJetpackAiToolbarButton', () => {
 	} );
 
 	it( 'does not submit or prefill chat when clicked', () => {
-		const setChatOpen = jest.fn();
-		const submitChatMessage = jest.fn();
-		const setChatInput = jest.fn();
+		const setChatOpen = vi.fn();
+		const submitChatMessage = vi.fn();
+		const setChatInput = vi.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
 			setChatOpen,

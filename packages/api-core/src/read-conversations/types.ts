@@ -15,11 +15,40 @@ export interface ReadConversationPerson {
 	url: string | null;
 }
 
+/** The Reader post endpoint's `author`. */
+export interface ReadConversationPostAuthor {
+	ID: number;
+	login: string;
+	name: string;
+	URL: string;
+	avatar_URL: string;
+	has_avatar?: boolean;
+	wpcom_id?: number;
+	wpcom_login?: string;
+}
+
+/** The Reader post endpoint's `discussion`. */
+export interface ReadConversationPostDiscussion {
+	comments_open: boolean;
+	comment_status: string;
+	pings_open: boolean;
+	ping_status: string;
+	comment_count: number;
+	comments_require_registration?: boolean;
+	comments_allow_blocks?: boolean;
+}
+
 export interface ReadConversationPost {
 	title: string;
 	url: string;
 	/** ISO 8601 date the post was published. */
 	date: string | null;
+	/** Built like the Reader post endpoint's fields, by servers that send them. */
+	author?: ReadConversationPostAuthor | null;
+	/** HTML. */
+	excerpt?: string;
+	featured_image?: string;
+	discussion?: ReadConversationPostDiscussion;
 }
 
 export interface ReadConversationSite {

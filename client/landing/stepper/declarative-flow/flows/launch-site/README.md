@@ -16,6 +16,10 @@ The Stepper replacement for `/start/launch-site`. It takes the owner of a privat
 
 Logged-out users log in first; the steps are then worked out for their site.
 
+## Preview sites
+
+A preview site nobody has bought is launched by buying a plan: WordPress.com refuses to launch it unpaid (`preview_site_unpaid`), so the launch step takes that refusal as its cue to go on to checkout, where buying the plan launches the site. The badge on the preview links here with `hide_free_plan=1` and `checkout_source`. The flow doesn't look up whether a site is a preview; it goes by its URL and that refusal.
+
 ## Query parameters
 
 - `siteSlug` – **Required.** The site to launch. Without it, or for a site that can't be found, the user goes to `/sites`.
@@ -26,6 +30,8 @@ Logged-out users log in first; the steps are then worked out for their site.
 
 - `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) lands the user on that wp-admin screen after launch, ahead of `back_to`.
 - `coupon` – Applied at checkout.
+- `hide_free_plan` – `1` offers only paid plans.
+- `checkout_source` – Passed on to checkout as its `source`, which it records on the purchase.
 - `dashboard` – Passed on to checkout when it is `a4a` or `dotcom`.
 - `new` – Pre-fills the domain search.
 

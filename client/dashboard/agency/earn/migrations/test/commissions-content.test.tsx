@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -35,13 +35,13 @@ function renderContent(
 }
 
 describe( 'MigrationsCommissionsContent', () => {
-	it( 'shows the empty state when there are no tagged sites', () => {
+	test( 'shows the empty state when there are no tagged sites', () => {
 		renderContent( { taggedSites: [] } );
 
 		expect( screen.getByText( EMPTY_STATE_COPY ) ).toBeVisible();
 	} );
 
-	it( 'shows the loading skeleton and not the empty state while loading', () => {
+	test( 'shows the loading skeleton and not the empty state while loading', () => {
 		renderContent( { isLoading: true } );
 
 		expect( screen.queryByText( EMPTY_STATE_COPY ) ).not.toBeInTheDocument();

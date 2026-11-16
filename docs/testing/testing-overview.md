@@ -42,6 +42,19 @@ Often your changes will affect other parts of the application, so it's a good id
 
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
 
+## Package tests
+
+This test configuration contains unit tests for the packages in the `packages` top level folder. They run on Vitest: each package with tests has a `vitest.config.*`. Test files go in a `test` subfolder, as in `client`.
+
+```bash
+> # run every package's tests; arguments are Vitest's, for example a path
+> yarn run test-packages [ path ]
+> # watch the packages' tests
+> yarn run test-packages:watch [ path ]
+> # run one package's tests, if it has a `test` script
+> yarn workspace <package name> test
+```
+
 ## Integration tests
 
 This test configuration contains integration tests that verify code located in `bin`, `client`, `server` and `test` top level folders. They should test how a group of components or a larger part of business logic works together.

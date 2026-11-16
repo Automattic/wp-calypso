@@ -1,10 +1,9 @@
-/**
- * @jest-environment jsdom
- */
 import { DomainData } from '@automattic/data-stores';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import moment from 'moment';
 import React from 'react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { renderWithProvider, testDomain, testPartialDomain } from '../../test-utils';
 import { transferStatus } from '../../utils/constants';
 import {
@@ -17,7 +16,7 @@ import { DomainsTableRow } from '../domains-table-row';
 const siteSlug = 'site123.com';
 
 // Mock fetchBulkActionStatus to prevent network requests
-const mockFetchBulkActionStatus = jest.fn().mockResolvedValue( {} );
+const mockFetchBulkActionStatus = vi.fn().mockResolvedValue( {} );
 
 const render = ( el, props ) =>
 	renderWithProvider( el, {
@@ -68,7 +67,7 @@ test( 'domain name links to management interface (all-domains table)', async () 
 		blog_id: 123,
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( {
+	const fetchSite = vi.fn().mockResolvedValue( {
 		URL: 'https://my-site.com',
 		options: { is_redirect: false },
 	} );
@@ -103,7 +102,7 @@ test( 'domain name links to management interface (site-specific table)', async (
 		blog_id: 123,
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( {
+	const fetchSite = vi.fn().mockResolvedValue( {
 		URL: 'https://my-site.com',
 		options: { is_redirect: false },
 	} );
@@ -139,12 +138,12 @@ test( "redirect links use the site's unmapped URL for the site slug (all-domains
 		blog_id: 123,
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( {
+	const fetchSite = vi.fn().mockResolvedValue( {
 		URL: 'http://redirect.blog',
 		options: { is_redirect: true, unmapped_url: 'http://redirect-site.wordpress.com' },
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
 
@@ -181,12 +180,12 @@ test( "redirect links use the site's unmapped URL for the site slug (site-specif
 		blog_id: 123,
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( {
+	const fetchSite = vi.fn().mockResolvedValue( {
 		URL: 'http://redirect.blog',
 		options: { is_redirect: true, unmapped_url: 'http://redirect-site.wordpress.com' },
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ fullRedirectDomain, fullUnmappedDomain ],
 	} );
 
@@ -215,11 +214,11 @@ test( 'transfer domains link to the transfer management interface (all-domains t
 		type: 'transfer',
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ fullDomain ],
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( {
+	const fetchSite = vi.fn().mockResolvedValue( {
 		URL: 'http://example.com',
 		options: { is_redirect: false },
 	} );
@@ -250,11 +249,11 @@ test( 'transfer domains link to the transfer management interface (site-specific
 		type: 'transfer',
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ fullDomain ],
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( {
+	const fetchSite = vi.fn().mockResolvedValue( {
 		URL: 'http://example.com',
 		options: { is_redirect: false },
 	} );
@@ -282,11 +281,11 @@ test( 'when a site is associated with a domain, display its name', async () => {
 		primary_domain: true,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ primaryFull ],
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+	const fetchSite = vi.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
 	render( <DomainsTableRow domain={ primaryPartial } />, {
 		domains: [ primaryPartial ],
@@ -307,11 +306,11 @@ test( 'Parenthetical username is removed from owner column', async () => {
 		current_user_is_owner: false,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ primaryFull ],
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+	const fetchSite = vi.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
 	render( <DomainsTableRow domain={ primaryPartial } />, {
 		domains: [ primaryPartial ],
@@ -332,11 +331,11 @@ test( "Doesn't strip parentheses used in the name portion of the owner field", a
 		current_user_is_owner: false,
 	} );
 
-	const fetchSiteDomains = jest.fn().mockResolvedValue( {
+	const fetchSiteDomains = vi.fn().mockResolvedValue( {
 		domains: [ primaryFull ],
 	} );
 
-	const fetchSite = jest.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
+	const fetchSite = vi.fn().mockResolvedValue( { ID: 123, name: 'Primary Domain Blog' } );
 
 	render( <DomainsTableRow domain={ primaryPartial } />, {
 		domains: [ primaryPartial ],
@@ -369,8 +368,8 @@ describe( 'selected domain', () => {
 } );
 
 describe( 'site linking ctas', () => {
-	beforeAll( () => {
-		global.ResizeObserver = require( 'resize-observer-polyfill' );
+	beforeAll( async () => {
+		vi.stubGlobal( 'ResizeObserver', ( await import( 'resize-observer-polyfill' ) ).default );
 	} );
 
 	test( 'when a site is not associated with a domain and the user has no connectable sites, display the site linking ctas targeting site creation', async () => {
@@ -381,11 +380,11 @@ describe( 'site linking ctas', () => {
 			current_user_can_create_site_from_domain_only: true,
 		} );
 
-		const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		const fetchSiteDomains = vi.fn().mockResolvedValue( {
 			domains: [ primaryFull ],
 		} );
 
-		const fetchSite = jest.fn().mockResolvedValue( {
+		const fetchSite = vi.fn().mockResolvedValue( {
 			ID: 123,
 			URL: 'https://primarydomainblog.wordpress.com',
 			options: { is_redirect: false },
@@ -432,11 +431,11 @@ describe( 'site linking ctas', () => {
 			current_user_can_create_site_from_domain_only: true,
 		} );
 
-		const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		const fetchSiteDomains = vi.fn().mockResolvedValue( {
 			domains: [ primaryFull ],
 		} );
 
-		const fetchSite = jest.fn().mockResolvedValue( {
+		const fetchSite = vi.fn().mockResolvedValue( {
 			ID: 123,
 			URL: 'https://primarydomainblog.wordpress.com',
 			options: { is_redirect: false },
@@ -482,10 +481,10 @@ describe( 'expires or renew on cell', () => {
 
 	beforeAll( () => {
 		const OriginalTimeFormat = Intl.DateTimeFormat;
-		dateTimeFormatSpy = jest.spyOn( global.Intl, 'DateTimeFormat' );
-		dateTimeFormatSpy.mockImplementation(
-			( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
-		);
+		dateTimeFormatSpy = vi.spyOn( global.Intl, 'DateTimeFormat' );
+		dateTimeFormatSpy.mockImplementation( function ( locale, options ) {
+			return new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } );
+		} );
 	} );
 
 	afterAll( () => {
@@ -534,11 +533,11 @@ describe( 'domain status cell', () => {
 	) => {
 		const [ partialDomain, fullDomain ] = testDomain( domain );
 
-		const fetchSiteDomains = jest.fn().mockResolvedValue( {
+		const fetchSiteDomains = vi.fn().mockResolvedValue( {
 			domains: [ fullDomain ],
 		} );
 
-		const fetchSite = jest.fn().mockResolvedValue( {
+		const fetchSite = vi.fn().mockResolvedValue( {
 			ID: 123,
 			URL: 'https://example.com',
 			options: { is_redirect: false },
@@ -628,10 +627,10 @@ describe( 'domain status cell', () => {
 		const OriginalTimeFormat = Intl.DateTimeFormat;
 
 		beforeAll( () => {
-			dateTimeFormatSpy = jest.spyOn( global.Intl, 'DateTimeFormat' );
-			dateTimeFormatSpy.mockImplementation(
-				( locale, options ) => new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } )
-			);
+			dateTimeFormatSpy = vi.spyOn( global.Intl, 'DateTimeFormat' );
+			dateTimeFormatSpy.mockImplementation( function ( locale, options ) {
+				return new OriginalTimeFormat( locale, { ...options, timeZone: 'UTC' } );
+			} );
 		} );
 
 		afterAll( () => {
@@ -639,7 +638,7 @@ describe( 'domain status cell', () => {
 		} );
 
 		test( 'when the domain expires, display a renew now cta if the user is the owner', async () => {
-			const onRenewNowClick = jest.fn();
+			const onRenewNowClick = vi.fn();
 
 			renderDomainStatusCell(
 				{
@@ -722,7 +721,7 @@ describe( 'domain status cell', () => {
 		} );
 
 		test( 'when the domain expires, display a renew now with credits cta if the user is the owner', async () => {
-			const onRenewNowClick = jest.fn();
+			const onRenewNowClick = vi.fn();
 
 			renderDomainStatusCell(
 				{
@@ -809,7 +808,7 @@ describe( 'domain status cell', () => {
 
 	describe( 'domain about to expire actions', () => {
 		test( 'when there is less than 30 days to expire and the viewer is the owner, display the renew now cta', async () => {
-			const onRenewNowClick = jest.fn();
+			const onRenewNowClick = vi.fn();
 
 			renderDomainStatusCell(
 				{
@@ -856,7 +855,7 @@ describe( 'domain status cell', () => {
 		} );
 
 		test( 'when there is less than 30 days to expire and the viewer is not the owner, display the renew notice', async () => {
-			const onRenewNowClick = jest.fn();
+			const onRenewNowClick = vi.fn();
 
 			renderDomainStatusCell(
 				{
@@ -1063,7 +1062,7 @@ describe( 'domain status cell', () => {
 
 	describe( 'renew now is in domain actions', () => {
 		test( 'when a domain is renewable, check the Renew now is in the domain actions', async () => {
-			const onRenewNowClick = jest.fn();
+			const onRenewNowClick = vi.fn();
 
 			renderDomainStatusCell(
 				{

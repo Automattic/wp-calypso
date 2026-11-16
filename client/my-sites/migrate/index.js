@@ -1,22 +1,12 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
-import { migrateSite, setSiteSelectionHeader, setStep } from 'calypso/my-sites/migrate/controller';
+import { navigation, redirectWithoutSite, siteSelection } from 'calypso/my-sites/controller';
+import { migrateSite, redirectToMigrationFlow } from 'calypso/my-sites/migrate/controller';
 
 export default function () {
-	page(
-		'/migrate',
-		setSiteSelectionHeader,
-		siteSelection,
-		navigation,
-		sites,
-		makeLayout,
-		clientRender
-	);
-
+	// The status page of a site's migration. wpcomsh also sends wp-admin here while one runs.
 	page(
 		'/migrate/:site_id',
-		setStep( 'input' ),
 		siteSelection,
 		navigation,
 		redirectWithoutSite( '/migrate' ),
@@ -27,7 +17,6 @@ export default function () {
 
 	page(
 		'/migrate/from/:sourceSiteId/to/:site_id',
-		setStep( 'confirm' ),
 		siteSelection,
 		navigation,
 		redirectWithoutSite( '/migrate' ),
@@ -36,28 +25,8 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		'/migrate/choose/:site_id',
-		setStep( 'migrateOrImport' ),
-		siteSelection,
-		navigation,
-		redirectWithoutSite( '/migrate' ),
-		migrateSite,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/migrate/upgrade/from/:sourceSiteId/to/:site_id',
-		setStep( 'upgrade' ),
-		siteSelection,
-		navigation,
-		redirectWithoutSite( '/migrate' ),
-		migrateSite,
-		makeLayout,
-		clientRender
-	);
-
-	// Fallback to handle /migrate/* routes that aren't previously matched
-	page( '/migrate/*', () => page.redirect( '/migrate' ) );
+	page( '/migrate/choose/:site_id', redirectToMigrationFlow );
+	page( '/migrate/upgrade/from/:sourceSiteId/to/:site_id', redirectToMigrationFlow );
+	page( '/migrate', redirectToMigrationFlow );
+	page( '/migrate/*', redirectToMigrationFlow );
 }

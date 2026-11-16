@@ -10,7 +10,7 @@ describe( 'flattenTitle', () => {
 		[ { raw: 7 }, '' ],
 		[ null, '' ],
 		[ undefined, '' ],
-	] )( 'flattens %p to %p', ( title, expected ) => {
+	] )( 'flattens %o to %o', ( title, expected ) => {
 		expect( flattenTitle( title ) ).toBe( expected );
 	} );
 } );

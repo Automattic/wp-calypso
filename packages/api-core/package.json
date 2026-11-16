@@ -35,7 +35,8 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@automattic/i18n-utils": "workspace:^",
@@ -51,8 +52,11 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"jsdom": "^20.0.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

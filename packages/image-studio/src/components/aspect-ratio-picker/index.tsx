@@ -2,11 +2,14 @@ import { AgentUI, cn } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore } from '../../store';
+import { ImageStudioMode } from '../../types';
 import { getDefaultAspectRatio } from '../../utils/default-aspect-ratio';
+import { trackImageStudioAspectRatioSelected } from '../../utils/tracking';
 import { AspectRatioIcon } from '../icons/AspectRatioIcon';
 
 interface AspectRatioPickerProps {
 	disabled?: boolean;
+	mode: ImageStudioMode;
 }
 
 export const ASPECT_RATIO_OPTIONS = [
@@ -15,9 +18,11 @@ export const ASPECT_RATIO_OPTIONS = [
 	{ label: __( '9:16', __i18n_text_domain__ ), value: '9:16' },
 	{ label: __( '4:3', __i18n_text_domain__ ), value: '4:3' },
 	{ label: __( '3:4', __i18n_text_domain__ ), value: '3:4' },
+	{ label: __( '3:2', __i18n_text_domain__ ), value: '3:2' },
+	{ label: __( '2:3', __i18n_text_domain__ ), value: '2:3' },
 ];
 
-export function AspectRatioPicker( { disabled = false }: AspectRatioPickerProps ) {
+export function AspectRatioPicker( { disabled = false, mode }: AspectRatioPickerProps ) {
 	const { setSelectedAspectRatio } = useDispatch( imageStudioStore );
 
 	const selectedAspectRatio = useSelect( ( select ) => {
@@ -29,6 +34,7 @@ export function AspectRatioPicker( { disabled = false }: AspectRatioPickerProps 
 
 	const handleAspectRatioSelect = ( value: string ) => {
 		setSelectedAspectRatio( value );
+		trackImageStudioAspectRatioSelected( { aspectRatio: value, mode } );
 		// Close dropdown by simulating mousedown outside
 		// Use requestAnimationFrame to ensure this happens after the current frame
 		requestAnimationFrame( () => {

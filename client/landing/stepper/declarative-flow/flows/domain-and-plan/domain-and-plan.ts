@@ -7,6 +7,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import wpcom from 'calypso/lib/wp';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { SIGNUP_DOMAIN_ORIGIN } from '../../../../../lib/analytics/signup';
@@ -49,10 +50,10 @@ const domainUpsell: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const backTo = useQuery().get( 'back_to' );
 		const flowName = this.name;
 		const siteSlug = useSiteSlug()!;
 		const site = useSite();
+		const backTo = getSafeUrl( useQuery().get( 'back_to' ), site?.URL );
 		const hasQualifyingPlan =
 			!! site?.plan && ! site.plan.is_free && site.plan.billing_period !== 'Monthly';
 		// Connecting a domain is bundled with every paid plan, so there is nothing left to buy.

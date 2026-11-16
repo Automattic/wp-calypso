@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	isMediaAttachment,
 	isAttachmentRecord,
@@ -52,7 +53,7 @@ const validBlockEditProps = {
 	clientId: 'abc-123',
 	isSelected: true,
 	attributes: { id: 1 },
-	setAttributes: jest.fn(),
+	setAttributes: vi.fn(),
 };
 
 const validErrorPayload = {
@@ -95,7 +96,7 @@ const validJobState = {
 // ── isMediaAttachment ───────────────────────────────────────────────
 
 describe( 'isMediaAttachment', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isMediaAttachment( value ) ).toBe( false );
 	} );
 
@@ -143,7 +144,7 @@ describe( 'isMediaAttachment', () => {
 // ── isAttachmentRecord ──────────────────────────────────────────────
 
 describe( 'isAttachmentRecord', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isAttachmentRecord( value ) ).toBe( false );
 	} );
 
@@ -174,7 +175,7 @@ describe( 'isAttachmentRecord', () => {
 // ── isWPBlock ───────────────────────────────────────────────────────
 
 describe( 'isWPBlock', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isWPBlock( value ) ).toBe( false );
 	} );
 
@@ -204,7 +205,7 @@ describe( 'isWPBlock', () => {
 // ── isBlockEditProps ────────────────────────────────────────────────
 
 describe( 'isBlockEditProps', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isBlockEditProps( value ) ).toBe( false );
 	} );
 
@@ -241,16 +242,16 @@ describe( 'isBlockEditProps', () => {
 // ── isCoreDataDispatch ──────────────────────────────────────────────
 
 describe( 'isCoreDataDispatch', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isCoreDataDispatch( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid dispatch', () => {
 		expect(
 			isCoreDataDispatch( {
-				saveEntityRecord: jest.fn(),
-				deleteEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				saveEntityRecord: vi.fn(),
+				deleteEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( true );
 	} );
@@ -258,8 +259,8 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'rejects missing saveEntityRecord', () => {
 		expect(
 			isCoreDataDispatch( {
-				deleteEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				deleteEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -267,8 +268,8 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'rejects missing deleteEntityRecord', () => {
 		expect(
 			isCoreDataDispatch( {
-				saveEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				saveEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -276,8 +277,8 @@ describe( 'isCoreDataDispatch', () => {
 	it( 'rejects missing invalidateResolution', () => {
 		expect(
 			isCoreDataDispatch( {
-				saveEntityRecord: jest.fn(),
-				deleteEntityRecord: jest.fn(),
+				saveEntityRecord: vi.fn(),
+				deleteEntityRecord: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -286,8 +287,8 @@ describe( 'isCoreDataDispatch', () => {
 		expect(
 			isCoreDataDispatch( {
 				saveEntityRecord: 'not-fn',
-				deleteEntityRecord: jest.fn(),
-				invalidateResolution: jest.fn(),
+				deleteEntityRecord: vi.fn(),
+				invalidateResolution: vi.fn(),
 			} )
 		).toBe( false );
 	} );
@@ -296,12 +297,12 @@ describe( 'isCoreDataDispatch', () => {
 // ── isBlockEditorDispatch ───────────────────────────────────────────
 
 describe( 'isBlockEditorDispatch', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isBlockEditorDispatch( value ) ).toBe( false );
 	} );
 
 	it( 'accepts valid dispatch', () => {
-		expect( isBlockEditorDispatch( { updateBlockAttributes: jest.fn() } ) ).toBe( true );
+		expect( isBlockEditorDispatch( { updateBlockAttributes: vi.fn() } ) ).toBe( true );
 	} );
 
 	it( 'rejects missing method', () => {
@@ -370,7 +371,7 @@ describe( 'isFile', () => {
 // ── isErrorPayload ──────────────────────────────────────────────────
 
 describe( 'isErrorPayload', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isErrorPayload( value ) ).toBe( false );
 	} );
 
@@ -407,7 +408,7 @@ describe( 'isErrorPayload', () => {
 // ── isGenerationSuccess ─────────────────────────────────────────────
 
 describe( 'isGenerationSuccess', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isGenerationSuccess( value ) ).toBe( false );
 	} );
 
@@ -448,7 +449,7 @@ describe( 'isGenerationSuccess', () => {
 // ── isGenerationError ───────────────────────────────────────────────
 
 describe( 'isGenerationError', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isGenerationError( value ) ).toBe( false );
 	} );
 
@@ -489,7 +490,7 @@ describe( 'isGenerationResult', () => {
 // ── isImageGenerationRequest ────────────────────────────────────────
 
 describe( 'isImageGenerationRequest', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isImageGenerationRequest( value ) ).toBe( false );
 	} );
 
@@ -527,7 +528,7 @@ describe( 'isImageGenerationRequest', () => {
 // ── isImageEditRequest ──────────────────────────────────────────────
 
 describe( 'isImageEditRequest', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isImageEditRequest( value ) ).toBe( false );
 	} );
 
@@ -564,7 +565,7 @@ describe( 'isGenerationRequest', () => {
 		expect( isGenerationRequest( { type: 'unknown', sessionId: 'x', prompt: 'y' } ) ).toBe( false );
 	} );
 
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isGenerationRequest( value ) ).toBe( false );
 	} );
 } );
@@ -572,7 +573,7 @@ describe( 'isGenerationRequest', () => {
 // ── isJobState ──────────────────────────────────────────────────────
 
 describe( 'isJobState', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isJobState( value ) ).toBe( false );
 	} );
 
@@ -615,7 +616,7 @@ describe( 'isJobState', () => {
 // ── OperationState guards ───────────────────────────────────────────
 
 describe( 'isIdleOperationState', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isIdleOperationState( value ) ).toBe( false );
 	} );
 
@@ -631,7 +632,7 @@ describe( 'isIdleOperationState', () => {
 } );
 
 describe( 'isProcessingOperationState', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isProcessingOperationState( value ) ).toBe( false );
 	} );
 
@@ -651,7 +652,7 @@ describe( 'isProcessingOperationState', () => {
 } );
 
 describe( 'isSuccessOperationState', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isSuccessOperationState( value ) ).toBe( false );
 	} );
 
@@ -699,7 +700,7 @@ describe( 'isSuccessOperationState', () => {
 } );
 
 describe( 'isErrorOperationState', () => {
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isErrorOperationState( value ) ).toBe( false );
 	} );
 
@@ -736,7 +737,7 @@ describe( 'isOperationState', () => {
 		expect( isOperationState( { status: 'cancelled' } ) ).toBe( false );
 	} );
 
-	it.each( NON_OBJECTS )( 'rejects non-object: %p', ( value ) => {
+	it.each( NON_OBJECTS.map( ( value ) => [ value ] ) )( 'rejects non-object: %o', ( value ) => {
 		expect( isOperationState( value ) ).toBe( false );
 	} );
 } );

@@ -3,20 +3,21 @@
  */
 /* eslint-disable react/no-danger */
 import { render, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn(),
-	loadjQueryDependentScript: jest.fn(),
+vi.mock( '@automattic/load-script', () => ( {
+	loadScript: vi.fn(),
+	loadjQueryDependentScript: vi.fn(),
 } ) );
 
 let EmbedContainer;
 let loadScript;
 let loadjQueryDependentScript;
 
-beforeEach( () => {
-	jest.resetModules();
-	EmbedContainer = require( '../' ).default;
-	( { loadScript, loadjQueryDependentScript } = require( '@automattic/load-script' ) );
+beforeEach( async () => {
+	vi.resetModules();
+	EmbedContainer = ( await import( '../' ) ).default;
+	( { loadScript, loadjQueryDependentScript } = await import( '@automattic/load-script' ) );
 } );
 
 afterEach( () => {
@@ -70,7 +71,7 @@ describe( 'exact carriers from the HackerOne reports', () => {
 		let galleryAtInit = null;
 		loadScript.mockImplementation( ( url, cb ) => cb() );
 		loadjQueryDependentScript.mockImplementation( ( url, cb ) => cb() );
-		const jQuery = jest.fn( () => ( {
+		const jQuery = vi.fn( () => ( {
 			trigger: () => {
 				galleryAtInit = document
 					.querySelector( '.jetpack-slideshow' )

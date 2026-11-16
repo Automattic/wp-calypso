@@ -49,6 +49,8 @@ class PasswordlessSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		termsAfterActions: PropTypes.bool,
 		useConnectScreenActions: PropTypes.bool,
+		// Names the signup's origin to the backend, which picks the activation email and its link.
+		activationEmailFrom: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -106,19 +108,25 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
-		const { flowName, queryArgs = {} } = this.props;
+		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( flowName === '' && this.props.submitForm ) {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			if ( blackboxSessionId === null ) {
+				this.submitLock = false;
+				return;
+			}
 
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
 				{
 					email,
 					is_passwordless: true,
-					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+					...( blackboxSessionId && {
+						blackbox_session_id: blackboxSessionId,
+					} ),
 				},
 				( error ) => {
 					this.submitLock = false;
@@ -135,11 +143,6 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			form,
-		} );
-
 		const { oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
@@ -149,6 +152,16 @@ class PasswordlessSignupForm extends Component {
 
 		try {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			if ( blackboxSessionId === null ) {
+				this.submitLock = false;
+				this.setState( { isSubmitting: false } );
+				return;
+			}
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				form,
+			} );
 
 			const body = {
 				email: this.getTrimmedEmail(),
@@ -163,8 +176,13 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
-				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
-				...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+				extra: {
+					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
+					...( activationEmailFrom && { from: activationEmailFrom } ),
+				},
+				...( blackboxSessionId && {
+					blackbox_session_id: blackboxSessionId,
+				} ),
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};
@@ -458,4 +476,11 @@ export default connect( null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
-} )( localize( withBlackboxProtection( PasswordlessSignupForm, { feature: 'blackbox-signup' } ) ) );
+} )(
+	localize(
+		withBlackboxProtection( PasswordlessSignupForm, {
+			feature: 'blackbox-signup',
+			flow: 'signup',
+		} )
+	)
+);

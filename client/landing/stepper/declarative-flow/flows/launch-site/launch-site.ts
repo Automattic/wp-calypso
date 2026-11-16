@@ -177,6 +177,8 @@ function useLaunchParams(): LaunchParams {
 		ref: query.get( 'ref' ),
 		coupon: query.get( 'coupon' ),
 		dashboard: query.get( 'dashboard' ),
+		checkoutSource: query.get( 'checkout_source' ),
+		hideFreePlan: query.get( 'hide_free_plan' ) === '1',
 	};
 }
 
@@ -228,13 +230,17 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const launchParams = useLaunchParams();
 		const isPlansFirstStep = ! getStepSlugs( this ).includes( STEPS.DOMAIN_SEARCH.slug );
+		// The step ignores `hideFreePlan` when Free is de-emphasized, and offers it as a link in the
+		// subheader instead.
+		const { hideFreePlan } = launchParams;
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				isInSignup: true,
 				isLaunchPage: true,
 				isCustomDomainAllowedOnFreePlan: true,
-				deemphasizeFreePlan: true,
+				deemphasizeFreePlan: ! hideFreePlan,
+				...( hideFreePlan && { hideFreePlan } ),
 				...( isPlansFirstStep && {
 					wrapperProps: {
 						goBack: () => window.location.assign( getLaunchReturnUrl( launchParams ) ),
@@ -283,7 +289,16 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 					throw new Error( 'Unknown site' );
 				}
 
-				await launchSite( siteId );
+				// WordPress.com refuses to launch a preview site nobody has bought: buying its plan at
+				// checkout launches it, so with a plan in the cart the flow goes on to checkout. Without
+				// one, such as Free picked, the refusal stands.
+				await launchSite( siteId ).catch( ( error ) => {
+					const isBuyingPlan =
+						stepSlugs.includes( STEPS.UNIFIED_PLANS.slug ) && !! getPlanCartItem();
+					if ( error?.error !== 'preview_site_unpaid' || ! isBuyingPlan ) {
+						throw error;
+					}
+				} );
 
 				return { siteSlug: launchParams.siteSlug };
 			} );

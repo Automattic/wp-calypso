@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { activeAgencyQuery } from '@automattic/api-queries';
@@ -7,6 +7,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import { getReferralConfig } from '../config';
@@ -78,7 +79,7 @@ describe( '<ReferHostingForm>', () => {
 
 	test( 'shows the classic messages and does not submit while fields are missing', async () => {
 		const user = userEvent.setup();
-		const onSubmitted = jest.fn();
+		const onSubmitted = vi.fn();
 		const request = nock( API ).post( '/wpcom/v2/agency/vip/partner-opportunity' ).reply( 200 );
 
 		render(
@@ -104,7 +105,7 @@ describe( '<ReferHostingForm>', () => {
 			id: 1,
 			approval_status: 'pending',
 		} as Agency );
-		const onSubmitted = jest.fn();
+		const onSubmitted = vi.fn();
 		render(
 			<ReferHostingForm
 				agencyId={ 1 }
@@ -129,7 +130,7 @@ describe( '<ReferHostingForm>', () => {
 			<ReferHostingForm
 				agencyId={ 1 }
 				config={ getReferralConfig( 'premium' ) }
-				onSubmitted={ jest.fn() }
+				onSubmitted={ vi.fn() }
 			/>
 		);
 		await screen.findByRole( 'combobox', { name: 'Country' } );
@@ -149,7 +150,7 @@ describe( '<ReferHostingForm>', () => {
 			<ReferHostingForm
 				agencyId={ 1 }
 				config={ getReferralConfig( 'premium' ) }
-				onSubmitted={ jest.fn() }
+				onSubmitted={ vi.fn() }
 			/>
 		);
 		await user.click( await screen.findByRole( 'combobox', { name: 'Country' } ) );
@@ -171,7 +172,7 @@ describe( '<ReferHostingForm>', () => {
 		'keeps the form and shows an error when the referral fails to send',
 		async () => {
 			const user = userEvent.setup();
-			const onSubmitted = jest.fn();
+			const onSubmitted = vi.fn();
 			nock( API )
 				.post( '/wpcom/v2/agency/pressable/premium-plan-referral' )
 				.reply( 500, { error: 'submission_failed', message: 'Nope' } );
@@ -207,7 +208,7 @@ describe( '<ReferHostingForm>', () => {
 		'sends the Enterprise referral with the lead type and RFP answer',
 		async () => {
 			const user = userEvent.setup();
-			const onSubmitted = jest.fn();
+			const onSubmitted = vi.fn();
 			let body: unknown;
 			const request = nock( API )
 				.post( '/wpcom/v2/agency/vip/partner-opportunity', ( requestBody ) => {
@@ -243,7 +244,7 @@ describe( '<ReferHostingForm>', () => {
 		'sends the Premium referral without the Enterprise-only fields',
 		async () => {
 			const user = userEvent.setup();
-			const onSubmitted = jest.fn();
+			const onSubmitted = vi.fn();
 			let body: unknown;
 			const request = nock( API )
 				.post( '/wpcom/v2/agency/pressable/premium-plan-referral', ( requestBody ) => {

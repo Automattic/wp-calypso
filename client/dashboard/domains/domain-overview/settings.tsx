@@ -27,33 +27,44 @@ import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
-// A component of its own because `SummaryButtonList` overrides the density of its direct
-// children, which would hide the description.
-function TransferInSummary( {
-	domain,
-	isDisabled,
-	onClick,
-}: {
-	domain: Domain;
-	isDisabled?: boolean;
-	onClick: () => void;
-} ) {
-	return (
-		<SummaryButton
-			title={ __( 'Bring your domain to WordPress.com' ) }
-			description={ __( 'Manage your site and domain all in one place.' ) }
-			density="medium-low"
-			href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-				initialQuery: domain.domain,
-				initialMode: 'transfer-domain',
-				siteSlug: domain.site_slug,
-				dashboard: getCurrentDashboard(),
-				back_to: redirectToDashboardLink(),
-			} ) }
-			disabled={ isDisabled }
-			onClick={ onClick }
-		/>
-	);
+import './style.scss';
+
+function getStorageKey( domainName: string ) {
+	return `dashboard-domain-overview-show-advanced:${ domainName }`;
+}
+
+function readShowAdvanced( domainName: string ) {
+	try {
+		return window.sessionStorage.getItem( getStorageKey( domainName ) ) === 'true';
+	} catch {
+		return false;
+	}
+}
+
+// Kept for the session so the advanced rows stay open after visiting one of them and coming back.
+function useShowAdvanced( domainName: string ) {
+	const [ state, setState ] = useState( () => ( {
+		domainName,
+		showAdvanced: readShowAdvanced( domainName ),
+	} ) );
+
+	// The overview stays mounted when switching domains.
+	if ( state.domainName !== domainName ) {
+		setState( { domainName, showAdvanced: readShowAdvanced( domainName ) } );
+	}
+
+	const setShowAdvanced = ( showAdvanced: boolean ) => {
+		setState( { domainName, showAdvanced } );
+		try {
+			if ( showAdvanced ) {
+				window.sessionStorage.setItem( getStorageKey( domainName ), 'true' );
+			} else {
+				window.sessionStorage.removeItem( getStorageKey( domainName ) );
+			}
+		} catch {}
+	};
+
+	return [ state.domainName === domainName && state.showAdvanced, setShowAdvanced ] as const;
 }
 
 export default function DomainOverviewSettings( {
@@ -68,7 +79,7 @@ export default function DomainOverviewSettings( {
 	isDisabled?: boolean;
 } ) {
 	const trackItem = useTrackOverviewItem( domain );
-	const [ showAdvanced, setShowAdvanced ] = useState( false );
+	const [ showAdvanced, setShowAdvanced ] = useShowAdvanced( domain.domain );
 	const buttonListItems = [
 		<DomainSiteSettingsSummary
 			key="site"
@@ -176,10 +187,17 @@ export default function DomainOverviewSettings( {
 
 	if ( shouldShowTransferInAction( domain ) ) {
 		buttonListItems.push(
-			<TransferInSummary
+			<SummaryButton
 				key="transfer-in"
-				domain={ domain }
-				isDisabled={ isDisabled }
+				title={ __( 'Bring your domain to WordPress.com' ) }
+				href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+					initialQuery: domain.domain,
+					initialMode: 'transfer-domain',
+					siteSlug: domain.site_slug,
+					dashboard: getCurrentDashboard(),
+					back_to: redirectToDashboardLink(),
+				} ) }
+				disabled={ isDisabled }
 				onClick={ () => trackItem( 'transfer-in' ) }
 			/>
 		);
@@ -190,6 +208,7 @@ export default function DomainOverviewSettings( {
 			<SectionHeader
 				title={ __( 'Settings' ) }
 				level={ 3 }
+				className="domain-overview-section-header"
 				actions={
 					advancedButtonListItems.length > 0 && (
 						<Button

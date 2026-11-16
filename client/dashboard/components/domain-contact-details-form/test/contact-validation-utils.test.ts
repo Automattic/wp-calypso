@@ -2,12 +2,12 @@ import { mapValidationMessagesToFieldErrors, resolveSmsCountry } from '../contac
 import type { ContactValidationResponseMessages, SMSCountryCode } from '@automattic/api-core';
 
 describe( 'mapValidationMessagesToFieldErrors', () => {
-	it( 'returns an empty map when there are no messages', () => {
+	test( 'returns an empty map when there are no messages', () => {
 		expect( mapValidationMessagesToFieldErrors( undefined ) ).toEqual( {} );
 		expect( mapValidationMessagesToFieldErrors( {} ) ).toEqual( {} );
 	} );
 
-	it( 'maps API (snake_case) message keys to field IDs and keeps the first message', () => {
+	test( 'maps API (snake_case) message keys to field IDs and keeps the first message', () => {
 		const messages: ContactValidationResponseMessages = {
 			postal_code: [ 'Please use the A1B 2C3 format.', 'Second message' ],
 			country_code: [ 'Invalid country.' ],
@@ -19,7 +19,7 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 		} );
 	} );
 
-	it( 'ignores fields with empty message arrays and non-field keys', () => {
+	test( 'ignores fields with empty message arrays and non-field keys', () => {
 		const messages = {
 			state: [],
 			extra: { ca: { cira_agreement_accepted: [ 'nope' ] } },
@@ -28,7 +28,7 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {} );
 	} );
 
-	it( 'maps the dotted ccTLD keys the endpoint reports .uk errors under', () => {
+	test( 'maps the dotted ccTLD keys the endpoint reports .uk errors under', () => {
 		const messages = {
 			'extra.uk.registrant_type': [ 'Please choose a registrant type.' ],
 			'extra.uk.registration_number': [ 'Please use a valid registration number.' ],
@@ -42,7 +42,7 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 		} );
 	} );
 
-	it( 'maps the dotted ccTLD keys the endpoint reports .fr and .ca errors under', () => {
+	test( 'maps the dotted ccTLD keys the endpoint reports .fr and .ca errors under', () => {
 		const messages = {
 			'extra.fr.registrant_type': [ 'Please choose a registrant type.' ],
 			'extra.fr.siren_siret': [ 'Please use a valid SIREN or SIRET number.' ],
@@ -56,7 +56,7 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 		} );
 	} );
 
-	it( 'attaches VAT errors to the .fr VAT field, which the schema files under vat_id', () => {
+	test( 'attaches VAT errors to the .fr VAT field, which the schema files under vat_id', () => {
 		const messages = {
 			vat_id: [ 'Please use a valid VAT number.' ],
 		} as unknown as ContactValidationResponseMessages;

@@ -1,10 +1,6 @@
 import { Locator, Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import {
-	TRANSIENT_RETRY_DELAYS,
-	TRANSIENT_UPSTREAM_STATUSES,
-	isServerErrorPage,
-} from '../transient-server-error';
+import { gotoWithRetry } from '../transient-server-error';
 
 const selectors = {
 	continue: 'button:text("Continue"),a:text("Continue")',
@@ -47,41 +43,7 @@ export class LoginPage {
 			} );
 		} );
 
-		// A deploy rollout serves a stock 502 for a few seconds; back off and
-		// navigate again rather than let the caller time out on a missing locator.
-		const url = getCalypsoURL( targetUrl );
-		const maxAttempts = TRANSIENT_RETRY_DELAYS.length + 1;
-		for ( let attempt = 1; ; attempt++ ) {
-			const response = await this.page.goto( url );
-			if ( ! ( await this.isTransientFailure( response ) ) ) {
-				return response;
-			}
-
-			const status = response?.status();
-			if ( attempt >= maxAttempts ) {
-				throw new Error(
-					`Login page ${ url } still returned a transient server error (status ${ status }) after ${ maxAttempts } attempts.`
-				);
-			}
-
-			const delay = TRANSIENT_RETRY_DELAYS[ attempt - 1 ];
-			console.warn(
-				`Login page attempt ${ attempt }/${ maxAttempts } returned a transient server error (status ${ status }), retrying in ${ delay }ms.`
-			);
-			await this.page.waitForTimeout( delay );
-		}
-	}
-
-	/**
-	 * Whether a navigation landed on a transient upstream error: a 502/503/504
-	 * status, or a gateway-error page served with another status.
-	 */
-	private async isTransientFailure( response: Response | null ): Promise< boolean > {
-		if ( response && TRANSIENT_UPSTREAM_STATUSES.includes( response.status() ) ) {
-			return true;
-		}
-
-		return isServerErrorPage( this.page );
+		return gotoWithRetry( this.page, getCalypsoURL( targetUrl ) );
 	}
 
 	/**

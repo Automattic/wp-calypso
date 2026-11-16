@@ -1,20 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { ActivityEvent } from '../activity-event';
 import type { Activity, ActivityDescription } from '../types';
 
-jest.mock( '@automattic/calypso-config', () =>
-	jest.fn( ( key ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : '' ) )
-);
-jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn( () => false ) );
-jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn( () => false ) );
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: vi.fn( ( key ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : '' ) ),
+	serverEnvId: undefined,
+} ) );
+vi.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn( () => false ) } ) );
+vi.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => ( {
+	default: vi.fn( () => false ),
+} ) );
 
-const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
-const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
+const mockedIsJetpackCloud = isJetpackCloud as MockedFunction< typeof isJetpackCloud >;
+const mockedIsA8CForAgencies = isA8CForAgencies as MockedFunction< typeof isA8CForAgencies >;
 
 const createActivity = ( {
 	title = 'Summary',
@@ -58,7 +62,7 @@ describe( 'ActivityEvent', () => {
 		mockedIsA8CForAgencies.mockReturnValue( false );
 	} );
 
-	it( 'renders the summary and plain content text', () => {
+	test( 'renders the summary and plain content text', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Plain content',
 			items: [ 'Plain content' ],
@@ -71,7 +75,7 @@ describe( 'ActivityEvent', () => {
 		expect( screen.getByText( 'Plain content' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders formatted content with links', () => {
+	test( 'renders formatted content with links', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'View post',
 			items: [
@@ -92,7 +96,7 @@ describe( 'ActivityEvent', () => {
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/post/example' );
 	} );
 
-	it( 'renders strong ranges as bold text', () => {
+	test( 'renders strong ranges as bold text', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'A Bold move',
 			items: [
@@ -113,7 +117,7 @@ describe( 'ActivityEvent', () => {
 		expect( strong.tagName ).toBe( 'STRONG' );
 	} );
 
-	it( 'renders emphasis ranges inside <em>', () => {
+	test( 'renders emphasis ranges inside <em>', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Very important',
 			items: [
@@ -133,7 +137,7 @@ describe( 'ActivityEvent', () => {
 		expect( emphasis.tagName ).toBe( 'EM' );
 	} );
 
-	it( 'renders preformatted ranges inside <pre>', () => {
+	test( 'renders preformatted ranges inside <pre>', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Code block',
 			items: [
@@ -153,7 +157,7 @@ describe( 'ActivityEvent', () => {
 		expect( pre.tagName ).toBe( 'PRE' );
 	} );
 
-	it( 'renders file paths inside a <code> element', () => {
+	test( 'renders file paths inside a <code> element', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'File wp-config.php',
 			items: [
@@ -173,7 +177,7 @@ describe( 'ActivityEvent', () => {
 		expect( code.tagName ).toBe( 'CODE' );
 	} );
 
-	it( 'renders post links when post ranges are provided', () => {
+	test( 'renders post links when post ranges are provided', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'View Example now',
 			items: [
@@ -196,7 +200,7 @@ describe( 'ActivityEvent', () => {
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/reader/blogs/123/posts/77' );
 	} );
 
-	it( 'renders comment links with anchors', () => {
+	test( 'renders comment links with anchors', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Comment added',
 			items: [
@@ -217,7 +221,7 @@ describe( 'ActivityEvent', () => {
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/comment/2/1' );
 	} );
 
-	it( 'renders plugin links for plugin ranges', () => {
+	test( 'renders plugin links for plugin ranges', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Activated Akismet today',
 			items: [
@@ -240,7 +244,7 @@ describe( 'ActivityEvent', () => {
 		expect( link.getAttribute( 'href' ) ).toBe( '/plugins/akismet/example.com' );
 	} );
 
-	it( 'renders theme links when themes originate from WordPress.com', () => {
+	test( 'renders theme links when themes originate from WordPress.com', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Installed Example today',
 			items: [
@@ -264,7 +268,7 @@ describe( 'ActivityEvent', () => {
 		expect( link.getAttribute( 'href' ) ).toBe( 'https://wordpress.com/theme/example/example.com' );
 	} );
 
-	it( 'renders external theme links with target and rel attributes', () => {
+	test( 'renders external theme links with target and rel attributes', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'External theme installed',
 			items: [
@@ -289,7 +293,7 @@ describe( 'ActivityEvent', () => {
 		expect( link.getAttribute( 'rel' ) ).toBe( 'noopener noreferrer' );
 	} );
 
-	it( 'renders backup links with site slug fallback', () => {
+	test( 'renders backup links with site slug fallback', () => {
 		const activityDescription: ActivityDescription = {
 			textDescription: 'Restored backup now',
 			items: [

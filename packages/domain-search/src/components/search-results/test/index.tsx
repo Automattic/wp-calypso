@@ -1,5 +1,6 @@
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SearchResults } from '..';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
@@ -32,8 +33,8 @@ describe( 'SearchResults', () => {
 
 	it( 'keeps rendering the other results if one of them throws', async () => {
 		// React logs the error caught by the boundary.
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const onSuggestionNotFound = jest.fn();
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const onSuggestionNotFound = vi.fn();
 
 		mockGetSuggestionsQuery( {
 			params: { query: 'test' },
@@ -75,7 +76,7 @@ describe( 'SearchResults', () => {
 
 	it( 'allows resetting filters if there are no suggestions but the exact match filter is active', async () => {
 		const user = userEvent.setup();
-		const onFilterReset = jest.fn();
+		const onFilterReset = vi.fn();
 
 		mockGetSuggestionsQuery( {
 			params: { query: 'test-no-suggestions' },
@@ -116,8 +117,8 @@ describe( 'SearchResults', () => {
 
 	it( 'allows resetting filters if there are no suggestions but the TLD filter is active', async () => {
 		const user = userEvent.setup();
-		const onFilterReset = jest.fn();
-		const onSearchStart = jest.fn();
+		const onFilterReset = vi.fn();
+		const onSearchStart = vi.fn();
 
 		mockGetSuggestionsQuery( {
 			params: { query: 'test-no-suggestions' },

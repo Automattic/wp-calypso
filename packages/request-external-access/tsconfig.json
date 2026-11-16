@@ -3,7 +3,6 @@
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"rootDir": "src",
-		"types": [ "jest" ],
 		"noEmit": false,
 		"emitDeclarationOnly": true
 	},

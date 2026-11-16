@@ -12,6 +12,23 @@ import './style.scss';
 
 const COMMENTS = 3;
 
+export function ConversationCommentsPlaceholder() {
+	return (
+		<VStack spacing={ 8 } aria-hidden="true">
+			{ Array.from( { length: COMMENTS }, ( _, index ) => (
+				<HStack key={ index } spacing={ 3 } alignment="top">
+					<Skeleton shape="circle" height="32px" width="32px" />
+					<VStack spacing={ 2.5 } className="conversations-inbox__placeholder-text">
+						<Skeleton height="14px" width="120px" />
+						<Skeleton height="14px" width="100%" />
+						<Skeleton height="14px" width="60%" />
+					</VStack>
+				</HStack>
+			) ) }
+		</VStack>
+	);
+}
+
 /** Stands in for the post card and its first comments while the post loads. */
 export function ConversationContentPlaceholder( { announce = true }: { announce?: boolean } ) {
 	const translate = useTranslate();
@@ -40,18 +57,7 @@ export function ConversationContentPlaceholder( { announce = true }: { announce?
 					<Skeleton height="72px" width="108px" />
 				</HStack>
 			</VStack>
-			<VStack spacing={ 8 }>
-				{ Array.from( { length: COMMENTS }, ( _, index ) => (
-					<HStack key={ index } spacing={ 3 } alignment="top">
-						<Skeleton shape="circle" height="32px" width="32px" />
-						<VStack spacing={ 2.5 } className="conversations-inbox__placeholder-text">
-							<Skeleton height="14px" width="120px" />
-							<Skeleton height="14px" width="100%" />
-							<Skeleton height="14px" width="60%" />
-						</VStack>
-					</HStack>
-				) ) }
-			</VStack>
+			<ConversationCommentsPlaceholder />
 		</VStack>
 	);
 }

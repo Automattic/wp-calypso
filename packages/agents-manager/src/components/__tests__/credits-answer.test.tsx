@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { buildLiveCreditsStatus } from '../../utils/live-credits';
 import { CreditsAnswer, CreditsMessage } from '../credits-answer';
 
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 
 const status = buildLiveCreditsStatus(
 	creditSnapshot( {
@@ -24,7 +25,7 @@ const upgrade = {
 	href: 'https://example.com/plans',
 	target: '_blank',
 	rel: 'noopener noreferrer',
-	onClick: jest.fn(),
+	onClick: vi.fn(),
 };
 const addCredits = {
 	...upgrade,

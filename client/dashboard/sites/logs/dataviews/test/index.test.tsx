@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -8,6 +8,7 @@ import { queryClient as appQueryClient } from '@automattic/api-queries';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import SiteLogsDataViews from '../index';
 import type { DeepPartial } from 'utility-types';
@@ -15,23 +16,23 @@ import type { DeepPartial } from 'utility-types';
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
 	isRTL: () => false,
@@ -149,7 +150,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.PHP }
 			/>
 		);
@@ -171,7 +172,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.SERVER }
 			/>
 		);
@@ -187,7 +188,7 @@ describe( 'SiteLogsDataViews', () => {
 		mockPreferences();
 		mockPhpLogsOnce();
 		const user = userEvent.setup();
-		const autoRefresh = jest.fn();
+		const autoRefresh = vi.fn();
 
 		const { recordTracksEvent } = render(
 			<SiteLogsDataViews
@@ -222,7 +223,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.SERVER }
 			/>,
 			{ queryClient: appQueryClient }
@@ -251,7 +252,7 @@ describe( 'SiteLogsDataViews', () => {
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
 				autoRefreshDisabledReason="blocked"
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.PHP }
 			/>
 		);
@@ -274,7 +275,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.SERVER }
 			/>,
 			{ queryClient: appQueryClient }

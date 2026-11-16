@@ -21,7 +21,7 @@
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
 		"build": "NODE_ENV=production yarn dev",
 		"test:js": "yarn run -T test-apps apps/notifications",
-		"test:js:watch": "yarn test:js --watch",
+		"test:js:watch": "yarn run -T test-apps:watch apps/notifications",
 		"teamcity:build-app": "yarn build",
 		"translate": "rm -rf dist/strings && (cd ../.. && wp-oxc-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './apps/notifications' --dir './apps/notifications/dist/strings' --jobs 4 --output './apps/notifications/dist/notifications.pot') && build-app-languages --stringsFilePath='./dist/notifications.pot' --outputPath='./dist/languages'"
 	},
@@ -39,7 +39,7 @@
 		"@wordpress/dataviews": "^22.0.0",
 		"@wordpress/element": "^10.1.0",
 		"@wordpress/i18n": "^7.1.0",
-		"@wordpress/icons": "^15.5.0",
+		"@wordpress/icons": "^20.0.0",
 		"@wordpress/ui": "^0.26.0",
 		"autoprefixer": "^10.4.21",
 		"calypso": "workspace:^",
@@ -65,6 +65,8 @@
 		"html-webpack-plugin": "^5.6.8",
 		"postcss": "^8.5.32",
 		"postcss-custom-properties": "^12.1.11",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	}
 }
