@@ -17,9 +17,6 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => {
-		if ( key === 'blackbox_signup_api_key' ) {
-			return 'signup-key';
-		}
 		if ( key === 'blackbox_api_key' ) {
 			return 'login-key';
 		}
