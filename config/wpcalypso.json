@@ -112,6 +112,7 @@
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": true,
+		"migration/see-it-first": true,
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": false,
 		"notifications/redesign": true,

@@ -288,6 +288,14 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
 	},
 
+	SEE_IT_FIRST_PREVIEW: {
+		slug: 'see-it-first-preview',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-see-it-first-preview' */ './steps-repository/see-it-first-preview'
+			),
+	},
+
 	STATIC_SITE_IMPORT_READING: {
 		slug: 'static-site-import-reading',
 		asyncComponent: () =>

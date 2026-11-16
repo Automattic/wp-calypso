@@ -45,7 +45,11 @@ const render = ( query: string, { afterCheckout = true, siteId = '123' } = {} ) 
 	renderWithProvider(
 		<MemoryRouter basename="/setup" initialEntries={ [ url ] }>
 			<StaticSiteImportReading
-				{ ...mockStepProps( { navigation: { submit }, stepName: 'static-site-import-reading' } ) }
+				{ ...mockStepProps( {
+					navigation: { submit },
+					flow: 'static-site-import',
+					stepName: 'static-site-import-reading',
+				} ) }
 			/>
 		</MemoryRouter>,
 		{

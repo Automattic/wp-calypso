@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
+	SEE_IT_FIRST_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -150,6 +151,16 @@ const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< an
 			}
 		: {};
 
+// Builds the import on an unpaid preview site, so it needs the static site import too.
+const seeItFirstFlow: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'migration/non-wordpress-source' ) &&
+	config.isEnabled( 'migration/see-it-first' )
+		? {
+				[ SEE_IT_FIRST_FLOW ]: () =>
+					import( /* webpackChunkName: "see-it-first-flow" */ './flows/see-it-first/see-it-first' ),
+			}
+		: {};
+
 const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
 	{
 		[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
@@ -176,4 +187,5 @@ export default {
 	...aiSiteBuilderFlows,
 	...aiSiteBuilderOnboardingFlows,
 	...staticSiteImportFlow,
+	...seeItFirstFlow,
 };

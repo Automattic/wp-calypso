@@ -1,0 +1,60 @@
+@use '@wordpress/base-styles/mixins';
+
+// The screenshot fills the right half edge to edge, so the columns meet with no gap.
+.step-container-v2__content-row--two-column-layout.see-it-first-preview {
+	gap: 0;
+
+	@include mixins.break-large {
+		align-items: stretch;
+	}
+}
+
+.see-it-first-preview__perks {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	svg {
+		flex-shrink: 0;
+		fill: var( --wp-admin-theme-color );
+	}
+}
+
+.see-it-first-preview__note {
+	margin: 0;
+	color: var( --studio-gray-60 );
+	font-size: 0.875rem;
+}
+
+.see-it-first-preview__screenshot {
+	background: var( --studio-gray-0 );
+
+	// The long screenshot scrolls inside the right half, which stays put.
+	@include mixins.break-large {
+		position: sticky;
+		top: 0;
+		height: 100dvh;
+		overflow-y: auto;
+	}
+
+	.site-thumbnail {
+		width: 100%;
+		height: auto;
+		min-height: 60vh;
+	}
+
+	.site-thumbnail__image {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+}
