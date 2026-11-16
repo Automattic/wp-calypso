@@ -1,14 +1,24 @@
 /**
- * Starts the Calypso server with the client served by Vite, in one process: `yarn start-dashboard:vite`.
- * It serves what `yarn start-dashboard` does, and builds the server with Vite, not webpack.
+ * Starts the Calypso server with the client served by Vite, in one process, for the config env
+ * given as the argument: `yarn start:vite` (`development`) and `yarn start-dashboard:vite`
+ * (`dashboard-development`). It serves what `yarn start` and `yarn start-dashboard` do, and builds
+ * the server with Vite, not webpack.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { root } from './base.mjs';
+import { entriesByEnv } from './dev.mjs';
 
-process.env.CALYPSO_ENV ??= 'dashboard-development';
+const calypsoEnv = process.argv[ 2 ];
+if ( ! entriesByEnv[ calypsoEnv ] ) {
+	console.error(
+		`Usage: node build-tools/vite/start.mjs <${ Object.keys( entriesByEnv ).join( '|' ) }>`
+	);
+	process.exit( 1 );
+}
+process.env.CALYPSO_ENV = calypsoEnv;
 process.env.NODE_ENV ??= 'development';
 process.env.BROWSERSLIST_ENV ??= 'evergreen';
 process.env.CALYPSO_BUNDLER = 'vite';

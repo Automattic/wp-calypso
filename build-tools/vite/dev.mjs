@@ -66,6 +66,10 @@ function reactPreamble() {
 	};
 }
 
+function calypsoEnv() {
+	return process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
+}
+
 /**
  * The sections the server config of `CALYPSO_ENV` enables, as `calypso/sections-filter` decides.
  * It reads the config files directly, so it works before the packages are built.
@@ -73,9 +77,7 @@ function reactPreamble() {
  */
 export function enabledSections() {
 	const parse = require( path.join( client, 'server/config/parser.js' ) );
-	const { serverData } = parse( path.join( root, 'config' ), {
-		env: process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development',
-	} );
+	const { serverData } = parse( path.join( root, 'config' ), { env: calypsoEnv() } );
 	delete require.cache[ sectionsFile ];
 	return require( sectionsFile ).filter(
 		( section ) => serverData.sections?.[ section.name ] ?? serverData.enable_all_sections
@@ -119,11 +121,13 @@ export function devOverlay( { entries, sections = [], httpServer } ) {
 	// these, Vite finds a section's dependencies on its first visit, then re-optimizes and reloads.
 	const sectionEntries = sections.map(
 		( section ) =>
-			section.module.replace( /^calypso\//, 'client/' ) + '/index.{web.js,js,jsx,ts,tsx}'
+			section.module.replace( /^calypso\//, 'client/' ) +
+			'/index.{web.js,web.jsx,web.ts,web.tsx,js,jsx,ts,tsx}'
 	);
 	const nodeDebug = JSON.stringify( process.env.NODE_DEBUG || false );
 	return {
-		cacheDir: path.join( root, '.cache/vite' ),
+		// Each config env pre-bundles a different set of dependencies.
+		cacheDir: path.join( root, '.cache/vite', calypsoEnv() ),
 		appType: 'custom',
 		plugins: [
 			react( { jsxImportSource: '@emotion/react', include: /\.(m?[jt]sx?)$/ } ),
@@ -226,6 +230,53 @@ export const startDashboardEntries = {
 };
 
 /**
+ * The entries `yarn start:vite` serves: all of them.
+ * @type {Record<string, { file: string, styles: string[] }>}
+ */
+export const startEntries = {
+	...startDashboardEntries,
+	'entry-login': { file: 'client/landing/login/index.js', styles: globalStyles },
+	'entry-subscriptions': {
+		file: 'client/landing/subscriptions/index.tsx',
+		styles: [ 'client/landing/subscriptions/styles/styles.scss' ],
+	},
+	'entry-domains-landing': {
+		file: 'client/landing/domains/index.jsx',
+		styles: [ ...globalStyles, 'client/landing/domains/style.scss' ],
+	},
+	// The page only links the stylesheets: the server renders it and it runs no script.
+	'entry-browsehappy': {
+		file: 'client/landing/browsehappy/index.jsx',
+		styles: [
+			...globalStyles,
+			'client/landing/browsehappy/style.scss',
+			'client/landing/browsehappy/circle.scss',
+		],
+	},
+};
+
+/**
+ * The config envs the Vite dev server supports, and the entries each serves.
+ * @type {Record<string, Record<string, { file: string, styles: string[] }>>}
+ */
+export const entriesByEnv = {
+	development: startEntries,
+	'dashboard-development': startDashboardEntries,
+};
+
+/**
+ * The entries the config env in `CALYPSO_ENV` serves.
+ * @returns {Record<string, { file: string, styles: string[] }>}
+ */
+export function devEntries() {
+	const entries = entriesByEnv[ calypsoEnv() ];
+	if ( ! entries ) {
+		throw new Error( `The Vite dev server doesn't support CALYPSO_ENV=${ calypsoEnv() }.` );
+	}
+	return entries;
+}
+
+/**
  * The stylesheets a section's server-rendered page needs before the scripts run.
  * @type {Record<string, string[]>}
  */
@@ -240,11 +291,11 @@ export const sectionStyles = {
  * @param {import('node:http').Server} [options.httpServer]
  * @returns {import('vite').UserConfig}
  */
-export function startDashboardDevConfig( options = {} ) {
+export function devConfig( options = {} ) {
 	return mergeConfig(
 		calypsoBase(),
 		devOverlay( {
-			entries: Object.values( startDashboardEntries ).map( ( entry ) => entry.file ),
+			entries: Object.values( devEntries() ).map( ( entry ) => entry.file ),
 			sections: enabledSections(),
 			...options,
 		} )
