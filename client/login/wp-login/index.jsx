@@ -243,7 +243,8 @@ export class Login extends Component {
 
 	/**
 	 * The main WordPress.com login, for logged-out visitors, stacks the social buttons above the
-	 * form. Partner, OAuth2 and connection logins keep the side-by-side layout.
+	 * form. Partner, OAuth2 and connection logins, and Akismet redirects, which show the Akismet
+	 * logo above the title, keep the side-by-side layout.
 	 */
 	isStackedLogin() {
 		return (
@@ -253,7 +254,8 @@ export class Login extends Component {
 			! this.props.isJetpack &&
 			! this.props.isUnifiedConnectionFlow &&
 			! this.props.oauth2Client &&
-			! this.props.isWoo
+			! this.props.isWoo &&
+			! this.props.isFromAkismet
 		);
 	}
 
