@@ -60,8 +60,22 @@ describe( 'EducationStudentValidation', () => {
 		expect( screen.getByLabelText( 'Invitation code' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Validate invite code' } ) ).toBeDisabled();
 		expect(
-			screen.getByRole( 'link', { name: 'Learn more about the program at wp.com/edu' } )
-		).toHaveAttribute( 'href', 'https://wp.com/edu' );
+			screen.getByRole( 'link', { name: 'Get the Student plan with your school email' } )
+		).toHaveAttribute( 'href', '/setup/student' );
+	} );
+
+	it( 'keeps the locale in the link to the Student flow', () => {
+		render(
+			{},
+			{
+				initialEntry: '/setup/education/es',
+				initialState: { ui: { language: { localeSlug: 'es' } } },
+			}
+		);
+
+		expect(
+			screen.getByRole( 'link', { name: 'Get the Student plan with your school email' } )
+		).toHaveAttribute( 'href', '/setup/student/es' );
 	} );
 
 	it( 'prefills the invite code from the `code` query parameter without submitting it', async () => {

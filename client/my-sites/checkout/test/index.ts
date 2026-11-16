@@ -78,6 +78,17 @@ describe( 'checkout routes', () => {
 		expect( studioReturnIndex ).toBeLessThan( genericIndex );
 	} );
 
+	it( 'registers the Student redirect ahead of the generic product route', () => {
+		registerCheckoutRoutes();
+
+		const studentIndex = registrationIndexOf( '/checkout/student' );
+		const genericIndex = registrationIndexOf( '/checkout/:domainOrProduct' );
+
+		expect( studentIndex ).toBeGreaterThanOrEqual( 0 );
+		expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
+		expect( studentIndex ).toBeLessThan( genericIndex );
+	} );
+
 	describe( 'siteless renewals by subscription ID', () => {
 		it.each( [
 			[ '/checkout/akismet/renew/:subscriptionId', checkoutAkismetSiteless ],
