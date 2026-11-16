@@ -1,6 +1,7 @@
 {
 	"extends": ["../../.stylelintrc"],
 	"rules": {
+		"plugin-wpds/no-unknown-ds-tokens": true,
 		"property-disallowed-list": [
 			[
 				"margin-left",
