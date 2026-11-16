@@ -321,7 +321,7 @@ export default function EmailSection( {
 			</HasEmailSaveErrorContext.Provider>
 			<AccountEmailRecoveryNotice
 				savedEmail={ userSettings.user_email ?? '' }
-				isDraft={ draftEmail !== undefined }
+				draftEmail={ draftEmail }
 				showDraftRecoveryWarning={ showDraftRecoveryWarning }
 				isPending={ !! isEmailPending }
 				hasUnsavedChanges={ hasUnsavedChanges }

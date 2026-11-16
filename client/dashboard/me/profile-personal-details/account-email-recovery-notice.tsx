@@ -1,11 +1,7 @@
-import {
-	accountEmailRecoverySnoozeMutation,
-	accountEmailRecoverySnoozeQuery,
-} from '@automattic/api-queries';
+import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
-import { useAuth } from '../../app/auth';
 import Notice, {
 	NoticeActionButton,
 	NoticeActionLinkButton,
@@ -13,6 +9,7 @@ import Notice, {
 } from '../../components/notice';
 import {
 	getAccountEmailRecoverySnoozeUntil,
+	hasSameDomainRecoveryEmail,
 	hasVerifiedAccountRecovery,
 	isAccountEmailAtRisk,
 	isAccountEmailRecoverySnoozed,
@@ -21,7 +18,7 @@ import type { VerifiedAccountRecovery } from './account-email-recovery';
 
 interface Props {
 	savedEmail: string;
-	isDraft: boolean;
+	draftEmail?: string;
 	showDraftRecoveryWarning: boolean;
 	isPending: boolean;
 	hasUnsavedChanges: boolean;
@@ -30,24 +27,31 @@ interface Props {
 
 export default function AccountEmailRecoveryNotice( {
 	savedEmail,
-	isDraft,
+	draftEmail,
 	showDraftRecoveryWarning,
 	isPending,
 	hasUnsavedChanges,
 	verifiedRecovery,
 }: Props ) {
-	const { user } = useAuth();
+	const isDraft = draftEmail !== undefined;
+	const warningEmail = draftEmail ?? savedEmail;
 	const queryClient = useQueryClient();
-	const snoozeQuery = accountEmailRecoverySnoozeQuery( user.ID );
+	const snoozeQuery = userPreferenceQuery( 'account-email-recovery-snoozed-until' );
 	const { data: snoozeUntil, isFetchedAfterMount } = useQuery( {
 		...snoozeQuery,
 		enabled: isAccountEmailAtRisk( savedEmail ),
+		refetchOnMount: 'always',
+		refetchOnWindowFocus: false,
 	} );
+	const dismissMutation = userPreferenceMutation( 'account-email-recovery-snoozed-until' );
 	const dismiss = useMutation( {
-		...accountEmailRecoverySnoozeMutation(),
-		onSuccess: async ( until ) => {
+		...dismissMutation,
+		onSuccess: async ( preferences, until, context ) => {
+			if ( preferences[ 'account-email-recovery-snoozed-until' ] !== until ) {
+				throw new Error( 'Recovery reminder preference was not saved.' );
+			}
 			await queryClient.cancelQueries( { queryKey: snoozeQuery.queryKey } );
-			queryClient.setQueryData( snoozeQuery.queryKey, until );
+			await dismissMutation.onSuccess?.( preferences, until, context );
 		},
 	} );
 
@@ -61,16 +65,29 @@ export default function AccountEmailRecoveryNotice( {
 		return null;
 	}
 
+	const sameDomainRecovery = hasSameDomainRecoveryEmail( warningEmail, verifiedRecovery );
 	let message: string = __(
 		'If you don’t have a verified recovery email or phone number, set one up in case you lose access to this email address.'
 	);
-	if ( isPending ) {
+	if ( isPending && sameDomainRecovery ) {
+		message = sprintf(
+			/* translators: %s: the current sign-in email address */
+			__(
+				'Until you confirm the change, %s is still your sign-in email. Your recovery email uses the same domain, so you could lose access to both at the same time. Add a recovery email on a different domain or verify a phone number.'
+			),
+			savedEmail
+		);
+	} else if ( isPending ) {
 		message = sprintf(
 			/* translators: %s: the current sign-in email address */
 			__(
 				'Until you confirm the change, %s is still your sign-in email. Add or verify a recovery email or phone number in case you lose access to it.'
 			),
 			savedEmail
+		);
+	} else if ( sameDomainRecovery ) {
+		message = __(
+			'Your recovery email uses the same domain as this email address. You could lose access to both at the same time. Add a recovery email on a different domain or verify a phone number.'
 		);
 	} else if ( verifiedRecovery ) {
 		message = __(

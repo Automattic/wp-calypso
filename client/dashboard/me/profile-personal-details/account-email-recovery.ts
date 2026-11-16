@@ -113,12 +113,29 @@ export function isAccountEmailAtRisk( email: string ): boolean {
 
 export type VerifiedAccountRecovery = { verifiedEmail?: string; hasVerifiedPhone: boolean };
 
+export function hasSameDomainRecoveryEmail(
+	email: string,
+	recovery: VerifiedAccountRecovery | undefined
+): boolean {
+	return (
+		!! recovery?.verifiedEmail &&
+		getEmailDomain( recovery.verifiedEmail.trim() ).toLowerCase() ===
+			getEmailDomain( email.trim() ).toLowerCase()
+	);
+}
+
 export function hasVerifiedAccountRecovery(
 	email: string,
 	recovery: VerifiedAccountRecovery | undefined
 ): boolean {
+	const primary = email.trim().toLowerCase();
 	const backup = recovery?.verifiedEmail?.trim().toLowerCase();
-	return !! recovery?.hasVerifiedPhone || ( !! backup && backup !== email.trim().toLowerCase() );
+	return (
+		!! recovery?.hasVerifiedPhone ||
+		( !! backup &&
+			backup !== primary &&
+			( ! isAccountEmailAtRisk( primary ) || ! hasSameDomainRecoveryEmail( email, recovery ) ) )
+	);
 }
 
 export function getAccountEmailRecoverySnoozeUntil( now = new Date() ): number {

@@ -213,27 +213,3 @@ function mergePreferences< P extends keyof UserPreferences >(
 
 	return { ...oldData, ...newData };
 }
-
-export const accountEmailRecoverySnoozeQuery = ( userId: number ) =>
-	queryOptions( {
-		queryKey: [ 'me', 'account-email-recovery-snooze', userId ],
-		queryFn: async () =>
-			( await fetchPreferences() )?.[ 'account-email-recovery-snoozed-until' ] ?? 0,
-		refetchOnMount: 'always',
-		refetchOnWindowFocus: false,
-		meta: { persist: false },
-	} );
-
-export const accountEmailRecoverySnoozeMutation = () =>
-	mutationOptions( {
-		meta: { statId: 'recovery-snooze-update' },
-		mutationFn: async ( until: number ) => {
-			const preferences = await updatePreferences( {
-				'account-email-recovery-snoozed-until': until,
-			} );
-			if ( preferences[ 'account-email-recovery-snoozed-until' ] !== until ) {
-				throw new Error( 'Recovery reminder preference was not saved.' );
-			}
-			return until;
-		},
-	} );

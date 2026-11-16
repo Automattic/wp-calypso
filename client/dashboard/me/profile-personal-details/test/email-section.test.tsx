@@ -2,14 +2,20 @@
  * @jest-environment jsdom
  */
 
-import { QueryClient } from '@tanstack/react-query';
+import {
+	queryClient as apiQueryClient,
+	rawUserPreferencesQuery,
+	userPreferenceMutation,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
+import { QueryClient, useQuery } from '@tanstack/react-query';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
 import { render } from '../../../test-utils';
 import EmailSection from '../email-section';
-import type { AccountRecovery, User, UserSettings } from '@automattic/api-core';
+import type { AccountRecovery, User, UserPreferences, UserSettings } from '@automattic/api-core';
 
 const ACCOUNT_EMAIL = 'owner@mycompany.com';
 
@@ -232,6 +238,9 @@ describe( '<EmailSection> TLD validation', () => {
 } );
 
 describe( 'Account email recovery reminder', () => {
+	beforeEach( () => apiQueryClient.clear() );
+	afterEach( () => apiQueryClient.clear() );
+
 	test( 'clears the warning when recovery is verified in another window', async () => {
 		mockPreferences();
 		mockAccountRecovery( { email: 'backup@gmail.com' } );
@@ -281,7 +290,8 @@ describe( 'Account email recovery reminder', () => {
 					userSettings={ userSettings }
 					isEmailVerified
 				/>
-			</form>
+			</form>,
+			{ queryClient: apiQueryClient }
 		);
 
 		const remind = await screen.findByRole( 'button', { name: /remind me in six months/i } );
@@ -295,21 +305,227 @@ describe( 'Account email recovery reminder', () => {
 		expect( save.isDone() ).toBe( true );
 	} );
 
+	test.each( [ false, true ] )(
+		'warns for a same-domain verified backup (draft %s)',
+		async ( draft ) => {
+			mockPreferences();
+			mockAccountRecovery( { email: 'backup@college.edu', email_validated: true } );
+			render(
+				<EmailSection
+					value="student@college.edu"
+					onChange={ noop }
+					userSettings={
+						{ user_email: draft ? ACCOUNT_EMAIL : 'student@college.edu' } as UserSettings
+					}
+					isEmailVerified
+				/>
+			);
+			expect(
+				await screen.findByText( /you could lose access to both at the same time/i )
+			).toBeVisible();
+			expect(
+				screen.getByText( /add a recovery email on a different domain or verify a phone number/i )
+			).toBeVisible();
+		}
+	);
+
+	test( 'explains the active same-domain risk while a different address awaits confirmation', async () => {
+		mockPreferences();
+		mockAccountRecovery( { email: 'backup@mycompany.com', email_validated: true } );
+		render(
+			<EmailSection
+				value="student@gmail.com"
+				onChange={ noop }
+				userSettings={
+					{
+						user_email: ACCOUNT_EMAIL,
+						new_user_email: 'student@gmail.com',
+						user_email_change_pending: true,
+					} as UserSettings
+				}
+				isEmailVerified
+			/>
+		);
+		expect(
+			await screen.findByText( /owner@mycompany.com is still your sign-in email/i )
+		).toBeVisible();
+		expect( screen.getByText( /your recovery email uses the same domain/i ) ).toBeVisible();
+	} );
+
+	test( 'accepts a verified phone alongside a same-domain recovery email', async () => {
+		mockPreferences();
+		const recovery = mockAccountRecovery( {
+			email: 'backup@mycompany.com',
+			email_validated: true,
+			phone: {
+				country_code: 'US',
+				country_numeric_code: '1',
+				number: '5551234567',
+				number_full: '15551234567',
+			},
+			phone_validated: true,
+		} );
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>
+		);
+		await waitFor( () => expect( recovery.isDone() ).toBe( true ) );
+		expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull();
+	} );
+
+	test( 'shares a confirmed dismissal with other preference observers and writes', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: { recentSites: [ 123 ], 'account-email-recovery-snoozed-until': 0 },
+			} );
+		mockAccountRecovery( {} );
+		let confirmedUntil = 0;
+		const save = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, ( _uri, body ) => {
+				if ( typeof body === 'string' ) {
+					throw new Error( 'Expected a decoded preference request.' );
+				}
+				confirmedUntil = body.calypso_preferences[ 'account-email-recovery-snoozed-until' ];
+				return body;
+			} );
+		function ReminderPreference() {
+			const { data } = useQuery( userPreferenceQuery( 'account-email-recovery-snoozed-until' ) );
+			return <output data-testid="reminder-preference">{ data }</output>;
+		}
+		render(
+			<>
+				<EmailSection
+					value={ ACCOUNT_EMAIL }
+					onChange={ noop }
+					userSettings={ userSettings }
+					isEmailVerified
+				/>
+				<ReminderPreference />
+			</>,
+			{ queryClient: apiQueryClient }
+		);
+		await user.click( await screen.findByRole( 'button', { name: /remind me in six months/i } ) );
+		await waitFor( () => expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull() );
+		expect( save.isDone() ).toBe( true );
+		expect( confirmedUntil ).toBeGreaterThan( Date.now() / 1000 );
+		expect( screen.getByTestId( 'reminder-preference' ) ).toHaveTextContent(
+			String( confirmedUntil )
+		);
+		expect( apiQueryClient.getQueryData( rawUserPreferencesQuery().queryKey ) ).toMatchObject( {
+			recentSites: [ 123 ],
+			'account-email-recovery-snoozed-until': confirmedUntil,
+		} );
+		const updateRecentSites = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', { calypso_preferences: { recentSites: [ 456 ] } } )
+			.query( true )
+			.reply( 200, { calypso_preferences: { recentSites: [ 456 ] } } );
+		await apiQueryClient
+			.getMutationCache()
+			.build( apiQueryClient, userPreferenceMutation( 'recentSites' ) )
+			.execute( [ 456 ] );
+		expect( updateRecentSites.isDone() ).toBe( true );
+		expect( apiQueryClient.getQueryData( rawUserPreferencesQuery().queryKey ) ).toMatchObject( {
+			recentSites: [ 456 ],
+			'account-email-recovery-snoozed-until': confirmedUntil,
+		} );
+	} );
+
+	test( 'keeps the warning visible when a successful response does not confirm dismissal', async () => {
+		mockPreferences();
+		mockAccountRecovery( {} );
+		const save = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, { calypso_preferences: {} } );
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>,
+			{ queryClient: apiQueryClient }
+		);
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: /remind me in six months/i } )
+		);
+		expect( await screen.findByText( /could not dismiss/i ) ).toBeVisible();
+		expect( screen.getByText( RECOVERY_WARNING ) ).toBeVisible();
+		expect( save.isDone() ).toBe( true );
+	} );
+
+	test( 'keeps a confirmed dismissal when an older preference read completes', async () => {
+		mockPreferences();
+		mockAccountRecovery( {} );
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>,
+			{ queryClient: apiQueryClient }
+		);
+		const remind = await screen.findByRole( 'button', { name: /remind me in six months/i } );
+		let completeRead: ( preferences: UserPreferences ) => void = noop;
+		const oldResponse = new Promise< UserPreferences >( ( resolve ) => {
+			completeRead = resolve;
+		} );
+		const read = apiQueryClient
+			.fetchQuery( {
+				...rawUserPreferencesQuery(),
+				queryFn: () => oldResponse,
+			} )
+			.catch( noop );
+		let confirmedUntil = 0;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, ( _uri, body ) => {
+				if ( typeof body === 'string' ) {
+					throw new Error( 'Expected a decoded preference request.' );
+				}
+				confirmedUntil = body.calypso_preferences[ 'account-email-recovery-snoozed-until' ];
+				return body;
+			} );
+		await userEvent.click( remind );
+		await waitFor( () => expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull() );
+		completeRead( { 'account-email-recovery-snoozed-until': 0 } );
+		await read;
+		expect( apiQueryClient.getQueryData( rawUserPreferencesQuery().queryKey ) ).toMatchObject( {
+			'account-email-recovery-snoozed-until': confirmedUntil,
+		} );
+		expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull();
+	} );
+
 	test( 'honors the saved dismissal and keeps the draft and recovery link usable', async () => {
 		const user = userEvent.setup();
 		const snooze = Math.floor( Date.now() / 1000 ) + 3600;
 		mockPreferences( snooze );
 		mockAccountRecovery( {} );
 
-		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		queryClient.setQueryData( [ 'me', 'account-email-recovery-snooze', 1 ], 0 );
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+		} );
+		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {
+			'account-email-recovery-snoozed-until': 0,
+		} );
 		render( <EditableEmailSection initialValue={ ACCOUNT_EMAIL } />, { queryClient } );
 		expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull();
 
 		await waitFor( () => {
-			expect( queryClient.getQueryData( [ 'me', 'account-email-recovery-snooze', 1 ] ) ).toBe(
-				snooze
-			);
+			expect( queryClient.getQueryData( rawUserPreferencesQuery().queryKey ) ).toMatchObject( {
+				'account-email-recovery-snoozed-until': snooze,
+			} );
 		} );
 		expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull();
 
