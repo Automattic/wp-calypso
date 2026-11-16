@@ -11,6 +11,7 @@ import {
 	getImageStudioRequestErrorType,
 	trackImageStudioClosed,
 	trackImageStudioOpened,
+	trackImageStudioRevisionNavigated,
 	trackImageStudioReelShareClicked,
 	trackImageStudioReelShareNotConnected,
 	trackImageStudioReelShareNotPublished,
@@ -879,5 +880,32 @@ describe( 'credits event details', () => {
 			[ 'jetpack_big_sky_image_studio_upgrade_notice_click', 'none' ],
 			[ 'jetpack_big_sky_image_studio_credits_meter_opened', 'none' ],
 		] );
+	} );
+} );
+
+describe( 'trackImageStudioRevisionNavigated', () => {
+	beforeEach( () => {
+		vi.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: vi.fn( () => ImageStudioEntryPoint.MediaLibrary ),
+		} );
+	} );
+
+	it.each( [
+		[ 'previous', 'button' ],
+		[ 'next', 'keyboard' ],
+		[ 'original', 'prompt' ],
+	] as const )( 'sends direction %s and source %s', ( direction, source ) => {
+		trackImageStudioRevisionNavigated( { direction, source } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_revision_navigated',
+			expect.objectContaining( {
+				direction,
+				source,
+				placement: ImageStudioEntryPoint.MediaLibrary,
+				sessionid: 'test-session-id',
+			} )
+		);
 	} );
 } );

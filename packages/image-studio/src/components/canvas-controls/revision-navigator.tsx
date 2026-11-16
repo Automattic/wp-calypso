@@ -8,18 +8,15 @@ import { Button } from '@wordpress/components';
 import { useKeyboardShortcut } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { store as imageStudioStore } from '../../store';
+import { getRevisionHistory } from '../../utils/revision-history';
+import { trackImageStudioRevisionNavigated } from '../../utils/tracking';
 import type { ImageStudioActions } from '../../store';
+import type { AttachmentRecord } from '../../types/wordpress.d';
 import './style.scss';
-
-interface ImageData {
-	id: number;
-	url: string;
-	date: string;
-}
 
 export const RevisionNavigator = () => {
 	const { draftIds, savedAttachmentIds, currentAttachmentId, originalAttachmentId, annotatedIds } =
@@ -36,50 +33,27 @@ export const RevisionNavigator = () => {
 
 	const { updateImageStudioCanvas } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-	const images = useSelect(
-		( select ) => {
-			const allAttachmentIds = new Set< number | null >( [
-				originalAttachmentId,
-				currentAttachmentId,
-				...draftIds,
-				...savedAttachmentIds,
-			] );
-
-			const attachments = Array.from( allAttachmentIds )
-				.map( ( id ) => {
-					if ( ! id ) {
-						return null;
-					}
-
-					// Exclude annotated images
-					if ( annotatedIds.includes( id ) ) {
-						return null;
-					}
-
-					const attachment = select( coreStore ).getEntityRecord( 'postType', 'attachment', id ) as
-						import( '../../types/wordpress' ).AttachmentRecord | undefined;
-
-					if ( ! attachment ) {
-						return null;
-					}
-
-					return {
-						id: attachment.id,
-						url: attachment.source_url,
-						date: attachment.date,
-					} as ImageData;
-				} )
-				.filter( ( item ) => !! item )
-				.sort( ( a, b ) => new Date( a.date ).getTime() - new Date( b.date ).getTime() );
-
-			return attachments;
-		},
+	const {
+		revisions: images,
+		currentIndex,
+		canGoBack,
+		canGoForward,
+	} = useSelect(
+		( select ) =>
+			getRevisionHistory(
+				{
+					originalAttachmentId,
+					currentAttachmentId,
+					draftIds,
+					savedAttachmentIds,
+					annotatedIds,
+				},
+				( id ) =>
+					select( coreStore ).getEntityRecord( 'postType', 'attachment', id ) as
+						AttachmentRecord | undefined
+			),
 		[ originalAttachmentId, currentAttachmentId, draftIds, savedAttachmentIds, annotatedIds ]
 	);
-
-	const currentIndex = useMemo( () => {
-		return images.findIndex( ( image ) => image.id === currentAttachmentId );
-	}, [ images, currentAttachmentId ] );
 
 	const setCurrentImage = useCallback(
 		( index: number ) => {
@@ -88,26 +62,34 @@ export const RevisionNavigator = () => {
 		[ images, updateImageStudioCanvas ]
 	);
 
-	const handlePrevious = useCallback( () => {
-		if ( currentIndex > 0 ) {
-			setCurrentImage( currentIndex - 1 );
-		}
-	}, [ currentIndex, setCurrentImage ] );
+	const goToPrevious = useCallback(
+		( source: 'button' | 'keyboard' ) => {
+			if ( currentIndex > 0 ) {
+				setCurrentImage( currentIndex - 1 );
+				trackImageStudioRevisionNavigated( { direction: 'previous', source } );
+			}
+		},
+		[ currentIndex, setCurrentImage ]
+	);
 
-	const handleNext = useCallback( () => {
-		if ( currentIndex < images.length - 1 ) {
-			setCurrentImage( currentIndex + 1 );
-		}
-	}, [ currentIndex, images.length, setCurrentImage ] );
+	const goToNext = useCallback(
+		( source: 'button' | 'keyboard' ) => {
+			if ( currentIndex < images.length - 1 ) {
+				setCurrentImage( currentIndex + 1 );
+				trackImageStudioRevisionNavigated( { direction: 'next', source } );
+			}
+		},
+		[ currentIndex, images.length, setCurrentImage ]
+	);
 
-	const disablePrev = images.length <= 1 || currentIndex <= 0;
-	const disableNext = images.length <= 1 || currentIndex >= images.length - 1;
+	const disablePrev = ! canGoBack;
+	const disableNext = ! canGoForward;
 
-	useKeyboardShortcut( 'left', handlePrevious, {
+	useKeyboardShortcut( 'left', () => goToPrevious( 'keyboard' ), {
 		isDisabled: disablePrev,
 	} );
 
-	useKeyboardShortcut( 'right', handleNext, {
+	useKeyboardShortcut( 'right', () => goToNext( 'keyboard' ), {
 		isDisabled: disableNext,
 	} );
 
@@ -123,7 +105,7 @@ export const RevisionNavigator = () => {
 		<div className="canvas-controls__revision-navigator">
 			<Button
 				icon={ chevronLeft }
-				onClick={ handlePrevious }
+				onClick={ () => goToPrevious( 'button' ) }
 				disabled={ disablePrev }
 				className="canvas-controls__nav-button"
 				aria-label={ __( 'Previous revision', __i18n_text_domain__ ) }
@@ -134,7 +116,7 @@ export const RevisionNavigator = () => {
 			</span>
 			<Button
 				icon={ chevronRight }
-				onClick={ handleNext }
+				onClick={ () => goToNext( 'button' ) }
 				disabled={ disableNext }
 				className="canvas-controls__nav-button"
 				aria-label={ __( 'Next revision', __i18n_text_domain__ ) }

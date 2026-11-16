@@ -721,6 +721,26 @@ export function trackImageStudioFileNavigated( {
 	} );
 }
 
+export type RevisionNavigationDirection = 'previous' | 'next' | 'original';
+
+interface TrackImageStudioRevisionNavigatedOptions {
+	direction: RevisionNavigationDirection;
+	source: 'button' | 'keyboard' | 'prompt';
+}
+
+/**
+ * Tracks when the canvas moves to another revision of the image.
+ * @param options           - Tracking options
+ * @param options.direction - 'previous', 'next' or 'original'
+ * @param options.source    - The chevron buttons, the arrow keys, or a prompt to the agent
+ */
+export function trackImageStudioRevisionNavigated( {
+	direction,
+	source,
+}: TrackImageStudioRevisionNavigatedOptions ): void {
+	recordImageStudioEvent( 'image_studio_revision_navigated', { direction, source } );
+}
+
 interface TrackImageStudioStyleSelectedOptions {
 	style: string;
 	mode: ImageStudioMode;

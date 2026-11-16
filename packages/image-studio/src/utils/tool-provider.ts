@@ -4,13 +4,18 @@
  * Provides the image studio abilities to the AI agent.
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
-import { registerUpdateCanvasImageAbility, registerUpdateCanvasVideoAbility } from '../abilities';
+import {
+	registerNavigateRevisionAbility,
+	registerUpdateCanvasImageAbility,
+	registerUpdateCanvasVideoAbility,
+} from '../abilities';
 import type { ToolProvider as AgentticToolProvider } from '@automattic/agenttic-client';
 
 export const ALLOWED_ABILITIES = [
 	'image-studio/update-canvas-image',
 	'image-studio/update-canvas-video',
 	'image-studio/render-images',
+	'image-studio/navigate-revision',
 ];
 
 let isInitialized = false;
@@ -22,6 +27,7 @@ export async function initializeAbilities(): Promise< void > {
 
 	await registerUpdateCanvasImageAbility();
 	await registerUpdateCanvasVideoAbility();
+	await registerNavigateRevisionAbility();
 	isInitialized = true;
 
 	window.console?.log?.( '[Image Studio] Abilities registered' );
