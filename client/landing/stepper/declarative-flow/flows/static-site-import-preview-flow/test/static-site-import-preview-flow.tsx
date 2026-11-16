@@ -104,6 +104,31 @@ describe( 'Static site import preview flow', () => {
 		} );
 	} );
 
+	describe( 'side effect', () => {
+		const renderSideEffect = ( url: string ) =>
+			renderHookWithProvider( () => staticSiteImportPreviewFlow.useSideEffect(), {
+				wrapper: ( { children } ) => (
+					<MemoryRouter initialEntries={ [ url ] }>{ children }</MemoryRouter>
+				),
+			} );
+
+		it( 'stores the source on the URL in the flow state', () => {
+			renderSideEffect( '/reading?from=url.example.com&platform=squarespace' );
+
+			expect( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( {
+				action: 'continue',
+				from: 'url.example.com',
+				platform: 'squarespace',
+			} );
+		} );
+
+		it( 'stores nothing without a source on the URL', () => {
+			renderSideEffect( '/reading' );
+
+			expect( flowState ).toEqual( {} );
+		} );
+	} );
+
 	describe( 'identify step', () => {
 		it( 'reads an importable source', () => {
 			const destination = runNavigation( {

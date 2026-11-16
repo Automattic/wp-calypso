@@ -14,8 +14,8 @@ to keep it.
 | `static-site-import-reading` | Starts the import session, then builds the preview site |
 
 The identified source is kept in the flow’s state (`useFlowState`, under the identify step’s slug)
-for this session, not in the URL. Opening the flow with `?from=<source>` skips identification and
-reads that source directly.
+for this session, not in the URL. Opening the flow with `?from=<source>` (and optionally
+`&platform=`) skips identification and stores that source in the flow state the same way.
 
 The reading step is the one `static-site-import` uses when a customer leaves checkout
 (`buildPreview`): it starts a static site import session, then builds a preview site through the

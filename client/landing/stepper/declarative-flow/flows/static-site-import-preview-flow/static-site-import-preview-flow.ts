@@ -28,9 +28,9 @@ const ALL_STEPS = [ STEPS.SITE_MIGRATION_IDENTIFY, STEPS.STATIC_SITE_IMPORT_READ
 /** A source named on the flow's URL. */
 const getSource = ( query: URLSearchParams ) => query.get( 'from' )?.trim() || '';
 
-/** The source to import: the one named on the flow's URL, or the one identified in this run. */
+/** The source to import: the one named on the flow's URL, or the one stored for this session. */
 function useSource() {
-	const { get } = useFlowState();
+	const { get } = useFlowState< typeof initialize >();
 	const identified = get( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 	const query = useQuery();
 	const urlSource = getSource( query );
@@ -71,15 +71,32 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 	},
 	useSideEffect() {
 		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+		const { set } = useFlowState< typeof initialize >();
+		const query = useQuery();
+		const urlSource = getSource( query );
+		const urlPlatform = query.get( 'platform' ) || undefined;
+
 		useEffect( () => {
 			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [ resetOnboardStore, setIntent ] );
+
+		// A source on the URL is stored like an identified one, so it outlasts the URL.
+		useEffect( () => {
+			if ( urlSource ) {
+				set( STEPS.SITE_MIGRATION_IDENTIFY.slug, {
+					action: 'continue',
+					from: urlSource,
+					platform: urlPlatform,
+				} );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps -- `set` changes on every render.
+		}, [ urlSource, urlPlatform ] );
 	},
 
 	useStepNavigation( _currentStep, navigate: NavigateV2< typeof ALL_STEPS > ) {
 		const locale = useFlowLocale();
-		const { set } = useFlowState();
+		const { set } = useFlowState< typeof initialize >();
 		const { from, platform } = useSource();
 
 		const exitFlow = ( to: string ) =>
