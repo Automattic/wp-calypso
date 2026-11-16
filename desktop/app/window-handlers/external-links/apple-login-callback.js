@@ -6,7 +6,9 @@
 function isAppleLoginCallback( url ) {
 	try {
 		const { origin, pathname } = new URL( url );
-		return origin === 'https://wordpress.com' && pathname.startsWith( '/log-in/apple/callback' );
+		return (
+			origin === 'https://wordpress.com' && /^\/log-in\/apple\/callback(\/|$)/.test( pathname )
+		);
 	} catch {
 		return false;
 	}

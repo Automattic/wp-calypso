@@ -6,6 +6,8 @@ describe( 'isAppleLoginCallback', () => {
 	it.each( [
 		'https://wordpress.com/log-in/apple/callback',
 		'https://wordpress.com/log-in/apple/callback?code=abc',
+		'https://wordpress.com/log-in/apple/callback/',
+		'https://wordpress.com/log-in/apple/callback/fr',
 	] )( 'matches the Apple login callback: %p', ( url ) => {
 		expect( isAppleLoginCallback( url ) ).toBe( true );
 	} );
@@ -16,6 +18,8 @@ describe( 'isAppleLoginCallback', () => {
 		'https://wordpress.com.example.com/log-in/apple/callback',
 		'http://wordpress.com/log-in/apple/callback',
 		'https://wordpress.com/log-in',
+		'https://wordpress.com/log-in/apple/callback-preview',
+		'https://wordpress.com/log-in/apple/callbacks',
 		'',
 	] )( 'does not match other URLs: %p', ( url ) => {
 		expect( isAppleLoginCallback( url ) ).toBe( false );
