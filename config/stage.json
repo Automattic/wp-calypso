@@ -112,7 +112,6 @@
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
 		"notifications/subscriber-alerts-default-on": true,
-		"notifications/view-settings": true,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
