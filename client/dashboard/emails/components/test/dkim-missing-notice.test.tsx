@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import {
 	DKIM_POLL_INTERVAL,
@@ -14,6 +15,8 @@ import {
 } from '../../hooks/use-dkim-record-checks';
 import DkimMissingNotice from '../dkim-missing-notice';
 import type { TitanDkimStatus } from '@automattic/api-core';
+
+const realSetTimeout = globalThis.setTimeout;
 
 const API = 'https://public-api.wordpress.com';
 const PATH = '/wpcom/v2/emails/titan/dkim-status';
@@ -128,13 +131,14 @@ describe( '<DkimMissingNotice>', () => {
 	} );
 
 	describe( 'with polling', () => {
-		beforeEach( () => jest.useFakeTimers() );
-		afterEach( () => jest.useRealTimers() );
+		beforeEach( () => vi.useFakeTimers( { shouldAdvanceTime: true } ) );
+		afterEach( () => vi.useRealTimers() );
 
-		// Small steps let each faked network reply land before the next poll is due.
+		// Small steps, each with a real event-loop turn, let each faked network reply land before the next poll is due.
 		const advance = async ( ms: number ) => {
 			for ( let elapsed = 0; elapsed < ms; elapsed += 100 ) {
-				await act( () => jest.advanceTimersByTimeAsync( 100 ) );
+				await act( () => vi.advanceTimersByTimeAsync( 100 ) );
+				await new Promise( ( resolve ) => realSetTimeout( resolve, 0 ) );
 			}
 		};
 
@@ -188,7 +192,7 @@ describe( '<DkimMissingNotice>', () => {
 		} );
 
 		const clickCheckAgain = async () => {
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 			await user.click( await screen.findByRole( 'button', { name: 'Check again' } ) );
 		};
 
@@ -208,7 +212,7 @@ describe( '<DkimMissingNotice>', () => {
 			expect( unchanged.isDone() ).toBe( true );
 			expect( screen.getByText( TITLE ) ).toBeVisible();
 
-			await advance( DKIM_POLL_INTERVAL );
+			await advance( DKIM_POLL_INTERVAL + 500 );
 			expect( found.isDone() ).toBe( true );
 			await waitFor( () => expect( screen.queryByText( TITLE ) ).not.toBeInTheDocument() );
 			expect( select( noticesStore ).getNotices() ).toEqual(
