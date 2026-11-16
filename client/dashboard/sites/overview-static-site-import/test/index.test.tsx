@@ -44,13 +44,13 @@ const session = ( state: string, extra = {} ) => ( {
 const mockApi = () => nock( 'https://public-api.wordpress.com' );
 
 function StaticSiteImport() {
-	const siteImport = useStaticSiteImport( site, search.importSessionId );
+	const siteImport = useStaticSiteImport( site.ID, search.importSessionId );
 	if ( ! siteImport ) {
 		return null;
 	}
 	// Mirrors the site Overview: a failed move (unless refused) replaces the progress card.
 	if ( siteImport.status === 'moving' ) {
-		return <StaticSiteImportProgress siteImport={ siteImport } search={ search } />;
+		return <StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" />;
 	}
 	if ( siteImport.status === 'failed' && ! siteImport.isRefused ) {
 		return <StaticSiteImportFailed site={ site } search={ search } />;
@@ -121,7 +121,7 @@ describe( 'StaticSiteImportCard', () => {
 			status: 'moving',
 			session: session( state, extra ) as StaticSiteImportSession,
 		} as StaticSiteImportState;
-		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" /> );
 		const current = screen
 			.getAllByRole( 'listitem' )
 			.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
@@ -231,7 +231,7 @@ describe( 'StaticSiteImportCard', () => {
 			return (
 				<>
 					<button onClick={ () => setState( 'building' ) }>Move on</button>
-					<StaticSiteImportProgress siteImport={ siteImport } search={ search } />
+					<StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" />
 				</>
 			);
 		}

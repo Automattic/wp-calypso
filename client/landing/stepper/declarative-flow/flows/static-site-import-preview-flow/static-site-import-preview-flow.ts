@@ -23,7 +23,12 @@ import type {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
-const ALL_STEPS = [ STEPS.SITE_MIGRATION_IDENTIFY, STEPS.STATIC_SITE_IMPORT_READING, STEPS.ERROR ];
+const ALL_STEPS = [
+	STEPS.SITE_MIGRATION_IDENTIFY,
+	STEPS.STATIC_SITE_IMPORT_READING,
+	STEPS.STATIC_SITE_IMPORT_PROGRESS,
+	STEPS.ERROR,
+];
 
 /** A source named on the flow's URL. */
 const getSource = ( query: URLSearchParams ) => query.get( 'from' )?.trim() || '';
@@ -49,7 +54,11 @@ function useSource() {
 function initialize() {
 	// A source on the URL skips identification.
 	if ( getSource( new URLSearchParams( window.location.search ) ) ) {
-		return stepsWithRequiredLogin( [ STEPS.STATIC_SITE_IMPORT_READING, STEPS.ERROR ] );
+		return stepsWithRequiredLogin( [
+			STEPS.STATIC_SITE_IMPORT_READING,
+			STEPS.STATIC_SITE_IMPORT_PROGRESS,
+			STEPS.ERROR,
+		] );
 	}
 	return stepsWithRequiredLogin( ALL_STEPS );
 }
@@ -61,11 +70,19 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepsProps() {
-		const { from } = useSource();
+		const { get } = useFlowState< typeof initialize >();
+		const { from, platform } = useSource();
+		const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
 		return {
 			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
 				buildPreview: true,
 				sourceUrl: from || undefined,
+			},
+			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
+				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
+				importSessionId: started?.action === 'continue' ? started.importSessionId : undefined,
+				from,
+				platform,
 			},
 		};
 	},
@@ -96,7 +113,7 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 
 	useStepNavigation( _currentStep, navigate: NavigateV2< typeof ALL_STEPS > ) {
 		const locale = useFlowLocale();
-		const { set } = useFlowState< typeof initialize >();
+		const { get, set } = useFlowState< typeof initialize >();
 		const { from, platform } = useSource();
 
 		const exitFlow = ( to: string ) =>
@@ -104,6 +121,19 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 
 		const siteMigrationUrl = ( slug: string, args: Record< string, string | undefined > ) =>
 			addQueryArgs( args, withLocale( `/setup/${ SITE_MIGRATION_FLOW }/${ slug }`, locale ) );
+
+		const goToPreviewOverview = () => {
+			const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
+			if ( started?.action !== 'continue' || ! started.previewSiteSlug ) {
+				return navigate( STEPS.ERROR.slug );
+			}
+			return exitFlow(
+				addQueryArgs(
+					{ importSessionId: started.importSessionId, from, platform },
+					dashboardLink( `/sites/${ started.previewSiteSlug }` )
+				)
+			);
+		};
 
 		const goToWordPressMigration = ( source: string, host?: string, isWpcom?: boolean ) =>
 			exitFlow(
@@ -168,16 +198,23 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 							);
 					}
 
-					const { importSessionId, previewSiteSlug } = providedDependencies;
-					if ( ! previewSiteSlug ) {
+					if ( ! providedDependencies.previewSiteSlug ) {
 						return navigate( STEPS.ERROR.slug );
 					}
-					return exitFlow(
-						addQueryArgs(
-							{ importSessionId, from, platform },
-							dashboardLink( `/sites/${ previewSiteSlug }` )
-						)
-					);
+					set( STEPS.STATIC_SITE_IMPORT_READING.slug, providedDependencies );
+					if ( ! providedDependencies.previewSiteId ) {
+						return goToPreviewOverview();
+					}
+					return navigate( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug );
+				}
+
+				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
+					// A finished preview opens at its share link, which gets past Coming Soon.
+					if ( providedDependencies.action === 'finished' && providedDependencies.previewUrl ) {
+						return window.location.replace( providedDependencies.previewUrl );
+					}
+					// The preview's Overview shows how a move ended, and what can be done next.
+					return goToPreviewOverview();
 				}
 			}
 		};

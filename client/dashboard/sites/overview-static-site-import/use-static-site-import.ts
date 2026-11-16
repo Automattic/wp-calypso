@@ -11,7 +11,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
-import type { Site, StaticSiteImportSession } from '@automattic/api-core';
+import type { StaticSiteImportSession } from '@automattic/api-core';
 
 export interface StaticSiteImportSearch {
 	importSessionId?: string;
@@ -52,7 +52,7 @@ export const getSourceHost = ( url = '' ) => {
 	}
 };
 
-export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSiteImport | null {
+export function useStaticSiteImport( siteId: number, sessionId?: string ): StaticSiteImport | null {
 	const {
 		data: session,
 		error: sessionError,
@@ -81,8 +81,8 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 			return;
 		}
 		hasRequestedApproval.current = true;
-		approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
-	}, [ approve, refetch, session, sessionId, site.ID ] );
+		approve( { sessionId, destinationBlogId: siteId }, { onSettled: () => refetch() } );
+	}, [ approve, refetch, session, sessionId, siteId ] );
 
 	// Only a finished move can be a preview with a share link, and the lookup is per user, not per site.
 	const isFinished = Boolean( sessionId ) && session?.state === 'finished';
@@ -91,14 +91,14 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		enabled: isFinished,
 		staleTime: 0,
 		refetchInterval: ( query ) => {
-			const preview = query.state.data?.preview_sites?.find( ( p ) => p.blog_id === site.ID );
+			const preview = query.state.data?.preview_sites?.find( ( p ) => p.blog_id === siteId );
 			return preview && ! preview.share_url && query.state.dataUpdateCount < PREVIEW_URL_MAX_POLLS
 				? PREVIEW_URL_POLL_INTERVAL
 				: false;
 		},
 	} );
 	const preview = isFinished
-		? pending?.preview_sites?.find( ( p ) => p.blog_id === site.ID )
+		? pending?.preview_sites?.find( ( p ) => p.blog_id === siteId )
 		: undefined;
 
 	if ( ! sessionId ) {
@@ -137,7 +137,7 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 			status: 'stalled',
 			session,
 			retry: () => {
-				approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
+				approve( { sessionId, destinationBlogId: siteId }, { onSettled: () => refetch() } );
 			},
 		};
 	}

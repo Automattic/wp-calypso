@@ -22,6 +22,18 @@ const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =
 const SOURCE = { from: 'source.example.com', platform: 'wix' };
 const IDENTIFIED = { action: 'continue', ...SOURCE, staticSiteImportable: true };
 
+const STARTED = {
+	action: 'continue',
+	importSessionId: 'abc123',
+	previewSiteId: 456,
+	previewSiteSlug: 'preview.wpcomstaging.com',
+};
+
+const overviewExit = ( source ) => ( {
+	path: expect.stringMatching( /\/sites\/preview\.wpcomstaging\.com$/ ),
+	query: { ...source, importSessionId: 'abc123', ref: 'static-site-import-preview' },
+} );
+
 let flowState: Record< string, unknown >;
 
 const lastExit = () => {
@@ -64,6 +76,7 @@ describe( 'Static site import preview flow', () => {
 			expect( slugs( steps ) ).toEqual( [
 				STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				STEPS.STATIC_SITE_IMPORT_READING.slug,
+				STEPS.STATIC_SITE_IMPORT_PROGRESS.slug,
 				STEPS.ERROR.slug,
 			] );
 			expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
@@ -74,6 +87,7 @@ describe( 'Static site import preview flow', () => {
 
 			expect( slugs( staticSiteImportPreviewFlow.initialize() ) ).toEqual( [
 				STEPS.STATIC_SITE_IMPORT_READING.slug,
+				STEPS.STATIC_SITE_IMPORT_PROGRESS.slug,
 				STEPS.ERROR.slug,
 			] );
 		} );
@@ -177,31 +191,26 @@ describe( 'Static site import preview flow', () => {
 	} );
 
 	describe( 'reading step', () => {
-		it.each( [
-			[ 'identified', {}, SOURCE ],
-			[ 'named on the URL', { from: SOURCE.from }, { from: SOURCE.from, platform: 'unknown' } ],
-		] )( 'opens the preview’s Overview for a source %s', ( name, query, expectedSourceQuery ) => {
-			if ( name === 'identified' ) {
-				identify();
-			}
-			runNavigation( {
+		it( 'keeps the started move and shows its progress', () => {
+			identify();
+			const destination = runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
-				dependencies: {
-					action: 'continue',
-					importSessionId: 'abc123',
-					previewSiteSlug: 'preview.wpcomstaging.com',
-				},
-				query,
+				dependencies: STARTED,
 			} );
 
-			expect( lastExit() ).toMatchObject( {
-				path: expect.stringMatching( /\/sites\/preview\.wpcomstaging\.com$/ ),
-				query: {
-					...expectedSourceQuery,
-					importSessionId: 'abc123',
-					ref: 'static-site-import-preview',
-				},
+			expect( destination ).toMatchDestination( { step: STEPS.STATIC_SITE_IMPORT_PROGRESS } );
+			expect( flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ] ).toEqual( STARTED );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'opens the preview’s Overview when the preview’s ID is unknown', () => {
+			identify();
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { ...STARTED, previewSiteId: undefined },
 			} );
+
+			expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
 		} );
 
 		it( 'continues a WordPress source as a migration', () => {
@@ -241,6 +250,56 @@ describe( 'Static site import preview flow', () => {
 
 			expect( destination ).toMatchDestination( { step: STEPS.ERROR } );
 			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'progress step', () => {
+		beforeEach( () => {
+			flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ] = STARTED;
+		} );
+
+		it( 'passes the started move to the step', () => {
+			identify();
+			const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
+				wrapper: ( { children } ) => (
+					<MemoryRouter initialEntries={ [ '/progress' ] }>{ children }</MemoryRouter>
+				),
+			} ).result.current[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ];
+
+			expect( props ).toEqual( {
+				siteId: 456,
+				importSessionId: 'abc123',
+				...SOURCE,
+			} );
+		} );
+
+		it( 'opens a finished preview at its share link', () => {
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_PROGRESS,
+				dependencies: { action: 'finished', previewUrl: 'https://preview.example/?share=x' },
+			} );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( 'https://preview.example/?share=x' );
+		} );
+
+		it.each( [
+			[ 'finished without a share link', { action: 'finished' } ],
+			[ 'stopped', { action: 'stopped' } ],
+		] )( 'opens the preview’s Overview for a move that %s', ( _name, dependencies ) => {
+			identify();
+			runNavigation( { from: STEPS.STATIC_SITE_IMPORT_PROGRESS, dependencies } );
+
+			expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
+		} );
+
+		it( 'shows the error step without a started move', () => {
+			delete flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ];
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_PROGRESS,
+				dependencies: { action: 'stopped' },
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.ERROR } );
 		} );
 	} );
 } );

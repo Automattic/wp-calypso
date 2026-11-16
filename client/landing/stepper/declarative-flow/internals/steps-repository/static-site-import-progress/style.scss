@@ -1,0 +1,7 @@
+// The progress card comes from the dashboard, which defines these on its root.
+.static-site-import-progress-step {
+	--dashboard__text-color: var( --color-text );
+	--dashboard__text-muted-color: var( --color-text-subtle );
+	--dashboard__foreground-color-success: var( --color-success );
+	--dashboard__foreground-color-error: var( --color-error );
+}

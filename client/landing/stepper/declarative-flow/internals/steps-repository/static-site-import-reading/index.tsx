@@ -27,7 +27,12 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	| { action: 'continue'; importSessionId: string; previewSiteSlug?: string }
+	| {
+			action: 'continue';
+			importSessionId: string;
+			previewSiteId?: number;
+			previewSiteSlug?: string;
+	  }
 	| { action: 'migrate' }
 	| { action: 'unavailable' }
 	| { action: 'preview_failed' };
@@ -144,6 +149,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 					return submit( {
 						action: 'continue',
 						importSessionId,
+						previewSiteId: preview.blogId,
 						previewSiteSlug: preview.siteSlug,
 					} );
 				} catch {

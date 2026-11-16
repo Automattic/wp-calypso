@@ -10,7 +10,6 @@ import { Icon, border, check, published } from '@wordpress/icons';
 import { Badge, Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
@@ -373,8 +372,7 @@ const getCapabilityLabels = (): Partial< Record< StaticSiteImportCapability, str
 } );
 
 /** The numbers the move has to show so far, and what it found on the old site. */
-function MoveFacts( { session }: { session?: StaticSiteImportSession } ) {
-	const locale = useIntlLocale();
+function MoveFacts( { session, locale }: { session?: StaticSiteImportSession; locale: string } ) {
 	const progress = session?.progress;
 	const summary = ( Array.isArray( session?.preview_summary ) ? {} : session?.preview_summary ) as
 		StaticSiteImportPreviewSummary | undefined;
@@ -534,9 +532,12 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 export function StaticSiteImportProgress( {
 	siteImport,
 	search,
+	locale,
 }: {
 	siteImport: StaticSiteImport;
 	search: StaticSiteImportSearch;
+	/** A BCP 47 language tag for formatting numbers, such as `useIntlLocale()` returns. */
+	locale: string;
 } ) {
 	const sourceHost = getSourceHost( search.from );
 	const session = siteImport.session;
@@ -552,7 +553,7 @@ export function StaticSiteImportProgress( {
 							<SiteSnapshot sourceHost={ sourceHost } session={ session } step={ step } />
 						</div>
 						<div className="static-site-import-moving__facts">
-							<MoveFacts session={ session } />
+							<MoveFacts session={ session } locale={ locale } />
 						</div>
 						<VStack spacing={ 6 } className="static-site-import-moving__main">
 							<VStack spacing={ 2 }>
