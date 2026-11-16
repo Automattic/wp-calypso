@@ -46,6 +46,8 @@ const isWordPressSourceError = ( error: unknown ) =>
 
 type StaticSiteImportReadingProps = {
 	accepts: {
+		/** The source to import, in place of the `from` query param. */
+		sourceUrl?: string;
 		/** Import onto a new preview site rather than a destination the customer paid for. */
 		buildPreview?: boolean;
 	};
@@ -53,13 +55,13 @@ type StaticSiteImportReadingProps = {
 };
 
 const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
-	function StaticSiteImportReading( { navigation, buildPreview } ) {
+	function StaticSiteImportReading( { navigation, sourceUrl: sourceProp, buildPreview } ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
-		const from = searchParams.get( 'from' )?.trim();
+		const from = ( sourceProp || searchParams.get( 'from' ) )?.trim();
 		const sourceUrl = from ? addSchemeIfMissing( from, 'https' ) : '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );

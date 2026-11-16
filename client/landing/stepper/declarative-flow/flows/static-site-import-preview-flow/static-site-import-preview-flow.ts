@@ -7,6 +7,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -24,8 +25,26 @@ import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 const ALL_STEPS = [ STEPS.SITE_MIGRATION_IDENTIFY, STEPS.STATIC_SITE_IMPORT_READING, STEPS.ERROR ];
 
-/** The source, once identified or named on the flow's URL. */
+/** A source named on the flow's URL. */
 const getSource = ( query: URLSearchParams ) => query.get( 'from' )?.trim() || '';
+
+/** The source to import: the one named on the flow's URL, or the one identified in this run. */
+function useSource() {
+	const { get } = useFlowState();
+	const identified = get( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+	const query = useQuery();
+	const urlSource = getSource( query );
+	if ( urlSource ) {
+		return {
+			from: urlSource,
+			platform: ( query.get( 'platform' ) || 'unknown' ) as ImporterPlatform,
+		};
+	}
+	return {
+		from: identified?.from || '',
+		platform: ( identified?.platform || 'unknown' ) as ImporterPlatform,
+	};
+}
 
 function initialize() {
 	// A source on the URL skips identification.
@@ -38,11 +57,16 @@ function initialize() {
 const staticSiteImportPreview: FlowV2< typeof initialize > = {
 	name: STATIC_SITE_IMPORT_PREVIEW_FLOW,
 	isSignupFlow: true,
+	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepsProps() {
+		const { from } = useSource();
 		return {
-			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: { buildPreview: true },
+			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
+				buildPreview: true,
+				sourceUrl: from || undefined,
+			},
 		};
 	},
 	useSideEffect() {
@@ -55,9 +79,8 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 
 	useStepNavigation( _currentStep, navigate: NavigateV2< typeof ALL_STEPS > ) {
 		const locale = useFlowLocale();
-		const urlQueryParams = useQuery();
-		const from = getSource( urlQueryParams );
-		const platform = ( urlQueryParams.get( 'platform' ) || 'unknown' ) as ImporterPlatform;
+		const { set } = useFlowState();
+		const { from, platform } = useSource();
 
 		const exitFlow = ( to: string ) =>
 			window.location.replace( addQueryArgs( { ref: STATIC_SITE_IMPORT_PREVIEW_FLOW }, to ) );
@@ -98,12 +121,8 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 						staticSiteImportable &&
 						canUseStaticSiteImport( identifiedPlatform as ImporterPlatform, source )
 					) {
-						return navigate(
-							`${ STEPS.STATIC_SITE_IMPORT_READING.slug }?${ new URLSearchParams( {
-								from: source,
-								platform: identifiedPlatform ?? 'unknown',
-							} ) }`
-						);
+						set( STEPS.SITE_MIGRATION_IDENTIFY.slug, providedDependencies );
+						return navigate( STEPS.STATIC_SITE_IMPORT_READING.slug );
 					}
 
 					// Parked, unhealthy and unrecognized sources take the regular migration paths.

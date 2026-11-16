@@ -3,12 +3,16 @@
  */
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
+import { MemoryRouter } from 'react-router';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import staticSiteImportPreviewFlow from '../static-site-import-preview-flow';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
 
 const originalLocation = window.location;
 
@@ -16,6 +20,9 @@ const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =
 	runFlowNavigation( staticSiteImportPreviewFlow, options, 'forward' );
 
 const SOURCE = { from: 'source.example.com', platform: 'wix' };
+const IDENTIFIED = { action: 'continue', ...SOURCE, staticSiteImportable: true };
+
+let flowState: Record< string, unknown >;
 
 const lastExit = () => {
 	const url = String( ( window.location.replace as jest.Mock ).mock.calls.at( -1 )?.[ 0 ] ?? '' );
@@ -41,7 +48,14 @@ describe( 'Static site import preview flow', () => {
 		window.location.search = '';
 		jest.clearAllMocks();
 		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
+		flowState = {};
+		jest.mocked( useFlowState ).mockReturnValue( {
+			get: ( key ) => flowState[ key ],
+			set: jest.fn( ( key, value ) => ( flowState[ key ] = value ) ),
+		} );
 	} );
+
+	const identify = () => ( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] = IDENTIFIED );
 
 	describe( 'initialize', () => {
 		it( 'asks for the source after login', () => {
@@ -65,23 +79,41 @@ describe( 'Static site import preview flow', () => {
 		} );
 	} );
 
-	it( 'builds a preview in the reading step', () => {
-		expect(
-			staticSiteImportPreviewFlow.useStepsProps()[ STEPS.STATIC_SITE_IMPORT_READING.slug ]
-		).toEqual( { buildPreview: true } );
+	describe( 'reading step props', () => {
+		const renderReadingProps = ( url: string ) =>
+			renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
+				wrapper: ( { children } ) => (
+					<MemoryRouter initialEntries={ [ url ] }>{ children }</MemoryRouter>
+				),
+			} ).result.current[ STEPS.STATIC_SITE_IMPORT_READING.slug ];
+
+		it( 'builds a preview of the identified source', () => {
+			identify();
+
+			expect( renderReadingProps( '/reading' ) ).toEqual( {
+				buildPreview: true,
+				sourceUrl: SOURCE.from,
+			} );
+		} );
+
+		it( 'builds a preview of the source on the URL', () => {
+			expect( renderReadingProps( '/reading?from=url.example.com' ) ).toEqual( {
+				buildPreview: true,
+				sourceUrl: 'url.example.com',
+			} );
+		} );
 	} );
 
 	describe( 'identify step', () => {
 		it( 'reads an importable source', () => {
 			const destination = runNavigation( {
 				from: STEPS.SITE_MIGRATION_IDENTIFY,
-				dependencies: { action: 'continue', ...SOURCE, staticSiteImportable: true },
+				dependencies: IDENTIFIED,
 			} );
 
-			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_READING,
-				query: SOURCE,
-			} );
+			expect( destination ).toMatchDestination( { step: STEPS.STATIC_SITE_IMPORT_READING } );
+			expect( destination.query.toString() ).toBe( '' );
+			expect( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( IDENTIFIED );
 		} );
 
 		it( 'continues a WordPress source as a migration', () => {
@@ -121,9 +153,12 @@ describe( 'Static site import preview flow', () => {
 
 	describe( 'reading step', () => {
 		it.each( [
-			[ 'identified', SOURCE, SOURCE ],
+			[ 'identified', {}, SOURCE ],
 			[ 'named on the URL', { from: SOURCE.from }, { from: SOURCE.from, platform: 'unknown' } ],
-		] )( 'opens the preview’s Overview for a source %s', ( _name, query, expectedSourceQuery ) => {
+		] )( 'opens the preview’s Overview for a source %s', ( name, query, expectedSourceQuery ) => {
+			if ( name === 'identified' ) {
+				identify();
+			}
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
 				dependencies: {
@@ -145,10 +180,10 @@ describe( 'Static site import preview flow', () => {
 		} );
 
 		it( 'continues a WordPress source as a migration', () => {
+			identify();
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
 				dependencies: { action: 'migrate' },
-				query: SOURCE,
 			} );
 
 			expect( lastExit() ).toEqual( {
@@ -158,10 +193,10 @@ describe( 'Static site import preview flow', () => {
 		} );
 
 		it( 'offers plans when no preview can be built', () => {
+			identify();
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
 				dependencies: { action: 'preview_failed' },
-				query: SOURCE,
 			} );
 
 			expect( lastExit() ).toEqual( {
@@ -177,7 +212,6 @@ describe( 'Static site import preview flow', () => {
 			const destination = runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
 				dependencies,
-				query: SOURCE,
 			} );
 
 			expect( destination ).toMatchDestination( { step: STEPS.ERROR } );
