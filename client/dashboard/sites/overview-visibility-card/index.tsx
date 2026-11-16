@@ -117,9 +117,7 @@ function VisibilityCardPreview( { site, shareUrl }: { site: Site; shareUrl?: str
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Coming soon' ) }
-			description={
-				shareUrl ? __( 'Visitors see a Coming Soon page.' ) : __( 'Share it with a preview link.' )
-			}
+			description={ __( 'Visitors see a Coming Soon page.' ) }
 			link={ getSiteVisibilityURL( site ) }
 			action={
 				shareUrl && (

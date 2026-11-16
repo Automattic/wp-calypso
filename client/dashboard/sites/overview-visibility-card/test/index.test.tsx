@@ -20,8 +20,6 @@ const preview = {
 } as Site;
 
 describe( '<VisibilityCard>', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'a built preview site links to its visibility settings and copies the share link the server gives it', async () => {
 		const shareUrl = 'https://test.wordpress.com/?share=abc';
 		nock( 'https://public-api.wordpress.com' )

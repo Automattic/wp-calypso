@@ -226,7 +226,7 @@ function WpcomStagingSitePlanCard( { site }: { site: Site } ) {
 
 // A preview reads as a Free site, but it is not one to upgrade: it is deleted unless a plan is
 // bought for it, on the date the server gives.
-function PreviewPlanCard( { site, expiresAt }: { site: Site; expiresAt?: Date } ) {
+function PreviewPlanCard( { site, expiresAt }: { site: Site; expiresAt: Date } ) {
 	const locale = useLocale();
 
 	return (
@@ -234,15 +234,11 @@ function PreviewPlanCard( { site, expiresAt }: { site: Site; expiresAt?: Date } 
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ __( 'Preview' ) }
-			description={
-				expiresAt
-					? sprintf(
-							/* translators: %s: the date the preview site is deleted, e.g. "December 16, 2026" */
-							__( 'Choose a plan to keep your site. Without one, it is deleted on %s.' ),
-							formatDate( expiresAt, locale, { dateStyle: 'long' } )
-						)
-					: __( 'Choose a plan to keep your site.' )
-			}
+			description={ sprintf(
+				/* translators: %s: the date the preview site is deleted, e.g. "December 16, 2026" */
+				__( 'Choose a plan to keep your site. Without one, it is deleted on %s.' ),
+				formatDate( expiresAt, locale, { dateStyle: 'long' } )
+			) }
 			externalLink={ getPreviewLaunchUrl( site ) }
 			tracksId="site-overview-plan"
 			bottom={ <SitePlanStats site={ site } /> }
@@ -276,9 +272,10 @@ export default function PlanCard( { site }: { site: Site } ) {
 	);
 	const purchase = purchases?.find( ( sitePurchase ) => sitePurchase.ID === plan?.id );
 
-	const { isPreview, expiresAt } = useSiteIsPreview( site );
+	// Until this answers, a preview would read as a Free site.
+	const { isLoading: isLoadingPreview, expiresAt } = useSiteIsPreview( site );
 
-	const isLoading = isLoadingPlan || isLoadingPurchases;
+	const isLoading = isLoadingPlan || isLoadingPurchases || isLoadingPreview;
 
 	if ( site.is_a4a_dev_site ) {
 		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
@@ -292,7 +289,7 @@ export default function PlanCard( { site }: { site: Site } ) {
 		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
-	if ( isPreview ) {
+	if ( expiresAt ) {
 		return <PreviewPlanCard site={ site } expiresAt={ expiresAt } />;
 	}
 

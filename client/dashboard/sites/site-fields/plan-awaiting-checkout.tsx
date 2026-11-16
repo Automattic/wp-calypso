@@ -102,7 +102,7 @@ export function useSiteIsPreview( site: Site ): {
 		isLoading: couldBePreview && isLoading,
 		isPreview: !! preview,
 		shareUrl: preview?.share_url || undefined,
-		expiresAt: preview?.expires_at ? new Date( preview.expires_at * 1000 ) : undefined,
+		expiresAt: preview && new Date( preview.expires_at * 1000 ),
 	};
 }
 

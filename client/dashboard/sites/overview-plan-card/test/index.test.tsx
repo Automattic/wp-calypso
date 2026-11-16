@@ -93,7 +93,6 @@ describe( '<PlanCard>', () => {
 	test( 'a preview offers a plan to keep it, until the date the server deletes it', async () => {
 		const preview = {
 			...site,
-			ID: 77,
 			slug: 'test.wpcomstaging.com',
 			plan: { is_free: true },
 		} as Site;
@@ -110,7 +109,6 @@ describe( '<PlanCard>', () => {
 					},
 				],
 			} );
-		nock( 'https://public-api.wordpress.com' ).get( /.*/ ).query( true ).reply( 200, {} ).persist();
 
 		render( <PlanCard site={ preview } /> );
 
