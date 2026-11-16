@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { DomainSubtype, type Domain, type Purchase } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewRegistration from '../registration';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 afterEach( () => {
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
 } );
 
-function renderRegistration( customProps: Partial< Domain > = {} ) {
+function renderRegistration( customProps: Partial< Domain > = {}, purchase?: Partial< Purchase > ) {
 	const domain = {
 		domain: 'example.com',
 		auto_renewing: true,
@@ -28,19 +29,23 @@ function renderRegistration( customProps: Partial< Domain > = {} ) {
 		...customProps,
 	} as Domain;
 
-	return render( <DomainOverviewRegistration domain={ domain } /> );
+	return render(
+		<DomainOverviewRegistration domain={ domain } purchase={ purchase as Purchase | undefined } />
+	);
 }
 
 const CONTACT = 'Contact details & privacy';
 const RENEWAL = 'Renewal & billing';
 
 describe( 'DomainOverviewRegistration', () => {
-	test.each( [
-		[ 'Auto-renew on', {} ],
-		[ 'Auto-renew off', { auto_renewing: false } ],
-		[ 'Expired', { expired: true } ],
-	] )( 'shows %s on the renewal row', async ( badge, customProps ) => {
-		renderRegistration( customProps );
+	test.each< [ string, Partial< Domain >, Partial< Purchase > | undefined ] >( [
+		[ 'Auto-renew on', {}, undefined ],
+		[ 'Auto-renew off', { auto_renewing: false }, undefined ],
+		[ 'Expired', { expired: true }, undefined ],
+		[ 'Needs payment method', {}, { expiry_status: 'manual-renew' } ],
+		[ 'Auto-renew on', {}, { expiry_status: 'included' } ],
+	] )( 'shows %s on the renewal row', async ( badge, customProps, purchase ) => {
+		renderRegistration( customProps, purchase );
 
 		expect( await screen.findByText( badge ) ).toBeVisible();
 		expect( screen.getByText( CONTACT ) ).toBeVisible();
@@ -94,7 +99,7 @@ describe( 'DomainOverviewRegistration', () => {
 	} );
 
 	test( 'opens contact details in a support session', async () => {
-		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		( isSupportSession as Mock ).mockReturnValue( true );
 		renderRegistration( { current_user_can_manage: false } );
 
 		await screen.findByText( CONTACT );

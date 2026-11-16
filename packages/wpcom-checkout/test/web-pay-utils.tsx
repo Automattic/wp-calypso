@@ -8,6 +8,7 @@ import {
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PropsWithChildren } from 'react';
+import { vi } from 'vitest';
 import { ApplePaySubmitButton } from '../src/payment-methods/apple-pay';
 import { GooglePaySubmitButton } from '../src/payment-methods/google-pay';
 import { usePaymentRequestOptions } from '../src/payment-methods/web-pay-utils';
@@ -42,7 +43,7 @@ function createCart( overrides: Partial< ResponseCart > = {} ): ResponseCart {
 }
 
 async function createCartWrapper( cart: ResponseCart ) {
-	const getCart = jest.fn().mockResolvedValue( cart );
+	const getCart = vi.fn().mockResolvedValue( cart );
 	const managerClient = createShoppingCartManagerClient( {
 		getCart,
 		setCart: async () => cart,
@@ -222,11 +223,11 @@ describe.each( [
 			createCart( { credits_integer: 2500, total_cost_integer: 8500 } )
 		);
 		const request = {
-			canMakePayment: jest.fn().mockResolvedValue( { applePay: true, googlePay: true } ),
-			on: jest.fn(),
-			show: jest.fn(),
+			canMakePayment: vi.fn().mockResolvedValue( { applePay: true, googlePay: true } ),
+			on: vi.fn(),
+			show: vi.fn(),
 		};
-		const paymentRequest = jest.fn().mockReturnValue( request );
+		const paymentRequest = vi.fn().mockReturnValue( request );
 		const stripe = { paymentRequest } as unknown as Stripe;
 
 		render(

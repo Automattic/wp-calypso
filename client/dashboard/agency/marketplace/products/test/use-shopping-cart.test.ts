@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { parseCartEntries, useShoppingCart } from '../use-shopping-cart';
 
-jest.mock( '../../use-marketplace-type', () => ( {
+vi.mock( '../../use-marketplace-type', () => ( {
 	useMarketplaceType: () => ( { marketplaceType: 'regular' } ),
 } ) );
 

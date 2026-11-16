@@ -3,14 +3,15 @@
  */
 
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { SiteGoal, SiteIntent } from '../constants';
 import { goalsToIntent } from '../utils';
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'Test onboard utils', () => {
 	beforeEach( () => {
-		( config.isEnabled as jest.Mock ).mockReset();
+		( config.isEnabled as Mock ).mockReset();
 	} );
 
 	it.each( [

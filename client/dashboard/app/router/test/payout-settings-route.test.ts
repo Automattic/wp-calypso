@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { activeAgencyQuery, queryClient } from '@automattic/api-queries';

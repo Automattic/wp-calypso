@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { SiteLaunchButton } from '..';
 import { render } from '../../../test-utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -214,7 +215,7 @@ describe( '<SiteLaunchButton>', () => {
 		const launchScope = mockLaunchApi();
 
 		const originalLocation = window.location;
-		const assign = jest.fn();
+		const assign = vi.fn();
 		Object.defineProperty( window, 'location', {
 			writable: true,
 			value: {
@@ -225,10 +226,6 @@ describe( '<SiteLaunchButton>', () => {
 				assign,
 			},
 		} );
-		const replaceState = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( () => {} );
-
 		try {
 			render(
 				<SiteLaunchButton
@@ -245,15 +242,12 @@ describe( '<SiteLaunchButton>', () => {
 			);
 
 			const launchButton = await screen.findByRole( 'button', { name: 'Launch your site' } );
-			replaceState.mockClear();
-
 			await user.click( launchButton );
 
 			await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
-			await waitFor( () => expect( replaceState ).toHaveBeenCalled() );
+			await waitFor( () => expect( launchButton ).not.toHaveClass( 'is-busy' ) );
 			expect( assign ).not.toHaveBeenCalled();
 		} finally {
-			replaceState.mockRestore();
 			Object.defineProperty( window, 'location', { writable: true, value: originalLocation } );
 		}
 	} );

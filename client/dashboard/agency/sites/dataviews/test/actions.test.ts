@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getAgencyActions } from '../actions';
 import type { AgencySite } from '@automattic/api-core';
 import type { ActionButton } from '@wordpress/dataviews';
@@ -63,21 +64,21 @@ function setup( {
 	canIssueLicenses = true,
 	canRemoveSites = true,
 }: { canIssueLicenses?: boolean; canRemoveSites?: boolean } = {} ) {
-	const onOpenSettings = jest.fn();
-	const onPrepareForLaunch = jest.fn();
-	const onSetUpSite = jest.fn();
-	const onViewBackups = jest.fn();
+	const onOpenSettings = vi.fn();
+	const onPrepareForLaunch = vi.fn();
+	const onSetUpSite = vi.fn();
+	const onViewBackups = vi.fn();
 
 	const actions = getAgencyActions( {
 		canIssueLicenses,
 		canRemoveSites,
-		onIssueLicense: jest.fn(),
+		onIssueLicense: vi.fn(),
 		onOpenSettings,
 		onPrepareForLaunch,
 		onSetUpSite,
-		onViewActivity: jest.fn(),
+		onViewActivity: vi.fn(),
 		onViewBackups,
-		recordTracksEvent: jest.fn(),
+		recordTracksEvent: vi.fn(),
 	} );
 
 	const action = ( id: string ) => {
@@ -216,7 +217,7 @@ describe( 'getAgencyActions destinations', () => {
 
 		// The dashboard has its own overview for the site, so this no longer
 		// leaves for WordPress.com.
-		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 		buttonAction( 'set-up-site' ).callback( [ atomic ], NO_CONTEXT );
 		expect( onSetUpSite ).toHaveBeenCalledWith( atomic );
 		expect( open ).not.toHaveBeenCalled();
@@ -224,7 +225,7 @@ describe( 'getAgencyActions destinations', () => {
 	} );
 
 	test( 'sends each copy action to the right destination', () => {
-		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 		const { buttonAction, onViewBackups } = setup();
 
 		buttonAction( 'clone-site' ).callback( [ atomic ], NO_CONTEXT );

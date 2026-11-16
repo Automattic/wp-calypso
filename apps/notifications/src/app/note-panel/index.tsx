@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
-import { Badge, Tabs } from '@wordpress/ui';
+import { Tabs } from '@wordpress/ui';
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
@@ -15,7 +15,6 @@ import { getFilters } from '../../panel/templates/filters';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
-import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import NotePanelActions from './actions';
 import type { FilterName } from '../types';
 
@@ -43,7 +42,6 @@ const NotePanel = ( {
 	const notificationTabs = getNotificationTabs();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
-	const isSimplified = useIsSimplifiedNote();
 
 	const handleSelect = useCallback(
 		( tabId: string | null | undefined ) => {
@@ -110,20 +108,13 @@ const NotePanel = ( {
 				<VStack>
 					<HStack>
 						<HStack justify="flex-start">
-							<Heading level={ 3 } size={ 15 } weight={ 500 }>
+							<Heading
+								level={ 3 }
+								size={ 15 }
+								weight="var(--wpds-typography-font-weight-emphasis, 600)"
+							>
 								{ __( 'Notifications' ) }
 							</Heading>
-							{ isSimplified && (
-								<Badge
-									className="wpnc-app__beta-badge"
-									intent="informational"
-									render={
-										<a href="https://wp.me/p9zg7s-dv" target="_blank" rel="noopener noreferrer" />
-									}
-								>
-									{ __( 'Beta' ) }
-								</Badge>
-							) }
 						</HStack>
 						<HStack justify="flex-end">
 							<NotePanelActions />

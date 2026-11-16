@@ -1,8 +1,10 @@
 export type WordPressMigrationFinding = {
 	code: string;
 	severity: 'warning' | 'failure';
-	// How the finding will be resolved: user accepts it (continue), retry, or an assisted handoff.
-	resolution: 'accept' | 'retry' | 'assisted_handoff';
+	// Whether the next run moves past it (accept), or something has to change first (retry).
+	resolution: 'accept' | 'retry';
+	// What we suggest doing about it: how to fix one to retry, or an option alongside one to accept.
+	suggested_action: 'connect_source' | 'change_source' | 'upgrade_plan' | null;
 	label: string;
 	message: string;
 	data?: Record< string, unknown >;
@@ -18,6 +20,8 @@ export type WordPressMigrationStatus = {
 	completed_at: string | null;
 	// Where the email announcing the finished migration is sent.
 	notification_emails: string[];
+	// Our team has taken the migration over, which the site's own migration state shows once it's read again.
+	handed_off: boolean;
 };
 
 export type WordPressMigrationSourceConnection = {

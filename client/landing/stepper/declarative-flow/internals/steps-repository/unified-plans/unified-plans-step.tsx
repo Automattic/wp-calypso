@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	UrlFriendlyTermType,
+	isDomainMoveInternal,
 	isDomainTransfer,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	PlanSlug,
@@ -348,6 +349,14 @@ function UnifiedPlansStep( {
 
 	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
+	const isDomainMove = domainCartItem ? isDomainMoveInternal( domainCartItem ) : false;
+	const domainCartItemExtra = domainCartItem?.extra;
+	const isConnectedDomainMove =
+		isDomainMove &&
+		!! domainCartItemExtra &&
+		'is_connected_domain_move' in domainCartItemExtra &&
+		!! domainCartItemExtra.is_connected_domain_move;
+
 	const isPaidTheme = Boolean( selectedThemeType && selectedThemeType !== FREE_THEME );
 
 	const effectiveSubmitSignupStep = useMemo(
@@ -693,6 +702,8 @@ function UnifiedPlansStep( {
 				signupFlowUserName={ username ?? undefined }
 				siteId={ selectedSite?.ID }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
+				isDomainMove={ isDomainMove }
+				isConnectedDomainMove={ isConnectedDomainMove }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }

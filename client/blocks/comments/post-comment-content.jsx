@@ -19,7 +19,7 @@ class PostCommentContent extends Component {
 		setWithDimensionsRef: () => {},
 	};
 
-	// React 19 rewrites innerHTML whenever this prop is a new object, which reloads embeds.
+	// Cached so a pending comment's markup is only sanitized again when it changes.
 	getInnerHtml( content, isPlaceholder ) {
 		if ( this.innerHtmlContent !== content || this.innerHtmlIsPlaceholder !== isPlaceholder ) {
 			this.innerHtmlContent = content;

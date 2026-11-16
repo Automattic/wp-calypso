@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AgencyAmplify from '../index';
 import type { AmplifyReport, AmplifyUsage } from '@automattic/api-core';
@@ -61,8 +62,8 @@ describe( '<AgencyAmplify>', () => {
 	// jsdom has no Web Animations API, which the score preview uses when the report type changes.
 	const originalAnimate = Element.prototype.animate;
 	beforeAll( () => {
-		Element.prototype.animate = jest.fn(
-			() => ( { cancel: jest.fn(), onfinish: null } ) as unknown as Animation
+		Element.prototype.animate = vi.fn(
+			() => ( { cancel: vi.fn(), onfinish: null } ) as unknown as Animation
 		);
 	} );
 	afterAll( () => {

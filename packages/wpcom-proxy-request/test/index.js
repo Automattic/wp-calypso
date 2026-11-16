@@ -174,6 +174,40 @@ describe( 'wpcom-proxy-request', () => {
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	test( 'sends a request buffered before a reload once the reloaded proxy is ready', () => {
+		const callback = vi.fn();
+		installProxy();
+		proxy.default( { path: '/me' }, callback );
+
+		installProxy();
+		sendFromProxy( 'ready' );
+
+		expect( lastRequest() ).toMatchObject( { path: '/me', callback: 'uuid-1' } );
+
+		respond( { ID: 1 }, 200 );
+
+		expect( callback ).toHaveBeenCalledWith( null, { ID: 1 }, { status: 200 } );
+	} );
+
+	test( 'fails a request in flight on the proxy when it reloads, without sending it again', () => {
+		const callback = vi.fn();
+		installProxy();
+		sendFromProxy( 'ready' );
+		proxy.default( { path: '/me' }, callback );
+
+		installProxy();
+
+		expect( callback ).toHaveBeenCalledTimes( 1 );
+		const [ error, body ] = callback.mock.calls[ 0 ];
+		expect( error ).toBeInstanceOf( Error );
+		expect( error ).toMatchObject( { statusCode: 500 } );
+		expect( body ).toBeNull();
+
+		sendFromProxy( 'ready' );
+
+		expect( postMessage ).not.toHaveBeenCalled();
+	} );
+
 	test( 'resolves a meta API request when the proxy confirms the update', async () => {
 		installProxy();
 		sendFromProxy( 'ready' );

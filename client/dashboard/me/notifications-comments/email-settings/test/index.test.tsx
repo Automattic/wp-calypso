@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { InputUserNotificationSettings, UserNotificationSettings } from '@automattic/api-core';
@@ -47,11 +47,6 @@ const mockUpdateSettingsApiAndReply = ( data: InputUserNotificationSettings ) =>
 };
 
 describe( 'EmailSettings', () => {
-	beforeEach( () => {
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	test( 'renders the email settings values', async () => {
 		mockGetSettingsApiAndReply( {
 			other: {

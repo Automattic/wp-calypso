@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { useFields } from '../fields';
 import { filterSortAndPaginateDomains } from '../filter-sort-and-paginate';
@@ -14,8 +15,10 @@ import type { Field, Filter, Operator, View } from '@wordpress/dataviews';
 
 let mockHasEnTranslation = true;
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 

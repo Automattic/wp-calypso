@@ -99,10 +99,10 @@ function Pending( { site, cancelButton }: { site: Site; cancelButton: React.Reac
 		return null;
 	}
 
-	// A failed run handed our migration over. The customer sees what stopped it if they take it back and try again.
-	const stoppedBy = migration?.findings.find(
-		( { resolution } ) => resolution === 'assisted_handoff'
-	);
+	let stoppedBy = undefined;
+	if ( migration?.status === 'failed' ) {
+		stoppedBy = migration.findings.find( ( { severity } ) => severity === 'failure' );
+	}
 	const isAfterFailure = !! stoppedBy;
 
 	return (

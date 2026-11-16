@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import {
 	getRegistrationErrorCode,
 	getSiteSuffix,
@@ -26,7 +27,7 @@ const INITIAL_STATE = {
 };
 
 const mockResponse = ( { ok = true, body = {} } = {} ) =>
-	jest.fn().mockResolvedValue( { ok, json: () => Promise.resolve( body ) } );
+	vi.fn().mockResolvedValue( { ok, json: () => Promise.resolve( body ) } );
 
 beforeEach( () => {
 	window.JP_CONNECTION_INITIAL_STATE = { ...INITIAL_STATE };
@@ -126,7 +127,7 @@ describe( 'registerSite', () => {
 	} );
 
 	it( 'rejects on a response that is not JSON', async () => {
-		globalThis.fetch = jest
+		globalThis.fetch = vi
 			.fn()
 			.mockResolvedValue( { ok: true, json: () => Promise.reject( new Error( 'not JSON' ) ) } );
 
@@ -166,7 +167,7 @@ describe( 'getRegistrationErrorCode', () => {
 	} );
 
 	it( 'reads a request that never completed off a bare browser error', async () => {
-		globalThis.fetch = jest.fn().mockRejectedValue( new TypeError( 'Failed to fetch' ) );
+		globalThis.fetch = vi.fn().mockRejectedValue( new TypeError( 'Failed to fetch' ) );
 
 		await expect( codeOfRejection( registerSite( REDIRECT_URI ) ) ).resolves.toBe(
 			'request_failed'

@@ -8,10 +8,12 @@ export default function Body( {
 	note,
 	hidePeople = false,
 	hidePost = false,
+	hideText = false,
 }: {
 	note: Note;
 	hidePeople?: boolean;
 	hidePost?: boolean;
+	hideText?: boolean;
 } ) {
 	// Stable, since the body's effects (the reply lookup among them) depend on the note.
 	const bodyNote = useMemo(
@@ -20,11 +22,13 @@ export default function Body( {
 			body: ( zipWithSignature( note.body, note ) as BlockWithSignature[] )
 				.filter(
 					( { signature: { type } } ) =>
-						! ( hidePeople && type === 'user' ) && ! ( hidePost && type === 'post' )
+						! ( hidePeople && type === 'user' ) &&
+						! ( hidePost && type === 'post' ) &&
+						! ( hideText && type === 'text' )
 				)
 				.map( ( { block } ) => block ),
 		} ),
-		[ note, hidePeople, hidePost ]
+		[ note, hidePeople, hidePost, hideText ]
 	);
 
 	return (

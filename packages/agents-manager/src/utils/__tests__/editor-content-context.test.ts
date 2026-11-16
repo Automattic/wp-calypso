@@ -1,17 +1,18 @@
 import { getBlockType, getBlockTypes } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
+import { vi } from 'vitest';
 import { getEditorContentContext } from '../editor-content-context';
 import { getSelectedTextContext } from '../get-selected-text';
 import { getEditedGlobalStyles } from '../global-styles';
 
-jest.mock( '@wordpress/blocks', () => ( { getBlockType: jest.fn(), getBlockTypes: jest.fn() } ) );
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
-jest.mock( '@wordpress/core-data', () => ( { store: { name: 'core' } } ) );
-jest.mock( '../global-styles', () => ( {
-	...jest.requireActual( '../global-styles' ),
-	getEditedGlobalStyles: jest.fn(),
+vi.mock( '@wordpress/blocks', () => ( { getBlockType: vi.fn(), getBlockTypes: vi.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn() } ) );
+vi.mock( '@wordpress/core-data', () => ( { store: { name: 'core' } } ) );
+vi.mock( '../global-styles', async () => ( {
+	...( await vi.importActual< typeof import( '../global-styles' ) >( '../global-styles' ) ),
+	getEditedGlobalStyles: vi.fn(),
 } ) );
-jest.mock( '../get-selected-text', () => ( { getSelectedTextContext: jest.fn() } ) );
+vi.mock( '../get-selected-text', () => ( { getSelectedTextContext: vi.fn() } ) );
 
 const blockTypes = [
 	{ name: 'core/paragraph', title: 'Paragraph', description: 'Text.', icon: 'p' },
@@ -29,11 +30,11 @@ const blockNames: Record< string, string > = {
 };
 
 function mockEditor( { hasBlocks }: { hasBlocks: boolean } ) {
-	jest.mocked( getBlockTypes ).mockReturnValue( ( hasBlocks ? blockTypes : [] ) as never );
-	jest
-		.mocked( getBlockType )
-		.mockImplementation( ( name ) => blockTypes.find( ( type ) => type.name === name ) as never );
-	jest.mocked( select ).mockReturnValue( {
+	vi.mocked( getBlockTypes ).mockReturnValue( ( hasBlocks ? blockTypes : [] ) as never );
+	vi.mocked( getBlockType ).mockImplementation(
+		( name ) => blockTypes.find( ( type ) => type.name === name ) as never
+	);
+	vi.mocked( select ).mockReturnValue( {
 		getClientIdsWithDescendants: () => ( hasBlocks ? Object.keys( blockNames ) : [] ),
 		getBlockName: ( clientId: string ) => blockNames[ clientId ],
 	} as never );
@@ -42,10 +43,13 @@ function mockEditor( { hasBlocks }: { hasBlocks: boolean } ) {
 describe( 'getEditorContentContext', () => {
 	it( 'sends the block names, the schemas of the blocks the agent does not know, the selection and the custom CSS', () => {
 		mockEditor( { hasBlocks: true } );
-		jest
-			.mocked( getSelectedTextContext )
-			.mockReturnValue( { text: 'Hi', attributeKey: 'content', start: 0, end: 2 } );
-		jest.mocked( getEditedGlobalStyles ).mockReturnValue( {
+		vi.mocked( getSelectedTextContext ).mockReturnValue( {
+			text: 'Hi',
+			attributeKey: 'content',
+			start: 0,
+			end: 2,
+		} );
+		vi.mocked( getEditedGlobalStyles ).mockReturnValue( {
 			id: '1',
 			record: { settings: {}, styles: { css: 'a { color: red; }' } },
 		} );
@@ -65,14 +69,14 @@ describe( 'getEditorContentContext', () => {
 		{
 			editor: 'cannot be read',
 			mock: () =>
-				jest.mocked( getBlockTypes ).mockImplementation( () => {
+				vi.mocked( getBlockTypes ).mockImplementation( () => {
 					throw new Error( 'No store' );
 				} ),
 		},
 	] )( 'sends nothing when the editor $editor', ( { mock } ) => {
 		mock();
-		jest.mocked( getSelectedTextContext ).mockReturnValue( null );
-		jest.mocked( getEditedGlobalStyles ).mockReturnValue( undefined );
+		vi.mocked( getSelectedTextContext ).mockReturnValue( null );
+		vi.mocked( getEditedGlobalStyles ).mockReturnValue( undefined );
 
 		expect( getEditorContentContext() ).toEqual( {} );
 	} );

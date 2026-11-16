@@ -269,7 +269,7 @@ describe( 'preview site owner from a share link', () => {
 			'sends the owner to launch the site',
 			true,
 			true,
-			'/setup/launch-site?siteSlug=preview.wpcomstaging.com&utm_source=share_link_preview',
+			'/setup/launch-site?siteSlug=preview.wpcomstaging.com&hide_free_plan=1&utm_source=share_link_preview',
 		],
 		[ 'starts signup for someone else', true, false, undefined ],
 		[ 'starts signup for a signed-out viewer', false, true, undefined ],

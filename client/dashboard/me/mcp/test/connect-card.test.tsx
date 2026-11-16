@@ -1,24 +1,25 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { isAutomatticianQuery, queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { MCP_SERVER_NAME, MCP_SERVER_URL, HELPER_PROMPT } from '../connect-agents';
 import McpConnectCard from '../connect-card';
 
-let writeText: jest.Mock;
+let writeText: Mock;
 
 beforeEach( () => {
 	queryClient.clear();
 	queryClient.setQueryData( isAutomatticianQuery().queryKey, false );
-	writeText = jest.fn().mockResolvedValue( undefined );
+	writeText = vi.fn().mockResolvedValue( undefined );
 	Object.defineProperty( navigator, 'clipboard', { value: { writeText }, configurable: true } );
 } );
 
 function renderCard( props: Partial< Parameters< typeof McpConnectCard >[ 0 ] > = {} ) {
 	return render(
-		<McpConnectCard mcpEnabled onTurnOn={ jest.fn() } isTurningOn={ false } { ...props } />,
+		<McpConnectCard mcpEnabled onTurnOn={ vi.fn() } isTurningOn={ false } { ...props } />,
 		{ queryClient }
 	);
 }
@@ -197,7 +198,7 @@ describe( '<McpConnectCard />', () => {
 	} );
 
 	test( 'offers to turn MCP access on while it is off', async () => {
-		const onTurnOn = jest.fn();
+		const onTurnOn = vi.fn();
 		renderCard( { mcpEnabled: false, onTurnOn } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Turn on MCP access' } ) );
@@ -239,7 +240,7 @@ describe( '<McpConnectCard />', () => {
 			const [ enabled, setEnabled ] = useState( false );
 			return (
 				<>
-					<McpConnectCard mcpEnabled={ enabled } onTurnOn={ jest.fn() } isTurningOn={ false } />
+					<McpConnectCard mcpEnabled={ enabled } onTurnOn={ vi.fn() } isTurningOn={ false } />
 					<button
 						type="button"
 						onClick={ ( event ) => {

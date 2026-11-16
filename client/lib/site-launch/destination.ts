@@ -16,6 +16,8 @@ export interface LaunchParams {
 	// Purchase attribution, such as what built a preview site: checkout reads it from its own URL as
 	// `source`. The launch flow's own `source` names where the launch started, so it isn't this.
 	checkoutSource?: string | null;
+	// Offer only paid plans, for a site that can't launch on Free, such as a preview site.
+	hideFreePlan?: boolean;
 }
 
 const DASHBOARDS: DashboardType[] = [ 'a4a', 'dotcom' ];

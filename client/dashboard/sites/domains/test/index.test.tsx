@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { domainsQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
 import { render } from '../../../test-utils';
 import SiteDomains from '../index';
@@ -15,13 +16,17 @@ import type { QueryClient } from '@tanstack/react-query';
 let mockSearchParams: { action?: string } = {};
 let mockHasEnTranslation = true;
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 
-jest.mock( '../../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../../app/router/sites' );
+vi.mock( '../../../app/router/sites', async () => {
+	const actual = await vi.importActual< typeof import( '../../../app/router/sites' ) >(
+		'../../../app/router/sites'
+	);
 	return {
 		...actual,
 		siteRoute: {
@@ -415,7 +420,7 @@ describe( '<SiteDomains>', () => {
 	test( 'keeps the way back to this list when opening a domain’s settings', async () => {
 		const user = userEvent.setup();
 		const { router } = render( <SiteDomains />, { user: ownerUser } );
-		const navigate = jest.spyOn( router, 'navigate' );
+		const navigate = vi.spyOn( router, 'navigate' );
 
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
 		await user.click( within( card ).getByRole( 'button', { name: 'Settings' } ) );

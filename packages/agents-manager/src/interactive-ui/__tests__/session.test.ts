@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	disposeInteractiveUiRuntime,
 	getInteractiveUiSession,
@@ -29,7 +30,7 @@ describe( 'getInteractiveUiSession', () => {
 
 describe( 'disposeInteractiveUiRuntime', () => {
 	it( 'disposes of the runtime and forgets its batches, so they apply again', () => {
-		const dispose = jest.fn();
+		const dispose = vi.fn();
 		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
 		session.runtime = { dispose } as unknown as InteractiveUiRuntime;
 		session.appliedBatches = [ { ...createBatch( [], 'agent' ), hasRejections: false } ];
@@ -103,7 +104,7 @@ describe( 'getShownInteractiveUiDataModel', () => {
 	} );
 
 	it( 'gives nothing instead of throwing, which would drop the message’s other metadata', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		const session = getInteractiveUiSession( undefined, SCOPE, 'session-1' );
 		session.runtime = {

@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import {
 	notificationDeviceQuery,
 	notificationPushPermissionStateQuery,
@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { BrowserNotificationCard } from '../index';
 
 describe( 'BrowserNotificationCard', () => {
@@ -24,14 +25,12 @@ describe( 'BrowserNotificationCard', () => {
 	};
 
 	beforeEach( () => {
-		window.scrollTo = jest.fn();
-
 		Object.defineProperty( window, 'navigator', {
 			value: {
 				serviceWorker: {
-					register: jest.fn(),
-					ready: jest.fn(),
-					getSubscription: jest.fn(),
+					register: vi.fn(),
+					ready: vi.fn(),
+					getSubscription: vi.fn(),
 				},
 			},
 		} );
@@ -95,9 +94,9 @@ describe( 'BrowserNotificationCard', () => {
 		Object.defineProperty( window.navigator.serviceWorker, 'ready', {
 			value: {
 				pushManager: {
-					permissionState: jest.fn().mockResolvedValue( 'granted' ),
-					getSubscription: jest.fn().mockResolvedValue( null ),
-					subscribe: jest.fn().mockResolvedValue( browserSubscription ),
+					permissionState: vi.fn().mockResolvedValue( 'granted' ),
+					getSubscription: vi.fn().mockResolvedValue( null ),
+					subscribe: vi.fn().mockResolvedValue( browserSubscription ),
 				},
 			},
 		} );
@@ -152,9 +151,9 @@ describe( 'BrowserNotificationCard', () => {
 		Object.defineProperty( window.navigator.serviceWorker, 'ready', {
 			value: {
 				pushManager: {
-					permissionState: jest.fn().mockResolvedValue( 'granted' ),
-					getSubscription: jest.fn().mockResolvedValue( browserSubscription ),
-					subscribe: jest.fn().mockResolvedValue( null ),
+					permissionState: vi.fn().mockResolvedValue( 'granted' ),
+					getSubscription: vi.fn().mockResolvedValue( browserSubscription ),
+					subscribe: vi.fn().mockResolvedValue( null ),
 				},
 			},
 		} );

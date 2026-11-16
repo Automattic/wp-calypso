@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { validateHostname, shouldShowUpsellNudge } from '../utils';
 import type { Domain, User, Site } from '@automattic/api-core';

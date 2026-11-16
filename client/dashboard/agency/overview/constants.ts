@@ -17,9 +17,6 @@ export const PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL =
 export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =
 	'https://pressable.com/legal/summer-2026-expansion-incentive-terms-and-conditions/';
 
-export const AI_MCP_ANNOUNCEMENT_BLOG_POST_URL =
-	'https://automattic.com/for-agencies/blog/our-new-mcp-brings-automattic-for-agencies-into-your-ai-workflow/';
-
 interface TierOverviewContent {
 	description: string;
 	hasPartnerManager: boolean;

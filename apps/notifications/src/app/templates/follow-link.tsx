@@ -1,5 +1,5 @@
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { check, Icon } from '@wordpress/icons';
 import { useState } from 'react';
 import useSafe from '../../panel/helpers/use-safe';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
@@ -63,18 +63,10 @@ export const FollowLink = ( {
 	}
 
 	return (
-		<Button
-			variant="link"
-			size="compact"
-			style={ {
-				height: '16px',
-				textDecoration: 'none',
-				fontWeight: 'var(--wpds-typography-font-weight-emphasis, 600)',
-			} }
-			onClick={ toggleFollowStatus }
-		>
+		<button type="button" className="wpnc__follow-link" onClick={ toggleFollowStatus }>
 			{ isFollowing ? __( 'Subscribed' ) : __( 'Subscribe' ) }
-		</Button>
+			{ isFollowing && <Icon icon={ check } size={ 16 } /> }
+		</button>
 	);
 };
 

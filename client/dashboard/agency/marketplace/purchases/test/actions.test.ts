@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getLicenseActions } from '../actions';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -98,9 +99,9 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 }
 
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
-	const onOpenHosting = jest.fn();
-	const onNavigate = jest.fn();
-	const onLicenseAssigned = jest.fn();
+	const onOpenHosting = vi.fn();
+	const onNavigate = vi.fn< ( to: string ) => void >();
+	const onLicenseAssigned = vi.fn();
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
@@ -167,7 +168,7 @@ describe( 'getLicenseActions eligibility', () => {
 
 	test( 'keeps Change domain outside the dashboard', () => {
 		const { run } = setupWithCallbacks();
-		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		// The A4A app registers no domains routes, so this one still leaves the dashboard.
 		run( 'change-domain', assignedWpcom );

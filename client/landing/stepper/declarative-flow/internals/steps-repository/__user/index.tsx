@@ -26,7 +26,7 @@ import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import { useSelector } from 'calypso/state';
+import { useSelector, useStore } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
@@ -73,6 +73,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
+	const store = useStore();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
@@ -92,24 +93,43 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isLoginLinkBelowButtons =
 		isLargeViewport && flow === ONBOARDING_FLOW && ! isEmailFirstVariant;
 
+	// Load the new account's token and fetch its user. Keyed on the account-create response only:
+	// running again would reload the proxy again, failing the `/me` it just sent.
 	useEffect( () => {
-		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
-			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			if ( ! config.isEnabled( 'oauth' ) ) {
-				reloadProxy();
-				requestAllBlogsAccess();
-			}
-			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
-			// but follow-up API calls go to the closest DC, which may be different and might not
-			// have replicated the user data yet.
-			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+		if ( ! ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) ) {
+			return;
 		}
+
+		wpcom.loadToken( wpAccountCreateResponse.bearer_token );
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
+
+		// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+		// but follow-up API calls go to the closest DC, which may be different and might not
+		// have replicated the user data yet.
+		const fetchNewUser = () =>
+			dispatch(
+				fetchCurrentUser( { retry: true } ) as unknown as AnyAction
+			) as unknown as Promise< void >;
+
+		// `fetchCurrentUser` hands back a `/me` already in flight, sent before the token and failed
+		// by the proxy reload, so fetch once more if nobody is logged in after it.
+		fetchNewUser().then( () => {
+			if ( ! isUserLoggedIn( store.getState() ) ) {
+				fetchNewUser();
+			}
+		} );
+	}, [ dispatch, store, wpAccountCreateResponse ] );
+
+	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else {
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation ] );
 
 	const locale = useFlowLocale();
 	const shouldLinkLogo = flow === ONBOARDING_FLOW && ! hasCustomBranding;

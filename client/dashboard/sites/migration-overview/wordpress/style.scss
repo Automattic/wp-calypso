@@ -198,3 +198,8 @@
 .wordpress-migration__domain {
 	overflow-wrap: anywhere;
 }
+
+// The same for a domain in a notice's message, which comes as plain text.
+.wordpress-migration__message {
+	overflow-wrap: anywhere;
+}

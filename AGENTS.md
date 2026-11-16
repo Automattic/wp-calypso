@@ -60,16 +60,16 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 
 ## Testing instructions
 
-> **Note**: E2E tests require a local Calypso development instance to be running.
+> **Note**: E2E tests require a local Calypso development instance to be running, started with `yarn start`: `yarn start-dashboard` doesn't serve the login page they use.
 
 ```bash
 # JavaScript tests
-yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps)
+yarn test                                       # Run unit tests for client, Dashboard, packages, server, and build-tools (CI also runs apps)
 yarn test-build-tools                           # Run unit tests for build-tools
-yarn test-client                                # Run unit tests for client
+yarn test-client                                # Run unit tests for client, except the Dashboard
+yarn test-dashboard [path]                      # Run Dashboard unit tests (on Vitest)
 yarn test-apps                                  # Run apps unit tests
-yarn test-packages                              # Run packages unit tests (arguments go to Jest only)
-yarn test-packages:vitest [path]                # Run unit tests for packages on Vitest
+yarn test-packages [path]                       # Run packages unit tests on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
@@ -77,6 +77,7 @@ yarn test-server:coverage                       # Run server unit tests with cov
 yarn test-client:watch                          # Run unit tests for client in watch mode
 yarn test-client <path_to_test_directory>       # Run client unit tests from a specific directory
 yarn test-client --testNamePattern="<TestName>" # Run a specific client unit test
+yarn test-dashboard:watch                       # Run Dashboard unit tests in watch mode
 
 # E2E tests - refer to: test/e2e/AGENTS.md
 

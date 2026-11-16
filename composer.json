@@ -9,7 +9,7 @@
 		}
 	},
 	"require-dev": {
-		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.2.1",
 		"wp-coding-standards/wpcs": "^3.4.1"
 	}
 }

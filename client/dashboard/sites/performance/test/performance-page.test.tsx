@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { type MockedFunction, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import PerformancePage from '../performance-page';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
-const mockedIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
+const mockedIsEnabled = isEnabled as MockedFunction< typeof isEnabled >;
 
 function mockIsAutomattician( isAutomattician: boolean ) {
 	return nock( 'https://public-api.wordpress.com' )

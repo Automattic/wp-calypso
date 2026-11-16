@@ -37,6 +37,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
@@ -49,6 +50,7 @@ import {
 	info,
 	check,
 } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -924,10 +926,12 @@ function WPComResourceMeters( {
 
 function getFields( {
 	isMutationPending,
+	pendingAutoRenew,
 	user,
 	purchase,
 }: {
 	isMutationPending?: boolean;
+	pendingAutoRenew?: boolean;
 	user: User;
 	purchase: Purchase;
 } ): Field< Purchase >[] {
@@ -1052,7 +1056,7 @@ function getFields( {
 									? __( 'Re-activate subscription' )
 									: field.label
 							}
-							checked={ getValue( { item: purchase } ) }
+							checked={ pendingAutoRenew ?? getValue( { item: purchase } ) }
 							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 							onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
 							help={ help }
@@ -1107,7 +1111,9 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
+		variables: pendingAutoRenew,
 	} = useMutation( userPurchaseSetAutoRenewQuery() );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
@@ -1123,7 +1129,14 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	const fields = getFields( { isMutationPending, user, purchase } );
+	// Only the toggle moves ahead of the refetch. The help text and payment method below it wait
+	// for the updated purchase, so the card doesn't show a state the server hasn't confirmed yet.
+	const fields = getFields( {
+		isMutationPending,
+		pendingAutoRenew: isMutationPending ? pendingAutoRenew?.autoRenew : undefined,
+		user,
+		purchase,
+	} );
 	if ( fields.length === 0 && ! error ) {
 		return null;
 	}
@@ -1144,7 +1157,18 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 								} );
 								return;
 							}
-							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
+							setAutoRenew(
+								{ purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled },
+								{
+									onSuccess: ( _data, { autoRenew } ) =>
+										createSuccessNotice(
+											autoRenew
+												? __( 'Auto-renew has been enabled.' )
+												: __( 'Auto-renew has been disabled.' ),
+											{ type: 'snackbar' }
+										),
+								}
+							);
 						}
 					} }
 				/>

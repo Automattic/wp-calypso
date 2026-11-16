@@ -1,0 +1,8 @@
+.primary-domain-selector-notice__message {
+	max-inline-size: var( --wpds-dimension-surface-width-xl, 720px );
+
+	// The 720px cap plus the notice's padding.
+	@container (width < 774px) {
+		text-wrap: balance;
+	}
+}
