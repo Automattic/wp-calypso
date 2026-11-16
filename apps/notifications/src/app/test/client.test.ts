@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { store, init as initState } from '../../panel/state';
 import { subscribeUnseenCount } from '../client';
 
-jest.mock( '../../panel/rest-client', () =>
-	jest.fn().mockImplementation( () => ( { setVisibility: jest.fn() } ) )
+vi.mock( '../../panel/rest-client', () =>
+	( { default: vi.fn().mockImplementation( () => ( { setVisibility: vi.fn() } ) ) } )
 );
-jest.mock( '../../panel/rest-client/wpcom', () => ( { init: jest.fn() } ) );
+vi.mock( '../../panel/rest-client/wpcom', () => ( { init: vi.fn() } ) );
 
 describe( 'subscribeUnseenCount', () => {
 	beforeEach( () => {
@@ -12,8 +13,8 @@ describe( 'subscribeUnseenCount', () => {
 	} );
 
 	it( 'keeps one count callback and forwards each live subscriber candidate', () => {
-		const onCount = jest.fn();
-		const onSubscriberNotification = jest.fn();
+		const onCount = vi.fn();
+		const onSubscriberNotification = vi.fn();
 		const subscriberNotifications = [
 			{ targetSiteId: 23, type: 'follow', receivedAt: 100, wasVisibleAtReceipt: true },
 			{ targetSiteId: 24, type: 'follow', receivedAt: 101, wasVisibleAtReceipt: true },
@@ -43,10 +44,10 @@ describe( 'subscribeUnseenCount', () => {
 	} );
 
 	it( 'does not invoke the optional callback for baseline render actions or existing two-argument subscribers', () => {
-		const onCount = jest.fn();
-		const onSubscriberNotification = jest.fn();
+		const onCount = vi.fn();
+		const onSubscriberNotification = vi.fn();
 		const unsubscribe = subscribeUnseenCount( {}, onCount );
-		const unsubscribeWithCallback = subscribeUnseenCount( {}, jest.fn(), onSubscriberNotification );
+		const unsubscribeWithCallback = subscribeUnseenCount( {}, vi.fn(), onSubscriberNotification );
 
 		store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount: 0 } );
 

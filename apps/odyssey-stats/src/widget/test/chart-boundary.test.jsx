@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import ChartBoundary from '../chart-boundary';
 
 const Boom = () => {
@@ -11,7 +12,7 @@ const Boom = () => {
 describe( 'ChartBoundary', () => {
 	beforeEach( () => {
 		// React prints the caught error, and the boundary logs it itself.
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {

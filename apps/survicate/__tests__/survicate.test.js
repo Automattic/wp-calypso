@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-const mockShouldLoadSurvicate = jest.fn();
-const mockLoadSurvicateScript = jest.fn();
-const mockSetSurvicateVisitorTraits = jest.fn();
-const mockIsMobile = jest.fn();
+import { vi } from 'vitest';
+const mockShouldLoadSurvicate = vi.fn();
+const mockLoadSurvicateScript = vi.fn();
+const mockSetSurvicateVisitorTraits = vi.fn();
+const mockIsMobile = vi.fn();
 
-jest.mock( '@automattic/survicate', () => ( {
+vi.mock( '@automattic/survicate', () => ( {
 	SURVICATE_WORKSPACE_ID: 'workspace-id',
 	shouldLoadSurvicate: mockShouldLoadSurvicate,
 	loadSurvicateScript: mockLoadSurvicateScript,
 	setSurvicateVisitorTraits: mockSetSurvicateVisitorTraits,
 } ) );
 
-jest.mock( '@automattic/viewport', () => ( {
+vi.mock( '@automattic/viewport', () => ( {
 	isMobile: mockIsMobile,
 } ) );
 
@@ -36,7 +37,7 @@ function boot( config ) {
 	} else {
 		window.wpcomSurvicateConfig = config;
 	}
-	jest.isolateModules( () => {
+	vi.isolateModules( () => {
 		require( '../survicate' );
 	} );
 }
@@ -101,7 +102,7 @@ describe( 'wp-admin Survicate entry', () => {
 	} );
 
 	it( 'swallows an SDK load failure', async () => {
-		const onUnhandledRejection = jest.fn();
+		const onUnhandledRejection = vi.fn();
 		process.on( 'unhandledRejection', onUnhandledRejection );
 		mockLoadSurvicateScript.mockRejectedValue( new Error( 'blocked' ) );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Tests the gutenberg entry's registerPlugin wiring: the Jetpack AI Sidebar
  * preview gate decides whether the Agents Manager mounts. The entry has
@@ -7,23 +7,24 @@
  * and only the registered render function is exercised.
  */
 
-jest.mock( '../config', () => ( {} ), { virtual: true } );
-jest.mock( '../agents-manager-with-provider', () => ( {
+import { vi } from 'vitest';
+vi.mock( '../config', () => ( {} ) );
+vi.mock( '../agents-manager-with-provider', () => ( {
 	__esModule: true,
 	default: function AgentsManagerWithProvider() {
 		return null;
 	},
 } ) );
 
-const mockRegisterPlugin = jest.fn();
-jest.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } ) );
+const mockRegisterPlugin = vi.fn();
+vi.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } ) );
 
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
 
 const loadRender = () => {
 	let render;
 
-	jest.isolateModules( () => {
+	vi.isolateModules( () => {
 		require( '../agents-manager-gutenberg' );
 		render = mockRegisterPlugin.mock.calls.at( -1 )?.[ 1 ]?.render;
 	} );

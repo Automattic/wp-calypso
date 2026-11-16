@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
+import { vi } from 'vitest';
 import { init as initStore } from '../../../panel/state';
 import { addListeners } from '../../../panel/state/create-listener-middleware';
 import { AppProvider } from '../../context';
@@ -12,7 +13,7 @@ const noop = () => {};
 describe( 'NotePanel settings', () => {
 	it( 'opens the notification settings straight from the gear', async () => {
 		const store = initStore();
-		const onViewSettings = jest.fn();
+		const onViewSettings = vi.fn();
 		store.dispatch( addListeners( { VIEW_SETTINGS: [ onViewSettings ] } ) );
 
 		render(

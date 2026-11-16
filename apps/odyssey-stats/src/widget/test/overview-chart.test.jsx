@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { BarChart, LineChart } from '@automattic/charts';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import moment from 'moment';
+import { vi } from 'vitest';
 import 'moment/locale/de';
 import 'moment/locale/th';
 import OverviewChart from '../overview-chart';
@@ -15,7 +16,7 @@ moment.locale( 'en' );
 let mockChartEmit = null;
 let mockChartTooltip = null;
 
-jest.mock( '@automattic/charts', () => {
+vi.mock( '@automattic/charts', () => {
 	const { useContext } = require( 'react' );
 	const { TooltipContext, useEventEmitter } = require( '@visx/xychart' );
 	const Chart = () => {
@@ -23,7 +24,7 @@ jest.mock( '@automattic/charts', () => {
 		mockChartTooltip = useContext( TooltipContext );
 		return null;
 	};
-	return { BarChart: jest.fn( Chart ), LineChart: jest.fn( Chart ) };
+	return { BarChart: vi.fn( Chart ), LineChart: vi.fn( Chart ) };
 } );
 
 const series = [ { label: 'Views', data: [] } ];
@@ -183,7 +184,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'reports the point a line chart was clicked on', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
 		pressLine( props );
@@ -194,7 +195,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'reads a drag across a line chart as no click', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
 		pressLine( props, 10, 10 );
@@ -204,7 +205,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'ignores a release on a line chart whose press began off the chart', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
 		releaseLine( props );
@@ -213,7 +214,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'ignores a click on a line chart that lands on no point', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
 		pressLine( props );
@@ -231,7 +232,7 @@ describe( 'OverviewChart click', () => {
 		[ 'a right click', { button: 2 } ],
 		[ 'a press with no event', null ],
 	] )( 'leaves %s on a line chart alone', ( _, event ) => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
 		pressLine( props, 10, 10, event );
@@ -245,7 +246,7 @@ describe( 'OverviewChart click', () => {
 		[ 'a middle click', { button: 1 } ],
 		[ 'a right click', { button: 2 } ],
 	] )( 'leaves %s on a bar chart alone', ( _, init ) => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
 
 		hoverBar();
@@ -258,7 +259,7 @@ describe( 'OverviewChart click', () => {
 	it.each( [ 'bar', 'line' ] )(
 		'opens the point the keyboard moved to on Enter, on a %s chart',
 		( chartType ) => {
-			const onBucketClick = jest.fn();
+			const onBucketClick = vi.fn();
 			const { container } = render(
 				<OverviewChart
 					series={ series }
@@ -288,7 +289,7 @@ describe( 'OverviewChart click', () => {
 		[ 'Shift-Enter', { shiftKey: true } ],
 		[ 'Alt-Enter', { altKey: true } ],
 	] )( 'leaves %s on a focused point alone', ( _, modifier ) => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const { container } = render(
 			<OverviewChart
 				series={ series }
@@ -306,7 +307,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'reports the bar its tooltip names when a bar chart is clicked', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
 
 		hoverBar();
@@ -318,7 +319,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'reads the bar at the release, not the one hovered when the chart was drawn', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		const later = new Date( 2026, 6, 2 );
 		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
 
@@ -331,7 +332,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'reads a drag across a bar chart as no click', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
 
 		hoverBar();
@@ -342,7 +343,7 @@ describe( 'OverviewChart click', () => {
 	} );
 
 	it( 'ignores a click on a bar chart with no bar under the tooltip', () => {
-		const onBucketClick = jest.fn();
+		const onBucketClick = vi.fn();
 		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
 
 		pressBar();

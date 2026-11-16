@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../../hooks/use-module-data-query';
 import config, { optionalConfig } from '../../lib/config-api';
 import canCurrentUser from '../../lib/selectors/can-current-user';
 import Modules from '../modules';
 
-jest.mock( '../../lib/config-api', () => {
-	const configApi = jest.fn();
-	configApi.isEnabled = jest.fn();
-	return { __esModule: true, default: configApi, optionalConfig: jest.fn() };
+vi.mock( '../../lib/config-api', () => {
+	const configApi = vi.fn();
+	configApi.isEnabled = vi.fn();
+	return { __esModule: true, default: configApi, optionalConfig: vi.fn() };
 } );
-jest.mock( '../../hooks/use-module-data-query' );
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn( () => Promise.resolve( {} ) ) } } ) );
-jest.mock( '../../lib/selectors/can-current-user' );
+vi.mock( '../../hooks/use-module-data-query' );
+vi.mock( 'calypso/lib/wp', () => ( { req: { post: vi.fn( () => Promise.resolve( {} ) ) } } ) );
+vi.mock( '../../lib/selectors/can-current-user' );
 
 const SITE_ID = 123;
 
@@ -41,7 +42,7 @@ const moduleStates = ( { protect, akismet } ) => {
 			isLoading: !! state.loading,
 			isError: !! state.error,
 			error: state.error ? new Error( state.error ) : null,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		};
 	} );
 };
@@ -58,7 +59,7 @@ function renderModules() {
 
 describe( 'Modules', () => {
 	beforeEach( () => {
-		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		window.matchMedia = vi.fn().mockReturnValue( { matches: true } );
 		config.isEnabled.mockImplementation( ( feature ) => feature === 'is_running_in_jetpack_site' );
 		mockConfigValues( { jetpack_version: '15.1' } );
 		canCurrentUser.mockReturnValue( true );

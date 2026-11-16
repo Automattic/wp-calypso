@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import usePremiumAnalyticsStatusQuery from 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query';
 import { optionalConfig } from '../../lib/config-api';
 import canCurrentUser from '../../lib/selectors/can-current-user';
 import useStatsLink from '../use-stats-link';
 
-jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => jest.fn() );
-jest.mock( '../../lib/config-api', () => ( { optionalConfig: jest.fn() } ) );
-jest.mock( '../../lib/selectors/can-current-user', () => jest.fn() );
-jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
+vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( { default: vi.fn() } ) );
+vi.mock( '../../lib/config-api', () => ( { optionalConfig: vi.fn() } ) );
+vi.mock( '../../lib/selectors/can-current-user', () => ( { default: vi.fn() } ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( { default: () => 'https://example.com/wp-admin/' } ) );
 
 const STATS_URL = 'https://example.com/wp-admin/admin.php?page=stats#!/stats/post/12/1';
 const DASHBOARD_URL =
@@ -21,8 +22,8 @@ const DASHBOARD_URL =
  * @param canManageOptions Whether the user may read the site settings.
  */
 function mockSite( enabled: boolean | undefined, canManageOptions = true ) {
-	( canCurrentUser as jest.Mock ).mockReturnValue( canManageOptions );
-	( usePremiumAnalyticsStatusQuery as jest.Mock ).mockImplementation(
+	( canCurrentUser as Mock ).mockReturnValue( canManageOptions );
+	( usePremiumAnalyticsStatusQuery as Mock ).mockImplementation(
 		( _siteId, queryEnabled ) => ( {
 			data: queryEnabled ? enabled : undefined,
 		} )
@@ -102,7 +103,7 @@ describe( 'useStatsLink', () => {
 
 	it( 'dates a range in the site timezone from the config, not in today’s offset', () => {
 		mockSite( true );
-		( optionalConfig as jest.Mock ).mockReturnValue( 'America/New_York' );
+		( optionalConfig as Mock ).mockReturnValue( 'America/New_York' );
 
 		const url = new URL(
 			statsLink( STATS_URL, '/', {
@@ -121,7 +122,7 @@ describe( 'useStatsLink', () => {
 	// bucket an hour out, so the link reads the zone Premium Analytics prints instead.
 	it( 'dates a range in the timezone the script data carries when the config has none', () => {
 		mockSite( undefined, false );
-		( optionalConfig as jest.Mock ).mockReturnValue( undefined );
+		( optionalConfig as Mock ).mockReturnValue( undefined );
 		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
 			analytics: { enabled: true, can_view: true, timezone: 'Europe/Amsterdam' },
 		};
@@ -137,7 +138,7 @@ describe( 'useStatsLink', () => {
 
 	it( 'prefers the timezone the config carries to the one the script data does', () => {
 		mockSite( undefined, false );
-		( optionalConfig as jest.Mock ).mockReturnValue( 'America/New_York' );
+		( optionalConfig as Mock ).mockReturnValue( 'America/New_York' );
 		( window as unknown as { JetpackScriptData: { analytics: object } } ).JetpackScriptData = {
 			analytics: { enabled: true, can_view: true, timezone: 'Europe/Amsterdam' },
 		};

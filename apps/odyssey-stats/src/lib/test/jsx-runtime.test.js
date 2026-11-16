@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import * as React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { vi } from 'vitest';
 
 /**
  * Loads the module fresh, since it picks its runtime from the page's globals once, at load time.
@@ -17,7 +18,7 @@ function loadRuntime( wpRuntime ) {
 	}
 
 	let runtime;
-	jest.isolateModules( () => {
+	vi.isolateModules( () => {
 		runtime = require( '../jsx-runtime' );
 	} );
 	return runtime;
@@ -30,7 +31,7 @@ describe( 'jsx-runtime', () => {
 	} );
 
 	it( "uses WordPress's runtime on WordPress 6.6+ instead of building elements itself", () => {
-		const wpRuntime = { jsx: jest.fn(), jsxs: jest.fn(), Fragment: Symbol( 'wp-fragment' ) };
+		const wpRuntime = { jsx: vi.fn(), jsxs: vi.fn(), Fragment: Symbol( 'wp-fragment' ) };
 
 		const runtime = loadRuntime( wpRuntime );
 
@@ -69,7 +70,7 @@ describe( 'jsx-runtime', () => {
 
 	it( 'renders literal siblings without "unique key" warnings', () => {
 		const { jsx, jsxs } = loadRuntime( undefined );
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		const element = jsxs( 'p', {
 			children: [ jsx( 'strong', { children: 'Views' } ), jsx( 'span', { children: '42' } ) ],

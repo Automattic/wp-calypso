@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import useVisitsQuery from '../use-visits-query';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	req: {
-		get: jest.fn( () =>
+		get: vi.fn( () =>
 			Promise.resolve( { unit: 'week', fields: [ 'period', 'views', 'visitors' ], data: [] } )
 		),
 	},
