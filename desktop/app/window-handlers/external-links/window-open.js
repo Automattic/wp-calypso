@@ -1,3 +1,12 @@
+function isGoogleLoginPopup( url ) {
+	try {
+		const { origin, pathname } = new URL( url );
+		return origin === 'https://accounts.google.com' && /^\/o\/oauth2\/auth(\/|$)/.test( pathname );
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Decides what to do with a request to open a new window (target="_blank" links, window.open()).
  * @param {string} url The URL the new window was requested for.
@@ -6,26 +15,12 @@
  */
 function resolveWindowOpen( url, targetURL ) {
 	// If the URL trying to open a new window is the Google Social login link, allow new window to open
-	if ( isGoogleLoginUrl( url ) ) {
+	if ( isGoogleLoginPopup( url ) ) {
 		return { action: 'allow' };
 	}
 	// Check if the incoming URL is blank and if it is send to the targetURL instead
 	const urlToLoad = url.includes( 'about:blank' ) || url === '' ? targetURL : url;
 	return { action: 'deny', urlToLoad };
-}
-
-/**
- * Whether a URL is Google's OAuth sign-in page.
- * @param {string} url
- * @returns {boolean}
- */
-function isGoogleLoginUrl( url ) {
-	try {
-		const { origin, pathname } = new URL( url );
-		return origin === 'https://accounts.google.com' && pathname.startsWith( '/o/oauth2/auth' );
-	} catch {
-		return false;
-	}
 }
 
 module.exports = { resolveWindowOpen };
