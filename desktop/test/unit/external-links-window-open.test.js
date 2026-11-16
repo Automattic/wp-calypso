@@ -25,6 +25,8 @@ describe( 'resolveWindowOpen', () => {
 		'https://example.com/?next=https://accounts.google.com/o/oauth2/auth',
 		'https://accounts.google.com.example.com/o/oauth2/auth',
 		'https://example.com/https://accounts.google.com/o/oauth2/auth',
+		'https://accounts.google.com/o/oauth2/authx',
+		'https://accounts.google.com/o/oauth2/auth-preview',
 	] )( 'loads look-alike Google login URLs in the main view: %p', ( url ) => {
 		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'deny', urlToLoad: url } );
 	} );

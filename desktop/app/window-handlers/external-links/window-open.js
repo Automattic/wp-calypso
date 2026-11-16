@@ -1,7 +1,7 @@
 function isGoogleLoginPopup( url ) {
 	try {
 		const { origin, pathname } = new URL( url );
-		return origin === 'https://accounts.google.com' && pathname.startsWith( '/o/oauth2/auth' );
+		return origin === 'https://accounts.google.com' && /^\/o\/oauth2\/auth(\/|$)/.test( pathname );
 	} catch {
 		return false;
 	}
