@@ -51,6 +51,7 @@
 /packages/api-queries/src/me-ssh.ts @Automattic/yolo
 /client/dashboard/sites/deployments @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/deployments-list @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/settings-repositories @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/settings-crontab @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/settings-sftp-ssh @Automattic/yolo @Automattic/lego
 /client/dashboard/me/security-ssh-key @Automattic/yolo @Automattic/lego
