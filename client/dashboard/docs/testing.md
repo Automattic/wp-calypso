@@ -44,6 +44,8 @@ Use the `render()` function from `client/dashboard/test-utils.tsx`, which will r
 - It only reads a param or search value: pass the value in as a prop and test the component with `render()`.
 - It reads or writes route search, or builds links from route objects: build the real route tree and a test router, as `domains/dataviews/test/field-domain-name.test.tsx` does. Prefer this over mocking `app/router/*` modules, whose mocks break whenever the code reads a route object they don't define.
 
+Under `render()`, a component's first render sees the router as `idle`, so `useConsumeSearchParams` consumes on mount. A route's component mounts while its navigation is still `pending`, unless it suspends first. To get that in a test, seed the query cache so the component doesn't suspend, render a wrapper that shows it once `state.location.pathname` changes, then navigate with `await act( async () => router.history.push( … ) )`. A `usePersistentView` list suspends on the user's preferences, so seed `rawUserPreferencesQuery()` too: with only the request mocked, the list mounts after the navigation settles.
+
 ### Mocking Network Requests
 
 Use `nock` to intercept HTTP requests made by queries and mutations. All dashboard API calls go through `https://public-api.wordpress.com`.
@@ -98,6 +100,7 @@ nock( 'https://public-api.wordpress.com' )
 - Avoid `nock.delay()` — it leaves open handles that keep the test run from exiting.
 - Use `scope.isDone()` to assert the request was actually made.
 - Use `.query( true )` when you don't care about specific query string values.
+- To test a refetch, wait until the screen shows data from the first response, then replace the mock and call `invalidateQueries()`. While a query has no data, TanStack Query keeps the fetch that is in flight instead of sending a second request.
 
 #### Asserting the request body
 
