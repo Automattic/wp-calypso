@@ -1,14 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import { redirectIfCurrentUserCannot, redirectLoggedOut } from 'calypso/controller';
 import { siteSelection } from 'calypso/my-sites/controller';
 import { renderSiteRedesign } from '../controller';
 import registerSiteRedesign from '../index';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: jest.fn() } ) );
 jest.mock( '@automattic/calypso-router', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
@@ -34,7 +32,6 @@ describe( 'site redesign route', () => {
 	afterEach( () => jest.clearAllMocks() );
 
 	it( 'requires login, a selected site and both theme capabilities before rendering', () => {
-		jest.mocked( isEnabled ).mockReturnValue( true );
 		registerSiteRedesign();
 
 		const calls = jest.mocked( page ).mock.calls as unknown[][];
@@ -51,8 +48,7 @@ describe( 'site redesign route', () => {
 		expect( handlers.indexOf( renderSiteRedesign ) ).toBe( guards.length );
 	} );
 
-	it( 'registers the route whatever the flag says', () => {
-		jest.mocked( isEnabled ).mockReturnValue( false );
+	it( 'registers the route', () => {
 		registerSiteRedesign();
 		const calls = jest.mocked( page ).mock.calls as unknown[][];
 		expect( calls.some( ( [ path ] ) => path === '/site-redesign/:site' ) ).toBe( true );

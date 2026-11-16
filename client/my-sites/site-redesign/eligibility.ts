@@ -26,6 +26,7 @@ export function useRedesignEligibility() {
 		staleTime: 10 * 60 * 1000,
 		retry: false,
 		refetchOnWindowFocus: false,
+		meta: { persist: false },
 	} );
 	return canDesign && ! isError && data?.can_preview === true ? site : null;
 }
