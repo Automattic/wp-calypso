@@ -12,11 +12,6 @@ export const notificationsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'notifications',
-} );
-
-export const notificationsIndexRoute = createRoute( {
-	getParentRoute: () => notificationsRoute,
-	path: '/',
 } ).lazy( () =>
 	import( '../../notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {
@@ -25,13 +20,16 @@ export const notificationsIndexRoute = createRoute( {
 	)
 );
 
+export const notificationsIndexRoute = createRoute( {
+	getParentRoute: () => notificationsRoute,
+	path: '/',
+} );
+
 export const notificationRoute = createRoute( {
-	getParentRoute: () => notificationsIndexRoute,
+	getParentRoute: () => notificationsRoute,
 	path: '$noteId',
 } );
 
 export const createNotificationsRoutes = () => [
-	notificationsRoute.addChildren( [
-		notificationsIndexRoute.addChildren( [ notificationRoute ] ),
-	] ),
+	notificationsRoute.addChildren( [ notificationsIndexRoute, notificationRoute ] ),
 ];

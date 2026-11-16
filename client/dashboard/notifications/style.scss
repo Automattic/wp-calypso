@@ -57,7 +57,7 @@ $pane-height: calc(
 }
 
 .dashboard-notifications__tab-list {
-	padding: 0 $grid-unit-20 $grid-unit-15;
+	padding: $grid-unit-10 $grid-unit-20 0;
 }
 
 .dashboard-notifications__list-actions {
