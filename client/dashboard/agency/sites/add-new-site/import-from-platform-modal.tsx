@@ -21,10 +21,15 @@ import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import Notice from '../../../components/notice';
 import { SiteConfigurationForm } from '../../marketplace/purchases/site-configuration-modal';
+import './import-from-platform-modal.scss';
 
 /**
  * Follows one import after its dev site is created, until the server has
  * delivered it or given up.
+ *
+ * All three states stay mounted and only `hidden` flips: swapping the moving
+ * text for a notice once the session settles can crash a translated page
+ * (react/react#11538).
  */
 function ImportProgress( {
 	sessionId,
@@ -37,10 +42,44 @@ function ImportProgress( {
 		...staticSiteImportSessionQuery( sessionId ),
 		refetchInterval: pollStaticSiteImportSessionUntil( STATIC_SITE_IMPORT_TERMINAL_STATES ),
 	} );
+	const isFailed = isError || session?.state === 'failed';
+	const isFinished = ! isFailed && session?.state === 'finished';
+	const isMoving = ! isFailed && ! isFinished;
 
-	if ( isError || session?.state === 'failed' ) {
-		return (
-			<VStack spacing={ 4 }>
+	return (
+		<VStack spacing={ 4 }>
+			<VStack spacing={ 4 } className="a4a-import-from-platform__state" hidden={ ! isMoving }>
+				<Text>
+					<Spinner />
+					{ __( 'Moving your site…' ) }
+				</Text>
+				<Text variant="muted">
+					{ __(
+						'We are building it on your new development site. This usually takes a few minutes. You can close this: the site is in Sites, and we email you if the move fails.'
+					) }
+				</Text>
+			</VStack>
+			<VStack spacing={ 4 } className="a4a-import-from-platform__state" hidden={ ! isFinished }>
+				<Notice variant="success" title={ __( 'Your site is ready to review' ) }>
+					{ __(
+						'The import is on your development site. Review it, then launch it when the client is ready.'
+					) }
+				</Notice>
+				<ButtonStack justify="flex-end">
+					<Link to="/sites">{ __( 'Go to Sites' ) }</Link>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						href={ session?.site_url || undefined }
+						hidden={ ! session?.site_url }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Review the site' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+			<VStack spacing={ 4 } className="a4a-import-from-platform__state" hidden={ ! isFailed }>
 				<Notice variant="error" title={ __( 'We couldn’t move this site' ) }>
 					{ __(
 						'Your development site was created, but the import did not finish. Start again with the address to try once more.'
@@ -52,46 +91,6 @@ function ImportProgress( {
 					</Button>
 				</ButtonStack>
 			</VStack>
-		);
-	}
-
-	if ( session?.state === 'finished' ) {
-		return (
-			<VStack spacing={ 4 }>
-				<Notice variant="success" title={ __( 'Your site is ready to review' ) }>
-					{ __(
-						'The import is on your development site. Review it, then launch it when the client is ready.'
-					) }
-				</Notice>
-				<ButtonStack justify="flex-end">
-					<Link to="/sites">{ __( 'Go to Sites' ) }</Link>
-					{ session.site_url && (
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							href={ session.site_url }
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ __( 'Review the site' ) }
-						</Button>
-					) }
-				</ButtonStack>
-			</VStack>
-		);
-	}
-
-	return (
-		<VStack spacing={ 4 }>
-			<Text>
-				<Spinner />
-				{ __( 'Moving your site…' ) }
-			</Text>
-			<Text variant="muted">
-				{ __(
-					'We are building it on your new development site. This usually takes a few minutes. You can close this: the site is in Sites, and we email you if the move fails.'
-				) }
-			</Text>
 		</VStack>
 	);
 }

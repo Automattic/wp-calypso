@@ -3,6 +3,7 @@ import {
 	agencyDevLicensesQuery,
 	agencyPendingSitesQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useQuery } from '@tanstack/react-query';
@@ -15,10 +16,12 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, globe } from '@wordpress/icons';
+import { useState } from 'react';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
 import Column from '../../../sites/add-new-site/column';
 import MenuItem from '../../../sites/add-new-site/menu-item';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { crossoverLinkProps } from '../../crossover/store';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
 import { OWNER_ROLE } from '../../team/constants';
@@ -58,8 +61,15 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const hasPendingSites = availablePendingSites.length > 0;
 	const pressableOwnership = getPressableOwnershipType( agency );
 	const ownsPressableDirectly = pressableOwnership === 'regular';
-	// The server attaches an import only to a dev site its owner administers.
-	const canImportFromPlatform = agency?.user?.role === OWNER_ROLE;
+	// The server attaches an import only to a dev site its owner administers,
+	// and the flag matches the classic Migrations entry so both go dark together.
+	const canImportFromPlatform =
+		isEnabled( 'a4a/static-site-import' ) && agency?.user?.role === OWNER_ROLE;
+	// The import lands on a free development site, so it follows the same gates
+	// as creating one: an approved agency with a license left.
+	const isGated = useIsApprovalGated();
+	const [ isImportGateOpen, setIsImportGateOpen ] = useState( false );
+	const canCreateDevSite = !! devLicenses?.available && isAgencyApproved( agency );
 
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
@@ -120,8 +130,17 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 						description={ __(
 							'Move a Wix, Squarespace, or other site onto a free development site.'
 						) }
-						onClick={ () => selectAction( 'import-from-platform' ) }
+						disabled={ ! isGated && ! canCreateDevSite }
+						accessibleWhenDisabled
+						onClick={
+							isGated
+								? () => setIsImportGateOpen( true )
+								: () => selectAction( 'import-from-platform' )
+						}
 					/>
+				) }
+				{ isImportGateOpen && (
+					<ApprovalGate kind="dev-site" onClose={ () => setIsImportGateOpen( false ) } />
 				) }
 			</Column>
 			<Column title={ __( 'Add a new production site' ) }>

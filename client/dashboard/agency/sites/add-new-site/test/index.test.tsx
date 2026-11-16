@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 
+import { disable, enable } from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -63,7 +64,14 @@ async function renderMenu( options: Options = {} ) {
 
 const devSiteButton = () => screen.getByRole( 'button', { name: 'Create a site now' } );
 
+const OWNER = { user: { capabilities: [], role: 'a4a_administrator' as const } };
+const importButton = () => screen.queryByRole( 'button', { name: /From another platform/ } );
+
 describe( 'agency AddNewSite', () => {
+	beforeEach( () => {
+		enable( 'a4a/static-site-import' );
+	} );
+
 	test( 'renders every way to add a site', async () => {
 		await renderMenu();
 
@@ -76,21 +84,47 @@ describe( 'agency AddNewSite', () => {
 	} );
 
 	test( 'offers the agency owner moving a site from another platform', async () => {
-		const { onSelectAction } = await renderMenu( {
-			agency: { user: { capabilities: [], role: 'a4a_administrator' } },
-		} );
+		const { onSelectAction } = await renderMenu( { agency: OWNER } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /From another platform/ } ) );
 
 		expect( onSelectAction ).toHaveBeenCalledWith( 'import-from-platform' );
 	} );
 
-	test( 'keeps moving a site from another platform from team members', async () => {
+	test( 'hides moving a site from another platform from team members', async () => {
 		await renderMenu( { agency: { user: { capabilities: [], role: 'a4a_manager' } } } );
 
+		expect( importButton() ).not.toBeInTheDocument();
+	} );
+
+	// The same flag hides the classic Migrations entry, so both go dark together.
+	test( 'hides moving a site from another platform while the feature is off', async () => {
+		disable( 'a4a/static-site-import' );
+
+		await renderMenu( { agency: OWNER } );
+
+		expect( importButton() ).not.toBeInTheDocument();
+	} );
+
+	test( 'blocks moving a site from another platform once the licenses run out', async () => {
+		await renderMenu( { agency: OWNER, availableDevLicenses: 0 } );
+
+		expect( importButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	test( 'opens the approval gate instead of the import while the agency is in review', async () => {
+		const { onSelectAction } = await renderMenu( {
+			agency: { ...OWNER, approval_status: 'pending' },
+		} );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /From another platform/ } ) );
+
 		expect(
-			screen.queryByRole( 'button', { name: /From another platform/ } )
-		).not.toBeInTheDocument();
+			await screen.findByRole( 'dialog', {
+				name: 'Development sites unlock once you’re approved',
+			} )
+		).toBeVisible();
+		expect( onSelectAction ).not.toHaveBeenCalled();
 	} );
 
 	test( 'reports the action chosen for the entries that open a modal', async () => {

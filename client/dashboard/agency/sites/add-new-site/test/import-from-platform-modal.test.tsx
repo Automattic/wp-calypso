@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { getProvisioningSiteIds, untrackProvisioningSite } from '../../../sites/provisioning-sites';
 import ImportFromPlatformModal from '../import-from-platform-modal';
@@ -46,7 +47,7 @@ async function startImportAndCreateSite( session: { state: string; site_url: str
 	nock( API )
 		.get( `/wpcom/v2/static-site-import-session/${ SESSION_ID }` )
 		.reply( 200, { session_id: SESSION_ID, ...session } );
-	render( <ImportFromPlatformModal onClose={ jest.fn() } /> );
+	render( <ImportFromPlatformModal onClose={ vi.fn() } /> );
 	const user = userEvent.setup();
 
 	await user.type( screen.getByLabelText( 'Current site address' ), 'https://example.wixsite.com' );
@@ -67,7 +68,6 @@ async function startImportAndCreateSite( session: { state: string; site_url: str
 
 describe( '<ImportFromPlatformModal>', () => {
 	afterEach( () => {
-		nock.cleanAll();
 		getProvisioningSiteIds().forEach( untrackProvisioningSite );
 	} );
 
@@ -77,7 +77,10 @@ describe( '<ImportFromPlatformModal>', () => {
 			site_url: 'https://ramblingthoughts.wpcomstaging.com/',
 		} );
 
-		expect( await screen.findByText( 'Your site is ready to review' ) ).toBeVisible();
+		// The ready state is mounted from the start and only unhidden once the session settles.
+		await waitFor( () =>
+			expect( screen.getByText( 'Your site is ready to review' ) ).toBeVisible()
+		);
 		expect( screen.getByRole( 'link', { name: 'Review the site' } ) ).toHaveAttribute(
 			'href',
 			'https://ramblingthoughts.wpcomstaging.com/'
