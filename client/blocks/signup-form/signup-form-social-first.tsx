@@ -261,6 +261,7 @@ const SignupFormSocialFirst = ( {
 
 	const emailScreen = (
 		<div className="signup-form-social-first-email">
+			{ emailTrackingConsentCheckbox }
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
 				blackboxSuspended={ currentStep !== 'email' }
@@ -273,9 +274,7 @@ const SignupFormSocialFirst = ( {
 						</Button>
 					)
 				}
-			>
-				{ emailTrackingConsentCheckbox }
-			</PasswordlessSignupForm>
+			/>
 			{ backButtonInFooter ? (
 				<Button
 					onClick={ () => setCurrentStep( 'initial' ) }

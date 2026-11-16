@@ -3,7 +3,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import {
-	getSavedEmailTrackingConsent,
+	forgetSavedEmailTrackingConsent,
 	setEmailTrackingConsent,
 	shouldAskEmailTrackingConsent,
 } from 'calypso/lib/signup/email-tracking-consent';
@@ -14,8 +14,7 @@ import {
  */
 export function useEmailTrackingConsent() {
 	const isAsked = shouldAskEmailTrackingConsent( useTranslate().localeSlug );
-	// A social login that came back to this form keeps the answer it left with.
-	const [ hasAgreed, setHasAgreed ] = useState( getSavedEmailTrackingConsent );
+	const [ hasAgreed, setHasAgreedState ] = useState( false );
 
 	useEffect( () => {
 		if ( ! isAsked ) {
@@ -24,6 +23,12 @@ export function useEmailTrackingConsent() {
 		setEmailTrackingConsent( hasAgreed );
 		return () => setEmailTrackingConsent( null );
 	}, [ isAsked, hasAgreed ] );
+
+	const setHasAgreed = ( agreed: boolean ) => {
+		// A changed answer replaces the one saved for a social login.
+		forgetSavedEmailTrackingConsent();
+		setHasAgreedState( agreed );
+	};
 
 	return { isAsked, hasAgreed, setHasAgreed };
 }
@@ -39,7 +44,6 @@ export function EmailTrackingConsent( { checked, onChange }: EmailTrackingConsen
 	return (
 		<CheckboxControl
 			className="signup-form__email-tracking-consent"
-			__nextHasNoMarginBottom
 			label={ __(
 				"[Optional] You agree that WordPress can use pixels and similar technologies to understand if you're opening our communications and what content you engage with."
 			) }

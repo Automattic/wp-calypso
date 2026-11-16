@@ -12,10 +12,11 @@ import {
 import { EmailTrackingConsent, useEmailTrackingConsent } from '../email-tracking-consent';
 
 let mockLocale = 'en';
+let mockIsFlagOn = true;
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => null;
-	config.isEnabled = ( feature: string ) => feature === 'me/email-tracking-consent';
+	config.isEnabled = ( feature: string ) => mockIsFlagOn && feature === 'me/email-tracking-consent';
 	return config;
 } );
 
@@ -31,6 +32,7 @@ const Form = () => {
 describe( 'Email tracking consent at signup', () => {
 	afterEach( () => {
 		jest.restoreAllMocks();
+		mockIsFlagOn = true;
 		window.sessionStorage.clear();
 	} );
 
@@ -41,6 +43,15 @@ describe( 'Email tracking consent at signup', () => {
 		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
 		expect( getEmailTrackingConsentPayload() ).toEqual( {} );
 		expect( getEmailTrackingConsentPayloadForSocialLogin() ).toEqual( {} );
+	} );
+
+	test( 'is not asked while the feature is off', () => {
+		mockIsFlagOn = false;
+		mockLocale = 'fr';
+		render( <Form /> );
+
+		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( getEmailTrackingConsentPayload() ).toEqual( {} );
 	} );
 
 	test.each( [ 'fr', 'it', 'fr-ca' ] )( 'is asked unticked on a %s page', ( locale ) => {
@@ -92,7 +103,7 @@ describe( 'Email tracking consent at signup', () => {
 		expect( getEmailTrackingConsentPayloadForSocialLogin() ).toEqual( {} );
 	} );
 
-	test( 'keeps the answer when a social login returns to the form', async () => {
+	test( 'sends the saved answer when a social login returns to the form, without ticking the box', async () => {
 		mockLocale = 'fr';
 		const { unmount } = render( <Form /> );
 		await userEvent.click( screen.getByRole( 'checkbox' ) );
@@ -101,7 +112,37 @@ describe( 'Email tracking consent at signup', () => {
 
 		render( <Form /> );
 
-		expect( screen.getByRole( 'checkbox' ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox' ) ).not.toBeChecked();
+		expect( getEmailTrackingConsentPayloadForSocialLogin() ).toEqual( { email_tracking: true } );
+		expect( getEmailTrackingConsentPayload() ).toEqual( { email_tracking: false } );
+	} );
+
+	test( 'forgets the saved answer when the box is unticked after a social login was started', async () => {
+		mockLocale = 'fr';
+		const { unmount } = render( <Form /> );
+		await userEvent.click( screen.getByRole( 'checkbox' ) );
+		saveEmailTrackingConsentForSocialLogin();
+		await userEvent.click( screen.getByRole( 'checkbox' ) );
+		unmount();
+
+		render( <Form /> );
+
+		expect( screen.getByRole( 'checkbox' ) ).not.toBeChecked();
+		expect( getEmailTrackingConsentPayloadForSocialLogin() ).toEqual( { email_tracking: false } );
+	} );
+
+	test( 'drops a saved answer when a social login starts on a page that does not ask', async () => {
+		mockLocale = 'fr';
+		const { unmount } = render( <Form /> );
+		await userEvent.click( screen.getByRole( 'checkbox' ) );
+		saveEmailTrackingConsentForSocialLogin();
+		unmount();
+
+		mockLocale = 'en';
+		render( <Form /> );
+		saveEmailTrackingConsentForSocialLogin();
+
+		expect( getEmailTrackingConsentPayloadForSocialLogin() ).toEqual( {} );
 	} );
 
 	test( 'starts unticked again after a plain reload', async () => {

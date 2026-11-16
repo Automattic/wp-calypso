@@ -15,10 +15,6 @@ export function shouldAskEmailTrackingConsent( locale: string | null | undefined
 	);
 }
 
-export function setEmailTrackingConsent( agreed: boolean | null ): void {
-	currentAnswer = agreed;
-}
-
 function readSavedAnswer(): boolean | null {
 	try {
 		const answer = window.sessionStorage.getItem( STORAGE_KEY );
@@ -28,21 +24,22 @@ function readSavedAnswer(): boolean | null {
 	}
 }
 
+export function setEmailTrackingConsent( agreed: boolean | null ): void {
+	currentAnswer = agreed;
+}
+
 /**
  * Saves the answer before a social login leaves the page. The login can return to another page,
- * which has no form to ask again.
+ * which has no form to ask again. A page that does not ask clears an answer saved earlier.
  */
 export function saveEmailTrackingConsentForSocialLogin(): void {
 	if ( currentAnswer === null ) {
+		forgetSavedEmailTrackingConsent();
 		return;
 	}
 	try {
 		window.sessionStorage.setItem( STORAGE_KEY, String( currentAnswer ) );
 	} catch {}
-}
-
-export function getSavedEmailTrackingConsent(): boolean {
-	return readSavedAnswer() === true;
 }
 
 /**
@@ -53,15 +50,15 @@ export function getEmailTrackingConsentPayload(): { email_tracking?: boolean } {
 }
 
 /**
- * The answer to send with a social signup: the open form's, or the one saved before the social
- * login left the page.
+ * The answer to send with a social signup: the one saved when the social button was clicked, or
+ * the open form's.
  */
 export function getEmailTrackingConsentPayloadForSocialLogin(): { email_tracking?: boolean } {
-	const answer = currentAnswer ?? readSavedAnswer();
+	const answer = readSavedAnswer() ?? currentAnswer;
 	return answer === null ? {} : { email_tracking: answer };
 }
 
-// Called once the social signup went through, so the saved answer is not reused.
+// Called once the social signup went through or the answer changed, so an old answer is not reused.
 export function forgetSavedEmailTrackingConsent(): void {
 	try {
 		window.sessionStorage.removeItem( STORAGE_KEY );

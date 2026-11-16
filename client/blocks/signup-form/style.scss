@@ -412,12 +412,12 @@ body.is-section-accept-invite {
 }
 
 .signup-form__email-tracking-consent {
-	margin-bottom: 24px;
-	text-align: left;
+	margin-block-end: 24px;
+	text-align: start;
 
 	.components-checkbox-control__label {
-		color: var(--studio-gray-60, #50575e);
-		font-size: 0.875rem;
+		color: var( --studio-gray-60 );
+		font-size: $font-body-small;
 		line-height: 20px;
 	}
 }
