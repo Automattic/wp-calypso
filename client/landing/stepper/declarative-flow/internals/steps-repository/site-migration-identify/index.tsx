@@ -268,11 +268,15 @@ export const Analyzer: FC< Props > = ( {
 						if ( url && isDestinationUrl( url ) ) {
 							return onSiteURLChange( url );
 						}
-						if ( ! isReprintFlow || ! url ) {
+						if ( ! isReprintFlow ) {
 							return onSkip();
 						}
-						// The platform list hands this address back in `from`, so save it as the entered one.
+						// The platform list hands this address back in `from`, so save it as the entered one,
+						// including an emptied field.
 						set( 'migrationSourceUrl', url );
+						if ( ! url ) {
+							return onSkip();
+						}
 						onSkip( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );
 					} }
 					placeholder={ translate( 'your-existing-site.com' ) }

@@ -626,6 +626,25 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( getInput() ).toHaveValue( 'second.example.com' );
 		} );
 
+		it( 'stays empty after clearing the field and choosing WordPress from the platform list', async () => {
+			const submit = jest.fn();
+			mockFlowState.set( 'migrationSourceUrl', 'first.example.com' );
+			const { unmount } = render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://first.example.com' }
+			);
+			expect( getInput() ).toHaveValue( 'first.example.com' );
+
+			await user.clear( getInput() );
+			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
+			expect( submit ).toHaveBeenLastCalledWith( { action: 'skip_platform_identification' } );
+			unmount();
+
+			// Selecting WordPress in the list returns here without an address in `from`.
+			render( { navigation: { submit } }, { initialEntry: '/some-path?manualPlatform=wordpress' } );
+			expect( getInput() ).toHaveValue( '' );
+		} );
+
 		it( 'edits the supplied address and waits for platform and hosting checks before continuing', async () => {
 			const submit = jest.fn();
 			render(
