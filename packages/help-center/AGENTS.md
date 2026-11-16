@@ -53,7 +53,7 @@ Changes in `packages/help-center/src/` are consumed by `apps/help-center/` via i
 
 ```bash
 # Run from repo root
-yarn test-packages:vitest packages/help-center
+yarn test-packages packages/help-center
 ```
 
 Test files live in `src/test/` and alongside source files.
