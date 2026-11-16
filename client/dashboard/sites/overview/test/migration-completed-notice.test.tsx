@@ -15,6 +15,11 @@ import {
 } from '../migration-completed-notice';
 import type { Site } from '@automattic/api-core';
 
+let mockIsBackport = false;
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
+	isDashboardBackport: () => mockIsBackport,
+} ) );
+
 const siteId = 123;
 const HOUR_IN_SECONDS = 60 * 60;
 const now = Math.floor( Date.now() / 1000 );
@@ -66,6 +71,7 @@ function Harness( { site }: { site: Site } ) {
 
 beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 afterEach( () => {
+	mockIsBackport = false;
 	config.disable( 'migration/reprint-flow' );
 	queryClient.clear();
 	window._sva = undefined;
@@ -83,18 +89,25 @@ test( 'confirms a migration that just finished, with a link to connect its domai
 	expect( link.getAttribute( 'href' ) ).toContain( 'step=transfer-or-connect' );
 } );
 
-test( 'links to the domain settings once the domain is on the site', async () => {
-	mockPreferences();
-	mockDomains( [ { domain: 'example.com', blog_id: siteId } ] );
-	render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
+test.each( [
+	[ 'the dashboard', false, '/domains/example.com' ],
+	[ 'the Calypso backport', true, '/domains/manage/example.com/edit/example.wpcomstaging.com' ],
+] )(
+	'links to the domain settings in %s once the domain is on the site',
+	async ( _label, isBackport, href ) => {
+		mockIsBackport = isBackport;
+		mockPreferences();
+		mockDomains( [ { domain: 'example.com', blog_id: siteId } ] );
+		render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
 
-	await waitFor( () =>
-		expect( screen.getByRole( 'link', { name: 'Connect example.com' } ) ).toHaveAttribute(
-			'href',
-			'/domains/example.com'
-		)
-	);
-} );
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: 'Connect example.com' } ) ).toHaveAttribute(
+				'href',
+				href
+			)
+		);
+	}
+);
 
 test( 'confirms a migration that just finished even when its domain is already primary', async () => {
 	mockPreferences();
