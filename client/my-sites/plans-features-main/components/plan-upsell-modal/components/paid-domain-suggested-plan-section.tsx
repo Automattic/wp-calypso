@@ -20,10 +20,11 @@ export default function PaidDomainSuggestedPlanSection( props: {
 	paidDomainName?: string;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	isBusy: boolean;
+	hideFreeDomainText?: boolean;
 } ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
-	const { paidDomainName, onPlanSelected, isBusy } = props;
+	const { paidDomainName, onPlanSelected, isBusy, hideFreeDomainText } = props;
 
 	const previousCopy = translate( 'Free for one year, includes Premium themes' );
 	const updatedCopy = translate( 'Free for one year, includes all Premium themes' );
@@ -36,7 +37,9 @@ export default function PaidDomainSuggestedPlanSection( props: {
 			{ paidDomainName && (
 				<DomainName>
 					<div>{ paidDomainName }</div>
-					<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
+					{ ! hideFreeDomainText && (
+						<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
+					) }
 				</DomainName>
 			) }
 			<PlanUpsellButton
@@ -47,9 +50,11 @@ export default function PaidDomainSuggestedPlanSection( props: {
 			{ paidDomainName && (
 				<DomainName>
 					<div>{ paidDomainName }</div>
-					<FreeDomainText>
-						{ hasTranslationForUpdatedCopy ? updatedCopy : previousCopy }
-					</FreeDomainText>
+					{ ! hideFreeDomainText && (
+						<FreeDomainText>
+							{ hasTranslationForUpdatedCopy ? updatedCopy : previousCopy }
+						</FreeDomainText>
+					) }
 				</DomainName>
 			) }
 			<PlanUpsellButton

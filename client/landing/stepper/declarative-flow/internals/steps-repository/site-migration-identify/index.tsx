@@ -18,6 +18,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
+import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
@@ -57,6 +58,7 @@ export const Analyzer: FC< Props > = ( {
 	destinationSiteUrls = [],
 } ) => {
 	const translate = useTranslate();
+	const { get, set } = useFlowState< AnyFlowInitialize >();
 	const enteredURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
 	const isDestinationUrl = ( sourceUrl: string ) =>
 		isReprintFlow && isSiteAddress( sourceUrl, destinationSiteUrls );
@@ -251,12 +253,14 @@ export const Analyzer: FC< Props > = ( {
 					) }
 				<CaptureInput
 					onInputEnter={ ( url ) => {
+						set( 'migrationSourceUrl', url );
 						if ( isReprintFlow && url === siteURL && ! isDestinationSite ) {
 							refetch();
 						} else {
 							onSiteURLChange( url );
 						}
 					} }
+					initialUrl={ get( 'migrationSourceUrl' ) }
 					onInputChange={ () => onSiteURLChange( '' ) }
 					hasError={ ! isReprintFlow && hasError }
 					isBusy={ isReprintFlow && isScanning }
@@ -265,7 +269,13 @@ export const Analyzer: FC< Props > = ( {
 						if ( url && isDestinationUrl( url ) ) {
 							return onSiteURLChange( url );
 						}
-						if ( ! isReprintFlow || ! url ) {
+						if ( ! isReprintFlow ) {
+							return onSkip();
+						}
+						// The platform list hands this address back in `from`, so save it as the entered one,
+						// including an emptied field.
+						set( 'migrationSourceUrl', url );
+						if ( ! url ) {
 							return onSkip();
 						}
 						onSkip( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );

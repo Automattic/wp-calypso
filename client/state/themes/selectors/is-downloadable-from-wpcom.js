@@ -11,5 +11,11 @@ import 'calypso/state/themes/init';
  */
 export function isDownloadableFromWpcom( state, themeId ) {
 	const downloadUri = getTheme( state, 'wpcom', themeId )?.download ?? '';
-	return downloadUri.includes( 'wordpress.com' );
+	let hostname;
+	try {
+		hostname = new URL( downloadUri ).hostname;
+	} catch {
+		return false;
+	}
+	return hostname === 'wordpress.com' || hostname.endsWith( '.wordpress.com' );
 }

@@ -23,6 +23,10 @@ let EmbedContainer;
 let loadScript;
 let loadjQueryDependentScript;
 
+// Each test imports a fresh copy of the component, so load it once while the file is collected,
+// which has no timeout: its first load can outlast the hook's timeout on a busy CI agent.
+await import( '../' );
+
 beforeEach( async () => {
 	// `loadAndRun` memoises provider scripts in a module-level cache, so without a fresh registry
 	// only the first test to render a given embed sees its script load.

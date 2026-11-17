@@ -44,6 +44,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/education-student-validation' ),
 	},
 
+	STUDENT_PLAN_ELIGIBILITY: {
+		slug: 'student-plan-eligibility',
+		asyncComponent: () => import( './steps-repository/student-plan-eligibility' ),
+	},
+
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	NEWSLETTER_SETUP: {
@@ -288,6 +293,14 @@ export const STEPS = {
 		asyncComponent: () =>
 			import(
 				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-reading'
+			),
+	},
+
+	STATIC_SITE_IMPORT_PROGRESS: {
+		slug: 'static-site-import-progress',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import-progress' */ './steps-repository/static-site-import-progress'
 			),
 	},
 

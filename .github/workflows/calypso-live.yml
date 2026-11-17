@@ -4,6 +4,10 @@ on:
   pull_request:
     types: ['opened']
 
+permissions:
+  pull-requests: write
+  statuses: read
+
 jobs:
   calypso-live:
     name: 'Links to a calypso.live instance for your branch'

@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
+	STATIC_SITE_IMPORT_PREVIEW_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -22,6 +23,7 @@ import {
 	WRITE_ON_FLOW,
 	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
+	STUDENT_FLOW,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
@@ -37,6 +39,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ EDUCATION_FLOW ]: () =>
 		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
+
+	[ STUDENT_FLOW ]: () =>
+		import( /* webpackChunkName: "student-flow" */ './flows/student/student' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
@@ -142,6 +147,10 @@ const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< an
 				[ STATIC_SITE_IMPORT_FLOW ]: () =>
 					import(
 						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
+					),
+				[ STATIC_SITE_IMPORT_PREVIEW_FLOW ]: () =>
+					import(
+						/* webpackChunkName: "static-site-import-preview-flow" */ './flows/static-site-import-preview-flow/static-site-import-preview-flow'
 					),
 			}
 		: {};

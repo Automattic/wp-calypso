@@ -25,8 +25,6 @@ describe( 'BrowserNotificationCard', () => {
 	};
 
 	beforeEach( () => {
-		window.scrollTo = vi.fn();
-
 		Object.defineProperty( window, 'navigator', {
 			value: {
 				serviceWorker: {

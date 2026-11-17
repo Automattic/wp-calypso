@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import config, { optionalConfig } from '../config-api';
 import { isProvidedByWpAdmin, isProvidedToWidget } from '../load-wp-components-style';
 
-jest.mock( '../config-api', () => ( {
+vi.mock( '../config-api', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	optionalConfig: jest.fn(),
+	default: vi.fn(),
+	optionalConfig: vi.fn(),
 } ) );
 
 const SITE_ID = 123;

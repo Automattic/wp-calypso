@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import useVisitsQuery from '../../hooks/use-visits-query';
 import {
 	getDateRange,
@@ -17,17 +18,17 @@ let mockChartFails = false;
 let mockChartLoading = false;
 let mockChartProps = null;
 
-jest.mock( '../../hooks/use-visits-query' );
-jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
-const mockStatsLink = jest.fn( ( url ) => url );
-jest.mock( '../use-stats-link', () => () => mockStatsLink );
-jest.mock( '../record-widget-event', () => ( {
+vi.mock( '../../hooks/use-visits-query' );
+vi.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => ( { default: () => '#3858e9' } ) );
+const mockStatsLink = vi.fn( ( url ) => url );
+vi.mock( '../use-stats-link', () => ( { default: () => mockStatsLink } ) );
+vi.mock( '../record-widget-event', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	recordWidgetEventThenFollow: jest.fn( () => jest.fn() ),
-	recordWidgetEventThenOpen: jest.fn(),
+	default: vi.fn(),
+	recordWidgetEventThenFollow: vi.fn( () => vi.fn() ),
+	recordWidgetEventThenOpen: vi.fn(),
 } ) );
-jest.mock( '../overview-chart', () => ( {
+vi.mock( '../overview-chart', () => ( {
 	__esModule: true,
 	default: ( props ) => {
 		mockChartProps = props;
@@ -68,14 +69,14 @@ function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS, startDate = '
 const moreStats = () => screen.queryByRole( 'link', { name: 'More stats' } );
 
 const mockViewport = ( { reducedMotion, mobile } ) => {
-	window.matchMedia = jest.fn( ( query ) => ( {
+	window.matchMedia = vi.fn( ( query ) => ( {
 		matches: query.includes( 'reduced-motion' ) ? reducedMotion : mobile,
 	} ) );
 };
 
 describe( 'MiniChart', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockChartFails = false;
 		mockChartLoading = false;
 		mockChartProps = null;
@@ -83,7 +84,7 @@ describe( 'MiniChart', () => {
 		// Reduced motion lands the totals on their value without counting up; the viewport
 		// is a desktop's unless a test says otherwise.
 		mockViewport( { reducedMotion: true, mobile: false } );
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
@@ -142,7 +143,7 @@ describe( 'MiniChart', () => {
 	it( 'opens "More stats" on the days the chart shows', async () => {
 		// Each tracked link gets its own handler, so the click can be traced to this one.
 		recordWidgetEventThenFollow.mockImplementation( () =>
-			jest.fn( ( event ) => event.preventDefault() )
+			vi.fn( ( event ) => event.preventDefault() )
 		);
 		render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
 		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();

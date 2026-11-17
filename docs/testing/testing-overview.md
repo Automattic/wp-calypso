@@ -38,28 +38,33 @@ Tests can be run in 3 different modes:
 
 They are executed on every push on continuous integration (TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
+The client tests are moving from Jest to Vitest one directory at a time. The directories listed in `test/client/vitest-directories.js` run on Vitest, and `yarn run test-client` skips them:
+
+```bash
+> # run the client tests that have moved to Vitest; arguments are Vitest's, for example a path
+> yarn run test-client:vitest [ path ]
+> # watch them
+> yarn run test-client:vitest:watch [ path ]
+```
+
+To move a directory, add it to that list, run `node test/client/jest-to-vitest-codemod.mjs` to rewrite its tests for Vitest, and fix what it reports. A test that can't move yet stays on Jest through the list's `onJest`. Tests in the listed directories can't use the `jest` global: import `vi` from `vitest` instead.
+
 Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
 
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
 
 ## Package tests
 
-This test configuration contains unit tests for the packages in the `packages` top level folder. Packages are moving from Jest to Vitest one batch at a time: a package with a `vitest.config.*` runs on Vitest, and one with a `jest.config.js` runs on Jest. Test files go in a `test` subfolder, as in `client`.
+This test configuration contains unit tests for the packages in the `packages` top level folder. They run on Vitest: each package with tests has a `vitest.config.*`. Test files go in a `test` subfolder, as in `client`.
 
 ```bash
-> # run every package's tests, on Jest and then on Vitest
-> yarn run test-packages
-> # run the packages on Jest; arguments are Jest's
-> yarn run test-packages:jest [ path ]
-> # run the packages on Vitest; arguments are Vitest's, for example a path
-> yarn run test-packages:vitest [ path ]
-> # watch the packages on Vitest
-> yarn run test-packages:vitest --watch [ path ]
-> # run one package's tests on whichever runner it uses, if it has a `test` script
+> # run every package's tests; arguments are Vitest's, for example a path
+> yarn run test-packages [ path ]
+> # watch the packages' tests
+> yarn run test-packages:watch [ path ]
+> # run one package's tests, if it has a `test` script
 > yarn workspace <package name> test
 ```
-
-`yarn run test-packages` passes any arguments to Jest only, so `yarn run test-packages:watch` watches only the Jest packages.
 
 ## Integration tests
 

@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
-import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser, getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import ScanningStep from '../scanning';
@@ -15,6 +14,8 @@ import type { OnInputEnter, OnInputChange } from './types';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
+
+const WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
 interface Props {
 	hasError?: boolean;
@@ -139,12 +140,20 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	const recordMigrationStartingPointEvent = () => {
 		if ( currentUser && currentUser.ID && ! isStartingPointEventTriggeredRef.current ) {
 			isStartingPointEventTriggeredRef.current = true;
-			triggerMigrationStartingEvent( currentUser );
+			const registrationDate = Date.parse( currentUser.date );
+			recordTracksEvent( 'calypso_migration_starting_point', {
+				is_new_user: !! registrationDate && Date.now() - registrationDate <= WEEK_IN_MILLISECONDS,
+				migration_flow: 'onboarding-flow',
+			} );
 		}
 	};
 
 	const onDontHaveSiteAddressClick = () => {
-		onImportListClick ? onImportListClick() : goToStep( 'list' );
+		if ( onImportListClick ) {
+			onImportListClick();
+		} else {
+			goToStep( 'list' );
+		}
 	};
 
 	/**
@@ -161,7 +170,11 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 			{ showCapture && (
 				<Capture
 					onInputEnter={ ( url ) => {
-						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
+						if ( onValidFormSubmit ) {
+							onValidFormSubmit( { url } );
+						} else {
+							setUrl( url );
+						}
 					} }
 					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
 					hasError={ !! analyzerError }

@@ -4,6 +4,7 @@ import { queryClient } from './query-client';
 import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
+	'account-email-recovery-snoozed-until': 0,
 	recentSites: [],
 	'hosting-dashboard-color-scheme': 'light',
 	'hosting-dashboard-dark-mode-announcement-dismissed': '',
@@ -38,8 +39,6 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-referrals-bank-details-success-notice-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
 	'a4a-feedback': {},
-	'notifications-layout-style': 'simplified',
-	'notifications-view-settings-seen': false,
 	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,

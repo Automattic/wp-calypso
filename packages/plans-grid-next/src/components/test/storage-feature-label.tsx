@@ -1,39 +1,40 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Default mock implementations
- */
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	createSelector: jest.fn(),
-	register: jest.fn(),
-	registerStore: jest.fn(),
-} ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	AddOns: {
-		useStorageAddOns: jest.fn(),
-	},
-	Purchases: {
-		useSitePurchasesByProductSlug: jest.fn(),
-	},
-	WpcomPlansUI: {
-		store: null,
-	},
-} ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-jest.mock( '../../hooks/use-is-large-currency', () => jest.fn() );
-
 import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { AddOns, Purchases } from '@automattic/data-stores';
 import { render } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import useIsLargeCurrency from '../../hooks/use-is-large-currency';
 import StorageFeatureLabel from '../shared/storage/components/storage-feature-label';
+
+/**
+ * Default mock implementations
+ */
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	createSelector: vi.fn(),
+	register: vi.fn(),
+	registerStore: vi.fn(),
+} ) );
+vi.mock( '@automattic/data-stores', () => ( {
+	AddOns: {
+		useStorageAddOns: vi.fn(),
+	},
+	Purchases: {
+		useSitePurchasesByProductSlug: vi.fn(),
+	},
+	WpcomPlansUI: {
+		store: null,
+	},
+} ) );
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+vi.mock( '../../hooks/use-is-large-currency', () => ( { default: vi.fn() } ) );
 
 describe( 'StorageFeatureLabel', () => {
 	const selectedStorageAddOn = {
@@ -45,15 +46,15 @@ describe( 'StorageFeatureLabel', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( AddOns.useStorageAddOns as jest.Mock ).mockReturnValue( [ selectedStorageAddOn ] );
-		( Purchases.useSitePurchasesByProductSlug as jest.Mock ).mockReturnValue( null );
-		( useSelect as jest.Mock ).mockReturnValue( selectedStorageAddOn.addOnSlug );
-		( useIsLargeCurrency as jest.Mock ).mockReturnValue( false );
+		vi.clearAllMocks();
+		( AddOns.useStorageAddOns as Mock ).mockReturnValue( [ selectedStorageAddOn ] );
+		( Purchases.useSitePurchasesByProductSlug as Mock ).mockReturnValue( null );
+		( useSelect as Mock ).mockReturnValue( selectedStorageAddOn.addOnSlug );
+		( useIsLargeCurrency as Mock ).mockReturnValue( false );
 	} );
 
 	const mockPlansGridContext = ( showFeatureCheckmarks: boolean ) => {
-		( usePlansGridContext as jest.Mock ).mockReturnValue( {
+		( usePlansGridContext as Mock ).mockReturnValue( {
 			gridPlansIndex: {
 				[ PLAN_BUSINESS ]: {
 					pricing: {

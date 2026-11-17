@@ -316,7 +316,7 @@ describe( 'Static site import flow', () => {
 			} );
 
 			expect( lastExit() ).toMatchObject( {
-				path: expect.stringMatching( new RegExp( `/sites/${ SITE.siteSlug }$` ) ),
+				path: expect.stringMatching( /\/sites\/destination\.example\.com$/ ),
 				query: { ...SOURCE, importSessionId: 'abc123', ref: 'static-site-import' },
 			} );
 		} );

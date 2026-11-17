@@ -38,6 +38,7 @@ export interface A4AFeedbackEntry {
 }
 
 export interface UserPreferences {
+	'account-email-recovery-snoozed-until'?: number;
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
@@ -73,8 +74,6 @@ export interface UserPreferences {
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
 	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
-	'notifications-layout-style'?: 'detailed' | 'simplified';
-	'notifications-view-settings-seen'?: boolean;
 	'notifications-subscriber-alerts-enabled'?: boolean;
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;

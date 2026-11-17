@@ -355,10 +355,70 @@
 	}
 }
 
-// The body's reset pins every element to its parent's font size, which outranks the
-// size the Text component would set.
-.wpnc__body-content .wpnc__user-site {
-	font-size: $font-size-small;
+// A person in a list of likes or subscribers: their name over their site and
+// Subscribe. The body's reset pins every element to its parent's font size, which
+// outranks the size the Text component would set.
+.wpnc__body-content .wpnc__user-name {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+}
+
+// Two lines tall even without a site, so every row in the list is the same height.
+.wpnc__body-content .wpnc__user-text {
+	min-height: 40px;
+}
+
+.wpnc__body-content .wpnc__user-meta {
+	// The token isn't remapped for the dark theme, so keep its gray there.
+	--wpnc-user-meta-color: var(--wpds-color-foreground-content-neutral-weak, #707070);
+	color: var(--wpnc-user-meta-color);
+	font-size: $default-font-size;
+	line-height: 20px;
+
+	@include ui-mixins.when-dark-theme {
+		--wpnc-user-meta-color: var(--wp-components-color-gray-700, #{$gray-700});
+	}
+
+	* {
+		line-height: inherit;
+	}
+
+	.wpnc__user-description-separator {
+		color: inherit;
+	}
+
+	a:hover .wpnc__user-site {
+		text-decoration: underline;
+	}
+}
+
+// A quiet text action beside a person's site, rather than a button that competes
+// with the names in the list.
+.wpnc__follow-link {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	// A 24px tap target that takes no more room than its 20px line.
+	margin-block: -2px;
+	padding: 2px 0;
+	border: 0;
+	background: none;
+	color: var(--wp-admin-theme-color);
+	font: inherit;
+	cursor: pointer;
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color);
+	}
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 /**
@@ -441,10 +501,28 @@
 .wpnc__actions-menu-dropdown {
 	flex-shrink: 0;
 
-	// The same weight as Like and Approve beside it.
+	// The same weight and gray as Like beside it, with a light border. Hover darkens
+	// the text and border rather than filling the button.
 	.wpnc__actions-menu-toggle {
+		--wp-ui-button-foreground-color: var(--wpnc-action__color, #{$gray-700});
+		--wp-ui-button-foreground-color-active: var(--wpnc-action__color-hover, #{$gray-900});
+		--wp-ui-button-border-color: var(--wp-components-color-gray-300, #{$gray-300});
+		--wp-ui-button-border-color-active: var(--wp-components-color-gray-400, #{$gray-400});
+		--wp-ui-button-background-color-active: transparent;
 		border-radius: var(--wpds-border-radius-md, 4px);
 		font-weight: 500;
+
+		@media not (prefers-reduced-motion) {
+			transition:
+				color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease),
+				border-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+		}
+
+		// The Button rings any focus but a press, so a click flashes the ring between
+		// mouseup and the menu taking focus. Keep it for the keyboard.
+		&:focus:not(:focus-visible) {
+			outline: none;
+		}
 	}
 }
 
@@ -541,7 +619,7 @@
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
 		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
-		--wpnc-action__color-hover: var( --wp-components-color-gray-100, #f0f0f1 );
+		--wpnc-action__color-hover: var( --dashboard__text-color, #f0f0f1 );
 		// The dark theme maps the neutral tokens but not a disabled solid button's,
 		// which would stay light; map them onto its grays for the reply send button.
 		--wpds-color-background-interactive-neutral-strong-disabled: var( --wp-components-color-gray-200, #3a3a3a );

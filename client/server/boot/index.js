@@ -40,7 +40,11 @@ export default function setup() {
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		require( 'calypso/server/bundler' )( app );
+		if ( process.env.CALYPSO_BUNDLER === 'vite' ) {
+			require( 'calypso/server/bundler/vite' )( app );
+		} else {
+			require( 'calypso/server/bundler' )( app );
+		}
 
 		// Production servers forward a request header with the user's country code. To ensure a
 		// consistent experience, we simulate this in local development with a custom middleware.

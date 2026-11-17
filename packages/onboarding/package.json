@@ -95,6 +95,8 @@
 		"sass-loader": "^16.0.8",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	}
 }

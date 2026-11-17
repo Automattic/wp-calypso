@@ -15,7 +15,6 @@ import { useMemo } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { Card, CardBody } from '../../components/card';
 import {
 	isCaDomain,
 	mapWhoisExtraToCaContactExtra,
@@ -120,12 +119,14 @@ export default function DomainContactInfo() {
 		} )
 	);
 
-	const isSubmitting =
-		validateMutation.isPending ||
+	// The contact form validates in the background as soon as it loads, so the privacy
+	// toggles ignore validation and only wait for saves.
+	const isSaving =
 		updateMutation.isPending ||
 		savePrivacyMutation.isPending ||
 		disclosePrivacyMutation.isPending ||
 		redactPrivacyMutation.isPending;
+	const isSubmitting = validateMutation.isPending || isSaving;
 
 	const handleSubmit = ( normalizedFormData: DomainContactDetails ) => {
 		validateMutation.mutate( normalizedFormData, {
@@ -167,16 +168,12 @@ export default function DomainContactInfo() {
 					! domain.is_hundred_year_domain && (
 						<VStack spacing={ 4 }>
 							<SectionHeader title={ __( 'Privacy protection' ) } level={ 3 } />
-							<Card>
-								<CardBody>
-									<ContactFormPrivacy
-										domainName={ domainName }
-										isSubmitting={ isSubmitting }
-										onTogglePrivacyProtection={ handleTogglePrivacyProtection }
-										onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
-									/>
-								</CardBody>
-							</Card>
+							<ContactFormPrivacy
+								domainName={ domainName }
+								isSubmitting={ isSaving }
+								onTogglePrivacyProtection={ handleTogglePrivacyProtection }
+								onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
+							/>
 						</VStack>
 					)
 				}

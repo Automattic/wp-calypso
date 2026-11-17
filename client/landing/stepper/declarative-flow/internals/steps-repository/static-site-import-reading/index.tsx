@@ -27,7 +27,12 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	| { action: 'continue'; importSessionId: string; previewSiteSlug?: string }
+	| {
+			action: 'continue';
+			importSessionId: string;
+			previewSiteId?: number;
+			previewSiteSlug?: string;
+	  }
 	| { action: 'migrate' }
 	| { action: 'unavailable' }
 	| { action: 'preview_failed' };
@@ -44,14 +49,24 @@ const isRefusedError = ( error: unknown ) =>
 const isWordPressSourceError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
 
-const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
-	function StaticSiteImportReading( { navigation } ) {
+type StaticSiteImportReadingProps = {
+	accepts: {
+		/** The source to import, in place of the `from` query param. */
+		sourceUrl?: string;
+		/** Import onto a new preview site rather than a destination the customer paid for. */
+		buildPreview?: boolean;
+	};
+	submits: StaticSiteImportReadingSubmits;
+};
+
+const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
+	function StaticSiteImportReading( { navigation, sourceUrl: sourceProp, buildPreview } ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
-		const from = searchParams.get( 'from' )?.trim();
+		const from = ( sourceProp || searchParams.get( 'from' ) )?.trim();
 		const sourceUrl = from ? addSchemeIfMissing( from, 'https' ) : '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
@@ -63,8 +78,8 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
-		// Left checkout with no destination: the import gets a preview site, so there is nothing to confirm.
-		const isPreview = isCheckoutExitPreview( searchParams );
+		// A preview site is built to take the import, so there is nothing to confirm.
+		const isPreview = Boolean( buildPreview ) || isCheckoutExitPreview( searchParams );
 		const needsConfirmation = ! isPreview && ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
@@ -134,6 +149,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 					return submit( {
 						action: 'continue',
 						importSessionId,
+						previewSiteId: preview.blogId,
 						previewSiteSlug: preview.siteSlug,
 					} );
 				} catch {

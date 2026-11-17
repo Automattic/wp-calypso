@@ -4,6 +4,15 @@ import { defineConfig } from 'eslint/config';
 import jest from 'eslint-plugin-jest';
 import reactPlugin from 'eslint-plugin-react';
 import parent from '../eslint.config.mjs';
+import dashboardTests from './eslint-rules/index.mjs';
+
+const snackbarMetaRestriction = {
+	// Spreading an api-queries factory and then setting `meta` replaces the
+	// whole object, dropping the factory's `meta.statId`.
+	selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
+	message:
+		'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
+};
 
 export default defineConfig( [
 	...parent,
@@ -40,6 +49,8 @@ export default defineConfig( [
 								'!calypso/lib/use-site-launch-gating-variant',
 								'!calypso/lib/load-dev-helpers',
 								'!calypso/lib/logstash',
+								// Allowed: calypso/lib/promotions (temporary, Black Friday 2026)
+								'!calypso/lib/promotions',
 								'!calypso/lib/version-compare',
 								'!calypso/lib/wp',
 								// Allowed: calypso/assets/icons
@@ -213,23 +224,7 @@ export default defineConfig( [
 				},
 			],
 			'@tanstack/query/exhaustive-deps': 'error',
-			'no-restricted-syntax': [
-				'error',
-				{
-					// Spreading an api-queries factory and then setting `meta` replaces the
-					// whole object, dropping the factory's `meta.statId`.
-					selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
-					message:
-						'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
-				},
-			],
-		},
-	},
-	{
-		name: 'calypso/dashboard/tests',
-		files: [ '**/*.test.ts', '**/*.test.tsx' ],
-		rules: {
-			'jest/consistent-test-it': [ 'error', { fn: 'test', withinDescribe: 'test' } ],
+			'no-restricted-syntax': [ 'error', snackbarMetaRestriction ],
 		},
 	},
 	{
@@ -255,12 +250,13 @@ export default defineConfig( [
 	{
 		name: 'calypso/dashboard/vitest',
 		files: [ '**/test/**/*.{js,jsx,ts,tsx}', 'test-utils.tsx' ],
-		plugins: { vitest },
+		plugins: { vitest, 'dashboard-tests': dashboardTests },
 		rules: {
 			...Object.fromEntries(
 				Object.keys( jest.rules ).map( ( rule ) => [ `jest/${ rule }`, 'off' ] )
 			),
 			...vitest.configs.recommended.rules,
+			'vitest/consistent-test-it': [ 'error', { fn: 'test', withinDescribe: 'test' } ],
 			'no-restricted-globals': [
 				'error',
 				{
@@ -268,6 +264,60 @@ export default defineConfig( [
 					message: 'The Dashboard tests run on Vitest. Use `vi` from `vitest` instead.',
 				},
 			],
+			'dashboard-tests/no-banned-module-mocks': 'error',
+			'dashboard-tests/no-router-mocks': 'error',
+		},
+	},
+	{
+		name: 'calypso/dashboard/vitest/skipped-test-files',
+		// The files under `test/` that test/dashboard/vitest.config.mts doesn't include.
+		files: [ '**/test/**/*.{js,jsx,ts,tsx}' ],
+		ignores: [ '**/test/*.test.{js,jsx,ts,tsx}' ],
+		rules: {
+			'dashboard-tests/no-skipped-test-file': 'error',
+		},
+	},
+	{
+		name: 'calypso/dashboard/vitest/router-mock-exceptions',
+		// These files mocked the router before it was banned. This list should only shrink:
+		// to take a file off it, build the real route tree as docs/testing.md explains.
+		files: [
+			'agency/earn/referrals/test/new-referral-feedback.test.tsx',
+			'agency/earn/referrals/test/new-referral-notice.test.tsx',
+			'agency/marketplace/products/test/cart-menu.test.tsx',
+			'agency/marketplace/referral-checkout/test/index.test.tsx',
+			'agency/sites/site/test/overview.test.tsx',
+			'app/test/unified-page-view.test.tsx',
+			'domains/dns/test/add.test.tsx',
+			'domains/domain-diagnostics/test/index.test.tsx',
+			'domains/domain-dns/test/index.test.tsx',
+			'domains/domain-forwarding/test/index.test.tsx',
+			'domains/domain-glue-records/test/index.test.tsx',
+			'domains/domain-overview/test/actions.test.tsx',
+			'domains/domain-overview/test/index.test.tsx',
+			'domains/domain-overview/test/overview-header.test.tsx',
+			'domains/domain-overview/test/overview-item-tracks.test.tsx',
+			'domains/domain-sidebar/test/index.test.tsx',
+			'domains/test/index.test.tsx',
+			'domains/test/saved-layout-fallback.test.tsx',
+			'emails/test/index.test.tsx',
+			'me/billing-purchases/cancel-purchase/cancel-purchase-form/test/index.test.tsx',
+			'me/billing-purchases/cancel-purchase/test/index.test.tsx',
+			'me/billing-purchases/purchase-settings/test/purchase-notice.test.tsx',
+			'me/billing-purchases/test/purchase-removed-notice.test.tsx',
+			'me/notifications-emails/subscription-settings/test/index.test.tsx',
+			'sites/backups/test/index.test.tsx',
+			'sites/domains/test/index.test.tsx',
+			'sites/logs-activity/dataviews/test/index.test.tsx',
+			'sites/migration-overview/test/started-difm-content-info.test.tsx',
+			'sites/performance/test/index.test.tsx',
+			'sites/settings-repositories/test/configure-repository.test.tsx',
+			'sites/settings-repositories/test/connect-repository.test.tsx',
+			'sites/site-plans/test/index.test.tsx',
+			'sites/staging-site-delete-modal/test/index.test.tsx',
+		],
+		rules: {
+			'dashboard-tests/no-router-mocks': 'off',
 		},
 	},
 ] );

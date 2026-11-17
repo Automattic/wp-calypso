@@ -16,12 +16,7 @@ const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;
 const currentPrimaryDomain = { domain: 'primary-domain-test.wordpress.com' } as DomainSummary;
 const domains = [ { domain: 'example.com' } ] as DomainSummary[];
 
-beforeEach( () => {
-	vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
-} );
-
 afterEach( () => {
-	vi.restoreAllMocks();
 	for ( const notice of select( noticesStore ).getNotices() ) {
 		dispatch( noticesStore ).removeNotice( notice.id );
 	}

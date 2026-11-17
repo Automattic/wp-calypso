@@ -15,7 +15,7 @@ import MissingPaymentSettingsNotice, {
 	useMissingPaymentSettings,
 } from '../earn/missing-payment-settings-notice';
 import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
-import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
+import { getMarketplaceReferHostingRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from '../partner-directory/lead-matching/form-data';
@@ -24,13 +24,12 @@ import {
 	PARTNER_DIRECTORY_ROUTE,
 } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
-import { isProPartnerOrHigher } from '../tiers/get-current-agency-tier';
+import { isProPartnerOrHigher, isVipProPartnerOrHigher } from '../tiers/get-current-agency-tier';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import { getAnsweredMatchingProfileCount } from './matching-profile-visibility';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
-import usePressableOfferEligibility from './use-pressable-offer-eligibility';
 
 export default function AgencyOverview() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -62,8 +61,6 @@ export default function AgencyOverview() {
 		: undefined;
 	const contact = leadMatching?.lead_matching_profile?.contact;
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
-	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
-		usePressableOfferEligibility( agency );
 	const { hasActivity, isLoading: isLoadingActivity } = useHasCommissionActivity( agencyId );
 	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const missingPaymentSettings = useMissingPaymentSettings( {
@@ -143,8 +140,6 @@ export default function AgencyOverview() {
 					( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
 				}
 				matchingProfileAnswered={ answeredRequiredFieldCount }
-				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
-				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
 					tiers: '/tiers',
 					sites: '/sites',
@@ -154,14 +149,21 @@ export default function AgencyOverview() {
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
 					leadMatching: PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE,
 					contactSupport: () => openContactForm(),
-					aiMcp: '/agency/ai',
-					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),
 					helpful: [
 						{
 							id: 'contact-support',
 							label: __( 'Contact sales & support' ),
 							onClick: () => openContactForm(),
 						},
+						...( isVipProPartnerOrHigher( agency.tier?.id )
+							? [
+									{
+										id: 'refer-enterprise-hosting',
+										label: __( 'Refer your client to VIP hosting' ),
+										href: getMarketplaceReferHostingRoute( 'enterprise' ),
+									},
+								]
+							: [] ),
 						{
 							id: 'relaunch-welcome-tour',
 							label: __( 'Take the full tour' ),

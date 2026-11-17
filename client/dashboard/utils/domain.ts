@@ -7,11 +7,13 @@ import {
 } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { isAfter, subMinutes, subDays } from 'date-fns';
+import { isExpiring } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
 	Domain,
 	DomainSummary,
+	Purchase,
 	Site,
 	User,
 	WhoisDataEntry,
@@ -96,6 +98,19 @@ export function canEnableAutoRenew( domain: DomainSummary ): boolean {
 		domain.domain_status.id === DomainStatus.PENDING_REGISTRATION ||
 		domain.domain_status.id === DomainStatus.EXPIRED_IN_AUCTION
 	);
+}
+
+/**
+ * Returns true if auto-renew is on for the domain but its subscription will
+ * still lapse, because there is no payment method to charge (e.g. it was paid
+ * with credits). The backend reports such a purchase as `manual-renew` or
+ * `expiring` rather than `auto-renewing`.
+ */
+export function needsPaymentMethodToAutoRenew(
+	domain: Pick< DomainSummary, 'auto_renewing' | 'expired' >,
+	purchase?: Purchase
+): boolean {
+	return domain.auto_renewing && ! domain.expired && !! purchase && isExpiring( purchase );
 }
 
 export function isDomainInGracePeriod( domain: DomainSummary ) {

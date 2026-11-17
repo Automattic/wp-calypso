@@ -5,12 +5,15 @@ import {
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import { Icon, arrowLeft, arrowRight, error, pending, people, published } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardFooter } from '../../../components/card';
 import { caution } from '../../../components/notice/icons';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
+import { wpcomLink } from '../../../utils/link';
+import type { Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 import './style.scss';
 
@@ -27,7 +30,7 @@ export function MigrationCard( {
 	description?: React.ReactNode;
 	decoration?: React.ReactNode;
 	// A way back to the step before, ahead of the title.
-	back?: { label: string; onClick: () => void; disabled?: boolean };
+	back?: { label: string; onClick?: () => void; href?: string; disabled?: boolean };
 	actions?: React.ReactNode;
 	note?: React.ReactNode;
 	children?: React.ReactNode;
@@ -50,6 +53,7 @@ export function MigrationCard( {
 												label={ back.label }
 												disabled={ back.disabled }
 												onClick={ back.onClick }
+												href={ back.href }
 											/>
 											{ decoration }
 										</HStack>
@@ -89,6 +93,18 @@ export function AssistedHandoffLink( { siteSlug }: { siteSlug: string } ) {
 			{ __( 'Have our team handle this migration for you, included in your plan.' ) }
 		</RouterLinkButton>
 	);
+}
+
+/**
+ * Back to entering the source's address in the Stepper, filled in but not checked, with this site kept as the destination.
+ */
+export function getChangeSourceUrl( site: Site, sourceUrl?: string | null ) {
+	return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-identify' ), {
+		siteId: site.ID,
+		siteSlug: site.slug,
+		from: sourceUrl ?? undefined,
+		ref: 'hosting-migration-overview',
+	} );
 }
 
 /**

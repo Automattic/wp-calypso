@@ -3,7 +3,11 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { screen, renderHook } from '@testing-library/react';
-import { FREE_PLAN_PAID_DOMAIN_DIALOG, PAID_PLAN_PAID_DOMAIN_DIALOG } from '..';
+import {
+	FREE_PLAN_DOMAIN_MOVE_DIALOG,
+	FREE_PLAN_PAID_DOMAIN_DIALOG,
+	PAID_PLAN_PAID_DOMAIN_DIALOG,
+} from '..';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import { useModalResolutionCallback } from '../hooks/use-modal-resolution-callback';
 
@@ -164,6 +168,46 @@ describe( 'PlanUpsellModal tests', () => {
 					flowName: 'domain',
 					paidDomainName: 'yourgroovydomain.com',
 					intent: null,
+				} )
+			);
+			expect( result.current( PLAN_FREE ) ).toBe( PAID_PLAN_PAID_DOMAIN_DIALOG );
+		} );
+
+		test( 'A registered domain move on the onboarding flow should show the FREE_PLAN_DOMAIN_MOVE_DIALOG', () => {
+			const { result } = renderHook( () =>
+				useModalResolutionCallback( {
+					isCustomDomainAllowedOnFreePlan: false,
+					flowName: 'onboarding',
+					paidDomainName: 'yourgroovydomain.com',
+					intent: null,
+					isDomainMove: true,
+				} )
+			);
+			expect( result.current( PLAN_FREE ) ).toBe( FREE_PLAN_DOMAIN_MOVE_DIALOG );
+		} );
+
+		test( 'A connected domain move on the onboarding flow should show the PAID_PLAN_PAID_DOMAIN_DIALOG', () => {
+			const { result } = renderHook( () =>
+				useModalResolutionCallback( {
+					isCustomDomainAllowedOnFreePlan: false,
+					flowName: 'onboarding',
+					paidDomainName: 'yourgroovydomain.com',
+					intent: null,
+					isDomainMove: true,
+					isConnectedDomainMove: true,
+				} )
+			);
+			expect( result.current( PLAN_FREE ) ).toBe( PAID_PLAN_PAID_DOMAIN_DIALOG );
+		} );
+
+		test( 'A paid domain that is not a move on the onboarding flow should show the PAID_PLAN_PAID_DOMAIN_DIALOG', () => {
+			const { result } = renderHook( () =>
+				useModalResolutionCallback( {
+					isCustomDomainAllowedOnFreePlan: false,
+					flowName: 'onboarding',
+					paidDomainName: 'yourgroovydomain.com',
+					intent: null,
+					isDomainMove: false,
 				} )
 			);
 			expect( result.current( PLAN_FREE ) ).toBe( PAID_PLAN_PAID_DOMAIN_DIALOG );

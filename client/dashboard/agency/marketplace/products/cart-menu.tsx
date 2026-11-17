@@ -61,7 +61,7 @@ export default function CartMenu( {
 }: CartMenuProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const backHereSearch = useBackHereSearch();
-	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
+	const { lines, currency, total, commission, isTotalReady } = useCartLines( {
 		items,
 		products,
 		term,
@@ -102,7 +102,7 @@ export default function CartMenu( {
 			href={
 				isLegacyBilling
 					? getLegacyCheckoutUrl( checkoutLines )
-					: getCheckoutUrl( checkoutLines, { term, hasWpcomHostingPlan } )
+					: getCheckoutUrl( checkoutLines, { term } )
 			}
 		/>
 	);
