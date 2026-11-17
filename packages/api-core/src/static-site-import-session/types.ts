@@ -19,8 +19,15 @@ export type StaticSiteImportCapability =
 
 export type StaticSiteImportBand = 'simple' | 'moderate' | 'complex' | 'unknown';
 
+/** A count inspection took on the pages it sampled, e.g. `{ code: 'images', value: 6 }`. */
+export interface StaticSiteImportFactor {
+	code: 'pages' | 'images' | 'embeds' | 'elements' | ( string & {} );
+	value: number;
+}
+
 export interface StaticSiteImportInspection {
 	measured: boolean;
+	factors?: StaticSiteImportFactor[];
 	error?: string;
 	band?: StaticSiteImportBand;
 	observed_band?: StaticSiteImportBand;
@@ -47,6 +54,10 @@ export interface StaticSiteImportFidelity {
 
 export interface StaticSiteImportPreviewSummary {
 	pages?: number;
+	/** Pages the source has that the build left out. */
+	routes_omitted?: number;
+	images_missing_source?: number;
+	unresolved_internal_links?: number;
 	documents?: number;
 	blocks?: number;
 	fallback_blocks?: number;
@@ -60,7 +71,38 @@ export interface StaticSiteImportPreviewSummary {
 	fidelity?: StaticSiteImportFidelity;
 }
 
+/** Where wpcom is in restoring the built site onto its destination. */
+export type StaticSiteImportDeliveryStage =
+	| 'preparing'
+	| 'convert_to_atomic'
+	| 'download_archive'
+	| 'unpack_file'
+	| 'preprocess'
+	| 'process_files'
+	| 'recreate_database'
+	| 'postprocess_database'
+	| 'verify_site_integrity'
+	| 'clean_up';
+
+/** The restore onto the destination, while the session is `queued` with one. */
+export interface StaticSiteImportDelivery {
+	stage: StaticSiteImportDeliveryStage;
+	/** 0 while preparing, then 1 to `total_steps` in the order of the stages. Stages can be skipped. */
+	step: number;
+	total_steps: number;
+	/** When wpcom first saw the stage, in Unix seconds. */
+	stage_started_at: number;
+	/** When the destination was approved, in Unix seconds. */
+	started_at?: number;
+	/** When the restore reached the site, in Unix seconds. */
+	restore_started_at?: number;
+	/** The files copied so far, from `process_files` on. */
+	files?: { done: number; total: number };
+}
+
 export interface StaticSiteImportProgress {
+	/** Present only while the built site is being restored onto its destination. */
+	delivery?: StaticSiteImportDelivery;
 	phase?: 'installing' | 'inspecting' | 'capturing' | 'comparing' | 'building' | 'exporting';
 	/** When the server first saw the current phase, in Unix seconds. */
 	phase_started_at?: number;

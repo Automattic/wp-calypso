@@ -11,8 +11,7 @@
 
 	@include break-medium {
 		grid-template-columns: minmax( 0, 5fr ) minmax( 0, 6fr );
-		grid-template-rows: auto 1fr;
-		grid-template-areas: 'snapshot main' 'facts main';
+		grid-template-areas: 'snapshot main' 'facts facts';
 	}
 }
 
@@ -311,7 +310,7 @@
 
 .static-site-import-facts {
 	display: grid;
-	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	grid-template-columns: repeat( auto-fit, minmax( 160px, 1fr ) );
 	gap: 12px;
 	margin: 0;
 }
@@ -324,6 +323,30 @@
 	dd {
 		margin: 4px 0 0;
 		font-variant-numeric: tabular-nums;
+	}
+}
+
+.static-site-import-checks {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+}
+
+.static-site-import-checks__icon {
+	flex-shrink: 0;
+	color: var( --dashboard__foreground-color-warning );
+
+	&.is-passed {
+		color: var( --dashboard__foreground-color-success );
 	}
 }
 

@@ -73,7 +73,6 @@ vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( component: unknown ) => component,
 	useViewportMatch: vi.fn( () => false ),
 } ) );
-vi.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
 vi.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { createNotice: mockCreateNotice } ),

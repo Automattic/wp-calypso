@@ -94,8 +94,5 @@ export function useCartLines( {
 		total,
 		commission,
 		isTotalReady,
-		hasWpcomHostingPlan: lines.some(
-			( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG
-		),
 	};
 }
