@@ -15,7 +15,7 @@ import {
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { matchPath } from 'react-router';
@@ -67,7 +67,7 @@ import {
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
-import { isPlaygroundStoreRun } from '../../../utils/playground-woo-intent';
+import { isPlaygroundStoreRun, isPlaygroundStoreVisit } from '../../../utils/playground-woo-intent';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
@@ -396,14 +396,14 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useTracksEventProps() {
 		const query = useQuery();
-		// A WooCommerce Playground run's plan isn't reported: the Playground adds its ID to the URL
-		// after it boots, which turns the run into a store and would record a second signup start.
-		const preselectedPlan =
-			query.get( 'intent' ) === 'woocommerce' ? null : getPreselectedPlan( query );
+		// A Playground store reports Commerce from the Playground step on. Read from the URL alone,
+		// its plan would change once the Playground adds its ID, and record a second signup start.
+		const isPlaygroundStore = isPlaygroundStoreVisit( query );
+		const preselectedPlan = isPlaygroundStore ? PLAN_ECOMMERCE : getPreselectedPlan( query );
 		// Reported raw, as the legacy flows reported their declared query dependencies. The
 		// coupon stands alone too: WordCamp coupon links name no plan.
 		const couponParam = query.get( 'coupon' );
-		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
+		const storageParam = preselectedPlan && ! isPlaygroundStore ? query.get( 'storage' ) : null;
 		// The legacy flow a link came from, such as `import` or `reblogging`.
 		const fromFlow = query.get( 'flow' );
 
@@ -604,7 +604,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 
 				if ( playgroundId ) {
-					params.playground = playgroundId;
+					Object.assign( params, { playground: playgroundId }, playgroundStoreQueryArgs );
 				} else if ( blueprint ) {
 					params.blueprint = blueprint;
 				}
@@ -931,7 +931,6 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * If the user comes from the Playground onboarding flow,
 							 * redirect the user back to Playground to start the import.
 							 */
-							const playgroundId = getQueryArg( window.location.href, 'playground' );
 							const redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
@@ -1171,7 +1170,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		// Skip the preload when this visit skips the plans step: enrolling someone in a
 		// plans-page test they never see only dilutes it.
 		useEffect( () => {
-			if ( getPreselectedPlan( getCurrentQueryParams() ) ) {
+			const query = getCurrentQueryParams();
+
+			if ( getPreselectedPlan( query ) || isPlaygroundStoreVisit( query ) ) {
 				return;
 			}
 

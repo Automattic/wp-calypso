@@ -8,6 +8,7 @@ import {
 	BUILD_FLOW,
 	ENTREPRENEUR_FLOW,
 	NEW_HOSTED_SITE_FLOW,
+	ONBOARDING_FLOW,
 	WRITE_FLOW,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -59,6 +60,20 @@ const ENTREPRENEUR_PLAYGROUND_IMPORT_REDIRECT: RedirectRule = {
 	query: { intent: 'woocommerce' },
 	keepAnyLocale: true,
 	shouldRedirect: ( searchParams, pathname ) => pathname.split( '/' )[ 3 ] === 'importerPlayground',
+	replace: true,
+};
+
+// A store saved from the WooCommerce Playground used to start a trial here. Onboarding now saves
+// it with a Commerce purchase, and the Playground's ID keeps the store to import.
+const ENTREPRENEUR_PLAYGROUND_STORE_REDIRECT: RedirectRule = {
+	flow: ENTREPRENEUR_FLOW,
+	to: `/setup/${ ONBOARDING_FLOW }/playground:lang?`,
+	query: { intent: 'woocommerce' },
+	keepAnyLocale: true,
+	shouldRedirect: ( searchParams, pathname ) =>
+		searchParams.get( 'from' ) === 'playground-publish' &&
+		searchParams.has( 'playground' ) &&
+		! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( pathname.split( '/' )[ 3 ] ?? '' ),
 	replace: true,
 };
 
@@ -115,6 +130,7 @@ const FLOW_REDIRECTS = [
 	AI_SITE_BUILDER_REDIRECT,
 	WRITE_REDIRECT,
 	ENTREPRENEUR_PLAYGROUND_IMPORT_REDIRECT,
+	ENTREPRENEUR_PLAYGROUND_STORE_REDIRECT,
 	ENTREPRENEUR_REDIRECT,
 	...REMOVED_TAILORED_FLOWS,
 ];

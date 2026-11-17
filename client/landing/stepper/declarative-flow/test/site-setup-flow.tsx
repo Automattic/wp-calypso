@@ -208,13 +208,15 @@ describe( 'Site Setup Flow', () => {
 		};
 
 		// Going through exitFlow would replace the Sell intent the Commerce site was created with,
-		// and Back onto the importer would import the store again.
-		it( 'replaces the page with the store', () => {
+		// and Back onto the importer would import the store again. The clean-up still runs, or the
+		// next run in this browser starts with this one's cart and destination.
+		it( 'replaces the page with the store and cleans up the run', () => {
 			finishImport( 'siteSlug=example.wordpress.com&siteId=123&playground=abc&intent=woocommerce' );
 
 			expect( window.location.replace ).toHaveBeenCalledWith( '/home/123' );
 			expect( window.location.assign ).not.toHaveBeenCalled();
-			expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( getFlowLocation().path ).not.toContain( 'processing' );
 		} );
 
 		// Without a site ID in the URL or the site loaded, the ID is 0.

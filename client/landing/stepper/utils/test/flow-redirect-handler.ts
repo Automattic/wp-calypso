@@ -213,8 +213,8 @@ describe( 'flow redirect handler', () => {
 			expect( replace ).not.toHaveBeenCalled();
 		} );
 
-		// A Playground store now buys Commerce through onboarding, so an old link to its trial
-		// path, or a trial path left before its site was created, buys Commerce too.
+		// Without the Playground's ID there is no store left to import, so the link buys Commerce
+		// like any other entrepreneur link.
 		it.each( [ '/setup/entrepreneur', `/setup/entrepreneur/${ STEPS.SITE_CREATION_STEP.slug }` ] )(
 			'redirects the old Playground publish path at %s',
 			( pathname ) => {
@@ -239,6 +239,37 @@ describe( 'flow redirect handler', () => {
 			expect( isRemovedFlow( 'entrepreneur' ) ).toBe( false );
 		} );
 	} );
+
+	// A visitor who saved a store just before the deploy still has the old trial link.
+	describe.each( [ true, false ] )(
+		'old Playground store links, with the redirect flag %s',
+		( flagEnabled ) => {
+			beforeEach( () => {
+				mockIsEnabled.mockReturnValue( flagEnabled );
+			} );
+
+			it.each( [
+				[ '/setup/entrepreneur', '/setup/onboarding/playground' ],
+				[ '/setup/entrepreneur/create-site', '/setup/onboarding/playground' ],
+				[ '/setup/entrepreneur/es', '/setup/onboarding/playground/es' ],
+			] )( 'save the store through onboarding from %s', ( pathname, expected ) => {
+				redirectPathIfNecessary( pathname, '?from=playground-publish&playground=abc' );
+
+				expect( replace ).toHaveBeenCalledWith(
+					`${ expected }?from=playground-publish&playground=abc&intent=woocommerce`
+				);
+			} );
+
+			it( 'let a trial already being set up finish', () => {
+				const didRedirect = redirectPathIfNecessary(
+					`/setup/entrepreneur/${ STEPS.WAIT_FOR_ATOMIC.slug }`,
+					'?from=playground-publish&playground=abc&siteId=123'
+				);
+
+				expect( didRedirect ).toBe( false );
+			} );
+		}
+	);
 
 	// A store whose trial started before onboarding took the store path over is still importing.
 	describe.each( [ true, false ] )(

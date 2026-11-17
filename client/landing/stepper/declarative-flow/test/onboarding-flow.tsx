@@ -184,8 +184,8 @@ describe( 'Onboarding Flow', () => {
 				expect(
 					await getCheckoutBackUrls( '/setup/onboarding/processing?playground=abc' )
 				).toEqual( {
-					plans: PLANS_STEP,
-					domains: DOMAINS_STEP,
+					plans: `${ PLANS_STEP }&playground=abc`,
+					domains: `${ DOMAINS_STEP }&playground=abc`,
 				} );
 				expect( retrieveSignupDestination() ).toContain( '/setup/site-setup/importerPlayground' );
 			} );
@@ -194,23 +194,18 @@ describe( 'Onboarding Flow', () => {
 			it( 'keeps a Playground store run, on the domains step, when leaving checkout', async () => {
 				dispatch( ONBOARD_STORE ).setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
 				const processingUrl = '/setup/onboarding/processing?intent=woocommerce&playground=abc';
-				const { href } = window.location;
-				// Checkout's return to the importer reads the Playground from the page URL.
-				window.location.href = `http://wordpress.com${ processingUrl }`;
+				const importerUrl =
+					'/setup/site-setup/importerPlayground?siteSlug=test-site.wordpress.com&siteId=123&playground=abc&intent=woocommerce';
 
-				try {
-					expect( await getCheckoutBackUrls( processingUrl ) ).toEqual( {
-						plans: `${ DOMAINS_STEP }&playground=abc&intent=woocommerce`,
-						domains: `${ DOMAINS_STEP }&playground=abc&intent=woocommerce`,
-					} );
+				expect( await getCheckoutBackUrls( processingUrl ) ).toEqual( {
+					plans: `${ DOMAINS_STEP }&playground=abc&intent=woocommerce`,
+					domains: `${ DOMAINS_STEP }&playground=abc&intent=woocommerce`,
+				} );
 
-					const checkoutUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
-					expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe(
-						'/setup/site-setup/importerPlayground?siteSlug=test-site.wordpress.com&siteId=123&playground=abc&intent=woocommerce'
-					);
-				} finally {
-					window.location.href = href;
-				}
+				// Checkout can land on either: the importer reads the store from the URL.
+				const checkoutUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
+				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( importerUrl );
+				expect( retrieveSignupDestination() ).toBe( importerUrl );
 			} );
 
 			it( 'goes back to the domains step when the plans step was skipped', async () => {

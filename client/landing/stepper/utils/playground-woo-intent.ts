@@ -18,3 +18,19 @@ export const isPlaygroundWooIntent = (
  */
 export const isPlaygroundStoreRun = ( query: URLSearchParams ) =>
 	!! query.get( 'playground' ) && query.get( 'intent' ) === 'woocommerce';
+
+/**
+ * Whether this onboarding visit saves a store from the WooCommerce Playground, from its first
+ * render. On the Playground step, the store's ID only reaches the URL once the Playground boots.
+ */
+export const isPlaygroundStoreVisit = (
+	query: URLSearchParams,
+	pathname = window.location.pathname
+) => {
+	const [ , , flowName, stepName ] = pathname.split( '/' );
+
+	return (
+		isPlaygroundStoreRun( query ) ||
+		isPlaygroundWooIntent( flowName, stepName, query.get( 'intent' ) )
+	);
+};

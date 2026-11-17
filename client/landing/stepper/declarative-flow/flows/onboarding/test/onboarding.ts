@@ -627,9 +627,10 @@ describe( 'onboarding flow tracks event props', () => {
 	} );
 
 	// The Playground adds its ID to the URL once it boots; a change here records a second start.
-	it.each( [ '', '&plan=personal-bundle' ] )(
-		'keeps the props when the Playground adds its ID to a store run (%s)',
+	it.each( [ '', '&plan=personal-bundle&storage=50gb-storage-add-on' ] )(
+		'reports Commerce for a store from the Playground step on (%s)',
 		( extraQuery ) => {
+			window.history.replaceState( null, '', '/setup/onboarding/playground' );
 			( useQuery as jest.Mock ).mockReturnValue(
 				new URLSearchParams( `intent=woocommerce${ extraQuery }` )
 			);
@@ -644,10 +645,33 @@ describe( 'onboarding flow tracks event props', () => {
 			);
 			rerender();
 
+			window.history.replaceState( null, '', '/setup/onboarding/domains' );
+			rerender();
+
 			expect( result.current ).toBe( first );
-			expect( first?.eventsProperties ).toEqual( {} );
+			expect( first?.eventsProperties.calypso_signup_start ).toEqual( {
+				preselected_plan: 'ecommerce-bundle',
+			} );
+
+			window.history.replaceState( null, '', '/' );
 		}
 	);
+
+	// Elsewhere the WooCommerce intent only styles the plans grid.
+	it( 'reports the plan of a WooCommerce intent link without a Playground', () => {
+		window.history.replaceState( null, '', '/setup/onboarding' );
+		( useQuery as jest.Mock ).mockReturnValue(
+			new URLSearchParams( 'intent=woocommerce&plan=personal-bundle' )
+		);
+
+		const { result } = renderHook( () => onboarding.useTracksEventProps?.call( onboarding ) );
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
+			preselected_plan: 'personal-bundle',
+		} );
+
+		window.history.replaceState( null, '', '/' );
+	} );
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {
@@ -673,6 +697,13 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 	// never see and dilutes it for everyone who does.
 	it( 'does not enrol a visit that skips the plans step', () => {
 		enterFlowAt( '?plan=personal-bundle' );
+
+		expect( loadExperimentAssignment ).not.toHaveBeenCalled();
+	} );
+
+	// The store's ID reaches the URL only once the Playground boots, after this runs.
+	it( 'does not enrol a WooCommerce Playground store', () => {
+		enterFlowAt( '/playground?intent=woocommerce' );
 
 		expect( loadExperimentAssignment ).not.toHaveBeenCalled();
 	} );
