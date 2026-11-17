@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { rebootAfterLogin } from '../reboot-after-login';
 
-jest.mock( 'calypso/lib/user/store', () => ( {
-	clearStore: jest.fn(),
+vi.mock( 'calypso/lib/user/store', () => ( {
+	clearStore: vi.fn(),
 	getStoredUserId: () => null,
 } ) );
 
@@ -12,7 +13,7 @@ Object.defineProperty( window, 'location', { value: { href: '' } } );
 
 const reboot = async ( sanitizedRedirectTo: string | null ) => {
 	const getState = () => ( { login: { redirectTo: { sanitized: sanitizedRedirectTo } } } );
-	await rebootAfterLogin( {} )( jest.fn(), getState );
+	await rebootAfterLogin( {} )( vi.fn(), getState );
 	return window.location.href;
 };
 
