@@ -589,11 +589,6 @@ export function StaticSiteImportProgress( {
 							<MovingChecklist session={ session } />
 						</VStack>
 					</div>
-					<Text variant="muted">
-						{ __(
-							'This can take a few minutes. You don’t need to wait here: we’ll email you as soon as your site is ready.'
-						) }
-					</Text>
 				</VStack>
 			</CardBody>
 		</Card>
