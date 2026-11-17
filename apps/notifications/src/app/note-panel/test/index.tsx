@@ -2,10 +2,13 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { vi } from 'vitest';
+import { recordTracksEvent } from '../../../panel/helpers/stats';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
 import NodePanel, { getNotificationTabs } from '../index';
 import type { FilterName } from '../../types';
+
+vi.mock( '../../../panel/helpers/stats', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const noop = () => {};
 
@@ -95,6 +98,23 @@ describe( 'NotePanel', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
 
 		expect( onOpenFullView ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'opens the full view on the selected tab and records the click', async () => {
+		const onOpenFullView = vi.fn();
+		renderWithProvider(
+			<AppProvider client={ null } locale="en" onOpenFullView={ onOpenFullView }>
+				<NodePanel { ...defaultProps } filterName="unread" />
+			</AppProvider>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
+
+		expect( onOpenFullView ).toHaveBeenCalledWith( { filterName: 'unread', noteId: undefined } );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_full_view_click', {
+			tab: 'unread',
+			is_note_open: false,
+		} );
 	} );
 
 	it( 'has no full view button when the host provides none', async () => {
