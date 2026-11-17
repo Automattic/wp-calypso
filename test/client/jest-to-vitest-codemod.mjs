@@ -183,6 +183,11 @@ for ( const file of files ) {
 		edits.push( { start: e.end, end: e.end, text: ' )' } );
 	};
 
+	// `require( './mock' )` in a factory loads the mock module with its exports.
+	const isRequire = ( e ) => ts.isCallExpression( e ) && e.expression.getText( sf ) === 'require';
+	const requireToImport = ( e ) =>
+		edits.push( { start: e.expression.getStart( sf ), end: e.expression.end, text: 'import' } );
+
 	// Jest lets a factory return the module itself (e.g. a function, read through the default
 	// import); Vitest needs an object of exports.
 	const wrapNonObjectFactory = ( call ) => {
@@ -195,6 +200,10 @@ for ( const file of files ) {
 				const e = r.expression && unwrap( r.expression );
 				if ( e && ts.isObjectLiteralExpression( e ) ) {
 					addInteropDefault( call, e );
+					continue;
+				}
+				if ( e && isRequire( e ) ) {
+					requireToImport( e );
 					continue;
 				}
 				if ( ! e || isRequireActual( e ) || isDynamicImport( e ) ) {
@@ -228,13 +237,8 @@ for ( const file of files ) {
 			return;
 		}
 		const body = unwrap( factory.body );
-		// `() => require( './mock' )` loads the mock module with its exports.
-		if ( ts.isCallExpression( body ) && body.expression.getText( sf ) === 'require' ) {
-			edits.push( {
-				start: body.expression.getStart( sf ),
-				end: body.expression.end,
-				text: 'import',
-			} );
+		if ( isRequire( body ) ) {
+			requireToImport( body );
 			return;
 		}
 		if ( ts.isObjectLiteralExpression( body ) ) {
