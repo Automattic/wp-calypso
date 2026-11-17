@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { HostingFeatures, type Site } from '@automattic/api-core';
+import { HostingFeatures, type McpAbility, type Site } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
@@ -40,6 +40,7 @@ import {
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
+import { getSiteBulkOverrides } from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -80,14 +81,6 @@ import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
-
-interface McpAbility {
-	title: string;
-	description: string;
-	enabled: boolean;
-	readonly?: boolean;
-	visible?: boolean;
-}
 
 /**
  * Badge for one access level, spanning wpcom tools and the site's published
@@ -373,13 +366,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	);
 
 	const handleMcpToggle = ( enabled: boolean ) => {
-		const abilities: Record< string, boolean > = {};
-		if ( enabled ) {
-			// Auto-enable all read tools; leave write tools unset (not explicitly disabled).
-			readTools.forEach( ( [ toolId ] ) => {
-				abilities[ toolId ] = true;
-			} );
-		}
+		const abilities = enabled ? getSiteBulkOverrides( readTools, true ) : {};
 		// When disabling, send abilities: {} to clear all site-level tool access.
 		mcpMutation.mutate(
 			{
