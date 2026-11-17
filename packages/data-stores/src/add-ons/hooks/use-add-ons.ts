@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Site from '../../site';
 import { getAddOnsList, getPluginAddOnsList } from '../add-ons-list';
-import { WOO_BUNDLE_EXTENSIONS_FEATURE } from '../constants';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import { createAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
 import type { AddOnMeta, AnyAddOnMeta } from '../types';
@@ -37,9 +36,7 @@ function useAddOns( {
 	const siteFeatures = Site.useSiteFeatures( {
 		siteIdOrSlug: includePluginAddOns ? selectedSiteId : null,
 	} );
-	const hasWooBundleExtensions = !! siteFeatures.data?.active?.includes(
-		WOO_BUNDLE_EXTENSIONS_FEATURE
-	);
+	const activeFeatures = siteFeatures.data?.active;
 
 	const productAddOns = useMemo(
 		() =>
@@ -93,13 +90,17 @@ function useAddOns( {
 		[ addOnPrices, productsList.data, productsList.isLoading, checkoutLink, selectedSiteId ]
 	);
 
-	return useMemo(
-		() =>
-			includePluginAddOns && hasWooBundleExtensions
-				? [ ...productAddOns, ...getPluginAddOnsList() ]
-				: productAddOns,
-		[ productAddOns, includePluginAddOns, hasWooBundleExtensions ]
-	);
+	return useMemo( () => {
+		if ( ! includePluginAddOns || ! activeFeatures ) {
+			return productAddOns;
+		}
+
+		const pluginAddOns = getPluginAddOnsList().filter( ( addOn ) =>
+			addOn.featureSlugs?.some( ( slug ) => activeFeatures.includes( slug ) )
+		);
+
+		return pluginAddOns.length ? [ ...productAddOns, ...pluginAddOns ] : productAddOns;
+	}, [ productAddOns, includePluginAddOns, activeFeatures ] );
 }
 
 export default useAddOns;
