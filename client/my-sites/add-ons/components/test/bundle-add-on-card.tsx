@@ -77,8 +77,8 @@ describe( 'BundleAddOnCard', () => {
 
 		renderCard();
 
-		expect( await screen.findByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Included in your plan' ) ).toBeInTheDocument();
+		expect( await screen.findByRole( 'button', { name: 'Install' } ) ).toBeVisible();
+		expect( screen.getByText( 'Included in your plan' ) ).toBeVisible();
 		expect( screen.queryByText( 'Buy add-on' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /\/month/ ) ).not.toBeInTheDocument();
 	} );
@@ -106,7 +106,7 @@ describe( 'BundleAddOnCard', () => {
 		renderCard();
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Install' } ) );
 
-		expect( await screen.findByText( 'Installed' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Installed' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Install' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -131,14 +131,14 @@ describe( 'BundleAddOnCard', () => {
 		await waitFor( () =>
 			expect( screen.queryByRole( 'button', { name: 'Install' } ) ).not.toBeInTheDocument()
 		);
-		expect( container.querySelector( '.spinner' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.spinner' ) ).toBeVisible();
 		expect( screen.queryByText( 'Installed' ) ).not.toBeInTheDocument();
 
 		act( () => {
 			jest.advanceTimersByTime( POLL_INTERVAL_MS );
 		} );
 
-		expect( await screen.findByText( 'Installed' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Installed' ) ).toBeVisible();
 		expect( container.querySelector( '.spinner' ) ).not.toBeInTheDocument();
 	} );
 
@@ -162,6 +162,6 @@ describe( 'BundleAddOnCard', () => {
 				'This extension is not available for this site.'
 			)
 		);
-		expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Install' } ) ).toBeVisible();
 	} );
 } );
