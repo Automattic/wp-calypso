@@ -94,7 +94,7 @@ describe( '<McpConnectCard />', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_mcp_connect_click',
-			expect.objectContaining( { agent: 'cursor', action: 'open' } )
+			expect.objectContaining( { source: 'account', agent: 'cursor', action: 'open' } )
 		);
 	} );
 
@@ -260,6 +260,40 @@ describe( '<McpConnectCard />', () => {
 
 		await screen.findByRole( 'link', { name: 'Manual setup' } );
 		expect( document.body ).toHaveFocus();
+	} );
+
+	test( 'on a site, links Manual setup to the site setup page and says the connection covers every site', async () => {
+		const { recordTracksEvent } = renderCard( { siteSlug: 'example.wordpress.com' } );
+
+		expect( screen.getByRole( 'link', { name: 'Manual setup' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com/settings/ai-tools/setup'
+		);
+		expect( screen.getByText( /It covers every site where MCP access is on\./ ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'link', { name: 'Cursor' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_mcp_connect_click',
+			expect.objectContaining( { source: 'site', agent: 'cursor' } )
+		);
+	} );
+
+	test( 'on a site, offers to turn MCP access on for that site, even when other sites were added', async () => {
+		const onTurnOn = vi.fn();
+		renderCard( {
+			siteSlug: 'example.wordpress.com',
+			mcpEnabled: false,
+			addedSiteCount: 3,
+			onTurnOn,
+		} );
+
+		expect( screen.getByText( 'MCP access is off for this site' ) ).toBeVisible();
+		expect( screen.queryByText( /read-only on/ ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Turn on MCP access' } ) );
+
+		expect( onTurnOn ).toHaveBeenCalled();
 	} );
 
 	test( 'hides the MCP-off notice while access is on', () => {

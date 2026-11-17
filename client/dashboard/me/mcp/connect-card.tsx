@@ -1,3 +1,5 @@
+import './connect-card.scss';
+
 import { formatNumber } from '@automattic/number-formatters';
 import { speak } from '@wordpress/a11y';
 import {
@@ -99,15 +101,17 @@ function AgentTile( {
 }
 
 function AccessOffNotice( {
+	isSite,
 	addedSiteCount,
 	onTurnOn,
 	isTurningOn,
 }: {
+	isSite: boolean;
 	addedSiteCount: number;
 	onTurnOn: () => void;
 	isTurningOn: boolean;
 } ) {
-	if ( addedSiteCount > 0 ) {
+	if ( ! isSite && addedSiteCount > 0 ) {
 		return (
 			<Notice
 				variant="info"
@@ -129,7 +133,7 @@ function AccessOffNotice( {
 	return (
 		<Notice
 			variant="warning"
-			title={ __( 'MCP access is off' ) }
+			title={ isSite ? __( 'MCP access is off for this site' ) : __( 'MCP access is off' ) }
 			actions={
 				<Button
 					__next40pxDefaultSize
@@ -143,7 +147,9 @@ function AccessOffNotice( {
 				</Button>
 			}
 		>
-			{ __( 'Turn it on so agents can read and change your sites.' ) }
+			{ isSite
+				? __( 'Turn it on so agents can read this site.' )
+				: __( 'Turn it on so agents can read and change your sites.' ) }
 		</Notice>
 	);
 }
@@ -181,12 +187,16 @@ export default function McpConnectCard( {
 	addedSiteCount = 0,
 	onTurnOn,
 	isTurningOn,
+	siteSlug,
 }: {
 	mcpEnabled: boolean;
 	addedSiteCount?: number;
 	onTurnOn: () => void;
 	isTurningOn: boolean;
+	/** Shows the card on a site's settings, where the toggle covers only that site. */
+	siteSlug?: string;
 } ) {
+	const isSite = siteSlug !== undefined;
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
@@ -239,6 +249,7 @@ export default function McpConnectCard( {
 	const trackAgentClick = ( agent: ConnectAgent ) => {
 		recordTracksEvent( 'calypso_dashboard_mcp_connect_click', {
 			...tracksAudienceProps,
+			source: isSite ? 'site' : 'account',
 			agent: agent.key,
 			action: agent.href ? 'open' : 'copy',
 		} );
@@ -251,12 +262,17 @@ export default function McpConnectCard( {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Connect an external AI agent' ) }
-						description={ __(
-							'Add WordPress.com to your agent, then sign in to approve the connection.'
-						) }
+						description={
+							isSite
+								? __(
+										'Add WordPress.com to your agent, then sign in to approve the connection. It covers every site where MCP access is on.'
+									)
+								: __( 'Add WordPress.com to your agent, then sign in to approve the connection.' )
+						}
 					/>
 					{ ! mcpEnabled && (
 						<AccessOffNotice
+							isSite={ isSite }
 							addedSiteCount={ addedSiteCount }
 							onTurnOn={ handleTurnOn }
 							isTurningOn={ isTurningOn }
@@ -293,10 +309,10 @@ export default function McpConnectCard( {
 						iconSize={ 16 }
 						onClick={ async () => {
 							if ( await copyText( 'helper', HELPER_PROMPT ) ) {
-								recordTracksEvent(
-									'calypso_dashboard_mcp_connect_helper_copy',
-									tracksAudienceProps
-								);
+								recordTracksEvent( 'calypso_dashboard_mcp_connect_helper_copy', {
+									...tracksAudienceProps,
+									source: isSite ? 'site' : 'account',
+								} );
 							}
 						} }
 					>
@@ -309,7 +325,11 @@ export default function McpConnectCard( {
 							className="mcp-connect__helper-button"
 							variant="tertiary"
 							size="small"
-							to="/me/preferences/mcp/setup"
+							to={
+								isSite
+									? `/sites/${ siteSlug }/settings/ai-tools/setup`
+									: '/me/preferences/mcp/setup'
+							}
 						>
 							{ __( 'Manual setup' ) }
 						</RouterLinkButton>
