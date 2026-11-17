@@ -60,8 +60,11 @@ import {
 import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
+import type { SnackbarBackTo } from '../snackbar-back-button';
 import type { Purchase } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
+
+type DomainBackTo = Extract< SnackbarBackTo, 'site-overview' | 'site-domains' >;
 
 export const meRoute = createRoute( {
 	head: () => ( {
@@ -486,8 +489,20 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+	validateSearch: (
+		search
+	): {
+		intent?: CancelIntent;
+		additionalPurchaseIds?: string;
+		back_to?: 'domain';
+		domain_back_to?: DomainBackTo;
+	} => {
 		return {
+			...( search.back_to === 'domain' ? { back_to: search.back_to } : {} ),
+			...( search.back_to === 'domain' &&
+			( search.domain_back_to === 'site-overview' || search.domain_back_to === 'site-domains' )
+				? { domain_back_to: search.domain_back_to }
+				: {} ),
 			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
 			search.intent === 'auto-renew'
@@ -833,17 +848,12 @@ export const securitySshKeyRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: isEnabled( 'ssh-multiple-keys' ) ? __( 'SSH keys' ) : __( 'SSH key' ),
+				title: __( 'SSH keys' ),
 			},
 		],
 	} ),
 	getParentRoute: () => securityRoute,
-	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( sshKeysQuery() ),
-			queryClient.ensureQueryData( userSettingsQuery() ),
-		] );
-	},
+	loader: () => queryClient.ensureQueryData( sshKeysQuery() ),
 	path: '/ssh-key',
 	validateSearch: ( search ): { back_to?: 'site-settings-sftp-ssh' } => {
 		return {
@@ -1250,6 +1260,26 @@ export const mcpLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+export const mcpLegacySubpageRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'mcp/$',
+	beforeLoad: ( { params } ) => {
+		switch ( params._splat ) {
+			case 'read':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/read' } );
+			case 'write':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/write' } );
+			case 'mcp-sites':
+			case 'add-site':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/mcp-sites' } );
+			case 'setup':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/setup' } );
+			default:
+				throw dashboardRedirect( { to: '/me/preferences/mcp' } );
+		}
+	},
+} );
+
 export const privacyLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
@@ -1274,24 +1304,6 @@ export const profileLegacyRedirectRoute = createRoute( {
 	},
 } );
 
-const validateAgentConnectionSearch = (
-	search: Record< string, unknown >
-): {
-	pair_token?: string;
-	slack?: string;
-	telegram_id?: string;
-	token?: string;
-	ts?: string;
-	bot?: string;
-} => ( {
-	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
-	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
-	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
-	...( typeof search.token === 'string' ? { token: search.token } : {} ),
-	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
-	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
-} );
-
 export const agentRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1302,7 +1314,6 @@ export const agentRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'agent',
-	validateSearch: validateAgentConnectionSearch,
 	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
 } ).lazy( () =>
 	import( '../../me/agent' ).then( ( d ) =>
@@ -1462,6 +1473,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
 		mcpLegacyRedirectRoute,
+		mcpLegacySubpageRedirectRoute,
 		privacyLegacyRedirectRoute,
 		blockedSitesLegacyRedirectRoute,
 		profileLegacyRedirectRoute,

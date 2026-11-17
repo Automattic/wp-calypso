@@ -1,5 +1,6 @@
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
+import { vi } from 'vitest';
 import i18n, { translate } from '..';
 import data from './data';
 
@@ -19,13 +20,13 @@ describe( 'I18n', function () {
 	} );
 
 	afterEach( function () {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		i18n.configure(); // ensure everything is reset
 	} );
 
 	describe( 'setLocale()', function () {
 		it( 'should emit a change event', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			i18n.subscribe( callback );
 
 			i18n.setLocale();
@@ -210,7 +211,7 @@ describe( 'I18n', function () {
 			} );
 
 			it( 'should emit a change event', () => {
-				const callback = jest.fn();
+				const callback = vi.fn();
 				i18n.subscribe( callback );
 
 				i18n.addTranslations( {} );
@@ -264,8 +265,8 @@ describe( 'I18n', function () {
 
 	describe( 'emitChange()', () => {
 		it( 'should call all subscribed callbacks', () => {
-			const callback1 = jest.fn();
-			const callback2 = jest.fn();
+			const callback1 = vi.fn();
+			const callback2 = vi.fn();
 
 			i18n.subscribe( callback1 );
 			i18n.subscribe( callback2 );
@@ -277,9 +278,9 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should not call unsubscribed callbacks', () => {
-			const callback1 = jest.fn();
-			const callback2 = jest.fn();
-			const callback3 = jest.fn();
+			const callback1 = vi.fn();
+			const callback2 = vi.fn();
+			const callback3 = vi.fn();
 
 			i18n.subscribe( callback1 );
 			const unsubscribe2 = i18n.subscribe( callback2 );
@@ -296,7 +297,7 @@ describe( 'I18n', function () {
 
 	describe( 'reRenderTranslations()', () => {
 		it( 'should call subscriber callback', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 
 			i18n.subscribe( callback );
 
@@ -308,7 +309,7 @@ describe( 'I18n', function () {
 
 	describe( 'subscribe()', () => {
 		it( 'should return an unsubscribe function', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 
 			const unsubscribe = i18n.subscribe( callback );
 			unsubscribe();
@@ -377,7 +378,7 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return newCopy if locale is en', () => {
-			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en' );
+			i18n.getLocaleSlug = vi.fn().mockReturnValue( 'en' );
 			const result = i18n.fixMe( {
 				text: 'hello',
 				newCopy: 'hello',
@@ -387,7 +388,7 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return newCopy if locale is en-gb', () => {
-			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en-gb' );
+			i18n.getLocaleSlug = vi.fn().mockReturnValue( 'en-gb' );
 			const result = i18n.fixMe( {
 				text: 'hello',
 				newCopy: 'hello',
@@ -397,7 +398,7 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return newCopy if text has a translation', () => {
-			i18n.hasTranslation = jest.fn().mockReturnValue( true );
+			i18n.hasTranslation = vi.fn().mockReturnValue( true );
 			const result = i18n.fixMe( {
 				text: 'hello',
 				newCopy: 'bonjour',
@@ -407,8 +408,8 @@ describe( 'I18n', function () {
 		} );
 
 		it( 'should return oldCopy if text does not have a translation and locale is not English', () => {
-			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'fr' );
-			i18n.hasTranslation = jest.fn().mockReturnValue( false );
+			i18n.getLocaleSlug = vi.fn().mockReturnValue( 'fr' );
+			i18n.hasTranslation = vi.fn().mockReturnValue( false );
 			const result = i18n.fixMe( {
 				text: 'hello',
 				newCopy: 'bonjour',

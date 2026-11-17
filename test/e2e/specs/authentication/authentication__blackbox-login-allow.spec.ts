@@ -33,6 +33,7 @@ test.describe( 'Authentication: Blackbox login allow', { tag: [ tags.AUTHENTICAT
 			const response = await collectResponse;
 			const body = await response.json();
 			expect( body?.data?.session_id ).toBe( 'bbtest_allow__________' );
+			expect( response.request().headers()[ 'x-blackbox-flow' ] ).toBe( 'login' );
 		} );
 
 		await testAccount.logInExclusively( async () => {

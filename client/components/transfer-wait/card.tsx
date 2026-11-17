@@ -1,7 +1,8 @@
 import './style.scss';
 
 import { Step } from '@automattic/onboarding';
-import { Button, ProgressBar } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { Progress } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import ExpectationChecklist from 'calypso/components/expectation-checklist';
@@ -100,11 +101,15 @@ export default function TransferWaitCard( {
 				) }
 			</div>
 			<div className="transfer-wait__progress">
-				<ProgressBar
+				<Progress.Root
 					className="transfer-wait__progress-bar"
 					value={ overallProgress }
 					aria-label={ String( stageTitles[ stageKey ] ) }
-				/>
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 				{ showEscape && (
 					<Button
 						className="transfer-wait__escape"

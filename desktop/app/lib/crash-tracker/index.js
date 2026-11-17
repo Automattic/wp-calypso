@@ -1,7 +1,4 @@
-const path = require( 'path' );
-const { app } = require( 'electron' );
-// eslint-disable-next-line no-restricted-modules
-const request = require( 'superagent' );
+const { net } = require( 'electron' );
 const config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:crash-tracker' );
 const system = require( '../../lib/system' );
@@ -37,26 +34,20 @@ module.exports = {
 			// Send to crash tracker
 			log.info( 'Sending crash report to ' + config.crash_reporter.url );
 
-			request
-				.post( config.crash_reporter.url )
-				.send( gatherData( errorType, errorData ) )
-				.end( function ( error, response ) {
-					finished( error, response, cb );
-				} );
+			// `net.fetch` throws before the app is ready, so wrap it to always reach `finished`.
+			Promise.resolve()
+				.then( () =>
+					net.fetch( config.crash_reporter.url, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify( gatherData( errorType, errorData ) ),
+					} )
+				)
+				.then(
+					( response ) =>
+						finished( response.ok ? null : new Error( `HTTP ${ response.status }` ), response, cb ),
+					( error ) => finished( error, undefined, cb )
+				);
 		}
-	},
-
-	trackLog: function ( cb ) {
-		const logFile = path.join( app.getPath( 'userData' ), config.debug.log_file );
-
-		log.info( 'Uploading log file: ' + logFile );
-
-		request
-			.post( config.crash_reporter.url )
-			.send( gatherData( 'logfile', logFile ) )
-			.attach( 'log', logFile )
-			.end( function ( error, response ) {
-				finished( error, response, cb );
-			} );
 	},
 };

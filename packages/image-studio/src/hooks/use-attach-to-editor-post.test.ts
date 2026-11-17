@@ -1,28 +1,29 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useAttachToEditorPost } from './use-attach-to-editor-post';
 
-const mockSaveEntityRecord = jest.fn();
-const mockGetEntityRecord = jest.fn();
-const mockTrackImageStudioError = jest.fn();
+const mockSaveEntityRecord = vi.fn();
+const mockGetEntityRecord = vi.fn();
+const mockTrackImageStudioError = vi.fn();
 let mockEditorStore: { getCurrentPost: () => unknown } | undefined;
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn( () => ( { saveEntityRecord: mockSaveEntityRecord } ) ),
-	select: jest.fn( ( storeName: string ) =>
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: vi.fn( () => ( { saveEntityRecord: mockSaveEntityRecord } ) ),
+	select: vi.fn( ( storeName: string ) =>
 		storeName === 'core/editor' ? mockEditorStore : undefined
 	),
-	resolveSelect: jest.fn( () => ( { getEntityRecord: mockGetEntityRecord } ) ),
+	resolveSelect: vi.fn( () => ( { getEntityRecord: mockGetEntityRecord } ) ),
 } ) );
 
-jest.mock( '@wordpress/core-data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
+vi.mock( '../utils/tracking', () => ( {
 	trackImageStudioError: ( ...args: unknown[] ) => mockTrackImageStudioError( ...args ),
 } ) );
 
@@ -32,7 +33,7 @@ function editorShowing( post: unknown ) {
 
 describe( 'useAttachToEditorPost', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSaveEntityRecord.mockResolvedValue( {} );
 		mockGetEntityRecord.mockImplementation( async ( _kind, _name, id ) => ( { id, post: null } ) );
 	} );
@@ -102,7 +103,7 @@ describe( 'useAttachToEditorPost', () => {
 	it( 'keeps the save going and reports it when the site refuses the attach', async () => {
 		mockEditorStore = editorShowing( { id: 7 } );
 		mockSaveEntityRecord.mockRejectedValue( new Error( 'rest_cannot_edit' ) );
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { result } = renderHook( () => useAttachToEditorPost() );
 
 		await expect( result.current( 42, 41 ) ).resolves.toBeUndefined();
@@ -119,7 +120,7 @@ describe( 'useAttachToEditorPost', () => {
 	it( 'keeps the save going and reports it when the image lookup fails', async () => {
 		mockEditorStore = editorShowing( { id: 7 } );
 		mockGetEntityRecord.mockRejectedValue( new Error( 'rest_forbidden' ) );
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { result } = renderHook( () => useAttachToEditorPost() );
 
 		await expect( result.current( 42, null ) ).resolves.toBeUndefined();

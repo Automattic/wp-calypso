@@ -2,12 +2,19 @@ import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Domain } from '@automattic/api-core';
 
-export default function DomainForwardingSettingsSummary( { domain }: { domain: Domain } ) {
+export default function DomainForwardingSettingsSummary( {
+	domain,
+	onClick,
+}: {
+	domain: Domain;
+	onClick?: () => void;
+} ) {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/domains/${ domain.domain }/forwarding` }
 			title={ __( 'Domain forwarding' ) }
 			badges={ [] }
+			onClick={ onClick }
 			density={ 'medium' as const }
 		/>
 	);

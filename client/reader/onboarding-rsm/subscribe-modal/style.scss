@@ -272,11 +272,8 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		border-color: var( --studio-gray-90, #1e1e1e );
 
 		svg.reader-following-feed {
+			color: var( --studio-white, #fff );
 			fill: var( --studio-white, #fff );
-
-			* {
-				fill: var( --studio-white, #fff );
-			}
 		}
 
 		.follow-button__label {

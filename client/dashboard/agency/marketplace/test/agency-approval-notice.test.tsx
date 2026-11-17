@@ -1,8 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { queryClient } from '@automattic/api-queries';
+// Loaded lazily when the notice opens the Help Center; importing it here keeps its first load out
+// of the `waitFor` timeout.
+// eslint-disable-next-line no-restricted-imports
+import '@automattic/data-stores/help-center';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';

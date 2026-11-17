@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 import { Input } from '../input';
 
@@ -17,8 +18,8 @@ describe( 'SearchBar#Input', () => {
 	it( 'changes the input value when the query changes and dispatches the onQueryChange event after a delay', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
-		const onSearchStart = jest.fn();
+		const onQueryChange = vi.fn();
+		const onSearchStart = vi.fn();
 
 		render(
 			<TestDomainSearch query="test" events={ { onQueryChange, onSearchStart } }>
@@ -42,7 +43,7 @@ describe( 'SearchBar#Input', () => {
 	it( 'still dispatches the pending query when the context is rebuilt before the delay', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
+		const onQueryChange = vi.fn();
 
 		const renderSearch = () => (
 			<TestDomainSearch query="test" events={ { onQueryChange } }>
@@ -69,7 +70,7 @@ describe( 'SearchBar#Input', () => {
 	it( 'drops the pending typed value when the query changes externally', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
+		const onQueryChange = vi.fn();
 
 		const renderSearch = ( query: string ) => (
 			<TestDomainSearch query={ query } events={ { onQueryChange } }>
@@ -94,7 +95,7 @@ describe( 'SearchBar#Input', () => {
 	it( 'does not dispatch a query that was cleared before the delay', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
+		const onQueryChange = vi.fn();
 
 		render(
 			<TestDomainSearch query="test" events={ { onQueryChange } }>
@@ -116,7 +117,7 @@ describe( 'SearchBar#Input', () => {
 	it( 'dispatches the query immediately when Enter is pressed', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
+		const onQueryChange = vi.fn();
 
 		render(
 			<TestDomainSearch query="test" events={ { onQueryChange } }>
@@ -137,7 +138,7 @@ describe( 'SearchBar#Input', () => {
 	it( 'clears the query when the clear button is clicked and dispatches the onQueryClear event', async () => {
 		const user = userEvent.setup();
 
-		const onQueryClear = jest.fn();
+		const onQueryClear = vi.fn();
 
 		render(
 			<TestDomainSearch query="test" events={ { onQueryClear } }>

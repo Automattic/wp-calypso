@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
@@ -402,7 +402,7 @@ describe( '<Plan>', () => {
 		expect( second.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a preview site its owner has not bought links to plans', async () => {
+	test( 'a preview site its owner has not bought links to the launch flow', async () => {
 		mockPendingFunnelSite( {
 			pending: false,
 			preview_sites: [ { blog_id: SITE_ID, site_slug: 'test.wordpress.com' } ],
@@ -412,7 +412,10 @@ describe( '<Plan>', () => {
 
 		const link = await findByRole( 'link' );
 		expect( link ).toHaveTextContent( 'Choose a plan' );
-		expect( link ).toHaveAttribute( 'href', wpcomLink( '/plans/test.wordpress.com' ) );
+		expect( link ).toHaveAttribute(
+			'href',
+			wpcomLink( '/setup/launch-site?siteSlug=test.wordpress.com&hide_free_plan=1' )
+		);
 		expect( container.textContent ).toContain( 'Preview' );
 		expect( container.textContent ).not.toContain( 'Free' );
 	} );

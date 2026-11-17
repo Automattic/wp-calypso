@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-core';
 import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { PRESSABLE_Q3_2026_OFFER_ENDS_AT, PRESSABLE_Q3_2026_OFFER_START_DATE } from './constants';
+import { PRESSABLE_OFFER_ENDS_AT, PRESSABLE_OFFER_START_DATE } from './constants';
 import type { Agency, JetpackLicense } from '@automattic/api-core';
 
 // The offer only covers moves up within the Signature and Premium tiers, the
@@ -38,7 +38,7 @@ export function hasBenefitedFromIntroductoryOffer( licenses: JetpackLicense[] ):
 		license.issued_at < earliest.issued_at ? license : earliest
 	);
 
-	return earliestLicense.issued_at.slice( 0, 10 ) >= PRESSABLE_Q3_2026_OFFER_START_DATE;
+	return earliestLicense.issued_at.slice( 0, 10 ) >= PRESSABLE_OFFER_START_DATE;
 }
 
 // An agency on a legacy plan has no upgrade path the offer applies to, so the
@@ -61,8 +61,10 @@ export const pressableOfferLicensesQuery = ( agencyId: number ) => ( {
 	staleTime: 5 * 60 * 1000,
 } );
 
-export const isPressableOfferActive = () =>
-	new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
+export const isPressableOfferActive = () => new Date() < new Date( PRESSABLE_OFFER_ENDS_AT );
+
+// No expansion offer runs alongside the holiday introductory offer.
+const EXPANSION_OFFER_IS_RUNNING = false;
 
 /**
  * The cheap checks before the license fetch: the offer is still running and
@@ -72,6 +74,7 @@ export function mayBeEligibleForPressableExpansionOffer( agency: Agency | null |
 	const pressable = agency?.third_party?.pressable;
 	const ownsPressableThroughA4A = !! pressable?.pressable_id && pressable?.a4a_id !== null;
 	return (
+		EXPANSION_OFFER_IS_RUNNING &&
 		isPressableOfferActive() &&
 		agency?.billing_system === 'billingdragon' &&
 		ownsPressableThroughA4A
@@ -79,8 +82,8 @@ export function mayBeEligibleForPressableExpansionOffer( agency: Agency | null |
 }
 
 /**
- * The dashboard's port of the classic app's Pressable Q3 2026 offer
- * eligibility (client/a8c-for-agencies/components/a4a-pressable-offer): the
+ * The dashboard's port of the classic app's Pressable offer eligibility
+ * (client/a8c-for-agencies/components/a4a-pressable-offer): the
  * introductory offer targets agencies without a Pressable plan through the A4A
  * marketplace, the expansion offer agencies with one that did not benefit from
  * the introductory offer. The license check behind the expansion offer only

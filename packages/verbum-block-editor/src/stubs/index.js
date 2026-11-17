@@ -33,11 +33,27 @@ const createNoop = ( name ) => () => {
 	warnStubUsed( name );
 };
 
-// @wordpress/sync exports
-export const createSyncProvider = createNoop( 'createSyncProvider' );
-export const connectIndexDb = createNoop( 'connectIndexDb' );
-export const getSyncProvider = createNoop( 'getSyncProvider' );
-export const createWebRTCConnection = createNoop( 'createWebRTCConnection' );
+// @wordpress/sync exports. core-data only creates a sync manager when real-time collaboration is
+// enabled, and subclasses Awareness when it loads.
+export const createSyncManager = createNoop( 'createSyncManager' );
+export const retrySyncConnection = createNoop( 'retrySyncConnection' );
+export class Awareness {}
+export class Delta {}
+export const Y = {};
+export const ConnectionErrorCode = {};
+export const CRDT_DOC_META_PERSISTENCE_KEY = 'CRDT_DOC_META_PERSISTENCE_KEY';
+export const CRDT_RECORD_MAP_KEY = 'CRDT_RECORD_MAP_KEY';
+export const LOCAL_EDITOR_ORIGIN = 'LOCAL_EDITOR_ORIGIN';
+export const LOCAL_UNDO_IGNORED_ORIGIN = 'LOCAL_UNDO_IGNORED_ORIGIN';
+
+// date-fns and date-fns/locale exports, used by ui's calendar
+export const differenceInCalendarDays = createNoop( 'differenceInCalendarDays' );
+export const enUS = {};
+
+// react-day-picker exports, used by ui's calendar
+export const DayPicker = createNullComponent( 'DayPicker' );
+export const useDayPicker = createNoop( 'useDayPicker' );
+export const rangeContainsModifiers = createNoop( 'rangeContainsModifiers' );
 
 // @wordpress/commands exports
 export const store = { name: 'core/commands' };

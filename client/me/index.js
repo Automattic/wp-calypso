@@ -48,19 +48,19 @@ export default function () {
 
 	page( '/me/get-apps', controller.appsRedirect );
 
+	// Old setup URLs; manual setup now lives in the dashboard.
 	page(
 		'/me/mcp/setup',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
-		controller.sidebar,
-		controller.mcpSetup,
-		makeLayout,
-		clientRender
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/setup', () => true )
+	);
+	page(
+		'/me/mcp-setup',
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/setup', () => true )
 	);
 	page(
 		'/me/mcp/read',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/read' ),
 		controller.sidebar,
 		controller.mcpRead,
 		makeLayout,
@@ -69,7 +69,7 @@ export default function () {
 	page(
 		'/me/mcp/write',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/write' ),
 		controller.sidebar,
 		controller.mcpWrite,
 		makeLayout,
@@ -78,7 +78,7 @@ export default function () {
 	page(
 		'/me/mcp/mcp-sites',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/mcp-sites' ),
 		controller.sidebar,
 		controller.mcpMcpSites,
 		makeLayout,
@@ -87,7 +87,7 @@ export default function () {
 	page(
 		'/me/mcp/add-site',
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp' ),
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/mcp-sites' ),
 		controller.sidebar,
 		controller.mcpAddSite,
 		makeLayout,
@@ -102,5 +102,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/me/mcp-setup', controller.mcpSetupLegacyRedirect, makeLayout, clientRender );
 }

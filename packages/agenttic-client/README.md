@@ -607,7 +607,7 @@ repository, so restructuring needs a coordinated release.
 ```bash
 # From the wp-calypso root
 yarn workspace @automattic/agenttic-client run build
-yarn workspace @automattic/agenttic-client run test        # vitest — not part of CI yet
+yarn workspace @automattic/agenttic-client run test
 yarn workspace @automattic/agenttic-client run type-check
 ```
 

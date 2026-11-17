@@ -1,5 +1,5 @@
-import { describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
+import { describe, expect, test, vi } from 'vitest';
 import { Roles } from '../lib';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
@@ -24,7 +24,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 // Persist and intercept all bearer token calls in these tests.
 nock( BEARER_TOKEN_URL )

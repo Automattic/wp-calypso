@@ -61,10 +61,11 @@ export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {
 				lastAgentMessageId,
 				feedbackText.trim(),
 				undefined,
-				getTraceIdForMessage?.( lastAgentMessageId )
+				getTraceIdForMessage?.( lastAgentMessageId ),
+				metadata
 			);
 		},
-		[ sessionId, authProvider, lastAgentMessageId, getTraceIdForMessage ]
+		[ sessionId, authProvider, lastAgentMessageId, metadata, getTraceIdForMessage ]
 	);
 
 	return {

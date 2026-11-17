@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { format } from '../src';
 
 describe( 'getUrlType', () => {

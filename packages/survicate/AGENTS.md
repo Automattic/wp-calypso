@@ -299,7 +299,7 @@ Three consumers, all funnelled through `shouldLoadSurvicate()`:
 Any PR that changes `packages/survicate/` or `apps/survicate/` ships to wp-admin
 through a separate widgets.wp.com deploy, not just the Calypso deploy. Reviewers
 and whoever merges need those steps, so **always add the two sections below to the
-PR description** (after "Testing Instructions" in `.github/PULL_REQUEST_TEMPLATE.md`).
+PR description** (after "How to Test" in `.github/PULL_REQUEST_TEMPLATE.md`).
 Adapt the feature-specific checks; keep the deploy steps as they are.
 
 ```markdown
@@ -351,7 +351,7 @@ fires correctly. The rule lives in the Survicate panel, not in our code.
   event fires only once per page load — code that registers a `SurvicateReady` listener
   _after_ the SDK already loaded will never run, so register at load time.
 - Each `src/*.ts` file has a matching `src/test/*.test.ts`. Tests use
-  `@jest-environment jsdom`, mock `@wordpress/data`'s `select`, and stub `window._sva`.
+  `// @vitest-environment jsdom`, mock `@wordpress/data`'s `select`, and stub `window._sva`.
 - Tab indentation, tabs for alignment (match existing files).
 
 ## Commands

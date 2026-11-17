@@ -60,6 +60,7 @@
 	background: var( --dashboard-background-color__elevated, var( --color-surface ) );
 
 	svg {
+		color: var( --color-primary );
 		fill: var( --color-primary );
 	}
 }

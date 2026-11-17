@@ -1,26 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import useReferrersQuery from '../../hooks/use-referrers-query';
 import useTopPostsQuery from '../../hooks/use-top-posts-query';
 import Highlights from '../highlights';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from '../record-widget-event';
 
-jest.mock( '../../hooks/use-top-posts-query' );
-jest.mock( '../../hooks/use-referrers-query' );
+vi.mock( '../../hooks/use-top-posts-query' );
+vi.mock( '../../hooks/use-referrers-query' );
 // Premium Analytics off, so the links are the classic Stats ones; highlights.test.tsx covers it on.
-jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => () => ( {
-	data: false,
+vi.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
+	default: () => ( {
+		data: false,
+	} ),
 } ) );
-jest.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
-jest.mock( '../../lib/selectors/can-current-user', () => () => true );
-jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
-jest.mock( '../record-widget-event', () => ( {
+vi.mock( '../../lib/config-api', () => ( { optionalConfig: () => undefined } ) );
+vi.mock( '../../lib/selectors/can-current-user', () => ( { default: () => true } ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
+vi.mock( '../record-widget-event', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	recordWidgetEventThenFollow: jest.fn( () => jest.fn() ),
+	default: vi.fn(),
+	recordWidgetEventThenFollow: vi.fn( () => vi.fn() ),
 } ) );
 
 const SITE_ID = 123;
@@ -65,7 +70,7 @@ const renderHighlights = ( lists ) => render( highlights( lists ) );
 
 describe( 'Highlights', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		global.ResizeObserver = class {
 			observe() {}
 			disconnect() {}

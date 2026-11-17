@@ -137,12 +137,14 @@
 
 	// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
 	.follow-button.is-following {
-		svg.reader-following-feed path {
+		svg.reader-following-feed {
+			color: initial;
 			fill: initial;
 		}
 
 		&:hover {
-			svg.reader-following-feed path {
+			svg.reader-following-feed {
+				color: initial;
 				fill: initial;
 			}
 		}

@@ -43,12 +43,9 @@
 }
 
 .transfer-wait__progress-bar {
-	width: 100% !important;
-	background: var( --color-neutral-5 );
-
-	> div {
-		background: var( --color-accent );
-	}
+	width: 100%;
+	--wpds-color-background-track-neutral: var( --color-neutral-5 );
+	--wpds-color-background-thumb-neutral: var( --color-accent );
 }
 
 .transfer-wait__escape {

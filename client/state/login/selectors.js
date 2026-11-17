@@ -84,6 +84,23 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 };
 
 /**
+ * Determines whether the account logging in has enhanced account security on.
+ * The login response has no flag for it, so this reads the server's rule for the
+ * supported auth types: with enhanced security only a passkey and backup codes are
+ * allowed (only a passkey for Automatticians), and otherwise the list always
+ * includes `sms` or `authenticator`.
+ * @param  {Object}   state  Global state tree
+ * @returns {boolean}        Whether enhanced account security is on
+ */
+export const isTwoFactorEnhancedSecurityEnabled = ( state ) => {
+	const supportedAuthTypes = getTwoFactorSupportedAuthTypes( state ) ?? [];
+	return (
+		supportedAuthTypes.includes( 'webauthn' ) &&
+		supportedAuthTypes.every( ( type ) => type === 'webauthn' || type === 'backup' )
+	);
+};
+
+/**
  * Determines whether a login request is in-progress.
  * @param  {Object}   state  Global state tree
  * @returns {boolean}         Whether a login request is in-progress.

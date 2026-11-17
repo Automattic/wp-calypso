@@ -77,11 +77,15 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 		svg {
 			fill: var(--dashboard__text-color);
+			color: var(--dashboard__text-color);
 		}
 	}
 }
 
 .wpnc-app {
+	// One amber for everything pending: the list's type badge, the Pending badge
+	// and the note detail's Approve action, at lighter and darker steps of its hue.
+	--wpnc-pending: #967023;
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -91,6 +95,25 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		text-rendering: optimizeLegibility;
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-font-smoothing: antialiased;
+	}
+}
+
+// The Pending badge on comments awaiting moderation, in the note list and the
+// note detail. Badge has no size prop, so it's stepped down a size here.
+.wpnc-app .wpnc__pending-badge {
+	flex-shrink: 0;
+	padding-block: 2px;
+	padding-inline: 6px;
+	border-radius: var(--wpds-border-radius-md, 4px);
+	background-color: oklch(from var(--wpnc-pending) 0.94 calc(c * 0.55) h);
+	color: oklch(from var(--wpnc-pending) 0.44 c h);
+	font-size: var(--wpds-typography-font-size-xs, 11px);
+	font-weight: 500;
+	line-height: var(--wpds-typography-line-height-xs, 16px);
+
+	@include ui-mixins.when-dark-theme {
+		background-color: oklch(from var(--wpnc-pending) 0.34 calc(c * 0.6) h);
+		color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
 	}
 }
 
@@ -135,6 +158,15 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 // DataViews list items use z-index: 1, so the detail needs ≥ 2 to cover them.
 .wpnc-app__list-pane {
 	z-index: 1;
+}
+
+// Pass the pane's column layout through to the list so it fills and scrolls.
+.wpnc-app__tabs,
+.wpnc-app__tab-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
 }
 
 .wpnc-app__detail-pane {
@@ -220,58 +252,4 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 		border-end-start-radius: 0;
 		box-shadow: none;
 	}
-}
-
-.wpnc-app__new-badge {
-	margin-inline-start: 6px;
-}
-
-.wpnc-app__beta-badge,
-.wpnc-app__beta-badge:visited {
-	color: var(--wpds-color-foreground-content-info, #001b4f);
-}
-
-// Marks the gear while the simplified layout is the one in use.
-.wpnc-app__settings-toggle.is-simplified {
-	position: relative;
-}
-
-.wpnc-app__settings-toggle.is-simplified::after {
-	content: "";
-	position: absolute;
-	inset-block-start: -2px;
-	inset-inline-end: -2px;
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: var(--color-accent);
-	// A ring in the panel's own background colour, so the dot reads against the gear
-	// rather than disappearing into its strokes.
-	box-shadow: 0 0 0 1px var(--color-surface);
-}
-
-
-.wpnc-app__layout-tour .components-popover__content {
-	width: 300px;
-	padding: 16px;
-	border-radius: 4px;
-}
-
-.wpnc-app__layout-tour-title {
-	margin: 0 0 8px;
-	font-size: 14px;
-	line-height: 20px;
-}
-
-.wpnc-app__layout-tour-text {
-	margin: 0 0 16px;
-	font-size: 13px;
-	line-height: 20px;
-	color: var(--color-text-subtle, #50575e);
-}
-
-.wpnc-app__layout-tour-body {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
 }

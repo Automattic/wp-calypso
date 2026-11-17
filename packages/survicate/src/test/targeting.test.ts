@@ -1,7 +1,6 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
+import { vi } from 'vitest';
 import { pauseSurvicateTargeting, resumeSurvicateTargeting } from '../targeting';
 
 describe( 'pauseSurvicateTargeting', () => {
@@ -30,7 +29,7 @@ describe( 'resumeSurvicateTargeting', () => {
 	} );
 
 	test( 'should clear the flag and re-run targeting when paused', () => {
-		const retarget = jest.fn();
+		const retarget = vi.fn();
 		window._sva = { disableTargeting: true, retarget };
 
 		resumeSurvicateTargeting();
@@ -40,7 +39,7 @@ describe( 'resumeSurvicateTargeting', () => {
 	} );
 
 	test( 'should not re-run targeting when not paused', () => {
-		const retarget = jest.fn();
+		const retarget = vi.fn();
 		window._sva = { retarget };
 
 		resumeSurvicateTargeting();

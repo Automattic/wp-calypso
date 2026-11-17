@@ -4,7 +4,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useColorScheme, type ColorScheme } from 'calypso/lib/color-scheme';
+import { useColorScheme, type ColorScheme } from 'calypso/lib/color-scheme/shared';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody } from '../../components/card';

@@ -9,8 +9,8 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
 import nock from 'nock';
+import { describe, expect, test, beforeEach, afterEach, vi } from 'vitest';
 import { SecretsManager } from '../secrets';
 import {
 	clearAccountLeak,
@@ -26,7 +26,7 @@ import type { Secrets } from '../secrets';
 // The reap tests drive a real RestAPIClient, whose closeAccount reads secrets.
 // `SecretsManager.secrets` throws when decrypted-secrets.json is absent, and the
 // unit-test CI build never decrypts it.
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation(
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation(
 	() =>
 		( {
 			calypsoOauthApplication: { client_id: 'some_value', client_secret: 'some_value' },
@@ -154,8 +154,8 @@ describe( 'teardown-markers: isAccountClosedError', () => {
 
 describe( 'closeAccountAndRecordLeak', () => {
 	test( 'no userID: records an email-keyed marker without accessing the account', async () => {
-		const closeAccount = jest.fn( async () => ( { success: true } ) );
-		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const closeAccount = vi.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = vi.fn( async () => ( {} ) );
 		const incompleteDetails = {
 			...details,
 			userID: undefined,
@@ -175,8 +175,8 @@ describe( 'closeAccountAndRecordLeak', () => {
 	} );
 
 	test( 'neither userID nor email: skips teardown and records nothing (no recordable key)', async () => {
-		const closeAccount = jest.fn( async () => ( { success: true } ) );
-		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const closeAccount = vi.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = vi.fn( async () => ( {} ) );
 		const unrecordableDetails = {
 			...details,
 			userID: undefined,
@@ -195,8 +195,8 @@ describe( 'closeAccountAndRecordLeak', () => {
 	} );
 
 	test( 'userID present but username/email missing: records a marker keyed by userID without accessing the account', async () => {
-		const closeAccount = jest.fn( async () => ( { success: true } ) );
-		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const closeAccount = vi.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = vi.fn( async () => ( {} ) );
 		const incompleteDetails = {
 			...details,
 			username: '',
@@ -216,10 +216,10 @@ describe( 'closeAccountAndRecordLeak', () => {
 	} );
 
 	test( 'close succeeds: clears the marker and never probes', async () => {
-		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const getMyAccountInformation = vi.fn( async () => ( {} ) );
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => ( { success: true } ) ),
+				closeAccount: vi.fn( async () => ( { success: true } ) ),
 				getMyAccountInformation,
 			} ),
 			details,
@@ -233,8 +233,8 @@ describe( 'closeAccountAndRecordLeak', () => {
 	test( 'close returns non-success and the account still exists: records a marker', async () => {
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => ( { success: false } ) ),
-				getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				closeAccount: vi.fn( async () => ( { success: false } ) ),
+				getMyAccountInformation: vi.fn( async () => ( {} ) ),
 			} ),
 			details,
 			leakDir
@@ -246,10 +246,10 @@ describe( 'closeAccountAndRecordLeak', () => {
 	test( 'close throws and the token is dead (probe throws auth error): no marker, account already gone', async () => {
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => {
+				closeAccount: vi.fn( async () => {
 					throw new Error( 'invalid_token: dead' );
 				} ),
-				getMyAccountInformation: jest.fn( async () => {
+				getMyAccountInformation: vi.fn( async () => {
 					throw new Error( 'invalid_token: dead' );
 				} ),
 			} ),
@@ -263,10 +263,10 @@ describe( 'closeAccountAndRecordLeak', () => {
 	test( 'close throws and probe fails transiently: records a marker (conservative, no missed leak)', async () => {
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => {
+				closeAccount: vi.fn( async () => {
 					throw new Error( '500: server error' );
 				} ),
-				getMyAccountInformation: jest.fn( async () => {
+				getMyAccountInformation: vi.fn( async () => {
 					throw new Error( 'fetch failed' );
 				} ),
 			} ),
@@ -280,8 +280,8 @@ describe( 'closeAccountAndRecordLeak', () => {
 	test( 'a stale marker is cleared once the account is confirmed gone', async () => {
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => ( { success: false } ) ),
-				getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				closeAccount: vi.fn( async () => ( { success: false } ) ),
+				getMyAccountInformation: vi.fn( async () => ( {} ) ),
 			} ),
 			details,
 			leakDir
@@ -290,10 +290,10 @@ describe( 'closeAccountAndRecordLeak', () => {
 
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => {
+				closeAccount: vi.fn( async () => {
 					throw new Error( 'invalid_token' );
 				} ),
-				getMyAccountInformation: jest.fn( async () => {
+				getMyAccountInformation: vi.fn( async () => {
 					throw new Error( 'invalid_token' );
 				} ),
 			} ),
@@ -305,27 +305,27 @@ describe( 'closeAccountAndRecordLeak', () => {
 
 	describe( 'retry loops (fake timers)', () => {
 		beforeEach( () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 		} );
 		afterEach( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		test( 'retries while the close is blocked by an active Atomic site, then clears once it succeeds', async () => {
 			let calls = 0;
-			const closeAccount = jest.fn( async () => {
+			const closeAccount = vi.fn( async () => {
 				calls += 1;
 				return calls < 3
 					? { error: 'atomic-site', message: 'active atomic sites' }
 					: { success: true };
 			} );
 			const promise = closeAccountAndRecordLeak(
-				fakeClient( { closeAccount, getMyAccountInformation: jest.fn( async () => ( {} ) ) } ),
+				fakeClient( { closeAccount, getMyAccountInformation: vi.fn( async () => ( {} ) ) } ),
 				details,
 				leakDir
 			);
 			// Drive the poll waits to completion; closeAccount succeeds on the 3rd call.
-			await jest.advanceTimersByTimeAsync( 90 * 1000 );
+			await vi.advanceTimersByTimeAsync( 90 * 1000 );
 			await promise;
 
 			expect( closeAccount ).toHaveBeenCalledTimes( 3 );
@@ -335,17 +335,17 @@ describe( 'closeAccountAndRecordLeak', () => {
 		test( 'records a leak when the Atomic site never deprovisions within the retry window', async () => {
 			const promise = closeAccountAndRecordLeak(
 				fakeClient( {
-					closeAccount: jest.fn( async () => ( {
+					closeAccount: vi.fn( async () => ( {
 						error: 'atomic-site',
 						message: 'active atomic sites',
 					} ) ),
-					getMyAccountInformation: jest.fn( async () => ( {} ) ),
+					getMyAccountInformation: vi.fn( async () => ( {} ) ),
 				} ),
 				details,
 				leakDir
 			);
 			// Advance past the full retry window so the loop reaches its deadline.
-			await jest.advanceTimersByTimeAsync( 200 * 1000 );
+			await vi.advanceTimersByTimeAsync( 200 * 1000 );
 			await promise;
 
 			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
@@ -353,18 +353,18 @@ describe( 'closeAccountAndRecordLeak', () => {
 
 		test( 'retries while the close POST rejects a fresh token, then clears once it succeeds', async () => {
 			let calls = 0;
-			const closeAccount = jest.fn( async () => {
+			const closeAccount = vi.fn( async () => {
 				calls += 1;
 				return calls < 3
 					? { error: 'invalid_token', message: 'The OAuth2 token is invalid.' }
 					: { success: true };
 			} );
 			const promise = closeAccountAndRecordLeak(
-				fakeClient( { closeAccount, getMyAccountInformation: jest.fn( async () => ( {} ) ) } ),
+				fakeClient( { closeAccount, getMyAccountInformation: vi.fn( async () => ( {} ) ) } ),
 				details,
 				leakDir
 			);
-			await jest.advanceTimersByTimeAsync( 30 * 1000 );
+			await vi.advanceTimersByTimeAsync( 30 * 1000 );
 			await promise;
 
 			expect( closeAccount ).toHaveBeenCalledTimes( 3 );
@@ -374,16 +374,16 @@ describe( 'closeAccountAndRecordLeak', () => {
 		test( 'records a leak when the close POST still rejects the token past the retry window', async () => {
 			const promise = closeAccountAndRecordLeak(
 				fakeClient( {
-					closeAccount: jest.fn( async () => ( {
+					closeAccount: vi.fn( async () => ( {
 						error: 'invalid_token',
 						message: 'The OAuth2 token is invalid.',
 					} ) ),
-					getMyAccountInformation: jest.fn( async () => ( {} ) ),
+					getMyAccountInformation: vi.fn( async () => ( {} ) ),
 				} ),
 				details,
 				leakDir
 			);
-			await jest.advanceTimersByTimeAsync( 60 * 1000 );
+			await vi.advanceTimersByTimeAsync( 60 * 1000 );
 			await promise;
 
 			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
@@ -391,13 +391,13 @@ describe( 'closeAccountAndRecordLeak', () => {
 	} );
 
 	test( 'a thrown invalid_token error is not retried and resolves via the probe', async () => {
-		const closeAccount = jest.fn( async () => {
+		const closeAccount = vi.fn( async () => {
 			throw new Error( 'invalid_token: The OAuth2 token is invalid.' );
 		} );
 		await closeAccountAndRecordLeak(
 			fakeClient( {
 				closeAccount,
-				getMyAccountInformation: jest.fn( async () => {
+				getMyAccountInformation: vi.fn( async () => {
 					throw new Error( 'invalid_token: The OAuth2 token is invalid.' );
 				} ),
 			} ),
@@ -415,10 +415,10 @@ describe( 'closeAccountAndRecordLeak', () => {
 		await expect(
 			closeAccountAndRecordLeak(
 				fakeClient( {
-					closeAccount: jest.fn( async () => {
+					closeAccount: vi.fn( async () => {
 						throw new Error( 'boom' );
 					} ),
-					getMyAccountInformation: jest.fn( async () => {
+					getMyAccountInformation: vi.fn( async () => {
 						throw new Error( 'boom' );
 					} ),
 				} ),
@@ -456,13 +456,13 @@ describe( 'teardown-markers: deferred Atomic closes', () => {
 	}
 
 	test( 'defers instead of waiting when the Atomic site is still deprovisioning', async () => {
-		const closeAccount = jest.fn( async () => atomicRefusal );
+		const closeAccount = vi.fn( async () => atomicRefusal );
 
 		await closeAccountAndRecordLeak(
 			fakeClient( {
 				closeAccount,
-				getMyAccountInformation: jest.fn( async () => ( {} ) ),
-				getBearerToken: jest.fn( async () => 'token-2001' ),
+				getMyAccountInformation: vi.fn( async () => ( {} ) ),
+				getBearerToken: vi.fn( async () => 'token-2001' ),
 			} ),
 			details,
 			leakDir,
@@ -481,9 +481,9 @@ describe( 'teardown-markers: deferred Atomic closes', () => {
 	test( 'records a leak rather than deferring when the bearer token is unavailable', async () => {
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => atomicRefusal ),
-				getMyAccountInformation: jest.fn( async () => ( {} ) ),
-				getBearerToken: jest.fn( async () => {
+				closeAccount: vi.fn( async () => atomicRefusal ),
+				getMyAccountInformation: vi.fn( async () => ( {} ) ),
+				getBearerToken: vi.fn( async () => {
 					throw new Error( 'no token' );
 				} ),
 			} ),
@@ -545,9 +545,9 @@ describe( 'teardown-markers: deferred Atomic closes', () => {
 
 		await closeAccountAndRecordLeak(
 			fakeClient( {
-				closeAccount: jest.fn( async () => atomicRefusal ),
-				getMyAccountInformation: jest.fn( async () => ( {} ) ),
-				getBearerToken: jest.fn( async () => 'token-2001' ),
+				closeAccount: vi.fn( async () => atomicRefusal ),
+				getMyAccountInformation: vi.fn( async () => ( {} ) ),
+				getBearerToken: vi.fn( async () => 'token-2001' ),
 			} ),
 			details,
 			leakDir,

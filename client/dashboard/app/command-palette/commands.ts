@@ -22,7 +22,7 @@ export interface Command {
 	label: string;
 	searchLabel: string;
 	path: string;
-	icon: React.ReactNode;
+	icon: React.JSX.Element;
 	// Optional predicate that controls when the command is available, based on
 	// the app's supported features. Omit to always show the command.
 	isEnabled?: ( supports: Supports ) => boolean;

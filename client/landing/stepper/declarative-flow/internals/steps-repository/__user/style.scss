@@ -30,7 +30,7 @@ $breakpoint-mobile: 660px;
 
 	// Match the login page's 2rem so the form does not jump between the two screens. The class
 	// sits on the form's row, so the rule reaches up to the wrapper that owns the gap.
-	.step-container-v2__content-wrapper:has(> .step-container-v2--user-entry-clarity) {
+	.step-container-v2__content-wrapper:has(> .step-container-v2--user-login-below-buttons) {
 		gap: 2rem;
 	}
 

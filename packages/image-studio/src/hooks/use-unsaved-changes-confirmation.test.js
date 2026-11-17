@@ -8,17 +8,18 @@
  * - Clean exit (no changes): runs onExit( false ).
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useUnsavedChangesConfirmation } from './use-unsaved-changes-confirmation';
 
 // Store selector and action mocks
-const mockGetHasUnsavedChanges = jest.fn();
-const mockGetHasUpdatedMetadata = jest.fn();
-const mockGetLastSavedAttachmentId = jest.fn();
-const mockSetIsExitConfirmed = jest.fn();
+const mockGetHasUnsavedChanges = vi.fn();
+const mockGetHasUpdatedMetadata = vi.fn();
+const mockGetLastSavedAttachmentId = vi.fn();
+const mockSetIsExitConfirmed = vi.fn();
 
 // Mock @wordpress/data
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( ( callback ) =>
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( ( callback ) =>
 		callback( ( storeName ) => {
 			if ( storeName === 'image-studio' ) {
 				return {
@@ -30,7 +31,7 @@ jest.mock( '@wordpress/data', () => ( {
 			return {};
 		} )
 	),
-	useDispatch: jest.fn( ( storeName ) => {
+	useDispatch: vi.fn( ( storeName ) => {
 		if ( storeName === 'image-studio' ) {
 			return {
 				setIsExitConfirmed: mockSetIsExitConfirmed,
@@ -41,23 +42,26 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Mock @wordpress/element
-jest.mock( '@wordpress/element', () => ( {
-	useState: jest.requireActual( '@wordpress/element' ).useState,
-	useCallback: jest.requireActual( '@wordpress/element' ).useCallback,
-	useEffect: jest.requireActual( '@wordpress/element' ).useEffect,
-} ) );
+vi.mock( '@wordpress/element', async () => {
+	const actual = await vi.importActual( '@wordpress/element' );
+	return {
+		useState: actual.useState,
+		useCallback: actual.useCallback,
+		useEffect: actual.useEffect,
+	};
+} );
 
 // Mock store
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
 // Tracking mocks (referenced lazily so module-init order does not matter)
-const mockTrackCloseWarningShown = jest.fn();
-const mockTrackCloseWarningKeptGenerating = jest.fn();
-const mockTrackCloseWarningStopped = jest.fn();
+const mockTrackCloseWarningShown = vi.fn();
+const mockTrackCloseWarningKeptGenerating = vi.fn();
+const mockTrackCloseWarningStopped = vi.fn();
 
-jest.mock( '../utils/tracking', () => ( {
+vi.mock( '../utils/tracking', () => ( {
 	trackImageStudioFeatureClipCloseWarningShown: ( ...args ) =>
 		mockTrackCloseWarningShown( ...args ),
 	trackImageStudioFeatureClipCloseWarningKeptGenerating: ( ...args ) =>
@@ -72,10 +76,10 @@ describe( 'useUnsavedChangesConfirmation', () => {
 	let mockOnExit;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		mockOnSave = jest.fn().mockResolvedValue( undefined );
-		mockOnDiscard = jest.fn().mockResolvedValue( undefined );
-		mockOnExit = jest.fn().mockResolvedValue( undefined );
+		vi.clearAllMocks();
+		mockOnSave = vi.fn().mockResolvedValue( undefined );
+		mockOnDiscard = vi.fn().mockResolvedValue( undefined );
+		mockOnExit = vi.fn().mockResolvedValue( undefined );
 
 		mockGetHasUnsavedChanges.mockReturnValue( false );
 		mockGetHasUpdatedMetadata.mockReturnValue( false );
@@ -343,7 +347,7 @@ describe( 'useUnsavedChangesConfirmation', () => {
 		it( 'does not register keydown listener when there are no unsaved changes', () => {
 			mockGetHasUnsavedChanges.mockReturnValue( false );
 
-			const addEventListenerSpy = jest.spyOn( document, 'addEventListener' );
+			const addEventListenerSpy = vi.spyOn( document, 'addEventListener' );
 
 			renderHook( () =>
 				useUnsavedChangesConfirmation( {
@@ -389,8 +393,8 @@ describe( 'useUnsavedChangesConfirmation', () => {
 		it( 'removes keydown listener on unmount', () => {
 			mockGetHasUnsavedChanges.mockReturnValue( true );
 
-			const addEventListenerSpy = jest.spyOn( document, 'addEventListener' );
-			const removeEventListenerSpy = jest.spyOn( document, 'removeEventListener' );
+			const addEventListenerSpy = vi.spyOn( document, 'addEventListener' );
+			const removeEventListenerSpy = vi.spyOn( document, 'removeEventListener' );
 
 			const { unmount } = renderHook( () =>
 				useUnsavedChangesConfirmation( {

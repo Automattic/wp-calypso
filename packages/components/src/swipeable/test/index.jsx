@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Swipeable } from '../';
 
 // jsdom has no PointerEvent, so build pointer events from MouseEvent to get real coordinates.
@@ -28,14 +29,17 @@ describe( 'Swipeable', () => {
 			</Swipeable>
 		);
 		const swipeable = container.querySelector( '.swipeable__container' );
-		jest
-			.spyOn( swipeable, 'getBoundingClientRect' )
-			.mockReturnValue( { left: 0, right: 400, top: 0, bottom: 400 } );
+		vi.spyOn( swipeable, 'getBoundingClientRect' ).mockReturnValue( {
+			left: 0,
+			right: 400,
+			top: 0,
+			bottom: 400,
+		} );
 		return swipeable;
 	};
 
 	it( 'ignores a release at x=0 without moving', () => {
-		const onPageSelect = jest.fn();
+		const onPageSelect = vi.fn();
 		const swipeable = renderSwipeable( { onPageSelect, isClickEnabled: true } );
 
 		fireEvent( swipeable, pointerEvent( 'pointerdown', { clientX: 100, timeStamp: 1 } ) );
@@ -45,7 +49,7 @@ describe( 'Swipeable', () => {
 	} );
 
 	it( 'uses the last moved position when released at x=0', () => {
-		const onPageSelect = jest.fn();
+		const onPageSelect = vi.fn();
 		const swipeable = renderSwipeable( { onPageSelect } );
 
 		fireEvent( swipeable, pointerEvent( 'pointerdown', { clientX: 200, timeStamp: 1 } ) );
@@ -56,7 +60,7 @@ describe( 'Swipeable', () => {
 	} );
 
 	it( 'ignores moves reported at x=0', () => {
-		const onPageSelect = jest.fn();
+		const onPageSelect = vi.fn();
 		const swipeable = renderSwipeable( { onPageSelect } );
 
 		fireEvent( swipeable, pointerEvent( 'pointerdown', { clientX: 200, timeStamp: 1 } ) );

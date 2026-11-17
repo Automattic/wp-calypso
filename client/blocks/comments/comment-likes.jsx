@@ -25,13 +25,19 @@ function getLikedByLabel( likeCount = 0, iLike = false ) {
 		} );
 	}
 	const others = likeCount - 1;
+	const components = { b: <strong /> };
 	if ( others <= 0 ) {
-		return translate( 'Liked by you' );
+		return translate( 'Liked by {{b}}you{{/b}}', { components } );
 	}
-	return translate( 'Liked by you and %(count)s other', 'Liked by you and %(count)s others', {
-		count: others,
-		args: { count: formatNumber( others ) },
-	} );
+	return translate(
+		'Liked by {{b}}you{{/b}} and {{b}}%(count)s other{{/b}}',
+		'Liked by {{b}}you{{/b}} and {{b}}%(count)s others{{/b}}',
+		{
+			count: others,
+			args: { count: formatNumber( others ) },
+			components,
+		}
+	);
 }
 
 class CommentLikeButtonContainer extends Component {

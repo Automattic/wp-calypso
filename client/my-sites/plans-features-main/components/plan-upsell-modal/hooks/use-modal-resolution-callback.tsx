@@ -3,6 +3,7 @@ import { FREE_THEME } from '@automattic/design-picker';
 import { DOMAIN_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
 import {
+	FREE_PLAN_DOMAIN_MOVE_DIALOG,
 	FREE_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_PAID_DOMAIN_DIALOG,
 	PAID_PLAN_IS_REQUIRED_DIALOG,
@@ -16,6 +17,8 @@ type Props = {
 	paidDomainName?: string | null;
 	intent?: string | null;
 	selectedThemeType?: string;
+	isDomainMove?: boolean;
+	isConnectedDomainMove?: boolean;
 };
 
 /**
@@ -28,6 +31,8 @@ export function useModalResolutionCallback( {
 	paidDomainName,
 	intent,
 	selectedThemeType,
+	isDomainMove,
+	isConnectedDomainMove,
 }: Props ) {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
@@ -55,6 +60,17 @@ export function useModalResolutionCallback( {
 				return FREE_PLAN_PAID_DOMAIN_DIALOG;
 			}
 
+			// A domain the user already registered moves to the new site at no cost and stays
+			// as a non-primary address on the Free plan. A connected domain needs a paid plan.
+			if (
+				paidDomainName &&
+				isDomainMove &&
+				! isConnectedDomainMove &&
+				flowName === ONBOARDING_FLOW
+			) {
+				return FREE_PLAN_DOMAIN_MOVE_DIALOG;
+			}
+
 			// TODO: look into decoupling the flowName from here as well.
 			if (
 				paidDomainName &&
@@ -75,6 +91,8 @@ export function useModalResolutionCallback( {
 			paidDomainName,
 			intent,
 			selectedThemeType,
+			isDomainMove,
+			isConnectedDomainMove,
 		]
 	);
 }

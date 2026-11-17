@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { CONTACT_URL_FOR_PRESSABLE_OFFER_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import PressableOfferBanner from './banner';
-import { PRESSABLE_EXPANSION_OFFER_TERMS_URL, PRESSABLE_Q3_2026_OFFER_DEADLINE } from './constants';
+import { PRESSABLE_EXPANSION_OFFER_TERMS_URL, PRESSABLE_OFFER_DEADLINE } from './constants';
 import useIsEligibleForExpansionOffer from './hooks/use-is-eligible-for-expansion-offer';
 import usePressableOfferEligibility from './hooks/use-pressable-offer-eligibility';
 
@@ -73,8 +73,7 @@ const PressableExpansionOffer = () => {
 
 	// Gate before rendering the banner so the license fetch it depends on only
 	// runs for agencies that own a Pressable plan through A4A.
-	const shouldShowOffer =
-		mayBeEligibleForExpansionOffer && new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
+	const shouldShowOffer = mayBeEligibleForExpansionOffer && new Date() <= PRESSABLE_OFFER_DEADLINE;
 
 	if ( ! shouldShowOffer ) {
 		return null;

@@ -4,6 +4,7 @@ import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import { tracksEvents } from 'calypso/lib/analytics/tracks';
 import Logger from 'calypso/lib/catch-js-errors';
+import { registerLogger } from 'calypso/lib/catch-js-errors/log';
 import { getSiteFragment } from 'calypso/lib/route';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
@@ -42,7 +43,7 @@ export function setupErrorLogger( reduxStore ) {
 	const errorLogger = new Logger();
 
 	// Save errorLogger to a singleton for use in arbitrary logging.
-	require( 'calypso/lib/catch-js-errors/log' ).registerLogger( errorLogger );
+	registerLogger( errorLogger );
 
 	// Save data to JS error logger
 	errorLogger.saveDiagnosticData( {

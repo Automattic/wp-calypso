@@ -27,6 +27,7 @@ import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { isWriteTool } from '../categories';
+import useAnchorScroll from '../use-anchor-scroll';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
 
 import '../toolbar.scss';
@@ -92,6 +93,10 @@ export default function McpRead() {
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 	const pageAllEnabled = allTools.length > 0 && allTools.every( ( [ , tool ] ) => tool.enabled );
 
+	const pageRef = useRef< HTMLDivElement >( null );
+	const toolbarRef = useRef< HTMLDivElement >( null );
+	const scrollToAnchor = useAnchorScroll( pageRef, toolbarRef );
+
 	// Open the group containing a tool anchor (or the group named by a group
 	// anchor), scrolling the target into view. Every other tool stays visible.
 	// Runs once per hash value, after the groups exist.
@@ -110,7 +115,7 @@ export default function McpRead() {
 			) {
 				openGroupsRef.current.add( groupKey );
 				setOpenGroups( new Set( openGroupsRef.current ) );
-				document.getElementById( locationHash )?.scrollIntoView?.( { block: 'start' } );
+				scrollToAnchor( locationHash );
 			}
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -221,8 +226,8 @@ export default function McpRead() {
 				eventName="calypso_dashboard_mcp_read_view"
 				properties={ tracksAudienceProps }
 			/>
-			<div className="mcp-tools-page">
-				<div className="mcp-tools-toolbar">
+			<div className="mcp-tools-page" ref={ pageRef }>
+				<div className="mcp-tools-toolbar" ref={ toolbarRef }>
 					<Card>
 						<CardBody>
 							<ToggleControl
@@ -253,7 +258,7 @@ export default function McpRead() {
 							const isOpen = openGroups.has( groupKey ) || query.length > 0;
 
 							return (
-								<Card key={ groupKey } id={ groupKey }>
+								<Card key={ groupKey } id={ groupKey } className="mcp-tools-anchor">
 									<CardBody>
 										{ isDesktop ? (
 											<HStack justify="space-between" alignment="center" spacing={ 4 }>
@@ -333,7 +338,7 @@ export default function McpRead() {
 													<CardBody>
 														<VStack spacing={ 4 }>
 															{ subTools.map( ( [ toolId, tool ] ) => (
-																<div key={ toolId } id={ toolId }>
+																<div key={ toolId } id={ toolId } className="mcp-tools-anchor">
 																	<HStack
 																		justify="space-between"
 																		alignment="flex-start"

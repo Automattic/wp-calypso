@@ -29,6 +29,8 @@ type SiteConfigurationsModalProps = {
 	randomSiteName: string;
 	isRandomSiteNameLoading: boolean;
 	siteId?: number;
+	/** A static-site import to deliver onto the new dev site. */
+	importSessionId?: string;
 };
 
 export default function SiteConfigurationsModal( {
@@ -37,6 +39,7 @@ export default function SiteConfigurationsModal( {
 	randomSiteName,
 	isRandomSiteNameLoading,
 	siteId,
+	importSessionId,
 }: SiteConfigurationsModalProps ) {
 	const isDevSite = ! siteId;
 	const [ allowClientsToUseSiteHelpCenter, setAllowClientsToUseSiteHelpCenter ] =
@@ -103,6 +106,7 @@ export default function SiteConfigurationsModal( {
 			...trackingParams,
 			id: siteId,
 			site_name: siteName.siteName,
+			import_session_id: importSessionId,
 		};
 
 		recordTracksEvent( 'calypso_a4a_create_site_config_submit', trackingParams );
@@ -116,6 +120,21 @@ export default function SiteConfigurationsModal( {
 						translate(
 							'Your account is blocked from creating new developer sites. Please get in touch with our support team for assistance.'
 						)
+					)
+				);
+			} else if ( error.code === 'static_site_import_not_site_owner' ) {
+				dispatch(
+					errorNotice(
+						translate( 'Only the agency owner can move a site onto a new development site.' )
+					)
+				);
+			} else if (
+				error.code === 'static_site_import_not_approvable' ||
+				error.code === 'static_site_import_session_not_found'
+			) {
+				dispatch(
+					errorNotice(
+						translate( "This import can no longer be used. Start again with the site's address." )
 					)
 				);
 			} else if ( error.code === 'email_unverified' ) {

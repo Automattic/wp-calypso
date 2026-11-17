@@ -1,6 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { DomainSearchContext, useDomainSearchContextValue } from '../../../page/context';
 import { InitialState } from '../../../page/initial-state';
 import { buildCart } from '../../../test-helpers/factories/cart';
@@ -79,7 +80,7 @@ describe( 'NamePulseFilter', () => {
 	} );
 
 	it( 'renders nothing when there are no endings to choose from', async () => {
-		const tlds = jest.fn( async () => [] );
+		const tlds = vi.fn( async () => [] );
 
 		const { container } = render( <FilterTestSearch tlds={ tlds } /> );
 
@@ -89,8 +90,8 @@ describe( 'NamePulseFilter', () => {
 
 	it( 'applies the chosen endings and clears them again', async () => {
 		const user = userEvent.setup();
-		const onFilterApplied = jest.fn();
-		const onFilterReset = jest.fn();
+		const onFilterApplied = vi.fn();
+		const onFilterReset = vi.fn();
 
 		render( <FilterTestSearch events={ { onFilterApplied, onFilterReset } } /> );
 

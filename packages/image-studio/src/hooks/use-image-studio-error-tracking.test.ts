@@ -1,21 +1,22 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioError } from '../utils/tracking';
 import { useImageStudioErrorTracking } from './use-image-studio-error-tracking';
 
 // The package root loads the whole chat; the real tracking module only needs its credits helpers.
-jest.mock( '@automattic/agents-manager', () =>
-	jest.requireActual( '@automattic/agents-manager/src/utils/credits' )
+vi.mock( '@automattic/agents-manager', () =>
+	vi.importActual( '@automattic/agents-manager/src/utils/credits' )
 );
 
-jest.mock( '../utils/tracking', () => ( {
-	...jest.requireActual( '../utils/tracking' ),
-	trackImageStudioError: jest.fn(),
+vi.mock( '../utils/tracking', async () => ( {
+	...( await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' ) ),
+	trackImageStudioError: vi.fn(),
 } ) );
 
 describe( 'useImageStudioErrorTracking', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'tracks a quota error from the agent error state', () => {

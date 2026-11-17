@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { speak } from '@wordpress/a11y';
-import { ProgressBar } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -251,7 +251,15 @@ export function PlaygroundIframe( {
 			{ bootProgress && <PlaygroundIntro progress={ bootProgress } /> }
 			{ isLoading && ! bootProgress && (
 				<div className="playground-iframe__loading">
-					<ProgressBar className="playground-iframe__progress-bar" />
+					<Progress.Root
+						className="playground-iframe__progress-bar"
+						aria-label={ __( 'Loading…' ) }
+						value={ null }
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				</div>
 			) }
 			<iframe

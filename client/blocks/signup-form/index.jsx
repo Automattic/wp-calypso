@@ -608,7 +608,7 @@ class SignupForm extends Component {
 			components: {
 				tosLink: (
 					<a
-						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						href={ localizeUrl( 'https://automattic.com/tos/' ) }
 						onClick={ this.handleTosClick }
 						target="_blank"
 						rel="noopener noreferrer"

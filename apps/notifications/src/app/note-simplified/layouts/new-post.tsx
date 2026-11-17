@@ -11,11 +11,16 @@ export default function NewPostNote( { note }: { note: Note } ) {
 	const author = actor?.name && (
 		<Author avatar={ actor.avatar }>
 			{ actor.url ? (
-				<a href={ actor.url } target="_blank" rel="noreferrer">
+				<a
+					className="wpnc-simplified__card-author"
+					href={ actor.url }
+					target="_blank"
+					rel="noreferrer"
+				>
 					{ actor.name }
 				</a>
 			) : (
-				actor.name
+				<span className="wpnc-simplified__card-author">{ actor.name }</span>
 			) }
 		</Author>
 	);
@@ -32,13 +37,18 @@ export default function NewPostNote( { note }: { note: Note } ) {
 				<Headline note={ note } />
 			) }
 			{ post && (
-				<Text className="wpnc-simplified__quiet-links" size={ 15 } weight={ 600 }>
+				<Text
+					className="wpnc-simplified__quiet-links wpnc-simplified__post-title"
+					size={ 17 }
+					weight={ 600 }
+					lineHeight="24px"
+				>
 					<a href={ post.url } target="_blank" rel="noreferrer">
 						{ post.title }
 					</a>
 				</Text>
 			) }
-			<Body note={ note } hidePeople={ actorCount === 1 } />
+			<Body className="wpnc-simplified__post-body" note={ note } hidePeople={ actorCount === 1 } />
 		</>
 	);
 }

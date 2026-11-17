@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
 import DollyComponent from 'calypso/me/dolly';
+import QRCodeAppLoginPage from 'calypso/me/qr-code-app-login';
 import PasswordComponent from 'calypso/me/security/main';
 import SecurityAccountEmail from 'calypso/me/security-account-email';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
@@ -100,7 +101,6 @@ export function sshKey( context, next ) {
 }
 
 export function qrCodeAppLogin( context, next ) {
-	const QRCodeAppLoginPage = require( 'calypso/me/qr-code-app-login' ).default;
 	context.primary = createElement( QRCodeAppLoginPage, {} );
 	next();
 }

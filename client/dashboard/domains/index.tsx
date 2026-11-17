@@ -2,8 +2,8 @@ import { DomainSubtype } from '@automattic/api-core';
 import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { useAnalytics } from '../app/analytics';
-import { useAuth } from '../app/auth';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
@@ -14,18 +14,21 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	getDomainId,
+	getTableActions,
 	useActions,
+	useDomainsListLayouts,
 	useFields,
 	DOMAINS_LIST_CONFIG,
 	DOMAINS_LIST_DEFAULT_VIEW,
-	DOMAINS_LIST_LAYOUTS,
 	recordDomainViewChanges,
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
+	withDomainsListDefaultLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -43,24 +46,10 @@ const defaultView = {
 };
 
 function Domains() {
-	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
-
-	const {
-		view: persistentView,
-		updateView,
-		resetView,
-	} = usePersistentView( {
-		slug: 'domains',
-		defaultView,
-		queryParams: searchParams,
-		sanitizeFields: sanitizeDomainFields,
-	} );
-	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
-
 	const { data: domains } = useSuspenseQuery( {
 		...domainsQuery(),
 		select: ( data ) => {
@@ -68,7 +57,25 @@ function Domains() {
 		},
 	} );
 
-	const actions = useActions( { user, sites, domains, layout: view.type } );
+	const {
+		view: persistentView,
+		updateView,
+		resetView,
+	} = usePersistentView( {
+		slug: 'domains',
+		defaultView: withDomainsListDefaultLayout( defaultView, domains.length ),
+		queryParams: searchParams,
+		sanitizeFields: sanitizeDomainFields,
+	} );
+	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
+	const {
+		layouts,
+		recordLayoutChoice,
+		resetView: resetViewAndLayoutChoice,
+	} = useDomainsListLayouts( { slug: 'domains', domainCount: domains.length, view, resetView } );
+
+	const actions = useActions( { sites, layout: view.type } );
+	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
@@ -99,22 +106,23 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard>
+					<DataViewsCard className={ DOMAINS_TABLE_CLASS_NAME }>
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }
 							onChangeView={ ( nextView ) => {
 								recordDomainViewChanges( view, nextView, recordTracksEvent );
+								recordLayoutChoice( view, nextView );
 								updateView( nextView );
 							} }
-							onReset={ resetView }
+							onReset={ resetViewAndLayoutChoice }
 							view={ view }
-							// The cards render their own actions, and DataViews would add a bulk selection footer.
-							actions={ isCardsLayout ? undefined : actions }
+							// The cards render their own actions.
+							actions={ isCardsLayout ? undefined : tableActions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
-							defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+							defaultLayouts={ layouts }
 							config={ DOMAINS_LIST_CONFIG }
 							empty={
 								<DataViewsEmptyStateLayout

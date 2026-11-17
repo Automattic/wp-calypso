@@ -42,7 +42,7 @@ console.log( url );
 ## Terms of Service
 
 - Use of this service is for users of the [Jetpack by WordPress.com](http://wordpress.org/extend/plugins/jetpack/) plugin only, and may be used by sites hosted on WordPress.com, or on Jetpack-connected WordPress sites. If you move to another platform, or disconnect Jetpack from your site, we can't promise it will continue to work.
-- Abuse of the Jetpack by WordPress.com [Terms of Service](http://en.wordpress.com/tos/) could result in suspension of your site from WordPress.com-connected services. By enabling Photon you agree to be responsible in what you publish; in particular be sure that you don't use the service for prohibited items (things like spam, viruses, or hate content). WordPress.com reserves the right, in its sole discretion, to temporarily or permanently revoke your ability to use and access Photon, with or without notice.
+- Abuse of the Jetpack by WordPress.com [Terms of Service](http://en.automattic.com/tos/) could result in suspension of your site from WordPress.com-connected services. By enabling Photon you agree to be responsible in what you publish; in particular be sure that you don't use the service for prohibited items (things like spam, viruses, or hate content). WordPress.com reserves the right, in its sole discretion, to temporarily or permanently revoke your ability to use and access Photon, with or without notice.
 
 ## License
 

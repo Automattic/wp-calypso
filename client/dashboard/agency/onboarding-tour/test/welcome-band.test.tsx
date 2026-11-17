@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import WelcomeBand, {
 	WELCOME_BAND_DISMISSED_PREFERENCE,
@@ -43,9 +44,9 @@ function Band( { approvalStatus, tierId, createdAt }: AgencyProps ) {
 			isPending={ approvalStatus === 'pending' }
 			referralsHref="/referrals"
 			wooPaymentsHref="/woopayments"
-			onScheduleCall={ jest.fn() }
-			onTakeTour={ jest.fn() }
-			recordTracksEvent={ jest.fn() }
+			onScheduleCall={ vi.fn() }
+			onTakeTour={ vi.fn() }
+			recordTracksEvent={ vi.fn() }
 		/>
 	) : null;
 }
@@ -106,7 +107,7 @@ describe( '<WelcomeBand>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'Welcome to Automattic for Agencies' } )
 		).toBeVisible();
-		const lockedLabels = screen.getAllByText( 'Unlocks when your account is activated' );
+		const lockedLabels = screen.getAllByText( 'Unlocks when your account is approved' );
 		expect( lockedLabels ).toHaveLength( 2 );
 		lockedLabels.forEach( ( label ) => expect( label ).toBeVisible() );
 		expect( screen.queryByRole( 'link', { name: 'Explore referrals' } ) ).not.toBeInTheDocument();

@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import MockDate from 'mockdate';
+import { vi } from 'vitest';
 import { useFormattedTime } from '../index';
 
 // Mock the useLocale hook to return a consistent locale
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en-US',
 	useIntlLocale: () => 'en-US',
 } ) );

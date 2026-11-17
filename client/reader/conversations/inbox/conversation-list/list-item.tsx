@@ -9,6 +9,7 @@ import {
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import { usePrefetchPostComments } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { formatCompactTime } from './format-compact-time';
 import type { Density } from './toolbar';
@@ -23,6 +24,7 @@ interface Props {
 	item: InboxItem;
 	isSelected: boolean;
 	openOnFocus: boolean;
+	followFocus: boolean;
 	density: Density;
 	onSelect: ( item: InboxItem, source: OpenSource ) => void;
 }
@@ -59,6 +61,7 @@ export function ConversationListItem( {
 	item,
 	isSelected,
 	openOnFocus,
+	followFocus,
 	density,
 	onSelect,
 }: Props ) {
@@ -70,7 +73,13 @@ export function ConversationListItem( {
 	const title = item.title || String( post?.title ?? '' );
 	const unreadCount = isOwnComment ? item.newCommentCount : item.unreadCount;
 	const newCount = unreadCount > 0 && (
-		<Text color="var(--color-primary)" className="conversations-inbox__item-new">
+		<Text
+			size={ 12 }
+			lineHeight="16px"
+			weight={ 500 }
+			color="var(--color-primary)"
+			className="conversations-inbox__item-new"
+		>
 			{ translate( '%(count)s new', '%(count)s new', {
 				count: unreadCount,
 				args: { count: formatNumber( unreadCount ) },
@@ -81,6 +90,11 @@ export function ConversationListItem( {
 	const isMountedRef = useRef( false );
 	const openedOnFocusRef = useRef( false );
 	const pointerDownRef = useRef( false );
+	const prefetchPostComments = usePrefetchPostComments();
+	const prefetchComments = () => prefetchPostComments( { siteId, postId } );
+	const hoverTimerRef = useRef< ReturnType< typeof setTimeout > >( undefined );
+
+	useEffect( () => () => clearTimeout( hoverTimerRef.current ), [] );
 
 	useEffect( () => {
 		const isFirstRun = ! isMountedRef.current;
@@ -94,20 +108,25 @@ export function ConversationListItem( {
 		// alone on first render and when it sits elsewhere, like the previous/next buttons.
 		const { activeElement, body } = item.ownerDocument;
 		const list = item.closest( '.conversations-inbox__list' );
-		if ( ! isFirstRun && ( activeElement === body || list?.contains( activeElement ) ) ) {
+		if (
+			! isFirstRun &&
+			followFocus &&
+			( activeElement === body || list?.contains( activeElement ) )
+		) {
 			item.querySelector( 'button' )?.focus( { preventScroll: true } );
 		}
-	}, [ isSelected ] );
+	}, [ isSelected, followFocus ] );
 
 	return (
 		<li ref={ itemRef }>
 			<VStack
 				as="button"
-				spacing={ 2.5 }
+				spacing={ 2 }
 				type="button"
 				className={ clsx( 'conversations-inbox__item', {
 					'is-selected': isSelected,
-					'is-unread': unreadCount > 0,
+					// Your comments count newer replies, which opening doesn't clear, so they aren't unread.
+					'is-unread': ! isOwnComment && unreadCount > 0,
 				} ) }
 				aria-current={ isSelected || undefined }
 				onClick={ () => {
@@ -120,6 +139,11 @@ export function ConversationListItem( {
 					}
 					onSelect( item, 'click' );
 				} }
+				// The delay skips rows the cursor only passes over.
+				onPointerEnter={ () => {
+					hoverTimerRef.current = setTimeout( prefetchComments, 100 );
+				} }
+				onPointerLeave={ () => clearTimeout( hoverTimerRef.current ) }
 				onPointerDown={ () => {
 					pointerDownRef.current = true;
 				} }
@@ -133,6 +157,7 @@ export function ConversationListItem( {
 				onFocus={ () => {
 					const source = pointerDownRef.current ? 'click' : 'tab_key';
 					pointerDownRef.current = false;
+					prefetchComments();
 					if ( openOnFocus && ! isSelected ) {
 						openedOnFocusRef.current = true;
 						onSelect( item, source );
@@ -140,8 +165,16 @@ export function ConversationListItem( {
 				} }
 			>
 				<HStack as="span">
-					<span className="conversations-inbox__item-title">{ title }</span>
-					<Text size={ 14 } color="var(--color-text-subtle)">
+					<Text
+						size={ 13 }
+						lineHeight="20px"
+						weight={ 600 }
+						color="inherit"
+						className="conversations-inbox__item-title"
+					>
+						{ title }
+					</Text>
+					<Text size={ 12 } lineHeight="16px" color="var(--color-text-subtle)">
 						<span aria-hidden="true">{ formatCompactTime( timestamp, locale ) }</span>
 						<VisuallyHidden>{ formatCompactTime( timestamp, locale, 'long' ) }</VisuallyHidden>
 					</Text>
@@ -157,15 +190,24 @@ export function ConversationListItem( {
 						>
 							{ /* Two commenters can share a name, and the list never reorders. */ }
 							{ item.commenters.slice( 0, MAX_AVATARS ).map( ( { avatar }, index ) => (
-								<img key={ index } src={ avatar } alt="" width={ 24 } height={ 24 } />
+								<img key={ index } src={ avatar } alt="" width={ 20 } height={ 20 } />
 							) ) }
 						</HStack>
-						<span>{ getContextLine( translate, item ) }</span>
+						<Text size={ 13 } lineHeight="20px" color="inherit">
+							{ getContextLine( translate, item ) }
+						</Text>
 					</HStack>
 				) }
 				{ density === 'comfortable' && (
 					<HStack as="span">
-						<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
+						<Text
+							size={ 13 }
+							lineHeight="20px"
+							color="inherit"
+							className="conversations-inbox__item-excerpt"
+						>
+							{ excerpt }
+						</Text>
 						{ newCount }
 					</HStack>
 				) }

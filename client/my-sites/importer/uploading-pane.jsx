@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import { ProgressBar } from '@wordpress/components';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -113,10 +113,15 @@ export class UploadingPane extends PureComponent {
 
 				return (
 					<div className="importer__upload-progress-container">
-						<ProgressBar
+						<Progress.Root
 							className={ progressClasses }
-							isPulsing={ uploadPercent > 99 || importerState === appStates.UPLOAD_PROCESSING }
-						/>
+							aria-label={ this.props.translate( 'Loading…' ) }
+							value={ null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
 					</div>
 				);
 			}

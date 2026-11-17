@@ -66,7 +66,7 @@ export const getRouter = ( config: AppConfig ) => {
 	const router = createRouter( {
 		...getRouterOptions( config ),
 		routeTree,
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+		defaultOnCatch: ( error: unknown, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
 				severity: calypsoConfig( 'env_id' ) === 'production' ? 'error' : 'debug',
 				dashboard_backport: true,

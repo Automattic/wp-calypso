@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	FEATURE_DEV_TOOLS,
 	FEATURE_DEV_TOOLS_GIT,
@@ -10,12 +11,13 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
+	getFeatureByKey,
 	getPlan,
 } from '../src';
 import type { WPComPlan } from '../src';
 
 let mockFlagEnabled = false;
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => '';
 	config.isEnabled = ( flag: string ) =>
 		flag === 'hosting/dev-tools-all-paid-plans' && mockFlagEnabled;
@@ -113,6 +115,12 @@ describe( 'hosting/dev-tools-all-paid-plans', () => {
 					FEATURE_SITE_STAGING_SITES
 				);
 			}
+		} );
+
+		it( 'keeps calling the staging site free, as the comparison grid does', () => {
+			expect( getFeatureByKey( FEATURE_SITE_STAGING_SITES ).getTitle() ).toBe(
+				'Free staging site'
+			);
 		} );
 
 		it( 'includes SFTP, SSH and GitHub Deployments in Personal and Premium abilities', () => {

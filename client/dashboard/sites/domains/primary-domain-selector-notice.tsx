@@ -14,6 +14,7 @@ import { canUserSetPrimaryDomain, isPrimaryDomainCandidate } from '../../utils/d
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
+import './primary-domain-selector-notice.scss';
 
 interface PrimaryDomainSelectorNoticeProps {
 	domains: DomainSummary[];
@@ -28,7 +29,8 @@ const PrimaryDomainSelectorNotice = ( {
 }: PrimaryDomainSelectorNoticeProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const canUserSetPrimaryDomainOnThisSite = canUserSetPrimaryDomain( site, user );
-	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
+	const primaryDomain = domains.find( ( domain ) => domain.primary_domain );
+	const currentPrimaryDomain = primaryDomain?.domain;
 	const domainsList = domains.filter( isPrimaryDomainCandidate );
 
 	const renderMessage = () => {
@@ -79,7 +81,9 @@ const PrimaryDomainSelectorNotice = ( {
 	return (
 		<Notice variant="info" title={ __( 'Primary site address' ) }>
 			<VStack spacing={ 4 }>
-				<Text as="p">{ renderMessage() }</Text>
+				<Text as="p" className="primary-domain-selector-notice__message">
+					{ renderMessage() }
+				</Text>
 				{ canUserSetPrimaryDomainOnThisSite && domainsList.length > 0 && (
 					<HStack justify="flex-start">
 						<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
@@ -91,7 +95,7 @@ const PrimaryDomainSelectorNotice = ( {
 			{ isModalOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }
-					currentPrimaryDomain={ currentPrimaryDomain }
+					currentPrimaryDomain={ primaryDomain }
 					eligibleDomains={ domainsList }
 					onClose={ () => setIsModalOpen( false ) }
 				/>

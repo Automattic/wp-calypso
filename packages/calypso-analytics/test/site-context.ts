@@ -7,7 +7,7 @@ describe( 'getValidBlogId', () => {
 	} );
 
 	test.each( [ 0, -1, 1.5, Number.NaN, null, undefined, '', 'not-a-number', {} ] )(
-		'rejects %p',
+		'rejects %o',
 		( value ) => {
 			expect( getValidBlogId( value ) ).toBeUndefined();
 		}

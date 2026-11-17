@@ -92,6 +92,7 @@ export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMa
 
 export function getPlanFeaturesGroupedForComparisonGrid( props?: {
 	isExperimentVariant?: boolean;
+	useMcpFeature?: boolean;
 } ): Partial< FeatureGroupMap > {
 	return resolveFeatureGroupsForComparisonGrid( props );
 }

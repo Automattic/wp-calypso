@@ -5,7 +5,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { arrowRight, Icon, lockOutline, plus, shield } from '@wordpress/icons';
+import { arrowRight, Icon, lock, plus, shield } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import { getTld } from '../../helpers/get-tld';
@@ -89,7 +89,7 @@ export const BundleCard = ( {
 					className="bundle-card__header"
 				>
 					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
-						<Icon icon={ lockOutline } size={ 20 } className="bundle-card__lock-icon" />
+						<Icon icon={ lock } size={ 20 } className="bundle-card__lock-icon" />
 						<Text size={ 14 } weight={ 500 }>
 							{ __( 'Protect your brand' ) }
 						</Text>

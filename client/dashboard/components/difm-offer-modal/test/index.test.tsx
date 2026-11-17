@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DifmOfferModal from '../index';
 import type { Site } from '@automattic/api-core';
@@ -12,9 +13,9 @@ import type { Site } from '@automattic/api-core';
 const API = 'https://public-api.wordpress.com';
 const BUILD_REQUEST_PATH = '/wpcom/v2/sites/123/difm-offer/build-request';
 
-const mockAddProductsToCart = jest.fn();
+const mockAddProductsToCart = vi.fn();
 
-jest.mock( '../../../app/shopping-cart', () => ( {
+vi.mock( '../../../app/shopping-cart', () => ( {
 	shoppingCartManagerClient: {
 		forCartKey: ( cartKey: number ) => ( {
 			actions: {
@@ -35,7 +36,7 @@ const expectedTracksProps = {
 
 const originalLocation = window.location;
 
-function renderModal( onClose = jest.fn() ) {
+function renderModal( onClose = vi.fn() ) {
 	return render(
 		<DifmOfferModal
 			site={ site }
@@ -69,7 +70,7 @@ function mockDifmProduct( product: { cost_smallest_unit: number; currency_code: 
 async function expectModalNotToClose(
 	user: ReturnType< typeof userEvent.setup >,
 	description: HTMLElement,
-	onClose: jest.Mock
+	onClose: Mock
 ) {
 	expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
 	// Escape from the busy submit button does not reach the modal, so focus a field first.
@@ -195,7 +196,7 @@ describe( '<DifmOfferModal>', () => {
 
 	test( 'sends the build request, adds the annual Business plan to the cart and redirects to checkout', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		const request = nock( API )
 			.post( BUILD_REQUEST_PATH, {
 				description: 'A bakery site with an online menu.',
@@ -256,7 +257,7 @@ describe( '<DifmOfferModal>', () => {
 		[ 500, 'unknown_error', 'Something went wrong. Try again.' ],
 	] )( 'shows a %d %s error inline and keeps the modal open', async ( status, code, message ) => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		nock( API )
 			.post( BUILD_REQUEST_PATH )
 			.reply( status, { code, message: 'Server message', data: { status } } );
@@ -300,7 +301,7 @@ describe( '<DifmOfferModal>', () => {
 
 	test( 'does not record a dismiss when the modal closes after the build request succeeds', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		nock( API ).post( BUILD_REQUEST_PATH ).reply( 200, { success: true } );
 		mockAddProductsToCart.mockRejectedValueOnce( new Error( 'The cart is unavailable.' ) );
 		const { recordTracksEvent } = renderModal( onClose );
@@ -320,7 +321,7 @@ describe( '<DifmOfferModal>', () => {
 
 	test( 'does not close while the plan is added to the cart', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		nock( API ).post( BUILD_REQUEST_PATH ).reply( 200, { success: true } );
 		mockAddProductsToCart.mockReturnValueOnce( new Promise( () => {} ) );
 		renderModal( onClose );
@@ -335,7 +336,7 @@ describe( '<DifmOfferModal>', () => {
 
 	test( 'does not close while the build request is pending', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		nock( API )
 			.post( BUILD_REQUEST_PATH )
 			.reply( () => new Promise( () => {} ) );
@@ -351,7 +352,7 @@ describe( '<DifmOfferModal>', () => {
 
 	test( 'records a dismiss with the offer step when the modal closes on the offer step', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		const { recordTracksEvent } = renderModal( onClose );
 
 		await screen.findByRole( 'button', { name: 'Tell us about your site' } );
@@ -366,7 +367,7 @@ describe( '<DifmOfferModal>', () => {
 
 	test( 'records a dismiss with the request step when the modal closes without a submit', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		const { recordTracksEvent } = renderModal( onClose );
 
 		await goToRequestStep( user );

@@ -1,22 +1,69 @@
 import {
 	Button,
 	Icon,
+	Tooltip,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Fragment } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { getReportAllowance } from '../amplify/constants';
+import { getUsageStatus } from '../amplify/usage';
 import { ALL_TIERS } from './constants';
 import getCurrentAgencyTier from './get-current-agency-tier';
-import type { AgencyTierType, Benefit, RecordTracksEvent, TierBenefitLinks } from './types';
+import type {
+	AgencyTierType,
+	Benefit,
+	ProspectReportsBenefitData,
+	RecordTracksEvent,
+	TierBenefitLinks,
+} from './types';
 import type { Button as ButtonComponent } from '@wordpress/components';
 import type { ComponentProps, ReactNode } from 'react';
+
+/**
+ * "3 of 5 reports used this month" once the agency has used some, otherwise
+ * the allowance ("5 reports a month"). Falls back to the tier's allowance
+ * while usage loads. Nothing while the account awaits approval.
+ */
+export function getProspectReportsUsageText(
+	{ usage }: ProspectReportsBenefitData = {},
+	tierId?: AgencyTierType
+) {
+	if ( usage?.limit === null ) {
+		return __( 'Unlimited reports every month' );
+	}
+	if ( usage && usage.limit <= 0 ) {
+		return null;
+	}
+	if ( usage && usage.used > 0 ) {
+		return sprintf(
+			/* translators: 1: reports created this month, 2: monthly allowance */
+			_n(
+				'%1$d of %2$d report used this month',
+				'%1$d of %2$d reports used this month',
+				usage.limit
+			),
+			usage.used,
+			usage.limit
+		);
+	}
+	const limit = usage?.limit ?? ( tierId ? getReportAllowance( tierId ) : 0 );
+	if ( ! limit ) {
+		return null;
+	}
+	return sprintf(
+		/* translators: %d is the monthly report allowance */
+		_n( '%d report a month', '%d reports a month', limit ),
+		limit
+	);
+}
 
 function BenefitRow( {
 	benefit,
@@ -30,6 +77,7 @@ function BenefitRow( {
 	links,
 	shouldUseRouterLink,
 	renderDownloadBadges,
+	prospectReports,
 }: {
 	benefit: Benefit;
 	isLocked: boolean;
@@ -42,7 +90,14 @@ function BenefitRow( {
 	links: TierBenefitLinks;
 	shouldUseRouterLink: boolean;
 	renderDownloadBadges?: ( buttonProps: ComponentProps< typeof ButtonComponent > ) => ReactNode;
+	prospectReports?: ProspectReportsBenefitData;
 } ) {
+	const usageText =
+		benefit.id === 'prospect-reports' && ! isLocked
+			? getProspectReportsUsageText( prospectReports, currentAgencyTierId )
+			: null;
+	const isAtReportCap = getUsageStatus( prospectReports?.usage ) === 'cap';
+
 	const renderActions = () => {
 		// Locked (higher) tiers don't expose actions yet.
 		if ( isLocked || ! benefit.actions ) {
@@ -101,11 +156,34 @@ function BenefitRow( {
 			if ( ! href ) {
 				return null;
 			}
+			if ( action.id === 'generate-prospect-report' && isAtReportCap ) {
+				return (
+					<Tooltip key={ action.id } text={ __( 'You’ve used all your reports for this month.' ) }>
+						<Button
+							__next40pxDefaultSize
+							{ ...buttonProps }
+							// Tertiary buttons keep the accent color when disabled.
+							style={ { ...buttonProps.style, color: 'var(--color-text-subtle)' } }
+							disabled
+							accessibleWhenDisabled
+						>
+							{ action.label }
+						</Button>
+					</Tooltip>
+				);
+			}
 			// Only in-app paths go through the router; absolute URLs and hash
 			// links stay plain anchors.
 			if ( shouldUseRouterLink && href.startsWith( '/' ) ) {
+				const [ to, query ] = href.split( '?' );
 				return (
-					<RouterLinkButton { ...buttonProps } key={ action.id } to={ href } onClick={ onClick }>
+					<RouterLinkButton
+						{ ...buttonProps }
+						key={ action.id }
+						to={ to }
+						search={ query ? Object.fromEntries( new URLSearchParams( query ) ) : undefined }
+						onClick={ onClick }
+					>
 						{ action.label }
 					</RouterLinkButton>
 				);
@@ -159,9 +237,14 @@ function BenefitRow( {
 					</Text>
 					{ benefit.status && <Badge intent="draft" children={ benefit.status } /> }
 				</HStack>
-				<Text size={ 12 } variant="muted">
+				<Text size={ 12 } variant="muted" style={ { textWrap: 'pretty' } }>
 					{ benefit.description }
 				</Text>
+				{ usageText && (
+					<Text size={ 12 } weight={ 500 }>
+						{ usageText }
+					</Text>
+				) }
 				{ renderActions() }
 			</VStack>
 		</HStack>
@@ -177,6 +260,7 @@ export default function TierBenefits( {
 	links = {},
 	shouldUseRouterLink = true,
 	renderDownloadBadges,
+	prospectReports,
 }: {
 	currentAgencyTierId?: AgencyTierType;
 	recordTracksEvent?: RecordTracksEvent;
@@ -191,6 +275,8 @@ export default function TierBenefits( {
 	 */
 	shouldUseRouterLink?: boolean;
 	renderDownloadBadges?: ( buttonProps: ComponentProps< typeof ButtonComponent > ) => ReactNode;
+	/** Usage for the Prospect Reports row. */
+	prospectReports?: ProspectReportsBenefitData;
 } ) {
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
@@ -216,6 +302,11 @@ export default function TierBenefits( {
 				const isCurrentTier = tier.id === currentAgencyTierId;
 				const isLowerTier = tier.level < currentTier.level;
 				const isHigherTier = tier.level > currentTier.level;
+				const benefits = tier.benefits.filter(
+					( benefit ) =>
+						( ! benefit.requiresLink || links[ benefit.requiresLink ] ) &&
+						( ! benefit.isUpgradeOnly || isHigherTier )
+				);
 
 				let tierHeading: string;
 				if ( tier.id === 'emerging-partner' ) {
@@ -246,7 +337,7 @@ export default function TierBenefits( {
 						<CardHeader isBorderless>
 							<SectionHeader title={ tierHeading } level={ 3 } />
 						</CardHeader>
-						{ tier.benefits.map( ( benefit, index ) => (
+						{ benefits.map( ( benefit, index ) => (
 							<Fragment key={ benefit.title }>
 								{ index > 0 && <CardDivider style={ { borderColor: 'var(--color-gray-100)' } } /> }
 								<CardBody>
@@ -262,6 +353,7 @@ export default function TierBenefits( {
 										links={ links }
 										shouldUseRouterLink={ shouldUseRouterLink }
 										renderDownloadBadges={ renderDownloadBadges }
+										prospectReports={ prospectReports }
 									/>
 								</CardBody>
 							</Fragment>

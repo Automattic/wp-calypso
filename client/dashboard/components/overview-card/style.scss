@@ -4,6 +4,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .dashboard-overview-card {
+	&--has-action {
+		position: relative;
+	}
+
 	&--disabled {
 		background-color: transparent !important;
 		box-shadow: 0 0 0 1px $gray-100 !important;
@@ -42,6 +46,17 @@
 
 	// Prevents unbreakable strings (site names, domains) from widening grid tracks.
 	overflow-wrap: anywhere;
+}
+
+.dashboard-overview-card__action {
+	position: absolute;
+	inset-block-end: #{$grid-unit-20};
+	inset-inline-end: #{$grid-unit-20};
+
+	@include break-medium {
+		inset-block-end: #{$grid-unit-30};
+		inset-inline-end: #{$grid-unit-30};
+	}
 }
 
 .dashboard-overview-card--has-bottom {
@@ -119,6 +134,7 @@
 
 			.dashboard-overview-card__icon,
 			.dashboard-overview-card__link-icon {
+				color: var( --wp-admin-theme-color );
 				fill: var( --wp-admin-theme-color );
 				background-color: transparent;
 			}

@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import EmailSection from '../email-section';
 import type { AccountRecovery, User, UserSettings } from '@automattic/api-core';
@@ -164,7 +165,7 @@ describe( '<EmailSection>', () => {
 describe( '<EmailSection> TLD validation', () => {
 	test( 'reports the field invalid and names the domain when the TLD is not real', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
-		const onValidationChange = jest.fn();
+		const onValidationChange = vi.fn();
 
 		render(
 			<EmailSection
@@ -199,7 +200,7 @@ describe( '<EmailSection> TLD validation', () => {
 
 	test( 'reports the field valid for a known TLD', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
-		const onValidationChange = jest.fn();
+		const onValidationChange = vi.fn();
 
 		render(
 			<EmailSection

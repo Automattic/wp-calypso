@@ -1,5 +1,24 @@
 import { html as toHtml } from '../indices-to-html';
 
+const blockTagRegex =
+	/^\s*<\/?(blockquote|figure|figcaption|hr|ol|ul|li|div|p|pre|h[1-6])\b|<\/(blockquote|figure|figcaption|hr|ol|ul|li|div|p|pre|h[1-6])>\s*$/i;
+const emptySpanLineRegex = /^\s*(<span[^>]*>\s*<\/span>\s*)+$/i;
+
+/**
+ * Whether a line starts or ends with a block-level tag.
+ * @param {string} [line] a line of the HTML string
+ * @returns {boolean} true for block tag lines
+ */
+const isBlockLine = ( line ) => !! line && blockTagRegex.test( line );
+
+/**
+ * Splits an HTML string into lines, dropping lines that hold only empty spans.
+ * @param {string} text HTML string
+ * @returns {string[]} lines
+ */
+const toLines = ( text ) =>
+	text.split( '\n' ).filter( ( line ) => ! emptySpanLineRegex.test( line ) );
+
 /**
  * Adds markup to some common text patterns
  *
@@ -20,10 +39,13 @@ import { html as toHtml } from '../indices-to-html';
  * @returns {string} marked-up text
  */
 const toBlocks = ( text ) =>
-	text.split( '\n' ).reduce(
+	toLines( text ).reduce(
 		( { out, inFence, inList }, raw, index, src ) => {
 			if ( ! raw ) {
-				if ( ! src[ index + 1 ] ) {
+				if (
+					! src[ index + 1 ] ||
+					( isBlockLine( src[ index - 1 ] ) && isBlockLine( src[ index + 1 ] ) )
+				) {
 					return { out, inFence, inList };
 				}
 				return {
@@ -33,12 +55,9 @@ const toBlocks = ( text ) =>
 				};
 			}
 
-			// Blockquote and list start/end tags do not need to be wrapped in div/p
-			const skipRegex = /(blockquote|ol|ul|li|div)(.*)>/i;
-			const shouldSkipWrap = skipRegex.test( raw );
-			if ( shouldSkipWrap ) {
+			if ( isBlockLine( raw ) ) {
 				return {
-					out: out + raw,
+					out: out + raw + '\n',
 					inFence,
 					inList,
 				};
@@ -235,15 +254,6 @@ export function getSignature( blocks, note ) {
 	} );
 }
 
-export function formatString() {
-	const args = [].slice.apply( arguments );
-	const str = args.shift();
-
-	return str.replace( /{(\d+)}/g, function ( match, number ) {
-		return typeof args[ number ] !== 'undefined' ? args[ number ] : match;
-	} );
-}
-
 export function zipWithSignature( blocks, note ) {
 	const signature = getSignature( blocks, note );
 
@@ -255,8 +265,26 @@ export function zipWithSignature( blocks, note ) {
 	} );
 }
 
-export const validURL =
-	/^(?:http(?:s?):\/\/|~\/|\/)?(?:\w+:\w+@)?((?:(?:[-\w\d{1-3}]+\.)+(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|edu|co\.uk|ac\.uk|it|fr|tv|museum|asia|local|travel|blog|[a-z]{2}))|((\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)(\.(\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)){3}))(?::[\d]{1,5})?(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?:#(?:[-\w~!$ |/.,*:;=]|%[a-f\d]{2})*)?$/i;
+/**
+ * A new-tab link to an http(s) URL as HTML, or null for any other URL. Built with the DOM, like
+ * indices-to-html, so serializing it escapes quotes in the URL and text.
+ */
+export function getLinkHtml( url, text ) {
+	try {
+		const { protocol } = new URL( url );
+		if ( protocol !== 'http:' && protocol !== 'https:' ) {
+			return null;
+		}
+	} catch {
+		return null;
+	}
+
+	const link = document.createElement( 'a' );
+	link.setAttribute( 'target', '_blank' );
+	link.setAttribute( 'href', url );
+	link.textContent = text;
+	return link.outerHTML;
+}
 
 export const linkProps = ( note, block ) => {
 	const { site: noteSite, comment, post } = note?.meta?.ids ?? {};

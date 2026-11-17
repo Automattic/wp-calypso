@@ -160,10 +160,10 @@ function getIconImgProps( isSmall: boolean, imgSrc: string ) {
 
 function getWidthParam( imgSrc: string ) {
 	const { hostname } = new URL( imgSrc, 'http://example.com' );
-	if ( hostname.endsWith( 'gravatar.com' ) ) {
+	if ( hostname === 'gravatar.com' || hostname.endsWith( '.gravatar.com' ) ) {
 		return 's';
 	}
-	if ( hostname.endsWith( 'files.wordpress.com' ) ) {
+	if ( hostname === 'files.wordpress.com' || hostname.endsWith( '.files.wordpress.com' ) ) {
 		return 'w';
 	}
 	return null;

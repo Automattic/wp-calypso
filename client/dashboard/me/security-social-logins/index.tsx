@@ -40,6 +40,7 @@ const SocialLoginIcon = ( {
 		<SVGIcon
 			icon={ decoration }
 			name={ `${ service.toLowerCase() }-logo` }
+			style={ { color: 'inherit' } }
 			role="img"
 			aria-label={ service }
 		/>

@@ -11,7 +11,6 @@ import McpComponent from 'calypso/me/mcp/main';
 import McpAddSiteComponent from 'calypso/me/mcp/mcp-add-site';
 import McpMcpSitesComponent from 'calypso/me/mcp/mcp-sites';
 import McpReadComponent from 'calypso/me/mcp/read';
-import McpSetupComponent from 'calypso/me/mcp/setup';
 import McpWriteComponent from 'calypso/me/mcp/write';
 import SidebarComponent from 'calypso/me/sidebar';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -63,23 +62,6 @@ export function mcp( context, next ) {
 			<McpTitle />
 			<QueryUserSettings />
 			<McpComponent path={ context.path } />
-		</>
-	);
-	next();
-}
-
-export function mcpSetup( context, next ) {
-	const McpSetupTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'MCP Client Setup', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<McpSetupTitle />
-			<QueryUserSettings />
-			<McpSetupComponent path={ context.path } />
 		</>
 	);
 	next();
@@ -147,10 +129,6 @@ export function mcpAddSite( context, next ) {
 		</>
 	);
 	next();
-}
-
-export function mcpSetupLegacyRedirect() {
-	page.redirect( '/me/mcp/setup' );
 }
 
 // Helper thunk that ensures that the user preferences has been fetched into Redux state before we

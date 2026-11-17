@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import AddNewSite from '../index';
 import type { Agency } from '@automattic/api-core';
@@ -41,7 +42,7 @@ function mockAgencyEndpoints( {
 		.query( true )
 		.reply( 200, { licenses: [], available: availableDevLicenses } );
 
-	const onSelectAction = jest.fn();
+	const onSelectAction = vi.fn();
 	render( <AddNewSite onSelectAction={ onSelectAction } /> );
 
 	return { onSelectAction, availableDevLicenses };

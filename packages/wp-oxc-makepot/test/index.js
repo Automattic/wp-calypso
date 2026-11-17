@@ -26,6 +26,8 @@ describe( 'makePot', () => {
 		const examplesGlob = path.join( __dirname, 'examples', '*.{js,jsx,ts,tsx}' );
 		const examplesPaths = globSync( examplesGlob ).sort();
 
+		fs.rmSync( potOutputDir, { recursive: true, force: true } );
+		fs.rmSync( parallelPotOutputDir, { recursive: true, force: true } );
 		fs.mkdirSync( path.join( potOutputDir, 'payload' ), { recursive: true } );
 		fs.mkdirSync( path.join( parallelPotOutputDir, 'payload' ), { recursive: true } );
 

@@ -1,19 +1,29 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, createRef } from 'react';
 import { connect } from 'react-redux';
+import { getDefaultTwoFactorAuthType } from 'calypso/blocks/login/two-factor-authentication/get-default-two-factor-auth-type';
 import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { navigate } from 'calypso/lib/navigate';
+import { login } from 'calypso/lib/paths';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
 import { fetchMagicLoginAuthenticate } from 'calypso/state/login/magic-login/actions';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import {
+	getRedirectToOriginal,
+	getRedirectToSanitized,
+	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
+	isTwoFactorEnabled,
+} from 'calypso/state/login/selectors';
 import getMagicLoginAuthSuccessData from 'calypso/state/selectors/get-magic-login-auth-success-data';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
@@ -31,12 +41,18 @@ const VerifyLoginCode = ( {
 	authSuccessData,
 	fetchMagicLoginAuthenticate: authenticate,
 	redirectTo,
+	redirectToSanitized,
+	twoFactorEnabled,
+	twoFactorNotificationSent,
+	twoFactorSupportedAuthTypes,
 	translate,
+	locale,
 	onResendEmail,
 	isNewAccount,
 } ) => {
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature: 'blackbox-signup',
+		flow: 'signup',
 		suspended: ! isNewAccount,
 		resetOnError: authError,
 	} );
@@ -53,19 +69,46 @@ const VerifyLoginCode = ( {
 	const inputRefs = useRef( Array.from( { length: CODE_LENGTH }, () => createRef() ) );
 
 	useEffect( () => {
-		if ( isAuthenticated && authSuccessData ) {
+		// A login without a valid redirect URL comes back with no `authSuccessData`.
+		if ( isAuthenticated ) {
 			setIsRedirecting( true );
 
-			const redirectUrl = authSuccessData.redirect_to;
+			// The code only proves the email address; a two-step account still needs its second factor.
+			if ( twoFactorEnabled ) {
+				page(
+					login( {
+						isJetpack: true,
+						locale,
+						twoFactorAuthType: getDefaultTwoFactorAuthType( {
+							supportedAuthTypes: twoFactorSupportedAuthTypes,
+							notificationSent: twoFactorNotificationSent,
+							isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
+						} ),
+						redirectTo: redirectToSanitized ?? undefined,
+					} )
+				);
+				return;
+			}
+
+			const redirectUrl = authSuccessData?.redirect_to;
 
 			if ( redirectUrl ) {
 				navigate( redirectUrl );
 			} else {
 				// Fall back to rebootAfterLogin which handles the default redirect to '/' and other edge cases
-				rebootAfterLogin( { magic_login: 1 } );
+				dispatch( rebootAfterLogin( { magic_login: 1 } ) );
 			}
 		}
-	}, [ isAuthenticated, authSuccessData ] );
+	}, [
+		dispatch,
+		isAuthenticated,
+		authSuccessData,
+		locale,
+		redirectToSanitized,
+		twoFactorEnabled,
+		twoFactorNotificationSent,
+		twoFactorSupportedAuthTypes,
+	] );
 
 	useEffect( () => {
 		setHeaders( {
@@ -200,6 +243,9 @@ const VerifyLoginCode = ( {
 		}
 		try {
 			const blackboxSessionId = await getSessionId();
+			if ( blackboxSessionId === null ) {
+				return;
+			}
 			authenticate( loginToken, redirectTo, null, true, blackboxSessionId );
 		} finally {
 			if ( shouldCollect ) {
@@ -319,6 +365,10 @@ VerifyLoginCode.propTypes = {
 	authSuccessData: PropTypes.object,
 	fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
 	redirectTo: PropTypes.string,
+	redirectToSanitized: PropTypes.string,
+	twoFactorEnabled: PropTypes.bool,
+	twoFactorNotificationSent: PropTypes.string,
+	twoFactorSupportedAuthTypes: PropTypes.arrayOf( PropTypes.string ),
 	onResendEmail: PropTypes.func,
 	isNewAccount: PropTypes.bool,
 };
@@ -328,6 +378,10 @@ const mapState = ( state ) => ( {
 	isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),
 	authError: getMagicLoginRequestAuthError( state ),
 	redirectTo: getRedirectToOriginal( state ),
+	redirectToSanitized: getRedirectToSanitized( state ),
+	twoFactorEnabled: isTwoFactorEnabled( state ),
+	twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+	twoFactorSupportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
 	authSuccessData: getMagicLoginAuthSuccessData( state ),
 } );
 
