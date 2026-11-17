@@ -38,6 +38,23 @@ interface BaseChartInternalProps {
 	} | null;
 }
 
+const CHART_THEME = {
+	...defaultTheme,
+	legendLabelStyles: {
+		fontSize: '11px',
+		fontWeight: '400',
+		lineHeight: '1.2',
+		fontFamily:
+			'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+	},
+	legendItemStyles: {
+		padding: '2px 0',
+		display: 'flex',
+		alignItems: 'center',
+	},
+	legendGlyphSize: 12,
+};
+
 /**
  * Base chart component with shared logic for all chart types
  * @param root0
@@ -49,25 +66,6 @@ export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) =
 	// page's primary color, which charts.css can't reach from inside `.agenttic`.
 	const primaryColor = useMemo( () => getCSSVariable( '--color-primary', '#4F46E5' ), [] );
 
-	const customTheme = useMemo( () => {
-		return {
-			...defaultTheme,
-			legendLabelStyles: {
-				fontSize: '11px',
-				fontWeight: '400',
-				lineHeight: '1.2',
-				fontFamily:
-					'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
-			},
-			legendItemStyles: {
-				padding: '2px 0',
-				display: 'flex',
-				alignItems: 'center',
-			},
-			legendGlyphSize: 12,
-		};
-	}, [] );
-
 	if ( error ) {
 		return <ChartError message={ error.message } details={ error.details } />;
 	}
@@ -78,7 +76,7 @@ export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) =
 				className="chart-container"
 				style={ { '--agenttic-chart-primary-color': primaryColor } as CSSProperties }
 			>
-				<ThemeProvider theme={ customTheme }>{ children }</ThemeProvider>
+				<ThemeProvider theme={ CHART_THEME }>{ children }</ThemeProvider>
 			</div>
 		</div>
 	);
