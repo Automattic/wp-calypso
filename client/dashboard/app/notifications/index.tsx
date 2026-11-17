@@ -4,10 +4,11 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { Text } from '../../components/text';
 import { dashboardLink } from '../../utils/link';
+import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
@@ -34,6 +35,14 @@ function getBellRect() {
 
 const bellAnchor = { getBoundingClientRect: getBellRect };
 
+type LinkAction = {
+	href: string;
+	siteId?: string;
+	postId?: string;
+	commentId?: string;
+	tracksEvent?: string;
+};
+
 export default function Notifications( {
 	className,
 	anchor,
@@ -48,12 +57,25 @@ export default function Notifications( {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
+	const unseenCountRef = useRef< number | undefined >( undefined );
+	const { recordTracksEvent } = useAnalytics();
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 	const onNotificationCount = useCallback( ( count: number ) => {
+		unseenCountRef.current = count;
 		setHasUnseenNotifications( count > 0 );
 		omnibarEvents.notificationsUnseenCount.emit( count );
 	}, [] );
 	useSubscriberAlerts( onNotificationCount, isViewSettingsEnabled );
+
+	const wasOpenRef = useRef( false );
+	useEffect( () => {
+		if ( isOpen && ! wasOpenRef.current ) {
+			recordTracksEvent( 'calypso_notification_open', {
+				unread_notifications: unseenCountRef.current,
+			} );
+		}
+		wasOpenRef.current = isOpen;
+	}, [ isOpen, recordTracksEvent ] );
 
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
@@ -78,13 +100,23 @@ export default function Notifications( {
 		handleToggle( false );
 	};
 
-	const openInNewTab = ( store: unknown, { href }: { href: string } ) => {
+	const openInNewTab = ( store: unknown, { href }: LinkAction ) => {
 		window.open( href, '_blank', 'noopener' );
+	};
+
+	/**
+	 * Returns an action handler that records the given Tracks event, then opens the action's link.
+	 */
+	const trackAndOpen = ( name: string ) => ( store: unknown, action: LinkAction ) => {
+		const { siteId, postId, commentId } = action;
+		recordTracksEvent( name, { site_id: siteId, post_id: postId, comment_id: commentId } );
+		openInNewTab( store, action );
 	};
 
 	const actionHandlers = {
 		APP_RENDER_NOTES: [
 			( store: unknown, { newNoteCount }: { newNoteCount: number } ) => {
+				unseenCountRef.current = newNoteCount;
 				setHasUnseenNotifications( newNoteCount > 0 );
 				omnibarEvents.notificationsUnseenCount.emit( newNoteCount );
 			},
@@ -95,12 +127,20 @@ export default function Notifications( {
 				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
-		EDIT_COMMENT: [ openInNewTab ],
-		ANSWER_PROMPT: [ openInNewTab ],
-		OPEN_LINK: [ openInNewTab ],
-		OPEN_POST: [ openInNewTab ],
-		OPEN_COMMENT: [ openInNewTab ],
-		OPEN_SITE: [ openInNewTab ],
+		EDIT_COMMENT: [ trackAndOpen( 'calypso_notifications_edit_comment' ) ],
+		ANSWER_PROMPT: [ trackAndOpen( 'calypso_notifications_answer_prompt' ) ],
+		OPEN_LINK: [
+			( store: unknown, action: LinkAction ) => {
+				if ( action.tracksEvent ) {
+					const suffix = action.tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
+					recordTracksEvent( 'calypso_notifications_' + suffix, { link: action.href } );
+				}
+				openInNewTab( store, action );
+			},
+		],
+		OPEN_POST: [ trackAndOpen( 'calypso_notifications_open_post' ) ],
+		OPEN_COMMENT: [ trackAndOpen( 'calypso_notifications_open_comment' ) ],
+		OPEN_SITE: [ trackAndOpen( 'calypso_notifications_open_site' ) ],
 		CLOSE_PANEL: [ handleClose ],
 	};
 

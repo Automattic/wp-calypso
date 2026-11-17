@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cog } from '@wordpress/icons';
 import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
 import NoteShortcuts from '../note-shortcuts';
 
@@ -15,7 +16,10 @@ export default function NotePanelActions() {
 				size="small"
 				icon={ cog }
 				label={ __( 'Settings' ) }
-				onClick={ () => dispatch( actions.ui.viewSettings() ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_notification_settings_click' );
+					dispatch( actions.ui.viewSettings() );
+				} }
 			/>
 		</>
 	);

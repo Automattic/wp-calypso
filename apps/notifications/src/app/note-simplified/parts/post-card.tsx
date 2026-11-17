@@ -18,6 +18,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 	if ( ! site ) {
 		return (
 			<LinkCard
+				card="post"
 				href={ post.url }
 				header={
 					<Text size={ 14 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
@@ -43,6 +44,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 
 	return (
 		<LinkCard
+			card="post"
 			href={ post.url }
 			header={ <SiteIdentity site={ site } title={ title } details={ details } /> }
 		/>
