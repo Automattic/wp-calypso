@@ -19,6 +19,7 @@ interface WidgetEvents {
 	more_stats_clicked: { range: DateRangeId };
 	chart_bucket_clicked: { range: DateRangeId; unit: DateRange[ 'unit' ] };
 	explore_more_clicked: { destination: ExploreMoreDestination };
+	upgrade_clicked: { feature: 'date_range' | HighlightsTab };
 }
 
 type WidgetEventName = keyof WidgetEvents;

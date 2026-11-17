@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from 'calypso/dashboard/utils/premium-analytics-url';
+import { STATS_FEATURE_DATE_CONTROL } from 'calypso/my-sites/stats/constants';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import config from '../lib/config-api';
 import {
@@ -24,6 +25,7 @@ import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
+import useStatsGates, { DATE_RANGE_GATES, getUpgradeUrl } from './use-stats-gates';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
@@ -92,10 +94,14 @@ export function init() {
 			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
 				readStoredRangeId( currentSiteId )
 			);
-			const range = resolveDateRange( rangeId, gmtOffset );
+			const gates = useStatsGates( currentSiteId );
+			const isRangeLocked = ( id: DateRangeId ) => gates.isGated( DATE_RANGE_GATES[ id ] );
+			// A range chosen before the site lost it is kept, for when the site has it again.
+			const shownRangeId = isRangeLocked( rangeId ) ? DEFAULT_DATE_RANGE_ID : rangeId;
+			const range = resolveDateRange( shownRangeId, gmtOffset );
 
 			const onRangeChange = ( nextRangeId: DateRangeId ) => {
-				if ( nextRangeId !== rangeId ) {
+				if ( nextRangeId !== shownRangeId ) {
 					recordWidgetEvent( 'date_range_changed', { range: nextRangeId } );
 				}
 				setRangeId( nextRangeId );
@@ -111,7 +117,17 @@ export function init() {
 						<WidgetSection
 							title={ translate( 'Overview' ) }
 							icon={ trendingUp }
-							action={ <DateRangeControl value={ rangeId } onChange={ onRangeChange } /> }
+							action={
+								<DateRangeControl
+									value={ shownRangeId }
+									onChange={ onRangeChange }
+									isLocked={ isRangeLocked }
+									upgradeUrl={
+										getUpgradeUrl( currentSiteId, STATS_FEATURE_DATE_CONTROL ) ??
+										`${ statsBaseUrl }/stats/day/${ currentSiteId }`
+									}
+								/>
+							}
 						>
 							<MiniChart
 								siteId={ currentSiteId }
@@ -125,6 +141,7 @@ export function init() {
 							statsBaseUrl={ statsBaseUrl }
 							range={ range }
 							gmtOffset={ gmtOffset }
+							gates={ gates }
 						/>
 						<Modules siteId={ currentSiteId } adminBaseUrl={ adminBaseUrl } />
 						<div className="stats-widget-footer">

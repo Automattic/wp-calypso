@@ -30,3 +30,16 @@
 		}
 	}
 }
+
+// The menu renders in a popover, outside the widget.
+.stats-widget-date-range__popover .stats-widget-date-range__upsell {
+	padding: var(--wpds-dimension-padding-sm, 8px);
+	max-inline-size: 200px;
+	font-size: var(--wpds-typography-font-size-md, 13px);
+	line-height: var(--wpds-typography-line-height-sm, 20px);
+
+	p {
+		margin: 0 0 var(--wpds-dimension-gap-xs, 4px);
+		color: var(--wpds-color-foreground-content-neutral-weak, #707070);
+	}
+}

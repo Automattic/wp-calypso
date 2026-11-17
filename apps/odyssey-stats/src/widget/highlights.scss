@@ -130,4 +130,18 @@ $offset-padding-hovering: var(--wpds-dimension-padding-sm, 8px);
 	.stats-widget-highlights-card__view-all {
 		margin-block-start: var(--wpds-dimension-gap-sm, 8px);
 	}
+
+	.stats-widget-highlights-card__locked-text {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--wpds-dimension-gap-sm, 8px);
+		margin: 0;
+		padding-block-start: var(--wpds-dimension-padding-lg, 16px);
+		color: var(--wpds-color-foreground-content-neutral-weak, #707070);
+
+		svg {
+			flex-shrink: 0;
+			fill: currentColor;
+		}
+	}
 }

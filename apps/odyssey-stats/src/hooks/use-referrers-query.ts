@@ -50,11 +50,13 @@ function queryReferrers( siteId: number, params: QueryReferrersParams ) {
  * @param siteId The site to query.
  * @param days   The range's first and last day.
  * @param max    How many groups to ask for: the number the caller renders.
+ * @param enabled Whether to ask at all: false where the site's plan locks the list.
  */
 export default function useReferrersQuery(
 	siteId: number,
 	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >,
-	max: number
+	max: number,
+	enabled = true
 ) {
 	const { startDate, endDate } = days;
 	return useQuery( {
@@ -88,6 +90,7 @@ export default function useReferrersQuery(
 				};
 			} );
 		},
+		enabled,
 		staleTime: 5 * 60 * 1000,
 	} );
 }

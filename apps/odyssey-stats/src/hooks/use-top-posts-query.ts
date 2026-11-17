@@ -24,11 +24,13 @@ function queryTopPosts( siteId: number, params: QueryTopPostsParams ) {
  * @param siteId The site to query.
  * @param days   The range's first and last day.
  * @param max    How many posts to ask for: the number the caller renders.
+ * @param enabled Whether to ask at all: false where the site's plan locks the list.
  */
 export default function useTopPostsQuery(
 	siteId: number,
 	days: Pick< ResolvedDateRange, 'startDate' | 'endDate' >,
-	max: number
+	max: number,
+	enabled = true
 ) {
 	const { startDate, endDate } = days;
 	return useQuery( {
@@ -43,6 +45,7 @@ export default function useTopPostsQuery(
 				max,
 			} ),
 		select: ( data ) => data?.summary?.postviews,
+		enabled,
 		staleTime: 5 * 60 * 1000,
 	} );
 }

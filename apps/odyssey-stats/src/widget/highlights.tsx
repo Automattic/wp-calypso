@@ -1,8 +1,9 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { TabPanel } from '@wordpress/components';
-import { Icon, chartBar, external } from '@wordpress/icons';
+import { Icon, chartBar, external, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
+import { STAT_TYPE_REFERRERS, STAT_TYPE_TOP_POSTS } from 'calypso/my-sites/stats/constants';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
@@ -10,9 +11,10 @@ import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import Skeleton from './skeleton';
+import { getUpgradeUrl, type IsGated } from './use-stats-gates';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
-import type { MouseEvent } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 
 import './highlights.scss';
 
@@ -35,12 +37,22 @@ interface TopColumnProps {
 	onViewAllClick: ClickHandler;
 }
 
+interface LockedColumnProps {
+	description: ReactNode;
+	upgradeUrl: string;
+	onUpgradeClick: ClickHandler;
+}
+
 interface HighlightsProps {
 	siteId: number;
 	statsBaseUrl: string;
 	range: ResolvedDateRange;
 	gmtOffset: number;
+	/** What the site's plan locks, from `useStatsGates`. */
+	gates?: { isLoading: boolean; isGated: IsGated };
 }
+
+const OPEN_GATES = { isLoading: false, isGated: () => false };
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
 const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
@@ -137,7 +149,36 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: HighlightsProps ) {
+// In place of a list the site's plan locks, as Stats v2 puts an upsell over its card.
+const LockedColumn: FunctionComponent< LockedColumnProps > = ( {
+	description,
+	upgradeUrl,
+	onUpgradeClick,
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="stats-widget-highlights-card stats-widget-highlights-card__locked">
+			<p className="stats-widget-highlights-card__locked-text">
+				<Icon icon={ lock } size={ 18 } />
+				{ description }
+			</p>
+			<div className="stats-widget-highlights-card__view-all">
+				<a href={ upgradeUrl } onClick={ onUpgradeClick }>
+					{ translate( 'Upgrade' ) }
+				</a>
+			</div>
+		</div>
+	);
+};
+
+export default function Highlights( {
+	siteId,
+	statsBaseUrl,
+	range,
+	gmtOffset,
+	gates = OPEN_GATES,
+}: HighlightsProps ) {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
 	const { startDate, endDate } = range;
@@ -163,25 +204,42 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 		);
 	const referrerHref = ( item: HighLightItem ) => item.url || item.href;
 
+	const isTopPostsLocked = gates.isGated( STAT_TYPE_TOP_POSTS );
+	const isReferrersLocked = gates.isGated( STAT_TYPE_REFERRERS );
+
+	// A locked list is never asked for, nor is either list before the gates are known.
 	const {
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
+	} = useTopPostsQuery(
+		siteId,
+		range,
+		HIGHLIGHT_ITEMS_LIMIT,
+		! gates.isLoading && ! isTopPostsLocked
+	);
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
+	} = useReferrersQuery(
+		siteId,
+		range,
+		HIGHLIGHT_ITEMS_LIMIT,
+		! gates.isLoading && ! isReferrersLocked
+	);
 
 	// Held here rather than left to TabPanel, which remounts when the section comes back after
 	// an empty range and reports its initial tab as it does; only a change is a user's click.
 	const [ selectedTab, setSelectedTab ] = useState< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
 	// Drop the section only once both lists have answered empty. A failed request also falls
-	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
+	// back to `[]`, so errors are excluded: those lists say "No data to show" instead. A locked
+	// list keeps the section, for its upsell.
 	const isEmpty =
+		! isTopPostsLocked &&
+		! isReferrersLocked &&
 		! isPendingPostsAndPages &&
 		! isPendingReferrers &&
 		! isPostsAndPagesError &&
@@ -200,6 +258,11 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			items: topPostsAndPages,
 			isLoading: isPendingPostsAndPages,
 			viewAllUrl: viewAllPostsStatsUrl,
+			isLocked: isTopPostsLocked,
+			statType: STAT_TYPE_TOP_POSTS,
+			lockedDescription: translate(
+				'Upgrade your plan to see which posts and pages get the most views.'
+			),
 			itemHref: postHref,
 			isExternal: false,
 			trackingName: 'top_posts' as const,
@@ -211,6 +274,9 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			items: topReferrers,
 			isLoading: isPendingReferrers,
 			viewAllUrl: viewAllReferrerStatsUrl,
+			isLocked: isReferrersLocked,
+			statType: STAT_TYPE_REFERRERS,
+			lockedDescription: translate( 'Upgrade your plan to see where your visitors come from.' ),
 			itemHref: referrerHref,
 			isExternal: true,
 			trackingName: 'top_referrers' as const,
@@ -241,6 +307,18 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			>
 				{ ( tab ) => {
 					const active = tabs.find( ( candidate ) => candidate.name === tab.name ) ?? tabs[ 0 ];
+
+					if ( active.isLocked ) {
+						return (
+							<LockedColumn
+								description={ active.lockedDescription }
+								upgradeUrl={ getUpgradeUrl( siteId, active.statType ) ?? active.viewAllUrl }
+								onUpgradeClick={ recordWidgetEventThenFollow( 'upgrade_clicked', {
+									feature: active.trackingName,
+								} ) }
+							/>
+						);
+					}
 
 					return (
 						<TopColumn
