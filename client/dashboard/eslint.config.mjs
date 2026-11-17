@@ -4,6 +4,7 @@ import { defineConfig } from 'eslint/config';
 import jest from 'eslint-plugin-jest';
 import reactPlugin from 'eslint-plugin-react';
 import parent from '../eslint.config.mjs';
+import dashboardTests from './eslint-rules/index.mjs';
 
 const snackbarMetaRestriction = {
 	// Spreading an api-queries factory and then setting `meta` replaces the
@@ -11,58 +12,6 @@ const snackbarMetaRestriction = {
 	selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
 	message:
 		'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
-};
-
-// A `vi.mock()` of a module whose path matches the `path` regex. `vi.mock()` and
-// `vi.doMock()` also take the module as `import( '…' )`. Selector regexes can't
-// contain a literal slash, hence `\x2F`.
-const mockOf = ( path ) =>
-	`CallExpression[callee.object.name='vi'][callee.property.name=/^(mock|doMock|importMock)$/]:matches([arguments.0.value=${ path }], [arguments.0.source.value=${ path }])`;
-
-// Matches the package and its subpaths, but not sibling packages such as
-// `@tanstack/react-query-persist-client`.
-const packagePath = ( name ) => `/^${ name.replace( '/', '\\x2F' ) }(\\x2F|$)/`;
-
-const bannedModuleMocks = [
-	...[ '@tanstack/react-query', '@automattic/api-queries' ].map( ( name ) => ( {
-		selector: mockOf( packagePath( name ) ),
-		message: `Mocking \`${ name }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
-	} ) ),
-	{
-		selector: mockOf( packagePath( '@automattic/api-core' ) ),
-		message:
-			'Mocking `@automattic/api-core` skips the request the code under test makes. Mock the network request with `nock` instead. See docs/testing.md.',
-	},
-	{
-		selector: mockOf( packagePath( '@wordpress/i18n' ) ),
-		message:
-			'Don’t mock `@wordpress/i18n`. In tests, `__()` and the other functions already return the strings they’re given.',
-	},
-];
-
-const routerMockRestriction = {
-	// A selector can't resolve a relative path, but `app/router` is the dashboard's only
-	// folder named `router`, so a relative path through one points at it.
-	selector: [
-		mockOf( packagePath( '@tanstack/react-router' ) ),
-		mockOf( '/^\\.\\.?\\x2F(.*\\x2F)?router(\\x2F|$)/' ),
-	].join( ', ' ),
-	message:
-		'Mocking `@tanstack/react-router` or `app/router/*` breaks whenever the code reads a route the mock doesn’t define. Build the real route tree and a test router instead. See docs/testing.md.',
-};
-
-const testFileRestrictions = [
-	snackbarMetaRestriction,
-	...bannedModuleMocks,
-	routerMockRestriction,
-];
-
-// Reported once per file.
-const misnamedTestFileRestriction = {
-	selector:
-		'Program:has(CallExpression[callee.name=/^(describe|test|it)$/], CallExpression[callee.object.name=/^(describe|test|it)$/])',
-	message:
-		'Vitest only runs `*.test.*` files directly inside a `test/` folder, so it skips this file. Rename it, or move it there.',
 };
 
 export default defineConfig( [
@@ -299,7 +248,7 @@ export default defineConfig( [
 	{
 		name: 'calypso/dashboard/vitest',
 		files: [ '**/test/**/*.{js,jsx,ts,tsx}', 'test-utils.tsx' ],
-		plugins: { vitest },
+		plugins: { vitest, 'dashboard-tests': dashboardTests },
 		rules: {
 			...Object.fromEntries(
 				Object.keys( jest.rules ).map( ( rule ) => [ `jest/${ rule }`, 'off' ] )
@@ -313,16 +262,17 @@ export default defineConfig( [
 					message: 'The Dashboard tests run on Vitest. Use `vi` from `vitest` instead.',
 				},
 			],
-			// Replaces the rule's options above, so the snackbar restriction is repeated.
-			'no-restricted-syntax': [ 'error', ...testFileRestrictions ],
+			'dashboard-tests/no-banned-module-mocks': 'error',
+			'dashboard-tests/no-router-mocks': 'error',
 		},
 	},
 	{
-		name: 'calypso/dashboard/vitest/test-file-names',
+		name: 'calypso/dashboard/vitest/skipped-test-files',
+		// The files under `test/` that test/dashboard/vitest.config.mts doesn't include.
 		files: [ '**/test/**/*.{js,jsx,ts,tsx}' ],
 		ignores: [ '**/test/*.test.{js,jsx,ts,tsx}' ],
 		rules: {
-			'no-restricted-syntax': [ 'error', ...testFileRestrictions, misnamedTestFileRestriction ],
+			'dashboard-tests/no-skipped-test-file': 'error',
 		},
 	},
 	{
@@ -365,7 +315,7 @@ export default defineConfig( [
 			'sites/staging-site-delete-modal/test/index.test.tsx',
 		],
 		rules: {
-			'no-restricted-syntax': [ 'error', snackbarMetaRestriction, ...bannedModuleMocks ],
+			'dashboard-tests/no-router-mocks': 'off',
 		},
 	},
 ] );

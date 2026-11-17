@@ -2,16 +2,24 @@
  * @vitest-environment jsdom
  */
 import { fixThreatsStatusQuery } from '@automattic/api-queries';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import nock from 'nock';
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useFixThreats } from '../hooks/use-fix-threats';
 import type { FixThreatsStatusResponse } from '@automattic/api-core';
 
-let queryClient: QueryClient;
-
 function TestWrapper( { children }: { children: ReactNode } ) {
+	const [ queryClient ] = useState(
+		() =>
+			new QueryClient( {
+				defaultOptions: {
+					queries: { retry: false },
+					mutations: { retry: false },
+				},
+			} )
+	);
+
 	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 }
 
@@ -33,24 +41,20 @@ describe( 'useFixThreats', () => {
 	}
 
 	// Until the status response arrives, the hook reports the same status as for threats still in
-	// progress, so wait for the response before asserting on it.
-	function waitForFixStatus() {
-		return waitFor( () =>
-			expect(
-				queryClient.getQueryState( fixThreatsStatusQuery( mockSiteId, mockThreatIds ).queryKey )
-					?.status
-			).toBe( 'success' )
+	// progress. Reading the query's state in the hook's render tells when its result includes the
+	// response.
+	function renderUseFixThreats() {
+		return renderHook(
+			() => ( {
+				...useFixThreats( mockSiteId, mockThreatIds ),
+				hasStatusResponse:
+					useQueryClient().getQueryState(
+						fixThreatsStatusQuery( mockSiteId, mockThreatIds ).queryKey
+					)?.status === 'success',
+			} ),
+			{ wrapper: TestWrapper }
 		);
 	}
-
-	beforeEach( () => {
-		queryClient = new QueryClient( {
-			defaultOptions: {
-				queries: { retry: false },
-				mutations: { retry: false },
-			},
-		} );
-	} );
 
 	describe( 'initial state', () => {
 		test( 'should return initial state when not fixing', () => {
@@ -104,13 +108,11 @@ describe( 'useFixThreats', () => {
 				100003: { status: 'fixed' },
 			} );
 
-			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
-				wrapper: TestWrapper,
-			} );
+			const { result } = renderUseFixThreats();
 
 			act( () => result.current.startFix() );
 
-			await waitForFixStatus();
+			await waitFor( () => expect( result.current.hasStatusResponse ).toBe( true ) );
 
 			expect( result.current.status.isComplete ).toBe( false );
 			expect( result.current.status.allFixed ).toBe( false );
@@ -124,13 +126,11 @@ describe( 'useFixThreats', () => {
 				100003: { status: 'fixed' },
 			} );
 
-			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
-				wrapper: TestWrapper,
-			} );
+			const { result } = renderUseFixThreats();
 
 			act( () => result.current.startFix() );
 
-			await waitForFixStatus();
+			await waitFor( () => expect( result.current.hasStatusResponse ).toBe( true ) );
 
 			expect( result.current.status.isComplete ).toBe( true );
 			expect( result.current.status.allFixed ).toBe( true );
@@ -144,13 +144,11 @@ describe( 'useFixThreats', () => {
 				100003: { status: 'fixed' },
 			} );
 
-			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
-				wrapper: TestWrapper,
-			} );
+			const { result } = renderUseFixThreats();
 
 			act( () => result.current.startFix() );
 
-			await waitForFixStatus();
+			await waitFor( () => expect( result.current.hasStatusResponse ).toBe( true ) );
 
 			expect( result.current.status.isComplete ).toBe( true );
 			expect( result.current.status.allFixed ).toBe( false );
@@ -164,13 +162,11 @@ describe( 'useFixThreats', () => {
 				100003: { status: 'not_fixed' },
 			} );
 
-			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
-				wrapper: TestWrapper,
-			} );
+			const { result } = renderUseFixThreats();
 
 			act( () => result.current.startFix() );
 
-			await waitForFixStatus();
+			await waitFor( () => expect( result.current.hasStatusResponse ).toBe( true ) );
 
 			expect( result.current.status.isComplete ).toBe( true );
 			expect( result.current.status.allFixed ).toBe( false );
@@ -184,13 +180,11 @@ describe( 'useFixThreats', () => {
 				100003: { status: 'not_started' },
 			} );
 
-			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
-				wrapper: TestWrapper,
-			} );
+			const { result } = renderUseFixThreats();
 
 			act( () => result.current.startFix() );
 
-			await waitForFixStatus();
+			await waitFor( () => expect( result.current.hasStatusResponse ).toBe( true ) );
 
 			expect( result.current.status.isComplete ).toBe( false );
 			expect( result.current.status.allFixed ).toBe( false );
@@ -278,13 +272,11 @@ describe( 'useFixThreats', () => {
 			mockFixRequest();
 			mockFixStatus( null );
 
-			const { result } = renderHook( () => useFixThreats( mockSiteId, mockThreatIds ), {
-				wrapper: TestWrapper,
-			} );
+			const { result } = renderUseFixThreats();
 
 			act( () => result.current.startFix() );
 
-			await waitForFixStatus();
+			await waitFor( () => expect( result.current.hasStatusResponse ).toBe( true ) );
 
 			expect( result.current.status.isComplete ).toBe( false );
 			expect( result.current.status.allFixed ).toBe( false );
