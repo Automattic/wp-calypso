@@ -28,7 +28,9 @@ export default function SecretAchievementCard( {
 		translate( 'Mystery achievement. Keep going — it’ll reveal itself.' ),
 		translate( 'Hidden in plain sight. Keep at it to unlock the details.' ),
 	];
-	const [ descriptionIndex ] = useState( () => Math.floor( Math.random() * descriptions.length ) );
+	const [ descriptionIndex ] = useState(
+		() => crypto.getRandomValues( new Uint32Array( 1 ) )[ 0 ] % descriptions.length
+	);
 	const description = descriptions[ descriptionIndex ];
 	const caption = unlockedDate
 		? translate( 'Unlocked: {{timeSince/}}', {

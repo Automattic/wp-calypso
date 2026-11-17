@@ -112,7 +112,7 @@ export const useDomainRow = (
 		const MIN = 40;
 		const MAX = 100;
 
-		return Math.floor( Math.random() * ( MAX - MIN + 1 ) ) + MIN;
+		return MIN + ( crypto.getRandomValues( new Uint32Array( 1 ) )[ 0 ] % ( MAX - MIN + 1 ) );
 	} );
 
 	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
