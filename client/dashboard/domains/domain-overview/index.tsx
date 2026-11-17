@@ -28,6 +28,7 @@ import IcannSuspensionNotice from './icann-suspension-notice';
 import PendingRegistrationNotice from './pending-registration-notice';
 import PointToWpcomNotice from './point-to-wpcom-notice';
 import DomainOverviewRegistration from './registration';
+import RenewalPaymentMethodNotice from './renewal-payment-method-notice';
 import { useRenewalNote } from './renewal-summary';
 import DomainOverviewSettings from './settings';
 import DomainOverviewSslStatus from './ssl-status';
@@ -144,6 +145,11 @@ export default function DomainOverview() {
 				}
 			>
 				<PendingRegistrationNotice domain={ domain } />
+				<RenewalPaymentMethodNotice
+					domain={ domain }
+					purchase={ purchase }
+					isDisabled={ isTldInMaintenance( domain ) }
+				/>
 				<PointToWpcomNotice domain={ domain } isDisabled={ isTldInMaintenance( domain ) } />
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
