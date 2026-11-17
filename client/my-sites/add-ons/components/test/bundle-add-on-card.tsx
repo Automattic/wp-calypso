@@ -50,8 +50,7 @@ const mockRequests = ( {
 		if ( params.method === 'POST' ) {
 			return install();
 		}
-		const response =
-			pluginResponses.length > 1 ? pluginResponses.shift() : pluginResponses[ 0 ];
+		const response = pluginResponses.length > 1 ? pluginResponses.shift() : pluginResponses[ 0 ];
 		return Promise.resolve( response );
 	} );
 };
