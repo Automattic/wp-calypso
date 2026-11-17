@@ -45,7 +45,6 @@ export const siteCreationPath = buildPathHelper<
 		queryParams: {
 			from?: string | null;
 			platform: ImporterPlatform;
-			ssh?: string;
 			host?: string;
 			isWpcom?: boolean | '';
 			action?: string;
@@ -60,7 +59,6 @@ export const sitePickerPath = buildPathHelper<
 		queryParams: {
 			from: string | null;
 			platform?: ImporterPlatform;
-			ssh?: string;
 			host?: string;
 			isWpcom?: boolean | '';
 			action?: string;
@@ -150,7 +148,6 @@ export const upgradePlanPath = buildPathHelper<
 			from?: string | null;
 			destination?: string;
 			how?: string;
-			ssh?: string;
 			host?: string;
 		};
 	},
@@ -220,41 +217,6 @@ export const supportInstructionsPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 >( STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug );
 
-export const sshVerificationPath = buildPathHelper<
-	{
-		queryParams: {
-			siteId?: number | string;
-			siteSlug: string;
-			from?: string | null;
-			host?: string | null;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug
->( STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug );
-
-export const sshShareAccessPath = buildPathHelper<
-	{
-		queryParams: {
-			siteId?: number | string;
-			siteSlug: string;
-			transferId?: number | string;
-			from?: string | null;
-			host?: string | null;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug
->( STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug );
-
-export const sshInProgressPath = buildPathHelper<
-	{
-		queryParams: {
-			siteId?: number | string;
-			siteSlug: string;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug
->( STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug );
-
 export const identifyPath = buildPathHelper<
 	{
 		queryParams: {
@@ -265,7 +227,6 @@ export const identifyPath = buildPathHelper<
 			manualPlatform?: 'wordpress' | '';
 			host?: string;
 			isWpcom?: '';
-			ssh?: string;
 			action?: string;
 			how?: string;
 			start?: string;
@@ -282,7 +243,6 @@ export const importListPath = buildPathHelper<
 			manualPlatform?: '';
 			host: string;
 			isWpcom: '';
-			ssh: string;
 			action: string;
 			how: string;
 		};
@@ -313,12 +273,3 @@ export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };
 	params: { siteSlug: string };
 } >( '/overview/:siteSlug' );
-
-export const dashboardSiteSSHMigration = buildPathHelper< {
-	queryParams: {
-		'ssh-migration': 'completed' | 'failed';
-	};
-	params: {
-		siteSlug: string;
-	};
-} >( '/sites/:siteSlug' );

@@ -1,5 +1,4 @@
 import { configureWordPressMigration } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { getUrlParts, isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { Onboard, type OnboardActions, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
@@ -24,7 +23,6 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { type CopySiteEligibility } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-check';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
-import { isHostingSupportedForSSHMigration } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
@@ -67,9 +65,6 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 	STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
-	STEPS.SITE_MIGRATION_SSH_VERIFICATION,
-	STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS,
-	STEPS.SITE_MIGRATION_SSH_IN_PROGRESS,
 	STEPS.UNIFIED_PLANS,
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
@@ -540,7 +535,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 									manualPlatform: '',
 									host: '',
 									isWpcom: '',
-									ssh: '',
 									action: '',
 									how: '',
 									start: '',
@@ -590,26 +584,17 @@ const siteMigration: FlowV2< typeof initialize > = {
 								manualPlatform: '',
 								host: '',
 								isWpcom: '',
-								ssh: '',
 								action: from ? 'import' : '',
 								how: '',
 							} )
 						);
 					}
 
-					const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
-					const isHostingSupported = isHostingSupportedForSSHMigration( host );
-					const canUseSSHMigration =
-						isSSHMigrationAvailable && isHostingSupported && locale === 'en';
-
 					// Track hosting provider detection
-					const recordHostingDetected = ( redirectedToSSH: boolean ) =>
+					const recordHostingDetected = () =>
 						recordTracksEvent( 'calypso_site_migration_hosting_detected', {
 							hosting_provider: host || 'unknown',
-							is_ssh_supported: isHostingSupported,
-							ssh_feature_enabled: isSSHMigrationAvailable,
 							is_english_locale: locale === 'en',
-							redirected_to_ssh: redirectedToSSH,
 						} );
 
 					if (
@@ -618,7 +603,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						platform === 'wordpress' &&
 						from
 					) {
-						recordHostingDetected( false );
+						recordHostingDetected();
 						return navigate(
 							paths.siteCheckPath( { from, platform, host: host ?? '', isWpcom: !! isWpcom } )
 						);
@@ -635,25 +620,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						return navigate( paths.plansPath( { from } ) );
 					}
-					recordHostingDetected( canUseSSHMigration );
-
-					if ( canUseSSHMigration ) {
-						if ( hasDestinationSite && siteCanInstallPlugins ) {
-							return navigate( paths.sshVerificationPath( { siteId, siteSlug, from, host } ) );
-						}
-
-						if ( hasDestinationSite ) {
-							return navigate(
-								paths.upgradePlanPath( { siteId, siteSlug, from, ssh: 'true', host } )
-							);
-						}
-
-						if ( shouldPickDestination ) {
-							return navigate( paths.sitePickerPath( { from, platform, ssh: 'true', host } ) );
-						}
-
-						return navigate( paths.siteCreationPath( { from, platform, ssh: 'true', host } ) );
-					}
+					recordHostingDetected();
 
 					if (
 						action !== 'skip_platform_identification' &&
@@ -719,7 +686,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 								manualPlatform: 'wordpress',
 								host: '',
 								isWpcom: '',
-								ssh: '',
 								action: '',
 								how: '',
 								start: '',
@@ -796,50 +762,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						case 'select-site': {
 							const { ID: siteId, slug: siteSlug } = providedDependencies.site as SiteExcerptData;
-							const selectedSite = providedDependencies.site as SiteExcerptData;
-							const selectedSiteCanInstallPlugins = canInstallPlugins( selectedSite );
-							const detectedHost = providedDependencies.host as string | undefined;
-							const host = detectedHost || hostQueryParam;
-
 							if ( isReprintSource && fromQueryParam && hasSite( siteId, siteSlug ) ) {
 								return showWordpressDestination( siteId, siteSlug, fromQueryParam );
 							}
 							if ( isManualImport ) {
 								return exitFlow(
 									getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam || '' )
-								);
-							}
-
-							// Check if this is an SSH migration flow
-							// Either from ssh=true param OR from move-lp with supported hosting and English locale
-							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
-							const isHostingSupported = isHostingSupportedForSSHMigration( host );
-							const shouldUseSSH =
-								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' &&
-									isSSHMigrationAvailable &&
-									isHostingSupported &&
-									locale === 'en' );
-
-							if ( shouldUseSSH ) {
-								if ( selectedSiteCanInstallPlugins ) {
-									return navigate(
-										paths.sshVerificationPath( {
-											siteId,
-											siteSlug,
-											from: fromQueryParam,
-											host,
-										} )
-									);
-								}
-								return navigate(
-									paths.upgradePlanPath( {
-										siteId,
-										siteSlug,
-										from: fromQueryParam,
-										ssh: 'true',
-										host,
-									} )
 								);
 							}
 
@@ -886,34 +814,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
 
-							// Check if SSH migration should be enabled
-							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
-							const isHostingSupported = isHostingSupportedForSSHMigration( host );
-							const shouldUseSSH =
-								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' &&
-									isSSHMigrationAvailable &&
-									isHostingSupported &&
-									locale === 'en' );
-
-							const queryParams: {
-								from: string | null;
-								platform: ImporterPlatform;
-								ssh?: string;
-								host?: string;
-							} = {
-								from: fromQueryParam,
-								platform: platformQueryParam,
-								host,
-							};
-
-							// Add SSH params if applicable
-							if ( shouldUseSSH ) {
-								queryParams.ssh = 'true';
-							}
-
 							// The picker auto-submits when the user has no sites. Replace so Back doesn't return to it.
-							return navigate( paths.siteCreationPath( queryParams ), undefined, siteCount === 0 );
+							return navigate(
+								paths.siteCreationPath( {
+									from: fromQueryParam,
+									platform: platformQueryParam,
+									host,
+								} ),
+								undefined,
+								siteCount === 0
+							);
 						}
 					}
 				}
@@ -968,19 +878,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					if ( isReprintSource && fromQueryParam ) {
 						return configureAndContinue( siteId, siteSlug, fromQueryParam, true );
-					}
-
-					// Check if this is an SSH migration flow (ssh=true is already set in URL from PICK_SITE)
-					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-						return replace(
-							paths.upgradePlanPath( {
-								siteId,
-								from: fromQueryParam,
-								siteSlug,
-								ssh: 'true',
-								host: hostQueryParam,
-							} )
-						);
 					}
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
@@ -1105,10 +1002,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_IDENTIFY.slug;
-						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-							// Redirect to verification first to obtain transferId before share-access
-							redirectAfterCheckout = STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug;
-						} else if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 						const destination = addQueryArgs(
@@ -1132,17 +1026,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return;
 					}
 
-					if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
-						return navigate(
-							paths.sshVerificationPath( {
-								siteId,
-								siteSlug,
-								from: fromQueryParam,
-								host: hostQueryParam,
-							} )
-						);
-					}
-
 					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
@@ -1150,47 +1033,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 					return navigate( paths.identifyPath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
-				case STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug: {
-					const { allowSiteMigration, transferId } = providedDependencies as {
-						verified: boolean;
-						transferId?: number;
-						allowSiteMigration?: boolean;
-					};
-
-					// If site migration is not allowed, redirect to fallback credentials flow
-					if ( allowSiteMigration === false ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
-					}
-
-					// Otherwise proceed to SSH share access
-					return navigate(
-						paths.sshShareAccessPath( {
-							siteId,
-							siteSlug,
-							transferId,
-							from: fromQueryParam,
-							host: hostQueryParam,
-						} )
-					);
-				}
-
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl, platform, host } = providedDependencies;
+					const { action, from, authorizationUrl, platform } = providedDependencies;
 
 					if ( action === 'skip' ) {
 						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
-					}
-
-					if ( action === 'redirect-to-ssh' ) {
-						// Redirect to SSH verification step
-						return navigate(
-							paths.sshVerificationPath( {
-								siteId,
-								siteSlug,
-								from: from || fromQueryParam,
-								host,
-							} )
-						);
 					}
 
 					if ( action === 'already-wpcom' ) {
@@ -1296,119 +1143,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
-				}
-
-				case STEPS.SITE_MIGRATION_SSH_SHARE_ACCESS.slug: {
-					const { destination, from, authorizationUrl, platform } = providedDependencies as {
-						destination?:
-							| 'migration-started'
-							| 'migration-completed'
-							| 'no-ssh-access'
-							| 'back-to-verification'
-							| 'do-it-for-me'
-							| 'application-passwords-approval'
-							| 'fallback-credentials'
-							| 'already-wpcom'
-							| 'site-is-not-using-wordpress';
-						from?: string;
-						authorizationUrl?: string;
-						platform?: ImporterPlatform;
-					};
-
-					// Missing transferId, redirect back to verification
-					if ( destination === 'back-to-verification' ) {
-						return navigate(
-							paths.sshVerificationPath( {
-								siteId,
-								siteSlug,
-								from: fromQueryParam,
-								host: hostQueryParam,
-							} )
-						);
-					}
-
-					// User doesn't have SSH access, redirect to credentials flow
-					if ( destination === 'no-ssh-access' ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
-					}
-
-					// Application passwords are enabled, go to authorization step
-					if ( destination === 'application-passwords-approval' ) {
-						return navigate(
-							paths.applicationPasswordAuthorizationPath( {
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-								authorizationUrl,
-							} )
-						);
-					}
-
-					// Application passwords are disabled, go to fallback credentials
-					if ( destination === 'fallback-credentials' ) {
-						return navigate(
-							paths.fallbackCredentialsPath( {
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-							} )
-						);
-					}
-
-					// Site is already on wpcom
-					if ( destination === 'already-wpcom' ) {
-						return navigate(
-							paths.alreadyWpcomPath( {
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-							} )
-						);
-					}
-
-					// Site is not using WordPress
-					if ( destination === 'site-is-not-using-wordpress' ) {
-						return navigate(
-							paths.otherPlatformDetectedImportPath( {
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-								platform,
-							} )
-						);
-					}
-
-					// Migration completed during polling, go to overview
-					if ( destination === 'migration-completed' ) {
-						return exitFlow(
-							paths.dashboardSiteSSHMigration( { 'ssh-migration': 'completed' }, { siteSlug } )
-						);
-					}
-
-					if ( destination === 'do-it-for-me' ) {
-						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
-					}
-
-					return navigate( paths.sshInProgressPath( { siteId, siteSlug } ) );
-				}
-
-				case STEPS.SITE_MIGRATION_SSH_IN_PROGRESS.slug: {
-					const { action } = providedDependencies as {
-						action: 'migration-completed' | 'migration-failed' | 'preflight' | 'unexpected-status';
-					};
-
-					switch ( action ) {
-						case 'migration-completed':
-							return exitFlow(
-								paths.dashboardSiteSSHMigration( { 'ssh-migration': 'completed' }, { siteSlug } )
-							);
-						case 'migration-failed':
-							return exitFlow(
-								paths.dashboardSiteSSHMigration( { 'ssh-migration': 'failed' }, { siteSlug } )
-							);
-						default:
-							return navigate( paths.sshShareAccessPath( { siteId, siteSlug } ) );
-					}
 				}
 			}
 		};

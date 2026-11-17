@@ -62,7 +62,7 @@ describe( 'Site Setup Flow', () => {
 					ref,
 					sessionId: 'fallback-selection',
 					source: 'sites-dashboard',
-					flags: 'migration/ssh-migration',
+					flags: 'migration/non-wordpress-source',
 					manualPlatform: 'wordpress',
 				};
 				const stale = {
@@ -70,7 +70,6 @@ describe( 'Site Setup Flow', () => {
 					platform: 'unknown',
 					host: 'bluehost',
 					isWpcom: 'true',
-					ssh: 'true',
 					action: 'import',
 					how: 'difm',
 					start: 'true',

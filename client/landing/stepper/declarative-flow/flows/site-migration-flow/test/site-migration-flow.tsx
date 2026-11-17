@@ -203,7 +203,7 @@ describe( 'Site Migration Flow', () => {
 				const query = new URLSearchParams( result.current.location.search );
 				expect( query.get( 'from' ) ).toBe( escape.from );
 				expect( query.get( 'sessionId' ) ).toBe( 'escape' );
-				for ( const key of [ 'host', 'ssh', 'isWpcom' ] ) {
+				for ( const key of [ 'host', 'isWpcom' ] ) {
 					expect( query.get( key ) ).toBe( '' );
 				}
 				act( () => result.current.navigation.goBack() );
@@ -290,7 +290,6 @@ describe( 'Site Migration Flow', () => {
 				manualPlatform: 'wordpress',
 				host: 'automattic',
 				isWpcom: 'true',
-				ssh: 'true',
 				action: 'migrate',
 				how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 				start: 'true',
@@ -298,7 +297,7 @@ describe( 'Site Migration Flow', () => {
 				siteSlug: 'previous.wordpress.com',
 				ref: 'move-lp',
 				sessionId: 'destination-correction',
-				flags: 'migration/ssh-migration',
+				flags: 'migration/non-wordpress-source',
 			} );
 			const { result, rerender } = renderNavigation( [
 				`/setup/site-migration/site-migration-check?${ context }`,
@@ -320,7 +319,6 @@ describe( 'Site Migration Flow', () => {
 				'manualPlatform',
 				'host',
 				'isWpcom',
-				'ssh',
 				'action',
 				'how',
 				'start',
@@ -366,13 +364,12 @@ describe( 'Site Migration Flow', () => {
 					platform: 'wordpress',
 					host: 'bluehost',
 					isWpcom: 'false',
-					ssh: 'true',
 					action: 'migrate',
 					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 					source: 'sites-dashboard',
 					ref: 'new-site-popover',
 					sessionId: 'platform-escape',
-					flags: 'migration/ssh-migration',
+					flags: 'migration/non-wordpress-source',
 				} );
 				const { result } = renderNavigation( [
 					`/setup/site-migration/site-migration-identify?${ context }`,
@@ -381,7 +378,7 @@ describe( 'Site Migration Flow', () => {
 				expect( result.current.location.pathname ).toBe( '/site-migration/importList' );
 				const query = new URLSearchParams( result.current.location.search );
 				expect( query.get( 'platform' ) ).toBe( 'unknown' );
-				for ( const key of [ 'from', 'host', 'isWpcom', 'ssh', 'action', 'how' ] ) {
+				for ( const key of [ 'from', 'host', 'isWpcom', 'action', 'how' ] ) {
 					expect( query.get( key ) ).toBe( '' );
 				}
 				for ( const key of [ 'source', 'ref', 'sessionId', 'flags' ] ) {
@@ -418,7 +415,7 @@ describe( 'Site Migration Flow', () => {
 				source: 'sites-dashboard',
 				ref: 'new-site-popover',
 				sessionId: 'different-site',
-				flags: 'migration/ssh-migration',
+				flags: 'migration/non-wordpress-source',
 			} );
 			const { result } = renderNavigation( [
 				`/setup/site-migration/site-migration-check?${ context }`,
@@ -452,7 +449,7 @@ describe( 'Site Migration Flow', () => {
 			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 			const browserBack = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
 			const search =
-				'?source=sites-dashboard&ref=new-site-popover&sessionId=abc&flags=migration%2Fssh-migration';
+				'?source=sites-dashboard&ref=new-site-popover&sessionId=abc&flags=migration%2Fnon-wordpress-source';
 			const addressPath = '/site-migration/site-migration-identify';
 			const { result } = renderNavigation(
 				[ '/setup/previous-page', `/setup${ addressPath }${ search }` ],
@@ -728,7 +725,6 @@ describe( 'Site Migration Flow', () => {
 						platform: 'squarespace',
 						host: 'bluehost',
 						isWpcom: 'true',
-						ssh: 'true',
 						action: 'import',
 						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 						start: 'true',
@@ -1402,11 +1398,8 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			describe.each( [ false, true ] )( 'signed out with SSH available: %s', ( ssh ) => {
+			describe( 'signed out', () => {
 				it( 'defers the destination to PICK_SITE, as the account’s sites are unknown', () => {
-					jest
-						.spyOn( config, 'isEnabled' )
-						.mockImplementation( ( flag ) => ssh && flag === 'migration/ssh-migration' );
 					jest.mocked( isUserLoggedIn ).mockReturnValue( false );
 					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( null );
 					const source = {
@@ -1422,7 +1415,7 @@ describe( 'Site Migration Flow', () => {
 
 					expect( destination ).toMatchDestination( {
 						step: STEPS.PICK_SITE,
-						query: { ...source, ...( ssh && { ssh: 'true' } ) },
+						query: source,
 					} );
 				} );
 			} );
@@ -1650,13 +1643,11 @@ describe( 'Site Migration Flow', () => {
 				host: 'bluehost',
 				ref: 'new-site-popover',
 				source: 'sites-dashboard',
-				flags: 'migration/ssh-migration',
+				flags: 'migration/non-wordpress-source',
 			};
 			let recoveryClient: QueryClient;
 			beforeEach( () => {
-				jest
-					.spyOn( config, 'isEnabled' )
-					.mockImplementation( ( flag ) => flag === 'migration/ssh-migration' );
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
 				recoveryClient = new QueryClient();
 				jest.mocked( useQueryClient ).mockReturnValue( recoveryClient );
 				jest
@@ -2528,7 +2519,7 @@ describe( 'Site Migration Flow', () => {
 				host: 'bluehost',
 				ref: 'move-lp',
 				source: 'sites-dashboard',
-				flags: 'migration/ssh-migration',
+				flags: 'migration/non-wordpress-source',
 			};
 
 			describe( 'with a destination', () => {

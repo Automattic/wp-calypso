@@ -1918,42 +1918,6 @@ export const siteMigrationShareAccessRoute = createRoute( {
 	)
 );
 
-export const siteSSHMigrationFailedRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'We hit a snag, but we’re on it' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-failed',
-} ).lazy( () =>
-	import( '../../sites/ssh-migration-failed' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-failed' )( {
-			component: () => <d.default />,
-		} )
-	)
-);
-
-export const siteSSHMigrationCompleteRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Welcome to your new home' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-complete',
-} ).lazy( () =>
-	import( '../../sites/ssh-migration-complete' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-complete' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
-
 export const sitePlansRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1997,8 +1961,6 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteMigrationOverviewRoute,
 		siteMigrationAssistedIntroRoute,
 		siteMigrationShareAccessRoute,
-		siteSSHMigrationCompleteRoute,
-		siteSSHMigrationFailedRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
 		sitePerformanceRoute.addChildren( [
 			sitePerformanceIndexRoute,

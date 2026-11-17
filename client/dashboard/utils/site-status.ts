@@ -2,7 +2,7 @@ import type { SiteBlockingStatus, SiteMigrationStatus } from '../types';
 import type { Site } from '@automattic/api-core';
 
 const MIGRATION_STATUSES: SiteMigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
-const MIGRATION_TYPES: SiteMigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
+const MIGRATION_TYPES: SiteMigrationStatus[ 'type' ][] = [ 'difm', 'diy' ];
 
 export function getSiteBlockingStatus( item: Site ): SiteBlockingStatus {
 	if ( item.is_deleted ) {

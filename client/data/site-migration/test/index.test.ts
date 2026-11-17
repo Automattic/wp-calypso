@@ -42,35 +42,12 @@ describe( 'getMigrationState', () => {
 		} );
 	} );
 
-	it( 'returns status pending and type ssh for migration-pending-ssh', () => {
-		const migrationInfo = {
-			migration_status: 'migration-pending-ssh',
-		};
-		expect( getMigrationState( migrationInfo ) ).toEqual( {
-			status: 'pending',
-			type: 'ssh',
-		} );
-	} );
-
-	it( 'returns status started and type ssh for migration-started-ssh', () => {
-		const migrationInfo = {
-			migration_status: 'migration-started-ssh',
-		};
-		expect( getMigrationState( migrationInfo ) ).toEqual( {
-			status: 'started',
-			type: 'ssh',
-		} );
-	} );
-
-	it( 'returns status completed and type ssh for migration-completed-ssh', () => {
-		const migrationInfo = {
-			migration_status: 'migration-completed-ssh',
-		};
-		expect( getMigrationState( migrationInfo ) ).toEqual( {
-			status: 'completed',
-			type: 'ssh',
-		} );
-	} );
+	it.each( [ 'migration-pending-ssh', 'migration-started-ssh', 'migration-completed-ssh' ] )(
+		'ignores the retired SSH migration sticker %s',
+		( migration_status ) => {
+			expect( getMigrationState( { migration_status } ) ).toBeNull();
+		}
+	);
 
 	it( 'returns type DIFM and status started when the migration was started by DAMS', () => {
 		const migrationInfo = {
