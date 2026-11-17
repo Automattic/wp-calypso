@@ -13,7 +13,7 @@ import {
 	pluginsScheduledUpdatesNewRoute,
 } from '../../app/router/plugins';
 import ConfirmModal from '../../components/confirm-modal';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -186,7 +186,7 @@ export default function PluginsScheduledUpdates() {
 		[ locale, handleToggleActive ]
 	);
 
-	const { isLoading, scheduledUpdates } = useScheduledUpdates();
+	const { isLoading, isError, scheduledUpdates } = useScheduledUpdates();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
 		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
@@ -242,55 +242,66 @@ export default function PluginsScheduledUpdates() {
 					/>
 				}
 			>
-				<DataViewsCard>
-					{ ! isLoading && <PerformanceTrackerStop /> }
-					<DataViews
-						paginationInfo={ paginationInfo }
-						fields={ fields }
-						data={ filtered }
-						defaultLayouts={ { table: {} } }
-						view={ view }
-						onChangeView={ setView }
-						isLoading={ isLoading }
-						empty={
-							<p>
-								{ scheduledUpdates.length === 0
-									? __( 'No scheduled updates yet.' )
-									: __(
-											"We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-										) }
-							</p>
-						}
-						actions={ [
-							{
-								id: 'edit',
-								label: __( 'Edit' ),
-								isPrimary: true,
-								callback: ( items ) => {
-									const item = items[ 0 ];
-									navigate( {
-										to: pluginsScheduledUpdatesEditRoute.fullPath,
-										params: { scheduleId: item?.scheduleId },
-									} );
-								},
-							},
-							{
-								id: 'remove',
-								label: __( 'Remove' ),
-								isEligible: () => ! isDeletingSchedule,
-								callback: ( items ) => {
-									const item = items[ 0 ];
-									if ( item ) {
-										handleDeleteClick( item );
-									}
-								},
-							},
-						] }
-						renderItemLink={ ( { item, ...props } ) => (
-							<SiteLink { ...props } site={ item.site } />
-						) }
+				{ ! isLoading && <PerformanceTrackerStop /> }
+				{ ! isLoading && ! isError && scheduledUpdates.length === 0 ? (
+					<DataViewsEmptyStateLayout
+						isCompact
+						title={ __( 'No scheduled updates yet' ) }
+						description={ __( 'Choose which plugins update, on which sites, and when.' ) }
 					/>
-				</DataViewsCard>
+				) : (
+					<DataViewsCard>
+						<DataViews
+							paginationInfo={ paginationInfo }
+							fields={ fields }
+							data={ filtered }
+							defaultLayouts={ { table: {} } }
+							view={ view }
+							onChangeView={ setView }
+							isLoading={ isLoading }
+							empty={
+								scheduledUpdates.length === 0 ? (
+									<p>{ __( 'No scheduled updates yet.' ) }</p>
+								) : (
+									<DataViewsEmptyStateLayout
+										isBorderless
+										isCompact
+										title={ __( 'No scheduled updates match your search' ) }
+										description={ __( 'Try a different search term or clear the filters.' ) }
+									/>
+								)
+							}
+							actions={ [
+								{
+									id: 'edit',
+									label: __( 'Edit' ),
+									isPrimary: true,
+									callback: ( items ) => {
+										const item = items[ 0 ];
+										navigate( {
+											to: pluginsScheduledUpdatesEditRoute.fullPath,
+											params: { scheduleId: item?.scheduleId },
+										} );
+									},
+								},
+								{
+									id: 'remove',
+									label: __( 'Remove' ),
+									isEligible: () => ! isDeletingSchedule,
+									callback: ( items ) => {
+										const item = items[ 0 ];
+										if ( item ) {
+											handleDeleteClick( item );
+										}
+									},
+								},
+							] }
+							renderItemLink={ ( { item, ...props } ) => (
+								<SiteLink { ...props } site={ item.site } />
+							) }
+						/>
+					</DataViewsCard>
+				) }
 			</PageLayout>
 
 			<ConfirmModal

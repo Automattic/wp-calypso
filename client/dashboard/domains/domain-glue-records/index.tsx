@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute, domainGlueRecordsEditRoute } from '../../app/router/domains';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import DomainGlueRecordDeleteModal from './delete-modal';
 import { DomainGlueRecordsLayout } from './layout';
 import type { DomainGlueRecord } from '@automattic/api-core';
@@ -111,6 +111,19 @@ function DomainGlueRecords() {
 		fields
 	);
 
+	if ( glueRecordsData.length === 0 ) {
+		return (
+			<DomainGlueRecordsLayout>
+				<PerformanceTrackerStop />
+				<DataViewsEmptyStateLayout
+					isCompact
+					title={ __( 'No glue records yet' ) }
+					description={ __( 'Glue records let you run your own name servers on this domain.' ) }
+				/>
+			</DomainGlueRecordsLayout>
+		);
+	}
+
 	return (
 		<DomainGlueRecordsLayout>
 			<DataViewsCard>
@@ -127,11 +140,12 @@ function DomainGlueRecords() {
 					isLoading={ isLoading }
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					empty={
-						<p>
-							{ view.search
-								? __( 'No glue records found.' )
-								: __( 'No glue records found for this domain.' ) }
-						</p>
+						<DataViewsEmptyStateLayout
+							isBorderless
+							isCompact
+							title={ __( 'No glue records match your search' ) }
+							description={ __( 'Try a different search term.' ) }
+						/>
 					}
 				/>
 			</DataViewsCard>

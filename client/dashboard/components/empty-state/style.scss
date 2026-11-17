@@ -24,8 +24,19 @@
 }
 
 .dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__wrapper-content {
+	padding-block: $grid-unit-30;
+
 	@include break-medium {
-		padding-block: 0;
+		padding-block: $grid-unit-40;
+	}
+}
+
+// Inside a table, the toolbar already adds space above the empty state.
+.dashboard-empty-state__wrapper.is-compact.is-borderless .dashboard-empty-state__wrapper-content {
+	padding-block-start: $grid-unit-15;
+
+	@include break-medium {
+		padding-block-start: $grid-unit-20;
 	}
 }
 

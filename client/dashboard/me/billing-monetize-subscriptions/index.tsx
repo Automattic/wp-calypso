@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute, purchasesRoute } from '../../app/router/me';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -56,9 +56,11 @@ function MonetizeSubscriptions() {
 	} );
 
 	const monetizeDataFields = useMonetizeFieldDefinitions();
-	const { data: monetizeSubscriptions, isLoading: isLoadingMonetize } = useQuery(
-		monetizeSubscriptionsQuery()
-	);
+	const {
+		data: monetizeSubscriptions,
+		isLoading: isLoadingMonetize,
+		isSuccess: hasLoadedMonetize,
+	} = useQuery( monetizeSubscriptionsQuery() );
 	const navigate = useNavigate();
 
 	const actions = useMemo(
@@ -111,19 +113,39 @@ function MonetizeSubscriptions() {
 			}
 		>
 			<div ref={ ref }>
-				<DataViewsCard>
-					<DataViews
-						data={ adjustedMonetizeSubscriptions }
-						isLoading={ isLoadingMonetize }
-						fields={ monetizeDataFields }
-						view={ currentView }
-						onChangeView={ setView }
-						defaultLayouts={ { table: {} } }
-						actions={ actions }
-						getItemId={ getItemId }
-						paginationInfo={ paginationInfo }
+				{ hasLoadedMonetize && ! monetizeSubscriptions?.length ? (
+					<DataViewsEmptyStateLayout
+						isCompact
+						title={ __( 'No memberships or donations' ) }
+						description={ __(
+							'Memberships and donations on other WordPress.com sites are listed here.'
+						) }
 					/>
-				</DataViewsCard>
+				) : (
+					<DataViewsCard>
+						<DataViews
+							data={ adjustedMonetizeSubscriptions }
+							isLoading={ isLoadingMonetize }
+							fields={ monetizeDataFields }
+							view={ currentView }
+							onChangeView={ setView }
+							defaultLayouts={ { table: {} } }
+							actions={ actions }
+							getItemId={ getItemId }
+							paginationInfo={ paginationInfo }
+							empty={
+								currentView.search ? (
+									<DataViewsEmptyStateLayout
+										isBorderless
+										isCompact
+										title={ __( 'No memberships or donations match your search' ) }
+										description={ __( 'Try a different search term.' ) }
+									/>
+								) : undefined
+							}
+						/>
+					</DataViewsCard>
+				) }
 			</div>
 		</PageLayout>
 	);

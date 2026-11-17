@@ -22,7 +22,7 @@ import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import ConfirmModal from '../../components/confirm-modal';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -104,7 +104,11 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const hasSshFeature = hasHostingFeature( site, HostingFeatures.SSH );
 
-	const { data: crontabs = [], isLoading: isLoadingCrontabs } = useQuery( {
+	const {
+		data: crontabs = [],
+		isLoading: isLoadingCrontabs,
+		isSuccess: hasLoadedCrontabs,
+	} = useQuery( {
 		...siteCrontabsQuery( site.ID ),
 		enabled: hasSshFeature,
 	} );
@@ -236,7 +240,6 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	];
 
 	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
-	const emptyTitle = hasFilterOrSearch ? __( 'No jobs found' ) : __( 'No jobs scheduled.' );
 
 	return (
 		<PageLayout
@@ -279,20 +282,39 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				upsellTitle={ __( 'Automate tasks with cron jobs' ) }
 				upsellDescription={ __( 'Schedule commands to run automatically at specified intervals.' ) }
 			>
-				<DataViewsCard>
-					<DataViews< Crontab >
-						getItemId={ ( item ) => String( item.cron_id ) }
-						data={ filteredData }
-						fields={ filteredData.length > 0 ? fields : [] }
-						actions={ filteredData.length > 0 ? actions : [] }
-						view={ view }
-						onChangeView={ setView }
-						isLoading={ isLoadingCrontabs }
-						defaultLayouts={ { table: {} } }
-						paginationInfo={ paginationInfo }
-						empty={ <p>{ emptyTitle }</p> }
+				{ hasLoadedCrontabs && crontabs.length === 0 ? (
+					<DataViewsEmptyStateLayout
+						isCompact
+						title={ __( 'No scheduled jobs yet' ) }
+						description={ __( 'Run commands on this site at set intervals.' ) }
 					/>
-				</DataViewsCard>
+				) : (
+					<DataViewsCard>
+						<DataViews< Crontab >
+							getItemId={ ( item ) => String( item.cron_id ) }
+							data={ filteredData }
+							fields={ filteredData.length > 0 ? fields : [] }
+							actions={ filteredData.length > 0 ? actions : [] }
+							view={ view }
+							onChangeView={ setView }
+							isLoading={ isLoadingCrontabs }
+							defaultLayouts={ { table: {} } }
+							paginationInfo={ paginationInfo }
+							empty={
+								hasFilterOrSearch ? (
+									<DataViewsEmptyStateLayout
+										isBorderless
+										isCompact
+										title={ __( 'No scheduled jobs match your search' ) }
+										description={ __( 'Try a different search term.' ) }
+									/>
+								) : (
+									<p>{ __( 'No jobs scheduled.' ) }</p>
+								)
+							}
+						/>
+					</DataViewsCard>
+				) }
 			</HostingFeatureGatedWithCallout>
 			<ConfirmModal
 				isOpen={ !! selectedCrontabToRemove }

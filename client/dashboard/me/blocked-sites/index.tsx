@@ -168,9 +168,12 @@ export default function BlockedSites() {
 			{ ! isLoading && sites.length === 0 ? (
 				<EmptyState.Wrapper isCompact>
 					<EmptyState>
-						<EmptyState.Description>
-							{ __( "You haven't blocked any sites yet." ) }
-						</EmptyState.Description>
+						<EmptyState.Header>
+							<EmptyState.Title>{ __( 'No blocked sites' ) }</EmptyState.Title>
+							<EmptyState.Description>
+								{ __( 'Sites you block in the Reader are listed here.' ) }
+							</EmptyState.Description>
+						</EmptyState.Header>
 					</EmptyState>
 				</EmptyState.Wrapper>
 			) : (

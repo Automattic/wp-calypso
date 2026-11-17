@@ -14,7 +14,7 @@ import {
 	domainForwardingAddRoute,
 	domainForwardingEditRoute,
 } from '../../app/router/domains';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -194,20 +194,35 @@ function DomainForwarding() {
 			}
 		>
 			<DomainForwardingNotice domainName={ domainName } domainData={ domainData } />
-			<DataViewsCard>
-				<DataViews< DomainForwardingType >
-					data={ filteredData || [] }
-					fields={ fields }
-					onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
-					view={ view }
-					actions={ actions }
-					search
-					paginationInfo={ paginationInfo }
-					getItemId={ getForwardingId }
-					defaultLayouts={ DEFAULT_LAYOUTS }
-					empty={ <p>{ __( 'No forwarding rules found for this domain.' ) }</p> }
+			{ ! forwardingData?.length ? (
+				<DataViewsEmptyStateLayout
+					isCompact
+					title={ __( 'No forwarding rules yet' ) }
+					description={ __( 'Forwarding rules send visitors to another address.' ) }
 				/>
-			</DataViewsCard>
+			) : (
+				<DataViewsCard>
+					<DataViews< DomainForwardingType >
+						data={ filteredData || [] }
+						fields={ fields }
+						onChangeView={ ( view: View ) => setView( view as ForwardingView ) }
+						view={ view }
+						actions={ actions }
+						search
+						paginationInfo={ paginationInfo }
+						getItemId={ getForwardingId }
+						defaultLayouts={ DEFAULT_LAYOUTS }
+						empty={
+							<DataViewsEmptyStateLayout
+								isBorderless
+								isCompact
+								title={ __( 'No forwarding rules match your search' ) }
+								description={ __( 'Try a different search term.' ) }
+							/>
+						}
+					/>
+				</DataViewsCard>
+			) }
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

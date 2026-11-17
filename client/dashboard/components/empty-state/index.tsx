@@ -41,6 +41,7 @@ function EmptyStateWrapper( {
 
 	const className = clsx( 'dashboard-empty-state__wrapper', {
 		'is-compact': isCompact,
+		'is-borderless': isBorderless,
 	} );
 
 	return (

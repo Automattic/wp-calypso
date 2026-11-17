@@ -16,7 +16,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainDnsAddRoute, domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -290,6 +290,31 @@ export default function DomainDns() {
 		);
 	};
 
+	const renderEmpty = () => {
+		if ( view.search ) {
+			return (
+				<DataViewsEmptyStateLayout
+					isBorderless
+					isCompact
+					title={ __( 'No DNS records match your search' ) }
+					description={ __( 'Try a different search term.' ) }
+				/>
+			);
+		}
+		if ( view.filters?.length ) {
+			return (
+				<DataViewsEmptyStateLayout
+					isBorderless
+					isCompact
+					title={ __( 'No DNS records match the selected filters' ) }
+					description={ __( 'Try different filters, or clear them.' ) }
+				/>
+			);
+		}
+		// Nothing was searched or filtered, so the records could not be loaded.
+		return undefined;
+	};
+
 	return (
 		<PageLayout
 			size="small"
@@ -341,13 +366,15 @@ export default function DomainDns() {
 			<DomainDnsNameserversNotice domainName={ domainName } domain={ domain } />
 			{ renderDefaultARecordsNotice() }
 			{ renderDefaultCnameRecordNotice() }
-			<DataViewsCard>
-				{ ! isLoading && <PerformanceTrackerStop /> }
-				{ dnsData?.records?.length === 0 && ! isLoading ? (
-					<div style={ { padding: '20px', textAlign: 'center' } }>
-						{ __( 'No DNS records found for this domain.' ) }
-					</div>
-				) : (
+			{ ! isLoading && <PerformanceTrackerStop /> }
+			{ dnsData?.records?.length === 0 && ! isLoading ? (
+				<DataViewsEmptyStateLayout
+					isCompact
+					title={ __( 'No DNS records yet' ) }
+					description={ __( 'Records you add here control where this domain points.' ) }
+				/>
+			) : (
+				<DataViewsCard>
 					<DataViews< DnsRecord >
 						data={ filteredData || [] }
 						fields={ fields }
@@ -359,16 +386,10 @@ export default function DomainDns() {
 						getItemId={ getDnsRecordId }
 						isLoading={ isLoading }
 						defaultLayouts={ DEFAULT_LAYOUTS }
-						empty={
-							<p>
-								{ view.search
-									? __( 'No DNS records match your search.' )
-									: __( 'No DNS records match the selected filters.' ) }
-							</p>
-						}
+						empty={ renderEmpty() }
 					/>
-				) }
-			</DataViewsCard>
+				</DataViewsCard>
+			) }
 			{ domain.has_wpcom_nameservers && <EmailSetup /> }
 			<RestoreDefaultARecords
 				onConfirm={ handleRestoreDefaultARecords }

@@ -173,7 +173,9 @@ describe( 'DomainDns', () => {
 		await user.click( await screen.findByRole( 'menuitem', { name: 'Type' } ) );
 		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
 
-		expect( await screen.findByText( 'No DNS records match the selected filters.' ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'No DNS records match the selected filters' } )
+		).toBeVisible();
 		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
 	} );
 
@@ -210,7 +212,24 @@ describe( 'DomainDns', () => {
 		await user.clear( searchbox );
 		await user.type( searchbox, 'nomatch' );
 
-		expect( await screen.findByText( 'No DNS records match your search.' ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'No DNS records match your search' } )
+		).toBeVisible();
+		// The table stays, so the search can be changed.
+		expect( searchbox ).toBeVisible();
+	} );
+
+	test( 'replaces the table with an empty state when the domain has no DNS records', async () => {
+		mockDomainApiRequest( getDefaultDomainData() );
+		mockDnsApiRequest( [] );
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'No DNS records yet' } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'Records you add here control where this domain points.' )
+		).toBeVisible();
+		expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the steps for pasting the verification value in email setup', async () => {

@@ -65,7 +65,27 @@ test( 'renders empty state when no glue records exist', async () => {
 	render( <DomainGlueRecords /> );
 
 	expect( await screen.findByRole( 'link', { name: 'Add glue record' } ) ).toBeInTheDocument();
-	expect( screen.getByText( 'No glue records found for this domain.' ) ).toBeInTheDocument();
+	expect( screen.getByRole( 'heading', { name: 'No glue records yet' } ) ).toBeVisible();
+	expect(
+		screen.getByText( 'Glue records let you run your own name servers on this domain.' )
+	).toBeVisible();
+	// The empty state replaces the table, so its search field is not rendered.
+	expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
+} );
+
+test( 'keeps the table and shows a search empty state when no glue records match', async () => {
+	const user = userEvent.setup();
+
+	mockFetchDomainGlueRecordsApiRequest();
+
+	render( <DomainGlueRecords /> );
+
+	await user.type( await screen.findByRole( 'searchbox', { name: 'Search' } ), 'nomatch' );
+
+	expect(
+		await screen.findByRole( 'heading', { name: 'No glue records match your search' } )
+	).toBeVisible();
+	expect( screen.getByRole( 'searchbox', { name: 'Search' } ) ).toBeVisible();
 } );
 
 test( 'renders actions when the actions menu is clicked', async () => {

@@ -8,10 +8,17 @@ import { useMemo } from 'react';
 import type { ScheduledUpdateRow } from '../types';
 
 export function useScheduledUpdates() {
-	const { data: scheduledUpdates, isLoading: isLoadingSchedules } = useQuery(
-		hostingUpdateSchedulesQuery()
-	);
-	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const {
+		data: scheduledUpdates,
+		isLoading: isLoadingSchedules,
+		isError: isErrorSchedules,
+	} = useQuery( hostingUpdateSchedulesQuery() );
+	const {
+		data: sites,
+		isLoading: isLoadingSites,
+		isError: isErrorSites,
+	} = useQuery( sitesQuery() );
+	const isError = isErrorSchedules || isErrorSites;
 	const siteIds = Object.keys( scheduledUpdates?.sites ?? [] );
 	const { pluginsData, isLoadingPlugins } = useQueries( {
 		queries: siteIds.map( ( id ) => siteCorePluginsQuery( Number( id ) ) ),
@@ -24,13 +31,15 @@ export function useScheduledUpdates() {
 	return useMemo( () => {
 		if ( ! scheduledUpdates || ! sites ) {
 			return {
-				isLoading: isLoadingSchedules && isLoadingSites,
+				isLoading: isLoadingSchedules || isLoadingSites,
+				isError,
 				scheduledUpdates: [],
 			};
 		}
 		if ( ! scheduledUpdates.sites ) {
 			return {
-				isLoading: isLoadingSchedules && isLoadingSites,
+				isLoading: isLoadingSchedules || isLoadingSites,
+				isError,
 				scheduledUpdates: [],
 			};
 		}
@@ -83,6 +92,7 @@ export function useScheduledUpdates() {
 		} );
 		return {
 			isLoading: isLoadingSchedules || isLoadingSites || isLoadingPlugins,
+			isError,
 			scheduledUpdates: result,
 		};
 	}, [
@@ -90,6 +100,7 @@ export function useScheduledUpdates() {
 		sites,
 		isLoadingSchedules,
 		isLoadingSites,
+		isError,
 		pluginsData,
 		isLoadingPlugins,
 	] );
