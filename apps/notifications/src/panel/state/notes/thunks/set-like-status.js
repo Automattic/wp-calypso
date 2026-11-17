@@ -1,3 +1,4 @@
+import { reportError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { likeNote } from '../actions';
@@ -13,10 +14,14 @@ const setLikeStatus =
 		} );
 
 		const entityPath = type === 'comment' ? `comments/${ commentId }` : `posts/${ postId }`;
-		if ( isLiked ) {
-			await wpcom().req.post( `/sites/${ siteId }/${ entityPath }/likes/new` );
-		} else {
-			await wpcom().req.del( `/sites/${ siteId }/${ entityPath }/likes/mine/delete` );
+		try {
+			if ( isLiked ) {
+				await wpcom().req.post( `/sites/${ siteId }/${ entityPath }/likes/new` );
+			} else {
+				await wpcom().req.del( `/sites/${ siteId }/${ entityPath }/likes/mine/delete` );
+			}
+		} catch ( error ) {
+			reportError( 'like', error );
 		}
 
 		// getNote() updates the redux store with a fresh object from the API

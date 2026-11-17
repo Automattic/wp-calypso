@@ -163,20 +163,17 @@ test.describe(
 				).toBeVisible( { timeout: 120 * 1000 } );
 			} );
 
-			await test.step( 'And the import completes on My Home', async () => {
-				const siteId = String( newSiteDetails!.blog_details.blogid );
+			await test.step( 'And the import completes in wp-admin', async () => {
 				// WordPress.com can fail the import without the step showing an error
 				// screen, so also stop waiting as soon as its status poll reports a failure.
 				const importFailure = watchImportFailure( page );
 				const errorHeading = page.getByRole( 'heading', {
 					name: 'Your site could not be imported',
 				} );
-				const importOutcome = page.waitForURL(
-					( url ) =>
-						url.pathname === `/home/${ siteId }` ||
-						url.pathname === `/home/${ selectedFreeDomain }`,
-					{ timeout: 10 * 60 * 1000 }
-				);
+				// The import hands over to My Home, which sends a new site on to wp-admin.
+				const importOutcome = page.waitForURL( ( url ) => url.pathname.startsWith( '/wp-admin/' ), {
+					timeout: 10 * 60 * 1000,
+				} );
 				const errorShown = errorHeading.waitFor( { timeout: 10 * 60 * 1000 } ).then( () => {
 					throw new Error( 'The Playground import failed on WordPress.com' );
 				} );
