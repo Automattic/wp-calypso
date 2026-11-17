@@ -1,7 +1,7 @@
 import { Spinner } from '@automattic/components';
 import { useAddOnPurchaseStatus } from '@automattic/data-stores/src/add-ons';
 import { Button, Notice } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { AddOnCardLayout, AddOnCardStatus } from 'calypso/sites/components/add-ons/add-ons-card';
 import { useBundlePluginInstall } from '../hooks/use-bundle-plugin-install';
@@ -16,7 +16,6 @@ interface Props {
 }
 
 const BundleAddOnCard = ( { addOnMeta, siteId, highlightFeatured }: Props ) => {
-	const translate = useTranslate();
 	const purchaseStatus = useAddOnPurchaseStatus( { selectedSiteId: siteId, addOnMeta } );
 	const { state, install, error, hasTimedOut } = useBundlePluginInstall(
 		siteId,
@@ -32,11 +31,9 @@ const BundleAddOnCard = ( { addOnMeta, siteId, highlightFeatured }: Props ) => {
 
 	let notice: ReactNode = null;
 	if ( error ) {
-		notice = error.message || translate( 'The installation failed. Please try again.' );
+		notice = error.message || __( 'The installation failed. Please try again.' );
 	} else if ( hasTimedOut ) {
-		notice = translate(
-			'The installation is taking longer than expected. Check again in a few minutes.'
-		);
+		notice = __( 'The installation is taking longer than expected. Check again in a few minutes.' );
 	}
 
 	return (
@@ -54,10 +51,10 @@ const BundleAddOnCard = ( { addOnMeta, siteId, highlightFeatured }: Props ) => {
 				{ ( state === 'loading' || state === 'installing' ) && (
 					<Spinner size={ 24 } className="spinner-button__spinner" />
 				) }
-				{ state === 'installed' && <AddOnCardStatus>{ translate( 'Installed' ) }</AddOnCardStatus> }
+				{ state === 'installed' && <AddOnCardStatus>{ __( 'Installed' ) }</AddOnCardStatus> }
 				{ state === 'not-installed' && (
 					<Button variant="primary" onClick={ onInstall }>
-						{ translate( 'Install' ) }
+						{ __( 'Install' ) }
 					</Button>
 				) }
 			</div>
