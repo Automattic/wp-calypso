@@ -78,10 +78,6 @@ if ( isJsdom ) {
 	window.scrollTo = function () {};
 }
 
-if ( typeof globalThis.structuredClone !== 'function' ) {
-	testGlobals.structuredClone = ( obj: unknown ) => JSON.parse( JSON.stringify( obj ) );
-}
-
 // @wordpress/dataviews' infinite-scroll hook needs IntersectionObserver, which jsdom lacks.
 testGlobals.IntersectionObserver = class IntersectionObserver {
 	root = null;
