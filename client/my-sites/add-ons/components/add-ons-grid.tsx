@@ -49,7 +49,7 @@ const AddOnsGrid = ( {
 				if ( AddOns.isPluginAddOn( addOn ) ) {
 					return siteId ? (
 						<BundleAddOnCard
-							key={ addOn.pluginSlug }
+							key={ `${ siteId }-${ addOn.pluginSlug }` }
 							addOnMeta={ addOn }
 							siteId={ siteId }
 							highlightFeatured={ highlightFeatured }
