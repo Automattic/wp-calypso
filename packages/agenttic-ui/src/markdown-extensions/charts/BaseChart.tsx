@@ -9,7 +9,7 @@ import {
 import React, { useMemo } from 'react';
 import { getCSSVariable } from '../../utils/theme';
 import { ChartError } from './ChartError';
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 
 export interface CurrencyOptions {
 	symbol: string;
@@ -45,15 +45,13 @@ interface BaseChartInternalProps {
  * @param root0.error
  */
 export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) => {
+	// The series colors are `--a8c-charts-color-series-*` roles in `charts.css`. The first is the
+	// page's primary color, which charts.css can't reach from inside `.agenttic`.
+	const primaryColor = useMemo( () => getCSSVariable( '--color-primary', '#4F46E5' ), [] );
+
 	const customTheme = useMemo( () => {
-		const primaryColor = getCSSVariable( '--color-primary', '#4F46E5' );
-
-		// TODO: Decide what other colors to include here
-		const colors = [ primaryColor, '#f0b849', '#00a32a', '#8c5e94' ];
-
 		return {
 			...defaultTheme,
-			colors,
 			legendLabelStyles: {
 				fontSize: '11px',
 				fontWeight: '400',
@@ -76,7 +74,10 @@ export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) =
 
 	return (
 		<div className="chart-block">
-			<div className="chart-container">
+			<div
+				className="chart-container"
+				style={ { '--agenttic-chart-primary-color': primaryColor } as CSSProperties }
+			>
 				<ThemeProvider theme={ customTheme }>{ children }</ThemeProvider>
 			</div>
 		</div>

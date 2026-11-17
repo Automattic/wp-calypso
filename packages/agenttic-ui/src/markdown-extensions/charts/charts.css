@@ -35,6 +35,17 @@
 		box-sizing: border-box;
 	}
 
+	/* The charts provider declares the first series color on its own wrapper, so it's set there. */
+	.chart-container .a8c-charts-scope {
+		--a8c-charts-color-series-1: var( --agenttic-chart-primary-color );
+		--a8c-charts-color-series-2: #f0b849;
+		--a8c-charts-color-series-3: #00a32a;
+		--a8c-charts-color-series-4: #8c5e94;
+
+		/* A light tooltip, as before @automattic/charts 4.x drew them dark. */
+		--a8c-charts-color-tooltip-surface: #fff;
+	}
+
 	.chart-container svg {
 		overflow: visible !important;
 	}

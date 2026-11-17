@@ -10,22 +10,24 @@ export const CHART_HEIGHT = 240;
 // Bars and lines start from zero, so they don't exaggerate differences.
 export const ZERO_BASED_SCALE = { zero: true };
 
-// The library resolves color tokens against the page, not the surface, so the labels and legend use
-// the surface's text color, and the series plain colors with at least 3:1 contrast on white and
-// #1e1e1e.
+// Plain colors with at least 3:1 contrast on white and #1e1e1e. Charts take them per series, as the
+// library's palette has only five slots and fills further ones with colors of its own.
+const CHART_COLORS = [ '#4f6bed', '#d65d00', '#008a8a', '#8c5fd9', '#d94f8a', '#008a20' ];
+
+export function getChartColor( index: number ) {
+	return CHART_COLORS[ index % CHART_COLORS.length ];
+}
+
+// The other colors are `--a8c-charts-color-*` roles in `style.scss`.
 const CHART_THEME: Partial< Charts.ChartTheme > = {
-	// The library outlines hovered points with this color, resolved against the page.
-	backgroundColor: 'transparent',
-	colors: [ '#4f6bed', '#d65d00', '#008a8a', '#8c5fd9', '#d94f8a', '#008a20' ],
-	svgLabelSmall: { fill: 'currentColor', fontSize: 12, fontWeight: 400 },
-	legend: { labelStyles: { color: 'inherit' } },
+	svgLabelSmall: { fontSize: 12, fontWeight: 400 },
 };
 
 // The library focuses its tooltip, in a portal at the end of the page, but never refocuses the
 // chart, so focus returns to the chart on Tab and when the tooltip closes.
 function returnFocusToChart( event: KeyboardEvent< HTMLElement > ) {
 	const figure = event.currentTarget;
-	const chart = figure.querySelector< HTMLElement >( '[role="grid"]' );
+	const chart = figure.querySelector< HTMLElement >( '[role="application"]' );
 
 	if ( event.key === 'Tab' && ! figure.contains( document.activeElement ) ) {
 		chart?.focus();

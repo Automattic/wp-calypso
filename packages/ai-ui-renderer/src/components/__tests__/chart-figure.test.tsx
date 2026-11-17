@@ -6,7 +6,8 @@ import { ChartFigure } from '../chart-figure';
 function FigureWithTooltip( { isOpen }: { isOpen: boolean } ) {
 	return (
 		<ChartFigure title="Stats" table={ { headings: [], rows: [] } }>
-			<div role="grid" tabIndex={ 0 } aria-label="Chart" />
+			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the library's chart is focusable like this */ }
+			<div role="application" tabIndex={ 0 } aria-label="Chart" />
 			{ isOpen && createPortal( <div role="tooltip" tabIndex={ -1 } />, document.body ) }
 		</ChartFigure>
 	);
@@ -20,7 +21,7 @@ it( 'returns focus from a chart’s tooltip to the chart on Tab', () => {
 	tooltip.focus();
 	fireEvent.keyDown( tooltip, { key: 'Tab' } );
 
-	expect( screen.getByRole( 'grid' ) ).toHaveFocus();
+	expect( screen.getByRole( 'application' ) ).toHaveFocus();
 } );
 
 it( 'returns focus to a chart when its tooltip closes', async () => {
@@ -32,5 +33,5 @@ it( 'returns focus to a chart when its tooltip closes', async () => {
 	fireEvent.keyDown( tooltip, { key: 'Escape' } );
 	rerender( <FigureWithTooltip isOpen={ false } /> );
 
-	await waitFor( () => expect( screen.getByRole( 'grid' ) ).toHaveFocus() );
+	await waitFor( () => expect( screen.getByRole( 'application' ) ).toHaveFocus() );
 } );

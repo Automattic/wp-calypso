@@ -15,17 +15,23 @@ import '@automattic/charts/style.css';
 
 const CHART_ID = 'apm-response-time-breakdown';
 
-const SERIES: Array< { key: keyof Omit< ApmTimePoint, 'timestamp' >; label: string } > = [
-	{ key: 'db', label: __( 'Database' ) },
-	{ key: 'wp_core', label: __( 'WordPress core' ) },
-	{ key: 'plugins', label: __( 'Plugins' ) },
-	{ key: 'external', label: __( 'External' ) },
-	{ key: 'cache', label: __( 'Cache' ) },
+// Colors are the @automattic/charts palette before 4.x, which derives it from the admin color scheme.
+const SERIES: Array< {
+	key: keyof Omit< ApmTimePoint, 'timestamp' >;
+	label: string;
+	color: string;
+} > = [
+	{ key: 'db', label: __( 'Database' ), color: '#98C8DF' },
+	{ key: 'wp_core', label: __( 'WordPress core' ), color: '#006DAB' },
+	{ key: 'plugins', label: __( 'Plugins' ), color: '#A6DC80' },
+	{ key: 'external', label: __( 'External' ), color: '#1F9828' },
+	{ key: 'cache', label: __( 'Cache' ), color: '#FF8C8F' },
 ];
 
 function toSeriesData( timeseries: ApmTimePoint[] ): SeriesData[] {
-	return SERIES.map( ( { key, label } ) => ( {
+	return SERIES.map( ( { key, label, color } ) => ( {
 		label,
+		options: { stroke: color },
 		data: timeseries.map( ( point ) => ( {
 			date: new Date( point.timestamp ),
 			value: point[ key ],
