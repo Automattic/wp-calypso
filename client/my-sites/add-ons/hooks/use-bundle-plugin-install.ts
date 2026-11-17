@@ -46,7 +46,7 @@ export function useBundlePluginInstall( siteId: SiteId, pluginSlug: string ) {
 			}
 		},
 		onSettled: () => {
-			refetch();
+			refetch( { cancelRefetch: false } );
 		},
 	} );
 
@@ -55,7 +55,9 @@ export function useBundlePluginInstall( siteId: SiteId, pluginSlug: string ) {
 			return;
 		}
 
-		const interval = setInterval( () => refetch(), POLL_INTERVAL_MS );
+		// Both cards share the plugins query. A default refetch cancels the request in flight, so a
+		// poll slower than the gap between two refetches would never land.
+		const interval = setInterval( () => refetch( { cancelRefetch: false } ), POLL_INTERVAL_MS );
 		const timeout = setTimeout( () => {
 			setIsPolling( false );
 			setHasTimedOut( true );
