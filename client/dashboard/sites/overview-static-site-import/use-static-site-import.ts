@@ -52,7 +52,19 @@ export const getSourceHost = ( url = '' ) => {
 	}
 };
 
-export function useStaticSiteImport( siteId: number, sessionId?: string ): StaticSiteImport | null {
+/**
+ * Follows a site's import, and names the site as its destination once the move can take one.
+ * @param siteId              The site the move is for.
+ * @param sessionId           The move's import session.
+ * @param options             Options.
+ * @param options.approve     Whether to name the site as the destination. A preview built for the
+ *                            move already is, through the funnel, so asking again only risks an error.
+ */
+export function useStaticSiteImport(
+	siteId: number,
+	sessionId?: string,
+	{ approve: shouldApprove = true }: { approve?: boolean } = {}
+): StaticSiteImport | null {
 	const {
 		data: session,
 		error: sessionError,
@@ -72,6 +84,7 @@ export function useStaticSiteImport( siteId: number, sessionId?: string ): Stati
 	const hasRequestedApproval = useRef( false );
 	useEffect( () => {
 		if (
+			! shouldApprove ||
 			! sessionId ||
 			hasRequestedApproval.current ||
 			! session ||
@@ -82,7 +95,7 @@ export function useStaticSiteImport( siteId: number, sessionId?: string ): Stati
 		}
 		hasRequestedApproval.current = true;
 		approve( { sessionId, destinationBlogId: siteId }, { onSettled: () => refetch() } );
-	}, [ approve, refetch, session, sessionId, siteId ] );
+	}, [ approve, refetch, session, sessionId, shouldApprove, siteId ] );
 
 	// Only a finished move can be a preview with a share link, and the lookup is per user, not per site.
 	const isFinished = Boolean( sessionId ) && session?.state === 'finished';

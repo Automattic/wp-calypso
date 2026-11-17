@@ -6,6 +6,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { StaticSiteImportProgress } from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
 import { useStaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -35,7 +37,9 @@ const StaticSiteImportProgressStep: StepType< {
 } ) {
 	const { __ } = useI18n();
 	const locale = getIntlLocale( useLocale() );
-	const siteImport = useStaticSiteImport( siteId ?? 0, importSessionId );
+	const email = useSelector( getCurrentUserEmail );
+	// The preview was built for this move, which already names it as the destination.
+	const siteImport = useStaticSiteImport( siteId ?? 0, importSessionId, { approve: false } );
 	const [ hasWaitedForPreviewUrl, setHasWaitedForPreviewUrl ] = useState( false );
 	const hasSubmitted = useRef( false );
 
@@ -98,6 +102,7 @@ const StaticSiteImportProgressStep: StepType< {
 						siteImport={ siteImport }
 						search={ { importSessionId, from, platform } }
 						locale={ locale }
+						email={ email || undefined }
 					/>
 				) }
 			</Step.WideLayout>

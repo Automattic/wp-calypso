@@ -53,7 +53,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 				'We’re rebuilding source.example.com here. Your current site stays live and unchanged.'
 			)
 		).toBeVisible();
-		expect( useStaticSiteImport ).toHaveBeenCalledWith( 456, 'abc123' );
+		expect( useStaticSiteImport ).toHaveBeenCalledWith( 456, 'abc123', { approve: false } );
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
