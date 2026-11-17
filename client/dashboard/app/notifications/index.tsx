@@ -57,7 +57,7 @@ export default function Notifications( {
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
-	const unseenCountRef = useRef< number | undefined >( undefined );
+	const unseenCountRef = useRef< number | undefined >( user.has_unseen_notes ? undefined : 0 );
 	const { recordTracksEvent } = useAnalytics();
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 	const onNotificationCount = useCallback( ( count: number ) => {
@@ -73,6 +73,7 @@ export default function Notifications( {
 				setShowHelpCenter( false, undefined, true );
 				recordTracksEvent( 'calypso_notification_open', {
 					unread_notifications: unseenCountRef.current,
+					unread_notifications_known: unseenCountRef.current !== undefined,
 				} );
 			}
 			setIsOpen( willOpen );
