@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useLocale } from '../app/locale';
+import { notificationRoute, notificationsRoute } from '../app/router/notifications';
 import { Card } from '../components/card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -14,47 +14,49 @@ import './style.scss';
 
 const NotificationsInbox = lazy( () => import( '@automattic/notifications/src/inbox' ) );
 
-type ReadFilter = 'all' | 'unread';
-
 export default function Notifications() {
 	const navigate = useNavigate();
 	const locale = useLocale();
 	const { noteId } = useParams( { strict: false } );
+	const { filter: readFilter = 'all' } = notificationsRoute.useSearch();
 	const isSmallViewport = useViewportMatch( 'large', '<' );
-	const [ readFilter, setReadFilter ] = useState< ReadFilter >( 'all' );
 
 	const setSelectedNoteId = ( selectedNoteId: string | undefined ) => {
 		if ( selectedNoteId ) {
 			navigate( {
-				to: '/notifications/$noteId',
+				to: notificationRoute.fullPath,
 				params: { noteId: selectedNoteId },
+				search: true,
 				replace: !! noteId,
 			} );
 		} else {
-			navigate( { to: '/notifications' } );
+			navigate( { to: notificationsRoute.fullPath, search: true } );
 		}
 	};
 
+	const setReadFilter = ( value: string | null ) => {
+		navigate( {
+			to: '.',
+			search: { filter: value === 'unread' ? 'unread' : undefined },
+			replace: true,
+		} );
+	};
+
 	const renderListPane = ( list: React.ReactNode ) => (
-		<div className="dashboard-notifications__list">
+		<div className="dashboard-notifications-inbox__list">
 			<Tabs.Root
-				className="dashboard-notifications__tabs"
+				className="dashboard-notifications-inbox__tabs"
 				value={ readFilter }
-				onValueChange={ ( value ) => setReadFilter( value === 'unread' ? 'unread' : 'all' ) }
+				onValueChange={ setReadFilter }
 			>
-				<Tabs.List className="dashboard-notifications__tab-list" variant="minimal">
+				<Tabs.List className="dashboard-notifications-inbox__tab-list" variant="minimal">
 					<Tabs.Tab value="all">{ __( 'All' ) }</Tabs.Tab>
 					<Tabs.Tab value="unread">{ __( 'Unread' ) }</Tabs.Tab>
 				</Tabs.List>
-				<div className="dashboard-notifications__list-actions">
-					<Button variant="tertiary" size="small">
-						{ __( 'Mark all as read' ) }
-					</Button>
-				</div>
-				<Tabs.Panel value="all" className="dashboard-notifications__tab-panel">
+				<Tabs.Panel value="all" className="dashboard-notifications-inbox__tab-panel">
 					{ list }
 				</Tabs.Panel>
-				<Tabs.Panel value="unread" className="dashboard-notifications__tab-panel">
+				<Tabs.Panel value="unread" className="dashboard-notifications-inbox__tab-panel">
 					{ list }
 				</Tabs.Panel>
 			</Tabs.Root>
@@ -73,15 +75,15 @@ export default function Notifications() {
 					renderLayout={ ( { list, detail } ) => {
 						const listPane = renderListPane( list );
 						const detailPane = detail && (
-							<div className="dashboard-notifications__detail">{ detail }</div>
+							<div className="dashboard-notifications-inbox__detail">{ detail }</div>
 						);
 
 						return (
-							<Card className="dashboard-notifications">
+							<Card className="dashboard-notifications-inbox">
 								{ isSmallViewport ? (
 									detailPane || listPane
 								) : (
-									<div className="dashboard-notifications__panes">
+									<div className="dashboard-notifications-inbox__panes">
 										{ listPane }
 										{ detailPane }
 									</div>

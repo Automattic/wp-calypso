@@ -1,13 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Provider, useSelector } from 'react-redux';
-import { getClient, initClient } from '../app/client';
+import { getClient, initClient, showNotes } from '../app/client';
 import { AppProvider } from '../app/context';
 import ErrorBoundary from '../app/error-boundary';
 import Note from '../app/note';
 import { useNoteNavigation } from '../app/note/hooks';
 import NoteList from '../app/note-list';
 import { store } from '../panel/state';
-import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getAllNotes from '../panel/state/selectors/get-all-notes';
@@ -53,14 +52,12 @@ function useInboxClient( wpcom: unknown, locale: string ): boolean {
 		initClient( wpcom, { includeNoteContext: true } );
 		setIsReady( true );
 
-		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
 		store.dispatch( addListeners( LINK_ACTION_HANDLERS ) );
-		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
+		const hideNotes = showNotes();
 
 		return () => {
 			store.dispatch( removeListeners( LINK_ACTION_HANDLERS ) );
-			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
-			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
+			hideNotes();
 		};
 	}, [ wpcom ] );
 
