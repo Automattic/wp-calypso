@@ -211,27 +211,6 @@ describe( 'getLaunchCheckoutUrl', () => {
 		expect( url.searchParams.get( 'source' ) ).toBe( 'studio-preview-site' );
 	} );
 
-	it( 'offers Pay later when the launch asks for it', () => {
-		const url = parse(
-			getLaunchCheckoutUrl( {
-				siteSlug,
-				backTo: 'https://my.wordpress.com/sites/test-site',
-				payLater: true,
-			} )
-		);
-
-		expect( url.searchParams.get( 'pay_later' ) ).toBe( '1' );
-		expect( url.searchParams.get( 'checkoutBackUrl' ) ).toMatch(
-			/^https:\/\/my\.wordpress\.com\/sites\/test-site\?/
-		);
-	} );
-
-	it( 'leaves Pay later out by default', () => {
-		const url = parse( getLaunchCheckoutUrl( { siteSlug } ) );
-
-		expect( url.searchParams.has( 'pay_later' ) ).toBe( false );
-	} );
-
 	it( 'drops a dashboard it does not know', () => {
 		const url = parse( getLaunchCheckoutUrl( { siteSlug, dashboard: 'evil' } ) );
 

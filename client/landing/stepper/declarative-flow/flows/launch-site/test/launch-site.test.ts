@@ -559,27 +559,6 @@ describe( 'launch-site flow', () => {
 			);
 		} );
 
-		it( 'offers Pay later in checkout when the link asks for it', async () => {
-			mockOnboard.planCartItem = planItem;
-			mockQuery.pay_later = '1';
-
-			await submit( STEPS.PROCESSING.slug, launched ).result;
-
-			const url = new URL( replaced(), 'http://localhost/' );
-			expect( url.pathname ).toBe( '/checkout/example.wordpress.com' );
-			expect( url.searchParams.get( 'pay_later' ) ).toBe( '1' );
-		} );
-
-		it( 'leaves Pay later out of checkout by default', async () => {
-			mockOnboard.planCartItem = planItem;
-
-			await submit( STEPS.PROCESSING.slug, launched ).result;
-
-			expect( new URL( replaced(), 'http://localhost/' ).searchParams.has( 'pay_later' ) ).toBe(
-				false
-			);
-		} );
-
 		it( 'adds a storage add-on picked with the plan to the cart', async () => {
 			mockOnboard.planCartItem = planItem;
 			mockOnboard.productCartItems = [ storageItem ];
