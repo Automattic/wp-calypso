@@ -9,6 +9,7 @@ import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
+import * as Tracks from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -205,6 +206,33 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records a Tracks event each time the checkout summary is toggled', async () => {
+		const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
+		const toggleEvents = () =>
+			recordTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_checkout_summary_toggle'
+			);
+		const user = userEvent.setup();
+		try {
+			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
+			const summaryButton = await screen.findByRole( 'button', { name: /Purchase Details/ } );
+			expect( toggleEvents() ).toEqual( [] );
+
+			await user.click( summaryButton );
+			expect( toggleEvents() ).toEqual( [
+				[ 'calypso_checkout_summary_toggle', { is_open: true } ],
+			] );
+
+			await user.click( summaryButton );
+			expect( toggleEvents() ).toEqual( [
+				[ 'calypso_checkout_summary_toggle', { is_open: true } ],
+				[ 'calypso_checkout_summary_toggle', { is_open: false } ],
+			] );
+		} finally {
+			recordTracksEvent.mockRestore();
+		}
 	} );
 
 	it( 'omits the plan step for opted-in Commerce checkout', async () => {
