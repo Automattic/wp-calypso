@@ -19,6 +19,7 @@ import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
+import { NativeShareMenuItem } from './native-share-menu-item';
 
 const noop = () => {};
 
@@ -294,6 +295,8 @@ class ReaderPostEllipsisMenu extends Component {
 								} ) }
 					</PopoverMenuItem>
 				) }
+
+				<NativeShareMenuItem post={ post } />
 
 				{ this.props.showVisitPost && post.URL && (
 					<PopoverMenuItem
