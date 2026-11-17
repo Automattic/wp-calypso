@@ -4,6 +4,7 @@ export type PartnerOffer = {
 	id: string;
 	type?: string;
 	offerType: string;
+	badge?: string;
 	product?: string;
 	productType?: string;
 	logo: ReactNode;

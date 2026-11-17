@@ -1,11 +1,14 @@
 import {
 	Button,
-	__experimentalSpacer as Spacer,
+	SelectControl,
+	__experimentalHeading as Heading,
 	__experimentalText as Text,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { getQueryArgs } from '@wordpress/url';
@@ -16,22 +19,15 @@ import Grid from '../../../components/grid';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { isDashboardPath } from '../../../utils/link';
-import { filterOptions, getPartnerOffers, getTrustedPartners } from './constants';
+import { getPartnerOffers, getTrustedPartners } from './constants';
 import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
-import type { View, Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
 const VIEW_TERMS_URL = 'https://automattic.com/for-agencies/program-incentives';
 
-const initialView: View = {
-	type: 'list',
-	fields: [],
-	search: '',
-	filters: [],
-	page: 1,
-	perPage: 100,
-};
+type SectionId = 'refer' | 'resell' | 'partner';
+type SectionFilter = SectionId | 'all';
 
 function PartnerOfferCard( {
 	item,
@@ -47,7 +43,8 @@ function PartnerOfferCard( {
 	defaultTermsUrl?: string;
 } ) {
 	const termsUrl = item.termsUrl ?? defaultTermsUrl;
-	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
+	// Offers lead with their number; partner cards lead with a longer benefit line.
+	const isPartner = item.offerType === 'partner';
 
 	const handleCTAClick = ( event: React.MouseEvent ) => {
 		onCtaClick?.( item, event );
@@ -78,15 +75,13 @@ function PartnerOfferCard( {
 						>
 							{ item.logo }
 						</HStack>
-						{ offerType?.label && <Badge intent="draft">{ offerType.label }</Badge> }
+						{ item.badge && <Badge intent="draft">{ item.badge }</Badge> }
 					</HStack>
-					<VStack spacing={ 1 }>
-						<Text size={ 13 } weight={ 500 }>
+					<VStack spacing={ 2 }>
+						<Heading level={ 3 } size={ isPartner ? 15 : 20 } weight={ 500 }>
 							{ item.title }
-						</Text>
-						<Text variant="muted" size={ 12 }>
-							{ item.description }
-						</Text>
+						</Heading>
+						<Text variant="muted">{ item.description }</Text>
 					</VStack>
 				</VStack>
 				{ item.cta && (
@@ -155,124 +150,113 @@ export default function PartnerOffers( {
 	 */
 	shouldUseRouterLink?: boolean;
 } ) {
-	const [ view, setView ] = useState< View >( initialView );
+	const [ filter, setFilter ] = useState< SectionFilter >( 'all' );
+	// The toggle doesn't fit on narrow screens.
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const partnerOffers = useMemo( () => getPartnerOffers( links ), [ links ] );
 	const trustedPartners = useMemo( () => getTrustedPartners(), [] );
 
-	const fields: Field< PartnerOffer >[] = useMemo(
-		() => [
-			{
-				id: 'title',
-				getValue: ( { item } ) => item.title,
-				enableGlobalSearch: true,
-			},
-			{
-				id: 'description',
-				getValue: ( { item } ) => item.description,
-				enableGlobalSearch: true,
-			},
-			{
-				id: 'product',
-				label: __( 'Product' ),
-				type: 'text',
-				getValue: ( { item } ) => item.product,
-				elements: filterOptions.products,
-				filterBy: {
-					operators: [ 'is' ],
-				},
-				enableSorting: false,
-				enableHiding: true,
-			},
-			{
-				id: 'offerType',
-				label: __( 'Offer type' ),
-				type: 'text',
-				getValue: ( { item } ) => item.offerType,
-				elements: filterOptions.offerTypes,
-				filterBy: {
-					operators: [ 'is' ],
-				},
-				enableSorting: false,
-				enableHiding: true,
-			},
-			{
-				id: 'productType',
-				label: __( 'Product type' ),
-				type: 'text',
-				getValue: ( { item } ) => item.productType,
-				elements: filterOptions.productTypes,
-				filterBy: {
-					operators: [ 'is' ],
-				},
-				enableSorting: false,
-				enableHiding: true,
-			},
-		],
-		[]
-	);
+	const sections: {
+		id: SectionId;
+		label: string;
+		title: string;
+		description: string;
+		items: PartnerOffer[];
+	}[] = [
+		{
+			id: 'refer',
+			label: __( 'Refer' ),
+			title: __( 'Refer and earn' ),
+			description: __( 'Your clients buy and pay directly, and you earn on every sale.' ),
+			items: partnerOffers.filter( ( offer ) => offer.offerType !== 'resell' ),
+		},
+		{
+			id: 'resell',
+			label: __( 'Resell' ),
+			title: __( 'Resell and save' ),
+			description: __( 'Buy in bulk at a discount and bill your clients yourself.' ),
+			items: partnerOffers.filter( ( offer ) => offer.offerType === 'resell' ),
+		},
+		{
+			id: 'partner',
+			label: __( 'Partners' ),
+			title: __( 'Trusted partners' ),
+			description: __( 'Tools from Automattic partners we recommend for your clients.' ),
+			items: trustedPartners,
+		},
+	];
 
-	const { data: filteredData } = useMemo(
-		() => filterSortAndPaginate( partnerOffers, view, fields ),
-		[ partnerOffers, view, fields ]
+	const options: { value: SectionFilter; label: string }[] = [
+		{ value: 'all', label: __( 'All' ) },
+		...sections.map( ( section ) => ( { value: section.id, label: section.label } ) ),
+	];
+	const handleFilterChange = ( value: unknown ) => {
+		setFilter( options.find( ( option ) => option.value === value )?.value ?? 'all' );
+	};
+	const visibleSections = sections.filter(
+		( section ) => filter === 'all' || section.id === filter
 	);
 
 	return (
-		<>
-			<Spacer marginBottom={ 4 } style={ { maxWidth: '600px' } }>
-				<Text size={ 15 }>
+		<VStack spacing={ 8 }>
+			<HStack justify="space-between" alignment="center" spacing={ 6 } wrap>
+				<Text size={ 15 } style={ { maxWidth: '600px' } }>
 					{ __(
 						'Discover exclusive offers, events, training, and tools from Automattic and our partners. Everything you need to help your agency grow and support your clients.'
 					) }
 				</Text>
-			</Spacer>
-
-			<div className="exclusive-offers-filters">
-				<DataViews< PartnerOffer >
-					data={ partnerOffers }
-					fields={ fields }
-					view={ view }
-					onChangeView={ setView }
-					paginationInfo={ { totalItems: partnerOffers.length, totalPages: 1 } }
-					defaultLayouts={ { list: {} } }
-					search
-				>
-					<HStack justify="start" style={ { paddingBlock: '16px' } }>
-						<DataViews.Search />
-						<DataViews.FiltersToggle />
-					</HStack>
-					<Spacer marginBottom={ 4 }>
-						<DataViews.FiltersToggled />
-					</Spacer>
-				</DataViews>
-			</div>
-			<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
-				{ filteredData.map( ( item ) => (
-					<PartnerOfferCard
-						key={ item.id }
-						item={ item }
-						recordTracksEvent={ recordTracksEvent }
-						onCtaClick={ onCtaClick }
-						shouldUseRouterLink={ shouldUseRouterLink }
-						defaultTermsUrl={ VIEW_TERMS_URL }
+				{ isSmallViewport ? (
+					<SelectControl
+						label={ __( 'Offer type' ) }
+						hideLabelFromVision
+						size="compact"
+						value={ filter }
+						options={ options.map( ( option ) => ( {
+							value: option.value,
+							label: option.value === 'all' ? __( 'All offers' ) : option.label,
+						} ) ) }
+						onChange={ handleFilterChange }
+						__nextHasNoMarginBottom
 					/>
+				) : (
+					<ToggleGroupControl
+						label={ __( 'Offer type' ) }
+						value={ filter }
+						hideLabelFromVision
+						isBlock={ false }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						onChange={ handleFilterChange }
+					>
+						{ options.map( ( option ) => (
+							<ToggleGroupControlOption
+								key={ option.value }
+								value={ option.value }
+								label={ option.label }
+							/>
+						) ) }
+					</ToggleGroupControl>
+				) }
+			</HStack>
+			<VStack spacing={ 12 }>
+				{ visibleSections.map( ( section ) => (
+					<VStack key={ section.id } spacing={ 6 }>
+						<SectionHeader title={ section.title } description={ section.description } />
+						<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
+							{ section.items.map( ( item ) => (
+								<PartnerOfferCard
+									key={ item.id }
+									item={ item }
+									recordTracksEvent={ recordTracksEvent }
+									onCtaClick={ section.id === 'partner' ? undefined : onCtaClick }
+									shouldUseRouterLink={ shouldUseRouterLink }
+									defaultTermsUrl={ section.id === 'partner' ? undefined : VIEW_TERMS_URL }
+								/>
+							) ) }
+						</Grid>
+					</VStack>
 				) ) }
-			</Grid>
-			<VStack spacing={ 6 } className="exclusive-offers-trusted-partners">
-				<SectionHeader
-					title={ __( 'Trusted partners' ) }
-					description={ __( 'Tools from Automattic partners we recommend for your clients.' ) }
-				/>
-				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
-					{ trustedPartners.map( ( item ) => (
-						<PartnerOfferCard
-							key={ item.id }
-							item={ item }
-							recordTracksEvent={ recordTracksEvent }
-							shouldUseRouterLink={ shouldUseRouterLink }
-						/>
-					) ) }
-				</Grid>
 			</VStack>
-		</>
+		</VStack>
 	);
 }

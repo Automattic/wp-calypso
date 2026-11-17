@@ -20,23 +20,6 @@ const MARKETPLACE_TYPE_REGULAR = 'regular';
 const PRODUCT_BRAND_FILTER_WOOCOMMERCE = 'woocommerce';
 const PRODUCT_BRAND_FILTER_JETPACK = 'jetpack';
 
-export const filterOptions = {
-	offerTypes: [
-		{ value: 'refer', label: __( 'Refer' ) },
-		{ value: 'resell', label: __( 'Resell' ) },
-	],
-	products: [
-		{ value: 'wordpress', label: __( 'WordPress.com' ) },
-		{ value: 'pressable', label: __( 'Pressable' ) },
-		{ value: 'jetpack', label: __( 'Jetpack' ) },
-		{ value: 'woocommerce', label: __( 'WooCommerce' ) },
-	],
-	productTypes: [
-		{ value: 'hosting', label: __( 'Hosting' ) },
-		{ value: 'extension', label: __( 'Extension' ) },
-	],
-};
-
 export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => [
 	{
 		id: 'wordpress-com-hosting-refer',
@@ -44,9 +27,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'wordpress',
 		productType: 'hosting',
 		logo: <img src={ WordPressDotComLogo } alt="WordPress.com" />,
-		title: __( 'Earn a 20% recurring commission' ),
+		title: __( '20% recurring commission' ),
 		description: __(
-			"Earn a 20% recurring commission when you refer WordPress.com's world-class hosting to your clients. Ideal for agencies that build and hand off to clients."
+			"Refer WordPress.com's world-class hosting to your clients. Ideal for agencies that build and hand off to clients."
 		),
 		cta: {
 			label: __( 'Refer WordPress.com' ),
@@ -60,9 +43,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'pressable',
 		productType: 'hosting',
 		logo: <img src={ PressableLogo } alt="Pressable" />,
-		title: __( 'Earn a 20% recurring commission' ),
+		title: __( '20% recurring commission' ),
 		description: __(
-			'Earn a 20% recurring commission when you refer Pressable’s best-in-class hosting to your clients. Ideal for agencies that build and continue to maintain sites or stores.'
+			'Refer Pressable’s best-in-class hosting to your clients. Ideal for agencies that build and continue to maintain sites or stores.'
 		),
 		cta: {
 			label: __( 'Refer Pressable' ),
@@ -88,9 +71,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 				</Text>
 			</HStack>
 		),
-		title: __( 'Earn a 20% recurring commission' ),
+		title: __( '20% recurring commission' ),
 		description: __(
-			'For mission-critical sites that demand extra attention and resources. Earn a 20% recurring commission when you refer Pressable Premium to your clients.'
+			'Refer Pressable Premium to your clients. Ideal for mission-critical sites that demand extra attention and resources.'
 		),
 		cta: {
 			label: __( 'Refer Pressable' ),
@@ -103,10 +86,8 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'wordpress',
 		productType: 'hosting',
 		logo: <img src={ VIPLogo } alt="WordPress VIP" />,
-		title: __( 'Earn up to a 20% one-time commission' ),
-		description: __(
-			'Earn up to a 20% one-time commission when you refer WordPress VIP’s enterprise-grade hosting to your clients.'
-		),
+		title: __( 'Up to 20% one-time commission' ),
+		description: __( 'Refer WordPress VIP’s enterprise-grade hosting to your clients.' ),
 		cta: {
 			label: __( 'Refer WordPress VIP' ),
 			url: links.referEnterprise,
@@ -118,10 +99,8 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'woocommerce',
 		productType: 'extension',
 		logo: <img src={ WooLogo } alt="WooCommerce" />,
-		title: __( 'Earn a 50% recurring commission' ),
-		description: __(
-			'Earn a 50% recurring commission when you refer Woo extensions to your clients.'
-		),
+		title: __( '50% recurring commission' ),
+		description: __( 'Refer Woo extensions to your clients.' ),
 		cta: {
 			label: __( 'Refer Woo' ),
 			url: addQueryArgs( links.products, {
@@ -135,9 +114,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		offerType: 'refer',
 		product: 'jetpack',
 		logo: <img src={ JetpackLogo } alt="Jetpack" />,
-		title: __( 'Earn a 50% recurring commission' ),
+		title: __( '50% recurring commission' ),
 		description: __(
-			'Earn a 50% recurring commission when you refer any of Jetpack’s security, performance, and growth products to your clients.'
+			'Refer any of Jetpack’s security, performance, and growth products to your clients.'
 		),
 		cta: {
 			label: __( 'Refer Jetpack' ),
@@ -153,9 +132,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'wordpress',
 		productType: 'hosting',
 		logo: <img src={ WordPressDotComLogo } alt="WordPress.com" />,
-		title: __( 'Get up to 66% off' ),
+		title: __( 'Up to 66% off' ),
 		description: __(
-			'Get up to 66% off WordPress.com’s world-class hosting when you buy in bulk and resell to clients. Ideal for agencies that build and hand off to clients.'
+			'Buy WordPress.com’s world-class hosting in bulk and resell to clients. Ideal for agencies that build and hand off to clients.'
 		),
 		cta: {
 			label: __( 'Save on WordPress.com' ),
@@ -169,9 +148,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'pressable',
 		productType: 'hosting',
 		logo: <img src={ PressableLogo } alt="Pressable" />,
-		title: __( 'Get up to 75% off' ),
+		title: __( 'Up to 75% off' ),
 		description: __(
-			'Get up to 75% off Pressable’s best-in-class hosting when you buy in bulk and resell to clients. Ideal for agencies that build and continue to maintain sites or stores.'
+			'Buy Pressable’s best-in-class hosting in bulk and resell to clients. Ideal for agencies that build and continue to maintain sites or stores.'
 		),
 		cta: {
 			label: __( 'Save on Pressable' ),
@@ -185,10 +164,8 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		product: 'woocommerce',
 		productType: 'extension',
 		logo: <img src={ WooLogo } alt="WooCommerce" />,
-		title: __( 'Get up to 50% off' ),
-		description: __(
-			'Get up to 50% off when you purchase Woo extensions in bulk and resell to your clients.'
-		),
+		title: __( 'Up to 50% off' ),
+		description: __( 'Purchase Woo extensions in bulk and resell to your clients.' ),
 		cta: {
 			label: __( 'Save on Woo' ),
 			url: addQueryArgs( links.products, {
@@ -199,7 +176,8 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 	},
 	{
 		id: 'woopayments-resell',
-		offerType: 'resell',
+		offerType: 'revenue-share',
+		badge: __( 'Revenue share' ),
 		product: 'woocommerce',
 		productType: 'extension',
 		logo: (
@@ -209,9 +187,9 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 				alt="WooPayments"
 			/>
 		),
-		title: __( 'Earn up to 5 bps on all TPV' ),
+		title: __( 'Up to 5 bps on all TPV' ),
 		description: __(
-			'Earn up to a 5 basis points (bps) revenue share on all Total Payments Volume (TPV) processed on client stores you onboard or migrate to WooPayments.'
+			'Earn a revenue share of up to 5 basis points (bps) on all Total Payments Volume (TPV) processed on client stores you onboard or migrate to WooPayments.'
 		),
 		cta: {
 			label: __( 'Earn with WooPayments' ),
@@ -224,6 +202,7 @@ export const getTrustedPartners = (): PartnerOffer[] => [
 	{
 		id: 'shipstation',
 		offerType: 'partner',
+		badge: __( 'Shipping' ),
 		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_shipstation_click',
 		logo: <img src={ ShipStationLogo } alt="ShipStation" />,
 		title: __( 'Help enhance customer experiences' ),
@@ -239,6 +218,7 @@ export const getTrustedPartners = (): PartnerOffer[] => [
 	{
 		id: 'packlink',
 		offerType: 'partner',
+		badge: __( 'Shipping' ),
 		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_packlink_click',
 		logo: <img src={ PacklinkLogo } alt="Packlink" />,
 		title: __( 'Boost efficiency for better retention' ),
@@ -254,6 +234,7 @@ export const getTrustedPartners = (): PartnerOffer[] => [
 	{
 		id: 'easypost-norton-shopping-guarantee',
 		offerType: 'partner',
+		badge: __( 'Buyer protection' ),
 		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_easypost_click',
 		logo: <img src={ EasyPostLogo } alt="EasyPost" />,
 		title: __( 'Build trust and boost conversions' ),
@@ -269,6 +250,7 @@ export const getTrustedPartners = (): PartnerOffer[] => [
 	{
 		id: 'avalara-partner-program-refer',
 		offerType: 'partner',
+		badge: __( 'Tax compliance' ),
 		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_avalara_click',
 		logo: <img className="exclusive-offers-card-logo-compact" src={ AvalaraLogo } alt="Avalara" />,
 		title: __( 'Join the Avalara Partner Program and unlock new revenue streams' ),

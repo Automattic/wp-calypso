@@ -49,6 +49,19 @@ describe( '<PartnerOffers>', () => {
 		expect( screen.getAllByRole( 'link', { name: 'Explore Avalara' } ) ).toHaveLength( 1 );
 	} );
 
+	test( 'groups the offers by how the agency earns and narrows to one group', async () => {
+		render( <PartnerOffers links={ LINKS } shouldUseRouterLink={ false } /> );
+
+		expect( screen.getByRole( 'heading', { name: 'Refer and earn' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Resell and save' } ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'radio', { name: 'Resell' } ) );
+
+		expect( screen.queryByRole( 'heading', { name: 'Refer and earn' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'heading', { name: 'Trusted partners' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Save on Pressable' } ) ).toBeVisible();
+	} );
+
 	test( 'records a dedicated event when a trusted partner CTA is clicked', async () => {
 		const recordTracksEvent = vi.fn();
 		render(
