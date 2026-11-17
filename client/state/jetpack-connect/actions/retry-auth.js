@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
+import { getRetryAuthUrl } from 'calypso/jetpack-connect/utils';
 import { navigate } from 'calypso/lib/navigate';
-import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { JETPACK_CONNECT_RETRY_AUTH } from 'calypso/state/jetpack-connect/action-types';
@@ -12,30 +10,16 @@ import 'calypso/state/jetpack-connect/init';
 /**
  * Module constants
  */
-const calypsoEnv = config( 'env_id' );
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 /**
- * The site URL that re-issues the authorize secret, keeping `from` and the return URL.
+ * Sends the user to the site to re-issue the authorize secret.
  * @param {string} url Site URL.
- * @param {?string} from The entry point's `from`.
- * @param {?string} redirectAfterAuth Where to send the user after connecting.
- * @returns {string} The URL.
+ * @param {number} attemptNumber Retry attempt.
+ * @param {Object} [retryArgs] `from`, `redirectAfterAuth` and `skipPricing`, see `getRetryAuthUrl()`.
+ * @returns {Function} Action thunk.
  */
-export function getRetryAuthUrl( url, from, redirectAfterAuth ) {
-	return addQueryArgs(
-		{
-			jetpack_connect_url: url + REMOTE_PATH_AUTH,
-			calypso_env: calypsoEnv,
-			auth_type: 'jetpack',
-			from,
-			redirect_after_auth: redirectAfterAuth,
-		},
-		url + REMOTE_PATH_AUTH
-	);
-}
-
-export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
+export function retryAuth( url, attemptNumber, retryArgs ) {
 	return ( dispatch ) => {
 		debug( 'retrying auth', url, attemptNumber );
 		dispatch( {
@@ -50,6 +34,6 @@ export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 			} )
 		);
 		debug( 'retryAuth', url );
-		navigate( getRetryAuthUrl( url, fromParam, redirectAfterAuth ) );
+		navigate( getRetryAuthUrl( url, retryArgs ) );
 	};
 }

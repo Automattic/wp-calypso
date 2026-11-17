@@ -6,6 +6,6 @@ export { createAccount } from 'calypso/state/jetpack-connect/actions/create-acco
 export { createSocialAccount } from 'calypso/state/jetpack-connect/actions/create-social-account';
 export { dismissUrl } from 'calypso/state/jetpack-connect/actions/dismiss-url';
 export { isUserConnected } from 'calypso/state/jetpack-connect/actions/is-user-connected';
-export { getRetryAuthUrl, retryAuth } from 'calypso/state/jetpack-connect/actions/retry-auth';
+export { retryAuth } from 'calypso/state/jetpack-connect/actions/retry-auth';
 export { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions/start-authorize-step';
 export { validateSSONonce } from 'calypso/state/jetpack-connect/actions/validate-sso-nonce';

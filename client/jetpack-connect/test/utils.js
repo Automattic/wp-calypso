@@ -9,6 +9,7 @@ import {
 	addCalypsoEnvQueryArg,
 	authQueryTransformer,
 	cleanUrl,
+	getRetryAuthUrl,
 	getRoleFromScope,
 	parseAuthorizationQuery,
 	redirect,
@@ -29,6 +30,30 @@ describe( 'addCalypsoEnvQueryArg', () => {
 		expect( addCalypsoEnvQueryArg( 'http://example.com' ) ).toBe(
 			'http://example.com/?calypso_env=mocked-test-env-id'
 		);
+	} );
+} );
+
+describe( 'getRetryAuthUrl', () => {
+	test( 'points at the site and keeps the query the site forwards', () => {
+		const redirectAfterAuth = 'http://example.com/wp-admin/admin.php?page=my-jetpack';
+		const url = new URL(
+			getRetryAuthUrl( 'http://example.com', {
+				from: 'my_jetpack_header',
+				redirectAfterAuth,
+				skipPricing: '1',
+			} )
+		);
+
+		expect( url.origin + url.pathname ).toBe( 'http://example.com/wp-admin/admin.php' );
+		expect( Object.fromEntries( url.searchParams ) ).toEqual( {
+			page: 'jetpack',
+			connect_url_redirect: 'true',
+			jetpack_connect_login_redirect: 'true',
+			calypso_env: 'mocked-test-env-id',
+			from: 'my_jetpack_header',
+			redirect_after_auth: redirectAfterAuth,
+			skip_pricing: '1',
+		} );
 	} );
 } );
 

@@ -42,7 +42,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	authorize as authorizeAction,
-	getRetryAuthUrl,
 	retryAuth as retryAuthAction,
 } from 'calypso/state/jetpack-connect/actions';
 import {
@@ -99,7 +98,7 @@ import {
 	clearSource,
 } from './persistence-utils';
 import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
-import { authQueryPropTypes, getRoleFromScope } from './utils';
+import { authQueryPropTypes, getRetryAuthUrl, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
 import { WooLoader } from './woo-loader';
@@ -227,7 +226,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
+			return retryAuth( site, attempts + 1, this.getRetryArgs( nextProps.authQuery ) );
 		}
 	}
 
@@ -600,9 +599,17 @@ export class JetpackAuthorize extends Component {
 		this.props.redirectToLogout( window.location.href );
 	};
 
+	getRetryArgs( authQuery = this.props.authQuery ) {
+		return {
+			from: authQuery.from,
+			redirectAfterAuth: authQuery.redirectAfterAuth,
+			skipPricing: new URLSearchParams( window.location.search ).get( 'skip_pricing' ),
+		};
+	}
+
 	handleResolve = () => {
 		const { recordTracksEvent } = this.props;
-		const { site, from, redirectAfterAuth } = this.props.authQuery;
+		const { site } = this.props.authQuery;
 		this.retryingAuth = false;
 		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
@@ -610,7 +617,7 @@ export class JetpackAuthorize extends Component {
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
 			// The user already approved, so authorize as soon as the site sends them back.
 			persistSession( site );
-			this.externalRedirectOnce( getRetryAuthUrl( site, from, redirectAfterAuth ) );
+			this.externalRedirectOnce( getRetryAuthUrl( site, this.getRetryArgs() ) );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.

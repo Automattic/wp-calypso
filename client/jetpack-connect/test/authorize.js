@@ -1221,9 +1221,11 @@ describe( 'JetpackAuthorize', () => {
 	describe( 'expired secret', () => {
 		afterEach( () => {
 			document.cookie = 'jetpack_connect_session_url=; max-age=0; path=/';
+			window.history.replaceState( null, '', '/' );
 		} );
 
-		test( '"Try again" re-issues the secret on the site, keeping from and the return URL', async () => {
+		test( '"Try again" re-issues the secret on the site, keeping from, skip_pricing and the return URL', async () => {
+			window.history.replaceState( null, '', '/?skip_pricing=1' );
 			const redirectAfterAuth = `http://${ SITE_SLUG }/wp-admin/admin.php?page=my-jetpack&step=onboarding`;
 			renderWithRedux(
 				<JetpackAuthorize
@@ -1250,6 +1252,7 @@ describe( 'JetpackAuthorize', () => {
 			expect( url.searchParams.get( 'connect_url_redirect' ) ).toBe( 'true' );
 			expect( url.searchParams.get( 'from' ) ).toBe( 'my_jetpack_onboarding' );
 			expect( url.searchParams.get( 'redirect_after_auth' ) ).toBe( redirectAfterAuth );
+			expect( url.searchParams.get( 'skip_pricing' ) ).toBe( '1' );
 			expect( isCalypsoStartedConnection( `http://${ SITE_SLUG }` ) ).toBe( true );
 		} );
 
