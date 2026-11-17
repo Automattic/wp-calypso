@@ -76,7 +76,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	const busy = activeAction !== null;
 	const pending = useRef( false );
 	const leaving = useRef( false );
-	const verifiedSource = useRef< string | null >( null );
+	const resolvedSource = useRef< string | null >( null );
 	const sourceAddress = parseAccessUrl( sourceUrl );
 	const source = sourceAddress?.href;
 
@@ -162,7 +162,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 		if ( ! result || leaving.current || result.source !== source ) {
 			return;
 		}
-		verifiedSource.current = result.source;
+		resolvedSource.current = result.fromUrl;
 		setAuthorizationUrl( result.authorizationUrl );
 		setManual( false );
 		const { credentials } = result;
@@ -177,7 +177,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 			}
 			const { success } = await saveSiteMigrationApplicationPassword( site.ID, {
 				...credentials,
-				from_url: result.source,
+				from_url: result.fromUrl,
 			} );
 			if ( ! success ) {
 				throw new Error();
@@ -199,10 +199,9 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	};
 
 	const ensureSupportedSource = async ( address: string ) => {
-		const info =
-			verifiedSource.current === address ? null : await analyzeSiteMigrationSource( address );
+		const info = resolvedSource.current ? null : await analyzeSiteMigrationSource( address );
 		if ( ! ( await ensurePending() ) ) {
-			return false;
+			return null;
 		}
 		const isWpcom = info?.platform_data?.is_wpcom;
 		if ( isWpcom || ( info?.platform && info.platform !== 'wordpress' ) ) {
@@ -212,15 +211,19 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 					? __( 'This site is already on WordPress.com. Ask our team for help.' )
 					: __( 'Our migration service is for WordPress sites. Ask our team for help.' )
 			);
-			return false;
+			return null;
 		}
-		verifiedSource.current = address;
-		return true;
+		if ( info ) {
+			// Send the address the source redirects to: a login check POSTed through a redirect arrives as a GET and fails.
+			resolvedSource.current = ( info.url && parseAccessUrl( info.url )?.href ) || address;
+		}
+		return resolvedSource.current ?? address;
 	};
 
 	const chooseAccess = ( action: 'authorize' | 'share' ) =>
 		void run( action, async () => {
-			if ( ! source || ! ( await ensureSupportedSource( source ) ) ) {
+			const fromUrl = source && ( await ensureSupportedSource( source ) );
+			if ( ! source || ! fromUrl ) {
 				return;
 			}
 			if ( action === 'authorize' ) {
@@ -228,7 +231,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 				if ( ! nextAuthorizationUrl ) {
 					try {
 						nextAuthorizationUrl =
-							( await setupSiteMigrationAuthorization( site.ID, source ) ).authorization_url ?? '';
+							( await setupSiteMigrationAuthorization( site.ID, fromUrl ) ).authorization_url ?? '';
 					} catch ( reason ) {
 						if (
 							( reason as { code?: string } | undefined )?.code !==
@@ -240,7 +243,11 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 				}
 				if ( nextAuthorizationUrl ) {
 					try {
-						const url = getMigrationAuthorizationUrl( site.ID, source, nextAuthorizationUrl );
+						const url = getMigrationAuthorizationUrl( site.ID, {
+							source,
+							fromUrl,
+							authorizationUrl: nextAuthorizationUrl,
+						} );
 						if ( url ) {
 							window.location.assign( url.href );
 							return;
@@ -257,12 +264,13 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	const submit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		void run( 'submit', async () => {
-			if ( ! source || ! ( await ensureSupportedSource( source ) ) ) {
+			const fromUrl = source && ( await ensureSupportedSource( source ) );
+			if ( ! fromUrl ) {
 				return;
 			}
 			const { success } = await shareSiteMigrationAccess( site.ID, site.slug, locale, {
 				migration_type: 'credentials',
-				from_url: source,
+				from_url: fromUrl,
 				username,
 				password,
 				notes,
@@ -328,7 +336,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 						if ( ! ( await ensurePending() ) ) {
 							return;
 						}
-						await openTicket( source, 'help_requested' );
+						await openTicket( resolvedSource.current ?? source, 'help_requested' );
 						await finish();
 					} )
 				}

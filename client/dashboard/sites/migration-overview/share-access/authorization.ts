@@ -4,6 +4,7 @@ type Attempt = {
 	state: string;
 	siteId: number;
 	source: string;
+	fromUrl: string;
 	authorizationUrl: string;
 	expiresAt: number;
 };
@@ -29,12 +30,15 @@ export function captureMigrationAuthorization() {
 
 export function getMigrationAuthorizationUrl(
 	siteId: number,
-	source: string,
-	authorizationUrl: string
+	{
+		source,
+		fromUrl,
+		authorizationUrl,
+	}: { source: string; fromUrl: string; authorizationUrl: string }
 ): URL | null {
 	if (
 		! shareAccessPath.test( window.location.pathname ) ||
-		! isAllowedRedirectUrl( authorizationUrl, [ new URL( source ).hostname ] )
+		! isAllowedRedirectUrl( authorizationUrl, [ new URL( fromUrl ).hostname ] )
 	) {
 		return null;
 	}
@@ -44,6 +48,7 @@ export function getMigrationAuthorizationUrl(
 		state,
 		siteId,
 		source,
+		fromUrl,
 		authorizationUrl,
 		expiresAt: Date.now() + 30 * 60 * 1000,
 	};
@@ -85,6 +90,7 @@ export function takeMigrationAuthorization( siteId: number ) {
 		password && /^[a-z\d]{24}$/i.test( password ) ? password.match( /.{4}/g )?.join( ' ' ) : null;
 	return {
 		source: attempt.source,
+		fromUrl: attempt.fromUrl,
 		authorizationUrl: attempt.authorizationUrl,
 		credentials: username && formattedPassword ? { username, password: formattedPassword } : null,
 	};

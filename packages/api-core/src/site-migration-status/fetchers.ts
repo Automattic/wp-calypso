@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 
 type MigrationSource = {
+	url?: string;
 	platform?: string;
 	platform_data?: { is_wpcom?: boolean };
 };

@@ -17,6 +17,7 @@ const siteSlug = 'destination.wordpress.com';
 const overviewPath = `/sites/${ siteSlug }/migration-overview`;
 const shareAccessPath = `${ overviewPath }/share-access`;
 const source = 'https://source.example.com/';
+const redirectedSource = 'https://www.source.example.com/';
 const api = 'https://public-api.wordpress.com';
 const siteEndpoint = `/rest/v1.1/sites/${ siteSlug }`;
 const site = {
@@ -31,11 +32,11 @@ afterEach( () => {
 	window.sessionStorage.clear();
 } );
 
-function mockSource() {
+function mockSource( url?: string ) {
 	return nock( api )
 		.get( '/wpcom/v2/imports/analyze-url' )
 		.query( { site_url: source } )
-		.reply( 200, { platform: 'wordpress' } );
+		.reply( 200, { platform: 'wordpress', url } );
 }
 
 function mockPendingSite( times = 1 ) {
@@ -44,8 +45,10 @@ function mockPendingSite( times = 1 ) {
 
 const mockPost = ( path: string, body?: nock.RequestBodyMatcher ) =>
 	nock( api ).post( path, body ).query( true );
-const mockAuthorizationSetup = () =>
-	mockPost( '/wpcom/v2/sites/123/automated-migration/application-passwords/setup', { source } );
+const mockAuthorizationSetup = ( from = source ) =>
+	mockPost( '/wpcom/v2/sites/123/automated-migration/application-passwords/setup', {
+		source: from,
+	} );
 const renderShareAccess = () => render( <ShareAccessForm site={ site } sourceUrl={ source } /> );
 const expectOverview = ( router: ReturnType< typeof render >[ 'router' ] ) =>
 	waitFor( () => expect( router.state.location.pathname ).toBe( overviewPath ) );
@@ -153,6 +156,46 @@ test( 'lets the user choose manual credentials and retry a failed verification',
 	expect( request.isDone() ).toBe( true );
 } );
 
+test( 'shares credentials for the address a redirecting source resolves to', async () => {
+	mockPendingSite( 2 );
+	mockSource( redirectedSource );
+	const request = mockPost( '/wpcom/v2/sites/123/automated-migration', {
+		migration_type: 'credentials',
+		from_url: redirectedSource,
+		username: 'admin',
+		password: 'test-password',
+		notes: '',
+		bypass_verification: false,
+		blog_url: siteSlug,
+	} ).reply( 200, { success: true } );
+
+	const { router } = renderShareAccess();
+
+	await userEvent.click( screen.getByRole( 'button', { name: 'Share credentials instead' } ) );
+	await userEvent.type( await screen.findByLabelText( 'WordPress admin username' ), 'admin' );
+	await userEvent.type( screen.getByLabelText( 'Password' ), 'test-password' );
+	await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+	await expectOverview( router );
+	expect( request.isDone() ).toBe( true );
+} );
+
+test( 'sets up authorization for the address a redirecting source resolves to', async () => {
+	mockPendingSite();
+	mockSource( redirectedSource );
+	const setup = mockAuthorizationSetup( redirectedSource ).reply( 500, {
+		code: 'failed_to_get_authorization_path',
+	} );
+
+	renderShareAccess();
+	await userEvent.click( screen.getByRole( 'button', { name: 'Authorize access' } ) );
+
+	expect(
+		await screen.findByRole( 'heading', { name: 'Securely share your credentials' } )
+	).toBeVisible();
+	expect( setup.isDone() ).toBe( true );
+} );
+
 test.each( [ 'abcd1234abcd1234abcd1234', 'abcd 1234 abcd 1234 abcd 1234' ] )(
 	'submits a matching authorization return after clearing credentials from the URL (%s)',
 	async ( password ) => {
@@ -160,11 +203,11 @@ test.each( [ 'abcd1234abcd1234abcd1234', 'abcd 1234 abcd 1234 abcd 1234' ] )(
 			Object.defineProperty( window.crypto, 'randomUUID', { value: randomUUID } );
 		}
 		window.history.replaceState( null, '', shareAccessPath );
-		const url = getMigrationAuthorizationUrl(
-			site.ID,
+		const url = getMigrationAuthorizationUrl( site.ID, {
 			source,
-			`${ source }wp-admin/authorize-application.php`
-		);
+			fromUrl: redirectedSource,
+			authorizationUrl: `${ redirectedSource }wp-admin/authorize-application.php`,
+		} );
 		const callback = new URL( url!.searchParams.get( 'success_url' )! );
 		window.history.replaceState(
 			null,
@@ -178,7 +221,7 @@ test.each( [ 'abcd1234abcd1234abcd1234', 'abcd 1234 abcd 1234 abcd 1234' ] )(
 		mockPendingSite();
 
 		const request = mockPost( '/wpcom/v2/sites/123/automated-migration/application-passwords', {
-			from_url: source,
+			from_url: redirectedSource,
 			username: 'admin',
 			password: 'abcd 1234 abcd 1234 abcd 1234',
 		} ).reply( 200, { success: true } );
