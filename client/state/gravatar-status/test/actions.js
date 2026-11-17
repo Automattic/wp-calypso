@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import {
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST,
 } from 'calypso/state/action-types';
 import { receiveGravatarImageFailed, uploadGravatar } from '../actions';
 
-const dispatch = jest.fn();
+const dispatch = vi.fn();
 
 describe( 'actions', () => {
 	describe( '#uploadGravatar', () => {

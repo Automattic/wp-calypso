@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { setFeatureFlag } from 'calypso/test-helpers/config';
 import {
 	COMMENTS_DELETE,
@@ -103,7 +104,7 @@ describe( 'actions', () => {
 
 	describe( '#deleteComment()', () => {
 		test( 'should dispatch remove for a placeholder when provided', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			deleteComment( SITE_ID, POST_ID, 'placeholder-123' )( dispatch, () => ( { comments: [] } ) );
 
 			expect( dispatch ).toHaveBeenCalledWith(
@@ -115,7 +116,7 @@ describe( 'actions', () => {
 		} );
 
 		test( "should dispatch remove including the 'previousStatus'", () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const getState = () => ( {
 				comments: {
 					items: {
@@ -149,7 +150,7 @@ describe( 'actions', () => {
 
 	describe( '#changeCommentStatus', () => {
 		test( "should dispatch including the 'previousStatus'", () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const getState = () => ( {
 				comments: {
 					items: {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	JETPACK_CONNECTION_STATUS_RECEIVE,
 	JETPACK_CONNECTION_STATUS_REQUEST,
@@ -22,7 +23,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#requestJetpackConnectionStatus()', () => {

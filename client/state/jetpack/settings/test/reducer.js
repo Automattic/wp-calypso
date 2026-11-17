@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -10,7 +11,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { settingsReducer } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should export expected reducer keys', () => {
 		const state = reducer( undefined, {} );

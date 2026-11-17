@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { SITE_RECEIVE } from 'calypso/state/action-types';
 import {
@@ -48,7 +49,7 @@ describe( '#dismissUrl()', () => {
 
 describe( '#retryAuth()', () => {
 	test( 'should dispatch redirect action when called', () => {
-		const spy = jest.fn();
+		const spy = vi.fn();
 		const { retryAuth } = actions;
 		const url = 'http://example.com';
 
@@ -113,7 +114,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize request action when thunk triggered', () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorize } = actions;
 
 			authorize( queryObject )( spy );
@@ -125,7 +126,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch login complete action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorize } = actions;
 
 			await authorize( queryObject )( spy );
@@ -138,7 +139,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorize } = actions;
 
 			await authorize( queryObject )( spy );
@@ -154,7 +155,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch sites receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorize } = actions;
 
 			await authorize( queryObject )( spy );
@@ -165,7 +166,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize receive site list action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorize } = actions;
 
 			await authorize( queryObject )( spy );
@@ -198,7 +199,7 @@ describe( '#authorize()', () => {
 		} );
 
 		test( 'should dispatch authorize receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorize } = actions;
 
 			await authorize( queryObject )( spy );
@@ -263,7 +264,7 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch validate action when thunk triggered', () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { validateSSONonce } = actions;
 
 			validateSSONonce( siteId, ssoNonce )( spy );
@@ -274,7 +275,7 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { validateSSONonce } = actions;
 
 			await validateSSONonce( siteId, ssoNonce )( spy );
@@ -305,7 +306,7 @@ describe( '#validateSSONonce()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { validateSSONonce } = actions;
 
 			await validateSSONonce( siteId, ssoNonce )( spy );
@@ -337,7 +338,7 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch validate action when thunk triggered', () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorizeSSO } = actions;
 
 			authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
@@ -348,7 +349,7 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorizeSSO } = actions;
 
 			await authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
@@ -374,7 +375,7 @@ describe( '#authorizeSSO()', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
-			const spy = jest.fn();
+			const spy = vi.fn();
 			const { authorizeSSO } = actions;
 
 			await authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
@@ -393,12 +394,12 @@ describe( '#authorizeSSO()', () => {
 describe( '#createAccount()', () => {
 	const { createAccount } = actions;
 
-	beforeEach( jest.restoreAllMocks );
+	beforeEach( vi.restoreAllMocks );
 
 	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
 		const data = { bearer_token: '1234 abcd' };
-		jest.spyOn( wpcom.req, 'post' ).mockImplementation( () => Promise.resolve( data ) );
+		vi.spyOn( wpcom.req, 'post' ).mockImplementation( () => Promise.resolve( data ) );
 
 		await expect( createAccount( userData )( () => {} ) ).resolves.toEqual( {
 			username: userData.username,
@@ -409,7 +410,7 @@ describe( '#createAccount()', () => {
 	test( 'should reject with the error', async () => {
 		const userData = { username: 'happyuser' };
 		const error = { code: 'user_exists' };
-		jest.spyOn( wpcom.req, 'post' ).mockImplementation( () => Promise.reject( error ) );
+		vi.spyOn( wpcom.req, 'post' ).mockImplementation( () => Promise.reject( error ) );
 
 		await expect( createAccount( userData )( () => {} ) ).rejects.toBe( error );
 	} );
@@ -418,7 +419,7 @@ describe( '#createAccount()', () => {
 describe( '#createSocialAccount()', () => {
 	const { createSocialAccount } = actions;
 
-	beforeEach( jest.restoreAllMocks );
+	beforeEach( vi.restoreAllMocks );
 
 	test( 'should reject with the error', async () => {
 		const error = {
@@ -426,7 +427,7 @@ describe( '#createSocialAccount()', () => {
 			error: 'an_error_code',
 			message: 'An error message',
 		};
-		jest.spyOn( wpcom.req, 'post' ).mockImplementation( () => Promise.reject( error ) );
+		vi.spyOn( wpcom.req, 'post' ).mockImplementation( () => Promise.reject( error ) );
 
 		await expect( createSocialAccount()( () => {} ) ).rejects.toEqual( {
 			code: error.error,
@@ -438,7 +439,7 @@ describe( '#createSocialAccount()', () => {
 	test( 'should resolve with the username and bearer token', async () => {
 		const bearerToken = 'foobar';
 		const username = 'a_happy_user';
-		jest.spyOn( wpcom.req, 'post' ).mockImplementation( () =>
+		vi.spyOn( wpcom.req, 'post' ).mockImplementation( () =>
 			Promise.resolve( {
 				bearer_token: bearerToken,
 				username,

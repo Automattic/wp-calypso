@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import moment from 'moment';
+import { vi } from 'vitest';
 import { isUserNewerThan } from '../contexts';
 
-jest.mock( 'calypso/layout/guided-tours/config', () => {
-	return require( 'calypso/state/guided-tours/test/fixtures/config' );
+vi.mock( 'calypso/layout/guided-tours/config', () => {
+	return import( 'calypso/state/guided-tours/test/fixtures/config' );
 } );
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;

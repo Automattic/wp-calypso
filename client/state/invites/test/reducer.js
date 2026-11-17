@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
@@ -453,7 +454,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'invalid state tests', () => {
-			jest.spyOn( console, 'warn' ).mockImplementation();
+			vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 			test( 'should not load invalid persisted state (1)', () => {
 				const original = deepFreeze( {

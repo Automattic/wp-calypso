@@ -1,5 +1,6 @@
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
+import { vi } from 'vitest';
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
 	GROUP_WPCOM: 'GROUP_WPCOM',
 	GROUP_JETPACK: 'GROUP_JETPACK',
 

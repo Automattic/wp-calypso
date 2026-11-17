@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	HOSTING_CLEAR_CACHE_REQUEST,
 	HOSTING_SFTP_USERS_SET,
@@ -7,17 +8,17 @@ import {
 import reducer, { lastCacheClearTimestamp, sftpUsers } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	describe( '#lastCacheClearTimestamp', () => {
 		const timestamp = 1664397666661;
 
 		beforeAll( () => {
-			jest.useFakeTimers( 'modern' ).setSystemTime( timestamp );
+			vi.useFakeTimers( 'modern' ).setSystemTime( timestamp );
 		} );
 
 		afterAll( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		test( 'should default to null', () => {

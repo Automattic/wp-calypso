@@ -1,4 +1,5 @@
 import { mapValues, omit } from '@automattic/js-utils';
+import { vi } from 'vitest';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -19,7 +20,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#activateJetpackModule', () => {

@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import {
@@ -123,7 +124,7 @@ describe( 'reducer', () => {
 				( persistedState ) => {
 					// Disable console here as `isValidStateWithSchema` util emits logs.
 					// see: https://github.com/Automattic/wp-calypso/blob/02c3a452881ff89fce240c09d16874c0c4e4d429/client/state/utils/schema-utils.js#L14
-					jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+					vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 					// This is the state that will be returned for the `deserialize` call
 					// if the persisted state fails schema validation

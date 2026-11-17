@@ -1,16 +1,19 @@
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite, validateSiteIsImportable } from '../actions';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-		post: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+			post: vi.fn(),
+		},
+	} )
+);
 
-jest.mock( 'calypso/lib/mshots', () => ( {
-	prefetchmShotsPreview: jest.fn(),
+vi.mock( 'calypso/lib/mshots', () => ( {
+	prefetchmShotsPreview: vi.fn(),
 } ) );
 
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
@@ -32,12 +35,12 @@ describe( 'site importer actions', () => {
 	const targetSiteUrl = 'https://example.com';
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'importSite', () => {
 		const runImportSite = async () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			importSite( {
 				engine: 'wix',
 				importerStatus: {
@@ -98,7 +101,7 @@ describe( 'site importer actions', () => {
 			mockIsSiteImportable( () =>
 				Promise.reject( apiError( { code: 'unauthorized', message: 'Not allowed' } ) )
 			);
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			await validateSiteIsImportable( { params: {}, site, targetSiteUrl } )( dispatch );
 
@@ -111,7 +114,7 @@ describe( 'site importer actions', () => {
 
 		test( 'records no reason code when the failure has none', async () => {
 			mockIsSiteImportable( () => Promise.reject( new Error( 'Network error' ) ) );
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			await validateSiteIsImportable( { params: {}, site, targetSiteUrl } )( dispatch );
 

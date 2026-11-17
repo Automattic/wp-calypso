@@ -1,9 +1,10 @@
+import { type Mock, vi } from 'vitest';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import sections from 'calypso/sections';
 import { getSidebarType, SidebarType } from '../selectors';
 
-jest.mock( 'calypso/lib/plans/untangling-plans-experiment', () => ( {
-	isPlansPageUntangled: jest.fn(),
+vi.mock( 'calypso/lib/plans/untangling-plans-experiment', () => ( {
+	isPlansPageUntangled: vi.fn(),
 } ) );
 
 interface Site {
@@ -34,7 +35,7 @@ describe( 'getSidebarType', () => {
 	};
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it.each( [
@@ -106,7 +107,7 @@ describe( 'getSidebarType', () => {
 			: {};
 
 		if ( selectedSite?.isPlansPageUntangled ) {
-			( isPlansPageUntangled as jest.Mock ).mockReturnValue( true );
+			( isPlansPageUntangled as Mock ).mockReturnValue( true );
 		}
 
 		const actual = getSidebarType( {

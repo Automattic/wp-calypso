@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
@@ -11,7 +12,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
 
 describe( '#jetpackConnectAuthorize()', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should default to an empty object', () => {
 		const state = jetpackConnectAuthorize( undefined, {} );

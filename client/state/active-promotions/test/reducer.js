@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { serialize, deserialize } from 'calypso/state/utils';
 import {
 	activePromotionsReceiveAction,
@@ -14,7 +15,7 @@ import activePromotionsReducer, {
 import { WPCOM_RESPONSE } from './fixture';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( activePromotionsReducer( undefined, {} ) ) ).toEqual(

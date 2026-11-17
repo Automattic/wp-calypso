@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { loginUserWithTwoFactorVerificationCode } from '../login-user-with-two-factor-verification-code';
 
-jest.mock( 'calypso/state/login/utils', () => ( {
-	postLoginRequest: jest.fn( () => Promise.resolve( { body: { data: {} } } ) ),
-	getErrorFromHTTPError: jest.fn( () => ( { code: 'error', message: 'error' } ) ),
+vi.mock( 'calypso/state/login/utils', () => ( {
+	postLoginRequest: vi.fn( () => Promise.resolve( { body: { data: {} } } ) ),
+	getErrorFromHTTPError: vi.fn( () => ( { code: 'error', message: 'error' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
-	remoteLoginUser: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
+	remoteLoginUser: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn( () => Promise.resolve( 'a-freshly-collected-session' ) ),
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn( () => Promise.resolve( 'a-freshly-collected-session' ) ),
 } ) );
 
 const mockStore = configureStore( [ thunk ] );
@@ -39,7 +40,7 @@ const dispatchVerificationCode = ( blackboxSessionId ) =>
 
 describe( 'loginUserWithTwoFactorVerificationCode', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'forwards the session id captured on the password step', async () => {
