@@ -9,6 +9,8 @@ import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ComponentProps, ReactNode } from 'react';
 
+import './style.scss';
+
 export function SitesDataViews( {
 	view,
 	sites,
@@ -35,7 +37,7 @@ export function SitesDataViews( {
 	return (
 		<>
 			{ ! isLoading && <PerformanceTrackerStop /> }
-			<DataViewsCard>
+			<DataViewsCard className="sites-table">
 				<DataViews< Site >
 					getItemId={ ( item ) => item.ID.toString() }
 					data={ sites }

@@ -35,6 +35,8 @@ import { hasDefaultARecords, hasDefaultCnameRecord, hasDefaultEmailRecords } fro
 import type { DnsRecord } from '@automattic/api-core';
 import type { ViewTable, View } from '@wordpress/dataviews';
 
+import './style.scss';
+
 function getDnsRecordId( record: DnsRecord ) {
 	return `${ record.id }-${ record.name }`;
 }
@@ -341,7 +343,7 @@ export default function DomainDns() {
 			<DomainDnsNameserversNotice domainName={ domainName } domain={ domain } />
 			{ renderDefaultARecordsNotice() }
 			{ renderDefaultCnameRecordNotice() }
-			<DataViewsCard>
+			<DataViewsCard className="domain-dns-table">
 				{ ! isLoading && <PerformanceTrackerStop /> }
 				{ dnsData?.records?.length === 0 && ! isLoading ? (
 					<div style={ { padding: '20px', textAlign: 'center' } }>

@@ -1,0 +1,5 @@
+// The DataViews minimum is far wider than a record type or a short name needs, and in this
+// narrow card it comes out of the Value column. The Value field sets its own minimum.
+.domain-dns-table .dataviews-view-table td > .dataviews-view-table__cell-content-wrapper {
+	min-width: 0;
+}

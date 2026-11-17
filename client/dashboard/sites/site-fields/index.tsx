@@ -142,7 +142,9 @@ export function NameRenderer( {
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
 			{ muted ? (
-				<Text variant="muted">{ value }</Text>
+				<Text variant="muted" style={ titleFieldTextOverflowStyles }>
+					{ value }
+				</Text>
 			) : (
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 			) }
@@ -160,7 +162,9 @@ export function NameRenderer( {
 
 export function URL( { site, value }: { site: Site; value: string } ) {
 	return site.is_deleted ? (
-		<Text variant="muted">{ value }</Text>
+		<Text variant="muted" style={ titleFieldTextOverflowStyles }>
+			{ value }
+		</Text>
 	) : (
 		<ExternalLink
 			className="dataviews-url-field"

@@ -45,3 +45,8 @@
 	flex: 1;
 	min-height: 0;
 }
+
+// The DataViews minimum is far wider than a toggle needs, and makes the table wider than its card.
+.sites-with-this-plugin .dataviews-view-table td > .dataviews-view-table__cell-content-wrapper {
+	min-width: 0;
+}
