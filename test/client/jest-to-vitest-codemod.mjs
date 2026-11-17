@@ -189,10 +189,15 @@ for ( const file of files ) {
 		edits.push( { start: e.expression.getStart( sf ), end: e.expression.end, text: 'import' } );
 
 	// Jest lets a factory return the module itself (e.g. a function, read through the default
-	// import); Vitest needs an object of exports.
+	// import); Vitest needs an object of exports. As with the interop default, only `jest.mock()`
+	// factories are changed.
 	const wrapNonObjectFactory = ( call ) => {
 		const factory = call.arguments[ 1 ];
-		if ( ! factory || ! ( ts.isArrowFunction( factory ) || ts.isFunctionExpression( factory ) ) ) {
+		if (
+			! isJest( call.expression.expression ) ||
+			! factory ||
+			! ( ts.isArrowFunction( factory ) || ts.isFunctionExpression( factory ) )
+		) {
 			return;
 		}
 		if ( ts.isBlock( factory.body ) ) {
