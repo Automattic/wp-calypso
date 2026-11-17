@@ -8,4 +8,5 @@ export interface WordPressTrackVersions {
 export interface WordPressPrerelease {
 	version: string;
 	auto_enrolled: boolean;
+	opted_out: boolean;
 }

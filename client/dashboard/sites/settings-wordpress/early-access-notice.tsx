@@ -12,10 +12,11 @@ import type { Site } from '@automattic/api-core';
 
 interface EarlyAccessNoticeProps {
 	site: Site;
-	wpVersion: string;
+	release: string;
+	build: string;
 }
 
-export function EarlyAccessNotice( { site, wpVersion }: EarlyAccessNoticeProps ) {
+export function EarlyAccessNotice( { site, release, build }: EarlyAccessNoticeProps ) {
 	const backupUrl = getBackupUrl( site );
 	const { setShowHelpCenter } = useHelpCenter();
 
@@ -23,20 +24,20 @@ export function EarlyAccessNotice( { site, wpVersion }: EarlyAccessNoticeProps )
 		<Notice
 			variant="info"
 			title={ sprintf(
-				/* translators: %s is the WordPress release, e.g. "7.2" */
-				__( 'Your site got early access to WordPress %s' ),
-				wpVersion
+				/* translators: %s is the upcoming WordPress release, e.g. "7.2" */
+				__( 'Early access to WordPress %s' ),
+				release
 			) }
 		>
 			{ site.is_wpcom_staging_site ||
 			! hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
 				? createInterpolateElement(
 						sprintf(
-							/* translators: %s is the WordPress release, e.g. "7.2" */
+							/* translators: %s is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
 							__(
-								'We’ve given your site early access to WordPress %s, ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release anytime.'
+								'We moved your site to WordPress %s ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release anytime.'
 							),
-							wpVersion
+							build
 						),
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
@@ -44,11 +45,11 @@ export function EarlyAccessNotice( { site, wpVersion }: EarlyAccessNoticeProps )
 					)
 				: createInterpolateElement(
 						sprintf(
-							/* translators: %s is the WordPress release, e.g. "7.2" */
+							/* translators: %s is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
 							__(
-								'We’ve given your site early access to WordPress %s, ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
+								'We moved your site to WordPress %s ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
 							),
-							wpVersion
+							build
 						),
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,

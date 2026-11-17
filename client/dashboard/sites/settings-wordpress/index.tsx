@@ -52,7 +52,13 @@ function VersionManagement( { site }: { site: Site } ) {
 	} else if ( switchedToLatest ) {
 		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
 	} else if ( currentVersion === 'beta' && prerelease?.auto_enrolled ) {
-		notice = <EarlyAccessNotice site={ site } wpVersion={ prerelease.version } />;
+		notice = (
+			<EarlyAccessNotice
+				site={ site }
+				release={ prerelease.version }
+				build={ betaVersion || prerelease.version }
+			/>
+		);
 	} else if ( switchedToBeta || currentVersion === 'beta' ) {
 		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	}

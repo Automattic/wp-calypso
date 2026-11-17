@@ -1,10 +1,15 @@
-import { siteWordPressTrackVersionsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	siteWordPressPrereleaseMutation,
+	siteWordPressPrereleaseQuery,
+	siteWordPressTrackVersionsQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { formatWordPressVersion } from '../../utils/wp-version';
@@ -18,24 +23,36 @@ interface VersionFormProps {
 	versionSwitch: VersionSwitchState;
 }
 
+interface VersionFormData {
+	version: string;
+	optedOut: boolean;
+}
+
 export function VersionForm( { site, currentVersion, versionSwitch }: VersionFormProps ) {
 	const { data: trackVersions } = useQuery( siteWordPressTrackVersionsQuery( site.ID ) );
 	const latestVersion = trackVersions?.latest;
 	const betaVersion = trackVersions?.beta;
 
+	const { data: prerelease } = useQuery( siteWordPressPrereleaseQuery( site.ID ) );
+	const prereleaseMutation = useMutation(
+		withSnackbar( siteWordPressPrereleaseMutation( site.ID ), {
+			success: __( 'Early access preference saved.' ),
+			error: __( 'Failed to save early access preference.' ),
+		} )
+	);
+
 	const { isSwitching, pendingVersion, switchVersion, isSaving } = versionSwitch;
 
-	const [ formEdits, setFormEdits ] = useState< { version: string } >( {
-		version: '',
-	} );
+	const [ formEdits, setFormEdits ] = useState< Partial< VersionFormData > >( {} );
 
-	const formData = {
+	const formData: VersionFormData = {
 		version: formEdits.version || pendingVersion || currentVersion || '',
+		optedOut: formEdits.optedOut ?? prerelease?.opted_out ?? false,
 	};
 
 	const currentWpVersion = site.options?.software_version ?? '';
 
-	const fields: Field< { version: string } >[] = [
+	const fields: Field< VersionFormData >[] = [
 		{
 			id: 'version',
 			label: __( 'WordPress version' ),
@@ -51,18 +68,36 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 				},
 			],
 		},
+		{
+			id: 'optedOut',
+			label: __( 'Keep my site out of early access to new WordPress versions' ),
+			description: __(
+				'We sometimes give sites early access to an upcoming WordPress release before it’s final.'
+			),
+			Edit: 'checkbox',
+		},
 	];
+
+	const canOptOut = typeof prerelease?.opted_out === 'boolean';
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: [ 'version' ],
+		fields: canOptOut ? [ 'version', 'optedOut' ] : [ 'version' ],
 	};
 
-	const isDirty = formData.version !== currentVersion;
+	const isVersionDirty = formData.version !== currentVersion;
+	const isOptedOutDirty = canOptOut && formData.optedOut !== prerelease?.opted_out;
+	const isDirty = isVersionDirty || isOptedOutDirty;
+	const isBusy = isSaving || isSwitching || prereleaseMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		switchVersion( formData.version );
+		if ( isVersionDirty ) {
+			switchVersion( formData.version );
+		}
+		if ( isOptedOutDirty ) {
+			prereleaseMutation.mutate( formData.optedOut );
+		}
 	};
 
 	return (
@@ -72,11 +107,11 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 					<fieldset disabled={ isSwitching } style={ { border: 0, margin: 0, padding: 0 } }>
 						<VStack spacing={ 4 }>
 							<NavigationBlocker shouldBlock={ isDirty } />
-							<DataForm< { version: string } >
+							<DataForm< VersionFormData >
 								data={ formData }
 								fields={ fields }
 								form={ form }
-								onChange={ ( edits: { version?: string } ) => {
+								onChange={ ( edits: Partial< VersionFormData > ) => {
 									setFormEdits( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
@@ -84,8 +119,8 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 								<Button
 									variant="primary"
 									type="submit"
-									isBusy={ isSaving || isSwitching }
-									disabled={ isSaving || ! isDirty || isSwitching }
+									isBusy={ isBusy }
+									disabled={ isBusy || ! isDirty }
 								>
 									{ __( 'Save' ) }
 								</Button>
