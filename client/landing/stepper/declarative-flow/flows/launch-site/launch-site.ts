@@ -179,6 +179,7 @@ function useLaunchParams(): LaunchParams {
 		dashboard: query.get( 'dashboard' ),
 		checkoutSource: query.get( 'checkout_source' ),
 		hideFreePlan: query.get( 'hide_free_plan' ) === '1',
+		payLater: query.get( 'pay_later' ) === '1',
 	};
 }
 

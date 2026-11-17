@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -24,6 +25,14 @@ const getAllowedHosts = ( siteSlug?: string ): string[] => {
 
 	return basicHosts.concat( languageSpecificJetpackHosts );
 };
+
+function isDashboardUrl( url: string ) {
+	try {
+		return dashboardOrigins().includes( new URL( url ).origin );
+	} catch {
+		return false;
+	}
+}
 
 const useValidCheckoutBackUrl = (
 	siteSlug: string | undefined,
@@ -55,6 +64,10 @@ const useValidCheckoutBackUrl = (
 				return 'https://cloud.jetpack.com/pricing/' + ( siteSlug || '' );
 			}
 			return undefined;
+		}
+
+		if ( isDashboardUrl( backUrl ) ) {
+			return backUrl;
 		}
 
 		const allowedHosts = getAllowedHosts( siteSlug );

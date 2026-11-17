@@ -51,6 +51,7 @@ import getPlanFeatures from '../lib/get-plan-features';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
 import { CheckIcon } from './check-icon';
 import CheckoutPayButtonFooter from './checkout-pay-button-footer';
+import CheckoutPayLaterButton from './checkout-pay-later-button';
 import { CheckoutSummaryRefundWindows } from './checkout-summary-refund-windows';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -279,6 +280,7 @@ function CheckoutSummaryPriceList() {
 							ref={ setSlotEl }
 							className="wp-checkout-order-summary__pay-button-slot"
 						/>
+						<CheckoutPayLaterButton />
 						<CheckoutPayButtonFooter cart={ responseCart } />
 					</>
 				) }

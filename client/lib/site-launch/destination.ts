@@ -18,6 +18,8 @@ export interface LaunchParams {
 	checkoutSource?: string | null;
 	// Offer only paid plans, for a site that can't launch on Free, such as a preview site.
 	hideFreePlan?: boolean;
+	// Offer "Pay later" in checkout, which leaves to `checkoutBackUrl` and keeps the cart.
+	payLater?: boolean;
 }
 
 const DASHBOARDS: DashboardType[] = [ 'a4a', 'dotcom' ];
@@ -154,6 +156,7 @@ export function getLaunchCheckoutUrl(
 			checkoutBackUrl: addQueryArgs( { skippedCheckout: 1, celebrateLaunch: 'true' }, backUrl ),
 			redirect_to: destination,
 			...( dashboard && { dashboard } ),
+			...( params.payLater && { pay_later: 1 } ),
 		},
 		`/checkout/${ params.siteSlug }`
 	);
