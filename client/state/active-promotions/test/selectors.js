@@ -1,4 +1,7 @@
 import { vi } from 'vitest';
+import { getActivePromotions, isRequestingActivePromotions } from '../selectors';
+import { ACTIVE_PROMOTIONS, getStateInstance } from './fixture';
+
 vi.mock( '@automattic/calypso-products', async () => ( {
 	...( await vi.importActual( '@automattic/calypso-products' ) ),
 	GROUP_WPCOM: 'GROUP_WPCOM',
@@ -25,9 +28,6 @@ vi.mock( '@automattic/calypso-products', async () => ( {
 		},
 	},
 } ) );
-
-import { getActivePromotions, isRequestingActivePromotions } from '../selectors';
-import { ACTIVE_PROMOTIONS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getActivePromotions()', () => {

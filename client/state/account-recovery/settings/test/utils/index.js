@@ -1,4 +1,4 @@
-/* eslint-disable jest/no-export, jest/expect-expect */
+/* eslint-disable vitest/expect-expect */
 
 import { useNock } from 'calypso/test-helpers/use-nock';
 
