@@ -24,7 +24,19 @@ const JETPACK_SITE = {
 	jetpack: true,
 } as unknown as Site;
 
-function seed() {
+const OPT_IN_TOOL = {
+	'wpcom-mcp/subscribers-list': {
+		enabled: false,
+		readonly: true,
+		visible: true,
+		requires_opt_in: true,
+		title: 'List subscribers',
+		description: 'List the subscribers of your sites.',
+		group: 'content-authoring',
+	},
+};
+
+function seed( extraAccountTools: Record< string, unknown > = {} ) {
 	// The page reads siteSlug from useParams, which is undefined in this harness.
 	queryClient.setQueryData(
 		siteBySlugQuery( undefined as unknown as string ).queryKey,
@@ -49,6 +61,7 @@ function seed() {
 					description: 'List pages on your sites.',
 					group: 'content-authoring',
 				},
+				...extraAccountTools,
 			},
 			groups: [
 				{
@@ -138,6 +151,20 @@ describe( '<SiteAIToolsRead>', () => {
 
 		const saveScope = mockPageSave();
 		// The page-level toggle precedes the per-group intents in the document.
+		await user.click( screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ 0 ] );
+
+		await waitFor( () => {
+			expect( saveScope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'the page-level Enable all leaves an opt-in tool off', async () => {
+		const user = userEvent.setup();
+		seed( OPT_IN_TOOL );
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		// Same body as without the opt-in tool: it gets no site value, so it keeps its account state.
+		const saveScope = mockPageSave();
 		await user.click( screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ 0 ] );
 
 		await waitFor( () => {

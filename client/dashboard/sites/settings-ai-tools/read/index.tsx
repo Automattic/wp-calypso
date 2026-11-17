@@ -20,6 +20,11 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment, useDeferredValue, useMemo, useState } from 'react';
+import {
+	getSiteBulkOverrides,
+	isBulkEnabled,
+	requiresOptIn,
+} from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import {
@@ -81,15 +86,21 @@ export default function SiteAIToolsRead() {
 
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
 	// enabled state for every tool. True when account MCP is on, false when it's disabled for sites.
+	// The site default never turns on an opt-in tool, so it keeps its account state.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled =
 		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
 	const mcpAbilities = hasSiteAbilityOverrides
 		? mergedAbilities
 		: Object.fromEntries(
-				Object.entries( mergedAbilities ).map( ( [ id, tool ] ) => [
+				Object.entries( mergedAbilities as Record< string, McpAbility > ).map( ( [ id, tool ] ) => [
 					id,
-					{ ...tool, enabled: defaultToolEnabled },
+					{
+						...tool,
+						enabled: requiresOptIn( tool )
+							? defaultToolEnabled && tool.enabled
+							: defaultToolEnabled,
+					},
 				] )
 			);
 
@@ -148,8 +159,7 @@ export default function SiteAIToolsRead() {
 		allTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const pageAllEnabled =
-		allTools.length > 0 &&
-		allTools.every( ( [ , tool ] ) => tool.enabled ) &&
+		isBulkEnabled( allTools ) &&
 		[ ...remoteGroupKeys, ...remoteAbilityKeys ].every( ( key ) =>
 			isRemoteKeyEnabled( savedRemoteGroups, key, remoteDefaultEnabled )
 		) &&
@@ -172,14 +182,17 @@ export default function SiteAIToolsRead() {
 	);
 
 	// When there are no existing overrides, materialize the implicit default alongside the change
-	// so subsequent edits have a full baseline to work from.
+	// so subsequent edits have a full baseline to work from. Opt-in tools are left out: the site
+	// default never covers them, so writing it would grant one nobody turned on.
 	const buildAbilities = ( overrides: Record< string, boolean > ): Record< string, boolean > => {
 		if ( hasSiteAbilityOverrides ) {
 			return overrides;
 		}
 		const defaults: Record< string, boolean > = {};
-		allTools.forEach( ( [ id ] ) => {
-			defaults[ id ] = defaultToolEnabled;
+		allTools.forEach( ( [ id, tool ] ) => {
+			if ( ! requiresOptIn( tool ) ) {
+				defaults[ id ] = defaultToolEnabled;
+			}
 		} );
 		return { ...defaults, ...overrides };
 	};
@@ -201,10 +214,7 @@ export default function SiteAIToolsRead() {
 		groupTools: Array< [ string, McpAbility ] >,
 		enabled: boolean
 	) => {
-		const overrides: Record< string, boolean > = {};
-		groupTools.forEach( ( [ toolId ] ) => {
-			overrides[ toolId ] = enabled;
-		} );
+		const overrides = getSiteBulkOverrides( groupTools, enabled );
 		mutation.mutate( {
 			mcp_abilities: {
 				sites: [
@@ -218,10 +228,7 @@ export default function SiteAIToolsRead() {
 	};
 
 	const handlePageToggle = ( enabled: boolean ) => {
-		const overrides: Record< string, boolean > = {};
-		allTools.forEach( ( [ toolId ] ) => {
-			overrides[ toolId ] = enabled;
-		} );
+		const overrides = getSiteBulkOverrides( allTools, enabled );
 		// Both directions write group keys and saved ability-level keys:
 		// ability-level trues actively allow, so disabling must clear them too.
 		const remoteKeys = [ ...remoteGroupKeys, ...remoteAbilityKeys ];
@@ -330,7 +337,7 @@ export default function SiteAIToolsRead() {
 				</div>
 				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 					const groupKey = descriptor?.name ?? '__other__';
-					const allGroupEnabled = groupTools.every( ( [ , tool ] ) => tool.enabled );
+					const allGroupEnabled = isBulkEnabled( groupTools );
 
 					return (
 						<McpGroupCard
