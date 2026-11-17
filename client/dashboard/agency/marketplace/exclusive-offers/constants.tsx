@@ -2,8 +2,11 @@ import { __experimentalText as Text, __experimentalHStack as HStack } from '@wor
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import AvalaraLogo from './images/avalara.svg';
+import EasyPostLogo from './images/easypost.svg';
 import JetpackLogo from './images/jetpack-descriptor.svg';
+import PacklinkLogo from './images/packlink.svg';
 import PressableLogo from './images/pressable-descriptor.svg';
+import ShipStationLogo from './images/shipstation.svg';
 import VIPLogo from './images/vip-descriptor.svg';
 import WooLogo from './images/woo-descriptor.svg';
 import WooPaymentsLogo from './images/woopayments.svg';
@@ -145,21 +148,6 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		},
 	},
 	{
-		id: 'avalara-partner-program-refer',
-		offerType: 'refer',
-		logo: <img className="exclusive-offers-card-logo-compact" src={ AvalaraLogo } alt="Avalara" />,
-		title: __( 'Join the Avalara Partner Program and unlock new revenue streams' ),
-		description: __(
-			'Help clients navigate tax complexity with a trusted partner—while unlocking new revenue opportunities for your business.'
-		),
-		termsUrl: 'https://legal.avalara.com/partner.legal.center#generalpartnerterms',
-		cta: {
-			label: __( 'Join the partner program' ),
-			url: 'https://www.avalara.com/us/en/partners/partner-programs.html',
-			external: true,
-		},
-	},
-	{
 		id: 'wordpress-com-hosting-resell',
 		offerType: 'resell',
 		product: 'wordpress',
@@ -228,6 +216,70 @@ export const getPartnerOffers = ( links: PartnerOfferLinks ): PartnerOffer[] => 
 		cta: {
 			label: __( 'Earn with WooPayments' ),
 			url: links.woopayments,
+		},
+	},
+];
+
+export const getTrustedPartners = (): PartnerOffer[] => [
+	{
+		id: 'shipstation',
+		offerType: 'partner',
+		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_shipstation_click',
+		logo: <img src={ ShipStationLogo } alt="ShipStation" />,
+		title: __( 'Help enhance customer experiences' ),
+		description: __(
+			'Equip your clients with a best-in-class shipping and fulfillment solution that cuts costs, streamlines operations, and delivers a superior post-purchase experience.'
+		),
+		cta: {
+			label: __( 'Explore ShipStation' ),
+			url: 'https://www.shipstation.com/partnership-options/',
+			external: true,
+		},
+	},
+	{
+		id: 'packlink',
+		offerType: 'partner',
+		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_packlink_click',
+		logo: <img src={ PacklinkLogo } alt="Packlink" />,
+		title: __( 'Boost efficiency for better retention' ),
+		description: __(
+			'Help your customers to get their ship organised - with better rates and automation tools that turn shipping from a cost centre into a growth driver!'
+		),
+		cta: {
+			label: __( 'Explore Packlink PRO' ),
+			url: 'https://partners.auctane.com',
+			external: true,
+		},
+	},
+	{
+		id: 'easypost-norton-shopping-guarantee',
+		offerType: 'partner',
+		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_easypost_click',
+		logo: <img src={ EasyPostLogo } alt="EasyPost" />,
+		title: __( 'Build trust and boost conversions' ),
+		description: __(
+			'Protect every WooCommerce order from cart to delivery with Norton Shopping Guarantee badges, buyer guarantees, and package protection at no extra cost to merchants.'
+		),
+		cta: {
+			label: __( 'Explore Norton' ),
+			url: 'https://woocommerce.com/products/norton-shopping-guarantee-with-package-protection',
+			external: true,
+		},
+	},
+	{
+		id: 'avalara-partner-program-refer',
+		offerType: 'partner',
+		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_avalara_click',
+		logo: <img className="exclusive-offers-card-logo-compact" src={ AvalaraLogo } alt="Avalara" />,
+		title: __( 'Join the Avalara Partner Program and unlock new revenue streams' ),
+		description: __(
+			'Help clients navigate tax complexity with a trusted partner—while unlocking new revenue opportunities for your business.'
+		),
+		termsUrl: 'https://legal.avalara.com/partner.legal.center#generalpartnerterms',
+		cta: {
+			label: __( 'Explore Avalara' ),
+			url: 'https://www.avalara.com/us/en/partners/partner-programs.html',
+			external: true,
 		},
 	},
 ];

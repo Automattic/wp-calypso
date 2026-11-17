@@ -10,6 +10,7 @@ export type PartnerOffer = {
 	title: string;
 	description: string;
 	termsUrl?: string;
+	tracksEventName?: string;
 	cta: {
 		label: string;
 		url: string;

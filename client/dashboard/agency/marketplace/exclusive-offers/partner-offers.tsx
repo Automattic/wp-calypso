@@ -14,8 +14,9 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import Grid from '../../../components/grid';
 import RouterLinkButton from '../../../components/router-link-button';
+import { SectionHeader } from '../../../components/section-header';
 import { isDashboardPath } from '../../../utils/link';
-import { filterOptions, getPartnerOffers } from './constants';
+import { filterOptions, getPartnerOffers, getTrustedPartners } from './constants';
 import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -37,12 +38,15 @@ function PartnerOfferCard( {
 	recordTracksEvent,
 	onCtaClick,
 	shouldUseRouterLink,
+	defaultTermsUrl,
 }: {
 	item: PartnerOffer;
 	recordTracksEvent: RecordTracksEvent;
 	onCtaClick?: ( offer: PartnerOffer, event: React.MouseEvent ) => void;
 	shouldUseRouterLink: boolean;
+	defaultTermsUrl?: string;
 } ) {
+	const termsUrl = item.termsUrl ?? defaultTermsUrl;
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
 
 	const handleCTAClick = ( event: React.MouseEvent ) => {
@@ -50,6 +54,9 @@ function PartnerOfferCard( {
 		// A host that stops the click (an offer the agency can't take yet) records its own event.
 		if ( ! event.defaultPrevented ) {
 			recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+			if ( item.tracksEventName ) {
+				recordTracksEvent( item.tracksEventName );
+			}
 		}
 	};
 
@@ -113,17 +120,19 @@ function PartnerOfferCard( {
 								{ item.cta.label }
 							</Button>
 						) }
-						<Button
-							variant="link"
-							href={ item.termsUrl ?? VIEW_TERMS_URL }
-							target="_blank"
-							onClick={ handleViewTermsClick }
-							style={ {
-								whiteSpace: 'nowrap',
-							} }
-						>
-							{ __( 'View terms' ) }
-						</Button>
+						{ termsUrl && (
+							<Button
+								variant="link"
+								href={ termsUrl }
+								target="_blank"
+								onClick={ handleViewTermsClick }
+								style={ {
+									whiteSpace: 'nowrap',
+								} }
+							>
+								{ __( 'View terms' ) }
+							</Button>
+						) }
 					</ButtonStack>
 				) }
 			</CardBody>
@@ -148,6 +157,7 @@ export default function PartnerOffers( {
 } ) {
 	const [ view, setView ] = useState< View >( initialView );
 	const partnerOffers = useMemo( () => getPartnerOffers( links ), [ links ] );
+	const trustedPartners = useMemo( () => getTrustedPartners(), [] );
 
 	const fields: Field< PartnerOffer >[] = useMemo(
 		() => [
@@ -243,9 +253,26 @@ export default function PartnerOffers( {
 						recordTracksEvent={ recordTracksEvent }
 						onCtaClick={ onCtaClick }
 						shouldUseRouterLink={ shouldUseRouterLink }
+						defaultTermsUrl={ VIEW_TERMS_URL }
 					/>
 				) ) }
 			</Grid>
+			<VStack spacing={ 6 } className="exclusive-offers-trusted-partners">
+				<SectionHeader
+					title={ __( 'Trusted partners' ) }
+					description={ __( 'Tools from Automattic partners we recommend for your clients.' ) }
+				/>
+				<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
+					{ trustedPartners.map( ( item ) => (
+						<PartnerOfferCard
+							key={ item.id }
+							item={ item }
+							recordTracksEvent={ recordTracksEvent }
+							shouldUseRouterLink={ shouldUseRouterLink }
+						/>
+					) ) }
+				</Grid>
+			</VStack>
 		</>
 	);
 }
