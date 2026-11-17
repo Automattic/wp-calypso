@@ -1,13 +1,8 @@
-import {
-	deleteSiteMigrationPendingStatusQuery,
-	siteMigrationKeyQuery,
-	sshMigrationQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteSiteMigrationPendingStatusQuery } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Modal } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
@@ -16,43 +11,17 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Text } from '../../components/text';
 import { wpcomLink } from '../../utils/link';
-import { getSiteMigrationState } from '../../utils/site-status';
 import { HostingCards } from './hosting-cards';
 import { MigrationCard, StatusIcon } from './wordpress/migration-card';
-import type { SiteMigrationStatus } from '../../types';
 import type { Site } from '@automattic/api-core';
 
-const getContinueMigrationUrl = ( site: Site, sshSourceSiteDomain?: string ): string | null => {
-	const migrationState = getSiteMigrationState( site );
-	const sourceSiteDomain = sshSourceSiteDomain ?? site.options?.migration_source_site_domain;
-
-	const queryArgs = {
+// Only DIFM migrations from before the assisted hand-off still reach this view.
+const getContinueMigrationUrl = ( site: Site ) =>
+	addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-credentials' ), {
 		siteId: site.ID,
 		siteSlug: site.slug,
 		ref: 'hosting-migration-overview',
-	};
-
-	if ( migrationState?.type === 'diy' ) {
-		if ( sourceSiteDomain ) {
-			const url = sourceSiteDomain.endsWith( '/' ) ? sourceSiteDomain : sourceSiteDomain + '/';
-			return addQueryArgs( `${ url }wp-admin/admin.php`, { page: 'wpcom-migration' } );
-		}
-
-		return addQueryArgs(
-			wpcomLink( '/setup/site-migration/site-migration-instructions' ),
-			queryArgs
-		);
-	}
-
-	if ( migrationState?.type === 'ssh' ) {
-		return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-ssh-verification' ), {
-			...queryArgs,
-			from: sourceSiteDomain || undefined,
-		} );
-	}
-
-	return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-credentials' ), queryArgs );
-};
+	} );
 
 function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const navigate = useNavigate();
@@ -109,77 +78,38 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 	);
 }
 
-export function PendingContentInfo( {
-	site,
-	type,
-}: {
-	site: Site;
-	type: SiteMigrationStatus[ 'type' ];
-} ) {
+export function PendingContentInfo( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice } = useDispatch( noticesStore );
-	const { data: migrationKey, isLoading } = useQuery( siteMigrationKeyQuery( site.ID ) );
-	const {
-		data: { migration_source_site_domain: sshSourceSiteDomain } = {},
-		isLoading: isSshSourceSiteDomainLoading,
-	} = useQuery( { ...sshMigrationQuery( site.ID ), enabled: type === 'ssh' } );
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
-	const continueMigrationUrl = getContinueMigrationUrl( site, sshSourceSiteDomain );
-
-	if ( isLoading || ( type === 'ssh' && isSshSourceSiteDomainLoading ) ) {
-		return null;
-	}
 
 	return (
 		<>
 			<VStack spacing={ 6 }>
 				<MigrationCard
 					title={ __( 'Your WordPress site is ready to be migrated' ) }
-					description={
-						type === 'diy'
-							? createInterpolateElement(
-									__(
-										'Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the <em>Migrate to WordPress.com</em> plugin.'
-									),
-									{
-										em: <em />,
-									}
-								)
-							: __( 'Start your migration today and get ready for unmatched WordPress hosting.' )
-					}
+					description={ __(
+						'Start your migration today and get ready for unmatched WordPress hosting.'
+					) }
 					decoration={ <StatusIcon status="pending" /> }
 					actions={
-						continueMigrationUrl && (
-							<>
-								<Button __next40pxDefaultSize href={ continueMigrationUrl } variant="primary">
-									{ type === 'diy' ? __( 'Complete migration' ) : __( 'Start your migration' ) }
-								</Button>
-								{ type === 'diy' && migrationKey && (
-									<Button
-										__next40pxDefaultSize
-										variant="secondary"
-										onClick={ () => {
-											navigator.clipboard.writeText( migrationKey );
-											recordTracksEvent( 'calypso_dashboard_migration_in_progress_copy_key_click' );
-											createSuccessNotice( __( 'Migration key copied successfully.' ), {
-												type: 'snackbar',
-											} );
-										} }
-									>
-										{ __( 'Copy migration key' ) }
-									</Button>
-								) }
-								<Button
-									variant="link"
-									onClick={ () => {
-										setIsCancellationModalOpen( true );
-										recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancel_click' );
-									} }
-								>
-									{ __( 'Cancel migration' ) }
-								</Button>
-							</>
-						)
+						<>
+							<Button
+								__next40pxDefaultSize
+								href={ getContinueMigrationUrl( site ) }
+								variant="primary"
+							>
+								{ __( 'Start your migration' ) }
+							</Button>
+							<Button
+								variant="link"
+								onClick={ () => {
+									setIsCancellationModalOpen( true );
+									recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancel_click' );
+								} }
+							>
+								{ __( 'Cancel migration' ) }
+							</Button>
+						</>
 					}
 				/>
 				<HostingCards />
