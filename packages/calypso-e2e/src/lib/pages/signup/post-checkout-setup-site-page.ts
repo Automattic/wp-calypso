@@ -6,9 +6,11 @@ import { Locator, Page } from 'playwright';
  * (`/setup/onboarding/setup-your-site-ai`).
  *
  * The screen offers a choice between "Start with a pre-made design" and "Create a
- * custom design". Flow tests reaching it generally navigate on to a specific
- * page of their own, so this object just exposes a check that the screen was
- * rendered — which confirms checkout completed and routed here.
+ * custom design", plus "Build with AI" on sites with an active AI Launchpad in
+ * the `bring_your_ai_tool` variation, which e2e runs never get. Flow tests
+ * reaching it generally navigate on to a specific page of their own, so this
+ * object just exposes a check that the screen was rendered — which confirms
+ * checkout completed and routed here.
  */
 export class PostCheckoutSetupSitePage {
 	private page: Page;

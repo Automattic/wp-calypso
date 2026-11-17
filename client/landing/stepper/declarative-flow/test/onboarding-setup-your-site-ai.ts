@@ -34,7 +34,7 @@ jest.mock( '@wordpress/data', () => {
 const originalLocation = window.location;
 const tick = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-describe( 'Onboarding flow: setup-your-site-ai manual setup destination', () => {
+describe( 'Onboarding flow: setup-your-site-ai pre-made and AI tool destinations', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			value: {
@@ -83,4 +83,48 @@ describe( 'Onboarding flow: setup-your-site-ai manual setup destination', () => 
 			'https://example.wordpress.com/wp-admin/admin.php?page=site-setup-wp-admin'
 		);
 	} );
+
+	it( 'sends the ai-tool choice to the AI tool start of Site Setup', async () => {
+		mockSiteOptions = { wpcom_ai_launchpad_enabled: true };
+		const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+		await runUseStepNavigationSubmit( {
+			currentStep: 'setup-your-site-ai',
+			dependencies: { setupChoice: 'ai-tool', siteSlug: 'example.wordpress.com' },
+		} );
+		await tick();
+
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/admin.php?page=site-setup-wp-admin&start=ai-tool'
+		);
+	} );
+
+	it.each( [
+		[ 'without the AI Launchpad', {}, '/home/example.wordpress.com' ],
+		// Jetpack forwards a completed Site Setup to the Dashboard.
+		[
+			'with a completed AI Launchpad',
+			{ wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_completed: true },
+			'https://example.wordpress.com/wp-admin/admin.php?page=site-setup-wp-admin',
+		],
+		[
+			'with no guidance',
+			{ wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_no_guidance: true },
+			'https://example.wordpress.com/wp-admin/',
+		],
+	] )(
+		'sends the ai-tool choice where blank-site goes on a site %s',
+		async ( _, options, destination ) => {
+			mockSiteOptions = options;
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			await runUseStepNavigationSubmit( {
+				currentStep: 'setup-your-site-ai',
+				dependencies: { setupChoice: 'ai-tool', siteSlug: 'example.wordpress.com' },
+			} );
+			await tick();
+
+			expect( window.location.assign ).toHaveBeenCalledWith( destination );
+		}
+	);
 } );

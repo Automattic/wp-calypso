@@ -80,6 +80,7 @@
 		"onboarding/import-from-substack": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
+		"onboarding/setup-your-site-ai-tool": false,
 		"onboarding/woo-hosting-post-purchase-setup-choice": false,
 		"plans/migration-trial": true,
 		"plans/scheduled-term-change": true,
