@@ -43,7 +43,7 @@ function UseMyDomain( props ) {
 		initialQuery,
 		isSignupStep = false,
 		onConnect,
-		onConnected,
+		onAlreadyConnected,
 		onTransfer,
 		dashboard,
 		selectedSite,
@@ -329,7 +329,7 @@ function UseMyDomain( props ) {
 						? showOwnershipVerificationFlow
 						: onConnect
 				}
-				onConnected={ onConnected }
+				onAlreadyConnected={ onAlreadyConnected }
 				onSkip={ onSkip }
 				onTransfer={ onTransfer ?? showTransferDomainFlow }
 				transferDomainUrl={ transferDomainUrl }
@@ -487,7 +487,7 @@ UseMyDomain.propTypes = {
 	initialQuery: PropTypes.string,
 	isSignupStep: PropTypes.bool,
 	onConnect: PropTypes.func,
-	onConnected: PropTypes.func,
+	onAlreadyConnected: PropTypes.func,
 	onTransfer: PropTypes.func,
 	onNextStep: PropTypes.func,
 	selectedSite: PropTypes.object,

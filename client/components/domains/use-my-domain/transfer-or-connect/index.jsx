@@ -36,7 +36,7 @@ export function DomainTransferOrConnect( {
 	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
-	onConnected,
+	onAlreadyConnected,
 	onSkip,
 	onTransfer,
 	primaryWithPlansOnly,
@@ -63,12 +63,12 @@ export function DomainTransferOrConnect( {
 		connectHandler( { domain, selectedSite }, () => setActionClicked( false ) );
 	};
 
-	const handleConnected = () => {
+	const handleAlreadyConnected = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
 		setActionClicked( true );
 
-		if ( onConnected ) {
-			onConnected( { domain, selectedSite } );
+		if ( onAlreadyConnected ) {
+			onAlreadyConnected( { domain, selectedSite } );
 		} else {
 			page( domainMappingSetup( selectedSite.slug, domain ) );
 		}
@@ -90,7 +90,7 @@ export function DomainTransferOrConnect( {
 		dashboard,
 		isSignupStep,
 		onConnect: handleConnect,
-		onConnected: handleConnected,
+		onAlreadyConnected: handleAlreadyConnected,
 		onSkip,
 		onTransfer: handleTransfer,
 		primaryWithPlansOnly,
@@ -162,7 +162,7 @@ DomainTransferOrConnect.propTypes = {
 	domain: PropTypes.string.isRequired,
 	isSignupStep: PropTypes.bool,
 	onConnect: PropTypes.func,
-	onConnected: PropTypes.func,
+	onAlreadyConnected: PropTypes.func,
 	onTransfer: PropTypes.func,
 	selectedSite: PropTypes.object,
 	transferDomainUrl: PropTypes.string,

@@ -54,7 +54,7 @@ export function getOptionInfo( {
 	dashboard,
 	isSignupStep,
 	onConnect,
-	onConnected,
+	onAlreadyConnected,
 	onSkip,
 	onTransfer,
 	primaryWithPlansOnly,
@@ -265,14 +265,14 @@ export function getOptionInfo( {
 					topText: isConnectedDomainTransferRestricted
 						? __( 'This domain is already connected to your site.' )
 						: __( 'This domain is already connected to your site, but you can still transfer it.' ),
-					onSelect: onConnected,
+					onSelect: onAlreadyConnected,
 				};
 				break;
 			case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
 				connectContent = {
 					...optionInfo.connectNotSupported,
 					topText: __( 'This domain is already connected to your site.' ),
-					onSelect: onConnected,
+					onSelect: onAlreadyConnected,
 				};
 				break;
 			default:

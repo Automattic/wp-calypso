@@ -155,7 +155,7 @@ const UseMyDomain: StepType< {
 		submit?.( { domainCartItem } );
 	};
 
-	const handleOnConnected = ( { domain }: { domain: string } ) => {
+	const handleOnAlreadyConnected = ( { domain }: { domain: string } ) => {
 		clearQueryParams();
 		// The mapping already exists, as it does after ownership verification, so flows send the user on to its setup.
 		submit?.( { ownershipVerificationCompleted: true, domain } );
@@ -194,7 +194,7 @@ const UseMyDomain: StepType< {
 					isSignupStep
 					onTransfer={ handleOnTransfer }
 					onConnect={ handleOnConnect }
-					onConnected={ handleOnConnected }
+					onAlreadyConnected={ handleOnAlreadyConnected }
 					onSkip={ handleOnSkip }
 					useMyDomainMode={ useMyDomainMode }
 					setUseMyDomainMode={ setUseMyDomainMode }

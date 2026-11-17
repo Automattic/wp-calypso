@@ -44,7 +44,7 @@ test( 'submits a domain already connected to the site as an existing mapping', (
 		/>
 	);
 
-	mockUseMyDomainProps.onConnected( { domain: 'example.com' } );
+	mockUseMyDomainProps.onAlreadyConnected( { domain: 'example.com' } );
 
 	expect( submit ).toHaveBeenCalledWith( {
 		ownershipVerificationCompleted: true,

@@ -10,7 +10,7 @@ import { getOptionInfo } from '../get-option-info';
 const DOMAIN = 'example.com';
 const ELIGIBLE_DATE = '2026-12-01T00:00:00+00:00';
 
-const onConnected = jest.fn();
+const onAlreadyConnected = jest.fn();
 
 const getCards = ( status, domainInboundTransferStatusInfo ) => {
 	const [ transfer, connect ] = getOptionInfo( {
@@ -18,7 +18,7 @@ const getCards = ( status, domainInboundTransferStatusInfo ) => {
 		domain: DOMAIN,
 		domainInboundTransferStatusInfo,
 		onConnect: jest.fn(),
-		onConnected,
+		onAlreadyConnected,
 		onTransfer: jest.fn(),
 	} );
 	return { transfer, connect };
@@ -168,7 +168,7 @@ describe( 'getOptionInfo() Connect card for a domain already connected to the si
 	] )( 'leads on to the existing connection when the status is %s', ( status, text ) => {
 		const { connect } = getCards( status );
 
-		expect( connect.onSelect ).toBe( onConnected );
+		expect( connect.onSelect ).toBe( onAlreadyConnected );
 		expect( renderTopText( connect ) ).toHaveTextContent( text );
 	} );
 

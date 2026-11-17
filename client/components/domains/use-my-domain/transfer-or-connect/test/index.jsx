@@ -44,12 +44,15 @@ test( 'opens the connection setup for a domain already connected to the site', a
 	expect( page ).toHaveBeenCalledWith( '/domains/mapping/example.wordpress.com/setup/example.com' );
 } );
 
-test( 'hands a domain already connected to the site to onConnected when given', async () => {
-	const onConnected = jest.fn();
-	renderCards( { onConnected } );
+test( 'hands a domain already connected to the site to onAlreadyConnected when given', async () => {
+	const onAlreadyConnected = jest.fn();
+	renderCards( { onAlreadyConnected } );
 
 	await userEvent.click( connectCard() );
 
-	expect( onConnected ).toHaveBeenCalledWith( { domain: 'example.com', selectedSite: SITE } );
+	expect( onAlreadyConnected ).toHaveBeenCalledWith( {
+		domain: 'example.com',
+		selectedSite: SITE,
+	} );
 	expect( page ).not.toHaveBeenCalled();
 } );
