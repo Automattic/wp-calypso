@@ -24,7 +24,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
-import { getOverridesToMatch, groupIntentKey } from './group-intents';
+import { getOverridesToMatch, groupIntentKey, isBulkEnabled } from './group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
 import { useMcpTracksAudienceProps } from './tracks';
@@ -224,7 +224,7 @@ export default function McpToolsSubpage( {
 		return null;
 	}
 
-	const pageAllEnabled = tools.length > 0 && tools.every( ( [ , tool ] ) => tool.enabled );
+	const pageAllEnabled = isBulkEnabled( tools );
 
 	return (
 		<Main wideLayout className="mcp mcp-tools-subpage">
@@ -262,7 +262,7 @@ export default function McpToolsSubpage( {
 						<VStack spacing={ 3 }>
 							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 								const groupKey = descriptor?.name ?? '__other__';
-								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
+								const allGroupEnabled = isBulkEnabled( groupTools );
 								const isOpen = openGroups.has( groupKey );
 
 								return (

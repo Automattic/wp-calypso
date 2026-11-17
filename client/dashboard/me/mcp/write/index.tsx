@@ -14,7 +14,11 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { Fragment, useDeferredValue, useEffect, useRef, useState } from 'react';
-import { groupIntentKey, getOverridesToMatch } from '../../../../me/mcp/group-intents';
+import {
+	groupIntentKey,
+	getOverridesToMatch,
+	isBulkEnabled,
+} from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
@@ -91,7 +95,7 @@ export default function McpWrite() {
 
 	const groupDescriptors = getGroupDescriptors( userSettings || {} ) as McpGroupDescriptor[];
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
-	const pageAllEnabled = allTools.length > 0 && allTools.every( ( [ , tool ] ) => tool.enabled );
+	const pageAllEnabled = isBulkEnabled( allTools );
 
 	const pageRef = useRef< HTMLDivElement >( null );
 	const toolbarRef = useRef< HTMLDivElement >( null );
@@ -254,7 +258,7 @@ export default function McpWrite() {
 					<VStack spacing={ 3 }>
 						{ groups.map( ( { group: descriptor, label, tools: groupTools }: ToolGroup ) => {
 							const groupKey = descriptor?.name ?? '__other__';
-							const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
+							const allGroupEnabled = isBulkEnabled( groupTools );
 							const isOpen = openGroups.has( groupKey ) || query.length > 0;
 
 							return (
