@@ -1,6 +1,6 @@
 import { PartialDomainData, useSiteDomainsQuery, useSiteQuery } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDomainsTable } from './domains-table/domains-table';
 import { getDomainId } from './get-domain-id';
@@ -108,14 +108,7 @@ export const useDomainRow = (
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
-	const [ placeholderWidth ] = useState( () => {
-		const MIN = 40;
-		const MAX = 100;
-
-		const random = crypto.getRandomValues( new Uint32Array( 1 ) )[ 0 ] / 2 ** 32;
-
-		return Math.floor( random * ( MAX - MIN + 1 ) ) + MIN;
-	} );
+	const placeholderWidth = Math.min( 100, 40 + domain.domain.length * 3 );
 
 	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
 

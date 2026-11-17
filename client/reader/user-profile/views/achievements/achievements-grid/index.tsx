@@ -103,7 +103,11 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 					{ sortedEarned.map( ( a ) => {
 						if ( a.is_redacted ) {
 							return (
-								<SecretAchievementCard key={ a.achievement_id } unlockedDate={ a.date_unlocked } />
+								<SecretAchievementCard
+									key={ a.achievement_id }
+									achievementId={ a.achievement_id }
+									unlockedDate={ a.date_unlocked }
+								/>
 							);
 						}
 						if ( a.slug === 'user_anniversary' ) {

@@ -4,7 +4,7 @@ import type { LockedAchievementEntry } from '@automattic/api-core';
 
 export default function LockedAchievementCard( { entry }: { entry: LockedAchievementEntry } ) {
 	if ( entry.is_redacted ) {
-		return <SecretAchievementCard locked />;
+		return <SecretAchievementCard achievementId={ entry.achievement_id } locked />;
 	}
 
 	return (
