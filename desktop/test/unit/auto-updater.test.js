@@ -125,4 +125,15 @@ describe( 'AutoUpdater', () => {
 		expect( shell.openExternal ).toHaveBeenCalledWith( 'https://example.com/download/' );
 		expect( AppQuit.shouldQuitToBackground() ).toBe( true );
 	} );
+
+	it( 'offers the beta download page when a beta install fails', async () => {
+		dialog.showMessageBox.mockResolvedValueOnce( { response: 0 } );
+		updater = new AutoUpdater( { beta: true } );
+
+		updater.onConfirm();
+		autoUpdater.emit( 'error', new Error( 'Code signature did not pass validation' ) );
+		await flushPromises();
+
+		expect( shell.openExternal ).toHaveBeenCalledWith( 'https://example.com/download/?beta=1' );
+	} );
 } );

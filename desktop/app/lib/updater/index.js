@@ -112,7 +112,7 @@ class Updater extends EventEmitter {
 		const selected = await dialog.showMessageBox( mainWindow, errorDialogOptions );
 
 		if ( downloadUrl && selected.response === 0 ) {
-			shell.openExternal( downloadUrl );
+			shell.openExternal( `${ downloadUrl }${ this.beta ? '?beta=1' : '' }` );
 		}
 	}
 
