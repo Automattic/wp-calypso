@@ -16,6 +16,7 @@ import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/notifications-node/icon-class';
 import useSubscriberAlerts from './use-subscriber-alerts';
 import './style.scss';
+import type { NotificationsPanelView } from './panel-view';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
@@ -53,7 +54,7 @@ export default function Notifications( {
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
 	isInboxShown?: boolean;
-	onOpenInbox?: () => void;
+	onOpenInbox?: ( view: NotificationsPanelView ) => void;
 } ) {
 	const { user } = useAuth();
 	const locale = useLocale();

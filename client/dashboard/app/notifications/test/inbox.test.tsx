@@ -9,9 +9,17 @@ import Notifications from '../index';
 
 // The panel starts a notifications client that polls the API and opens a websocket.
 vi.mock( '@automattic/notifications/src/app', () => ( {
-	default: ( { onOpenFullView }: { onOpenFullView?: () => void } ) => (
+	default: ( {
+		onOpenFullView,
+	}: {
+		onOpenFullView?: ( view: { filterName: string; noteId?: string } ) => void;
+	} ) => (
 		<div role="region" aria-label="Notifications panel">
-			{ onOpenFullView && <button onClick={ onOpenFullView }>Open full view</button> }
+			{ onOpenFullView && (
+				<button onClick={ () => onOpenFullView( { filterName: 'unread', noteId: '42' } ) }>
+					Open full view
+				</button>
+			) }
 		</div>
 	),
 } ) );
@@ -24,7 +32,7 @@ const openPanel = async ( user: ReturnType< typeof userEvent.setup > ) => {
 };
 
 describe( '<Notifications> with the inbox', () => {
-	test( 'offers the full view from the panel', async () => {
+	test( 'opens the full view on what the panel is showing', async () => {
 		const user = userEvent.setup();
 		const onOpenInbox = vi.fn();
 		render( <Notifications onOpenInbox={ onOpenInbox } /> );
@@ -33,6 +41,7 @@ describe( '<Notifications> with the inbox', () => {
 		await user.click( await screen.findByRole( 'button', { name: 'Open full view' } ) );
 
 		expect( onOpenInbox ).toHaveBeenCalledTimes( 1 );
+		expect( onOpenInbox ).toHaveBeenCalledWith( { filterName: 'unread', noteId: '42' } );
 	} );
 
 	test( 'has no full view button without an inbox to open', async () => {
