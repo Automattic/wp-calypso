@@ -3,6 +3,8 @@ import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/s
 import { RestorableProductsProvider } from '@automattic/wpcom-checkout';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { MiniCartLineItems } from '../src/mini-cart-line-items';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -45,9 +47,9 @@ function renderLineItems( showBundleGrouping: boolean, responseCart: ResponseCar
 			<RestorableProductsProvider>
 				<MiniCartLineItems
 					responseCart={ responseCart }
-					removeProductFromCart={ jest.fn() }
-					addProductsToCart={ jest.fn() }
-					removeCoupon={ jest.fn() }
+					removeProductFromCart={ vi.fn() }
+					addProductsToCart={ vi.fn() }
+					removeCoupon={ vi.fn() }
 					showBundleGrouping={ showBundleGrouping }
 				/>
 			</RestorableProductsProvider>
@@ -101,7 +103,8 @@ describe( 'MiniCartLineItems bundle grouping', () => {
 			.find( ( element ) => element.tagName === 'S' );
 		expect( crossedOut ).toBeVisible();
 		expect( screen.getAllByText( /\$29\b/ ) ).toHaveLength( 2 );
-		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 2 );
+		// The undiscounted bundle's total also appears in its renewal disclosure.
+		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 3 );
 
 		// Only the discounted bundle shows a strikethrough.
 		expect( container.querySelectorAll( 's' ) ).toHaveLength( 1 );

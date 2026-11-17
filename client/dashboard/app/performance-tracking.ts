@@ -71,7 +71,7 @@ export function startPerformanceTracking( routeId: string ) {
 export function usePerformanceTrackerStop() {
 	const { siteSlug } = useParams( { strict: false } );
 	const router = useRouter();
-	const routeId = ( router.state.pendingMatches ?? router.state.matches ).at( -1 )?.routeId;
+	const routeId = router.getMatchedRoutes( router.state.location.pathname )[ 0 ].at( -1 )?.id;
 
 	const normalizedRouteId = normalizeRouteId( routeId );
 

@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
@@ -15,7 +17,18 @@ function getIntlLocale( locale: string ) {
 	}
 }
 
+/**
+ * Formats a note's time as relative ("Yesterday", "2 days ago") within a few days, and
+ * as a date before that. The time stands on its own as a label, so in English its first
+ * letter is capitalized, which Intl doesn't do.
+ */
 export function formatNoteTime( timestamp: string, locale: string, now = Date.now() ) {
+	const time = formatTime( timestamp, locale, now );
+
+	return locale.startsWith( 'en' ) ? time.charAt( 0 ).toUpperCase() + time.slice( 1 ) : time;
+}
+
+function formatTime( timestamp: string, locale: string, now: number ) {
 	const date = new Date( timestamp );
 	const elapsed = now - date.getTime();
 
@@ -23,6 +36,10 @@ export function formatNoteTime( timestamp: string, locale: string, now = Date.no
 		return new Intl.DateTimeFormat( getIntlLocale( locale ), { dateStyle: 'medium' } ).format(
 			date
 		);
+	}
+
+	if ( elapsed < MINUTE ) {
+		return __( 'just now' );
 	}
 
 	const relative = new Intl.RelativeTimeFormat( getIntlLocale( locale ), { numeric: 'auto' } );
@@ -40,8 +57,3 @@ export const formatFullTime = ( timestamp: string, locale: string ) =>
 		dateStyle: 'long',
 		timeStyle: 'short',
 	} ).format( new Date( timestamp ) );
-
-export const formatDate = ( timestamp: string, locale: string ) =>
-	new Intl.DateTimeFormat( getIntlLocale( locale ), { dateStyle: 'medium' } ).format(
-		new Date( timestamp )
-	);

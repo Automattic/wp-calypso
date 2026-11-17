@@ -6,11 +6,10 @@ import { isRouteAllowedByCapabilities, marketplaceHostingRoute } from '../../../
 import OverviewCard from '../../../components/overview-card';
 import PlanCard from '../../../sites/overview-plan-card';
 import { calculateEffectiveCapacity } from '../../marketplace/hosting/lib/pressable-capacity';
-import { getPressablePlanInfo } from '../../marketplace/hosting/lib/pressable-plans';
 import PressableUsageStats from '../../marketplace/hosting/pressable-usage-stats';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
-import { useAgencyPressablePlan } from '../../marketplace/use-agency-pressable-plan';
 import { isPressableSite } from '../lib';
+import { usePressableSitesPlan } from '../use-pressable-sites-plan';
 import type { PressableCapacity } from '../../marketplace/hosting/lib/pressable-capacity';
 import type { AgencyProduct, AgencySite, Site } from '@automattic/api-core';
 
@@ -61,8 +60,7 @@ function PressablePlanCard( {
 // Without a Pressable plan bought through A4A there is no plan to show, so the
 // site falls back to the Jetpack card.
 function PressableSitePlanCard( { site }: { site: Site } ) {
-	const { plan, licenses, products } = useAgencyPressablePlan();
-	const planInfo = plan && getPressablePlanInfo( plan );
+	const { plan, planInfo, licenses, products } = usePressableSitesPlan();
 
 	if ( ! plan || ! planInfo ) {
 		return <PlanCard site={ site } />;

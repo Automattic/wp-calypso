@@ -274,6 +274,47 @@ describe( 'useAgentChat regenerate action', () => {
 		expect( latestHookValue?.isProcessing ).toBe( false );
 	} );
 
+	it( 'gives the restored conversation the actions registered while regenerate ran', async () => {
+		let failRegenerate: () => void = () => {};
+		const gate = new Promise< void >( ( resolve ) => {
+			failRegenerate = resolve;
+		} );
+
+		vi.mocked( mockClient.sendMessageStream ).mockImplementation(
+			// eslint-disable-next-line require-yield
+			async function* (): AsyncIterable< TaskUpdate > {
+				await gate;
+				throw new Error( 'network down' );
+			}
+		);
+
+		await act( async () => {
+			root.render( <HookHarness registerActions /> );
+		} );
+		await loadBaseConversation();
+
+		let regenerating: Promise< void > | undefined;
+
+		await act( async () => {
+			regenerating = Promise.resolve( latestHookValue?.getRegenerateHandler()?.() ).catch(
+				() => {}
+			);
+			await Promise.resolve();
+			latestHookValue?.registerMessageActions( {
+				id: 'copy',
+				actions: [ { id: 'copy', label: 'Copy', onClick: () => {} } ],
+			} );
+		} );
+		await act( async () => {
+			failRegenerate();
+			await regenerating;
+		} );
+
+		const reply = latestHookValue?.messages.find( ( message ) => message.id === 'agent-1' );
+
+		expect( reply?.actions?.map( ( action ) => action.id ) ).toContain( 'copy' );
+	} );
+
 	it( 'clears state without an error when regenerate is aborted', async () => {
 		vi.mocked( mockClient.sendMessageStream ).mockImplementation(
 			// eslint-disable-next-line require-yield

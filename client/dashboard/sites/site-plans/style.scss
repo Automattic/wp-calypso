@@ -252,9 +252,11 @@
 }
 
 .site-plans__comparison-check-icon {
+	color: var( --wp-admin-theme-color, #007cba );
 	fill: var( --wp-admin-theme-color, #007cba );
 }
 
 .site-plans__comparison-dash-icon {
+	color: var( --wp-components-color-gray-400, #949494 );
 	fill: var( --wp-components-color-gray-400, #949494 );
 }

@@ -3,26 +3,25 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .domain-transfer {
-	height: 100%;
-	padding: 60px 0 0;
-	margin: 0 auto;
-	max-width: 1024px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 30px;
+	// Only the 100-year variant still renders the V1 step container. `:where()` keeps
+	// these below the specificity of the global `.step-route` padding/margin pair.
+	&:where(.hundred-year-domain-transfer, .step-container) {
+		height: 100%;
+		padding: 60px 0 0;
+		margin: 0 auto;
+		max-width: 1024px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 30px;
+	}
 
 	&.hundred-year-domain-transfer {
-
 		&.step-route.domains.domain-transfer {
 			gap: 0;
 			width: 100%;
-			margin: 0;
+			margin: -60px 0 0;
 			max-width: none;
-
-			@include break-small {
-				margin-top: 0;
-			}
 
 			&.processing {
 				padding: 0;
@@ -45,30 +44,16 @@
 			}
 		}
 
-		.bulk-domain-transfer__cta-container {
-			display: flex;
-			justify-content: center;
-			margin-bottom: 32px;
+		.bulk-domain-transfer__cta {
+			&.components-button.is-primary[disabled] {
+				background: var(--studio-gray-30);
+			}
 
-			.bulk-domain-transfer__cta {
-				height: 48px;
-				width: 240px;
+			&.components-button.is-primary {
+				background: var(--studio-gray-100);
 
-				&.components-button.is-primary[disabled]{
-					background: var(--studio-gray-30);
-				}
-
-				&.components-button.is-primary{
-					background: var(--studio-gray-100);
-
-					&:hover {
-						background: var(--studio-gray-70);
-					}
-				}
-				
-
-				@media (max-width: $break-medium) {
-					width: 100%;
+				&:hover {
+					background: var(--studio-gray-70);
 				}
 			}
 		}
@@ -97,7 +82,7 @@
 		outline: 3px solid transparent;
 	}
 
-	&.domains {
+	&.domains:where(.step-container) {
 		padding: 0;
 		width: 754px;
 
@@ -406,10 +391,12 @@
 				.domains__domain-input-icon {
 					&.is-valid {
 						fill: #008a20;
+						color: #008a20;
 					}
 
 					&.is-not-valid {
 						fill: #d63638;
+						color: #d63638;
 					}
 				}
 			}
@@ -538,46 +525,5 @@
 	button.loading-placeholder {
 		width: 150px;
 		@include placeholder();
-	}
-
-	.domains-transfer-chat-button {
-		display: none;
-		position: absolute;
-		right: 1rem;
-		font-size: inherit;
-
-		&.button {
-			display: none;
-		}
-
-		&.at-bottom {
-			display: inline-block;
-			font-size: 0;
-		}
-
-		@include break-small {
-			transform: translateY(-4px);
-
-			&.button {
-				display: inline-block;
-			}
-
-			&.at-bottom {
-				display: none;
-			}
-		}
-
-		.material-icon {
-			fill: var(--studio-gray-50);
-			width: 1.5rem;
-			height: 1.5rem;
-			margin-right: 0.5rem;
-			vertical-align: middle;
-
-			@include break-small {
-				width: 1rem;
-				height: 1rem;
-			}
-		}
 	}
 }

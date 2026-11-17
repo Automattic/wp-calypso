@@ -452,7 +452,10 @@ export function getRedirectFromPendingPage( {
 				effectiveReceiptId: receiptId,
 				redirectTo,
 				siteSlug,
-				fromSiteSlug,
+				// `from_site_slug` comes from the URL, so only allow redirects to its
+				// host once the receipt has loaded, proving this is the user's own
+				// purchase. Otherwise anyone could craft an open redirect.
+				fromSiteSlug: receipt ? fromSiteSlug : undefined,
 				purchaseId,
 			} )
 		);

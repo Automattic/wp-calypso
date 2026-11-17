@@ -45,6 +45,7 @@ import type {
 	JetpackSearchParams,
 	SiteSettingsParams,
 	SiteSettingsResponse,
+	AdminMenuResponse,
 	Subscriber,
 	SitePostState,
 	AllPurchasesResponse,
@@ -57,7 +58,7 @@ import type {
 /**
  * Specifies the version of WordPress.com REST API.
  */
-type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '1.4' | '2';
+type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '1.4' | '2' | '3';
 type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 
 /**
@@ -1347,6 +1348,67 @@ export class RestAPIClient {
 		}
 
 		return response.updated;
+	}
+
+	/**
+	 * Gets the wp-admin menu of a site, as its sidebar lists it.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @returns {Promise<AdminMenuResponse>} Top-level menu items with their submenus.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getAdminMenu( siteID: number | string ): Promise< AdminMenuResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/admin-menu`, 'wpcom' ),
+			params
+		);
+
+		// Sites on the redesigned sidebar wrap the menu in `{ menu, groups, layoutDelta }`.
+		const menu = Array.isArray( response ) ? response : response?.menu;
+
+		if ( ! Array.isArray( menu ) ) {
+			throw new Error( `Unexpected admin menu response: ${ JSON.stringify( response ) }` );
+		}
+
+		return menu;
+	}
+
+	/**
+	 * Dismisses a JITM (Just In Time Message) on the site for the user.
+	 *
+	 * A dismissed JITM is skipped when the site's JITMs are next computed, so the
+	 * one with the next highest priority is served in its place.
+	 *
+	 * @param {number} siteID ID of the site.
+	 * @param {string} id ID of the JITM, e.g. `wpcom_free_site_mcp_202610`.
+	 * @param {string} featureClass Feature class of the JITM; dismissals apply to the whole class.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async dismissJITM( siteID: number, id: string, featureClass: string ): Promise< void > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { id, feature_class: featureClass } ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '3', `/sites/${ siteID }/jitm`, 'wpcom' ),
+			params
+		);
+
+		if ( response !== true ) {
+			throw new Error( `Failed to dismiss JITM ${ id }: ${ JSON.stringify( response ) }` );
+		}
 	}
 
 	/* Shopping Cart */

@@ -18,6 +18,28 @@ export function isStandardEntryPoint( from?: string | null ): boolean {
 	);
 }
 
+export function isMigrationEntryPoint( from?: string | null ): boolean {
+	return (
+		isStandardEntryPoint( from ) &&
+		( from === 'wpcom_migration' || from?.startsWith( 'wpcom_migration_' ) === true )
+	);
+}
+
+/**
+ * The plugins the connection screens present for this entry point.
+ */
+export function getPluginsForEntryPoint(
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
+) {
+	// Remove the migration plugin unless we came from the migration entry point.
+	if ( ! isMigrationEntryPoint( from ) ) {
+		return pluginSlugs.filter( ( slug ) => slug !== 'wpcom-migration' );
+	}
+
+	return [ ...pluginSlugs ];
+}
+
 /**
  * Whether `from` gets the unified connection flow: the plugin-aware logo,
  * title, subtitle and feature cards on the authorize, signup and login

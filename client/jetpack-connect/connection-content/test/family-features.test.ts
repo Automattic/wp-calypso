@@ -2,6 +2,7 @@ import { getFeatureCardData, getSecondaryFeatureCardData } from '../family-featu
 import type { FeatureCardKey } from '../family-features';
 
 const ALL_KEYS: FeatureCardKey[] = [
+	'migration',
 	'a4a',
 	'woo',
 	'jetpack',

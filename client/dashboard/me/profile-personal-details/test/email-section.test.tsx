@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import EmailSection from '../email-section';
 import type { AccountRecovery, User, UserSettings } from '@automattic/api-core';
@@ -93,6 +94,34 @@ describe( '<EmailSection>', () => {
 		);
 
 		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox', { name: /email address/i } ) ).not.toHaveFocus();
+	} );
+
+	test( 'flags the field when the value returns to a bouncing account email', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+
+		function ResettableEmailSection() {
+			const [ value, setValue ] = useState( 'new@example.com' );
+			return (
+				<>
+					<EmailSection
+						value={ value }
+						onChange={ setValue }
+						userSettings={ userSettings }
+						isEmailVerified
+					/>
+					<button onClick={ () => setValue( ACCOUNT_EMAIL ) }>Reset</button>
+				</>
+			);
+		}
+
+		render( <ResettableEmailSection />, { user: bouncingUser } );
+		expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Reset' } ) );
+
+		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox', { name: /email address/i } ) ).not.toHaveFocus();
 	} );
 
 	test( 'drops the bouncing message once a different address is typed', async () => {
@@ -107,6 +136,9 @@ describe( '<EmailSection>', () => {
 			/>,
 			{ user: bouncingUser }
 		);
+
+		await userEvent.click( screen.getByRole( 'textbox', { name: /email address/i } ) );
+		await userEvent.tab();
 
 		expect( await screen.findByText( 'Email address looks good!' ) ).toBeVisible();
 		expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
@@ -133,7 +165,7 @@ describe( '<EmailSection>', () => {
 describe( '<EmailSection> TLD validation', () => {
 	test( 'reports the field invalid and names the domain when the TLD is not real', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
-		const onValidationChange = jest.fn();
+		const onValidationChange = vi.fn();
 
 		render(
 			<EmailSection
@@ -144,6 +176,9 @@ describe( '<EmailSection> TLD validation', () => {
 				onValidationChange={ onValidationChange }
 			/>
 		);
+
+		await userEvent.click( screen.getByRole( 'textbox', { name: /email address/i } ) );
+		await userEvent.tab();
 
 		expect( await screen.findByText( /gmail\.commmm/ ) ).toBeVisible();
 		expect( screen.getByText( /real domain/i ) ).toBeVisible();
@@ -157,6 +192,7 @@ describe( '<EmailSection> TLD validation', () => {
 		expect( await screen.findByText( CUSTOM_DOMAIN_WARNING ) ).toBeVisible();
 
 		await userEvent.type( screen.getByRole( 'textbox', { name: /email address/i } ), 'mmm' );
+		await userEvent.tab();
 
 		expect( await screen.findByText( /real domain/i ) ).toBeVisible();
 		expect( screen.queryByText( CUSTOM_DOMAIN_WARNING ) ).not.toBeInTheDocument();
@@ -164,7 +200,7 @@ describe( '<EmailSection> TLD validation', () => {
 
 	test( 'reports the field valid for a known TLD', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
-		const onValidationChange = jest.fn();
+		const onValidationChange = vi.fn();
 
 		render(
 			<EmailSection
@@ -175,6 +211,9 @@ describe( '<EmailSection> TLD validation', () => {
 				onValidationChange={ onValidationChange }
 			/>
 		);
+
+		await userEvent.click( screen.getByRole( 'textbox', { name: /email address/i } ) );
+		await userEvent.tab();
 
 		expect( await screen.findByText( /looks good/i ) ).toBeVisible();
 		expect( onValidationChange ).toHaveBeenLastCalledWith( true );

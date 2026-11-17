@@ -1,0 +1,12 @@
+@import '@wordpress/base-styles/variables';
+
+// No sidebar, so the page sets its own surface.
+.agency-fullscreen-page {
+	min-height: 100vh;
+	background: var( --color-surface );
+}
+
+.agency-fullscreen-page__top-bar {
+	padding-block: $grid-unit-20;
+	padding-inline: $grid-unit-30;
+}

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';

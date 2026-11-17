@@ -24,7 +24,10 @@ const LostPasswordForm = ( {
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
-	const blackbox = useBlackboxProtection( { feature: 'blackbox-lost-password' } );
+	const blackbox = useBlackboxProtection( {
+		feature: 'blackbox-lost-password',
+		flow: 'login',
+	} );
 
 	const inputRef = useRef( null );
 	useEffect( () => {
@@ -67,6 +70,9 @@ const LostPasswordForm = ( {
 		formData.set( 'user_login', userLogin );
 
 		const blackboxSessionId = await blackbox.getSessionId();
+		if ( blackboxSessionId === null ) {
+			return null;
+		}
 		if ( blackboxSessionId ) {
 			formData.set( 'blackbox_session_id', blackboxSessionId );
 		}
@@ -121,6 +127,9 @@ const LostPasswordForm = ( {
 			setBusy( true );
 			const result = await lostPasswordRequest();
 			setBusy( false );
+			if ( result === null ) {
+				return;
+			}
 			if ( result.includes( 'Unable to reset password' ) ) {
 				blackbox.reset();
 				return setError(

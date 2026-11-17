@@ -43,6 +43,7 @@ export interface UserPreferences {
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
+	[ key: `hosting-dashboard-dataviews-layout-chosen-${ string }` ]: boolean | undefined; // Whether the user picked a layout, kept even when it matches the default
 	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
@@ -72,8 +73,6 @@ export interface UserPreferences {
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
 	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
-	'notifications-layout-style'?: 'detailed' | 'simplified';
-	'notifications-view-settings-seen'?: boolean;
 	'notifications-subscriber-alerts-enabled'?: boolean;
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;
@@ -81,6 +80,12 @@ export interface UserPreferences {
 	/** The welcome tour section to pick back up at after leaving the tour to explore a page. */
 	'a4a-dashboard-onboarding-tour-section'?: string;
 	'a4a-overview-welcome-band-dismissed'?: boolean;
+	/** The `updated_at` of the opt-in the user was last welcomed to the new dashboard for. */
+	'a4a-dashboard-welcome-notice-seen'?: string;
 	/** Resources marked as read in the A4A Library, shared with the classic A4A dashboard. */
 	'a4a-library-read-resources'?: number[];
+	/** The `completed_at` of the migration whose completed notice the user dismissed for a site. */
+	[ key: `site-migration-completed-notice-dismissed-${ number }` ]: number | undefined;
+	/** The places outside the agency dashboard the agency asked not to be warned about again. */
+	'a4a-crossover-dismissed'?: string[];
 }

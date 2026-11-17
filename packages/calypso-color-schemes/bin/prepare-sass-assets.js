@@ -26,7 +26,7 @@ const REQUIRED_SCHEMES = [
 	'sunrise',
 ];
 
-// wp-admin's default scheme. Core publishes it as an unconditional `:root` value rather than a `body.admin-color-fresh` block, so it is absent from the mixin `parseAdminSchemes` reads. Odyssey inherits it from wp-admin like any other; leaving it out here would make the two environments disagree on the most common scheme of all.
+// What wp-admin shows for its Fresh scheme. Since 13.3, `@wordpress/base-styles` gives Fresh its own `body.admin-color-fresh` block at #007cba, but the wp-admin in production (checked on WordPress 7.1) has no such block and resolves Fresh to its `:root` default instead. Odyssey has to match the page it runs in, so this overrides the parsed value; drop it once wp-admin ships the Fresh block.
 const FRESH_ADMIN_THEME_COLOR = '#3858e9';
 
 function parseAdminSchemes( source ) {
@@ -68,7 +68,7 @@ function parseAdminSchemes( source ) {
 }
 
 function getAdminSchemes( source ) {
-	return { fresh: FRESH_ADMIN_THEME_COLOR, ...parseAdminSchemes( source ) };
+	return { ...parseAdminSchemes( source ), fresh: FRESH_ADMIN_THEME_COLOR };
 }
 
 /**

@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useConstrainedTabbing } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
@@ -18,27 +19,11 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
-import type { FilterName, LayoutStyle } from './types';
+import type { FilterName } from './types';
 
 import './style.scss';
 
 repliesCache.cleanup();
-
-export type NotificationPreferences = {
-	layoutStyle?: LayoutStyle | null;
-	viewSettingsSeen?: boolean | null;
-};
-
-let hasResolvedPreferences = false;
-
-const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
-	// Unset means never chosen, and those people get the simplified rows. Where the picker
-	// is missing the note list renders the detailed ones whatever this says, so there is
-	// nothing here to ask about the flag.
-	store.dispatch( actions.ui.setLayoutStyle( layoutStyle ?? 'simplified' ) );
-
-	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
-};
 
 /**
  * Force a manual refresh of the notes data
@@ -68,7 +53,13 @@ const defaultHandlers = {
 	],
 };
 
-const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) => {
+const NotificationContent = ( {
+	isDismissible,
+	constrainTabbing,
+}: {
+	isDismissible: boolean;
+	constrainTabbing: boolean;
+} ) => {
 	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 	const isDetailOpen = selectedNoteId !== undefined;
@@ -96,9 +87,11 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 	};
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
+	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
 		<HStack
+			ref={ constrainTabbing ? constrainedTabbingRef : undefined }
 			className="wpnc-app"
 			spacing={ 0 }
 			alignment="stretch"
@@ -143,26 +136,22 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
+	constrainTabbing = false,
 	isViewSettingsEnabled = false,
-	isSimplifiedNoteEnabled = false,
-	preferences,
-	onPreferenceChange,
 	actionHandlers = {},
 	wpcom,
 }: {
 	locale?: string;
 	isDismissible?: boolean;
+	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
-	isSimplifiedNoteEnabled?: boolean;
-	preferences?: NotificationPreferences;
-	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
 
 	useEffect( () => {
-		initClient( wpcom, { includeNoteContext: isSimplifiedNoteEnabled && isViewSettingsEnabled } );
+		initClient( wpcom, { includeNoteContext: isViewSettingsEnabled } );
 		setIsReady( true );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
@@ -173,18 +162,7 @@ const NotificationApp = ( {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
 			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [ wpcom, isSimplifiedNoteEnabled, isViewSettingsEnabled ] );
-
-	// Seeded once, whenever the host resolves them. A later value would overwrite
-	// whatever the picker has since saved.
-	useEffect( () => {
-		if ( ! preferences || hasResolvedPreferences ) {
-			return;
-		}
-
-		hasResolvedPreferences = true;
-		applyPreferences( preferences );
-	}, [ preferences ] );
+	}, [ wpcom, isViewSettingsEnabled ] );
 
 	useEffect( () => {
 		getClient()?.setLocale( locale );
@@ -262,10 +240,11 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
-					isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
-					onPreferenceChange={ onPreferenceChange }
 				>
-					<NotificationContent isDismissible={ isDismissible } />
+					<NotificationContent
+						isDismissible={ isDismissible }
+						constrainTabbing={ constrainTabbing }
+					/>
 				</AppProvider>
 			</Provider>
 		</ErrorBoundary>

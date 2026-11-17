@@ -15,9 +15,18 @@ type NoteTypeConfig = {
 
 const getCommentText = ( note: Note ) => note.subject[ 1 ]?.text;
 
+// A mention in a post is about the post itself, so it takes the New Post layout, with
+// the site as its context, rather than a card for the post above the same post.
+const MentionNote = ( { note }: { note: Note } ) =>
+	note.meta?.post && note.meta.site && ! note.meta.ids?.comment ? (
+		<NewPostNote note={ note } />
+	) : (
+		<CommentNote note={ note } />
+	);
+
 const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 	comment: { Layout: CommentNote, getPreview: getCommentText },
-	automattcher: { Layout: CommentNote, getPreview: getCommentText },
+	automattcher: { Layout: MentionNote, getPreview: getCommentText },
 	like: { Layout: ReactionsNote },
 	comment_like: {
 		Layout: ReactionsNote,
@@ -25,6 +34,8 @@ const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 	},
 	reblog: { Layout: ReactionsNote },
 	follow: { Layout: FollowNote },
+	activitypub_followed_note: { Layout: FollowNote },
+	activitypub_interaction_note: { Layout: FollowNote },
 	new_post: { Layout: NewPostNote },
 };
 

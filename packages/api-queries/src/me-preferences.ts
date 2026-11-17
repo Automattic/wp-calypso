@@ -38,17 +38,18 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-referrals-bank-details-success-notice-seen': false,
 	'a4a-marketplace-term-pricing': 'yearly',
 	'a4a-feedback': {},
-	'notifications-layout-style': 'simplified',
-	'notifications-view-settings-seen': false,
 	'notifications-subscriber-alerts-enabled': false,
 	'pressable-limit-notification-dismissed': 0,
 	'a4a-agency-approval-notice-dismissed': false,
 	'a4a-dashboard-onboarding-tour-section': '',
 	'a4a-overview-welcome-band-dismissed': false,
+	'a4a-dashboard-welcome-notice-seen': '',
 	'a4a-library-read-resources': [],
+	'a4a-crossover-dismissed': [],
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
+	'notifications-subscriber-alerts-enabled': 'subalrt',
 	recentSites: 'recent',
 	'hosting-dashboard-color-scheme': 'color',
 	'hosting-dashboard-dark-mode-announcement-dismissed': 'darkann',
@@ -77,12 +78,15 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
 	'a4a-dashboard-onboarding-tour-section': 'a4adtour',
 	'a4a-overview-welcome-band-dismissed': 'a4awelc',
+	'a4a-crossover-dismissed': 'a4across',
+	'a4a-dashboard-welcome-notice-seen': 'a4adwel',
 	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
 	'a4a-library-read-resources': 'a4aread',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-dataviews-view': 'dvview',
+	'hosting-dashboard-dataviews-layout-chosen': 'dvlyt',
 	'hosting-dashboard-visit-count': 'visits',
 	'hosting-dashboard-overview-storage-notice-dismissed': 'storage',
 	'hosting-dashboard-tours': 'tours',
@@ -90,6 +94,7 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
+	'site-migration-completed-notice-dismissed': 'migdone',
 };
 
 function getUserPreferenceMutationStatId(
@@ -117,14 +122,17 @@ export const rawUserPreferencesQuery = () =>
 		queryFn: fetchPreferences,
 	} );
 
-export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) =>
+export const userPreferenceQuery = < P extends keyof UserPreferences >(
+	preferenceName: P,
+	defaultValue: Required< UserPreferences >[ P ] = defaultValues[ preferenceName ]
+) =>
 	queryOptions( {
 		queryKey: rawUserPreferencesQuery().queryKey,
 		queryFn: fetchPreferences,
 		select: ( data ): Required< UserPreferences >[ P ] => {
 			const fetchedValue = data[ preferenceName ];
 			return fetchedValue === undefined
-				? defaultValues[ preferenceName ]
+				? defaultValue
 				: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
 					// as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
 					// the query is used in the component.

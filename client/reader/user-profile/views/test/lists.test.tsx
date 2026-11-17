@@ -43,10 +43,8 @@ function renderWithQueryClient(
 }
 
 describe( 'UserLists', () => {
-	beforeEach( () => nock.disableNetConnect() );
 	afterEach( () => {
 		nock.cleanAll();
-		nock.enableNetConnect();
 	} );
 
 	test( 'should render empty content when user has no lists', async () => {

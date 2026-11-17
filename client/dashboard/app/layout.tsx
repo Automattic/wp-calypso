@@ -8,8 +8,9 @@ import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
-import { useMemo, useEffect } from 'react';
-import { withColorScheme } from 'calypso/lib/color-scheme';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
+import { useMemo, useEffect, useState } from 'react';
+import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
@@ -28,21 +29,13 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
+	const { unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
 			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
 		}
 	}, [ user, router ] );
-
-	useEffect( () => {
-		if ( posthog ) {
-			import( '@automattic/posthog' ).then( ( { init } ) =>
-				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
-			);
-		}
-	}, [ user, posthog ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {
@@ -72,14 +65,10 @@ function AnalyticsProviderWithClient( {
 		}
 
 		const recordUnifiedPageView = () => {
-			if ( router.state.matches.some( ( match ) => match.status === 'redirected' ) ) {
-				return;
-			}
-
 			analyticsClient.recordTracksEvent( 'wpcom_unified_admin_page_view', {
 				source: 'msd',
 				app,
-				path: router.state.location.pathname,
+				path: router.history.location.pathname,
 				route: getNormalizedPath( router.state.matches, router.basepath ),
 			} );
 		};
@@ -102,8 +91,24 @@ function AnalyticsProviderWithClient( {
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }
 
+/**
+ * In development, TanStack Router's `Transitioner` only loads the first router
+ * it mounts with. When a hot update re-runs the router modules, Fast Refresh
+ * recreates the router, and the new one would never load and render nothing.
+ * Keying `RouterProvider` with this remounts it, so the new router loads.
+ */
+function useRouterKey( router: AnyRouter ) {
+	const [ current, setCurrent ] = useState( { router, key: 0 } );
+	if ( current.router !== router ) {
+		setCurrent( { router, key: current.key + 1 } );
+	}
+	return current.key;
+}
+
 function Layout( { config }: { config: AppConfig } ) {
+	useEnableWpCompatOverlaySlot();
 	const router = useMemo( () => getRouter( config ), [ config ] );
+	const routerKey = useRouterKey( router );
 
 	return (
 		<AppProvider config={ config }>
@@ -112,9 +117,12 @@ function Layout( { config }: { config: AppConfig } ) {
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
 							<GlobalChartsProvider theme={ dashboardChartTheme }>
-								{ withColorScheme( <RouterProvider router={ router } context={ { config } } />, {
-									enabled: config.supports.colorScheme,
-								} ) }
+								{ withColorScheme(
+									<RouterProvider key={ routerKey } router={ router } context={ { config } } />,
+									{
+										enabled: config.supports.colorScheme,
+									}
+								) }
 							</GlobalChartsProvider>
 						</AnalyticsProviderWithClient>
 					</I18nProvider>

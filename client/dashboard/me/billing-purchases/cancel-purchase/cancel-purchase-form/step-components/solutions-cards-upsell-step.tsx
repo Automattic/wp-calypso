@@ -34,12 +34,13 @@ import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getPurchaseSettingsUrl, getPurchasesListUrl } from '../../../../../utils/site-url';
+import { getCancelFlowPlanChangeUrl } from '../../get-cancel-flow-plan-change-url';
 import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
-import UpsellStep from './upsell-step';
+import { getFreeMonthOfferText, getFreeMonthOfferTitle } from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
-const RENEW_COUPON = 'DONTGO25';
+const RENEW_COUPON = 'CANRENEW25OFF';
 
 const CARD_ICONS: Record< string, IconType > = {
 	'change-plan': reusableBlock,
@@ -56,6 +57,7 @@ const CARD_ICONS: Record< string, IconType > = {
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
 	'explore-domain-options': search,
+	'free-month-offer': calendar,
 };
 
 function getDecorationForCard( cardId: string ) {
@@ -82,12 +84,20 @@ const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
 function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
+	changePlanCardUrl: string,
+	switchToMonthlyUrl: string,
 	renewNowUrl: string,
 	subscriptionsUrl: string | undefined,
 	siteSlug: string,
 	yearlyPlanUrl?: string
 ): string | undefined {
-	if ( cardId === 'change-plan' || cardId === 'upgrade-for-full-access' ) {
+	if ( cardId === 'change-plan' ) {
+		return changePlanCardUrl;
+	}
+	if ( cardId === 'switch-to-monthly' ) {
+		return switchToMonthlyUrl;
+	}
+	if ( cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
 	}
 	if ( cardId === 'renew-now-pay-less' ) {
@@ -129,6 +139,7 @@ function getCardOnClick(
 		'built-by',
 		'change-plan',
 		'renew-now-pay-less',
+		'switch-to-monthly',
 		'switch-to-yearly',
 		'upgrade-for-full-access',
 		'get-theme-addon',
@@ -180,17 +191,20 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Use our domain guide' );
 		case 'explore-domain-options':
 			return __( 'Explore more domain options' );
+		case 'free-month-offer':
+			return getFreeMonthOfferTitle();
 		default:
 			return '';
 	}
 }
 
-function getCardDescription( cardId: string ): string {
+function getCardDescription( cardId: string, planName: string ): string {
 	switch ( cardId ) {
 		case 'change-plan':
 			return __( 'You can change to a plan with the features and pricing that work for you.' );
 		case 'renew-now-pay-less':
-			return __( 'Get an exclusive 25%% discount automatically applied at checkout.' );
+			// eslint-disable-next-line @wordpress/i18n-translator-comments -- "% d" is a literal percent, not a sprintf placeholder.
+			return __( 'Get an exclusive 25% discount automatically applied at checkout.' );
 		case 'switch-to-monthly':
 			return __( 'Keep things flexible with monthly billing.' );
 		case 'switch-to-yearly':
@@ -215,6 +229,8 @@ function getCardDescription( cardId: string ): string {
 			return __( 'Follow our simple guide to get connected quickly.' );
 		case 'explore-domain-options':
 			return __( "Our search tool finds great alternatives you'll love." );
+		case 'free-month-offer':
+			return getFreeMonthOfferText( planName );
 		default:
 			return '';
 	}
@@ -223,38 +239,37 @@ function getCardDescription( cardId: string ): string {
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
-	cancelBundledDomain?: boolean;
 	closeDialog?: () => void;
-	downgradePlan?: PlanProduct | null;
-	includedDomainPurchase?: Purchase;
 	intent?: string;
-	onClickDowngrade?: ( upsell: string ) => void;
+	onClickFreeMonthOffer?: () => void;
 	onDeclineUpsell?: () => void;
-	onSwitchToMonthly?: () => void;
+	plans?: PlanProduct[];
 	purchase: Purchase;
 	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
-	refundAmount?: number;
+	showFreeMonthOffer?: boolean;
 	yearlyPlanSlug?: string;
 };
 
 export default function SolutionsCardsUpsellStep( {
 	cancellationReason = '',
 	cancellationInProgress,
-	cancelBundledDomain,
 	closeDialog,
-	downgradePlan,
-	includedDomainPurchase,
 	intent,
-	onClickDowngrade,
+	onClickFreeMonthOffer,
 	onDeclineUpsell,
-	onSwitchToMonthly,
+	plans,
 	purchase,
 	recordEvent,
-	refundAmount,
+	showFreeMonthOffer,
 	yearlyPlanSlug,
 }: SolutionsCardsUpsellStepProps ) {
-	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
-	const solutions = getSolutionsForReason( cancellationReason );
+	const reasonSolutions = getSolutionsForReason( cancellationReason );
+	const solutions =
+		showFreeMonthOffer && reasonSolutions
+			? [ { id: 'free-month-offer' }, ...reasonSolutions ]
+			: reasonSolutions;
+	const planName =
+		plans?.find( ( plan ) => purchase.product_slug === plan.product_slug )?.product_name ?? '';
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
@@ -293,26 +308,9 @@ export default function SolutionsCardsUpsellStep( {
 		return null;
 	}
 
-	if ( showDowngradeStep ) {
-		return (
-			<UpsellStep
-				upsell="downgrade-monthly"
-				cancellationReason={ cancellationReason }
-				cancellationInProgress={ cancellationInProgress }
-				cancelBundledDomain={ cancelBundledDomain }
-				currencyCode={ purchase.currency_code }
-				downgradePlan={ downgradePlan }
-				includedDomainPurchase={ includedDomainPurchase }
-				onClickDowngrade={ onClickDowngrade }
-				onDeclineUpsell={ () => setShowDowngradeStep( false ) }
-				plans={ [] }
-				purchase={ purchase }
-				refundAmount={ refundAmount }
-			/>
-		);
-	}
-
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
+	const changePlanCardUrl = getCancelFlowPlanChangeUrl( purchase, 'change-plan' );
+	const switchToMonthlyUrl = getCancelFlowPlanChangeUrl( purchase, 'switch-to-monthly' );
 	const purchaseSettingsUrl = getPurchaseSettingsUrl( purchase );
 	const renewNowUrl = addQueryArgs(
 		wpcomLink(
@@ -338,6 +336,8 @@ export default function SolutionsCardsUpsellStep( {
 
 		switch ( solutionId ) {
 			case 'change-plan':
+				window.location.href = changePlanCardUrl;
+				break;
 			case 'upgrade-for-full-access':
 				window.location.href = changePlanUrl;
 				break;
@@ -345,12 +345,7 @@ export default function SolutionsCardsUpsellStep( {
 				window.location.href = renewNowUrl;
 				break;
 			case 'switch-to-monthly':
-				( document.activeElement as HTMLElement )?.blur();
-				if ( onSwitchToMonthly ) {
-					onSwitchToMonthly();
-				} else {
-					setShowDowngradeStep( true );
-				}
+				window.location.href = switchToMonthlyUrl;
 				break;
 			case 'switch-to-yearly':
 				if ( yearlyPlanUrl ) {
@@ -397,6 +392,9 @@ export default function SolutionsCardsUpsellStep( {
 			case 'explore-domain-options':
 				window.location.href = dashboardLink( `/sites/${ purchase.site_slug }/domains` );
 				break;
+			case 'free-month-offer':
+				onClickFreeMonthOffer?.();
+				break;
 			case 'ask-ai-assistant': {
 				const initialMessage =
 					"User is contacting from pre-cancellation form. Cancellation reason they've given: " +
@@ -440,11 +438,14 @@ export default function SolutionsCardsUpsellStep( {
 						card.id === 'make-site-faster' ||
 						card.id === 'use-migration-tools' ||
 						card.id === 'use-domain-guide' ||
-						card.id === 'explore-domain-options'
+						card.id === 'explore-domain-options' ||
+						card.id === 'free-month-offer'
 					);
 					const href = getCardHref(
 						card.id,
 						changePlanUrl,
+						changePlanCardUrl,
+						switchToMonthlyUrl,
 						renewNowUrl,
 						subscriptionsUrl,
 						purchase.site_slug,
@@ -458,7 +459,7 @@ export default function SolutionsCardsUpsellStep( {
 							key={ card.id }
 							className="cancel-purchase-form__solution-card"
 							title={ title }
-							description={ getCardDescription( card.id ) }
+							description={ getCardDescription( card.id, planName ) }
 							decoration={ getDecorationForCard( card.id ) }
 							href={ href }
 							onClick={ onClick }

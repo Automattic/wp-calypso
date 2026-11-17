@@ -68,6 +68,7 @@ $redesign-table-cell-max-width: 280px;
 			.foldable-card__expand .gridicon {
 				width: 14px;
 				fill: currentColor;
+				color: inherit;
 			}
 		}
 
@@ -285,7 +286,7 @@ $redesign-table-cell-max-width: 280px;
 		font-weight: 600;
 	}
 
-	.is-plan-differentiators-experiment & .has-min-height {
+	.plans-grid-next-features-grid & .has-min-height {
 		min-height: 32px;
 	}
 
@@ -305,6 +306,19 @@ $redesign-table-cell-max-width: 280px;
 		&:is(td, th) {
 			border-left: solid 1px #e0e0e0;
 		}
+
+		// The first column has no left border, so its feature titles get 1px more width than the other
+		// columns'. Take that 1px back, so titles wrap at the same viewport widths in every column
+		// without moving any content.
+		&:first-of-type:is(td, th) .plan-features-2023-grid__item-title-label {
+			margin-inline-end: 1px;
+		}
+	}
+}
+
+.plan-features-2023-grid__table tr:has(.plans-grid-next-action-button__playground-warning) {
+	> .is-top-buttons {
+		vertical-align: bottom;
 	}
 }
 
@@ -470,7 +484,7 @@ $redesign-table-cell-max-width: 280px;
 	padding: 0 20px 12px;
 	text-align: left;
 
-	.is-plan-differentiators-experiment & {
+	.plans-grid-next-features-grid & {
 		padding-inline-end: 12px;
 	}
 
@@ -1075,6 +1089,11 @@ $redesign-table-cell-max-width: 280px;
 			font-size: 12px;
 			line-height: 16px;
 			padding: 0 16px 20px;
+			// The enterprise cell spans this row and the price row. Without a savings badge the two
+			// rows are shorter than the logos, and the browser spreads the excess over both, pushing
+			// the billing copy above the logos. A declared height marks this row as fixed so the
+			// excess goes to the price row instead; the value is below the natural height.
+			height: 16px;
 		}
 	}
 

@@ -18,6 +18,27 @@ export async function configureWordPressMigration(
 	} );
 }
 
+// Our team takes the migration over. They ask the customer for access to their site next.
+export async function handOffWordPressMigration(
+	siteId: number
+): Promise< WordPressMigrationStatus > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/wordpress-migration/assisted-handoff`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+// The customer takes the migration back from our team, or asks our team to stop once they're running it.
+export async function cancelWordPressMigrationHandoff(
+	siteId: number
+): Promise< WordPressMigrationStatus > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/wordpress-migration/assisted-handoff`,
+		apiNamespace: 'wpcom/v2',
+		method: 'DELETE',
+	} );
+}
+
 export async function runWordPressMigration(
 	siteId: number,
 	params: WordPressMigrationRunParams

@@ -7,16 +7,16 @@ export default defineConfig( {
 	build: {
 		lib: {
 			entry: {
-				index: resolve( __dirname, 'src/index.ts' ),
-				'embedded-agent-ui': resolve( __dirname, 'src/embedded-agent-ui.ts' ),
-				'embedded-agent-ui.css': resolve( __dirname, 'src/embedded-agent-ui.css' ),
-				'global.css': resolve( __dirname, 'src/styles/global.css' ),
+				index: resolve( import.meta.dirname, 'src/index.ts' ),
+				'embedded-agent-ui': resolve( import.meta.dirname, 'src/embedded-agent-ui.ts' ),
+				'embedded-agent-ui.css': resolve( import.meta.dirname, 'src/embedded-agent-ui.css' ),
+				'global.css': resolve( import.meta.dirname, 'src/styles/global.css' ),
 			},
 			name: 'AgentticUI',
 			fileName: ( format, entryName ) => `${ entryName }.js`,
 			formats: [ 'es' ],
 		},
-		rollupOptions: {
+		rolldownOptions: {
 			external: [
 				// Externalize all dependencies and peerDependencies
 				'react',

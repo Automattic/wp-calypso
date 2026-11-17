@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
-import { isSelfHostedJetpackConnected, isP2 } from '../utils/site-types';
+import { isSelfHostedJetpackConnected, isP2, isSimple } from '../utils/site-types';
 import type { Site, User } from '@automattic/api-core';
 
 export function canManageSite( site: Site ) {
@@ -28,6 +28,14 @@ export function canManageSite( site: Site ) {
 	}
 
 	return true;
+}
+
+/**
+ * Whether the user belongs to the site. The API leaves `capabilities` out of the site for
+ * anyone who isn't a member.
+ */
+export function isSiteMember( site: Site ) {
+	return !! site.capabilities && ! site.is_deleted;
 }
 
 // Settings -> General
@@ -69,6 +77,15 @@ export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undef
 		return false;
 	}
 	return versionTag === 'beta';
+}
+
+// Settings -> PHP
+
+export function canViewPHPVersion( site: Site ) {
+	return (
+		hasHostingFeature( site, HostingFeatures.PHP ) ||
+		( isSimple( site ) && !! site.capabilities?.manage_options )
+	);
 }
 
 // Settings -> Actions & danger zone

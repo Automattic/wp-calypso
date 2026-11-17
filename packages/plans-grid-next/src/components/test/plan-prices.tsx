@@ -1,16 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn(),
-} ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	Plans: { usePricingMetaForGridPlans: jest.fn() },
-} ) );
-
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -26,9 +16,22 @@ import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { useMemo } from 'react';
+import { vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import PlanPrices from '../features-grid/plan-prices';
 import type { GridPlan } from '../../types';
+
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useSelector: vi.fn(),
+} ) );
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
+	Plans: { usePricingMetaForGridPlans: vi.fn() },
+} ) );
 
 const makePlan = ( planSlug: PlanSlug, pricing: Partial< GridPlan[ 'pricing' ] > = {} ): GridPlan =>
 	( {
@@ -51,7 +54,7 @@ const introOffer = {
 };
 
 const prices = ( plans: GridPlan[] ) => {
-	jest.mocked( usePlansGridContext ).mockReturnValue( {
+	vi.mocked( usePlansGridContext ).mockReturnValue( {
 		gridPlansIndex: Object.fromEntries( plans.map( ( plan ) => [ plan.planSlug, plan ] ) ),
 	} as ReturnType< typeof usePlansGridContext > );
 	return <PlanPrices renderedGridPlans={ plans } />;
@@ -61,7 +64,7 @@ const badgeSelector = '.plans-grid-next-header-price__badge';
 
 describe( 'PlanPrices discount alignment', () => {
 	beforeEach( () => {
-		jest.mocked( Plans.usePricingMetaForGridPlans ).mockReturnValue( {} );
+		vi.mocked( Plans.usePricingMetaForGridPlans ).mockReturnValue( {} );
 	} );
 
 	const Wrapper = ( { children }: { children: React.ReactNode } ) => {

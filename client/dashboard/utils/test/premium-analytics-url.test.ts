@@ -1,4 +1,4 @@
-import { getPremiumAnalyticsPath } from '../premium-analytics-url';
+import { getPremiumAnalyticsPath, PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from '../premium-analytics-url';
 
 /**
  * The route the dashboard would read out of the `p` param.
@@ -9,19 +9,39 @@ function route( path: string ) {
 }
 
 describe( 'getPremiumAnalyticsPath', () => {
-	it( 'carries the dashboard route in the p param, encoded', () => {
+	test( 'carries the dashboard route in the p param, encoded', () => {
 		expect( getPremiumAnalyticsPath( '/post/123' ) ).toBe(
 			'admin.php?page=jetpack-premium-analytics-wp-admin&p=%2Fpost%2F123'
 		);
 	} );
 
-	it( 'serves the route from the page it is given', () => {
+	test( 'serves the route from the page it is given', () => {
 		expect( getPremiumAnalyticsPath( '/', undefined, 'jetpack-analytics' ) ).toBe(
 			'admin.php?page=jetpack-analytics&p=%2F'
 		);
 	} );
 
-	it( 'opens the route on whole days in the site offset', () => {
+	test( 'keeps a query the route brings of its own', () => {
+		expect( route( getPremiumAnalyticsPath( PREMIUM_ANALYTICS_TRAFFIC_ROUTE ) ) ).toBe(
+			'/?section=traffic'
+		);
+	} );
+
+	test( 'adds the range to a query the route brings of its own', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( PREMIUM_ANALYTICS_TRAFFIC_ROUTE, {
+					from: '2026-09-24',
+					to: '2026-09-30',
+					gmtOffset: 0,
+				} )
+			)
+		).toBe(
+			'/?section=traffic&from=2026-09-24T00%3A00%3A00.000%2B00%3A00&to=2026-09-30T23%3A59%3A59.999%2B00%3A00'
+		);
+	} );
+
+	test( 'opens the route on whole days in the site offset', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/reports/posts', {
@@ -35,7 +55,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 		);
 	} );
 
-	it( 'writes a negative offset with its sign', () => {
+	test( 'writes a negative offset with its sign', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', { from: '2026-09-30', to: '2026-09-30', gmtOffset: -8 } )
@@ -43,14 +63,14 @@ describe( 'getPremiumAnalyticsPath', () => {
 		).toBe( '/?from=2026-09-30T00%3A00%3A00.000-08%3A00&to=2026-09-30T23%3A59%3A59.999-08%3A00' );
 	} );
 
-	it( 'leaves off a range that is not whole days, so the route keeps its default', () => {
+	test( 'leaves off a range that is not whole days, so the route keeps its default', () => {
 		expect(
 			route( getPremiumAnalyticsPath( '/', { from: '2026-09', to: '2026-09-30', gmtOffset: 0 } ) )
 		).toBe( '/' );
 	} );
 
 	// gmtOffset is the offset of today, after the change, so it is wrong for the earlier end.
-	it( 'gives each end the offset of its own day across a spring-forward change', () => {
+	test( 'gives each end the offset of its own day across a spring-forward change', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', {
@@ -63,7 +83,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 		).toBe( '/?from=2026-03-03T00%3A00%3A00.000-05%3A00&to=2026-03-09T23%3A59%3A59.999-04%3A00' );
 	} );
 
-	it( 'gives each end the offset of its own time on a fall-back day', () => {
+	test( 'gives each end the offset of its own time on a fall-back day', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', {
@@ -77,7 +97,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 	} );
 
 	// The same clock digits read as UTC land on 5 April, after Sydney's switch to +10:00.
-	it( 'reads the offset at the site clock time, not at the same digits in UTC', () => {
+	test( 'reads the offset at the site clock time, not at the same digits in UTC', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', {
@@ -92,7 +112,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 		);
 	} );
 
-	it( 'starts a day whose midnight is skipped at its first real time, not in the day before', () => {
+	test( 'starts a day whose midnight is skipped at its first real time, not in the day before', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', {
@@ -106,7 +126,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 	} );
 
 	// Nuuk jumps from 23:00 on 28 March straight to midnight.
-	it( 'ends a day whose last hour is skipped before the jump, not in the day after', () => {
+	test( 'ends a day whose last hour is skipped before the jump, not in the day after', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', {
@@ -120,7 +140,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 	} );
 
 	// Havana repeats the first hour of 1 November, and Santiago the last hour of 4 April.
-	it( 'covers both runs of an hour the clock repeats at either end of a day', () => {
+	test( 'covers both runs of an hour the clock repeats at either end of a day', () => {
 		const days = ( day: string, timezone: string ) =>
 			route( getPremiumAnalyticsPath( '/', { from: day, to: day, gmtOffset: 0, timezone } ) );
 
@@ -132,7 +152,7 @@ describe( 'getPremiumAnalyticsPath', () => {
 		);
 	} );
 
-	it( 'falls back to the fixed offset for a timezone the browser does not know', () => {
+	test( 'falls back to the fixed offset for a timezone the browser does not know', () => {
 		expect(
 			route(
 				getPremiumAnalyticsPath( '/', {

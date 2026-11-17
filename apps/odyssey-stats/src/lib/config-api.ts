@@ -23,6 +23,12 @@ export function optionalConfig( key: string ) {
 	return configApi.getConfigData()[ key ];
 }
 
+/**
+ * `@automattic/calypso-config` exports the `env_id` the server printed, which Dashboard code reads
+ * to tell whether it runs in a Dashboard environment. Odyssey Stats never does.
+ */
+export const serverEnvId: string | undefined = undefined;
+
 export default configApi;
 export const isEnabled = configApi.isEnabled.bind( configApi );
 export const enabledFeatures = configApi.enabledFeatures.bind( configApi );

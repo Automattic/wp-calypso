@@ -13,15 +13,20 @@ import './style.scss';
  *
  * It's a thin wrapper around the `Notice` from `@wordpress/ui`.
  *
+ * The notice needs a parent that gives it a width, such as block flow or a stretched
+ * `VStack`. It's a size container (`container-type: inline-size`), so its text doesn't widen
+ * its parent: as an item in a row (`HStack`, `CardHeader`) or in any content-sized wrapper it
+ * collapses to its padding.
+ *
  * ```jsx
- * import { Notice } from '@automattic/components';
+ * import { Notice, NoticeActionButton } from 'calypso/dashboard/components/notice';
  * import { ExternalLink } from '@wordpress/components';
  *
  * function MyComponent() {
  * 	return (
  * 		<Notice
  * 			title="Title"
- * 			actions={ <Button variant="primary">Label</Button> }
+ * 			actions={ <NoticeActionButton variant="solid">Label</NoticeActionButton> }
  * 		>
  * 			<>Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink></>
  * 		</Notice>
@@ -39,17 +44,17 @@ function UnforwardedNotice(
 			className="dashboard-notice"
 			intent={ variant }
 			icon={ icon === undefined && variant === 'warning' ? caution : icon }
-			// Dashboard notices are static page content; dynamic messages use snackbars.
-			spokenMessage={ null }
 		>
 			{ title && <UINotice.Title>{ title }</UINotice.Title> }
 			{ children && <UINotice.Description render={ <div /> }>{ children }</UINotice.Description> }
 			{ actions && <UINotice.Actions>{ actions }</UINotice.Actions> }
-			{ !! onClose && <UINotice.CloseIcon onClick={ onClose } /> }
+			{ !! onClose && <UINotice.CloseIconButton onClick={ onClose } /> }
 		</UINotice.Root>
 	);
 }
 
 export const Notice = forwardRef( UnforwardedNotice );
+
+export * from './actions';
 
 export default Notice;

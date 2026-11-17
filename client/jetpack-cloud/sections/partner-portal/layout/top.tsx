@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import ProgramSunsetBanner from 'calypso/jetpack-cloud/components/program-sunset-banner';
 
 type Props = {
 	children: ReactNode;
@@ -7,7 +8,10 @@ type Props = {
 export default function LayoutTop( { children }: Props ) {
 	return (
 		<div className="partner-portal-layout__top">
-			<div className="partner-portal-layout__top-wrapper">{ children }</div>
+			<div className="partner-portal-layout__top-wrapper">
+				<ProgramSunsetBanner />
+				{ children }
+			</div>
 		</div>
 	);
 }

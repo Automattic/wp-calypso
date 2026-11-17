@@ -6,39 +6,17 @@ import {
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-	Icon,
-	Modal,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Modal } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { globe, group, scheduled } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody, CardDivider } from '../../components/card';
-import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
+import { WhatToExpect } from './what-to-expect';
+import { MigrationCard, StatusIcon } from './wordpress/migration-card';
 import type { Site } from '@automattic/api-core';
-
-const GUIDE_LIST = [
-	{
-		icon: group,
-		text: __( 'We’ll bring over a copy of your site, without affecting the current live version.' ),
-	},
-	{
-		icon: scheduled,
-		text: __( 'You’ll get an update on the progress of your migration within 2–3 business days.' ),
-	},
-	{
-		icon: globe,
-		text: __( 'We’ll help you switch your domain over after the migration’s completed.' ),
-	},
-];
 
 function CancellationModal( {
 	site,
@@ -146,17 +124,15 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 
 	return (
 		<>
-			<VStack spacing={ 8 } expanded={ false }>
-				<PageHeader
-					title={ __( 'We’ve received your migration request' ) }
-					description={ __(
-						'We will review your site to make sure we have everything we need. Here’s what you can expect next:'
-					) }
-				/>
-				{ canCancelMigration && (
-					<ButtonStack justify="flex-start">
+			<MigrationCard
+				title={ __( 'We’ve received your migration request' ) }
+				description={ __( 'We will review your site to make sure we have everything we need.' ) }
+				decoration={ <StatusIcon status="pending" /> }
+				note={
+					canCancelMigration && (
 						<Button
 							variant="link"
+							className="wordpress-migration__note-link"
 							onClick={ () => {
 								setIsCancellationModalOpen( true );
 								recordTracksEvent( 'calypso_dashboard_migration_started_difm_cancel_click' );
@@ -166,22 +142,11 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 								? __( 'Request migration cancellation' )
 								: __( 'Cancel migration' ) }
 						</Button>
-					</ButtonStack>
-				) }
-				<Card size="small">
-					{ GUIDE_LIST.map( ( item, index ) => (
-						<Fragment key={ index }>
-							<CardBody>
-								<HStack justify="flex-start">
-									<Icon icon={ item.icon } />
-									<Text>{ item.text }</Text>
-								</HStack>
-							</CardBody>
-							{ index < GUIDE_LIST.length - 1 && <CardDivider /> }
-						</Fragment>
-					) ) }
-				</Card>
-			</VStack>
+					)
+				}
+			>
+				<WhatToExpect />
+			</MigrationCard>
 			{ isCancellationModalOpen && (
 				<CancellationModal
 					site={ site }

@@ -8,6 +8,7 @@ import {
 } from '@automattic/api-core';
 import {
 	pluginsQuery,
+	sitesQuery,
 	wpOrgPluginQuery,
 	sitePluginQuery,
 	marketplacePluginsQuery,
@@ -15,7 +16,6 @@ import {
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import { useLocale } from '../../app/locale';
 import { isWebUrl } from '../../utils/is-web-url';
 
@@ -59,7 +59,6 @@ const useMarketplaceSearchIcon = ( pluginSlug: string ) => {
 export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: boolean } = {} ) => {
 	const queryClient = useQueryClient();
 	const availableIcon = useMarketplaceSearchIcon( pluginSlug );
-	const { queries } = useAppContext();
 	const locale = useLocale();
 	// No slug to look up yet — the consumer may still be deriving it.
 	const hasPluginSlug = !! pluginSlug;
@@ -68,7 +67,7 @@ export const usePlugin = ( pluginSlug: string, { enabled = true }: { enabled?: b
 		isLoading: isLoadingSitesPlugins,
 		isFetching: isFetchingSitePlugins,
 	} = useQuery( { ...pluginsQuery(), enabled } );
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 	const { data: marketplacePlugins, isLoading: isLoadingMarketplacePlugins } =
 		useQuery( marketplacePluginsQuery() );
 	const isMarketplacePlugin = !! marketplacePlugins?.results[ pluginSlug ];

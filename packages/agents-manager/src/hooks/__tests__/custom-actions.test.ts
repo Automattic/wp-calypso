@@ -2,31 +2,34 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import { takeActionOrigin } from '../../utils/action-origin';
 import { getExternalContextEntries } from '../../utils/external-context';
 import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
-jest.mock( '../../utils/tracks', () => ( {
-	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
-	recordAgentsManagerTracksEvent: jest.fn(),
-	recordBigSkyTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', async () => ( {
+	BIG_SKY_EVENT_PREFIX: (
+		await vi.importActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' )
+	).BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent: vi.fn(),
+	recordBigSkyTracksEvent: vi.fn(),
 } ) );
 
-const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as MockedFunction<
 	typeof recordBigSkyTracksEvent
 >;
-const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as MockedFunction<
 	typeof recordAgentsManagerTracksEvent
 >;
 
-const mockSetIsOpen = jest.fn();
-const mockSetIsDocked = jest.fn();
-const mockSetIsMinimized = jest.fn();
+const mockSetIsOpen = vi.fn();
+const mockSetIsDocked = vi.fn();
+const mockSetIsMinimized = vi.fn();
 let mockContext = {
-	getTabSessionId: jest.fn( () => 'session-123' ),
-	resumeChat: jest.fn(),
+	getTabSessionId: vi.fn( () => 'session-123' ),
+	resumeChat: vi.fn(),
 	agentConfig: { agentId: 'reader-chat' },
 };
 let mockSelectState: {
@@ -43,41 +46,41 @@ let mockSelectState: {
 	floatingPosition: '',
 };
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( () => mockSelectState ),
-	useDispatch: jest.fn( () => ( {
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( () => mockSelectState ),
+	useDispatch: vi.fn( () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
 		setIsMinimized: mockSetIsMinimized,
 	} ) ),
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
-	useNavigate: jest.fn( () => jest.fn() ),
+vi.mock( 'react-router-dom', () => ( {
+	useNavigate: vi.fn( () => vi.fn() ),
 } ) );
 
-jest.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: jest.fn( () => mockContext ),
+vi.mock( '../../contexts', () => ( {
+	useAgentsManagerContext: vi.fn( () => mockContext ),
 } ) );
 
-jest.mock( '../../stores', () => ( {
+vi.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'agents-manager-store',
 } ) );
 
 const baseProps = {
-	dock: jest.fn(),
-	undock: jest.fn(),
-	openSidebar: jest.fn(),
-	closeSidebar: jest.fn(),
+	dock: vi.fn(),
+	undock: vi.fn(),
+	openSidebar: vi.fn(),
+	closeSidebar: vi.fn(),
 	canDock: true,
-	setIsCompactMode: jest.fn(),
-	setIsChatEnabled: jest.fn(),
-	setDesktopMediaQuery: jest.fn(),
+	setIsCompactMode: vi.fn(),
+	setIsChatEnabled: vi.fn(),
+	setDesktopMediaQuery: vi.fn(),
 };
 
 describe( 'useSetupCustomActions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		delete window.__agentsManagerConfig;
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
@@ -85,8 +88,8 @@ describe( 'useSetupCustomActions', () => {
 		takeActionOrigin( 'close' );
 		takeActionOrigin( 'send' );
 		mockContext = {
-			getTabSessionId: jest.fn( () => 'session-123' ),
-			resumeChat: jest.fn(),
+			getTabSessionId: vi.fn( () => 'session-123' ),
+			resumeChat: vi.fn(),
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
@@ -99,7 +102,7 @@ describe( 'useSetupCustomActions', () => {
 	} );
 
 	it( 'dispatches `agents-manager-ready` event after mount', () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'agents-manager-ready', listener );
 
 		renderHook( () => useSetupCustomActions( baseProps ) );
@@ -110,7 +113,7 @@ describe( 'useSetupCustomActions', () => {
 	} );
 
 	it( 'fires `agents-manager-ready` only once across re-renders', () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( 'agents-manager-ready', listener );
 
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
@@ -198,8 +201,8 @@ describe( 'useSetupCustomActions', () => {
 
 	it( 'opens regular agents while preserving shared Agents Manager state persistence', () => {
 		mockContext = {
-			getTabSessionId: jest.fn( () => 'session-123' ),
-			resumeChat: jest.fn(),
+			getTabSessionId: vi.fn( () => 'session-123' ),
+			resumeChat: vi.fn(),
 			agentConfig: { agentId: 'wp-orchestrator' },
 		};
 		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
@@ -422,7 +425,7 @@ describe( 'useRegisterCustomActions', () => {
 	} );
 
 	it( 'publishes actions onto the global after mount', () => {
-		const setChatInput = jest.fn();
+		const setChatInput = vi.fn();
 
 		renderHook( () => useRegisterCustomActions( { setChatInput } ) );
 
@@ -431,7 +434,7 @@ describe( 'useRegisterCustomActions', () => {
 	} );
 
 	it( 'removes its keys from the global on unmount', () => {
-		const setChatInput = jest.fn();
+		const setChatInput = vi.fn();
 		const { unmount } = renderHook( () => useRegisterCustomActions( { setChatInput } ) );
 
 		expect( window.__agentsManagerActions?.setChatInput ).toBe( setChatInput );
@@ -442,7 +445,7 @@ describe( 'useRegisterCustomActions', () => {
 	} );
 
 	it( 'preserves pre-existing keys (merge, not replace)', () => {
-		const setChatInput = jest.fn();
+		const setChatInput = vi.fn();
 		window.__agentsManagerActions = { isCompactMode: true } as AgentsManagerActions;
 
 		renderHook( () => useRegisterCustomActions( { setChatInput } ) );
@@ -452,8 +455,8 @@ describe( 'useRegisterCustomActions', () => {
 	} );
 
 	it( 'leaves a key alone on cleanup if another caller has overwritten it', () => {
-		const firstFn = jest.fn();
-		const secondFn = jest.fn();
+		const firstFn = vi.fn();
+		const secondFn = vi.fn();
 
 		const { unmount } = renderHook( () => useRegisterCustomActions( { setChatInput: firstFn } ) );
 
@@ -467,8 +470,8 @@ describe( 'useRegisterCustomActions', () => {
 	} );
 
 	it( 'updates the global when an action reference changes', () => {
-		const first = jest.fn();
-		const second = jest.fn();
+		const first = vi.fn();
+		const second = vi.fn();
 
 		const { rerender } = renderHook(
 			( { fn }: { fn: ( value: string ) => void } ) =>
@@ -484,8 +487,8 @@ describe( 'useRegisterCustomActions', () => {
 	} );
 
 	it( 'adapts when the set of registered keys changes between renders', () => {
-		const setChatInput = jest.fn();
-		const submitChatMessage = jest.fn( async () => undefined );
+		const setChatInput = vi.fn();
+		const submitChatMessage = vi.fn( async () => undefined );
 
 		const { rerender } = renderHook< void, { actions: Partial< AgentsManagerActions > } >(
 			( { actions } ) => useRegisterCustomActions( actions ),

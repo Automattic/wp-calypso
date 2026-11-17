@@ -8,7 +8,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -17,6 +17,7 @@ import {
 	useContactDetails,
 	vatDetailsInFormStore,
 } from '../lib/checkout-stores';
+import { validateLoggedOutEmailOnBlur } from '../lib/contact-validation';
 import { useValueStore } from '../lib/value-store';
 import {
 	prepareDomainContactDetails,
@@ -77,7 +78,14 @@ export default function ContactDetailsContainer( {
 		} );
 	};
 
-	const { updateDomainContactFields, updateTaxFields, updateEmail } = contactDetailsActions;
+	const {
+		updateDomainContactFields,
+		updateTaxFields,
+		updateEmail,
+		applyDomainContactValidationResults,
+	} = contactDetailsActions;
+	const latestEmailRef = useRef( email?.value ?? '' );
+	latestEmailRef.current = email?.value ?? '';
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
@@ -146,6 +154,13 @@ export default function ContactDetailsContainer( {
 							onChange={ ( value ) => {
 								updateEmail( value );
 							} }
+							onBlur={ async ( value ) => {
+								await validateLoggedOutEmailOnBlur( value, translate, ( errors ) => {
+									if ( latestEmailRef.current === value ) {
+										applyDomainContactValidationResults( errors );
+									}
+								} );
+							} }
 							autoComplete="email"
 							isError={ email?.isTouched && ! isValid( email ) }
 							errorMessage={ email?.errors[ 0 ] || '' }
@@ -175,7 +190,7 @@ export default function ContactDetailsContainer( {
 									components: {
 										tosLink: (
 											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												href={ localizeUrl( 'https://automattic.com/tos/' ) }
 												target="_blank"
 												rel="noreferrer"
 											/>

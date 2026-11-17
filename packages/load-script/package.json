@@ -30,8 +30,8 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@babel/runtime": "^8.0.7",
-		"debug": "^4.4.1"
+		"@babel/runtime": "^8.0.10",
+		"debug": "^4.4.3"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
@@ -39,6 +39,9 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"jsdom": "^20.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

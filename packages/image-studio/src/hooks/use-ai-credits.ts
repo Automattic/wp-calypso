@@ -6,7 +6,9 @@ import {
 	getCreditsPurchaseAction,
 	getCreditsPurchaseLink,
 	getCreditsPurchaseOptions,
+	getCreditsTopUpsNotice,
 	getTopUpCreditsLeft,
+	isCreditsOnTopUps,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
 } from '@automattic/agents-manager';
@@ -170,6 +172,7 @@ export function useAiCredits( {
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
+	const [ isTopUpsNoticeDismissed, setIsTopUpsNoticeDismissed ] = useState( false );
 	const [ isMeterOpen, setIsMeterOpen ] = useState( false );
 	// Only a credits check says who may buy; a turn's balance doesn't.
 	const [ access, setAccess ] = useState< CreditsAccess >();
@@ -381,6 +384,26 @@ export function useAiCredits( {
 		} );
 	} );
 
+	// The notices' button. A click records what brought the balance to its current level.
+	const noticeAction = useMemo(
+		() =>
+			purchaseAction && {
+				...purchaseAction,
+				onClick: () => trackUpgradeClick( shown.current.trigger ),
+			},
+		[ purchaseAction, trackUpgradeClick ]
+	);
+
+	// Only without a level, so a low balance keeps its own notice and no notice event fires.
+	const topUpsNotice = useMemo( () => {
+		if ( ! status || level || isTopUpsNoticeDismissed || ! isCreditsOnTopUps( status ) ) {
+			return undefined;
+		}
+		return getCreditsTopUpsNotice( status.remaining, askToUpgrade, noticeAction, () =>
+			setIsTopUpsNoticeDismissed( true )
+		);
+	}, [ status, level, isTopUpsNoticeDismissed, askToUpgrade, noticeAction ] );
+
 	const beforeSubmit = useEvent( () => {
 		if ( ! status || level !== 'out' ) {
 			return true;
@@ -425,12 +448,9 @@ export function useAiCredits( {
 							message: getCreditsNoticeMessage( level, status.remaining, askToUpgrade ),
 							dismissible: level === 'low',
 							onDismiss: () => setIsLowNoticeDismissed( true ),
-							action: purchaseAction && {
-								...purchaseAction,
-								onClick: () => trackUpgradeClick( shown.current.trigger ),
-							},
+							action: noticeAction,
 						}
-					: undefined,
+					: topUpsNotice,
 		} ),
 		[
 			status,
@@ -439,6 +459,8 @@ export function useAiCredits( {
 			askToUpgrade,
 			purchaseHint,
 			isNoticeHidden,
+			noticeAction,
+			topUpsNotice,
 			isMeterOpen,
 			isLoading,
 			onTaskUpdate,

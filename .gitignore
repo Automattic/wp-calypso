@@ -2,7 +2,6 @@
 .sass-cache
 .babel-cache
 .superpowers/
-.vagrant
 .unison
 .env
 .DS_Store

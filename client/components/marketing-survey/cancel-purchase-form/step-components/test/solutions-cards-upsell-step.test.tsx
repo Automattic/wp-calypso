@@ -137,4 +137,28 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );
+
+	test( 'renew card links to checkout with the renewal discount coupon', () => {
+		const purchaseSettingsUrl = '/purchases/subscriptions/example.wordpress.com/123';
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ purchase }
+				site={ site }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+				purchaseSettingsUrl={ purchaseSettingsUrl }
+			/>
+		);
+
+		const renewCard = screen.getByRole( 'link', { name: /Renew now and pay less/ } );
+		const href = renewCard.getAttribute( 'href' ) ?? '';
+		expect( href ).toMatch( /^\/checkout\// );
+		const url = new URL( href, window.location.origin );
+		expect( url.pathname ).toBe( '/checkout/example.wordpress.com/business-bundle' );
+		expect( url.searchParams.getAll( 'coupon' ) ).toEqual( [ 'CANRENEW25OFF' ] );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe( purchaseSettingsUrl );
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe( purchaseSettingsUrl );
+	} );
 } );

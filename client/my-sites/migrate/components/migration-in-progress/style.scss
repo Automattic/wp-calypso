@@ -1,7 +1,7 @@
-@import "@automattic/typography/styles/fonts";
+@import '@automattic/typography/styles/fonts';
 
 .migration-in-progress {
-	height: calc(100svh - 120px);
+	height: calc( 100svh - 120px );
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -20,7 +20,7 @@
 	font-weight: 400;
 	font-size: 1.75rem;
 	line-height: 2;
-	color: var(--studio-gray-100);
+	color: var( --studio-gray-100 );
 	margin: 0;
 }
 

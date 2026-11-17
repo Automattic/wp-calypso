@@ -5,11 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { useSiteTimezone } from '../../app/hooks/use-site-timezone';
 import { siteRoute } from '../../app/router/sites';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import TimeMismatchNotice, {
 	useShouldShowTimeMismatchNotice,
 } from '../../components/time-mismatch-notice';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
+import illustrationDarkUrl from './scan-callout-illustration-dark.svg';
 import illustrationUrl from './scan-callout-illustration.svg';
 import { ScanContent } from './scan-content';
 
@@ -38,7 +40,7 @@ function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
 			upsellId="site-scan"
 			upsellIcon={ shield }
 			upsellTitle={ __( 'Scan for security threats' ) }
-			upsellImage={ illustrationUrl }
+			upsellImage={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
 			upsellDescription={ __(
 				'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
 			) }

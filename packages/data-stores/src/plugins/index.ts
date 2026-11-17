@@ -8,8 +8,9 @@ const pluginRegistry = registerDataPlugin as typeof registerDataPlugin & {
 	__automatticDataStoresPersistencePluginRegistered?: boolean;
 };
 
-const persistencePlugin: DataPlugin = ( registry, options ) =>
-	plugins.persistence(
+const persistencePlugin: DataPlugin = ( registry, options ) => {
+	const { persistence } = plugins;
+	return persistence(
 		{
 			...registry,
 			registerStore( storeName, storeOptions ) {
@@ -23,8 +24,9 @@ const persistencePlugin: DataPlugin = ( registry, options ) =>
 				return registry.registerStore( storeName, storeOptionsWithoutPersistence );
 			},
 		},
-		options as Parameters< typeof plugins.persistence >[ 1 ]
+		options as Parameters< typeof persistence >[ 1 ]
 	);
+};
 
 export const registerPlugins = () => {
 	if ( isRegistered || pluginRegistry.__automatticDataStoresPersistencePluginRegistered ) {

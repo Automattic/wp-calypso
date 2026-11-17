@@ -3,12 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
-	ProgressBar,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { Progress } from '@wordpress/ui';
+import { useEffect, useId } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
+import { ThemedIllustration } from '../../components/themed-illustration';
+import downloadIllustrationDark from './backup-download-illustration-dark.svg';
 import downloadIllustration from './backup-download-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -58,11 +60,21 @@ function SiteBackupDownloadProgress( {
 		downloadQueryError,
 	] );
 
+	const labelId = useId();
+
 	return (
 		<>
 			<VStack spacing={ 4 } alignment="center">
-				<img src={ downloadIllustration } alt="" width={ 408 } height={ 280 } />
-				<Text size={ 20 }> { __( 'Initializing the download process' ) } </Text>
+				<ThemedIllustration
+					light={ downloadIllustration }
+					dark={ downloadIllustrationDark }
+					alt=""
+					width={ 408 }
+					height={ 280 }
+				/>
+				<Text id={ labelId } size={ 20 }>
+					{ __( 'Initializing the download process' ) }
+				</Text>
 				<Text size={ 13 } variant="muted">
 					{ sprintf(
 						/* translators: %d is the download completion percentage. */
@@ -70,10 +82,15 @@ function SiteBackupDownloadProgress( {
 						downloadProgress?.progress ?? 0
 					) }
 				</Text>
-				<ProgressBar
+				<Progress.Root
 					className="dashboard-backups__progress-bar"
+					aria-labelledby={ labelId }
 					value={ downloadProgress?.progress ?? 0 }
-				/>
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			</VStack>
 			<Spacer marginTop={ 12 }>
 				<Notice variant="info" title={ __( 'Check your email' ) }>

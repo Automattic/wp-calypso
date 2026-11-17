@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import MetricValue from '../metric-value';
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Tooltip: ( { text, children } ) => (
 		<div data-testid="tooltip" data-text={ text }>
 			{ children }
@@ -17,7 +18,7 @@ const describe_ = ( count ) => `${ count } views`;
 describe( 'MetricValue', () => {
 	beforeEach( () => {
 		// Reduced motion makes the count-up land on the value straight away.
-		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		window.matchMedia = vi.fn().mockReturnValue( { matches: true } );
 	} );
 
 	it( 'shows the compact figure, with the full amount in a tooltip and for screen readers', () => {
@@ -26,6 +27,16 @@ describe( 'MetricValue', () => {
 		expect( screen.getByText( '118.5K' ) ).toHaveAttribute( 'aria-hidden', 'true' );
 		expect( screen.getByTestId( 'tooltip' ) ).toHaveAttribute( 'data-text', '118,492 views' );
 		expect( container.querySelector( '.screen-reader-text' ) ).toHaveTextContent( '118,492 views' );
+	} );
+
+	it( 'stands a placeholder in for the figure while it loads', () => {
+		const { container } = render( <MetricValue value={ 617 } describe={ describe_ } isLoading /> );
+
+		expect( container.querySelector( '.stats-widget-skeleton' ) ).toHaveAttribute(
+			'aria-hidden',
+			'true'
+		);
+		expect( screen.queryByText( '617' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'skips the tooltip when the figure is already exact', () => {

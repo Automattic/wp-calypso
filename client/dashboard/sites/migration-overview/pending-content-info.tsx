@@ -5,12 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	Button,
-	Modal,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Modal } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -19,11 +14,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
-import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
 import { wpcomLink } from '../../utils/link';
 import { getSiteMigrationState } from '../../utils/site-status';
 import { HostingCards } from './hosting-cards';
+import { MigrationCard, StatusIcon } from './wordpress/migration-card';
 import type { SiteMigrationStatus } from '../../types';
 import type { Site } from '@automattic/api-core';
 
@@ -137,8 +132,8 @@ export function PendingContentInfo( {
 
 	return (
 		<>
-			<VStack spacing={ 8 }>
-				<PageHeader
+			<VStack spacing={ 6 }>
+				<MigrationCard
 					title={ __( 'Your WordPress site is ready to be migrated' ) }
 					description={
 						type === 'diy'
@@ -152,43 +147,41 @@ export function PendingContentInfo( {
 								)
 							: __( 'Start your migration today and get ready for unmatched WordPress hosting.' )
 					}
-				/>
-				{ continueMigrationUrl && (
-					<HStack justify="flex-start">
-						<ButtonStack justify="flex-start" expanded={ false }>
-							{ type === 'diy' && migrationKey && (
+					decoration={ <StatusIcon status="pending" /> }
+					actions={
+						continueMigrationUrl && (
+							<>
+								<Button __next40pxDefaultSize href={ continueMigrationUrl } variant="primary">
+									{ type === 'diy' ? __( 'Complete migration' ) : __( 'Start your migration' ) }
+								</Button>
+								{ type === 'diy' && migrationKey && (
+									<Button
+										__next40pxDefaultSize
+										variant="secondary"
+										onClick={ () => {
+											navigator.clipboard.writeText( migrationKey );
+											recordTracksEvent( 'calypso_dashboard_migration_in_progress_copy_key_click' );
+											createSuccessNotice( __( 'Migration key copied successfully.' ), {
+												type: 'snackbar',
+											} );
+										} }
+									>
+										{ __( 'Copy migration key' ) }
+									</Button>
+								) }
 								<Button
-									variant="secondary"
+									variant="link"
 									onClick={ () => {
-										navigator.clipboard.writeText( migrationKey );
-										recordTracksEvent( 'calypso_dashboard_migration_in_progress_copy_key_click' );
-										createSuccessNotice( __( 'Migration key copied successfully.' ), {
-											type: 'snackbar',
-										} );
+										setIsCancellationModalOpen( true );
+										recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancel_click' );
 									} }
 								>
-									{ __( 'Copy migration key' ) }
+									{ __( 'Cancel migration' ) }
 								</Button>
-							) }
-							<Button href={ continueMigrationUrl } variant="primary">
-								{ type === 'diy' ? __( 'Complete migration' ) : __( 'Start your migration' ) }
-							</Button>
-						</ButtonStack>
-						<Text as="p" variant="muted">
-							{ createInterpolateElement( __( 'or <button>cancel migration</button>.' ), {
-								button: (
-									<Button
-										variant="link"
-										onClick={ () => {
-											setIsCancellationModalOpen( true );
-											recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancel_click' );
-										} }
-									/>
-								),
-							} ) }
-						</Text>
-					</HStack>
-				) }
+							</>
+						)
+					}
+				/>
 				<HostingCards />
 			</VStack>
 			{ isCancellationModalOpen && (

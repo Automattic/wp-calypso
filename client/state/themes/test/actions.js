@@ -31,6 +31,7 @@ import {
 	THEMES_UPDATE,
 	THEMES_UPDATE_FAILURE,
 	THEMES_UPDATE_SUCCESS,
+	THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
 } from 'calypso/state/themes/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { ADMIN_MENU_REQUEST } from '../../action-types';
@@ -1720,6 +1721,54 @@ describe( 'actions', () => {
 			await expect(
 				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
 			).rejects.toThrow( 'Theme is already purchased' );
+		} );
+
+		describe( 'Atomic transfer dialog', () => {
+			const getState = ( { siteOptions = {}, themeHasAtomicTransferDialog = null } = {} ) => ( {
+				themes: { ...themes, themeHasAtomicTransferDialog },
+				purchases: { data: [] },
+				productsList: { items: {} },
+				sites: {
+					items: {
+						[ siteId ]: { ...sites.items[ siteId ], options: siteOptions },
+					},
+				},
+			} );
+
+			test( 'should show the Atomic transfer dialog instead of going to checkout on a Simple site', async () => {
+				await addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState );
+
+				expect( spy ).toHaveBeenCalledWith( {
+					type: THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
+					themeId: twentyfifteenTheme.id,
+				} );
+			} );
+
+			test( 'should skip the dialog once it has been accepted for the theme', async () => {
+				await expect(
+					addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, () =>
+						getState( {
+							themeHasAtomicTransferDialog: {
+								themeId: twentyfifteenTheme.id,
+								show: false,
+								accepted: true,
+							},
+						} )
+					)
+				).rejects.toThrow( 'No products available' );
+
+				expect( spy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'should skip the dialog on an Atomic site', async () => {
+				await expect(
+					addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, () =>
+						getState( { siteOptions: { is_wpcom_atomic: true } } )
+					)
+				).rejects.toThrow( 'No products available' );
+
+				expect( spy ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 

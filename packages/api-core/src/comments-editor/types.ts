@@ -1,0 +1,19 @@
+/** The strings and routes the Jetpack Comments block editor takes from PHP. */
+export interface CommentsEditorLabels {
+	blockTools: string;
+	addBlock: string;
+	images: boolean;
+	imageError: string;
+}
+
+/** What `/wpcom/v2/comments/editor` returns. */
+export interface CommentsEditorSettings {
+	/** The build directory the editor loads its chunks from. */
+	assetsUrl: string;
+	/** The versioned loader script, which sets `window.JetpackCommentsEditor`. */
+	loaderUrl: string;
+	maxLength: number;
+	/** Core's translations of the editor's strings, keyed as its script translations are. */
+	editorLocale: Record< string, unknown >;
+	editor: CommentsEditorLabels;
+}

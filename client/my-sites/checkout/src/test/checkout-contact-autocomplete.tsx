@@ -127,6 +127,35 @@ describe( 'Checkout contact step', () => {
 		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
 	} );
 
+	it( 'shows the existing-account error on the email field when it loses focus while logged-out', async () => {
+		const user = userEvent.setup();
+		mockCachedContactDetailsEndpoint( { country_code: '', postal_code: '' } );
+		mockUserSignupValidationEndpoint( () => [
+			200,
+			{
+				success: false,
+				messages: { email: { taken: 'An account with this email already exists.' } },
+			},
+		] );
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ { products: [ planWithoutDomain ] } }
+				additionalProps={ { isLoggedOutCart: true } }
+			/>
+		);
+		await screen.findByText( 'Country' );
+
+		await user.type( screen.getByLabelText( 'Email' ), 'test@example.com' );
+		await user.tab();
+
+		expect(
+			await screen.findByText( ( content ) =>
+				content.startsWith( 'That email address is already in use' )
+			)
+		).toBeVisible();
+	} );
+
 	it.each( [
 		{ complete: 'does', valid: 'valid', name: 'plan', email: 'fails', logged: 'in' },
 		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'in' },

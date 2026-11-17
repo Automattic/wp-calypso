@@ -6,6 +6,13 @@ export const canUseStaticSiteImport = (
 	from?: string | null
 ) =>
 	config.isEnabled( 'migration/non-wordpress-source' ) &&
-	Boolean( platform ) &&
+	!! platform &&
 	platform !== 'wordpress' &&
 	Boolean( from );
+
+/**
+ * Whether this run is a customer coming back from checkout without paying, for a new destination.
+ * They get their site imported onto a free preview site, and pay to keep it.
+ */
+export const isCheckoutExitPreview = ( query: URLSearchParams ) =>
+	query.get( 'checkoutExit' ) === '1' && ! query.get( 'siteId' ) && ! query.get( 'siteSlug' );

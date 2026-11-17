@@ -2,30 +2,58 @@
 
 Moves a site built on another platform (Wix, Squarespace, and similar) to WordPress.com.
 
-The `site-migration` flow identifies the source and hands non-WordPress ones here with `from` and
-`platform`. Opening this flow without them sends you to that identify step. Anything this flow can’t
-take is sent back to `site-migration`.
+The `site-migration` flow identifies the source without requiring an account and hands
+non-WordPress sources here with `from` and `platform` when the URL analyzer reports
+`static_site_importable`: a working site that is neither WordPress nor a parked domain. Parked
+and unhealthy sites keep the previous behavior. Landing pages such as `/move` link to
+the plans step directly using the same analyzer field.
+Opening this flow without a supported source sends the user to that identify step.
 
 ## Steps
 
-| Step                         | Screen                                                   |
-| ---------------------------- | -------------------------------------------------------- |
-| `static-site-import-reading` | Checking your site                                       |
-| `static-site-import-results` | We can move your site (or almost all / some parts can’t) |
-| `static-site-import-expert`  | A migration expert will be in touch                      |
-| `plans`                      | Plans                                                    |
-| `create-site` → `processing` | Site creation, then checkout                             |
+| Step                         | Screen                                      |
+| ---------------------------- | ------------------------------------------- |
+| `plans`                      | Public plan selection for a new destination |
+| Unified checkout             | Account, payment, and destination creation  |
+| `static-site-import-reading` | Checking your site as the session starts    |
 
-The results screen picks its version from the session’s `preview_summary` (see
-`components/static-site-import/confidence.ts`): a store, bookings or member logins mean some parts
-can’t be moved; forms, embeds, sections that didn’t convert cleanly, pages that look different or
-pages that weren’t found are things to set up after the move; otherwise the whole site can move.
+There is no preview or address/domain selection step. Unified checkout creates the destination
+site and returns its ID to the authenticated reading step. That step starts the import session
+and immediately opens the site’s Overview in the dashboard
+(`client/dashboard/sites/overview-static-site-import`). Overview records delivery intent and
+tracks capture and import in the background, then offers the finished site with a way to hand the
+move to our migrations team.
 
-After checkout the user lands on the site’s Overview in the dashboard
-(`client/dashboard/sites/overview-static-site-import`), which approves the move, follows it until
-it finishes, and then asks whether the site looks right.
+An existing destination requires authentication. Paid destinations skip plans and checkout;
+free destinations use site checkout to buy a plan before starting the import session.
+The reading step asks for confirmation before importing into an existing destination unless
+this tab just came back from checkout in this flow. When unified checkout created the site
+(`newSite=1`), the step also records the signup and applies the flow’s site settings.
 
-State that has to survive checkout is kept in the URL: `from`, `platform` and `importSessionId`.
+If the session API refuses the source, the reading step says so and stops there. If it finds
+WordPress behind the source (`static_site_import_source_is_wordpress`), for example a site the
+analyzer saw only as a hosting notice, the user continues to `site-migration`'s check step with
+`platform=wordpress` and the destination, skipping identification. Other failures to start fall
+back to the content importer for the destination site.
+
+The source, platform, and entry parameters survive checkout in the return URL. The receipt
+resolves the new destination’s `siteId`. Cancelling site checkout for an existing destination
+returns to plans with the source and destination retained. Once the session starts, Overview
+receives its `importSessionId` so it can resume tracking after a reload.
+
+## Preview site on leaving checkout
+
+Cancelling unified checkout for a new destination returns to the reading step with
+`checkoutExit=1` instead of plans. The step starts the import session, then builds a preview site
+through the `preview` WoW funnel (`/sites/new` with `wow_funnel=preview` and the session’s
+`import_session_id`). WordPress.com delivers the import onto the preview as soon as the build
+lands, so the flow goes straight to the preview’s Overview. If the server won’t build a preview,
+the customer goes back to plans as before.
+
+Overview tracks the import as usual. When it finishes while the customer is watching, Overview
+opens the preview at its share URL, which gets past Coming Soon. Coming back later shows **Your
+preview is ready** with **View site** and **Choose a plan**: buying a plan keeps the site, and an
+unpaid preview is removed when its review window ends.
 
 ## Feature flag
 
@@ -34,17 +62,25 @@ its previous behavior.
 
 ## Testing instructions
 
-1. `yarn start` and go to `/setup/site-migration`.
-2. Enter a Wix or Squarespace URL and confirm you land on
-   `/setup/static-site-import/static-site-import-reading`.
-3. On the results screen, click **Move my site**, pick a plan, and check out. Back from Plans returns
-   to the results screen.
-4. After checkout, confirm you land on the site’s Overview with **We’re moving your site**. Reload
-   it and confirm it resumes.
-5. Once it’s ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.
+1. Run `yarn start` and open `/setup/site-migration` while signed out.
+2. Enter a Wix or Squarespace URL. Confirm analysis finishes and opens
+   `/setup/static-site-import/plans` without signup or login.
+3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
+   has run.
+4. Cancel checkout with an account allowed to create preview sites. Confirm the reading step
+   starts a session, builds a preview site, and opens its Overview with **We’re moving your
+   site**. When it finishes, confirm the browser opens the preview at its `?share=` URL, and that
+   its Overview then shows **Your preview is ready** with **View site** and **Choose a plan**.
+5. In a test account, complete checkout. Confirm the reading step starts a session, then opens
+   the destination’s Overview with **We’re moving your site**. Reload and confirm it resumes.
+6. Once it’s ready, click **Something not right? Let our team fix it** and confirm it files a migration
+   ticket. Above it, the notice shows the session's `review_note`, the sentence wpcom also puts in
+   the ready email: it names a store, events, bookings, memberships, or forms found on the old site,
+   or gives a general note for a site inspection rated moderate or complex.
+7. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
+   Confirm that a direct reading link shows the destination and requires clicking **Import into
+   this site**, even with `newSite=1` or an existing `importSessionId` in the URL.
 
 ## Owned by
 
 @Automattic/dotcom-stepper
-
-## Context

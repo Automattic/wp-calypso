@@ -107,6 +107,7 @@ export function useSiteGeneration( {
 	source,
 	specId,
 	graph,
+	designCandidate,
 	completionDelayMs = 0,
 	steps,
 }: {
@@ -115,6 +116,8 @@ export function useSiteGeneration( {
 	specId?: string | null;
 	/** Graph the build was queued with, so a retry rebuilds on the same one. */
 	graph?: BuildWowGraph;
+	/** The design candidate the build continues, so a retry continues it too. */
+	designCandidate?: string;
 	completionDelayMs?: number;
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
@@ -241,7 +244,7 @@ export function useSiteGeneration( {
 			spec_id: specId,
 		} );
 		try {
-			await requestBuildWowSite( siteIdentifier, specId, graph );
+			await requestBuildWowSite( siteIdentifier, specId, graph, undefined, designCandidate );
 			clearStoredStepTimer( siteIdentifier );
 			setStreamInfo( null );
 			setHostState( undefined );
@@ -261,7 +264,7 @@ export function useSiteGeneration( {
 			isRetryingRef.current = false;
 			setIsRetryingBuild( false );
 		}
-	}, [ siteIdentifier, specId, graph ] );
+	}, [ siteIdentifier, specId, graph, designCandidate ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {

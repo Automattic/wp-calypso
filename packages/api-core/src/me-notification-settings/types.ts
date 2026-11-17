@@ -23,6 +23,7 @@ export interface WpcomNotificationSettings {
 	woopay_marketing: boolean;
 	gravatar_onboarding: boolean;
 	ai_tips: boolean;
+	email_tracking?: boolean;
 }
 
 export interface NotificationSettings {

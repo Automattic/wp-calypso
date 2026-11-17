@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
  * `getFeatureCardData()`.
  */
 export type FeatureCardKey =
+	| 'migration'
 	| 'a4a'
 	| 'woo'
 	| 'jetpack'
@@ -56,6 +57,14 @@ export interface FeatureCardData {
  */
 export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
 	switch ( key ) {
+		case 'migration':
+			return {
+				title: __( 'WordPress.com migration' ),
+				bullets: [
+					__( "Copy the site's posts, pages, and media to WordPress.com." ),
+					__( 'Bring over your themes, plugins, and settings too.' ),
+				],
+			};
 		case 'a4a':
 			return {
 				title: __( 'Automattic for Agencies' ),
@@ -178,6 +187,11 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
  */
 export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardData {
 	switch ( key ) {
+		case 'migration':
+			return {
+				title: __( 'WordPress.com migration' ),
+				bullets: [ __( 'Help migrate this site to WordPress.com.' ) ],
+			};
 		case 'a4a':
 			return {
 				title: __( 'Automattic for Agencies' ),

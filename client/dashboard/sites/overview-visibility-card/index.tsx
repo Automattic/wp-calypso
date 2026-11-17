@@ -1,13 +1,17 @@
 import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { lockOutline, published } from '@wordpress/icons';
+import { lock, published } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
 import { getSiteVisibilityURL } from '../../utils/site-url';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
+import { useSiteIsPreview } from '../site-fields/plan-awaiting-checkout';
 import type { Site } from '@automattic/api-core';
 
 const CARD_PROPS = {
@@ -104,11 +108,42 @@ function VisibilityCardComingSoon( { site }: { site: Site } ) {
 	);
 }
 
+// A preview is shared, not set up: it stays Coming Soon until it is bought, and visitors reach it
+// through the share link the server gives it once it is built.
+function VisibilityCardPreview( { site, shareUrl }: { site: Site; shareUrl?: string } ) {
+	const { createSuccessNotice } = useDispatch( noticesStore );
+
+	return (
+		<OverviewCard
+			{ ...CARD_PROPS }
+			heading={ __( 'Coming soon' ) }
+			description={ __( 'Visitors see a Coming Soon page.' ) }
+			link={ getSiteVisibilityURL( site ) }
+			action={
+				shareUrl && (
+					<Button
+						variant="primary"
+						size="compact"
+						onClick={ () => {
+							navigator.clipboard.writeText( shareUrl );
+							createSuccessNotice( __( 'Copied the share link to clipboard.' ), {
+								type: 'snackbar',
+							} );
+						} }
+					>
+						{ __( 'Copy share link' ) }
+					</Button>
+				)
+			}
+		/>
+	);
+}
+
 function VisibilityCardPrivate( { site }: { site: Site } ) {
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			icon={ lockOutline }
+			icon={ lock }
 			heading={ __( 'Private' ) }
 			description={ __( 'Only invited users can view your site.' ) }
 			link={ getSiteVisibilityURL( site ) }
@@ -134,8 +169,14 @@ function VisibilityCardPublic( { site }: { site: Site } ) {
 }
 
 export default function VisibilityCard( { site }: { site: Site } ) {
+	const { isPreview, shareUrl } = useSiteIsPreview( site );
+
 	if ( site.__inaccessible_jetpack_error ) {
 		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
+	if ( isPreview ) {
+		return <VisibilityCardPreview site={ site } shareUrl={ shareUrl } />;
 	}
 
 	if ( site.launch_status === 'unlaunched' ) {

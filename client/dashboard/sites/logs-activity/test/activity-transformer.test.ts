@@ -2,7 +2,7 @@ import { transformActivityLogEntry } from '../activity-transformer';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
 describe( 'transformActivityLogEntry', () => {
-	it( 'maps API entry to Activity structure', () => {
+	test( 'maps API entry to Activity structure', () => {
 		const entry: ActivityLogEntry = {
 			activity_id: '42',
 			actor: {
@@ -66,7 +66,7 @@ describe( 'transformActivityLogEntry', () => {
 		expect( activity.rewindId ).toBe( 'rewind' );
 	} );
 
-	it( 'provides defaults when optional fields are missing', () => {
+	test( 'provides defaults when optional fields are missing', () => {
 		const entry: ActivityLogEntry = {
 			activity_id: 'not-a-number',
 			actor: {
@@ -98,7 +98,7 @@ describe( 'transformActivityLogEntry', () => {
 		expect( activity.rewindId ).toBeUndefined();
 	} );
 
-	it( 'maps MCP agent fields when present on the actor', () => {
+	test( 'maps MCP agent fields when present on the actor', () => {
 		const entry: ActivityLogEntry = {
 			activity_id: '99',
 			actor: {

@@ -1,22 +1,29 @@
 import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
+	FlexBlock,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
+	privateApis,
 } from '@wordpress/components';
+import { useDebounce, useViewportMatch } from '@wordpress/compose';
+import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, check } from '@wordpress/icons';
-import { useState, useCallback } from 'react';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useMemo, useRef, useState, useCallback } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { reloadWithFlashMessage } from '../../components/flash-message';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
-	validateUsernameDebounced,
+	validateUsernameInternal,
 	isUsernameValid,
 	getUsernameValidationMessage,
 	type ValidationResult,
 } from './update-username/username-validation-utils';
+import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
 
 interface UsernameSectionProps {
 	value: string;
@@ -26,7 +33,52 @@ interface UsernameSectionProps {
 	isEmailVerified: boolean;
 	canChangeUsername: boolean;
 	onCancel: () => void;
+	/** Rendered beside the username input on wide screens, below it on narrow ones. */
+	inlineField: React.ReactNode;
 }
+
+type UsernameFormData = { user_login?: string };
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { ValidatedInputControl } = unlock( privateApis );
+
+const UsernameEdit = ( {
+	data,
+	field,
+	onChange,
+	validity,
+}: DataFormControlProps< UsernameFormData > ) => (
+	<ValidatedInputControl
+		__next40pxDefaultSize
+		id="username-input"
+		autoCapitalize="off"
+		autoComplete="username"
+		autoCorrect="off"
+		prefix={ <InputControlPrefixWrapper>@</InputControlPrefixWrapper> }
+		customValidity={ validity?.custom }
+		label={ field.label }
+		help={ field.description }
+		value={ field.getValue( { item: data } ) ?? '' }
+		onChange={ ( value?: string ) =>
+			onChange( field.setValue( { item: data, value: value ?? '' } ) )
+		}
+		disabled={ field.isDisabled( { item: data, field } ) }
+	/>
+);
+
+const usernameForm: Form = {
+	layout: { type: 'regular' },
+	fields: [ 'user_login' ],
+};
+
+// v1.x endpoints put the error code in `error`.
+function getErrorCode( error: Error ): string {
+	return 'error' in error && typeof error.error === 'string' ? error.error : 'unknown';
+}
+
 /*
 	Username section:
 	- Username input field
@@ -41,71 +93,99 @@ export default function UsernameSection( {
 	isEmailVerified,
 	canChangeUsername,
 	onCancel,
+	inlineField,
 }: UsernameSectionProps ) {
+	const isMobile = useViewportMatch( 'small', '<' );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
+	const validateUsernameDebounced = useDebounce( validateUsernameInternal, 600 );
+	// The username most recently sent for validation, so a slow response for an older value
+	// can't overwrite the result for the current one.
+	const latestValidatedUsername = useRef< string | null >( null );
+	const { recordTracksEvent } = useAnalytics();
 
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...withSnackbar( updateUsernameMutation(), {
 			error: { source: 'server' },
 		} ),
-		onSuccess: () => {
+		onSuccess: ( _data, { action } ) => {
+			recordTracksEvent( 'calypso_dashboard_me_username_change_success', { action } );
 			reloadWithFlashMessage( 'username' );
+		},
+		onError: ( error, { action } ) => {
+			recordTracksEvent( 'calypso_dashboard_me_username_change_error', {
+				action,
+				error: getErrorCode( error ),
+			} );
 		},
 	} );
 
 	const hasUsernameChange = !! ( value && value !== currentUsername );
 
-	// Input field helper text
-	const getHelpText = useCallback( () => {
-		// Static/conditional messages
+	const description = useMemo( () => {
+		if ( hasUsernameChange ) {
+			return undefined;
+		}
+
+		if ( isAutomattician ) {
+			return __( 'Automatticians cannot change their username.' );
+		}
+
+		// New users can't change their username until they've verified their email
+		if ( ! isEmailVerified ) {
+			return __( 'Username can be changed once your email address is verified.' );
+		}
+
+		return __( 'Sign-in and @mentions. Changes can’t be undone.' );
+	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
+
+	const validity = useMemo( (): FormValidity => {
 		if ( ! hasUsernameChange ) {
-			if ( isAutomattician ) {
-				return __( 'Automatticians cannot change their username.' );
-			}
-
-			// New users can't change their username until they've verified their email
-			if ( ! isEmailVerified ) {
-				return __( 'Username can be changed once your email address is verified.' );
-			}
-
-			return null;
+			return undefined;
 		}
 
-		// Success state
 		if ( isUsernameValid( validationResult ) ) {
-			return (
-				<>
-					<Icon icon={ check } size={ 16 } />
-					{ __( 'Nice username!' ) }
-				</>
-			);
+			return { user_login: { custom: { type: 'valid', message: __( 'Nice username!' ) } } };
 		}
 
-		// Error state
 		const errorMessage = getUsernameValidationMessage( validationResult );
 		if ( errorMessage ) {
-			return (
-				<>
-					<Icon icon={ info } size={ 16 } />
-					{ errorMessage }
-				</>
-			);
+			return { user_login: { custom: { type: 'invalid', message: errorMessage } } };
 		}
 
-		return null;
-	}, [ hasUsernameChange, isAutomattician, isEmailVerified, validationResult ] );
+		return undefined;
+	}, [ hasUsernameChange, validationResult ] );
+
+	const fields = useMemo(
+		(): Field< UsernameFormData >[] => [
+			{
+				id: 'user_login',
+				label: __( 'Username' ),
+				type: 'text',
+				description,
+				isDisabled: isAutomattician || ! isEmailVerified || ! canChangeUsername,
+				Edit: UsernameEdit,
+			},
+		],
+		[ description, isAutomattician, isEmailVerified, canChangeUsername ]
+	);
+
+	const clearValidation = useCallback( () => {
+		latestValidatedUsername.current = null;
+		setValidationResult( null );
+	}, [] );
 
 	// Event handlers to update the username
 	const cancelUsernameChange = useCallback( () => {
+		validateUsernameDebounced.cancel();
 		onChange( currentUsername );
-		setValidationResult( null );
+		clearValidation();
 		setUserLoginConfirm( '' );
 		setUsernameAction( 'none' );
 		onCancel();
-	}, [ onChange, currentUsername, onCancel ] );
+	}, [ validateUsernameDebounced, onChange, currentUsername, clearValidation, onCancel ] );
 
 	const handleUsernameChange = ( newValue: string | undefined ) => {
 		onChange( newValue );
@@ -113,10 +193,17 @@ export default function UsernameSection( {
 		const lowerCaseValue = ( newValue || '' ).toLowerCase();
 		if ( lowerCaseValue !== currentUsername ) {
 			setUsernameAction( 'none' );
-			validateUsernameDebounced( lowerCaseValue, currentUsername, setValidationResult );
+			latestValidatedUsername.current = lowerCaseValue;
+			validateUsernameDebounced( lowerCaseValue, currentUsername, ( result ) => {
+				if ( latestValidatedUsername.current !== lowerCaseValue ) {
+					return;
+				}
+				setValidationResult( result );
+			} );
 		} else {
 			// Just clear validation when username matches current, don't fully cancel
-			setValidationResult( null );
+			validateUsernameDebounced.cancel();
+			clearValidation();
 			setUserLoginConfirm( '' );
 			setUsernameAction( 'none' );
 		}
@@ -134,63 +221,82 @@ export default function UsernameSection( {
 		updateUsername( { username: value, action } );
 	};
 
+	const showConfirmUsernameChange = () => {
+		recordTracksEvent( 'calypso_dashboard_me_username_change_attempt', {
+			action: usernameAction || 'none',
+		} );
+		setShowConfirmModal( true );
+	};
+
+	const cancelConfirmUsernameChange = () => {
+		recordTracksEvent( 'calypso_dashboard_me_username_change_cancel', {
+			action: usernameAction || 'none',
+		} );
+		setShowConfirmModal( false );
+	};
+
+	const formData = useMemo( () => ( { user_login: value || '' } ), [ value ] );
+
+	const usernameInput = (
+		<DataForm< UsernameFormData >
+			data={ formData }
+			fields={ fields }
+			form={ usernameForm }
+			validity={ validity }
+			onChange={ ( edits ) => handleUsernameChange( edits.user_login ) }
+		/>
+	);
+
+	const updateForm = (
+		<UsernameUpdateForm
+			hasUsernameChange={ hasUsernameChange }
+			userLoginConfirm={ userLoginConfirm }
+			usernameToConfirm={ value }
+			validationResult={ validationResult }
+			usernameAction={ usernameAction }
+			onConfirmChange={ setUserLoginConfirm }
+			onActionChange={ setUsernameAction }
+			onShowConfirmModal={ showConfirmUsernameChange }
+			onCancel={ cancelUsernameChange }
+			onValidationChange={ setValidationResult }
+		/>
+	);
+
+	const hiddenUntilChanged = hasUsernameChange ? {} : { display: 'none' };
+
+	const updateFormRegion = (
+		<VStack
+			role="region"
+			aria-label={ __( 'Username confirmation' ) }
+			aria-live="polite"
+			style={ hiddenUntilChanged }
+			spacing={ 0 }
+		>
+			{ updateForm }
+		</VStack>
+	);
+
 	return (
 		<>
-			{ /* Not using DataForm to avoid focus issues on the custom Edit property */ }
-			<VStack spacing={ 1 }>
-				{ /* Username input field */ }
-				<InputControl
-					__next40pxDefaultSize
-					id="username-input"
-					label={ __( 'Username' ) }
-					value={ value || '' }
-					onChange={ handleUsernameChange }
-					disabled={ isAutomattician || ! isEmailVerified || ! canChangeUsername }
-					autoCapitalize="off"
-					autoComplete="username"
-					autoCorrect="off"
-					aria-invalid={
-						hasUsernameChange && validationResult && ! isUsernameValid( validationResult )
-							? 'true'
-							: 'false'
-					}
-					className={ ( () => {
-						if ( ! hasUsernameChange ) {
-							return '';
-						}
-						if ( validationResult && ! isUsernameValid( validationResult ) ) {
-							return 'has-error';
-						}
-						if ( isUsernameValid( validationResult ) ) {
-							return 'has-success';
-						}
-						return '';
-					} )() }
-					help={ getHelpText() }
-				/>
-			</VStack>
-
-			{ /* Update username form */ }
-			<VStack
-				role="region"
-				aria-label={ __( 'Username confirmation' ) }
-				aria-live="polite"
-				style={ hasUsernameChange ? {} : { display: 'none' } }
-				spacing={ 0 }
-			>
-				<UsernameUpdateForm
-					hasUsernameChange={ hasUsernameChange }
-					userLoginConfirm={ userLoginConfirm }
-					usernameToConfirm={ value }
-					validationResult={ validationResult }
-					usernameAction={ usernameAction }
-					onConfirmChange={ setUserLoginConfirm }
-					onActionChange={ setUsernameAction }
-					onShowConfirmModal={ () => setShowConfirmModal( true ) }
-					onCancel={ cancelUsernameChange }
-					onValidationChange={ setValidationResult }
-				/>
-			</VStack>
+			{ isMobile ? (
+				<VStack spacing={ 4 }>
+					{ usernameInput }
+					{ updateFormRegion }
+					{ inlineField }
+				</VStack>
+			) : (
+				<VStack spacing={ 4 }>
+					<HStack alignment="top" spacing={ 4 }>
+						<FlexBlock>{ usernameInput }</FlexBlock>
+						<FlexBlock>{ inlineField }</FlexBlock>
+					</HStack>
+					{ /* Kept to the username column so it lines up with the input above */ }
+					<HStack alignment="top" spacing={ 4 } style={ hiddenUntilChanged }>
+						<FlexBlock>{ updateFormRegion }</FlexBlock>
+						<FlexBlock />
+					</HStack>
+				</VStack>
+			) }
 
 			{ /* Confirmation modal to update username */ }
 			<UsernameUpdateConfirmationModal
@@ -198,7 +304,7 @@ export default function UsernameSection( {
 				currentUsername={ currentUsername }
 				newUsername={ value }
 				onConfirm={ submitUpdateUsername }
-				onCancel={ () => setShowConfirmModal( false ) }
+				onCancel={ cancelConfirmUsernameChange }
 				isBusy={ isPending }
 			/>
 		</>

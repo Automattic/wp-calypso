@@ -16,7 +16,7 @@ import { Badge } from '@wordpress/ui';
 import { Text as DashboardText } from '../../../components/text';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
-import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
+import { crossoverLinkProps } from '../../crossover/store';
 import {
 	LICENSE_STATUS_FILTERS,
 	getLicenseDisplayStatus,
@@ -157,7 +157,7 @@ export function SiteCell( {
 	}
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL } onClick={ () => onManageSite( license ) }>
+			<ExternalLink { ...crossoverLinkProps( 'pressable', () => onManageSite( license ) ) }>
 				{ __( 'Manage in Pressable' ) }
 			</ExternalLink>
 		) : (

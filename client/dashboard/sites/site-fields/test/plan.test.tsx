@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DotcomPlans, SubscriptionBillPeriod } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
@@ -400,6 +400,37 @@ describe( '<Plan>', () => {
 		await waitFor( () => expect( unknownFunnel.isDone() ).toBe( true ) );
 		expect( second.container.textContent ).toBe( 'Free' );
 		expect( second.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'a preview site its owner has not bought links to the launch flow', async () => {
+		mockPendingFunnelSite( {
+			pending: false,
+			preview_sites: [ { blog_id: SITE_ID, site_slug: 'test.wordpress.com' } ],
+		} );
+
+		const { container, findByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		const link = await findByRole( 'link' );
+		expect( link ).toHaveTextContent( 'Choose a plan' );
+		expect( link ).toHaveAttribute(
+			'href',
+			wpcomLink( '/setup/launch-site?siteSlug=test.wordpress.com&hide_free_plan=1' )
+		);
+		expect( container.textContent ).toContain( 'Preview' );
+		expect( container.textContent ).not.toContain( 'Free' );
+	} );
+
+	test( 'a preview site of another site leaves this row alone', async () => {
+		const scope = mockPendingFunnelSite( {
+			pending: false,
+			preview_sites: [ { blog_id: SITE_ID + 1, site_slug: 'other.wordpress.com' } ],
+		} );
+
+		const { container, queryByRole } = renderPlan( { site: makeAtomicFreeSite() } );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( container.textContent ).toBe( 'Free' );
+		expect( queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'a lookup that fails leaves the plan name as it was', async () => {

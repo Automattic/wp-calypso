@@ -114,7 +114,6 @@ function GuidedTourStepContents( {
 
 	return (
 		<Popover
-			isVisible={ isActive }
 			placement={ placement }
 			anchor={ anchor }
 			offset={ 10 }

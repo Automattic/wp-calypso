@@ -4,11 +4,13 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 interface DomainGlueRecordsSettingsSummaryProps {
 	domainName: string;
 	isDisabled?: boolean;
+	onClick?: () => void;
 }
 
 export default function DomainGlueRecordsSettingsSummary( {
 	domainName,
 	isDisabled,
+	onClick,
 }: DomainGlueRecordsSettingsSummaryProps ) {
 	return (
 		<RouterLinkSummaryButton
@@ -17,6 +19,7 @@ export default function DomainGlueRecordsSettingsSummary( {
 			badges={ [] }
 			density={ 'medium' as const }
 			disabled={ isDisabled }
+			onClick={ onClick }
 		/>
 	);
 }

@@ -15,6 +15,7 @@ import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
@@ -97,6 +98,7 @@ export default function usePluginsThankYouData(
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+	const isWpcomAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginsInformationList = useMemo( () => {
@@ -146,7 +148,7 @@ export default function usePluginsThankYouData(
 	const isPluginPollActive =
 		!! siteId &&
 		pluginSlugs.length > 0 &&
-		( isJetpackSelfHosted || transferCompleteStates.includes( transferStatus ) ) &&
+		( isJetpackSelfHosted || isWpcomAtomic || transferCompleteStates.includes( transferStatus ) ) &&
 		! ( allPluginsFetched && allPluginsActivated );
 
 	useEffect( () => {

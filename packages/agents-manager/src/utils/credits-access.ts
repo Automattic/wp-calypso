@@ -126,9 +126,9 @@ export function getCreditsCtaType(
 	return 'none';
 }
 
-/** The low or zero-balance notice for site credits, with who to ask when the reader can't buy. */
+/** The low, zero-balance or top-ups notice for site credits, with who to ask when the reader can't buy. */
 export function getCreditsNoticeMessage(
-	level: 'low' | 'out',
+	level: 'low' | 'out' | 'top_ups',
 	remaining: number,
 	askToUpgrade?: CreditsAskToUpgrade
 ): string {
@@ -146,6 +146,27 @@ export function getCreditsNoticeMessage(
 			);
 		}
 		return __( 'You’ve used all your site credits.', __i18n_text_domain__ );
+	}
+	if ( level === 'top_ups' ) {
+		if ( askToUpgrade === 'site-admin' ) {
+			return sprintf(
+				/* translators: %s: top-up credits left in short form, e.g. "25k" */
+				__( 'Now using top-ups: %s left. Ask a site admin to add more.', __i18n_text_domain__ ),
+				formatCreditsShort( remaining )
+			);
+		}
+		if ( askToUpgrade === 'plan-owner' ) {
+			return sprintf(
+				/* translators: %s: top-up credits left in short form, e.g. "25k" */
+				__( 'Now using top-ups: %s left. Ask the plan owner to upgrade.', __i18n_text_domain__ ),
+				formatCreditsShort( remaining )
+			);
+		}
+		return sprintf(
+			/* translators: %s: top-up credits left in short form, e.g. "25k" */
+			__( 'Now using top-ups: %s left.', __i18n_text_domain__ ),
+			formatCreditsShort( remaining )
+		);
 	}
 	if ( askToUpgrade === 'site-admin' ) {
 		return sprintf(
@@ -192,14 +213,31 @@ export function getCreditsOutNotice(
 	};
 }
 
+/** Once plan credits are used up and top-ups pay for replies. The caller keeps whether it was closed. */
+export function getCreditsTopUpsNotice(
+	remaining: number,
+	askToUpgrade: CreditsAskToUpgrade | undefined,
+	action: CreditsPurchaseAction | undefined,
+	onDismiss: () => void
+): NoticeConfig {
+	return {
+		icon: false,
+		message: getCreditsNoticeMessage( 'top_ups', remaining, askToUpgrade ),
+		action,
+		dismissible: true,
+		onDismiss,
+	};
+}
+
 /**
- * The card in the thread for a reply refused for no credits, with the purchase as its link
- * and words that match it. Someone who can't buy gets the title alone; the composer's
- * notice says who may buy.
+ * The card in the thread for a reply refused for no credits, with the purchase as its link and
+ * words that match it. Output in the turn means it isn't called unsent: an edit may have landed.
+ * Someone who can't buy gets the title alone; the composer's notice says who may buy.
  */
 export function getCreditsRefusalNotice(
 	purchaseKind: CreditsPurchaseKind | undefined,
-	action: CreditsPurchaseAction | undefined
+	action: CreditsPurchaseAction | undefined,
+	hasTurnOutput: boolean
 ): NoticeConfig {
 	let message = '';
 	if ( action ) {
@@ -210,7 +248,9 @@ export function getCreditsRefusalNotice(
 	}
 	return {
 		icon: false,
-		title: __( 'Your message wasn’t sent', __i18n_text_domain__ ),
+		title: hasTurnOutput
+			? __( 'Your request didn’t complete', __i18n_text_domain__ )
+			: __( 'Your message wasn’t sent', __i18n_text_domain__ ),
 		message,
 		action,
 		dismissible: false,

@@ -1,10 +1,11 @@
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/reader/controller';
 import { readerPage } from 'calypso/reader/lib/reader-router';
-import { conversations, conversationsA8c, conversationsInbox } from './controller';
+import { conversationsA8c, conversationsInbox } from './controller';
 
 export default function () {
-	readerPage( '/reader/conversations', sidebar, conversations, makeLayout, clientRender );
+	page.redirect( '/reader/conversations', '/reader/conversations/inbox' );
 
 	readerPage( '/reader/conversations/a8c', sidebar, conversationsA8c, makeLayout, clientRender );
 

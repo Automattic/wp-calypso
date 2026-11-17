@@ -4,13 +4,9 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { sanitizeView } from './sanitize-view';
 import type { ComponentProps } from 'react';
 
-type WPDataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
+export type DataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
 
-export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
-	isPlaceholderData?: boolean;
-};
-
-export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataViewsProps< Item > ) {
+export function DataViews< Item >( { view, isLoading, ...props }: DataViewsProps< Item > ) {
 	const previousPage = useRef( view.page );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 
@@ -22,7 +18,7 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 
 	// Scroll to top only after pagination data loads.
 	useEffect( () => {
-		if ( isPlaceholderData ) {
+		if ( isLoading ) {
 			return;
 		}
 		if ( previousPage.current !== view.page ) {
@@ -35,11 +31,13 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 			}
 			previousPage.current = view.page;
 		}
-	}, [ view.page, isPlaceholderData ] );
+	}, [ view.page, isLoading ] );
 
 	const sanitizedView = sanitizeView( view, props.fields );
 
-	return <WPDataViews< Item > view={ sanitizedView } { ...( props as any ) } />;
+	return (
+		<WPDataViews< Item > view={ sanitizedView } isLoading={ isLoading } { ...( props as any ) } />
+	);
 }
 
 DataViews.Layout = WPDataViews.Layout;

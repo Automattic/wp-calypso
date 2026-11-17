@@ -8,7 +8,6 @@ describe( 'Site Spec early provisioning', () => {
 		it( 'hands off to AI Site Builder with a WPCOM Atomic provision target', () => {
 			const destination = buildEarlyProvisionDestination( {
 				specId: 'spec id',
-				phSessionId: 'ph-session',
 				source: 'vega',
 			} );
 			const url = new URL( destination, 'https://wordpress.com' );
@@ -20,7 +19,6 @@ describe( 'Site Spec early provisioning', () => {
 				EARLY_PROVISION_TARGET_WPCOM_ATOMIC
 			);
 			expect( url.searchParams.has( 'early_created_site' ) ).toBe( false );
-			expect( url.searchParams.get( '_ph' ) ).toBe( 'ph-session' );
 			expect( url.searchParams.get( 'source' ) ).toBe( 'vega' );
 			expect( url.searchParams.has( 'create_garden_site' ) ).toBe( false );
 		} );

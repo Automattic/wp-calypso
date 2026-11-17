@@ -1,10 +1,6 @@
 {
 	"extends": [ "@wordpress/stylelint-config/scss" ],
-	"plugins": [
-		"@signal-noise/stylelint-scales",
-		"@wordpress/theme/stylelint-plugins/no-unknown-ds-tokens",
-		"@wordpress/theme/stylelint-plugins/no-setting-wpds-custom-properties"
-	],
+	"plugins": [ "@signal-noise/stylelint-scales" ],
 	"reportInvalidScopeDisables": true,
 	"reportNeedlessDisables": true,
 	"rules": {

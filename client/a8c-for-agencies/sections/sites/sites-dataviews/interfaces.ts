@@ -12,7 +12,6 @@ export interface SitesDataResponse {
 export interface SitesDataViewsProps {
 	className?: string;
 	data: SitesDataResponse | undefined;
-	forceTourExampleSite?: boolean;
 	isLargeScreen: boolean;
 	isLoading: boolean;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;

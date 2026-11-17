@@ -25,6 +25,15 @@ export interface TitanDkimRecord {
 	data: string;
 }
 
+export type TitanDkimStatusValue = 'found' | 'missing' | 'not_applicable' | 'unknown';
+
+export interface TitanDkimStatus {
+	domain: string;
+	status: TitanDkimStatusValue;
+	checked_at: string | null;
+	record: TitanDkimRecord | null;
+}
+
 export interface Mailbox {
 	account_type: EmailProvider;
 	domain: string;

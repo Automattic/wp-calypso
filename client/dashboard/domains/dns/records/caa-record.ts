@@ -10,6 +10,9 @@ import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 import type { DnsRecordType } from '@automattic/api-core';
 
 export const CAARecordConfig: DnsRecordConfig = {
+	description: __(
+		'Lists which certificate authorities may issue SSL certificates for this domain name.'
+	),
 	fields: [
 		{
 			id: 'name',

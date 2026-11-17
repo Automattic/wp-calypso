@@ -1,5 +1,5 @@
+import i18n from '..';
 const path = require( 'path' );
-const i18n = require( '..' );
 
 // generate allowed file
 const sourceFiles = [

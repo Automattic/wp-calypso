@@ -138,7 +138,7 @@ export const FlowRenderer: React.FC< {
 		if ( assertCondition ) {
 			switch ( assertCondition.state ) {
 				case AssertConditionState.CHECKING:
-					return shouldUseStepContainerV2( flow.name ) ? (
+					return shouldUseStepContainerV2( flow.variantSlug ?? flow.name ) ? (
 						<Step.Loading />
 					) : (
 						<Loading className="wpcom-loading__boot" />
@@ -232,7 +232,7 @@ export const FlowRenderer: React.FC< {
 
 	useSignUpStartTracking( { flow } );
 
-	const fallback = shouldUseStepContainerV2( flow.name ) ? (
+	const fallback = shouldUseStepContainerV2( flow.variantSlug ?? flow.name ) ? (
 		<Step.Loading />
 	) : (
 		<Loading className="wpcom-loading__boot" />

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ContactForm from '../contact-form';
 import type { DomainContactDetails } from '@automattic/api-core';
@@ -27,7 +28,7 @@ const frIndividualContact: DomainContactDetails = {
 	extra: { fr: { registrantType: 'individual' } },
 };
 
-const alwaysValid = jest.fn( () =>
+const alwaysValid = vi.fn( () =>
 	Promise.resolve( { success: true } )
 ) as unknown as ContactFormProps[ 'validate' ];
 
@@ -71,7 +72,7 @@ describe( '<ContactForm>', () => {
 				} }
 				domainNames={ [ 'example.com' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -83,7 +84,7 @@ describe( '<ContactForm>', () => {
 
 	test( 'does not submit a stored state for a country whose form hides the state field', async () => {
 		const user = userEvent.setup();
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 
 		render(
 			<ContactForm
@@ -119,7 +120,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -134,6 +135,39 @@ describe( '<ContactForm>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'shows the ICANN verification notice below the email field', async () => {
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ vi.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect( await screen.findByRole( 'textbox', { name: 'Email' } ) ).toBeVisible();
+		expect( screen.getByText( /sends a verification to this email address/ ) ).toBeVisible();
+		const icannLink = screen.getByRole( 'link', { name: 'ICANN' } );
+		expect( icannLink ).toHaveAttribute( 'target', '_blank' );
+		expect( icannLink ).not.toHaveTextContent( '\u2197' );
+	} );
+
+	test( 'shows the section title above the form when given', async () => {
+		render(
+			<ContactForm
+				title="Contact details"
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ vi.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect( await screen.findByRole( 'heading', { name: 'Contact details' } ) ).toBeVisible();
+	} );
+
 	test( 'lifts the .fr individual organization error once the registrant becomes an organization', async () => {
 		const user = userEvent.setup();
 
@@ -142,7 +176,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -188,7 +222,7 @@ describe( '<ContactForm>', () => {
 				initialData={ frIndividualContact }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);
@@ -226,7 +260,7 @@ describe( '<ContactForm>', () => {
 				initialData={ { ...frIndividualContact, address2: 'Second floor' } }
 				domainNames={ [ 'example.fr' ] }
 				isSubmitting={ false }
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				validate={ alwaysValid }
 			/>
 		);

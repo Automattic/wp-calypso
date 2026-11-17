@@ -1,6 +1,6 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -42,7 +42,6 @@ export type SiteLogsDataViewsProps = {
 	setAutoRefresh: Dispatch< SetStateAction< boolean > >;
 	autoRefreshDisabledReason?: string | null;
 	onAutoRefreshRequest?: ( isChecked: boolean ) => boolean;
-	dateRangeVersion?: number;
 	gmtOffset: number;
 	timezoneString: string | undefined;
 	site: Site;
@@ -51,7 +50,6 @@ export type SiteLogsDataViewsProps = {
 function SiteLogsDataViews( {
 	logType,
 	dateRange,
-	dateRangeVersion,
 	gmtOffset,
 	timezoneString,
 	autoRefresh,
@@ -101,15 +99,6 @@ function SiteLogsDataViews( {
 	const startSec = parseUrlSeconds ? parseUrlSeconds.from : computed.startSec;
 	const endSec = parseUrlSeconds ? parseUrlSeconds.to : computed.endSec;
 
-	// Sync URL when time change.
-	useEffect( () => {
-		const url = new URL( window.location.href );
-		// Always set canonical time params (seconds)
-		url.searchParams.set( 'from', String( startSec ) );
-		url.searchParams.set( 'to', String( endSec ) );
-		window.history.replaceState( null, '', url.toString() );
-	}, [ startSec, endSec, logType ] );
-
 	// Derived from the persisted view, not the merged one, so that advancing
 	// `startPosition` doesn't churn the query params.
 	const filter = useMemo(
@@ -140,10 +129,16 @@ function SiteLogsDataViews( {
 		data,
 		isFetching,
 		isFetchingNextPage,
+		isPlaceholderData,
 		fetchNextPage,
 		hasNextPage,
 		isLoading: isLoadingLogQuery,
-	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
+	} = useInfiniteQuery( {
+		...siteLogsInfiniteQuery( site.ID, params ),
+		placeholderData: keepPreviousData,
+	} );
+
+	const pages = isPlaceholderData ? undefined : data?.pages;
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -164,14 +159,6 @@ function SiteLogsDataViews( {
 			dataviewsRef.current.style.maxHeight = `${ maxHeight }px`;
 		} );
 	}, [] );
-
-	useEffect( () => {
-		if ( ! view.page || view.page === 1 ) {
-			return;
-		}
-		updateView( { ...view, page: 1 } );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
-	}, [ dateRangeVersion ] );
 
 	useLayoutEffect( () => {
 		dataviewsRef.current = document.querySelector< HTMLDivElement >( '.dataviews-wrapper' );
@@ -199,15 +186,15 @@ function SiteLogsDataViews( {
 		if ( logType !== LogType.PHP ) {
 			return [];
 		}
-		return buildPhpLogsWithId( ( data?.pages as Array< { logs?: PHPLog[] } > ) ?? [] );
-	}, [ data?.pages, logType ] );
+		return buildPhpLogsWithId( ( pages as Array< { logs?: PHPLog[] } > ) ?? [] );
+	}, [ pages, logType ] );
 
 	const serverLogs = useMemo< ServerLogWithId[] >( () => {
 		if ( logType !== LogType.SERVER ) {
 			return [];
 		}
-		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
-	}, [ data?.pages, logType ] );
+		return buildServerLogsWithId( ( pages as Array< { logs?: ServerLog[] } > ) ?? [] );
+	}, [ pages, logType ] );
 
 	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
 	const perPage = view.perPage ?? DEFAULT_PER_PAGE;
@@ -267,12 +254,6 @@ function SiteLogsDataViews( {
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
 			! fastDeepEqual( nextFilter, filter );
-
-		const url = new URL( window.location.href );
-		// Always keep canonical time range params
-		url.searchParams.set( 'from', String( startSec ) );
-		url.searchParams.set( 'to', String( endSec ) );
-		window.history.replaceState( null, '', url.pathname + url.search );
 
 		if ( datasetChanged ) {
 			// Clear prior infinite data for old sort/filter so we don't show an empty state.
@@ -338,6 +319,9 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
+	const dataViewsView = isPlaceholderData ? { ...view, infiniteScrollEnabled: false } : view;
+	const isLoadingDataViews = isFetchingNextPage || ( isPlaceholderData && isFetching );
+
 	const emptyState = (
 		<DataViewsEmptyStateLayout
 			isBorderless
@@ -375,11 +359,12 @@ function SiteLogsDataViews( {
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ visiblePhpLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingDataViews }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
-					view={ view }
+					view={ dataViewsView }
+					config={ { perPageSizes: [ DEFAULT_PER_PAGE ] } }
 					actions={ actions as Action< PHPLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }
@@ -391,11 +376,12 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ visibleServerLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingDataViews }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
-					view={ view }
+					view={ dataViewsView }
+					config={ { perPageSizes: [ DEFAULT_PER_PAGE ] } }
 					actions={ actions as Action< ServerLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }

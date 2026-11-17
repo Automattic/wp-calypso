@@ -1,7 +1,7 @@
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
-import Notice from '../../../components/notice';
+import { useLocale } from '../../../app/locale';
+import Notice, { NoticeActionLinkButton } from '../../../components/notice';
+import { formatDate } from '../../../utils/datetime';
 import { classifyPurchaseForCopy, getProductNounForCategory } from './classify-purchase-for-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -19,16 +19,14 @@ export function PurchaseCancelledNotice( {
 	intent?: 'auto-renew';
 	onClose: () => void;
 } ) {
+	const locale = useLocale();
+
 	// One-time purchases and edge cases without an expiry can't render a
 	// meaningful "until <date>" message, so skip the notice entirely.
 	if ( ! purchase.expiry_date ) {
 		return null;
 	}
-	const expiryDate = intlFormat(
-		new Date( purchase.expiry_date ),
-		{ dateStyle: 'long' },
-		{ locale: 'en-US' }
-	);
+	const expiryDate = formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } );
 
 	if ( intent === 'auto-renew' ) {
 		const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
@@ -52,9 +50,14 @@ export function PurchaseCancelledNotice( {
 				variant="success"
 				onClose={ onClose }
 				actions={
-					<Button variant="primary" href={ exportUrl } target="_blank" rel="noreferrer">
+					<NoticeActionLinkButton
+						variant="solid"
+						href={ exportUrl }
+						target="_blank"
+						rel="noreferrer"
+					>
 						{ __( 'Download backup' ) }
-					</Button>
+					</NoticeActionLinkButton>
 				}
 			>
 				{ sprintf(

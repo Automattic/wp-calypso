@@ -81,8 +81,11 @@ describe( 'AdsWrapper', () => {
 		renderWrapper( { site: { jetpack: true } } );
 
 		const url = upgradeUrl();
-		expect( url.pathname ).toBe( '/checkout/example.wordpress.com/jetpack_security_daily' );
+		expect( url.pathname ).toBe( '/plans/example.wordpress.com' );
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			'/earn/ads-settings/example.wordpress.com'
+		);
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
 			'/earn/ads-settings/example.wordpress.com'
 		);
 	} );

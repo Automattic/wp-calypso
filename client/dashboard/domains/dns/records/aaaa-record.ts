@@ -5,6 +5,7 @@ import type { DnsRecordFormData, DnsRecordConfig } from './dns-record-configs';
 import type { DnsRecordType } from '@automattic/api-core';
 
 export const AAAARecordConfig: DnsRecordConfig = {
+	description: __( 'The same as an A record, for newer IPv6 addresses (like 2001:db8::1).' ),
 	fields: [
 		{
 			id: 'name',

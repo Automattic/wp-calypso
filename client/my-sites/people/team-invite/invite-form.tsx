@@ -107,7 +107,7 @@ function InviteForm( props: Props ) {
 	/**
 	 * Add debouncedCallback to prevent API requests on evert keystroke
 	 */
-	const [ debouncedTokenValidation ] = useDebouncedCallback( tokenValidation, 2000 );
+	const debouncedTokenValidation = useDebouncedCallback( tokenValidation, 2000 );
 
 	function onTokenChange( val: string, i: number ) {
 		const value = val.trim();

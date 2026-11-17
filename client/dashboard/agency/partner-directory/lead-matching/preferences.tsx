@@ -1,3 +1,4 @@
+import { validateAgencyLeadMatchingContact } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	agencyLeadMatchingMutation,
@@ -8,9 +9,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { NavigationBlocker } from '../../../app/navigation-blocker';
@@ -22,6 +23,7 @@ import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE } from '../paths';
 import { getAvailabilityUpdate } from './availability';
+import ContactOptionsPreview from './contact-options-preview';
 import {
 	REQUIRED_LEAD_MATCHING_FIELDS,
 	getAnsweredRequiredFieldCount,
@@ -81,20 +83,25 @@ function LeadMatchingPreferencesForm( {
 } ) {
 	const agencyId = agency.id;
 	const savedAvailability = agency.profile?.listing_details?.is_available ?? true;
-	const savedFormData = useMemo( () => getLeadMatchingFormData( profile ), [ profile ] );
+	const [ savedProfile, setSavedProfile ] = useState( profile );
+	const savedFormData = useMemo( () => getLeadMatchingFormData( savedProfile ), [ savedProfile ] );
 
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice, createWarningNotice, removeNotice } =
+		useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< LeadMatchingFormData >( savedFormData );
 	const [ isAvailable, setIsAvailable ] = useState( savedAvailability );
+	const [ contactErrors, setContactErrors ] = useState< { phone?: string; bookingLink?: string } >(
+		{}
+	);
 
 	const { mutateAsync: saveAvailability, isPending: isSavingAvailability } = useMutation(
 		agencyProfileMutation( agencyId )
 	);
 	const { mutateAsync: savePreferences, isPending: isSavingPreferences } = useMutation(
-		agencyLeadMatchingMutation( agencyId )
+		agencyLeadMatchingMutation( agencyId, savedProfile )
 	);
 	const isSubmitting = isSavingAvailability || isSavingPreferences;
 
@@ -137,6 +144,10 @@ function LeadMatchingPreferencesForm( {
 			return;
 		}
 
+		const payload = getLeadMatchingProfile( formData, savedProfile, isAvailable );
+		const errors = validateAgencyLeadMatchingContact( payload.contact );
+		setContactErrors( errors );
+
 		// The availability lives on the public profile, so it saves there
 		// first; the preferences are only sent when an answer changed.
 		if ( hasAvailabilityChange ) {
@@ -157,7 +168,40 @@ function LeadMatchingPreferencesForm( {
 
 		if ( hasAnswerChanges ) {
 			try {
-				await savePreferences( getLeadMatchingProfile( formData, profile, isAvailable ) );
+				const response = await savePreferences( payload );
+				const savedData = getLeadMatchingFormData( response.lead_matching_profile );
+				const ignoredFields = response.ignored_contact_fields ?? [];
+				setSavedProfile( response.lead_matching_profile );
+				if ( ignoredFields.includes( 'phone' ) ) {
+					savedData.phoneNumber = formData.phoneNumber;
+					savedData.phoneCountryCode = formData.phoneCountryCode;
+				}
+				if ( ignoredFields.includes( 'booking_link' ) ) {
+					savedData.bookingLink = formData.bookingLink;
+				}
+				setFormData( savedData );
+				if ( ignoredFields.length ) {
+					createWarningNotice(
+						sprintf(
+							/* translators: %s is a list of contact fields that were not saved. */
+							__(
+								'Preferences saved, but these contact fields were not saved: %s. Check them and try again.'
+							),
+							ignoredFields
+								.map( ( field ) =>
+									field === 'phone' ? __( 'Phone number' ) : __( 'Booking link' )
+								)
+								.join( ', ' )
+						),
+						{ id: 'lead-matching-contact-warning', type: 'snackbar' }
+					);
+					recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_partial', {
+						agency_id: agencyId,
+						source: 'manual',
+						ignored_contact_fields: ignoredFields,
+					} );
+					return;
+				}
 			} catch {
 				trackResult( 'error' );
 				createErrorNotice( __( 'Failed to save lead matching preferences.' ), {
@@ -167,6 +211,7 @@ function LeadMatchingPreferencesForm( {
 			}
 		}
 
+		removeNotice( 'lead-matching-contact-warning' );
 		trackResult( 'success' );
 		createSuccessNotice( __( 'Lead matching preferences saved.' ), {
 			type: 'snackbar',
@@ -180,28 +225,39 @@ function LeadMatchingPreferencesForm( {
 				shouldBlock={ ( hasAvailabilityChange || hasAnswerChanges ) && ! isSubmitting }
 			/>
 			{ LEAD_MATCHING_SECTIONS.map( ( section ) => (
-				<Card key={ section }>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader level={ 3 } title={ getLeadMatchingSectionTitle( section ) } />
-							{ section === 'availability' ? (
-								<ToggleControl
-									__nextHasNoMarginBottom
-									label={ __( 'Accepting new clients' ) }
-									help={ __( 'Agencies not accepting new clients are not eligible for leads.' ) }
-									checked={ isAvailable }
-									onChange={ onAvailabilityChange }
-								/>
-							) : (
-								<LeadMatchingSectionFields
-									section={ section }
-									formData={ formData }
-									onChange={ onFieldsChange }
-								/>
-							) }
-						</VStack>
-					</CardBody>
-				</Card>
+				<Fragment key={ section }>
+					<Card>
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader level={ 3 } title={ getLeadMatchingSectionTitle( section ) } />
+								{ section === 'availability' ? (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										label={ __( 'Accepting new clients' ) }
+										help={ __( 'Agencies not accepting new clients are not eligible for leads.' ) }
+										checked={ isAvailable }
+										onChange={ onAvailabilityChange }
+									/>
+								) : (
+									<LeadMatchingSectionFields
+										section={ section }
+										formData={ formData }
+										onChange={ onFieldsChange }
+									/>
+								) }
+							</VStack>
+						</CardBody>
+					</Card>
+					{ section === 'availability' && (
+						<ContactOptionsPreview
+							key={ agencyId }
+							countryCode={ agency.profile?.company_details?.country }
+							formData={ formData }
+							onChange={ onFieldsChange }
+							errors={ contactErrors }
+						/>
+					) }
+				</Fragment>
 			) ) }
 
 			<ButtonStack justify="flex-start">

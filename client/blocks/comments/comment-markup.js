@@ -1,0 +1,122 @@
+// An inert document, so nothing in the markup runs or loads.
+const parse = ( markup ) => new DOMParser().parseFromString( markup, 'text/html' ).body;
+
+// The words of the editor's block markup, for the textarea it falls back to.
+export const blocksToText = ( markup ) =>
+	parse(
+		markup
+			.replace( /<\/(p|pre|blockquote|figcaption|ul|ol)>/gi, '$&\n\n' )
+			.replace( /<\/li>/gi, '$&\n' )
+	)
+		.textContent.replace( /\n{3,}/g, '\n\n' )
+		.trim();
+
+// Whether the editor's markup holds anything to post. The editor reports an empty paragraph as
+// empty, but not an emptied list, quote, or code block.
+export const hasBlockContent = ( markup ) => {
+	const body = parse( markup );
+	return !! body.textContent.trim() || !! body.querySelector( 'img' );
+};
+
+const escape = ( text ) =>
+	text
+		.replace( /&/g, '&amp;' )
+		.replace( /</g, '&lt;' )
+		.replace( />/g, '&gt;' )
+		.replace( /"/g, '&quot;' );
+
+// The inline tags a site's comment kses keeps, so a site without block comments stores them as written.
+const INLINE_TAGS = [ 'a', 'b', 'code', 'del', 'em', 'i', 's', 'strong' ];
+
+const inline = ( node ) =>
+	Array.from( node.childNodes )
+		.map( ( child ) => {
+			if ( child.nodeType === child.TEXT_NODE ) {
+				return escape( child.textContent );
+			}
+			if ( child.nodeType !== child.ELEMENT_NODE ) {
+				return '';
+			}
+
+			const tag = child.tagName.toLowerCase();
+			if ( tag === 'br' ) {
+				return '\n';
+			}
+			// An image is its URL, as an embed already is, which the site's comment text turns into a link.
+			if ( tag === 'img' ) {
+				const src = child.getAttribute( 'src' ) ?? '';
+				return /^https?:/i.test( src ) ? escape( src ) : '';
+			}
+			if ( tag === 'figcaption' ) {
+				return '\n' + inline( child );
+			}
+			// A nested list is written out as lines of its own.
+			if ( tag === 'ul' || tag === 'ol' ) {
+				return '';
+			}
+			if ( ! INLINE_TAGS.includes( tag ) ) {
+				return inline( child );
+			}
+			if ( tag === 'a' ) {
+				const href = child.getAttribute( 'href' ) ?? '';
+				return /^(https?:|mailto:)/i.test( href )
+					? `<a href="${ escape( href ) }">${ inline( child ) }</a>`
+					: inline( child );
+			}
+			return `<${ tag }>${ inline( child ) }</${ tag }>`;
+		} )
+		.join( '' );
+
+const list = ( node, depth = 0 ) => {
+	const items = Array.from( node.children ).filter( ( item ) => item.tagName === 'LI' );
+	const reversed = node.hasAttribute( 'reversed' );
+	const start = node.hasAttribute( 'start' )
+		? Number( node.getAttribute( 'start' ) )
+		: ( reversed && items.length ) || 1;
+
+	return items.flatMap( ( item, index ) => {
+		const marker = node.tagName === 'OL' ? `${ reversed ? start - index : start + index }.` : '-';
+		const nested = Array.from( item.children ).filter(
+			( child ) => child.tagName === 'UL' || child.tagName === 'OL'
+		);
+		return [
+			`${ '  '.repeat( depth ) }${ marker } ${ inline( item ).trim() }`,
+			...nested.flatMap( ( child ) => list( child, depth + 1 ) ),
+		];
+	} );
+};
+
+function block( node ) {
+	switch ( node.tagName ) {
+		case 'UL':
+		case 'OL':
+			return list( node ).join( '\n' );
+		case 'BLOCKQUOTE':
+			return `<blockquote>${ blocks( node ) }</blockquote>`;
+		// wpautop splits on a blank line, even inside code, so code keeps none.
+		case 'PRE':
+			return `<code>${ escape( node.textContent.replace( /\n(?:[^\S\n]*\n)+/g, '\n' ) ) }</code>`;
+		default:
+			return inline( node ).trim();
+	}
+}
+
+// Text outside any block, such as words typed after a stray delimiter, is kept as a paragraph.
+function blocks( parent ) {
+	return Array.from( parent.childNodes )
+		.map( ( node ) => {
+			if ( node.nodeType === node.TEXT_NODE ) {
+				return escape( node.textContent ).trim();
+			}
+			return node.nodeType === node.ELEMENT_NODE ? block( node ) : '';
+		} )
+		.filter( Boolean )
+		.join( '\n\n' );
+}
+
+/**
+ * The editor's block markup as HTML a site without block comments keeps: the inline tags core's
+ * comment kses allows, with blank lines between paragraphs and lists as lines, which wpautop turns
+ * back into paragraphs and line breaks when the comment is shown.
+ */
+export const blocksToHtml = ( markup ) => blocks( parse( markup ) );

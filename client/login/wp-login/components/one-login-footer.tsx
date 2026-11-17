@@ -28,6 +28,10 @@ interface OneLoginFooterProps {
 	 */
 	showSignupPrompt?: boolean;
 	/**
+	 * Words that prompt "New here? Create an account" instead.
+	 */
+	isNewHereSignupPrompt?: boolean;
+	/**
 	 * Passed through to the signup link so an explicit `?signup_url` is honoured.
 	 */
 	signupUrl?: string;
@@ -52,18 +56,21 @@ const recordBackToWpcomLinkClick = () => {
 /**
  * The route to signup, placed and worded like signup's route to login.
  */
-const SignUpPrompt = ( { signupUrl }: { signupUrl?: string } ) => {
+const SignUpPrompt = ( { signupUrl, isNewHere }: { signupUrl?: string; isNewHere?: boolean } ) => {
 	const translate = useTranslate();
 	const { href, onClick } = useSignupLink( { signupUrl, origin: 'login-footer' } );
+	const components = {
+		// eslint-disable-next-line jsx-a11y/anchor-has-content
+		signupLink: <a href={ href } onClick={ onClick } rel="external" />,
+	};
 
 	return (
 		<p className="one-login__footer-signup">
-			{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
-				components: {
-					// eslint-disable-next-line jsx-a11y/anchor-has-content
-					signupLink: <a href={ href } onClick={ onClick } rel="external" />,
-				},
-			} ) }
+			{ isNewHere
+				? translate( 'New here? {{signupLink}}Create an account{{/signupLink}}', { components } )
+				: translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+						components,
+					} ) }
 		</p>
 	);
 };
@@ -73,6 +80,7 @@ const OneLoginFooter = ( {
 	lostPasswordLinkMobileOnly,
 	loginLink,
 	showSignupPrompt,
+	isNewHereSignupPrompt,
 	signupUrl,
 	isLoginView,
 	supportLink,
@@ -92,7 +100,9 @@ const OneLoginFooter = ( {
 				>
 					{ lostPasswordLink }
 				</div>
-				{ showSignupPrompt && <SignUpPrompt signupUrl={ signupUrl } /> }
+				{ showSignupPrompt && (
+					<SignUpPrompt signupUrl={ signupUrl } isNewHere={ isNewHereSignupPrompt } />
+				) }
 				<div className="one-login__footer-links-wrapper">
 					{ oauth2Client && (
 						<LoggedOutFormBackLink

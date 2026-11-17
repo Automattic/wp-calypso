@@ -9,6 +9,11 @@ on:
       - opened
       - synchronize
 
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     name: Build ICFY stats

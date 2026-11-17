@@ -42,7 +42,7 @@ const GRID_CARDS = [
 
 export function HostingCards() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
-	const layout = { columns: 3, rows: 2 };
+	const layout = { columns: 2, rows: Math.ceil( GRID_CARDS.length / 2 ) };
 
 	if ( isSmallViewport ) {
 		layout.columns = 1;

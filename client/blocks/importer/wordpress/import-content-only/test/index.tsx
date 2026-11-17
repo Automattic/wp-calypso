@@ -1,7 +1,8 @@
 /** @jest-environment jsdom */
 
-import { render } from '@testing-library/react';
-import { startImport } from 'calypso/state/imports/actions';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import ImportContentOnly from '..';
@@ -24,7 +25,14 @@ jest.mock( 'calypso/state/imports/site-importer/actions', () => ( {
 	importSite: jest.fn( () => ( { type: 'IMPORT_SITE' } ) ),
 } ) );
 
-jest.mock( '../../../components/complete-screen', () => () => null );
+jest.mock(
+	'../../../components/complete-screen',
+	() =>
+		( { onImportAnotherClick }: { onImportAnotherClick?: () => void } ) =>
+			onImportAnotherClick ? (
+				<button onClick={ onImportAnotherClick }>Start another import</button>
+			) : null
+);
 jest.mock( '../../../components/error-message', () => () => null );
 jest.mock( '../../../components/importer-drag', () => () => <div>Upload</div> );
 jest.mock( '../../../components/migration-plans-grid', () => () => null );
@@ -64,4 +72,33 @@ describe( 'ImportContentOnly', () => {
 
 		expect( importSite ).not.toHaveBeenCalled();
 	} );
+
+	// Without it, a finished import keeps the importer on the success screen until it expires.
+	it( 'resets the finished import when starting another import', async () => {
+		renderImporter( {
+			importerId: 'importer-123',
+			importerState: appStates.IMPORT_SUCCESS,
+			type: 'importer-type-wordpress',
+			site: { ID: 123 },
+		} as ImportJob );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start another import' } ) );
+
+		expect( resetImport ).toHaveBeenCalledWith( 123, 'importer-123' );
+	} );
+
+	it.each( [ 'playground', 'jetpack_backup' ] as const )(
+		'does not offer another import after a site restore from a %s file',
+		( importerFileType ) => {
+			renderImporter( {
+				importerId: 'importer-123',
+				importerState: appStates.IMPORT_SUCCESS,
+				importerFileType,
+				type: 'importer-type-wordpress',
+				site: { ID: 123 },
+			} as ImportJob );
+
+			expect( screen.queryByRole( 'button', { name: 'Start another import' } ) ).toBeNull();
+		}
+	);
 } );

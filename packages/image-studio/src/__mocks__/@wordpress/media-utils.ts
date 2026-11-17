@@ -2,7 +2,8 @@
  * Mock for @wordpress/media-utils package
  */
 
-const transformAttachment = jest.fn( ( attachment ) => ( {
+import { vi } from 'vitest';
+const transformAttachment = vi.fn( ( attachment ) => ( {
 	...attachment,
 	transformed: true,
 } ) );

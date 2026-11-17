@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterAll, describe, expect, test } from '@jest/globals';
+import { afterAll, describe, expect, test } from 'vitest';
 import {
 	abandonPendingLoginLockWaits,
 	clearStaleLoginLocks,

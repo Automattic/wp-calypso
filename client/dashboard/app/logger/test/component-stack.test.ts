@@ -1,7 +1,7 @@
 import { getComponentStackFingerprint } from '../component-stack';
 
 describe( 'getComponentStackFingerprint', () => {
-	it( 'splits the default grouping by the innermost components (Chromium frames)', () => {
+	test( 'splits the default grouping by the innermost components (Chromium frames)', () => {
 		expect(
 			getComponentStackFingerprint(
 				'\n    at Text (https://example.com/chunk.js:1:2)\n    at Callout (https://example.com/chunk.js:3:4)'
@@ -9,13 +9,13 @@ describe( 'getComponentStackFingerprint', () => {
 		).toEqual( [ '{{ default }}', 'Text', 'Callout' ] );
 	} );
 
-	it( 'parses Firefox and Safari frames', () => {
+	test( 'parses Firefox and Safari frames', () => {
 		expect(
 			getComponentStackFingerprint( '\nText@https://example.com/chunk.js:1:2\nCallout@unknown:0:0' )
 		).toEqual( [ '{{ default }}', 'Text', 'Callout' ] );
 	} );
 
-	it( 'parses bare component names', () => {
+	test( 'parses bare component names', () => {
 		expect( getComponentStackFingerprint( '\nText\nCallout' ) ).toEqual( [
 			'{{ default }}',
 			'Text',
@@ -23,7 +23,7 @@ describe( 'getComponentStackFingerprint', () => {
 		] );
 	} );
 
-	it( 'skips host elements, which are identical across crash sites', () => {
+	test( 'skips host elements, which are identical across crash sites', () => {
 		expect(
 			getComponentStackFingerprint(
 				'\n    at div (<anonymous>)\n    at span (<anonymous>)\n    at Callout (https://example.com/chunk.js:3:4)'
@@ -31,7 +31,7 @@ describe( 'getComponentStackFingerprint', () => {
 		).toEqual( [ '{{ default }}', 'Callout' ] );
 	} );
 
-	it( 'trims to the innermost components', () => {
+	test( 'trims to the innermost components', () => {
 		const stack = Array.from(
 			{ length: 20 },
 			( _, i ) => `    at Component${ i } (https://example.com/chunk.js:${ i }:0)`
@@ -45,7 +45,7 @@ describe( 'getComponentStackFingerprint', () => {
 		] );
 	} );
 
-	it( 'returns undefined when there is nothing to group on', () => {
+	test( 'returns undefined when there is nothing to group on', () => {
 		expect( getComponentStackFingerprint( '' ) ).toBeUndefined();
 		expect( getComponentStackFingerprint( null ) ).toBeUndefined();
 		expect( getComponentStackFingerprint( undefined ) ).toBeUndefined();

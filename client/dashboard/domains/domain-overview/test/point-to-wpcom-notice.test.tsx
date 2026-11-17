@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { domainQuery, queryClient } from '@automattic/api-queries';
@@ -164,7 +164,7 @@ describe( '<PointToWpcomNotice>', () => {
 				1
 			);
 		} );
-		expect( button ).toBeDisabled();
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
 
 		await waitFor( () => {
 			expect( screen.queryByText( NOTICE_TITLE ) ).not.toBeInTheDocument();
@@ -208,7 +208,10 @@ describe( '<PointToWpcomNotice>', () => {
 			);
 		} );
 
-		expect( screen.getByRole( 'button', { name: BUTTON_LABEL } ) ).toBeEnabled();
+		expect( screen.getByRole( 'button', { name: BUTTON_LABEL } ) ).toHaveAttribute(
+			'aria-disabled',
+			'false'
+		);
 		expect( queryClient.getQueryState( domainQuery( domainName ).queryKey )?.isInvalidated ).toBe(
 			false
 		);

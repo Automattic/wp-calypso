@@ -1,0 +1,153 @@
+@import '@automattic/components/src/styles/typography';
+
+/* This is needed to prevent the panel from growing beyond its container */
+:where( :has( > .signup-brand-panel ) ) {
+	min-width: 0;
+}
+
+.signup-brand-panel {
+	box-sizing: border-box;
+	height: 100vh;
+	padding: var( --wpds-dimension-padding-lg );
+	padding-left: 0;
+}
+
+.signup-brand-panel__content {
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 16px;
+	background-color: var( --studio-wordpress-blue-50 );
+
+	// The grid sits at the very back, and only shows in the gaps between the themes. A second one
+	// in the same position comes in on top, below the fade, where the themes are gone.
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: url( ../signup-slider/images/pattern-01.webp ) top left repeat;
+		opacity: 0.35;
+		pointer-events: none;
+	}
+
+	&::after {
+		mask-image: linear-gradient( 180deg, transparent 62%, #000 74% );
+	}
+}
+
+.signup-brand-panel__wall-fade {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	user-select: none;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			180deg,
+			rgb( from var( --studio-wordpress-blue-50 ) r g b / 0 ) 44%,
+			rgb( from var( --studio-wordpress-blue-50 ) r g b / 0.92 ) 60%,
+			var( --studio-wordpress-blue-50 ) 66%
+		);
+	}
+}
+
+.signup-brand-panel__wall {
+	display: flex;
+	align-items: flex-start;
+	gap: var( --wpds-dimension-gap-lg );
+	position: absolute;
+	// Sized around the panel, with the columns overflowing, so it rotates around the panel's center
+	// however long they are.
+	inset: -18% -14%;
+	transform: rotate( -7deg );
+}
+
+.signup-brand-panel__column {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var( --wpds-dimension-gap-lg );
+	animation: signup-brand-panel-drift 60s linear infinite;
+
+	&:nth-child( 2 ) {
+		animation-direction: reverse;
+	}
+
+	&:nth-child( 3 ) {
+		animation-duration: 75s;
+	}
+}
+
+.signup-brand-panel__card {
+	display: block;
+	width: 100%;
+	aspect-ratio: 779 / 474;
+	object-fit: cover;
+	border-radius: var( --wpds-border-radius-lg );
+}
+
+.signup-brand-panel__copy {
+	position: absolute;
+	inset: auto 50px 96px;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	color: var( --studio-white );
+}
+
+.signup-brand-panel__headline {
+	max-width: 12em;
+	margin-bottom: var( --wpds-dimension-gap-sm );
+	color: var( --studio-white );
+	font-family: $font-recoleta;
+	font-size: 48px;
+	line-height: 1.2;
+	text-wrap: balance;
+}
+
+.signup-brand-panel__description {
+	margin-bottom: 0;
+	color: var( --studio-white );
+	font-family: $font-sf-pro-display;
+	font-size: 20px;
+	line-height: 1.5;
+}
+
+// The panel is at its narrowest here, so the copy steps down to keep the headline on two lines.
+@media ( max-width: 1199px ) {
+	.signup-brand-panel__copy {
+		inset-inline: var( --wpds-dimension-padding-lg );
+	}
+
+	.signup-brand-panel__headline {
+		font-size: 36px;
+	}
+
+	.signup-brand-panel__description {
+		font-size: 16px;
+
+		br {
+			display: none;
+		}
+	}
+}
+
+// Half the column, which is the list twice, minus half a gap.
+@keyframes signup-brand-panel-drift {
+	to {
+		transform: translateY( calc( -50% - 8px ) );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.signup-brand-panel__column {
+		animation: none;
+	}
+}

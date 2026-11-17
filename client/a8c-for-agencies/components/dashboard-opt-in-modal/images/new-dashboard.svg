@@ -1,0 +1,32 @@
+<svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="63" y="68" width="151" height="56" rx="16" fill="white"/>
+<rect x="77" y="80" width="32" height="32" rx="16" fill="#E5F1FF"/>
+<path d="M93 88C88.6 88 85 91.6 85 96C85 100.4 88.6 104 93 104C97.4 104 101 100.4 101 96C101 91.6 97.4 88 93 88ZM99.5 96C99.5 96.6 99.5 97.2 99.3 97.8H96.6C96.6 97.2 96.8 96.7 96.8 96C96.8 95.3 96.8 94.8 96.6 94.2H99.3C99.5 94.8 99.5 95.3 99.5 96ZM98.6 92.8H96.2C95.9 91.9 95.5 91 95.1 90.4C95 90.2 94.9 90 94.8 89.9C96.4 90.4 97.8 91.5 98.6 92.9V92.8ZM93.8 101C93.5 101.5 93.2 102 93 102.3C92.8 102 92.5 101.5 92.2 101C91.9 100.5 91.6 99.9 91.4 99.3H94.7C94.5 99.9 94.2 100.5 93.9 101H93.8ZM90.9 97.8C90.8 97.2 90.7 96.7 90.7 96C90.7 95.3 90.7 94.8 90.9 94.2H95C95.1 94.8 95.2 95.3 95.2 96C95.2 96.7 95.2 97.2 95 97.8H90.9ZM92.2 91C92.5 90.5 92.8 90 93 89.7C93.2 90 93.5 90.5 93.8 91C94.1 91.5 94.4 92.1 94.6 92.7H91.3C91.5 92.1 91.8 91.5 92.1 91H92.2ZM91.2 89.8C91.1 90 91 90.1 90.9 90.3C90.5 91 90.1 91.8 89.8 92.7H87.4C88.2 91.3 89.6 90.2 91.2 89.7V89.8ZM89.4 97.8H86.7C86.5 97.2 86.5 96.7 86.5 96C86.5 95.3 86.5 94.8 86.7 94.2H89.4C89.4 94.8 89.2 95.3 89.2 96C89.2 96.7 89.2 97.2 89.4 97.8ZM87.4 99.2H89.8C90.1 100.1 90.5 101 90.9 101.6C91 101.8 91.1 102 91.2 102.1C89.6 101.6 88.2 100.5 87.4 99.1V99.2ZM94.8 102.2C94.9 102 95 101.9 95.1 101.7C95.5 101 95.9 100.2 96.2 99.3H98.6C97.8 100.7 96.4 101.8 94.8 102.3V102.2Z" fill-rule="evenodd" clip-rule="evenodd" fill="#0240E4"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="121" y="101.332">Sites</tspan></text>
+<g clip-path="url(#clip0_16186_21585)">
+<path d="M199 96C199 103.732 192.732 110 185 110C177.268 110 171 103.732 171 96C171 88.268 177.268 82 185 82C192.732 82 199 88.268 199 96Z" stroke-width="2" stroke="#0240E4"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="178" y="100.266">21</tspan></text>
+</g>
+<rect x="226" y="68" width="192" height="56" rx="16" fill="white"/>
+<rect x="240" y="80" width="32" height="32" rx="16" fill="#E5F1FF"/>
+<path d="M260.83 90.342L261.432 90.642L262.057 90.392L262.5 90.216V102.785L262.057 102.607L261.432 102.357L260.829 102.658L259.385 103.381L256.975 102.577L256.5 102.419L256.026 102.577L253.616 103.38L252.171 102.658L251.568 102.358L250.943 102.608L250.5 102.785V90.215L250.943 90.393L251.568 90.643L252.171 90.342L253.615 89.62L256.025 90.423L256.5 90.581L256.974 90.423L259.384 89.62L260.83 90.342ZM264 88L262.5 88.6L261.5 89L259.5 88L256.5 89L253.5 88L251.5 89L250.5 88.6L249 88V105L250.5 104.4L251.5 104L253.5 105L256.5 104L259.5 105L261.5 104L262.5 104.4L264 105V88ZM260.5 94.25V92.75H252.5V94.25H260.5ZM260.5 97.25V95.75H252.5V97.25H260.5ZM252.5 100.25V98.75H260.5V100.25H252.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="#0240E4"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="284" y="101.332">Purchases</tspan></text>
+<g clip-path="url(#clip1_16186_21585)">
+<path d="M403 96C403 103.732 396.732 110 389 110C381.268 110 375 103.732 375 96C375 88.268 381.268 82 389 82C396.732 82 403 88.268 403 96Z" stroke-width="2" stroke="#0240E4"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="382" y="100.266">12</tspan></text>
+</g>
+<rect x="133" y="136" width="215" height="56" rx="16" fill="white"/>
+<rect x="147" y="148" width="32" height="32" rx="16" fill="#E5F1FF"/>
+<path d="M161.7 161.6C162 161.4 162.5 161.2 163 161.2C163.5 161.2 164 161.4 164.3 161.6C164.6 161.8 164.7 162.1 164.7 162.2C164.7 162.6 165 163 165.5 163C166 163 166.3 162.7 166.3 162.2C166.3 161.4 165.8 160.8 165.2 160.3C164.8 160 164.3 159.8 163.8 159.7V159.4C163.8 159 163.5 158.6 163 158.6C162.5 158.6 162.2 158.9 162.2 159.4V159.7C161.7 159.7 161.2 160 160.8 160.3C160.2 160.7 159.7 161.4 159.7 162.2C159.7 163 160.2 163.6 160.8 164.1C161.4 164.5 162.2 164.7 163 164.7H163.2C163.7 164.7 164.1 164.9 164.3 165.1C164.6 165.3 164.7 165.6 164.7 165.7C164.7 165.8 164.7 166.1 164.3 166.3C164 166.5 163.5 166.7 163 166.7C162.5 166.7 162 166.5 161.7 166.3C161.4 166.1 161.3 165.8 161.3 165.7C161.3 165.3 161 164.9 160.5 164.9C160 164.9 159.7 165.2 159.7 165.7C159.7 166.5 160.2 167.1 160.8 167.6C161.2 167.9 161.7 168.1 162.2 168.2V168.5C162.2 168.9 162.5 169.3 163 169.3C163.5 169.3 163.8 169 163.8 168.5V168.2C164.3 168.2 164.8 167.9 165.2 167.6C165.8 167.2 166.3 166.5 166.3 165.7C166.3 164.9 165.8 164.3 165.2 163.8C164.7 163.4 164 163.2 163.3 163.2H163C162.4 163.2 162 163 161.7 162.8C161.4 162.6 161.3 162.3 161.3 162.2C161.3 162.1 161.3 161.8 161.7 161.6ZM163 156C158.6 156 155 159.6 155 164C155 168.4 158.6 172 163 172C167.4 172 171 168.4 171 164C171 159.6 167.4 156 163 156ZM163 170.5C159.4 170.5 156.5 167.6 156.5 164C156.5 160.4 159.4 157.5 163 157.5C166.6 157.5 169.5 160.4 169.5 164C169.5 167.6 166.6 170.5 163 170.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="#0240E4"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="191" y="169.332">Earnings</tspan></text>
+<rect x="269" y="150" width="64" height="28" rx="14" stroke="#0240E4" stroke-width="2"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em"><tspan x="280" y="168.266">$1,486</tspan></text>
+<defs>
+<clipPath id="clip0_16186_21585">
+<rect width="30" height="30" fill="white" transform="translate(170 81)"/>
+</clipPath>
+<clipPath id="clip1_16186_21585">
+<rect width="30" height="30" fill="white" transform="translate(374 81)"/>
+</clipPath>
+</defs>
+</svg>

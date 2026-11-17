@@ -367,10 +367,6 @@
 	padding: 0;
 	z-index: z-index(".reader-related-card__meta", ".follow-button");
 
-	.reader-follow-feed {
-		fill: var(--color-link);
-	}
-
 	@include breakpoint-deprecated( "<960px" ) {
 		min-width: 20px;
 	}

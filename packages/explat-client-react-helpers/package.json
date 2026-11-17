@@ -30,7 +30,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepack": "yarn run clean && yarn run build",
-		"test": "yarn jest"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@automattic/explat-client": "workspace:^",
@@ -40,10 +40,11 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",
-		"jest": "^30.5.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0"

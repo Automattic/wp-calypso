@@ -1,4 +1,5 @@
 import path from 'path';
+import { DataHelper } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 const TEST_WORDPRESS_EXPORT_FILE_PATH = path.join(
@@ -7,6 +8,11 @@ const TEST_WORDPRESS_EXPORT_FILE_PATH = path.join(
 	'wordpress-export-example.xml'
 );
 
+// The journeys below are the ones production serves, with the reprint flow off.
+// Environments differ (on in horizon, which calypso.live PR builds run), so pin it.
+// A cookie, unlike `?flags=`, applies on every page load, not only the first.
+const REPRINT_FLOW_OFF_COOKIE = { name: 'flags', value: '-migration/reprint-flow' };
+
 test.describe(
 	'Site Import: Calypso: WordPress',
 	{
@@ -14,6 +20,12 @@ test.describe(
 	},
 	() => {
 		skipIfMailosaurLimitReached();
+
+		test.beforeEach( async ( { page } ) => {
+			await page
+				.context()
+				.addCookies( [ { ...REPRINT_FLOW_OFF_COOKIE, url: DataHelper.getCalypsoURL() } ] );
+		} );
 
 		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "WordPress Run Importer" link on the wp-admin Importers List page to import my content from my WordPress site', async ( {
 			pageImportContentFromWordPress,

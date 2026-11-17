@@ -1,5 +1,6 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { DesignYourOwnCard } from 'calypso/my-sites/site-redesign/design-your-own-card';
 import { ThemesQuery } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import AIBuilderBanner from '../banners-modern/ai-builder-banner';
 import DIFMBanner from '../banners-modern/difm-banner';
@@ -49,6 +50,7 @@ export default function RecommendedSections( {
 	return (
 		<div className="recommended-sections">
 			<ThemeSection
+				leadingCard={ <DesignYourOwnCard /> }
 				title={ translate( 'Our favorites' ) }
 				subtitle={ translate( 'Exceptional themes selected by the WordPress.com design team.' ) }
 				buttonLabel={ translate( 'See all' ) }

@@ -82,7 +82,9 @@ export function ScheduleFormPaths( props: Props ) {
 
 	const onNewPathSubmit = useCallback( () => {
 		const validationErrors = validatePath( newPath, paths );
-		! validationErrors && setNewPathSubmitted( true );
+		if ( ! validationErrors ) {
+			setNewPathSubmitted( true );
+		}
 		setNewPathError( validationErrors );
 	}, [ newPath, paths, newPathError ] );
 
@@ -121,7 +123,7 @@ export function ScheduleFormPaths( props: Props ) {
 				<div className="paths">
 					<Flex className="path" gap={ 2 }>
 						<FlexItem isBlock>
-							<InputControl value={ siteSlug } size="__unstable-large" readOnly />
+							<InputControl value={ siteSlug } readOnly />
 						</FlexItem>
 						<FlexItem>
 							<Button disabled icon={ check } __next40pxDefaultSize />
@@ -130,7 +132,7 @@ export function ScheduleFormPaths( props: Props ) {
 					{ paths.map( ( path, i ) => (
 						<Flex className="path" gap={ 2 } key={ i }>
 							<FlexItem isBlock>
-								<InputControl value={ path } size="__unstable-large" readOnly />
+								<InputControl value={ path } readOnly />
 							</FlexItem>
 							<FlexItem>
 								<Button __next40pxDefaultSize onClick={ () => removePath( i ) } variant="secondary">
@@ -146,7 +148,6 @@ export function ScheduleFormPaths( props: Props ) {
 							<FlexItem isBlock>
 								<InputControl
 									value={ newPath }
-									size="__unstable-large"
 									autoComplete="off"
 									placeholder={ translate( '/add-path' ) }
 									onChange={ ( p ) => setNewPath( p || '' ) }

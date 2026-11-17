@@ -1,0 +1,22 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -38,7 +38,17 @@
+ 			"default": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/*": "./build-style/*"
++		"./build-style/*": "./build-style/*",
++		"./build-module/hooks": {
++			"types": "./build-types/hooks.d.ts",
++			"import": "./build-module/hooks.mjs",
++			"default": "./build/hooks.cjs"
++		},
++		"./build-module/context": {
++			"types": "./build-types/context.d.ts",
++			"import": "./build-module/context.mjs",
++			"default": "./build/context.cjs"
++		}
+ 	},
+ 	"dependencies": {
+ 		"@wordpress/a11y": "^5.1.0",

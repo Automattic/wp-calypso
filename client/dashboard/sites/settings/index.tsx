@@ -10,6 +10,7 @@ import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { SitesNoticeArbiter } from '../notice-arbiter';
+import { useCanViewApm } from '../performance/backend-access';
 import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';
 import ApmSettingsSummary from '../settings-apm/summary';
@@ -38,6 +39,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: settings } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+	const canViewApm = useCanViewApm();
 
 	return (
 		<PageLayout
@@ -83,7 +85,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<PrimaryDataCenterSettingsSummary site={ site } />
 						<StaticFile404SettingsSummary site={ site } />
 						<CachingSettingsSummary site={ site } />
-						{ isEnabled( 'performance/apm' ) ? <ApmSettingsSummary site={ site } /> : null }
+						{ canViewApm ? <ApmSettingsSummary site={ site } /> : null }
 					</SummaryButtonList>
 				</VStack>
 			) }

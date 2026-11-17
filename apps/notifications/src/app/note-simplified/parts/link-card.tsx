@@ -26,7 +26,7 @@ export default function LinkCard( {
 			rel="noreferrer"
 			size="small"
 		>
-			<CardBody>
+			<CardBody className="wpnc-simplified__card-body" size="none">
 				<VStack spacing={ 3 }>
 					<HStack alignment="top" justify="space-between" spacing={ 3 }>
 						{ header }

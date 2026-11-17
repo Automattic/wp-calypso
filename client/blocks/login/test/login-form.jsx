@@ -196,6 +196,22 @@ describe( 'LoginForm', () => {
 		expect( row ).toContainElement( screen.getByRole( 'link', { name: 'Lost your password?' } ) );
 	} );
 
+	test( 'puts the lost-password link on the email label row when social is above the form', async () => {
+		const { container } = render(
+			<LoginForm
+				isSocialFirst
+				isSocialAboveForm
+				lostPasswordLink={ <a href="/">Lost your password?</a> }
+			/>
+		);
+
+		const row = container.getElementsByClassName( 'login__form-username-label-row' )[ 0 ];
+		expect( row ).toContainElement( screen.getByRole( 'link', { name: 'Lost your password?' } ) );
+		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
+			0
+		);
+	} );
+
 	test( 'does not render the lost-password link while the password field is hidden', async () => {
 		const { container } = render(
 			<LoginForm isSocialFirst lostPasswordLink={ <a href="/">Lost your password?</a> } />
@@ -345,6 +361,16 @@ describe( 'LoginForm', () => {
 			getBlackboxSessionId.mockResolvedValue( undefined );
 			MockBlackboxChallenge.blocked = false;
 			delete window.Blackbox;
+		} );
+
+		test( 'cancels an inactive form without sending a login request', async () => {
+			getBlackboxSessionId.mockResolvedValue( null );
+			renderRegularLoginForm();
+			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: /Log In/i } ) ).toBeEnabled()
+			);
+			expect( mockFetch ).not.toHaveBeenCalled();
 		} );
 
 		test( 'attaches blackbox_session_id to the login request when available', async () => {

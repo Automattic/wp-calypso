@@ -1,3 +1,8 @@
+// Room for the item count, so the header doesn't shift when the count shows or hides.
+.dashboard-marketplace-products__cart-menu {
+	min-inline-size: 56px;
+}
+
 .dashboard-marketplace-products__cart {
 	min-inline-size: min( 360px, 100vw - 48px );
 	padding: 8px;

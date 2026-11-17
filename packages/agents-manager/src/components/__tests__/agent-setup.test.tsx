@@ -1,20 +1,29 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- `AgentsManager` must be imported after `jest.mock` */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import {
+	getSessionId,
+	saveSessionId,
+	setSessionSiteKey,
+	setSessionUserId,
+} from '../../utils/agent-session';
+import AgentsManager from '../agents-manager';
+import type { AgentsManagerProps } from '../agents-manager';
 
 const mockAgentManager = {
-	hasAgent: jest.fn( () => true ),
-	abortCurrentRequest: jest.fn(),
-	removeAgent: jest.fn(),
+	hasAgent: vi.fn( () => true ),
+	abortCurrentRequest: vi.fn(),
+	removeAgent: vi.fn(),
+	getAgentSessionId: vi.fn< ( ...args: [] ) => string | null >(),
 };
 let mockIsOpen = true;
 let mockHasAiChatEntry = false;
 let mockIsStoreReady = true;
 let mockAgentDockCatchAll = false;
 let mockAgentConfig = { agentId: 'wp-orchestrator' };
-const mockCreateAgentConfig = jest.fn(
+const mockCreateAgentConfig = vi.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
 		agentId,
 		sessionId,
@@ -22,46 +31,46 @@ const mockCreateAgentConfig = jest.fn(
 );
 
 // Packages that Jest can't resolve in this environment
-jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: () => mockAgentManager } ), {
-	virtual: true,
-} );
-jest.mock( '@automattic/data-stores', () => ( {} ), { virtual: true } );
+vi.mock( '@automattic/agenttic-client', () => ( { getAgentManager: () => mockAgentManager } ) );
+vi.mock( '@automattic/data-stores', () => ( {} ) );
 
 // Simulate `store` ready so the component renders
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: () => ( { hasLoaded: mockIsStoreReady, isOpen: mockIsOpen } ),
 } ) );
-jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+vi.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
 	default: () => mockHasAiChatEntry,
 } ) );
-jest.mock( '@tanstack/react-query', () => ( {
-	QueryClient: jest.fn(),
+vi.mock( '@tanstack/react-query', () => ( {
+	QueryClient: vi.fn(),
 	QueryClientProvider: ( { children }: { children: React.ReactNode } ) => children,
 } ) );
 
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../../utils/create-agent-config', () => ( {
+vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+vi.mock( '../../utils/create-agent-config', () => ( {
 	createAgentConfig: ( options: { sessionId: string; agentId: string } ) =>
 		mockCreateAgentConfig( options ),
 } ) );
-jest.mock( '../../hooks/use-agent-config', () => ( {
+vi.mock( '../../hooks/use-agent-config', () => ( {
 	useAgentConfig: () => mockAgentConfig,
 } ) );
-jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
+vi.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
 } ) );
-jest.mock( '../../utils/load-external-providers', () => ( {
+vi.mock( '../../utils/load-external-providers', () => ( {
 	loadExternalProviders: async () => ( {
 		providerIds: [],
 	} ),
 } ) );
-jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
+vi.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 	useEmptyViewSuggestions: () => [],
 } ) );
-jest.mock( '../agent-dock', () => {
-	const { useAgentsManagerContext } = jest.requireActual( '../../contexts' );
-	const { Navigate, Route, Routes, useNavigate } = jest.requireActual( 'react-router-dom' );
+vi.mock( '../agent-dock', async () => {
+	const { useAgentsManagerContext } =
+		await vi.importActual< typeof import( '../../contexts' ) >( '../../contexts' );
+	const { Navigate, Route, Routes, useNavigate } =
+		await vi.importActual< typeof import( 'react-router-dom' ) >( 'react-router-dom' );
 	function MockAgentDock() {
 		const { agentConfig } = useAgentsManagerContext();
 		const navigate = useNavigate();
@@ -90,15 +99,6 @@ jest.mock( '../agent-dock', () => {
 	return { __esModule: true, default: MockAgentDock };
 } );
 
-import AgentsManager from '../agents-manager';
-import {
-	getSessionId,
-	saveSessionId,
-	setSessionSiteKey,
-	setSessionUserId,
-} from '../../utils/agent-session';
-import type { AgentsManagerProps } from '../agents-manager';
-
 const user = ( ID: number ) => ( { ID } ) as AgentsManagerProps[ 'currentUser' ];
 
 function manager( siteId: number ) {
@@ -113,8 +113,10 @@ function manager( siteId: number ) {
 
 describe( 'AgentSetup', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockAgentManager.hasAgent.mockReturnValue( true );
+		// The live agent follows the tab's session unless a test says otherwise.
+		mockAgentManager.getAgentSessionId.mockImplementation( () => getSessionId() || null );
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
 		mockIsStoreReady = true;
@@ -146,7 +148,7 @@ describe( 'AgentSetup', () => {
 		mockAgentDockCatchAll = true;
 		document.body.className = 'site-editor-php';
 		saveSessionId( 'stored-session', undefined, '111' );
-		const onPopState = jest.fn();
+		const onPopState = vi.fn();
 		window.addEventListener( 'popstate', onPopState );
 		window.history.replaceState(
 			{ canvas: 'edit' },
@@ -170,7 +172,7 @@ describe( 'AgentSetup', () => {
 	} );
 
 	it( 'does not emit popstate outside the Site Editor', async () => {
-		const onPopState = jest.fn();
+		const onPopState = vi.fn();
 		window.addEventListener( 'popstate', onPopState );
 		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
 
@@ -401,20 +403,40 @@ describe( 'AgentSetup', () => {
 		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-live' );
 	} );
 
-	it( 'loads a conversation selected from the history view', async () => {
+	it( 'stops the previous reply before loading a conversation selected from the history view', async () => {
 		render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		fireEvent.click( screen.getByText( 'go-history' ) );
 
-		// `AgentDock` saves the selected conversation before navigating back.
+		// `AgentDock` saves the selection first; the agent still runs the previous chat.
+		mockAgentManager.getAgentSessionId.mockReturnValue( 'session-previous' );
 		saveSessionId( 'session-selected' );
 		fireEvent.click( screen.getByText( 'go-chat' ) );
 
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
 			expect.objectContaining( { sessionId: 'session-selected' } )
 		);
+		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
+		expect( mockAgentManager.removeAgent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			mockCreateAgentConfig.mock.invocationCallOrder[ 1 ]
+		);
+	} );
+
+	it( 'keeps the running reply when the same conversation is selected again', async () => {
+		render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		fireEvent.click( screen.getByText( 'go-history' ) );
+		saveSessionId( getSessionId() );
+		fireEvent.click( screen.getByText( 'go-chat' ) );
+
+		await act( async () => {} );
+
+		expect( mockAgentManager.abortCurrentRequest ).not.toHaveBeenCalled();
+		expect( mockAgentManager.removeAgent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores a superseded initialization that resolves after a site switch', async () => {

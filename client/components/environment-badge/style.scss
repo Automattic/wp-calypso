@@ -25,7 +25,7 @@ $z-index: 999;
 		}
 	}
 
-	.bug-report {
+	.environment-badge-icon {
 		position: relative;
 		display: inline-flex;
 		background-color: var(--color-surface);
@@ -34,9 +34,7 @@ $z-index: 999;
 		color: var(--color-text);
 		margin-left: -4px;
 		text-decoration: none;
-		text-align: center;
 		z-index: $z-index + 1;
-		transition: border-radius 0.2s ease-out;
 		vertical-align: middle;
 
 		svg {
@@ -70,24 +68,19 @@ $z-index: 999;
 			}
 		}
 
-		&.is-staging {
+		&.is-staging,
+		&.is-dashboard-staging,
+		&.is-a8c-for-agencies-staging {
 			color: var(--studio-orange-90);
 			background-color: var(--studio-orange-20);
 		}
-		&.is-wpcalypso {
+		&.is-wpcalypso,
+		&.is-horizon,
+		&.is-dashboard-horizon,
+		&.is-feedback {
 			color: var(--studio-celadon-90);
 			background-color: var(--studio-celadon-20);
 		}
-		&.is-dev {
-			color: var(--studio-purple-90);
-			background-color: var(--studio-purple-20);
-		}
-		&.is-horizon,
-		&.is-feedback {
-			color: var(--studio-blue-90);
-			background-color: var(--studio-blue-20);
-		}
-		&.is-jetpack-cloud-dev,
 		&.is-jetpack-cloud-staging {
 			color: var(--studio-jetpack-green-90);
 			background-color: var(--studio-jetpack-green-20);
@@ -108,14 +101,6 @@ $z-index: 999;
 	&.hovered .environment.is-rtl-css-disabled {
 		display: none;
 	}
-
-	.notouch & {
-		.bug-report {
-			&:hover {
-				border-radius: 2px;
-			}
-		}
-	}
 }
 
 html[dir="rtl"] .environment-badge,
@@ -135,7 +120,7 @@ html[dir="rtl"] .environment-badge,
 			padding-left: 20px;
 		}
 	}
-	.bug-report {
+	.environment-badge-icon {
 		margin-top: -10px;
 	}
 }

@@ -2,6 +2,13 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+// Same space above and below the main login form, to match signup.
+.step-container-v2__content-wrapper.center-aligned:has( .is-stacked-login ) {
+	@include break-small {
+		padding-bottom: var( --step-container-v2-content-block-padding );
+	}
+}
+
 // The wrapper centers its children, so a notice would otherwise shrink to its
 // text. Span it, like the heading and form below.
 .wp-login__one-login-layout-content-wrapper > .components-notice {
@@ -39,6 +46,11 @@
 
 	@include break-large {
 		display: none;
+
+		// With that link hidden, the next one has nothing to be divided from.
+		+ *::before {
+			display: none;
+		}
 	}
 }
 

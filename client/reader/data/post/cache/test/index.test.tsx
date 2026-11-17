@@ -356,6 +356,39 @@ describe( 'reader post cache', () => {
 		} );
 	} );
 
+	it( 'caches saved snapshots by their snapshot key without colliding on a shared ID', () => {
+		const queryClient = makeQueryClient();
+		const snapshot = { ID: 64089, site_ID: 0, feed_ID: 0, is_external: true };
+		const urlSave = {
+			...snapshot,
+			global_ID: 'url-save',
+			URL: 'https://example.com/saved-page',
+			title: 'Saved page',
+		};
+		const prunedFeedItem = {
+			...snapshot,
+			feed_item_ID: 64089,
+			global_ID: 'pruned',
+			URL: 'https://example.com/deleted-item',
+			title: 'Deleted item',
+		};
+
+		upsertPostCache( queryClient, [ urlSave, prunedFeedItem ] );
+
+		expect(
+			getCachedPost( queryClient, { snapshotId: 'url-save', url: urlSave.URL } )
+		).toMatchObject( { title: 'Saved page' } );
+		expect(
+			getCachedPost( queryClient, { snapshotId: 'pruned', url: prunedFeedItem.URL } )
+		).toMatchObject( { title: 'Deleted item' } );
+		expect( getCachedPost( queryClient, { feedId: 0, postId: 64089 } ) ).toBeNull();
+		expect(
+			queryClient
+				.getQueriesData( { queryKey: [ 'read', 'post', 'cache' ] } )
+				.map( ( [ key ] ) => key[ 3 ] )
+		).toEqual( [ 'snapshot-url-save', 'snapshot-pruned' ] );
+	} );
+
 	it( 'exposes dynamic cached post lists through useCachedPosts', async () => {
 		const queryClient = makeQueryClient();
 		const postKeys = [

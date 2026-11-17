@@ -1,7 +1,7 @@
-/** @jest-environment jsdom */
-import { queryClient, userSettingsQuery } from '@automattic/api-queries';
+/** @vitest-environment jsdom */
+import { queryClient, sitesQuery, userSettingsQuery } from '@automattic/api-queries';
 import { screen } from '@testing-library/react';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import McpMcpSites from '../mcp-sites';
 import type { Site, UserSettings } from '@automattic/api-core';
@@ -10,7 +10,7 @@ import type { Site, UserSettings } from '@automattic/api-core';
 // this harness the component passes to={ undefined }. Mirror the production
 // template (/sites/$siteSlug/settings/ai-tools) and substitute the params the
 // component supplies, which is the part under test here.
-jest.mock( '../../../components/router-link-button', () => ( {
+vi.mock( '../../../components/router-link-button', () => ( {
 	__esModule: true,
 	default: ( {
 		params,
@@ -60,13 +60,13 @@ const SIMPLE_SITE = {
 	options: { admin_url: 'https://simple-site.wordpress.com/wp-admin/' },
 } as Site;
 
-const sitesQuery = APP_CONTEXT_DEFAULT_CONFIG.queries.sitesQuery( {
+const visibleSitesQuery = sitesQuery( 'all', {
 	site_visibility: 'visible',
 	include_a8c_owned: false,
 } );
 
 function seed( site: Site ) {
-	queryClient.setQueryData( sitesQuery.queryKey, [ site ] );
+	queryClient.setQueryData( visibleSitesQuery.queryKey, [ site ] );
 	queryClient.setQueryData( userSettingsQuery().queryKey, {
 		mcp_abilities: {
 			account: {

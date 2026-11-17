@@ -170,3 +170,19 @@ describe( 'getConnectorFeatureCards', () => {
 		} );
 	} );
 } );
+
+describe( 'migration feature cards', () => {
+	const plugins = [ 'wpcom-migration', 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ];
+	test( 'gives migration a hero and condenses supporting cards', () => {
+		const { cards, heroFirstCard } = getConnectorFeatureCards( plugins );
+		expect( heroFirstCard ).toBe( true );
+		expect( cards[ 0 ].id ).toBe( 'migration' );
+		expect( cards.map( ( card ) => card.bullets.length ) ).toEqual( [ 2, 1, 1, 1 ] );
+	} );
+	test( 'keeps secondary-admin cards to one bullet with migration as the hero', () => {
+		const { cards, heroFirstCard } = getSecondaryAdminFeatureCards( plugins );
+		expect( heroFirstCard ).toBe( true );
+		expect( cards[ 0 ].id ).toBe( 'migration' );
+		expect( cards.map( ( card ) => card.bullets.length ) ).toEqual( [ 1, 1, 1, 1 ] );
+	} );
+} );

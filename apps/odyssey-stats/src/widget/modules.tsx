@@ -5,12 +5,16 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
-import config, { optionalConfig } from '../lib/config-api';
+import hasSiteProtection from '../lib/has-site-protection';
 import canCurrentUser from '../lib/selectors/can-current-user';
 import MetricValue from './metric-value';
 import { recordWidgetEventThenFollow } from './record-widget-event';
 import WidgetSection from './widget-section';
 import './modules.scss';
+
+// Routes whose failure message is a sentence meant for the viewer. Others, such as
+// `some_updated` from `/settings`, prefix the module slug and HTML-escape the text.
+const USER_FACING_ERROR_CODES = new Set( [ 'rest_forbidden', 'not_allowed' ] );
 
 interface ModuleCardProps {
 	title: string;
@@ -22,6 +26,11 @@ interface ModuleCardProps {
 	isLoading: boolean;
 	isError: boolean;
 	canManageModule: boolean;
+	/**
+	 * Whether the route behind the Install and Activate buttons asks for more than
+	 * `canManageModule` covers.
+	 */
+	canActivate?: boolean;
 	className?: string;
 	manageUrl?: string;
 }
@@ -39,20 +48,32 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	activateProduct,
 	manageUrl,
 	canManageModule,
+	canActivate = true,
 	isLoading,
 	isError,
 	className = null,
 } ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
+	const [ failure, setFailure ] = useState< string | null >( null );
 	const onActivateProduct = () => {
 		setDisabled( true );
-		activateProduct().catch( () => setDisabled( false ) );
+		setFailure( null );
+		activateProduct().catch( ( activationError: { code?: string; message?: string } ) => {
+			setDisabled( false );
+			setFailure(
+				( USER_FACING_ERROR_CODES.has( activationError?.code ?? '' ) && activationError.message ) ||
+					( translate( 'Something went wrong. Please try again.' ) as string )
+			);
+		} );
 	};
+
+	const needsActivation = error === 'not_active' || error === 'not_installed';
+	const canAct = canManageModule && ( ! needsActivation || canActivate );
 
 	// Nothing worth showing: the figure is unknown and the viewer cannot act on it, so a
 	// zero would read as a real count.
-	if ( isError && ! canManageModule ) {
+	if ( isError && ! canAct ) {
 		return null;
 	}
 
@@ -63,15 +84,15 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 		>
 			<div className="stats-widget-metric__title">{ title }</div>
 			{ ( isLoading || ! isError ) && (
-				// Zero while loading, so it counts up once the figure lands, as in Overview.
 				<MetricValue
-					value={ ! isLoading && Number.isFinite( value ) ? value : 0 }
+					value={ Number.isFinite( value ) ? value : 0 }
 					describe={ describe }
+					isLoading={ isLoading }
 				/>
 			) }
 			{ ! isLoading && (
 				<>
-					{ isError && canManageModule && (
+					{ isError && canAct && (
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
 								<Button
@@ -101,6 +122,11 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
 								<p>{ translate( 'An error occurred.' ) }</p>
 							) }
+							{ failure && (
+								<p className="stats-widget-module__error" role="alert">
+									{ failure }
+								</p>
+							) }
 						</div>
 					) }
 				</>
@@ -112,6 +138,10 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseUrl } ) => {
 	const translate = useTranslate();
 	const canManageModules = canCurrentUser( siteId, 'manage_options' );
+	// My Jetpack installs and activates the Akismet plugin, so its route asks for
+	// `activate_plugins`, which a site administrator on a multisite network lacks unless the
+	// network grants it. Protect is a Jetpack module, and `/settings` needs only `manage_options`.
+	const canActivatePlugins = canCurrentUser( siteId, 'activate_plugins' );
 	const protect = useModuleDataQuery( 'protect' );
 	const akismet = useModuleDataQuery( 'akismet' );
 
@@ -158,6 +188,11 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 			icon={ shield }
 			className="stats-widget-modules"
 		>
+			{ /* The placeholders are decorative, so this is the one word a screen reader gets
+			     while the counts load. */ }
+			{ ( protect.isPending || akismet.isPending ) && (
+				<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+			) }
 			<div className="stats-widget-metrics">
 				<ModuleCard
 					title={ translate( 'Blocked login attempts' ) }
@@ -187,6 +222,7 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					error={ akismet.error instanceof Error ? akismet.error.message : '' }
 					isLoading={ akismet.isPending }
 					canManageModule={ canManageModules }
+					canActivate={ canActivatePlugins }
 					activateProduct={ activateAkismet }
 					manageUrl={ akismetUrl }
 				/>
@@ -206,18 +242,10 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 };
 
 export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
-	// Akismet and Protect modules are not available on Simple sites.
-	if ( ! config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+	// SiteProtection runs the module queries, so it mounts only once the gate passes.
+	if ( ! hasSiteProtection() ) {
 		return null;
 	}
 
-	// Only the Jetpack plugin registers the REST routes these cards read. The standalone
-	// Stats plugin prints an empty `jetpack_version` when Jetpack is not active;
-	// stats-admin releases older than that key ship only with the Jetpack plugin.
-	if ( optionalConfig( 'jetpack_version' ) === '' ) {
-		return null;
-	}
-
-	// SiteProtection runs the module queries, so it mounts only once both gates pass.
 	return <SiteProtection siteId={ siteId } adminBaseUrl={ adminBaseUrl } />;
 }

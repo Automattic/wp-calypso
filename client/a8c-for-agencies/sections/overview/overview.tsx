@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
+import DashboardOptInInvitation from 'calypso/a8c-for-agencies/components/dashboard-opt-in-invitation';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PaymentRiskNoticeBanner from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner';
@@ -46,6 +47,7 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
+				<DashboardOptInInvitation />
 				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				{ showApprovalNotice && <A4AAgencyApprovalNotice /> }
 				<PressableUsageLimitNotice />

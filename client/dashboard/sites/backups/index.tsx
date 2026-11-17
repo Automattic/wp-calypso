@@ -13,10 +13,12 @@ import {
 	siteBackupRestoreRoute,
 	siteBackupDownloadRoute,
 } from '../../app/router/sites';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import { BackupFileBrowserProvider } from './backup-file-browser-provider';
+import illustrationDarkUrl from './backups-callout-illustration-dark.svg';
 import illustrationUrl from './backups-callout-illustration.svg';
 import { BackupsPage, type BackupsNavigation } from './backups-page';
 import './style.scss';
@@ -31,8 +33,13 @@ export function BackupsListPage() {
 		{ rewindId?: string } | undefined;
 	const rewindId = routeParams?.rewindId;
 
-	const navigation = useMemo< BackupsNavigation >(
-		() => ( {
+	const navigation = useMemo< BackupsNavigation >( () => {
+		const listRoute = {
+			to: siteBackupsIndexRoute.fullPath,
+			params: { siteSlug },
+		} as const;
+		return {
+			listPath: router.buildLocation( listRoute ).pathname,
 			selectBackup: ( id ) =>
 				id
 					? router.navigate( {
@@ -41,8 +48,7 @@ export function BackupsListPage() {
 							search: ( query: Record< string, string > ) => query,
 						} )
 					: router.navigate( {
-							to: siteBackupsIndexRoute.fullPath,
-							params: { siteSlug },
+							...listRoute,
 							search: ( query: Record< string, string > ) => query,
 						} ),
 			requestRestore: ( id ) =>
@@ -61,9 +67,8 @@ export function BackupsListPage() {
 							to: siteBackupDownloadRoute.fullPath,
 							params: { siteSlug, rewindId: id },
 						} ),
-		} ),
-		[ router, siteSlug ]
-	);
+		};
+	}, [ router, siteSlug ] );
 
 	return (
 		<BackupsPage
@@ -89,7 +94,7 @@ function SiteBackups() {
 			upsellId="site-backups"
 			upsellIcon={ backup }
 			upsellTitle={ __( 'Secure your content with Jetpack Backups' ) }
-			upsellImage={ illustrationUrl }
+			upsellImage={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
 			upsellDescription={ __(
 				'Protect your site with scheduled and real-time backups—giving you the ultimate “undo” button and peace of mind that your content is always safe.'
 			) }

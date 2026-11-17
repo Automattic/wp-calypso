@@ -47,7 +47,9 @@ export function subscribeSubscriberNotifications(
 				}
 
 				const result = sound?.play();
-				if ( result ) {
+				if ( result instanceof Promise ) {
+					void result.then( ( settled ) => onSound?.( settled, candidate ) );
+				} else if ( result ) {
 					onSound?.( result, candidate );
 				}
 			}

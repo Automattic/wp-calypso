@@ -99,6 +99,22 @@ describe( 'redirectLegacyFlow', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	it( 'sends the retired website-design-services flow to DIFM with its query and locale', () => {
+		const next = jest.fn();
+		controller.redirectLegacyFlow(
+			{
+				params: { flowName: 'website-design-services', stepName: 'difm-options', lang: 'es' },
+				querystring: 'siteSlug=example.wordpress.com',
+			},
+			next
+		);
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/start/do-it-for-me/es?siteSlug=example.wordpress.com'
+		);
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	it( 'still redirects legacy plan flows', () => {
 		run( { flowName: 'business' } );
 
@@ -132,16 +148,13 @@ describe( 'start', () => {
 		return dispatch;
 	};
 
-	it.each( [ 'launch-site', 'site-selected' ] )(
-		'clears %s landing dependencies left over from an earlier visit',
-		async ( flowName ) => {
-			const dispatch = await run( flowName, { siteSlug: 'example.wordpress.com' } );
+	it( 'clears site-selected landing dependencies left over from an earlier visit', async () => {
+		const dispatch = await run( 'site-selected', { siteSlug: 'example.wordpress.com' } );
 
-			expect( dispatch ).toHaveBeenCalledWith(
-				updateDependencies( { back_to: null, redirect_to: null, refParameter: null } )
-			);
-		}
-	);
+		expect( dispatch ).toHaveBeenCalledWith(
+			updateDependencies( { back_to: null, redirect_to: null, refParameter: null } )
+		);
+	} );
 
 	it( 'takes the site-selected landing dependencies from the query it was entered with', async () => {
 		const dispatch = await run( 'site-selected', {

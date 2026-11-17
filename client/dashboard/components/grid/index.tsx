@@ -1,7 +1,7 @@
 import type { ComponentProps, CSSProperties } from 'react';
 
 // Local fallbacks rather than importing `@wordpress/theme/design-tokens.css`: loaded lazily,
-// that stylesheet resets Calypso's `:root` token overrides (e.g. the 499 emphasis weight).
+// that stylesheet resets Calypso's `:root` token overrides.
 const GAP_FALLBACKS = {
 	xs: '4px',
 	sm: '8px',

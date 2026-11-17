@@ -15,7 +15,13 @@ import type { ReferralPurchase } from '../types';
 
 import './style.scss';
 
-export default function ReferralPurchases( { purchases }: { purchases: ReferralPurchase[] } ) {
+export default function ReferralPurchases( {
+	referralId,
+	purchases,
+}: {
+	referralId: number;
+	purchases: ReferralPurchase[];
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -56,6 +62,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 
 					return (
 						<AssignedTo
+							referralId={ referralId }
 							purchase={ item }
 							data={ data }
 							handleAssignToSite={ handleAssignToSite }
@@ -87,7 +94,7 @@ export default function ReferralPurchases( { purchases }: { purchases: ReferralP
 				enableSorting: false,
 			},
 		],
-		[ translate, data, isFetching, handleAssignToSite ]
+		[ translate, data, isFetching, handleAssignToSite, referralId ]
 	);
 
 	return <ReferralDetailsTable items={ purchases } fields={ fields } />;

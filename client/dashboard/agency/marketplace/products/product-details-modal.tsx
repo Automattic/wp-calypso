@@ -65,7 +65,6 @@ export default function ProductDetailsModal( {
 		<Modal
 			title={ getProductTitle( product.name ) }
 			onRequestClose={ onClose }
-			size="large"
 			className="dashboard-marketplace-products__modal"
 			__experimentalHideHeader
 		>

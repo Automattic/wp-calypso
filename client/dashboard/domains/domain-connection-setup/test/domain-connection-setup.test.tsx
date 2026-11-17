@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	DomainConnectionSetupMode,
@@ -8,11 +8,12 @@ import {
 } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainConnectionSetup from '../domain-connection-setup';
 
 // Mock InlineSupportLink to avoid async state update warnings
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => <button>{ children }</button>,
 } ) );
@@ -56,7 +57,7 @@ describe( 'DomainConnectionSetup', () => {
 	const defaultProps = {
 		domainName: 'example.com',
 		siteSlug: 'example.wordpress.com',
-		onVerifyConnection: jest.fn(),
+		onVerifyConnection: vi.fn(),
 		isUpdatingConnectionMode: false,
 	};
 
@@ -162,7 +163,7 @@ describe( 'DomainConnectionSetup', () => {
 
 		test( 'calls onVerifyConnection with DC mode when "Start setup" is clicked', async () => {
 			const user = userEvent.setup();
-			const onVerifyConnection = jest.fn();
+			const onVerifyConnection = vi.fn();
 			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );
 			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
 				domain_connect_apply_wpcom_hosting: 'https://example.com/domain-connect',
@@ -256,6 +257,40 @@ describe( 'DomainConnectionSetup', () => {
 			expect( screen.getByText( '1. Login to your domain name provider' ) ).toBeVisible();
 			expect( screen.getByText( '2. Back up DNS records' ) ).toBeVisible();
 			expect( screen.getByText( '3. Update DNS records' ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'Back up DNS records step', () => {
+		const renderAndExpandBackupStep = async () => {
+			const user = userEvent.setup();
+			render(
+				<DomainConnectionSetup
+					{ ...defaultProps }
+					domainMappingStatus={ createMockDomainMappingStatus() }
+					domainConnectionSetupInfo={ createMockDomainConnectionSetupInfo( {
+						domain_connect_apply_wpcom_hosting: null,
+					} ) }
+				/>
+			);
+			await user.click( screen.getByText( '2. Back up DNS records' ) );
+		};
+
+		test( 'asks the user to keep a copy of their DNS records', async () => {
+			await renderAndExpandBackupStep();
+
+			expect( screen.getByLabelText( 'I have a copy of my DNS records' ) ).toBeVisible();
+			expect( screen.queryByText( 'I have downloaded the DNS records' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /Download your DNS records/ ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'suggests a screenshot or a text copy of the records', async () => {
+			await renderAndExpandBackupStep();
+
+			expect(
+				screen.getByText(
+					'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by taking a screenshot or copying the text into a document.'
+				)
+			).toBeVisible();
 		} );
 	} );
 

@@ -48,7 +48,7 @@ export function useOtherUsersSitePurchases( {
 	return useQueries( {
 		queries: managedSiteIds.map( ( siteId ) => ( {
 			...sitePurchasesQuery( siteId ),
-			// The user may have lost manage rights since `allSitesQuery()` loaded;
+			// The user may have lost manage rights since `sitesQuery()` loaded;
 			// a 403 just means there is nothing extra to show.
 			retry: false,
 		} ) ),

@@ -63,6 +63,30 @@ const DEFAULT_PROPS = deepFreeze( {
 } );
 
 describe( 'JetpackSignup', () => {
+	test( 'uses migration copy and dynamic branding on mixed-plugin signup', () => {
+		const { container } = render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'wpcom_migration',
+					plugins: [ 'wpcom-migration', 'jetpack' ],
+					connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+				} }
+			/>
+		);
+		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				"You'll use it to migrate your site to WordPress.com and connect its other active plugins."
+			)
+		).toBeVisible();
+		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect.svg'
+		);
+	} );
+
 	let originalScrollTo;
 
 	beforeAll( () => {
@@ -104,6 +128,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack', 'woocommerce' ],
+					connectorPlugins: [ 'jetpack', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -126,6 +151,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);
@@ -157,7 +183,12 @@ describe( 'JetpackSignup', () => {
 		const { container } = render(
 			<JetpackSignup
 				{ ...DEFAULT_PROPS }
-				authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from,
+					plugins: [ 'jetpack' ],
+					connectorPlugins: [ 'jetpack' ],
+				} }
 			/>
 		);
 
@@ -190,6 +221,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'banner-44-slide-1-dashboard',
 					plugins: [ 'woocommerce' ],
+					connectorPlugins: [ 'woocommerce' ],
 				} }
 			/>
 		);
@@ -213,6 +245,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);

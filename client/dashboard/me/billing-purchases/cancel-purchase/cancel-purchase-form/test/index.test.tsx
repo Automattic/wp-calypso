@@ -1,17 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { disable, enable } from '@automattic/calypso-config';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
-import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, NEXT_ADVENTURE_STEP, REMOVE_PLAN_STEP } from '../steps';
-import type { Purchase } from '@automattic/api-core';
+import {
+	ATOMIC_REVERT_STEP,
+	FEEDBACK_STEP,
+	NEXT_ADVENTURE_STEP,
+	REMOVE_PLAN_STEP,
+	UPSELL_STEP,
+} from '../steps';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
-const mockNavigate = jest.fn();
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+const mockNavigate = vi.fn();
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 
@@ -58,7 +68,7 @@ const personalPlan = makePurchase( {
 
 describe( '<CancelPurchaseForm />', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
@@ -173,7 +183,7 @@ describe( '<CancelPurchaseForm />', () => {
 
 	test( 'submits the removal from the Complete removal button on the remove plan step', async () => {
 		const user = userEvent.setup();
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		render(
 			<CancelPurchaseForm
 				{ ...defaultProps }
@@ -195,8 +205,8 @@ describe( '<CancelPurchaseForm />', () => {
 
 	test( 'returns to purchase settings when Keep plan is clicked on the remove plan step', async () => {
 		const user = userEvent.setup();
-		const onKeepSubscriptionClick = jest.fn();
-		const onSubmit = jest.fn();
+		const onKeepSubscriptionClick = vi.fn();
+		const onSubmit = vi.fn();
 		render(
 			<CancelPurchaseForm
 				{ ...defaultProps }
@@ -229,5 +239,227 @@ describe( '<CancelPurchaseForm />', () => {
 		);
 
 		expect( screen.getByRole( 'button', { name: 'Keep plan' } ) ).toBeDisabled();
+	} );
+
+	describe( 'option cards', () => {
+		const premiumPurchase = makePurchase( {
+			product_name: 'WordPress.com Premium',
+			product_slug: 'value_bundle',
+			bill_period_days: 365,
+			currency_code: 'USD',
+			site_slug: 'example.wordpress.com',
+		} );
+		const upsellStepProps = {
+			...defaultProps,
+			surveyStep: UPSELL_STEP,
+			allSteps: [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ],
+			purchase: premiumPurchase,
+			clickNext: noop,
+			onSubmit: noop,
+		};
+		const cardsListName = 'Before canceling, you can consider these options:';
+
+		afterEach( () => {
+			disable( 'purchases/cancel-options-cards' );
+			disable( 'purchases/split-cancel-remove' );
+		} );
+
+		test( 'shows the cards for a reason that has them when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render( <CancelPurchaseForm { ...upsellStepProps } questionOneText="noLongerNeedSite" /> );
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 2 );
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to a different plan/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+		} );
+
+		test( 'shows the cards instead of the Personal offer when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			const cards = screen.getByRole( 'list', { name: cardsListName } );
+			expect( within( cards ).getAllByRole( 'listitem' ) ).toHaveLength( 4 );
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to a different plan/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'link', { name: /Renew now and pay less/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'link', { name: /Switch to monthly payments/ } )
+			).toBeVisible();
+			expect(
+				within( cards ).getByRole( 'button', { name: /Speak with our support team/ } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'shows the Personal offer instead of the cards when the cards flag is off', () => {
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'keeps the Personal offer when only the split cancel/remove flag is on', () => {
+			enable( 'purchases/split-cancel-remove' );
+
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					questionOneText="tooExpensive"
+					upsell="downgrade-personal"
+				/>
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	test.each( [
+		{
+			upsell: 'downgrade-personal',
+			accept: 'Switch to the Personal plan',
+			ref: 'cancel-flow-downgrade-personal',
+			intervalType: 'yearly',
+		},
+		{
+			upsell: 'downgrade-monthly',
+			accept: 'Switch to monthly payments',
+			ref: 'cancel-flow-downgrade-monthly',
+			intervalType: 'monthly',
+		},
+	] )( '$accept opens the plans page', ( { upsell, accept, ref, intervalType } ) => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ UPSELL_STEP }
+				allSteps={ [ UPSELL_STEP ] }
+				plans={ [ { product_slug: 'personal-bundle', product_name: 'Personal' } as PlanProduct ] }
+				purchase={ makePurchase( { is_plan_type_downgradable: true, bill_period_days: 365 } ) }
+				upsell={ upsell }
+			/>
+		);
+
+		const { searchParams } = new URL(
+			screen.getByRole( 'link', { name: accept } ).getAttribute( 'href' ) as string
+		);
+		expect( searchParams.get( 'ref' ) ).toBe( ref );
+		expect( searchParams.getAll( 'intervalType' ) ).toEqual( [ intervalType ] );
+	} );
+
+	describe( 'free month offer', () => {
+		const freeMonthOfferText =
+			'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your WordPress.com Business plan subscription to continue building your site?';
+
+		function renderFreeMonthOffer( upsell = 'free-month-offer' ) {
+			const freeMonthOfferClick = vi.fn();
+			const recordEvent = vi.fn();
+
+			render(
+				<CancelPurchaseForm
+					{ ...defaultProps }
+					surveyStep={ UPSELL_STEP }
+					allSteps={ [ FEEDBACK_STEP, UPSELL_STEP ] }
+					purchase={ makePurchase( {
+						product_name: 'Business',
+						product_slug: 'business-bundle-monthly',
+						bill_period_days: 31,
+					} ) }
+					plans={ [
+						{
+							product_slug: 'business-bundle-monthly',
+							product_name: 'WordPress.com Business',
+						} as PlanProduct,
+					] }
+					questionOneText="foundBetterValue"
+					upsell={ upsell }
+					freeMonthOfferClick={ freeMonthOfferClick }
+					recordEvent={ recordEvent }
+				/>
+			);
+
+			return { freeMonthOfferClick, recordEvent };
+		}
+
+		afterEach( () => {
+			disable( 'purchases/cancel-options-cards' );
+			disable( 'purchases/split-cancel-remove' );
+		} );
+
+		test( 'offers a free month on its own screen when the cards flag is off', async () => {
+			const user = userEvent.setup();
+			disable( 'purchases/cancel-options-cards' );
+			const { freeMonthOfferClick } = renderFreeMonthOffer();
+
+			expect( screen.getByRole( 'heading', { name: 'How about a free month?' } ) ).toBeVisible();
+			expect( screen.getByText( freeMonthOfferText ) ).toBeVisible();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get a free month' } ) );
+
+			expect( freeMonthOfferClick ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'offers a free month as the first card when the cards flag is on', async () => {
+			const user = userEvent.setup();
+			enable( 'purchases/cancel-options-cards' );
+			const { freeMonthOfferClick, recordEvent } = renderFreeMonthOffer();
+
+			const list = screen.getByRole( 'list', {
+				name: 'Before canceling, you can consider these options:',
+			} );
+			const firstCard = within( within( list ).getAllByRole( 'listitem' )[ 0 ] );
+			expect( firstCard.getByText( freeMonthOfferText ) ).toBeVisible();
+			expect( recordEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.objectContaining( { solution_ids: expect.stringMatching( /^free-month-offer,/ ) } )
+			);
+
+			await user.click( firstCard.getByRole( 'button', { name: /^How about a free month\?/ } ) );
+
+			expect( freeMonthOfferClick ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_card_click',
+				expect.objectContaining( { solution_id: 'free-month-offer' } )
+			);
+		} );
+
+		test( 'leaves out the free month card for another upsell when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+			renderFreeMonthOffer( 'built-by' );
+
+			expect(
+				screen.getByRole( 'list', { name: 'Before canceling, you can consider these options:' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: /^How about a free month\?/ } )
+			).not.toBeInTheDocument();
+		} );
 	} );
 } );

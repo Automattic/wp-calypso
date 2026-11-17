@@ -4,10 +4,11 @@
 @import '@wordpress/base-styles/variables';
 
 // The template every account screen follows: log in, sign up, lost password,
-// magic link, two-step authentication. A 432px column (`columnWidth={ 4 }`)
-// with the heading left-aligned above the form. The main login screen is the
-// exception: its form and social buttons sit side by side, so it opts into
-// `.is-centered` and keeps its wider column.
+// magic link, two-step authentication, and the site migration steps that ask
+// for an address or access. A 432px column (`columnWidth={ 4 }`) with the
+// heading left-aligned above the form. The main login screen is the exception:
+// its form and social buttons sit side by side, so it opts into `.is-centered`
+// and keeps its wider column.
 .account-template {
 	display: flex;
 	flex-direction: column;
@@ -62,12 +63,10 @@
 		color: var( --color-neutral-100 );
 		font-size: $font-body-small;
 		line-height: $font-line-height-small;
-		letter-spacing: -0.15px;
 
 		@include break-small {
 			font-size: $font-body;
 			line-height: $font-line-height-medium;
-			letter-spacing: -0.32px;
 		}
 
 		.wp-login__one-login-layout-tos,
@@ -78,6 +77,12 @@
 		a {
 			text-decoration: underline;
 		}
+	}
+
+	// Screens without a subtitle render it empty, and its margin would still add to the
+	// gap under the title.
+	.wp-login__one-login-layout-heading-subtext:empty {
+		display: none;
 	}
 
 	&.is-centered .step-container-v2__heading p,
@@ -138,6 +143,67 @@
 			}
 		}
 
+		// Two-step: the card's own padding and margin would inset the form from the heading
+		// and push the actions away. Field to CTA is 16px, and CTA to the actions is 8px.
+		.two-factor-authentication__verification-code-form.card {
+			margin-bottom: 0;
+			padding-inline: 0;
+
+			.form-fieldset {
+				margin-bottom: $grid-unit-20;
+			}
+		}
+
+		.two-factor-authentication__actions.card {
+			gap: $grid-unit-10;
+			padding: $grid-unit-10 0 0;
+		}
+
+		.two-factor-authentication__push-notification-approval {
+			width: 100%;
+		}
+
+		// The text above the security key CTA sits 16px from it, while waiting or not.
+		.security-key-form__help-text p:last-child {
+			margin-bottom: $grid-unit-20;
+		}
+
+		.security-key-form__add-wait-for-key {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: center;
+			// 24px between the rows, like the paragraphs of the idle state.
+			gap: $grid-unit-30 $grid-unit-10;
+			margin-bottom: $grid-unit-20;
+			text-align: start;
+
+			.spinner,
+			p {
+				margin-bottom: 0;
+			}
+
+			.spinner__outer {
+				margin-inline-start: 0;
+			}
+
+			p:not( .security-key-form__add-wait-for-key-heading ) {
+				grid-column: 1 / -1;
+			}
+		}
+
+		// The footer links under the two-step form keep `.login`'s 2rem gap, and each is
+		// centered in a 40px row.
+		.login:has(
+				.two-factor-authentication__verification-code-form-wrapper,
+				.two-factor-authentication__push-notification-approval
+			)
+			> .one-login__footer
+			.one-login__footer-link {
+			display: inline-flex;
+			align-items: center;
+			min-height: $button-size-next-default-40px;
+		}
+
 		// The link under the CTA ("Enter a password instead") is the template's secondary
 		// button: 8px below the CTA, centered in a 40px row.
 		.magic-login__form + .one-login__footer {
@@ -177,12 +243,28 @@
 	}
 }
 
+// Secondary links after the form, like the way back to the previous step: 8px below
+// the element before them (the CTA, as a rule), each centered in a 40px row.
+.account-template__secondary-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	// Takes back the template's 2rem gap, leaving 8px above the first link.
+	margin-block-start: -1.5rem;
+	font-size: $font-body-small;
+
+	> .components-button {
+		min-height: 40px;
+		color: var( --studio-gray-90 );
+	}
+}
+
 // Top bar links. Up to two, separated by a divider, e.g. "Use my own domain | Help Center".
 .account-template__top-bar-links {
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	font-size: 13px;
+	font-size: $font-size-medium;
 	line-height: $font-line-height-small;
 
 	> * + * {

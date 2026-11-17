@@ -71,6 +71,41 @@ describe( 'reader utils', () => {
 		} );
 	} );
 
+	describe( '#showSelectedPost with a saved snapshot', () => {
+		const windowOpen = jest.fn();
+
+		beforeEach( () => {
+			Object.defineProperty( globalThis, 'window', {
+				configurable: true,
+				value: { open: windowOpen },
+			} );
+		} );
+
+		afterEach( () => {
+			Reflect.deleteProperty( globalThis, 'window' );
+		} );
+
+		test( 'opens the saved page in a new tab', () => {
+			showSelectedPost( {
+				postKey: { snapshotId: 'url-save-1', url: 'https://example.com/page' },
+			} )();
+			expect( windowOpen ).toHaveBeenCalledWith(
+				'https://example.com/page',
+				'_blank',
+				'noopener,noreferrer'
+			);
+			expect( page ).not.toHaveBeenCalled();
+		} );
+
+		test( 'does not open a URL that is not http or https', () => {
+			showSelectedPost( {
+				postKey: { snapshotId: 'url-save-1', url: 'javascript:alert(1)' },
+			} )();
+			expect( windowOpen ).not.toHaveBeenCalled();
+			expect( page ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'getSafeImageUrlForReader', () => {
 		test( 'returns the url as is if it is from a trusted host', () => {
 			const url = 'https://www.redditstatic.com/image.jpg';

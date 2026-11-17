@@ -10,11 +10,11 @@ export const SignupSlider = () => {
 			<div className="signup-slider__slide-content">
 				<div className="signup-slider__slide-image" aria-hidden="true" />
 				<p className="signup-slider__headline">
-					{ translate( 'WordPress powers 43% of the web' ) }
+					{ translate( 'Millions of sites run on WordPress' ) }
 				</p>
 				<p className="signup-slider__description">
 					{ translate(
-						'That’s 472+ million sites. From Barbara’s business to Sam’s blog, your store will be in good company.'
+						'From Barbara’s business to Sam’s blog, your store will be in good company.'
 					) }
 				</p>
 			</div>

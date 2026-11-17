@@ -1,5 +1,6 @@
 import {
 	dashboardAdminBarQuery,
+	omnibarCurrentUrlQuery,
 	omnibarSiteIdQuery,
 	siteAdminBarQuery,
 	siteByIdQuery,
@@ -83,6 +84,7 @@ function ConnectedOmnibar( {
 	const authUser = useOmnibarUser( { user, enabled: hydrated } );
 
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
+	const { data: currentUrl } = useQuery( omnibarCurrentUrlQuery() );
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
@@ -102,6 +104,11 @@ function ConnectedOmnibar( {
 		[ preferDashboardAdminBar, dashboardAdminBarNodes, siteAdminBarNodes ]
 	);
 
+	const resolveHref = useMemo(
+		() => createHrefResolver( siteAdminBarNodes ? site?.options?.admin_url : undefined ),
+		[ siteAdminBarNodes, site ]
+	);
+
 	const { nodeBuilder: launchSiteNodeBuilder, panel: launchSitePanel } = useLaunchSiteNodeBuilder( {
 		site,
 	} );
@@ -113,7 +120,12 @@ function ConnectedOmnibar( {
 		() => ( {
 			'site-plan-badge': createSiteBadgeNodeBuilder(),
 			'site-status-badge': createSiteBadgeNodeBuilder(),
-			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { sectionName, recordTracksEvent } ),
+			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( {
+				currentUrl,
+				resolveHref,
+				sectionName,
+				recordTracksEvent,
+			} ),
 			stats: createStatsSparklineNodeBuilder( { siteId } ),
 			'launch-site': launchSiteNodeBuilder,
 			...( supports.commandPalette ? {} : { 'command-palette': () => null } ),
@@ -125,6 +137,8 @@ function ConnectedOmnibar( {
 		} ),
 		[
 			siteId,
+			currentUrl,
+			resolveHref,
 			sectionGroup,
 			sectionName,
 			recordTracksEvent,
@@ -137,11 +151,7 @@ function ConnectedOmnibar( {
 	);
 
 	const baseOmnibarNodes = useMemo( () => {
-		const result = buildOmnibarNodesFromAdminBarNodes(
-			adminBarNodes,
-			nodeBuilders,
-			createHrefResolver( siteAdminBarNodes ? site?.options?.admin_url : undefined )
-		);
+		const result = buildOmnibarNodesFromAdminBarNodes( adminBarNodes, nodeBuilders, resolveHref );
 
 		if ( ! result.home ) {
 			result.home = { id: '' };
@@ -166,7 +176,7 @@ function ConnectedOmnibar( {
 		}
 
 		return result;
-	}, [ adminBarNodes, siteAdminBarNodes, site, nodeBuilders ] );
+	}, [ adminBarNodes, resolveHref, site, nodeBuilders ] );
 
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, { site, sectionGroup } );
 

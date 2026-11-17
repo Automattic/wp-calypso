@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { bigSkyPluginQuery, queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useShouldLoadAgentsManager, {
 	getAgentsManagerEligibility,
 } from '../use-should-load-agents-manager';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
+vi.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: vi.fn(),
 } ) );
 
-const mockedIsEnabled = jest.mocked( isEnabled );
+const mockedIsEnabled = vi.mocked( isEnabled );
 
 describe( 'useShouldLoadAgentsManager', () => {
 	beforeEach( () => {
@@ -20,7 +21,7 @@ describe( 'useShouldLoadAgentsManager', () => {
 		mockedIsEnabled.mockReturnValue( true );
 	} );
 
-	it.each( [ '/sites/example.wordpress.com', '/sites/example.com/' ] )(
+	test.each( [ '/sites/example.wordpress.com', '/sites/example.com/' ] )(
 		'loads Agents Manager on a site overview at %s',
 		( currentRoute ) => {
 			expect( getAgentsManagerEligibility( currentRoute, true ) ).toEqual( {
@@ -30,7 +31,7 @@ describe( 'useShouldLoadAgentsManager', () => {
 		}
 	);
 
-	it.each( [ '/sites', '/sites/example.com/domains', '/me', '/', null, undefined ] )(
+	test.each( [ '/sites', '/sites/example.com/domains', '/me', '/', null, undefined ] )(
 		'does not load Agents Manager at %s',
 		( currentRoute ) => {
 			expect( getAgentsManagerEligibility( currentRoute, true ) ).toEqual( {
@@ -40,14 +41,14 @@ describe( 'useShouldLoadAgentsManager', () => {
 		}
 	);
 
-	it( 'does not load Agents Manager when WordPress Agent is disabled', () => {
+	test( 'does not load Agents Manager when WordPress Agent is disabled', () => {
 		expect( getAgentsManagerEligibility( '/sites/example.com', false ) ).toEqual( {
 			routeIsEnabled: false,
 			isInternalOnly: true,
 		} );
 	} );
 
-	it.each( [ true, false ] )(
+	test.each( [ true, false ] )(
 		'returns %s when the WordPress Agent setting has that value',
 		( enabled ) => {
 			const siteId = 123;
@@ -69,7 +70,7 @@ describe( 'useShouldLoadAgentsManager', () => {
 		}
 	);
 
-	it( 'does not load an internal-only route when the internal feature is disabled', () => {
+	test( 'does not load an internal-only route when the internal feature is disabled', () => {
 		mockedIsEnabled.mockReturnValue( false );
 
 		expect( getAgentsManagerEligibility( '/sites/example.com', true ) ).toEqual( {
@@ -81,11 +82,11 @@ describe( 'useShouldLoadAgentsManager', () => {
 } );
 
 describe( 'marketplace eligibility', () => {
-	it( 'keeps the dashboard plugin management page disabled', () => {
+	test( 'keeps the dashboard plugin management page disabled', () => {
 		expect( getAgentsManagerEligibility( '/plugins', true ).routeIsEnabled ).toBe( false );
 	} );
 
-	it.each( [
+	test.each( [
 		'/plugins',
 		'/plugins/',
 		'/plugins/example.com',
@@ -100,7 +101,7 @@ describe( 'marketplace eligibility', () => {
 		expect( result.current ).toEqual( { routeIsEnabled: true, isInternalOnly: false } );
 	} );
 
-	it.each( [
+	test.each( [
 		'manage',
 		'upload',
 		'setup',

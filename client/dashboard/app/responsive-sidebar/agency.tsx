@@ -1,13 +1,18 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
+import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
+import SidebarPromo from '../../agency/components/sidebar-promo';
+import { crossoverLinkProps } from '../../agency/crossover/store';
+import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
-import { a4aLink } from '../../utils/link';
+import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
+	agencyAmplifyRoute,
 	agencySitesRoute,
 	agencyTeamRoute,
 	agencyTiersRoute,
@@ -24,7 +29,6 @@ import {
 	marketplaceSections,
 	mcpRoute,
 } from '../router/agency';
-import { buildDashboardLink } from '../routing';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function AgencySidebar() {
@@ -46,9 +50,7 @@ export default function AgencySidebar() {
 		!! supports.agency.plugins && hasAnyCapability( capabilities, 'a4a_read_managed_sites' );
 	const canAccessDevTools = !! supports.agency.devTools && canAccess( devToolsRoute );
 	const canAccessMigrations = !! supports.agency.earn && canAccess( earnMigrationsRoute );
-	const canAccessAmplify =
-		!! ( supports.agency.amplify && activeAgency?.amplify?.allowed ) &&
-		hasAnyCapability( capabilities, 'a4a_read_amplify' );
+	const canAccessAmplify = !! supports.agency.amplify && canAccess( agencyAmplifyRoute );
 	const accessibleMarketplaceSections = marketplaceSections.filter( ( section ) =>
 		isMarketplaceSectionAvailable( section, agencySupports, capabilities )
 	);
@@ -76,7 +78,9 @@ export default function AgencySidebar() {
 		canAccessMigrations ||
 		canAccessAmplify;
 	const canAccessGrow = canAccessLibrary || canAccessPartnerDirectory || canAccessTiers;
-	const canAccessAgency = canAccessTeam || canAccessMcp || canAccessBilling;
+	const canAccessDashboardOptIn = canSwitchAgencyDashboard( activeAgency );
+	const canAccessAgency =
+		canAccessTeam || canAccessMcp || canAccessBilling || canAccessDashboardOptIn;
 
 	return (
 		<>
@@ -88,12 +92,12 @@ export default function AgencySidebar() {
 					label={ __( 'Clients' ) }
 					icon={ people }
 					to="/sites"
-					activePaths={ [ '/dev-tools', '/migrations' ] }
+					activePaths={ [ '/dev-tools', '/migrations', '/prospect-reports' ] }
 				>
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
 					{ canAccessPlugins && (
-						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/plugins' ) }>
+						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-plugins' ) }>
 							{ __( 'Plugins' ) }
 						</SidebarMenuItem>
 					) }
@@ -104,7 +108,7 @@ export default function AgencySidebar() {
 						<SidebarMenuItem to="/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
 					) }
 					{ canAccessAmplify && (
-						<SidebarMenuItem href={ a4aLink( '/amplify' ) }>{ __( 'Amplify' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/prospect-reports">{ getAmplifyFeatureName() }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
@@ -147,7 +151,7 @@ export default function AgencySidebar() {
 					label={ __( 'Earn' ) }
 					icon={ currencyDollar }
 					to="/referrals"
-					activePaths={ [ '/woopayments', '/payout-settings' ] }
+					activePaths={ [ '/woopayments' ] }
 				>
 					{ canAccess( earnReferralsRoute ) && (
 						<SidebarMenuItem to="/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
@@ -168,12 +172,29 @@ export default function AgencySidebar() {
 					) }
 					{ /* Billing lives in the WP.com dashboard. */ }
 					{ canAccessBilling && (
-						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/me/billing' ) }>
+						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-billing' ) }>
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
+					) }
+					{ canAccessDashboardOptIn && (
+						<SidebarMenuItem to="/agency/dashboard">{ __( 'Classic dashboard' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
 		</>
 	);
+}
+
+/**
+ * Sits outside the sidebar navigator so it stays put across screens. `Sidebar`
+ * renders it in every dashboard variant, hence the non-suspense query.
+ */
+export function AgencySidebarPromo() {
+	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
+	const { data: agency } = useQuery( { ...agencyQuery(), enabled: !! supports.agency } );
+	if ( ! supports.agency || ! agency || agency.isClientUser ) {
+		return null;
+	}
+	return <SidebarPromo recordTracksEvent={ recordTracksEvent } />;
 }

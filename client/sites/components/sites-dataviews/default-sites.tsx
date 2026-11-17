@@ -65,14 +65,11 @@ export default function DefaultSitesDataViews( {
 		navigate,
 	} );
 
-	const { sites, isLoadingSites, isPlaceholderData, hasNoData, totalItems } = useSiteListQuery(
-		view,
-		{
-			isDefaultView: ! resetView && ! view.search && view.page === 1,
-			isRestoringAccount,
-			isAutomattician,
-		}
-	);
+	const { sites, isLoadingSites, totalItems } = useSiteListQuery( view, {
+		isDefaultView: ! resetView && ! view.search && view.page === 1,
+		isRestoringAccount,
+		isAutomattician,
+	} );
 
 	const fields = useFields( { isAutomattician, viewType: listView.type } );
 	const actions = useActions( { viewType: listView.type } );
@@ -121,8 +118,7 @@ export default function DefaultSitesDataViews( {
 			fields={ fields.map( ( field ) => ( { ...field, enableHiding: false } ) ) }
 			actions={ actions as unknown as Action< Site >[] }
 			view={ { ...view, ...listView } as View }
-			isLoading={ isLoadingSites || ( isPlaceholderData && hasNoData ) }
-			isPlaceholderData={ isPlaceholderData }
+			isLoading={ isLoadingSites }
 			onChangeView={ handleViewChange }
 			paginationInfo={ paginationInfo }
 			config={ DEFAULT_CONFIG }

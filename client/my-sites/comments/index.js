@@ -47,11 +47,14 @@ export default function () {
 	);
 
 	// Comment View
-	page(
-		'/comment/:site/:comment',
-		siteSelection,
-		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' )
-	);
+	page( '/comment/:site/:comment', siteSelection, ( context, next ) => {
+		// wp-admin asks for confirmation on these, so email action links stay safe.
+		const { action } = context.query;
+		const adminAction = [ 'approve', 'trash', 'spam', 'delete' ].includes( action )
+			? action
+			: 'editcomment';
+		redirectToCommentIfDuplicatedView( `comment.php?action=${ adminAction }` )( context, next );
+	} );
 
 	// Redirect
 	page(

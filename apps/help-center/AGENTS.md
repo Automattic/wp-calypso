@@ -53,7 +53,7 @@ This deploys the Help Center bundles and language files for Jetpack consumption 
 For PRs that **only** touch `apps/help-center/` (build config, entry point wiring):
 
 ```markdown
-## Testing Instructions
+## How to Test
 
 1. Sandbox `widgets.wp.com` (the sites themselves do not need sandboxing).
 2. Run `cd apps/help-center && yarn dev --sync`.

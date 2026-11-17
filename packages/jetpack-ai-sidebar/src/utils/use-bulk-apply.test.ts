@@ -3,11 +3,12 @@
  */
 
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useBulkApply from './use-bulk-apply';
 
 describe( 'useBulkApply', () => {
 	it( 'counts step results and reports one aggregate action', async () => {
-		const fire = jest.fn();
+		const fire = vi.fn();
 		const { result } = renderHook( () => useBulkApply( fire, () => false ) );
 
 		await act( async () => {
@@ -29,8 +30,8 @@ describe( 'useBulkApply', () => {
 	} );
 
 	it( 'stops without reporting when a step observes a stale post', async () => {
-		const fire = jest.fn();
-		const later = jest.fn( async () => true );
+		const fire = vi.fn();
+		const later = vi.fn( async () => true );
 		const { result } = renderHook( () => useBulkApply( fire, () => false ) );
 
 		await act( async () => {
@@ -43,7 +44,7 @@ describe( 'useBulkApply', () => {
 	} );
 
 	it( 'stops without reporting when the context goes stale between steps', async () => {
-		const fire = jest.fn();
+		const fire = vi.fn();
 		let stale = false;
 		const { result } = renderHook( () => useBulkApply( fire, () => stale ) );
 
@@ -62,15 +63,15 @@ describe( 'useBulkApply', () => {
 	} );
 
 	it( 'ignores a second run while one is in flight', async () => {
-		const fire = jest.fn();
+		const fire = vi.fn();
 		let resolveStep: ( value: boolean ) => void = () => {};
-		const firstStep = jest.fn(
+		const firstStep = vi.fn(
 			() =>
 				new Promise< boolean >( ( resolve ) => {
 					resolveStep = resolve;
 				} )
 		);
-		const secondRunStep = jest.fn( async () => true );
+		const secondRunStep = vi.fn( async () => true );
 		const { result } = renderHook( () => useBulkApply( fire, () => false ) );
 
 		let firstRun: Promise< void > = Promise.resolve();
@@ -90,8 +91,8 @@ describe( 'useBulkApply', () => {
 	} );
 
 	it( 'does not start while the post context is already stale', async () => {
-		const fire = jest.fn();
-		const step = jest.fn( async () => true );
+		const fire = vi.fn();
+		const step = vi.fn( async () => true );
 		const { result } = renderHook( () => useBulkApply( fire, () => true ) );
 
 		await act( async () => {

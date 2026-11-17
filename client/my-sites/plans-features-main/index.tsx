@@ -82,6 +82,7 @@ import {
 	shouldForceDefaultPlansBasedOnIntent,
 	hideEscapeHatchForIntent,
 	ensureCompatibleIntervalType,
+	reverseGridPlanOrder,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
@@ -167,6 +168,8 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	isDomainTransfer?: boolean;
+	isDomainMove?: boolean;
+	isConnectedDomainMove?: boolean;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
@@ -233,11 +236,6 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 	renderFreePlanCtaInStepContainerV2?: boolean;
 
-	/**
-	 * Whether the plans render inside StepContainerV2. Defaults to what the flow name implies.
-	 */
-	isInStepContainerV2?: boolean;
-
 	selectedThemeType?: string;
 }
 
@@ -250,6 +248,8 @@ const PlansFeaturesMain = ( {
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
 	isDomainTransfer,
+	isDomainMove,
+	isConnectedDomainMove,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
@@ -286,7 +286,6 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
 	renderFreePlanCtaInStepContainerV2 = false,
-	isInStepContainerV2,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -645,6 +644,8 @@ const PlansFeaturesMain = ( {
 		paidDomainName,
 		intent: intentFromProps,
 		selectedThemeType,
+		isDomainMove,
+		isConnectedDomainMove,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -780,13 +781,6 @@ const PlansFeaturesMain = ( {
 	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
 	const {
-		showDifferentiatorHeader,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
-		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
-	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
 		showEnterpriseBottomCard,
@@ -795,6 +789,12 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { isInSignup, intent } );
+
+	const {
+		isLoading: isPlanDifferentiatorsExperimentLoading,
+		useReversedPlanOrder,
+		useMcpFeature,
+	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -1055,7 +1055,7 @@ const PlansFeaturesMain = ( {
 	] );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
-	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
+	const gridPlansForComparisonGridRaw = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -1075,13 +1075,17 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
+
+	const gridPlansForComparisonGrid = useMemo(
+		() =>
+			useReversedPlanOrder && gridPlansForComparisonGridRaw
+				? reverseGridPlanOrder( gridPlansForComparisonGridRaw )
+				: gridPlansForComparisonGridRaw,
+		[ gridPlansForComparisonGridRaw, useReversedPlanOrder ]
+	);
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
@@ -1107,13 +1111,11 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
+		useMcpFeature,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		hideFreeDomainBadge: isDomainMove,
 	} );
 
 	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
@@ -1165,7 +1167,7 @@ const PlansFeaturesMain = ( {
 	const gridPlansForFeaturesGrid = useMemo( () => {
 		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
 
-		return (
+		const gridPlans =
 			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
 				if ( planSlug === bottomGridPlanSlug ) {
 					return false;
@@ -1180,13 +1182,15 @@ const PlansFeaturesMain = ( {
 				}
 
 				return true;
-			} ) ?? null
-		);
+			} ) ?? null;
+
+		return useReversedPlanOrder && gridPlans ? reverseGridPlanOrder( gridPlans ) : gridPlans;
 	}, [
 		bottomGridPlanForFeaturesGrid,
 		gridPlansForFeaturesGridRaw,
 		deemphasizeFreePlan,
 		showWooCommerceBottomCard,
+		useReversedPlanOrder,
 	] );
 
 	const isVisualSplitEnabled =
@@ -1412,7 +1416,8 @@ const PlansFeaturesMain = ( {
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
-		! isPlansGridRedesignExperimentLoading;
+		! isPlansGridRedesignExperimentLoading &&
+		! isPlanDifferentiatorsExperimentLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
@@ -1458,7 +1463,8 @@ const PlansFeaturesMain = ( {
 			// The row set has to match the feature lists the comparison grid is built from, which a
 			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
 			// titles with a control list.
-			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
+			isExperimentVariant: ! hasTailoredFeatureList( intent ),
+			useMcpFeature,
 		} );
 	}
 
@@ -1469,10 +1475,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if (
-		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
-		! hasTailoredFeatureList( intent )
-	) {
+	} else if ( usePlansGridRedesignFeatures && ! hasTailoredFeatureList( intent ) ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		// Skipped for intents that curate their own feature list, whose grouping is theirs too.
@@ -1553,6 +1556,7 @@ const PlansFeaturesMain = ( {
 					generatedWPComSubdomain={ resolvedSubdomainName }
 					selectedThemeType={ selectedThemeType }
 					isDomainTransfer={ isDomainTransfer || false }
+					isConnectedDomainMove={ isConnectedDomainMove || false }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {
@@ -1648,13 +1652,10 @@ const PlansFeaturesMain = ( {
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
-					isInStepContainerV2={ isInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }
-					showDifferentiatorHeader={
-						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
-					}
+					showDifferentiatorHeader={ showPlansGridRedesignDifferentiatorHeader }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -1693,7 +1694,6 @@ const PlansFeaturesMain = ( {
 										allFeaturesList={ getFeaturesList() }
 										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
 										className={ clsx( 'plans-features-main__features-grid', {
-											'is-plan-differentiators-experiment': isExperimentVariant,
 											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
 										} ) }
 										coupon={ coupon }
@@ -1733,7 +1733,6 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
-										isExperimentVariant={ isExperimentVariant }
 										showFeatureCheckmarks={ usePlansGridRedesign }
 									/>
 								) }
@@ -1803,7 +1802,6 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
-													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle

@@ -5,7 +5,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 const BUILT_BY_URL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
-const RENEW_COUPON = 'DONTGO25';
+const RENEW_COUPON = 'CANRENEW25OFF';
 const SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/' );
 const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );

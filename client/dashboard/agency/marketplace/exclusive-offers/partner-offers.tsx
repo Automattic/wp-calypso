@@ -60,7 +60,7 @@ function PartnerOfferCard( {
 	return (
 		<Card>
 			<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-				<VStack spacing={ 4 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+				<VStack spacing={ 4 } justify="flex-start" style={ { flex: 1 } }>
 					<HStack>
 						<HStack
 							className="exclusive-offers-card-logo"

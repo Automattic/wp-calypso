@@ -7,8 +7,8 @@
  * the fixed `.some()` behavior: delete only when the target is among the user's
  * own domains.
  */
-import { describe, expect, test, jest, beforeEach } from '@jest/globals';
 import nock from 'nock';
+import { describe, expect, test, beforeEach, vi } from 'vitest';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -20,7 +20,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 // Persist and intercept all bearer token calls in these tests.
 nock( BEARER_TOKEN_URL )

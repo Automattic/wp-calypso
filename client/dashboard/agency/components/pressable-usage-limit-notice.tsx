@@ -2,8 +2,7 @@ import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-que
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import type { Agency } from '@automattic/api-core';
 
@@ -63,16 +62,15 @@ export default function PressableUsageLimitNotice( {
 			title={ __( 'Upgrade Pressable' ) }
 			onClose={ dismiss }
 			actions={
-				<RouterLinkButton
-					variant="primary"
-					size="compact"
+				<RouterNoticeActionLinkButton
+					variant="solid"
 					to={ getMarketplaceHostingSectionRoute( 'pressable' ) }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_a4a_pressable_limit_notification_upgrade_click' )
 					}
 				>
 					{ __( 'Upgrade now' ) }
-				</RouterLinkButton>
+				</RouterNoticeActionLinkButton>
 			}
 		>
 			{ isExceeded

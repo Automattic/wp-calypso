@@ -1,7 +1,7 @@
 import { getInitialReferralLogo, getReferralLogoPayload } from '../logo';
 
 describe( 'getInitialReferralLogo', () => {
-	it( 'opens on the profile logo, then the last referral logo, then nothing', () => {
+	test( 'opens on the profile logo, then the last referral logo, then nothing', () => {
 		expect( getInitialReferralLogo( 'https://a/profile.png', 'https://a/last.png' ) ).toEqual( {
 			type: 'profile',
 			url: 'https://a/profile.png',
@@ -15,7 +15,7 @@ describe( 'getInitialReferralLogo', () => {
 } );
 
 describe( 'getReferralLogoPayload', () => {
-	it( 'sends the profile logo by type and a chosen logo by URL', () => {
+	test( 'sends the profile logo by type and a chosen logo by URL', () => {
 		expect( getReferralLogoPayload( { type: 'profile', url: 'https://a/p.png' } ) ).toEqual( {
 			type: 'profile',
 		} );
@@ -26,7 +26,7 @@ describe( 'getReferralLogoPayload', () => {
 		expect( getReferralLogoPayload( { type: 'none' } ) ).toEqual( { type: 'none' } );
 	} );
 
-	it( 'sends an uploaded file by its stored URL, and nothing when the upload gave none', () => {
+	test( 'sends an uploaded file by its stored URL, and nothing when the upload gave none', () => {
 		const file = new File( [ 'x' ], 'logo.png', { type: 'image/png' } );
 		const picked = { type: 'file' as const, file, previewUrl: 'blob:preview' };
 		expect( getReferralLogoPayload( picked, 'https://a/uploaded.png' ) ).toEqual( {

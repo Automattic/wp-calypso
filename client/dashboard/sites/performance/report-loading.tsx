@@ -43,7 +43,7 @@ export default function ReportLoading( {
 		if ( step > index ) {
 			return (
 				<Icon
-					style={ { fill: 'var(--dashboard__foreground-color-success)' } }
+					style={ { color: 'var(--dashboard__foreground-color-success)' } }
 					icon={ published }
 					size={ iconSize }
 				/>
@@ -62,7 +62,7 @@ export default function ReportLoading( {
 		}
 		return (
 			<Icon
-				style={ { fill: 'var(--dashboard__text-muted-color)' } }
+				style={ { color: 'var(--dashboard__text-muted-color)' } }
 				icon={ border }
 				size={ iconSize }
 			/>

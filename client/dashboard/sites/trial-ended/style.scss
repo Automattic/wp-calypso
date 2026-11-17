@@ -3,7 +3,7 @@
 .site-trial-ended__title {
 	font-family: Recoleta, sans-serif;
 	font-size: $font-size-2x-large;
-	font-weight: $font-weight-regular;
+	font-weight: var(--wpds-typography-font-weight-default, 400);
 	line-height: $font-line-height-2x-large;
 	color: var(--dashboard__text-color);
 	margin: 0;
@@ -17,14 +17,14 @@
 	.plan-price__currency-symbol {
 		color: var(--dashboard__text-muted-color);
 		font-size: $font-size-medium;
-		font-weight: $font-weight-regular;
+		font-weight: var(--wpds-typography-font-weight-default, 400);
 		line-height: $font-line-height-small;
 	}
 
 	.plan-price__integer {
 		font-family: Recoleta, sans-serif;
 		font-size: $font-size-2x-large;
-		font-weight: $font-weight-regular;
+		font-weight: var(--wpds-typography-font-weight-default, 400);
 		line-height: $font-line-height-x-large;
 	}
 }

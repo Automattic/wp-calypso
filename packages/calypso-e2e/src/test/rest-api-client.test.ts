@@ -1,5 +1,14 @@
-import { afterEach, beforeEach, describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	test,
+	type Mock,
+	vi,
+	type MockInstance,
+} from 'vitest';
 import * as teamcity from '../lib/teamcity';
 import {
 	flushThrottleWrites,
@@ -28,7 +37,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 // Persist and intercept all bearer token calls in these tests.
 nock( BEARER_TOKEN_URL )
@@ -203,14 +212,14 @@ describe( 'RestAPIClient: createSite', function () {
 		} );
 	} );
 
-	let tagOwnBuild: jest.SpiedFunction< typeof teamcity.tagOwnBuild >;
-	let appendOwnBuildLog: jest.SpiedFunction< typeof teamcity.appendOwnBuildLog >;
-	let warn: jest.SpiedFunction< typeof console.warn >;
-	let throttleActionHandler: jest.Mock;
+	let tagOwnBuild: MockInstance< typeof teamcity.tagOwnBuild >;
+	let appendOwnBuildLog: MockInstance< typeof teamcity.appendOwnBuildLog >;
+	let warn: MockInstance< typeof console.warn >;
+	let throttleActionHandler: Mock;
 	let unregisterThrottleActionHandler: () => void;
 
 	beforeEach( () => {
-		throttleActionHandler = jest.fn();
+		throttleActionHandler = vi.fn();
 		unregisterThrottleActionHandler = registerThrottleActionHandler( throttleActionHandler );
 		delete process.env.THROTTLE_SIGNUP_EXPIRATION;
 		delete process.env.E2E_THROTTLE_SIGNUP_ACTION;
@@ -229,7 +238,7 @@ describe( 'RestAPIClient: createSite', function () {
 	} );
 
 	test( 'An active signup throttle acts before the request is sent', async function () {
-		const sendRequest = jest.spyOn( restAPIClient, 'sendRequest' );
+		const sendRequest = vi.spyOn( restAPIClient, 'sendRequest' );
 		process.env.THROTTLE_SIGNUP_EXPIRATION = String( Date.now() + 60_000 );
 		throttleActionHandler.mockImplementation( () => {
 			throw new Error( 'policy applied' );
@@ -243,9 +252,9 @@ describe( 'RestAPIClient: createSite', function () {
 	} );
 
 	test( 'A throttled response raises a flag and still fails the call', async function () {
-		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
-		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		tagOwnBuild = vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+		warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, {
 			error: 'throttled',
 			message: 'Limit reached. You can try again in 10 minutes.',
@@ -269,11 +278,11 @@ describe( 'RestAPIClient: createSite', function () {
 
 	test( 'A throttled call answers without waiting for the write', async function () {
 		let settle: ( status: number ) => void = () => undefined;
-		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		appendOwnBuildLog = jest
+		tagOwnBuild = vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = vi
 			.spyOn( teamcity, 'appendOwnBuildLog' )
 			.mockImplementation( () => new Promise< number >( ( resolve ) => ( settle = resolve ) ) );
-		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, { error: 'throttled' } );
 
 		// TeamCity has not answered, and the caller is through regardless: what a
@@ -288,9 +297,9 @@ describe( 'RestAPIClient: createSite', function () {
 	} );
 
 	test( 'A throttled response is recognised without the sentence too', async function () {
-		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
-		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		tagOwnBuild = vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+		warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 403, { error: 'throttled' } );
 
 		// The code alone settles it on this endpoint, and only the caller knows
@@ -303,10 +312,10 @@ describe( 'RestAPIClient: createSite', function () {
 	} );
 
 	test( 'A refusal that is not JSON acts on the call that met it', async function () {
-		tagOwnBuild = jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-		appendOwnBuildLog = jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
-		warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		tagOwnBuild = vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+		appendOwnBuildLog = vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+		warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => undefined );
 		// A refusal a gateway wrapped in a page of its own: `sendRequest` cannot
 		// parse it, so the throttle arrives as a thrown error, not a response body.
 		nock( requestURL.origin )

@@ -1,5 +1,4 @@
 import { validateUsername } from '@automattic/api-core';
-import { debounce } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import type { UsernameValidationResult } from '@automattic/api-core';
 
@@ -42,11 +41,6 @@ export async function validateUsernameInternal(
 		setValidationResult( error as ValidationResult );
 	}
 }
-
-export const validateUsernameDebounced = debounce(
-	validateUsernameInternal as ( ...args: unknown[] ) => unknown,
-	600
-) as typeof validateUsernameInternal;
 
 export function isUsernameValid( validationResult: ValidationResult | null ): boolean {
 	return !! (

@@ -119,7 +119,7 @@ export default function TierCards( {
 					} }
 				>
 					<CardBody style={ { display: 'flex', flexDirection: 'column', height: '100%' } }>
-						<VStack spacing={ 1 } style={ { flex: 1, justifyContent: 'flex-start' } }>
+						<VStack spacing={ 1 } justify="flex-start" style={ { flex: 1 } }>
 							<HStack style={ { marginBlockEnd: '4px' } }>
 								<Heading level={ 3 } weight={ 500 }>
 									{ tier.name }
@@ -168,7 +168,8 @@ export default function TierCards( {
 						</VStack>
 						<VStack
 							spacing={ 1 }
-							style={ { flex: 1, justifyContent: 'flex-start', marginBlockStart: '8px' } }
+							justify="flex-start"
+							style={ { flex: 1, marginBlockStart: '8px' } }
 						>
 							<Text color={ TEXT_COLOR } weight={ 700 }>
 								{ tier.heading }

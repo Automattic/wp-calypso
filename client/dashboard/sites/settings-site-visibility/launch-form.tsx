@@ -5,7 +5,6 @@ import { useLocation } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	Button,
 	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -13,8 +12,10 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../../agency/marketplace/paths';
 import { getSiteLaunchCheckoutUrl } from '../../agency/marketplace/products/lib/checkout-url';
 import { useAppContext } from '../../app/context';
-import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import Notice, {
+	NoticeActionLinkButton,
+	RouterNoticeActionLinkButton,
+} from '../../components/notice';
 import { a4aLink } from '../../utils/link';
 import { SiteLaunchButton } from '../site-launch-button';
 import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
@@ -113,9 +114,8 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 					/>
 					{ shouldShowReferClientButton &&
 						( hasAgencyCheckouts ? (
-							<RouterLinkButton
-								size="compact"
-								variant="secondary"
+							<RouterNoticeActionLinkButton
+								variant="outline"
 								to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
 								search={ {
 									referral_blog_id: site.ID,
@@ -123,15 +123,14 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 								} }
 							>
 								{ __( 'Refer a client' ) }
-							</RouterLinkButton>
+							</RouterNoticeActionLinkButton>
 						) : (
-							<Button
-								size="compact"
-								variant="secondary"
+							<NoticeActionLinkButton
+								variant="outline"
 								href={ a4aLink( `/marketplace/checkout?referral_blog_id=${ site.ID }` ) }
 							>
 								{ __( 'Refer a client' ) }
-							</Button>
+							</NoticeActionLinkButton>
 						) ) }
 				</>
 			}

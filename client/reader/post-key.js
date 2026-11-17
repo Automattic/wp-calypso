@@ -1,8 +1,23 @@
+/**
+ * Whether the post is a snapshot the saved posts API built for a save it can't
+ * load as a Reader post: a page saved by URL, or a feed item that's since been
+ * deleted. Snapshots have no site or feed, so render them from the stream data.
+ */
+export function isSavedSnapshotPost( post ) {
+	return Boolean( post?.is_external && post.site_ID === 0 && post.feed_ID === 0 );
+}
+
 export function keyForPost( post ) {
 	if ( ! post ) {
 		return;
 	}
 
+	if ( isSavedSnapshotPost( post ) ) {
+		return {
+			snapshotId: post.global_ID || post.URL,
+			url: post.URL,
+		};
+	}
 	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
@@ -34,6 +49,9 @@ export function keysAreEqual( a, b ) {
 	if ( a.isGap && b.isGap ) {
 		return a.from === b.from && a.to === b.to;
 	}
+	if ( a.snapshotId || b.snapshotId ) {
+		return a.snapshotId === b.snapshotId;
+	}
 	if ( a.postId !== b.postId ) {
 		return false;
 	}
@@ -54,6 +72,8 @@ export function keyToString( postKey ) {
 		return `prompt-${ postKey.index }`;
 	} else if ( postKey.isCustomBlock ) {
 		return `custom-${ postKey.index }`;
+	} else if ( postKey.snapshotId ) {
+		return `snapshot-${ postKey.snapshotId }`;
 	} else if ( postKey.feedId ) {
 		return `feed-${ postKey.postId }-${ postKey.feedId }`;
 	} else if ( postKey.blogId ) {

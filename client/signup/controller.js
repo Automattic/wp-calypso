@@ -15,6 +15,10 @@ import {
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
 import {
+	LEGACY_WEBSITE_DESIGN_SERVICES_FLOW,
+	getWebsiteDesignServicesRedirect,
+} from 'calypso/lib/signup/legacy-website-design-services-flow';
+import {
 	LEGACY_WOOCOMMERCE_INSTALL_FLOW,
 	getWooCommercePluginPage,
 } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
@@ -142,6 +146,11 @@ export default {
 
 		if ( flowName === LEGACY_WOOCOMMERCE_INSTALL_FLOW ) {
 			window.location.replace( getWooCommercePluginPage( context.query?.siteSlug ) );
+			return;
+		}
+
+		if ( flowName === LEGACY_WEBSITE_DESIGN_SERVICES_FLOW ) {
+			window.location.replace( getWebsiteDesignServicesRedirect( lang, context.querystring ) );
 			return;
 		}
 
@@ -341,7 +350,7 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		if ( [ 'launch-site', 'site-selected' ].includes( flowName ) ) {
+		if ( 'site-selected' === flowName ) {
 			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
 			// optional, so an abandoned flow would otherwise decide where the next one leaves the user.
 			// Re-read them from the query the flow was entered with.

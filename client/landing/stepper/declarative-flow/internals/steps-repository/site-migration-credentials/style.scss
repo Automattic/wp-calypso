@@ -38,6 +38,7 @@ $blueberry-color: #3858e9;
 
 	&__error-notice.calypso-notice .calypso-notice__icon-wrapper svg.calypso-notice__icon {
 		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
 	}
 
 	&__error-notice,
@@ -57,9 +58,13 @@ $blueberry-color: #3858e9;
 			margin-top: 1em;
 			background: var(--color-border-subtle);
 		}
-		.action-buttons__next {
-			width: 100%;
-			margin-top: 1em;
+		.site-migration-credentials__submit {
+			margin-block-start: 1rem;
+
+			.components-button {
+				justify-content: center;
+				width: 100%;
+			}
 		}
 		.site-migration-credentials__form-fields-row {
 			display: flex;
@@ -132,17 +137,15 @@ $blueberry-color: #3858e9;
 
 				svg {
 					fill: var(--color-neutral-20);
+					color: var(--color-neutral-20);
 
 					&:hover {
 						fill: var(--studio-blue-50);
+						color: var(--studio-blue-50);
 					}
 				}
 			}
 		}
-	}
-	.site-migration-credentials__skip {
-		margin-top: 1em;
-		text-align: center;
 	}
 	.site-migration-credentials__special-instructions {
 		.components-button {
@@ -155,7 +158,7 @@ $blueberry-color: #3858e9;
 		}
 
 		.site-migration-credentials__special-instructions-icon {
-			fill: var(--color-text) !important;
+			color: var(--color-text) !important;
 		}
 	}
 	.site-migration-credentials__backup-note {
@@ -167,11 +170,5 @@ $blueberry-color: #3858e9;
 		&.site-migration-credentials__content {
 			padding: 1rem;
 		}
-	}
-}
-
-.site-migration-credentials__need-help-link {
-	.components-button {
-		font-size: 0.875rem;
 	}
 }

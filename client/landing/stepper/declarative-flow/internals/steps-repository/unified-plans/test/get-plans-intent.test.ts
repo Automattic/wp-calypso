@@ -18,6 +18,13 @@ describe( 'getPlansIntent', () => {
 		expect( getPlansIntent( 'ai-site-builder-onboarding' ) ).toBe( 'plans-ai-assembler-paid-only' );
 	} );
 
+	// Without this, an import is offered Commerce, whose site is still moving to Atomic at hand-off.
+	it( 'offers an import the plans that can take one', () => {
+		window.history.replaceState( {}, '', '/?flow=import' );
+
+		expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-import' );
+	} );
+
 	it( 'uses the fixed Playground plans intent', () => {
 		window.history.replaceState( {}, '', '/?playground=playground-id' );
 		window.localStorage.setItem( 'playground-plans-intent-playground-id', 'plans-blog-onboarding' );

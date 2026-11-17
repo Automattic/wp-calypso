@@ -1,9 +1,10 @@
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
+import { useLocale } from '../../../../app/locale';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	CANCEL_FLOW_TYPE,
 	isExpiredOrRemoved,
@@ -12,7 +13,7 @@ import {
 } from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
 import KeepSubscriptionButton from '../keep-subscription-button';
-import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
+import { useCancelOptionsExperiment } from '../use-cancel-options-experiment';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep, { shouldShowCancellationReason } from './step-components/feedback-step';
@@ -51,7 +52,6 @@ interface CancelPurchaseFormProps {
 	clickNext?: () => void;
 	closeDialog?: () => void;
 	disableButtons?: boolean;
-	downgradeClick?: ( upsell: string ) => void;
 	downgradePlan?: PlanProduct;
 	downgradePlanToMonthlyPrice?: number;
 	downgradePlanToPersonalPrice?: number;
@@ -79,7 +79,6 @@ interface CancelPurchaseFormProps {
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
 	onSurveyComplete?: () => void;
-	onSwitchToMonthly?: () => void;
 	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
@@ -113,7 +112,6 @@ function SurveyContent( {
 	cancellationOffer,
 	clickNext,
 	closeDialog,
-	downgradeClick,
 	downgradePlan,
 	flowType,
 	freeMonthOfferClick,
@@ -144,12 +142,12 @@ function SurveyContent( {
 	includedDomainPurchase,
 	isAkismet,
 	intent,
-	onSwitchToMonthly,
 	recordEvent,
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
+	const locale = useLocale();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -169,24 +167,21 @@ function SurveyContent( {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
 		const solutions = getSolutionsForReason( questionOneText ?? '' );
-		const useSolutionsCards = isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
+		const useSolutionsCards = showCancelOptionsCards && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
 				<SolutionsCardsUpsellStep
 					cancellationInProgress={ cancellationInProgress }
 					cancellationReason={ questionOneText }
-					cancelBundledDomain={ cancelBundledDomain }
 					closeDialog={ closeDialog }
-					downgradePlan={ downgradePlan }
-					includedDomainPurchase={ includedDomainPurchase }
 					intent={ intent ?? undefined }
-					onClickDowngrade={ downgradeClick }
+					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
-					onSwitchToMonthly={ onSwitchToMonthly }
+					plans={ plans }
 					purchase={ purchase }
 					recordEvent={ recordEvent }
-					refundAmount={ refundAmount }
+					showFreeMonthOffer={ upsell === 'free-month-offer' }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
@@ -214,7 +209,6 @@ function SurveyContent( {
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
 				intent={ intent ?? undefined }
-				onClickDowngrade={ downgradeClick }
 				onClickFreeMonthOffer={ freeMonthOfferClick }
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 				plans={ plans }
@@ -278,9 +272,7 @@ function SurveyContent( {
 								),
 								{
 									planName: productName,
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
-										dateStyle: 'medium',
-									} ),
+									purchaseRenewalDate: formatDate( new Date( purchase.expiry_date ), locale ),
 								}
 							),
 							{

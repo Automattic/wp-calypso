@@ -93,7 +93,6 @@ export default function ProductFilter( {
 						className="product-filter"
 						label={ translate( 'Filter' ) }
 						icon={ funnel }
-						variant="product-filter"
 						open={ openDropdown }
 						onToggle={ () => setOpenDropdown( ! openDropdown ) }
 					>

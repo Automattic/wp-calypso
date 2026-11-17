@@ -1,15 +1,17 @@
-import { isWpError } from '@automattic/api-core';
-import { siteQueryFilter, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
+import { fetchWordPressMigrationStatus, isWpError } from '@automattic/api-core';
+import {
+	siteQueryFilter,
+	siteWordPressMigrationConfigurationQuery,
+	siteWordPressMigrationStatusQuery,
+} from '@automattic/api-queries';
+import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
-import Notice from '../../../components/notice';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
-import { getSiteDisplayName } from '../../../utils/site-name';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { Connect } from './connect';
 import { Findings } from './findings';
@@ -32,6 +34,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetch,
 	} = useQuery( {
 		...siteWordPressMigrationStatusQuery( site.ID ),
+		// Once our team has the migration, read the site again: its migration state takes this page over.
+		queryFn: async () => {
+			const status = await fetchWordPressMigrationStatus( site.ID );
+			if ( status.handed_off ) {
+				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
+			}
+			return status;
+		},
 		refetchInterval: ( { state } ) => {
 			const status = state.data?.status;
 			if ( status === 'running' ) {
@@ -49,11 +59,49 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
 
-	// Only connecting the source again gets past a refused connection, so go straight back to that step.
-	const connectionFailure =
-		migration?.status === 'failed'
-			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
+	// What's fixed by setting the source up again goes straight back to that step.
+	let connectionFailure = undefined;
+	if ( migration?.status === 'failed' ) {
+		connectionFailure = migration.findings.find(
+			( { suggested_action } ) => suggested_action === 'connect_source'
+		);
+	}
+
+	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
+	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
+	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
+	useEffect( () => {
+		if ( ! isStopped ) {
+			setIsBackToSetup( false );
+		}
+	}, [ isStopped ] );
+	const isConnecting =
+		migration?.status === 'not_started' || !! connectionFailure || ( isStopped && isBackToSetup );
+
+	// What stopped the run stays on screen there too, so a connected source doesn't read as nothing having gone wrong.
+	const backToSetupFailure =
+		isStopped && isBackToSetup
+			? migration?.findings.find( ( { severity } ) => severity === 'failure' )
 			: undefined;
+
+	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
+	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
+	const { isPending: isConfigurationPending } = useQuery( {
+		...siteWordPressMigrationConfigurationQuery( site.ID ),
+		enabled: ! migration || isConnecting,
+		// The source is connected on its own site, often in another tab, so check again on coming back to this one.
+		refetchOnWindowFocus: isConnecting ? 'always' : false,
+	} );
+
+	// Each migration asks once, whether it started from this page or was already going when the page opened. A run
+	// resumed after a pause is the same migration, so the key is the source rather than when the run started.
+	const isRunning = migration?.status === 'running';
+	const sourceUrl = migration?.source_url;
+	useEffect( () => {
+		if ( isRunning && sourceUrl ) {
+			return invokeSurvicateEventOnce( 'migrationStarted', `${ site.ID }:${ sourceUrl }` );
+		}
+	}, [ isRunning, sourceUrl, site.ID ] );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
@@ -81,7 +129,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		}
 
 		if ( isSiteUnlocked ) {
-			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug }, replace: true } );
+			navigate( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug: site.slug },
+				search: { migration: 'completed' },
+				replace: true,
+			} );
 			return;
 		}
 
@@ -102,28 +155,22 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	);
 
 	return (
-		<PageLayout
-			size="small"
-			notices={
-				isUnreadable &&
-				! isForbidden && (
-					<Notice
-						variant="error"
-						actions={
-							<>
-								<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
-									{ __( 'Try again' ) }
-								</Button>
-								{ contactUs }
-							</>
-						}
-					>
-						{ __( 'We couldn’t load your migration. We’ll keep trying.' ) }
-					</Notice>
-				)
-			}
-			header={ <PageHeader title={ getSiteDisplayName( site ) } /> }
-		>
+		<>
+			{ isUnreadable && ! isForbidden && (
+				<Notice
+					variant="error"
+					actions={
+						<>
+							<NoticeActionButton variant="solid" onClick={ () => refetch() }>
+								{ __( 'Try again' ) }
+							</NoticeActionButton>
+							{ contactUs }
+						</>
+					}
+				>
+					{ __( 'We couldn’t load your migration. We’ll keep trying.' ) }
+				</Notice>
+			) }
 			{ /* Only the site's administrators can read the migration. */ }
 			{ isForbidden && (
 				<MigrationCard
@@ -133,18 +180,34 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ contactUs }
 				/>
 			) }
-			{ ( migration?.status === 'not_started' || connectionFailure ) && (
-				<Connect site={ site } failure={ connectionFailure } />
+			{ isConnecting && ! isConfigurationPending && (
+				<Connect
+					site={ site }
+					sourceHost={ sourceHost }
+					failure={ connectionFailure ?? backToSetupFailure }
+				/>
 			) }
 			{ migration?.status === 'running' && (
 				<Running
 					phase={ migration.phase }
+					progress={ migration.progress }
 					sourceHost={ sourceHost }
 					notificationEmails={ migration.notification_emails }
 				/>
 			) }
-			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
-				! connectionFailure && <Findings site={ site } migration={ migration } /> }
+			{ migration && isStopped && ! isConnecting && (
+				<Findings
+					site={ site }
+					migration={ migration }
+					onBackToSetup={ () => {
+						// It isn't kept up while the run is going, and the source may have changed since.
+						queryClient.invalidateQueries( {
+							queryKey: siteWordPressMigrationConfigurationQuery( site.ID ).queryKey,
+						} );
+						setIsBackToSetup( true );
+					} }
+				/>
+			) }
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }
@@ -178,7 +241,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ contactUs }
 				/>
 			) }
-		</PageLayout>
+		</>
 	);
 }
 

@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import ProgramSunsetBanner from 'calypso/jetpack-cloud/components/program-sunset-banner';
 import OverviewProducts from 'calypso/jetpack-cloud/sections/overview/primary/overview-products';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -48,6 +49,7 @@ export default function Overview() {
 	return (
 		<div className="overview">
 			<DocumentHead title={ translate( 'Overview' ) } />
+			<ProgramSunsetBanner />
 			{ ! hideIntroCards && (
 				<Card>
 					<IntroCards onFinish={ introCardFinishHandler } />

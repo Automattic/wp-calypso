@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter, createRootRoute } from '@tanstack/react-router';
 import { render as testingLibraryRender } from '@testing-library/react';
 import { Suspense } from 'react';
+import { vi } from 'vitest';
 import { type AnalyticsClient, AnalyticsProvider } from './app/analytics';
 import { AuthContext } from './app/auth';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from './app/context';
@@ -19,7 +20,7 @@ const defaultUser = {
 function createTestRouter( ui: React.ReactElement ) {
 	const Component = () => ui;
 
-	return createRouter( {
+	const router = createRouter( {
 		routeTree: createRootRoute( {
 			pendingMs: 0,
 			component: () => (
@@ -29,6 +30,16 @@ function createTestRouter( ui: React.ReactElement ) {
 			),
 		} ),
 	} );
+
+	// The router resolves its first matches after mounting. Seed them so the UI
+	// renders synchronously, as tests query it right after `render()`.
+	router.stores.setMatches(
+		router
+			.matchRoutes( router.latestLocation )
+			.map( ( match ) => ( { ...match, status: 'success' as const } ) )
+	);
+
+	return router;
 }
 
 type RenderResult = ReturnType< typeof testingLibraryRender > &
@@ -58,14 +69,14 @@ export function render( ui: React.ReactElement, options: RenderOptions = {} ): R
 		} );
 	const router = createTestRouter( ui );
 
-	const recordTracksEvent = jest.fn();
-	const recordPageView = jest.fn();
+	const recordTracksEvent = vi.fn();
+	const recordPageView = vi.fn();
 
 	const testingLibraryResult = testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
 			<AppProvider config={ config }>
 				<AnalyticsProvider client={ { recordTracksEvent, recordPageView } }>
-					<AuthContext.Provider value={ { user, logout: jest.fn() } }>
+					<AuthContext.Provider value={ { user, logout: vi.fn() } }>
 						<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
 					</AuthContext.Provider>
 				</AnalyticsProvider>
