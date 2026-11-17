@@ -11,6 +11,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import repliesCache from '../../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { reportError } from '../../panel/helpers/log-error';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -113,6 +114,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						retryCountRef.current = 0;
 						replyInputRef.current?.focus();
 						debug( 'Failed to submit comment reply: %s', error.message );
+						reportError( 'reply', error, { note_type: note.type } );
 					}
 					return;
 				}

@@ -1,3 +1,4 @@
+import { reportError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { trashNote as trashNoteAction } from '../actions';
@@ -10,7 +11,12 @@ const trashNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 	} );
 
 	if ( immediately ) {
-		await wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment ).del();
+		try {
+			await wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment ).del();
+		} catch ( error ) {
+			reportError( 'trash', error, { note_type: note.type } );
+			throw error;
+		}
 	} else {
 		restClient.global.updateUndoBar( 'trash', note );
 	}
