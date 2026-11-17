@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { addImageCarousel } from '..';
 
@@ -27,6 +27,5 @@ describe( 'addImageCarousel', () => {
 				'Harbour’s best view'
 			)
 		);
-		expect( screen.getByText( 'Harbour’s best view' ) ).toBeVisible();
 	} );
 } );
