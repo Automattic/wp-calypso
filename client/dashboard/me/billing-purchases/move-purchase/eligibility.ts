@@ -56,7 +56,8 @@ export function canSiteReceivePurchase( purchase: Purchase, site: Site ): boolea
 
 	// A plan can only move to a site without a plan of its own. That is a
 	// Simple site, or a preview site, which is held on Atomic until a plan
-	// reaches it. The preview tells a preview apart from other Atomic sites.
+	// reaches it. The server's transfer check tells a preview site apart from
+	// other Atomic sites.
 	if ( isDotcomPlan( purchase ) ) {
 		return Boolean( site.plan?.is_free );
 	}
