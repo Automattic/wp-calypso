@@ -5,6 +5,7 @@
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
 import { defaultParseSearch } from '@tanstack/react-router';
 import nock from 'nock';
+import { SitePermissionError } from '../../../utils/site-permissions';
 import { AUTH_QUERY_KEY } from '../../auth';
 import { siteBackupsRoute, siteLogsRoute, siteOverviewRoute, siteRoute } from '../sites';
 import type { Site, User } from '@automattic/api-core';
@@ -179,26 +180,24 @@ describe( 'siteRoute while the site turns Atomic', () => {
 		await expect( runSiteGuard( owner ) ).resolves.toBeUndefined();
 	} );
 
-	test( 'shows not found to the owner when the site isn’t turning Atomic', async () => {
+	test( 'keeps the owner out when the site isn’t turning Atomic', async () => {
 		mockLatestTransfer().query( true ).reply( 200, { status: 'error' } );
 
-		await expect( runSiteGuard( owner ) ).rejects.toMatchObject( { isNotFound: true } );
+		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( SitePermissionError );
 	} );
 
-	test( 'shows not found to the owner when the site’s transfer can’t be read', async () => {
+	test( 'keeps the owner out when the site’s transfer can’t be read', async () => {
 		mockLatestTransfer()
 			.query( true )
 			.reply( 403, { code: 'unauthorized', message: 'Not allowed.' } );
 
-		await expect( runSiteGuard( owner ) ).rejects.toMatchObject( { isNotFound: true } );
+		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( SitePermissionError );
 	} );
 
-	test( 'shows not found to someone else without asking for the transfer', async () => {
+	test( 'keeps someone else out without asking for the transfer', async () => {
 		const transferRequest = mockLatestTransfer().query( true ).reply( 200, { status: 'active' } );
 
-		await expect( runSiteGuard( { ID: 8 } as User ) ).rejects.toMatchObject( {
-			isNotFound: true,
-		} );
+		await expect( runSiteGuard( { ID: 8 } as User ) ).rejects.toBeInstanceOf( SitePermissionError );
 		expect( transferRequest.isDone() ).toBe( false );
 	} );
 } );
