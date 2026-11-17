@@ -85,6 +85,14 @@ This mixin generates alias variables for a color palette. For example, the
 	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
 	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
+	// Field fills and borders of `@wordpress/components` and `@wordpress/ui` controls
+	// (checkboxes, inputs). Without these they keep the light fallbacks, e.g. a white checkbox.
+	--wpds-color-background-interactive-neutral: transparent;
+	--wpds-color-background-interactive-neutral-active: transparent;
+	--wpds-color-background-interactive-neutral-disabled: var( --dashboard-surface__background-color );
+	--wpds-color-stroke-interactive-neutral: var( --dashboard-field__border-color );
+	--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-gray-700 );
+	--wpds-color-stroke-interactive-neutral-disabled: var( --dashboard-surface__border-color );
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;
