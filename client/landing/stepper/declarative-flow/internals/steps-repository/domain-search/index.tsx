@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isMonthly } from '@automattic/calypso-products';
 import { HelpCenter } from '@automattic/data-stores';
 import { DomainSuggestionBadge } from '@automattic/domain-search';
@@ -158,6 +159,10 @@ const DomainSearchStep: StepType< {
 	const { isLoading: isLoadingResultsExperiment, variation: resultsVariation } =
 		useDomainSearchResultsExperiment( flow );
 	const isCustomDomainBannerCopyVariation = resultsVariation === 'custom_domain_banner_copy';
+	// Name Pulse results in onboarding, behind a flag until the A/B test replaces it.
+	// Turn it on with `?flags=domain-search/name-pulse-onboarding`.
+	const showNamePulseSearch =
+		isOnboardingFlow( flow ) && isEnabled( 'domain-search/name-pulse-onboarding' );
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -180,9 +185,10 @@ const DomainSearchStep: StepType< {
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
-	const { query, setQuery, clearQuery } = useQueryHandler( {
+	const { query, setQuery, clearQuery, resetQuery } = useQueryHandler( {
 		initialQuery,
 		currentSiteUrl,
+		persistQuery: ! showNamePulseSearch,
 	} );
 
 	const config = useMemo( () => {
@@ -243,6 +249,7 @@ const DomainSearchStep: StepType< {
 				flow !== LAUNCH_SITE_FLOW,
 			allowedTlds: resolvedAllowedTlds,
 			includeOwnedDomainInSuggestions: true,
+			showNamePulseSearch,
 			allowsUsingOwnDomain:
 				! isAIBuilderFlow( flow ) &&
 				! isAIBuilderOnboardingFlow( flow ) &&
@@ -258,6 +265,7 @@ const DomainSearchStep: StepType< {
 		isWowFunnel,
 		wowSkipCopy,
 		resultsVariation,
+		showNamePulseSearch,
 		tldQuery,
 		query,
 		allowedTldsProp,
@@ -285,7 +293,7 @@ const DomainSearchStep: StepType< {
 				return product;
 			},
 			onQueryChange: setQuery,
-			onQueryClear: clearQuery,
+			onQueryClear: showNamePulseSearch ? resetQuery : clearQuery,
 			onMoveDomainToSiteClick( otherSiteDomain: string, domainName: string ) {
 				if ( dashboard ) {
 					window.location.assign( dashboardLink( `/domains/${ domainName }/transfer/other-site` ) );
@@ -389,7 +397,7 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 		};
-	}, [ submit, setQuery, clearQuery, flow, siteSlug, dashboard ] );
+	}, [ submit, setQuery, clearQuery, resetQuery, showNamePulseSearch, flow, siteSlug, dashboard ] );
 
 	// For /setup flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context or in the 100-year plan or domain flow
