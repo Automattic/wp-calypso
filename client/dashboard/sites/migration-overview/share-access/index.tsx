@@ -17,6 +17,7 @@ import {
 	Button,
 	TextControl,
 	TextareaControl,
+	VisuallyHidden,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -52,6 +53,8 @@ function parseAccessUrl( value: string ) {
 
 const LOGIN_FAILED = 'automated_migration_tools_login_and_get_cookies_test_failed';
 
+type AccessAction = 'authorize' | 'complete-authorization' | 'share' | 'submit' | 'help';
+
 function needsAccess( site: Site ) {
 	return (
 		site.site_migration.type === 'assisted-wordpress' && site.site_migration.status_v2 === 'pending'
@@ -69,7 +72,8 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 	const [ authorizationUrl, setAuthorizationUrl ] = useState( '' );
 	const [ error, setError ] = useState( '' );
 	const [ loginFailed, setLoginFailed ] = useState( false );
-	const [ busy, setBusy ] = useState( false );
+	const [ activeAction, setActiveAction ] = useState< AccessAction | null >( null );
+	const busy = activeAction !== null;
 	const pending = useRef( false );
 	const leaving = useRef( false );
 	const verifiedSource = useRef< string | null >( null );
@@ -106,20 +110,22 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 		await returnToOverview();
 	}, [ queryClient, returnToOverview, site.ID ] );
 
-	const run = useCallback( async ( action: () => Promise< void >, authorizationError?: string ) => {
+	const run = useCallback( async ( actionName: AccessAction, action: () => Promise< void > ) => {
 		if ( pending.current ) {
 			return;
 		}
 		pending.current = true;
-		setBusy( true );
+		setActiveAction( actionName );
 		setError( '' );
 		try {
 			await action();
 		} catch ( reason ) {
 			const code = ( reason as { code?: string } | undefined )?.code;
 			let message;
-			if ( authorizationError ) {
-				message = authorizationError;
+			if ( actionName === 'complete-authorization' ) {
+				message = __(
+					'We couldn’t connect to your site. Try authorizing again or share your credentials.'
+				);
 			} else if ( code === LOGIN_FAILED ) {
 				setLoginFailed( true );
 				message = __(
@@ -141,7 +147,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 			setError( message );
 		} finally {
 			pending.current = false;
-			setBusy( false );
+			setActiveAction( null );
 		}
 	}, [] );
 
@@ -165,7 +171,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 			return;
 		}
 
-		void run( async () => {
+		void run( 'complete-authorization', async () => {
 			if ( ! ( await ensurePending() ) ) {
 				return;
 			}
@@ -177,7 +183,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 				throw new Error();
 			}
 			await finish();
-		}, __( 'We couldn’t connect to your site. Try authorizing again or share your credentials.' ) );
+		} );
 	}, [ ensurePending, finish, run, site.ID, source ] );
 
 	const openTicket = async ( source: string, context?: string ) => {
@@ -212,12 +218,12 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 		return true;
 	};
 
-	const chooseAccess = ( useAuthorization: boolean ) =>
-		void run( async () => {
+	const chooseAccess = ( action: 'authorize' | 'share' ) =>
+		void run( action, async () => {
 			if ( ! source || ! ( await ensureSupportedSource( source ) ) ) {
 				return;
 			}
-			if ( useAuthorization ) {
+			if ( action === 'authorize' ) {
 				let nextAuthorizationUrl = authorizationUrl;
 				if ( ! nextAuthorizationUrl ) {
 					try {
@@ -250,7 +256,7 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 
 	const submit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
-		void run( async () => {
+		void run( 'submit', async () => {
 			if ( ! source || ! ( await ensureSupportedSource( source ) ) ) {
 				return;
 			}
@@ -307,23 +313,29 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 						)
 					: undefined,
 			};
+	const authorizing = activeAction === 'authorize' || activeAction === 'complete-authorization';
+	const connecting = authorizing ? __( 'Connecting to your site…' ) : '';
 	const help = source && (
-		<Button
-			__next40pxDefaultSize
-			variant="link"
-			disabled={ busy }
-			onClick={ () =>
-				void run( async () => {
-					if ( ! ( await ensurePending() ) ) {
-						return;
-					}
-					await openTicket( source, 'help_requested' );
-					await finish();
-				} )
-			}
-		>
-			{ __( 'Have our team email you' ) }
-		</Button>
+		<Text>
+			{ __( 'Need help?' ) }{ ' ' }
+			<Button
+				__next40pxDefaultSize
+				variant="link"
+				isBusy={ activeAction === 'help' }
+				disabled={ busy }
+				onClick={ () =>
+					void run( 'help', async () => {
+						if ( ! ( await ensurePending() ) ) {
+							return;
+						}
+						await openTicket( source, 'help_requested' );
+						await finish();
+					} )
+				}
+			>
+				{ __( 'Have our team email you' ) }
+			</Button>
+		</Text>
 	);
 
 	return (
@@ -346,16 +358,18 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
-						onClick={ () => chooseAccess( true ) }
+						onClick={ () => chooseAccess( 'authorize' ) }
+						isBusy={ authorizing }
 						disabled={ busy || ! source }
 					>
-						{ __( 'Authorize access' ) }
+						{ connecting || __( 'Authorize access' ) }
 					</Button>
 					<Button
 						__next40pxDefaultSize
 						variant="link"
 						disabled={ busy || ! source }
-						onClick={ () => chooseAccess( false ) }
+						isBusy={ activeAction === 'share' }
+						onClick={ () => chooseAccess( 'share' ) }
 					>
 						{ __( 'Share credentials instead' ) }
 					</Button>
@@ -402,19 +416,21 @@ export function ShareAccessForm( { site, sourceUrl }: { site: Site; sourceUrl: s
 								disabled={ busy }
 							/>
 						</details>
-						<Button
-							__next40pxDefaultSize
-							type="submit"
-							variant="primary"
-							isBusy={ busy }
-							disabled={ busy }
-						>
-							{ loginFailed ? __( 'Continue anyway' ) : __( 'Continue' ) }
-						</Button>
+						<ButtonStack justify="flex-start">
+							<Button
+								__next40pxDefaultSize
+								type="submit"
+								variant="primary"
+								isBusy={ activeAction === 'submit' }
+								disabled={ busy }
+							>
+								{ loginFailed ? __( 'Continue anyway' ) : __( 'Continue' ) }
+							</Button>
+						</ButtonStack>
 					</VStack>
 				</form>
 			) }
-			{ busy && ! manual && <Text role="status">{ __( 'Connecting to your site…' ) }</Text> }
+			<VisuallyHidden role="status">{ connecting }</VisuallyHidden>
 		</MigrationCard>
 	);
 }
