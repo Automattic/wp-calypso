@@ -197,8 +197,8 @@ function DomainForwarding() {
 			{ ! forwardingData?.length ? (
 				<DataViewsEmptyStateLayout
 					isCompact
-					title={ __( 'No forwarding rules yet' ) }
-					description={ __( 'Forwarding rules send visitors to another address.' ) }
+					title={ __( 'Send visitors to another address' ) }
+					description={ __( 'Each forwarding rule can be temporary or permanent.' ) }
 				/>
 			) : (
 				<DataViewsCard>

@@ -24,20 +24,16 @@
 }
 
 .dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__wrapper-content {
-	padding-block: $grid-unit-30;
+	padding-block: $grid-unit-10;
 
 	@include break-medium {
-		padding-block: $grid-unit-40;
+		padding-block: $grid-unit-20;
 	}
 }
 
 // Inside a table, the toolbar already adds space above the empty state.
 .dashboard-empty-state__wrapper.is-compact.is-borderless .dashboard-empty-state__wrapper-content {
-	padding-block-start: $grid-unit-15;
-
-	@include break-medium {
-		padding-block-start: $grid-unit-20;
-	}
+	padding-block-start: 0;
 }
 
 .dashboard-empty-state__wrapper-content {
@@ -50,6 +46,27 @@
 .dashboard-empty-state__title.dashboard-empty-state__title {
 	font-size: $font-size-x-large;
 	font-weight: 500;
+}
+
+// A compact empty state sits inside a page that already has a title, so its
+// own title is regular UI text and the parts sit closer together.
+.dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__title.dashboard-empty-state__title {
+	font-size: $font-size-large;
+	line-height: 20px;
+	text-wrap: balance;
+}
+
+.dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__header.dashboard-empty-state__header {
+	gap: $grid-unit-05;
+}
+
+// Optional action under the description.
+.dashboard-empty-state__wrapper.is-compact .dashboard-empty-state.dashboard-empty-state {
+	gap: $grid-unit-15;
+}
+
+.dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__content.dashboard-empty-state__content {
+	align-items: center;
 }
 
 // Balanced wrapping works better for centered text

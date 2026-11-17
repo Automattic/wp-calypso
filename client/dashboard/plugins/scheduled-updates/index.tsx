@@ -197,6 +197,9 @@ export default function PluginsScheduledUpdates() {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
 	}, [ scheduledUpdates, view, fields ] );
 
+	// Filters are active and nothing was typed in the search field.
+	const hasOnlyFilters = ! view.search && !! view.filters?.length;
+
 	const handleDeleteClick = ( schedule: ScheduledUpdateRow ) => {
 		setScheduleToDelete( schedule );
 	};
@@ -246,8 +249,8 @@ export default function PluginsScheduledUpdates() {
 				{ ! isLoading && ! isError && scheduledUpdates.length === 0 ? (
 					<DataViewsEmptyStateLayout
 						isCompact
-						title={ __( 'No scheduled updates yet' ) }
-						description={ __( 'Choose which plugins update, on which sites, and when.' ) }
+						title={ __( 'Choose when your plugins update' ) }
+						description={ __( 'Select the sites, the plugins, and how often they update.' ) }
 					/>
 				) : (
 					<DataViewsCard>
@@ -266,8 +269,16 @@ export default function PluginsScheduledUpdates() {
 									<DataViewsEmptyStateLayout
 										isBorderless
 										isCompact
-										title={ __( 'No scheduled updates match your search' ) }
-										description={ __( 'Try a different search term or clear the filters.' ) }
+										title={
+											hasOnlyFilters
+												? __( 'No schedules match your filters' )
+												: __( 'No schedules match your search' )
+										}
+										description={
+											hasOnlyFilters
+												? __( 'Try different filters, or reset them.' )
+												: __( 'Try a different search term.' )
+										}
 									/>
 								)
 							}

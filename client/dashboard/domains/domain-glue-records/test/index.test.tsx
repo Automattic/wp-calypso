@@ -65,9 +65,9 @@ test( 'renders empty state when no glue records exist', async () => {
 	render( <DomainGlueRecords /> );
 
 	expect( await screen.findByRole( 'link', { name: 'Add glue record' } ) ).toBeInTheDocument();
-	expect( screen.getByRole( 'heading', { name: 'No glue records yet' } ) ).toBeVisible();
+	expect( screen.getByRole( 'heading', { name: 'Register your own name servers' } ) ).toBeVisible();
 	expect(
-		screen.getByText( 'Glue records let you run your own name servers on this domain.' )
+		screen.getByText( 'Add a glue record to point a name server to its IP address.' )
 	).toBeVisible();
 	// The empty state replaces the table, so its search field is not rendered.
 	expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();

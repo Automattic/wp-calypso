@@ -171,7 +171,7 @@ export default function BlockedSites() {
 						<EmptyState.Header>
 							<EmptyState.Title>{ __( 'No blocked sites' ) }</EmptyState.Title>
 							<EmptyState.Description>
-								{ __( 'Sites you block in the Reader are listed here.' ) }
+								{ __( 'Sites you block in the Reader will appear here.' ) }
 							</EmptyState.Description>
 						</EmptyState.Header>
 					</EmptyState>

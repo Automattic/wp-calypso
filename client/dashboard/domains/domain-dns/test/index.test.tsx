@@ -174,7 +174,7 @@ describe( 'DomainDns', () => {
 		await user.click( await screen.findByRole( 'option', { name: 'TXT' } ) );
 
 		expect(
-			await screen.findByRole( 'heading', { name: 'No DNS records match the selected filters' } )
+			await screen.findByRole( 'heading', { name: 'No DNS records match your filters' } )
 		).toBeVisible();
 		expect( screen.queryByText( '192.0.2.1' ) ).not.toBeInTheDocument();
 	} );
@@ -225,9 +225,11 @@ describe( 'DomainDns', () => {
 
 		render( <DomainDns /> );
 
-		expect( await screen.findByRole( 'heading', { name: 'No DNS records yet' } ) ).toBeVisible();
 		expect(
-			screen.getByText( 'Records you add here control where this domain points.' )
+			await screen.findByRole( 'heading', { name: 'This domain has no DNS records' } )
+		).toBeVisible();
+		expect(
+			screen.getByText( 'Add a record, or restore the default records from the three dots menu.' )
 		).toBeVisible();
 		expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
 	} );

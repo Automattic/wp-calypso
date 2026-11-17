@@ -285,8 +285,10 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				{ hasLoadedCrontabs && crontabs.length === 0 ? (
 					<DataViewsEmptyStateLayout
 						isCompact
-						title={ __( 'No scheduled jobs yet' ) }
-						description={ __( 'Run commands on this site at set intervals.' ) }
+						title={ __( 'Schedule your first job' ) }
+						description={ __(
+							'Run a WP-CLI or shell command on this site, on a schedule you set.'
+						) }
 					/>
 				) : (
 					<DataViewsCard>

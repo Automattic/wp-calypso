@@ -103,10 +103,15 @@ describe( '<SiteRepositories>', () => {
 		renderRepositories();
 
 		expect(
-			await screen.findByRole( 'heading', { name: 'No repositories connected' } )
+			await screen.findByRole( 'heading', { name: 'Deploy your code from GitHub' } )
 		).toBeVisible();
-		expect( screen.getByText( 'Deploy code from GitHub to this site.' ) ).toBeVisible();
+		expect(
+			screen.getByText( 'Connect a repository to deploy automatically or manually.' )
+		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Connect repository' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Install the WordPress.com app' } )
+		).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
 	} );
 
@@ -116,10 +121,10 @@ describe( '<SiteRepositories>', () => {
 		renderRepositories();
 
 		expect(
-			await screen.findByRole( 'heading', { name: 'No repositories connected' } )
+			await screen.findByRole( 'heading', { name: 'Deploy your code from GitHub' } )
 		).toBeVisible();
 		expect(
-			screen.queryByRole( 'heading', { name: 'Connect your GitHub account' } )
+			screen.queryByRole( 'heading', { name: 'Install the WordPress.com app on GitHub' } )
 		).not.toBeInTheDocument();
 	} );
 
@@ -129,8 +134,12 @@ describe( '<SiteRepositories>', () => {
 		renderRepositories();
 
 		expect(
-			await screen.findByRole( 'heading', { name: 'Connect your GitHub account' } )
+			await screen.findByRole( 'heading', { name: 'Install the WordPress.com app on GitHub' } )
 		).toBeVisible();
+		expect(
+			screen.getByText( 'This site’s repositories will appear here once the app is installed.' )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Install the WordPress.com app' } ) ).toBeVisible();
 		expect( screen.queryByText( 'test-repo' ) ).not.toBeInTheDocument();
 	} );
 

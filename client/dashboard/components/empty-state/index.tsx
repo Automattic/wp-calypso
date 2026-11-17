@@ -73,7 +73,7 @@ function EmptyStateDescription( { children }: { children: ReactNode } ) {
 
 function EmptyStateHeader( { children }: { children: ReactNode } ) {
 	return (
-		<VStack spacing={ 2 } alignment="center">
+		<VStack spacing={ 2 } alignment="center" className="dashboard-empty-state__header">
 			{ children }
 		</VStack>
 	);

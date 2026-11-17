@@ -306,8 +306,8 @@ export default function DomainDns() {
 				<DataViewsEmptyStateLayout
 					isBorderless
 					isCompact
-					title={ __( 'No DNS records match the selected filters' ) }
-					description={ __( 'Try different filters, or clear them.' ) }
+					title={ __( 'No DNS records match your filters' ) }
+					description={ __( 'Try different filters, or reset them.' ) }
 				/>
 			);
 		}
@@ -370,8 +370,10 @@ export default function DomainDns() {
 			{ dnsData?.records?.length === 0 && ! isLoading ? (
 				<DataViewsEmptyStateLayout
 					isCompact
-					title={ __( 'No DNS records yet' ) }
-					description={ __( 'Records you add here control where this domain points.' ) }
+					title={ __( 'This domain has no DNS records' ) }
+					description={ __(
+						'Add a record, or restore the default records from the three dots menu.'
+					) }
 				/>
 			) : (
 				<DataViewsCard>

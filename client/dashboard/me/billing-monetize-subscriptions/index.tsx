@@ -116,9 +116,9 @@ function MonetizeSubscriptions() {
 				{ hasLoadedMonetize && ! monetizeSubscriptions?.length ? (
 					<DataViewsEmptyStateLayout
 						isCompact
-						title={ __( 'No memberships or donations' ) }
+						title={ __( 'No memberships or donations yet' ) }
 						description={ __(
-							'Memberships and donations on other WordPress.com sites are listed here.'
+							'Paid subscriptions and donations to other WordPress.com sites will appear here.'
 						) }
 					/>
 				) : (

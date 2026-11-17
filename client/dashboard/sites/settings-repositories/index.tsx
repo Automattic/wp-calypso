@@ -24,15 +24,19 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
+import { useInstallGithub } from './use-install-github';
 import type { RenderModalProps, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const router = useRouter();
 	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { error: githubInstallationsError, isLoading: isLoadingInstallations } = useQuery(
-		githubInstallationsQuery()
-	);
+	const {
+		error: githubInstallationsError,
+		isLoading: isLoadingInstallations,
+		refetch: refetchGithubInstallations,
+	} = useQuery( githubInstallationsQuery() );
+	const { installGithub } = useInstallGithub();
 
 	const searchParams = useSearch( { strict: false } );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -103,8 +107,8 @@ function RepositoriesList() {
 		return (
 			<DataViewsEmptyStateLayout
 				isCompact
-				title={ __( 'No repositories connected' ) }
-				description={ __( 'Deploy code from GitHub to this site.' ) }
+				title={ __( 'Deploy your code from GitHub' ) }
+				description={ __( 'Connect a repository to deploy automatically or manually.' ) }
 			/>
 		);
 	}
@@ -116,11 +120,17 @@ function RepositoriesList() {
 		return (
 			<DataViewsEmptyStateLayout
 				isCompact
-				title={ __( 'Connect your GitHub account' ) }
-				description={ __(
-					'Install the WordPress.com app on GitHub to see the repositories connected to this site.'
-				) }
-			/>
+				title={ __( 'Install the WordPress.com app on GitHub' ) }
+				description={ __( 'This site’s repositories will appear here once the app is installed.' ) }
+			>
+				<Button
+					variant="secondary"
+					__next40pxDefaultSize
+					onClick={ () => installGithub( { onSuccess: () => refetchGithubInstallations() } ) }
+				>
+					{ __( 'Install the WordPress.com app' ) }
+				</Button>
+			</DataViewsEmptyStateLayout>
 		);
 	}
 

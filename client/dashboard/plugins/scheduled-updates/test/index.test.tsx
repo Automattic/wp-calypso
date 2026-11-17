@@ -3,6 +3,7 @@
  */
 import { createRouter } from '@tanstack/react-router';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { createPluginsRoutes } from '../../../app/router/plugins';
@@ -80,10 +81,10 @@ describe( '<PluginsScheduledUpdates>', () => {
 		render( <PluginsScheduledUpdates /> );
 
 		expect(
-			await screen.findByRole( 'heading', { name: 'No scheduled updates yet' } )
+			await screen.findByRole( 'heading', { name: 'Choose when your plugins update' } )
 		).toBeVisible();
 		expect(
-			screen.getByText( 'Choose which plugins update, on which sites, and when.' )
+			screen.getByText( 'Select the sites, the plugins, and how often they update.' )
 		).toBeVisible();
 		expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
 	} );
@@ -98,14 +99,14 @@ describe( '<PluginsScheduledUpdates>', () => {
 		expect( await screen.findByRole( 'searchbox', { name: 'Search' } ) ).toBeVisible();
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect(
-			screen.queryByRole( 'heading', { name: 'No scheduled updates yet' } )
+			screen.queryByRole( 'heading', { name: 'Choose when your plugins update' } )
 		).not.toBeInTheDocument();
 
 		release();
 
 		expect( await screen.findByText( 'Site A' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'heading', { name: 'No scheduled updates yet' } )
+			screen.queryByRole( 'heading', { name: 'Choose when your plugins update' } )
 		).not.toBeInTheDocument();
 	} );
 
@@ -117,7 +118,49 @@ describe( '<PluginsScheduledUpdates>', () => {
 
 		expect( await screen.findByText( 'No scheduled updates yet.' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'heading', { name: 'No scheduled updates yet' } )
+			screen.queryByRole( 'heading', { name: 'Choose when your plugins update' } )
 		).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the table and shows a search empty state when no schedule matches', async () => {
+		const user = userEvent.setup();
+		mockSites();
+		nock( API_BASE )
+			.get( '/wpcom/v2/hosting/update-schedules' )
+			.query( true )
+			.reply( 200, schedules );
+
+		render( <PluginsScheduledUpdates /> );
+
+		expect( await screen.findByText( 'Site A' ) ).toBeVisible();
+
+		await user.type( screen.getByRole( 'searchbox', { name: 'Search' } ), 'nomatch' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No schedules match your search' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Try a different search term.' ) ).toBeVisible();
+	} );
+
+	test( 'shows a filters empty state when no schedule matches the active filter', async () => {
+		const user = userEvent.setup();
+		mockSites();
+		nock( API_BASE )
+			.get( '/wpcom/v2/hosting/update-schedules' )
+			.query( true )
+			.reply( 200, schedules );
+
+		render( <PluginsScheduledUpdates /> );
+
+		expect( await screen.findByText( 'Site A' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Frequency' } ) );
+		await user.click( await screen.findByRole( 'option', { name: 'Weekly' } ) );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No schedules match your filters' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Try different filters, or reset them.' ) ).toBeVisible();
 	} );
 } );

@@ -117,8 +117,8 @@ function DomainGlueRecords() {
 				<PerformanceTrackerStop />
 				<DataViewsEmptyStateLayout
 					isCompact
-					title={ __( 'No glue records yet' ) }
-					description={ __( 'Glue records let you run your own name servers on this domain.' ) }
+					title={ __( 'Register your own name servers' ) }
+					description={ __( 'Add a glue record to point a name server to its IP address.' ) }
 				/>
 			</DomainGlueRecordsLayout>
 		);
