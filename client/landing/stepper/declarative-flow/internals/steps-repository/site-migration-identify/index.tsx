@@ -16,7 +16,7 @@ import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
-import { useSitePreviewMShotImageHandler } from '../components/site-preview/hooks/use-site-preview-mshot-image-handler';
+import { createSitePreviewScreenshot } from '../components/site-preview/mshot';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -30,11 +30,9 @@ type ConnectionIssue = 'unreachable';
 const MINIMUM_CHECK_DURATION_MS = 1500;
 
 interface Props {
-	hasError?: boolean;
 	onComplete: ( siteInfo: Omit< UrlData, 'meta' >, hostingProviderSlug?: string ) => void;
 	onSkip: ( from?: string ) => void;
 	hideImporterListLink: boolean;
-	flowName: string;
 	onVisibilityChange: ( isVisible: boolean, issue?: ConnectionIssue ) => void;
 	isManualWordPress: boolean;
 	siteURL: string;
@@ -291,7 +289,6 @@ const SiteMigrationIdentify: StepType< {
 } > = function ( { navigation, flow, stepName, checkOnArrival = false, destinationSiteUrls } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
-	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
 		async (
@@ -308,12 +305,12 @@ const SiteMigrationIdentify: StepType< {
 			// early in the flow to avoid long loading times in the site check step.
 			// Because mShots API can often take a long time to generate screenshots.
 			if ( data?.from ) {
-				createScreenshots( data?.from );
+				createSitePreviewScreenshot( data.from );
 			}
 
 			navigation?.submit?.( { action, ...data } );
 		},
-		[ navigation, createScreenshots ]
+		[ navigation ]
 	);
 
 	const urlQueryParams = useQuery();
@@ -398,7 +395,6 @@ const SiteMigrationIdentify: StepType< {
 			isManualWordPress={ isManualWordPress }
 			siteURL={ siteURL }
 			onSiteURLChange={ setSiteURL }
-			flowName={ flow }
 			onVisibilityChange={ ( isVisible, issue ) => {
 				setIsVisible( isVisible );
 				setConnectionIssue( issue );

@@ -1411,41 +1411,53 @@ describe( 'Site Migration Flow', () => {
 				jest.clearAllMocks();
 			} );
 
-			it( 'redirects to CREATE_SITE keeping the platform query param when it exists', async () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						platform: 'wordpress',
-					},
-					query: {
-						platform: 'wordpress',
-					},
+			describe( 'an assisted (how=difm) migration from the site checks', () => {
+				const source = { from: 'https://example-to-be-migrated.com', platform: 'wordpress' };
+				const assisted = { ...source, how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME };
+
+				it( 'goes to CREATE_SITE when the user has no other sites', () => {
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_CHECK,
+						query: assisted,
+						dependencies: { action: 'continue', ...source },
+					} );
+
+					expect( destination ).toMatchDestination( {
+						step: STEPS.SITE_CREATION_STEP,
+						query: source,
+					} );
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_CREATION_STEP,
-					query: {
-						platform: 'wordpress',
-					},
-				} );
-			} );
+				it( 'goes to PICK_SITE when the user has other sites', () => {
+					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 
-			it( 'redirects to PICK_SITE when there is not destination site (siteSlug/siteId) and the user has other wpcom sites', async () => {
-				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_CHECK,
+						query: assisted,
+						dependencies: { action: 'continue', ...source },
+					} );
 
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						platform: 'wordpress',
-						from: 'https://example-to-be-migrated.com',
-					},
+					expect( destination ).toMatchDestination( {
+						step: STEPS.PICK_SITE,
+						query: { from: source.from },
+					} );
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.PICK_SITE,
-					query: {
-						from: 'https://example-to-be-migrated.com',
-					},
+				it( 'goes to HOW_TO_MIGRATE with a destination site', () => {
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_CHECK,
+						query: { ...assisted, siteId: 123, siteSlug: 'example.wordpress.com' },
+						dependencies: { action: 'continue', ...source },
+					} );
+
+					expect( destination ).toMatchDestination( {
+						step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+						query: {
+							siteId: 123,
+							siteSlug: 'example.wordpress.com',
+							from: source.from,
+						},
+					} );
 				} );
 			} );
 
@@ -1471,29 +1483,6 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to HOW_TO_MIGRATE when there is a destination site (siteSlug/siteId) and platform is wordpress', async () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						platform: 'wordpress',
-						from: 'https://example-to-be-migrated.com',
-					},
-					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
-					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-						from: 'https://example-to-be-migrated.com',
-					},
-				} );
-			} );
-
 			it( 'redirects to site-setup>IMPORT_LIST when there is a destination site (siteSlug/siteId) and platform is not wordpress', async () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -1509,29 +1498,6 @@ describe( 'Site Migration Flow', () => {
 
 				expect( window.location.assign ).toMatchURL( {
 					path: '/setup/site-setup/importList',
-					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-						from: 'https://example-to-be-migrated.com',
-					},
-				} );
-			} );
-
-			it( 'redirects to HOW_TO_MIGRATE when there is a destination site (siteSlug/siteId) and platform wordpress', async () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						platform: 'wordpress',
-						from: 'https://example-to-be-migrated.com',
-					},
-					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',

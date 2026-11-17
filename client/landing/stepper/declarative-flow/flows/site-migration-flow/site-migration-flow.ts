@@ -986,7 +986,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
-								destination: providedDependencies?.destination,
 								how: providedDependencies?.how as string,
 							} )
 						);

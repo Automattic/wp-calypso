@@ -46,7 +46,6 @@ export const siteCreationPath = buildPathHelper<
 			from?: string | null;
 			platform: ImporterPlatform;
 			host?: string;
-			isWpcom?: boolean | '';
 			action?: string;
 			how?: string;
 		};
@@ -60,7 +59,6 @@ export const sitePickerPath = buildPathHelper<
 			from: string | null;
 			platform?: ImporterPlatform;
 			host?: string;
-			isWpcom?: boolean | '';
 			action?: string;
 			how?: string;
 			siteId?: number | '';
@@ -146,7 +144,6 @@ export const upgradePlanPath = buildPathHelper<
 			siteId?: number | string;
 			siteSlug?: string;
 			from?: string | null;
-			destination?: string;
 			how?: string;
 			host?: string;
 		};

@@ -3,11 +3,13 @@
  */
 import { SiteThumbnail } from '@automattic/components';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { SitePreview } from '..';
-import { useSitePreviewMShotImageHandler } from '../hooks/use-site-preview-mshot-image-handler';
+import { createSitePreviewScreenshot, SITE_PREVIEW_MSHOT } from '../mshot';
 
-jest.mock( '../hooks/use-site-preview-mshot-image-handler' );
+jest.mock( '../mshot', () => ( {
+	...jest.requireActual( '../mshot' ),
+	createSitePreviewScreenshot: jest.fn(),
+} ) );
 jest.mock( '@automattic/components', () => ( {
 	SiteThumbnail: jest.fn( ( props ) => {
 		const { className, alt } = props;
@@ -32,64 +34,39 @@ jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 } ) );
 
 describe( 'SitePreview', () => {
-	const mockUpdateDimensions = jest.fn();
-	const mockUseSitePreviewMShotImageHandler = useSitePreviewMShotImageHandler as jest.Mock;
-
-	beforeEach( () => {
-		mockUseSitePreviewMShotImageHandler.mockReturnValue( {
-			mShotsOption: { w: 800, h: 600, vpw: 800, vph: 600, screen_height: 600, scale: 2 },
-			updateDimensions: mockUpdateDimensions,
-		} );
-	} );
-
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should render the SitePreview component', () => {
-		render( <SitePreview /> );
-
-		expect( screen.getByText( 'Mocked Site Preview Image' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should pass the correct props to SiteThumbnail', () => {
+	it( 'previews the source from the address at desktop size', () => {
 		render( <SitePreview /> );
 
 		expect( screen.getByText( 'Mocked Site Preview Image' ).parentElement ).toHaveClass(
-			'migration-instructions-from-preview__screenshot'
-		);
-		expect( screen.getByText( 'Mocked Site Preview Image' ).parentElement ).toHaveAttribute(
-			'alt',
-			'Preview of the site being imported'
+			'site-migration-preview__screenshot'
 		);
 		expect( screen.getByText( 'Mocked Spinner' ) ).toBeInTheDocument();
 		expect( jest.mocked( SiteThumbnail ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			mShotsUrl: 'https://example.com',
 			alt: 'Preview of the site being imported',
+			mshotsOption: SITE_PREVIEW_MSHOT,
+			width: SITE_PREVIEW_MSHOT.w,
+			height: SITE_PREVIEW_MSHOT.h,
 		} );
+		expect( createSitePreviewScreenshot ).toHaveBeenCalledWith( 'https://example.com' );
 	} );
 
-	it( 'uses the supplied destination URL, label and capture dimensions', () => {
-		const options = { vpw: 1200, vph: 800, w: 1200, h: 800, screen_height: 800, scale: 2 };
-		mockUseSitePreviewMShotImageHandler.mockReturnValue( { mShotsOption: options } );
+	it( 'uses the supplied URL and label', () => {
 		render(
-			<SitePreview
-				url="https://destination.wordpress.com"
-				label="Current destination site"
-				mshotsOptions={ options }
-			/>
+			<SitePreview url="https://destination.wordpress.com" label="Current destination site" />
 		);
-		expect( mockUseSitePreviewMShotImageHandler ).toHaveBeenCalledWith(
-			'https://destination.wordpress.com',
-			options
-		);
+
 		expect( jest.mocked( SiteThumbnail ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			mShotsUrl: 'https://destination.wordpress.com',
 			alt: 'Current destination site',
 			'aria-label': 'Current destination site',
-			mshotsOption: options,
-			width: 1200,
-			height: 800,
 		} );
+		expect( createSitePreviewScreenshot ).toHaveBeenCalledWith(
+			'https://destination.wordpress.com'
+		);
 	} );
 } );
