@@ -13,19 +13,57 @@ const snackbarMetaRestriction = {
 		'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
 };
 
-const bannedModuleMocks = [ '@tanstack/react-query', '@automattic/api-queries' ].map(
-	( module ) => {
-		// Matches the module and its subpaths, but not sibling packages such as
-		// `@tanstack/react-query-persist-client`. Selector regexes can't contain
-		// a literal slash, hence `\x2F`.
-		const name = `/^${ module.replace( '/', '\\x2F' ) }(\\x2F|$)/`;
-		return {
-			// `vi.mock()` and `vi.doMock()` also take the module as `import( '…' )`.
-			selector: `CallExpression[callee.object.name='vi'][callee.property.name=/^(mock|doMock|importMock)$/]:matches([arguments.0.value=${ name }], [arguments.0.source.value=${ name }])`,
-			message: `Mocking \`${ module }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
-		};
-	}
-);
+// A `vi.mock()` of a module whose path matches the `path` regex. `vi.mock()` and
+// `vi.doMock()` also take the module as `import( '…' )`. Selector regexes can't
+// contain a literal slash, hence `\x2F`.
+const mockOf = ( path ) =>
+	`CallExpression[callee.object.name='vi'][callee.property.name=/^(mock|doMock|importMock)$/]:matches([arguments.0.value=${ path }], [arguments.0.source.value=${ path }])`;
+
+// Matches the package and its subpaths, but not sibling packages such as
+// `@tanstack/react-query-persist-client`.
+const packagePath = ( name ) => `/^${ name.replace( '/', '\\x2F' ) }(\\x2F|$)/`;
+
+const bannedModuleMocks = [
+	...[ '@tanstack/react-query', '@automattic/api-queries' ].map( ( name ) => ( {
+		selector: mockOf( packagePath( name ) ),
+		message: `Mocking \`${ name }\` replaces the code under test. Mock the network request with \`nock\`, or pass a \`QueryClient\` holding the data to \`render()\` from test-utils. See docs/testing.md.`,
+	} ) ),
+	{
+		selector: mockOf( packagePath( '@automattic/api-core' ) ),
+		message:
+			'Mocking `@automattic/api-core` skips the request the code under test makes. Mock the network request with `nock` instead. See docs/testing.md.',
+	},
+	{
+		selector: mockOf( packagePath( '@wordpress/i18n' ) ),
+		message:
+			'Don’t mock `@wordpress/i18n`. In tests, `__()` and the other functions already return the strings they’re given.',
+	},
+];
+
+const routerMockRestriction = {
+	// A selector can't resolve a relative path, but `app/router` is the dashboard's only
+	// folder named `router`, so a relative path through one points at it.
+	selector: [
+		mockOf( packagePath( '@tanstack/react-router' ) ),
+		mockOf( '/^\\.\\.?\\x2F(.*\\x2F)?router(\\x2F|$)/' ),
+	].join( ', ' ),
+	message:
+		'Mocking `@tanstack/react-router` or `app/router/*` breaks whenever the code reads a route the mock doesn’t define. Build the real route tree and a test router instead. See docs/testing.md.',
+};
+
+const testFileRestrictions = [
+	snackbarMetaRestriction,
+	...bannedModuleMocks,
+	routerMockRestriction,
+];
+
+// Reported once per file.
+const misnamedTestFileRestriction = {
+	selector:
+		'Program:has(CallExpression[callee.name=/^(describe|test|it)$/], CallExpression[callee.object.name=/^(describe|test|it)$/])',
+	message:
+		'Vitest only runs `*.test.*` files directly inside a `test/` folder, so it skips this file. Rename it, or move it there.',
+};
 
 export default defineConfig( [
 	...parent,
@@ -276,6 +314,57 @@ export default defineConfig( [
 				},
 			],
 			// Replaces the rule's options above, so the snackbar restriction is repeated.
+			'no-restricted-syntax': [ 'error', ...testFileRestrictions ],
+		},
+	},
+	{
+		name: 'calypso/dashboard/vitest/test-file-names',
+		files: [ '**/test/**/*.{js,jsx,ts,tsx}' ],
+		ignores: [ '**/test/*.test.{js,jsx,ts,tsx}' ],
+		rules: {
+			'no-restricted-syntax': [ 'error', ...testFileRestrictions, misnamedTestFileRestriction ],
+		},
+	},
+	{
+		name: 'calypso/dashboard/vitest/router-mock-exceptions',
+		// These files mocked the router before it was banned. This list should only shrink:
+		// to take a file off it, build the real route tree as docs/testing.md explains.
+		files: [
+			'agency/earn/referrals/test/new-referral-feedback.test.tsx',
+			'agency/earn/referrals/test/new-referral-notice.test.tsx',
+			'agency/marketplace/products/test/cart-menu.test.tsx',
+			'agency/marketplace/referral-checkout/test/index.test.tsx',
+			'agency/sites/site/test/overview.test.tsx',
+			'app/test/unified-page-view.test.tsx',
+			'domains/dns/test/add.test.tsx',
+			'domains/domain-diagnostics/test/index.test.tsx',
+			'domains/domain-dns/test/index.test.tsx',
+			'domains/domain-forwarding/test/index.test.tsx',
+			'domains/domain-glue-records/test/index.test.tsx',
+			'domains/domain-overview/test/actions.test.tsx',
+			'domains/domain-overview/test/index.test.tsx',
+			'domains/domain-overview/test/overview-header.test.tsx',
+			'domains/domain-overview/test/overview-item-tracks.test.tsx',
+			'domains/domain-sidebar/test/index.test.tsx',
+			'domains/test/index.test.tsx',
+			'domains/test/saved-layout-fallback.test.tsx',
+			'emails/test/index.test.tsx',
+			'me/billing-purchases/cancel-purchase/cancel-purchase-form/test/index.test.tsx',
+			'me/billing-purchases/cancel-purchase/test/index.test.tsx',
+			'me/billing-purchases/purchase-settings/test/purchase-notice.test.tsx',
+			'me/billing-purchases/test/purchase-removed-notice.test.tsx',
+			'me/notifications-emails/subscription-settings/test/index.test.tsx',
+			'sites/backups/test/index.test.tsx',
+			'sites/domains/test/index.test.tsx',
+			'sites/logs-activity/dataviews/test/index.test.tsx',
+			'sites/migration-overview/test/started-difm-content-info.test.tsx',
+			'sites/performance/test/index.test.tsx',
+			'sites/settings-repositories/test/configure-repository.test.tsx',
+			'sites/settings-repositories/test/connect-repository.test.tsx',
+			'sites/site-plans/test/index.test.tsx',
+			'sites/staging-site-delete-modal/test/index.test.tsx',
+		],
+		rules: {
 			'no-restricted-syntax': [ 'error', snackbarMetaRestriction, ...bannedModuleMocks ],
 		},
 	},

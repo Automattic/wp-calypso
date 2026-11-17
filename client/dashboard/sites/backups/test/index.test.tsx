@@ -41,14 +41,6 @@ vi.mock( '@wordpress/data', () => ( {
 // Mock scrollIntoView for JSDOM compatibility
 Element.prototype.scrollIntoView = vi.fn();
 
-vi.mock( '@wordpress/i18n', async () => ( {
-	__: ( text: string ) => text,
-	_x: ( text: string ) => text,
-	isRTL: () => false,
-	sprintf: ( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) )
-		.sprintf,
-} ) );
-
 vi.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => ( {
