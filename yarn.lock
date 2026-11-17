@@ -366,7 +366,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:7.18.4"
     resize-observer-polyfill: "npm:^1.5.1"
-    smooch: "npm:^5.7.17"
+    smooch: "npm:^5.7.20"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
@@ -1617,7 +1617,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-draggable: "npm:^4.4.6"
-    smooch: "npm:^5.7.17"
+    smooch: "npm:^5.7.20"
     typescript: "npm:^6.0.3"
     use-debounce: "npm:^10.0.6"
     vite: "npm:^8.3.7"
@@ -2095,7 +2095,7 @@ __metadata:
     react-markdown: "npm:^10.1.0"
     react-redux: "npm:^9.3.1"
     react-router-dom: "npm:7.18.4"
-    smooch: "npm:^5.7.17"
+    smooch: "npm:^5.7.20"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.7"
@@ -2909,7 +2909,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:7.18.4"
-    smooch: "npm:^5.7.17"
+    smooch: "npm:^5.7.20"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.7"
@@ -29709,10 +29709,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smooch@npm:^5.7.17":
-  version: 5.7.17
-  resolution: "smooch@npm:5.7.17"
-  checksum: 93753be1d7ed169dcdc8d2132f2dd690a54f3575b74043113ec83a2931102b989203b155f410eae17cb2c87b55c14fd14a2e9f0af46c9a9de5ee12ff349a1ffb
+"smooch@npm:^5.7.20":
+  version: 5.7.20
+  resolution: "smooch@npm:5.7.20"
+  checksum: 400c2b5c5b0a600ffea9dbb59c330272cce237a1515c21b62b3ab063c4a1661f2d4668c8a3eb01684e40afa1b1234bad43381c7e62707676c90c33d483c20013
   languageName: node
   linkType: hard
 
