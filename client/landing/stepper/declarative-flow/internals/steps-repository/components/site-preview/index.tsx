@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { createSitePreviewScreenshot, SITE_PREVIEW_MSHOT } from './mshot';
+
 import './style.scss';
 
 export const SitePreview: FC< { url?: string; label?: string } > = ( { url, label } ) => {
