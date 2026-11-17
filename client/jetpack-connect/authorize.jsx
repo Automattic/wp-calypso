@@ -153,15 +153,8 @@ export class JetpackAuthorize extends Component {
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const { from, clientId, closeWindowAfterLogin, plugins } = this.props.authQuery;
-		const tracksProperties = {
-			from,
-			is_mobile_app_flow: isMobileAppFlow,
-			site: clientId,
-			plugins: plugins?.length ? plugins.join( ',' ) : undefined,
-			is_secondary_connection: this.isSecondaryConnection(),
-			is_admin_connection: this.isAdminConnection(),
-		};
+		const { closeWindowAfterLogin } = this.props.authQuery;
+		const tracksProperties = { ...this.getTracksProperties(), is_mobile_app_flow: isMobileAppFlow };
 
 		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
 			// Certain connection flows may complete the login step within a popup window.
@@ -599,6 +592,17 @@ export class JetpackAuthorize extends Component {
 		this.props.redirectToLogout( window.location.href );
 	};
 
+	getTracksProperties() {
+		const { from, clientId, plugins } = this.props.authQuery;
+		return {
+			from,
+			site: clientId,
+			plugins: plugins?.join( ',' ) || undefined,
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
+		};
+	}
+
 	getRetryArgs( authQuery = this.props.authQuery ) {
 		return {
 			from: authQuery.from,
@@ -630,7 +634,7 @@ export class JetpackAuthorize extends Component {
 	handleSubmit = () => {
 		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
-		const { alreadyAuthorized, clientId, from, plugins, redirectAfterAuth } = this.props.authQuery;
+		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
@@ -655,13 +659,7 @@ export class JetpackAuthorize extends Component {
 			return this.redirect();
 		}
 
-		recordTracksEvent( 'calypso_jpc_approve_click', {
-			from,
-			site: clientId,
-			plugins: plugins?.length ? plugins.join( ',' ) : undefined,
-			is_secondary_connection: this.isSecondaryConnection(),
-			is_admin_connection: this.isAdminConnection(),
-		} );
+		recordTracksEvent( 'calypso_jpc_approve_click', this.getTracksProperties() );
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
