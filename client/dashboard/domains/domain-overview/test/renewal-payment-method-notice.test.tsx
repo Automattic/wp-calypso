@@ -33,14 +33,12 @@ const purchaseFixture = ( customProps: Partial< Purchase > = {} ): Purchase =>
 
 const renderNotice = (
 	domain: Partial< Domain > = {},
-	purchase: Partial< Purchase > | null = {},
-	isDisabled = false
+	purchase: Partial< Purchase > | null = {}
 ) =>
 	render(
 		<RenewalPaymentMethodNotice
 			domain={ domainFixture( domain ) }
 			purchase={ purchase ? purchaseFixture( purchase ) : undefined }
-			isDisabled={ isDisabled }
 		/>
 	);
 
@@ -51,7 +49,6 @@ describe( '<RenewalPaymentMethodNotice>', () => {
 		expect( await screen.findByText( NO_PAYMENT_METHOD_TITLE ) ).toBeVisible();
 		expect( screen.getByText( /It expires on June 15, 2030/ ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Add payment method' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Renew now' } ) ).toBeVisible();
 	} );
 
 	test( 'tells the owner the card on the subscription has expired', async () => {
@@ -71,8 +68,8 @@ describe( '<RenewalPaymentMethodNotice>', () => {
 		expect( screen.getByRole( 'link', { name: 'Update payment method' } ) ).toBeVisible();
 	} );
 
-	test( 'hides the renew action while the TLD is in maintenance', async () => {
-		renderNotice( {}, {}, true );
+	test( 'leaves renewing to the header button rather than repeating it', async () => {
+		renderNotice();
 
 		expect( await screen.findByText( NO_PAYMENT_METHOD_TITLE ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Renew now' } ) ).not.toBeInTheDocument();

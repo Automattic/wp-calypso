@@ -145,11 +145,7 @@ export default function DomainOverview() {
 				}
 			>
 				<PendingRegistrationNotice domain={ domain } />
-				<RenewalPaymentMethodNotice
-					domain={ domain }
-					purchase={ purchase }
-					isDisabled={ isTldInMaintenance( domain ) }
-				/>
+				<RenewalPaymentMethodNotice domain={ domain } purchase={ purchase } />
 				<PointToWpcomNotice domain={ domain } isDisabled={ isTldInMaintenance( domain ) } />
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />

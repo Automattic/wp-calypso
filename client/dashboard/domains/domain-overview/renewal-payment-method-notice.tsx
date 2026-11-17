@@ -2,10 +2,10 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { changePaymentMethodRoute } from '../../app/router/me';
-import Notice, { NoticeActionLink, RouterNoticeActionLinkButton } from '../../components/notice';
+import Notice, { RouterNoticeActionLinkButton } from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
 import { needsPaymentMethodToAutoRenew } from '../../utils/domain';
-import { creditCardHasAlreadyExpired, getRenewalUrlFromPurchase } from '../../utils/purchase';
+import { creditCardHasAlreadyExpired } from '../../utils/purchase';
 import type { Domain, Purchase } from '@automattic/api-core';
 
 /**
@@ -26,11 +26,9 @@ function needsPaymentMethodToRenew( domain: Domain, purchase?: Purchase ): boole
 export default function RenewalPaymentMethodNotice( {
 	domain,
 	purchase,
-	isDisabled,
 }: {
 	domain: Domain;
 	purchase?: Purchase;
-	isDisabled?: boolean;
 } ) {
 	const locale = useLocale();
 
@@ -89,20 +87,13 @@ export default function RenewalPaymentMethodNotice( {
 				hasExpiredCard ? __( 'Your payment method has expired' ) : __( 'Add a payment method' )
 			}
 			actions={
-				<>
-					<RouterNoticeActionLinkButton
-						to={ changePaymentMethodRoute.fullPath }
-						params={ { purchaseId: purchase.ID } }
-						variant="solid"
-					>
-						{ hasExpiredCard ? __( 'Update payment method' ) : __( 'Add payment method' ) }
-					</RouterNoticeActionLinkButton>
-					{ ! isDisabled && ( purchase.can_explicit_renew || purchase.is_renewable ) && (
-						<NoticeActionLink href={ getRenewalUrlFromPurchase( purchase ) }>
-							{ __( 'Renew now' ) }
-						</NoticeActionLink>
-					) }
-				</>
+				<RouterNoticeActionLinkButton
+					to={ changePaymentMethodRoute.fullPath }
+					params={ { purchaseId: purchase.ID } }
+					variant="solid"
+				>
+					{ hasExpiredCard ? __( 'Update payment method' ) : __( 'Add payment method' ) }
+				</RouterNoticeActionLinkButton>
 			}
 		>
 			<Text as="p">{ getMessage() }</Text>
