@@ -38,12 +38,15 @@ vi.mock( '@automattic/notifications/src/inbox', () => ( {
 		} ),
 } ) );
 
-function renderNotifications( initialPath: string ) {
+async function renderNotifications( initialPath: string ) {
 	const router = createRouter( {
 		routeTree: rootRoute.addChildren( createNotificationsRoutes() ),
 		history: createMemoryHistory( { initialEntries: [ initialPath ] } ),
 		context: { config: APP_CONTEXT_DEFAULT_CONFIG },
 	} );
+
+	// The route loads the page lazily. Load it first, so no test spends its wait on the import.
+	await router.load();
 
 	render(
 		<QueryClientProvider client={ new QueryClient() }>
@@ -62,7 +65,7 @@ function renderNotifications( initialPath: string ) {
 
 describe( '<Notifications>', () => {
 	test( 'shows every notification by default', async () => {
-		renderNotifications( '/notifications' );
+		await renderNotifications( '/notifications' );
 
 		expect( await screen.findByRole( 'heading', { name: 'Notifications' } ) ).toBeVisible();
 		expect( await screen.findByRole( 'tab', { name: 'All', selected: true } ) ).toBeVisible();
@@ -70,7 +73,7 @@ describe( '<Notifications>', () => {
 	} );
 
 	test( 'has no "Mark all as read" button', async () => {
-		renderNotifications( '/notifications' );
+		await renderNotifications( '/notifications' );
 
 		await screen.findByRole( 'tab', { name: 'All', selected: true } );
 		expect( screen.queryByRole( 'button', { name: 'Mark all as read' } ) ).not.toBeInTheDocument();
@@ -78,7 +81,7 @@ describe( '<Notifications>', () => {
 
 	test( 'keeps the Unread tab in the address', async () => {
 		const user = userEvent.setup();
-		const router = renderNotifications( '/notifications' );
+		const router = await renderNotifications( '/notifications' );
 
 		await user.click( await screen.findByRole( 'tab', { name: 'Unread' } ) );
 
@@ -88,14 +91,14 @@ describe( '<Notifications>', () => {
 	} );
 
 	test( 'opens on the Unread tab from an address that asks for it', async () => {
-		renderNotifications( '/notifications?filter=unread' );
+		await renderNotifications( '/notifications?filter=unread' );
 
 		expect( await screen.findByRole( 'tab', { name: 'Unread', selected: true } ) ).toBeVisible();
 	} );
 
 	test( 'opens a note at its own address and keeps the tab', async () => {
 		const user = userEvent.setup();
-		const router = renderNotifications( '/notifications?filter=unread' );
+		const router = await renderNotifications( '/notifications?filter=unread' );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Open a note from unread' } ) );
 
@@ -104,14 +107,14 @@ describe( '<Notifications>', () => {
 	} );
 
 	test( 'shows the note an address links to', async () => {
-		renderNotifications( '/notifications/42' );
+		await renderNotifications( '/notifications/42' );
 
 		expect( await screen.findByRole( 'button', { name: 'Close note 42' } ) ).toBeVisible();
 	} );
 
 	test( 'goes back to the list in one step after moving between notes', async () => {
 		const user = userEvent.setup();
-		const router = renderNotifications( '/notifications' );
+		const router = await renderNotifications( '/notifications' );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Open a note from all' } ) );
 		await screen.findByRole( 'button', { name: 'Close note 42' } );
@@ -126,7 +129,7 @@ describe( '<Notifications>', () => {
 
 	test( 'returns to the list address when the note closes', async () => {
 		const user = userEvent.setup();
-		const router = renderNotifications( '/notifications/42' );
+		const router = await renderNotifications( '/notifications/42' );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Close note 42' } ) );
 

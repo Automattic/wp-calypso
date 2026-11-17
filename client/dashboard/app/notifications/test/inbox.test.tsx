@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
@@ -41,7 +41,10 @@ describe( '<Notifications> with the inbox', () => {
 
 		await openPanel( user );
 
-		expect( await screen.findByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible();
+		// The popover fades in, so it is in the document before it is visible.
+		await waitFor( () =>
+			expect( screen.getByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible()
+		);
 		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
 
