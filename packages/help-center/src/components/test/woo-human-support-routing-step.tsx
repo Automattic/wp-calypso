@@ -298,17 +298,60 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		expect( lastDecision() ).toMatchObject( { route: 'ticket', row_id: 4, is_emergency: true } );
 	} );
 
-	it( "sends the bot's unknown charges to a ticket", async () => {
+	it( "sends the bot's unknown charges to a ticket without asking anything", () => {
 		renderStep( { ...request, flags: { ...request.flags, isUnknownCharge: true } } );
 
-		await userEvent.selectOptions( question(), 'account' );
-		await userEvent.click( continueButton() );
-
+		expect( screen.queryByLabelText( 'What do you need help with?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
 		expect( lastDecision() ).toMatchObject( {
 			route: 'ticket',
 			row_id: 2,
+			question: null,
+			product: null,
+			has_store: false,
 			is_unknown_charge: true,
 		} );
+		expect( startChat ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( "sends the bot's account recovery to the email form without asking anything", () => {
+		renderStep( { ...request, flags: { ...request.flags, routeToEmail: true } } );
+
+		expect( screen.queryByLabelText( 'What do you need help with?' ) ).not.toBeInTheDocument();
+		expect( lastDecision() ).toMatchObject( { route: 'email-form', row_id: 1 } );
+		expect( startChat ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( "waits for the merchant's details before going on without the questions", () => {
+		mockHandoff = { isPending: true };
+		const accountRecovery = { ...request, flags: { ...request.flags, routeToEmail: true } };
+		const { rerender } = renderStep( accountRecovery );
+
+		expect( startChat ).not.toHaveBeenCalled();
+		expect( screen.queryByLabelText( 'What do you need help with?' ) ).not.toBeInTheDocument();
+
+		mockHandoff = loaded( merchant() );
+		rerender(
+			<WooHumanSupportRoutingStep
+				request={ accountRecovery }
+				startChat={ startChat }
+				dismiss={ dismiss }
+			/>
+		);
+
+		expect( lastDecision() ).toMatchObject( { route: 'email-form', row_id: 1 } );
+		expect( startChat ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'turns away a blocked merchant even when the bot decides the route', () => {
+		mockHandoff = loaded( null, true );
+		renderStep( { ...request, flags: { ...request.flags, routeToEmail: true } } );
+
+		expect(
+			screen.getByText( /You no longer have access to our direct support channels/ )
+		).toBeInTheDocument();
+		expect( lastDecision() ).toBeUndefined();
+		expect( startChat ).not.toHaveBeenCalled();
 	} );
 
 	it( 'drops the request on cancel', async () => {

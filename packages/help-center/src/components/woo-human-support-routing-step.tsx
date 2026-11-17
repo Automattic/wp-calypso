@@ -10,8 +10,11 @@ import {
 	isStoreAsked,
 	isStoreRequired,
 } from '../human-routing/woo-handoff';
-import { getWooHumanSupportRoute } from '../human-routing/woo-human-routing';
-import type { HumanSupportQuestionType } from '../human-routing/types';
+import {
+	getWooHumanSupportRoute,
+	getWooHumanSupportRouteFromFlags,
+} from '../human-routing/woo-human-routing';
+import type { HumanRoutingDecision, HumanSupportQuestionType } from '../human-routing/types';
 import type { HumanSupportRouting, HumanSupportRoutingStepProps } from '@automattic/odie-client';
 import './woo-human-support-routing-step.scss';
 
@@ -30,7 +33,8 @@ const getQuestionOptions = ( isVendor: boolean ) => [
 
 /**
  * Asks a WooCommerce.com merchant what they need before a request for a human goes anywhere,
- * then picks the route with the who-gets-a-human table (WOOPUBR-2400).
+ * then picks the route with the who-gets-a-human table (WOOPUBR-2400). When the bot's flags
+ * already decide the route (account recovery, an unknown charge), it asks nothing.
  */
 export function WooHumanSupportRoutingStep( {
 	request,
@@ -48,6 +52,9 @@ export function WooHumanSupportRoutingStep( {
 	const actionsRef = useRef< HTMLDivElement >( null );
 	// A second click before the step closes would start a second chat.
 	const hasContinuedRef = useRef( false );
+	// No answer would change these routes, so the questions are skipped.
+	const flagsDecision = getWooHumanSupportRouteFromFlags( request.flags );
+	const isSupportBlocked = !! handoff?.isSupportBlocked;
 
 	// The chat only scrolls for new messages, so bring the questions into view.
 	useEffect( () => {
@@ -86,26 +93,25 @@ export function WooHumanSupportRoutingStep( {
 		( ! showProduct || !! productSlug ) &&
 		( ! storeIsAsked || ! isStoreRequired( question ) || !! storeUrl );
 
-	const onContinue = () => {
-		if ( ! canContinue || hasContinuedRef.current ) {
+	const continueTo = (
+		{ route, rowId }: HumanRoutingDecision,
+		answers: {
+			question: HumanSupportQuestionType | null;
+			product: string | null;
+			hasStore: boolean;
+		}
+	) => {
+		if ( hasContinuedRef.current ) {
 			return;
 		}
 		hasContinuedRef.current = true;
 
-		const { route, rowId } = getWooHumanSupportRoute(
-			getWooRoutingInput( {
-				data: wooHandoff,
-				flags: request.flags,
-				answers: { question, productSlug: showProduct ? productSlug : null, storeUrl },
-			} )
-		);
-
 		recordTracksEvent( 'calypso_helpcenter_human_support_routing_decided', {
 			route,
 			row_id: rowId,
-			question,
-			product: showProduct ? productSlug : null,
-			has_store: !! storeUrl,
+			question: answers.question,
+			product: answers.product,
+			has_store: answers.hasStore,
 			has_merchant_data: !! wooHandoff,
 			is_emergency: request.flags.isEmergency,
 			is_unknown_charge: request.flags.isUnknownCharge,
@@ -116,9 +122,35 @@ export function WooHumanSupportRoutingStep( {
 		startChat();
 	};
 
+	// The support form's block comes first, so wait for the merchant's details before going on.
+	// Runs after every render; continueTo goes on only once.
+	useEffect( () => {
+		if ( flagsDecision && ! isPending && ! isSupportBlocked ) {
+			continueTo( flagsDecision, { question: null, product: null, hasStore: false } );
+		}
+	} );
+
+	const onContinue = () => {
+		if ( ! canContinue ) {
+			return;
+		}
+
+		const product = showProduct ? productSlug : null;
+		continueTo(
+			getWooHumanSupportRoute(
+				getWooRoutingInput( {
+					data: wooHandoff,
+					flags: request.flags,
+					answers: { question, productSlug: product, storeUrl },
+				} )
+			),
+			{ question, product, hasStore: !! storeUrl }
+		);
+	};
+
 	// The support form turns these merchants away too, with the same message. It's the answer, so
 	// there's no Done: that would put the chat's "connect me" buttons back for the same request.
-	if ( handoff?.isSupportBlocked ) {
+	if ( isSupportBlocked ) {
 		return (
 			<div className="help-center-woo-routing-step" ref={ stepRef }>
 				<p className="help-center-woo-routing-step__message">
@@ -133,6 +165,14 @@ export function WooHumanSupportRoutingStep( {
 						}
 					) }
 				</p>
+			</div>
+		);
+	}
+
+	if ( flagsDecision ) {
+		return (
+			<div className="help-center-woo-routing-step" ref={ stepRef }>
+				<Spinner className="help-center-woo-routing-step__spinner" />
 			</div>
 		);
 	}

@@ -1,14 +1,20 @@
 import { evaluateHumanRouting } from './evaluate-human-routing';
-import type { HumanRoutingDecision, HumanRoutingInput, HumanRoutingRow } from './types';
+import type {
+	HumanRoutingDecision,
+	HumanRoutingFlags,
+	HumanRoutingInput,
+	HumanRoutingRow,
+} from './types';
+
+type WooFlagRow = Omit< HumanRoutingRow, 'when' > & {
+	when: ( input: { flags: HumanRoutingFlags } ) => boolean;
+};
 
 /**
- * Who gets a human on WooCommerce.com (WOOPUBR-2400). Rows are checked top to bottom, and the
- * first one that matches decides the route. Asking for a human doesn't override the table.
- *
- * Row ids match the decision table in WOOPUBR-2400; keep them when reordering or editing rows,
- * and give a new row the next unused id.
+ * The first rows of the table, which read only the bot's flags. When one of them matches, the
+ * merchant's answers can't change the route.
  */
-export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
+const WOO_FLAG_ROWS: readonly WooFlagRow[] = [
 	{
 		id: 1,
 		description: 'Account recovery',
@@ -21,6 +27,17 @@ export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 		when: ( { flags } ) => flags.isUnknownCharge,
 		route: 'ticket',
 	},
+];
+
+/**
+ * Who gets a human on WooCommerce.com (WOOPUBR-2400). Rows are checked top to bottom, and the
+ * first one that matches decides the route. Asking for a human doesn't override the table.
+ *
+ * Row ids match the decision table in WOOPUBR-2400; keep them when reordering or editing rows,
+ * and give a new row the next unused id.
+ */
+export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
+	...WOO_FLAG_ROWS,
 	{
 		id: 3,
 		description: 'Emergency, paying',
@@ -113,6 +130,19 @@ export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 		route: 'forums',
 	},
 ];
+
+/**
+ * The route when the bot's flags alone decide it: account recovery or an unknown charge. The
+ * routing step doesn't ask its questions then, since no answer would change the route. Null when
+ * the route depends on the merchant's answers.
+ */
+export function getWooHumanSupportRouteFromFlags(
+	flags: HumanRoutingFlags
+): HumanRoutingDecision | null {
+	const row = WOO_FLAG_ROWS.find( ( { when } ) => when( { flags } ) );
+
+	return row ? { route: row.route, rowId: row.id } : null;
+}
 
 export function getWooHumanSupportRoute( input: HumanRoutingInput ): HumanRoutingDecision {
 	// The last row matches everything, so this only falls back if the table loses it.

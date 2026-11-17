@@ -1,4 +1,8 @@
-import { getWooHumanSupportRoute, WOO_HUMAN_ROUTING_ROWS } from '../woo-human-routing';
+import {
+	getWooHumanSupportRoute,
+	getWooHumanSupportRouteFromFlags,
+	WOO_HUMAN_ROUTING_ROWS,
+} from '../woo-human-routing';
 import type {
 	HumanRoutingCustomer,
 	HumanRoutingInput,
@@ -224,5 +228,47 @@ describe( 'getWooHumanSupportRoute', () => {
 		it( 'ends with a row that matches everything', () => {
 			expect( WOO_HUMAN_ROUTING_ROWS.at( -1 )?.when( {} as never ) ).toBe( true );
 		} );
+	} );
+} );
+
+describe( 'getWooHumanSupportRouteFromFlags', () => {
+	const accountRecovery = { ...noFlags, routeToEmail: true };
+	const unknownCharge = { ...noFlags, isUnknownCharge: true };
+
+	it.each( [
+		[ 'account recovery', accountRecovery, { route: 'email-form', rowId: 1 } ],
+		[ 'an unknown charge', unknownCharge, { route: 'ticket', rowId: 2 } ],
+		[ 'both', { ...accountRecovery, isUnknownCharge: true }, { route: 'email-form', rowId: 1 } ],
+	] )( 'decides %s without the answers', ( _name, flags, decision ) => {
+		expect( getWooHumanSupportRouteFromFlags( flags ) ).toEqual( decision );
+	} );
+
+	it.each( [
+		[ 'no flags', noFlags ],
+		[ 'an emergency', emergency ],
+	] )( 'leaves %s to the answers', ( _name, flags ) => {
+		expect( getWooHumanSupportRouteFromFlags( flags ) ).toBeNull();
+	} );
+
+	it( 'agrees with the full table whatever the answers', () => {
+		const answers = [
+			input(),
+			input( { question: 'account', product: null } ),
+			input( { customer: null, product: coreProduct } ),
+			input( { customer: customer( { supportTier: 'tier_1', isPaying: true } ) } ),
+			input( { product: product( { supportType: 'external' } ) } ),
+		];
+
+		for ( const flags of [
+			accountRecovery,
+			unknownCharge,
+			{ ...emergency, routeToEmail: true },
+		] ) {
+			for ( const answer of answers ) {
+				expect( getWooHumanSupportRoute( { ...answer, flags } ) ).toEqual(
+					getWooHumanSupportRouteFromFlags( flags )
+				);
+			}
+		}
 	} );
 } );
