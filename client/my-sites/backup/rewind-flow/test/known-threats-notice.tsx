@@ -271,13 +271,15 @@ describe( 'KnownThreatsNotice', () => {
 		expect( banner ).toBeInTheDocument();
 		expect( banner ).toContainElement( details );
 		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
-		// Right under the warning: where to go instead, as one sentence.
+		// In the same paragraph as the warning: where to go instead.
 		const link = await screen.findByRole( 'link', {
 			name: /^restore the latest backup without known threats, from .+ at .+$/,
 		} );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
-		expect( link.parentElement ).toHaveTextContent(
-			/^Instead, restore the latest backup without known threats, from .+ at .+\.$/
+		const title = screen.getByText( NOTICE ).parentElement;
+		expect( title ).toContainElement( link );
+		expect( title ).toHaveTextContent(
+			`${ NOTICE } Instead, restore the latest backup without known threats, from`
 		);
 		expect( banner ).toContainElement( link );
 		expectInOrder( screen.getByText( NOTICE ), link, summary );

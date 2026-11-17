@@ -17,14 +17,10 @@
 	align-self: stretch;
 }
 
-// Follows the banner's title: "Instead, restore the latest backup …". Empty until the clean
-// backup is found, or when there isn't one.
-.rewind-flow-known-threats__instead {
-	margin: 0;
-
-	&:empty {
-		display: none;
-	}
+// "Instead, restore the latest backup …", in the banner's title after the warning. It sits in
+// running text, so it needs its underline back from `.card a` on the backup pages.
+.rewind-flow-notice h4 .rewind-flow-known-threats__instead a {
+	text-decoration: underline;
 }
 
 .rewind-flow-known-threats__details summary {

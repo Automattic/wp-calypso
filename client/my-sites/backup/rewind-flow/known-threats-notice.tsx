@@ -101,26 +101,34 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 		<RewindFlowNotice
 			gridicon="notice"
 			title={
-				flagged > 0
-					? getKnownThreatsWarning( translate, flagged )
-					: translate(
-							'This backup is known to contain security threats. Acknowledge them to restore it.'
-						)
+				// One paragraph, as on the Dashboard: the warning, then where to go instead.
+				<>
+					<span>
+						{ flagged > 0
+							? getKnownThreatsWarning( translate, flagged )
+							: translate(
+									'This backup is known to contain security threats. Acknowledge them to restore it.'
+								) }
+					</span>
+					{ siteSlug && (
+						<>
+							{ ' ' }
+							<span className="rewind-flow-known-threats__instead">
+								<RestoreThatOneInsteadLink
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									latestWithoutKnownThreats={ counts?.latestWithoutKnownThreats }
+									currentBackupPeriod={ counts?.backupPeriod }
+									inline
+								/>
+							</span>
+						</>
+					) }
+				</>
 			}
 			type={ RewindFlowNoticeLevel.WARNING }
 		>
 			<div className="rewind-flow-known-threats">
-				{ siteSlug && (
-					<p className="rewind-flow-known-threats__instead">
-						<RestoreThatOneInsteadLink
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							latestWithoutKnownThreats={ counts?.latestWithoutKnownThreats }
-							currentBackupPeriod={ counts?.backupPeriod }
-							inline
-						/>
-					</p>
-				) }
 				{ hasScan && flagged > 0 && counts?.backupPeriod != null && (
 					// Native disclosure: the list loads the first time it's opened.
 					<details
