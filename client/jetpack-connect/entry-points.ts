@@ -43,12 +43,16 @@ export function getPluginsForEntryPoint(
 /**
  * Whether `from` gets the unified connection flow: the plugin-aware logo,
  * title, subtitle and feature cards on the authorize, signup and login
- * screens. `jetpack-connector` (the Connectors card) and `jetpack-onboarding`
- * (My Jetpack's onboarding takeover) are matched exactly because they have
- * already shipped. New entry points get it by using a standard name.
+ * screens. `jetpack-connector` (the Connectors card), `jetpack-onboarding`
+ * (My Jetpack's onboarding takeover) and `sso` (Jetpack SSO) are matched
+ * exactly because they have already shipped. New entry points get it by using
+ * a standard name.
  */
 export function isUnifiedFlow( from?: string | null ): boolean {
 	return (
-		from === 'jetpack-connector' || from === 'jetpack-onboarding' || isStandardEntryPoint( from )
+		from === 'jetpack-connector' ||
+		from === 'jetpack-onboarding' ||
+		from === 'sso' ||
+		isStandardEntryPoint( from )
 	);
 }

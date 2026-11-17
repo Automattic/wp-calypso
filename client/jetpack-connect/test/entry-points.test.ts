@@ -18,6 +18,7 @@ describe( 'isStandardEntryPoint', () => {
 		[ 'jetpack-onboarding', false ],
 		[ 'jetpack-newsletter', false ],
 		[ 'my-jetpack', false ],
+		[ 'sso', false ],
 		[ 'woocommerce-core-profiler', false ],
 		[ 'jetpack-x_y', false ],
 		[ 'jetpack', false ],
@@ -39,6 +40,7 @@ describe( 'isUnifiedFlow', () => {
 	test.each( [
 		[ 'jetpack-connector', true ],
 		[ 'jetpack-onboarding', true ],
+		[ 'sso', true ],
 		[ 'jetpack_premium_analytics_onboarding', true ],
 		[ 'delete_connection_owner_notice', true ],
 		[ 'jetpack-connector-v2', false ],

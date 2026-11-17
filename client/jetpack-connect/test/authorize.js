@@ -1059,6 +1059,15 @@ describe( 'JetpackAuthorize', () => {
 			);
 		} );
 
+		test( 'SSO without its approval cookie still returns to the site', async () => {
+			await approve( { authQuery: { from: 'sso', redirectAfterAuth: null } } );
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`http://${ SITE_SLUG }/wp-admin/`,
+				expect.any( String )
+			);
+		} );
+
 		test( 'a standard entry-point name does not pre-empt the A4A source redirect', async () => {
 			global.window.location.search = '?source=a8c-for-agencies';
 
@@ -1147,6 +1156,50 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Sign in as a different user' ) );
 			expect( global.window.location.href ).toBe(
 				'https://example.com/log-in/jetpack?redirect_to=http%3A%2F%2Fwwww.example.com&from=woocommerce-core-profiler'
+			);
+		} );
+	} );
+
+	describe( 'return URL', () => {
+		test( "is the site's return URL when there is one", () => {
+			const component = new JetpackAuthorize( DEFAULT_PROPS );
+			expect( component.getReturnUrl() ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
+		} );
+
+		test( "falls back to the site's wp-admin when the return URL was dropped", () => {
+			const component = new JetpackAuthorize( {
+				...DEFAULT_PROPS,
+				authQuery: {
+					...DEFAULT_PROPS.authQuery,
+					redirectAfterAuth: null,
+					siteUrl: `http://${ SITE_SLUG }/`,
+				},
+			} );
+			expect( component.getReturnUrl() ).toBe( `http://${ SITE_SLUG }/wp-admin/` );
+		} );
+
+		test( 'SSO returns to the site after connecting without a return URL', () => {
+			const authQuery = {
+				...DEFAULT_PROPS.authQuery,
+				from: 'sso',
+				clientId: APPROVE_SSO_CLIENT_ID,
+				redirectAfterAuth: null,
+			};
+			const { rerender } = renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } authQuery={ authQuery } />
+			);
+
+			rerender(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ authQuery }
+					authorizationData={ { ...DEFAULT_PROPS.authorizationData, authorizeSuccess: true } }
+				/>
+			);
+
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`http://${ SITE_SLUG }/wp-admin/`,
+				expect.any( String )
 			);
 		} );
 	} );
