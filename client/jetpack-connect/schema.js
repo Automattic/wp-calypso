@@ -1,3 +1,6 @@
+// The site's own URLs end up in redirects, so only web URLs are allowed.
+const HTTP_URL = '^https?://';
+
 export const authorizeQueryDataSchema = {
 	type: 'object',
 	required: [
@@ -24,7 +27,7 @@ export const authorizeQueryDataSchema = {
 		close_window_after_auth: { type: 'string' }, // '1' if true
 		from: { type: 'string' },
 		has_connected_owner: { type: 'string' },
-		home_url: { type: 'string' },
+		home_url: { pattern: HTTP_URL, type: 'string' },
 		is_popup: { type: 'string' }, // '1' if true
 		jp_version: { type: 'string' },
 		partner_id: { pattern: '^\\d+$', type: 'string' },
@@ -32,10 +35,10 @@ export const authorizeQueryDataSchema = {
 		redirect_uri: { type: 'string' },
 		scope: { type: 'string' },
 		secret: { type: 'string' },
-		site: { type: 'string' },
+		site: { pattern: HTTP_URL, type: 'string' },
 		site_icon: { type: 'string' },
 		site_lang: { type: 'string' },
-		site_url: { type: 'string' },
+		site_url: { pattern: HTTP_URL, type: 'string' },
 		state: { type: 'string' },
 		user_email: { type: 'string' },
 		woodna_service_name: { type: 'string' },

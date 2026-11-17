@@ -47,7 +47,6 @@ vi.mock( '../use-cart-lines', () => ( {
 		total: 47.4,
 		commission: 0,
 		isTotalReady: true,
-		hasWpcomHostingPlan: false,
 	} ),
 } ) );
 
