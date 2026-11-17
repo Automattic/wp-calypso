@@ -101,10 +101,7 @@ export default function Notifications( {
 	};
 
 	/**
-	 * Returns an action handler that records the given Tracks event, then opens the action's link.
-	 */
 	const trackAndOpen = ( name: string ) => ( store: unknown, action: LinkAction ) => {
-		const { siteId, postId, commentId } = action;
 		recordTracksEvent( name, { site_id: siteId, post_id: postId, comment_id: commentId } );
 		openInNewTab( store, action );
 	};
