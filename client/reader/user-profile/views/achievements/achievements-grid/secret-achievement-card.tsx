@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import AchievementCard from './achievement-card';
 
 interface SecretAchievementCardProps {
-	/** The card's position in its grid, so any ten cards in a row show different descriptions. */
+	/** The card's place among the secret cards in its grid, so any ten in a row show different descriptions. */
 	index: number;
 	/** Render the locked variant — faded card. Omit for unlocked masked secrets. */
 	locked?: boolean;
