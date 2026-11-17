@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
+	STATIC_SITE_IMPORT_PREVIEW_FLOW,
 	ENTREPRENEUR_FLOW,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -146,6 +147,10 @@ const staticSiteImportFlow: Record< string, () => Promise< { default: FlowV2< an
 				[ STATIC_SITE_IMPORT_FLOW ]: () =>
 					import(
 						/* webpackChunkName: "static-site-import-flow" */ './flows/static-site-import-flow/static-site-import-flow'
+					),
+				[ STATIC_SITE_IMPORT_PREVIEW_FLOW ]: () =>
+					import(
+						/* webpackChunkName: "static-site-import-preview-flow" */ './flows/static-site-import-preview-flow/static-site-import-preview-flow'
 					),
 			}
 		: {};

@@ -5,12 +5,12 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, border, check, published } from '@wordpress/icons';
+import { Icon, border, caution, check, published } from '@wordpress/icons';
 import { Badge, Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
@@ -18,7 +18,10 @@ import { formatStorage } from '../../utils/site-storage';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type {
+	StaticSiteImportBand,
+	StaticSiteImportDelivery,
 	StaticSiteImportCapability,
+	StaticSiteImportInspection,
 	StaticSiteImportPreviewSummary,
 	StaticSiteImportProgress,
 	StaticSiteImportSession,
@@ -165,6 +168,33 @@ function getFindActivity( progress?: StaticSiteImportProgress ) {
  * How far the whole move is, out of 100. Copying and building are weighted by the pages they've
  * done; delivery reports nothing, so it holds near the end until the site is ready.
  */
+/** What the restore onto the site is doing, in the reader's words. */
+function getDeliveryActivity( delivery?: StaticSiteImportDelivery ) {
+	switch ( delivery?.stage ) {
+		case 'preparing':
+			return __( 'Getting your site ready to move' );
+		case 'convert_to_atomic':
+			return __( 'Setting up your site’s hosting' );
+		case 'download_archive':
+			return __( 'Sending your site to its new home' );
+		case 'unpack_file':
+			return __( 'Unpacking your site' );
+		case 'preprocess':
+			return __( 'Preparing your files' );
+		case 'process_files':
+			return __( 'Copying your files' );
+		case 'recreate_database':
+		case 'postprocess_database':
+			return __( 'Setting up your content' );
+		case 'verify_site_integrity':
+			return __( 'Checking everything works' );
+		case 'clean_up':
+			return __( 'Finishing up' );
+		default:
+			return '';
+	}
+}
+
 function getOverallProgress( session?: StaticSiteImportSession ) {
 	const progress = session?.progress;
 	const fraction = ( current = 0, total = 0 ) => ( total > 0 ? Math.min( current / total, 1 ) : 0 );
@@ -206,8 +236,18 @@ function getOverallProgress( session?: StaticSiteImportSession ) {
 					return 82;
 			}
 		}
-		default:
-			return 92;
+		default: {
+			const delivery = progress?.delivery;
+			if ( ! delivery?.total_steps ) {
+				return 88;
+			}
+			// Within copying files, the files themselves fill the step.
+			const files =
+				delivery.stage === 'process_files'
+					? fraction( delivery.files?.done, delivery.files?.total )
+					: 0;
+			return 88 + 11 * fraction( delivery.step - 1 + files, delivery.total_steps );
+		}
 	}
 }
 
@@ -372,28 +412,89 @@ const getCapabilityLabels = (): Partial< Record< StaticSiteImportCapability, str
 	membership: __( 'Members area' ),
 } );
 
-/** The numbers the move has to show so far, and what it found on the old site. */
-function MoveFacts( { session }: { session?: StaticSiteImportSession } ) {
-	const locale = useIntlLocale();
+const getBandLabels = (): Partial< Record< StaticSiteImportBand, string > > => ( {
+	simple: __( 'Simple' ),
+	moderate: __( 'Moderate' ),
+	complex: __( 'Complex' ),
+} );
+
+const getFactor = ( inspection: StaticSiteImportInspection | null | undefined, code: string ) =>
+	inspection?.factors?.find( ( factor ) => factor.code === code )?.value;
+
+/** What the build's checks found, once it has run them: each one passed, or how much it missed. */
+function getChecks( summary?: StaticSiteImportPreviewSummary ) {
+	const checks: { label: string; passed: boolean }[] = [];
+	const { content_loss, images_missing_source, unresolved_internal_links } = summary ?? {};
+	if ( typeof content_loss === 'number' ) {
+		checks.push( {
+			passed: content_loss === 0,
+			label: content_loss === 0 ? __( 'No content lost' ) : __( 'Some content didn’t come over' ),
+		} );
+	}
+	if ( typeof images_missing_source === 'number' ) {
+		checks.push( {
+			passed: images_missing_source === 0,
+			label:
+				images_missing_source === 0
+					? __( 'Every image found' )
+					: sprintf(
+							/* translators: %s: formatted number of images, e.g. "3". */
+							_n( '%s image is missing', '%s images are missing', images_missing_source ),
+							formatNumber( images_missing_source )
+						),
+		} );
+	}
+	if ( typeof unresolved_internal_links === 'number' ) {
+		checks.push( {
+			passed: unresolved_internal_links === 0,
+			label:
+				unresolved_internal_links === 0
+					? __( 'No broken links' )
+					: sprintf(
+							/* translators: %s: formatted number of links, e.g. "3". */
+							_n( '%s link needs fixing', '%s links need fixing', unresolved_internal_links ),
+							formatNumber( unresolved_internal_links )
+						),
+		} );
+	}
+	return checks;
+}
+
+type Fact = { label: string; value?: number | string; format?: ( value: number ) => string };
+
+/** Everything the move has to tell about the old site and the new one, as soon as it's known. */
+function MoveFacts( { session, locale }: { session?: StaticSiteImportSession; locale: string } ) {
 	const progress = session?.progress;
 	const summary = ( Array.isArray( session?.preview_summary ) ? {} : session?.preview_summary ) as
 		StaticSiteImportPreviewSummary | undefined;
-	const facts = [
-		{ label: __( 'Pages' ), value: progress?.pages_total },
-		{ label: __( 'Files saved' ), value: progress?.captured?.files },
-		{
-			label: __( 'Copied' ),
-			value: progress?.captured?.bytes,
-			format: ( bytes: number ) => formatStorage( bytes, locale ),
-		},
-		{ label: __( 'Blocks built' ), value: summary?.blocks },
-	].filter( ( fact ): fact is typeof fact & { value: number } => Boolean( fact.value ) );
+	const inspection = session?.assessment ?? summary?.inspection;
+	const band = inspection?.observed_band ?? inspection?.band;
+	const facts = (
+		[
+			{
+				label: __( 'Pages' ),
+				value: progress?.pages_total || progress?.source?.pages_found || inspection?.routes,
+			},
+			{ label: __( 'Pages built' ), value: summary?.pages },
+			{ label: __( 'Images seen' ), value: getFactor( inspection, 'images' ) },
+			{ label: __( 'Files saved' ), value: progress?.captured?.files },
+			{
+				label: __( 'Copied' ),
+				value: progress?.captured?.bytes,
+				format: ( bytes: number ) => formatStorage( bytes, locale ),
+			},
+			{ label: __( 'Blocks built' ), value: summary?.blocks },
+			{ label: __( 'Complexity' ), value: band ? getBandLabels()[ band ] : undefined },
+			{ label: __( 'Your domain' ), value: session?.connectable_domain || undefined },
+		] as Fact[]
+	 ).filter( ( fact ): fact is Fact & { value: number | string } => Boolean( fact.value ) );
 	const labels = getCapabilityLabels();
-	const found = Object.entries( session?.assessment?.capabilities ?? {} )
+	const found = Object.entries( inspection?.capabilities ?? {} )
 		.filter( ( [ capability, count ] ) => count && capability in labels )
 		.map( ( [ capability ] ) => labels[ capability as StaticSiteImportCapability ] as string );
+	const checks = getChecks( summary );
 
-	if ( ! facts.length && ! found.length ) {
+	if ( ! facts.length && ! found.length && ! checks.length ) {
 		return null;
 	}
 
@@ -408,7 +509,9 @@ function MoveFacts( { session }: { session?: StaticSiteImportSession } ) {
 							</dt>
 							<dd>
 								<Text size={ 20 } weight={ 600 }>
-									{ fact.format ? fact.format( fact.value ) : formatNumber( fact.value ) }
+									{ typeof fact.value === 'string'
+										? fact.value
+										: ( fact.format ?? formatNumber )( fact.value ) }
 								</Text>
 							</dd>
 						</div>
@@ -427,6 +530,25 @@ function MoveFacts( { session }: { session?: StaticSiteImportSession } ) {
 					</HStack>
 				</VStack>
 			) }
+			{ checks.length > 0 && (
+				<VStack spacing={ 2 }>
+					<Text variant="muted">{ __( 'Checked after the build' ) }</Text>
+					<ul className="static-site-import-checks">
+						{ checks.map( ( item ) => (
+							<li key={ item.label }>
+								<Icon
+									icon={ item.passed ? check : caution }
+									size={ 20 }
+									className={ clsx( 'static-site-import-checks__icon', {
+										'is-passed': item.passed,
+									} ) }
+								/>
+								<Text>{ item.label }</Text>
+							</li>
+						) ) }
+					</ul>
+				</VStack>
+			) }
 		</VStack>
 	);
 }
@@ -434,7 +556,11 @@ function MoveFacts( { session }: { session?: StaticSiteImportSession } ) {
 function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	const progress = session?.progress;
 	const current = getCurrentStep( session );
-	const startedAt = progress?.phase_started_at;
+	const delivery = progress?.delivery;
+	const startedAt =
+		current === 3
+			? ( delivery?.restore_started_at ?? delivery?.started_at ?? delivery?.stage_started_at )
+			: progress?.phase_started_at;
 	const now = useNow( Boolean( startedAt ) );
 	const pagesTotal = progress?.pages_total;
 	// Until the capture settles on its total, the inspection's count is all that's known.
@@ -473,7 +599,15 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 			count: '',
 			seconds: undefined,
 		},
-		{ label: __( 'Moving it onto your site' ), activity: '', count: '', seconds: undefined },
+		{
+			label: __( 'Moving it onto your site' ),
+			activity: current === 3 ? getDeliveryActivity( delivery ) : '',
+			count:
+				current === 3 && delivery?.stage === 'process_files' && delivery.files?.total
+					? formatCount( delivery.files.done, delivery.files.total )
+					: '',
+			seconds: undefined,
+		},
 	];
 
 	return (
@@ -534,9 +668,15 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 export function StaticSiteImportProgress( {
 	siteImport,
 	search,
+	locale,
+	email,
 }: {
 	siteImport: StaticSiteImport;
 	search: StaticSiteImportSearch;
+	/** Where the ready email goes, named in the card when given. */
+	email?: string;
+	/** A BCP 47 language tag for formatting numbers, such as `useIntlLocale()` returns. */
+	locale: string;
 } ) {
 	const sourceHost = getSourceHost( search.from );
 	const session = siteImport.session;
@@ -546,49 +686,56 @@ export function StaticSiteImportProgress( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 6 }>
-					<div className="static-site-import-moving">
-						<div className="static-site-import-moving__snapshot">
-							<SiteSnapshot sourceHost={ sourceHost } session={ session } step={ step } />
-						</div>
-						<div className="static-site-import-moving__facts">
-							<MoveFacts session={ session } />
-						</div>
-						<VStack spacing={ 6 } className="static-site-import-moving__main">
-							<VStack spacing={ 2 }>
-								<Heading level={ 2 } size={ 20 } weight={ 600 }>
-									{ __( 'We’re moving your site' ) }
-								</Heading>
-								<Text variant="muted">
-									{ sourceHost
-										? sprintf(
-												/* translators: %s: the domain of the site being moved, e.g. example.com. */
-												__(
-													'We’re rebuilding %s here. Your current site stays live and unchanged.'
-												),
-												sourceHost
-											)
-										: __(
-												'We’re rebuilding your site here. Your current site stays live and unchanged.'
-											) }
-								</Text>
-							</VStack>
-							<Progress.Root
-								className="static-site-import-moving__progress"
-								aria-label={ __( 'Move progress' ) }
-								value={ overall }
-							>
-								<Progress.Track>
-									<Progress.Indicator />
-								</Progress.Track>
-							</Progress.Root>
-							<MovingChecklist session={ session } />
-						</VStack>
+				<div className="static-site-import-moving">
+					<div className="static-site-import-moving__snapshot">
+						<SiteSnapshot sourceHost={ sourceHost } session={ session } step={ step } />
 					</div>
-					<Notice variant="info">
-						{ __( 'You can close this page. We’ll email you when it’s done.' ) }
-					</Notice>
-				</VStack>
+					<div className="static-site-import-moving__facts">
+						<MoveFacts session={ session } locale={ locale } />
+					</div>
+					<VStack spacing={ 6 } className="static-site-import-moving__main">
+						<VStack spacing={ 2 }>
+							<Heading level={ 2 } size={ 20 } weight={ 600 }>
+								{ __( 'We’re moving your site' ) }
+							</Heading>
+							<Text variant="muted">
+								{ sourceHost
+									? sprintf(
+											/* translators: %s: the domain of the site being moved, e.g. example.com. */
+											__( 'We’re rebuilding %s here. Your current site stays live and unchanged.' ),
+											sourceHost
+										)
+									: __(
+											'We’re rebuilding your site here. Your current site stays live and unchanged.'
+										) }
+							</Text>
+						</VStack>
+						<Notice variant="info">
+							{ email
+								? createInterpolateElement(
+										sprintf(
+											/* translators: %s: the email address the ready email goes to, e.g. name@example.com. */
+											__(
+												'You can close this page. We’ll email you at <strong>%s</strong> when it’s done.'
+											),
+											email
+										),
+										{ strong: <strong /> }
+									)
+								: __( 'You can close this page. We’ll email you when it’s done.' ) }
+						</Notice>
+						<Progress.Root
+							className="static-site-import-moving__progress"
+							aria-label={ __( 'Move progress' ) }
+							value={ overall }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
+						<MovingChecklist session={ session } />
+					</VStack>
+				</div>
 			</CardBody>
 		</Card>
 	);
