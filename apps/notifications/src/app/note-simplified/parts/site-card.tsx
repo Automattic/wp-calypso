@@ -36,7 +36,6 @@ export default function SiteCard( { site, url, post }: HeaderSite ) {
 
 	return (
 		<LinkCard
-			card="site"
 			href={ post?.url ?? url }
 			header={ <SiteIdentity site={ site } details={ displayUrl } /> }
 		>
