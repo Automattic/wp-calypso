@@ -328,6 +328,29 @@ describe( 'AchievementsGrid', () => {
 		expect( screen.getAllByText( 'Secret achievement' ) ).toHaveLength( 1 );
 	} );
 
+	test( 'gives neighbouring secret cards different descriptions', () => {
+		mockUseAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ earned() ],
+			lockedAchievements: [
+				lockedSecret( { achievement_id: 20, date_created: '2026-01-01' } ),
+				locked( { achievement_id: 25, date_created: '2026-01-02' } ),
+				lockedSecret( { achievement_id: 30, date_created: '2026-01-03' } ),
+			],
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect(
+			screen
+				.getAllByText( 'Secret achievement' )
+				.map( ( title ) => title.closest( '.achievement-card' )?.textContent )
+		).toEqual( [
+			expect.stringContaining( 'This one’s a mystery.' ),
+			expect.stringContaining( 'A secret achievement. Unlock it' ),
+		] );
+	} );
+
 	test( 'renders earned achievements from a legacy response that omits is_secret', () => {
 		const { is_secret: _omit, ...legacy } = earned();
 		mockUseAchievementsQuery.mockReturnValue( {
