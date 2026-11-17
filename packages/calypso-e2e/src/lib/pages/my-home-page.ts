@@ -1,7 +1,6 @@
 import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import { handleActiveThrottles } from '../throttle-flags';
-import { gotoWithRetry, isServerErrorPage } from '../transient-server-error';
+import { gotoWithRetry } from '../transient-server-error';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
@@ -16,7 +15,6 @@ export class MyHomePage {
 	private page: Page;
 	private anchor: Locator;
 	readonly heading: Locator;
-	private readonly suggestedUpsellDomainName: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -27,36 +25,6 @@ export class MyHomePage {
 		this.page = page;
 		this.anchor = page.getByRole( 'main' );
 		this.heading = this.page.getByRole( 'heading', { name: 'My Home' } );
-		// The <strong> renders empty until the domain suggestion query resolves.
-		this.suggestedUpsellDomainName = this.anchor.getByTestId( 'domain-upsell-domain-name' );
-	}
-
-	/**
-	 * Waits for the domain upsell card to name a suggested domain.
-	 *
-	 * The name is whatever `/domains/suggestions` answered with, so a ban leaves
-	 * the <strong> empty for as long as it lasts and the wait spends its timeout
-	 * in full. Reaching the throw means none was in force and the wait's own
-	 * error stands: the card renders on other things too.
-	 */
-	async waitForSuggestedUpsellDomain(): Promise< void > {
-		try {
-			// The suggestion API can be slow on CI, hence the raised timeout.
-			await this.suggestedUpsellDomainName
-				.filter( { hasText: /\S+\.\S+/ } )
-				.waitFor( { timeout: 60 * 1000 } );
-		} catch ( error ) {
-			// A gateway-error page has no card at all: say so before a domain
-			// suggestion ban is blamed for the missing name.
-			if ( await isServerErrorPage( this.page ) ) {
-				throw new Error(
-					'Home page shows a transient server error (502/503/504), not a missing domain suggestion.'
-				);
-			}
-
-			handleActiveThrottles( [ 'domain-suggestions' ] );
-			throw error;
-		}
 	}
 
 	/**
