@@ -15,6 +15,7 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { pick, isEmpty } from '@automattic/js-utils';
+import { isDIFMFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -141,6 +142,9 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
+const isFlowWithoutAiLaunchpad = ( flowName ) =>
+	isDIFMFlow( flowName ?? null ) || flowName === 'onboarding-with-email';
+
 export const getNewSiteParams = ( {
 	dependencies,
 	flowToCheck,
@@ -187,6 +191,9 @@ export const getNewSiteParams = ( {
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: launchAsComingSoon,
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
+			// /start flows get the wp-admin AI Launchpad (Site Setup), except where we build the site
+			// for the user (DIFM) or the signup is about email.
+			...( ! isFlowWithoutAiLaunchpad( flowToCheck ) && { wpcom_ai_launchpad_enabled: true } ),
 		},
 		validate: false,
 	};
@@ -737,15 +744,6 @@ function addPrivacyProtectionIfSupported( item, state ) {
 	return item;
 }
 
-export function launchSiteApi( callback, dependencies ) {
-	const { siteSlug } = dependencies;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/launch` )
-		.then( () => callback( null ) )
-		.catch( ( error ) => callback( error ) );
-}
-
 export function createAccount(
 	callback,
 	dependencies,
@@ -927,41 +925,6 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 	);
 
 	return isEmpty( dependenciesNotProvided );
-}
-
-function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
-	let fulfilledDependencies = [];
-	const domainItem = undefined;
-	const domainCart = undefined;
-
-	submitSignupStep( { stepName, domainItem, wasSkipped: true }, { domainItem, domainCart } );
-	recordExcludeStepEvent( stepName, tracksEventValue );
-
-	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
-
-	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
-		flows.excludeStep( stepName );
-	}
-}
-
-export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep, flowName } = nextProps;
-
-	// Prevent duplicate processing for launch-site flow's domains-launch step
-	if (
-		flowName === 'launch-site' &&
-		stepName === 'domains-launch' &&
-		flows.excludedSteps.includes( stepName )
-	) {
-		return;
-	}
-
-	const customDomains = siteDomains?.filter( ( siteDomain ) => ! siteDomain.isWPCOMDomain ) ?? [];
-
-	if ( customDomains.length > 0 ) {
-		const tracksEventValue = customDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
-		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
-	}
 }
 
 /**

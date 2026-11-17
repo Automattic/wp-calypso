@@ -14,7 +14,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { countries } from 'calypso/components/phone-input/data';
-import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
+import { findCountryFromNumber, toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import CountrySelectMenu from 'calypso/my-sites/checkout/src/components/country-select-menu';
 import {
 	prepareDomainContactDetails,
@@ -82,6 +82,7 @@ export interface ManagedContactDetailsFormFieldsConnectedProps {
 
 interface ManagedContactDetailsFormFieldsState {
 	phoneCountryCode: string | undefined;
+	hasEditedPhone: boolean;
 }
 
 export class ManagedContactDetailsFormFields extends Component<
@@ -109,14 +110,26 @@ export class ManagedContactDetailsFormFields extends Component<
 		super( props );
 		this.state = {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
+			hasEditedPhone: false,
 		};
+	}
+
+	getPhoneCountryCode(): string | undefined {
+		const { phone } = this.props.contactDetails;
+		if ( ! this.state.hasEditedPhone && phone?.startsWith( '+' ) ) {
+			const country = findCountryFromNumber( phone, this.state.phoneCountryCode );
+			if ( country ) {
+				return country.isoCode;
+			}
+		}
+		return this.state.phoneCountryCode;
 	}
 
 	updateParentState = ( newData: DomainContactDetailsData ) => {
 		this.props.onContactDetailsChange(
 			formatDataForParent( {
 				data: newData,
-				phoneCountryCode: this.state.phoneCountryCode,
+				phoneCountryCode: this.getPhoneCountryCode(),
 				countryCode: this.props.countryCode,
 				hasCountryStates: this.props.hasCountryStates,
 			} )
@@ -160,7 +173,7 @@ export class ManagedContactDetailsFormFields extends Component<
 
 		if ( countries[ countryCode as keyof typeof countries ] ) {
 			phoneCountryCode = countryCode;
-			this.setState( { phoneCountryCode }, () => {
+			this.setState( { phoneCountryCode, hasEditedPhone: true }, () => {
 				// We have to wait for the phoneCountryCode to be updated because it is
 				// used by updateParentState.
 				const updatedParentState: DomainContactDetailsData = {
@@ -172,6 +185,7 @@ export class ManagedContactDetailsFormFields extends Component<
 			return;
 		}
 
+		this.setState( { hasEditedPhone: true } );
 		const updatedParentState: DomainContactDetailsData = {
 			...this.props.contactDetails,
 			phone: phoneNumber,
@@ -274,7 +288,7 @@ export class ManagedContactDetailsFormFields extends Component<
 						value={ {
 							phoneNumber: this.props.contactDetails.phone ?? '',
 							countryCode:
-								this.state.phoneCountryCode ??
+								this.getPhoneCountryCode() ??
 								this.props.contactDetails.countryCode ??
 								this.props.countryCode ??
 								'',

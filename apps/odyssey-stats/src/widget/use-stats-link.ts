@@ -7,7 +7,12 @@ import { optionalConfig } from '../lib/config-api';
 import canCurrentUser from '../lib/selectors/can-current-user';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
 
-type AnalyticsScriptData = { enabled?: unknown; can_view?: unknown; page_slug?: unknown };
+type AnalyticsScriptData = {
+	enabled?: unknown;
+	can_view?: unknown;
+	page_slug?: unknown;
+	timezone?: unknown;
+};
 
 /**
  * What Jetpack's own links go by: the `analytics` key Premium Analytics adds to `JetpackScriptData`
@@ -44,15 +49,15 @@ export default function useStatsLink( siteId: number ) {
 			? scriptData.page_slug
 			: undefined;
 	const adminUrl = getSiteAdminUrl( siteId );
-	// Absent before Jetpack sent it, and empty for a site set to a fixed UTC offset.
-	const timezone = optionalConfig( 'timezone' );
+	// Absent before Jetpack sent it, and empty for a site set to a fixed UTC offset. Premium
+	// Analytics' script data has carried the zone for longer, as a `+HH:MM` offset for such a
+	// site, which the link falls back to the offset in hours from if the browser can't read it.
+	const timezone = [ optionalConfig( 'timezone' ), scriptData?.timezone ].find(
+		( zone ): zone is string => typeof zone === 'string' && '' !== zone
+	);
 
 	return ( statsUrl: string, route: string, range?: PremiumAnalyticsRange ): string =>
 		isPremiumAnalyticsEnabled && adminUrl
-			? `${ adminUrl }${ getPremiumAnalyticsPath(
-					route,
-					range && { ...range, timezone: typeof timezone === 'string' ? timezone : undefined },
-					pageSlug
-				) }`
+			? `${ adminUrl }${ getPremiumAnalyticsPath( route, range && { ...range, timezone }, pageSlug ) }`
 			: statsUrl;
 }

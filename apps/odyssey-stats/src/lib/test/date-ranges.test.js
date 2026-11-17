@@ -1,8 +1,10 @@
+import { vi } from 'vitest';
 import {
 	DATE_RANGE_LAST_7_DAYS,
 	DATE_RANGE_LAST_30_DAYS,
 	DATE_RANGE_LAST_90_DAYS,
 	DATE_RANGE_LAST_12_MONTHS,
+	getBucketDays,
 	getDateRange,
 	getRangeStartDate,
 	getSiteToday,
@@ -24,7 +26,7 @@ describe( 'isDateRangeId', () => {
 
 describe( 'getSiteToday', () => {
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it.each( [
@@ -32,7 +34,7 @@ describe( 'getSiteToday', () => {
 		[ 0, '2026-10-01' ],
 		[ -12, '2026-09-30' ],
 	] )( 'should date 11:00 UTC on Oct 1 by the site offset %s', ( gmtOffset, expected ) => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-01T11:00:00Z' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2026-10-01T11:00:00Z' ) );
 		expect( getSiteToday( gmtOffset ) ).toBe( expected );
 	} );
 } );
@@ -49,18 +51,76 @@ describe( 'getRangeStartDate', () => {
 	} );
 } );
 
+describe( 'getBucketDays', () => {
+	const range = ( unit ) => ( { unit, startDate: '2026-07-09', endDate: '2026-10-06' } );
+
+	it( 'should cover a single day', () => {
+		expect( getBucketDays( new Date( 2026, 9, 3 ), range( 'day' ) ) ).toEqual( {
+			startDate: '2026-10-03',
+			endDate: '2026-10-03',
+		} );
+	} );
+
+	it( 'should run a week from its Monday to its Sunday', () => {
+		expect( getBucketDays( new Date( 2026, 8, 14 ), range( 'week' ) ) ).toEqual( {
+			startDate: '2026-09-14',
+			endDate: '2026-09-20',
+		} );
+	} );
+
+	it( 'should cut the first week to the day the range starts on', () => {
+		// The point is drawn on the range's first day, a Thursday; its week began on Monday the 6th.
+		expect( getBucketDays( new Date( 2026, 6, 9 ), range( 'week' ) ) ).toEqual( {
+			startDate: '2026-07-09',
+			endDate: '2026-07-12',
+		} );
+	} );
+
+	it( 'should cut the last week to the day the range ends on', () => {
+		expect( getBucketDays( new Date( 2026, 9, 5 ), range( 'week' ) ) ).toEqual( {
+			startDate: '2026-10-05',
+			endDate: '2026-10-06',
+		} );
+	} );
+
+	it( 'should run a month from its first day to its last', () => {
+		expect( getBucketDays( new Date( 2026, 8, 1 ), range( 'month' ) ) ).toEqual( {
+			startDate: '2026-09-01',
+			endDate: '2026-09-30',
+		} );
+	} );
+
+	it( 'should cut the last month to the day the range ends on', () => {
+		expect( getBucketDays( new Date( 2026, 9, 1 ), range( 'month' ) ) ).toEqual( {
+			startDate: '2026-10-01',
+			endDate: '2026-10-06',
+		} );
+	} );
+} );
+
 describe( 'resolveDateRange', () => {
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( "should end on the site's today and start where the range does", () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
 		expect( resolveDateRange( DATE_RANGE_LAST_7_DAYS, 2 ) ).toEqual( {
 			id: DATE_RANGE_LAST_7_DAYS,
 			unit: 'day',
 			quantity: 7,
 			startDate: '2026-09-30',
+			endDate: '2026-10-06',
+		} );
+	} );
+
+	it( 'should bucket the last 90 days by week, as Stats v2 does', () => {
+		vi.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
+		expect( resolveDateRange( DATE_RANGE_LAST_90_DAYS, 2 ) ).toEqual( {
+			id: DATE_RANGE_LAST_90_DAYS,
+			unit: 'week',
+			days: 90,
+			startDate: '2026-07-09',
 			endDate: '2026-10-06',
 		} );
 	} );

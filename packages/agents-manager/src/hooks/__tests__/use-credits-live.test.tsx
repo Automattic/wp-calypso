@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ORCHESTRATOR_AGENT_URL } from '../../constants';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { localNumber } from '../../utils/__tests__/fixtures/local-number';
@@ -13,33 +14,33 @@ import {
 	setSessionSiteKey,
 	setSessionUserId,
 } from '../../utils/agent-session';
-import { CREDITS_LOW_BALANCE, getCreditsLabel, isCreditsAlert } from '../../utils/credits';
+import { CREDITS_LOW_BALANCE, getCreditsLabel } from '../../utils/credits';
 import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
-import { useCredits } from '../use-credits';
+import { useCredits, useCreditsVisit } from '../use-credits';
+import type { AgentsManagerContextType } from '../../contexts';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsPlanTier, CreditsStatus } from '../../utils/credits';
 import type { CreditsPurchaseAction } from '../../utils/credits-access';
-import type { TaskUpdate, UseAgentChatConfig } from '@automattic/agenttic-client';
+import type { TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { AgentsManagerSite } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
-let mockIsProcessing = false;
-let mockMessages: unknown[] = [];
-let mockConfig: UseAgentChatConfig;
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		useAgentChat: ( config: UseAgentChatConfig ) => {
-			mockConfig = config;
-			return { isProcessing: mockIsProcessing, messages: mockMessages };
-		},
-	} ),
-	{ virtual: true }
+let chatIsProcessing = false;
+let chatMessages: unknown[] = [];
+// The latest visit's `onTaskUpdate`, as the chat sends it.
+let onTaskUpdate: ( update: TaskUpdate ) => void;
+// The visit the credits hooks read from the Agents Manager context.
+let mockVisit: Pick< AgentsManagerContextType, 'agentConfig' | 'siteKey' | 'site' > & {
+	currentUser?: { ID: number };
+};
+vi.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
+vi.mock(
+	'@wordpress/element',
+	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
 );
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string, count: number ) => ( count === 1 ? single : plural ),
 	sprintf: ( format: string, ...values: unknown[] ) => {
@@ -49,11 +50,11 @@ jest.mock( '@wordpress/i18n', () => ( {
 			.replace( /%%/g, '%' );
 	},
 } ) );
-jest.mock( '../../components/credits-meter', () => () => null );
-jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( '../../components/credits-meter', () => ( { default: () => null } ) );
+vi.mock( '../../utils/tracks', { spy: true } );
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 
-const authProvider = jest.fn();
+const authProvider = vi.fn();
 const agentConfig: AgentConfig = {
 	authenticationScope: { siteId: 123, userId: 1 },
 	agentId: 'wp-orchestrator',
@@ -86,9 +87,27 @@ const flush = () =>
 		await Promise.resolve();
 	} );
 const renderCredits = ( initial = {} ) =>
-	renderHook( ( options ) => useCredits( options ), {
-		initialProps: { ...defaultOptions, ...initial },
-	} );
+	renderHook(
+		( { enabled, userId, agentConfig, siteKey, site, ...options } ) => {
+			mockVisit = {
+				agentConfig,
+				siteKey,
+				site,
+				currentUser: userId === undefined ? undefined : { ID: userId },
+			};
+
+			const creditsVisit = useCreditsVisit( enabled );
+			onTaskUpdate = creditsVisit.onTaskUpdate;
+
+			return useCredits( {
+				...options,
+				creditsVisit,
+				isProcessing: chatIsProcessing,
+				messages: chatMessages as UseAgentChatReturn[ 'messages' ],
+			} );
+		},
+		{ initialProps: { ...defaultOptions, ...initial } }
+	);
 const props = ( value: ReturnType< typeof useCredits > ) =>
 	(
 		value.trailingActions as ReactElement< {
@@ -96,6 +115,7 @@ const props = ( value: ReturnType< typeof useCredits > ) =>
 			isOpen: boolean;
 			onToggle: ( open: boolean ) => void;
 			onAction?: unknown;
+			onShowCredits?: () => void;
 			action?: CreditsPurchaseAction;
 			manageUrl?: string;
 		} >
@@ -103,7 +123,7 @@ const props = ( value: ReturnType< typeof useCredits > ) =>
 const exhausted = ( blocked = false ) =>
 	creditSnapshot( { credits_used: 2500, credits_remaining: 0, exhausted: true, blocked } );
 const receive = ( snapshot: unknown, state: 'completed' | 'failed' | 'canceled' = 'completed' ) =>
-	act( async () => mockConfig.onTaskUpdate?.( terminal( snapshot, state ) ) );
+	act( async () => onTaskUpdate( terminal( snapshot, state ) ) );
 const failed = ( parts: unknown[] ): TaskUpdate =>
 	( {
 		id: 'task',
@@ -116,11 +136,11 @@ const failed = ( parts: unknown[] ): TaskUpdate =>
 	} ) as TaskUpdate;
 const refuse = ( aiCredits: unknown, code = 'ai_credit_allowance_exhausted' ) =>
 	act( async () =>
-		mockConfig.onTaskUpdate?.( { ...failed( [ { type: 'data', data: { code } } ] ), aiCredits } )
+		onTaskUpdate( { ...failed( [ { type: 'data', data: { code } } ] ), aiCredits } )
 	);
 const low = ( plan_tier: CreditsPlanTier = 'personal' ) =>
 	creditSnapshot( { credits_remaining: 5, credits_used: 2495, plan_tier } );
-const fetchMock = jest.fn();
+const fetchMock = vi.fn();
 // `null` leaves a field out, as an older server does; the server itself sends
 // `can_upgrade: null` when it can't tell who bought the plan.
 const response = (
@@ -147,19 +167,19 @@ function deferred< T >() {
 }
 
 beforeEach( () => {
-	jest.useFakeTimers();
-	jest.setSystemTime( new Date( '2026-09-21T12:00:00Z' ) );
-	mockIsProcessing = false;
-	mockMessages = [ { id: 'm' } ];
+	vi.useFakeTimers();
+	vi.setSystemTime( new Date( '2026-09-21T12:00:00Z' ) );
+	chatIsProcessing = false;
+	chatMessages = [ { id: 'm' } ];
 	window.history.replaceState( {}, '', '/' );
 	fetchMock.mockReset().mockImplementation( () => new Promise( () => {} ) );
 	authProvider.mockReset().mockResolvedValue( { Authorization: 'Bearer site-jwt' } );
 	Object.defineProperty( document, 'visibilityState', { configurable: true, value: 'visible' } );
 	globalThis.fetch = fetchMock;
-	jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+	vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 } );
 afterEach( () => {
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 const UPGRADE_URL = 'https://wordpress.com/plans/example.wordpress.com?source=wp_ai_credits';
@@ -262,7 +282,6 @@ describe( 'session', () => {
 		setResolvedAgentId( undefined );
 		setSessionSiteKey( NO_SITE );
 		setSessionUserId( undefined );
-		jest.mocked( recordAgentsManagerTracksEvent ).mockReset();
 	} );
 
 	it.each( LINKS )(
@@ -287,12 +306,7 @@ describe( 'session', () => {
 	);
 
 	it( 'sends the click event the session its link carries', async () => {
-		const tracks =
-			jest.requireActual< typeof import( '../../utils/tracks' ) >( '../../utils/tracks' );
-		jest
-			.mocked( recordAgentsManagerTracksEvent )
-			.mockImplementation( tracks.recordAgentsManagerTracksEvent );
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		saveSessionId( 'session-a' );
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'business' } ) );
 		const { result } = renderCredits();
@@ -301,7 +315,7 @@ describe( 'session', () => {
 		act( () => result.current.notice?.action?.onClick?.() );
 		act( () => props( result.current ).action?.onClick?.() );
 
-		const clicks = jest
+		const clicks = vi
 			.mocked( recordTracksEvent )
 			.mock.calls.filter( ( [ name ] ) => name === 'calypso_agents_manager_credits_cta_clicked' );
 		expect( clicks.map( ( [ , eventProps ] ) => eventProps?.ai_session_id ) ).toEqual( [
@@ -333,7 +347,7 @@ describe( 'session', () => {
 	} );
 } );
 it.each( [ undefined, null, 'unsupported' ] )(
-	'keeps the balance without a purchase link or fabricated guidance for tier %p',
+	'keeps the balance without a purchase link or fabricated guidance for tier %o',
 	async ( plan_tier ) => {
 		const { result } = renderCredits();
 		await receive( { ...creditSnapshot(), plan_tier } );
@@ -351,6 +365,27 @@ describe( 'purchase access', () => {
 				purchaseHint?: string;
 			} >
 		 )?.props.purchaseHint;
+
+	it( 'offers the popover’s credits button for a live balance, and closes the popover on click', async () => {
+		fetchMock.mockResolvedValueOnce( response( exhausted() ) );
+		const onShowCredits = vi.fn();
+		const { result } = renderCredits( { onShowCredits } );
+		await flush();
+		act( () => props( result.current ).onShowCredits!() );
+		expect( onShowCredits ).toHaveBeenCalledTimes( 1 );
+		expect( props( result.current ).isOpen ).toBe( false );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_credits_show_clicked',
+			expect.objectContaining( { state: 'zero' } )
+		);
+	} );
+
+	it( 'shows the popover’s credits button only when the chat asks for it', async () => {
+		fetchMock.mockResolvedValueOnce( response( exhausted() ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).onShowCredits ).toBeUndefined();
+	} );
 
 	it( 'shows Upgrade with no guidance to someone who can upgrade the plan but can’t buy credits', async () => {
 		fetchMock.mockResolvedValueOnce(
@@ -536,7 +571,7 @@ describe( 'purchase access', () => {
 			{
 				agentConfig: {
 					...agentConfig,
-					authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer other' } ),
+					authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer other' } ),
 				},
 			},
 		],
@@ -621,7 +656,7 @@ it( 'waits for matching site data and follows a domain change for the same site'
 	);
 } );
 it.each( [ '', '.', '..', ' ' ] )(
-	'omits the destination for an invalid site slug %p',
+	'omits the destination for an invalid site slug %o',
 	async ( domain ) => {
 		const { result } = renderCredits( { site: { ...site, domain } } );
 		await receive( creditSnapshot( { plan_tier: 'personal' } ) );
@@ -634,7 +669,7 @@ it( 'never uses a previous site destination during a site switch', async () => {
 	const view = renderCredits();
 	await flush();
 	await receive( creditSnapshot( { plan_tier: 'personal' } ) );
-	const oldObserver = mockConfig.onTaskUpdate;
+	const oldObserver = onTaskUpdate;
 	const next = {
 		...defaultOptions,
 		siteKey: '456',
@@ -647,13 +682,13 @@ it( 'never uses a previous site destination during a site switch', async () => {
 	await receive( creditSnapshot( { blog_id: 456, plan_tier: 'premium' } ) );
 	expect( props( view.result.current ).action?.href ).toBeUndefined();
 	view.rerender( { ...next, site: { ID: 456, domain: 'second.wordpress.com' } } );
-	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
+	await act( async () => oldObserver( terminal( creditSnapshot( { plan_tier: 'commerce' } ) ) ) );
 	expect( props( view.result.current ).action?.href ).toBe(
 		'https://wordpress.com/plans/second.wordpress.com?source=wp_ai_credits'
 	);
 } );
-it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: jest.fn() } } ] )(
-	'drops the upgrade action when the authenticated visit changes: %p',
+it.each( [ { userId: 2 }, { agentConfig: { ...agentConfig, authProvider: vi.fn() } } ] )(
+	'drops the upgrade action when the authenticated visit changes: %o',
 	async ( next ) => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 		const view = renderCredits();
@@ -732,7 +767,7 @@ it.each( [
 	}
 );
 
-it( 'switches the meter to its alert icon by amount through depletion and replenishment', async () => {
+it( 'shows the credits notice by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
 			credits_limit: 100000,
@@ -743,28 +778,21 @@ it( 'switches the meter to its alert icon by amount through depletion and replen
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	// The meter and the notice share one rule, so the alert icon shows exactly when a notice would.
-	const expectAlert = ( isAlert: boolean, message?: string ) => {
-		const actual = isCreditsAlert( props( result.current ).status );
-		expect( actual ).toBe( isAlert );
-		expect( result.current.notice?.message ).toBe( message );
-		expect( result.current.notice !== undefined ).toBe( actual );
-	};
-	expectAlert( false );
-	for ( const [ remaining, isAlert, message ] of [
-		[ 10000, false, undefined ],
-		[ 9999, true, `${ localNumber( 9.9 ) }k credits left.` ],
-		[ 800, true, `${ localNumber( 800 ) } credits left.` ],
-		[ 0, true, 'You’ve used all your site credits.' ],
+	expect( result.current.notice ).toBeUndefined();
+	for ( const [ remaining, message ] of [
+		[ 10000, undefined ],
+		[ 9999, `${ localNumber( 9.9 ) }k credits left.` ],
+		[ 800, `${ localNumber( 800 ) } credits left.` ],
+		[ 0, 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expectAlert( isAlert, message );
+		expect( result.current.notice?.message ).toBe( message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expectAlert( false );
+	expect( result.current.notice ).toBeUndefined();
 } );
 
 it.each( [ 'GET', 'terminal' ] )(
@@ -797,17 +825,18 @@ it.each( [ 'GET', 'terminal' ] )(
 	}
 );
 
-// A 15,000-credit plan with 67,000 of 100,000 top-up credits left.
-const withTopUps = ( planRemaining: number ) =>
+// A 15,000-credit plan with 67,000, or `topUpsRemaining`, of 100,000 top-up credits left.
+const withTopUps = ( planRemaining: number, topUpsRemaining = 67000 ) =>
 	creditSnapshot( {
 		plan_tier: 'personal',
 		credits_limit: 15000,
 		credits_used: 15000 - planRemaining,
 		credits_remaining: planRemaining,
-		credits_available: planRemaining + 67000,
+		credits_available: planRemaining + topUpsRemaining,
+		exhausted: planRemaining + topUpsRemaining === 0,
 		top_up_credits_purchased: 100000,
-		top_up_credits_used: 33000,
-		top_up_credits_remaining: 67000,
+		top_up_credits_used: 100000 - topUpsRemaining,
+		top_up_credits_remaining: topUpsRemaining,
 	} );
 
 it( 'shows no low notice while top-ups keep a low plan balance above the limit', async () => {
@@ -855,8 +884,149 @@ it.each( [ 'GET', 'terminal' ] )(
 	}
 );
 
+describe( 'the top-ups notice', () => {
+	const topUpsMessage = ( thousands: number ) =>
+		`Now using top-ups: ${ localNumber( thousands ) }k left.`;
+	const otherSite = {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	};
+
+	it( 'shows once plan credits are spent with 10,000 or more left', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 10000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.topUpsNotice ).toEqual( {
+			icon: false,
+			message: topUpsMessage( 10 ),
+			action: {
+				label: 'Upgrade',
+				href: UPGRADE_URL,
+				target: '_blank',
+				rel: 'noopener noreferrer',
+				onClick: expect.any( Function ),
+			},
+			dismissible: true,
+			onDismiss: expect.any( Function ),
+		} );
+		expect( result.current.topUpsNotice?.action ).toBe( props( result.current ).action );
+	} );
+
+	it( 'tells someone who can’t buy who to ask, with no button', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ), false ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.topUpsNotice?.message ).toBe(
+			`${ topUpsMessage( 25 ) } Ask a site admin to add more.`
+		);
+		expect( result.current.topUpsNotice?.action ).toBeUndefined();
+	} );
+
+	it( 'reads the combined balance when the top-up fields are absent', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					plan_tier: 'personal',
+					credits_used: 2500,
+					credits_remaining: 0,
+					credits_available: 67000,
+				} )
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).status.pools ).toEqual( [
+			expect.objectContaining( { id: 'plan' } ),
+		] );
+		expect( result.current.topUpsNotice?.message ).toBe( topUpsMessage( 67 ) );
+	} );
+
+	it( 'gives way to the low notice under 10,000, and shows neither once that one is closed', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+		await receive( withTopUps( 0, 9999 ) );
+		expect( result.current.notice?.message ).toBe( `${ localNumber( 9.9 ) }k credits left.` );
+		expect( result.current.topUpsNotice ).toBeUndefined();
+		act( () => result.current.notice?.onDismiss?.() );
+		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.topUpsNotice ).toBeUndefined();
+	} );
+
+	it( 'gives way to the zero notice, then the credits-back notice, and returns with the next turn', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		const view = renderCredits();
+		await flush();
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+		await refuse( withTopUps( 0, 0 ) );
+		expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( view.result.current.notice?.message ).toBe( 'Your site has credits again.' );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		chatIsProcessing = true;
+		view.rerender( defaultOptions );
+		expect( view.result.current.notice ).toBeUndefined();
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+	} );
+
+	it( 'goes once the plan refills', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.topUpsNotice ).toBeDefined();
+		await receive( withTopUps( 15000, 25000 ) );
+		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.topUpsNotice ).toBeUndefined();
+	} );
+
+	it( 'stays closed through a read and a turn, and shows again on returning to the site', async () => {
+		fetchMock.mockResolvedValue( response( withTopUps( 0, 25000 ) ) );
+		const view = renderCredits();
+		await flush();
+		act( () => view.result.current.topUpsNotice?.onDismiss?.() );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		chatIsProcessing = true;
+		view.rerender( defaultOptions );
+		await receive( withTopUps( 0, 20000 ) );
+		chatIsProcessing = false;
+		view.rerender( defaultOptions );
+		await flush();
+		expect( props( view.result.current ).status.remaining ).toBe( 20000 );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		view.rerender( otherSite );
+		await flush();
+		view.rerender( defaultOptions );
+		await flush();
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+	} );
+
+	it( 'ignores a close from a previous visit to the site', async () => {
+		fetchMock.mockResolvedValue( response( withTopUps( 0, 25000 ) ) );
+		const view = renderCredits();
+		await flush();
+		const oldDismiss = view.result.current.topUpsNotice?.onDismiss;
+		expect( oldDismiss ).toBeDefined();
+		view.rerender( otherSite );
+		await flush();
+		view.rerender( defaultOptions );
+		await flush();
+		act( () => oldDismiss?.() );
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+	} );
+} );
+
 it.each( [ undefined, 'unsupported' ] )(
-	'shows the exhausted notice without a purchase link for tier %p',
+	'shows the exhausted notice without a purchase link for tier %o',
 	async ( plan_tier ) => {
 		const { result } = renderCredits();
 		await receive( { ...exhausted(), plan_tier } );
@@ -940,10 +1110,10 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 		await flush();
 		// In dev mode, a valid turn reads again for who may buy, and a turn without a balance reads instead.
 		for ( const snapshot of [ creditSnapshot( { plan_tier: 'personal' } ), undefined ] ) {
-			mockIsProcessing = true;
+			chatIsProcessing = true;
 			view.rerender( defaultOptions );
 			await receive( snapshot );
-			mockIsProcessing = false;
+			chatIsProcessing = false;
 			view.rerender( defaultOptions );
 			await flush();
 		}
@@ -984,11 +1154,11 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 			window.dispatchEvent( new Event( 'focus' ) );
 		} );
 		act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
-		await act( async () => jest.advanceTimersByTime( 1000 ) );
+		await act( async () => vi.advanceTimersByTime( 1000 ) );
 		expect( result.current.trailingActions ).toBeUndefined();
 		expect( result.current.beforeSubmit() ).toBe( true );
 		await receive( exhausted() );
-		jest.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
+		vi.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
 		// Timers can be throttled in a hidden tab; the submit gate also checks expiry.
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 		expect( fetchMock ).not.toHaveBeenCalled();
@@ -1092,7 +1262,7 @@ it( 'keeps initial and new-site exhausted plan-period balances quiet', async () 
 	expect( props( view.result.current ).status.remaining ).toBe( 0 );
 	expect( props( view.result.current ).isOpen ).toBe( false );
 	await receive( creditSnapshot() );
-	const oldObserver = mockConfig.onTaskUpdate;
+	const oldObserver = onTaskUpdate;
 	fetchMock.mockResolvedValueOnce( response( { ...zero, blog_id: 456 } ) );
 	view.rerender( {
 		...defaultOptions,
@@ -1100,7 +1270,7 @@ it( 'keeps initial and new-site exhausted plan-period balances quiet', async () 
 		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
 	} );
 	await flush();
-	await act( async () => oldObserver?.( terminal( zero ) ) );
+	await act( async () => oldObserver( terminal( zero ) ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 0 );
 	expect( props( view.result.current ).isOpen ).toBe( false );
 } );
@@ -1155,7 +1325,7 @@ it( 'does not carry a paid tier across sites or reuse a prior visit callback', a
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier: 'business' } ) ) );
 	const view = renderCredits();
 	await flush();
-	const oldObserver = mockConfig.onTaskUpdate;
+	const oldObserver = onTaskUpdate;
 	expect( props( view.result.current ).status.planTier ).toBe( 'business' );
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: 456 } ) ) );
 	view.rerender( {
@@ -1172,7 +1342,7 @@ it( 'does not carry a paid tier across sites or reuse a prior visit callback', a
 	view.rerender( defaultOptions );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	await flush();
-	await act( async () => oldObserver?.( terminal( creditSnapshot( { plan_tier: 'business' } ) ) ) );
+	await act( async () => oldObserver( terminal( creditSnapshot( { plan_tier: 'business' } ) ) ) );
 	expect( props( view.result.current ).status ).not.toHaveProperty( 'planTier' );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 } );
@@ -1196,7 +1366,7 @@ it.each( [
 	creditSnapshot( { blog_id: 456 } ),
 	creditSnapshot( { credits_remaining: -1 } ),
 	creditSnapshot( { resets_at: '2026-09-01T00:00:00Z' } ),
-] )( 'rejects an invalid balance read %p', async ( snapshot ) => {
+] )( 'rejects an invalid balance read %o', async ( snapshot ) => {
 	fetchMock.mockResolvedValueOnce( response( snapshot ) );
 	const { result } = renderCredits();
 	await flush();
@@ -1246,7 +1416,7 @@ it( 'does not refetch a hidden tab or use an absent auth provider', async () => 
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 } );
 it.each( [ { siteKey: '456' }, { userId: 2 }, { enabled: false } ] )(
-	'ignores a previous read after changing scope %p',
+	'ignores a previous read after changing scope %o',
 	async ( next ) => {
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock.mockReturnValueOnce( read.promise );
@@ -1311,7 +1481,7 @@ it( 'uses the terminal balance and avoids reads while an Agent task is running',
 	const view = renderCredits();
 	await flush();
 	const signal = fetchMock.mock.calls[ 0 ][ 1 ].signal;
-	mockIsProcessing = true;
+	chatIsProcessing = true;
 	view.rerender( defaultOptions );
 	expect( signal.aborted ).toBe( true );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
@@ -1319,7 +1489,7 @@ it( 'uses the terminal balance and avoids reads while an Agent task is running',
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	await receive( creditSnapshot() );
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
-	mockIsProcessing = false;
+	chatIsProcessing = false;
 	view.rerender( defaultOptions );
 	await flush();
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
@@ -1330,10 +1500,10 @@ it.each( [
 ] )(
 	'reads who may buy after a task delivers the balance when %s',
 	async ( _case, openedMidTask ) => {
-		mockIsProcessing = openedMidTask;
+		chatIsProcessing = openedMidTask;
 		const view = renderCredits();
 		await flush();
-		mockIsProcessing = true;
+		chatIsProcessing = true;
 		view.rerender( defaultOptions );
 		const openingReads = openedMidTask ? 0 : 1;
 		expect( fetchMock ).toHaveBeenCalledTimes( openingReads );
@@ -1343,7 +1513,7 @@ it.each( [
 		expect( props( view.result.current ).action?.href ).toBeUndefined();
 		const read = deferred< ReturnType< typeof response > >();
 		fetchMock.mockReturnValueOnce( read.promise );
-		mockIsProcessing = false;
+		chatIsProcessing = false;
 		view.rerender( defaultOptions );
 		await flush();
 		expect( fetchMock ).toHaveBeenCalledTimes( openingReads + 1 );
@@ -1364,10 +1534,10 @@ it( 'does not read again after a task when the opening read already said who may
 	const view = renderCredits();
 	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
-	mockIsProcessing = true;
+	chatIsProcessing = true;
 	view.rerender( defaultOptions );
 	await receive( { ...exhausted(), plan_tier: 'personal' } );
-	mockIsProcessing = false;
+	chatIsProcessing = false;
 	view.rerender( defaultOptions );
 	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
@@ -1381,13 +1551,13 @@ it.each( [ 'no update', 'missing metadata', 'invalid metadata' ] )(
 	async ( outcome ) => {
 		const view = renderCredits();
 		await flush();
-		mockIsProcessing = true;
+		chatIsProcessing = true;
 		view.rerender( defaultOptions );
 		if ( outcome !== 'no update' ) {
 			await receive( outcome === 'missing metadata' ? undefined : { broken: true } );
 		}
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
-		mockIsProcessing = false;
+		chatIsProcessing = false;
 		view.rerender( defaultOptions );
 		await flush();
 		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
@@ -1429,7 +1599,7 @@ it.each( [ false, true ] )(
 	}
 );
 it.each( [ null, undefined, false, { broken: true }, creditSnapshot( { blog_id: 456 } ) ] )(
-	'invalidates prior balance on unreadable, absent, invalid or wrong-site status %p',
+	'invalidates prior balance on unreadable, absent, invalid or wrong-site status %o',
 	async ( snapshot ) => {
 		const { result } = renderCredits();
 		await receive( exhausted() );
@@ -1453,7 +1623,7 @@ it.each( [
 	{ siteKey: 'no-site' },
 	{ agentConfig: { ...agentConfig, agentId: 'reader-chat' } },
 	{ agentConfig: { ...agentConfig, agentUrl: 'https://legacy.example/agent' } },
-] )( 'ignores live metadata on unsupported surfaces %p', async ( options ) => {
+] )( 'ignores live metadata on unsupported surfaces %o', async ( options ) => {
 	const { result } = renderCredits( options );
 	await receive( creditSnapshot() );
 	expect( result.current.trailingActions ).toBeUndefined();
@@ -1463,7 +1633,7 @@ it.each( [
 } );
 it( 'rejects stale callbacks across A to B to A, user and agent changes', async () => {
 	const view = renderCredits();
-	const oldObserver = mockConfig.onTaskUpdate;
+	const oldObserver = onTaskUpdate;
 	await receive( creditSnapshot() );
 	view.rerender( {
 		...defaultOptions,
@@ -1472,25 +1642,25 @@ it( 'rejects stale callbacks across A to B to A, user and agent changes', async 
 	} );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	view.rerender( defaultOptions );
-	await act( async () => oldObserver?.( terminal( exhausted() ) ) );
+	await act( async () => oldObserver( terminal( exhausted() ) ) );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	await receive( creditSnapshot() );
-	const beforeUserSwitch = mockConfig.onTaskUpdate;
+	const beforeUserSwitch = onTaskUpdate;
 	view.rerender( { ...defaultOptions, userId: 2 } );
-	await act( async () => beforeUserSwitch?.( terminal( exhausted() ) ) );
+	await act( async () => beforeUserSwitch( terminal( exhausted() ) ) );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	view.rerender( { ...defaultOptions, agentConfig: { ...agentConfig, agentId: 'reader-chat' } } );
-	await act( async () => beforeUserSwitch?.( terminal( exhausted() ) ) );
+	await act( async () => beforeUserSwitch( terminal( exhausted() ) ) );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 } );
 it.each( [ 'completed', 'failed', 'canceled' ] as const )(
 	'keeps valid %s terminal amounts without a simulated debit',
 	async ( state ) => {
 		const view = renderCredits();
-		mockIsProcessing = true;
+		chatIsProcessing = true;
 		view.rerender( defaultOptions );
 		await receive( creditSnapshot( { plan_tier: 'premium' } ), state );
-		mockIsProcessing = false;
+		chatIsProcessing = false;
 		view.rerender( defaultOptions );
 		expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 		expect( props( view.result.current ).status.percent ).toBe( 98 );
@@ -1500,12 +1670,10 @@ it.each( [ 'completed', 'failed', 'canceled' ] as const )(
 it( 'clears old amounts after cancellation/error without terminal metadata, including intermediate completions', async () => {
 	const view = renderCredits();
 	await receive( creditSnapshot() );
-	mockIsProcessing = true;
+	chatIsProcessing = true;
 	view.rerender( defaultOptions );
-	await act( async () =>
-		mockConfig.onTaskUpdate?.( { ...terminal( exhausted() ), final: false } )
-	);
-	mockIsProcessing = false;
+	await act( async () => onTaskUpdate( { ...terminal( exhausted() ), final: false } ) );
+	chatIsProcessing = false;
 	view.rerender( defaultOptions );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	expect( view.result.current.beforeSubmit() ).toBe( true );
@@ -1620,13 +1788,13 @@ it( 'draws a turn’s zero on reopening once the turn ends, without another read
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	const view = renderCredits();
 	await flush();
-	mockIsProcessing = true;
+	chatIsProcessing = true;
 	view.rerender( { ...defaultOptions, isOpen: false } );
 	await receive( exhausted() );
 
 	view.rerender( defaultOptions );
 	expect( view.result.current.trailingActions ).toBeUndefined();
-	mockIsProcessing = false;
+	chatIsProcessing = false;
 	view.rerender( defaultOptions );
 	await flush();
 	expect( props( view.result.current ).status.remaining ).toBe( 0 );
@@ -1654,27 +1822,21 @@ it( 'expires the old balance and reads the next period without sending a prompt'
 	await flush();
 	act( () => expect( result.current.beforeSubmit() ).toBe( false ) );
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
-	await act( async () => jest.advanceTimersByTime( 1000 ) );
+	await act( async () => vi.advanceTimersByTime( 1000 ) );
 	expect( props( result.current ).status.remaining ).toBe( 2450 );
 	expect( result.current.beforeSubmit() ).toBe( true );
 	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
 	await receive( exhausted() );
-	jest.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
+	vi.setSystemTime( new Date( '2026-10-01T00:00:00Z' ) );
 	// Timers can be throttled in a hidden tab; the submit gate also checks expiry.
 	act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 	expect( result.current.trailingActions ).toBeUndefined();
 } );
-it( 'rejects late expired snapshots and forwards provider errors unchanged', async () => {
-	const error = new Error( 'provider observer failed' );
-	const onTaskUpdate = jest.fn().mockRejectedValue( error );
-	const { result } = renderCredits( { agentConfig: { ...agentConfig, onTaskUpdate } } );
-	await act( async () => {
-		await expect(
-			mockConfig.onTaskUpdate?.(
-				terminal( creditSnapshot( { resets_at: '2026-09-01T00:00:00Z' } ) )
-			)
-		).rejects.toBe( error );
-	} );
+it( 'rejects late expired snapshots', async () => {
+	const { result } = renderCredits();
+	await act( async () =>
+		onTaskUpdate( terminal( creditSnapshot( { resets_at: '2026-09-01T00:00:00Z' } ) ) )
+	);
 	expect( result.current.trailingActions ).toBeUndefined();
 	expect( result.current.beforeSubmit() ).toBe( true );
 } );
@@ -1687,9 +1849,9 @@ it.each( [
 	async ( config ) => {
 		window.history.replaceState( {}, '', '/?am_credits=0&am_plan=free' );
 		const view = renderCredits( { agentConfig: config } );
-		mockIsProcessing = true;
+		chatIsProcessing = true;
 		view.rerender( { ...defaultOptions, agentConfig: config } );
-		mockIsProcessing = false;
+		chatIsProcessing = false;
 		view.rerender( { ...defaultOptions, agentConfig: config } );
 		expect( view.result.current.trailingActions ).toBeUndefined();
 		expect( view.result.current.notice ).toBeUndefined();
@@ -1700,11 +1862,11 @@ it.each( [
 it.each( [
 	{ siteKey: '456', userId: 1, siteId: 456 },
 	{ siteKey: '123', userId: 2, siteId: 123 },
-] )( 'waits for configuration authentication to match the selected scope %p', async ( next ) => {
+] )( 'waits for configuration authentication to match the selected scope %o', async ( next ) => {
 	const oldAuth = deferred< Record< string, string > >();
 	authProvider.mockReturnValueOnce( oldAuth.promise );
 	const view = renderCredits();
-	const oldObserver = mockConfig.onTaskUpdate;
+	const oldObserver = onTaskUpdate;
 	const nextOptions = { ...defaultOptions, siteKey: next.siteKey, userId: next.userId };
 	view.rerender( nextOptions );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
@@ -1712,7 +1874,7 @@ it.each( [
 	await flush();
 	expect( authProvider ).toHaveBeenCalledTimes( 1 );
 	expect( fetchMock ).not.toHaveBeenCalled();
-	const newAuth = jest.fn().mockResolvedValue( { Authorization: 'Bearer new-scope' } );
+	const newAuth = vi.fn().mockResolvedValue( { Authorization: 'Bearer new-scope' } );
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot( { blog_id: next.siteId } ) ) );
 	view.rerender( {
 		...nextOptions,
@@ -1727,7 +1889,7 @@ it.each( [
 		`https://public-api.wordpress.com/wpcom/v2/sites/${ next.siteId }/ai/credits`,
 		expect.objectContaining( { headers: { Authorization: 'Bearer new-scope' } } )
 	);
-	await act( async () => oldObserver?.( terminal( exhausted() ) ) );
+	await act( async () => oldObserver( terminal( exhausted() ) ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 } );
 
@@ -1735,14 +1897,14 @@ it( 'does not reuse B authentication when returning to A before configuration is
 	fetchMock.mockResolvedValue( response( creditSnapshot() ) );
 	const view = renderCredits();
 	await flush();
-	const originalObserver = mockConfig.onTaskUpdate;
+	const originalObserver = onTaskUpdate;
 	view.rerender( { ...defaultOptions, siteKey: '456' } );
 	await flush();
 	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 	const bConfig = {
 		...agentConfig,
 		authenticationScope: { siteId: 456, userId: 1 },
-		authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer B' } ),
+		authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer B' } ),
 	};
 	view.rerender( { ...defaultOptions, siteKey: '456', agentConfig: bConfig } );
 	await flush();
@@ -1754,11 +1916,11 @@ it( 'does not reuse B authentication when returning to A before configuration is
 		...defaultOptions,
 		agentConfig: {
 			...agentConfig,
-			authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer new-A' } ),
+			authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer new-A' } ),
 		},
 	} );
 	await flush();
-	await act( async () => originalObserver?.( terminal( exhausted() ) ) );
+	await act( async () => originalObserver( terminal( exhausted() ) ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 	expect( fetchMock ).toHaveBeenLastCalledWith(
 		expect.stringContaining( '/sites/123/' ),
@@ -1770,7 +1932,7 @@ it.each( [
 	{ siteKey: '456', userId: 1, agentId: 'wp-orchestrator' },
 	{ siteKey: '123', userId: 2, agentId: 'wp-orchestrator' },
 	{ siteKey: '123', userId: 1, agentId: 'other-agent' },
-] )( 'keeps an open popover and its callbacks within their visit %p', async ( next ) => {
+] )( 'keeps an open popover and its callbacks within their visit %o', async ( next ) => {
 	const view = renderCredits();
 	await receive( creditSnapshot() );
 	const oldToggle = props( view.result.current ).onToggle;
@@ -1796,7 +1958,7 @@ it( 'rejects callbacks and pending reads from the previous initialized conversat
 	fetchMock.mockReturnValueOnce( oldRead.promise );
 	const view = renderCredits();
 	await flush();
-	const oldObserver = mockConfig.onTaskUpdate;
+	const oldObserver = onTaskUpdate;
 	const signal = fetchMock.mock.calls[ 0 ][ 1 ].signal;
 	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 	view.rerender( {
@@ -1804,25 +1966,25 @@ it( 'rejects callbacks and pending reads from the previous initialized conversat
 		agentConfig: {
 			...agentConfig,
 			sessionId: 'new-conversation',
-			authProvider: jest.fn().mockResolvedValue( { Authorization: 'Bearer new-agent' } ),
+			authProvider: vi.fn().mockResolvedValue( { Authorization: 'Bearer new-agent' } ),
 		},
 	} );
 	await flush();
 	expect( signal.aborted ).toBe( true );
 	oldRead.resolve( response( exhausted() ) );
-	await act( async () => oldObserver?.( terminal( exhausted() ) ) );
+	await act( async () => oldObserver( terminal( exhausted() ) ) );
 	await flush();
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 } );
 
 it( 'accepts the first terminal snapshot after the server assigns the same conversation a session', async () => {
 	const view = renderCredits();
-	const observer = mockConfig.onTaskUpdate;
+	const observer = onTaskUpdate;
 	view.rerender( {
 		...defaultOptions,
 		agentConfig: { ...agentConfig, sessionId: 'server-assigned' },
 	} );
-	await act( async () => observer?.( terminal( creditSnapshot() ) ) );
+	await act( async () => observer( terminal( creditSnapshot() ) ) );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 } );
 describe( 'credits Tracks events', () => {
@@ -1840,7 +2002,7 @@ describe( 'credits Tracks events', () => {
 		};
 	};
 	const creditsEvents = () =>
-		jest
+		vi
 			.mocked( recordAgentsManagerTracksEvent )
 			.mock.calls.filter( ( [ eventName ] ) => eventName.includes( '_credits_' ) );
 	const healthy = () =>
@@ -1898,7 +2060,7 @@ describe( 'credits Tracks events', () => {
 		second.rerender( {
 			...defaultOptions,
 			...scope,
-			agentConfig: { ...scope.agentConfig, authProvider: jest.fn( authProvider ) },
+			agentConfig: { ...scope.agentConfig, authProvider: vi.fn( authProvider ) },
 		} );
 		await flush();
 		expect( second.result.current.notice ).toBeDefined();
@@ -1949,7 +2111,7 @@ describe( 'credits Tracks events', () => {
 			scope: ReturnType< typeof freshScope >,
 			isProcessing: boolean
 		) => {
-			mockIsProcessing = isProcessing;
+			chatIsProcessing = isProcessing;
 			view.rerender( { ...defaultOptions, ...scope } );
 		};
 		const runTurn = async (
@@ -2063,7 +2225,7 @@ describe( 'credits Tracks events', () => {
 		[ true, false, 'admin', 'contact_plan_owner', 'none' ],
 		[ null, null, 'none', 'none', 'none' ],
 	] as const )(
-		'records who may buy (%p, %p) as %s with the %s call to action the notice shows, and ref %s',
+		'records who may buy (%o, %o) as %s with the %s call to action the notice shows, and ref %s',
 		async ( canBuyCredits, canUpgrade, userRole, ctaType, ref ) => {
 			fetchMock.mockResolvedValueOnce( response( low(), canBuyCredits, canUpgrade ) );
 			renderCredits( freshScope() );
@@ -2181,6 +2343,55 @@ describe( 'credits Tracks events', () => {
 		} );
 	} );
 
+	describe( 'the top-ups notice', () => {
+		it( 'records a click on its button as ok, with placement none', async () => {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			act( () => result.current.topUpsNotice?.action?.onClick?.() );
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_cta_clicked',
+					{
+						...base,
+						state: 'ok',
+						credits_left: 25000,
+						plan_tier: 'personal',
+						top_up_credits_left: 25000,
+						cta_type: 'upgrade',
+						ref: 'wp_ai_credits',
+						placement: 'none',
+					},
+				],
+			] );
+		} );
+
+		it( 'records nothing when it shows or closes', async () => {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			expect( result.current.topUpsNotice ).toBeDefined();
+			act( () => result.current.topUpsNotice?.onDismiss?.() );
+			expect( result.current.topUpsNotice ).toBeUndefined();
+			expect( creditsEvents() ).toEqual( [] );
+		} );
+
+		it( 'leaves the low notice that follows it to record as usual', async () => {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			expect( result.current.topUpsNotice ).toBeDefined();
+			await receive( withTopUps( 0, 6000 ) );
+			expect( result.current.notice?.message ).toBe( `${ localNumber( 6 ) }k credits left.` );
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					expect.objectContaining( { state: 'low', top_up_credits_left: 6000 } ),
+				],
+			] );
+		} );
+	} );
+
 	it( 'records a dismissal once, and nothing from a previous site’s handler', async () => {
 		const scope = freshScope();
 		fetchMock.mockResolvedValueOnce( response( low() ) );
@@ -2207,6 +2418,19 @@ describe( 'credits Tracks events', () => {
 				( [ name ] ) => name === 'calypso_agents_manager_credits_notice_dismissed'
 			)
 		).toHaveLength( 1 );
+	} );
+
+	it( 'records nothing from a dismissal after the chat unmounts', async () => {
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( freshScope() );
+		await flush();
+		const dismiss = view.result.current.notice?.onDismiss;
+		const count = creditsEvents().length;
+
+		view.unmount();
+		act( () => dismiss?.() );
+
+		expect( creditsEvents() ).toHaveLength( count );
 	} );
 
 	it( 'records a click on the meter as ok on a healthy balance, only when it opens', async () => {
@@ -2288,16 +2512,6 @@ describe( 'credits Tracks events', () => {
 			showChat( false );
 			showChat( true );
 			expect( opened() ).toEqual( [ byItself ] );
-		} );
-
-		it( 'keeps the chat’s config while the popover opens by itself, by a click and closes', async () => {
-			const { view, isPopoverOpen } = await renderHealthy();
-			const config = mockConfig;
-			act( () => props( view.result.current ).onToggle( true ) );
-			act( () => props( view.result.current ).onToggle( false ) );
-			await receive( zero() );
-			expect( isPopoverOpen() ).toBe( true );
-			expect( mockConfig ).toBe( config );
 		} );
 
 		it.each( [ 'chat opening', 'window focus' ] )(
@@ -2398,7 +2612,7 @@ describe( 'credits Tracks events', () => {
 				if ( cause === 'a reply without a balance' ) {
 					await receive( undefined );
 				} else {
-					act( () => jest.advanceTimersByTime( 10 * 24 * 60 * 60 * 1000 ) );
+					act( () => vi.advanceTimersByTime( 10 * 24 * 60 * 60 * 1000 ) );
 				}
 				expect( view.result.current.trailingActions ).toBeUndefined();
 				showChat( true );
@@ -2475,7 +2689,7 @@ describe( 'credits Tracks events', () => {
 				showChat( chat === 'showing' );
 				act( () => {
 					props( view.result.current ).onToggle( false );
-					void mockConfig.onTaskUpdate?.( terminal( zero() ) );
+					onTaskUpdate( terminal( zero() ) );
 				} );
 				expect( isPopoverOpen() ).toBe( true );
 				fetchMock.mockResolvedValue( response( zero() ) );
@@ -2649,7 +2863,7 @@ describe( 'credits Tracks events', () => {
 			expect( view.result.current.notice?.message ).toBe( 'Your site has credits again.' );
 			expect( view.result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
 			expect( shownStates() ).toEqual( [ 'zero' ] );
-			mockIsProcessing = true;
+			chatIsProcessing = true;
 			view.rerender( { ...defaultOptions, ...scope } );
 			expect( shownStates() ).toEqual( [ 'zero', 'low' ] );
 		} );
@@ -2687,36 +2901,34 @@ describe( 'refusal code', () => {
 
 	it( 'keeps the failed reply’s code for one read', async () => {
 		const { result } = renderCredits();
-		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		await act( async () => onTaskUpdate( refusal ) );
 		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
 		expect( result.current.takeRefusalCode() ).toBeUndefined();
 	} );
 
 	it( 'drops the code once a later reply finishes without one', async () => {
 		const { result } = renderCredits();
-		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		await act( async () => onTaskUpdate( refusal ) );
 		await act( async () =>
-			mockConfig.onTaskUpdate?.( { ...refusal, status: { state: 'working' }, final: false } )
+			onTaskUpdate( { ...refusal, status: { state: 'working' }, final: false } )
 		);
 		await receive( creditSnapshot() );
 		expect( result.current.takeRefusalCode() ).toBeUndefined();
-		await act( async () =>
-			mockConfig.onTaskUpdate?.( failed( [ { type: 'text', text: 'Oops' } ] ) )
-		);
+		await act( async () => onTaskUpdate( failed( [ { type: 'text', text: 'Oops' } ] ) ) );
 		expect( result.current.takeRefusalCode() ).toBeUndefined();
 	} );
 
 	it( 'drops the code when the next turn starts', async () => {
 		const view = renderCredits();
-		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
-		mockIsProcessing = true;
+		await act( async () => onTaskUpdate( refusal ) );
+		chatIsProcessing = true;
 		view.rerender( defaultOptions );
 		expect( view.result.current.takeRefusalCode() ).toBeUndefined();
 	} );
 
 	it( 'keeps the code without a live balance, since every chat shows the error', async () => {
 		const { result } = renderCredits( { siteKey: '456' } );
-		await act( async () => mockConfig.onTaskUpdate?.( refusal ) );
+		await act( async () => onTaskUpdate( refusal ) );
 		expect( result.current.takeRefusalCode() ).toBe( 'ai_credit_allowance_exhausted' );
 	} );
 
@@ -2731,6 +2943,16 @@ describe( 'refusal code', () => {
 			await flush();
 			await refuse( { ...exhausted( true ), plan_tier } );
 			return view;
+		};
+		const typedQuestion = {
+			id: 'q',
+			role: 'user',
+			content: [ { type: 'text', text: 'Make it shorter' } ],
+		};
+		const agentReply = {
+			id: 'r',
+			role: 'agent',
+			content: [ { type: 'text', text: 'Shortening the intro.' } ],
 		};
 
 		it.each( [
@@ -2755,6 +2977,99 @@ describe( 'refusal code', () => {
 				} );
 			}
 		);
+
+		it.each( [
+			[ 'a reply', agentReply ],
+			[
+				'a tool’s chat message',
+				{
+					id: 't',
+					role: 'agent',
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify( {
+								tool_id: 'big_sky__apply_block_edits',
+								tool_call_id: 'call-1',
+								data: {
+									result: { success: true, message: 'Shortened the intro.', outcome: 'updated' },
+									followUpTasks: false,
+								},
+							} ),
+						},
+					],
+				},
+			],
+			[
+				'a failed block edit the chat hides',
+				{
+					id: 't',
+					role: 'agent',
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify( {
+								tool_id: 'big_sky__apply_block_edits',
+								tool_call_id: 'call-1',
+								data: {
+									result: {
+										success: false,
+										message: 'Something went wrong. Please try again.',
+										error: 'Custom CSS could not be updated because global styles are unavailable.',
+									},
+									followUpTasks: false,
+								},
+							} ),
+						},
+					],
+				},
+			],
+			[
+				'a failed tool summary the chat hides',
+				{
+					id: 't',
+					role: 'agent',
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify( {
+								tool_id: 'big_sky__set_site_logo',
+								data: { success: false, summary: 'Could not set the site logo.' },
+							} ),
+						},
+					],
+				},
+			],
+		] )( 'says the request didn’t complete after %s in the same turn', async ( _, output ) => {
+			chatMessages = [ typedQuestion, output ];
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.refusalNotice?.title ).toBe( 'Your request didn’t complete' );
+		} );
+
+		it.each( [
+			[
+				'no reply after the latest question',
+				[ { ...typedQuestion, id: 'q0' }, agentReply, typedQuestion ],
+			],
+			[ 'no typed question', [ agentReply ] ],
+		] )( 'says the message wasn’t sent with %s', async ( _, messages ) => {
+			chatMessages = messages;
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+		} );
+
+		it( 'doesn’t count a context-only agent message as the turn’s output', async () => {
+			chatMessages = [
+				typedQuestion,
+				{
+					id: 'c',
+					role: 'agent',
+					content: [ { type: 'context', text: 'Context for the model.' } ],
+				},
+			];
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+		} );
 
 		it( 'keeps the composer’s zero notice and its button while the card shows', async () => {
 			const { result } = await openThenRefuse( 'business' );
@@ -2827,7 +3142,7 @@ describe( 'refusal code', () => {
 		it( 'drops the notice when the next turn starts', async () => {
 			const view = await openThenRefuse( 'business' );
 			expect( view.result.current.refusalNotice ).toBeDefined();
-			mockIsProcessing = true;
+			chatIsProcessing = true;
 			view.rerender( defaultOptions );
 			expect( view.result.current.refusalNotice ).toBeUndefined();
 		} );
@@ -2865,8 +3180,8 @@ describe( 'refusal code', () => {
 			} );
 
 			it( 'offers Continue, which resends the refused question', async () => {
-				const onTryAgain = jest.fn();
-				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
+				const onTryAgain = vi.fn();
+				chatMessages = question( { type: 'text', text: 'Make it shorter' } );
 				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
 				const { result } = renderCredits( { onTryAgain } );
 				await flush();
@@ -2879,9 +3194,9 @@ describe( 'refusal code', () => {
 			} );
 
 			it( 'offers no Continue for a question with images, which is asked again by hand', async () => {
-				mockMessages = question( { type: 'text', text: 'Match this' }, { type: 'component' } );
+				chatMessages = question( { type: 'text', text: 'Match this' }, { type: 'component' } );
 				fetchMock.mockResolvedValueOnce( response( low( 'business' ) ) );
-				const { result } = renderCredits( { onTryAgain: jest.fn() } );
+				const { result } = renderCredits( { onTryAgain: vi.fn() } );
 				await flush();
 				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
 				await topUp();
@@ -2889,7 +3204,7 @@ describe( 'refusal code', () => {
 			} );
 
 			it( 'offers no Continue where the chat can’t resend', async () => {
-				mockMessages = question( { type: 'text', text: 'Make it shorter' } );
+				chatMessages = question( { type: 'text', text: 'Make it shorter' } );
 				const { result } = await openThenRefuse( 'business' );
 				await topUp();
 				expect( result.current.notice ).toEqual( backNotice );
@@ -2904,7 +3219,7 @@ describe( 'refusal code', () => {
 			it( 'drops the card when the next turn starts, and the composer shows the balance', async () => {
 				const view = await openThenRefuse( 'business' );
 				await topUp();
-				mockIsProcessing = true;
+				chatIsProcessing = true;
 				view.rerender( defaultOptions );
 				expect( view.result.current.refusalNotice ).toBeUndefined();
 				expect( view.result.current.notice?.message ).toBe( '2.4k credits left.' );
@@ -2913,9 +3228,9 @@ describe( 'refusal code', () => {
 			it( 'offers the card again for the next refusal', async () => {
 				const view = await openThenRefuse( 'business' );
 				await topUp();
-				mockIsProcessing = true;
+				chatIsProcessing = true;
 				view.rerender( defaultOptions );
-				mockIsProcessing = false;
+				chatIsProcessing = false;
 				view.rerender( defaultOptions );
 				await refuse( { ...exhausted( true ), plan_tier: 'business' } );
 				expect( view.result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
@@ -2925,9 +3240,9 @@ describe( 'refusal code', () => {
 			it( 'holds nothing over for a next refusal that brings no balance', async () => {
 				const view = await openThenRefuse( 'business' );
 				await topUp();
-				mockIsProcessing = true;
+				chatIsProcessing = true;
 				view.rerender( defaultOptions );
-				mockIsProcessing = false;
+				chatIsProcessing = false;
 				view.rerender( defaultOptions );
 				await refuse( undefined );
 				expect( view.result.current.trailingActions ).toBeUndefined();
@@ -2937,7 +3252,7 @@ describe( 'refusal code', () => {
 			it( 'drops the notice when the thread empties', async () => {
 				const view = await openThenRefuse( 'business' );
 				await topUp();
-				mockMessages = [];
+				chatMessages = [];
 				view.rerender( defaultOptions );
 				expect( view.result.current.refusalNotice ).toBeUndefined();
 			} );
@@ -2965,12 +3280,14 @@ describe( 'refusal code', () => {
 				}
 			);
 
-			it( 'keeps the card, and its link, while a read fails', async () => {
+			it( 'keeps the card, its title and its link, while a read fails', async () => {
+				chatMessages = [ typedQuestion, agentReply ];
 				const { result } = await openThenRefuse( 'business' );
 				const card = result.current.refusalNotice;
 				await read( { ok: false, json: async () => ( {} ) } );
 				expect( result.current.trailingActions ).toBeUndefined();
 				expect( result.current.refusalNotice ).toBe( card );
+				expect( card?.title ).toBe( 'Your request didn’t complete' );
 				expect( card?.action?.label ).toBe( 'Add credits' );
 			} );
 
@@ -2998,7 +3315,7 @@ describe( 'refusal code', () => {
 				} );
 				const reset = deferred< unknown >();
 				fetchMock.mockReturnValueOnce( reset.promise );
-				await act( async () => jest.advanceTimersByTime( 1000 ) );
+				await act( async () => vi.advanceTimersByTime( 1000 ) );
 				expect( result.current.trailingActions ).toBeUndefined();
 				expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
 				reset.resolve( response( creditSnapshot( { plan_tier: 'business' } ) ) );
@@ -3021,7 +3338,7 @@ describe( 'refusal code', () => {
 
 		it( 'keeps the notice when a reply from the previous site ends late', async () => {
 			const view = renderCredits();
-			const previousSiteConfig = mockConfig;
+			const previousSiteObserver = onTaskUpdate;
 			view.rerender( {
 				...defaultOptions,
 				siteKey: '456',
@@ -3030,14 +3347,14 @@ describe( 'refusal code', () => {
 			await refuse( { ...exhausted( true ), plan_tier: 'business', blog_id: 456 } );
 			expect( view.result.current.refusalNotice ).toBeDefined();
 
-			await act( async () => previousSiteConfig.onTaskUpdate?.( terminal( creditSnapshot() ) ) );
+			await act( async () => previousSiteObserver( terminal( creditSnapshot() ) ) );
 			expect( view.result.current.refusalNotice ).toBeDefined();
 		} );
 
 		it( 'drops the notice when the thread empties, leaving the composer’s', async () => {
 			const view = await openThenRefuse( 'business' );
 			expect( view.result.current.refusalNotice ).toBeDefined();
-			mockMessages = [];
+			chatMessages = [];
 			view.rerender( defaultOptions );
 			expect( view.result.current.refusalNotice ).toBeUndefined();
 			expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
@@ -3051,7 +3368,7 @@ describe( 'refusal code', () => {
 
 		it( 'keeps the popover closed once the refusal clears with the balance still 0', async () => {
 			const view = await openThenRefuse( 'business' );
-			mockIsProcessing = true;
+			chatIsProcessing = true;
 			view.rerender( defaultOptions );
 			expect( view.result.current.refusalNotice ).toBeUndefined();
 			expect( props( view.result.current ).status.remaining ).toBe( 0 );
@@ -3065,5 +3382,247 @@ describe( 'refusal code', () => {
 			await receive( { ...exhausted(), plan_tier: 'business' } );
 			expect( props( result.current ).isOpen ).toBe( true );
 		} );
+	} );
+} );
+
+const answerOf = ( credits: ReturnType< typeof useCredits > ) =>
+	credits.creditsCommand && 'answer' in credits.creditsCommand
+		? credits.creditsCommand.answer
+		: undefined;
+
+describe( 'credits answer', () => {
+	it.each( [ 'personal', 'premium' ] as const )(
+		'offers Upgrade and Add credits on %s, each click recording its own cta_type',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce(
+				response(
+					creditSnapshot( {
+						plan_tier,
+						credits_available: 62450,
+						top_up_credits_purchased: 100000,
+						top_up_credits_remaining: 60000,
+					} )
+				)
+			);
+			const { result } = renderCredits();
+			await flush();
+
+			const { status, resetDate, actions } = answerOf( result.current ) ?? {};
+			expect( status?.remaining ).toBe( 62450 );
+			expect( resetDate ).toBe( 'Oct 1' );
+			expect( actions?.map( ( { kind, label, href } ) => ( { kind, label, href } ) ) ).toEqual( [
+				{ kind: 'upgrade', label: 'Upgrade', href: UPGRADE_URL },
+				{ kind: 'top_up', label: 'Add credits', href: ADD_CREDITS_URL },
+			] );
+			expect( actions?.[ 0 ] ).toMatchObject( { href: props( result.current ).action?.href } );
+
+			vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			act( () => actions?.[ 0 ].onClick?.() );
+			act( () => actions?.[ 1 ].onClick?.() );
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				1,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'upgrade', placement: 'none' } )
+			);
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				2,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'top_up', ref: 'wp_ai_credits', placement: 'none' } )
+			);
+		}
+	);
+
+	it.each( [
+		[ 'another account bought the plan', true, false, true ],
+		[ 'the plan buyer is unknown', true, null, false ],
+	] as const )(
+		'offers no button on Personal when %s, as in the meter',
+		async ( _, canBuyCredits, canUpgrade, namesPlanOwner ) => {
+			fetchMock.mockResolvedValueOnce(
+				response( creditSnapshot( { plan_tier: 'personal' } ), canBuyCredits, canUpgrade )
+			);
+			const { result } = renderCredits();
+			await flush();
+
+			expect( answerOf( result.current )?.actions ).toEqual( [] );
+			expect( props( result.current ).action ).toBeUndefined();
+			expect(
+				answerOf( result.current )?.purchaseHint?.includes( 'different WordPress.com account' ) ??
+					false
+			).toBe( namesPlanOwner );
+		}
+	);
+
+	it.each( [ 'business', 'commerce' ] as const )(
+		'offers only Add credits on %s',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ) ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect(
+				answerOf( result.current )?.actions.map( ( { kind, href } ) => ( { kind, href } ) )
+			).toEqual( [ { kind: 'top_up', href: ADD_CREDITS_URL } ] );
+		}
+	);
+
+	it.each( [ 'personal', 'business' ] as const )(
+		'names who to ask, with no button, for someone who can’t buy on %s',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ), false ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( answerOf( result.current )?.actions ).toEqual( [] );
+			expect( answerOf( result.current )?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
+		}
+	);
+
+	it( 'offers nothing while it isn’t known who may buy', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { plan_tier: 'personal' } ), null )
+		);
+		const { result } = renderCredits();
+		await flush();
+
+		expect( answerOf( result.current )?.actions ).toEqual( [] );
+		expect( answerOf( result.current )?.purchaseHint ).toBeUndefined();
+	} );
+
+	describe( '/credits reply states', () => {
+		afterEach( () => {
+			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+		} );
+
+		it( 'answers with the balance on a metered site', async () => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+		} );
+
+		it.each( [
+			[ 'a 404', { ok: false, status: 404, json: async () => ( {} ) } ],
+			[ 'an answer with no credits data', { ok: true, status: 200, json: async () => ( {} ) } ],
+		] )( 'says the site has no credits after %s, never failed', async ( _name, reply ) => {
+			fetchMock.mockResolvedValueOnce( reply );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'unmetered' } );
+		} );
+
+		it( 'says the site has no credits when the host says it isn’t metered, without waiting for a read', () => {
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
+			fetchMock.mockReturnValue( new Promise( () => {} ) );
+			const { result } = renderCredits();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'unmetered' } );
+		} );
+
+		it( 'says it is loading until the read settles', async () => {
+			let settle: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValueOnce( new Promise( ( resolve ) => ( settle = resolve ) ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'loading' } );
+
+			await act( async () => settle( response( creditSnapshot() ) ) );
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+		} );
+
+		it.each( [
+			[ 'a 5xx', { ok: false, status: 503, json: async () => ( {} ) } ],
+			[
+				'a snapshot that isn’t valid',
+				{ ok: true, status: 200, json: async () => ( { ai_credits: { a: 1 } } ) },
+			],
+		] )(
+			'says it couldn’t check after %s, never that the site has no credits',
+			async ( _name, reply ) => {
+				fetchMock.mockResolvedValueOnce( reply );
+				const { result } = renderCredits();
+				await flush();
+
+				expect( result.current.creditsCommand ).toEqual( { state: 'failed' } );
+			}
+		);
+
+		it( 'says it couldn’t check when the read fails on the network', async () => {
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'failed' } );
+		} );
+
+		it( 'keeps the last known balance when a later read fails', async () => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { credits_available: 12500 } ) ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			act( () => {
+				window.dispatchEvent( new Event( 'online' ) );
+			} );
+			await flush();
+
+			const reply = result.current.creditsCommand;
+			expect( reply?.state ).toBe( 'stale' );
+			expect( reply && 'answer' in reply && reply.answer.status.remaining ).toBe( 12500 );
+			expect( reply && 'answer' in reply && reply.answer.actions ).toEqual( [] );
+		} );
+
+		it( 'still records a click on an earlier card once a later read fails', async () => {
+			fetchMock.mockResolvedValueOnce(
+				response( creditSnapshot( { plan_tier: 'personal', credits_available: 12500 } ) )
+			);
+			const { result } = renderCredits();
+			await flush();
+			const actions = answerOf( result.current )?.actions ?? [];
+			expect( actions.map( ( { kind } ) => kind ) ).toEqual( [ 'upgrade', 'top_up' ] );
+
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			act( () => {
+				window.dispatchEvent( new Event( 'online' ) );
+			} );
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'stale' );
+
+			vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			act( () => actions[ 0 ].onClick?.() );
+			act( () => actions[ 1 ].onClick?.() );
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				1,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'upgrade', placement: 'none' } )
+			);
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				2,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'top_up', placement: 'none' } )
+			);
+		} );
+	} );
+
+	it( 'is absent on a chat with no site, even in demo mode', () => {
+		window.history.replaceState( {}, '', '/?am_credits=55&am_plan=paid' );
+		const { result } = renderCredits( { siteKey: NO_SITE } );
+
+		expect( result.current.creditsCommand ).toBeUndefined();
+	} );
+
+	it( 'is absent where the host says the page isn’t in dev mode, which reads nothing', async () => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		const { result } = renderCredits();
+		await flush();
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( result.current.creditsCommand ).toBeUndefined();
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 } );

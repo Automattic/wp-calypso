@@ -1,5 +1,5 @@
-import { ProgressBar } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
@@ -175,7 +175,15 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 		return (
 			<div className={ clsx( 'newsletter-importer', 'newsletter-importer__step-' + step ) }>
 				<div className="step-container-v2--loading import-layout__center">
-					<ProgressBar className="step-container-v2--loading__progress-bar" />
+					<Progress.Root
+						className="step-container-v2--loading__progress-bar"
+						aria-label={ __( 'Loading…' ) }
+						value={ null }
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				</div>
 			</div>
 		);

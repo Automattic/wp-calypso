@@ -1,13 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render as dashboardRender } from '../../../test-utils';
 import NotificationsExtras from '../index';
 import type { UserNotificationSettings, WpcomNotificationSettings } from '@automattic/api-core';
+
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
+	return {
+		...actual,
+		isEnabled: ( flag: string ) => flag === 'me/email-tracking-consent' || actual.isEnabled( flag ),
+	};
+} );
 
 const defaultWpcomSettings: WpcomNotificationSettings = {
 	marketing: false,
@@ -76,12 +87,7 @@ const notificationSnackBar = () => {
 };
 
 describe( 'NotificationsExtras', () => {
-	beforeEach( () => {
-		// Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
-	it( 'renders the page header and sections correctly', async () => {
+	test( 'renders the page header and sections correctly', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -110,7 +116,7 @@ describe( 'NotificationsExtras', () => {
 		).toBeVisible();
 	} );
 
-	it( 'displays all WordPress.com notification options', async () => {
+	test( 'displays all WordPress.com notification options', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -145,7 +151,7 @@ describe( 'NotificationsExtras', () => {
 		expect( wpcomSectionQueries.getByLabelText( 'Scheduled updates' ) ).toBeVisible();
 	} );
 
-	it( 'displays all Jetpack notification options', async () => {
+	test( 'displays all Jetpack notification options', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -175,7 +181,7 @@ describe( 'NotificationsExtras', () => {
 		expect( jetpackSectionQueries.getByLabelText( 'Reports' ) ).toBeVisible();
 	} );
 
-	it( 'shows current settings correctly', async () => {
+	test( 'shows current settings correctly', async () => {
 		const customSettings: UserNotificationSettings = {
 			...defaultUserSettings,
 			wpcom: {
@@ -231,7 +237,7 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getAllByLabelText( 'Reports' )[ 1 ] ).not.toBeChecked();
 	} );
 
-	it( 'renders the On this day and Achievements toggles', async () => {
+	test( 'renders the On this day and Achievements toggles', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 
@@ -254,7 +260,7 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getByRole( 'link', { name: 'site-level settings' } ) ).toBeVisible();
 	} );
 
-	it( 'saves the On this day setting when toggled', async () => {
+	test( 'saves the On this day setting when toggled', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
@@ -282,7 +288,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows the Achievements toggle as unchecked when notifications are disabled', async () => {
+	test( 'shows the Achievements toggle as unchecked when notifications are disabled', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi( { 'achievements-global-notifications': 'disabled' } );
 
@@ -297,7 +303,7 @@ describe( 'NotificationsExtras', () => {
 		expect( achievementsToggle ).not.toBeChecked();
 	} );
 
-	it( 'saves the Achievements setting when toggled', async () => {
+	test( 'saves the Achievements setting when toggled', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
@@ -327,7 +333,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows snackbar notification on single setting change', async () => {
+	test( 'shows snackbar notification on single setting change', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		mockSaveNotificationSettingsApi( { marketing: true } );
@@ -355,7 +361,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows snackbar notification when all settings are saved', async () => {
+	test( 'shows snackbar notification when all settings are saved', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		mockSaveNotificationSettingsApi( {
@@ -391,7 +397,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'disables controls while saving', async () => {
+	test( 'disables controls while saving', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		// Don't mock the save API to simulate a pending request
@@ -423,7 +429,7 @@ describe( 'NotificationsExtras', () => {
 		} );
 	} );
 
-	it( 'shows error message when save fails', async () => {
+	test( 'shows error message when save fails', async () => {
 		mockGetNotificationSettingsApi();
 		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
@@ -450,6 +456,102 @@ describe( 'NotificationsExtras', () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Failed to save subscription settings.' );
+		} );
+	} );
+
+	describe( 'Email tracking', () => {
+		const settingsWithEmailTracking: UserNotificationSettings = {
+			...defaultUserSettings,
+			wpcom: { ...defaultWpcomSettings, email_tracking: true },
+		};
+
+		test( 'hides the toggle when the API does not return the setting', async () => {
+			mockGetNotificationSettingsApi();
+			mockGetPreferencesApi();
+
+			dashboardRender( <NotificationsExtras /> );
+
+			await screen.findByText( 'Email from WordPress.com' );
+			expect( screen.queryByLabelText( 'Track email opens and clicks' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'saves the setting when turned off', async () => {
+			mockGetNotificationSettingsApi( settingsWithEmailTracking );
+			mockGetPreferencesApi();
+			mockSaveNotificationSettingsApi( { email_tracking: false } );
+
+			const { recordTracksEvent } = dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			const toggle = await screen.findByLabelText( 'Track email opens and clicks' );
+			expect( toggle ).toBeChecked();
+
+			await userEvent.click( toggle );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent( 'Email tracking turned off.' );
+			} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_notifications_email_tracking_updated',
+				{ setting_value: false, source: 'extras' }
+			);
+		} );
+
+		test( 'does not record the change when saving fails', async () => {
+			mockGetNotificationSettingsApi( settingsWithEmailTracking );
+			mockGetPreferencesApi();
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/notifications/settings' )
+				.reply( 500, { error: 'Internal server error' } );
+
+			const { recordTracksEvent } = dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			await userEvent.click( await screen.findByLabelText( 'Track email opens and clicks' ) );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent(
+					'Failed to save email tracking settings.'
+				);
+			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_notifications_email_tracking_updated',
+				expect.anything()
+			);
+		} );
+
+		test( 'is not changed by "Unsubscribe from all"', async () => {
+			mockGetNotificationSettingsApi( {
+				...settingsWithEmailTracking,
+				wpcom: { ...settingsWithEmailTracking.wpcom, marketing: true },
+			} );
+			mockGetPreferencesApi();
+			// nock matches the body exactly, so an email_tracking key would fail the request.
+			mockSaveNotificationSettingsApi( { marketing: false } );
+
+			dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			const [ unsubscribeAll ] = await screen.findAllByRole( 'checkbox', {
+				name: 'Unsubscribe from all',
+			} );
+			await userEvent.click( unsubscribeAll );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent( 'Subscriptions settings saved.' );
+			} );
 		} );
 	} );
 } );

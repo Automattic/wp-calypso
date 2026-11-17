@@ -63,7 +63,7 @@ jest.mock( 'calypso/server/state-cache', () => new Map() );
 
 jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 
-jest.mock( 'calypso/state', () => ( {
+jest.mock( 'calypso/state/create-store', () => ( {
 	createReduxStore: jest.fn(),
 } ) );
 
@@ -142,6 +142,7 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
@@ -151,12 +152,13 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
 		};
 		mocks.sanitize = require( 'calypso/server/sanitize' );
-		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
+		mocks.createReduxStore = require( 'calypso/state/create-store' ).createReduxStore;
 		mocks.createReduxStore.mockImplementation( createMockStore );
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
@@ -165,6 +167,7 @@ const buildApp = ( environment ) => {
 		mocks.analytics = require( 'calypso/server/lib/analytics' );
 
 		// Set the environment. This has to be done before requiring `../index.js`
+		mocks.config.serverEnvId = environment;
 		mocks.config.mockImplementation(
 			( key ) =>
 				( {
@@ -564,19 +567,57 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
 		} );
+	} );
 
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
+	describe( 'on calypso.live', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'horizon' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
 		} );
 
 		it( 'sets the branch name', async () => {
 			const { request } = await customApp.run( {
-				request: { query: { branch: 'my-branch' } },
+				request: { hostname: 'hash-abcd1234.calypso.live', query: { branch: 'my-branch' } },
 			} );
 			expect( request.context.branchName ).toEqual( 'my-branch' );
+		} );
+
+		it( 'enables the dev helpers', async () => {
+			const { request } = await customApp.run( {
+				request: { hostname: 'hash-abcd1234.calypso.live' },
+			} );
+			expect( request.context ).toMatchObject( {
+				accountSettingsHelper: true,
+				authHelper: true,
+				preferencesHelper: true,
+				storeSandboxHelper: true,
+			} );
+		} );
+
+		it( 'does not enable the dev helpers outside calypso.live', async () => {
+			const { request } = await customApp.run();
+			expect( request.context.accountSettingsHelper ).toBeFalsy();
+			expect( request.context.authHelper ).toBeFalsy();
+			expect( request.context.preferencesHelper ).toBeFalsy();
+			expect( request.context.storeSandboxHelper ).toBeFalsy();
+		} );
+
+		it( 'does not set the branch name outside calypso.live', async () => {
+			const { request } = await customApp.run( {
+				request: { query: { branch: 'my-branch' } },
+			} );
+			expect( request.context.branchName ).toBeUndefined();
 		} );
 	} );
 
@@ -629,13 +670,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment development', () => {
@@ -662,13 +696,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
 		} );
 
 		it( 'sets the branch name', async () => {
@@ -703,13 +730,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment jetpack-cloud-development', () => {
@@ -736,13 +756,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-dev' );
-		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
 		} );
 
 		it( 'sets the branch name', async () => {
@@ -1900,6 +1913,21 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'bumps dashboard-404 for unmatched paths', async () => {
+		await app.run( { request: { url: '/does-not-exist', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith( 'dashboard-404', '/does-not-exist' );
+	} );
+
+	it( 'bumps dashboard-404-probing for paths bots probe', async () => {
+		await app.run( { request: { url: '/sitemap.xml', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith(
+			'dashboard-404-probing',
+			'/sitemap.xml'
+		);
 	} );
 
 	it( 'serves known dashboard routes without a 404', async () => {

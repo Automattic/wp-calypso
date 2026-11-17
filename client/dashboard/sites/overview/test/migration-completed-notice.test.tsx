@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { queryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -7,6 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import {
 	MigrationCompletedNotice,
@@ -60,6 +61,8 @@ beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 afterEach( () => {
 	config.disable( 'migration/reprint-flow' );
 	queryClient.clear();
+	window._sva = undefined;
+	window.localStorage.clear();
 } );
 
 test( 'confirms a migration that just finished, with a link to connect its domain', async () => {
@@ -125,4 +128,28 @@ test( 'a dismissal is saved for that site only', async () => {
 
 	await user.click( screen.getByRole( 'button', { name: 'Switch site' } ) );
 	expect( screen.getByText( 'No notice' ) ).toBeInTheDocument();
+} );
+
+test( 'asks for the migration survey once per migration, even on a later visit', async () => {
+	const invokeEvent = vi.fn();
+	Object.assign( window, { _sva: { invokeEvent } } );
+
+	mockPreferences();
+	const { unmount } = render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
+	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeVisible() );
+	expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+	expect( invokeEvent ).toHaveBeenCalledWith( 'migrationCompleted' );
+	unmount();
+
+	mockPreferences();
+	const { unmount: unmountAgain } = render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
+	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeVisible() );
+	expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+	unmountAgain();
+
+	// A later migration into the same site asks again.
+	mockPreferences();
+	render( <Harness site={ completedSite( { hoursAgo: 0.5 } ) } /> );
+	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeVisible() );
+	expect( invokeEvent ).toHaveBeenCalledTimes( 2 );
 } );

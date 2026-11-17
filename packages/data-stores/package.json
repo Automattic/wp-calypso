@@ -15,6 +15,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./help-center": {
+			"calypso:src": "./src/help-center/index.ts",
+			"types": "./dist/types/help-center/index.d.ts",
+			"import": "./dist/esm/help-center/index.js",
+			"require": "./dist/cjs/help-center/index.js"
+		},
 		"./src/*": {
 			"types": [
 				"./src/*.ts",
@@ -46,7 +52,8 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@automattic/api-core": "workspace:^",
@@ -71,23 +78,25 @@
 		"@wordpress/url": "^4.48.0",
 		"debug": "^4.4.3",
 		"i18n-calypso": "workspace:^",
-		"qs": "^6.15.2",
+		"qs": "^6.17.1",
 		"redux": "^5.0.1",
 		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.48.0",
+		"@wordpress/data": "^10.48.0 || ^11.0.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"jsdom": "^20.0.3",
 		"nock": "^14.0.17",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"wait-for-expect": "^3.0.2"
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { parseTrackingPrefs } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import {
 	filterLanguageRevisions,
 	isTranslatedIncompletely,
@@ -67,8 +68,8 @@ import {
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
-import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
@@ -82,6 +83,7 @@ import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
 import { getFrameHeaders } from './frame-options';
+import { isProbingPath } from './probing-paths';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -270,13 +272,15 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
-	const authHelper = config.isEnabled( 'dev/auth-helper' );
-	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
-	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
+	const isCalypsoLive = isCalypsoLiveHostname( request.hostname );
+	const authHelper = isCalypsoLive || config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = isCalypsoLive || config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = isCalypsoLive || config.isEnabled( 'dev/store-sandbox-helper' );
 	const blackboxHelper = config.isEnabled( 'dev/blackbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
-		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
+		( isCalypsoLive || config.isEnabled( 'dev/preferences-helper' ) ) &&
+		entrypoint !== 'entry-gutenboarding';
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
@@ -299,6 +303,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: entrypointFiles,
 		manifests,
+		useViteDevServer: request.app.get( 'bundler' ) === 'vite',
 		reactQueryDevtoolsHelper,
 		accountSettingsHelper,
 		authHelper,
@@ -331,67 +336,67 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'setup environments', true );
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		// this is for calypso.live, so that branchName can be available while rendering the page
-		if ( request.query.branch ) {
-			context.branchName = request.query.branch;
-		}
+	}
+
+	// calypso.live passes the branch along, so that it can be shown in the environment badge.
+	if ( isCalypsoLive && request.query.branch ) {
+		context.branchName = request.query.branch;
 	}
 
 	if ( calypsoEnv === 'horizon' ) {
-		context.badge = 'feedback';
-		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		if ( isCalypsoLive ) {
+			context.badge = 'horizon';
+		} else {
+			context.badge = 'feedback';
+			context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		}
 	}
 
 	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-stage' ) {
 		context.badge = 'jetpack-cloud-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-development' ) {
 		context.badge = 'jetpack-cloud-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'a8c-for-agencies-stage' ) {
 		context.badge = 'a8c-for-agencies-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'a8c-for-agencies-development' ) {
 		context.badge = 'a8c-for-agencies-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'dashboard-horizon' ) {
-		context.badge = 'dashboard-horizon';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+		if ( isCalypsoLive ) {
+			context.badge = 'dashboard-horizon';
+		} else {
+			context.badge = 'feedback';
+			context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		}
 	}
 
 	if ( calypsoEnv === 'dashboard-stage' ) {
 		context.badge = 'dashboard-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'dashboard-development' ) {
 		context.badge = 'dashboard-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
@@ -634,8 +639,8 @@ function setUpCSP( req, res, next ) {
 			"'self'",
 			"'report-sample'",
 			// Allow eval only in development for webpack's eval-based source maps (devtool: 'eval')
-			// which enable fast rebuilds and hot module reloading. Production uses 'hidden-source-map'
-			// which doesn't require eval, maintaining strict CSP in production environments.
+			// which enable fast rebuilds and hot module reloading. Production builds don't need eval,
+			// maintaining strict CSP in production environments.
 			...( req.context.app.isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'stats.wp.com',
@@ -889,8 +894,10 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
-	// bumpStat only accepts 32 chars max for the value
-	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	bumpStat(
+		isProbingPath( req.path ) ? 'dashboard-404-probing' : 'dashboard-404',
+		req.path.slice( 0, 32 ) // bumpStat only accepts 32 chars max for the value
+	);
 	next();
 };
 

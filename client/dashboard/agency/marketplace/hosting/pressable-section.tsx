@@ -13,13 +13,13 @@ import { useAnalytics } from '../../../app/analytics';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody } from '../../../components/card';
 import Divider from '../../../components/divider';
+import { PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL } from '../../overview/constants';
 import { useContactSupport } from '../../support/use-contact-support';
 import { getProductPriceInfo } from '../products/lib/product-pricing';
 import { CheckGrid, HostingFeatures, JetpackComplete, Testimonials } from './content-sections';
 import demoIllustration from './demo-callout-illustration.svg';
 import {
 	PLAN_CATEGORY_PREMIUM,
-	PRESSABLE_PROMOTION_TERMS_URL,
 	areSignaturePlansFor,
 	getDefaultPlanCategoryTab,
 	getMinimumSelectableIndex,
@@ -428,7 +428,9 @@ export default function PressableSection( {
 					hasIntroductoryDiscount ? (
 						<Text variant="muted" size={ 12 }>
 							{ createInterpolateElement( __( '*Limited time only. <a>See details</a>' ), {
-								a: <ExternalLink href={ PRESSABLE_PROMOTION_TERMS_URL } children={ null } />,
+								a: (
+									<ExternalLink href={ PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL } children={ null } />
+								),
 							} ) }
 						</Text>
 					) : undefined

@@ -1,5 +1,5 @@
 import { activeAgencyQuery, paginatedJetpackAgencyLicensesQuery } from '@automattic/api-queries';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -57,10 +57,9 @@ export default function MarketplacePurchases() {
 
 	const tableView = useMemo( () => withLicenseColumnStyles( view ), [ view ] );
 
-	const { data, isLoading, isPlaceholderData } = useQuery( {
+	const { data, isLoading } = useQuery( {
 		...paginatedJetpackAgencyLicensesQuery( agencyId, toFetchOptions( view ) ),
 		enabled: agencyId > 0,
-		placeholderData: keepPreviousData,
 	} );
 	const { provisioningLicenseKeys, isProvisioning } = useProvisioningLicenses( agencyId );
 	const [ isFeedbackOpen, setIsFeedbackOpen ] = useState( false );
@@ -149,7 +148,6 @@ export default function MarketplacePurchases() {
 					actions={ actions }
 					view={ tableView }
 					isLoading={ isLoading }
-					isPlaceholderData={ isPlaceholderData }
 					onChangeView={ onChangeView }
 					onReset={ resetView }
 					getItemId={ getLicenseId }

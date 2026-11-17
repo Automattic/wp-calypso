@@ -1,10 +1,6 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import path from 'path';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { getAdminSchemes } = require( '../bin/prepare-sass-assets' );
+import { getAdminSchemes } from '../bin/prepare-sass-assets';
 
 const REPO_ROOT = path.join( __dirname, '..', '..', '..' );
 

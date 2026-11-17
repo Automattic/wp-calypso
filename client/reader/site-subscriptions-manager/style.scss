@@ -17,6 +17,10 @@
 		}
 
 		svg path {
+			color: var(--color-text-inverted);
+		}
+
+		svg:not([stroke]) path {
 			fill: var(--color-text-inverted);
 		}
 

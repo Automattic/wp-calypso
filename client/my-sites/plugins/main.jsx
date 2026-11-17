@@ -17,6 +17,7 @@ import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import NavigationHeader from 'calypso/components/navigation-header';
 import MissingPaymentNotification from 'calypso/jetpack-cloud/components/missing-payment-notification';
+import ProgramSunsetBanner from 'calypso/jetpack-cloud/components/program-sunset-banner';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -264,6 +265,7 @@ export class PluginsMain extends Component {
 						} ) }
 					>
 						<div className="plugins__content-wrapper">
+							{ isJetpackCloud && <ProgramSunsetBanner /> }
 							<MissingPaymentNotification />
 
 							{ isJetpackCloud && (

@@ -3,7 +3,7 @@ import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
-export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store';
+export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store' | 'WooCommerce';
 type TrafficActivityType = 'Views' | 'Visitors' | 'Likes' | 'Comments';
 type StoreActivityType = 'Gross Sales' | 'Net sales' | 'Orders' | 'Avg. Order Value';
 // Discriminated Union type.
@@ -16,6 +16,13 @@ const selectors = {
 	graph: '.chart__bars',
 	statsTabs: '.stats-tabs',
 };
+
+// The wp-admin page of Stats v2 (Premium Analytics), which replaces the classic Stats page
+// once it is retired for a site.
+const STATS_V2_PAGE = 'page=jetpack-premium-analytics-wp-admin';
+// Stats v2 boots after wp-admin's DOMContentLoaded and keeps a tab named "Loading…" until its
+// section resolves, which can outlast the action timeout on a slow agent.
+const STATS_V2_BOOT_TIMEOUT = 30 * 1000;
 
 /**
  * Represents the Stats page, powered by Jetpack.
@@ -46,6 +53,17 @@ export class StatsPage {
 	 */
 	async visit( siteSlug?: string ) {
 		await this.page.goto( getCalypsoURL( `/stats/${ siteSlug }` ) );
+
+		// Calypso may send the link on to wp-admin, and from there to Stats v2, so wait for a page
+		// with tabs to settle before checking which one it is.
+		await this.anchor.getByRole( 'tab' ).first().waitFor( { timeout: STATS_V2_BOOT_TIMEOUT } );
+	}
+
+	/**
+	 * Whether the current page is Stats v2 rather than the classic Stats page.
+	 */
+	private isStatsV2(): boolean {
+		return this.page.url().includes( STATS_V2_PAGE );
 	}
 
 	/**
@@ -68,6 +86,15 @@ export class StatsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
+		if ( this.isStatsV2() ) {
+			const tab = this.anchor.getByRole( 'tab', { name, exact: true } );
+			await tab.waitFor( { timeout: STATS_V2_BOOT_TIMEOUT } );
+			await tab.click();
+			await this.anchor.getByRole( 'tab', { name, exact: true, selected: true } ).waitFor();
+			await this.anchor.getByRole( 'tabpanel', { name } ).waitFor();
+			return;
+		}
+
 		await this.dismissTooltip();
 		await clickNavTab( this.page, name, { isCoreTabs: true } );
 
@@ -130,6 +157,29 @@ export class StatsPage {
 	 * @param {ActivityTypes} activityType Type of activity to show.
 	 */
 	async showStatsOfType( activityType: ActivityTypes ): Promise< void > {
+		if ( this.isStatsV2() ) {
+			const label = `${ activityType.tab } metric`;
+			const tabs = this.anchor.getByRole( 'tablist', { name: label } );
+			// Below about 480px the metric tabs collapse into a select, so a narrow viewport has
+			// no tablist to click.
+			const select = this.anchor.getByRole( 'combobox', { name: label } );
+			await tabs.or( select ).first().waitFor( { timeout: STATS_V2_BOOT_TIMEOUT } );
+
+			if ( await select.isVisible() ) {
+				await select.click();
+				await this.page
+					.getByRole( 'listbox' )
+					.getByRole( 'option', { name: activityType.type, exact: true } )
+					.click();
+				await select.filter( { hasText: activityType.type } ).waitFor();
+				return;
+			}
+
+			await tabs.getByRole( 'tab', { name: activityType.type } ).click();
+			await tabs.getByRole( 'tab', { name: activityType.type, selected: true } ).waitFor();
+			return;
+		}
+
 		// Wait for the charts to load first, even if no activity is present.
 		// CSS selector has to be used here because there is no a11y selector
 		// for this element.
@@ -179,6 +229,16 @@ export class StatsPage {
 	 * This link is only available in site specific view.
 	 */
 	async clickViewAllAnnualInsights() {
+		if ( this.isStatsV2() ) {
+			await this.anchor
+				.getByRole( 'region', { name: 'Year in review' } )
+				.getByRole( 'link', { name: 'View all' } )
+				.click();
+
+			await this.page.waitForURL( /annual-insights/ );
+			return;
+		}
+
 		await this.anchor.getByRole( 'link', { name: 'View all annual insights' } ).click();
 
 		await this.page.waitForURL( /annualstats/ );

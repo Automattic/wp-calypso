@@ -36,6 +36,7 @@ export function authorize( queryObject ) {
 				redirect_uri,
 				scope,
 				state,
+				from,
 			} )
 			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { TitanPlanTier } from '../../../types';
 import { TitanDowngradeModal } from '../titan-downgrade-modal';
@@ -10,7 +11,7 @@ import { TitanDowngradeModal } from '../titan-downgrade-modal';
 const pendingDowngrade = { tier: TitanPlanTier.Pro, toProductId: 400 };
 
 function renderModal( props: Partial< React.ComponentProps< typeof TitanDowngradeModal > > = {} ) {
-	const onConfirm = jest.fn();
+	const onConfirm = vi.fn();
 	const result = render(
 		<TitanDowngradeModal
 			pendingDowngrade={ pendingDowngrade }
@@ -21,7 +22,7 @@ function renderModal( props: Partial< React.ComponentProps< typeof TitanDowngrad
 			purchaseId={ 29102774 }
 			isRechargeable
 			isBusy={ false }
-			onCancel={ jest.fn() }
+			onCancel={ vi.fn() }
 			onConfirm={ onConfirm }
 			{ ...props }
 		/>

@@ -43,6 +43,7 @@ jest.mock( '@wordpress/data', () => ( {
 			getSignupDomainOrigin: () => undefined,
 			getPlanCartItem: () => null,
 			getDomainCartItem: () => undefined,
+			getDomainCartItems: () => undefined,
 			getBlueprint: () => undefined,
 		} ) )
 	),
@@ -190,12 +191,12 @@ describe( 'onboarding navigations to the error step', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'build_wow_start_failed' } );
 	} );
 
-	it( 'labels a failed processing result', async () => {
+	it( 'labels a failed processing result and replaces processing so Back does not re-run it', async () => {
 		const navigate = await submitStep( 'processing', {
 			processingResult: ProcessingResult.FAILURE,
 		} );
 
-		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_failed' } );
+		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_failed' }, true );
 	} );
 
 	it( 'labels a processing result with no pending action and no siteSlug', async () => {
@@ -203,7 +204,11 @@ describe( 'onboarding navigations to the error step', () => {
 			processingResult: ProcessingResult.NO_ACTION,
 		} );
 
-		expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_no_action' } );
+		expect( navigate ).toHaveBeenCalledWith(
+			'error',
+			{ errorReason: 'processing_no_action' },
+			true
+		);
 	} );
 } );
 

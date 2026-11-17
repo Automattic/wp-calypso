@@ -199,6 +199,28 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://helpme.com' );
 	} );
 
+	it( 'warns that the new address is not indexed by search engines', () => {
+		const state = createState( {
+			warnings: [
+				{
+					name: 'Subdomain',
+					description: 'Your site address will change',
+					domainNames: { current: 'example.wordpress.com', new: 'example.wpcomstaging.com' },
+				},
+			],
+		} );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="hosting-features" inModal />,
+			state
+		);
+
+		expect( getByText( /isn’t indexed by search engines/ ) ).toBeVisible();
+		expect( getByText( 'add a custom domain so your site can be indexed' ).tagName ).toBe(
+			'STRONG'
+		);
+	} );
+
 	it( "doesn't render warnings when there are blocking holds", () => {
 		const state = createState( {
 			holds: [ 'BLOCKED_ATOMIC_TRANSFER' ],
@@ -260,6 +282,19 @@ describe( '<EligibilityWarnings>', () => {
 		expect( page.redirect ).toHaveBeenCalledWith(
 			expect.stringContaining( '/checkout/example.wordpress.com/personal-bundle' )
 		);
+	} );
+
+	it( 'upsells the Personal plan for a partner theme', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings context="themes" isMarketplace onProceed={ noop } />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a Personal plan' ) ).toBeVisible();
+		expect( queryByText( 'Upgrade to a Business plan' ) ).not.toBeInTheDocument();
+		expect( getByText( /install custom plugins/ ) ).toBeVisible();
 	} );
 
 	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {

@@ -1,9 +1,9 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
-import { Button, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLinkButton } from '../../components/notice';
 import type { ScanStatusType } from './use-scan-state';
 
 interface ScanNoticesProps {
@@ -32,9 +32,9 @@ export function ScanNotices( { status, threatCount }: ScanNoticesProps ) {
 				title={ __( 'Latest scan for your site couldn’t be completed' ) }
 				onClose={ handleDismiss }
 				actions={
-					<Button variant="primary" href={ JETPACK_CONTACT_SUPPORT } target="_blank">
+					<NoticeActionLinkButton variant="solid" href={ JETPACK_CONTACT_SUPPORT } target="_blank">
 						{ __( 'Contact support' ) }
-					</Button>
+					</NoticeActionLinkButton>
 				}
 			>
 				{ createInterpolateElement(

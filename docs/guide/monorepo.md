@@ -135,9 +135,13 @@ To run all of the package tests:
 
 `yarn run test-packages`
 
-To run one package's tests:
+To run one package's tests, or one file's:
 
-`yarn run test-packages [ test file pattern ]`
+`yarn run test-packages [ path ]`
+
+To test one package, you can also run its own `test` script, if it has one:
+
+`yarn workspace @automattic/<name> test`
 
 ## Building packages & apps
 

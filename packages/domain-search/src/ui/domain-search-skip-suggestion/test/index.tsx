@@ -1,12 +1,15 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DomainSearchSkipSuggestion } from '../index';
 
 // Force the "large" container query so the text CTA renders (the mobile layout
 // swaps it for an icon-only chevron button, which has no visible label).
-jest.mock( '../../../hooks/use-domain-suggestion-container', () => ( {
-	...jest.requireActual( '../../../hooks/use-domain-suggestion-container' ),
+vi.mock( '../../../hooks/use-domain-suggestion-container', async () => ( {
+	...( await vi.importActual< typeof import( '../../../hooks/use-domain-suggestion-container' ) >(
+		'../../../hooks/use-domain-suggestion-container'
+	) ),
 	useDomainSuggestionContainer: () => ( {
-		containerRef: jest.fn(),
+		containerRef: vi.fn(),
 		activeQuery: 'large',
 		currentWidth: 600,
 	} ),
@@ -15,7 +18,7 @@ jest.mock( '../../../hooks/use-domain-suggestion-container', () => ( {
 describe( 'DomainSearchSkipSuggestion', () => {
 	it( 'renders the default "start free" copy for a free suggestion', () => {
 		render(
-			<DomainSearchSkipSuggestion freeSuggestion="mysite.wordpress.com" onSkip={ jest.fn() } />
+			<DomainSearchSkipSuggestion freeSuggestion="mysite.wordpress.com" onSkip={ vi.fn() } />
 		);
 
 		expect( screen.getByText( 'Start free with mysite.wordpress.com' ) ).toBeInTheDocument();
@@ -28,7 +31,7 @@ describe( 'DomainSearchSkipSuggestion', () => {
 				freeSuggestion="mysite.wordpress.com"
 				title="Start with %(domain)s"
 				buttonText="Choose a domain later"
-				onSkip={ jest.fn() }
+				onSkip={ vi.fn() }
 			/>
 		);
 
@@ -42,7 +45,7 @@ describe( 'DomainSearchSkipSuggestion', () => {
 			<DomainSearchSkipSuggestion
 				freeSuggestion="mysite.wordpress.com"
 				subtitle="You’ll get a WordPress.com branded domain."
-				onSkip={ jest.fn() }
+				onSkip={ vi.fn() }
 			/>
 		);
 
@@ -58,7 +61,7 @@ describe( 'DomainSearchSkipSuggestion', () => {
 				freeSuggestion="mysite.wordpress.com"
 				buttonText="Skip"
 				skipLabel="Skip the domain for now"
-				onSkip={ jest.fn() }
+				onSkip={ vi.fn() }
 			/>
 		);
 

@@ -13,12 +13,10 @@ import type { StoredPaymentMethod, StoredPaymentMethodTaxLocation } from '@autom
 
 export function PaymentMethodEditDialog( {
 	paymentMethod,
-	isVisible,
 	onCancel,
 	onConfirm,
 }: {
 	paymentMethod: StoredPaymentMethod;
-	isVisible: boolean;
 	onCancel: () => void;
 	onConfirm: ( paymentMethod: StoredPaymentMethod ) => void;
 } ) {
@@ -28,7 +26,6 @@ export function PaymentMethodEditDialog( {
 
 	return (
 		<ConfirmDialog
-			isVisible={ isVisible }
 			confirmButtonText={ __( 'Save' ) }
 			size="large"
 			onConfirm={ () =>
@@ -39,7 +36,7 @@ export function PaymentMethodEditDialog( {
 			}
 			onCancel={ onCancel }
 		>
-			<VStack style={ { gap: '24px' } }>
+			<VStack spacing={ 6 }>
 				<Heading level={ 2 } size={ 20 } weight={ 500 }>
 					{ __( 'Edit billing address' ) }
 				</Heading>

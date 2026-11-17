@@ -1,10 +1,12 @@
 import { tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
-import { Notice } from '../../../components/notice';
-import RouterLinkButton from '../../../components/router-link-button';
+import {
+	Notice,
+	NoticeActionButton,
+	RouterNoticeActionLinkButton,
+} from '../../../components/notice';
 import { useBackHereSearch } from '../../components/fullscreen-page';
 import { useContactSupport } from '../../support/use-contact-support';
 import { getAccountStatus } from './get-account-status';
@@ -57,9 +59,8 @@ export default function PayoutStatusNotice( {
 	let actions;
 	if ( accountStatus.statusKey !== 'not_payable' ) {
 		actions = (
-			<Button
-				variant="primary"
-				__next40pxDefaultSize
+			<NoticeActionButton
+				variant="solid"
 				onClick={ () => {
 					recordTracksEvent(
 						'calypso_a4a_payout_status_notice_contact_support_click',
@@ -69,13 +70,12 @@ export default function PayoutStatusNotice( {
 				} }
 			>
 				{ __( 'Contact support' ) }
-			</Button>
+			</NoticeActionButton>
 		);
 	} else if ( source === 'referrals' ) {
 		actions = (
-			<RouterLinkButton
-				variant="primary"
-				__next40pxDefaultSize
+			<RouterNoticeActionLinkButton
+				variant="solid"
 				to="/payout-settings"
 				search={ backHereSearch }
 				onClick={ () =>
@@ -83,7 +83,7 @@ export default function PayoutStatusNotice( {
 				}
 			>
 				{ __( 'Add my details' ) }
-			</RouterLinkButton>
+			</RouterNoticeActionLinkButton>
 		);
 	}
 

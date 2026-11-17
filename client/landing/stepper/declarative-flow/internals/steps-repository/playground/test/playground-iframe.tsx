@@ -28,6 +28,20 @@ jest.mock( 'react-router-dom', () => ( {
 	useSearchParams: () => [ mockSearchParams, mockSetSearchParams ],
 } ) );
 
+const deferBoot = () => {
+	const boot: {
+		resolve: ( value: unknown ) => void;
+		reject: ( error: Error ) => void;
+	} = { resolve: () => {}, reject: () => {} };
+	jest.mocked( initializeWordPressPlayground ).mockReturnValue(
+		new Promise( ( resolve, reject ) => {
+			boot.resolve = resolve as ( value: unknown ) => void;
+			boot.reject = reject;
+		} ) as ReturnType< typeof initializeWordPressPlayground >
+	);
+	return boot;
+};
+
 describe( 'PlaygroundIframe acquisition retry', () => {
 	const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
 	const reload = jest.fn();
@@ -212,6 +226,126 @@ describe( 'PlaygroundIframe intro', () => {
 	} );
 } );
 
+describe( 'PlaygroundIframe intro abandon', () => {
+	const leavePage = ( persisted = false ) =>
+		act( () => {
+			window.dispatchEvent( new PageTransitionEvent( 'pagehide', { persisted } ) );
+		} );
+
+	const renderIframe = ( withIntro = true ) =>
+		render(
+			<PlaygroundIframe
+				hasPlaygroundClient={ false }
+				setPlaygroundClient={ jest.fn() }
+				withIntro={ withIntro }
+			/>
+		);
+
+	const abandonedCalls = () =>
+		jest
+			.mocked( recordTracksEvent )
+			.mock.calls.filter( ( [ name ] ) => name === 'calypso_playground_woo_intro_abandoned' );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSearchParams = new URLSearchParams( { intent: 'woocommerce', blueprint: 'woocommerce' } );
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'is recorded once, with how long the visitor waited, when they leave mid-load', () => {
+		jest.useFakeTimers();
+		mockSearchParams.set( 'blueprint', '123' );
+		deferBoot();
+		renderIframe();
+
+		jest.advanceTimersByTime( 12_000 );
+		leavePage();
+		leavePage();
+
+		expect( abandonedCalls() ).toEqual( [
+			[
+				'calypso_playground_woo_intro_abandoned',
+				{ blueprint: 'bpl-123', duration_seconds: 12, use_beacon: true },
+			],
+		] );
+	} );
+
+	it( 'is not recorded once the store is ready', async () => {
+		const boot = deferBoot();
+		renderIframe();
+
+		await act( async () => boot.resolve( { blueprint: null, client: {} } ) );
+		leavePage();
+
+		expect( abandonedCalls() ).toHaveLength( 0 );
+	} );
+
+	it( 'is not recorded once the boot has failed', async () => {
+		const boot = deferBoot();
+		renderIframe();
+
+		await act( async () => boot.reject( new Error( 'boot failed' ) ) );
+		expect( await screen.findByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		leavePage();
+
+		expect( abandonedCalls() ).toHaveLength( 0 );
+	} );
+
+	it( 'is not recorded when the page is kept in the back/forward cache', () => {
+		deferBoot();
+		renderIframe();
+
+		leavePage( true );
+		expect( abandonedCalls() ).toHaveLength( 0 );
+
+		// The visitor came back to the running load, and then left for good.
+		leavePage();
+		expect( abandonedCalls() ).toHaveLength( 1 );
+	} );
+
+	it( 'is recorded once when leaving a new playground started after the old one was not found', async () => {
+		jest.useFakeTimers();
+		mockSearchParams.set( 'playground', 'missing-id' );
+		jest
+			.mocked( initializeWordPressPlayground )
+			.mockRejectedValueOnce( new PlaygroundNotFoundError( 'missing-id', new Error() ) )
+			.mockReturnValue( new Promise( () => {} ) );
+
+		renderIframe();
+		await act( async () => {} );
+		for ( let second = 0; second < 5; second++ ) {
+			await act( async () => jest.advanceTimersByTime( 1000 ) );
+		}
+		expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
+
+		leavePage();
+
+		expect( abandonedCalls() ).toHaveLength( 1 );
+	} );
+
+	it( 'is not recorded after unmounting', () => {
+		deferBoot();
+		const { unmount } = renderIframe();
+
+		unmount();
+		leavePage();
+
+		expect( abandonedCalls() ).toHaveLength( 0 );
+	} );
+
+	it( 'is not recorded without the intro', () => {
+		deferBoot();
+		renderIframe( false );
+
+		leavePage();
+
+		expect( abandonedCalls() ).toHaveLength( 0 );
+	} );
+} );
+
 describe( 'PlaygroundIframe messages', () => {
 	const PLAYGROUND_ORIGIN = 'https://playground.wordpress.net';
 	const data = { type: 'test' };
@@ -237,20 +371,6 @@ describe( 'PlaygroundIframe messages', () => {
 
 	const renderIframe = ( onPlaygroundMessage?: ( data: unknown ) => void, withIntro = false ) =>
 		render( getIframeElement( onPlaygroundMessage, withIntro ) );
-
-	const deferBoot = () => {
-		const boot: {
-			resolve: ( value: unknown ) => void;
-			reject: ( error: Error ) => void;
-		} = { resolve: () => {}, reject: () => {} };
-		jest.mocked( initializeWordPressPlayground ).mockReturnValue(
-			new Promise( ( resolve, reject ) => {
-				boot.resolve = resolve as ( value: unknown ) => void;
-				boot.reject = reject;
-			} ) as ReturnType< typeof initializeWordPressPlayground >
-		);
-		return boot;
-	};
 
 	const appendFrame = ( document: Document ) => {
 		const frame = document.createElement( 'iframe' );

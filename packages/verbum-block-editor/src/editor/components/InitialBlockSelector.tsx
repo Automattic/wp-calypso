@@ -1,7 +1,4 @@
-import {
-	store as blockEditorStore,
-	// @ts-expect-error - Typings missing
-} from '@wordpress/block-editor';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useCallback, useRef } from '@wordpress/element';
 

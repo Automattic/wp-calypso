@@ -21,6 +21,8 @@ type LinkSource = ( typeof LINK_SOURCES )[ number ];
 
 type Props = {
 	onClose: () => void;
+	// Called instead of `onClose` when enabling fails.
+	onError?: () => void;
 	// Where the modal was opened from, for Tracks.
 	source: 'overview' | LinkSource;
 };
@@ -70,7 +72,7 @@ export function DashboardOptInLinkModal() {
 /**
  * Introduces the new dashboard and moves the agency there in one step.
  */
-export default function DashboardOptInModal( { onClose, source }: Props ) {
+export default function DashboardOptInModal( { onClose, onError = onClose, source }: Props ) {
 	const dispatch = useDispatch();
 	const { optIn, isPending } = useDashboardOptIn();
 
@@ -85,7 +87,7 @@ export default function DashboardOptInModal( { onClose, source }: Props ) {
 
 	const handleConfirm = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_dashboard_opt_in_modal_confirm', { source } ) );
-		optIn();
+		optIn( { onError } );
 	};
 
 	return (
@@ -98,11 +100,16 @@ export default function DashboardOptInModal( { onClose, source }: Props ) {
 				<img className="a4a-dashboard-opt-in-modal-drawing" src={ newDashboardDrawing } alt="" />
 				<VStack spacing={ 2 }>
 					<Heading level={ 2 } size={ 20 } weight={ 600 }>
-						{ __( 'Try the new dashboard' ) }
+						{ __( 'Enable the new dashboard' ) }
 					</Heading>
 					<Text>
 						{ __(
-							'Manage your sites, purchases, and earnings in one place. Your whole team moves with you, and you can switch back at any time from Agency > Dashboard.'
+							'The new dashboard comes to every agency in December, and you can start using it today. It’s faster, with improved navigation, easier site management, and simpler ways to track commissions and agency health.'
+						) }
+					</Text>
+					<Text>
+						{ __(
+							'When you opt in, all invited team members will gain access to the new dashboard. To switch back, open Agency in the sidebar and choose Classic dashboard.'
 						) }
 					</Text>
 				</VStack>
@@ -122,7 +129,7 @@ export default function DashboardOptInModal( { onClose, source }: Props ) {
 						disabled={ isPending }
 						__next40pxDefaultSize
 					>
-						{ __( 'Switch to the new dashboard' ) }
+						{ __( 'Enable the new dashboard' ) }
 					</Button>
 				</HStack>
 			</VStack>

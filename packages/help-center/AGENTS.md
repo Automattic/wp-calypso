@@ -53,7 +53,7 @@ Changes in `packages/help-center/src/` are consumed by `apps/help-center/` via i
 
 ```bash
 # Run from repo root
-yarn jest packages/help-center
+yarn test-packages packages/help-center
 ```
 
 Test files live in `src/test/` and alongside source files.
@@ -72,10 +72,10 @@ See `apps/help-center/AGENTS.md` for more details on the build/sync layer.
 
 **Every PR touching `packages/help-center/`** must include testing instructions for both Calypso and Simple/Atomic environments:
 
-### Testing Instructions Template
+### How to Test Template
 
 ```markdown
-## Testing Instructions
+## How to Test
 
 ### Calypso
 

@@ -4,7 +4,10 @@
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
-import usePlanDifferentiatorsExperiment from '../use-plan-differentiators-experiment';
+import usePlanDifferentiatorsExperiment, {
+	PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE,
+} from '../use-plan-differentiators-experiment';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
@@ -19,8 +22,8 @@ const EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
 const CONTROL_RESULT = {
 	isLoading: false,
 	variant: 'control',
-	showAiCredits: false,
 	useReversedPlanOrder: false,
+	useMcpFeature: false,
 	isExperimentEligible: true,
 };
 
@@ -34,6 +37,16 @@ const mockUseSelector = useSelector as jest.Mock;
 
 const SITE_ID = 123;
 
+const LAUNCH_TIME = Date.parse( PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE );
+const SECOND = 1000;
+const HOUR = 60 * 60 * SECOND;
+
+// Formats a time as the API's created_at, e.g. 2026-11-04T01:00:00+02:00 for an offset of 2.
+function toCreatedAt( time: number, offsetHours = 0 ) {
+	const offset = `+${ String( offsetHours ).padStart( 2, '0' ) }:00`;
+	return new Date( time + offsetHours * HOUR ).toISOString().replace( /\.\d{3}Z$/, offset );
+}
+
 // Runs the hook's real selectors against the given sites.
 function mockSitesState( items: Record< number, object > ) {
 	mockUseSelector.mockImplementation( ( selector ) => selector( { sites: { items } } ) );
@@ -41,7 +54,7 @@ function mockSitesState( items: Record< number, object > ) {
 
 function mockSite( {
 	siteCreationFlow = 'onboarding',
-	createdAt = '2026-11-05T00:00:01+00:00',
+	createdAt = toCreatedAt( LAUNCH_TIME + SECOND ),
 }: {
 	siteCreationFlow?: string | null;
 	createdAt?: string;
@@ -61,14 +74,18 @@ function mockNoSite() {
 	mockSitesState( {} );
 }
 
+const INTENT = 'plans-default-wpcom' as const;
+
 const SIGNUP_PARAMS = {
 	flowName: 'onboarding',
+	intent: INTENT,
 	isInSignup: true,
 	siteId: null,
 };
 
 const SITE_PARAMS = {
 	flowName: null,
+	intent: INTENT,
 	isInSignup: false,
 	siteId: SITE_ID,
 };
@@ -86,6 +103,36 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 
 			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: true } );
 			expect( result.current ).toEqual( CONTROL_RESULT );
+		} );
+
+		test( 'is not eligible for intents that curate their own plans or features', () => {
+			mockUseExperiment.mockReturnValue( [ false, null ] );
+
+			const { result } = renderHook( () =>
+				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
+			);
+
+			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: false } );
+			expect( result.current ).toEqual( INELIGIBLE_RESULT );
+		} );
+
+		test( 'waits for the intent before enrolling', () => {
+			mockUseExperiment.mockReturnValue( [ false, null ] );
+
+			const { result, rerender } = renderHook(
+				( { intent }: { intent?: PlansIntent } ) =>
+					usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent } ),
+				{ initialProps: {} }
+			);
+
+			expect( mockUseExperiment ).toHaveBeenLastCalledWith( EXPERIMENT_NAME, {
+				isEligible: false,
+			} );
+			expect( result.current ).toEqual( { ...INELIGIBLE_RESULT, isLoading: true } );
+
+			rerender( { intent: INTENT } );
+
+			expect( mockUseExperiment ).toHaveBeenLastCalledWith( EXPERIMENT_NAME, { isEligible: true } );
 		} );
 
 		test( 'is not eligible for other signup flows', () => {
@@ -126,9 +173,9 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 		} );
 
 		test.each( [
-			[ 'before launch', '2026-11-04T23:59:59+00:00' ],
-			[ 'exactly at launch', '2026-11-05T00:00:00+00:00' ],
-			[ 'before launch in another timezone', '2026-11-05T01:00:00+02:00' ],
+			[ 'before launch', toCreatedAt( LAUNCH_TIME - SECOND ) ],
+			[ 'exactly at launch', toCreatedAt( LAUNCH_TIME ) ],
+			[ 'before launch in another timezone', toCreatedAt( LAUNCH_TIME - HOUR, 2 ) ],
 		] )(
 			'is not eligible for logged-in plans pages when the site was created %s',
 			( _, createdAt ) => {
@@ -163,46 +210,28 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 	} );
 
 	describe( 'variants', () => {
-		test( 'shows AI credits in the normal order for the ai_credits variant', () => {
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'ai_credits' } ] );
+		test( 'reverses the plan order for the reversed_order variant', () => {
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'reversed_order' } ] );
 
 			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
 
 			expect( result.current ).toEqual( {
 				...CONTROL_RESULT,
-				variant: 'ai_credits',
-				showAiCredits: true,
-			} );
-		} );
-
-		test( 'shows AI credits in the reversed order for the ai_credits_reversed_order variant', () => {
-			mockUseExperiment.mockReturnValue( [
-				false,
-				{ variationName: 'ai_credits_reversed_order' },
-			] );
-
-			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
-
-			expect( result.current ).toEqual( {
-				...CONTROL_RESULT,
-				variant: 'ai_credits_reversed_order',
-				showAiCredits: true,
+				variant: 'reversed_order',
 				useReversedPlanOrder: true,
 			} );
 		} );
 
-		test( 'keeps the normal order for intents that curate their own plan mix', () => {
-			mockUseExperiment.mockReturnValue( [
-				false,
-				{ variationName: 'ai_credits_reversed_order' },
-			] );
+		test( 'shows the MCP feature for the mcp_features variant', () => {
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_features' } ] );
 
-			const { result } = renderHook( () =>
-				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
-			);
+			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
 
-			expect( result.current.showAiCredits ).toBe( true );
-			expect( result.current.useReversedPlanOrder ).toBe( false );
+			expect( result.current ).toEqual( {
+				...CONTROL_RESULT,
+				variant: 'mcp_features',
+				useMcpFeature: true,
+			} );
 		} );
 
 		test( 'falls back to control for an unknown variation', () => {
@@ -239,13 +268,13 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			expect( result.current.isLoading ).toBe( true );
 
 			mockSite();
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'ai_credits' } ] );
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'reversed_order' } ] );
 			rerender();
 
 			expect( result.current ).toEqual( {
 				...CONTROL_RESULT,
-				variant: 'ai_credits',
-				showAiCredits: true,
+				variant: 'reversed_order',
+				useReversedPlanOrder: true,
 			} );
 		} );
 	} );

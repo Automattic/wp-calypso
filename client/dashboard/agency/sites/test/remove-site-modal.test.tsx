@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { agencySitesQueryKey } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import RemoveSiteModal from '../remove-site-modal';
 import type { AgencySite } from '@automattic/api-core';
@@ -40,7 +41,7 @@ describe( '<RemoveSiteModal>', () => {
 	test( 'removes the site and closes', async () => {
 		mockAgency();
 		const removal = mockRemoval( 200 );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
 		await userEvent.click( await findEnabledRemoveButton() );
@@ -54,7 +55,7 @@ describe( '<RemoveSiteModal>', () => {
 	test( 'stays open until the sites list has been refreshed', async () => {
 		mockAgency();
 		mockRemoval( 200 );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
 		const button = await findEnabledRemoveButton();
@@ -74,7 +75,7 @@ describe( '<RemoveSiteModal>', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		queryClient.setQueryData( agencySitesQueryKey, [] );
 		let wasListRefreshed: boolean | undefined;
-		const onRemoved = jest.fn( () => {
+		const onRemoved = vi.fn( () => {
 			wasListRefreshed = queryClient.getQueryState( agencySitesQueryKey )?.isInvalidated;
 		} );
 
@@ -88,7 +89,7 @@ describe( '<RemoveSiteModal>', () => {
 	test( 'stays open when the removal fails', async () => {
 		mockAgency();
 		const removal = mockRemoval( 403, { message: 'You are not allowed to do that.' } );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
 		await userEvent.click( await findEnabledRemoveButton() );
@@ -101,7 +102,7 @@ describe( '<RemoveSiteModal>', () => {
 	test( 'stays open when the removal is declined with a 200', async () => {
 		mockAgency();
 		const removal = mockRemoval( 200, false );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 
 		render( <RemoveSiteModal site={ site } closeModal={ closeModal } /> );
 		await userEvent.click( await findEnabledRemoveButton() );

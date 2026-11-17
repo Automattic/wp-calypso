@@ -12,7 +12,7 @@ import type { NewUserResponse } from '@automattic/api-core';
 
 function isBlackboxUserlessCheckoutEnabled() {
 	return (
-		!! getBlackboxApiKey( 'blackbox-userless-checkout' ) &&
+		!! getBlackboxApiKey() &&
 		config.isEnabled( 'blackbox' ) &&
 		config.isEnabled( 'blackbox-userless-checkout' )
 	);
@@ -85,11 +85,18 @@ export async function createAccount( {
 	}
 
 	const blogName = newSiteParams?.blog_name;
-	const blackboxApiKey = getBlackboxApiKey( 'blackbox-userless-checkout' );
+	const blackboxApiKey = getBlackboxApiKey();
 	const blackboxSessionId =
 		blackboxApiKey && isBlackboxUserlessCheckoutEnabled()
-			? await getBlackboxSessionId( blackboxApiKey )
+			? await getBlackboxSessionId( blackboxApiKey, undefined, 'signup' )
 			: undefined;
+
+	if ( blackboxSessionId === null ) {
+		throw new DOMException(
+			String( i18n.translate( 'Checkout is no longer active. Please try again.' ) ),
+			'AbortError'
+		);
+	}
 
 	try {
 		const response = await createUser( {
@@ -106,7 +113,9 @@ export async function createAccount( {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			tos: getToSAcceptancePayload(),
-			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+			...( blackboxSessionId && {
+				blackbox_session_id: blackboxSessionId,
+			} ),
 		} );
 
 		if ( ! response?.success ) {

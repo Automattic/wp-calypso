@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import AppleIcon from 'calypso/components/social-icons/apple';
 
@@ -20,22 +21,26 @@ const loadAol = () =>
 
 interface MagicLoginEmailIconProps {
 	icon: string;
+	/**
+	 * Shown while the provider's icon loads.
+	 */
+	placeholder?: ReactNode;
 }
 
-export function MagicLoginEmailIcon( { icon }: MagicLoginEmailIconProps ) {
+export function MagicLoginEmailIcon( { icon, placeholder = null }: MagicLoginEmailIconProps ) {
 	switch ( icon ) {
 		case 'apple':
 			// No async import because AppleIcon is already in the login bundle via
 			// social-buttons/apple, so AsyncLoad cannot split it.
 			return <AppleIcon />;
 		case 'gmail':
-			return <AsyncLoad require={ loadGmail } placeholder={ null } />;
+			return <AsyncLoad require={ loadGmail } placeholder={ placeholder } />;
 		case 'outlook':
-			return <AsyncLoad require={ loadOutlook } placeholder={ null } />;
+			return <AsyncLoad require={ loadOutlook } placeholder={ placeholder } />;
 		case 'yahoo':
-			return <AsyncLoad require={ loadYahoo } placeholder={ null } />;
+			return <AsyncLoad require={ loadYahoo } placeholder={ placeholder } />;
 		case 'aol':
-			return <AsyncLoad require={ loadAol } placeholder={ null } />;
+			return <AsyncLoad require={ loadAol } placeholder={ placeholder } />;
 		default:
 			return null;
 	}

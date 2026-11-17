@@ -45,15 +45,10 @@ function announce( isActive: boolean ): void {
  * and stopped acting, and repeating "still processing" on every render would
  * say nothing new.
  *
- * `isProcessing` alone would be wrong at both edges, because it belongs to this
- * component and the turn does not. The chat is one route among several
- * (`agent-dock` renders it under `/chat`), so opening conversation history
- * mid-turn unmounts it while the stream carries on running on the agent manager
- * singleton — and `useAgentChat` neither aborts on unmount nor re-attaches to a
- * running stream on mount, so a remount reports `isProcessing: false` for the
- * rest of the turn. Announcing the end there would tell a host the agent had
- * stopped while it was still writing, which is the one thing this API exists to
- * prevent.
+ * `isProcessing` alone isn't enough: it belongs to this component, and the turn
+ * does not. History or closing the panel unmounts the chat while the stream
+ * carries on, and announcing the end then would tell a host the agent had
+ * stopped while it was still writing.
  *
  * So the manager is asked at every edge, and it has the last word: the turn is
  * over only when it says so. What that cannot cover is a turn finishing while

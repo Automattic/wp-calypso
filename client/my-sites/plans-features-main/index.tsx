@@ -82,8 +82,10 @@ import {
 	shouldForceDefaultPlansBasedOnIntent,
 	hideEscapeHatchForIntent,
 	ensureCompatibleIntervalType,
+	reverseGridPlanOrder,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -166,6 +168,8 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	isDomainTransfer?: boolean;
+	isDomainMove?: boolean;
+	isConnectedDomainMove?: boolean;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
@@ -232,11 +236,6 @@ export interface PlansFeaturesMainProps {
 	deemphasizeFreePlan?: boolean;
 	renderFreePlanCtaInStepContainerV2?: boolean;
 
-	/**
-	 * Whether the plans render inside StepContainerV2. Defaults to what the flow name implies.
-	 */
-	isInStepContainerV2?: boolean;
-
 	selectedThemeType?: string;
 }
 
@@ -249,6 +248,8 @@ const PlansFeaturesMain = ( {
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
 	isDomainTransfer,
+	isDomainMove,
+	isConnectedDomainMove,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
@@ -285,7 +286,6 @@ const PlansFeaturesMain = ( {
 	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
 	renderFreePlanCtaInStepContainerV2 = false,
-	isInStepContainerV2,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -644,6 +644,8 @@ const PlansFeaturesMain = ( {
 		paidDomainName,
 		intent: intentFromProps,
 		selectedThemeType,
+		isDomainMove,
+		isConnectedDomainMove,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -787,6 +789,12 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { isInSignup, intent } );
+
+	const {
+		isLoading: isPlanDifferentiatorsExperimentLoading,
+		useReversedPlanOrder,
+		useMcpFeature,
+	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -1047,7 +1055,7 @@ const PlansFeaturesMain = ( {
 	] );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
-	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
+	const gridPlansForComparisonGridRaw = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -1070,6 +1078,14 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
+
+	const gridPlansForComparisonGrid = useMemo(
+		() =>
+			useReversedPlanOrder && gridPlansForComparisonGridRaw
+				? reverseGridPlanOrder( gridPlansForComparisonGridRaw )
+				: gridPlansForComparisonGridRaw,
+		[ gridPlansForComparisonGridRaw, useReversedPlanOrder ]
+	);
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
@@ -1097,7 +1113,9 @@ const PlansFeaturesMain = ( {
 		reflectStorageSelectionInPlanPrices: true,
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesignNewDescription,
+		useMcpFeature,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
+		hideFreeDomainBadge: isDomainMove,
 	} );
 
 	// A site-meta intent (e.g. newsletter) can leave nothing to upgrade to once the
@@ -1149,7 +1167,7 @@ const PlansFeaturesMain = ( {
 	const gridPlansForFeaturesGrid = useMemo( () => {
 		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
 
-		return (
+		const gridPlans =
 			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
 				if ( planSlug === bottomGridPlanSlug ) {
 					return false;
@@ -1164,13 +1182,15 @@ const PlansFeaturesMain = ( {
 				}
 
 				return true;
-			} ) ?? null
-		);
+			} ) ?? null;
+
+		return useReversedPlanOrder && gridPlans ? reverseGridPlanOrder( gridPlans ) : gridPlans;
 	}, [
 		bottomGridPlanForFeaturesGrid,
 		gridPlansForFeaturesGridRaw,
 		deemphasizeFreePlan,
 		showWooCommerceBottomCard,
+		useReversedPlanOrder,
 	] );
 
 	const isVisualSplitEnabled =
@@ -1396,7 +1416,8 @@ const PlansFeaturesMain = ( {
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
-		! isPlansGridRedesignExperimentLoading;
+		! isPlansGridRedesignExperimentLoading &&
+		! isPlanDifferentiatorsExperimentLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
@@ -1443,6 +1464,7 @@ const PlansFeaturesMain = ( {
 			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
 			// titles with a control list.
 			isExperimentVariant: ! hasTailoredFeatureList( intent ),
+			useMcpFeature,
 		} );
 	}
 
@@ -1534,6 +1556,7 @@ const PlansFeaturesMain = ( {
 					generatedWPComSubdomain={ resolvedSubdomainName }
 					selectedThemeType={ selectedThemeType }
 					isDomainTransfer={ isDomainTransfer || false }
+					isConnectedDomainMove={ isConnectedDomainMove || false }
 					onClose={ () => setIsModalOpen( false ) }
 					onFreePlanSelected={ ( isDomainRetained ) => {
 						if ( ! isDomainRetained ) {
@@ -1629,7 +1652,6 @@ const PlansFeaturesMain = ( {
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
-					isInStepContainerV2={ isInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }

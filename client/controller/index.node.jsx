@@ -81,7 +81,6 @@ export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
 export const redirectToDashboard = () => {};
-export const redirectMyJetpack = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
 // eslint-disable-next-line no-unused-vars
 export const redirectIfCurrentUserCannot = ( capability ) => () => {};

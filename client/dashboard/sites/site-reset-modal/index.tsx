@@ -11,14 +11,14 @@ import {
 	Button,
 	ExternalLink,
 	Modal,
-	ProgressBar,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useState, useCallback } from 'react';
+import { Progress } from '@wordpress/ui';
+import { useEffect, useState, useCallback, useId } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { wpcomLink } from '../../utils/link';
@@ -47,10 +47,21 @@ function ErrorContent( { message, onClose }: { message: string; onClose: () => v
 
 function InProgressContent( { progress }: { progress: number | undefined } ) {
 	const progressValue = progress ? progress * 100 : 10;
+	const messageId = useId();
 	return (
 		<VStack spacing={ 4 }>
-			<ProgressBar className="reset-site-modal-progress-bar" value={ progressValue } />
-			<Text>{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }</Text>
+			<Progress.Root
+				className="reset-site-modal-progress-bar"
+				aria-labelledby={ messageId }
+				value={ progressValue }
+			>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
+			<Text id={ messageId }>
+				{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }
+			</Text>
 		</VStack>
 	);
 }

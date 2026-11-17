@@ -56,11 +56,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import {
-	getDomainsBySiteId,
-	hasLoadedSiteDomains,
-	isRequestingSiteDomains,
-} from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
 	isCurrentPlanPaid,
@@ -247,8 +243,7 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies, siteDomains } =
-			this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
 		const didCurrentStepBecomeFulfillmentReady =
 			! this.isStepFulfillmentReady( stepName, prevProps ) &&
 			this.isStepFulfillmentReady( stepName );
@@ -286,7 +281,7 @@ class Signup extends Component {
 			clearDomainsDependencies();
 		}
 
-		if ( siteDomains !== prevProps.siteDomains || didCurrentStepBecomeFulfillmentReady ) {
+		if ( didCurrentStepBecomeFulfillmentReady ) {
 			this.removeFulfilledSteps( this.props );
 
 			if ( ! flows.excludedSteps.includes( stepName ) && ! this._recordedSteps.has( stepName ) ) {
@@ -884,12 +879,6 @@ class Signup extends Component {
 		return flows.getFlow( flowName, this.props.isLoggedIn ).steps.indexOf( stepName );
 	}
 
-	getInteractiveStepsCount() {
-		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
-		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
-		return flowSteps.length;
-	}
-
 	renderProcessingScreen() {
 		const domainItem = this.props?.signupDependencies?.domainItem ?? {};
 		const hasPaidDomain = isDomainRegistration( domainItem );
@@ -1028,7 +1017,9 @@ class Signup extends Component {
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
 										positionInFlow={ this.getPositionInFlow() }
-										flowLength={ this.getInteractiveStepsCount() }
+										flowLength={
+											flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps.length
+										}
 										flowName={ this.props.flowName }
 									/>
 								)
@@ -1078,8 +1069,6 @@ export default connect(
 			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
-			hasLoadedSiteDomains: hasLoadedSiteDomains( state, siteId ),
-			isRequestingSiteDomains: isRequestingSiteDomains( state, siteId ),
 			siteId,
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,

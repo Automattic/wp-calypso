@@ -9,10 +9,11 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
-const formatMessage = require( '../../../test-utils/format-message' );
-const { ERROR_MESSAGE } = require( '../i18n-no-collapsible-whitespace' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
+import formatMessage from '../../../test-utils/format-message';
+import rule from '../i18n-no-collapsible-whitespace';
+const { ERROR_MESSAGE } = rule;
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------

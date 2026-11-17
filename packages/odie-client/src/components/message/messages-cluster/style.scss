@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/variables';
 
 .odie-chatbox-messages-cluster {
 	width: 100%;
@@ -64,7 +63,7 @@
 		}
 
 		.message-header {
-			font-weight: $font-weight-medium;
+			font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 			margin-right: 16px;
 		}
 	}

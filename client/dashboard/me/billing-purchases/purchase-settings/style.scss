@@ -12,6 +12,7 @@
 }
 
 .purchase-settings__feature-icon {
+	color: var(--dashboard__foreground-color-success);
 	fill: var(--dashboard__foreground-color-success);
 	flex-shrink: 0;
 	align-self: flex-start;

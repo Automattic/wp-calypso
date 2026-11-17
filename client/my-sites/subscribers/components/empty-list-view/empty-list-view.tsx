@@ -32,7 +32,7 @@ const EmptyListCTALink = ( {
 		supportContext,
 	} );
 
-	const handleClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+	const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
 		recordTracksEvent( eventName );
 
 		if ( openInHelpCenter ) {

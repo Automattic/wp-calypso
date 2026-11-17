@@ -1,8 +1,7 @@
 import { JetpackModules } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
 import { hasJetpackModule } from '../../utils/site-features';
 import { useAuth } from '../auth';
 import type { Site } from '@automattic/api-core';
@@ -30,9 +29,9 @@ export default function TwoStepRequiredNotice( { site }: { site: Site } ) {
 				variant="warning"
 				title={ __( 'Set up two-step authentication to access WP Admin' ) }
 				actions={
-					<RouterLinkButton to="/me/security/two-step-auth" variant="primary">
+					<RouterNoticeActionLinkButton to="/me/security/two-step-auth" variant="solid">
 						{ __( 'Set up two-step authentication' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLinkButton>
 				}
 			>
 				{ sprintf(

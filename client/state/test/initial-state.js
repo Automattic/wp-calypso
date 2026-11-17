@@ -5,9 +5,9 @@
 import { withStorageKey } from '@automattic/state-utils';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import { createReduxStore } from 'calypso/state';
 import { addReducerToStore } from 'calypso/state/add-reducer';
 import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
+import { createReduxStore } from 'calypso/state/create-store';
 import currentUser from 'calypso/state/current-user/reducer';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';

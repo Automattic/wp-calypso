@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -135,7 +135,7 @@ describe( '<BillingHistory>', () => {
 		await screen.findByRole( 'table' );
 		await user.click( screen.getByRole( 'button', { name: 'Add filter' } ) );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Site' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'menuitem', { name: 'Site' } ) ).toBeVisible();
 	} );
 
 	test( 'does not offer a site filter when the user only has one site', async () => {

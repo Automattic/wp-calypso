@@ -1,16 +1,17 @@
-import { isWpError } from '@automattic/api-core';
+import { fetchWordPressMigrationStatus, isWpError } from '@automattic/api-core';
 import {
 	siteQueryFilter,
 	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationStatusQuery,
 } from '@automattic/api-queries';
+import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { Connect } from './connect';
 import { Findings } from './findings';
@@ -33,6 +34,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetch,
 	} = useQuery( {
 		...siteWordPressMigrationStatusQuery( site.ID ),
+		// Once our team has the migration, read the site again: its migration state takes this page over.
+		queryFn: async () => {
+			const status = await fetchWordPressMigrationStatus( site.ID );
+			if ( status.handed_off ) {
+				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
+			}
+			return status;
+		},
 		refetchInterval: ( { state } ) => {
 			const status = state.data?.status;
 			if ( status === 'running' ) {
@@ -50,11 +59,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
 
-	// Only connecting the source again gets past a refused connection, so go straight back to that step.
-	const connectionFailure =
-		migration?.status === 'failed'
-			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
-			: undefined;
+	// What's fixed by setting the source up again goes straight back to that step.
+	let connectionFailure = undefined;
+	if ( migration?.status === 'failed' ) {
+		connectionFailure = migration.findings.find(
+			( { suggested_action } ) => suggested_action === 'connect_source'
+		);
+	}
 
 	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
@@ -81,6 +92,16 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		// The source is connected on its own site, often in another tab, so check again on coming back to this one.
 		refetchOnWindowFocus: isConnecting ? 'always' : false,
 	} );
+
+	// Each migration asks once, whether it started from this page or was already going when the page opened. A run
+	// resumed after a pause is the same migration, so the key is the source rather than when the run started.
+	const isRunning = migration?.status === 'running';
+	const sourceUrl = migration?.source_url;
+	useEffect( () => {
+		if ( isRunning && sourceUrl ) {
+			return invokeSurvicateEventOnce( 'migrationStarted', `${ site.ID }:${ sourceUrl }` );
+		}
+	}, [ isRunning, sourceUrl, site.ID ] );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
@@ -127,17 +148,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		return () => clearInterval( interval );
 	}, [ isCompleted, isSiteUnlocked, isUnlockOverdue, queryClient, navigate, site.ID, site.slug ] );
 
-	// An "assisted_handoff" failure automatically switches to the assisted flow,
-	// so read the state again in case a redirect is needed.
-	const hasHandoffFinding =
-		migration?.status === 'failed' &&
-		migration.findings.some( ( { resolution } ) => resolution === 'assisted_handoff' );
-	useEffect( () => {
-		if ( hasHandoffFinding ) {
-			queryClient.invalidateQueries( siteQueryFilter( site.ID ) );
-		}
-	}, [ hasHandoffFinding, queryClient, site.ID ] );
-
 	const contactUs = (
 		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 			{ __( 'Contact us' ) }
@@ -151,9 +161,9 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					variant="error"
 					actions={
 						<>
-							<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
+							<NoticeActionButton variant="solid" onClick={ () => refetch() }>
 								{ __( 'Try again' ) }
-							</Button>
+							</NoticeActionButton>
 							{ contactUs }
 						</>
 					}

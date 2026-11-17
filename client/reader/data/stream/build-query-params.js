@@ -17,6 +17,27 @@ import {
 // across requests. `custom_recs_sites_with_images` does not use it.
 const recommendationsSeed = random( 0, 1000 );
 
+/**
+ * The `saved` stream oldest save first. `saved` itself is newest first.
+ */
+export const SAVED_OLDEST_STREAM_KEY = 'saved:oldest';
+
+/**
+ * The `saved` stream newest post first, by the date each post was published.
+ */
+export const SAVED_PUBLISHED_STREAM_KEY = 'saved:published';
+
+/**
+ * The `saved` stream oldest post first, by the date each post was published.
+ */
+export const SAVED_OLDEST_PUBLISHED_STREAM_KEY = 'saved:oldest-published';
+
+const SAVED_SORT_PARAMS = {
+	[ SAVED_OLDEST_STREAM_KEY ]: { order: 'ASC' },
+	[ SAVED_PUBLISHED_STREAM_KEY ]: { orderBy: 'date_published' },
+	[ SAVED_OLDEST_PUBLISHED_STREAM_KEY ]: { orderBy: 'date_published', order: 'ASC' },
+};
+
 function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
@@ -66,48 +87,6 @@ function buildTagPopularQueryParams( extras, streamKey ) {
  */
 function buildListQueryParams( extras ) {
 	return getQueryString( { ...extras, number: 40 } );
-}
-
-// Default posts per page for the shelf feed. The shelf uses its own page size
-// rather than the shared `INITIAL_FETCH`/`PER_FETCH` sizes the other streams
-// use; consumers can override it via `perPage` (e.g. the gallery layout asks for
-// 9 to fill its 3×3 grid). Always kept at or under the 15-post server cap.
-const SHELF_PER_PAGE = 10;
-
-/**
- * Shared shape for the Shelf streams (`/reader/shelves/<id>/posts` and
- * `/reader/shelves/<id>/discover`): `count` (the per-page size) plus a
- * `page_handle` cursor and `_locale`, rather than the `number`/offset shape the
- * other streams use. `cap` is the server-side per-page limit per endpoint (posts
- * 15, discover 7 — both Elasticsearch query-size limits). `perPage`, when given,
- * pins the page size (the posts feed passes its own — e.g. the gallery layout
- * asks for 9); otherwise it falls back to the shared `INITIAL_FETCH`/`PER_FETCH`
- * sizes. Always clamped to the cap so an oversized page can't silently break
- * end-of-stream detection. Locale is passed as `_locale`, the param the endpoints read.
- */
-function buildShelfStreamParams( extras, cap, perPage ) {
-	const { number, page_handle: pageHandle, lang } = extras;
-	const queryParams = { count: Math.min( perPage || number || INITIAL_FETCH, cap ) };
-	if ( pageHandle ) {
-		queryParams.page_handle = pageHandle;
-	}
-	if ( lang ) {
-		queryParams._locale = lang;
-	}
-	return queryParams;
-}
-
-// `shelf` — the posts feed (`/reader/shelves/<id>/posts`), followed feeds + tags.
-// Pins the layout's page size (`perPage`, e.g. the gallery's 9) or the default
-// `SHELF_PER_PAGE`, rather than the shared fetch sizes.
-function buildShelfQueryParams( extras, perPage ) {
-	return buildShelfStreamParams( extras, 15, perPage ?? SHELF_PER_PAGE );
-}
-
-// `shelf_discover` — recommended on-topic posts the user doesn't follow
-// (`/reader/shelves/<id>/discover`). Tighter cap (7) than the posts feed.
-function buildShelfDiscoverQueryParams( extras ) {
-	return buildShelfStreamParams( extras, 7 );
 }
 
 /**
@@ -254,10 +233,8 @@ export function buildStreamQueryParams( {
 			return buildListQueryParams( extras );
 		case 'on_this_day':
 			return buildOnThisDayQueryParams( extras, streamKey );
-		case 'shelf':
-			return buildShelfQueryParams( extras, perPage );
-		case 'shelf_discover':
-			return buildShelfDiscoverQueryParams( extras );
+		case 'saved':
+			return getQueryString( { ...extras, ...SAVED_SORT_PARAMS[ streamKey ] } );
 		case 'conversations':
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':

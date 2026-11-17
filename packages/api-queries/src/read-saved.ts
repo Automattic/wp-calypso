@@ -9,7 +9,7 @@ import {
 	type ReadSavedPostResponse,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
-import { getStreamInfiniteQueryKeyPrefix } from './read-streams';
+import { getStreamType, parseStreamInfiniteQueryKey } from './read-streams';
 
 export const readSavedKeysQuery = () =>
 	queryOptions( {
@@ -230,7 +230,11 @@ function savedWriteCallbacks(
 
 			void queryClient.invalidateQueries( { queryKey: savedKeysQueryKey } );
 			void queryClient.invalidateQueries( {
-				queryKey: getStreamInfiniteQueryKeyPrefix( 'saved' ),
+				queryKey: [ 'read', 'stream', 'infinite' ],
+				predicate: ( { queryKey } ) => {
+					const stream = parseStreamInfiniteQueryKey( queryKey );
+					return !! stream && getStreamType( stream.streamKey ) === 'saved';
+				},
 			} );
 		},
 	};

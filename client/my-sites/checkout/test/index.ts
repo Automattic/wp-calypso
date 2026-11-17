@@ -21,7 +21,6 @@ jest.mock( '@automattic/calypso-router', () => ( {
 jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
 	redirectLoggedOut: jest.fn(),
-	redirectMyJetpack: jest.fn(),
 	render: jest.fn(),
 	setLocaleMiddleware: () => mockLocaleMiddleware,
 } ) );

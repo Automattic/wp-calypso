@@ -1,7 +1,7 @@
 /* global Typekit */
-import calypsoConfig from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 
-if ( typeof document !== 'undefined' && calypsoConfig( 'env_id' ) !== 'wpcalypso' ) {
+if ( typeof document !== 'undefined' && ! isCalypsoLiveHostname( window.location.hostname ) ) {
 	// Load fonts - https://helpx.adobe.com/fonts/using/embed-codes.html
 	( function ( d ) {
 		const config = {

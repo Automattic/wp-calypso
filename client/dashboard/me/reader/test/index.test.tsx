@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';

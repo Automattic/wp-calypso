@@ -2,6 +2,8 @@ import { store as coreStore } from '@wordpress/core-data';
 import { resolveSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { extractFilenameFromUrl } from './extract-filename';
+import type { CanvasMetadata } from '../store';
+import type { MediaAttachment } from '../types';
 
 /**
  * Image data returned by this function
@@ -44,6 +46,22 @@ interface WordPressMediaEntity {
 }
 
 /**
+ * Reads the editable metadata fields from a WordPress attachment record.
+ * @param media - The attachment record from the core-data store.
+ * @returns The metadata, with missing fields as empty strings.
+ */
+export function getAttachmentMetadata(
+	media: Pick< MediaAttachment, 'alt_text' | 'title' | 'caption' | 'description' >
+): Record< keyof CanvasMetadata, string > {
+	return {
+		title: media.title?.raw || '',
+		caption: media.caption?.raw || '',
+		description: media.description?.raw || '',
+		alt_text: media.alt_text || '',
+	};
+}
+
+/**
  * Fetches image attachment data from WordPress data store and transforms it
  * to the format expected by Image Studio.
  * Note: this could be placed in @utils/media.js as a getImageDataFromStore
@@ -69,14 +87,16 @@ export async function getImageData( attachmentId: number ): Promise< ImageData |
 			__( 'Untitled', __i18n_text_domain__ )
 		);
 
+		const { alt_text, title, caption, description } = getAttachmentMetadata( media );
+
 		// Transform WordPress media entity to Image Studio format
 		return {
 			id: media.id,
 			url: media.source_url,
-			alt: media.alt_text || '',
-			title: media.title?.raw || '',
-			caption: media.caption?.raw || '',
-			description: media.description?.raw || '',
+			alt: alt_text,
+			title,
+			caption,
+			description,
 			width: media.media_details?.width || 0,
 			height: media.media_details?.height || 0,
 			filename,

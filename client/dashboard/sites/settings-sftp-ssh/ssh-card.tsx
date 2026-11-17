@@ -7,7 +7,6 @@ import {
 	siteSshKeysDetachMutation,
 	sshKeysQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -49,10 +48,6 @@ type SshCardFormData = {
 };
 
 const getSiteSshKeyTitle = ( siteSshKey: SiteSshKey, currentUserLogin: string ) => {
-	if ( ! isEnabled( 'ssh-multiple-keys' ) ) {
-		return `${ siteSshKey.user_login }-${ siteSshKey.name }`;
-	}
-
 	const label = getSshKeyLabel( siteSshKey );
 	if ( siteSshKey.user_login === currentUserLogin ) {
 		return label;
@@ -150,7 +145,6 @@ export default function SshCard( {
 	sshEnabled: boolean;
 } ) {
 	const { user } = useAuth();
-	const isMultipleKeysEnabled = isEnabled( 'ssh-multiple-keys' );
 	const queryClient = useQueryClient();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
 	const {
@@ -177,13 +171,6 @@ export default function SshCard( {
 		ssh_key: 'default',
 	} );
 
-	const userKeyIsAttached = useMemo( () => {
-		if ( ! siteSshKeys ) {
-			return false;
-		}
-		return !! siteSshKeys.find( ( { user_login }: SiteSshKey ) => user_login === user.username );
-	}, [ siteSshKeys, user.username ] );
-
 	const unattachedUserSshKeys = useMemo(
 		() =>
 			( userSshKeys ?? [] ).filter(
@@ -197,20 +184,11 @@ export default function SshCard( {
 	);
 
 	// Fall back to the first key that can still be attached, for example after the selected key was attached.
-	const selectedSshKey =
-		! isMultipleKeysEnabled ||
-		unattachedUserSshKeys.some( ( { name } ) => name === formData.ssh_key )
-			? formData.ssh_key
-			: ( unattachedUserSshKeys[ 0 ]?.name ?? '' );
-	const showAttachSshKey = isMultipleKeysEnabled
-		? ! hasUserSshKeys || unattachedUserSshKeys.length > 0
-		: ! userKeyIsAttached;
-	const showAddSshKey = isMultipleKeysEnabled
-		? ( userSshKeys?.length ?? 0 ) < MAX_SSH_KEYS
-		: showAttachSshKey;
-	const attachableUserSshKeys = isMultipleKeysEnabled
-		? unattachedUserSshKeys
-		: ( userSshKeys ?? [] );
+	const selectedSshKey = unattachedUserSshKeys.some( ( { name } ) => name === formData.ssh_key )
+		? formData.ssh_key
+		: ( unattachedUserSshKeys[ 0 ]?.name ?? '' );
+	const showAttachSshKey = ! hasUserSshKeys || unattachedUserSshKeys.length > 0;
+	const showAddSshKey = ( userSshKeys?.length ?? 0 ) < MAX_SSH_KEYS;
 
 	const handleCopy = ( label?: React.ReactNode ) => {
 		if ( ! label ) {
@@ -333,7 +311,7 @@ export default function SshCard( {
 		},
 		{
 			id: 'ssh_key',
-			label: isMultipleKeysEnabled ? __( 'SSH keys' ) : __( 'SSH key' ),
+			label: __( 'SSH keys' ),
 			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
 				const hasSiteSshKeys = siteSshKeys && siteSshKeys.length > 0;
 				const sshKeysControl = (
@@ -373,10 +351,8 @@ export default function SshCard( {
 				);
 			},
 			elements: hasUserSshKeys
-				? attachableUserSshKeys.map( ( userSshKey: UserSshKey ) => ( {
-						label: isMultipleKeysEnabled
-							? getSshKeyLabel( userSshKey )
-							: `${ user.username }-${ userSshKey.name }`,
+				? unattachedUserSshKeys.map( ( userSshKey: UserSshKey ) => ( {
+						label: getSshKeyLabel( userSshKey ),
 						value: userSshKey.name,
 					} ) )
 				: [

@@ -55,7 +55,9 @@ export function AssistedWordPressMigration( { site }: { site: Site } ) {
 	return (
 		<MigrationCard
 			title={ __( 'We’ve received your migration request' ) }
-			description={ __( 'We will review your site to make sure we have everything we need.' ) }
+			description={ __(
+				'We will review your site to make sure we have everything we need. Keep an eye on your inbox, we’ll send you emails as we work through the migration. Feel free to reply at any time if you have a question.'
+			) }
 			decoration={ <StatusIcon status="pending" /> }
 			note={ cancelButton }
 		>
@@ -97,10 +99,10 @@ function Pending( { site, cancelButton }: { site: Site; cancelButton: React.Reac
 		return null;
 	}
 
-	// A failed run handed our migration over. The customer sees what stopped it if they take it back and try again.
-	const stoppedBy = migration?.findings.find(
-		( { resolution } ) => resolution === 'assisted_handoff'
-	);
+	let stoppedBy = undefined;
+	if ( migration?.status === 'failed' ) {
+		stoppedBy = migration.findings.find( ( { severity } ) => severity === 'failure' );
+	}
 	const isAfterFailure = !! stoppedBy;
 
 	return (
@@ -152,7 +154,13 @@ function StoppedBy( {
 
 	return (
 		<VStack spacing={ 1 } className="wordpress-migration__details">
-			<Text weight={ 500 }>{ __( 'What stopped the migration' ) }</Text>
+			<Text weight={ 500 }>
+				{ sprintf(
+					/* translators: %s: what stopped the migration, e.g. "The migration plugin isn’t active on your site". */
+					__( 'What stopped the migration: %s' ),
+					finding.label
+				) }
+			</Text>
 			<Text>{ finding.message }</Text>
 			{ step && (
 				<Text variant="muted">

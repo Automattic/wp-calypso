@@ -9,9 +9,13 @@ import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param'
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { NeedHelpLink } from '../site-migration-credentials/components/need-help-link';
+import { useRequestMigrationHelp } from '../site-migration-credentials/hooks/use-request-migration-help';
 import Authorization from './components/authorization';
 import useStoreApplicationPassword from './hooks/use-store-application-password';
 import type { Step as StepType } from '../../types';
+
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 const SiteMigrationApplicationPasswordsAuthorization: StepType< {
@@ -55,7 +59,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 
 	useEffect( () => {
 		if ( isStoreApplicationPasswordSuccess ) {
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 			navigation?.submit?.( { action: 'migration-started' } );
 		}
 	}, [ isStoreApplicationPasswordSuccess, navigation, dispatch, siteId ] );
@@ -68,9 +74,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		navigation?.submit?.( { action: 'authorization', authorizationUrl } );
 	};
 
-	const contactMe = () => {
-		navigation?.submit?.( { action: 'contact-me' } );
-	};
+	const { requestHelp: contactMe, isHelpRequested } = useRequestMigrationHelp( () =>
+		navigation?.submit?.( { action: 'contact-me' } )
+	);
 
 	let notice = undefined;
 	if ( isStoreApplicationPasswordError ) {
@@ -126,19 +132,26 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				columnWidth={ 5 }
+				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
+						rightElement={
+							<div className="account-template__top-bar-links">
+								<NeedHelpLink onHelpLinkClicked={ contactMe } isBusy={ isHelpRequested } />
+							</div>
+						}
 					/>
 				}
-				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 				className="site-migration-application-password-authorization-v2"
 			>
-				{ notice }
-				{ stepContent }
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subHeaderText } />
+					{ notice }
+					{ stepContent }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

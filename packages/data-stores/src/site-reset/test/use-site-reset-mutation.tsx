@@ -5,17 +5,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/dom';
 import { renderHook } from '@testing-library/react';
 import React, { act } from 'react';
+import { type Mock, vi } from 'vitest';
 import wpcomRequest from '../../wpcom-request';
 import { useSiteResetMutation } from '../use-site-reset-mutation';
 
-jest.mock( '../../wpcom-request', () => ( {
+vi.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 describe( 'use-site-reset-mutation hook', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'returns success from the api', async () => {
@@ -28,7 +29,7 @@ describe( 'use-site-reset-mutation hook', () => {
 			success: true,
 		};
 
-		( wpcomRequest as jest.Mock ).mockImplementation( () => Promise.resolve( expected ) );
+		( wpcomRequest as Mock ).mockImplementation( () => Promise.resolve( expected ) );
 
 		const { result } = renderHook( () => useSiteResetMutation(), {
 			wrapper,
@@ -57,7 +58,7 @@ describe( 'use-site-reset-mutation hook', () => {
 			message: 'Something went wrong',
 		};
 
-		( wpcomRequest as jest.Mock ).mockImplementation( () => Promise.reject( error ) );
+		( wpcomRequest as Mock ).mockImplementation( () => Promise.reject( error ) );
 
 		const { result } = renderHook( () => useSiteResetMutation(), {
 			wrapper,

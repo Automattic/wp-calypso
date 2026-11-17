@@ -43,6 +43,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 		.components-button:hover svg {
 			fill: var(--color-neutral-20);
+			color: var(--color-neutral-20);
 		}
 	}
 

@@ -9,9 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
-const { ERROR_MESSAGE } = require( '../../../lib/rules/i18n-named-placeholders' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
+import rule from '../../../lib/rules/i18n-named-placeholders';
+const { ERROR_MESSAGE } = rule;
 const config = { languageOptions: { ecmaVersion: 2015, sourceType: 'script' } }; // support for string templates
 
 //------------------------------------------------------------------------------

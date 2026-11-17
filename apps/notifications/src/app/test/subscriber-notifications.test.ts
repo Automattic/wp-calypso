@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import { subscribeUnseenCount } from '../client';
 import { createNotificationSound } from '../notification-sound';
 import { subscribeSubscriberNotifications } from '../subscriber-notifications';
 
-jest.mock( '../client' );
-jest.mock( '../notification-sound' );
+vi.mock( '../client' );
+vi.mock( '../notification-sound' );
 
 describe( 'subscribeSubscriberNotifications', () => {
-	const sound = { play: jest.fn(), dispose: jest.fn() };
-	const unsubscribe = jest.fn();
+	const sound = { play: vi.fn(), dispose: vi.fn() };
+	const unsubscribe = vi.fn();
 	const candidate = {
 		targetSiteId: 23,
 		type: 'follow' as const,
@@ -17,19 +18,19 @@ describe( 'subscribeSubscriberNotifications', () => {
 	let onLiveNotification: ( notification: typeof candidate ) => void;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( createNotificationSound ).mockReturnValue( sound );
-		jest
-			.mocked( subscribeUnseenCount )
-			.mockImplementation( ( _wpcom, _onCount, onSubscriberNotification ) => {
+		vi.clearAllMocks();
+		vi.mocked( createNotificationSound ).mockReturnValue( sound );
+		vi.mocked( subscribeUnseenCount ).mockImplementation(
+			( _wpcom, _onCount, onSubscriberNotification ) => {
 				onLiveNotification = onSubscriberNotification!;
 				return unsubscribe;
-			} );
+			}
+		);
 	} );
 
 	it( 'plays and confirms a visible live follow note', () => {
-		const onCount = jest.fn();
-		const onConfirmed = jest.fn();
+		const onCount = vi.fn();
+		const onConfirmed = vi.fn();
 		const stop = subscribeSubscriberNotifications( {}, onCount, onConfirmed );
 
 		onLiveNotification( candidate );
@@ -46,9 +47,9 @@ describe( 'subscribeSubscriberNotifications', () => {
 
 	it( 'reports the sound result and forwards the error reporter', () => {
 		sound.play.mockReturnValueOnce( 'cooldown' );
-		const onSound = jest.fn();
-		const onError = jest.fn();
-		const stop = subscribeSubscriberNotifications( {}, jest.fn(), jest.fn(), {
+		const onSound = vi.fn();
+		const onError = vi.fn();
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), vi.fn(), {
 			onSound,
 			onError,
 		} );
@@ -60,9 +61,22 @@ describe( 'subscribeSubscriberNotifications', () => {
 		stop();
 	} );
 
+	it( 'reports the sound result once audio that was still starting settles', async () => {
+		sound.play.mockReturnValueOnce( Promise.resolve( 'played' ) );
+		const onSound = vi.fn();
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), vi.fn(), { onSound } );
+
+		onLiveNotification( candidate );
+		expect( onSound ).not.toHaveBeenCalled();
+
+		await Promise.resolve();
+		expect( onSound ).toHaveBeenCalledWith( 'played', candidate );
+		stop();
+	} );
+
 	it( 'does not report a sound result for a rejected candidate', () => {
-		const onSound = jest.fn();
-		const stop = subscribeSubscriberNotifications( {}, jest.fn(), () => false, { onSound } );
+		const onSound = vi.fn();
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), () => false, { onSound } );
 
 		onLiveNotification( candidate );
 
@@ -71,8 +85,8 @@ describe( 'subscribeSubscriberNotifications', () => {
 	} );
 
 	it( 'does not play audio when the alert consumer rejects a stale candidate', () => {
-		const onConfirmed = jest.fn().mockReturnValue( false );
-		const stop = subscribeSubscriberNotifications( {}, jest.fn(), onConfirmed );
+		const onConfirmed = vi.fn().mockReturnValue( false );
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), onConfirmed );
 
 		onLiveNotification( candidate );
 
@@ -82,8 +96,8 @@ describe( 'subscribeSubscriberNotifications', () => {
 	} );
 
 	it( 'does not alert for a push received while hidden', () => {
-		const onConfirmed = jest.fn();
-		const stop = subscribeSubscriberNotifications( {}, jest.fn(), onConfirmed );
+		const onConfirmed = vi.fn();
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), onConfirmed );
 
 		onLiveNotification( { ...candidate, wasVisibleAtReceipt: false } );
 
@@ -95,8 +109,8 @@ describe( 'subscribeSubscriberNotifications', () => {
 	it( 'does not deliver alerts while the document is hidden', () => {
 		const originalHidden = Object.getOwnPropertyDescriptor( document, 'hidden' );
 		Object.defineProperty( document, 'hidden', { configurable: true, value: true } );
-		const onConfirmed = jest.fn();
-		const stop = subscribeSubscriberNotifications( {}, jest.fn(), onConfirmed );
+		const onConfirmed = vi.fn();
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), onConfirmed );
 
 		onLiveNotification( candidate );
 
@@ -109,8 +123,8 @@ describe( 'subscribeSubscriberNotifications', () => {
 	} );
 
 	it( 'ignores callbacks after cleanup', () => {
-		const onConfirmed = jest.fn();
-		const stop = subscribeSubscriberNotifications( {}, jest.fn(), onConfirmed );
+		const onConfirmed = vi.fn();
+		const stop = subscribeSubscriberNotifications( {}, vi.fn(), onConfirmed );
 
 		stop();
 		onLiveNotification( candidate );
@@ -121,7 +135,7 @@ describe( 'subscribeSubscriberNotifications', () => {
 	} );
 
 	it( 'keeps count subscriptions without creating audio when alerts are disabled', () => {
-		const stop = subscribeSubscriberNotifications( {}, jest.fn() );
+		const stop = subscribeSubscriberNotifications( {}, vi.fn() );
 
 		expect( subscribeUnseenCount ).toHaveBeenCalledTimes( 1 );
 		expect( createNotificationSound ).not.toHaveBeenCalled();

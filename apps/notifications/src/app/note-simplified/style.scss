@@ -34,21 +34,53 @@
 	list-style: none;
 	overflow-wrap: anywhere;
 
-	&.is-reply > li > :last-child {
-		padding-inline-start: 48px;
-	}
-
-	&.is-reply .wpnc-simplified__thread-parent {
+	// The comment a reply answers, or that someone liked, sits as a smaller quote on
+	// a gray panel, so what happened to it leads and a reply's own quotes can't be
+	// mistaken for it.
+	.wpnc-simplified__thread-parent.is-compact {
 		position: relative;
+		padding: 14px $grid-unit-20;
+		border-radius: $radius-large;
+		background: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
+		transition: background-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 
-		&::before {
+		// The token isn't remapped for the dark theme, so recess the panel into the
+		// page's darker background, as the light theme does.
+		@include ui-mixins.when-dark-theme {
+			background: var(--dashboard__background-color);
+		}
+
+		// The comment's link stretches over the whole panel, so any of it opens the
+		// comment. The name, photo, time and links in the text stay above it.
+		.wpnc-simplified__item-link::after {
 			content: "";
 			position: absolute;
-			inset-block: 48px -4px;
-			inset-inline-start: 17px;
-			width: 2px;
-			border-radius: 2px;
-			background: var(--wp-components-color-gray-300, #{$gray-300});
+			inset: 0;
+			border-radius: inherit;
+		}
+
+		a:not(.wpnc-simplified__item-link) {
+			position: relative;
+			z-index: 1;
+		}
+
+		&:has(.wpnc-simplified__item-link:hover) {
+			background: color-mix(in srgb, var(--wpds-color-background-surface-neutral-weak, #f4f4f4), #000 2%);
+
+			@include ui-mixins.when-dark-theme {
+				background: color-mix(in srgb, var(--dashboard__background-color), #fff 4%);
+			}
+		}
+
+		// The time's link opens the comment for the keyboard, so its focus ring goes
+		// around the whole panel, as the context card's does.
+		.wpnc-simplified__comment-link:focus-visible {
+			outline: none;
+		}
+
+		&:has(.wpnc-simplified__comment-link:focus-visible) {
+			outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color);
+			outline-offset: 2px;
 		}
 
 		.wpnc-simplified__author,
@@ -59,45 +91,61 @@
 
 		.wpnc-simplified__parent-text {
 			@extend .wpnc-simplified__quiet-links;
-			color: var(--wp-components-color-gray-700, #{$gray-700});
 		}
 	}
 }
 
-.wpnc-simplified__card + .wpnc-simplified__thread,
+// The card and the quoted comment sit 20px from each other and from the reply or
+// the people below them.
+.wpnc-simplified > .wpnc-simplified__card + .wpnc-simplified__thread,
+.wpnc-simplified__people > .wpnc-simplified__card + .wpnc-simplified__thread,
+.wpnc-simplified__people > .wpnc-simplified__card + .wpnc__note,
+.wpnc-simplified__people > .wpnc-simplified__thread + .wpnc__note {
+	margin-block-start: $grid-unit-05;
+}
+
+.wpnc-simplified__people .wpnc__user-icon {
+	transition: opacity var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+
+	&:hover {
+		opacity: 0.88;
+	}
+}
+
 .wpnc-simplified__thread + .wpnc-simplified__heading {
-	margin-top: $grid-unit-10;
+	margin-block-start: $grid-unit-10;
 }
 
-.wpnc-simplified__photo {
-	display: flex;
-	flex-shrink: 0;
+.wpnc-simplified__post-title {
+	overflow-wrap: anywhere;
+	text-wrap: pretty;
 }
 
-.wpnc-simplified__pending-approval {
-	flex-shrink: 0;
-	font-size: $font-size-medium;
-	font-weight: $font-weight-medium;
-	color: var(--wpds-color-foreground-content-warning-weak, #926300);
+// The closing "And 7 others liked your post" line carries on from the people, in
+// gray as a footnote, with its link reading like Subscribe beside them. With the
+// last row's bottom padding, it sits 24px below it.
+.wpnc-simplified__more-people {
+	margin: 0;
+	color: var(--wpds-color-foreground-content-neutral-weak, #707070);
+	line-height: 20px;
 
 	@include ui-mixins.when-dark-theme {
-		color: var(--dashboard__foreground-color-warning, #f5c15c);
+		color: var(--wp-components-color-gray-700, #{$gray-700});
 	}
 
-	svg {
-		align-self: center;
-		fill: currentColor;
-	}
-
-	a,
-	a:visited {
-		color: inherit;
+	a {
+		color: var(--wp-admin-theme-color);
 		text-decoration: none;
 
 		&:hover {
 			text-decoration: underline;
 		}
 	}
+}
+
+.wpnc-simplified__photo {
+	display: flex;
+	flex-shrink: 0;
 }
 
 .wpnc-simplified__parent-text.is-truncated {
@@ -107,9 +155,32 @@
 	overflow: hidden;
 	white-space: normal;
 
+	// Paragraphs run on, so a blank line between them doesn't take up the preview.
+	p {
+		display: inline;
+	}
+
 	img:not(.emoji) {
 		display: none;
 	}
+}
+
+// Quoted text in the comment takes a thin bar, upright so longer quotes stay easy
+// to read.
+.wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content blockquote {
+	padding-inline: $grid-unit-20 0;
+	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-400, #{$gray-400});
+	color: var(--wp-components-color-gray-700, #{$gray-700});
+	font-style: normal;
+}
+
+// Text quoted inside the quoted comment takes the same thin bar, indented less to
+// suit the smaller text, and no gap below so the two-line preview isn't half blank.
+.wpnc-simplified__thread-parent.is-compact .wpnc-simplified__parent-text blockquote {
+	margin: 0;
+	padding-inline: $grid-unit-15 0;
+	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-300, #{$gray-300});
+	font-style: normal;
 }
 
 .wpnc-simplified__parent-text.is-excerpt img:not(.emoji) {
@@ -119,6 +190,16 @@
 .wpnc-simplified__card {
 	display: block;
 	overflow-wrap: anywhere;
+	// The design system's surface border, which Card doesn't take yet. The token
+	// isn't remapped for the dark theme, so the dashboard's border takes over there.
+	box-shadow: 0 0 0 1px var(--wpds-color-stroke-surface-neutral, #dbdbdb);
+
+	@include ui-mixins.when-dark-theme {
+		box-shadow: 0 0 0 1px var(--dashboard-surface__border-color, #4a4a4a);
+	}
+	transition:
+		background-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease),
+		box-shadow var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 
 	&,
 	&:visited {
@@ -131,25 +212,86 @@
 		outline-offset: 2px;
 	}
 
+	// The note list rows' hover fill (the rows' text color at 2%, #f0f0f0 in dark mode),
+	// with the border a touch darker than at rest. The pane remaps
+	// --wpds-color-background-interactive-neutral-weak-active to a solid gray, so this
+	// takes the list's value.
 	&:hover {
-		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 2%, transparent);
-		box-shadow: 0 0 0 1px color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
+		background-color: color-mix(in srgb, #{$gray-900} 2%, transparent);
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--wpds-color-stroke-surface-neutral, #dbdbdb), #{$gray-900} 4%);
+
+		@include ui-mixins.when-dark-theme {
+			background-color: color-mix(in srgb, #f0f0f0 2%, transparent);
+			box-shadow: 0 0 0 1px color-mix(in srgb, var(--dashboard-surface__border-color, #4a4a4a), #fff 10%);
+		}
 	}
+
+	// 14px between the card's edge and its text, as in the quoted comment below it.
+	// Card's sizes step from 8px to 16px, so the body takes no size and sets this itself.
+	.wpnc-simplified__card-body {
+		padding: 14px $grid-unit-20;
+	}
+
+	// A step darker on hover, short of the text color.
+	&:hover .wpnc-simplified__card-arrow {
+		fill: color-mix(in srgb, var(--wp-components-color-foreground, #{$gray-900}) 60%, transparent);
+		color: color-mix(in srgb, var(--wp-components-color-foreground, #{$gray-900}) 60%, transparent);
+	}
+}
+
+// The author's name reads darker than the time beside it, linked or not.
+.wpnc-simplified__card-author,
+.wpnc-simplified__quiet-links a.wpnc-simplified__card-author {
+	color: var(--wp-components-color-foreground, #{$gray-900});
 }
 
 .wpnc-simplified__card-arrow {
 	flex-shrink: 0;
 	fill: var(--wp-components-color-gray-600, #{$gray-600});
+	color: var(--wp-components-color-gray-600, #{$gray-600});
+	transition: fill var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+}
+
+// A comment's time, followed by an arrow, opens the comment on its site, as the context
+// card's arrow opens the post.
+.wpnc-simplified__comment-link {
+	display: inline-flex;
+	align-items: center;
+	// With the arrow's own 4px of space, it sits about 8px after the time, as far as
+	// the time sits from the name.
+	gap: $grid-unit-05;
+
+	// On hover the arrow takes the time's own color.
+	&:hover .wpnc-simplified__comment-arrow,
+	.wpnc-simplified__thread-parent:has(.wpnc-simplified__item-link:hover) & .wpnc-simplified__comment-arrow {
+		color: inherit;
+	}
+}
+
+.wpnc-simplified__comment-arrow {
+	flex-shrink: 0;
+	color: var(--wp-components-color-gray-600, #{$gray-600});
+	transition: color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+}
+
+// The note list's hairline edge on every avatar, drawn inside so they keep their size.
+.wpnc-simplified .wpnc__note-icon > :first-child {
+	outline: 1px solid color-mix(in srgb, #000 10%, transparent);
+	outline-offset: -1px;
 }
 
 .wpnc-simplified__site-icon {
 	flex-shrink: 0;
 	border-radius: $radius-medium;
+	// The same hairline edge as the list avatars, drawn inside so the icon stays 36px.
+	outline: 1px solid color-mix(in srgb, #000 10%, transparent);
+	outline-offset: -1px;
 
 	&.is-placeholder {
 		padding: $grid-unit-05;
 		background: var(--wp-components-color-gray-100, #{$gray-100});
 		fill: var(--wp-components-color-gray-700, #{$gray-700});
+		color: var(--wp-components-color-gray-700, #{$gray-700});
 	}
 }
 
@@ -161,8 +303,8 @@
 .wpnc-simplified .wpnc__reply {
 	// Adds to the body stack's 8px gap for 12px above the line.
 	margin-block-start: $grid-unit-05;
-	font-size: 15px;
-	line-height: 24px;
+	font-size: 14px;
+	line-height: 22px;
 
 	.wpnc__gridicon {
 		margin-inline-end: 2px;
@@ -183,6 +325,92 @@
 .wpnc-simplified .wpnc__body-content > .wpnc__comment,
 .wpnc-simplified .wpnc__body-content > .wpnc__post,
 .wpnc-simplified .wpnc-simplified__parent-text {
-	font-size: 15px;
-	line-height: 24px;
+	font-size: 14px;
+	line-height: 22px;
+}
+
+// Headings in a post take the body's size, set apart by their weight and more
+// space above them than between paragraphs, so each starts a section.
+.wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content :is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
+	font-size: 14px;
+	line-height: 22px;
+
+	&:not(:first-child) {
+		margin-block-start: $grid-unit-30;
+	}
+}
+
+// A post's headings step down from its 17px title: h1 and h2 a size above the
+// body, h3 and h4 at the body's size, and h5 and h6 a size below, in gray.
+.wpnc-simplified .wpnc-simplified__post-body.wpnc__note .wpnc__body .wpnc__body-content {
+	:is(h1, h2, .wpnc__h1, .wpnc__h2) {
+		font-size: 15px;
+		line-height: 22px;
+	}
+
+	:is(h5, h6) {
+		font-size: 13px;
+		line-height: 20px;
+		color: var(--wpds-color-foreground-content-neutral-weak, #{$gray-700});
+
+		@include ui-mixins.when-dark-theme {
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+		}
+	}
+
+	p {
+		text-wrap: pretty;
+	}
+
+	// A thinner, lower underline, so a paragraph full of links stays readable.
+	a {
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
+	}
+
+	// Markers hang in a narrower gutter, with wrapped lines under the text.
+	:is(ul, ol) {
+		margin-inline-start: 0;
+		padding-inline-start: 20px;
+		list-style-position: outside;
+	}
+
+	// Spacer blocks are sized for the post's page, so they leave large gaps here.
+	// The separator takes the space above a heading on each side instead.
+	.wp-block-spacer,
+	p:empty {
+		display: none;
+	}
+
+	hr {
+		margin-block: $grid-unit-30;
+	}
+}
+
+// List items wrap over several of the taller lines, so they need more room
+// between them than in the detailed layout.
+.wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content li + li {
+	margin-block-start: $grid-unit-10;
+}
+
+.wpnc-simplified__reply-footer {
+	.comment-reply-input__textarea textarea,
+	button[type="submit"] {
+		border-radius: $radius-medium;
+	}
+
+	// A light border at rest that darkens on hover. The placeholder and the send
+	// button already mark it as an input.
+	.comment-reply-input__textarea textarea:not(:focus) {
+		border-color: $gray-400;
+		transition: border-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+
+		&:hover {
+			border-color: $gray-600;
+		}
+
+		@include ui-mixins.when-dark-theme {
+			border-color: var(--wpds-color-stroke-interactive-neutral, #8d8d8d);
+		}
+	}
 }

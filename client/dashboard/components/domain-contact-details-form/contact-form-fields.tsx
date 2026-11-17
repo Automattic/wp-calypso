@@ -3,7 +3,6 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	CheckboxControl,
-	ExternalLink,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -144,9 +143,13 @@ function OrganizationNotice() {
 function EmailNotice() {
 	const hasEnTranslation = useHasEnTranslation();
 	const icannLink = (
-		<ExternalLink href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en">
+		<a
+			href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
 			ICANN
-		</ExternalLink>
+		</a>
 	);
 
 	return (

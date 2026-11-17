@@ -1,0 +1,15 @@
+diff --git a/build/base-control/hooks.cjs b/build/base-control/hooks.cjs
+index 68b04d30635fe40bf9b23a50982950d4c62b67f1..3f7b132ae9ce4c743ceb2ba5721fff4e9498ff46 100644
+--- a/build/base-control/hooks.cjs
++++ b/build/base-control/hooks.cjs
+@@ -25,8 +25,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
+ 	enumerable: true
+ }) : target, mod));
+ let _wordpress_compose = require("@wordpress/compose");
++// index.cjs requires this file first, so it is still empty here and __toESM would copy no
++// `default`; read its exports live instead.
+ let __index_tsx = require("./index.cjs");
+-__index_tsx = __toESM(__index_tsx);
+ // packages/components/src/base-control/hooks.ts
+ /**
+ * Generate props for the `BaseControl` and the inner control itself.

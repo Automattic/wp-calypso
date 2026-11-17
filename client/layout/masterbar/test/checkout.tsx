@@ -14,7 +14,7 @@ jest.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () =
 	useCheckoutLeaveModal: () => ( { clickClose: jest.fn(), isLeaveDisabled: false } ),
 } ) );
 jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
-	useCheckoutHelpCenter: () => ( { showHelpIcon: false, toggleHelpCenter: jest.fn() } ),
+	useCheckoutHelpCenter: () => ( { toggleHelpCenter: jest.fn() } ),
 } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '../masterbar', () => ( {

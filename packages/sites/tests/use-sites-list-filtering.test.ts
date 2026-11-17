@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { useSitesListFiltering } from '../src';
 import { createMockSite } from './create-mock-site';

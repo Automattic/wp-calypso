@@ -515,7 +515,7 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 		border-color: var( --ai-ui-renderer-accent-line );
 	}
 
-	:is( .ai-ui-renderer__button, [role='checkbox'] ) svg {
+	.ai-ui-renderer__button svg {
 		fill: currentColor;
 	}
 

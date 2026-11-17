@@ -1,12 +1,16 @@
 import { isWpError } from '@automattic/api-core';
-import { Button, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import Notice from '../../components/notice';
+import Notice, {
+	NoticeActionButton,
+	NoticeActionLink,
+	NoticeActionLinkButton,
+} from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { reauthRequiredLink, wpcomLink } from '../../utils/link';
+import { toError } from '../../utils/to-error';
 import { bumpStat } from '../analytics';
 import { AuthContext, useSessionStateQuery } from '../auth';
 
@@ -94,7 +98,9 @@ function PermissionError() {
 				<Notice
 					variant="error"
 					actions={
-						<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
+						<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab rel="noopener noreferrer">
+							{ __( 'Contact support' ) }
+						</NoticeActionLink>
 					}
 				>
 					{ __( 'Your account doesn’t have permission to view this page.' ) }
@@ -124,15 +130,21 @@ function SessionError() {
 					actions={
 						<>
 							{ auth ? (
-								<Button variant="primary" onClick={ handleLogout }>
+								<NoticeActionButton variant="solid" onClick={ handleLogout }>
 									{ __( 'Log out' ) }
-								</Button>
+								</NoticeActionButton>
 							) : (
-								<Button variant="primary" href={ wpcomLink( '/log-in' ) }>
+								<NoticeActionLinkButton variant="solid" href={ wpcomLink( '/log-in' ) }>
 									{ __( 'Log in again' ) }
-								</Button>
+								</NoticeActionLinkButton>
 							) }
-							<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
+							<NoticeActionLink
+								href={ wpcomLink( '/help' ) }
+								openInNewTab
+								rel="noopener noreferrer"
+							>
+								{ __( 'Contact support' ) }
+							</NoticeActionLink>
 						</>
 					}
 				>
@@ -155,7 +167,9 @@ function GenericError( { error }: { error: Error } ) {
 				<Notice
 					variant="error"
 					actions={
-						<ExternalLink href={ wpcomLink( '/help' ) }>{ __( 'Contact support' ) }</ExternalLink>
+						<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab rel="noopener noreferrer">
+							{ __( 'Contact support' ) }
+						</NoticeActionLink>
 					}
 				>
 					{ error.message }
@@ -165,7 +179,9 @@ function GenericError( { error }: { error: Error } ) {
 	);
 }
 
-function UnknownError( { error }: { error: Error } ) {
+function UnknownError( { error: thrown }: { error: unknown } ) {
+	const error = toError( thrown );
+
 	if ( isWpError( error ) && error.error === 'reauthorization_required' ) {
 		return <ReauthRedirect />;
 	}

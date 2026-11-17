@@ -11,6 +11,7 @@ export default function Field( {
 	inputClassName,
 	isError,
 	onChange,
+	onBlur,
 	label,
 	value,
 	icon,
@@ -30,6 +31,7 @@ export default function Field( {
 	inputClassName?: string;
 	isError?: boolean;
 	onChange?: ( value: string ) => void;
+	onBlur?: ( value: string ) => void;
 	label?: string;
 	value: string;
 	icon?: ReactNode;
@@ -51,7 +53,11 @@ export default function Field( {
 		return null;
 	};
 
-	const onBlurField = () => {
+	const onBlurField = ( event: { target: { value: string } } ) => {
+		if ( onBlur ) {
+			onBlur( event.target.value );
+		}
+
 		return null;
 	};
 

@@ -1,20 +1,7 @@
-/* eslint-disable no-restricted-imports */
-import {
-	sitesQuery,
-	paginatedSitesQuery,
-	dashboardSiteFiltersQuery,
-	domainsQuery,
-} from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import A4AHelpCenter from './help-center';
 import { A4ALoadingLogo } from './loading-logo';
 import A4AOmnibar from './omnibar';
-import type {
-	FetchSitesOptions,
-	FetchPaginatedSitesOptions,
-	FetchDashboardSiteFiltersParams,
-} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -59,13 +46,5 @@ boot( {
 	components: {
 		omnibar: A4AOmnibar,
 		helpCenter: A4AHelpCenter,
-	},
-	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
-			dashboardSiteFiltersQuery( 'all', fields ),
-		domainsQuery: () => domainsQuery(),
 	},
 } );

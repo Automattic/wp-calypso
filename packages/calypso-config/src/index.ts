@@ -1,3 +1,4 @@
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import createConfig from '@automattic/create-calypso-config';
 import cookie from 'cookie';
 import desktopOverride from './desktop';
@@ -36,6 +37,8 @@ if ( ! window.configData ) {
 	window.configData = {};
 }
 
+export const serverEnvId: string | undefined = window.configData.env_id;
+
 const isDesktop = window.electron !== undefined;
 
 let configData: ConfigData;
@@ -44,16 +47,6 @@ if ( isDesktop ) {
 	configData = desktopOverride( window.configData );
 } else {
 	configData = window.configData;
-}
-
-// calypso.live matches
-// hash-abcd1234.calypso.live matches
-// calypso.live.com doesn't match
-const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9-]+\.)?calypso\.live$/;
-
-// check if the current browser location is *.calypso.live
-export function isCalypsoLive(): boolean {
-	return typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host );
 }
 
 function applyFlags( flagsString: string, modificationMethod: string ) {
@@ -90,7 +83,7 @@ const flagEnvironments = [
 if (
 	process.env.NODE_ENV === 'development' ||
 	flagEnvironments.includes( configData.env_id ) ||
-	isCalypsoLive()
+	isCalypsoLiveHostname( window.location.hostname )
 ) {
 	const cookies = cookie.parse( document.cookie );
 	if ( cookies.flags ) {

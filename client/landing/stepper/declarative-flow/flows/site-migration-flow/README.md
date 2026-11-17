@@ -2,11 +2,12 @@
 
 Shared migration router for source identification, destination selection, and plan selection. WordPress source access and migration execution belong to the Migration Status Dashboard (MSD).
 
-The WordPress journey is gated by `migration/reprint-flow`, which defaults to false. Non-WordPress sources retain the existing importer and static-site import routes. Backup upload is deferred and has no entry point in this flow.
+The WordPress journey is gated by `migration/reprint-flow`. Non-WordPress sources retain the existing importer and static-site import routes. Backup upload is deferred and has no entry point in this flow.
 
 ## Entry points
 
 - `/setup/site-migration`: the user enters their site address and runs URL/platform analysis before signup or login. WordPress migration requires authentication on the next step. Static-site import continues to public plan selection, with account creation handled by unified checkout.
+- With the flag on, selecting WordPress from the platform list returns to the address form, prefilling any earlier address. Continue keeps the selected WordPress platform and runs the existing analysis to detect WordPress.com hosting. Other detected platforms or analysis failures do not override the manual selection.
 - `/setup/site-migration/site-migration-identify?from=<url>&start=true`: hands over an address the user already submitted elsewhere, such as a landing page. With the flag on, identify checks it once on arrival; going back to identify shows the address form.
 - Landing pages built with landpack's `url-analyzer` block (e.g. `/move`) currently run their own analysis and link WordPress sources to `sitePicker?from=<url>&platform=wordpress&start=true`. With the flag on, `initialize` rewrites those to identify. Once the flag ships, point the block at identify and drop its routing and this rewrite.
 
@@ -31,6 +32,9 @@ Checkout returns to the destination's migration page in MSD. Cancelling checkout
 7. Cancel checkout and verify plans retains the created destination. Verify Back through picker, plans, result, and address entry.
 8. With and without the flag, verify non-WordPress sources retain their existing routes. With the flag off, WordPress migration retains the legacy workflow.
 9. Open `/setup/site-migration/sitePicker?from=<url>&platform=wordpress&start=true&ref=move-lp&flags=migration/reprint-flow` (what `/move` sends). Verify a single page load straight into "Checking your site", then Back shows the address form. Without the flag, verify the site picker.
+10. Select WordPress manually and enter a WordPress.com source. Verify the WordPress.com choices still appear. A different detected platform or failed analysis must retain the manual WordPress selection.
+11. On the WordPress.com choices screen, select the top option to migrate into this site from elsewhere. The option requires a resolved Simple or Atomic site with management access, excluding staging and deleted sites; it stays hidden while loading or if lookup fails. Verify address entry opens empty, the entered WordPress.com site becomes the destination (replacing any earlier selection), and the next source is analyzed afresh. Continue with an external WordPress source and verify the destination comparison appears before configuring a migration.
+12. With a selected destination, enter its current or default address as the source. Verify the form explains that this is the destination and does not analyze or continue. Check HTTP/HTTPS, `www`, and trailing paths, then enter a different source and verify the error clears and checking continues.
 
 ## Owned by
 

@@ -4,6 +4,7 @@ import {
 	Button,
 	RadioControl,
 	__experimentalVStack as VStack,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
 	privateApis,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -50,6 +51,7 @@ const UsernameConfirmEdit = ( {
 		__next40pxDefaultSize
 		id="username_confirm"
 		name="username_confirm"
+		prefix={ <InputControlPrefixWrapper>@</InputControlPrefixWrapper> }
 		autoCapitalize="off"
 		autoComplete="off"
 		autoCorrect="off"

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AgencyPartnerDirectoryExpertise from '../expertise';
 import PartnerDirectoryExpertiseContent from '../expertise/expertise-content';
@@ -76,7 +77,7 @@ function mockAgency( application: AgencyPartnerDirectoryApplication | null = nul
 beforeAll( () => {
 	// jsdom doesn't implement scrollIntoView, which the form calls when
 	// validation fails on the fields above the fold.
-	window.HTMLElement.prototype.scrollIntoView = jest.fn();
+	window.HTMLElement.prototype.scrollIntoView = vi.fn();
 } );
 
 beforeEach( () => {
@@ -129,12 +130,12 @@ describe( '<AgencyPartnerDirectoryExpertise>', () => {
 			.put( '/wpcom/v2/agency/123/profile/application' )
 			.reply( 200, updatedAgency );
 
-		const onSubmitSuccess = jest.fn();
+		const onSubmitSuccess = vi.fn();
 
 		render(
 			<PartnerDirectoryExpertiseContent
 				agency={ { id: 123, profile: makeProfile( application ) } }
-				recordTracksEvent={ jest.fn() }
+				recordTracksEvent={ vi.fn() }
 				dashboardUrl="/partner-directory"
 				onSubmitSuccess={ onSubmitSuccess }
 			/>

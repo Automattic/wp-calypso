@@ -25,6 +25,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
+import { CommentLabelsContext } from './comment-labels-context';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -50,6 +51,8 @@ const noop = () => {};
  */
 
 class PostComment extends PureComponent {
+	static contextType = CommentLabelsContext;
+
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -237,15 +240,7 @@ class PostComment extends PureComponent {
 		}
 
 		if ( canCollapse && this.state.isCollapsed ) {
-			const count = this.getAllChildrenIds( commentId ).length;
-			return (
-				<p className="comments__collapsed-replies">
-					{ translate( '%(count)s reply', '%(count)s replies', {
-						count,
-						args: { count: formatNumber( count ) },
-					} ) }
-				</p>
-			);
+			return null;
 		}
 
 		const showRepliesText = translate(
@@ -377,7 +372,7 @@ class PostComment extends PureComponent {
 			<strong className={ className } id={ `comment-${ commentId }` }>
 				{ authorName }
 
-				{ isExternalUrl && (
+				{ isExternalUrl && ! this.context && (
 					<a
 						className="comments__external-link"
 						href={ authorUrl }
@@ -473,6 +468,14 @@ class PostComment extends PureComponent {
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );
+		const respondee =
+			parentAuthorName &&
+			this.renderAuthorTag( {
+				className: 'comments__comment-respondee-link',
+				authorName: parentAuthorName,
+				authorUrl: parentAuthorUrl,
+				commentId: parentCommentId,
+			} );
 
 		// highlight comments not older than 10s
 		const isHighlighted =
@@ -481,6 +484,7 @@ class PostComment extends PureComponent {
 		const isNew = highlightedCommentIds.includes( commentId );
 		const canCollapse = this.canCollapse();
 		const { isCollapsed } = this.state;
+		const collapsedCount = canCollapse ? this.getAllChildrenIds( commentId ).length : 0;
 
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
@@ -501,13 +505,17 @@ class PostComment extends PureComponent {
 					} ) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
-							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
-								className: 'comments__comment-respondee-link',
-								authorName: parentAuthorName,
-								authorUrl: parentAuthorUrl,
-								commentId: parentCommentId,
-							} ) }
+							{ this.context ? (
+								translate( 'to {{author/}}', {
+									components: { author: respondee },
+									comment: 'Names the commenter a reply answers, as in "Petra to Bram".',
+								} )
+							) : (
+								<>
+									<Gridicon icon="chevron-right" size={ 16 } />
+									{ respondee }
+								</>
+							) }
 						</span>
 					) }
 					<div className="comments__comment-timestamp">
@@ -531,12 +539,29 @@ class PostComment extends PureComponent {
 							size="small"
 							className="comments__comment-collapse-toggle"
 							icon={ isCollapsed ? chevronDown : chevronUp }
-							label={ isCollapsed ? translate( 'Show replies' ) : translate( 'Hide replies' ) }
+							label={
+								isCollapsed
+									? translate( 'Show %(count)s reply', 'Show %(count)s replies', {
+											count: collapsedCount,
+											args: { count: formatNumber( collapsedCount ) },
+										} )
+									: translate( 'Hide replies' )
+							}
+							showTooltip
 							aria-expanded={ ! isCollapsed }
 							disabled={ this.hasPendingReply() }
 							accessibleWhenDisabled
 							onClick={ this.handleToggleCollapsedClick }
-						/>
+						>
+							{ isCollapsed && (
+								<span className="comments__collapsed-replies">
+									{ translate( '%(count)s reply', '%(count)s replies', {
+										count: collapsedCount,
+										args: { count: formatNumber( collapsedCount ) },
+									} ) }
+								</span>
+							) }
+						</Button>
 					) }
 				</div>
 

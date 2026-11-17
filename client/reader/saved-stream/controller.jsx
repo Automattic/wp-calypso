@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import {
@@ -6,7 +5,6 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
-import { isSavedPostsEnabled } from 'calypso/reader/data/saved-posts';
 
 const loadMain = () =>
 	import(
@@ -16,14 +14,6 @@ const loadMain = () =>
 const analyticsPageTitle = 'Reader';
 
 const exported = {
-	async requireSavedPosts( context, next ) {
-		if ( await isSavedPostsEnabled( context.queryClient ) ) {
-			next();
-			return;
-		}
-		page.redirect( '/reader' );
-	},
-
 	saved( context, next ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Saved';
@@ -54,4 +44,4 @@ const exported = {
 
 export default exported;
 
-export const { requireSavedPosts, saved } = exported;
+export const { saved } = exported;

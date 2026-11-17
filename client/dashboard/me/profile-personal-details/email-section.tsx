@@ -13,8 +13,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { createContext, useMemo, useEffect, useCallback, useContext, useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import Notice, { RouterNoticeActionLinkButton } from '../../components/notice';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
@@ -272,11 +271,16 @@ export default function EmailSection( {
 			return __( 'Your email has not been verified yet.' );
 		}
 
-		return undefined;
+		if ( validity?.user_email?.custom ) {
+			return undefined;
+		}
+
+		return __( 'Sign-in and account emails. Not shown publicly.' );
 	}, [
 		isEmailPending,
 		isEmailVerified,
 		hasEmailError,
+		validity,
 		handleCancelPendingEmail,
 		isEmailWritePending,
 	] );
@@ -313,9 +317,9 @@ export default function EmailSection( {
 					variant="warning"
 					title={ __( 'Protect access to your account' ) }
 					actions={
-						<RouterLinkButton variant="secondary" to="/me/security/account-recovery">
+						<RouterNoticeActionLinkButton variant="outline" to="/me/security/account-recovery">
 							{ __( 'Set up account recovery' ) }
-						</RouterLinkButton>
+						</RouterNoticeActionLinkButton>
 					}
 				>
 					{ __(

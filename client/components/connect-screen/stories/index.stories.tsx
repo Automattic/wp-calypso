@@ -249,7 +249,7 @@ export const ConsentTextVariants: StoryObj< typeof ConsentText > = {
 			<VariantSection title="With links">
 				<ConsentText>
 					By continuing, you agree to our{ ' ' }
-					<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_blank" rel="noreferrer">
+					<a href={ localizeUrl( 'https://automattic.com/tos/' ) } target="_blank" rel="noreferrer">
 						Terms of Service
 					</a>{ ' ' }
 					and{ ' ' }
@@ -428,7 +428,7 @@ export const FullInviteScreen: StoryObj = {
 			/>
 			<ConsentText>
 				By accepting, you agree to our{ ' ' }
-				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_blank" rel="noreferrer">
+				<a href={ localizeUrl( 'https://automattic.com/tos/' ) } target="_blank" rel="noreferrer">
 					Terms of Service
 				</a>
 				.

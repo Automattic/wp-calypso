@@ -5,7 +5,7 @@
  * See LICENSE.md file in root directory for full license.
  */
 
-const getCallee = require( '../get-callee' );
+import getCallee from '../get-callee';
 
 describe( '#getCallee', function () {
 	it( 'should return non-sequence callee', function () {

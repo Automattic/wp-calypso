@@ -66,13 +66,14 @@ describe( '#authorize()', () => {
 	const queryObject = {
 		_wp_nonce: 'nonce',
 		client_id: '12345678',
+		from: 'my_jetpack_onboarding',
 		redirect_uri: 'https://example.com/',
 		scope: 'auth',
 		secret: '1234abcd',
 		state: 12345678,
 	};
 	const code = 'abcdefghi1234';
-	const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+	const { _wp_nonce, client_id, from, redirect_uri, scope, secret, state } = queryObject;
 
 	describe( 'success', () => {
 		const mySitesPath = '/rest/v1.1/me/sites';
@@ -85,6 +86,7 @@ describe( '#authorize()', () => {
 					redirect_uri,
 					scope,
 					state,
+					from,
 				} )
 				.reply( 200, { code }, { 'Content-Type': 'application/json' } );
 
@@ -95,6 +97,7 @@ describe( '#authorize()', () => {
 					state,
 					redirect_uri,
 					secret,
+					from,
 				} )
 				.reply(
 					200,
@@ -182,6 +185,7 @@ describe( '#authorize()', () => {
 					redirect_uri,
 					scope,
 					state,
+					from,
 				} )
 				.reply(
 					400,

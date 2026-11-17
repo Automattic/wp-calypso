@@ -1,26 +1,23 @@
-/**
- * @jest-environment jsdom
- */
-
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useReelShare } from './index';
 
 ( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
 
 // Tracking spies
-const mockTrackClicked = jest.fn();
-const mockTrackNotConnected = jest.fn();
-const mockTrackConnectionDisabled = jest.fn();
-const mockTrackNotPublished = jest.fn();
-const mockTrackInvalidState = jest.fn();
-const mockTrackDispatched = jest.fn();
-const mockTrackFailed = jest.fn();
-const mockTrackCancelled = jest.fn();
+const mockTrackClicked = vi.fn();
+const mockTrackNotConnected = vi.fn();
+const mockTrackConnectionDisabled = vi.fn();
+const mockTrackNotPublished = vi.fn();
+const mockTrackInvalidState = vi.fn();
+const mockTrackDispatched = vi.fn();
+const mockTrackFailed = vi.fn();
+const mockTrackCancelled = vi.fn();
 
 // Store action spies
-const mockEditPost = jest.fn();
-const mockShareCurrentPost = jest.fn();
-const mockAddNotice = jest.fn();
+const mockEditPost = vi.fn();
+const mockShareCurrentPost = vi.fn();
+const mockAddNotice = vi.fn();
 
 // Selector state — mutable per-test
 type Connection = {
@@ -50,7 +47,7 @@ let mockReelSharePath: string | null;
 // then returns null from both select() and dispatch() for that store.
 let mockSocialStoreRegistered: boolean;
 
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', () => {
 	const select = ( storeName: string ) => {
 		if ( storeName === 'video-studio' ) {
 			return {
@@ -83,9 +80,9 @@ jest.mock( '@wordpress/data', () => {
 		return {};
 	};
 	return {
-		useSelect: jest.fn( ( selector ) => selector( select ) ),
+		useSelect: vi.fn( ( selector ) => selector( select ) ),
 		select,
-		useDispatch: jest.fn( ( storeName: string ) => {
+		useDispatch: vi.fn( ( storeName: string ) => {
 			if ( storeName === 'core/editor' ) {
 				return { editPost: mockEditPost };
 			}
@@ -101,7 +98,7 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
-jest.mock( '@wordpress/element', () => {
+vi.mock( '@wordpress/element', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require( 'react' );
 	return {
@@ -111,11 +108,11 @@ jest.mock( '@wordpress/element', () => {
 	};
 } );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: {
 		MediaLibrary: 'media_library',
@@ -129,16 +126,16 @@ jest.mock( '../../store', () => ( {
 	},
 } ) );
 
-jest.mock( '../../stores/video-studio', () => ( {
+vi.mock( '../../stores/video-studio', () => ( {
 	store: 'video-studio',
 } ) );
 
-jest.mock( '../../utils/jetpack-script-data', () => ( {
-	getReelSharePostPath: jest.fn( () => mockReelSharePath ),
-	getJetpackAdminUrl: jest.fn( ( path: string ) => `https://example.com/blog/wp-admin/${ path }` ),
+vi.mock( '../../utils/jetpack-script-data', () => ( {
+	getReelSharePostPath: vi.fn( () => mockReelSharePath ),
+	getJetpackAdminUrl: vi.fn( ( path: string ) => `https://example.com/blog/wp-admin/${ path }` ),
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
+vi.mock( '../../utils/tracking', () => ( {
 	trackImageStudioReelShareClicked: ( ...args: unknown[] ) => mockTrackClicked( ...args ),
 	trackImageStudioReelShareNotConnected: ( ...args: unknown[] ) => mockTrackNotConnected( ...args ),
 	trackImageStudioReelShareConnectionDisabled: ( ...args: unknown[] ) =>
@@ -164,7 +161,7 @@ const twitterConnection: Connection = {
 
 describe( 'useReelShare', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockReelSharePath = '/wpcom/v2/publicize/share-post/{postId}';
 		mockSocialStoreRegistered = true;
 		mockState = {

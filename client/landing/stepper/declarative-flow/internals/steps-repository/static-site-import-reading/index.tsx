@@ -10,7 +10,9 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { isCheckoutExitPreview } from 'calypso/landing/stepper/declarative-flow/flows/static-site-import-flow/helpers';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSchemeIfMissing } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
@@ -25,12 +27,22 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	{ action: 'continue'; importSessionId: string } | { action: 'unavailable' };
+	| { action: 'continue'; importSessionId: string; previewSiteSlug?: string }
+	| { action: 'migrate' }
+	| { action: 'unavailable' }
+	| { action: 'preview_failed' };
+
+/** The WoW funnel that builds a preview site for an import. */
+const PREVIEW_FUNNEL = 'preview';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const isRefusedError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_refused';
+
+// The server found WordPress behind the source, which a site migration moves whole.
+const isWordPressSourceError = ( error: unknown ) =>
+	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
 
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
 	function StaticSiteImportReading( { navigation } ) {
@@ -40,9 +52,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
 		const from = searchParams.get( 'from' )?.trim();
-		const sourceUrl = from
-			? addSchemeIfMissing( from, 'https' ).replace( /^http:/i, 'https:' )
-			: '';
+		const sourceUrl = from ? addSchemeIfMissing( from, 'https' ) : '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
 		const siteId = Number( searchParams.get( 'siteId' ) );
@@ -53,7 +63,9 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
-		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
+		// Left checkout with no destination: the import gets a preview site, so there is nothing to confirm.
+		const isPreview = isCheckoutExitPreview( searchParams );
+		const needsConfirmation = ! isPreview && ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
 
@@ -109,14 +121,34 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				] );
 			}
 
+			// The server delivers the import onto the preview as soon as its build lands.
+			const continueWith = async ( importSessionId: string ) => {
+				if ( ! isPreview ) {
+					return submit( { action: 'continue', importSessionId } );
+				}
+				try {
+					const preview = await startWowFunnelSite( {
+						funnelSlug: PREVIEW_FUNNEL,
+						funnelArgs: { import_session_id: importSessionId },
+					} );
+					return submit( {
+						action: 'continue',
+						importSessionId,
+						previewSiteSlug: preview.siteSlug,
+					} );
+				} catch {
+					return submit( { action: 'preview_failed' } );
+				}
+			};
+
 			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
+				return continueWith( sessionId );
 			}
 			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
+				onSuccess: ( session ) => continueWith( session.session_id ),
 				onError: ( createError ) =>
-					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
+					! isRefusedError( createError ) &&
+					submit( { action: isWordPressSourceError( createError ) ? 'migrate' : 'unavailable' } ),
 			} );
 		} );
 		const hasStarted = useRef( false );

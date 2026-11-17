@@ -59,7 +59,10 @@ export const Modal = createComponentImplementation(
 					initialFocus={ popupRef }
 					finalFocus={ triggerRef }
 					portal={
+						// On `<body>`, not ui's overlay layer, which stacks above the chart tooltips
+						// that portal there.
 						<Dialog.Portal
+							container={ document.body }
 							ref={ copySurfaceTheme }
 							className={ clsx( 'ai-ui-renderer__modal', className ) }
 						/>
@@ -69,7 +72,7 @@ export const Modal = createComponentImplementation(
 						<Dialog.Title>
 							{ props.accessibility?.label || __( 'Details', 'default' ) }
 						</Dialog.Title>
-						{ /* CloseIcon's tooltip needs private APIs that older WordPress hosts lack. */ }
+						{ /* CloseIconButton's tooltip needs private APIs that older WordPress hosts lack. */ }
 						<Dialog.Action
 							className="ai-ui-renderer__dialog-close"
 							variant="minimal"

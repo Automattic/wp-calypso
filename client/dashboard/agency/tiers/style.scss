@@ -6,18 +6,13 @@
 	--color-gray-700: #{$gray-700};
 }
 
-// The ProgressBar component officially supports a custom width via its
-// `className` prop — see the "With Custom Width" Storybook example:
-// https://wordpress.github.io/gutenberg/?path=/docs/components-progressbar--docs#with-custom-width
-// The class is doubled to outrank the track's own emotion styles (width: 160px),
-// which have equal specificity and would otherwise win or lose on injection order.
-.agency-tiers-influenced-revenue-bar.agency-tiers-influenced-revenue-bar {
+.agency-tiers-influenced-revenue-bar {
 	width: 100%;
-
-	// ProgressBar has no colour prop: its track and indicator both derive from
-	// `--wp-components-color-foreground`, so rebind it here to keep the override
-	// scoped to the bar.
 	--wp-components-color-foreground: var(--wp-admin-theme-color);
+	// Progress paints its indicator and track with these tokens; mix them from the
+	// foreground color, as ProgressBar did before.
+	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }
 
 // Wrapper provides the gradient fade — must sit outside the scroll container

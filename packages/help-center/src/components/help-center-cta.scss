@@ -56,6 +56,7 @@
 	}
 
 	svg {
+		color: $help-center-blue;
 		fill: $help-center-blue;
 		flex-shrink: 0;
 	}
@@ -72,6 +73,7 @@
 
 .help-center-cta__resource-item {
 	.help-center-link__cell a svg:first-child {
+		color: $help-center-blue;
 		fill: $help-center-blue;
 	}
 

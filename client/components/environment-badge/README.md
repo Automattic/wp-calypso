@@ -1,6 +1,6 @@
 # EnvironmentBadge
 
-Adds a little development helper badge to the bottom of the screen, which provides a link for feedback.
+Adds a little development helper badge to the bottom of the screen, which can provide a link for feedback.
 When expanded, it also provides information such as a link to documentation, and a list of currently active A/B tests.
 In the `development` environment, it also displays the current branch name.
 
@@ -13,7 +13,7 @@ The component already provides a few helpers which are used for Calypso e.g. _Pr
 ```jsx
 import EnvironmentBadge, { PreferencesHelper } from 'calypso/components/environment-badge';
 
-<EnvironmentBadge badge="development" feedbackURL="http://feedback">
+<EnvironmentBadge badge="development">
 	<PreferencesHelper />
 </EnvironmentBadge>;
 ```
@@ -21,5 +21,5 @@ import EnvironmentBadge, { PreferencesHelper } from 'calypso/components/environm
 ## Props
 
 - `badge` – mirrors the environment e.g. dev or staging:
-- `feedbackURL` – link to the feedback tracker e.g. github issues
+- `feedbackURL` (optional) – link to the feedback tracker; when set, the badge icon links to it
 - `children` (optional) – Any children elements which extend the badge and are being rendered next to it

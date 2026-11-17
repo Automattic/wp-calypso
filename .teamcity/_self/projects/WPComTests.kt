@@ -57,6 +57,8 @@ object WPComTests : Project({
 	buildType(GutenbergPlaywrightTests);
 
 	// Jetpack E2E Tests (Playwright)
+	// Started from outside this repository by build ID: check the callers listed in
+	// test/e2e/docs/tests_ci.md#jetpack-build-configurations before renaming or removing one.
 	template(JetpackE2ETestsBuildTemplate);
 	buildType(JetpackSimpleE2ETests);
 	buildType(JetpackAtomicE2ETests);
@@ -121,6 +123,12 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 	});
 }
 
+// Workers per single-variation Atomic run, all hitting one site. The ecomm-plan site answers
+// API calls past the 10s action timeout with 5 concurrent editors and holds at 2; the other
+// sites hold at 5.
+private const val SINGLE_VARIATION_WORKERS = "5"
+private const val SINGLE_VARIATION_ECOMM_WORKERS = "2"
+
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
 
@@ -155,7 +163,7 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 					targetDevice = targetDevice,
 					additionalEnvVars = mapOf(
 						"ATOMIC_VARIATION" to variation,
-						"PW_WORKERS" to "5",
+						"PW_WORKERS" to if ( variation == "ecomm-plan" ) SINGLE_VARIATION_ECOMM_WORKERS else SINGLE_VARIATION_WORKERS,
 					),
 					stepName = "Run Playwright specs: $variation",
 					// Per-variation report name so the loop's runs don't overwrite each other.
@@ -230,10 +238,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
-				// The spec files spread over the seven Atomic sites, but every worker can still
-				// land on one of them at once: the private site fails at 14 concurrent workers
-				// and holds at 4, so the count stays bounded by what a single site serves.
-				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
+				// No PW_WORKERS: the Playwright config sizes and caps mixed runs per Atomic site.
 			)
 		}
 
@@ -441,7 +446,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
+				sendTo = "#jetpack-alerts"
 				messageFormat = verboseMessageFormat {
 					addStatusText = true
 				}
@@ -482,19 +487,19 @@ private object JetpackAtomicE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "5")
 	}
 
 	features {
 		matrix {
-			param("env.ATOMIC_VARIATION", listOf(
-				value("default", label = "Default"),
-				value("php-old", label = "PHP Old"),
-				value("php-new", label = "PHP New"),
-				value("wp-beta", label = "WP Beta"),
-				value("wp-previous", label = "WP Previous"),
-				value("private", label = "Private"),
-				value("ecomm-plan", label = "Ecomm"),
+			// EXTRA_ENV_VARS so each variation can set its own worker count.
+			param("EXTRA_ENV_VARS", listOf(
+				value("ATOMIC_VARIATION=default;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "Default"),
+				value("ATOMIC_VARIATION=php-old;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "PHP Old"),
+				value("ATOMIC_VARIATION=php-new;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "PHP New"),
+				value("ATOMIC_VARIATION=wp-beta;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "WP Beta"),
+				value("ATOMIC_VARIATION=wp-previous;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "WP Previous"),
+				value("ATOMIC_VARIATION=private;PW_WORKERS=$SINGLE_VARIATION_WORKERS", label = "Private"),
+				value("ATOMIC_VARIATION=ecomm-plan;PW_WORKERS=$SINGLE_VARIATION_ECOMM_WORKERS", label = "Ecomm"),
 			))
 		}
 	}
@@ -510,7 +515,7 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "14")
+		// No PW_WORKERS: the Playwright config sizes and caps mixed runs per Atomic site.
 		param("env.ATOMIC_VARIATION", "mixed")
 		// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
 		// re-run of a failed build repeats the variations that failed.

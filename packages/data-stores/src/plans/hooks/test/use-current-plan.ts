@@ -1,9 +1,11 @@
+/* eslint-disable import/order */
 // Mocks
-jest.mock( '@wordpress/element', () => ( {
-	useMemo: jest.fn( ( callback ) => callback() ),
+import { vi } from 'vitest';
+vi.mock( '@wordpress/element', () => ( {
+	useMemo: vi.fn( ( callback ) => callback() ),
 } ) );
 
-jest.mock( '../../queries/use-site-plans', () => jest.fn() );
+vi.mock( '../../queries/use-site-plans', () => ( { default: vi.fn() } ) );
 
 import * as MockData from '../../mock';
 import useSitePlans from '../../queries/use-site-plans';
@@ -11,7 +13,7 @@ import useCurrentPlan from '../use-current-plan';
 
 describe( 'useCurrentPlan selector', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should bring back current plan when one exists in Site Plans', () => {

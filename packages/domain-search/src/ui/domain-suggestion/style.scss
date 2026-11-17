@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/colors';
 
 .domain-suggestions-list-item__icon {
+	color: #{$gray-700};
 	fill: #{$gray-700};
 	flex-shrink: 0;
 }

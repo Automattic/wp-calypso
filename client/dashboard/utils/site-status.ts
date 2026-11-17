@@ -57,8 +57,7 @@ export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null 
 	};
 }
 
-// A WordPress (Reprint) migration, which has its own views. Until the flow launches, these sites
-// are treated as whatever their flow sticker says.
+// A WordPress (Reprint) migration, which has its own views.
 export function isWordPressMigration( item: Site ) {
 	return config.isEnabled( 'migration/reprint-flow' ) && item.site_migration.type === 'wordpress';
 }

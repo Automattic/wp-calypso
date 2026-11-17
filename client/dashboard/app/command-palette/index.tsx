@@ -1,4 +1,3 @@
-// @ts-expect-error The commands package is not yet typed.
 import { CommandMenu, useCommandLoader } from '@wordpress/commands';
 import { useNavigationCommandLoader } from './commands';
 
@@ -9,7 +8,7 @@ function DashboardCommandPalette() {
 		context: 'root',
 	} );
 
-	return <CommandMenu search="" />;
+	return <CommandMenu />;
 }
 
 export default DashboardCommandPalette;

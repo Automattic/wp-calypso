@@ -48,16 +48,9 @@ class PasswordlessSignupForm extends Component {
 		onCreateAccountSuccess: PropTypes.func,
 		disableTosText: PropTypes.bool,
 		termsAfterActions: PropTypes.bool,
-		// Replaces account creation with a change to the account the caller already has, and
-		// reports its own failures.
-		onUpdateEmail: PropTypes.func,
-		// Names the signup's origin to the backend, which aims the activation link on it.
-		activationEmailFrom: PropTypes.string,
-		// Holds account creation until the caller is ready — the onboarding account step keeps this on
-		// while the email-verification arm loads, so the request can't go out before the arm decides
-		// activationEmailFrom. Guards the submit itself, not just the button, so Enter can't slip past.
-		isSubmitBlocked: PropTypes.bool,
 		useConnectScreenActions: PropTypes.bool,
+		// Names the signup's origin to the backend, which picks the activation email and its link.
+		activationEmailFrom: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -85,7 +78,7 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if ( this.props.isSubmitBlocked || this.props.blackbox.isSubmitBlocked || this.submitLock ) {
+		if ( this.props.blackbox.isSubmitBlocked || this.submitLock ) {
 			return;
 		}
 
@@ -96,32 +89,16 @@ class PasswordlessSignupForm extends Component {
 				errorMessages: [ this.getEmailErrorMessage( emailError, email ) ],
 				isSubmitting: false,
 			} );
-			if ( ! this.props.onUpdateEmail ) {
-				this.submitTracksEvent( false, {
-					action_message:
-						emailError === 'unknown_tld'
-							? 'Email domain does not end in a valid TLD.'
-							: 'Please provide a valid email address.',
-				} );
-			}
+			this.submitTracksEvent( false, {
+				action_message:
+					emailError === 'unknown_tld'
+						? 'Email domain does not end in a valid TLD.'
+						: 'Please provide a valid email address.',
+			} );
 			return;
 		}
 
 		this.submitLock = true;
-
-		if ( this.props.onUpdateEmail ) {
-			this.setState( { isSubmitting: true } );
-			try {
-				await this.props.onUpdateEmail( email );
-			} catch {
-				// The caller reports its own failures. This only keeps one it didn't from leaving
-				// the screen disabled with nothing to press.
-			} finally {
-				this.submitLock = false;
-				this.setState( { isSubmitting: false } );
-			}
-			return;
-		}
 
 		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
 		const form = {
@@ -137,13 +114,19 @@ class PasswordlessSignupForm extends Component {
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( flowName === '' && this.props.submitForm ) {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			if ( blackboxSessionId === null ) {
+				this.submitLock = false;
+				return;
+			}
 
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
 				{
 					email,
 					is_passwordless: true,
-					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+					...( blackboxSessionId && {
+						blackbox_session_id: blackboxSessionId,
+					} ),
 				},
 				( error ) => {
 					this.submitLock = false;
@@ -160,11 +143,6 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			form,
-		} );
-
 		const { oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
@@ -174,6 +152,16 @@ class PasswordlessSignupForm extends Component {
 
 		try {
 			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			if ( blackboxSessionId === null ) {
+				this.submitLock = false;
+				this.setState( { isSubmitting: false } );
+				return;
+			}
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				form,
+			} );
 
 			const body = {
 				email: this.getTrimmedEmail(),
@@ -192,7 +180,9 @@ class PasswordlessSignupForm extends Component {
 					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
 					...( activationEmailFrom && { from: activationEmailFrom } ),
 				},
-				...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+				...( blackboxSessionId && {
+					blackbox_session_id: blackboxSessionId,
+				} ),
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};
@@ -412,7 +402,6 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting ||
 			!! this.props.disabled ||
 			!! this.props.disableSubmitButton ||
-			!! this.props.isSubmitBlocked ||
 			this.props.blackbox.isSubmitBlocked;
 		const submitButtonText = isCreatingAccount
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating your account…' )
@@ -487,4 +476,11 @@ export default connect( null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
-} )( localize( withBlackboxProtection( PasswordlessSignupForm, { feature: 'blackbox-signup' } ) ) );
+} )(
+	localize(
+		withBlackboxProtection( PasswordlessSignupForm, {
+			feature: 'blackbox-signup',
+			flow: 'signup',
+		} )
+	)
+);

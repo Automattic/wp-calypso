@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor, within } from '@testing-library/react';
@@ -93,6 +93,15 @@ describe( '<SshKeys>', () => {
 		await userEvent.paste( VALID_KEY );
 
 		expect( within( dialog ).getByLabelText( 'Label' ) ).toHaveValue( 'Work laptop' );
+	} );
+
+	test( 'shows the limit message only at the limit', async () => {
+		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
+
+		render( <SshKeys /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Add SSH key' } ) ).toBeEnabled();
+		expect( screen.queryByText( /You can add up to/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'disables adding keys at the limit', async () => {

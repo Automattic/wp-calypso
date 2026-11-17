@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
-import { ProgressBar } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useCallback, useEffect } from 'react';
 import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
@@ -185,7 +185,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			if ( isLoading ) {
 				return (
 					<div className="step-container-v2--loading import-layout__center">
-						<ProgressBar className="step-container-v2--loading__progress-bar" />
+						<Progress.Root
+							className="step-container-v2--loading__progress-bar"
+							aria-label={ __( 'Loading…' ) }
+							value={ null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
 					</div>
 				);
 			}

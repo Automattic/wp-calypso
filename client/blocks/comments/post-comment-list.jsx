@@ -68,6 +68,8 @@ class PostCommentList extends Component {
 		commentsTree: PropTypes.object,
 		fetchEarlierComments: PropTypes.func.isRequired,
 		fetchLaterComments: PropTypes.func.isRequired,
+		latestCommentId: PropTypes.number,
+		loadedComments: PropTypes.array,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
 		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
@@ -122,13 +124,34 @@ class PostCommentList extends Component {
 			// in this case we can't just load the exact comment in question because
 			// we could create a gap in the list.
 			if ( this.props.commentsTree ) {
-				// view earlier...
-				this.viewEarlierCommentsHandler();
+				this.loadInitialPages();
 			}
 		} else if ( this.shouldFetchInitialPages() ) {
-			this.viewEarlierCommentsHandler();
-			this.viewLaterCommentsHandler();
+			this.loadInitialPages();
 			this.alreadyLoadedInitialSet = true;
+		}
+	};
+
+	// A fresh first page already holds the newest comments, so later ones are missing only when
+	// the caller knows of a newer comment than a cached thread has.
+	loadInitialPages = () => {
+		const { commentsFetchingStatus, latestCommentId, loadedComments } = this.props;
+		if ( commentsFetchingStatus.haveEarlierCommentsToFetch ) {
+			this.loadMoreCommentsHandler( 'before' );
+		} else {
+			this.setState( ( { amountOfCommentsToTake } ) => ( {
+				amountOfCommentsToTake: amountOfCommentsToTake + this.props.pageSize,
+			} ) );
+		}
+		// Once per comment, since one that never loads (held for moderation, deleted) would refetch on every update.
+		if (
+			latestCommentId &&
+			commentsFetchingStatus.hasReceivedBefore &&
+			! loadedComments?.some( ( comment ) => comment.ID === latestCommentId ) &&
+			this.requestedLatestCommentId !== latestCommentId
+		) {
+			this.requestedLatestCommentId = latestCommentId;
+			this.props.fetchLaterComments();
 		}
 	};
 
@@ -590,8 +613,8 @@ class PostCommentList extends Component {
 			? this.getDisplayedCollapsedInlineComments( commentsTree )
 			: this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
 
-		// The inbox's composer closes the thread; elsewhere the form opens it.
-		const isComposer = this.context;
+		// The inbox's form closes the thread; elsewhere it opens it.
+		const formAfterThread = this.context;
 		const rootForm = (
 			<PostCommentFormRoot
 				post={ this.props.post }
@@ -661,7 +684,7 @@ class PostCommentList extends Component {
 						</div>
 					</div>
 				) }
-				{ ! isComposer && rootForm }
+				{ ! formAfterThread && rootForm }
 				{ shouldShowFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
@@ -726,7 +749,7 @@ class PostCommentList extends Component {
 						} ) }
 					</button>
 				) }
-				{ isComposer && rootForm }
+				{ formAfterThread && rootForm }
 			</div>
 		);
 	}

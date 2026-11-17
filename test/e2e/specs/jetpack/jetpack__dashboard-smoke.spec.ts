@@ -51,7 +51,6 @@ test.describe(
 			} );
 
 			for ( const tab of [
-				'Security',
 				'Performance',
 				'Writing',
 				'Sharing',

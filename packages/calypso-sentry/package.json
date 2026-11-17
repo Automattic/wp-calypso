@@ -39,14 +39,18 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
+		"@automattic/calypso-url": "workspace:^",
 		"@sentry/react": "^7.120.4",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"jsdom": "^20.0.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0",

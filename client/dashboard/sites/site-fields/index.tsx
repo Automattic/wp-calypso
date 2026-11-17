@@ -2,6 +2,7 @@ import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import {
 	siteLastBackupQuery,
 	siteMediaStorageQuery,
+	siteEnvironmentPHPVersionQuery,
 	sitePHPVersionQuery,
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
@@ -31,7 +32,7 @@ import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getStorageUsagePercent } from '../../utils/site-storage';
 import { getVisibilityLabels } from '../../utils/site-visibility';
-import { canManageSite } from '../features';
+import { canManageSite, canViewPHPVersion } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
 import {
@@ -324,14 +325,16 @@ export function Uptime( { site }: { site?: Site } ) {
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
-	const isEligible = hasHostingFeature( site, HostingFeatures.PHP );
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
 	} );
 
+	const isEligible = canViewPHPVersion( site );
 	const { data, isLoading } = useQuery( {
-		...sitePHPVersionQuery( site.ID ),
+		...( hasHostingFeature( site, HostingFeatures.PHP )
+			? sitePHPVersionQuery( site.ID )
+			: siteEnvironmentPHPVersionQuery( site.ID ) ),
 		enabled: isEligible && inView,
 	} );
 

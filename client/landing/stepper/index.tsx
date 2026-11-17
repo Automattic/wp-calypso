@@ -31,7 +31,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';

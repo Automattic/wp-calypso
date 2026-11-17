@@ -1,9 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch, select } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
+import { CheckoutSuccessFlashMessage } from '../../../../app/checkout-success-flash-message';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CrossoverModalHost from '../../../crossover';
@@ -122,7 +126,7 @@ function mockAssign() {
 
 async function assignLicense() {
 	const user = await openRowActions();
-	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site' } ) );
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site…' } ) );
 	await user.click( await screen.findByRole( 'radio', { name: 'https://client.example.com' } ) );
 	await user.click( screen.getByRole( 'button', { name: 'Assign to selected site' } ) );
 	return user;
@@ -147,10 +151,48 @@ describe( '<MarketplacePurchases>', () => {
 			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
 		);
 
-		render( <MarketplacePurchases /> );
+		// The app shell renders the checkout success message, which removes `flash` and
+		// `purchased_plan`.
+		const { recordTracksEvent } = render(
+			<>
+				<CheckoutSuccessFlashMessage />
+				<MarketplacePurchases />
+			</>
+		);
 
 		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_marketplace_cart_cleared_on_checkout_success',
+			{ receipt_id: '123' }
+		);
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
+		expect(
+			select( noticesStore )
+				.getNotices()
+				.map( ( { content } ) => content )
+		).toEqual( [ 'Your purchase was completed.' ] );
+		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
+	} );
+
+	test( 'leaves `flash` and `purchased_plan` to the checkout success message', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+		);
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () =>
+			expect( window.location.search ).toBe(
+				'?flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+			)
+		);
 	} );
 
 	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {
@@ -211,7 +253,7 @@ describe( '<MarketplacePurchases>', () => {
 
 		// The action stays in the menu so the agency can see it exists; the Site
 		// column is what says why it is out of reach.
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -227,7 +269,7 @@ describe( '<MarketplacePurchases>', () => {
 		await screen.findByText( 'Not assigned' );
 		await openRowActions();
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).not.toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -265,8 +307,6 @@ describe( '<MarketplacePurchases>', () => {
 	} );
 
 	test( 'does not ask a partner who already answered', async () => {
-		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = jest.fn();
 		mockAgency();
 		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
 		mockAssignableLicense();
@@ -327,7 +367,7 @@ describe( '<MarketplacePurchases>', () => {
 			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
 			mockPendingSites( 'pending' );
 
-			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 			render(
 				<>
 					<MarketplacePurchases />

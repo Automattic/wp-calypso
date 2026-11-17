@@ -5,7 +5,7 @@
 	@include body-small;
 
 	color: var(--color-neutral-70);
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	text-transform: uppercase;
 }
 
@@ -21,7 +21,7 @@
 
 .a4a-stat__metric {
 	color: var(--color-neutral-100);
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 }
 
 .a4a-stat__metric-placeholder {

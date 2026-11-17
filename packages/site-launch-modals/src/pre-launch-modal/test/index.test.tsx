@@ -1,9 +1,7 @@
-/**
- * @jest-environment jsdom
- */
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import PreLaunchModal from '..';
 
 describe( '<PreLaunchModal>', () => {
@@ -36,7 +34,7 @@ describe( '<PreLaunchModal>', () => {
 
 	test( 'fires onLaunch when the launch button is clicked', async () => {
 		const user = userEvent.setup();
-		const onLaunch = jest.fn();
+		const onLaunch = vi.fn();
 		render( <PreLaunchModal { ...baseProps } isLaunching={ false } onLaunch={ onLaunch } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Yes, launch site!' } ) );

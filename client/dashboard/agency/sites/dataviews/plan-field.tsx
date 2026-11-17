@@ -1,7 +1,10 @@
 import { TextBlur } from '../../../components/text-blur';
+import { Plan } from '../../../sites/site-fields';
+import { getSitePlanDisplayName } from '../../../utils/site-plan';
+import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
 import { isPressableSite } from '../lib';
 import { usePressableSitesPlan } from '../use-pressable-sites-plan';
-import type { AgencySite } from '@automattic/api-core';
+import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ComponentProps, ComponentType } from 'react';
 
@@ -45,4 +48,27 @@ export function withPressablePlan( field: Field< AgencySite > | null ): Field< A
 	}
 
 	return { ...field, render: PlanCell };
+}
+
+// Agencies manage sites on several hosts, so a plan not bought through A4A shows its full
+// name (“WordPress.com Business”), as licensed plans already do, not the short one.
+function getPlanName( site: Site ) {
+	const name = getSitePlanDisplayName( site );
+	return name === site.plan?.product_name_short && site.plan?.product_name
+		? site.plan.product_name
+		: name;
+}
+
+export function withFullPlanName( field: Field< Site > ): Field< Site > {
+	return {
+		...field,
+		render: ( { item } ) => (
+			<Plan
+				site={ item }
+				isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
+				isJetpack={ item.jetpack }
+				value={ getPlanName( item ) ?? '' }
+			/>
+		),
+	};
 }

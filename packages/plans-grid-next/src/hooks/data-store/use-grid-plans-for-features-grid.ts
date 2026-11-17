@@ -29,6 +29,8 @@ const useGridPlansForFeaturesGrid = ( {
 	reflectStorageSelectionInPlanPrices,
 	usePlansGridRedesignFeatures,
 	usePlansGridRedesignNewDescription,
+	useMcpFeature,
+	hideFreeDomainBadge,
 	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
@@ -65,6 +67,8 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		usePlansGridRedesignFeatures,
+		useMcpFeature,
+		hideFreeDomainBadge,
 	} );
 
 	return useMemo( () => {

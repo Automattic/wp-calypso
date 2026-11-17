@@ -62,10 +62,12 @@ Query argument examples:
 You can use the same syntax in a cookie or via session storage
 
 Cookies:
+
 - `document.cookie = 'flags=+flag1,-flag2;max-age=1209600;path=/';`: Enable feature `flag1` and disable feature `flag2`.
 - `document.cookie = 'flags= ; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';`: Reset flags cookie to config values.
 
-Session Storage: 
+Session Storage:
+
 - `window.sessionStorage.setItem( 'flags', 'flag1,-flag2' );`: Enable feature `flag1` and disable feature `flag2`.
 - `window.sessionStorage.removeItem( 'flags' );`: Reset flags session item to config values.
 
@@ -93,15 +95,14 @@ which exports a function of the same name, so a change to `optionalConfig()` bel
 
 ## Testing for calypso.live environment
 
-We often need to enable or disable certain features not only based on the Calypso environment
-(development, production, staging, horizon, ...) but also when Calypso runs in the calypso.live
-testing environment. The `config` module exports a helper function `isCalypsoLive` that returns
-`true` if Calypso is running on the `*.calypso.live` origin.
+To check whether Calypso runs on `*.calypso.live`, use `isCalypsoLiveHostname` from
+`@automattic/calypso-url`. It takes the hostname explicitly, so the same helper works on the server
+with the request hostname.
 
 ```js
-import { isCalypsoLive } from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 
-if ( isCalypsoLive() ) {
+if ( isCalypsoLiveHostname( window.location.hostname ) ) {
 	/* ... */
 }
 ```

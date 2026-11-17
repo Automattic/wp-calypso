@@ -604,7 +604,7 @@ full context before restructuring anything.
 ```bash
 # From the wp-calypso root
 yarn workspace @automattic/agenttic-ui run build       # downloads translations; needs network
-yarn workspace @automattic/agenttic-ui run test        # vitest — not part of CI yet
+yarn workspace @automattic/agenttic-ui run test
 yarn workspace @automattic/agenttic-ui run type-check
 yarn workspace @automattic/agenttic-ui run storybook
 ```

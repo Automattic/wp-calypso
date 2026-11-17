@@ -2,10 +2,12 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import config from '@automattic/calypso-config';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
+import { useFlowState } from '../internals/state-manager/store';
 import { STEPS } from '../internals/steps';
-import { renderFlow } from './helpers';
+import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
@@ -13,6 +15,7 @@ const originalLocation = window.location;
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	clearSignupDestinationCookie: jest.fn(),
 } ) );
+jest.mock( '../internals/state-manager/store', () => ( { useFlowState: jest.fn() } ) );
 
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
@@ -27,9 +30,69 @@ describe( 'Site Setup Flow', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
+		jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+		jest.mocked( useFlowState ).mockReturnValue( { get: jest.fn() } );
 	} );
 
+	afterEach( () => jest.restoreAllMocks() );
+
 	describe( 'when the current step is importListing', () => {
+		it.each(
+			[ '', 'https://example.com' ].flatMap( ( from ) =>
+				[ false, true ].flatMap( ( fromWpAdmin ) =>
+					[ false, true ].map( ( staticImport ) => ( { from, fromWpAdmin, staticImport } ) )
+				)
+			)
+		)(
+			'returns WordPress to address entry (source: "$from", wp-admin: $fromWpAdmin, static import: $staticImport)',
+			( { from, fromWpAdmin, staticImport } ) => {
+				jest
+					.mocked( config.isEnabled )
+					.mockImplementation(
+						( flag ) =>
+							flag === 'migration/reprint-flow' ||
+							( staticImport && flag === 'migration/non-wordpress-source' )
+					);
+				const ref = fromWpAdmin ? 'wp-admin-importers-list' : 'new-site-popover';
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: () => ( { entryPoint: fromWpAdmin ? ref : undefined } ),
+				} );
+				const retained = {
+					siteId: '123',
+					siteSlug: 'example.wordpress.com',
+					from,
+					ref,
+					sessionId: 'fallback-selection',
+					source: 'sites-dashboard',
+					flags: 'migration/reprint-flow',
+					manualPlatform: 'wordpress',
+				};
+				const stale = {
+					manualPlatform: '',
+					platform: 'unknown',
+					host: 'bluehost',
+					isWpcom: 'true',
+					ssh: 'true',
+					action: 'import',
+					how: 'difm',
+					start: 'true',
+					origin: fromWpAdmin ? '' : STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				};
+				const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+				runUseStepNavigationSubmit( {
+					currentURL: `/some-path?${ new URLSearchParams( { ...retained, ...stale } ) }`,
+					currentStep: STEPS.IMPORT_LIST.slug,
+					dependencies: { platform: 'wordpress', url: 'importerWordpress' },
+				} );
+				const destination = new URL(
+					window.location.assign.mock.lastCall[ 0 ],
+					'https://example.com'
+				);
+				expect( destination.pathname ).toBe( '/setup/site-migration/site-migration-identify' );
+				expect( Object.fromEntries( destination.searchParams ) ).toEqual( retained );
+			}
+		);
+
 		it( 'redirects the user to the migration offer when the origin param is set as site-migration-identify', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
@@ -47,19 +110,38 @@ describe( 'Site Setup Flow', () => {
 			);
 		} );
 
-		it( 'continues the regular flow when the origin param is not available', async () => {
+		it.each( [ false, true ] )(
+			'keeps the file importer without a migration origin (Reprint: %s)',
+			( enabled ) => {
+				jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+				const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+				runUseStepNavigationSubmit( {
+					currentStep: STEPS.IMPORT_LIST.slug,
+					dependencies: {
+						platform: 'wordpress',
+						url: 'importerWordpress',
+					},
+				} );
+
+				expect( window.location.assign ).not.toHaveBeenCalledWith(
+					expect.stringContaining( '/setup/site-migration/' )
+				);
+				expect( getFlowLocation().path ).toBe( '/importerWordpress' );
+			}
+		);
+
+		it( 'keeps other platforms on their importer with Reprint enabled', () => {
+			jest.mocked( config.isEnabled ).mockReturnValue( true );
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
-
 			runUseStepNavigationSubmit( {
+				currentURL: '/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com',
 				currentStep: STEPS.IMPORT_LIST.slug,
-				dependencies: {
-					platform: 'wordpress',
-					url: 'importerWordpress',
-				},
+				dependencies: { platform: 'squarespace', url: 'importerSquarespace' },
 			} );
-
-			expect( window.location.assign ).not.toHaveBeenCalledWith(
-				expect.stringContaining( '/setup/site-migration/' )
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( getFlowLocation().path ).toBe(
+				'/importerSquarespace?origin=site-migration-identify'
 			);
 		} );
 	} );

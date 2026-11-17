@@ -38,12 +38,19 @@ export async function requestStaticSiteImportHandoff( {
 	blogUrl,
 	fromUrl,
 	locale,
+	importSessionId,
 }: StaticSiteImportHandoffParams ): Promise< { success: boolean } > {
 	return wpcom.req.post(
 		{
 			path: '/help/migration-ticket/new',
 			apiNamespace: 'wpcom/v2',
 		},
-		{ blog_url: blogUrl, from_url: fromUrl, locale, context: 'site_is_not_wordpress' }
+		{
+			blog_url: blogUrl,
+			from_url: fromUrl,
+			locale,
+			context: 'site_is_not_wordpress',
+			import_session_id: importSessionId,
+		}
 	);
 }

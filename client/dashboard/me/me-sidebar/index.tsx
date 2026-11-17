@@ -6,24 +6,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	bell,
-	buttons,
-	comment,
-	commentAuthorAvatar,
-	lock,
-	payment,
-	settings,
-} from '@wordpress/icons';
+import { bell, comment, commentAuthorAvatar, lock, payment, settings } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
-import type { AppConfig, MeSupports } from '../../app/context';
 
 import './style.scss';
-
-const hasAppSupport = ( supports: AppConfig[ 'supports' ], feature: keyof MeSupports ) => {
-	return supports.me && supports.me[ feature ];
-};
 
 export default function MeSidebar() {
 	const { data: userSettings } = useQuery( userSettingsQuery() );
@@ -82,11 +69,6 @@ function MeMenuSidebar() {
 			<SidebarMenuItem icon={ comment } to="/me/agent">
 				{ __( 'WordPress Agent' ) }
 			</SidebarMenuItem>
-			{ hasAppSupport( supports, 'apps' ) && (
-				<SidebarMenuItem icon={ buttons } to="/me/apps">
-					{ __( 'Apps' ) }
-				</SidebarMenuItem>
-			) }
 		</SidebarMenu>
 	);
 }

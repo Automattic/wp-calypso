@@ -1,3 +1,4 @@
+import { __, sprintf } from '@wordpress/i18n';
 import Body from '../parts/body';
 import NoteMeta from '../parts/note-meta';
 import PendingApproval from '../parts/pending-approval';
@@ -12,14 +13,25 @@ export default function CommentNote( { note }: { note: Note } ) {
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } url={ note.url } /> }
-			<Thread spacing={ 4 } isReply={ !! repliedTo }>
-				{ repliedTo && <ThreadParent comment={ repliedTo } truncate /> }
+			{ post && <PostCard post={ post } site={ site } /> }
+			<Thread spacing={ 5 }>
+				{ repliedTo && (
+					<ThreadParent
+						comment={ repliedTo }
+						truncate
+						compact
+						label={ sprintf(
+							/* translators: %s is the name of the person whose comment was replied to. */
+							__( 'In reply to %s' ),
+							repliedTo.author_name
+						) }
+					/>
+				) }
 				{ actor && (
 					<ThreadReply
 						commenter={ actor }
-						meta={ <NoteMeta note={ note } /> }
-						status={ isPendingApproval && <PendingApproval note={ note } /> }
+						meta={ <NoteMeta note={ note } isComment /> }
+						status={ isPendingApproval && <PendingApproval /> }
 					>
 						<Body note={ note } hidePeople />
 					</ThreadReply>

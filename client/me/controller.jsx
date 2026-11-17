@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { createElement } from 'react';
@@ -6,12 +7,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import AppsComponent from 'calypso/me/get-apps';
 import McpComponent from 'calypso/me/mcp/main';
 import McpAddSiteComponent from 'calypso/me/mcp/mcp-add-site';
 import McpMcpSitesComponent from 'calypso/me/mcp/mcp-sites';
 import McpReadComponent from 'calypso/me/mcp/read';
-import McpSetupComponent from 'calypso/me/mcp/setup';
 import McpWriteComponent from 'calypso/me/mcp/write';
 import SidebarComponent from 'calypso/me/sidebar';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -43,20 +42,8 @@ export async function profile( context, next ) {
 	next();
 }
 
-export function apps( context, next ) {
-	const AppsTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'Get Apps', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<AppsTitle />
-			<AppsComponent path={ context.path } />
-		</>
-	);
-	next();
+export function appsRedirect() {
+	window.location.replace( localizeUrl( 'https://apps.wordpress.com/' ) );
 }
 
 export function profileRedirect() {
@@ -75,23 +62,6 @@ export function mcp( context, next ) {
 			<McpTitle />
 			<QueryUserSettings />
 			<McpComponent path={ context.path } />
-		</>
-	);
-	next();
-}
-
-export function mcpSetup( context, next ) {
-	const McpSetupTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'MCP Client Setup', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<McpSetupTitle />
-			<QueryUserSettings />
-			<McpSetupComponent path={ context.path } />
 		</>
 	);
 	next();
@@ -159,10 +129,6 @@ export function mcpAddSite( context, next ) {
 		</>
 	);
 	next();
-}
-
-export function mcpSetupLegacyRedirect() {
-	page.redirect( '/me/mcp/setup' );
 }
 
 // Helper thunk that ensures that the user preferences has been fetched into Redux state before we

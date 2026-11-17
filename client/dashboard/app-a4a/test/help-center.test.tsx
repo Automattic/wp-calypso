@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import A4AHelpCenter from '../help-center';
 import type { Agency } from '@automattic/api-core';
 
-jest.mock( '@automattic/help-center', () => ( {
+vi.mock( '@automattic/help-center', () => ( {
 	__esModule: true,
 	default: ( {
 		product,
@@ -32,6 +33,15 @@ jest.mock( '@automattic/help-center', () => ( {
 } ) );
 
 describe( '<A4AHelpCenter />', () => {
+	// The panel waits on two lazy imports. Loading them cold can take longer than a test's
+	// 5s limit on CI, so load them once up front.
+	beforeAll( async () => {
+		await Promise.all( [
+			import( '@automattic/data-stores' ),
+			import( '../../app/help-center/help-center-app' ),
+		] );
+	}, 30000 );
+
 	afterEach( () => {
 		window.history.replaceState( {}, '', '/' );
 	} );

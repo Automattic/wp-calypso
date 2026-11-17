@@ -39,6 +39,11 @@ on:
       - 'renovate.json5'
       - 'renovate.json'
 
+# Renovate itself authenticates with RENOVATE_TOKEN; this token only restores its cache.
+permissions:
+  actions: read
+  contents: read
+
 concurrency:
   group: renovate-${{ github.ref }}
 

@@ -4,6 +4,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import MarketplaceThankYou from '../marketplace-thank-you';
 
@@ -16,6 +17,8 @@ const mockSetShowProgressBar = jest.fn();
 let mockState = {
 	siteId: 1,
 	transferStatus: transferStates.ACTIVE as string | null,
+	isWpcomAtomic: false,
+	isPageReady: false,
 };
 let mockWait = {
 	isInitialized: true,
@@ -61,6 +64,10 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
+jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
+	__esModule: true,
+	default: ( state: typeof mockState ) => state.isWpcomAtomic,
+} ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteAdminUrl: () => null,
 	isJetpackSite: () => false,
@@ -82,8 +89,8 @@ jest.mock( '../use-plugins-thank-you-data', () => ( {
 	__esModule: true,
 	default: () => ( {
 		pluginsSection: [],
-		allPluginsFetched: false,
-		allPluginsActivated: false,
+		allPluginsFetched: mockState.isPageReady,
+		allPluginsActivated: mockState.isPageReady,
 		pluginTitle: '',
 		pluginSubtitle: '',
 		pluginsProgressbarSteps: [],
@@ -95,7 +102,7 @@ jest.mock( '../use-plugins-thank-you-data', () => ( {
 } ) );
 jest.mock( '../use-atomic-transfer', () => ( {
 	useAtomicTransfer: () => ( {
-		isAtomicTransferCheckComplete: false,
+		isAtomicTransferCheckComplete: mockState.isPageReady,
 		currentStep: 0,
 		showProgressBar: false,
 		setShowProgressBar: mockSetShowProgressBar,
@@ -133,7 +140,12 @@ const renderPage = () =>
 describe( 'MarketplaceThankYou errors', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockState = { siteId: 1, transferStatus: transferStates.ACTIVE };
+		mockState = {
+			siteId: 1,
+			transferStatus: transferStates.ACTIVE,
+			isWpcomAtomic: false,
+			isPageReady: false,
+		};
 		mockWait = {
 			isInitialized: true,
 			hasTimedOut: false,
@@ -174,5 +186,44 @@ describe( 'MarketplaceThankYou errors', () => {
 		expect( mockRetryPlugins ).toHaveBeenCalledTimes( 1 );
 		expect( mockRetryThemes ).toHaveBeenCalledTimes( 1 );
 		expect( mockSetShowProgressBar ).toHaveBeenCalledWith( true );
+	} );
+} );
+
+describe( 'MarketplaceThankYou admin menu refresh', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockState = {
+			siteId: 1,
+			transferStatus: null,
+			isWpcomAtomic: false,
+			isPageReady: true,
+		};
+		mockWait = {
+			isInitialized: true,
+			hasTimedOut: false,
+			getWaitedSeconds: () => 0,
+			restart: mockRestart,
+			complete: mockComplete,
+		};
+	} );
+
+	it( 'refreshes the admin menu without a transfer status when the site is already Atomic', () => {
+		mockState.isWpcomAtomic = true;
+		renderPage();
+
+		expect( requestAdminMenu ).toHaveBeenCalledWith( 1 );
+	} );
+
+	it( 'refreshes the admin menu once the transfer has completed', () => {
+		mockState.transferStatus = transferStates.COMPLETE;
+		renderPage();
+
+		expect( requestAdminMenu ).toHaveBeenCalledWith( 1 );
+	} );
+
+	it( 'does not refresh the admin menu without a transfer status when the site is not Atomic', () => {
+		renderPage();
+
+		expect( requestAdminMenu ).not.toHaveBeenCalled();
 	} );
 } );

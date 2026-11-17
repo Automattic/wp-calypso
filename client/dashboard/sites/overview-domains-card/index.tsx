@@ -1,10 +1,9 @@
 import { DomainSubtype, type DomainSummary, type Site } from '@automattic/api-core';
-import { siteCurrentPlanQuery } from '@automattic/api-queries';
+import { domainsQuery, siteCurrentPlanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useAppContext } from '../../app/context';
 import { siteDomainsRoute } from '../../app/router/sites';
 import { CalloutSkeleton } from '../../components/callout-skeleton';
 import { Card, CardHeader, CardBody } from '../../components/card';
@@ -55,12 +54,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 
 	return (
 		<Card>
-			<CardHeader
-				style={ {
-					flexDirection: 'column',
-					alignItems: 'stretch',
-				} }
-			>
+			<CardHeader direction="column" expanded={ false }>
 				<SectionHeader
 					title={ __( 'Domain names' ) }
 					level={ 3 }
@@ -101,10 +95,9 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 };
 
 export default function DomainsCard( { site }: { site: Site } ) {
-	const { queries } = useAppContext();
 	const { data: sitePlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
 	const { data: siteDomains } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 

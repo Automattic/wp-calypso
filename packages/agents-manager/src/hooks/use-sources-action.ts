@@ -1,14 +1,9 @@
 import { useEffect } from '@wordpress/element';
 import SourcesDisplay from '../components/sources-display';
+import type { Source } from '../components/sources-display';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-
-interface Source {
-	title: string;
-	url: string;
-	content?: string;
-}
 
 /**
  * Extracts the sources array from a message's data block, or returns null.
@@ -56,7 +51,6 @@ export default function useSourcesAction(
 					{
 						type: 'component',
 						id: 'sources',
-						label: 'Sources',
 						component: SourcesDisplay,
 						componentProps: { sources },
 					},

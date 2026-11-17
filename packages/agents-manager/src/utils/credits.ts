@@ -46,10 +46,10 @@ export type CreditsStatus =
 			remaining: number;
 	  } );
 
-/** Free-plan low-balance percentage, for the alert icon and the notice. */
+/** Free-plan low-balance percentage, for the toggle's label and the notice. */
 const CREDITS_LOW_THRESHOLD = 20;
 
-/** Paid balance, in credits, below which the meter shows its alert icon and the low-balance notice. */
+/** Paid balance, in credits, below which the toggle's label says so and the low-balance notice shows. */
 export const CREDITS_LOW_BALANCE = 10000;
 
 export function clampPercent( percent: number ): number {
@@ -95,9 +95,26 @@ export function isCreditsLow( status: CreditsStatus ): boolean {
 		: status.percent <= CREDITS_LOW_THRESHOLD;
 }
 
-/** Whether the meter shows its alert icon: low or exhausted, by the same rule as the credits notices. */
-export function isCreditsAlert( status: CreditsStatus ): boolean {
-	return isCreditsLow( status ) || isCreditsExhausted( status );
+/**
+ * The ring's filled share: this period's plan credits left, so top-ups never fill it. Read from
+ * the pool, since a demo status's `percent` is the combined share.
+ */
+export function getCreditsRingPercent( status: CreditsStatus ): number {
+	const poolId = status.plan === 'paid' ? 'plan' : 'free';
+	const pool = status.pools.find( ( { id } ) => id === poolId );
+	return clampPercent( pool?.percent ?? status.percent );
+}
+
+/**
+ * Plan credits used up while top-ups remain. Plan credits are spent first, so the combined
+ * balance is then the top-ups left, even when their own fields were unreadable and dropped.
+ */
+export function isCreditsOnTopUps( status: CreditsStatus ): boolean {
+	if ( status.plan !== 'paid' || status.remaining <= 0 ) {
+		return false;
+	}
+	const plan = status.pools.find( ( pool ) => pool.id === 'plan' );
+	return ( plan?.remaining ?? plan?.percent ) === 0;
 }
 
 /**

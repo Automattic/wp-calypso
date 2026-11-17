@@ -38,6 +38,7 @@ $blueberry-color: #3858e9;
 
 	&__error-notice.calypso-notice .calypso-notice__icon-wrapper svg.calypso-notice__icon {
 		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
 	}
 
 	&__error-notice,
@@ -136,17 +137,15 @@ $blueberry-color: #3858e9;
 
 				svg {
 					fill: var(--color-neutral-20);
+					color: var(--color-neutral-20);
 
 					&:hover {
 						fill: var(--studio-blue-50);
+						color: var(--studio-blue-50);
 					}
 				}
 			}
 		}
-	}
-	.site-migration-credentials__skip {
-		margin-top: 1em;
-		text-align: center;
 	}
 	.site-migration-credentials__special-instructions {
 		.components-button {
@@ -159,7 +158,7 @@ $blueberry-color: #3858e9;
 		}
 
 		.site-migration-credentials__special-instructions-icon {
-			fill: var(--color-text) !important;
+			color: var(--color-text) !important;
 		}
 	}
 	.site-migration-credentials__backup-note {

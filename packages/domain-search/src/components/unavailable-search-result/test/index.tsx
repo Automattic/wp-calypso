@@ -1,6 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { UnavailableSearchResult } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildSuggestion } from '../../../test-helpers/factories/suggestions';
@@ -157,7 +158,7 @@ describe( 'UnavailableSearchResult', () => {
 
 	describe( 'bring it over cta', () => {
 		it( 'calls onExternalDomainClick if config.allowsUsingOwnDomain is true', async () => {
-			const onExternalDomainClick = jest.fn();
+			const onExternalDomainClick = vi.fn();
 			const user = userEvent.setup();
 
 			mockGetSuggestionsQuery( {

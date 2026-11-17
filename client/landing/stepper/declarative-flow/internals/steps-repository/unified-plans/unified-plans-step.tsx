@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	UrlFriendlyTermType,
+	isDomainMoveInternal,
 	isDomainTransfer,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	PlanSlug,
@@ -14,7 +15,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
-	LAUNCH_SITE_FLOW,
 	ONBOARDING_FLOW,
 	SITE_MIGRATION_FLOW,
 	Step,
@@ -349,6 +349,14 @@ function UnifiedPlansStep( {
 
 	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
+	const isDomainMove = domainCartItem ? isDomainMoveInternal( domainCartItem ) : false;
+	const domainCartItemExtra = domainCartItem?.extra;
+	const isConnectedDomainMove =
+		isDomainMove &&
+		!! domainCartItemExtra &&
+		'is_connected_domain_move' in domainCartItemExtra &&
+		!! domainCartItemExtra.is_connected_domain_move;
+
 	const isPaidTheme = Boolean( selectedThemeType && selectedThemeType !== FREE_THEME );
 
 	const effectiveSubmitSignupStep = useMemo(
@@ -497,10 +505,12 @@ function UnifiedPlansStep( {
 		paidDomainName = getDomainFromUrl( selectedSite.URL );
 	}
 
+	const isPlaygroundOnboarding = flowName === ONBOARDING_FLOW && intent === 'plans-playground';
 	const deemphasizeFreePlan =
-		( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
+		! isPlaygroundOnboarding &&
+		( ( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
 			( paidDomainName != null || isPaidTheme ) ) ||
-		deemphasizeFreePlanFromProps;
+			deemphasizeFreePlanFromProps );
 
 	const shouldUseModalBackedFreePlanCTA =
 		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
@@ -669,7 +679,7 @@ function UnifiedPlansStep( {
 	const intervalTypeValue = intervalType || getIntervalType( path );
 
 	let freeWPComSubdomain: string | undefined;
-	if ( typeof siteUrl === 'string' && siteUrl.includes( '.wordpress.com' ) ) {
+	if ( typeof siteUrl === 'string' && siteUrl.endsWith( '.wordpress.com' ) ) {
 		freeWPComSubdomain = siteUrl;
 	}
 
@@ -694,6 +704,8 @@ function UnifiedPlansStep( {
 				signupFlowUserName={ username ?? undefined }
 				siteId={ selectedSite?.ID }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
+				isDomainMove={ isDomainMove }
+				isConnectedDomainMove={ isConnectedDomainMove }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
@@ -705,9 +717,6 @@ function UnifiedPlansStep( {
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
-				// Legacy /start/launch-site shares its flow name with the Stepper flow, so the name
-				// alone can't tell which container the plans render in.
-				isInStepContainerV2={ flowName === LAUNCH_SITE_FLOW ? !! useStepContainerV2 : undefined }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }

@@ -1,25 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { readTeamsQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import ReaderPostActions from '../index';
 
-let mockReaderShelvesEnabled = false;
 let mockSavedPostsEnabled = false;
 jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: ( flag ) =>
-		( flag === 'reader/shelves' && mockReaderShelvesEnabled ) ||
-		( flag === 'reader/saved-posts' && mockSavedPostsEnabled ),
-} ) );
-
-const mockRecordReaderTracksEvent = jest.fn( () => ( { type: 'MOCK_TRACKS_EVENT' } ) );
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: ( ...args ) => mockRecordReaderTracksEvent( ...args ),
+	isEnabled: ( flag ) => flag === 'reader/saved-posts' && mockSavedPostsEnabled,
 } ) );
 
 // Mock the components that are complex to test
@@ -27,9 +17,6 @@ jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="commen
 jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
 jest.mock( 'calypso/blocks/reader-save-button', () => () => <div data-testid="save-button" /> );
 jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
-jest.mock( 'calypso/reader/shelves/subscribe-with-shelf/shelf-picker-modal', () => ( {
-	ShelfPickerModal: () => null,
-} ) );
 
 // Simple mock store
 const createMockStore = ( initialState = {} ) => {
@@ -56,9 +43,7 @@ const defaultProps = {
 
 describe( 'ReaderPostActions', () => {
 	beforeEach( () => {
-		mockReaderShelvesEnabled = false;
 		mockSavedPostsEnabled = false;
-		mockRecordReaderTracksEvent.mockClear();
 	} );
 
 	describe( 'when comments API is disabled', () => {
@@ -110,57 +95,18 @@ describe( 'ReaderPostActions', () => {
 		} );
 	} );
 
-	it( 'tracks when the shelves button is clicked', async () => {
-		mockReaderShelvesEnabled = true;
-		const user = userEvent.setup();
-		const store = createMockStore();
-		const props = {
-			...defaultProps,
-			post: {
-				...defaultProps.post,
-				feed_ID: 789,
-				feed_URL: 'https://example.com/feed',
-			},
-		};
-
-		render(
-			<QueryClientProvider client={ createQueryClient() }>
-				<Provider store={ store }>
-					<ReaderPostActions { ...props } />
-				</Provider>
-			</QueryClientProvider>
-		);
-
-		await user.click( screen.getByRole( 'button', { name: 'Move site to a shelf' } ) );
-
-		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-			'calypso_reader_subscribe_shelf_button_clicked',
-			{
-				blog_id: 456,
-				feed_id: 789,
-				source: 'post_actions',
-			}
-		);
-	} );
-
 	describe( 'the Save button', () => {
-		const A8C_TEAM = { slug: 'a8c', title: 'Automattic' };
-
 		const renderActions = ( {
 			post = defaultProps.post,
 			state = { currentUser: { id: 1 } },
-			teams = [],
-		} = {} ) => {
-			const queryClient = createQueryClient();
-			queryClient.setQueryData( readTeamsQuery().queryKey, { number: teams.length, teams } );
-			return render(
-				<QueryClientProvider client={ queryClient }>
+		} = {} ) =>
+			render(
+				<QueryClientProvider client={ createQueryClient() }>
 					<Provider store={ createMockStore( state ) }>
 						<ReaderPostActions { ...defaultProps } post={ post } />
 					</Provider>
 				</QueryClientProvider>
 			);
-		};
 
 		beforeEach( () => {
 			mockSavedPostsEnabled = true;
@@ -178,14 +124,6 @@ describe( 'ReaderPostActions', () => {
 			renderActions();
 
 			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'shows for an Automattician when the saved posts feature is off', () => {
-			mockSavedPostsEnabled = false;
-
-			renderActions( { teams: [ A8C_TEAM ] } );
-
-			expect( screen.getByTestId( 'save-button' ) ).toBeVisible();
 		} );
 
 		it( 'is hidden from a logged-out user', () => {

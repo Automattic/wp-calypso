@@ -8,10 +8,12 @@ import { lazy, Suspense, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import {
 	agencySiteActivityRoute,
+	agencySiteSettingsSiteVisibilityRoute,
 	agencySitesRoute,
 	hasAnyCapability,
 } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
+import RouterLinkButton from '../../../components/router-link-button';
 import { leaveDashboard } from '../../crossover/store';
 import { OWNER_ROLE } from '../../team/constants';
 import { canActOnSite, getAdminUrl, isDevSite, isUrlOnlySite } from '../dataviews/site-data';
@@ -52,6 +54,17 @@ export default function AgencySiteHeaderActions( {
 
 	return (
 		<>
+			{ canUseMenu && isDevSite( site ) && (
+				<RouterLinkButton
+					__next40pxDefaultSize
+					variant="secondary"
+					to={ agencySiteSettingsSiteVisibilityRoute.fullPath }
+					params={ { siteSlug: site.url } }
+					onClick={ () => track( 'prepare-for-launch' ) }
+				>
+					{ __( 'Prepare for launch' ) }
+				</RouterLinkButton>
+			) }
 			<Button
 				__next40pxDefaultSize
 				variant="primary"

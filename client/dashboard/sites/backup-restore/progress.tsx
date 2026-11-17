@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
-	ProgressBar,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { Progress } from '@wordpress/ui';
+import { useEffect, useId } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { ThemedIllustration } from '../../components/themed-illustration';
@@ -50,6 +50,7 @@ function SiteBackupRestoreProgress( {
 	}, [ restoreProgress?.status, onRestoreComplete, onRestoreError ] );
 
 	const isRunning = restoreProgress?.status === 'running';
+	const labelId = useId();
 
 	return (
 		<>
@@ -61,8 +62,8 @@ function SiteBackupRestoreProgress( {
 					width={ 408 }
 					height={ 280 }
 				/>
-				<Text size={ 20 }>
-					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
+				<Text id={ labelId } size={ 20 }>
+					{ ( isRunning && restoreProgress?.message ) || __( 'Initializing the restore process' ) }
 				</Text>
 				<Text size={ 13 } variant="muted">
 					{ sprintf(
@@ -71,10 +72,15 @@ function SiteBackupRestoreProgress( {
 						restoreProgress?.percent ?? 0
 					) }
 				</Text>
-				<ProgressBar
+				<Progress.Root
 					className="dashboard-backups__progress-bar"
+					aria-labelledby={ labelId }
 					value={ restoreProgress?.percent ?? 0 }
-				/>
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			</VStack>
 			<Spacer marginTop={ 12 }>
 				<Notice variant="info" title={ __( 'Check your email' ) }>

@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
 import { loadScript } from '../src';
 import { removeAllScriptCallbacks } from '../src/callback-handler';

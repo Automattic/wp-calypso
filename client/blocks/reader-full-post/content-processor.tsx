@@ -1,4 +1,4 @@
-import React, { type JSX } from 'react';
+import React, { useMemo, type JSX } from 'react';
 import LinkPreview from './link-preview';
 
 interface ContentProcessorProps {
@@ -106,6 +106,8 @@ function isUrlInHtmlTag( content: string, position: number ): boolean {
  * @returns {React.Component} Processed content with link previews.
  */
 export default function ContentProcessor( { content }: ContentProcessorProps ): JSX.Element | null {
+	const innerHtml = useMemo( () => ( { __html: content ?? '' } ), [ content ] );
+
 	// If no content, return null
 	if ( ! content ) {
 		return null;
@@ -119,7 +121,7 @@ export default function ContentProcessor( { content }: ContentProcessorProps ): 
 			<div
 				className="reader-full-post__story-content"
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: content } }
+				dangerouslySetInnerHTML={ innerHtml }
 			/>
 			{ url && <LinkPreview url={ url } /> }
 		</>

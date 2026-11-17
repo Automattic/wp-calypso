@@ -56,9 +56,10 @@ test( 'announces missing saved contact options only to listed classic partners w
 		</AnalyticsProvider>,
 		{ store, queryClient }
 	);
-	const announcement = () => screen.queryByRole( 'link', { name: 'Update your details' } );
+	const announcement = () => screen.queryByText( 'Update your details' );
 	expect( announcement() ).not.toBeInTheDocument();
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toHaveAttribute(
+	await screen.findByText( 'Update your details' );
+	expect( screen.getByRole( 'link', { name: 'Update your details' } ) ).toHaveAttribute(
 		'href',
 		'/partner-directory/lead-matching'
 	);
@@ -78,12 +79,12 @@ test( 'announces missing saved contact options only to listed classic partners w
 	setLeadMatching( {
 		lead_matching_profile: { ...completeProfile, contact: { ...contact, booking_link: '' } },
 	} );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 
 	setLeadMatching( { lead_matching_profile: null } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setLeadMatching( {} );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 
 	const setAgency = ( changes: Partial< typeof agency > ) => {
 		act( () => store.dispatch( { type: 'update-agency', agency: { ...agency, ...changes } } ) );
@@ -91,7 +92,7 @@ test( 'announces missing saved contact options only to listed classic partners w
 	setAgency( { profile: { ...agency.profile, partner_directory_application: null } } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setAgency( {} );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 	setAgency( { partner_directory: { allowed: false } } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	view.unmount();
