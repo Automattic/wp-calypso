@@ -111,6 +111,24 @@ export function sanitizeDomainsListLayout( view: View ): View {
 	return { ...viewWithoutLayout, type: 'table', layout: DEFAULT_VIEW.layout } as View;
 }
 
+/*
+ * A small screen has no room for the table: only the domain name fits, cut by the actions column. Show the cards
+ * there instead. The saved view keeps its layout, so the table is back on a larger screen.
+ */
+export function withDomainsListSmallScreenLayout( view: View, isSmallScreen: boolean ): View {
+	if ( ! isSmallScreen || view.type === 'grid' ) {
+		return view;
+	}
+
+	// The cards read only the density from `layout`, so the rest of the view carries over.
+	return { ...view, type: 'grid' } as View;
+}
+
+// Undoes `withDomainsListSmallScreenLayout` on a changed view, so that saving it doesn't replace the saved layout.
+export function withDomainsListSavedLayout( changedView: View, savedView: View ): View {
+	return { ...changedView, type: savedView.type } as View;
+}
+
 export function recordDomainViewChanges(
 	oldView: View,
 	newView: View,

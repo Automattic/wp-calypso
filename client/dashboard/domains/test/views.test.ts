@@ -5,6 +5,8 @@ import {
 	sanitizeDomainsListLayout,
 	sanitizeDomainsListPageSize,
 	withDomainsListDefaultLayout,
+	withDomainsListSavedLayout,
+	withDomainsListSmallScreenLayout,
 } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
 
@@ -402,6 +404,50 @@ describe( 'withDomainsListDefaultLayout', () => {
 		expect( withDomainsListDefaultLayout( cardsView, 17 ) ).toEqual( {
 			...cardsView,
 			type: 'table',
+		} );
+	} );
+} );
+
+describe( 'withDomainsListSmallScreenLayout', () => {
+	const tableView: View = {
+		type: 'table',
+		layout: { density: 'compact' },
+		perPage: 24,
+		sort: { field: 'expiry', direction: 'desc' },
+		fields: [ 'blog_name', 'domain_status' ],
+	};
+
+	test( 'keeps the table on a larger screen', () => {
+		expect( withDomainsListSmallScreenLayout( tableView, false ) ).toBe( tableView );
+	} );
+
+	test( 'shows a table as cards on a small screen, keeping the other settings', () => {
+		expect( withDomainsListSmallScreenLayout( tableView, true ) ).toEqual( {
+			...tableView,
+			type: 'grid',
+		} );
+	} );
+
+	test( 'returns the same view when it already shows cards', () => {
+		const cardsView: View = { type: 'grid', perPage: 12 };
+
+		expect( withDomainsListSmallScreenLayout( cardsView, true ) ).toBe( cardsView );
+	} );
+} );
+
+describe( 'withDomainsListSavedLayout', () => {
+	test( 'puts the saved layout back on a view changed on a small screen, keeping the change', () => {
+		const savedView: View = { type: 'table', layout: { density: 'balanced' }, perPage: 12 };
+		const changedView: View = {
+			...withDomainsListSmallScreenLayout( savedView, true ),
+			sort: { field: 'expiry', direction: 'desc' },
+			fields: [ 'expiry' ],
+		};
+
+		expect( withDomainsListSavedLayout( changedView, savedView ) ).toEqual( {
+			...savedView,
+			sort: { field: 'expiry', direction: 'desc' },
+			fields: [ 'expiry' ],
 		} );
 	} );
 } );

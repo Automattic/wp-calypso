@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
 import { render } from '../../test-utils';
@@ -46,6 +47,29 @@ const mockDomain = ( name: string ) => ( {
 	tags: [],
 } );
 
+// Media queries are read once and cached, so the answer has to change behind the same object.
+let isSmallScreen = false;
+
+beforeAll( () => {
+	vi.mocked( window.matchMedia ).mockImplementation(
+		( query: string ) =>
+			( {
+				get matches() {
+					return isSmallScreen && query.includes( 'max-width: 782px' );
+				},
+				media: query,
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+			} ) as unknown as MediaQueryList
+	);
+} );
+
+afterEach( () => {
+	isSmallScreen = false;
+} );
+
 function mockApis( savedView: Partial< View > ) {
 	const scope = nock( 'https://public-api.wordpress.com' ).persist();
 	scope
@@ -68,6 +92,13 @@ function mockApis( savedView: Partial< View > ) {
 		.get( /\/wpcom\/v2\/domains\/ssl\/.*/ )
 		.query( true )
 		.reply( 200, { data: { certificate_provisioned: true, is_newly_registered: false } } );
+
+	const savedPreferences: Record< string, Record< string, Partial< View > > >[] = [];
+	scope.post( '/rest/v1.1/me/preferences' ).reply( 200, ( _uri, body ) => {
+		savedPreferences.push( body as ( typeof savedPreferences )[ number ] );
+		return { calypso_preferences: {} };
+	} );
+	return savedPreferences;
 }
 
 const SAVED_VIEW: Partial< View > = {
@@ -119,6 +150,37 @@ describe( '<Domains> saved layouts', () => {
 		const { recordTracksEvent } = render( <Domains /> );
 
 		await screen.findByRole( 'table' );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_domains_saved_layout_fallback',
+			expect.anything()
+		);
+	} );
+
+	test( 'shows a saved table view as cards on a small screen, and keeps the table saved', async () => {
+		isSmallScreen = true;
+		const savedPreferences = mockApis( { ...SAVED_VIEW, type: 'table' } as Partial< View > );
+		const user = userEvent.setup();
+
+		const { recordTracksEvent } = render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'a-domain.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+
+		// A change made on the small screen is saved with the layout the user chose.
+		await user.click( screen.getByRole( 'button', { name: 'View options' } ) );
+		await user.click( await screen.findByRole( 'radio', { name: 'Sort ascending' } ) );
+
+		await vi.waitFor( () => expect( savedPreferences ).toHaveLength( 1 ) );
+		const savedView =
+			savedPreferences[ 0 ].calypso_preferences[ 'hosting-dashboard-dataviews-view-domains' ];
+		expect( savedView.type ).toBe( 'table' );
+		expect( savedView.sort ).toEqual( { field: 'domain', direction: 'asc' } );
+
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_domains_view_type_changed',
+			expect.anything()
+		);
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_dashboard_domains_saved_layout_fallback',
 			expect.anything()

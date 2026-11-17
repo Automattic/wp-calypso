@@ -101,15 +101,16 @@ function SiteDomains() {
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );
-	const view = sanitizeDomainsListPageSize( persistentView );
 	const {
+		view,
+		getViewToSave,
 		layouts,
 		recordLayoutChoice,
 		resetView: resetViewAndLayoutChoice,
 	} = useDomainsListLayouts( {
 		slug: 'site-domains',
 		domainCount: siteDomains.length,
-		view,
+		view: sanitizeDomainsListPageSize( persistentView ),
 		resetView,
 	} );
 	const isCardsLayout = view.type === 'grid';
@@ -187,7 +188,7 @@ function SiteDomains() {
 					fields={ fields }
 					onChangeView={ ( nextView ) => {
 						recordLayoutChoice( view, nextView );
-						updateView( nextView );
+						updateView( getViewToSave( nextView ) );
 					} }
 					onReset={ resetViewAndLayoutChoice }
 					view={ view }
