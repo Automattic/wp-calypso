@@ -50,6 +50,8 @@ The PHP lives in Jetpack's [`projects/packages/agents-manager`](https://github.c
 
 The app's `translate` script builds translations into `dist/languages/`, released with the bundles to `widgets.wp.com/agents-manager/languages/`. Jetpack loads `languages/{locale}-v1.js` from there at runtime for non-English locales.
 
+Reader Chat bundles its own `@wordpress/i18n`, so it loads that file itself, next to `reader-chat.min.js`. Its locale is `JetpackReaderChatConfig.locale`, else the page's `<html lang>`. Agenttic's own strings (the input placeholder, the button labels) come from the translations bundled with `@automattic/agenttic-ui`.
+
 ### Deployment
 
 After every change to the Agents Manager, the development process is two parts:

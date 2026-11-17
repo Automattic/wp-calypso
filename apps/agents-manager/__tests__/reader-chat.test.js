@@ -21,6 +21,10 @@ vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
 		Authorization: `Bearer test-token-${ siteId }`,
 	} ) ),
 } ) );
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	hasAgentticTranslations: vi.fn( ( locale ) => locale === 'nl' ),
+	loadAgentticTranslations: vi.fn(),
+} ) );
 vi.mock( '@tanstack/react-query', () => ( {
 	QueryClient: vi.fn( function () {
 		return {};
@@ -52,6 +56,8 @@ beforeAll( () => {
 // Import after mocks are registered.
 const { createCalypsoAuthProvider } =
 	await import( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
+const { loadAgentticTranslations } = await import( '@automattic/agenttic-ui' );
+const { resetLocaleData } = await import( '@wordpress/i18n' );
 const {
 	parseAgentSseResponse,
 	slugify,
@@ -66,6 +72,10 @@ const {
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
 	watchFirstChatOpen,
+	normalizeReaderLocale,
+	resolveReaderLocale,
+	getLanguageFileUrl,
+	loadReaderTranslations,
 } = await import( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
@@ -592,5 +602,103 @@ describe( 'watchFirstChatOpen', () => {
 		watchFirstChatOpen( onFirstOpen, deps );
 		expect( onFirstOpen ).toHaveBeenCalledTimes( 1 );
 		expect( unsubscribeSpy ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// Locale and translations
+// ---------------------------------------------------------------------------
+
+describe( 'normalizeReaderLocale', () => {
+	it.each( [
+		[ 'nl-NL', 'nl' ],
+		[ 'nl_NL', 'nl' ],
+		[ 'pt-BR', 'pt-br' ],
+		[ 'pt_BR', 'pt-br' ],
+		[ 'zh-TW', 'zh-tw' ],
+		[ 'pt-PT', 'pt' ],
+		[ 'de', 'de' ],
+		[ '', 'en' ],
+		[ undefined, 'en' ],
+		[ '../evil', 'en' ],
+	] )( 'normalizes %j to %j', ( locale, expected ) => {
+		expect( normalizeReaderLocale( locale ) ).toBe( expected );
+	} );
+} );
+
+describe( 'resolveReaderLocale', () => {
+	const doc = ( lang ) => ( { documentElement: { lang } } );
+
+	it.each( [
+		[ 'the config locale over the page language', { locale: 'nl' }, doc( 'de-DE' ), 'nl' ],
+		[ 'the page language when the config has no locale', {}, doc( 'de-DE' ), 'de' ],
+		[ 'English when neither is set', {}, doc( '' ), 'en' ],
+	] )( 'uses %s', ( _, config, document, expected ) => {
+		expect( resolveReaderLocale( config, document ) ).toBe( expected );
+	} );
+} );
+
+describe( 'getLanguageFileUrl', () => {
+	it( 'points next to the bundle and keeps its cache-busting version', () => {
+		expect(
+			getLanguageFileUrl( 'nl', 'https://widgets.wp.com/agents-manager/reader-chat.min.js?ver=abc' )
+		).toBe( 'https://widgets.wp.com/agents-manager/languages/nl-v1.js?ver=abc' );
+	} );
+} );
+
+describe( 'loadReaderTranslations', () => {
+	const languageScripts = () => document.head.querySelectorAll( 'script[src*="/languages/"]' );
+
+	afterEach( () => {
+		languageScripts().forEach( ( script ) => script.remove() );
+		resetLocaleData( {}, 'default' );
+		loadAgentticTranslations.mockClear();
+		delete window.wp;
+	} );
+
+	it( 'loads nothing for English', async () => {
+		await loadReaderTranslations( 'en' );
+
+		expect( loadAgentticTranslations ).not.toHaveBeenCalled();
+		expect( languageScripts() ).toHaveLength( 0 );
+	} );
+
+	it( 'translates the starter questions with what the language file registers', async () => {
+		const loaded = loadReaderTranslations( 'nl' );
+		// Stand in for the language file, which registers through the global.
+		window.wp.i18n.setLocaleData( { 'Explore recent posts': [ 'Recente berichten' ] }, 'default' );
+		languageScripts()[ 0 ].onload();
+		await loaded;
+
+		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'nl', { domain: 'a8c-agenttic' } );
+		expect( getFallbackSuggestions()[ 0 ] ).toMatchObject( {
+			id: 'recent',
+			label: 'Recente berichten',
+		} );
+		expect( window.wp ).toBeUndefined();
+	} );
+
+	it( 'stays in English, without a warning, when the locale has no translations', async () => {
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const loaded = loadReaderTranslations( 'xx' );
+		languageScripts()[ 0 ].onerror();
+		await loaded;
+
+		expect( loadAgentticTranslations ).not.toHaveBeenCalled();
+		expect( getFallbackSuggestions()[ 0 ].label ).toBe( 'Explore recent posts' );
+		expect( warn ).not.toHaveBeenCalled();
+		warn.mockRestore();
+	} );
+
+	it( 'hands the page its own wp.i18n back, with the translations it would have received', async () => {
+		const pageI18n = { setLocaleData: vi.fn() };
+		window.wp = { i18n: pageI18n };
+		const loaded = loadReaderTranslations( 'nl' );
+		window.wp.i18n.setLocaleData( { Hello: [ 'Hallo' ] }, 'default' );
+		languageScripts()[ 0 ].onload();
+		await loaded;
+
+		expect( pageI18n.setLocaleData ).toHaveBeenCalledWith( { Hello: [ 'Hallo' ] }, 'default' );
+		expect( window.wp.i18n ).toBe( pageI18n );
 	} );
 } );

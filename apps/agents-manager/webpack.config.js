@@ -203,6 +203,11 @@ function getReaderConfig( options = {} ) {
 				__i18n_text_domain__: JSON.stringify( 'default' ),
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
+			// Paths from the repo root, so the app's own files match their references in the POT.
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( './dist/chunks-map-reader-chat.json' ),
+				base_dir: path.join( __dirname, '../..' ),
+			} ),
 			new ReadableJsAssetsWebpackPlugin(),
 			// Emit the cache-busting manifest without externalizing any dependencies.
 			new DependencyExtractionWebpackPlugin( {
