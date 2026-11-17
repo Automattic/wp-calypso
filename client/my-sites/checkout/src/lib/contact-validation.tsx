@@ -87,6 +87,35 @@ const getEmailTakenLoginRedirectMessage = (
 	);
 };
 
+const isEmailTaken = ( emailErrors: Record< string, string > ) =>
+	Object.prototype.hasOwnProperty.call( emailErrors, 'taken' );
+
+const getEmailValidationErrors = ( validationResult: unknown ): TranslateResult[] =>
+	( validationResult as { messages?: { email?: TranslateResult[] } } ).messages?.email ?? [];
+
+export async function validateLoggedOutEmailOnBlur(
+	email: string,
+	translate: ReturnType< typeof useTranslate >,
+	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void
+): Promise< void > {
+	if ( ! email.includes( '@' ) ) {
+		return;
+	}
+	try {
+		const { validationResult } = await getSignupEmailValidationResult(
+			email,
+			( newEmail: string ) => getEmailTakenLoginRedirectMessage( newEmail, translate )
+		);
+		if ( isContactValidationResponse( validationResult ) && ! validationResult.success ) {
+			applyDomainContactValidationResults(
+				formatDomainContactValidationResponse( validationResult )
+			);
+		}
+	} catch ( error ) {
+		debug( 'email validation on blur failed', error );
+	}
+}
+
 async function runContactValidationCheck(
 	contactInfo: ManagedContactDetails,
 	responseCart: ResponseCart
@@ -122,7 +151,7 @@ export async function validateContactDetails(
 	contactInfo: ManagedContactDetails,
 	isLoggedOutCart: boolean,
 	responseCart: ResponseCart,
-	showErrorMessageBriefly: ( message: string ) => void,
+	showErrorMessageBriefly: ( message: TranslateResult ) => void,
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
 	translate: ReturnType< typeof useTranslate >,
@@ -171,6 +200,9 @@ export async function validateContactDetails(
 				validationResult: loggedOutValidationResult,
 				applyDomainContactValidationResults,
 				clearDomainContactErrorMessages,
+				errorMessage: isEmailTaken( emailErrors )
+					? getEmailValidationErrors( loggedOutValidationResult )[ 0 ]
+					: undefined,
 			} );
 		}
 
@@ -362,9 +394,11 @@ function handleContactValidationResult( {
 	validationResult,
 	applyDomainContactValidationResults,
 	clearDomainContactErrorMessages,
+	errorMessage,
 }: {
 	translate: ReturnType< typeof useTranslate >;
-	showErrorMessage: ( message: string ) => void;
+	showErrorMessage: ( message: TranslateResult ) => void;
+	errorMessage?: TranslateResult;
 	validationResult: unknown;
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void;
 	clearDomainContactErrorMessages: () => void;
@@ -384,11 +418,12 @@ function handleContactValidationResult( {
 	}
 	if ( validationResult && ! validationResult.success && validationResult.messages ) {
 		showErrorMessage(
-			String(
-				translate(
-					'We could not validate your contact information. Please review and update all the highlighted fields.'
+			errorMessage ??
+				String(
+					translate(
+						'We could not validate your contact information. Please review and update all the highlighted fields.'
+					)
 				)
-			)
 		);
 	}
 	if ( validationResult?.success ) {

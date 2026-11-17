@@ -48,8 +48,7 @@
 			fill: var(--color-text-inverted);
 		}
 
-		svg.reader-follow-conversation path,
-		svg.reader-following-conversation path {
+		svg.reader-follow-conversation path {
 			fill: var(--color-text-inverted);
 
 			&.status {

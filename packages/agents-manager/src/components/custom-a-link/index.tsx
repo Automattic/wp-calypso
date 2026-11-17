@@ -2,6 +2,7 @@ import { isThisASupportArticleLink } from '@automattic/urls';
 import { useMemo } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FROM_CHAT } from '../../constants';
+import { InsideLinkProvider } from '../../contexts/inside-link-context';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { uriTransformer } from '../../utils/uri-transformer';
 
@@ -45,7 +46,7 @@ export default function CustomALink( {
 				} );
 			} }
 		>
-			{ children }
+			<InsideLinkProvider>{ children }</InsideLinkProvider>
 		</a>
 	);
 }

@@ -9,7 +9,6 @@ bin/build-docker.sh
 .vscode
 /.babel-cache
 /build
-/cached-requests.json
 **/node_modules
 /public
 /packages/calypso-e2e/src/secrets/*.json

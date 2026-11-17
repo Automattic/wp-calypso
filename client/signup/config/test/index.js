@@ -1,7 +1,9 @@
+import fs from 'fs';
+import path from 'path';
 import { isEmpty } from '@automattic/js-utils';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
-import { getStepModuleMap } from '../step-components';
+import { getStepModuleLoaders, getStepModuleMap } from '../step-components';
 import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
@@ -41,25 +43,38 @@ describe( 'index', () => {
 		} );
 	} );
 
-	test( 'All step components should have a step implementation', async () => {
-		const stepModuleMap = getStepModuleMap();
-		const allModules = new Set( Object.values( stepModuleMap ) );
-		const nonExistentModules = [];
+	test( 'All step modules should have a loader', () => {
+		const mappedModules = new Set( Object.values( getStepModuleMap() ) );
+		const loadedModules = new Set( Object.keys( getStepModuleLoaders() ) );
+
+		expect( [ ...mappedModules ].filter( ( name ) => ! loadedModules.has( name ) ) ).toEqual( [] );
+		expect( [ ...loadedModules ].filter( ( name ) => ! mappedModules.has( name ) ) ).toEqual( [] );
+	} );
+
+	test( 'Every step module loader should resolve its module', async () => {
+		const unresolvedModules = [];
 		await Promise.all(
-			Array.from( allModules ).map( async ( module ) => {
-				const path = `calypso/signup/steps/${ module }`;
+			Object.entries( getStepModuleLoaders() ).map( async ( [ moduleName, load ] ) => {
 				try {
-					await import( path );
+					await load();
 				} catch ( e ) {
 					if ( e.message.includes( 'Cannot find module' ) ) {
-						console.error( e );
-						nonExistentModules.push( path );
+						unresolvedModules.push( moduleName );
 					}
 				}
 			} )
 		);
 
-		expect( nonExistentModules ).toEqual( [] );
+		expect( unresolvedModules ).toEqual( [] );
+	} );
+
+	test( 'Every step directory should have a loader, and every loader a step directory', () => {
+		const stepDirectories = fs
+			.readdirSync( path.join( __dirname, '../../steps' ), { withFileTypes: true } )
+			.filter( ( entry ) => entry.isDirectory() )
+			.map( ( entry ) => entry.name );
+
+		expect( Object.keys( getStepModuleLoaders() ).sort() ).toEqual( stepDirectories.sort() );
 	} );
 
 	/**
@@ -149,7 +164,6 @@ describe( 'index', () => {
 		// deciding whether the domain-search step or the old ones are being used.
 		definedSteps.delete( 'domain-only' );
 		definedSteps.delete( 'domains' );
-		definedSteps.delete( 'domains-launch' );
 		definedSteps.delete( 'domains-theme-preselected' );
 		definedSteps.delete( 'mailbox-domain' );
 

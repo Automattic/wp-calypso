@@ -214,5 +214,3 @@ export function hasPressableUpgrade(
 		getMinimumSelectableIndex( highCategory, highOptions, existingPlan ) < highOptions.length
 	);
 }
-
-export const PRESSABLE_PROMOTION_TERMS_URL = 'https://pressable.com/legal/hosting-promotion-terms/';

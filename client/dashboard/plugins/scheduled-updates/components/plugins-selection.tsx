@@ -24,7 +24,7 @@ const defaultView: View = {
 	titleField: 'name',
 };
 
-type Props = {
+type ScheduledUpdatesPluginsSelectionProps = {
 	selectedSiteIds: string[];
 	selection: string[];
 	onChangeSelection: ( slugs: string[] ) => void;
@@ -34,7 +34,7 @@ function ScheduledUpdatesPluginsSelection( {
 	selectedSiteIds,
 	selection,
 	onChangeSelection,
-}: Props ) {
+}: ScheduledUpdatesPluginsSelectionProps ) {
 	const eligiblePlugins = useEligiblePlugins( selectedSiteIds );
 	const [ view, setView ] = useState< View >( defaultView );
 	const { data: filtered, paginationInfo } = useMemo( () => {

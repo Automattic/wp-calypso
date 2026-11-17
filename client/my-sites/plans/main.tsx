@@ -1,3 +1,4 @@
+import { wowFunnelPendingQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_LEGACY_STORAGE_200GB,
@@ -23,6 +24,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Plans } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Component, type ComponentProps } from 'react';
@@ -37,6 +39,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { getLaunchDestination } from 'calypso/lib/site-launch/destination';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -49,6 +52,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -95,6 +99,7 @@ interface OwnProps {
 	customerType?: string;
 	discountEndDate?: Date;
 	intervalType?: IntervalType;
+	isPreviewSite?: boolean;
 	jetpackAppPlans?: boolean;
 	pluginSlug?: string;
 	redirectTo?: string;
@@ -238,7 +243,9 @@ class PlansComponent extends Component< Props > {
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
 				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+				hideFreePlan={
+					this.props.isPreviewSite || ! visiblePlanTiers.includes( TYPE_FREE ) || undefined
+				}
 				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
@@ -514,11 +521,35 @@ export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'se
 	);
 	const intervalType = intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm;
 
+	/**
+	 * A preview site reads as Free, but it is already built and any paid plan keeps it. So it is
+	 * offered only paid plans, and buying one ends where the launch flow does: My Home, celebrating
+	 * the launch, rather than the generic thank-you page. Only an Atomic site on Free can be a
+	 * preview, so only one asks.
+	 */
+	const site = useSelector( getSelectedSite );
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ) );
+	const couldBePreview = isAtomic && !! currentPlan && isFreePlanProduct( currentPlan );
+	const { data: wowFunnelPending } = useQuery( {
+		...wowFunnelPendingQuery(),
+		enabled: couldBePreview,
+	} );
+	const isPreviewSite =
+		couldBePreview &&
+		!! wowFunnelPending?.preview_sites?.some( ( preview ) => preview.blog_id === selectedSiteId );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans
 				{ ...props }
 				currentPlan={ currentPlan }
+				isPreviewSite={ isPreviewSite }
+				redirectTo={
+					props.redirectTo ??
+					( isPreviewSite && site?.slug
+						? getLaunchDestination( { siteSlug: site.slug } )
+						: undefined )
+				}
 				selectedSiteId={ selectedSiteId }
 				intervalType={ isSupportedIntervalType( intervalType ) ? intervalType : undefined }
 			/>

@@ -1,4 +1,4 @@
-import { allSitesQuery } from '@automattic/api-queries';
+import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -23,7 +23,7 @@ export default function EarnMigrations() {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
-	const { data: sites = [] } = useQuery( allSitesQuery() );
+	const { data: sites = [] } = useQuery( sitesQuery() );
 	const { data, isLoading } = useFetchTaggedSitesForMigration();
 	const taggedSites = data ?? [];
 	const missingPaymentSettings = useMissingPaymentSettings( {

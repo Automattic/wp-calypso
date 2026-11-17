@@ -7,6 +7,8 @@ export interface StreamPostKey {
 	blogId?: ReadPostBlogId | string;
 	feedId?: ReadPostFeedId | string;
 	postId?: ReadPostKey[ 'postId' ] | string;
+	/** Set instead of the IDs for a saved snapshot post. See `isSavedSnapshotPost()`. */
+	snapshotId?: string;
 }
 
 export interface StreamItem extends StreamPostKey {

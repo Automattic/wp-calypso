@@ -6,7 +6,7 @@ import { useSiteSlugParam } from './use-site-slug-param';
 export const useSiteData = () => {
 	const site = useSite();
 	const siteSlugParam = useSiteSlugParam() ?? '';
-	const siteIdParam = Number( useSiteIdParam() ) ?? 0;
+	const siteIdParam = Number( useSiteIdParam() ) || 0;
 	const siteSlug = site?.URL ? urlToSlug( site?.URL ?? '' ) : siteSlugParam;
 	const siteId = site?.ID ?? siteIdParam;
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;

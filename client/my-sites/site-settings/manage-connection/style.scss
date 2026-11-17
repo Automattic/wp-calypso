@@ -16,6 +16,10 @@
 	margin-top: 16px;
 }
 
+.form-setting-explanation + .manage-connection__user-dropdown {
+	margin-block-start: 16px;
+}
+
 .manage-connection__user-dropdown .author-selector__author-toggle {
 	display: inline-block;
 	border-style: solid;

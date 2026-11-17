@@ -10,13 +10,13 @@ export interface MShotConfig {
 	scale: number;
 }
 
-const mShotConfigs: Record< string, MShotConfig > = {
+export const mShotConfigs: Record< string, MShotConfig > = {
 	desktop: {
-		vpw: 1600,
-		vph: 1600,
-		w: 1600,
-		h: 1624,
-		screen_height: 1600,
+		vpw: 1440,
+		vph: 1440,
+		w: 1440,
+		h: 1462,
+		screen_height: 1440,
 		scale: 2,
 	},
 	tablet: {

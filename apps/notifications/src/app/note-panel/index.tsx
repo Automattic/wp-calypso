@@ -3,12 +3,10 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 	CardHeader,
-	privateApis,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { Badge } from '@wordpress/ui';
+import { Tabs } from '@wordpress/ui';
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
@@ -17,16 +15,8 @@ import { getFilters } from '../../panel/templates/filters';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
-import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import NotePanelActions from './actions';
 import type { FilterName } from '../types';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-
-const { Tabs } = unlock( privateApis );
 
 export const getNotificationTabs = () =>
 	Object.values( getFilters() ).map( ( { name, label } ) => ( {
@@ -52,7 +42,6 @@ const NotePanel = ( {
 	const notificationTabs = getNotificationTabs();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
-	const isSimplified = useIsSimplifiedNote();
 
 	const handleSelect = useCallback(
 		( tabId: string | null | undefined ) => {
@@ -80,6 +69,9 @@ const NotePanel = ( {
 			if ( modifierKeyIsActive( event ) ) {
 				return;
 			}
+			if ( selectedNoteId ) {
+				return;
+			}
 
 			const shortcutToTabId: Record< string, string > = {
 				a: 'all',
@@ -104,75 +96,71 @@ const NotePanel = ( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled ] );
+	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled, selectedNoteId ] );
 
 	return (
-		<>
+		<Tabs.Root className="wpnc-app__tabs" value={ filterName } onValueChange={ handleSelect }>
 			<CardHeader
+				isBorderless
 				size="small"
 				style={ { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 0 } }
 			>
 				<VStack>
 					<HStack>
 						<HStack justify="flex-start">
-							<Heading level={ 3 } size={ 15 } weight={ 500 }>
+							<Heading
+								level={ 3 }
+								size={ 15 }
+								weight="var(--wpds-typography-font-weight-emphasis, 600)"
+							>
 								{ __( 'Notifications' ) }
 							</Heading>
-							{ isSimplified && (
-								<Badge
-									className="wpnc-app__beta-badge"
-									intent="informational"
-									render={
-										<a href="https://wp.me/p9zg7s-dv" target="_blank" rel="noopener noreferrer" />
-									}
-								>
-									{ __( 'Beta' ) }
-								</Badge>
-							) }
 						</HStack>
 						<HStack justify="flex-end">
 							<NotePanelActions />
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
-					<Tabs selectedTabId={ filterName } onSelect={ handleSelect }>
-						<Tabs.TabList
-							style={ {
-								maxWidth: '100%',
-							} }
-						>
-							{ notificationTabs.map( ( { name, title } ) => (
-								<Tabs.Tab
-									key={ name }
-									tabId={ name }
-									style={ { fontFamily: 'inherit', fontWeight: 500, lineHeight: '16px' } }
-									ref={ ( element: HTMLButtonElement ) => {
-										tabRefs.current[ name ] = element;
-									} }
-								>
-									{ title }
-								</Tabs.Tab>
-							) ) }
-						</Tabs.TabList>
-					</Tabs>
+					<Tabs.List variant="minimal" activateOnFocus>
+						{ notificationTabs.map( ( { name, title } ) => (
+							<Tabs.Tab
+								key={ name }
+								value={ name }
+								ref={ ( element: HTMLButtonElement ) => {
+									tabRefs.current[ name ] = element;
+								} }
+							>
+								{ title }
+							</Tabs.Tab>
+						) ) }
+					</Tabs.List>
 				</VStack>
 			</CardHeader>
-			{ /* Scope the boundary to the list content so a render error there
-			   leaves the header controls (tabs, settings) intact and only
-			   overlays the message, instead of collapsing the whole panel. */ }
-			<ErrorBoundary>
-				{ /* Key by `filterName` so switching tabs remounts the list. The tab
-				   filter is applied outside the DataViews `view`, so DataViews'
-				   infinite-scroll row accumulation would otherwise carry stale
-				   notes from the previously selected tab. */ }
-				<NoteList
-					key={ filterName }
-					filterName={ filterName }
-					selectedNoteId={ selectedNoteId }
-					setSelectedNoteId={ setSelectedNoteId }
-				/>
-			</ErrorBoundary>
-		</>
+			{ notificationTabs.map( ( { name } ) => (
+				// The list inside is focusable, so the panel needn't be a tab stop of its own.
+				<Tabs.Panel key={ name } value={ name } className="wpnc-app__tab-panel" tabIndex={ -1 }>
+					{ /* Scope the boundary to the list content so a render error there
+					   leaves the header controls (tabs, settings) intact and only
+					   overlays the message, instead of collapsing the whole panel.
+					   Only the active panel renders it: the outgoing one stays mounted
+					   while it hides. */ }
+					{ name === filterName && (
+						<ErrorBoundary>
+							{ /* Key by `filterName` so switching tabs remounts the list. The tab
+							   filter is applied outside the DataViews `view`, so DataViews'
+							   infinite-scroll row accumulation would otherwise carry stale
+							   notes from the previously selected tab. */ }
+							<NoteList
+								key={ filterName }
+								filterName={ filterName }
+								selectedNoteId={ selectedNoteId }
+								setSelectedNoteId={ setSelectedNoteId }
+							/>
+						</ErrorBoundary>
+					) }
+				</Tabs.Panel>
+			) ) }
+		</Tabs.Root>
 	);
 };
 

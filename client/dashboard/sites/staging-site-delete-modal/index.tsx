@@ -84,7 +84,7 @@ export default function StagingSiteDeleteModal( {
 		<Modal title={ __( 'Delete staging site' ) } size="medium" onRequestClose={ onClose }>
 			<VStack spacing={ 4 }>
 				{ isSyncing && (
-					<Notice variant="warning" density="medium">
+					<Notice variant="warning">
 						<Text>
 							{ __(
 								'A sync is currently in progress. Deleting this staging site will cancel the sync and any unfinished changes will be lost.'

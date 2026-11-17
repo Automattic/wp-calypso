@@ -1,3 +1,5 @@
+import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
+
 function isIDN( url: string ): boolean {
 	try {
 		// Regex to extract the hostname from the URL.
@@ -25,16 +27,22 @@ function isIDN( url: string ): boolean {
 	}
 }
 
+export type UrlValidationErrorReason =
+	'email' | 'idn' | 'invalid_characters' | 'missing_tld' | 'invalid_protocol' | 'invalid_url';
+
 /*
- * Get the validation message for the given URL.
+ * Validate a site URL the user entered.
  *
  * @param {string} url The URL to validate.
- * @param {Function} translate The translation function.
- * @param {Function} hasEnTranslation The function to check if a translation key has an English translation.
  *
- * @return {string} The validation message for the given URL.
+ * @return {UrlValidationErrorReason | null} `null` if the URL is valid, otherwise a stable
+ * identifier for the rule that rejects it.
  */
-export default function getValidationMessage( url: string, translate: ( key: string ) => string ) {
+export function getUrlValidationError( url: string ): UrlValidationErrorReason | null {
+	if ( CAPTURE_URL_RGX.test( url ) ) {
+		return null;
+	}
+
 	const missingTLDRegex = /^(?:https?:\/\/)?(?!.*\.[a-z]{2,})([a-zA-Z0-9-_]+)$/;
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	const invalidURLProtocolRegex = /^(?!https?:\/\/)\S+:\/\//;
@@ -42,31 +50,57 @@ export default function getValidationMessage( url: string, translate: ( key: str
 
 	const removedInitialDots = url.replace( 'www.', '' );
 
-	let errorMessage = translate(
-		"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps."
-	);
-
 	if ( emailRegex.test( url ) ) {
-		errorMessage = translate(
-			"Looks like you might have added an email address. Please use a URL instead, like 'example.com'."
-		);
+		return 'email';
 	} else if ( isIDN( url ) ) {
-		errorMessage = translate(
-			"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com')."
-		);
+		return 'idn';
 	} else if ( invalidCharsRegex.test( url ) ) {
-		errorMessage = translate(
-			'Looks like your URL has some invalid characters (like ~ or ^). Please delete them and try again.'
-		);
+		return 'invalid_characters';
 	} else if ( missingTLDRegex.test( removedInitialDots ) ) {
-		errorMessage = translate(
-			"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'."
-		);
+		return 'missing_tld';
 	} else if ( invalidURLProtocolRegex.test( url ) ) {
-		errorMessage = translate(
-			"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'."
-		);
+		return 'invalid_protocol';
 	}
 
-	return errorMessage;
+	return 'invalid_url';
+}
+
+/*
+ * Get the validation message for a reason returned by `getUrlValidationError()`.
+ *
+ * @param {UrlValidationErrorReason} reason Why the URL is invalid.
+ * @param {Function} translate The translation function.
+ *
+ * @return {string} The validation message.
+ */
+export function getValidationMessage(
+	reason: UrlValidationErrorReason,
+	translate: ( key: string ) => string
+) {
+	switch ( reason ) {
+		case 'email':
+			return translate(
+				"Looks like you might have added an email address. Please use a URL instead, like 'example.com'."
+			);
+		case 'idn':
+			return translate(
+				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com')."
+			);
+		case 'invalid_characters':
+			return translate(
+				'Looks like your URL has some invalid characters (like ~ or ^). Please delete them and try again.'
+			);
+		case 'missing_tld':
+			return translate(
+				"Looks like your site address is missing its domain extension. Please try again with something like 'example.com' or 'example.net'."
+			);
+		case 'invalid_protocol':
+			return translate(
+				"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'."
+			);
+		case 'invalid_url':
+			return translate(
+				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps."
+			);
+	}
 }

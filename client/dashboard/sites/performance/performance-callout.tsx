@@ -1,7 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import illustrationDarkUrl from './performance-callout-illustration-dark.svg';
 import illustrationUrl from './performance-callout-illustration.svg';
 import type { Site } from '@automattic/api-core';
 import type { JSX } from 'react';
@@ -12,7 +14,7 @@ export function getPerformanceCalloutProps() {
 		upsellId: 'site-performance',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Optimize your site’s performance' ),
-		upsellImage: illustrationUrl,
+		upsellImage: <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />,
 		upsellDescription: __(
 			'Make smarter decisions, boost speed and engagement, and see how your site‘s performing with key metrics and contextual insights.'
 		),

@@ -1,8 +1,14 @@
 @import "@automattic/typography/styles/variables";
 
 $toolbar-height: 48px;
-// The whole composer, toolbar included; past it the writing area scrolls.
-$composer-max-height: 400px;
+$compact-toolbar-height: 32px;
+// The whole box, toolbar included; past it the writing area scrolls.
+$editor-max-height: 400px;
+// How the toolbar opens and folds, besides when it shows.
+$toolbar-fold:
+	grid-template-rows 0.25s ease-in-out,
+	min-block-size 0.25s ease-in-out,
+	border-color 0.25s ease-in-out;
 
 // The box and type, which the editor's own styles read as variables.
 .comments__block-editor {
@@ -22,20 +28,28 @@ $composer-max-height: 400px;
 	}
 }
 
-// Open from the start, not only once a block has tools, so the box doesn't grow on focus.
-// The classes outrank the editor's open rule, which loads after this.
+// The toolbar: open while the box is in use, folding up once the writer leaves. The classes
+// outrank the editor's own rules, which load after these and open it only for a block's tools.
 .comments__block-editor .comments__block-editor-toolbar,
-.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
 	box-sizing: border-box;
-	min-block-size: $toolbar-height + 1px;
+	min-block-size: 0;
 	padding-inline: 12px;
-	border-block-end: 1px solid var(--color-neutral-5);
+	border-block-end: 1px solid transparent;
+	transition: $toolbar-fold, visibility 0s linear 0.25s;
 }
 
+.comments__block-editor:not(.is-open) .comments__block-editor-toolbar {
+	display: none;
+}
+
+.comments__block-editor.is-open .comments__block-editor-toolbar,
 .comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
 	grid-template-rows: 1fr;
+	min-block-size: $toolbar-height + 1px;
 	visibility: visible;
-	transition: none;
+	border-block-end-color: var(--color-neutral-5);
+	transition: $toolbar-fold, visibility 0s;
 	animation: none;
 }
 
@@ -44,12 +58,113 @@ $composer-max-height: 400px;
 .comments__block-editor .jetpack-comments__editor .editor-styles-wrapper {
 	box-sizing: border-box;
 	min-block-size: calc(4lh + 2 * var(--jetpack-comments-pad));
-	max-block-size: $composer-max-height - $toolbar-height - 1px;
+	max-block-size: $editor-max-height - $toolbar-height - 1px;
 	overflow-y: auto;
 }
 
 .comments__block-editor-content {
 	position: relative;
+}
+
+// The box stays close to the textarea it replaces: its border and type, two lines to write on, and
+// a slimmer toolbar that keeps to the background until it's used. The doubled class outranks the
+// editor's own styles.
+.comments__block-editor.comments__block-editor {
+	--jetpack-comments-pad: 12px;
+	--jetpack-comments-font-size: #{$font-body-small};
+	--jetpack-comments-line-height: 21px;
+
+	&:not(:focus-within) {
+		border-color: var(--color-neutral-10);
+	}
+
+	.comments__block-editor-textarea,
+	.jetpack-comments__editor .editor-styles-wrapper {
+		min-block-size: calc(2lh + 2 * var(--jetpack-comments-pad));
+		max-block-size: $editor-max-height - $compact-toolbar-height - 1px;
+		transition: padding-block 0.25s ease-in-out;
+	}
+
+	// Closing, the words slide up to the textarea's padding as the row shrinks around them, with
+	// nothing left of the folded toolbar above them.
+	&.is-closing .comments__block-editor-textarea,
+	&.is-closing .jetpack-comments__editor .editor-styles-wrapper {
+		padding-block: 5px;
+	}
+
+	&.is-closing.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
+		border-block-end-width: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar,
+	.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar,
+	.comments__block-editor.comments__block-editor .comments__block-editor-textarea,
+	.comments__block-editor.comments__block-editor .jetpack-comments__editor .editor-styles-wrapper {
+		transition: none;
+	}
+}
+
+.comments__block-editor.comments__block-editor.is-open .comments__block-editor-toolbar,
+.comments__block-editor.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+	min-block-size: $compact-toolbar-height + 1px;
+	border-block-end-color: var(--color-neutral-0);
+}
+
+.comments__block-editor.comments__block-editor.jetpack-comments .jetpack-comments__toolbar {
+	padding-inline: 4px;
+
+	.components-toolbar-group {
+		min-height: $compact-toolbar-height;
+		padding-inline: 2px;
+	}
+
+	.components-toolbar-group .components-button {
+		min-width: $compact-toolbar-height;
+		height: $compact-toolbar-height;
+		padding: 4px;
+		color: var(--color-text-subtle);
+
+		&:hover,
+		&.is-pressed,
+		&[aria-expanded="true"] {
+			color: var(--color-text);
+		}
+
+		// The pressed and focused pill, sized for the shorter button.
+		&::before {
+			inset: 2px;
+		}
+	}
+
+	.components-toolbar-group .components-button svg {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+// Room for a finger on a touch screen.
+@media (pointer: coarse) {
+	.comments__block-editor.comments__block-editor.is-open .comments__block-editor-toolbar,
+	.comments__block-editor.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+		min-block-size: $toolbar-height + 1px;
+	}
+
+	.comments__block-editor.comments__block-editor.jetpack-comments .jetpack-comments__toolbar {
+		.components-toolbar-group {
+			min-height: $toolbar-height;
+		}
+
+		.components-toolbar-group .components-button {
+			min-width: 40px;
+			height: $toolbar-height;
+		}
+
+		.components-toolbar-group .components-button::before {
+			inset: 4px 2px;
+		}
+	}
 }
 
 .comments__block-editor .comments__block-editor-textarea {

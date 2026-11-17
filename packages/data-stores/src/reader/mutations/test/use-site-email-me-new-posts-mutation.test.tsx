@@ -8,20 +8,21 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { EmailDeliveryFrequency } from '../../constants';
 import { callApi } from '../../helpers';
 import useSiteEmailMeNewPostsMutation from '../../mutations/use-site-email-me-new-posts-mutation';
 import type { SiteSubscriptionItem } from '../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( '../../hooks', () => ( {
-	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true, id: 1 } ),
-	useCacheKey: jest.fn( ( key ) => [ ...key, true, 1 ] ),
+vi.mock( '../../hooks', () => ( {
+	useIsLoggedIn: vi.fn().mockReturnValue( { isLoggedIn: true, id: 1 } ),
+	useCacheKey: vi.fn( ( key ) => [ ...key, true, 1 ] ),
 } ) );
 
-jest.mock( '../../helpers', () => ( {
-	...jest.requireActual( '../../helpers' ),
-	callApi: jest.fn(),
+vi.mock( '../../helpers', async () => ( {
+	...( await vi.importActual< typeof import( '../../helpers' ) >( '../../helpers' ) ),
+	callApi: vi.fn(),
 } ) );
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -71,7 +72,7 @@ const getCachedEmail = ( queryClient: QueryClient ) =>
 
 describe( 'useSiteEmailMeNewPostsMutation()', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'clears the stored delivery frequency when email delivery is turned off', async () => {
@@ -80,7 +81,7 @@ describe( 'useSiteEmailMeNewPostsMutation()', () => {
 			getSiteSubscriptionsQueryKey(),
 			makeSiteSubscriptionsData( [ makeSubscription() ] )
 		);
-		( callApi as jest.Mock ).mockResolvedValue( { success: true, subscribed: false } );
+		( callApi as Mock ).mockResolvedValue( { success: true, subscribed: false } );
 
 		const { result } = renderHook( () => useSiteEmailMeNewPostsMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -108,7 +109,7 @@ describe( 'useSiteEmailMeNewPostsMutation()', () => {
 				} ),
 			] )
 		);
-		( callApi as jest.Mock ).mockResolvedValue( { success: true, subscribed: true } );
+		( callApi as Mock ).mockResolvedValue( { success: true, subscribed: true } );
 
 		const { result } = renderHook( () => useSiteEmailMeNewPostsMutation(), {
 			wrapper: makeWrapper( queryClient ),
@@ -128,7 +129,7 @@ describe( 'useSiteEmailMeNewPostsMutation()', () => {
 		const queryClient = makeQueryClient();
 		const previousData = makeSiteSubscriptionsData( [ makeSubscription() ] );
 		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), previousData );
-		( callApi as jest.Mock ).mockRejectedValue( new Error( 'request failed' ) );
+		( callApi as Mock ).mockRejectedValue( new Error( 'request failed' ) );
 
 		const { result } = renderHook( () => useSiteEmailMeNewPostsMutation(), {
 			wrapper: makeWrapper( queryClient ),

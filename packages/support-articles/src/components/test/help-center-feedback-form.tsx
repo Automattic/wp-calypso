@@ -1,27 +1,32 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import HelpCenterFeedbackForm from '../help-center-feedback-form';
 
-const mockRateArticle = jest.fn();
+const mockRateArticle = vi.fn();
 const mockSessionRatings: Record< number, 1 | 2 | undefined > = {};
+let mockCheckoutSupportVariation: string | undefined;
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/odie-client', () => ( {
-	GetSupport: () => <div>support options</div>,
+vi.mock( '@automattic/odie-client', () => ( {
+	GetSupport: ( {
+		onClickAdditionalEvent,
+	}: {
+		onClickAdditionalEvent: ( destination: string ) => void;
+	} ) => <button onClick={ () => onClickAdditionalEvent( 'chat' ) }>support options</button>,
+	useCheckoutSupportVariation: () => mockCheckoutSupportVariation,
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
 
-jest.mock( '../../hooks/use-rate-article', () => ( {
+vi.mock( '../../hooks/use-rate-article', () => ( {
 	useRateArticle: () => ( { mutate: mockRateArticle } ),
 	getSessionRating: ( _blogId: number, postId: number ) => mockSessionRatings[ postId ],
 } ) );
@@ -40,8 +45,9 @@ function renderForm( userRating?: 1 | 2 | null ) {
 
 describe( 'HelpCenterFeedbackForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		delete mockSessionRatings[ 185130 ];
+		mockCheckoutSupportVariation = undefined;
 	} );
 
 	it( 'asks for a rating when the article has not been rated', () => {
@@ -116,5 +122,31 @@ describe( 'HelpCenterFeedbackForm', () => {
 
 		expect( screen.getByText( 'support options' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'You found this article helpful.' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'records getting support from the article', () => {
+		renderForm( 2 );
+
+		fireEvent.click( screen.getByText( 'support options' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_odie_chat_get_support', {
+			location: 'article-feedback',
+			destination: 'chat',
+			is_user_eligible: false,
+		} );
+	} );
+
+	it( 'adds the checkout support variation when support was opened from checkout', () => {
+		mockCheckoutSupportVariation = 'hybrid';
+		renderForm( 2 );
+
+		fireEvent.click( screen.getByText( 'support options' ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_odie_chat_get_support', {
+			location: 'article-feedback',
+			destination: 'chat',
+			is_user_eligible: false,
+			checkout_support_variation: 'hybrid',
+		} );
 	} );
 } );

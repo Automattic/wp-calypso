@@ -2,6 +2,9 @@ import type { HelpCenterFeatureConfig, HelpCenterProduct } from './types';
 
 /** WordPress.com default: all features enabled. */
 const wpcomPreset: HelpCenterFeatureConfig = {
+	aiDisclosureLine: ( __ ) =>
+		/* translators: Tells users they're chatting with AI in the Help Center. "WordPress.com" is the product name; write it the way your language does. */
+		__( 'You’re chatting with AI from WordPress.com Support.', __i18n_text_domain__ ),
 	header: {
 		ellipsisMenu: true,
 	},
@@ -64,6 +67,9 @@ const a4aPreset: HelpCenterFeatureConfig = {
 
 /** WooCommerce.com: chat enabled with filtered history, Woo docs instead of dotcom-specific links. */
 const wooPreset: HelpCenterFeatureConfig = {
+	aiDisclosureLine: ( __ ) =>
+		/* translators: Tells users they're chatting with AI in the Help Center. "Woo" is the product name; write it the way your language does. */
+		__( 'You’re chatting with AI from Woo Support.', __i18n_text_domain__ ),
 	header: {
 		ellipsisMenu: true,
 	},

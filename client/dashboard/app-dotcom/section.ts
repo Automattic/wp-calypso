@@ -24,6 +24,7 @@ export const DOTCOM_DASHBOARD_SECTION_PATHS = [
 	'/',
 	'/sites',
 	'/domains',
+	'/email',
 	'/emails',
 	'/plugins',
 	'/me',

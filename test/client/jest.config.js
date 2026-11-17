@@ -1,51 +1,39 @@
 const path = require( 'path' );
 const base = require( '@automattic/calypso-jest' );
+const { jestIgnorePatterns } = require( './vitest-directories' );
 
-const shared = {
+module.exports = {
 	...base,
 	rootDir: path.join( __dirname, '../../client' ),
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
-	testPathIgnorePatterns: [ ...base.testPathIgnorePatterns, '<rootDir>/server/' ],
+	testPathIgnorePatterns: [
+		...base.testPathIgnorePatterns,
+		'<rootDir>/server/',
+		'<rootDir>/dashboard/',
+		...jestIgnorePatterns,
+	],
 
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
-		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
+		'^react-markdown$': '<rootDir>/../test/mocks/react-markdown.js',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\]|(?:d3-(?:array|color|format|interpolate|scale|time|time-format)|internmap)[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
+		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|@wordpress[\\/\\\\]theme[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\]|(?:.*[\\/\\\\])?marked[\\/\\\\]|(?:d3-(?:array|color|format|interpolate|scale|time|time-format)|internmap)[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	testEnvironmentOptions: {
 		url: 'https://example.com',
 	},
-	setupFiles: [ ...base.setupFiles, 'jest-canvas-mock' ],
+	setupFiles: [
+		...base.setupFiles,
+		'jest-canvas-mock',
+		'<rootDir>/../test/client/setup-globals.js',
+	],
+	setupFilesAfterEnv: [
+		...base.setupFilesAfterEnv,
+		'<rootDir>/../test/client/setup-test-framework.js',
+	],
 	globals: {
 		google: {},
 		__i18n_text_domain__: 'default',
 	},
-};
-
-module.exports = {
-	projects: [
-		{
-			...shared,
-			displayName: 'client',
-			testPathIgnorePatterns: [ ...shared.testPathIgnorePatterns, '<rootDir>/dashboard/' ],
-			setupFiles: [ ...shared.setupFiles, '<rootDir>/../test/client/setup-globals.js' ],
-			setupFilesAfterEnv: [
-				...shared.setupFilesAfterEnv,
-				'<rootDir>/../test/client/setup-test-framework.js',
-			],
-		},
-		{
-			...shared,
-			displayName: 'dashboard',
-			// Override testMatch to only run dashboard tests
-			testMatch: [ '<rootDir>/dashboard/**/test/*.[jt]s?(x)' ],
-			setupFiles: [ ...shared.setupFiles, '<rootDir>/../test/client/setup-globals.js' ],
-			setupFilesAfterEnv: [
-				...shared.setupFilesAfterEnv,
-				'<rootDir>/../test/client/setup-dashboard-test-framework.js',
-			],
-		},
-	],
 };

@@ -4,7 +4,10 @@ import calypso, {
 	nodeConfig,
 	restrictedImports,
 } from '@automattic/calypso-eslint-config';
+import vitest from '@vitest/eslint-plugin';
 import { defineConfig } from 'eslint/config';
+import jest from 'eslint-plugin-jest';
+import { eslintFiles, eslintIgnores } from '../test/client/vitest-directories.js';
 
 const [ , { patterns } ] = restrictedImports;
 
@@ -52,6 +55,32 @@ export default defineConfig(
 			},
 		},
 		{ ...nodeConfig, files: [ 'webpack.*.js', 'server/**', '**/test/**' ] },
+		// ESLint rejects an empty `files`.
+		...( eslintFiles.length
+			? [
+					{
+						name: 'calypso/client/vitest',
+						files: eslintFiles,
+						ignores: eslintIgnores,
+						plugins: { vitest },
+						rules: {
+							...Object.fromEntries(
+								Object.keys( jest.rules ).map( ( rule ) => [ `jest/${ rule }`, 'off' ] )
+							),
+							...vitest.configs.recommended.rules,
+							'vitest/no-mocks-import': 'off',
+							'no-restricted-globals': [
+								'error',
+								{
+									name: 'jest',
+									message:
+										'These tests run on Vitest (see test/client/vitest-directories.js). Use `vi` from `vitest` instead.',
+								},
+							],
+						},
+					},
+				]
+			: [] ),
 		{
 			files: [ '**/docs/example.jsx' ],
 			rules: {
@@ -60,7 +89,7 @@ export default defineConfig(
 			},
 		},
 		{
-			files: [ '**/*.stories.tsx' ],
+			files: [ '**/*.stories.{ts,tsx}' ],
 			rules: {
 				'import/no-extraneous-dependencies': 'off',
 			},

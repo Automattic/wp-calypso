@@ -1,9 +1,9 @@
+import { domainsQuery } from '@automattic/api-queries';
 import { PreLaunchModal, CelebrationModal } from '@automattic/site-launch-modals';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useAppContext } from '../../app/context';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { getSitePlanDisplayName } from '../../utils/site-plan';
 import SitePreview from '../site-preview';
@@ -39,9 +39,8 @@ type SiteLaunchModalProps = CelebrationVariantProps | PreLaunchVariantProps;
 export default function SiteLaunchModal( props: SiteLaunchModalProps ) {
 	const { isOpen, onClose } = props;
 	const { recordTracksEvent } = useAnalytics();
-	const { queries } = useAppContext();
 	const { data: domains = [], isFetchedAfterMount: isDomainsDataReady } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		enabled: isOpen,
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === props.site.ID ),
 	} );

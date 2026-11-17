@@ -60,7 +60,7 @@ describe( 'SMSNotification', () => {
 		expect( screen.getByLabelText( 'Disable SMS notifications' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'SMS Notification' ) ).toBeInTheDocument();
 		expect(
-			screen.getByText( 'Set up text messages to send to one or more people.' )
+			screen.getByText( 'Set up text messages to send to one phone number.' )
 		).toBeInTheDocument();
 	} );
 

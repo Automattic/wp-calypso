@@ -191,14 +191,11 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
-			gap: 7px;
-		}
-}
-
-	${ handleLabelDisabled };
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 7px;
+	}
 `;
 
 const RadioButtonChildren = styled.div<
@@ -316,34 +313,6 @@ function handleWrapperDisabled( { disabled, checked }: { disabled?: boolean; che
 	}
 
 	return styles;
-}
-
-function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {
-	if ( ! disabled ) {
-		return null;
-	}
-
-	return `
-		color: lightgray;
-		font-style: italic;
-
-		:hover {
-			cursor: default;
-		}
-
-		::before {
-			border: 1px solid lightgray;
-			background: lightgray;
-		}
-
-		::after {
-			background: white;
-		}
-
-		span {
-			color: lightgray;
-		}
-	`;
 }
 
 function getBorderColor( { checked, theme }: { checked?: boolean; theme: Theme } ) {

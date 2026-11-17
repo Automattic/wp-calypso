@@ -2,6 +2,7 @@ import { screen, render, waitFor, fireEvent } from '@testing-library/react';
 import { withShoppingCart } from '../src/index';
 import { planOne, mainCartKey } from './utils/mock-cart-api';
 import { MockProvider, ProductListWithoutHook } from './utils/mock-components';
+import '@testing-library/jest-dom/vitest';
 
 describe( 'withShoppingCart', () => {
 	it( 'provides both shoppingCartManager and cart props to the wrapped component', async () => {

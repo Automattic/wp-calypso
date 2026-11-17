@@ -1,8 +1,6 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook, waitFor, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useGetCombinedChat } from '../use-get-combined-chat';
 import type { Message } from '../../types';
 
@@ -13,37 +11,39 @@ import type { Message } from '../../types';
 let mockIsChatLoaded = true;
 let mockConnectionStatus: string | undefined;
 let mockZendeskClientId: string | undefined;
+let mockCheckoutSupportVariation: string | undefined;
 let mockZendeskJwt: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
 let mockOdieChat: Record< string, unknown > | undefined;
-const mockGetZendeskConversation = jest.fn();
-const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
-const mockGetZendeskConversationHistory = jest.fn();
-const mockGetQueryData = jest.fn();
+const mockGetZendeskConversation = vi.fn();
+const mockGetOdieTransferMessages = vi.fn().mockReturnValue( [] );
+const mockGetZendeskConversationHistory = vi.fn();
+const mockGetQueryData = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: () => ( {
 		isChatLoaded: mockIsChatLoaded,
 		connectionStatus: mockConnectionStatus,
 		zendeskClientId: mockZendeskClientId,
+		checkoutSupportVariation: mockCheckoutSupportVariation,
 	} ),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
+vi.mock( '@tanstack/react-query', () => ( {
 	useIsMutating: () => 0,
 	useQueryClient: () => ( { getQueryData: mockGetQueryData } ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => false,
 } ) );
 
-jest.mock( '../use-logged-out-session', () => ( {
+vi.mock( '../use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( {
 		loggedOutOdieChatId: undefined,
 		sessionId: undefined,
@@ -51,7 +51,7 @@ jest.mock( '../use-logged-out-session', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../data', () => ( {
+vi.mock( '../../data', () => ( {
 	useAuthenticateZendeskMessaging: () => ( {
 		data: mockZendeskJwt ? { jwt: mockZendeskJwt } : undefined,
 	} ),
@@ -64,21 +64,21 @@ jest.mock( '../../data', () => ( {
 	useOdieChat: () => ( { data: mockOdieChat, isFetching: false } ),
 } ) );
 
-jest.mock( '../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( {
 		data: mockCurrentSupportInteraction,
 		isLoading: false,
 	} ),
 } ) );
 
-jest.mock( '../../utils', () => ( {
+vi.mock( '../../utils', () => ( {
 	getConversationIdFromInteraction: ( interaction: { conversationId?: string } ) =>
 		interaction?.conversationId ?? null,
 	getOdieIdFromInteraction: ( interaction: { odieId?: number } ) => interaction?.odieId ?? null,
 	getIsRequestingHumanSupport: () => false,
 } ) );
 
-jest.mock( '../../constants', () => ( {
+vi.mock( '../../constants', () => ( {
 	HELP_CENTER_STORE: 'automattic/help-center',
 	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
@@ -89,7 +89,7 @@ jest.mock( '../../constants', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../context', () => ( {
+vi.mock( '../../context', () => ( {
 	emptyChat: {
 		odieId: null,
 		conversationId: null,
@@ -113,10 +113,11 @@ const renderCombinedChat = () =>
 	renderHook( () => useGetCombinedChat( /* canConnectToZendesk */ true, /* isLoading */ false ) );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockIsChatLoaded = true;
 	mockConnectionStatus = undefined;
 	mockZendeskClientId = 'client-1';
+	mockCheckoutSupportVariation = undefined;
 	mockZendeskJwt = 'messenger-jwt';
 	mockCurrentSupportInteraction = undefined;
 	mockConversation = null;
@@ -418,6 +419,31 @@ describe( 'useGetCombinedChat — when the conversation cannot be fetched', () =
 
 		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'adds the checkout support variation to its event', async () => {
+		mockCheckoutSupportVariation = 'human_only';
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_not_found',
+				expect.objectContaining( {
+					conversation_id: 'conv-1',
+					checkout_support_variation: 'human_only',
+				} )
+			);
+		} );
+	} );
 } );
 
 describe( 'useGetCombinedChat — older Zendesk messages', () => {
@@ -618,5 +644,42 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 				error: 'unauthorized',
 			}
 		);
+	} );
+
+	it( 'adds the checkout support variation to the history events', async () => {
+		mockCheckoutSupportVariation = 'human_only';
+		mockGetZendeskConversationHistory.mockResolvedValue( {
+			messages: [ receivedMessage( 1, 'first', 100 ) ],
+			truncated: false,
+		} );
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_history_loaded',
+				expect.objectContaining( { checkout_support_variation: 'human_only' } )
+			);
+		} );
+	} );
+
+	it( 'adds the checkout support variation when the history cannot be loaded', async () => {
+		mockCheckoutSupportVariation = 'hybrid';
+		mockGetZendeskConversationHistory.mockImplementation( () =>
+			Promise.reject( new Error( 'unauthorized' ) )
+		);
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_history_failed',
+				{
+					conversation_id: 'conv-1',
+					error: 'unauthorized',
+					checkout_support_variation: 'hybrid',
+				}
+			);
+		} );
 	} );
 } );

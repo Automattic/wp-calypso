@@ -46,13 +46,17 @@ const DEFAULT_VIEW: DnsView = {
 	search: '',
 	page: 1,
 	perPage: 20,
-	titleField: 'type',
 	sort: {
 		field: 'type',
 		direction: 'asc',
 	},
-	fields: [ 'name', 'value' ],
+	fields: [ 'type', 'name', 'value' ],
 	filters: [],
+	layout: {
+		styles: {
+			name: { maxWidth: '140px', minWidth: '72px' },
+		},
+	},
 };
 
 const DEFAULT_LAYOUTS = {

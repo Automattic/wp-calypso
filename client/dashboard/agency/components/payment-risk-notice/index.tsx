@@ -1,8 +1,7 @@
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
-import { Notice } from '../../../components/notice';
+import { Notice, NoticeActionLinkButton } from '../../../components/notice';
 import { wpcomLink } from '../../../utils/link';
 import type { Agency } from '@automattic/api-core';
 
@@ -18,23 +17,22 @@ function ActionButton( {
 	label,
 	onClick,
 }: {
-	variant: 'primary' | 'secondary';
+	variant: 'solid' | 'outline';
 	href: string;
 	label: string;
 	onClick: () => void;
 } ) {
 	const isExternal = isExternalUrl( href );
 	return (
-		<Button
+		<NoticeActionLinkButton
 			variant={ variant }
-			size="compact"
 			href={ href }
 			target={ isExternal ? '_blank' : undefined }
 			rel={ isExternal ? 'noopener noreferrer' : undefined }
 			onClick={ onClick }
 		>
 			{ label }
-		</Button>
+		</NoticeActionLinkButton>
 	);
 }
 
@@ -86,7 +84,7 @@ export default function PaymentRiskNotice( {
 		primaryLabel && primaryUrl && (
 			<ActionButton
 				key="primary"
-				variant="primary"
+				variant="solid"
 				href={ primaryUrl }
 				label={ primaryLabel }
 				onClick={ () => recordActionClick( 'primary' ) }
@@ -95,7 +93,7 @@ export default function PaymentRiskNotice( {
 		notice.secondary_action_label && notice.secondary_action_url && (
 			<ActionButton
 				key="secondary"
-				variant="secondary"
+				variant="outline"
 				href={ notice.secondary_action_url }
 				label={ notice.secondary_action_label }
 				onClick={ () => recordActionClick( 'secondary' ) }

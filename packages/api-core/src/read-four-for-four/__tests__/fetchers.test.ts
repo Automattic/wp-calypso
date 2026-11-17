@@ -1,6 +1,6 @@
 import nock from 'nock';
 import { fetchReadFourForFourCandidates, fetchReadFourForFourStatus } from '../fetchers';
-import { recordReadFourForFourProgress } from '../mutators';
+import { recordReadFourForFourProgress, reviewReadFourForFourSite } from '../mutators';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -19,13 +19,17 @@ describe( 'read four-for-four', () => {
 	} );
 
 	it( 'fetches the status from the wpcom/v2 endpoint', async () => {
-		nock( BASE )
-			.get( '/wpcom/v2/read/four-for-four/status' )
-			.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 2 ] } );
+		const status = {
+			status: 'opted_in',
+			blog_id: 1,
+			followed_blog_ids: [ 2 ],
+			review: { verdict: 'pass' },
+		};
+		nock( BASE ).get( '/wpcom/v2/read/four-for-four/status' ).reply( 200, status );
 
 		const response = await fetchReadFourForFourStatus();
 
-		expect( response ).toEqual( { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 2 ] } );
+		expect( response ).toEqual( status );
 	} );
 
 	it( 'posts progress with the followed blog ids', async () => {
@@ -37,5 +41,25 @@ describe( 'read four-for-four', () => {
 
 		expect( scope.isDone() ).toBe( true );
 		expect( response.followed_blog_ids ).toEqual( [ 2, 3 ] );
+	} );
+
+	it( 'posts a review request without naming a site', async () => {
+		const review = {
+			verdict: 'not_english',
+			language: 'pt',
+			category: 'personal',
+			is_cached: false,
+		};
+		const scope = nock( BASE )
+			.post(
+				'/wpcom/v2/read/four-for-four/review',
+				( body ) => Object.keys( body ?? {} ).length === 0
+			)
+			.reply( 200, review );
+
+		const response = await reviewReadFourForFourSite();
+
+		expect( scope.isDone() ).toBe( true );
+		expect( response ).toEqual( review );
 	} );
 } );

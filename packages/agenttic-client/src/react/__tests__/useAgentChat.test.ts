@@ -57,6 +57,17 @@ describe( 'useAgentChat', () => {
 			expect( preserved[ 0 ].id ).toBe( 'tool-injected-msg' );
 		} );
 
+		it( 'should preserve user messages marked as UI-only', () => {
+			const uiMessages: UIMessage[] = [
+				{ ...createMessage( 'ui-only-user-msg', 'user', 'text' ), isUiOnly: true },
+				createMessage( 'local-user-msg', 'user', 'text' ),
+			];
+
+			const preserved = filterUiOnlyMessages( uiMessages, new Set< string >() );
+
+			expect( preserved.map( ( m ) => m.id ) ).toEqual( [ 'ui-only-user-msg' ] );
+		} );
+
 		it( 'should not preserve messages that exist in client history', () => {
 			const uiMessages: UIMessage[] = [
 				createMessage( 'server-msg-1', 'agent', 'text' ),

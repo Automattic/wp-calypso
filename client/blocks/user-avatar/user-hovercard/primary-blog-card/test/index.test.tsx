@@ -128,17 +128,23 @@ describe( 'PrimaryBlogCard', () => {
 		);
 	} );
 
-	describe( 'onFollowToggle', () => {
+	describe( 'onFollowSuccess', () => {
 		const mockedReaderFollowButton = jest.mocked( ReaderFollowButton );
 		const mockedSuccessNotice = jest.mocked( successNotice );
 
-		function fireOnFollowToggle( followed: boolean ) {
-			return mockedReaderFollowButton.mock.calls[ 0 ][ 0 ].onFollowToggle?.( followed );
+		function fireOnFollowSuccess( followed: boolean ) {
+			return mockedReaderFollowButton.mock.calls[ 0 ][ 0 ].onFollowSuccess?.( followed );
 		}
+
+		test( 'does not show a notice on click', () => {
+			renderWithProvider( <PrimaryBlogCard user={ defaultUser } /> );
+
+			expect( mockedReaderFollowButton.mock.calls[ 0 ][ 0 ].onFollowToggle ).toBeUndefined();
+		} );
 
 		test( 'shows subscribed notice when followed', () => {
 			renderWithProvider( <PrimaryBlogCard user={ defaultUser } /> );
-			fireOnFollowToggle( true );
+			fireOnFollowSuccess( true );
 
 			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
 				expect.stringContaining( 'subscribed to' ),
@@ -148,10 +154,25 @@ describe( 'PrimaryBlogCard', () => {
 
 		test( 'shows unsubscribed notice when unfollowed', () => {
 			renderWithProvider( <PrimaryBlogCard user={ defaultUser } /> );
-			fireOnFollowToggle( false );
+			fireOnFollowSuccess( false );
 
 			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
 				expect.stringContaining( 'unsubscribed from' ),
+				{ duration: 3000 }
+			);
+		} );
+
+		test( 'decodes HTML entities in the blog title', () => {
+			const user = {
+				...defaultUser,
+				primary_blog: { ...defaultUser.primary_blog!, title: 'Maya&#039;s Food Blog' },
+			};
+
+			renderWithProvider( <PrimaryBlogCard user={ user } /> );
+			fireOnFollowSuccess( true );
+
+			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
+				'Success! You are now subscribed to "Maya\'s Food Blog".',
 				{ duration: 3000 }
 			);
 		} );
@@ -163,7 +184,7 @@ describe( 'PrimaryBlogCard', () => {
 			};
 
 			renderWithProvider( <PrimaryBlogCard user={ user } /> );
-			fireOnFollowToggle( true );
+			fireOnFollowSuccess( true );
 
 			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
 				expect.stringContaining( 'https://testblog.com' ),

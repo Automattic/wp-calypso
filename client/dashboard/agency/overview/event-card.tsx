@@ -5,31 +5,20 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
+import { Fragment } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { isDashboardPath } from '../../utils/link';
 import NewTabLabel from '../components/new-tab-label';
-import {
-	FEATURED_EVENT,
-	getAiMcpAnnouncement,
-	getPressableExpansionOfferEvent,
-	getPressableIntroOfferEvent,
-} from './events';
 import type { FeaturedEvent } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 
-interface EventCardProps {
-	isEligibleForPressableIntroOffer?: boolean;
-	isEligibleForPressableExpansionOffer?: boolean;
-	aiMcpHref: string;
-	pressableHostingHref: string;
-	shouldUseRouterLink?: boolean;
-	recordTracksEvent?: RecordTracksEvent;
-}
+const DESCRIPTION_TAGS = { strong: <strong /> };
 
-function SingleEventCard( {
+export function SingleEventCard( {
 	event,
 	shouldUseRouterLink,
 	recordTracksEvent,
@@ -48,43 +37,66 @@ function SingleEventCard( {
 					<HStack spacing={ 3 } justify="flex-start" alignment="center">
 						{ logo && <img src={ logo } alt={ logoAlt ?? '' } width={ 64 } height={ 64 } /> }
 						<VStack spacing={ 1 }>
-							<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
-								{ when }
-							</Text>
+							{ when && (
+								<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
+									{ when }
+								</Text>
+							) }
 							<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 								{ title }
 							</Heading>
-							<Text variant="muted" size={ 12 } lineHeight="16px">
-								{ subtitle }
-							</Text>
+							{ subtitle && (
+								<Text variant="muted" size={ 12 } lineHeight="16px">
+									{ subtitle }
+								</Text>
+							) }
 						</VStack>
 					</HStack>
 					<VStack spacing={ 4 }>
 						{ description.map( ( paragraph ) => (
 							<Text key={ paragraph } size={ 13 } lineHeight="20px">
-								{ paragraph }
+								{ createInterpolateElement( paragraph, DESCRIPTION_TAGS ) }
 							</Text>
 						) ) }
 					</VStack>
 					<ButtonStack justify="flex-start" wrap>
 						{ ctas.map( ( cta ) => {
+							const trackClick = () =>
+								recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+									event_id: id,
+									cta_id: cta.id,
+								} );
+							const style = isMobileViewport
+								? { width: '100%', justifyContent: 'center' }
+								: undefined;
+							if ( 'render' in cta ) {
+								return (
+									<Fragment key={ cta.id }>
+										{ cta.render( {
+											size: 'compact',
+											variant: 'secondary',
+											style,
+											onClick: trackClick,
+										} ) }
+									</Fragment>
+								);
+							}
 							const buttonProps = {
 								size: 'compact' as const,
 								variant: cta.variant ?? ( 'secondary' as const ),
-								style: isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined,
+								style,
 								onClick: () => {
-									recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
-										event_id: id,
-										cta_id: cta.id,
-									} );
+									trackClick();
 									if ( cta.legacyTrackEventName ) {
 										recordTracksEvent?.( cta.legacyTrackEventName );
 									}
 								},
 							};
 							if ( shouldUseRouterLink && ! cta.isExternal && isDashboardPath( cta.url ) ) {
+								// The router takes the hash separately; left in `to`, it is dropped.
+								const [ to, hash ] = cta.url.split( '#' );
 								return (
-									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ cta.url }>
+									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ to } hash={ hash }>
 										{ cta.label }
 									</RouterLinkButton>
 								);
@@ -105,41 +117,5 @@ function SingleEventCard( {
 				</VStack>
 			</CardBody>
 		</Card>
-	);
-}
-
-export default function EventCard( {
-	isEligibleForPressableIntroOffer,
-	isEligibleForPressableExpansionOffer,
-	aiMcpHref,
-	pressableHostingHref,
-	shouldUseRouterLink = true,
-	recordTracksEvent,
-}: EventCardProps ) {
-	const now = new Date();
-	const events = [
-		FEATURED_EVENT,
-		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
-		isEligibleForPressableExpansionOffer
-			? getPressableExpansionOfferEvent( pressableHostingHref )
-			: null,
-		getAiMcpAnnouncement( aiMcpHref ),
-	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
-
-	if ( ! events.length ) {
-		return null;
-	}
-
-	return (
-		<>
-			{ events.map( ( event ) => (
-				<SingleEventCard
-					key={ event.id }
-					event={ event }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-			) ) }
-		</>
 	);
 }

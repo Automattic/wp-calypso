@@ -1,13 +1,12 @@
-jest.mock( '@wordpress/data', () => ( { select: jest.fn(), dispatch: jest.fn() } ) );
-jest.mock( '../private-apis', () => ( { unlock: jest.fn( ( store ) => store ) } ) );
-
 import { dispatch, select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import {
 	clearBlockSelection,
 	DOCUMENT_ROOT_CLIENT_ID,
 	getCurrentPost,
 	getPaletteColor,
 	getRootBlocks,
+	isTemplatePartLoaded,
 	openUndoLevel,
 	replaceRootBlocks,
 	resolveBlocksRoot,
@@ -16,6 +15,9 @@ import {
 	type UndoLevel,
 } from '../editor-blocks';
 
+vi.mock( '@wordpress/data', () => ( { select: vi.fn(), dispatch: vi.fn() } ) );
+vi.mock( '../private-apis', () => ( { unlock: vi.fn( ( store ) => store ) } ) );
+
 const block = ( clientId: string, name: string ): EditorBlock => ( {
 	clientId,
 	name,
@@ -23,11 +25,11 @@ const block = ( clientId: string, name: string ): EditorBlock => ( {
 	innerBlocks: [],
 } );
 
-const replaceInnerBlocks = jest.fn();
-const resetBlocks = jest.fn();
-const markNextChangeAsNotPersistent = jest.fn();
-const markLastChangeAsPersistent = jest.fn();
-const clearSelectedBlock = jest.fn();
+const replaceInnerBlocks = vi.fn();
+const resetBlocks = vi.fn();
+const markNextChangeAsNotPersistent = vi.fn();
+const markLastChangeAsPersistent = vi.fn();
+const clearSelectedBlock = vi.fn();
 
 // Each record's blocks, by its clientId (`''` for the document), as the writes leave them.
 let records: Record< string, EditorBlock[] > = {};
@@ -35,7 +37,7 @@ const NO_BLOCKS: EditorBlock[] = [];
 
 // A write to the list of the block it names, which lands in `record`, or is
 // dropped without one, as a restricted list does.
-const land = jest.fn( ( _clientId: string, record?: string ) => {
+const land = vi.fn( ( _clientId: string, record?: string ) => {
 	if ( record !== undefined ) {
 		records[ record ] = [ ...( records[ record ] ?? [] ) ];
 	}
@@ -62,7 +64,7 @@ function withEditor( {
 	/** The blocks whose inner blocks sync to their own record. */
 	controlled?: string[];
 } = {} ) {
-	( select as jest.Mock ).mockImplementation( ( store: string ) =>
+	( select as Mock ).mockImplementation( ( store: string ) =>
 		store === 'core/block-editor'
 			? {
 					getBlocks: ( root?: string ) => records[ root ?? '' ] ?? ( root ? NO_BLOCKS : blocks ),
@@ -90,7 +92,7 @@ function withEditor( {
 						attribute === 'title' ? title : undefined,
 				}
 	);
-	( dispatch as jest.Mock ).mockReturnValue( {
+	( dispatch as Mock ).mockReturnValue( {
 		replaceInnerBlocks,
 		resetBlocks,
 		clearSelectedBlock,
@@ -100,7 +102,7 @@ function withEditor( {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	records = {};
 } );
 
@@ -145,7 +147,7 @@ it( 'reads the document root as the top-level blocks', () => {
 } );
 
 it( 'reads a palette colour by slug', () => {
-	jest.mocked( select ).mockReturnValue( {
+	vi.mocked( select ).mockReturnValue( {
 		getSettings: () => ( { colors: [ { slug: 'vivid-red', color: '#cf2e2e' } ] } ),
 	} as never );
 
@@ -175,7 +177,7 @@ describe( 'writes', () => {
 	it( 'stages outside the undo stack, mark and write in one batch', () => {
 		withEditor();
 		const queued: ( () => void )[] = [];
-		const batch = jest.fn( ( run: () => void ) => queued.push( run ) );
+		const batch = vi.fn( ( run: () => void ) => queued.push( run ) );
 
 		stageRootBlocks( 'pc', blocks, batch );
 
@@ -283,7 +285,7 @@ describe( 'writes', () => {
 	} );
 
 	it( 'refuses to write, and clears no selection, without the block editor', () => {
-		( dispatch as jest.Mock ).mockReturnValue( undefined );
+		( dispatch as Mock ).mockReturnValue( undefined );
 
 		expect( () => replaceRootBlocks( 'pc', blocks ) ).toThrow( 'unavailable' );
 		expect( () => clearBlockSelection() ).not.toThrow();
@@ -295,5 +297,96 @@ describe( 'writes', () => {
 		clearBlockSelection();
 
 		expect( clearSelectedBlock ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'isTemplatePartLoaded', () => {
+	const PART_ID = 'assembler//footer';
+
+	function withPart( {
+		blocks = [],
+		attributes = { slug: 'footer', theme: 'assembler' },
+		resolved = true,
+		record,
+	}: {
+		blocks?: EditorBlock[];
+		attributes?: Record< string, unknown >;
+		resolved?: boolean;
+		record?: { blocks?: unknown[]; content?: unknown };
+	} ) {
+		const hasFinishedResolution = vi.fn( () => resolved );
+		const getEditedEntityRecord = vi.fn( () => record );
+
+		vi.mocked( select ).mockImplementation( ( store ) =>
+			store === 'core/block-editor'
+				? ( {
+						getBlocks: () => blocks,
+						getBlock: () => ( { ...block( 'footer', 'core/template-part' ), attributes } ),
+					} as never )
+				: ( {
+						getCurrentTheme: () => ( { stylesheet: 'assembler' } ),
+						hasFinishedResolution,
+						getEditedEntityRecord,
+					} as never )
+		);
+
+		return { hasFinishedResolution, getEditedEntityRecord };
+	}
+
+	it( 'holds once the part has blocks in the tree', () => {
+		withPart( { blocks: [ block( 'credit', 'core/paragraph' ) ], resolved: false } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( true );
+	} );
+
+	it( 'does not hold while the entity is resolving', () => {
+		const { hasFinishedResolution } = withPart( { resolved: false } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( false );
+		expect( hasFinishedResolution ).toHaveBeenCalledWith( 'getEditedEntityRecord', [
+			'postType',
+			'wp_template_part',
+			PART_ID,
+		] );
+	} );
+
+	it.each( [
+		{ case: 'saved with no content', record: { content: '' }, expected: true },
+		{ case: 'edited to no blocks', record: { blocks: [], content: () => '' }, expected: true },
+		{ case: 'missing', record: undefined, expected: true },
+		{ case: 'saved with no raw content', record: { content: { raw: '' } }, expected: true },
+		{
+			case: 'saved with raw blocks the tree does not hold yet',
+			record: { content: { raw: '<!-- wp:site-title /-->' } },
+			expected: false,
+		},
+		{
+			case: 'saved with blocks the tree does not hold yet',
+			record: { content: '<!-- wp:paragraph --><p>Credit</p><!-- /wp:paragraph -->' },
+			expected: false,
+		},
+		{
+			case: 'edited to blocks the tree does not hold yet',
+			record: { blocks: [ {} ] },
+			expected: false,
+		},
+	] )( 'reads a resolved part $case as loaded: $expected', ( { record, expected } ) => {
+		withPart( { record } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( expected );
+	} );
+
+	// Core's block keys the entity the same way.
+	it( 'keys a part that names no theme under the active one', () => {
+		const { getEditedEntityRecord } = withPart( { attributes: { slug: 'footer' }, record: {} } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( true );
+		expect( getEditedEntityRecord ).toHaveBeenCalledWith( 'postType', 'wp_template_part', PART_ID );
+	} );
+
+	it( 'does not hold for a part with no slug', () => {
+		withPart( { attributes: {}, record: {} } );
+
+		expect( isTemplatePartLoaded( 'footer' ) ).toBe( false );
 	} );
 } );

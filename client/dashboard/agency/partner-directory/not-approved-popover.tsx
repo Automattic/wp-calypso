@@ -20,7 +20,7 @@ import type { ReactNode } from 'react';
 
 const PREFERENCE_NAME = 'a4a-dashboard-pd-not-approved-popover';
 
-interface Props {
+interface NotApprovedPopoverProps {
 	children: ReactNode;
 	showOnLoad: boolean;
 	expertiseUrl: string;
@@ -39,7 +39,7 @@ export default function NotApprovedPopover( {
 	expertiseUrl,
 	recordTracksEvent,
 	shouldUseRouterLink,
-}: Props ) {
+}: NotApprovedPopoverProps ) {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
 

@@ -16,3 +16,10 @@ export type SiteAbility = {
 		annotations?: SiteAbilityAnnotations;
 	};
 };
+
+export type SiteEnvironmentInfo = {
+	environment: 'production' | 'staging' | 'development' | 'local';
+	php_version: string;
+	db_server_info: string;
+	wp_version: string;
+};

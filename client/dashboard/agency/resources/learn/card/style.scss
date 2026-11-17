@@ -105,6 +105,7 @@
 	min-block-size: 140px;
 	padding: 20px $grid-unit-30;
 	box-sizing: border-box;
+	container-type: inline-size;
 	color: var( --resource-card-ink, var( --resource-brand ) );
 	background: color-mix( in srgb, var( --resource-brand ) 18%, #{$studio-white} );
 
@@ -124,21 +125,46 @@
 		box-sizing: border-box;
 	}
 
+	// Sized by each product, relative to the default size. Below the width a
+	// title is designed at, it shrinks with the header, down to a floor, so it
+	// keeps breaking in the same places as the header narrows. useFitTitle()
+	// then scales a title that's still too long down further.
 	.dashboard-resources-learn__card-title {
+		--resource-title-ratio: 1;
+		// 31px across a card's 277px-wide header, as designed.
+		/* stylelint-disable-next-line unit-allowed-list -- sized to the header, its query container */
+		--resource-title-fluid: 11.2cqi;
+		--resource-title-max-lines: 3;
+
 		margin-block-start: auto;
-		font-size: 31px;
+		font-size: calc(
+			clamp( 24px, var( --resource-title-fluid ), 31px ) * var( --resource-title-ratio ) *
+				var( --resource-title-scale, 1 )
+		);
 		font-weight: 600;
 		line-height: 1.03;
 		letter-spacing: -0.035em;
 		text-wrap: balance;
 		overflow-wrap: anywhere;
+
+		> .dashboard-resources-learn__link {
+			display: block;
+		}
+
+		&[data-clamped] > .dashboard-resources-learn__link {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: var( --resource-title-lines );
+			overflow: hidden;
+		}
 	}
 
 	&[data-product='automattic-for-agencies'],
 	&[data-product='pressable'] {
 		.dashboard-resources-learn__card-title {
+			--resource-title-ratio: calc( 38 / 31 );
+
 			font-family: 'A4A Knockout', Impact, sans-serif;
-			font-size: 38px;
 			font-weight: 400;
 			letter-spacing: 0;
 			text-transform: uppercase;
@@ -147,9 +173,10 @@
 
 	&[data-product='jetpack'] {
 		.dashboard-resources-learn__card-title {
+			--resource-title-ratio: calc( 28 / 31 );
+
 			padding-inline-start: $grid-unit-15;
 			border-inline-start: 4px solid currentColor;
-			font-size: 28px;
 			font-weight: 700;
 		}
 	}

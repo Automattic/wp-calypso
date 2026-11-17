@@ -118,11 +118,14 @@ export const getBlockRootClientId = ( clientId: string ): string | undefined =>
 export const getSelectedBlockClientId = (): string | undefined =>
 	blockEditorSelect()?.getSelectedBlockClientId?.() ?? undefined;
 
+const getPalette = () => blockEditorSelect()?.getSettings?.().colors ?? [];
+
 /** The colour a palette slug stands for, or `undefined` when the palette lacks it. */
 export const getPaletteColor = ( slug: string ): string | undefined =>
-	blockEditorSelect()
-		?.getSettings?.()
-		.colors?.find( ( entry ) => entry.slug === slug )?.color;
+	getPalette().find( ( entry ) => entry.slug === slug )?.color;
+
+/** The colours of the editor's palette, as its entries give them. */
+export const getPaletteColors = (): string[] => getPalette().map( ( entry ) => entry.color );
 
 /** The post the editor holds, or `undefined` while it is still loading. */
 export function getCurrentPost(): CurrentPost | undefined {
@@ -203,6 +206,64 @@ export const getTemplatePartClientIds = (): { slug: string; clientId: string }[]
 
 		return typeof slug === 'string' && slug ? [ { slug, clientId } ] : [];
 	} );
+
+interface CoreSelect {
+	getCurrentTheme?: () => { stylesheet?: string } | undefined;
+	getEditedEntityRecord?: (
+		kind: string,
+		name: string,
+		key: string
+	) => { blocks?: unknown[]; content?: unknown } | undefined;
+	hasFinishedResolution?: ( selector: string, args: unknown[] ) => boolean;
+}
+
+const coreSelect = () => select( 'core' ) as unknown as CoreSelect | undefined;
+
+/**
+ * Whether a template part's blocks have all reached the tree. The part block
+ * mounts before the `wp_template_part` entity behind it resolves, and its
+ * blocks land after that, so a part with none is only empty once its record
+ * says so. The entity is keyed as core's block keys it: `theme//slug`, with
+ * the active theme for a part that names none.
+ */
+export function isTemplatePartLoaded( clientId: string ): boolean {
+	if ( getBlocks( clientId ).length ) {
+		return true;
+	}
+
+	const core = coreSelect();
+	const { slug, theme = core?.getCurrentTheme?.()?.stylesheet } =
+		getBlock( clientId )?.attributes ?? {};
+
+	if ( typeof slug !== 'string' || ! slug || typeof theme !== 'string' || ! theme ) {
+		return false;
+	}
+
+	const args: [ string, string, string ] = [
+		'postType',
+		'wp_template_part',
+		`${ theme }//${ slug }`,
+	];
+
+	if ( ! core?.hasFinishedResolution?.( 'getEditedEntityRecord', args ) ) {
+		return false;
+	}
+
+	// Saved blocks still on their way to the tree; a part with no record has none coming.
+	const record = core.getEditedEntityRecord?.( ...args );
+
+	if ( Array.isArray( record?.blocks ) ) {
+		return ! record.blocks.length;
+	}
+
+	// The record may still hold its content as it came over the wire.
+	const content =
+		record?.content && typeof record.content === 'object'
+			? ( record.content as { raw?: unknown } ).raw
+			: record?.content;
+
+	return typeof content !== 'string' || ! content.trim();
+}
 
 /** The blocks of every template part on the page, by slug. */
 export const getTemplatePartBlocks = (): TemplatePartBlocks[] =>

@@ -25,6 +25,7 @@ const selectors = {
 		return `.plans-grid-next-plan-storage[data-plan-title="${ name }"]`;
 	},
 	addOnComboboxButton: 'button[role="combobox"]',
+	addOnAddMoreButton: 'button.plans-grid-next-storage-feature-label__add-more',
 	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
 	selectPlanButton: ( name: Plans ) => `button.is-${ name.toLowerCase() }-plan:visible`,
 
@@ -40,10 +41,7 @@ const selectors = {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
-	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
-	spotlightPlan: '.plan-features-2023-grid__plan-spotlight',
-	// My Plans tab
-	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
+	activePlan: ( plan: Plans ) => `button.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
 };
 
 /**
@@ -102,18 +100,37 @@ export class PlansPage {
 	 */
 	async selectAddOn( plan: Plans, addOn: string ): Promise< void > {
 		const combobox = this.page.locator( selectors.addOnCombobox( plan ) );
-
+		const addMoreButton = combobox.locator( selectors.addOnAddMoreButton );
 		const comboboxSelect = combobox.locator( selectors.addOnComboboxButton );
-		// Callers resolve on API responses (e.g. `/users/new?`), which can
-		// return before the React step transition has rendered the plans grid.
-		// Wait for the combobox itself so the action timeout is spent on the
-		// click, not on the preceding navigation.
-		await comboboxSelect.first().waitFor( { state: 'visible', timeout: 30_000 } );
-		await comboboxSelect.first().click();
-
 		const comboboxOption = combobox.locator(
 			selectors.addOnComboboxOption( `50 GB + ${ addOn }` )
 		);
+
+		// Callers resolve on API responses (e.g. `/users/new?`), which can
+		// return before the React step transition has rendered the plans grid.
+		// Wait for the storage control itself so the action timeout is spent on
+		// the click, not on the preceding navigation.
+		await addMoreButton
+			.or( comboboxSelect )
+			.first()
+			.waitFor( { state: 'visible', timeout: 30_000 } );
+
+		// The redesigned grid shows the storage amount with an "Add more" button and
+		// only mounts the dropdown, already open, once that button is clicked.
+		if ( await addMoreButton.count() ) {
+			await addMoreButton.first().click();
+			// The dropdown opens itself a tick after mounting. Give it that moment so the
+			// fallback click below cannot land first and toggle it closed again.
+			await comboboxOption
+				.first()
+				.waitFor( { state: 'visible', timeout: 5_000 } )
+				.catch( () => undefined );
+		}
+
+		if ( ! ( await comboboxOption.first().isVisible() ) ) {
+			await comboboxSelect.first().waitFor( { state: 'visible' } );
+			await comboboxSelect.first().click();
+		}
 		await comboboxOption.first().click();
 	}
 
@@ -166,13 +183,15 @@ export class PlansPage {
 	 * subdomain the free plan is selected directly.
 	 */
 	async clickStartWithFreePlan(): Promise< void > {
-		await this.page
+		const button = this.page
 			.getByRole( 'button', {
 				name: 'start with a free plan',
 				exact: true,
 			} )
-			.first()
-			.click( { noWaitAfter: true } );
+			.first();
+
+		await button.waitFor( { state: 'visible', timeout: 30_000 } );
+		await button.click( { noWaitAfter: true } );
 	}
 
 	/**
@@ -299,24 +318,14 @@ export class PlansPage {
 	/**
 	 * Validates the expected plan is active.
 	 *
-	 * This method accepts a parameter of `Plan` type which defines the expected
-	 * plan to be active on the site. This method then compares this against the
-	 * actual text on both the My Plans and Plans tabs, hence the race.
+	 * The plans grid marks the owned plan's "Manage plan" button with
+	 * `is-current-plan` on both desktop and mobile.
 	 *
 	 * @param {Plans} expectedPlan Name of the expected plan.
-	 * @throws If the expected plan title is not found in the timeout period.
+	 * @throws If the expected plan's current-plan button is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile stacks the plans and surfaces the owned plan in the "My Plan"
-			// card, not the desktop spotlight card. Confirm both the plan name
-			// (scoped to the card title) and the owned-plan "Manage plan" control,
-			// which renders as an anchor rather than a button.
-			await this.page.locator( selectors.myPlanTitle( expectedPlan ) ).first().waitFor();
-			await this.page.locator( selectors.managePlanButton ).first().waitFor();
-			return;
-		}
-		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
+		await this.page.locator( selectors.activePlan( expectedPlan ) ).first().waitFor();
 	}
 
 	/**

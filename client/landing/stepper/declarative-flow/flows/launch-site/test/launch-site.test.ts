@@ -33,6 +33,7 @@ let mockOnboard: {
 } = {};
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
+let mockSetupError: { error?: string } = {};
 let mockDomains: unknown[] | Error = [];
 let mockCart: unknown = { products: [] };
 let mockUserId: number | null = 1;
@@ -106,6 +107,7 @@ jest.mock( '@wordpress/data', () => {
 		useSelect: ( mapSelect: ( select: () => typeof selectors ) => unknown ) =>
 			mapSelect( () => selectors ),
 		useDispatch: () => actions,
+		select: () => ( { getSiteSetupError: () => mockSetupError } ),
 		resolveSelect: () => ( {
 			getSite: () => Promise.resolve( mockSite ),
 			getSiteDomains: () =>
@@ -218,6 +220,7 @@ describe( 'launch-site flow', () => {
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockUserId = 1;
 		mockOnboard = {};
+		mockSetupError = {};
 		mockProductsList = {
 			domain_reg: {
 				product_slug: 'domain_reg',
@@ -430,6 +433,15 @@ describe( 'launch-site flow', () => {
 			expect( props?.wrapperProps?.goBack ).toBeUndefined();
 		} );
 
+		it( 'offers only paid plans when the link asks for it', () => {
+			mockQuery.hide_free_plan = '1';
+
+			expect( launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+				deemphasizeFreePlan: false,
+				hideFreePlan: true,
+			} );
+		} );
+
 		it( 'returns to where the user came from on Back when plans is the first step', () => {
 			setFlowSteps( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] );
 			mockQuery.back_to = '/sites';
@@ -452,6 +464,25 @@ describe( 'launch-site flow', () => {
 			expect( launchSite ).toHaveBeenCalledWith( 1 );
 		} );
 
+		// WordPress.com refuses to launch a preview nobody has bought; buying its plan at checkout does.
+		it.each( [
+			[ 'goes on to checkout with a plan', [ { product_slug: 'personal-bundle' } ], 'checkout' ],
+			[ 'stops on the refusal with Free', null, 'preview_site_unpaid' ],
+		] )( 'for a preview nobody has bought, %s', async ( _name, cartItems, outcome ) => {
+			mockSite = freeSite;
+			( launchSite as jest.Mock ).mockRejectedValueOnce(
+				Object.assign( new Error( 'Choose a plan' ), { error: 'preview_site_unpaid' } )
+			);
+			submit( STEPS.UNIFIED_PLANS.slug, { cartItems } );
+
+			await expect(
+				mockOnboard.pendingAction?.().then(
+					() => 'checkout',
+					( error ) => error.error
+				)
+			).resolves.toBe( outcome );
+		} );
+
 		it( 'lets the processing step see a failed launch', async () => {
 			mockSite = freeSite;
 			( launchSite as jest.Mock ).mockRejectedValueOnce( new Error( 'launch failed' ) );
@@ -460,12 +491,21 @@ describe( 'launch-site flow', () => {
 			await expect( mockOnboard.pendingAction?.() ).rejects.toThrow( 'launch failed' );
 		} );
 
-		it( 'shows the error step when the launch fails', () => {
+		it.each( [
+			[ 'shows the error step', 'launch_failed', STEPS.ERROR.slug ],
+			[
+				'offers the paid plans again for a preview nobody has bought',
+				'preview_site_unpaid',
+				`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=example.wordpress.com&hide_free_plan=1`,
+			],
+		] )( 'when the launch fails, %s', ( _name, error, destination ) => {
+			setFlowSteps( ALL_STEPS );
+			mockSetupError = { error };
 			const { navigate } = submit( STEPS.PROCESSING.slug, {
 				processingResult: ProcessingResult.FAILURE,
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug );
+			expect( navigate ).toHaveBeenCalledWith( destination );
 			expect( window.location.replace ).not.toHaveBeenCalled();
 		} );
 

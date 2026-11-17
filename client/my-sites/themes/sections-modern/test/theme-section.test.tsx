@@ -81,6 +81,18 @@ describe( 'ThemeSection', () => {
 		expect( screen.getByTestId( 'theme-block-theme-2' ) ).toBeVisible();
 	} );
 
+	test( 'places the redesign entry before the themes', () => {
+		const { container } = render(
+			<ThemeSection
+				{ ...defaultProps }
+				leadingCard={ <a href="/site-redesign/example">Redesign</a> }
+			/>
+		);
+		expect( container.querySelector( '.theme-section-modern__grid' )?.firstElementChild ).toBe(
+			screen.getByRole( 'link', { name: 'Redesign' } )
+		);
+	} );
+
 	test( 'renders "See all" button', () => {
 		render( <ThemeSection { ...defaultProps } /> );
 		expect( screen.getByRole( 'link', { name: 'See all' } ) ).toBeVisible();

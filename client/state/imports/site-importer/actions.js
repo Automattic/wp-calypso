@@ -144,6 +144,7 @@ export const importSite =
 				],
 			} )
 			.then( ( response ) => {
+				// `CompleteScreen` records the same event name when it mounts.
 				dispatch(
 					recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams )
 				);
@@ -163,7 +164,17 @@ export const importSite =
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ) );
+				// Recorded whether or not the user sees an error. The failure screen records
+				// `calypso_site_importer_start_import_failure` separately.
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_start_import_fail', {
+						...trackingParams,
+						error_code: error?.code,
+						// `InternalServerError` and the like for API errors, `TypeError` and the like
+						// for exceptions thrown by the success handler above.
+						error_type: error?.name,
+					} )
+				);
 				dispatch( siteImporterImportFailed( error ) );
 			} );
 	};
@@ -215,6 +226,7 @@ export const validateSiteIsImportable =
 				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
 					blog_id: siteId,
 					site_url: targetSiteUrl,
+					error_code: isSiteImportableResult?.reason?.code,
 				} )
 			);
 

@@ -48,7 +48,7 @@ describe( 'NotificationSettings', () => {
 
 		expect( screen.getByText( 'SMS Notification' ) ).toBeInTheDocument();
 		expect(
-			screen.getByText( /set up text messages to send to one or more people./i )
+			screen.getByText( /set up text messages to send to one phone number./i )
 		).toBeInTheDocument();
 
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();

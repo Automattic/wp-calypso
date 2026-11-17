@@ -1,36 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import EventCard from '../event-card';
+import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { SingleEventCard } from '../event-card';
+import { getLeadMatchingContactAnnouncement } from '../events';
 
-describe( '<EventCard>', () => {
-	beforeEach( () => {
-		jest.useFakeTimers( { now: new Date( '2026-09-01T00:00:00Z' ) } );
-	} );
-
-	afterEach( () => {
-		jest.useRealTimers();
-	} );
-
-	test( 'renders plain anchors for in-app CTAs without a router', () => {
+describe( '<SingleEventCard>', () => {
+	test( 'tracks internal announcement CTAs', async () => {
+		const user = userEvent.setup();
+		const recordTracksEvent = vi.fn();
 		render(
-			<EventCard
-				isEligibleForPressableIntroOffer
-				aiMcpHref="/resources-and-tools/ai-mcp"
-				pressableHostingHref="/marketplace/hosting/pressable"
+			<SingleEventCard
+				event={ getLeadMatchingContactAnnouncement( '/partner-directory/lead-matching' ) }
 				shouldUseRouterLink={ false }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
 
-		expect( screen.getByRole( 'link', { name: 'Enable MCP' } ) ).toHaveAttribute(
-			'href',
-			'/resources-and-tools/ai-mcp'
-		);
-		expect( screen.getByRole( 'link', { name: 'View promo details' } ) ).toHaveAttribute(
-			'href',
-			'/marketplace/hosting/pressable'
-		);
+		const link = screen.getByRole( 'link', { name: 'Update your details' } );
+		link.addEventListener( 'click', ( event ) => event.preventDefault(), { once: true } );
+		await user.click( link );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
+			event_id: 'a4a-lead-matching-contact-options',
+			cta_id: 'update-details',
+		} );
 	} );
 } );

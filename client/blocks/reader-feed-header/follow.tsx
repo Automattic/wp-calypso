@@ -6,6 +6,7 @@ import { shallowEqual } from 'react-redux';
 import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { useFeedRecommendationsMutation } from 'calypso/data/reader/use-feed-recommendations-mutation';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useCanMarkSeen, useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
 import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
@@ -81,18 +82,21 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const following = reduxFollowing || !! site?.is_following;
 
 	const openSuggestedFollowsModal = ( followClicked: boolean ) => {
-		const displayName = site?.name || filterURLForDisplay( resolvedFeed?.feed_URL ?? '' );
+		setIsSuggestedFollowsModalOpen( followClicked );
+	};
+
+	const showFollowSuccessNotice = ( followed: boolean ) => {
+		const displayName =
+			decodeEntities( site?.name ?? '' ) || filterURLForDisplay( resolvedFeed?.feed_URL ?? '' );
 
 		dispatch(
 			successNotice(
-				following
-					? translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } )
-					: translate( 'Success! You are now subscribed to "%s".', { args: displayName } ),
+				followed
+					? translate( 'Success! You are now subscribed to "%s".', { args: displayName } )
+					: translate( 'Success! You are now unsubscribed from "%s".', { args: displayName } ),
 				{ duration: 3000 }
 			)
 		);
-
-		setIsSuggestedFollowsModalOpen( followClicked );
 	};
 
 	const onCloseSuggestedFollowModal = () => {
@@ -139,6 +143,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 								hasButtonStyle
 								iconSize={ 24 }
 								onFollowToggle={ openSuggestedFollowsModal }
+								onFollowSuccess={ showFollowSuccessNotice }
 							/>
 
 							{ site && following && ! isEmailBlocked && (

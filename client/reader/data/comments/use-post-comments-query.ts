@@ -12,11 +12,13 @@ type UsePostCommentsQueryParams = {
 export type UseCommentsOptions = {
 	enabled?: boolean;
 	retry?: boolean | number;
+	staleTime?: number;
+	refetchOnWindowFocus?: boolean;
 };
 
 export const usePostCommentsQuery = (
 	{ siteId, postId, status = 'approved', number }: UsePostCommentsQueryParams,
-	{ enabled = true, retry = false }: UseCommentsOptions = {}
+	{ enabled = true, retry = false, ...options }: UseCommentsOptions = {}
 ) => {
 	const queryClient = useQueryClient();
 	const queryOptions = siteCommentsInfiniteQuery( {
@@ -28,6 +30,7 @@ export const usePostCommentsQuery = (
 
 	return useInfiniteQuery( {
 		...queryOptions,
+		...options,
 		queryFn: async ( context ) => {
 			try {
 				return await queryOptions.queryFn!( context );

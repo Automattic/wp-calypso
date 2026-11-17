@@ -112,14 +112,18 @@ export interface AgencyProfileUpdate {
  * GET and PUT /wpcom/v2/agency/$agencyId/lead-matching exchange them.
  */
 export interface AgencyLeadMatchingProfile {
+	contact?: {
+		phone?: string;
+		booking_link?: string;
+	};
 	availability: {
-		accepting_work: boolean;
+		accepting_work: boolean | null;
 		lead_eligibility: string | null;
-		profile_v2_complete: boolean;
+		profile_v2_complete: boolean | null;
 	};
 	geography_and_language: {
 		supported_regions: string[];
-		global_remote: boolean;
+		global_remote: boolean | null;
 		supported_languages: string[];
 	};
 	business_fit: {
@@ -130,16 +134,16 @@ export interface AgencyLeadMatchingProfile {
 	platform_and_hosting: {
 		supported_hosting_environments: string[];
 		migration_platforms: string[];
-		can_recommend_better_hosting: boolean;
+		can_recommend_better_hosting: boolean | null;
 	};
 	ecommerce: {
 		supports_ecommerce_projects: boolean;
-		ecommerce_focus: boolean;
+		ecommerce_focus: boolean | null;
 		supported_complexity_flags: string[];
 	};
 	project_types: {
 		supported_project_types: string[];
-		accepts_small_fixes: boolean;
+		accepts_small_fixes: boolean | null;
 	};
 	service_and_budget: {
 		max_service_level: string;
@@ -148,14 +152,14 @@ export interface AgencyLeadMatchingProfile {
 	};
 	timing: {
 		supported_start_timings: string[];
-		supports_hard_deadlines: boolean;
+		supports_hard_deadlines: boolean | null;
 	};
 	delivery_model: {
 		supported_decision_processes: string[];
-		offers_care_plans: boolean;
-		trains_clients: boolean;
-		works_with_internal_technical_teams: boolean;
-		requires_maintenance_plan: boolean;
+		offers_care_plans: boolean | null;
+		trains_clients: boolean | null;
+		works_with_internal_technical_teams: boolean | null;
+		requires_maintenance_plan: boolean | null;
 	};
 }
 
@@ -168,6 +172,7 @@ export interface AgencyLeadMatchingSyncState {
 export interface AgencyLeadMatchingResponse {
 	agency_id: number;
 	lead_matching_profile: AgencyLeadMatchingProfile | null;
+	ignored_contact_fields?: Array< 'phone' | 'booking_link' >;
 	sync?: AgencyLeadMatchingSyncState;
 }
 
@@ -196,6 +201,22 @@ export interface AgencyPartnerDirectoryApplicationUpdate {
 	}[];
 	feedback_url: string;
 	is_published?: boolean;
+}
+
+export type AgencyDashboardOptInValue =
+	'unset' | 'opt-in' | 'opt-out' | 'forced-opt-in' | 'forced-opt-out';
+
+/** The values an agency owner can set themselves. */
+export type AgencyDashboardOptInChoice = Extract< AgencyDashboardOptInValue, 'opt-in' | 'opt-out' >;
+
+/**
+ * Whether the agency has moved to the Multi-site Dashboard. `forced-*` values
+ * are set by support only.
+ */
+export interface AgencyDashboardOptIn {
+	value: AgencyDashboardOptInValue;
+	/** ISO date of the last change; empty when never set. */
+	updated_at: string;
 }
 
 /**
@@ -244,6 +265,7 @@ export interface Agency {
 	payment_notice?: AgencyPaymentNotice | null;
 	/** The partner manager the agency's HubSpot record assigns; null when none is assigned. */
 	partner_manager?: AgencyPartnerManager | null;
+	dashboard_opt_in?: AgencyDashboardOptIn;
 }
 
 export interface AgencyPaymentNotice {
@@ -434,6 +456,18 @@ export interface AgencyResourceEvent {
 
 export interface AgencyResourceEventResponse {
 	status: 'success';
+}
+
+/**
+ * Response from GET /wpcom/v2/agency/<agency_id>/apwd-discount-code: the agency's
+ * active Advanced Professional WordPress Developer coupon from HubSpot, or null
+ * when it has none. HubSpot properties come through as strings, empty when unset.
+ */
+export interface AgencyApwdDiscountCode {
+	code: string;
+	discount_percent: string;
+	tier_at_issuance: string;
+	expiration_date: string;
 }
 
 export interface TipaltiIFrameUrl {

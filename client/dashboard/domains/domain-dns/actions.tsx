@@ -1,12 +1,18 @@
 import { domainDnsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Icon,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { pencil as edit, trash } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { domainRoute, domainDnsEditRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../components/button-stack';
 import type { DnsRecord } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -40,7 +46,6 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				id: 'edit',
 				label: __( 'Edit' ),
 				icon: <Icon icon={ edit } />,
-				isPrimary: true,
 				callback: ( items: DnsRecord[] ) => {
 					const item = items[ 0 ];
 					router.navigate( {
@@ -60,7 +65,35 @@ export function useDnsActions(): Action< DnsRecord >[] {
 				isBusy: isDeletingDnsRecord,
 				label: __( 'Delete' ),
 				icon: <Icon icon={ trash } />,
-				callback: handleDelete,
+				isDestructive: true,
+				RenderModal: ( { items, closeModal } ) => (
+					<VStack spacing={ 4 }>
+						<Text>
+							{ sprintf(
+								/* translators: %1$s is the DNS record type, for example CNAME; %2$s is the record name, for example www */
+								__( 'The %1$s record for %2$s will be removed. This cannot be undone.' ),
+								items[ 0 ].type,
+								items[ 0 ].name.replace( /\.$/, '' ) === domainName ? '@' : items[ 0 ].name
+							) }
+						</Text>
+						<ButtonStack justify="flex-end">
+							<Button variant="tertiary" onClick={ () => closeModal?.() } __next40pxDefaultSize>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button
+								variant="primary"
+								isDestructive
+								onClick={ () => {
+									handleDelete( items );
+									closeModal?.();
+								} }
+								__next40pxDefaultSize
+							>
+								{ __( 'Delete record' ) }
+							</Button>
+						</ButtonStack>
+					</VStack>
+				),
 			},
 		];
 	}, [ deleteDnsRecord, isDeletingDnsRecord, router, domainName ] );

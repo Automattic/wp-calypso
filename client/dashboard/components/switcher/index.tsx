@@ -68,7 +68,6 @@ function Switcher< T >( {
 
 		return (
 			<Button
-				className="dashboard-menu__item active"
 				icon={ icon }
 				iconPosition="right"
 				onClick={ () => onToggle() }

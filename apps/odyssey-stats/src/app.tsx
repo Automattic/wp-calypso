@@ -18,7 +18,6 @@ import sites from 'calypso/state/sites/reducer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import config, { optionalConfig } from './lib/config-api';
-import initSentry from './lib/init-sentry';
 import { initializeSiteData } from './lib/initialize-site-data';
 import loadWpComponentsStyle from './lib/load-wp-components-style';
 import setLocale from './lib/set-locale';
@@ -95,6 +94,4 @@ async function AppBoot() {
 	} );
 }
 
-// Caution: We're loading Sentry after initializing Webpack; Webpack load failures may not be captured.
-initSentry();
 AppBoot();

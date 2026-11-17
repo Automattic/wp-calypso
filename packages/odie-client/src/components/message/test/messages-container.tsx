@@ -1,39 +1,44 @@
-/**
- * @jest-environment jsdom
- */
 import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { useOdieAssistantContext } from '../../../context';
 import { CHAT_CLIENT_TIMEOUT_MS, MessagesContainer } from '../messages-container';
+import type {
+	HumanSupportRequest,
+	HumanSupportRouting,
+	HumanSupportRoutingStepProps,
+} from '../../../types';
 
-const mockCreateZendeskConversation = jest.fn();
-const mockNavigate = jest.fn();
-const mockSetSearchParams = jest.fn();
-const mockGetOpenLiveInteractions = jest.fn();
-const mockAddMessage = jest.fn();
-const mockTrackEvent = jest.fn();
+const mockCreateZendeskConversation = vi.fn();
+const mockNavigate = vi.fn();
+const mockSetSearchParams = vi.fn();
+const mockGetOpenLiveInteractions = vi.fn();
+const mockAddMessage = vi.fn();
+const mockTrackEvent = vi.fn();
 
 // Changed by each test.
 let mockSearchParams = new URLSearchParams();
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	useHasEnTranslation: () => () => true,
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Spinner: () => null,
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useNavigate: () => mockNavigate,
 	useNavigationType: () => 'PUSH',
 	useSearchParams: () => [ mockSearchParams, mockSetSearchParams ],
 } ) );
 
-jest.mock( '../../../constants', () => ( {
+vi.mock( '../../../constants', () => ( {
 	getConversationLimitReachedMessage: () => ( { internal_message_id: 'limit' } ),
 	getOdieEmailFallbackMessage: () => ( { internal_message_id: 'email-fallback' } ),
 	getOdieInitialMessage: () => ( { content: 'Hi', role: 'bot', type: 'message' } ),
@@ -41,52 +46,75 @@ jest.mock( '../../../constants', () => ( {
 	ODIE_DEFAULT_BOT_SLUG_LEGACY: 'wpcom-support-chat',
 } ) );
 
-jest.mock( '../../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: undefined } ),
 } ) );
 
-jest.mock( '../../../hooks', () => ( {
+vi.mock( '../../../hooks', () => ( {
 	useAutoScroll: () => false,
 	useCreateZendeskConversation: () => mockCreateZendeskConversation,
+	// Without a routing step, asking for a human starts the chat.
+	useRequestHumanSupport:
+		() =>
+		( { flags, ...request }: { flags: unknown; createdFrom: string } ) =>
+			mockCreateZendeskConversation( request ),
 	useZendeskMessageListener: () => {},
 	useUpdateDocumentTitle: () => {},
 } ) );
 
-jest.mock( '../../../hooks/use-help-center-chat-scroll', () => ( {
+vi.mock( '../../../hooks/use-help-center-chat-scroll', () => ( {
 	useHelpCenterChatScroll: () => {},
 } ) );
 
-jest.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
+vi.mock( '../../../hooks/use-logged-out-session', () => ( {
+	useLoggedOutSession: () => ( { isLoggedOutSession: false } ),
+} ) );
+
+vi.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenInteractionStatusMap: () => ( {} ),
 } ) );
 
-jest.mock( '../../../utils/get-open-live-interactions', () => ( {
+vi.mock( '../../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
 } ) );
 
-jest.mock( '..', () => ( { __esModule: true, default: () => null } ) );
-jest.mock( '../jump-to-recent', () => ( { JumpToRecent: () => null } ) );
-jest.mock( '../messages-cluster/messages-cluster', () => ( { MessagesClusterizer: () => null } ) );
-jest.mock( '../thinking-placeholder', () => ( {
+vi.mock( '..', () => ( { default: () => null } ) );
+vi.mock( '../jump-to-recent', () => ( { JumpToRecent: () => null } ) );
+vi.mock( '../messages-cluster/messages-cluster', () => ( { MessagesClusterizer: () => null } ) );
+vi.mock( '../thinking-placeholder', () => ( {
 	ThinkingPlaceholder: ( { content }: { content?: string } ) => <p>{ content }</p>,
 } ) );
-jest.mock( '../zendesk-typing-indicator', () => ( { ZendeskTypingIndicator: () => null } ) );
+vi.mock( '../zendesk-typing-indicator', () => ( { ZendeskTypingIndicator: () => null } ) );
+
+const mockSetPendingHumanSupportRequest = vi.fn();
+
+const RoutingStep = ( { request, startChat, dismiss }: HumanSupportRoutingStepProps ) => (
+	<div>
+		<p>Routing { request.createdFrom }</p>
+		<button onClick={ startChat }>Start chat</button>
+		<button onClick={ dismiss }>Dismiss</button>
+	</div>
+);
 
 const mockContext = ( {
 	isUserEligibleForPaidSupport = true,
 	isChatLoaded = true,
 	forceEmailSupport = false,
 	chatStatus = 'loaded',
+	// The route has no interaction, so it leads to a new chat, without an odieId.
+	odieId = null as number | null,
+	humanSupportRouting = null as HumanSupportRouting | null,
+	pendingHumanSupportRequest = null as HumanSupportRequest | null,
 } = {} ) => {
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		chat: {
 			provider: 'odie',
 			conversationId: null,
-			odieId: null,
+			odieId,
 			messages: [],
 			status: chatStatus,
 		},
@@ -96,6 +124,9 @@ const mockContext = ( {
 		isUserEligibleForPaidSupport,
 		forceEmailSupport,
 		isLoadingZendeskHistory: false,
+		humanSupportRouting,
+		pendingHumanSupportRequest,
+		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
 	} );
 };
 
@@ -111,7 +142,7 @@ const renderDirectLink = ( context: Parameters< typeof mockContext >[ 0 ] = {} )
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	// No open live chat to go back to, and below the limit.
 	mockGetOpenLiveInteractions.mockReturnValue( {
 		mostRecentSupportInteractionId: null,
@@ -126,6 +157,13 @@ describe( 'MessagesContainer direct link to a human', () => {
 
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 		expect( mockAddMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'opens it from the chat on show when the link is followed from another chat', () => {
+		// The provider swaps in the new chat afterwards; the human chat replaces both.
+		renderDirectLink( { odieId: 5 } );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 	} );
 
 	it( "doesn't open a new human chat without paid support, even with the chat client loaded", () => {
@@ -174,11 +212,11 @@ describe( 'MessagesContainer direct link to a human', () => {
 
 	describe( 'while the chat client loads', () => {
 		beforeEach( () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 		} );
 
 		afterEach( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		it( 'shows that a human is being requested', () => {
@@ -193,7 +231,7 @@ describe( 'MessagesContainer direct link to a human', () => {
 			renderDirectLink( { isChatLoaded: false } );
 
 			act( () => {
-				jest.advanceTimersByTime( CHAT_CLIENT_TIMEOUT_MS );
+				vi.advanceTimersByTime( CHAT_CLIENT_TIMEOUT_MS );
 			} );
 
 			expect( mockAddMessage ).toHaveBeenCalledWith( { internal_message_id: 'connection-error' } );
@@ -209,16 +247,99 @@ describe( 'MessagesContainer direct link to a human', () => {
 			const { rerender } = renderDirectLink( { isChatLoaded: false } );
 
 			act( () => {
-				jest.advanceTimersByTime( CHAT_CLIENT_TIMEOUT_MS - 1 );
+				vi.advanceTimersByTime( CHAT_CLIENT_TIMEOUT_MS - 1 );
 			} );
 			mockContext( { isChatLoaded: true } );
 			rerender( container() );
 			act( () => {
-				jest.advanceTimersByTime( CHAT_CLIENT_TIMEOUT_MS );
+				vi.advanceTimersByTime( CHAT_CLIENT_TIMEOUT_MS );
 			} );
 
 			expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 			expect( mockAddMessage ).not.toHaveBeenCalled();
 		} );
+	} );
+} );
+
+describe( 'MessagesContainer routing step', () => {
+	const request: HumanSupportRequest = {
+		createdFrom: 'automatic_escalation',
+		isFromError: false,
+		escalationOnSecondAttempt: true,
+		flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+	};
+
+	it( 'shows the routing step for a pending request', () => {
+		mockContext( {
+			humanSupportRouting: { Step: RoutingStep },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		expect( screen.getByText( 'Routing automatic_escalation' ) ).toBeInTheDocument();
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( "doesn't show it without a pending request", () => {
+		mockContext( { humanSupportRouting: { Step: RoutingStep } } );
+		render( container() );
+
+		expect( screen.queryByText( /Routing/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'starts the chat for the request when the step chooses chat', async () => {
+		mockContext( {
+			humanSupportRouting: { Step: RoutingStep },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		await userEvent.click( screen.getByText( 'Start chat' ) );
+
+		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( null );
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( {
+			createdFrom: 'automatic_escalation',
+			isFromError: false,
+			escalationOnSecondAttempt: true,
+		} );
+	} );
+
+	it( 'drops the request when the step dismisses it', async () => {
+		mockContext( {
+			humanSupportRouting: { Step: RoutingStep },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		await userEvent.click( screen.getByText( 'Dismiss' ) );
+
+		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( null );
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'requests a human from a direct link without paid support', () => {
+		// The routing step decides who gets a human.
+		renderDirectLink( {
+			isUserEligibleForPaidSupport: false,
+			humanSupportRouting: { Step: RoutingStep },
+		} );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
+	} );
+
+	it( 'waits for the chat the link leads to before asking for a human', () => {
+		// Following the link from another chat: the provider swaps the new chat in after this renders.
+		const { rerender } = renderDirectLink( {
+			humanSupportRouting: { Step: RoutingStep },
+			odieId: 5,
+		} );
+
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+		expect( mockSearchParams.get( 'provider' ) ).toBe( 'zendesk' );
+
+		mockContext( { humanSupportRouting: { Step: RoutingStep } } );
+		rerender( container() );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 	} );
 } );

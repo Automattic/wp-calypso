@@ -1,0 +1,32 @@
+@import '@wordpress/base-styles/variables';
+
+.domain-diagnostics__records {
+	margin-block: 0;
+	padding-inline-start: 0;
+	list-style: none;
+
+	// Native markers hang at a browser-defined offset and can't be pinned to the
+	// card's content edge, so the bullet is drawn as a pseudo-element.
+	li {
+		position: relative;
+		padding-inline-start: $grid-unit-30;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset-inline-start: 0;
+			inset-block-start: 0.5em;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			background: currentColor;
+		}
+	}
+
+	// Record values contain long runs with no break opportunities, so pre-wrap
+	// alone won't wrap them.
+	pre {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+}

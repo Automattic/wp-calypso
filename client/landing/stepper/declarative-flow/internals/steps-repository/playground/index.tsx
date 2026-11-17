@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-woo-intent';
@@ -12,8 +12,10 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { PlaygroundLeaveModal } from './components/playground-leave-modal';
 import { PlaygroundSaveModal } from './components/playground-save-modal';
-import { getBlueprintLabelForTracking } from './lib/blueprint';
+import { usePlaygroundWebMcp } from './hooks/use-playground-webmcp';
+import { getBlueprintLabelForTracking, getBlueprintUrlHost } from './lib/blueprint';
 import { DEFAULT_PLAN_INTENT, TRACKS_FLUSH_DELAY, WOO_START_HOSTS_URL } from './lib/constants';
+import { MAX_WOO_TRACKS_EVENTS, parseWooTracksMessage } from './lib/woo-tracks';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 
@@ -27,7 +29,8 @@ const isLeaveModal = ( modal: ActiveModal | null ): modal is LeaveModalTrigger =
 
 export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const { submit } = navigation;
-	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
+	const [ playgroundClient, setClient ] = useState< PlaygroundClient | null >( null );
+	const launchingRef = useRef( false );
 	const { __ } = useI18n();
 	const [ query ] = useSearchParams();
 	const readyForLaunch = query.has( 'playground' );
@@ -42,7 +45,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const canLaunch = Boolean( submit ) && readyForLaunch && ! isBusy;
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
-		playgroundClientRef.current = client;
+		setClient( () => client );
 	};
 
 	const tracksProps = useMemo(
@@ -55,12 +58,32 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		[ flow, query, isWooCommerceIntent ]
 	);
 
+	const wooTracksProps = useMemo( () => {
+		const blueprintHost = getBlueprintUrlHost( query );
+		return { ...tracksProps, ...( blueprintHost && { blueprint_host: blueprintHost } ) };
+	}, [ tracksProps, query ] );
+
+	const wooTracksCountRef = useRef( 0 );
+	const recordWooTracksMessage = useCallback(
+		( data: unknown ) => {
+			const event = parseWooTracksMessage( data );
+			if ( ! event || wooTracksCountRef.current >= MAX_WOO_TRACKS_EVENTS ) {
+				return;
+			}
+
+			wooTracksCountRef.current++;
+			recordTracksEvent( event.name, { ...wooTracksProps, ...event.properties } );
+		},
+		[ wooTracksProps ]
+	);
+
 	useEffect( () => {
 		// Coming back with the browser's Back button can restore this page from the
 		// back/forward cache, mid-leave or mid-save, so put it back in a usable state.
 		const onPageShow = ( event: PageTransitionEvent ) => {
 			if ( event.persisted ) {
 				clearTimeout( navigationTimeoutRef.current );
+				launchingRef.current = false;
 				setIsBusy( false );
 				setActiveModal( null );
 			}
@@ -78,18 +101,21 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	};
 
 	const launchSite = () => {
-		if ( ! canLaunch ) {
-			return;
+		if ( ! canLaunch || isIntroShown || launchingRef.current ) {
+			return false;
 		}
 
+		launchingRef.current = true;
 		setIsBusy( true );
 		const launchTracksProps = { ...tracksProps, intent: DEFAULT_PLAN_INTENT };
 		try {
 			recordTracksEvent( 'calypso_playground_launch_site', launchTracksProps );
 			submit?.();
+			return true;
 		} catch ( error ) {
 			// Only synchronous throws land here, such as from recording events: Stepper doesn't
 			// await the flow's async submit, so its rejections bypass this.
+			launchingRef.current = false;
 			setIsBusy( false );
 			const message = error instanceof Error ? error.message : String( error );
 			void logToLogstash( {
@@ -107,6 +133,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 				...launchTracksProps,
 				error_message: message,
 			} );
+			return false;
 		}
 	};
 
@@ -160,6 +187,12 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		setIsBusy( true );
 		navigateAfterTracksFlush( () => window.location.assign( WOO_START_HOSTS_URL ) );
 	};
+
+	usePlaygroundWebMcp( {
+		client: flow === ONBOARDING_FLOW ? playgroundClient : null,
+		slug: query.get( 'playground' ),
+		launch: launchSite,
+	} );
 
 	return (
 		<>
@@ -218,10 +251,11 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			>
 				<PlaygroundIframe
 					className="playground__onboarding-iframe"
-					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
+					hasPlaygroundClient={ Boolean( playgroundClient ) }
 					setPlaygroundClient={ setPlaygroundClient }
 					withIntro={ isWooCommerceIntent }
 					onIntroChange={ setIsIntroShown }
+					onPlaygroundMessage={ isWooCommerceIntent ? recordWooTracksMessage : undefined }
 				/>
 			</Step.PlaygroundLayout>
 			{ isLeaveModal( activeModal ) && (

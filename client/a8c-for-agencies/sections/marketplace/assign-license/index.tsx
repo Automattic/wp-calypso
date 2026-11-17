@@ -15,7 +15,9 @@ import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
 	A4A_FEEDBACK_LINK,
+	A4A_REFERRALS_DASHBOARD,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { REFERRAL_ID_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
@@ -107,6 +109,13 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		return [];
 	}, [] );
 
+	const referralUrl = useMemo( () => {
+		const referralId = getQueryArg( window.location.href, REFERRAL_ID_QUERY_PARAM_KEY );
+		return typeof referralId === 'string'
+			? addQueryArgs( { [ REFERRAL_ID_QUERY_PARAM_KEY ]: referralId }, A4A_REFERRALS_DASHBOARD )
+			: null;
+	}, [] );
+
 	const filterOutMultisites = ! areLicenseKeysAssignableToMultisite( licenseKeysArray );
 
 	const agencyId = useSelector( getActiveAgencyId );
@@ -173,13 +182,17 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	} );
 
 	const onClickAssignLater = useCallback( () => {
+		if ( referralUrl ) {
+			return page.redirect( referralUrl );
+		}
+
 		if ( licenseKeysArray.length > 1 ) {
 			page.redirect( A4A_LICENSES_LINK );
 		}
 
 		const licenseKey = licenseKeysArray[ 0 ];
 		page.redirect( addQueryArgs( { highlight: licenseKey }, A4A_LICENSES_LINK ) );
-	}, [ licenseKeysArray ] );
+	}, [ licenseKeysArray, referralUrl ] );
 
 	const onClickAssignLicenses = useCallback( async () => {
 		dispatch(
@@ -234,7 +247,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		}
 
 		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
-		const redirectUrl = fromDashboard ? A4A_SITES_LINK : A4A_LICENSES_LINK;
+		const redirectUrl = referralUrl ?? ( fromDashboard ? A4A_SITES_LINK : A4A_LICENSES_LINK );
 		return isFeedbackShown
 			? page.redirect( redirectUrl )
 			: page.redirect(
@@ -251,6 +264,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		dispatch,
 		isFeedbackShown,
 		licenseKeysArray,
+		referralUrl,
 		selectedSite?.ID,
 		translate,
 	] );

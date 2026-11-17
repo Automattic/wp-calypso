@@ -5,7 +5,8 @@ export async function fetchDomainPropagationStatus(
 	domainName: string
 ): Promise< DomainPropagationStatus > {
 	return wpcom.req.get( {
-		path: `/domains/propagation-status/${ domainName }`,
+		// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+		path: `/domains/propagation-status/${ domainName }/`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

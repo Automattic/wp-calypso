@@ -1,14 +1,11 @@
 import { domainQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	ToggleControl,
-} from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody, CardDivider } from '../card';
 import InlineSupportLink from '../inline-support-link';
-import { SectionHeader } from '../section-header';
 
 interface ContactFormPrivacyProps {
 	domainName: string;
@@ -24,90 +21,113 @@ export default function ContactFormPrivacy( {
 	onTogglePrivacyDisclosure,
 }: ContactFormPrivacyProps ) {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const hasEnTranslation = useHasEnTranslation();
+
+	const hasNewPrivacyCopy =
+		hasEnTranslation( 'Privacy protection on' ) &&
+		hasEnTranslation( 'Privacy protection off' ) &&
+		hasEnTranslation(
+			'Your name, address, email and phone stay private. Anyone who looks the domain up in the public WHOIS record sees the registrar’s details instead. <learnMoreLink />'
+		) &&
+		hasEnTranslation(
+			'Your name, address, email and phone are public. Anyone who looks the domain up in the WHOIS record sees them. Turn on to keep them private. <learnMoreLink />'
+		);
+
+	const getPrivacyProtectionHelp = () => {
+		if ( ! domain.privacy_available ) {
+			return domain.private_domain
+				? __(
+						'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
+					)
+				: __(
+						'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
+					);
+		}
+
+		if ( ! hasNewPrivacyCopy ) {
+			return __( 'We recommend keeping privacy protection on. <learnMoreLink />' );
+		}
+
+		return domain.private_domain
+			? __(
+					'Your name, address, email and phone stay private. Anyone who looks the domain up in the public WHOIS record sees the registrar’s details instead. <learnMoreLink />'
+				)
+			: __(
+					'Your name, address, email and phone are public. Anyone who looks the domain up in the WHOIS record sees them. Turn on to keep them private. <learnMoreLink />'
+				);
+	};
+
+	const getPrivacyProtectionLabel = () => {
+		if ( ! hasNewPrivacyCopy ) {
+			return __( 'Privacy protection' );
+		}
+
+		return domain.private_domain ? __( 'Privacy protection on' ) : __( 'Privacy protection off' );
+	};
 
 	const renderPrivacyProtection = () => {
 		return (
-			<>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					checked={ domain.private_domain }
-					disabled={ isSubmitting || ! domain.privacy_available }
-					onChange={ onTogglePrivacyProtection }
-					label={ __( 'Privacy protection' ) }
-				/>
-
-				{ ! domain.privacy_available && (
-					<Text as="p" variant="muted">
-						{ createInterpolateElement(
-							domain.private_domain
-								? __(
-										'Privacy protection must be enabled due to the registry’s policies. <learnMoreLink />'
-									)
-								: __(
-										'Privacy protection is not available due to the registry’s policies. <learnMoreLink />'
-									),
-							{
-								learnMoreLink: (
-									<InlineSupportLink supportContext="domain-registrations-and-privacy" />
-								),
-							}
-						) }
-					</Text>
-				) }
-			</>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				checked={ domain.private_domain }
+				disabled={ isSubmitting || ! domain.privacy_available }
+				onChange={ onTogglePrivacyProtection }
+				label={ getPrivacyProtectionLabel() }
+				help={ createInterpolateElement( getPrivacyProtectionHelp(), {
+					learnMoreLink: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+				} ) }
+			/>
 		);
 	};
 
-	const renderPrivacyDisclosure = () => {
-		if (
-			! domain.privacy_available ||
-			! domain.contact_info_disclosure_available ||
-			domain.private_domain ||
-			domain.is_hundred_year_domain
-		) {
-			return false;
+	const hasNewDisclosureCopy =
+		hasEnTranslation( 'Show my contact details publicly' ) &&
+		hasEnTranslation(
+			'Turn on to show your name, address, email and phone to anyone who looks up the domain.'
+		);
+
+	const getPrivacyDisclosureHelp = () => {
+		if ( domain.is_pending_icann_verification ) {
+			return __(
+				'You need to verify the contact information for the domain before you can disclose it publicly.'
+			);
 		}
 
-		return (
-			<>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					checked={ domain.contact_info_disclosed }
-					onChange={ onTogglePrivacyDisclosure }
-					disabled={ isSubmitting || domain.is_pending_icann_verification }
-					label={ __( 'Display my contact information in public WHOIS' ) }
-				/>
-
-				{ domain.is_pending_icann_verification && (
-					<Text as="p" variant="muted">
-						{ __(
-							'You need to verify the contact information for the domain before you can disclose it publicly.'
-						) }
-					</Text>
-				) }
-			</>
-		);
+		return hasNewDisclosureCopy
+			? __(
+					'Turn on to show your name, address, email and phone to anyone who looks up the domain.'
+				)
+			: undefined;
 	};
 
+	const showPrivacyDisclosure =
+		domain.privacy_available &&
+		domain.contact_info_disclosure_available &&
+		! domain.private_domain &&
+		! domain.is_hundred_year_domain;
+
 	return (
-		<VStack spacing={ 4 }>
-			<SectionHeader title={ __( 'Privacy protection' ) } level={ 3 } />
-
-			{ renderPrivacyProtection() }
-			{ renderPrivacyDisclosure() }
-
-			{ domain.privacy_available && (
-				<Text as="p" variant="muted">
-					{ createInterpolateElement(
-						__( 'We recommend keeping privacy protection on. <learnMoreLink />' ),
-						{
-							learnMoreLink: (
-								<InlineSupportLink supportContext="domain-registrations-and-privacy" />
-							),
-						}
-					) }
-				</Text>
+		<Card>
+			<CardBody>{ renderPrivacyProtection() }</CardBody>
+			{ showPrivacyDisclosure && (
+				<>
+					<CardDivider />
+					<CardBody>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ domain.contact_info_disclosed }
+							onChange={ onTogglePrivacyDisclosure }
+							disabled={ isSubmitting || domain.is_pending_icann_verification }
+							label={
+								hasNewDisclosureCopy
+									? __( 'Show my contact details publicly' )
+									: __( 'Display my contact information in public WHOIS' )
+							}
+							help={ getPrivacyDisclosureHelp() }
+						/>
+					</CardBody>
+				</>
 			) }
-		</VStack>
+		</Card>
 	);
 }

@@ -48,7 +48,7 @@ interface DirectoryStatus {
 	badge: DirectoryStatusBadge;
 }
 
-interface Props {
+interface PartnerDirectoryDashboardContentProps {
 	agency: PartnerDirectoryDashboardAgency;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	expertiseUrl: string;
@@ -84,7 +84,7 @@ export default function PartnerDirectoryDashboardContent( {
 	openSupportGuide,
 	shouldUseRouterLink,
 	showIntro = true,
-}: Props ) {
+}: PartnerDirectoryDashboardContentProps ) {
 	const profile = agency.profile;
 	const application = profile?.partner_directory_application;
 	const isMobile = useViewportMatch( 'mobile', '<' );

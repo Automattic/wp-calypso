@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useRouter } from '@tanstack/react-router';
 import { privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -6,6 +5,7 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
+import { useCanViewApm } from './backend-access';
 
 export type PerformanceTab = 'frontend' | 'backend';
 
@@ -35,13 +35,14 @@ export default function PerformancePage( {
 	children: React.ReactNode;
 } ) {
 	const router = useRouter();
+	const canViewApm = useCanViewApm();
 
 	const header = (
 		<PageHeader title={ __( 'Performance' ) } description={ description } actions={ actions } />
 	);
 
 	// Without APM there is only one view, so a tab bar would be noise.
-	if ( ! isEnabled( 'performance/apm' ) ) {
+	if ( ! canViewApm ) {
 		return (
 			<PageLayout header={ header } notices={ <SitesNoticeArbiter /> }>
 				{ children }

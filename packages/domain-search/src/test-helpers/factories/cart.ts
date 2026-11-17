@@ -1,14 +1,15 @@
+import { vi } from 'vitest';
 import type { DomainSearchCart, SelectedDomain } from '../../page/types';
 
 export const buildCart = ( overrides: Partial< DomainSearchCart > = {} ): DomainSearchCart => {
 	return {
 		items: [],
 		total: '$0',
-		onAddItem: jest.fn(),
-		onAddBundle: jest.fn(),
-		onRemoveItem: jest.fn(),
-		onRemoveBundle: jest.fn(),
-		hasItem: jest.fn(),
+		onAddItem: vi.fn(),
+		onAddBundle: vi.fn(),
+		onRemoveItem: vi.fn(),
+		onRemoveBundle: vi.fn(),
+		hasItem: vi.fn(),
 		...overrides,
 	};
 };

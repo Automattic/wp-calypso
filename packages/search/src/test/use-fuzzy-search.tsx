@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import Search, { useFuzzySearch } from '..';
 import type { UseFuzzySearchOptions } from '../use-fuzzy-search';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 const TestComponent = < T, >( props: UseFuzzySearchOptions< T > ) => {
 	const [ query, setQuery ] = useState( props.query );

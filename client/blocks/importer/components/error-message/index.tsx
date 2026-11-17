@@ -9,14 +9,26 @@ import './style.scss';
 interface Props {
 	primaryBtnText?: string;
 	onPrimaryBtnClick?: () => void;
+	errorData?: {
+		code?: string | number;
+		type?: string;
+	};
+	importerFileType?: string;
 }
 
 const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-	const { primaryBtnText, onPrimaryBtnClick } = props;
+	const { primaryBtnText, onPrimaryBtnClick, errorData, importerFileType } = props;
 
+	// A view of the failure screen, recorded once on mount, whatever failed. Not the same as
+	// `calypso_site_importer_start_import_fail`, which records a failed `import-site` API request.
 	useEffect( () => {
-		recordTracksEvent( 'calypso_site_importer_start_import_failure' );
+		recordTracksEvent( 'calypso_site_importer_start_import_failure', {
+			error_code: errorData?.code,
+			error_type: errorData?.type,
+			importer_file_type: importerFileType,
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return (

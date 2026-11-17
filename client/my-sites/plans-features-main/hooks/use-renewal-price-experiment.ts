@@ -2,14 +2,10 @@ import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
-
-const RENEWAL_PRICING_EXPERIMENT_V2_EN_USD = 'wpcom_renewal_pricing_increase_v2_usd_202604_v2';
-const RENEWAL_PRICING_EXPERIMENT_V2_NON_USD = 'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1';
 
 function useCurrencyFromPlans(): string | undefined {
 	const plans = Plans.usePlans( { coupon: undefined } );
@@ -61,20 +57,6 @@ function useIsEligibleForV1EnUSDExperiment(
 	return [ false, 'crossed_price' ];
 }
 
-function isEligibleForExperiment( flowName?: string | null ): boolean {
-	const flowFromStorage = getSignupCompleteFlowName(); // The flow for the Checkout page
-	const flowFromURL = getFlowFromURL(); // The flow for the Plans step
-	const flow = flowName || flowFromStorage || flowFromURL;
-
-	// onboarding-pm and onboarding-affiliate flows are ineligible for streamlined pricing. Akismet/Jetpack checkouts are excluded as well.
-	return (
-		flow !== 'onboarding-pm' &&
-		flow !== 'onboarding-affiliate' &&
-		! isAkismetCheckout() &&
-		! isJetpackCheckout()
-	);
-}
-
 export function useRenewalPricingExperiment(
 	flowName?: string | null
 ): [ boolean, string | null ] {
@@ -85,30 +67,11 @@ export function useRenewalPricingExperiment(
 		locale,
 		currencyCode
 	);
-	const [ isLoadingV2EnUsd, v2EnUsdAssignment ] = useExperiment(
-		RENEWAL_PRICING_EXPERIMENT_V2_EN_USD,
-		{
-			// EN locale and USD currency required; skip until plans are loaded.
-			isEligible: locale === 'en' && currencyCode === 'USD' && isEligibleForExperiment( flowName ),
-		}
-	);
-	const [ isLoadingV2NonUsd, v2NonUsdAssignment ] = useExperiment(
-		RENEWAL_PRICING_EXPERIMENT_V2_NON_USD,
-		{
-			// Eligible when the user is either non-EN or non-USD. A non-EN locale
-			// is sufficient on its own (no need to wait for plans to load); for EN
-			// users we additionally wait for the currency to confirm it's non-USD.
-			isEligible:
-				( locale !== 'en' || ( currencyCode !== undefined && currencyCode !== 'USD' ) ) &&
-				isEligibleForExperiment( flowName ),
-		}
-	);
-	const isLoadingExperiment = isLoadingV1 || isLoadingV2EnUsd || isLoadingV2NonUsd;
-	const variationName =
-		v2NonUsdAssignment?.variationName ?? v2EnUsdAssignment?.variationName ?? v1Variation;
+	const isLoadingExperiment = isLoadingV1;
+	const variationName = v1Variation;
 	return [ isLoadingExperiment, isLoadingExperiment ? null : variationName ];
 }
 
 export function isRenewalPricingTreatment( variationName?: string | null ) {
-	return Boolean( variationName );
+	return variationName === 'crossed_price';
 }

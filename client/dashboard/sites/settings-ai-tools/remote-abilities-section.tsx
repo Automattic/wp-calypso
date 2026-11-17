@@ -197,7 +197,7 @@ export default function RemoteAbilitiesSection( {
 				/>
 				{ isLoading && namespaces.size === 0 && <Spinner /> }
 				{ isError && (
-					<Notice density="medium">
+					<Notice>
 						{ __(
 							'This site’s abilities can’t be loaded right now. The site may be unreachable or too old to publish them. Your saved settings are shown and still apply.'
 						) }

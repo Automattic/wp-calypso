@@ -1,72 +1,81 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../../context';
 import { useSendOdieMessage } from '../use-send-odie-message';
 import type { Message } from '../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( select: unknown ) => unknown ) =>
 		selector( () => ( { getCurrentUser: () => ( { ID: 1 } ) } ) ),
-	useDispatch: () => ( { setLoggedOutOdieChat: jest.fn() } ),
+	useDispatch: () => ( { setLoggedOutOdieChat: vi.fn() } ),
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: '', pathname: '/odie' } ),
-	useNavigate: () => jest.fn(),
+	useNavigate: () => vi.fn(),
 } ) );
 
-jest.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
-	default: jest.fn(),
+vi.mock( 'wpcom-proxy-request', () => ( {
+	default: vi.fn(),
 	canAccessWpcomApis: () => true,
 } ) );
 
-jest.mock( '../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../../hooks', () => ( {
-	useCreateZendeskConversation: () => jest.fn(),
+const mockRequestHumanSupport = vi.fn();
+
+vi.mock( '../../hooks', () => ( {
+	useCreateZendeskConversation: () => vi.fn(),
+	useRequestHumanSupport: () => mockRequestHumanSupport,
 } ) );
 
-jest.mock( '../../hooks/use-logged-out-session', () => ( {
+vi.mock( '../../hooks/use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( { isLoggedOutSession: false } ),
 } ) );
 
-jest.mock( '../../hooks/use-open-interaction-status-map', () => ( {
+vi.mock( '../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenInteractionStatusMap: () => ( {} ),
 } ) );
 
-jest.mock( '../../utils/is-agents-manager-available', () => ( {
+const mockGetOpenLiveInteractions = vi.fn( () => ( {
+	mostRecentSupportInteractionId: null as string | null,
+	hasReachedLimit: false,
+} ) );
+
+vi.mock( '../../utils/get-open-live-interactions', () => ( {
+	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
+} ) );
+
+vi.mock( '../../utils/is-agents-manager-available', () => ( {
 	getIsAgentsManagerAvailable: () => false,
 } ) );
 
-jest.mock( '../use-current-support-interaction', () => ( {
+vi.mock( '../use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: undefined } ),
 } ) );
 
-jest.mock( '../request-logged-out-wpcom-odie', () => ( {
-	requestLoggedOutWpcomOdie: jest.fn(),
+vi.mock( '../request-logged-out-wpcom-odie', () => ( {
+	requestLoggedOutWpcomOdie: vi.fn(),
 } ) );
 
 // The hook imports useManageSupportInteraction from the data barrel.
-jest.mock( '../index', () => ( {
+vi.mock( '../index', () => ( {
 	useManageSupportInteraction: () => ( {
-		addEventToInteraction: jest.fn(),
-		startNewInteraction: jest.fn().mockResolvedValue( { uuid: 'interaction-1' } ),
+		addEventToInteraction: vi.fn(),
+		startNewInteraction: vi.fn().mockResolvedValue( { uuid: 'interaction-1' } ),
 	} ),
 } ) );
 
@@ -76,18 +85,22 @@ const userMessage: Message = {
 	type: 'message',
 };
 
+const mockSetChat = vi.fn();
+const mockSetPendingHumanSupportRequest = vi.fn();
+
 const mockContext = ( overrides: Record< string, unknown > = {} ) =>
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		selectedSiteId: 1,
 		version: null,
-		setChat: jest.fn(),
-		setChatStatus: jest.fn(),
-		setExperimentVariationName: jest.fn(),
+		setChat: mockSetChat,
+		setPendingHumanSupportRequest: mockSetPendingHumanSupportRequest,
+		setChatStatus: vi.fn(),
+		setExperimentVariationName: vi.fn(),
 		chat: { odieId: null, conversationId: null, messages: [], provider: 'odie', status: 'loaded' },
 		isUserEligibleForPaidSupport: false,
 		canConnectToZendesk: false,
 		forceEmailSupport: false,
-		trackEvent: jest.fn(),
+		trackEvent: vi.fn(),
 		newInteractionsBotSlug: 'wpcom-workflow-support_chat',
 		newLoggedOutInteractionsBotSlug: 'wpcom-workflow-chat_loggedout',
 		externalChatProvider: null,
@@ -108,13 +121,13 @@ const sendMessage = async () => {
 		await result.current.mutateAsync( userMessage );
 	} );
 
-	return ( wpcomRequest as jest.Mock ).mock.calls[ 0 ][ 0 ].body;
+	return ( wpcomRequest as Mock ).mock.calls[ 0 ][ 0 ].body;
 };
 
 describe( 'useSendOdieMessage – checkout support variation', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+		vi.clearAllMocks();
+		( wpcomRequest as Mock ).mockResolvedValue( {
 			chat_id: 5,
 			messages: [ { message_id: 1, content: 'Yes, PayPal works.', role: 'bot', type: 'message' } ],
 		} );
@@ -138,5 +151,100 @@ describe( 'useSendOdieMessage – checkout support variation', () => {
 		const body = await sendMessage();
 
 		expect( body.context ).not.toHaveProperty( 'checkoutSupportVariation' );
+	} );
+} );
+
+describe( 'useSendOdieMessage – asking for a human', () => {
+	beforeEach( () => {
+		vi.clearAllMocks();
+		( wpcomRequest as Mock ).mockResolvedValue( {
+			chat_id: 5,
+			messages: [
+				{
+					message_id: 1,
+					content: 'Let me connect you with a Happiness Engineer.',
+					role: 'bot',
+					type: 'message',
+					context: {
+						site_id: null,
+						flags: {
+							forward_to_human_support: true,
+							is_emergency: true,
+							emergency_type: 'checkout_broken',
+							route_to_email: false,
+						},
+					},
+				},
+			],
+		} );
+	} );
+
+	it( "passes the bot's flags with the request", async () => {
+		mockContext( { isUserEligibleForPaidSupport: true, canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		expect( mockRequestHumanSupport ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				createdFrom: 'automatic_escalation',
+				flags: { isEmergency: true, emergencyType: 'checkout_broken', routeToEmail: false },
+			} )
+		);
+	} );
+
+	it( 'lets a routing step decide for a user without paid support', async () => {
+		mockContext( { canConnectToZendesk: true, humanSupportRouting: { Step: () => null } } );
+
+		await sendMessage();
+
+		expect( mockRequestHumanSupport ).toHaveBeenCalledWith(
+			expect.objectContaining( { createdFrom: 'automatic_escalation' } )
+		);
+	} );
+
+	it( "keeps the bot's flags on the existing-conversation prompt", async () => {
+		mockGetOpenLiveInteractions.mockReturnValueOnce( {
+			mostRecentSupportInteractionId: 'interaction-9',
+			hasReachedLimit: false,
+		} );
+		mockContext( { isUserEligibleForPaidSupport: true, canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		// The prompt is shown instead of starting a chat; its button needs the bot's flags.
+		expect( mockRequestHumanSupport ).not.toHaveBeenCalled();
+		const updates = mockSetChat.mock.calls
+			.map( ( [ update ] ) => update )
+			.filter( ( update ) => typeof update === 'function' );
+		const chat = updates.reduce( ( prev, update ) => update( prev ), {
+			messages: [],
+			status: 'sending',
+		} );
+		expect( chat.messages.at( -1 ) ).toMatchObject( {
+			internal_message_id: 'existing-conversation-message',
+			context: {
+				flags: {
+					forward_to_human_support: true,
+					is_emergency: true,
+					emergency_type: 'checkout_broken',
+				},
+			},
+		} );
+	} );
+
+	it( 'drops a waiting request for a human when the user writes to the bot again', async () => {
+		mockContext( { canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		expect( mockSetPendingHumanSupportRequest ).toHaveBeenCalledWith( null );
+	} );
+
+	it( "doesn't ask for a human for a user without paid support or a routing step", async () => {
+		mockContext( { canConnectToZendesk: true } );
+
+		await sendMessage();
+
+		expect( mockRequestHumanSupport ).not.toHaveBeenCalled();
 	} );
 } );

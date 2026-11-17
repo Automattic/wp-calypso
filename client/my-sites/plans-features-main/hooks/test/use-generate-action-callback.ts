@@ -39,7 +39,12 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs
 jest.mock( '../use-current-plan-manage-href', () => () => '/manage' );
 jest.mock( '../use-non-owner-handler', () => ( { useNonOwnerHandler: () => jest.fn() } ) );
 
-import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
+import {
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_WOO_HOSTED_BASIC,
+	PLAN_WOO_HOSTED_PRO,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { renderHook } from '@testing-library/react';
 import useGenerateActionCallback from '../use-generate-action-callback';
@@ -106,5 +111,30 @@ describe( 'useGenerateActionCallback upgrade checkout URL', () => {
 		const url = await upgradeToPersonal( { checkoutAttribution: {} } );
 
 		expect( url.search ).toBe( '' );
+	} );
+} );
+
+describe( 'useGenerateActionCallback downgrades', () => {
+	// Without it, a Woo Hosted store picking a lower plan is sent to checkout instead of support.
+	it( 'sends a Woo Hosted store picking a lower plan to support, not checkout', async () => {
+		jest.clearAllMocks();
+		const { result } = renderHook( () =>
+			useGenerateActionCallback( {
+				currentPlan: { productSlug: PLAN_WOO_HOSTED_PRO } as never,
+				eligibleForFreeHostingTrial: false,
+				flowName: 'plan-upgrade',
+				intent: 'plans-woo-hosted',
+				sitePlanSlug: PLAN_WOO_HOSTED_PRO,
+				siteId: 1,
+			} )
+		);
+
+		await result.current( {
+			planSlug: PLAN_WOO_HOSTED_BASIC,
+			cartItemForPlan: { product_slug: PLAN_WOO_HOSTED_BASIC },
+			availableForPurchase: false,
+		} as never )();
+
+		expect( page ).not.toHaveBeenCalled();
 	} );
 } );

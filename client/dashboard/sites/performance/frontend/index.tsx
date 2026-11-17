@@ -47,9 +47,7 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
-	const performanceUrl = [ 'development', 'dashboard-development', 'wpcalypso' ].includes(
-		config( 'env_id' )
-	)
+	const performanceUrl = config.isEnabled( 'performance/test-url-override' )
 		? ( url ?? currentPage?.link )
 		: currentPage?.link;
 
@@ -125,6 +123,7 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 						siteUrl={ site.URL }
 						currentPage={ currentPage }
 						pages={ pagesData || [] }
+						isLoading={ isLoadingPages }
 						onChange={ ( pageId ) => {
 							setRunNewReport( false );
 							recordTracksEvent( 'calypso_dashboard_performance_profiler_page_selector_change', {

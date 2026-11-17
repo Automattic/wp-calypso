@@ -54,51 +54,6 @@ test.describe(
 			} );
 		} );
 
-		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com import link" on the wp-admin Importers List page to import my content from my Medium account', async ( {
-			pageImportContentFromMedium,
-			pageImportLetsFindYourSite,
-			sitePublic,
-		} ) => {
-			const mediumSiteURL = 'https://medium.com/@testacount';
-
-			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
-				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug );
-			} );
-
-			await test.step( "Then I see the Let's find your site page", async function () {
-				await expect( pageImportLetsFindYourSite.heading ).toBeVisible();
-			} );
-
-			await test.step( 'When I enter my Medium site URL and click Continue', async function () {
-				await pageImportLetsFindYourSite.enterSiteURLAndCheck( mediumSiteURL );
-			} );
-
-			await test.step( 'Then I see the Import content from Medium page', async function () {
-				await expect( pageImportContentFromMedium.heading ).toBeVisible();
-			} );
-
-			await test.step( 'When I upload a valid Medium export file', async function () {
-				await pageImportContentFromMedium.importFileContentPage.uploadExportFile(
-					TEST_MEDIUM_EXPORT_FILE_PATH
-				);
-			} );
-
-			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
-				await expect( pageImportContentFromMedium.heading ).toBeVisible();
-				await expect(
-					pageImportContentFromMedium.importFileContentPage.yourFileIsReadyText
-				).toBeVisible( {
-					timeout: 30000,
-				} );
-				await expect(
-					pageImportContentFromMedium.importFileContentPage.importButton
-				).toBeVisible();
-				await expect(
-					pageImportContentFromMedium.importFileContentPage.importButton
-				).toBeEnabled();
-			} );
-		} );
-
 		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Medium account', async ( {
 			sitePublicShared: sitePublic,
 			pageImportContent,

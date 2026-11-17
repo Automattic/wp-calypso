@@ -14,13 +14,17 @@ import { getFeedbackCopy, type FeedbackCopyArgs } from './copy';
 import { useMilestoneFeedback } from './use-milestone-feedback';
 import type { FeedbackRating, FeedbackType } from './types';
 
-interface Props {
+interface MilestoneFeedbackModalProps {
 	type: FeedbackType;
 	args?: FeedbackCopyArgs;
 	onClose: () => void;
 }
 
-export default function MilestoneFeedbackModal( { type, args, onClose }: Props ) {
+export default function MilestoneFeedbackModal( {
+	type,
+	args,
+	onClose,
+}: MilestoneFeedbackModalProps ) {
 	const { submit, skip, isSubmitting } = useMilestoneFeedback( type );
 	const [ rating, setRating ] = useState< FeedbackRating >();
 	const [ comments, setComments ] = useState( '' );

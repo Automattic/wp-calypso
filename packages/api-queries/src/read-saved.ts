@@ -9,7 +9,7 @@ import {
 	type ReadSavedPostResponse,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
-import { getStreamInfiniteQueryKeyPrefix } from './read-streams';
+import { getStreamType, parseStreamInfiniteQueryKey } from './read-streams';
 
 export const readSavedKeysQuery = () =>
 	queryOptions( {
@@ -18,13 +18,43 @@ export const readSavedKeysQuery = () =>
 		staleTime: 1000 * 60 * 5,
 	} );
 
+const TRACKING_PARAM = /^(utm_.*|fbclid|gclid)$/;
+
+/**
+ * A saved URL as the saved posts API stores and matches it: the scheme and host
+ * lowercased, without the fragment, a default port, tracking params, or
+ * trailing slashes except on the root path. A post's `URL` can differ from the
+ * stored one in any of these.
+ */
+const normalizeReadSavedUrl = ( url: string ): string => {
+	let parsed: URL;
+	try {
+		parsed = new URL( url );
+	} catch {
+		return url;
+	}
+	const query = parsed.search
+		.slice( 1 )
+		.split( '&' )
+		.filter( ( pair ) => pair && ! TRACKING_PARAM.test( pair.split( '=' )[ 0 ] ) )
+		.join( '&' );
+	const path = parsed.pathname.replace( /\/+$/, '' ) || '/';
+	return `${ parsed.protocol }//${ parsed.host }${ path }${ query ? `?${ query }` : '' }`;
+};
+
 /**
  * A string that identifies a saved key, for comparing keys and building lookups.
+ * Any entry can carry a `url`, so it only identifies a save that has no IDs.
  */
-export const getReadSavedKeyId = ( key: ReadSavedKey ): string =>
-	'feed_item_id' in key
-		? `feed-item-${ key.feed_item_id }`
-		: `blog-${ key.blog_id }-post-${ key.post_id }`;
+export const getReadSavedKeyId = ( key: ReadSavedKey ): string => {
+	if ( 'feed_item_id' in key && key.feed_item_id ) {
+		return `feed-item-${ key.feed_item_id }`;
+	}
+	if ( 'blog_id' in key && key.blog_id ) {
+		return `blog-${ key.blog_id }-post-${ key.post_id }`;
+	}
+	return `url-${ 'url' in key ? normalizeReadSavedUrl( key.url ) : '' }`;
+};
 
 const savedKeysQueryKey = readSavedKeysQuery().queryKey;
 
@@ -113,6 +143,43 @@ function getSavedWrites( queryClient: QueryClient ): SavedWrites {
 	return writes;
 }
 
+/**
+ * Adds saves the keys query is missing, newest first. The saved posts stream
+ * can list a save made elsewhere, such as in the browser extension, before the
+ * keys query refetches. Each save lists every key it may be stored under, and
+ * is added under the first unless one of them is already there.
+ *
+ * Does nothing while a save or unsave is in flight, so a stream page fetched
+ * before an unsave can't put the key back.
+ */
+export function addMissingReadSavedKeys(
+	queryClient: QueryClient,
+	saves: Array< { keys: ReadSavedKey[]; date_saved: string } >
+) {
+	const data = queryClient.getQueryData( savedKeysQueryKey );
+	if ( ! data || getSavedWrites( queryClient ).pending > 0 ) {
+		return;
+	}
+
+	const ids = new Set( data.keys.map( getReadSavedKeyId ) );
+	const missing: ReadSavedKeyEntry[] = [];
+	for ( const { keys, date_saved } of saves ) {
+		const keyIds = keys.map( getReadSavedKeyId );
+		if ( keys.length === 0 || keyIds.some( ( id ) => ids.has( id ) ) ) {
+			continue;
+		}
+		ids.add( keyIds[ 0 ] );
+		missing.push( { ...keys[ 0 ], date_saved } );
+	}
+
+	if ( missing.length > 0 ) {
+		queryClient.setQueryData( savedKeysQueryKey, {
+			keys: [ ...missing, ...data.keys ],
+			total: data.total + missing.length,
+		} );
+	}
+}
+
 interface SavedWriteContext {
 	write: symbol;
 	undo?: () => void;
@@ -163,7 +230,11 @@ function savedWriteCallbacks(
 
 			void queryClient.invalidateQueries( { queryKey: savedKeysQueryKey } );
 			void queryClient.invalidateQueries( {
-				queryKey: getStreamInfiniteQueryKeyPrefix( 'saved' ),
+				queryKey: [ 'read', 'stream', 'infinite' ],
+				predicate: ( { queryKey } ) => {
+					const stream = parseStreamInfiniteQueryKey( queryKey );
+					return !! stream && getStreamType( stream.streamKey ) === 'saved';
+				},
 			} );
 		},
 	};

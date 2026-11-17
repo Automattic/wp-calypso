@@ -20,9 +20,6 @@ jest.mock( '../wp-order-review-line-items', () => ( {
 	WPOrderReviewLineItems: () => null,
 	WPOrderReviewSection: ( { children }: { children: React.ReactNode } ) => children,
 } ) );
-jest.mock( '../../hooks/use-mobile-checkout-sticky-summary-experiment', () => ( {
-	useMobileCheckoutStickySummaryExperiment: () => ( { isMobileCheckoutStickySummary: false } ),
-} ) );
 
 function renderOrderReview(
 	cart: ResponseCart,

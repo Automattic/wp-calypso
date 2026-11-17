@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import shuffle from '../shuffle';
 
 const TEST_ARRAY_EMPTY = [];
@@ -7,11 +8,11 @@ const TEST_ARRAY_MANY = [ 'baz', 1, { foo: 'bar' }, null, true ];
 describe( 'Design Picker shuffle utils', () => {
 	describe( 'shuffle', () => {
 		afterEach( () => {
-			jest.resetAllMocks();
+			vi.resetAllMocks();
 		} );
 
 		it( 'should shuffle an array correctly', () => {
-			const randomSpy = jest.spyOn( Math, 'random' ).mockImplementation( () => 0 );
+			const randomSpy = vi.spyOn( Math, 'random' ).mockImplementation( () => 0 );
 
 			// If Math.random() always returns `0`, then the array's first item should
 			// become the last item, while every other item stays in the same order.
@@ -31,7 +32,7 @@ describe( 'Design Picker shuffle utils', () => {
 		} );
 
 		it( 'should handle empty arrays', () => {
-			const randomSpy = jest.spyOn( Math, 'random' );
+			const randomSpy = vi.spyOn( Math, 'random' );
 
 			expect( shuffle( TEST_ARRAY_EMPTY ) ).toEqual( TEST_ARRAY_EMPTY );
 			expect( randomSpy ).not.toHaveBeenCalled();

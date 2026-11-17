@@ -1,14 +1,16 @@
 import { __ } from '@wordpress/i18n';
 import ConfirmModal from '../../../../components/confirm-modal';
 
-interface Props {
+interface ApplySettingsToAllSitesConfirmationModalProps {
 	onCancel: () => void;
 	onConfirm: () => void;
 	isBusy: boolean;
 	isOpen: boolean;
 }
 
-export const ApplySettingsToAllSitesConfirmationModal = ( props: Props ) => {
+export const ApplySettingsToAllSitesConfirmationModal = (
+	props: ApplySettingsToAllSitesConfirmationModalProps
+) => {
 	const { onCancel, onConfirm, isBusy, isOpen } = props;
 	return (
 		<ConfirmModal

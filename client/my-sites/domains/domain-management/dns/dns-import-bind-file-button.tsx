@@ -89,7 +89,8 @@ function DnsImportBindFileButton( { domain, isMobile }: DnsImportBindFileButtonP
 
 		try {
 			const recordsToImport = await wpcom.req.post( {
-				path: `/domains/dns/import/bind/${ domain }`,
+				// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+				path: `/domains/dns/import/bind/${ domain }/`,
 				apiNamespace: 'wpcom/v2',
 				formData,
 			} );

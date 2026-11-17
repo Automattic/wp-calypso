@@ -6,7 +6,7 @@ import {
 	DirectoryApplicationType,
 	LeadMatchingDetails,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
-import type { AgencyPartnerManager } from '@automattic/api-core';
+import type { AgencyDashboardOptIn, AgencyPartnerManager } from '@automattic/api-core';
 import type { AgencyTier } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 export interface APIError {
@@ -160,6 +160,7 @@ export interface Agency {
 	billing_system?: 'billingdragon' | 'legacy';
 	payment_notice?: PaymentNotice | null;
 	partner_manager?: AgencyPartnerManager | null;
+	dashboard_opt_in?: AgencyDashboardOptIn;
 }
 
 export type UserBillingType = 'legacy' | 'billingdragon';

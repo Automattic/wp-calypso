@@ -14,10 +14,17 @@ import {
 	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
-import { useCreateZendeskConversation } from '../hooks';
+import { useRequestHumanSupport } from '../hooks';
 import { useLoggedOutSession } from '../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-status-map';
-import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
+import {
+	generateUUID,
+	getHumanSupportFlags,
+	getOdieIdFromInteraction,
+	getIsRequestingHumanSupport,
+	NO_HUMAN_SUPPORT_FLAGS,
+	withHumanSupportFlags,
+} from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { getBotSlug } from '../utils/get-bot-slug';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
@@ -25,7 +32,7 @@ import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-availabl
 import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction } from '.';
-import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
+import type { Chat, HumanSupportFlags, Message, ReturnedChat, SupportInteraction } from '../types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -76,7 +83,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
 
 	const { addEventToInteraction, startNewInteraction } = useManageSupportInteraction();
-	const createZendeskConversation = useCreateZendeskConversation();
+	const requestHumanSupport = useRequestHumanSupport();
 
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
@@ -85,18 +92,29 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		createdFrom?: string;
 		isFromError?: boolean;
 		escalationOnSecondAttempt?: boolean;
+		flags?: HumanSupportFlags;
 		trigger: boolean;
 	} >( { isFromError: false, trigger: false } );
 
 	useEffect( () => {
-		const { createdFrom, isFromError, escalationOnSecondAttempt, trigger } =
-			shouldCreateConversation;
+		const {
+			createdFrom = '',
+			isFromError,
+			escalationOnSecondAttempt,
+			flags,
+			trigger,
+		} = shouldCreateConversation;
 
 		if ( trigger ) {
-			createZendeskConversation( { createdFrom, isFromError, escalationOnSecondAttempt } );
+			requestHumanSupport( {
+				createdFrom,
+				isFromError,
+				escalationOnSecondAttempt,
+				flags: flags ?? NO_HUMAN_SUPPORT_FLAGS,
+			} );
 			setShouldCreateConversation( { createdFrom: undefined, isFromError: false, trigger: false } );
 		}
-	}, [ createZendeskConversation, shouldCreateConversation ] );
+	}, [ requestHumanSupport, shouldCreateConversation ] );
 
 	const {
 		selectedSiteId,
@@ -108,6 +126,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
+		humanSupportRouting,
+		setPendingHumanSupportRequest,
 		trackEvent,
 		newInteractionsBotSlug,
 		newLoggedOutInteractionsBotSlug,
@@ -200,11 +220,20 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
-						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
+						// Its "connect me with someone new" button needs the bot's flags.
+						messages: [
+							...prevChat.messages,
+							withHumanSupportFlags( getExistingConversationMessage(), message ),
+						],
 						status: 'loaded',
 					} ) );
 					return;
-				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
+				} else if (
+					! chat.conversationId &&
+					canConnectToZendesk &&
+					// With a routing step, the host decides who gets a human.
+					( isUserEligibleForPaidSupport || !! humanSupportRouting )
+				) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
@@ -216,6 +245,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						createdFrom: 'automatic_escalation',
 						isFromError,
 						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
+						flags: getHumanSupportFlags( message ),
 					} );
 					return;
 				}
@@ -308,6 +338,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
+			// Writing to the bot again moves on from a waiting request for a human. If the bot asks for
+			// a human again, the routing step comes back.
+			setPendingHumanSupportRequest( null );
 		},
 		onSuccess: async ( returnedChat ) => {
 			if (
@@ -316,15 +349,16 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				! returnedChat.messages[ 0 ].content
 			) {
 				// Handle empty/error response based on user eligibility
-				if ( isUserEligibleForPaidSupport && canConnectToZendesk ) {
+				if ( ( isUserEligibleForPaidSupport || !! humanSupportRouting ) && canConnectToZendesk ) {
 					// User is eligible for premium support - transfer to Zendesk
 					// Note: newConversation will add the ODIE_ON_ERROR_TRANSFER_MESSAGE automatically
-					createZendeskConversation( {
+					requestHumanSupport( {
 						createdFrom: 'empty_response_error',
 						isFromError: true,
 						errorReason: `messages: ${ returnedChat.messages
 							?.map( ( message ) => message.content )
 							.join( '|' ) }`,
+						flags: NO_HUMAN_SUPPORT_FLAGS,
 					} );
 				} else {
 					// User is not eligible for premium support - show error message with support buttons

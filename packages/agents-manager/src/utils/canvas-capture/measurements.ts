@@ -16,6 +16,10 @@ import { getCanvasDocument } from '../editor-canvas';
 
 // Below this, a difference is rounding and subpixel layout, not misalignment.
 const TOLERANCE = 2;
+// Rows are compared by visible boxes, and a link-style button's is its text,
+// whose centre shifts a pixel or two with the font's metrics against a filled
+// button's padded box. Wider, so that is not reported as misalignment.
+const ROW_TOLERANCE = 3;
 const MAX_ROWS = 4;
 const MAX_ROW_ITEMS = 8;
 const MAX_IMAGE_NOTES = 6;
@@ -65,6 +69,9 @@ interface Row {
 }
 
 const px = ( value: number ): number => Math.round( value );
+
+// To a tenth, for a note whose numbers have to agree with each other.
+const tenths = ( value: number ): number => Math.round( value * 10 ) / 10;
 
 const centreOf = ( box: Box ): number => ( box.top + box.bottom ) / 2;
 
@@ -283,17 +290,22 @@ function describeRow( { parent, items, boxes }: Row ): string {
 	const edges = items
 		.map(
 			( item, index ) =>
-				`${ item.label } ${ px( boxes[ index ].top - parent.block.top ) }–${ px(
+				`${ item.label } ${ tenths( boxes[ index ].top - parent.block.top ) }–${ tenths(
 					boxes[ index ].bottom - parent.block.top
 				) }`
 		)
 		.join( ', ' );
+	// Judged from the unrounded centres, so the verdict cannot turn on
+	// rounding, on direction, or on which item comes first. An uneven row
+	// gives every offset as a number, edges and offsets to the same tenth:
+	// an offset within the tolerance once read "level with it" beside a
+	// verdict that the row was not, and the check believed the verdict.
 	const spread = Math.max( ...centres ) - Math.min( ...centres );
 
 	const describeOffset = ( item: Measured, index: number ): string => {
-		const offset = px( centres[ index ] - centres[ 0 ] );
+		const offset = tenths( centres[ index ] - centres[ 0 ] );
 
-		if ( Math.abs( offset ) <= TOLERANCE ) {
+		if ( offset === 0 ) {
 			return `${ item.label }'s is level with it`;
 		}
 
@@ -301,8 +313,8 @@ function describeRow( { parent, items, boxes }: Row ): string {
 	};
 
 	const comparison =
-		spread <= TOLERANCE
-			? `Their visible centre lines are level (within ${ TOLERANCE }px).`
+		spread <= ROW_TOLERANCE
+			? `Their visible centre lines are level (within ${ ROW_TOLERANCE }px).`
 			: `Their visible centre lines are not level. Against ${ reference.label }'s: ${ items
 					.map( describeOffset )
 					.slice( 1 )

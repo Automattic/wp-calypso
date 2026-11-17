@@ -1,8 +1,15 @@
 // Must come before ./lib/pw-base so .env is loaded before
 // @automattic/calypso-e2e's env-variables module is evaluated.
 import './load-env';
-import { envVariables, validateThrottleActions } from '@automattic/calypso-e2e';
-import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
+import fs from 'fs';
+import path from 'path';
+import {
+	MIXED_RUN_WORKERS,
+	createAtomicSiteProjects,
+	envVariables,
+	validateThrottleActions,
+} from '@automattic/calypso-e2e';
+import { defineConfig, devices, type Project, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
 
 // Reads every supported variable so an unsupported value fails here, before the suite starts,
@@ -64,9 +71,46 @@ const loginBrowserUse = {
 	// let the device descriptor track the bundled Chromium.
 };
 
+const chromeProject: Project = {
+	name: 'chrome',
+	dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
+	use: withCustomOptions( {
+		...devices[ 'Desktop Chrome HiDPI' ],
+		userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
+		viewportName: 'desktop',
+	} ),
+};
+
+// The mixed run's specs, found by their source: the config loads before Playwright collects
+// any test, so the tag is all it has to go on. A spec it misses doesn't run.
+const MIXED_RUN_SPEC_MARKER = /JETPACK_WPCOM_INTEGRATION|@jetpack-wpcom-integration/;
+const SPECS_DIR = path.join( __dirname, 'specs' );
+
+/**
+ * `chrome`, or in a mixed Atomic run one capped copy per site. A mixed run has no `chrome`:
+ * it would load every spec file, and the ones with no site would stop the run.
+ */
+function getChromeProjects(): Project[] {
+	if ( process.env.ATOMIC_VARIATION !== 'mixed' ) {
+		return [ chromeProject ];
+	}
+
+	const specFiles = fs
+		.readdirSync( SPECS_DIR, { recursive: true, encoding: 'utf8' } )
+		.filter( ( file ) => file.endsWith( '.spec.ts' ) )
+		.filter( ( file ) =>
+			MIXED_RUN_SPEC_MARKER.test( fs.readFileSync( path.join( SPECS_DIR, file ), 'utf8' ) )
+		);
+
+	return createAtomicSiteProjects( chromeProject, specFiles );
+}
+
 function getWorkers(): number | string {
 	if ( process.env.PW_WORKERS ) {
 		return parseInt( process.env.PW_WORKERS, 10 );
+	}
+	if ( process.env.ATOMIC_VARIATION === 'mixed' ) {
+		return MIXED_RUN_WORKERS;
 	}
 	return process.env.CI ? '50%' : '100%';
 }
@@ -121,15 +165,7 @@ export default defineConfig( {
 			testMatch: /throttle-check\.setup\.ts/,
 			testDir: './setup',
 		},
-		{
-			name: 'chrome',
-			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],
-			use: withCustomOptions( {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
-				viewportName: 'desktop',
-			} ),
-		},
+		...getChromeProjects(),
 		{
 			name: 'mobile',
 			dependencies: [ 'mailosaur-usage-check', 'throttle-check' ],

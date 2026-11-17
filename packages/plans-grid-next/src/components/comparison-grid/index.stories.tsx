@@ -2,8 +2,20 @@ import {
 	getFeaturesList,
 	getPlanFeaturesGroupedForComparisonGrid,
 } from '@automattic/calypso-products';
-import { ComparisonGrid, ComparisonGridExternalProps, useGridPlansForComparisonGrid } from '../..';
+import {
+	ComparisonGrid,
+	ComparisonGridExternalProps,
+	hasTailoredFeatureList,
+	useGridPlansForComparisonGrid,
+} from '../..';
+import type { PlansIntent } from '../..';
 import type { Meta, StoryObj } from '@storybook/react';
+
+// The groups have to match the feature lists the grid builds for the intent.
+const getFeatureGroupMap = ( intent?: PlansIntent ) =>
+	getPlanFeaturesGroupedForComparisonGrid( {
+		isExperimentVariant: ! hasTailoredFeatureList( intent ),
+	} );
 
 const ComponentWrapper = ( props: Omit< ComparisonGridExternalProps, 'gridPlans' > ) => {
 	const gridPlans = useGridPlansForComparisonGrid( {
@@ -33,7 +45,7 @@ const ComponentWrapper = ( props: Omit< ComparisonGridExternalProps, 'gridPlans'
 			<ComparisonGrid
 				{ ...props }
 				gridPlans={ gridPlans }
-				featureGroupMap={ getPlanFeaturesGroupedForComparisonGrid() }
+				featureGroupMap={ getFeatureGroupMap( props.intent ) }
 			/>
 		)
 	);
@@ -43,7 +55,7 @@ const defaultProps = {
 	allFeaturesList: getFeaturesList(),
 	coupon: undefined,
 	currentSitePlanSlug: undefined,
-	featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
+	featureGroupMap: getFeatureGroupMap(),
 	hideUnavailableFeatures: false,
 	intervalType: 'yearly' as const,
 	isInAdmin: false,

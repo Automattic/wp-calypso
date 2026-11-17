@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Remove the unused `@babel/cli` dependency.
 - Apply `@babel/preset-react` only outside `.ts` files, so `<T>value` assertions and generic arrows in them don't parse as JSX on Babel 8.
 
 ## 1.2.0

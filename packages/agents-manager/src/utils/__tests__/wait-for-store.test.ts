@@ -1,9 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { subscribe } from '@wordpress/data';
+import { vi } from 'vitest';
+import { waitForStore } from '../wait-for-store';
+
 let notify: () => void = () => {};
-jest.mock( '@wordpress/data', () => ( {
-	subscribe: jest.fn( ( listener: () => void ) => {
+vi.mock( '@wordpress/data', () => ( {
+	subscribe: vi.fn( ( listener: () => void ) => {
 		notify = listener;
 		return () => {
 			notify = () => {};
@@ -11,16 +15,13 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-import { subscribe } from '@wordpress/data';
-import { waitForStore } from '../wait-for-store';
-
 beforeEach( () => {
-	jest.clearAllMocks();
-	jest.useFakeTimers();
+	vi.clearAllMocks();
+	vi.useFakeTimers();
 } );
 
 afterEach( () => {
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 describe( 'waitForStore', () => {
@@ -39,13 +40,13 @@ describe( 'waitForStore', () => {
 
 		await expect( pending ).resolves.toBe( true );
 		// The timer must not outlive the wait.
-		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 
 	it( 'resolves false once the timeout passes', async () => {
 		const pending = waitForStore( 'core/editor', () => false, 1000 );
 
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 
 		await expect( pending ).resolves.toBe( false );
 	} );
@@ -60,9 +61,33 @@ describe( 'waitForStore', () => {
 		);
 
 		notify();
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 
 		await expect( pending ).resolves.toBe( false );
+	} );
+
+	it( 'listens to every store it names, and stops listening to all of them', async () => {
+		const unsubscribes = [ vi.fn(), vi.fn() ];
+		const listeners: ( () => void )[] = [];
+
+		const listen = ( listener: () => void ) => {
+			listeners.push( listener );
+			return unsubscribes[ listeners.length - 1 ];
+		};
+
+		vi.mocked( subscribe ).mockImplementationOnce( listen ).mockImplementationOnce( listen );
+
+		let ready = false;
+		const pending = waitForStore( [ 'core/block-editor', 'core' ], () => ready, 1000 );
+
+		expect( subscribe ).toHaveBeenCalledWith( expect.any( Function ), 'core/block-editor' );
+		expect( subscribe ).toHaveBeenCalledWith( expect.any( Function ), 'core' );
+
+		ready = true;
+		listeners[ 1 ]();
+
+		await expect( pending ).resolves.toBe( true );
+		unsubscribes.forEach( ( unsubscribe ) => expect( unsubscribe ).toHaveBeenCalled() );
 	} );
 
 	it( 'settles once, even when the store keeps changing', async () => {
@@ -72,7 +97,7 @@ describe( 'waitForStore', () => {
 		ready = true;
 		notify();
 		notify();
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 
 		await expect( pending ).resolves.toBe( true );
 	} );

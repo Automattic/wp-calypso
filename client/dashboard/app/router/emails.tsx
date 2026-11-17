@@ -1,18 +1,21 @@
 import { DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
+	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
 	rawUserPreferencesQuery,
 	siteByIdQuery,
 	siteProductsQuery,
+	titanDkimStatusQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../emails/types';
+import { hasTitanAccount } from '../../emails/utils/has-titan-account';
 import { isTitanPlanTier } from '../../emails/utils/titan-tiers';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { dashboardRedirect } from './redirect';
@@ -39,12 +42,17 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
-		await Promise.all( [
+	loader: async () => {
+		const [ accounts ] = await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
+		// Settles the DKIM notice before first paint. `prefetchQuery` ignores a failed request,
+		// which leaves the page without the notice.
+		if ( hasTitanAccount( accounts ) ) {
+			await queryClient.prefetchQuery( titanDkimStatusQuery() );
+		}
 	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>
@@ -53,6 +61,19 @@ export const emailsIndexRoute = createRoute( {
 		} )
 	)
 );
+
+const emailRedirectRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'email',
+	beforeLoad: ( { location } ) => {
+		throw dashboardRedirect( {
+			to: emailsRoute.fullPath,
+			search: true,
+			hash: location.hash,
+			replace: true,
+		} );
+	},
+} );
 
 const isMailboxProvider = ( value: unknown ): value is MailboxProvider =>
 	value === MailboxProvider.Titan || value === MailboxProvider.Google;
@@ -107,8 +128,8 @@ export const chooseDomainRoute = createRoute( {
 			tier: isTitanPlanTier( search.tier ) ? search.tier : undefined,
 		};
 	},
-	loader: async ( { context } ) => {
-		const domains = await queryClient.ensureQueryData( context.config.queries.domainsQuery() );
+	loader: async () => {
+		const domains = await queryClient.ensureQueryData( domainsQuery() );
 		const hasEmailableDomains = domains.some(
 			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 		);
@@ -400,6 +421,7 @@ const emailsDomainRedirectRoute = createRoute( {
 
 export const createEmailsRoutes = () => {
 	return [
+		emailRedirectRoute,
 		emailsRoute.addChildren( [
 			emailsIndexRoute,
 			chooseDomainRoute,

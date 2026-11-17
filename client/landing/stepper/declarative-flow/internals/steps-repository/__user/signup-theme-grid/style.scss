@@ -1,0 +1,99 @@
+@import '@automattic/components/src/styles/typography';
+
+/* This is needed to prevent the panel from growing beyond its container */
+:where( :has( > .signup-theme-grid ) ) {
+	min-width: 0;
+}
+
+.signup-theme-grid {
+	box-sizing: border-box;
+	height: 100vh;
+	padding: 16px;
+	padding-right: 0;
+}
+
+.signup-theme-grid__content {
+	box-sizing: border-box;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	overflow: hidden;
+	padding-bottom: 48px;
+	border-radius: 16px;
+	text-align: center;
+	background-color: var( --studio-gray-0 );
+	background-image: radial-gradient( var( --studio-gray-5 ) 1px, transparent 1px );
+	background-size: 16px 16px;
+}
+
+.signup-theme-grid__image {
+	flex: 1;
+	width: 100%;
+	margin-bottom: 40px;
+	background-image:
+		linear-gradient( to bottom, transparent 70%, var( --studio-gray-0 ) ),
+		url( ./images/theme-grid@2x.webp );
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center top;
+	pointer-events: none;
+	user-select: none;
+}
+
+.signup-theme-grid__headline {
+	margin: 0 0 16px;
+	padding-inline: 48px;
+	color: var( --studio-gray-100 );
+	font-family: $font-recoleta;
+	font-size: 48px;
+	line-height: 1.2;
+	text-wrap: balance;
+}
+
+.signup-theme-grid__description {
+	margin: 0;
+	padding-inline: 48px;
+	color: var( --studio-gray-60 );
+	font-family: $font-sf-pro-display;
+	font-size: 20px;
+	line-height: 1.5;
+	text-wrap: balance;
+}
+
+.signup-theme-grid.signup-theme-grid--compact {
+	height: 120px;
+	margin-bottom: 24px;
+	padding: 0;
+	border-radius: 8px;
+	background-image: url( ./images/theme-grid@2x.webp );
+	background-size: cover;
+	background-position: center;
+	mask-image: linear-gradient( to bottom, #000 60%, transparent );
+}
+
+// The compact phone layout leaves free space above the heading. The strip grows into it instead,
+// and is left out on screens too short to spare any, so the form still fits without scrolling.
+.step-container-v2:has( .signup-theme-grid--compact )
+	.step-container-v2__content-wrapper
+	.step-container-v2__content-row.step-container-v2--user-mobile:first-child {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	margin-block-start: 0;
+
+	.account-template {
+		flex: 1;
+		justify-content: flex-end;
+	}
+
+	.signup-theme-grid--compact {
+		flex: 1 1 0;
+		height: auto;
+		min-height: 96px;
+
+		@media ( max-height: 719px ) {
+			display: none;
+		}
+	}
+}

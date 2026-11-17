@@ -8,12 +8,12 @@ import { EmailSettings } from './email-settings';
 import { WebSettings } from './web-settings';
 import './index.scss';
 
-interface Props {
+interface SiteSettingsProps {
 	className?: string;
 	siteId: number;
 }
 
-export const SiteSettings = ( { className, siteId }: Props ) => {
+export const SiteSettings = ( { className, siteId }: SiteSettingsProps ) => {
 	return (
 		<div className={ clsx( 'site-settings', className ) }>
 			<Suspense fallback={ <Loading style={ { minHeight: '500px' } } /> }>

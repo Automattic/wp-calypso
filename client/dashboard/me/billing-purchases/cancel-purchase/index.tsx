@@ -1,8 +1,4 @@
-import {
-	DomainProductSlugs,
-	SubscriptionBillPeriod,
-	CancellationOffer,
-} from '@automattic/api-core';
+import { DomainProductSlugs, SubscriptionBillPeriod } from '@automattic/api-core';
 import {
 	applyCancellationOfferMutation,
 	cancelAndRefundPurchaseMutation,
@@ -53,6 +49,7 @@ import {
 	CancelFlowType,
 	getCancelIntentFromSearch,
 	getDisplayVariant,
+	getDowngradeRefundAmount,
 	getIncludedDomainPurchase,
 	type CancelIntent,
 	type DisplayVariant,
@@ -61,12 +58,9 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	hasQueryableSite,
-	isAgencyPartnerType,
 	isRemoved,
 	isManageableByUser,
-	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
-	isPartnerPurchase,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
 import {
@@ -80,17 +74,16 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './cancel-purchase-form/options-for-product';
 import {
-	ATOMIC_REVERT_STEP,
-	CANCEL_CONFIRM_STEP,
 	CANCELLATION_OFFER_STEP,
-	FEEDBACK_STEP,
-	NEXT_ADVENTURE_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
 import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
+import { getAllSurveySteps } from './get-all-survey-steps';
+import { getDowngradePlanForPurchase } from './get-downgrade-plan-for-purchase';
+import { getOfferDiscountBasedOnPurchasePrice } from './get-offer-discount-based-on-purchase-price';
 import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
@@ -99,6 +92,8 @@ import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
+import { useCancelOptionsExperiment } from './use-cancel-options-experiment';
+import { useDomainReturnLocation } from './use-domain-return-location';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
@@ -167,37 +162,6 @@ const willShowDomainOptionsRadioButtons = (
 	);
 };
 
-const getDowngradePlanForPurchase = (
-	plans: PlanProduct[],
-	purchase: Purchase,
-	upsell: string | undefined
-): PlanProduct | undefined => {
-	if ( ! plans ) {
-		return;
-	}
-	const plan = plans.find( ( plan ) => plan.product_id === purchase.product_id );
-	if ( ! plan ) {
-		return;
-	}
-
-	let downgradePlanInfo;
-	switch ( upsell ) {
-		case 'downgrade-monthly':
-			downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-				return path.bill_period !== plan.bill_period;
-			} );
-			break;
-		case 'downgrade-personal':
-			downgradePlanInfo = plan.downgrade_paths.find( ( path ) => {
-				return path.bill_period === plan.bill_period;
-			} );
-			break;
-	}
-	if ( downgradePlanInfo ) {
-		return plans.find( ( plan ) => plan.product_id === downgradePlanInfo.product_id );
-	}
-};
-
 function getYearlyPlanSlug( plans: PlanProduct[], purchase: Purchase ): string {
 	if ( ! plans ) {
 		return '';
@@ -235,159 +199,6 @@ function getYearlyPlanSlug( plans: PlanProduct[], purchase: Purchase ): string {
 	return '';
 }
 
-function getOfferDiscountBasedOnPurchasePrice(
-	purchase: Purchase,
-	cancellationOffer: CancellationOffer | undefined
-): number {
-	if ( ! cancellationOffer ) {
-		return 0;
-	}
-	const offerDiscountPercentage = ( 1 - cancellationOffer.raw_price / purchase.amount ) * 100;
-	// Round the cancellation offer discount percentage to the nearest whole number
-	return Math.round( offerDiscountPercentage );
-}
-
-function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowType ): string[] {
-	const availableSteps = [];
-
-	// If the subscription has already been removed or is a temporary Jetpack
-	// purchase (license), we only need one "confirm" step for the survey — the
-	// removal confirmation. A product that is not in use does not need to collect
-	// the survey or show benefits. Note we intentionally do NOT short-circuit for
-	// purchases that are merely past expiry (in the grace period): those still go
-	// through the normal removal flow.
-	if ( isRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
-		return [ CANCEL_CONFIRM_STEP ];
-	}
-
-	// Always include the survey step if it's a normal cancellation flow
-	if (
-		CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
-		CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
-	) {
-		availableSteps.push( FEEDBACK_STEP );
-	}
-
-	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
-		availableSteps.push( FEEDBACK_STEP );
-	}
-
-	return availableSteps;
-}
-
-function shouldAddCancellationOfferStep(
-	purchase: Purchase,
-	flowType: CancelFlowType,
-	cancellationOffer: CancellationOffer | undefined
-): boolean {
-	if ( CANCEL_FLOW_TYPE.REMOVE === flowType ) {
-		const isOfferPriceSameOrLowerThanPurchasePrice = cancellationOffer
-			? purchase.amount >= cancellationOffer.original_price
-			: false;
-		const offerDiscountBasedFromPurchasePrice = getOfferDiscountBasedOnPurchasePrice(
-			purchase,
-			cancellationOffer
-		);
-
-		return isOfferPriceSameOrLowerThanPurchasePrice && offerDiscountBasedFromPurchasePrice >= 10;
-	}
-	return false;
-}
-
-function getBasicSurveySteps( {
-	purchase,
-	upsell,
-	hasQuestionTwo,
-	plans,
-}: {
-	purchase: Purchase;
-	upsell: CancelPurchaseState[ 'upsell' ];
-	hasQuestionTwo: boolean;
-	plans: PlanProduct[];
-} ): string[] {
-	const flowType = getPurchaseCancellationFlowType( purchase );
-	const isJetpack = purchase.is_jetpack_plan_or_product;
-	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
-	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
-	const hasBeenRemoved = isRemoved( purchase );
-
-	if (
-		isPartnerPurchase( purchase ) &&
-		purchase.partner_type &&
-		isAgencyPartnerType( purchase.partner_type )
-	) {
-		return [];
-	}
-	if ( isJetpack ) {
-		return availableJetpackSurveySteps( purchase, flowType );
-	}
-	if ( purchase.is_domain_registration ) {
-		return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
-	}
-	if ( ! purchase.is_google_workspace_product && ! purchase.is_plan ) {
-		return [ NEXT_ADVENTURE_STEP ];
-	}
-	if ( upsell && ! hasBeenRemoved && ! isDowngradePlan ) {
-		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
-	}
-	// NOTE: downgradePlan only ever exists if upsell is true (see getDowngradePlanForPurchase).
-	if ( upsell && ! hasBeenRemoved && downgradePlan ) {
-		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
-	}
-	if ( hasQuestionTwo ) {
-		return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
-	}
-	return [ FEEDBACK_STEP ];
-}
-
-function getAllSurveySteps( {
-	purchase,
-	upsell,
-	cancellationOffer,
-	hasQuestionTwo,
-	plans,
-	userHasCompletedCancelSurveyForPurchase,
-	isSplitCancelRemoveEnabled,
-}: {
-	purchase: Purchase;
-	upsell: CancelPurchaseState[ 'upsell' ];
-	cancellationOffer: CancellationOffer | undefined;
-	hasQuestionTwo: boolean;
-	plans: PlanProduct[];
-	userHasCompletedCancelSurveyForPurchase: boolean;
-	isSplitCancelRemoveEnabled: boolean;
-} ): string[] {
-	let steps = getBasicSurveySteps( {
-		purchase,
-		upsell,
-		hasQuestionTwo,
-		plans,
-	} );
-	const skipRemovePlanSurvey = purchase.is_plan && userHasCompletedCancelSurveyForPurchase;
-	const flowType = getPurchaseCancellationFlowType( purchase );
-
-	if (
-		purchase.will_atomic_revert_after_removal &&
-		flowType === CANCEL_FLOW_TYPE.REMOVE &&
-		! isSplitCancelRemoveEnabled
-	) {
-		steps.push( ATOMIC_REVERT_STEP );
-	}
-
-	// If the survey has already been completed, then remove certain steps and make `REMOVE_PLAN_STEP` the first step.
-	if ( skipRemovePlanSurvey ) {
-		const stepsToRemove = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
-		steps = steps.filter( ( step ) => ! stepsToRemove.includes( step ) );
-		steps = [ REMOVE_PLAN_STEP, ...steps ];
-	}
-
-	if ( shouldAddCancellationOfferStep( purchase, flowType, cancellationOffer ) ) {
-		steps.push( CANCELLATION_OFFER_STEP );
-	}
-
-	return steps;
-}
-
 export default function CancelPurchase() {
 	// TanStack Router keeps the component mounted across search-param changes,
 	// so stale state from a prior cancel-flow run can persist when the user
@@ -401,7 +212,7 @@ export default function CancelPurchase() {
 
 function CancelPurchaseInner() {
 	const queryClient = useQueryClient();
-	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 	const [ state, setState ] = useState< CancelPurchaseState >( {
@@ -460,13 +271,14 @@ function CancelPurchaseInner() {
 	} );
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
 	const { data: purchaseCancelFeatures } = useQuery(
 		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( {
-		...hasPurchaseBeenExtendedQuery( purchase.blog_id ),
+		...hasPurchaseBeenExtendedQuery( purchase.ID ),
 		enabled: purchaseHasQueryableSite,
 	} );
 	const {
@@ -526,7 +338,13 @@ function CancelPurchaseInner() {
 	const isAkismet = purchase ? isAkismetProduct( purchase ) : false;
 
 	const navigate = useNavigate();
+	const domainReturnLocation = useDomainReturnLocation( purchase );
 	const redirectBack = useCallback( () => {
+		if ( domainReturnLocation ) {
+			navigate( domainReturnLocation );
+			return;
+		}
+
 		if (
 			purchase &&
 			( ! purchase.can_disable_auto_renew ||
@@ -537,7 +355,7 @@ function CancelPurchaseInner() {
 		}
 
 		navigate( { to: purchasesRoute.to } );
-	}, [ purchase, navigate ] );
+	}, [ purchase, domainReturnLocation, navigate ] );
 
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
@@ -592,13 +410,12 @@ function CancelPurchaseInner() {
 
 	const allSteps = getAllSurveySteps( {
 		purchase,
+		intent,
 		upsell: state.upsell,
 		cancellationOffer,
 		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
-		userHasCompletedCancelSurveyForPurchase: fireOnConfirm
-			? false
-			: userHasCompletedCancelSurveyForPurchase,
+		userHasCompletedCancelSurveyForPurchase,
 		isSplitCancelRemoveEnabled,
 	} );
 
@@ -688,17 +505,6 @@ function CancelPurchaseInner() {
 
 	const atomicRevertOnClickCheckTwo = ( isChecked: boolean ) =>
 		setState( ( state ) => ( { ...state, atomicRevertCheckTwo: isChecked } ) );
-
-	const setStateBasedOnExtendedStatus = useCallback( async () => {
-		const newState: Partial< CancelPurchaseState > = {};
-		if ( hasBeenExtended && newState.upsell === 'free-month-offer' ) {
-			newState.upsell = '';
-		}
-		setState( ( state ) => ( {
-			...state,
-			...newState,
-		} ) );
-	}, [ hasBeenExtended ] );
 
 	const recordEvent = useCallback(
 		( name: string, properties: Record< string, unknown > = {} ) => {
@@ -801,89 +607,6 @@ function CancelPurchaseInner() {
 		} ) );
 	};
 
-	const downgradeClick = () => {
-		if ( ! state.isSubmitting ) {
-			if ( ! downgradePlan ) {
-				createErrorNotice( __( 'Cannot find a plan to downgrade to.' ), { type: 'snackbar' } );
-				return;
-			}
-
-			setState( ( state ) => ( { ...state, isLoading: true } ) );
-
-			cancelAndRefundMutation.mutate(
-				{
-					purchaseId: purchase.ID,
-					options: {
-						type: 'downgrade',
-						to_product_id: downgradePlan.product_id,
-					},
-				},
-				{
-					onSuccess: ( response ) => {
-						setState( ( state ) => ( { ...state, isLoading: false } ) );
-						createSuccessNotice( response.message, { type: 'snackbar' } );
-						navigate( { to: purchasesRoute.to } );
-					},
-					onError: ( error ) => {
-						setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
-						createErrorNotice( error.message, { type: 'snackbar' } );
-					},
-				}
-			);
-			recordEvent( 'calypso_purchases_downgrade_form_submit' );
-			setState( ( state ) => ( { ...state, solution: 'downgrade', isSubmitting: true } ) );
-		}
-	};
-
-	const onSwitchToMonthly = async () => {
-		if ( state.isSubmitting ) {
-			return;
-		}
-
-		const monthlyPlan = getDowngradePlanForPurchase( plans, purchase, 'downgrade-monthly' );
-		if ( ! monthlyPlan ) {
-			createErrorNotice( __( 'Failed to switch to monthly billing.' ), { type: 'snackbar' } );
-			return;
-		}
-
-		setState( ( state ) => ( { ...state, isLoading: true, isSubmitting: true } ) );
-		recordEvent( 'calypso_purchases_downgrade_form_submit' );
-
-		try {
-			await cancelAndRefundMutation.mutateAsync( {
-				purchaseId: purchase.ID,
-				options: {
-					type: 'downgrade',
-					to_product_id: monthlyPlan.product_id,
-				},
-			} );
-
-			// Fetch the refreshed purchases list to find the new monthly purchase.
-			const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
-			const newPurchase = freshPurchases?.find( ( p: Purchase ) => {
-				return p.product_id === monthlyPlan.product_id && p.blog_id === purchase.blog_id;
-			} );
-
-			if ( newPurchase ) {
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: newPurchase.ID },
-					search: { downgraded: true },
-				} );
-			} else {
-				// Fallback: new purchase not found (eventual consistency edge case).
-				createSuccessNotice( __( 'Your plan has been switched to monthly billing.' ), {
-					type: 'snackbar',
-				} );
-				navigate( { to: purchasesRoute.to } );
-			}
-		} catch ( error ) {
-			createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-		} finally {
-			setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
-		}
-	};
-
 	const freeMonthOfferClick = async () => {
 		if ( ! state.isSubmitting ) {
 			setState( ( state ) => ( { ...state, isLoading: true } ) );
@@ -891,16 +614,17 @@ function CancelPurchaseInner() {
 			extendWithFreeMonthMutation.mutate( purchase.ID, {
 				onSuccess: ( response ) => {
 					if ( response.status === 'completed' ) {
-						// refreshSitePlans( purchase.blog_id );
-						// clearPurchases();
-						createSuccessNotice( response.message, { type: 'snackbar' } );
-						navigate( { to: purchasesRoute.to } );
+						navigate( {
+							to: purchaseSettingsRoute.fullPath,
+							params: { purchaseId: purchase.ID },
+							search: { free_month: true },
+						} );
 					}
 					setState( ( state ) => ( { ...state, isLoading: false } ) );
 				},
 				onError: ( error ) => {
 					createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-					setState( ( state ) => ( { ...state, isLoading: false } ) );
+					setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 				},
 			} );
 			recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
@@ -1135,11 +859,12 @@ function CancelPurchaseInner() {
 		}
 
 		const upsellType = getUpsellType( value, purchase, {
-			canDowngrade: !! downgradeClick,
-			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
+			// Offer only when the check answers false. It stays undefined while loading, on error, or with no site.
+			canOfferFreeMonth:
+				!! freeMonthOfferClick && hasBeenExtended === false && ! purchase.is_refundable,
 		} );
 		const hasSolutionsCards =
-			isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			showCancelOptionsCards && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 
 		setState( ( state ) => ( {
 			...state,
@@ -1619,25 +1344,13 @@ function CancelPurchaseInner() {
 		if ( didRunEffect.current ) {
 			return;
 		}
-		if ( purchase.ID && purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
-			setStateBasedOnExtendedStatus();
-		}
 		if ( ! isDataValid() ) {
 			redirectBack();
 			return;
 		}
 		track();
 		didRunEffect.current = true;
-	}, [
-		setStateBasedOnExtendedStatus,
-		isDataValid,
-		purchase.ID,
-		purchase.bill_period_days,
-		purchase.product_slug,
-		redirectBack,
-		track,
-		createErrorNotice,
-	] );
+	}, [ isDataValid, purchase.product_slug, redirectBack, track, createErrorNotice ] );
 
 	// componentDidUpdate
 	useEffect( () => {
@@ -1742,7 +1455,7 @@ function CancelPurchaseInner() {
 		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
 	const isSolutionsStep =
 		state.surveyStep === UPSELL_STEP &&
-		isSplitCancelRemoveEnabled &&
+		showCancelOptionsCards &&
 		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
@@ -1762,11 +1475,9 @@ function CancelPurchaseInner() {
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
 			disableButtons={ state.isLoading || isMutationPending }
-			downgradeClick={ downgradeClick }
 			downgradePlan={ downgradePlan }
 			flowType={ flowType }
 			freeMonthOfferClick={ freeMonthOfferClick }
-			onSwitchToMonthly={ onSwitchToMonthly }
 			hasBackupsFeature={ hasBackupsFeature }
 			importQuestionRadio={ state.importQuestionRadio }
 			includedDomainPurchase={ includedDomainPurchase }
@@ -1781,6 +1492,7 @@ function CancelPurchaseInner() {
 			onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 			onGetCancellationOffer={ onGetCancellationOffer }
 			onImportRadioChange={ onImportRadioChange }
+			onKeepSubscriptionClick={ onKeepSubscriptionClick }
 			onNextAdventureValidationChange={ onNextAdventureValidationChange }
 			onRadioOneChange={ onRadioOneChange }
 			onRadioTwoChange={ onRadioTwoChange }
@@ -1798,7 +1510,7 @@ function CancelPurchaseInner() {
 			questionTwoOrder={ state.questionTwoOrder }
 			questionTwoRadio={ state.questionTwoRadio }
 			questionTwoText={ state.questionTwoText }
-			refundAmount={ purchase.total_refund_amount }
+			refundAmount={ getDowngradeRefundAmount( purchase, downgradePlan?.product_id ) }
 			siteSlug={ siteSlug }
 			solution={ state.solution }
 			surveyStep={ state.surveyStep }

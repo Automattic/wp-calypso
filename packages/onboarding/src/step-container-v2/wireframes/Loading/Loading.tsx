@@ -1,4 +1,5 @@
-import { ProgressBar } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import { ReactNode, useEffect, useState } from 'react';
 import { Heading } from '../../components/Heading/Heading';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
@@ -14,6 +15,7 @@ interface LoadingProps {
 }
 
 export const Loading = ( { title, progress, delay = 0, compactLogo }: LoadingProps ) => {
+	const { __ } = useI18n();
 	const [ shouldDisplayTitle, setShouldDisplayTitle ] = useState( delay === 0 );
 
 	const [ prevDelay, setPrevDelay ] = useState( delay );
@@ -45,7 +47,15 @@ export const Loading = ( { title, progress, delay = 0, compactLogo }: LoadingPro
 						</div>
 					</div>
 				) }
-				<ProgressBar className="step-container-v2--loading__progress-bar" value={ progress } />
+				<Progress.Root
+					className="step-container-v2--loading__progress-bar"
+					aria-label={ __( 'Loading…' ) }
+					value={ progress ?? null }
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			</div>
 		</StepContainerV2>
 	);

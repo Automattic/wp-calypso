@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { BASIC_CATALOG_ID } from '../../capabilities';
 import { createInteractiveUiCatalog } from '../catalog';
 import { createInteractiveUiRuntime } from '../runtime';
@@ -18,7 +19,7 @@ function createSurfaceMessages( surfaceId: string, catalogId = BASIC_CATALOG_ID 
 	];
 }
 
-const onError = jest.fn();
+const onError = vi.fn();
 
 function createRuntime() {
 	return createInteractiveUiRuntime( {
@@ -26,12 +27,46 @@ function createRuntime() {
 			createInteractiveUiCatalog(),
 			createInteractiveUiCatalog( { catalog: { catalogId: HOST_CATALOG_ID } } ),
 		],
-		onAction: jest.fn(),
+		onAction: vi.fn(),
 		onError,
 	} );
 }
 
 beforeEach( () => onError.mockClear() );
+
+it.each( [ new Error( 'Tool failed' ), 'Tool failed' ] )(
+	'reports a tool failure with its original surface owner: %o',
+	async ( failure ) => {
+		const runtime = createInteractiveUiRuntime( {
+			catalogs: [ createInteractiveUiCatalog() ],
+			actionMode: 'tool-call',
+			onAction: async () => {
+				runtime.processMessages(
+					[ { version: 'v1.0', deleteSurface: { surfaceId: 'first' } } ],
+					'message-2'
+				);
+				throw failure;
+			},
+			onError,
+		} );
+		runtime.processMessages( createSurfaceMessages( 'first' ), 'message-1' );
+
+		await runtime.getSurface( 'first' )?.dispatchAction( { event: { name: 'save' } }, 'root' );
+
+		expect( onError.mock.calls ).toEqual( [
+			[
+				{
+					code: 'TOOL_CALL_FAILED',
+					message: 'Tool failed',
+					surfaceId: 'first',
+					expression: 'save',
+				},
+				'message-1',
+			],
+		] );
+		runtime.dispose();
+	}
+);
 
 it( 'groups surfaces by the owner that created them', () => {
 	const runtime = createRuntime();

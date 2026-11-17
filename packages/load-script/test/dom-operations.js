@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
 import { createScriptElement } from '../src/dom-operations';
 

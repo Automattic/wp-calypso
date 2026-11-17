@@ -1,20 +1,25 @@
 import {
 	__experimentalVStack as VStack,
 	Button,
-	Panel,
 	PanelBody,
 	PanelRow,
 	RadioControl,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
-import { isTargetUrlValid, isSubdomainValid } from './utils';
+import {
+	getForwardingSummary,
+	isTargetUrlValid,
+	isSubdomainValid,
+	normalizeUrlWithDefaultProtocol,
+} from './utils';
 import type { DomainForwarding } from '@automattic/api-core';
+import './form.scss';
 import type { Field } from '@wordpress/dataviews';
 
 export interface FormData {
@@ -68,6 +73,14 @@ export default function DomainForwardingForm( {
 		initialData && ( initialData.is_permanent !== false || initialData.forward_paths !== false )
 	);
 
+	const exampleSource =
+		formData.sourceType === '' && formData.subdomain
+			? `${ formData.subdomain }.${ domainName }`
+			: domainName;
+	const exampleTarget =
+		normalizeUrlWithDefaultProtocol( formData.targetUrl.trim() ).replace( /\/+$/, '' ) ||
+		'https://example.com';
+
 	const isPermanentField = {
 		id: 'isPermanent',
 		label: __( 'HTTP redirect type' ),
@@ -77,32 +90,41 @@ export default function DomainForwardingForm( {
 			{
 				label: __( 'Temporary redirect (307)' ),
 				value: 'false',
-				description: __( 'Enables quick propagation of changes to your forwarding address.' ),
+				description: __(
+					'Search results keep pointing at this domain name, and a change you make later takes effect straight away. Choose this if you might turn the forward off again.'
+				),
 			},
 			{
 				label: __( 'Permanent redirect (301)' ),
 				value: 'true',
 				description: __(
-					'Enables browser caching of the forwarding address for quicker resolution. Note that changes might take longer to fully propagate.'
+					'Search results move across to the new address over time, and browsers remember the forward. Choose this if the move is for good. A change you make later can take a while to reach people who have already visited.'
 				),
 			},
 		],
 	};
 	const forwardPathsField = {
 		id: 'forwardPaths',
-		label: __( 'Path forwarding' ),
+		label: __( 'Where visitors land' ),
 		type: 'text' as const,
 		Edit: 'radio',
 		elements: [
 			{
-				label: __( 'Do not forward' ),
+				label: __( 'Always the same address' ),
 				value: 'false',
+				description: sprintf(
+					/* translators: %(source)s is the forwarded domain name, %(target)s is the destination URL. */
+					__( '%(source)s/prices goes to %(target)s.' ),
+					{ source: exampleSource, target: exampleTarget }
+				),
 			},
 			{
-				label: __( 'Forward path' ),
+				label: __( 'The matching page' ),
 				value: 'true',
-				description: __(
-					'Redirects the path after the domain name to the corresponding path at the new address.'
+				description: sprintf(
+					/* translators: %(source)s is the forwarded domain name, %(target)s is the destination URL. */
+					__( '%(source)s/prices goes to %(target)s/prices.' ),
+					{ source: exampleSource, target: exampleTarget }
 				),
 			},
 		],
@@ -131,8 +153,8 @@ export default function DomainForwardingForm( {
 			},
 			{
 				id: 'subdomain',
-				label: __( 'Source URL' ),
-				help: __( 'Enter the subdomain (e.g., "blog")' ),
+				label: forceSubdomain ? __( 'Subdomain' ) : __( 'Source URL' ),
+				placeholder: __( 'blog' ),
 				type: 'text' as const,
 				Edit: ( { field, data, onChange, markWhenOptional } ) => {
 					const { id, getValue } = field;
@@ -177,8 +199,9 @@ export default function DomainForwardingForm( {
 			},
 			{
 				id: 'targetUrl',
-				label: __( 'Target URL' ),
-				help: __( 'The URL to redirect to (e.g., https://example.com/path)' ),
+				label: __( 'Forward to' ),
+				placeholder: 'https://example.com',
+				description: __( 'The full address visitors should land on.' ),
 				type: 'text',
 				isValid: {
 					required: true,
@@ -245,10 +268,10 @@ export default function DomainForwardingForm( {
 	const { validity } = useFormValidity( formData, fields, form );
 
 	return (
-		<Card>
-			<CardBody>
-				<div ref={ ref }>
-					<form onSubmit={ handleSubmit }>
+		<div ref={ ref }>
+			<form onSubmit={ handleSubmit }>
+				<Card>
+					<CardBody>
 						<VStack spacing={ 4 }>
 							<DataForm< FormData >
 								data={ formData }
@@ -259,14 +282,13 @@ export default function DomainForwardingForm( {
 									setFormData( ( data ) => ( { ...data, ...edits } ) );
 								} }
 							/>
-
-							<Panel>
+							<Card className="domain-forwarding-form-options">
 								<PanelBody
-									title={ __( 'Advanced settings' ) }
+									title={ getForwardingSummary( formData.isPermanent, formData.forwardPaths ) }
 									initialOpen={ hasNonDefaultAdvancedValues }
 								>
 									<PanelRow>
-										<VStack spacing={ 6 } style={ { marginTop: '12px' } }>
+										<VStack spacing={ 6 }>
 											<RadioControl
 												label={ isPermanentField.label }
 												selected={ formData.isPermanent ? 'true' : 'false' }
@@ -292,21 +314,22 @@ export default function DomainForwardingForm( {
 										</VStack>
 									</PanelRow>
 								</PanelBody>
-							</Panel>
+							</Card>
 							<ButtonStack justify="start">
 								<Button
 									variant="primary"
 									type="submit"
 									isBusy={ isSubmitting }
 									disabled={ isSubmitting }
+									__next40pxDefaultSize
 								>
 									{ submitButtonText }
 								</Button>
 							</ButtonStack>
 						</VStack>
-					</form>
-				</div>
-			</CardBody>
-		</Card>
+					</CardBody>
+				</Card>
+			</form>
+		</div>
 	);
 }

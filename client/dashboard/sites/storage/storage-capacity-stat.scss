@@ -7,7 +7,7 @@
 
 	&__metric {
 		font-size: $font-size-large;
-		font-weight: $font-weight-medium;
+		font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 		line-height: $font-line-height-small;
 		color: $gray-900;
 	}

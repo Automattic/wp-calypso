@@ -302,7 +302,6 @@ export interface CheckoutStepGroupState {
 	stepIdMap: StepIdMap;
 	stepCompleteCallbackMap: StepCompleteCallbackMap;
 	stepSkipValidationOnSubmitMap: Record< number, boolean >;
-	suppressNextForwardScroll: boolean;
 	hasUserInteractedWithSteps: boolean;
 }
 
@@ -321,7 +320,6 @@ export interface CheckoutStepGroupActions {
 	) => void;
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
-	setSuppressNextForwardScroll: ( value: boolean ) => void;
 	setHasUserInteractedWithSteps: ( value: boolean ) => void;
 }
 

@@ -7,6 +7,7 @@ import {
 	getBlueprintArchiveIdentifier,
 	getBlueprintID,
 	getBlueprintLabelForTracking,
+	getBlueprintUrlHost,
 } from '../lib/blueprint';
 
 const DEFAULT_BLUEPRINT = {
@@ -420,5 +421,24 @@ describe( 'getBlueprintLabelForTracking', () => {
 		params.set( 'blueprint', '55555' );
 		const label = getBlueprintLabelForTracking( params );
 		expect( label ).toBe( 'bpl-55555' );
+	} );
+} );
+
+describe( 'getBlueprintUrlHost', () => {
+	it( 'returns the host of the blueprint-url', () => {
+		const params = new URLSearchParams();
+		params.set(
+			'blueprint-url',
+			'https://woocommerce.com/wp-admin/admin-ajax.php?action=wccom_start_playground_blueprint'
+		);
+		expect( getBlueprintUrlHost( params ) ).toBe( 'woocommerce.com' );
+	} );
+
+	it( 'returns null without a blueprint-url', () => {
+		expect( getBlueprintUrlHost( new URLSearchParams( 'blueprint=woocommerce' ) ) ).toBeNull();
+	} );
+
+	it( 'returns null for a blueprint-url that is not a URL', () => {
+		expect( getBlueprintUrlHost( new URLSearchParams( 'blueprint-url=not-a-url' ) ) ).toBeNull();
 	} );
 } );

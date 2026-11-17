@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
 import { translate } from 'i18n-calypso';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
+import * as isUserConnectedActions from 'calypso/state/jetpack-connect/actions/is-user-connected';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -54,6 +55,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	hasExpiredSecretError: false,
 	hasXmlrpcError: false,
 	isAlreadyOnSitesList: false,
+	isCheckingUserConnection: false,
 	isFetchingAuthorizationSite: false,
 	isFetchingSites: false,
 	recordTracksEvent: noop,
@@ -99,6 +101,34 @@ afterEach( () => {
 } );
 
 describe( 'JetpackAuthorize', () => {
+	describe( 'unified migration connection', () => {
+		const authQuery = {
+			...DEFAULT_PROPS.authQuery,
+			from: 'wpcom_migration_dashboard',
+			plugins: [ 'wpcom-migration', 'jetpack' ],
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+		};
+		test( 'passes migration context to branding, copy, and cards', () => {
+			const { container } = renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } authQuery={ authQuery } />
+			);
+			expect(
+				container.querySelector( '.connect-screen-brand-header__logo-image' )
+			).toHaveAttribute( 'src', 'jetpack-connect.svg' );
+			expect( screen.getByText( /connecting your account lets you migrate/ ) ).toBeVisible();
+			expect( screen.getByRole( 'article', { name: 'WordPress.com migration' } ) ).toBeVisible();
+		} );
+		test( 'passes migration context to secondary-admin copy', () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ { ...authQuery, hasConnectedOwner: true } }
+				/>
+			);
+			expect( screen.getByText( /Connect your account to help migrate this site/ ) ).toBeVisible();
+		} );
+	} );
+
 	test( 'renders as expected', () => {
 		const { container } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
 
@@ -151,6 +181,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack', 'woocommerce' ],
+					connectorPlugins: [ 'jetpack', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -209,6 +240,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'automattic-for-agencies-client', 'woocommerce' ],
+					connectorPlugins: [ 'automattic-for-agencies-client', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -238,6 +270,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);
@@ -269,6 +302,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack-boost' ],
+					connectorPlugins: [ 'jetpack-boost' ],
 				} }
 			/>
 		);
@@ -279,16 +313,22 @@ describe( 'JetpackAuthorize', () => {
 		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
 	} );
 
-	describe( 'standard entry-point names', () => {
+	describe( 'unified connection screen', () => {
 		test.each( [
 			'jetpack-connector',
+			'jetpack-onboarding',
 			'jetpack_premium_analytics_onboarding',
 			'delete_connection_owner_notice',
 		] )( 'from=%s shows the unified connection screen', ( from ) => {
 			const { container } = renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
-					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from,
+						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
+					} }
 				/>
 			);
 
@@ -302,13 +342,18 @@ describe( 'JetpackAuthorize', () => {
 			expect( screen.getByText( 'Connect account' ) ).toBeInTheDocument();
 		} );
 
-		test.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+		test.each( [ 'jetpack-onboarding-wizard', 'jetpack-newsletter', 'jetpack-x_y' ] )(
 			'from=%s keeps the legacy authorize card',
 			( from ) => {
 				const { container } = renderWithRedux(
 					<JetpackAuthorize
 						{ ...DEFAULT_PROPS }
-						authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+						authQuery={ {
+							...DEFAULT_PROPS.authQuery,
+							from,
+							plugins: [ 'jetpack' ],
+							connectorPlugins: [ 'jetpack' ],
+						} }
 					/>
 				);
 
@@ -319,10 +364,60 @@ describe( 'JetpackAuthorize', () => {
 				expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
 			}
 		);
+
+		// Only the Connectors card gets the newer account wording; see disclaimer.jsx.
+		test.each( [
+			[ 'jetpack-connector', 'By connecting your account' ],
+			[ 'jetpack-onboarding', 'By connecting your site' ],
+			[ 'jetpack_premium_analytics_onboarding', 'By connecting your site' ],
+		] )( 'from=%s shows the consent text "%s"', ( from, consent ) => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from,
+						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
+					} }
+				/>
+			);
+
+			expect( screen.getByText( new RegExp( consent ) ) ).toBeVisible();
+		} );
+
+		test( 'from=my-jetpack keeps the static permissions screen', () => {
+			const { container } = renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'my-jetpack',
+						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
+					} }
+				/>
+			);
+
+			expect(
+				container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+				/Now let.s connect your account/
+			);
+			expect(
+				screen.getByText( 'This connection on an.example.site allows Jetpack to:' )
+			).toBeInTheDocument();
+			expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'secondary connection branches', () => {
-		test.each( [ 'jetpack-connector', 'jetpack_premium_analytics_onboarding' ] )(
+		test.each( [
+			'jetpack-connector',
+			'jetpack-onboarding',
+			'jetpack_premium_analytics_onboarding',
+		] )(
 			'admin secondary connection from=%s shows secondary cards and Connect account button, no blocking notice',
 			( from ) => {
 				renderWithRedux(
@@ -333,6 +428,7 @@ describe( 'JetpackAuthorize', () => {
 							from,
 							hasConnectedOwner: true,
 							plugins: [ 'jetpack' ],
+							connectorPlugins: [ 'jetpack' ],
 							scope: 'administrator:fooBarBaz',
 						} }
 					/>
@@ -364,6 +460,7 @@ describe( 'JetpackAuthorize', () => {
 						from: 'jetpack-connector',
 						hasConnectedOwner: true,
 						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
 						scope: 'editor:fooBarBaz',
 					} }
 				/>
@@ -390,6 +487,7 @@ describe( 'JetpackAuthorize', () => {
 						from: 'my-jetpack',
 						hasConnectedOwner: true,
 						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
 					} }
 				/>
 			);
@@ -411,6 +509,7 @@ describe( 'JetpackAuthorize', () => {
 						from: 'my-jetpack',
 						alreadyAuthorized: true,
 						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
 					} }
 				/>
 			);
@@ -622,34 +721,14 @@ describe( 'JetpackAuthorize', () => {
 	describe( 'isFromJetpackOnboardingFlow', () => {
 		const isFromJetpackOnboarding = new JetpackAuthorize().isFromJetpackOnboarding;
 
-		test( 'is from jetpack onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( true );
-		} );
-
-		test( 'does not match jetpack-onboarding prefix variants', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding-v2',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( false );
-		} );
-
-		test( 'is not from jetpack onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'not-jetpack-onboarding',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		test.each( [
+			[ 'jetpack-onboarding', true ],
+			[ 'jetpack-onboarding-v2', false ],
+			[ 'jetpack-onboarding-wizard', false ],
+			[ 'not-jetpack-onboarding', false ],
+			[ 'my-jetpack', false ],
+		] )( 'from=%s → %s', ( from, expected ) => {
+			expect( isFromJetpackOnboarding( { authQuery: { from } } ) ).toBe( expected );
 		} );
 	} );
 
@@ -695,7 +774,9 @@ describe( 'JetpackAuthorize', () => {
 			[ 'jetpack-connector', true ],
 			[ 'jetpack_premium_analytics_onboarding', true ],
 			[ 'delete_connection_owner_notice', true ],
+			[ 'jetpack-onboarding-wizard', false ],
 			[ 'woocommerce-onboarding', false ],
+			[ 'my-jetpack', false ],
 			[ 'jetpack-newsletter', false ],
 			[ 'jetpack-x_y', false ],
 		] )( 'from=%s → %s', ( from, expected ) => {
@@ -748,6 +829,46 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isFromJetpackBoost( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'user connection check', () => {
+		test( 'should not offer "Return to your site" for a listed site until the check confirms the connection', () => {
+			renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } isAlreadyOnSitesList isCheckingUserConnection />
+			);
+
+			expect( screen.getByText( 'Preparing authorization' ) ).toBeVisible();
+			expect( screen.queryByText( 'Return to your site' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Approve' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'should offer "Return to your site" once the check confirms the connection', () => {
+			renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } isAlreadyOnSitesList /> );
+
+			expect( screen.getByText( 'Return to your site' ) ).toBeVisible();
+		} );
+
+		test( 'should check the user connection again when the authorize step restarts', () => {
+			const isUserConnectedSpy = jest
+				.spyOn( isUserConnectedActions, 'isUserConnected' )
+				.mockReturnValue( { type: 'TEST_IS_USER_CONNECTED' } );
+
+			const { rerender } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
+			expect( isUserConnectedSpy ).toHaveBeenCalledTimes( 1 );
+
+			rerender(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorizationData={ {
+						...DEFAULT_PROPS.authorizationData,
+						timestamp: DEFAULT_PROPS.authorizationData.timestamp + 1,
+					} }
+				/>
+			);
+			expect( isUserConnectedSpy ).toHaveBeenCalledTimes( 2 );
+
+			isUserConnectedSpy.mockRestore();
 		} );
 	} );
 
@@ -896,13 +1017,20 @@ describe( 'JetpackAuthorize', () => {
 				/>
 			);
 
-			await userEvent.click( screen.getByText( 'Return to your site' ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Return to your site' } ) );
 		};
 
 		test.each( [
 			[ 'jetpack_premium_analytics_onboarding', redirectAfterAuth ],
 			[ 'delete_connection_owner_notice', redirectAfterAuth ],
+			[ 'wpcom_migration', redirectAfterAuth ],
+			[ 'wpcom_migration_dashboard', redirectAfterAuth ],
+			[ 'wpcom-migration', `/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }` ],
+			[ 'wpcom-migration-plugin', `/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }` ],
 			[ 'jetpack-connector', `${ redirectAfterAuth }&from=jetpack-connector` ],
+			[ 'jetpack-onboarding', `${ redirectAfterAuth }&from=jetpack-onboarding` ],
+			[ 'jetpack-onboarding-wizard', plansPage ],
+			[ 'my-jetpack', plansPage ],
 			[ 'jetpack-newsletter', plansPage ],
 			[ 'jetpack-x_y', plansPage ],
 		] )( 'from=%s goes to %s', async ( from, expected ) => {

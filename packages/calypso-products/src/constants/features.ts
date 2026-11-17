@@ -1,4 +1,7 @@
 import {
+	PRODUCT_JETPACK_AI_BI_YEARLY,
+	PRODUCT_JETPACK_AI_MONTHLY,
+	PRODUCT_JETPACK_AI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -220,6 +223,9 @@ export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC
 export const FEATURE_JETPACK_SOCIAL_V1_YEARLY = PRODUCT_JETPACK_SOCIAL_V1_YEARLY;
 export const FEATURE_JETPACK_SOCIAL_V1_MONTHLY = PRODUCT_JETPACK_SOCIAL_V1_MONTHLY;
 export const FEATURE_JETPACK_SOCIAL_V1_BI_YEARLY = PRODUCT_JETPACK_SOCIAL_V1_BI_YEARLY;
+export const FEATURE_JETPACK_AI_BI_YEARLY = PRODUCT_JETPACK_AI_BI_YEARLY;
+export const FEATURE_JETPACK_AI_YEARLY = PRODUCT_JETPACK_AI_YEARLY;
+export const FEATURE_JETPACK_AI_MONTHLY = PRODUCT_JETPACK_AI_MONTHLY;
 export const FEATURE_SOCIAL_AUTO_SHARE = 'social-auto-share';
 export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_IMAGE_GENERATOR = 'social-image-generator';
@@ -576,6 +582,7 @@ export const FEATURE_AI_WEBSITE_BUILDER = 'feature-ai-website-builder';
 export const FEATURE_AI_WEBSITE_BUILDER_LIMITED = 'feature-ai-website-builder-limited';
 export const FEATURE_GUIDED_WEBSITE_BUILDER = 'feature-guided-website-builder';
 export const FEATURE_GUIDED_WEBSITE_BUILDER_LIMITED = 'feature-guided-website-builder-limited';
+export const FEATURE_CONNECT_AI_AGENTS = 'feature-connect-ai-agents';
 export const FEATURE_AI_WRITER_DESIGNER = 'feature-ai-writer-designer';
 export const FEATURE_AI_WRITER_DESIGNER_LIMITED = 'feature-ai-writer-designer-limited';
 export const FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS = 'feature-enhanced-ai-assistant-and-tools';

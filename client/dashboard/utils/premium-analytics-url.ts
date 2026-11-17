@@ -7,6 +7,12 @@ const PREMIUM_ANALYTICS_PAGE = 'jetpack-premium-analytics-wp-admin';
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
+ * The dashboard opened on its Traffic section. The bare dashboard route opens whichever section
+ * sorts first, which on a store is WooCommerce.
+ */
+export const PREMIUM_ANALYTICS_TRAFFIC_ROUTE = '/?section=traffic';
+
+/**
  * A range of whole days for a dashboard route to open on.
  */
 export interface PremiumAnalyticsRange {
@@ -116,17 +122,21 @@ export function getPremiumAnalyticsPath(
 	range?: PremiumAnalyticsRange,
 	page = PREMIUM_ANALYTICS_PAGE
 ): string {
-	let path = route;
+	const [ pathname, query = '' ] = route.split( '?' );
+	const search = new URLSearchParams( query );
 
 	if ( range && DAY.test( range.from ) && DAY.test( range.to ) ) {
 		const from = boundaryOf( range.from, 'start', range );
 		const to = boundaryOf( range.to, 'end', range );
 
 		if ( from !== null && to !== null ) {
-			const search = new URLSearchParams( { from, to } );
-			path = `${ route }?${ search }`;
+			search.set( 'from', from );
+			search.set( 'to', to );
 		}
 	}
+
+	const params = search.toString();
+	const path = params ? `${ pathname }?${ params }` : pathname;
 
 	return `admin.php?${ new URLSearchParams( { page, p: path } ) }`;
 }

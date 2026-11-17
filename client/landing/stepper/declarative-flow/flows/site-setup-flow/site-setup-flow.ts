@@ -1,8 +1,12 @@
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
+import {
+	useFlowState,
+	type AnyFlowInitialize,
+} from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -222,7 +226,7 @@ const siteSetupFlow: Flow = {
 		} );
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
-		const { get } = useFlowState();
+		const { get } = useFlowState< AnyFlowInitialize >();
 		const entryPoint = get( 'flow' )?.entryPoint;
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -266,10 +270,26 @@ const siteSetupFlow: Flow = {
 					const entryPoint = get( 'flow' )?.entryPoint;
 
 					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
+						const useReprint = config.isEnabled( 'migration/reprint-flow' );
+						const step = useReprint
+							? STEPS.SITE_MIGRATION_IDENTIFY
+							: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE;
 						return window.location.assign(
 							addQueryArgs(
-								{ siteSlug, siteId, from, ref: entryPoint },
-								'/setup/site-migration/' + STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+								{
+									siteSlug,
+									siteId,
+									from,
+									ref: entryPoint,
+									...( useReprint && {
+										manualPlatform: 'wordpress',
+										ref: entryPoint || urlQueryParams.get( 'ref' ),
+										sessionId: urlQueryParams.get( 'sessionId' ),
+										source: urlQueryParams.get( 'source' ),
+										flags: urlQueryParams.get( 'flags' ),
+									} ),
+								},
+								`/setup/${ SITE_MIGRATION_FLOW }/${ step.slug }`
 							)
 						);
 					}
@@ -500,7 +520,7 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSideEffect() {
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< AnyFlowInitialize >();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
 

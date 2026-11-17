@@ -54,10 +54,6 @@ export const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
 	margin: 16px 0;
-
-	> ${ Option } {
-		border-radius: 3px;
-	}
 `;
 
 export const OptionList = styled.ul`
@@ -67,7 +63,7 @@ export const OptionList = styled.ul`
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
-	${ Option } {
+	.item-variant-option {
 		margin-top: -1px;
 
 		&:last-child {

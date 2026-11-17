@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { sitePHPVersionQuery } from '@automattic/api-queries';
@@ -97,6 +97,28 @@ describe( '<PHPVersionSettings>', () => {
 		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 		expect( saveButton ).toBeEnabled();
 		await user.click( saveButton );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'saves PHP 8.5 when it is selected', async () => {
+		const user = userEvent.setup();
+
+		mockSite( site );
+		mockPHPVersion( '8.4' );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		await user.selectOptions( versionSelect, '8.5' );
+		const scope = mockPHPVersionSaved( '8.5' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );

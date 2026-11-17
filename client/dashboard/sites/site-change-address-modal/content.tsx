@@ -1,8 +1,10 @@
 import { DomainSubtype, FreeSiteAddressType, isWpError } from '@automattic/api-core';
 import {
+	domainsQuery,
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
 } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
@@ -10,14 +12,13 @@ import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, closeSmall } from '@wordpress/icons';
+import { check, closeSmall, globe } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { Text } from '../../components/text';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { parseHtmlMessage } from '../../utils/html-message';
@@ -49,12 +50,61 @@ const SubdomainInputControlEdit = < Item, >( {
 		<SuffixInputControl
 			customValidity={ validity?.custom }
 			label={ field.label }
+			placeholder={ field.placeholder }
 			value={ getValue( { item: data } ) }
 			suffix={ DOMAIN_SUFFIX }
 			onChange={ ( newValue: string ) => {
 				onChange( { [ id ]: newValue } as Partial< Item > );
 			} }
 		/>
+	);
+};
+
+const CustomDomainSuggestion = ( { site }: { site: Site } ) => {
+	const hasEnTranslation = useHasEnTranslation();
+	const addSiteDomainUrl = getAddSiteDomainUrl( site.slug );
+
+	if (
+		hasEnTranslation(
+			'A custom domain is easier to share and remember than a wordpress.com address. You will also keep this one.'
+		)
+	) {
+		return (
+			<Notice
+				variant="info"
+				icon={ globe }
+				actions={
+					<NoticeActionLinkButton href={ addSiteDomainUrl } variant="solid">
+						{ __( 'Add a custom domain' ) }
+					</NoticeActionLinkButton>
+				}
+			>
+				{ __(
+					'A custom domain is easier to share and remember than a wordpress.com address. You will also keep this one.'
+				) }
+			</Notice>
+		);
+	}
+
+	return (
+		<Notice variant="info">
+			<Text>
+				{ createInterpolateElement(
+					hasEnTranslation(
+						'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+					)
+						? __(
+								'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+							)
+						: __(
+								'Before changing site address, consider <link>adding a custom domain</link> instead?'
+							),
+					{
+						link: <a href={ addSiteDomainUrl } />,
+					}
+				) }
+			</Text>
+		</Notice>
 	);
 };
 
@@ -69,10 +119,9 @@ const NewSiteAddressForm = ( {
 	onSubmit: ( data: NewSiteAddressFormData ) => void;
 	onCancel: () => void;
 } ) => {
-	const { queries } = useAppContext();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { data: siteDomains } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -166,25 +215,15 @@ const NewSiteAddressForm = ( {
 
 	return (
 		<VStack spacing={ 4 }>
-			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="warning" density="medium">
-					<Text>
-						{ createInterpolateElement(
-							__(
-								'Before changing site address, consider <link>adding a custom domain</link> instead?'
-							),
-							{
-								link: <a href={ getAddSiteDomainUrl( site.slug ) } />,
-							}
-						) }
-					</Text>
-				</Notice>
-			) }
+			{ !! siteDomains && ! hasCustomDomain && <CustomDomainSuggestion site={ site } /> }
 			<Text as="p">
-				{ sprintf(
-					/* translators: %s: site domain */
-					__( 'Once you change your site address, %s will no longer be available.' ),
-					wpcomDomain?.domain ?? ''
+				{ createInterpolateElement(
+					sprintf(
+						/* translators: %s: site domain */
+						__( 'Once you change your site address, %s will no longer be available.' ),
+						`<strong>${ wpcomDomain?.domain ?? '' }</strong>`
+					),
+					{ strong: <strong /> }
 				) }
 			</Text>
 			<form ref={ formRef } onSubmit={ handleSubmit }>
@@ -305,13 +344,13 @@ const ConfirmNewSiteAddressForm = ( {
 		<VStack spacing={ 4 }>
 			<Text as="p">{ __( 'Once you confirm, this will be the new address for your site:' ) }</Text>
 			<Text as="p" intent="success" style={ { display: 'flex', alignItems: 'center ' } }>
-				<Icon icon={ check } size={ 24 } style={ { fill: 'currentColor' } } />
+				<Icon icon={ check } size={ 24 } />
 				<strong>{ newSubdomain }</strong>
 				{ DOMAIN_SUFFIX }
 			</Text>
 			<Text as="p">{ __( 'And this address will be removed and unavailable for use:' ) }</Text>
 			<Text as="p" intent="error" style={ { display: 'flex', alignItems: 'center ' } }>
-				<Icon icon={ closeSmall } size={ 24 } style={ { fill: 'currentColor' } } />
+				<Icon icon={ closeSmall } size={ 24 } />
 				<strong>{ currentSubdomain }</strong>
 				{ DOMAIN_SUFFIX }
 			</Text>

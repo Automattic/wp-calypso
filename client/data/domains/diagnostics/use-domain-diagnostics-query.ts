@@ -11,7 +11,8 @@ export default function useDomainDiagnosticsQuery(
 		queryKey: domainDiagnosticsQueryKey( domainName ),
 		queryFn: () =>
 			wp.req.get( {
-				path: `/domains/diagnostics/${ domainName }`,
+				// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+				path: `/domains/diagnostics/${ domainName }/`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		refetchOnWindowFocus: false,

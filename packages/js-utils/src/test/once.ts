@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import once from '../once';
 
 describe( 'once', () => {
 	it( 'invokes the wrapped function only on the first call', () => {
-		const fn = jest.fn( ( a: number, b: number ) => a + b );
+		const fn = vi.fn( ( a: number, b: number ) => a + b );
 		const wrapped = once( fn );
 
 		expect( wrapped( 1, 2 ) ).toBe( 3 );

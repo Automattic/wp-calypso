@@ -1,6 +1,7 @@
 import {
 	rawUserPreferencesQuery,
 	siteByIdQuery,
+	sitesQuery,
 	userPreferencesMutation,
 	userSettingsMutation,
 	userSettingsQuery,
@@ -15,7 +16,6 @@ import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack/';
 import { Card, CardBody } from '../../components/card';
@@ -171,7 +171,6 @@ function LandingPageCard() {
 function PrimarySiteCard() {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
-	const { queries } = useAppContext();
 
 	const { data: primarySiteId } = useSuspenseQuery( {
 		...userSettingsQuery(),
@@ -179,7 +178,7 @@ function PrimarySiteCard() {
 	} );
 
 	const { data: sites, isLoading: isSiteListLoading } = useQuery(
-		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 
 	// The site list is filtered, so the saved primary site can be absent from it.

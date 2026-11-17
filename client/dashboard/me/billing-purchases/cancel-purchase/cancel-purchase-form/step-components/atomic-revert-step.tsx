@@ -6,14 +6,15 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
+import { useIntlLocale } from '../../../../../app/locale';
 import { SectionHeader } from '../../../../../components/section-header';
 import { Text } from '../../../../../components/text';
+import { formatDate } from '../../../../../utils/datetime';
 import { wpcomLink } from '../../../../../utils/link';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
-type Props = {
+type AtomicRevertStepProps = {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	purchase: Purchase | undefined;
 	siteSlug: string;
@@ -28,7 +29,7 @@ type Props = {
 	setEnableLosslessRevert?: ( isChecked: boolean ) => void;
 };
 
-export function AtomicRevertStep( props: Props ) {
+export function AtomicRevertStep( props: AtomicRevertStepProps ) {
 	const {
 		atomicTransfer,
 		purchase,
@@ -43,14 +44,15 @@ export function AtomicRevertStep( props: Props ) {
 		isRemovePlan,
 		isDowngradePlan,
 	} = props;
+	const locale = useIntlLocale();
 
 	if ( ! siteSlug || ! atomicTransfer || ! purchase || ! atomicTransfer.created_at ) {
 		return null;
 	}
 
-	const atomicTransferDate = intlFormat( atomicTransfer.created_at, { dateStyle: 'medium' } );
+	const atomicTransferDate = formatDate( new Date( atomicTransfer.created_at ), locale );
 	const purchaseRenewalDate =
-		purchase?.expiry_date && intlFormat( purchase.expiry_date, { dateStyle: 'medium' } );
+		purchase?.expiry_date && formatDate( new Date( purchase.expiry_date ), locale );
 	const isPlanPurchase = purchase.is_plan;
 	const createInfoPopover = (
 		<BillingPurchaseInfoPopover>
@@ -139,7 +141,7 @@ export function AtomicRevertStep( props: Props ) {
 									'Any themes/plugins you have installed on the site will be removed on %(purchaseRenewalDate)s, along with their data.'
 								),
 								{
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, { dateStyle: 'medium' } ),
+									purchaseRenewalDate: formatDate( new Date( purchase.expiry_date ), locale ),
 								}
 							)
 						: __(
@@ -158,7 +160,7 @@ export function AtomicRevertStep( props: Props ) {
 									'On %(purchaseRenewalDate)s, your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
 								),
 								{
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, { dateStyle: 'medium' } ),
+									purchaseRenewalDate: formatDate( new Date( purchase.expiry_date ), locale ),
 								}
 							)
 						: __(

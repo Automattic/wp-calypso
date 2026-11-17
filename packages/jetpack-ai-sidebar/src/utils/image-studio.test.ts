@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { dispatch } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import {
 	isImageStudioAvailable,
 	openImageStudioForBlock,
@@ -8,23 +9,23 @@ import {
 } from './image-studio';
 import { revealSidebarField } from './reveal-sidebar-field';
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/block-editor', () => ( {
+vi.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 } ) );
 
-jest.mock( './reveal-sidebar-field', () => ( {
-	revealSidebarField: jest.fn().mockResolvedValue( true ),
+vi.mock( './reveal-sidebar-field', () => ( {
+	revealSidebarField: vi.fn().mockResolvedValue( true ),
 } ) );
 
-const mockDispatch = dispatch as unknown as jest.Mock;
+const mockDispatch = dispatch as unknown as Mock;
 
-const openImageStudio = jest.fn();
-const updateBlockAttributes = jest.fn();
-const editPost = jest.fn();
+const openImageStudio = vi.fn();
+const updateBlockAttributes = vi.fn();
+const editPost = vi.fn();
 
 // Routes the stores this module dispatches to. An Image Studio bundle that
 // is not loaded leaves the store registered but without openImageStudio.
@@ -52,7 +53,7 @@ const imageBlock = {
 };
 
 describe( 'isImageStudioAvailable', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'is true when the store exposes openImageStudio', () => {
 		stubStores();
@@ -67,7 +68,7 @@ describe( 'isImageStudioAvailable', () => {
 
 describe( 'openImageStudioForBlock', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		stubStores();
 	} );
 
@@ -142,7 +143,7 @@ describe( 'openImageStudioForBlock', () => {
 
 describe( 'openImageStudioForFeaturedImage', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		stubStores();
 	} );
 

@@ -1,11 +1,11 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 	TextareaControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { send } from '@wordpress/icons';
+import { IconButton } from '@wordpress/ui';
 import debugModule from 'debug';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -58,6 +58,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 	);
 
 	const replyInputRef = useRef< HTMLTextAreaElement | null >( null );
+	const submitButtonRef = useRef< HTMLButtonElement | null >( null );
 	const savedReplyKey = `reply_${ note.id }`;
 	const savedReply = repliesCache.getItem( savedReplyKey );
 	const [ value, setValue ] = useState( savedReply ? savedReply[ 0 ] : '' );
@@ -124,7 +125,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 				// remove focus from textarea so we can resume using keyboard
 				// shortcuts without typing in the field
-				replyInputRef.current?.blur();
+				submitButtonRef.current?.focus();
 
 				setValue( '' );
 				setIsSubmitting( false );
@@ -227,16 +228,16 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						onBlur={ handleBlur }
 						onChange={ handleChange }
 					/>
-					<Button
+					<IconButton
+						ref={ submitButtonRef }
 						type="submit"
-						variant="primary"
-						title={
+						tone={ value.length ? 'brand' : 'neutral' }
+						label={
 							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
 						}
 						icon={ send }
-						isBusy={ isSubmitting }
+						loading={ isSubmitting }
 						disabled={ ! value.length }
-						__next40pxDefaultSize
 					/>
 				</HStack>
 			</form>

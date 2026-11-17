@@ -1,5 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { userMailboxesQuery } from '@automattic/api-queries';
+import { domainsQuery, userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -7,7 +7,6 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
@@ -15,6 +14,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../componen
 import InlineSupportLink from '../components/inline-support-link';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import DkimMissingNotice from './components/dkim-missing-notice';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
 import { DEFAULT_VIEW, getFields, useActions } from './dataviews';
 import EmptyDomainsState from './empty-domains-state';
@@ -22,18 +22,19 @@ import {
 	EmptyMailboxesStateContent,
 	EmptyMailboxesSearchStateContent,
 } from './empty-mailboxes-state';
+import { useDkimRecordChecks } from './hooks/use-dkim-record-checks';
 import { mapMailboxToEmail } from './mappers/mailbox-to-email-mapper';
+import { hasTitanAccount } from './utils/has-titan-account';
 import type { DomainWithUnusedMailboxes } from './components/unused-mailbox-notice';
 import type { Email } from './types';
 
 import './style.scss';
 
 function Emails() {
-	const { queries } = useAppContext();
 	const navigate = useNavigate();
 	const { data: allEmailAccounts } = useSuspenseQuery( userMailboxesQuery() );
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
-	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
+	const { data: allDomains } = useSuspenseQuery( domainsQuery() );
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
@@ -78,6 +79,8 @@ function Emails() {
 				unusedCount: unusedMailboxesByDomain.get( d.domain ) ?? 0,
 			} ) );
 	}, [ domainsWithEmails, allEmailAccounts ] );
+
+	const dkimRecordChecks = useDkimRecordChecks( hasTitanAccount( allEmailAccounts ) );
 
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
@@ -190,7 +193,12 @@ function Emails() {
 				/>
 			}
 		>
-			<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
+			{ /* One notice at a time: free mailboxes come first. */ }
+			{ domainsWithUnusedMailboxes.length ? (
+				<UnusedMailboxNotice domains={ domainsWithUnusedMailboxes } />
+			) : (
+				<DkimMissingNotice { ...dkimRecordChecks } />
+			) }
 			{ renderContent() }
 		</PageLayout>
 	);

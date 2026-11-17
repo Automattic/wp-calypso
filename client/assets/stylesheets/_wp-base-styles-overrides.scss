@@ -15,6 +15,11 @@
 		--wp-admin-theme-color: var(--color-akismet);
 	}
 
+	/* WooCommerce */
+	.woo &:not(.is-error, .is-valid) {
+		--wp-admin-theme-color: var(--woo-purple-50);
+	}
+
 	/* Jetpack Cloud */
 	.jetpack-cloud &:not(.is-error, .is-valid) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-50);

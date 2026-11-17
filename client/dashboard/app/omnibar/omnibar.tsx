@@ -1,5 +1,6 @@
 import {
 	dashboardAdminBarQuery,
+	omnibarCurrentUrlQuery,
 	omnibarSiteIdQuery,
 	siteAdminBarQuery,
 	siteByIdQuery,
@@ -13,23 +14,23 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import { createHrefResolver, preferDashboardAdminBarNodes } from './admin-bar-nodes';
+import { useAiChatNode } from './ai-chat-node';
+import { addDashboardNode } from './dashboard-node';
 import { omnibarEvents } from './events';
+import { createFreeDomainUpsellNodeBuilder } from './free-domain-upsell-node';
+import { useHelpCenterNodeBuilder } from './help-center-node';
 import { OmnibarHomeIcon } from './home';
-import { useAiChatNode } from './node-ai-chat';
-import { addDashboardNode } from './node-dashboard';
-import { createFreeDomainUpsellNodeBuilder } from './node-free-domain-upsell';
-import { useHelpCenterNodeBuilder } from './node-help-center';
-import { useLanguageSwitcherNode } from './node-language-switcher';
-import { useLaunchSiteNodeBuilder } from './node-launch-site';
-import { createLogoutNodeBuilder } from './node-logout';
-import { useNotificationsNodeBuilder } from './node-notifications';
-import { createReaderNodeBuilder } from './node-reader';
-import { useShoppingCartNode } from './node-shopping-cart';
-import { createSiteBadgeNodeBuilder } from './node-site-badges';
-import { createStatsSparklineNodeBuilder } from './node-stats-sparkline';
-import { createWpcomAccountNodeBuilder } from './node-wpcom-account';
+import { useLanguageSwitcherNode } from './language-switcher-node';
+import { useLaunchSiteNodeBuilder } from './launch-site-node';
+import { createLogoutNodeBuilder } from './logout-node';
+import { useNotificationsNodeBuilder } from './notifications-node';
+import { createReaderNodeBuilder } from './reader-node';
+import { useShoppingCartNode } from './shopping-cart-node';
+import { createSiteBadgeNodeBuilder } from './site-badges-node';
+import { createStatsSparklineNodeBuilder } from './stats-sparkline-node';
 import { RESPONSIVE_MENU_NODE_ID, trackOmnibarNodes, useRecordOmnibarNodeClick } from './tracking';
 import { useOmnibarUser } from './user';
+import { createWpcomAccountNodeBuilder } from './wpcom-account-node';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNode, OmnibarNodeBuilders } from '@automattic/omnibar';
 import type { ShoppingCartManagerClient } from '@automattic/shopping-cart';
@@ -83,6 +84,7 @@ function ConnectedOmnibar( {
 	const authUser = useOmnibarUser( { user, enabled: hydrated } );
 
 	const { data: siteId } = useQuery( omnibarSiteIdQuery() );
+	const { data: currentUrl } = useQuery( omnibarCurrentUrlQuery() );
 	const { data: site } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
 		enabled: hydrated && !! siteId,
@@ -102,6 +104,11 @@ function ConnectedOmnibar( {
 		[ preferDashboardAdminBar, dashboardAdminBarNodes, siteAdminBarNodes ]
 	);
 
+	const resolveHref = useMemo(
+		() => createHrefResolver( siteAdminBarNodes ? site?.options?.admin_url : undefined ),
+		[ siteAdminBarNodes, site ]
+	);
+
 	const { nodeBuilder: launchSiteNodeBuilder, panel: launchSitePanel } = useLaunchSiteNodeBuilder( {
 		site,
 	} );
@@ -113,7 +120,12 @@ function ConnectedOmnibar( {
 		() => ( {
 			'site-plan-badge': createSiteBadgeNodeBuilder(),
 			'site-status-badge': createSiteBadgeNodeBuilder(),
-			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( { sectionName, recordTracksEvent } ),
+			'free-domain-upsell': createFreeDomainUpsellNodeBuilder( {
+				currentUrl,
+				resolveHref,
+				sectionName,
+				recordTracksEvent,
+			} ),
 			stats: createStatsSparklineNodeBuilder( { siteId } ),
 			'launch-site': launchSiteNodeBuilder,
 			...( supports.commandPalette ? {} : { 'command-palette': () => null } ),
@@ -125,6 +137,8 @@ function ConnectedOmnibar( {
 		} ),
 		[
 			siteId,
+			currentUrl,
+			resolveHref,
 			sectionGroup,
 			sectionName,
 			recordTracksEvent,
@@ -137,11 +151,7 @@ function ConnectedOmnibar( {
 	);
 
 	const baseOmnibarNodes = useMemo( () => {
-		const result = buildOmnibarNodesFromAdminBarNodes(
-			adminBarNodes,
-			nodeBuilders,
-			createHrefResolver( siteAdminBarNodes ? site?.options?.admin_url : undefined )
-		);
+		const result = buildOmnibarNodesFromAdminBarNodes( adminBarNodes, nodeBuilders, resolveHref );
 
 		if ( ! result.home ) {
 			result.home = { id: '' };
@@ -166,7 +176,7 @@ function ConnectedOmnibar( {
 		}
 
 		return result;
-	}, [ adminBarNodes, siteAdminBarNodes, site, nodeBuilders ] );
+	}, [ adminBarNodes, resolveHref, site, nodeBuilders ] );
 
 	const siteNode = addDashboardNode( baseOmnibarNodes.site, { site, sectionGroup } );
 

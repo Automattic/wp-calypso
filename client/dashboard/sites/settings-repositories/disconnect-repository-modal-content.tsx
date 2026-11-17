@@ -16,7 +16,7 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import type { Field } from '@wordpress/dataviews';
 
-interface DisconnectRepositoryModalProps {
+interface DisconnectRepositoryModalContentProps {
 	deployment: CodeDeploymentData;
 	onClose?: () => void;
 }
@@ -28,7 +28,7 @@ type DisconnectRepositoryFormData = {
 export function DisconnectRepositoryModalContent( {
 	deployment,
 	onClose,
-}: DisconnectRepositoryModalProps ) {
+}: DisconnectRepositoryModalContentProps ) {
 	const queryClient = useQueryClient();
 	const [ formData, setFormData ] = useState< DisconnectRepositoryFormData >( {
 		removeFiles: false,

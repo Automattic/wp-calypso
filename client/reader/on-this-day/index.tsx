@@ -245,8 +245,14 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 	}, [ data?.pagination ] );
 
 	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( streamItems, view, fields );
-	}, [ streamItems, view, fields ] );
+		const pageData = filterSortAndPaginate( streamItems, view, fields );
+		return {
+			...pageData,
+			data: isLoading
+				? pageData.data
+				: pageData.data.filter( ( item ) => ! isPaddingStreamItem( item ) ),
+		};
+	}, [ streamItems, view, fields, isLoading ] );
 
 	useEffect( () => {
 		fetchData();

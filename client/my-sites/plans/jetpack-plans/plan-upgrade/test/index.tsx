@@ -137,4 +137,31 @@ describe( '<PlanUpgradeSection />', () => {
 
 		expect( container ).toBeEmptyDOMElement();
 	} );
+
+	it.each( [
+		[ 'shows', { available: true, introductory_offer: { cost_per_interval: 299.4 } }, true ],
+		[ 'hides', { available: true }, false ],
+	] )( '%s the intro discount line by the catalog offer', ( _label, complete, isShown ) => {
+		renderWithProvider(
+			<PlanUpgradeSection
+				planRecommendation={ [ 'jetpack_business', [ 'jetpack_complete' ] ] }
+				duration={ TERM_ANNUALLY }
+				filterBar={ null }
+				onSelectProduct={ () => null }
+			/>,
+			{
+				initialState: {
+					...initialState,
+					productsList: {
+						isFetching: false,
+						sessionListStatus: 'full',
+						items: { jetpack_complete: complete },
+					},
+				},
+				reducers: { purchases, productsList },
+			}
+		);
+
+		expect( !! screen.queryByText( /off/, { selector: 'p' } ) ).toBe( isShown );
+	} );
 } );

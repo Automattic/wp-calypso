@@ -1,4 +1,3 @@
-import { HostingFeatures } from '@automattic/api-core';
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
@@ -6,11 +5,11 @@ import { __experimentalText as Text, ExternalLink } from '@wordpress/components'
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { MetadataList, MetadataItem } from '../../components/metadata-list';
-import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { canViewPHPVersion } from '../features';
 import { PHPVersion } from '../site-fields';
 import type { Site } from '@automattic/api-core';
 
@@ -46,7 +45,6 @@ const HostingProvider = ( { site }: { site: Site } ) => {
 
 const SiteOverviewFields = ( { site }: { site: Site } ) => {
 	const wpVersion = getFormattedWordPressVersion( site );
-	const hasPHPFeature = hasHostingFeature( site, HostingFeatures.PHP );
 	const hasSiteRedirect = site.options?.is_redirect;
 
 	const fields: React.ReactElement[] = [];
@@ -83,7 +81,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( hasPHPFeature && ! site.__inaccessible_jetpack_error ) {
+	if ( canViewPHPVersion( site ) && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="php" title={ __( 'PHP' ) }>
 				<Link to={ `/sites/${ site.slug }/settings/php` }>

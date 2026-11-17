@@ -176,6 +176,20 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 	return 'unknown';
 }
 
+// The host serving a `blueprint-url` blueprint, such as woocommerce.com for its `/start/` store.
+export function getBlueprintUrlHost( query: URLSearchParams ): string | null {
+	const blueprintUrl = query.get( 'blueprint-url' );
+	if ( ! blueprintUrl ) {
+		return null;
+	}
+
+	try {
+		return new URL( blueprintUrl ).host;
+	} catch {
+		return null;
+	}
+}
+
 async function getBlueprintFromUrl( recommendedPhpVersion: string ): Promise< Blueprint > {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );

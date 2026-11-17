@@ -5,7 +5,6 @@ import { backup } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { Activity } from '../../..//components/logs-activity/types';
 import { useAnalytics } from '../../../app/analytics';
-import { siteBackupDetailRoute } from '../../../app/router/sites';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -45,9 +44,10 @@ export function useActivityActions( {
 						site_id: site.ID,
 					} );
 				}
+				// A path rather than a route object: the agency dashboard registers
+				// its own backups route at the same path.
 				router.navigate( {
-					to: siteBackupDetailRoute.fullPath,
-					params: { siteSlug: site.slug, rewindId: item.rewindId },
+					to: `/sites/${ site.slug }/backups/${ item.rewindId }`,
 				} );
 			},
 		};

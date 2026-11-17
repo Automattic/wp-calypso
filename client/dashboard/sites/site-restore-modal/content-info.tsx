@@ -13,12 +13,12 @@ import { ButtonStack } from '../../components/button-stack';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 
-interface ContentInfoProps {
+interface SiteRestoreContentInfoProps {
 	site: Site;
 	onClose: () => void;
 }
 
-export default function SiteRestoreContentInfo( { site, onClose }: ContentInfoProps ) {
+export default function SiteRestoreContentInfo( { site, onClose }: SiteRestoreContentInfoProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( siteRestoreMutation( site.ID ) );
 	const siteSlug = getSiteDisplayUrl( site );

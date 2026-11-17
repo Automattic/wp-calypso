@@ -226,7 +226,8 @@
 	}
 }
 
-.product-lightbox__checkout-button {
+// Scoped to the variants content so it outranks `.button { margin: 0 }` regardless of CSS chunk load order.
+.product-lightbox__variants-content .product-lightbox__checkout-button {
 	margin-block-start: 1rem;
 	margin-block-end: 0;
 	display: flex;

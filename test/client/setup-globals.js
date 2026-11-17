@@ -4,3 +4,14 @@
 if ( typeof global.fetch === 'undefined' ) {
 	global.fetch = require( 'node:vm' ).runInThisContext( 'globalThis' ).fetch;
 }
+
+// JSDOM 20 has no `PointerEvent`, which Base UI constructs when a checkbox is clicked.
+if ( typeof window !== 'undefined' && typeof window.PointerEvent === 'undefined' ) {
+	window.PointerEvent = class PointerEvent extends window.MouseEvent {
+		constructor( type, init = {} ) {
+			super( type, init );
+			this.pointerId = init.pointerId ?? 0;
+			this.pointerType = init.pointerType ?? '';
+		}
+	};
+}

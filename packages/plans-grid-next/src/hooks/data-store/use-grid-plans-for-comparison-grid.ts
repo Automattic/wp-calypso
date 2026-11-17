@@ -28,11 +28,7 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useVar42NoAiFeatures,
-	showPricingDifferentiationFeaturePills,
-	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
-	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
@@ -52,7 +48,6 @@ const useGridPlansForComparisonGrid = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
@@ -64,9 +59,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		isExperimentVariant,
 	} );
 
 	return useMemo( () => {

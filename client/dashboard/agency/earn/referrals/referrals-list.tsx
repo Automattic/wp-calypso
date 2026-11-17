@@ -8,7 +8,7 @@ import type { Referral } from '@automattic/api-core';
 import type { Action, View } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
-interface Props {
+interface ReferralsListProps {
 	referrals: Referral[];
 	view: View;
 	onChangeView: ( view: View ) => void;
@@ -30,7 +30,7 @@ export default function ReferralsList( {
 	actions,
 	selection,
 	onChangeSelection,
-}: Props ) {
+}: ReferralsListProps ) {
 	const fields = getReferralFields( renderClient );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( referrals, view, fields );
 

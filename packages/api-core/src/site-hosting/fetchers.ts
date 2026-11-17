@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DataCenterOption } from './types';
+import type { DataCenterOption, WordPressTrackVersions } from './types';
 
 export async function fetchWordPressVersion( siteId: number ): Promise< string > {
 	return wpcom.req.get( {
@@ -13,6 +13,15 @@ export async function fetchPendingWordPressVersion( siteId: number ): Promise< s
 		path: `/sites/${ siteId }/hosting/wp-version/pending`,
 		apiNamespace: 'wpcom/v2',
 	} );
+}
+
+export async function fetchWordPressTrackVersions(
+	siteId: number
+): Promise< WordPressTrackVersions > {
+	const { data } = await wpcom.req.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
+		path: '/wpcomsh/v1/wordpress-versions',
+	} );
+	return data;
 }
 
 export async function fetchPHPVersion( siteId: number ): Promise< string > {

@@ -88,6 +88,72 @@ function requestUrlMatchesAgent(
 	return url === `${ agentUrl }/${ agentId }`;
 }
 
+interface TraceSubscriber {
+	agentUrl: string;
+	agentId: string;
+	onCaptures: ( captures: TraceCapture[] ) => void;
+}
+
+const subscribers = new Set< TraceSubscriber >();
+let installedFetch: typeof window.fetch | undefined;
+let originalFetch: typeof window.fetch | undefined;
+
+function installFetchInterceptor() {
+	if ( installedFetch && window.fetch === installedFetch ) {
+		return;
+	}
+
+	const baseFetch = window.fetch.bind( window );
+	originalFetch = window.fetch;
+	const interceptor = ( async ( input: RequestInfo | URL, init?: RequestInit ) => {
+		const response = await baseFetch( input, init );
+		const matching =
+			installedFetch === interceptor
+				? [ ...subscribers ].filter( ( { agentUrl, agentId } ) =>
+						requestUrlMatchesAgent( input, agentUrl, agentId )
+					)
+				: [];
+
+		if ( matching.length > 0 ) {
+			void response
+				.clone()
+				.text()
+				.then( ( text ) => {
+					const captures = getTraceCapturesFromResponseText(
+						text,
+						response.headers.get( 'content-type' )
+					);
+					if ( captures.length > 0 ) {
+						matching.forEach( ( { onCaptures } ) => onCaptures( captures ) );
+					}
+				} )
+				.catch( () => {} );
+		}
+
+		return response;
+	} ) as typeof window.fetch;
+	installedFetch = interceptor;
+	window.fetch = interceptor;
+}
+
+function subscribeToTraceCaptures( subscriber: TraceSubscriber ) {
+	subscribers.add( subscriber );
+	installFetchInterceptor();
+
+	return () => {
+		subscribers.delete( subscriber );
+		if ( subscribers.size > 0 ) {
+			return;
+		}
+		// If something else wrapped fetch after us, leave our now-inert wrapper in its chain.
+		if ( window.fetch === installedFetch && originalFetch ) {
+			window.fetch = originalFetch;
+		}
+		installedFetch = undefined;
+		originalFetch = undefined;
+	};
+}
+
 export default function useAgentTraceIds( agentConfig?: UseAgentChatConfig | null ) {
 	const traceIdsByMessageIdRef = useRef< Map< string, string > >( new Map() );
 	const [ , setTraceIdsByMessageId ] = useState< Map< string, string > >(
@@ -104,48 +170,27 @@ export default function useAgentTraceIds( agentConfig?: UseAgentChatConfig | nul
 			return;
 		}
 
-		const originalFetch = window.fetch.bind( window );
-		window.fetch = ( async ( input: RequestInfo | URL, init?: RequestInit ) => {
-			const response = await originalFetch( input, init );
-
-			if ( requestUrlMatchesAgent( input, agentConfig.agentUrl, agentConfig.agentId ) ) {
-				void response
-					.clone()
-					.text()
-					.then( ( text ) => {
-						const captures = getTraceCapturesFromResponseText(
-							text,
-							response.headers.get( 'content-type' )
-						);
-						if ( captures.length === 0 ) {
-							return;
+		return subscribeToTraceCaptures( {
+			agentUrl: agentConfig.agentUrl,
+			agentId: agentConfig.agentId,
+			onCaptures: ( captures ) => {
+				setTraceIdsByMessageId( ( previous ) => {
+					const next = new Map( traceIdsByMessageIdRef.current );
+					let changed = false;
+					for ( const { messageId, traceId } of captures ) {
+						if ( next.get( messageId ) !== traceId ) {
+							next.set( messageId, traceId );
+							changed = true;
 						}
-
-						setTraceIdsByMessageId( ( previous ) => {
-							const next = new Map( traceIdsByMessageIdRef.current );
-							let changed = false;
-							for ( const { messageId, traceId } of captures ) {
-								if ( next.get( messageId ) !== traceId ) {
-									next.set( messageId, traceId );
-									changed = true;
-								}
-							}
-							if ( ! changed ) {
-								return previous;
-							}
-							traceIdsByMessageIdRef.current = next;
-							return next;
-						} );
-					} )
-					.catch( () => {} );
-			}
-
-			return response;
-		} ) as typeof window.fetch;
-
-		return () => {
-			window.fetch = originalFetch;
-		};
+					}
+					if ( ! changed ) {
+						return previous;
+					}
+					traceIdsByMessageIdRef.current = next;
+					return next;
+				} );
+			},
+		} );
 	}, [ agentConfig?.agentId, agentConfig?.agentUrl ] );
 
 	return useCallback(

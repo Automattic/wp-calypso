@@ -84,7 +84,7 @@ function PurchasesWarning( {
 	}
 
 	return (
-		<Notice variant="warning" density="medium">
+		<Notice variant="warning">
 			<Text>{ createInterpolateElement( message, { link } ) }</Text>
 		</Notice>
 	);

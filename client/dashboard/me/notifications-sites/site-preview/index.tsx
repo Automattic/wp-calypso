@@ -6,11 +6,11 @@ import { getSiteDisplayName } from '../../../utils/site-name';
 
 import './index.scss';
 
-interface Props {
+interface SitePreviewProps {
 	site: Site;
 }
 
-export const SitePreview = ( { site }: Props ) => {
+export const SitePreview = ( { site }: SitePreviewProps ) => {
 	return (
 		<HStack className="site-preview" spacing={ 3 }>
 			<SiteIconLink site={ site } size={ 44 } />

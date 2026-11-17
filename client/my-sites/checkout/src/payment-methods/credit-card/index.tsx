@@ -6,7 +6,6 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
-import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import { useCreditCardStoreState } from './store';
@@ -36,7 +35,6 @@ const CreditCardLabel: React.FC< {
 	currency: string | null;
 } > = ( { hasExistingCardMethods, currency } ) => {
 	const { __ } = useI18n();
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	return (
 		<Fragment>
 			{ hasExistingCardMethods ? (
@@ -44,10 +42,7 @@ const CreditCardLabel: React.FC< {
 			) : (
 				<span>{ __( 'Credit or debit card' ) }</span>
 			) }
-			<CreditCardLogos
-				currency={ currency }
-				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
-			/>
+			<CreditCardLogos currency={ currency } />
 		</Fragment>
 	);
 };

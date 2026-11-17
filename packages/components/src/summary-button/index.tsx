@@ -43,6 +43,7 @@ function UnforwardedSummaryButton(
 		description,
 		strapline,
 		badges,
+		suffix,
 		showArrow = true,
 		onClick,
 		disabled,
@@ -84,6 +85,7 @@ function UnforwardedSummaryButton(
 						{ hasLowDensity && <BadgeList badges={ badges } /> }
 					</VStack>
 					{ ! hasLowDensity && <BadgeList badges={ badges } /> }
+					{ ! hasLowDensity && suffix }
 				</HStack>
 				{ showArrow && (
 					<Icon

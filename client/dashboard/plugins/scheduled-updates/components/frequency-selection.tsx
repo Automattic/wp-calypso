@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
 import type { Frequency, Weekday } from '../types';
 
-type Props = {
+type ScheduledUpdatesFrequencySelectionProps = {
 	frequency: Frequency;
 	weekday: Weekday;
 	time: string; // HH:MM 24h
@@ -20,7 +20,12 @@ const HOUR_OPTIONS_24 = [ ...Array( 24 ).keys() ].map( ( i ) => ( {
 	value: i.toString().padStart( 2, '0' ) + ':00',
 } ) );
 
-function ScheduledUpdatesFrequencySelection( { frequency, weekday, time, onChange }: Props ) {
+function ScheduledUpdatesFrequencySelection( {
+	frequency,
+	weekday,
+	time,
+	onChange,
+}: ScheduledUpdatesFrequencySelectionProps ) {
 	return (
 		<Card>
 			<CardBody>

@@ -3,7 +3,13 @@ export * as DataHelper from './data-helper';
 export * as ElementHelper from './element-helper';
 export * as MediaHelper from './media-helper';
 
-export { default as envVariables, ATOMIC_VARIATIONS, setRunningSpecFile } from './env-variables';
+export {
+	default as envVariables,
+	ATOMIC_VARIATIONS,
+	MIXED_RUN_WORKERS,
+	createAtomicSiteProjects,
+	setRunningSpecFile,
+} from './env-variables';
 
 export * from './lib';
 export * from './secrets';

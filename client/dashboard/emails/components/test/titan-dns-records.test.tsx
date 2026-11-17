@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -23,7 +23,7 @@ const fieldValues = ( name: 'Name' | 'Value' ) =>
 
 function mockDomain( hasWpcomNameservers: boolean ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ DOMAIN }` )
+		.get( `/rest/v1.2/domain-details/${ DOMAIN }/` )
 		.query( true )
 		.reply( 200, {
 			domain: DOMAIN,

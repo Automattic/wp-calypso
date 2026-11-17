@@ -1,5 +1,5 @@
 import { Domain, DomainSubtype, DomainSummary } from '@automattic/api-core';
-import { domainQuery } from '@automattic/api-queries';
+import { domainQuery, domainsQuery } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -15,7 +15,6 @@ import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
 import {
 	addMailboxRoute,
 	chooseDomainRoute,
@@ -50,12 +49,11 @@ function canBuyPlanDirectly( domain: Domain, provider: MailboxProvider ) {
 }
 
 export default function ChooseDomain() {
-	const { queries } = useAppContext();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { provider, interval, tier } = chooseDomainRoute.useSearch();
 
-	const { data: allDomains, isLoading: isLoading } = useQuery( queries.domainsQuery() );
+	const { data: allDomains, isLoading: isLoading } = useQuery( domainsQuery() );
 	// Non-owners are allowed through: the next step explains what they can't buy via
 	// EmailNonDomainOwnerNotice rather than hiding the domain outright.
 	const eligibleDomains = ( allDomains ?? [] ).filter(

@@ -35,6 +35,38 @@ describe( 'CaptureInput', () => {
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 	} );
 
+	it( 'uses the initial address instead of the resolved address in the query string', async () => {
+		const user = userEvent.setup();
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=https://redirected.example.com' ] }>
+				<CaptureInput onInputEnter={ onInputEnter } initialUrl="example.com" skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'example.com' );
+		expect( onInputEnter ).not.toHaveBeenCalled();
+
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( onInputEnter ).toHaveBeenCalledWith( 'example.com' );
+	} );
+
+	it( 'validates the initial address before submitting it', async () => {
+		const user = userEvent.setup();
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ onInputEnter } initialUrl="invalid" skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( onInputEnter ).not.toHaveBeenCalled();
+		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
 	it( 'preserves the URL and focus while busy and allows editing and submission afterward', async () => {
 		const user = userEvent.setup();
 		const onInputEnter = jest.fn();
@@ -109,7 +141,7 @@ describe( 'CaptureInput', () => {
 		);
 
 		// enter an invalid URL
-		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'not a url' );
+		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'notaurl' );
 
 		// try to submit the same value twice
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
@@ -128,6 +160,22 @@ describe( 'CaptureInput', () => {
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
 
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_importer_capture_input_invalid',
+			{ error_code: 'missing_tld' }
+		);
+	} );
+
+	it( 'does not record a valid URL from the query string as invalid', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=example.com' ] }>
+				<CaptureInput onInputEnter={ jest.fn() } hasError />
+			</MemoryRouter>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows a custom CTA label', async () => {

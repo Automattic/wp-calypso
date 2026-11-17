@@ -16,12 +16,13 @@ import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/pro
 import './style.scss';
 
 type PurchaseItemProps = {
+	referralId: number;
 	purchase: ReferralPurchase;
 	data?: APIProductFamilyProduct[];
 	isFetching: boolean;
 };
 
-const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
+const PurchaseItem = ( { referralId, purchase, data, isFetching }: PurchaseItemProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -61,6 +62,7 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 
 				{ ! isPressablePlan && (
 					<AssignedTo
+						referralId={ referralId }
 						purchase={ purchase }
 						data={ data }
 						handleAssignToSite={ handleAssignToSite }
@@ -78,7 +80,13 @@ const PurchaseItem = ( { purchase, data, isFetching }: PurchaseItemProps ) => {
 	);
 };
 
-const ReferralPurchasesMobile = ( { purchases }: { purchases: ReferralPurchase[] } ) => {
+const ReferralPurchasesMobile = ( {
+	referralId,
+	purchases,
+}: {
+	referralId: number;
+	purchases: ReferralPurchase[];
+} ) => {
 	const { data, isFetching } = useProductsQuery();
 
 	return (
@@ -86,6 +94,7 @@ const ReferralPurchasesMobile = ( { purchases }: { purchases: ReferralPurchase[]
 			{ purchases.map( ( purchase ) => (
 				<PurchaseItem
 					key={ `${ purchase.product_id }-${ purchase.referral_id }` }
+					referralId={ referralId }
 					purchase={ purchase }
 					data={ data }
 					isFetching={ isFetching }

@@ -9,6 +9,7 @@ Object {
   "clientId": 12345,
   "closeWindowAfterAuthorize": false,
   "closeWindowAfterLogin": false,
+  "connectorPlugins": Array [],
   "from": "[unknown]",
   "hasConnectedOwner": false,
   "homeUrl": "https://yourjetpack.blog",

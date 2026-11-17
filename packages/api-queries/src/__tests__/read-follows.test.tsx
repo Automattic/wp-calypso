@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	followSiteMutation,
 	siteSubscriptionsQuery,
@@ -580,7 +581,7 @@ describe( 'follow mutations', () => {
 			.post( '/rest/v1.1/read/following/mine/delete', { sub_id: 1234 } )
 			.reply( 200, { subscribed: false } );
 		const client = newClient();
-		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateQueries = vi.spyOn( client, 'invalidateQueries' );
 		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ makeFollow() ] ) );
 
 		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
@@ -615,7 +616,7 @@ describe( 'follow mutations', () => {
 				} ),
 			] )
 		);
-		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateQueries = vi.spyOn( client, 'invalidateQueries' );
 
 		const { result } = renderHook( () => useMutation( unfollowSiteMutation( client ) ), {
 			wrapper: makeWrapper( client ),

@@ -1,0 +1,172 @@
+.dashboard-amplify-story {
+	container: amplify-story / inline-size;
+	width: min( 100%, 1080px );
+	margin-block-start: 76px;
+}
+
+.dashboard-amplify-story__section {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	align-items: center;
+	gap: clamp( 32px, 6vw, 88px );
+	margin-block-end: 88px;
+}
+
+.dashboard-amplify-story__section:nth-child( 2 ) .dashboard-amplify-story__graphic {
+	order: 2;
+}
+
+.dashboard-amplify-story__graphic {
+	position: relative;
+	display: grid;
+	place-items: center;
+	min-height: 280px;
+	padding: 28px;
+	border-radius: 8px;
+}
+
+.dashboard-amplify-story__section:nth-child( 4 ) .dashboard-amplify-story__graphic {
+	order: 2;
+}
+
+.dashboard-amplify-story__copy {
+	max-width: 440px;
+}
+
+.dashboard-amplify-story__rubric {
+	position: relative;
+	container: amplify-rubric / inline-size;
+	margin-block: 24px 96px;
+}
+
+.dashboard-amplify-story__rubric-intro {
+	max-width: 680px;
+}
+
+.dashboard-amplify-story__rubric-columns {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+	gap: 48px;
+	margin-block-start: 44px;
+}
+
+.dashboard-amplify-story__rubric-perspective {
+	min-width: 0;
+}
+
+.dashboard-amplify-story__rubric-grid {
+	display: grid;
+	grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
+	gap: 2px 8px;
+	margin: 16px 0 0;
+}
+
+.dashboard-amplify-story__rubric-item {
+	position: relative;
+	min-width: 0;
+}
+
+.dashboard-amplify-story__rubric-item[data-active='true'] {
+	z-index: 2;
+}
+
+.dashboard-amplify-story__rubric-item button {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 36px;
+	padding: 4px 0;
+	border: 0;
+	background: transparent;
+	color: var( --color-text );
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.4;
+	text-align: start;
+	cursor: help;
+}
+
+.dashboard-amplify-story__rubric-item button span {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-decoration: underline dotted var( --color-text-subtle );
+	text-underline-offset: 3px;
+	white-space: nowrap;
+}
+
+.dashboard-amplify-story__rubric-item button strong {
+	flex: none;
+	margin-inline-start: 8px;
+	color: var( --color-text-subtle );
+	font-weight: 400;
+}
+
+.dashboard-amplify-story__rubric-item button:hover span,
+.dashboard-amplify-story__rubric-item button:focus-visible span,
+.dashboard-amplify-story__rubric-item[data-active='true'] button span {
+	text-decoration-color: currentColor;
+}
+
+@container amplify-rubric ( max-width: 899px ) {
+	.dashboard-amplify-story__rubric-grid {
+		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	}
+}
+
+@container amplify-rubric ( max-width: 649px ) {
+	.dashboard-amplify-story__rubric-grid {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+}
+
+@container amplify-rubric ( max-width: 479px ) {
+	.dashboard-amplify-story__rubric-grid {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+}
+
+.dashboard-amplify-story__faq {
+	max-width: 760px;
+	margin-inline: auto;
+}
+
+/* Below this, the inset FAQ no longer lines up with anything; run it full width. */
+@container amplify-story ( max-width: 960px ) {
+	.dashboard-amplify-story__faq {
+		max-width: none;
+		margin-inline: 0;
+	}
+}
+
+.dashboard-amplify-story__faq-list {
+	display: grid;
+	gap: 30px;
+	margin-block-start: 40px;
+}
+
+.dashboard-amplify-story__faq-answer {
+	max-width: 640px;
+}
+
+@media ( max-width: 900px ) {
+	.dashboard-amplify-story__section {
+		grid-template-columns: minmax( 0, 1fr );
+		gap: 24px;
+		margin-block-end: 64px;
+	}
+
+	.dashboard-amplify-story__section:nth-child( 2 ) .dashboard-amplify-story__graphic,
+	.dashboard-amplify-story__section:nth-child( 4 ) .dashboard-amplify-story__graphic {
+		order: 0;
+	}
+
+	.dashboard-amplify-story__graphic {
+		min-height: 240px;
+	}
+}
+
+.dashboard-amplify-story__sample-link {
+	display: inline-block;
+}

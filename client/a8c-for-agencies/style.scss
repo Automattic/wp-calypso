@@ -9,9 +9,6 @@
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
 
-	// Match the classic .tooltip.popover layer so wp-ui tooltips render above the sidebar.
-	--wp-ui-tooltip-z-index: 100000;
-
 	--color-surface-backdrop: #021a23;
 	--color-overview-header-background: #05374a;
 	--color-light-backdrop: var(--studio-white);
@@ -196,6 +193,7 @@
 
 			svg {
 				fill: var(--color-primary-50);
+				color: var(--color-primary-50);
 				margin-inline-start: 4px;
 			}
 		}
@@ -228,6 +226,7 @@
 
 		svg {
 			fill: var(--color-text-white);
+			color: var(--color-text-white);
 		}
 
 		&.is-busy {
@@ -235,6 +234,7 @@
 
 			svg {
 				fill: var(--color-text);
+				color: var(--color-text);
 			}
 		}
 	}
@@ -530,6 +530,7 @@ html {
 
 		.gridicon {
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 		}
 	}
 
@@ -538,6 +539,7 @@ html {
 
 		.gridicon {
 			fill: var(--color-error-50);
+			color: var(--color-error-50);
 		}
 	}
 }
@@ -761,6 +763,7 @@ html {
 
 		svg {
 			fill: var(--color-text-white);
+			color: var(--color-text-white);
 		}
 	}
 

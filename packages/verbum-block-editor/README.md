@@ -22,13 +22,18 @@ The Verbum Block Editor stubs out heavy dependencies that are pulled in transiti
 | `@wordpress/sync`                                                                    | Collaborative editing (yjs/lib0/simple-peer) | ~500KB       |
 | `@wordpress/date`, `date-fns`, `react-day-picker`                                    | Date/time pickers                            | ~2.5MB       |
 | `@wordpress/commands`                                                                | Command palette                              | ~33KB        |
+| `@wordpress/vips/worker`                                                             | Client-side image processing (WebAssembly)   | ~17MB        |
 | `@wordpress/components` (navigation, focal-point-picker, color-picker, palette-edit) | Unused UI components                         | ~250KB       |
-| `showdown`                                                                           | Markdown parser                              | ~156KB       |
+| `@wordpress/block-editor` inserter menu, inspector controls, list view, bindings     | Full inserter and block sidebar (dataviews)  | ~1.2MB       |
+| `@wordpress/components` private `Menu`                                               | Deprecated; nothing bundled reads it         | ~200KB       |
+| `marked`                                                                             | Markdown parser                              | ~46KB        |
 | `react-easy-crop`                                                                    | Image cropping                               | ~46KB        |
 
 ### How It Works
 
-The webpack config uses `NormalModuleReplacementPlugin` to replace these modules with a consolidated stub file (`src/stubs/index.js`) that exports no-op functions and null components.
+The webpack config uses `NormalModuleReplacementPlugin` to replace these modules with a consolidated stub file (`src/stubs/index.js`) that exports no-op functions and null components. Modules whose default export must be a component or a block-editor hook use their own stub files in `src/stubs`. Only stub modules that export nothing but components rendered in UI Verbum doesn't show; a stubbed hook or helper breaks every block that calls it.
+
+The editor canvas loads only the stylesheets of the blocks registered in `load-blocks.ts` (`src/editor/inline-iframe-style.scss`); add a block's CSS there when registering a new block.
 
 ### Adding New Stubs
 

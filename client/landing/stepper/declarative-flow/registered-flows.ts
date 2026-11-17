@@ -17,12 +17,12 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
 	WRITE_NEW_SITE_FLOW,
 	EDUCATION_FLOW,
+	STUDENT_FLOW,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
@@ -38,6 +38,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ EDUCATION_FLOW ]: () =>
 		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
+
+	[ STUDENT_FLOW ]: () =>
+		import( /* webpackChunkName: "student-flow" */ './flows/student/student' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
@@ -64,11 +67,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ PLAN_UPGRADE_FLOW ]: () =>
 		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
-
-	[ WOO_HOSTED_PLANS_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
-		),
 
 	[ ART_PROMO_FLOW ]: () =>
 		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),

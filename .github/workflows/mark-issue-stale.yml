@@ -5,6 +5,12 @@ on:
     - cron: '30 */6 * * *'
   workflow_dispatch:
 
+permissions:
+  actions: write # Deletes the action's state cache between runs.
+  contents: write # delete-branch
+  issues: write
+  pull-requests: write
+
 jobs:
   stale:
     runs-on: ubuntu-latest

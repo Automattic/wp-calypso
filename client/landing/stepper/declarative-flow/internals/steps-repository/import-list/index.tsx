@@ -3,22 +3,22 @@ import ListStep from 'calypso/blocks/import/list';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ImportWrapper } from '../import';
 import { getFinalImporterUrl } from '../import/helper';
-import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { Step as StepType } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
-const ImportList: Step< {
-	submits: {
-		platform: ImporterPlatform;
-		url: string;
-	};
+const ImportList: StepType< {
+	submits:
+		| { platform: ImporterPlatform; url: string; action?: never }
+		| { action: 'use_automatic_detection'; platform?: never; url?: never };
 	accepts: {
 		title?: string;
 		subTitle?: string;
 		skipTracking?: boolean;
+		allowAutomaticDetection?: boolean;
 	};
 } > = function ImportStep( props ) {
 	const siteSlug = useSiteSlug();
-	const { navigation } = props;
+	const { navigation, allowAutomaticDetection } = props;
 
 	const text = __( 'Import content from another platform or file' );
 	const subText = __( "Select the platform you're coming from" );
@@ -30,6 +30,11 @@ const ImportList: Step< {
 				submit={ navigation.submit }
 				getFinalImporterUrl={ getFinalImporterUrl }
 				{ ...props }
+				onDetectAutomatically={
+					allowAutomaticDetection
+						? () => navigation.submit?.( { action: 'use_automatic_detection' } )
+						: undefined
+				}
 				title={ text }
 				subTitle={ subText }
 			/>

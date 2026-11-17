@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 describe( 'safeImageUrl()', () => {
 	let safeImageUrl;
 
@@ -143,21 +144,14 @@ describe( 'safeImageUrl()', () => {
 	}
 
 	describe( 'browser', () => {
-		beforeAll( () => {
-			// this allows overwriting location
-			global.window = Object.create( window );
-			Object.defineProperty( window, 'location', {
-				value: {
-					origin: 'https://wordpress.com',
-				},
-			} );
-			jest.resetModules();
-			safeImageUrl = require( '../' ).safeImageUrl;
+		beforeAll( async () => {
+			vi.stubGlobal( 'location', { origin: 'https://wordpress.com' } );
+			vi.resetModules();
+			safeImageUrl = ( await import( '../' ) ).safeImageUrl;
 		} );
 
 		afterAll( () => {
-			delete globalThis.location;
-			delete require.cache[ require.resolve( '../' ) ];
+			vi.unstubAllGlobals();
 		} );
 
 		test( 'should ignore a blob url for current origin', () => {
@@ -176,8 +170,14 @@ describe( 'safeImageUrl()', () => {
 	} );
 
 	describe( 'node', () => {
-		beforeAll( () => {
-			safeImageUrl = require( '../' ).safeImageUrl;
+		beforeAll( async () => {
+			vi.stubGlobal( 'location', undefined );
+			vi.resetModules();
+			safeImageUrl = ( await import( '../' ) ).safeImageUrl;
+		} );
+
+		afterAll( () => {
+			vi.unstubAllGlobals();
 		} );
 
 		test( 'should make a blob url safe', () => {

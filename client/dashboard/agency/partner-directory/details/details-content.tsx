@@ -55,7 +55,7 @@ interface PartnerDirectoryDetailsAgency {
 
 export type DetailsSubmitFailure = 'logo-upload' | 'save';
 
-interface Props {
+interface PartnerDirectoryDetailsContentProps {
 	agency: PartnerDirectoryDetailsAgency;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	onSubmitSuccess?: ( agency: Agency ) => void;
@@ -85,7 +85,7 @@ export default function PartnerDirectoryDetailsContent( {
 	onSubmitSuccess,
 	onSubmitError,
 	openSupportGuide,
-}: Props ) {
+}: PartnerDirectoryDetailsContentProps ) {
 	const initialFormData = getDetailsFormData( agency.profile );
 	const hasProfile = initialFormData !== null;
 

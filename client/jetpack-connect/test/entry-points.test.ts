@@ -1,4 +1,9 @@
-import { isStandardEntryPoint, isUnifiedFlow } from '../entry-points';
+import {
+	getPluginsForEntryPoint,
+	isMigrationEntryPoint,
+	isStandardEntryPoint,
+	isUnifiedFlow,
+} from '../entry-points';
 
 describe( 'isStandardEntryPoint', () => {
 	test.each( [
@@ -33,10 +38,13 @@ describe( 'isStandardEntryPoint', () => {
 describe( 'isUnifiedFlow', () => {
 	test.each( [
 		[ 'jetpack-connector', true ],
+		[ 'jetpack-onboarding', true ],
 		[ 'jetpack_premium_analytics_onboarding', true ],
 		[ 'delete_connection_owner_notice', true ],
 		[ 'jetpack-connector-v2', false ],
-		[ 'jetpack-onboarding', false ],
+		[ 'jetpack-onboarding-v2', false ],
+		[ 'jetpack-onboarding-wizard', false ],
+		[ 'my-jetpack-connection', false ],
 		[ 'jetpack-newsletter', false ],
 		[ 'my-jetpack', false ],
 		[ 'jetpack-x_y', false ],
@@ -44,4 +52,37 @@ describe( 'isUnifiedFlow', () => {
 	] )( '%p → %p', ( from, expected ) => {
 		expect( isUnifiedFlow( from ) ).toBe( expected );
 	} );
+} );
+
+describe( 'isMigrationEntryPoint', () => {
+	test.each( [
+		[ 'wpcom_migration', true ],
+		[ 'wpcom_migration_dashboard', true ],
+		[ 'wpcom_migrationother', false ],
+		[ 'wpcom-migration', false ],
+	] )( '%p → %p', ( from, expected ) => {
+		expect( isMigrationEntryPoint( from ) ).toBe( expected );
+	} );
+} );
+
+describe( 'getPluginsForEntryPoint', () => {
+	const plugins = [ 'wpcom-migration', 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ];
+
+	test.each( [ 'wpcom_migration', 'wpcom_migration_dashboard' ] )(
+		'keeps the migration plugin for from=%s',
+		( from ) => {
+			expect( getPluginsForEntryPoint( plugins, from ) ).toEqual( plugins );
+		}
+	);
+
+	test.each( [ undefined, null, 'jetpack-connector', 'jetpack_onboarding', 'wpcom-migration' ] )(
+		'drops the migration plugin for from=%s',
+		( from ) => {
+			expect( getPluginsForEntryPoint( plugins, from ) ).toEqual( [
+				'automattic-for-agencies-client',
+				'woocommerce',
+				'jetpack',
+			] );
+		}
+	);
 } );

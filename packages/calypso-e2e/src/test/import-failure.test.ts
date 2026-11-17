@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from 'vitest';
 import { getImportFailure, watchImportFailure } from '../lib/import-failure';
 import type { Page } from 'playwright';
 

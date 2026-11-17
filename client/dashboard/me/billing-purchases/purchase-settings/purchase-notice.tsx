@@ -10,18 +10,21 @@ import {
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { differenceInCalendarDays } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
-import Notice from '../../../components/notice';
+import Notice, {
+	NoticeActionButton,
+	RouterNoticeActionLinkButton,
+} from '../../../components/notice';
 import {
 	PlanExpiryNotice,
 	hasPlanExpiryNotice,
@@ -47,7 +50,6 @@ import {
 	getUpgradedPurchaseRedirectUrl,
 	getWpcomPlanChangeUrl,
 } from '../../../utils/site-url';
-import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import { getDelayedDowngradeNotice } from './get-delayed-downgrade-notice';
 import {
@@ -60,51 +62,45 @@ import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-exp
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
+// One-shot flags from the redirects that land here. They leave the URL on arrival, so a refresh or
+// Back doesn't show their notices again.
+const NOTICE_FLAGS = [
+	'upgraded',
+	'cancelled',
+	'downgraded',
+	'free_month',
+	'plan_changed',
+	'delayed_downgrade_scheduled',
+] as const;
+const NOTICE_PARAMS = [ ...NOTICE_FLAGS, 'intent' ] as const;
+
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { refunded } = purchaseSettingsRoute.useSearch();
+	const router = useRouter();
 	const {
-		refunded,
 		upgraded,
 		cancelled,
 		downgraded,
+		free_month,
 		plan_changed,
 		delayed_downgrade_scheduled,
 		intent,
-	} = purchaseSettingsRoute.useSearch();
-	const navigate = purchaseSettingsRoute.useNavigate();
-	const router = useRouter();
+	} = useConsumeSearchParams( NOTICE_PARAMS, {
+		when: ( params ) => NOTICE_FLAGS.some( ( flag ) => params[ flag ] === 'true' ),
+	} );
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
-	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
-	const [ cancelledIntent ] = useState( () => ( cancelled ? intent : undefined ) );
-	useEffect( () => {
-		if ( cancelled ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { cancelled: _cancelled, intent: _intent, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ cancelled, navigate ] );
-	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( Boolean( downgraded ) );
-	useEffect( () => {
-		if ( downgraded ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { downgraded: _downgraded, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ downgraded, navigate ] );
+	const [ showCancelledNotice, setShowCancelledNotice ] = useState( cancelled === 'true' );
+	const [ cancelledIntent ] = useState( () =>
+		cancelled === 'true' && intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined
+	);
+	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( downgraded === 'true' );
+	const [ showFreeMonthNotice, setShowFreeMonthNotice ] = useState( free_month === 'true' );
 	// Transient success notice shown after a change-plan checkout (upgrade or
 	// downgrade) redirects back here with `?plan_changed=true`. The param is
 	// stripped immediately so it doesn't survive a refresh or back navigation.
@@ -112,32 +108,8 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	// present: plan_changed=true comes from the redirect_to template and is a
 	// red herring in that flow — the delayed-downgrade notice is the right one.
 	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState(
-		Boolean( plan_changed ) && ! delayed_downgrade_scheduled
+		plan_changed === 'true' && delayed_downgrade_scheduled !== 'true'
 	);
-	useEffect( () => {
-		if ( plan_changed ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { plan_changed: _plan_changed, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ plan_changed, navigate ] );
-	// Strip ?delayed_downgrade_scheduled from the URL on mount so refresh
-	// doesn't re-trigger anything; the persistent warning notice handles display.
-	useEffect( () => {
-		if ( delayed_downgrade_scheduled ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { delayed_downgrade_scheduled: _delayed_downgrade_scheduled, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
-		}
-	}, [ delayed_downgrade_scheduled, navigate ] );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
 		setDelayedDowngradeMutation()
@@ -173,22 +145,12 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		/>
 	) : null;
 
-	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
-
-	useEffect( () => {
-		if ( upgraded ) {
-			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
-			navigate( {
-				search: { refunded },
-				replace: true,
-			} );
-		}
-	}, [ upgraded, refunded, navigate ] );
+	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( upgraded === 'true' );
 
 	// Transient cancelled success notice — suppresses every other notice until
 	// dismissed, refreshed, or navigated-away-and-back. Gated on the
 	// `?cancelled=true` search param set by the cancel redirect.
-	if ( isSplitCancelRemoveEnabled && showCancelledNotice ) {
+	if ( showCancelledNotice ) {
 		return (
 			<PurchaseCancelledNotice
 				purchase={ purchase }
@@ -202,6 +164,14 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<Notice variant="success" onClose={ () => setShowDowngradedNotice( false ) }>
 				{ __( 'You\u2019ve switched to monthly billing.' ) }
+			</Notice>
+		);
+	}
+
+	if ( showFreeMonthNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowFreeMonthNotice( false ) }>
+				{ __( 'Your free month is added to your account! Enjoy!' ) }
 			</Notice>
 		);
 	}
@@ -226,15 +196,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<>
 						{ delayedDowngradeNotice.isRetryingRenewal && (
-							<Button
-								variant="primary"
-								size="compact"
-								href={
-									router.buildLocation( {
-										to: changePaymentMethodRoute.fullPath,
-										params: { purchaseId: purchase.ID },
-									} ).href
-								}
+							<RouterNoticeActionLinkButton
+								variant="solid"
+								to={ changePaymentMethodRoute.fullPath }
+								params={ { purchaseId: purchase.ID } }
 								onClick={ () =>
 									recordTracksEvent(
 										'calypso_purchases_delayed_downgrade_update_payment_method_click',
@@ -243,11 +208,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 								}
 							>
 								{ __( 'Update payment method' ) }
-							</Button>
+							</RouterNoticeActionLinkButton>
 						) }
-						<Button
-							variant="secondary"
-							size="compact"
+						<NoticeActionButton
+							variant="outline"
 							onClick={ () => {
 								recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
 									purchase_id: purchase.ID,
@@ -270,10 +234,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 								);
 							} }
 							disabled={ isCancellingDelayedDowngrade }
-							isBusy={ isCancellingDelayedDowngrade }
+							loading={ isCancellingDelayedDowngrade }
 						>
 							{ __( 'Cancel downgrade' ) }
-						</Button>
+						</NoticeActionButton>
 					</>
 				}
 			>
@@ -640,9 +604,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				isCloseToExpiration( purchase ) && ! isRecentMonthlyPurchase( purchase ) ? 'error' : 'info'
 			}
 			actions={
-				<Button variant="primary" onClick={ onClickUpgrade }>
+				<NoticeActionButton variant="solid" onClick={ onClickUpgrade }>
 					{ __( 'Upgrade now' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ noticeText }

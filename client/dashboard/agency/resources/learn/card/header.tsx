@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import ResourceProductLogo from '../resource-product-logo';
 import ResourceIllustration from './illustration';
+import { useFitTitle } from './use-fit-title';
 import type { AgencyEnablementResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -24,6 +25,8 @@ export default function ResourceCardHeader( {
 	title,
 	children,
 }: ResourceCardHeaderProps ) {
+	const titleRef = useFitTitle< HTMLHeadingElement >( resource.name );
+
 	return (
 		<div
 			className="dashboard-resources-learn__card-header"
@@ -43,7 +46,12 @@ export default function ResourceCardHeader( {
 					<Badge className="dashboard-resources-learn__top-badge">{ __( 'Top resource' ) }</Badge>
 				) }
 			</VStack>
-			<Heading level={ 3 } color="inherit" className="dashboard-resources-learn__card-title">
+			<Heading
+				ref={ titleRef }
+				level={ 3 }
+				color="inherit"
+				className="dashboard-resources-learn__card-title"
+			>
 				{ title }
 			</Heading>
 			{ children }

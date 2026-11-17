@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainAddDNS from '../add';
 import type { Domain, DnsRecord } from '@automattic/api-core';
 
 const domainName = 'example.com';
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},
@@ -24,7 +27,7 @@ const rootMxRecords: DnsRecord[] = [
 
 function mockApi( records: DnsRecord[] = rootMxRecords ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.get( `/rest/v1.2/domain-details/${ domainName }/` )
 		.reply( 200, { domain: domainName, has_wpcom_nameservers: true } as Domain )
 		.get( `/rest/v1.1/domains/${ domainName }/dns` )
 		.reply( 200, { records } );
@@ -42,7 +45,11 @@ function mockUpdateDns() {
 }
 
 async function selectType( type: string ) {
-	await userEvent.selectOptions( await screen.findByRole( 'combobox', { name: 'Type' } ), type );
+	const showAllTypes = screen.queryByRole( 'button', { name: 'Show all record types' } );
+	if ( showAllTypes && ! screen.queryByRole( 'radio', { name: type } ) ) {
+		await userEvent.click( showAllTypes );
+	}
+	await userEvent.click( await screen.findByRole( 'radio', { name: type } ) );
 	await screen.findByRole( 'spinbutton', { name: /TTL/ } );
 }
 
@@ -146,5 +153,50 @@ describe( '<DomainAddDNS>', () => {
 		expect( getRecordsToAdd() ).toEqual( [
 			expect.objectContaining( { type: 'TXT', name: '_dmarc' } ),
 		] );
+	} );
+
+	test( 'shows the common record types first and the rest on request', async () => {
+		mockApi();
+		const user = userEvent.setup();
+		render( <DomainAddDNS /> );
+
+		expect( await screen.findByRole( 'radio', { name: 'TXT' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'radio', { name: 'AAAA' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Show all record types' } ) );
+
+		expect( screen.getByRole( 'radio', { name: 'AAAA' } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'The same as an A record, for newer IPv6 addresses (like 2001:db8::1).' )
+		).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Show fewer record types' } ) );
+
+		expect( screen.queryByRole( 'radio', { name: 'AAAA' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Show all record types' } ) ).toBeVisible();
+	} );
+
+	test( 'keeps a selected uncommon record type visible after showing fewer types', async () => {
+		mockApi();
+		const user = userEvent.setup();
+		render( <DomainAddDNS /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Show all record types' } ) );
+		await selectType( 'AAAA' );
+		await user.click( screen.getByRole( 'button', { name: 'Show fewer record types' } ) );
+
+		expect( screen.getByRole( 'radio', { name: 'AAAA' } ) ).toBeChecked();
+		expect( screen.queryByRole( 'radio', { name: 'SRV' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'explains when to pick TXT over CNAME', async () => {
+		mockApi();
+		render( <DomainAddDNS /> );
+
+		await selectType( 'TXT' );
+
+		expect(
+			screen.getByText( /Some providers offer a TXT or a CNAME for the same verification/ )
+		).toBeVisible();
 	} );
 } );

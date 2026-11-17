@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import type { Purchase } from '@automattic/api-core';
 
-interface MarketPlaceSubscriptionsDialogProps {
+interface MarketPlaceSubscriptionsWarningProps {
 	planName: string;
 	closeDialog: () => void;
 	removePlan: () => void;
@@ -25,7 +25,7 @@ const MarketPlaceSubscriptionsWarning = ( {
 	sectionHeadingText,
 	primaryButtonText,
 	bodyParagraphText,
-}: MarketPlaceSubscriptionsDialogProps ) => {
+}: MarketPlaceSubscriptionsWarningProps ) => {
 	return (
 		isDialogVisible && (
 			<Modal

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	Domain,
@@ -10,11 +10,12 @@ import {
 	DomainSubtype,
 } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainConnectionVerification from '../domain-connection-verification';
 
 // Mock InlineSupportLink to render a button with the support context as data attribute
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( {
 		children,
@@ -26,13 +27,13 @@ jest.mock( '../../../components/inline-support-link', () => ( {
 } ) );
 
 // Mock RouterLinkSummaryButton to avoid routing issues
-jest.mock( '../../../components/router-link-summary-button', () => ( {
+vi.mock( '../../../components/router-link-summary-button', () => ( {
 	__esModule: true,
 	default: ( { title }: { title: string } ) => <div>{ title }</div>,
 } ) );
 
 // Mock DomainPropagationStatus to avoid useAuth dependency
-jest.mock( '../components/domain-propagation-status', () => ( {
+vi.mock( '../components/domain-propagation-status', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
@@ -164,7 +165,7 @@ describe( 'DomainConnectionVerification', () => {
 		siteSlug: 'example.wordpress.com',
 		domainMappingStatus: createMockDomainMappingStatus(),
 		domainConnectionSetupInfo: createMockDomainConnectionSetupInfo(),
-		onRestartConnection: jest.fn(),
+		onRestartConnection: vi.fn(),
 		isRestartingConnection: false,
 	};
 
@@ -210,6 +211,23 @@ describe( 'DomainConnectionVerification', () => {
 			const badgeElements = screen.getAllByText( 'Verifying' );
 			expect( badgeElements.length ).toBeGreaterThan( 0 );
 			expect( badgeElements[ 0 ] ).toBeVisible();
+		} );
+
+		test.each( [
+			[ 'connected', true ],
+			[ 'verifying', false ],
+		] )( 'does not show a progress bar when the domain is %s', ( _status, isConnected ) => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainMappingStatus={ createMockDomainMappingStatus( {
+						has_wpcom_ip_addresses: isConnected,
+						resolves_to_wpcom: isConnected,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -268,16 +286,14 @@ describe( 'DomainConnectionVerification', () => {
 				resolves_to_wpcom: false,
 			} );
 
-			const { container } = render(
+			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
 					domainMappingStatus={ domainMappingStatus }
 				/>
 			);
 
-			const noticeElement = container.querySelector( '.dashboard-notice.is-info' );
-			expect( noticeElement ).toBeInTheDocument();
-			expect( noticeElement?.textContent ).toContain( 'checking your DNS records' );
+			expect( screen.getByText( /checking your DNS records/ ) ).toBeVisible();
 		} );
 
 		test( 'does not display info notice when domain is connected', () => {
@@ -395,7 +411,7 @@ describe( 'DomainConnectionVerification', () => {
 	} );
 
 	describe( 'While You Wait Section', () => {
-		test( 'displays "While you wait" section when domain is verifying', () => {
+		test( 'shows "Customize your site" without a "While you wait" heading when domain is verifying', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				has_wpcom_ip_addresses: false,
 				resolves_to_wpcom: false,
@@ -408,23 +424,7 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.getByText( 'While you wait' ) ).toBeVisible();
 			expect( screen.getByText( 'Customize your site' ) ).toBeVisible();
-		} );
-
-		test( 'does not display "While you wait" heading when domain is connected', () => {
-			const domainMappingStatus = createMockDomainMappingStatus( {
-				has_wpcom_ip_addresses: true,
-				resolves_to_wpcom: true,
-			} );
-
-			render(
-				<DomainConnectionVerification
-					{ ...defaultProps }
-					domainMappingStatus={ domainMappingStatus }
-				/>
-			);
-
 			expect( screen.queryByText( 'While you wait' ) ).not.toBeInTheDocument();
 		} );
 

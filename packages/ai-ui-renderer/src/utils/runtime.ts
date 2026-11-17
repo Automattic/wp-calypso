@@ -1,5 +1,6 @@
 import { A2uiError, DataModel, MessageProcessor, RELAXED_VALIDATION } from '@a2ui/web_core';
 import { getInteractiveUiOperation } from './operation';
+import type { InteractiveUiActionMode } from '../capabilities';
 import type { InteractiveUiCatalog } from './catalog';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { A2uiErrorPayload, ActionPayload, SurfaceModel } from '@a2ui/web_core';
@@ -14,10 +15,11 @@ export interface InteractiveUiDataModel {
 	surfaces: Record< string, Record< string, unknown > >;
 }
 
-interface InteractiveUiRuntimeOptions {
+export interface InteractiveUiRuntimeOptions {
 	/** From `createInteractiveUiCatalog()`. Each surface renders with the one its messages name. */
 	catalogs: InteractiveUiCatalog[];
-	/** Sends the surfaces' actions to the agent. */
+	actionMode?: InteractiveUiActionMode;
+	/** Handles actions in the selected mode; tool execution must reject on failure. */
 	onAction: ( action: ActionPayload ) => Promise< void >;
 	/**
 	 * Reports each error with the owner of its batch or surface, and the surface's ID when known:
@@ -55,19 +57,39 @@ function getObscuredPaths( surface: SurfaceModel< ReactComponentImplementation >
  * Turns A2UI messages into surfaces, grouped by the owner the host shows them next to,
  * such as a chat message.
  */
-export function createInteractiveUiRuntime( {
-	catalogs,
-	onAction,
-	onError,
-}: InteractiveUiRuntimeOptions ) {
-	// Relaxed validation still rejects cycles and over-deep layouts, which would never finish
-	// rendering, even across updates.
-	const processor = new MessageProcessor< ReactComponentImplementation >( catalogs, onAction, {
-		validationConfig: RELAXED_VALIDATION,
-	} );
-
+export function createInteractiveUiRuntime( options: InteractiveUiRuntimeOptions ) {
+	const { catalogs, onError } = options;
 	const surfaceOwnerIds = new Map< string, string >();
 	let currentOwnerId = '';
+
+	// Relaxed validation still rejects cycles and over-deep layouts, which would never finish
+	// rendering, even across updates.
+	const processor = new MessageProcessor< ReactComponentImplementation >(
+		catalogs,
+		async ( action ) => {
+			if ( options.actionMode !== 'tool-call' ) {
+				await options.onAction( action );
+				return;
+			}
+
+			const ownerId = surfaceOwnerIds.get( action.surfaceId ) ?? '';
+
+			try {
+				await options.onAction( action );
+			} catch ( error ) {
+				onError(
+					{
+						code: 'TOOL_CALL_FAILED',
+						message: error instanceof Error ? error.message : String( error ),
+						surfaceId: action.surfaceId,
+						expression: action.name,
+					},
+					ownerId
+				);
+			}
+		},
+		{ validationConfig: RELAXED_VALIDATION }
+	);
 
 	// A surface disposes its error subscription along with itself.
 	const createdSubscription = processor.onSurfaceCreated( ( surface ) => {

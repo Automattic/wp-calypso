@@ -3,10 +3,12 @@ import {
 	createStaticSiteImportSession,
 	fetchStaticSiteImportSession,
 	isWpError,
+	requestStaticSiteImportHandoff,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import type {
 	ApproveStaticSiteImportSessionParams,
+	StaticSiteImportHandoffParams,
 	StaticSiteImportSession,
 	StaticSiteImportState,
 } from '@automattic/api-core';
@@ -45,4 +47,11 @@ export const approveStaticSiteImportSessionMutation = () =>
 		meta: { statId: 'static-site-import-approve' },
 		mutationFn: ( params: ApproveStaticSiteImportSessionParams ) =>
 			approveStaticSiteImportSession( params ),
+	} );
+
+export const staticSiteImportHandoffMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'static-site-import-handoff' },
+		mutationFn: ( params: StaticSiteImportHandoffParams ) =>
+			requestStaticSiteImportHandoff( params ),
 	} );

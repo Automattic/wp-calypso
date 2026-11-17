@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { queryClient } from '@automattic/api-queries';
 import { act, screen, waitFor } from '@testing-library/react';

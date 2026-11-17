@@ -9,7 +9,7 @@ import type {
 export const sitesQueryKey = [ 'sites', SITE_FIELDS, SITE_OPTIONS ];
 
 export const sitesQuery = (
-	siteFilters: FetchSiteTypes,
+	siteFilters: FetchSiteTypes = 'all',
 	fetchSitesOptions: FetchSitesOptions = { site_visibility: 'visible', include_a8c_owned: false }
 ) => {
 	const { source, ...fetchSitesOptionsKey } = fetchSitesOptions;
@@ -32,8 +32,6 @@ export const paginatedSitesQuery = (
 		queryFn: () => fetchPaginatedSites( siteFilters, fetchSitesOptions ),
 	} );
 };
-
-export const allSitesQuery = () => sitesQuery( 'all' );
 
 export const hasDeletedSitesQuery = () =>
 	queryOptions( {

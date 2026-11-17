@@ -144,6 +144,10 @@
 		align-items: flex-start;
 		padding-top: 0.5rem;
 	}
+
+	.item-price__message {
+		padding-block: 0.5rem 0.3rem;
+	}
 }
 
 .featured-item-card--desc {
@@ -166,10 +170,11 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: flex-start;
-	margin-top: 0.5rem;
+	margin-top: 1rem;
 }
 
-.featured-item-card--cta {
+// Scoped to the footer so it outranks `.button { margin: 0 }` regardless of CSS chunk load order.
+.featured-item-card--footer .featured-item-card--cta {
 	min-width: 5.7em;
 	border-width: 0;
 	margin-top: 1.5rem;

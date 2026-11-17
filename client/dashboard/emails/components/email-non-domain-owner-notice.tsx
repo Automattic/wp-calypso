@@ -8,11 +8,11 @@ import { wpcomLink } from '../../utils/link';
 
 const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
-type EmailNonDomainOwnerMessageProps = {
+type EmailNonDomainOwnerNoticeProps = {
 	domain?: Domain;
 };
 
-export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerMessageProps ) => {
+export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerNoticeProps ) => {
 	const { domain } = props;
 
 	const ownerUserName = domain?.owner;

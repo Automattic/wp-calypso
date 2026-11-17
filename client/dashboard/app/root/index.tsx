@@ -117,7 +117,9 @@ function Root() {
 		if ( isNavigating ) {
 			slowTimeout = setTimeout( () => setNavigationTime( 'slow' ), SLOW_THRESHOLD_MS );
 			verySlowTimeout = setTimeout( () => {
-				const leafRouteId = router.state.pendingMatches?.at( -1 )?.routeId;
+				const leafRouteId = router
+					.getMatchedRoutes( router.state.location.pathname )[ 0 ]
+					.at( -1 )?.id;
 				if ( leafRouteId ) {
 					bumpStat(
 						'hd-very-slow-nav',

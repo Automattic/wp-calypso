@@ -15,7 +15,8 @@ export default function useProvisionCertificateMutation(
 		mutationFn: () =>
 			wp.req
 				.post( {
-					path: `/domains/ssl/${ domainName }`,
+					// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+					path: `/domains/ssl/${ domainName }/`,
 					apiNamespace: 'wpcom/v2',
 				} )
 				.then( () => {} ),

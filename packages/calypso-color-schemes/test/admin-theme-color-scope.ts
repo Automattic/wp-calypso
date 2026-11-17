@@ -1,13 +1,6 @@
-/**
- * @jest-environment node
- */
 import fs from 'fs';
 import * as sass from 'sass';
-const {
-	getAdminSchemes,
-	buildAdminThemeColors,
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-} = require( '../bin/prepare-sass-assets' );
+import { getAdminSchemes, buildAdminThemeColors } from '../bin/prepare-sass-assets';
 
 // Built here rather than read from src/__wp-base-styles, which is generated and git-ignored: that file survives branch switches, so asserting against it fails for reasons unrelated to the code under test.
 const schemes = (): Record< string, string > =>
@@ -78,19 +71,19 @@ describe( 'admin theme colour declarations', () => {
 	} );
 
 	it( 'produces the exact shades wp-admin publishes, for a scheme verified against a real install', () => {
-		// Measured on a WP 7.0 site: body.admin-color-sunrise resolves to these three values.
+		// Measured on WordPress.com's wp-admin (WordPress 7.1): body.admin-color-sunrise resolves to these three values.
 		const block = parseBlocks( compile( '@include wp-admin-theme-colors(".stats-main");' ) ).find(
 			( b ) => b.selector.startsWith( 'body.is-sunrise ' )
 		);
 
 		expect( block?.declarations ).toMatchObject( {
-			'--wp-admin-theme-color': '#dd823b',
-			'--wp-admin-theme-color-darker-10': '#d97426',
-			'--wp-admin-theme-color-darker-20': '#c36922',
+			'--wp-admin-theme-color': '#ad631e',
+			'--wp-admin-theme-color-darker-10': '#97571a',
+			'--wp-admin-theme-color-darker-20': '#824a16',
 		} );
 	} );
 
-	it( 'covers fresh, the wp-admin default that upstream omits from the mixin', () => {
+	it( 'covers fresh, the wp-admin default scheme', () => {
 		expect( schemes().fresh ).toBeDefined();
 		expect( compile( '@include wp-admin-theme-colors(".stats-main");' ) ).toContain(
 			'body.is-fresh'

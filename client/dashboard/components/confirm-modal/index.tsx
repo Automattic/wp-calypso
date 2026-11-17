@@ -4,7 +4,7 @@ import { useRef, type ComponentProps } from 'react';
 import { Text } from '../../components/text';
 import { ButtonStack } from '../button-stack';
 
-interface Props {
+interface ConfirmModalProps {
 	__experimentalHideHeader?: boolean;
 	title?: string;
 	size?: 'small' | 'medium' | 'large';
@@ -28,7 +28,7 @@ export default function ConfirmModal( {
 	isDismissible = true,
 	onCancel,
 	onConfirm,
-}: Props ) {
+}: ConfirmModalProps ) {
 	const cancelButtonRef = useRef( undefined );
 	const confirmButtonRef = useRef( undefined );
 

@@ -13,11 +13,13 @@ import {
 	usePlanBillingPeriod,
 } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import clsx from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import useGenerateActionHook from 'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import type { DataResponse, SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
 import './style.scss';
@@ -45,6 +47,8 @@ export default function MigrationPlansGrid( {
 
 	const term = usePlanBillingPeriod( { intervalType } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const { usePlansGridRedesign, usePlansGridRedesignFeatures, usePlansGridRedesignNewDescription } =
+		usePlansGridRedesignExperiment( { isInSignup: true, intent: 'plans-migration' } );
 
 	const useAction = useGenerateActionHook( {
 		siteId,
@@ -93,6 +97,8 @@ export default function MigrationPlansGrid( {
 		isDomainOnlySite: false,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
+		usePlansGridRedesignFeatures,
+		usePlansGridRedesignNewDescription,
 	} );
 
 	const gridPlansForPlanTypeSelector = useMemo(
@@ -100,7 +106,13 @@ export default function MigrationPlansGrid( {
 		[ gridPlans ]
 	);
 
-	const featureGroupMap = useMemo( () => getPlanFeaturesGroupedForFeaturesGrid(), [] );
+	// The pricing differentiation lists render storage before the rest of the features.
+	const featureGroupMap = useMemo( () => {
+		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
+		return usePlansGridRedesignFeatures
+			? Object.fromEntries( Object.entries( featureGroups ).reverse() )
+			: featureGroups;
+	}, [ usePlansGridRedesignFeatures ] );
 
 	// Key behavior: Show term savings for yearly and 2-yearly plans (monthly is the base term)
 	const enableTermSavingsPriceDisplay = intervalType !== 'monthly';
@@ -139,7 +151,9 @@ export default function MigrationPlansGrid( {
 			) }
 			<FeaturesGrid
 				allFeaturesList={ getFeaturesList() }
-				className="migration-plans-grid__features-grid"
+				className={ clsx( 'migration-plans-grid__features-grid', {
+					'is-plans-grid-redesign-experiment': usePlansGridRedesign,
+				} ) }
 				coupon={ coupon }
 				currentSitePlanSlug={ currentPlan?.productSlug }
 				generatedWPComSubdomain={ generatedWPComSubdomain }
@@ -167,6 +181,8 @@ export default function MigrationPlansGrid( {
 				enableReducedFeatureGroupSpacing
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				showSimplifiedBillingDescription
+				hideFeatureGroupTitles
+				showFeatureCheckmarks={ usePlansGridRedesign }
 			/>
 		</div>
 	);

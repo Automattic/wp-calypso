@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import * as ExperimentAssignments from '../experiment-assignments';
 import localStorage from '../local-storage';
 import * as Requests from '../requests';
@@ -5,10 +6,10 @@ import { delayedValue, ONE_DELAY, validExperimentAssignment } from '../test-comm
 import * as Timing from '../timing';
 import type { Config, ExperimentAssignment } from '../../types';
 
-const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
+const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
-const mockedFetchExperimentAssignment = jest.fn();
-const mockedGetAnonId = jest.fn();
+const mockedFetchExperimentAssignment = vi.fn();
+const mockedGetAnonId = vi.fn();
 const mockedConfig: Config = {
 	fetchExperimentAssignment: mockedFetchExperimentAssignment,
 	getAnonId: mockedGetAnonId,
@@ -186,7 +187,7 @@ describe( 'fetchExperimentAssignment', () => {
 	} );
 
 	it( 'should throw for returned experiment not being alive', async () => {
-		jest.spyOn( ExperimentAssignments, 'isAlive' ).mockImplementationOnce( () => false );
+		vi.spyOn( ExperimentAssignments, 'isAlive' ).mockImplementationOnce( () => false );
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		await expect(
@@ -290,13 +291,13 @@ describe( 'isFetchExperimentAssignmentResponse', () => {
 
 describe( 'localStorageCachedGetAnonId', () => {
 	it( 'should return a fresh anonId for non-falsy values', async () => {
-		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
+		const mockGetAnonIdA = vi.fn( async () => 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
 		expect( mockGetAnonIdA ).toHaveBeenCalledTimes( 3 );
 
-		const mockGetAnonIdB = jest.fn( async () => 'qwer' );
+		const mockGetAnonIdB = vi.fn( async () => 'qwer' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdB ) ).toBe( 'qwer' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdB ) ).toBe( 'qwer' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdB ) ).toBe( 'qwer' );
@@ -304,13 +305,13 @@ describe( 'localStorageCachedGetAnonId', () => {
 	} );
 
 	it( 'should not cache an anonId for falsy values', async () => {
-		const mockGetAnonIdNull = jest.fn( async () => null );
+		const mockGetAnonIdNull = vi.fn( async () => null );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( null );
 		expect( mockGetAnonIdNull ).toHaveBeenCalledTimes( 3 );
 
-		const mockGetAnonIdEmpty = jest.fn( async () => '' );
+		const mockGetAnonIdEmpty = vi.fn( async () => '' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( null );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( null );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( null );
@@ -323,16 +324,16 @@ describe( 'localStorageCachedGetAnonId', () => {
 	} );
 
 	it( 'should return a cached anonId for falsy-values within the expiry time', async () => {
-		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
+		const mockGetAnonIdA = vi.fn( async () => 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
 
-		const mockGetAnonIdNull = jest.fn( async () => null );
+		const mockGetAnonIdNull = vi.fn( async () => null );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
 		expect( mockGetAnonIdNull ).toHaveBeenCalledTimes( 3 );
 
-		const mockGetAnonIdEmpty = jest.fn( async () => '' );
+		const mockGetAnonIdEmpty = vi.fn( async () => '' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( 'asdf' );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdEmpty ) ).toBe( 'asdf' );
@@ -340,11 +341,11 @@ describe( 'localStorageCachedGetAnonId', () => {
 	} );
 
 	it( 'should not return the cached anonId for falsy-values outside of the expiry time', async () => {
-		const mockGetAnonIdA = jest.fn( async () => 'asdf' );
+		const mockGetAnonIdA = vi.fn( async () => 'asdf' );
 		spiedMonotonicNow.mockImplementationOnce( () => 0 );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdA ) ).toBe( 'asdf' );
 
-		const mockGetAnonIdNull = jest.fn( async () => null );
+		const mockGetAnonIdNull = vi.fn( async () => null );
 		spiedMonotonicNow.mockImplementationOnce( () => 1 );
 		expect( await Requests.localStorageCachedGetAnonId( mockGetAnonIdNull ) ).toBe( 'asdf' );
 		spiedMonotonicNow.mockImplementationOnce( () => 24 * 60 * 60 * 1000 - 1 );

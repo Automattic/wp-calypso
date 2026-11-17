@@ -36,7 +36,7 @@ const MAX_SITES_FOR_TIER_PICKER = 10;
 const TIER_CARD_UNITS = [ 2, 5, 7, 10 ];
 const FREE_DEV_LICENSES = 5;
 
-interface Props {
+interface WpcomSectionProps {
 	plan: AgencyProduct;
 	term: TermPricing;
 	isReferralMode: boolean;
@@ -86,7 +86,7 @@ function getNextTier(
 function DevSitesCallout( {
 	availableDevSites,
 	isAgencyApproved,
-}: Pick< Props, 'availableDevSites' | 'isAgencyApproved' > ) {
+}: Pick< WpcomSectionProps, 'availableDevSites' | 'isAgencyApproved' > ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isConfiguringSite, setIsConfiguringSite ] = useState( false );
 	const isGated = useIsApprovalGated();
@@ -152,7 +152,7 @@ export default function WpcomSection( {
 	isAgencyApproved,
 	availableDevSites,
 	onAddToCart,
-}: Props ) {
+}: WpcomSectionProps ) {
 	const [ persistedQuantity, setQuantity ] = useSessionState(
 		'wpcom-quantity',
 		1,

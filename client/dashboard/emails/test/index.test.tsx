@@ -1,24 +1,30 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { EmailProvider } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import Emails from '../index';
-import type { DomainSummary, EmailAccount } from '@automattic/api-core';
+import type { DomainSummary, EmailAccount, TitanDkimStatus } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const { default: actual, serverEnvId } = await vi.importActual<
+		typeof import( '@automattic/calypso-config' )
+	>( '@automattic/calypso-config' );
 	const isEnabled = ( flag: string ) => flag === 'emails/titan-tiers' || actual.isEnabled( flag );
 	const config = Object.assign( ( key: string ) => actual( key ), actual, { isEnabled } );
-	return Object.assign( config, { __esModule: true, default: config } );
+	return { ...config, default: config, serverEnvId };
 } );
 
-jest.mock( '../../app/router/emails', () => {
-	const actual = jest.requireActual( '../../app/router/emails' );
+vi.mock( '../../app/router/emails', async () => {
+	const actual =
+		await vi.importActual< typeof import( '../../app/router/emails' ) >(
+			'../../app/router/emails'
+		);
 	return {
 		...actual,
 		emailsRoute: {
@@ -59,7 +65,15 @@ const forwardingAccount = {
 	],
 } as unknown as EmailAccount;
 
-function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: EmailAccount[] } ) {
+function mockApi( {
+	domains,
+	accounts,
+	dkimStatus = [],
+}: {
+	domains: DomainSummary[];
+	accounts: EmailAccount[];
+	dkimStatus?: TitanDkimStatus[];
+} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/me/preferences' )
@@ -77,6 +91,10 @@ function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: E
 		.get( '/rest/v1/me/mailboxes' )
 		.query( ( q ) => q.include_all_managed_domains === 'true' )
 		.reply( 200, accounts );
+
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/emails/titan/dkim-status' )
+		.reply( 200, dkimStatus );
 }
 
 describe( '<Emails>', () => {
@@ -140,6 +158,44 @@ describe( '<Emails>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'shows the free mailbox notice instead of the missing DKIM record notice', async () => {
+		const titanAccount = {
+			account_type: EmailProvider.Titan,
+			maximum_mailboxes: 2,
+			warnings: [ { warning_slug: 'unused_mailboxes', message: '' } ],
+			domains: [ { domain: DOMAIN, is_primary: true } ],
+			emails: [
+				{ mailbox: 'hello', domain: DOMAIN, email_type: 'email', role: 'standard', warnings: [] },
+			],
+		} as unknown as EmailAccount;
+		mockApi( {
+			domains: [ nonOwnedDomain ],
+			accounts: [ titanAccount ],
+			dkimStatus: [
+				{
+					domain: DOMAIN,
+					status: 'missing',
+					checked_at: '2026-11-10T21:00:00+00:00',
+					record: { name: `titan1._domainkey.${ DOMAIN }`, type: 'TXT', data: 'v=DKIM1; k=rsa' },
+				},
+			],
+		} );
+		render( <Emails /> );
+
+		expect(
+			await screen.findByText( 'You have 1 free mailbox waiting to be set up.' )
+		).toBeVisible();
+		expect( screen.queryByText( `Add the DKIM record for ${ DOMAIN }` ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not check DKIM records without a Professional Email domain', async () => {
+		const dkimStatus = mockApi( { domains: [ nonOwnedDomain ], accounts: [ forwardingAccount ] } );
+		render( <Emails /> );
+
+		expect( await screen.findByText( `yea@${ DOMAIN }` ) ).toBeVisible();
+		expect( dkimStatus.isDone() ).toBe( false );
+	} );
+
 	test( 'opens the DNS records from a Titan mailbox row action', async () => {
 		const titanAccount = {
 			account_type: EmailProvider.Titan,
@@ -156,7 +212,7 @@ describe( '<Emails>', () => {
 		render( <Emails /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
-		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'View DNS records' } ) );
+		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'View DNS records…' } ) );
 
 		expect(
 			await screen.findByRole( 'dialog', { name: `DNS records for ${ DOMAIN }` } )
@@ -215,7 +271,7 @@ describe( '<Emails>', () => {
 			render( <Emails /> );
 
 			await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
-			expect( await screen.findByRole( 'menuitem', { name: 'View DNS records' } ) ).toBeVisible();
+			expect( await screen.findByRole( 'menuitem', { name: 'View DNS records…' } ) ).toBeVisible();
 			expect(
 				screen.queryByRole( 'menuitem', { name: 'Upgrade mailbox' } )
 			).not.toBeInTheDocument();

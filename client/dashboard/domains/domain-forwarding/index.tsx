@@ -1,6 +1,8 @@
 import { domainForwardingQuery, domainQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -17,8 +19,10 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
+import { Text } from '../../components/text';
 import DomainForwardingDeleteModal from './delete-modal';
 import { DomainForwardingNotice } from './notice';
+import { getForwardingSummary } from './utils';
 import type { DomainForwarding as DomainForwardingType } from '@automattic/api-core';
 import type { Action, Field, ViewTable, ViewList, View } from '@wordpress/dataviews';
 
@@ -49,6 +53,7 @@ const DEFAULT_LAYOUTS = {
 
 function DomainForwarding() {
 	const router = useRouter();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { domainName } = domainRoute.useParams();
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
@@ -116,6 +121,14 @@ function DomainForwarding() {
 					const targetPath = item.target_path || '';
 					return `${ protocol }${ item.target_host }${ targetPath }`;
 				},
+				render: ( { field, item } ) => (
+					<VStack spacing={ 0 }>
+						<span>{ field.getValue( { item } ) }</span>
+						<Text variant="muted">
+							{ getForwardingSummary( item.is_permanent, item.forward_paths ) }
+						</Text>
+					</VStack>
+				),
 			},
 			{
 				id: 'forward_paths',
@@ -156,7 +169,11 @@ function DomainForwarding() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ createInterpolateElement(
-						__( 'Forward your domain or subdomain to another address. <learnMoreLink />' ),
+						hasEnTranslation(
+							'Forward your domain name or subdomain to another address. <learnMoreLink />'
+						)
+							? __( 'Forward your domain name or subdomain to another address. <learnMoreLink />' )
+							: __( 'Forward your domain or subdomain to another address. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="domain-forwarding" />,
 						}
@@ -168,7 +185,9 @@ function DomainForwarding() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ __( 'Add Domain Forwarding' ) }
+							{ hasEnTranslation( 'Add domain forwarding' )
+								? __( 'Add domain forwarding' )
+								: __( 'Add forwarding' ) }
 						</RouterLinkButton>
 					}
 				/>

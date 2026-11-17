@@ -48,6 +48,7 @@ const SOLUTIONS_TOO_EXPENSIVE: SolutionCardConfig[] = [
 const SOLUTIONS_LACK_OF_FLEXIBILITY: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.RENEW_NOW_PAY_LESS },
+	{ id: SOLUTION_IDS.SWITCH_TO_MONTHLY },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
@@ -110,6 +111,7 @@ const SOLUTIONS_MISSING_FUNCTIONALITY: SolutionCardConfig[] = [
 
 /** Core features missing */
 const SOLUTIONS_CORE_FEATURES_MISSING: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.CHANGE_PLAN },
 	{ id: SOLUTION_IDS.FIND_GUIDES },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
@@ -190,9 +192,9 @@ const SOLUTIONS_SLOW_OR_UNHELPFUL: SolutionCardConfig[] = [
 
 /** No human support */
 const SOLUTIONS_NO_HUMAN_SUPPORT: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.FIND_GUIDES },
-	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** AI insufficient */
@@ -244,8 +246,6 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_FOUND_BETTER_OR_FREE ];
 		case 'budgetConstraints':
 			return [ ...SOLUTIONS_BUDGET_CONSTRAINTS ];
-		case 'otherPriceValue':
-			return null;
 
 		// Too hard to use
 		case 'complicatedDashboard':
@@ -254,8 +254,6 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 		case 'tooMuchTimeToLearn':
 		case 'inadequateOnboarding':
 			return [ ...SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY ];
-		case 'otherTooHardToUse':
-			return null;
 
 		// Missing features / limitations
 		case 'cannotInstallPlugins':

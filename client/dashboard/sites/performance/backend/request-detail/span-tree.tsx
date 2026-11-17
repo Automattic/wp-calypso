@@ -1,5 +1,6 @@
 import './span-tree.scss';
 
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -150,7 +151,7 @@ function SpanRowContent( { node, rootMaxMs }: { node: SpanNode; rootMaxMs: numbe
 						{ sprintf(
 							/* translators: %s is a count, possibly fractional (an average across transactions in the bucket). */
 							__( '%s calls/tx' ),
-							callsPerTx >= 10 ? callsPerTx.toFixed( 0 ) : callsPerTx.toFixed( 1 )
+							formatNumber( callsPerTx, { decimals: callsPerTx >= 10 ? 0 : 1 } )
 						) }
 					</Text>
 				) }
@@ -164,8 +165,8 @@ function PrunedChildrenContent( { pruned }: { pruned: ApmDetailSpanPrunedChildre
 		<Text variant="muted" size={ 12 }>
 			{ sprintf(
 				/* translators: 1: number of child spans hidden, 2: total time those spans took. */
-				__( '+ %1$d more child spans (%2$s total)' ),
-				pruned.count,
+				__( '+ %1$s more child spans (%2$s total)' ),
+				formatNumber( pruned.count ),
 				formatMs( pruned.total_sum_ms )
 			) }
 		</Text>
@@ -224,8 +225,8 @@ export default function SpanTree( {
 					<Text variant="muted" size={ 12 }>
 						{ sprintf(
 							/* translators: 1: number of additional spans not shown, 2: total self time. */
-							__( '+ %1$d additional spans pruned from the tree (%2$s self time)' ),
-							pruned.node_count,
+							__( '+ %1$s additional spans pruned from the tree (%2$s self time)' ),
+							formatNumber( pruned.node_count ),
 							formatMs( pruned.self_sum_ms )
 						) }
 					</Text>

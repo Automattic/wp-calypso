@@ -19,8 +19,9 @@ set -e
 #
 yarn workspace @automattic/calypso-color-schemes run prepare
 yarn workspace @automattic/create-calypso-config run prepare
-yarn workspace @automattic/agenttic-client run prepare
-yarn workspace @automattic/agenttic-ui run prepare
+# Webpack only bundles their JavaScript, so skip emitting type declarations.
+yarn workspace @automattic/agenttic-client run build:js
+yarn workspace @automattic/agenttic-ui run build:js
 
 if [ "${BUILD_TRANSLATION_CHUNKS:-}" = "true" ] || [ "${ENABLE_FEATURES:-}" = "use-translation-chunks" ]; then
 	yarn workspace @automattic/languages run prepare

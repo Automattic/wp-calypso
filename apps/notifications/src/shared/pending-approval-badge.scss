@@ -24,10 +24,12 @@
 
 	svg {
 		fill: var(--color-warning, #f0b849);
+		color: var(--color-warning, #f0b849);
 		flex-shrink: 0;
 
 		@include ui-mixins.when-dark-theme {
 			fill: var(--dashboard__foreground-color-warning, #f5c15c);
+			color: var(--dashboard__foreground-color-warning, #f5c15c);
 		}
 	}
 

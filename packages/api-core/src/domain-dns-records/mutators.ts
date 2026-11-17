@@ -46,7 +46,8 @@ export function applyDnsTemplate(
 
 export function importDnsBind( domain: string, file: File ): Promise< DnsRecord[] > {
 	return wpcom.req.post( {
-		path: `/domains/dns/import/bind/${ domain }`,
+		// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+		path: `/domains/dns/import/bind/${ domain }/`,
 		apiNamespace: 'wpcom/v2',
 		formData: [ [ 'files[]', file, file.name ] ],
 	} );

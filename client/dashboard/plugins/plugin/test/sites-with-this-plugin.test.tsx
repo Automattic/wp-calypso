@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor, within } from '@testing-library/react';
@@ -108,7 +108,7 @@ async function openDeleteModalForSiteOne( user: ReturnType< typeof userEvent.set
 		.find( ( r ) => within( r ).queryByRole( 'link', { name: /Test Site One/ } ) );
 	await user.click( within( row! ).getByRole( 'button', { name: 'Actions' } ) );
 
-	await user.click( await screen.findByRole( 'menuitem', { name: 'Delete' } ) );
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Delete…' } ) );
 
 	const dialog = await screen.findByRole( 'dialog' );
 	await user.click( within( dialog ).getByRole( 'button', { name: 'Delete' } ) );

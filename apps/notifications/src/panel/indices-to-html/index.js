@@ -61,6 +61,9 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			if ( new_sub_text.trim().length > 0 ) {
 				new_container.setAttribute( 'alt', new_sub_text );
 			}
+			if ( range_info.emoji ) {
+				new_classes.push( 'emoji' );
+			}
 			break;
 		// All of the following are simple element types we want to create and then
 		// recurse into for their constituent blocks or texts

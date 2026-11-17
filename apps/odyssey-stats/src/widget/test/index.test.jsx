@@ -1,31 +1,39 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { init } from '..';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from '../record-widget-event';
 
-jest.mock( '../../lib/config-api', () => ( {
+vi.mock( '../../lib/config-api', () => ( {
 	__esModule: true,
 	default: ( key ) => ( { blog_id: 123, gmt_offset: 0, i18n_locale_slug: 'en' } )[ key ],
 	optionalConfig: () => undefined,
 } ) );
-jest.mock( '../../lib/set-locale', () => () => Promise.resolve() );
-jest.mock( '../../lib/load-wp-components-style', () => ( {
+vi.mock( '../../lib/set-locale', () => ( { default: () => Promise.resolve() } ) );
+vi.mock( '../../lib/load-wp-components-style', () => ( {
 	loadWpComponentsStyleForWidget: () => Promise.resolve(),
 } ) );
-jest.mock( '../../lib/selectors/get-site-stats-base-url', () => () => 'https://example.com/stats' );
-jest.mock( '../../lib/selectors/get-site-admin-url', () => () => 'https://example.com/wp-admin/' );
-jest.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => () => null );
-jest.mock( '../use-stats-link', () => () => ( url ) => url );
-jest.mock( '../mini-chart', () => ( { range } ) => <p>{ `Chart of ${ range.id }` }</p> );
-jest.mock( '../highlights', () => () => null );
-jest.mock( '../modules', () => () => null );
-jest.mock( '../record-widget-event', () => ( {
+vi.mock( '../../lib/selectors/get-site-stats-base-url', () => ( {
+	default: () => 'https://example.com/stats',
+} ) );
+vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
+	default: () => 'https://example.com/wp-admin/',
+} ) );
+vi.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => ( { default: () => null } ) );
+const mockStatsLink = vi.fn( ( url ) => url );
+vi.mock( '../use-stats-link', () => ( { default: () => mockStatsLink } ) );
+vi.mock( '../mini-chart', () => ( {
+	default: ( { range } ) => <p>{ `Chart of ${ range.id }` }</p>,
+} ) );
+vi.mock( '../highlights', () => ( { default: () => null } ) );
+vi.mock( '../modules', () => ( { default: () => null } ) );
+vi.mock( '../record-widget-event', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	recordWidgetEventThenFollow: jest.fn( () => jest.fn() ),
+	default: vi.fn(),
+	recordWidgetEventThenFollow: vi.fn( () => vi.fn() ),
 } ) );
 
 const STORAGE_KEY = 'jetpack_stats_widget_date_range_123';
@@ -42,7 +50,7 @@ async function renderWidget( menu = '' ) {
 
 describe( 'Stats widget', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		localStorage.clear();
 	} );
 
@@ -61,7 +69,7 @@ describe( 'Stats widget', () => {
 	} );
 
 	it( 'still renders where site data is blocked', async () => {
-		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
+		vi.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
 			throw new Error( 'SecurityError' );
 		} );
 		try {
@@ -111,6 +119,10 @@ describe( 'Stats widget', () => {
 		expect( screen.getByRole( 'link', { name: 'Explore more' } ) ).toHaveAttribute(
 			'href',
 			'https://example.com/stats/stats/day/123'
+		);
+		expect( mockStatsLink ).toHaveBeenCalledWith(
+			'https://example.com/stats/stats/day/123',
+			'/?section=traffic'
 		);
 		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'explore_more_clicked', {
 			destination: 'stats',

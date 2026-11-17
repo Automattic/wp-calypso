@@ -1,0 +1,12 @@
+// A surface's Column stretches its children, so the button keeps its own width.
+.agents-manager-open-help-center-button {
+	align-self: flex-start;
+}
+
+// A disabled primary button keeps its accent fill, so on a surface it takes the renderer's disabled
+// colors, as the basic Buttons do.
+.ai-ui-renderer
+	.components-button.is-primary.agents-manager-open-help-center-button[aria-disabled='true'] {
+	background: var( --ai-ui-renderer-disabled-background );
+	color: var( --ai-ui-renderer-disabled-foreground );
+}

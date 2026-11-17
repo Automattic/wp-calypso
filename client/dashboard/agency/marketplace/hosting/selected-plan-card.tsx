@@ -13,7 +13,7 @@ import { Card, CardBody, CardDivider, CardHeader } from '../../../components/car
 import { SectionHeader } from '../../../components/section-header';
 import type { ReactNode } from 'react';
 
-interface Props {
+interface SelectedPlanCardProps {
 	/** What is selected, e.g. "3 WordPress.com sites" or the plan name. */
 	label: ReactNode;
 	price: ReactNode;
@@ -40,7 +40,7 @@ export default function SelectedPlanCard( {
 	footnote,
 	assurance,
 	compactPrice,
-}: Props ) {
+}: SelectedPlanCardProps ) {
 	const isSmallScreen = useViewportMatch( 'small', '<' );
 	const cardRef = useRef< HTMLDivElement >( null );
 	const [ isCardInView, setIsCardInView ] = useState( false );

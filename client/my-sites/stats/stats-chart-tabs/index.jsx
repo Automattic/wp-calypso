@@ -30,6 +30,7 @@ import StatsError from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
+import { readChartType, saveChartType } from './chart-type';
 import { buildChartData, getQueryDate, transformChartDataToLineFormat } from './utility';
 
 import './style.scss';
@@ -46,21 +47,7 @@ const ChartTabShape = PropTypes.shape( {
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
 
-const CHART_TYPE_STORAGE_KEY = ( siteId ) => `jetpack_stats_chart_type_${ siteId }`;
-
-const getChartType = memoize( ( siteId, isMobile = false ) => {
-	if ( ! siteId ) {
-		return 'bar';
-	}
-
-	const savedChartType = localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) );
-
-	if ( [ 'bar', 'line' ].includes( savedChartType ) ) {
-		return savedChartType;
-	}
-
-	return isMobile ? 'line' : 'bar';
-} );
+const getChartType = memoize( readChartType );
 
 // Define chart type change event names
 const CHART_TYPE_EVENTS = {
@@ -162,8 +149,8 @@ class StatModuleChartTabs extends Component {
 
 		this.setState( { chartType: newType } );
 		if ( siteId ) {
-			localStorage.setItem( CHART_TYPE_STORAGE_KEY( siteId ), newType );
-			getChartType.cache.clear(); // Clear memoization cache when type changes
+			saveChartType( siteId, newType );
+			getChartType.cache.clear();
 		}
 
 		// Record the chart type change event

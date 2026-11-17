@@ -1,12 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider, createRootRoute, createRoute } from '@tanstack/react-router';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { Suspense } from 'react';
+import { createContext, Suspense, useContext } from 'react';
 import { usePersistentView } from '../use-persistent-view';
 import type { QueryParamFilterField } from '../use-persistent-view';
 import type { View } from '@wordpress/dataviews';
@@ -20,26 +20,27 @@ const slug = 'sites';
 
 function createTestWrapper() {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	let router: ReturnType< typeof createRouter > | undefined;
+	const ChildrenContext = createContext< React.ReactNode >( null );
+	const rootRoute = createRootRoute();
+	const RouteChildren = () => (
+		<Suspense fallback={ null }>{ useContext( ChildrenContext ) }</Suspense>
+	);
+	const indexRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/',
+		component: RouteChildren,
+	} );
+	const router = createRouter( {
+		routeTree: rootRoute.addChildren( [ indexRoute ] ),
+	} );
 
-	const Wrapper = ( { children }: { children: React.ReactNode } ) => {
-		const rootRoute = createRootRoute();
-		const indexRoute = createRoute( {
-			getParentRoute: () => rootRoute,
-			path: '/',
-			component: () => <Suspense fallback={ null }>{ children }</Suspense>,
-		} );
-
-		router = createRouter( {
-			routeTree: rootRoute.addChildren( [ indexRoute ] ),
-		} );
-
-		return (
-			<QueryClientProvider client={ queryClient }>
+	const Wrapper = ( { children }: { children: React.ReactNode } ) => (
+		<QueryClientProvider client={ queryClient }>
+			<ChildrenContext.Provider value={ children }>
 				<RouterProvider router={ router } />
-			</QueryClientProvider>
-		);
-	};
+			</ChildrenContext.Provider>
+		</QueryClientProvider>
+	);
 
 	return { Wrapper, getRouter: () => router };
 }
@@ -63,7 +64,7 @@ function mockUpdateCalypsoPreferences( preferences?: any ) {
 
 describe( 'usePersistentView', () => {
 	describe( 'view', () => {
-		it( 'should return the default view if there is no persisted view yet', async () => {
+		test( 'should return the default view if there is no persisted view yet', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const { Wrapper } = createTestWrapper();
@@ -80,7 +81,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should return the persisted view if exists', async () => {
+		test( 'should return the persisted view if exists', async () => {
 			const persistedView = {
 				type: 'grid',
 				layout: { previewSize: 120 },
@@ -104,7 +105,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should return the persisted view with synced transient properties from the current URL query params', async () => {
+		test( 'should return the persisted view with synced transient properties from the current URL query params', async () => {
 			const persistedView = {
 				type: 'grid',
 				layout: { previewSize: 120 },
@@ -133,7 +134,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should return the persisted view merged with transient filters from the current URL query params', async () => {
+		test( 'should return the persisted view merged with transient filters from the current URL query params', async () => {
 			const persistedView = {
 				type: 'grid',
 				layout: { previewSize: 120 },
@@ -179,7 +180,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should lock the transient filters when `lockQueryParamFilters` is set', async () => {
+		test( 'should lock the transient filters when `lockQueryParamFilters` is set', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const { Wrapper } = createTestWrapper();
@@ -205,7 +206,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should build a bare-value filter for a field whose operator is single-selection', async () => {
+		test( 'should build a bare-value filter for a field whose operator is single-selection', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const { Wrapper } = createTestWrapper();
@@ -232,7 +233,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
+		test( 'should convert "true"/"false" query param values into a boolean `is` filter', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const { Wrapper } = createTestWrapper();
@@ -257,7 +258,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should follow the default view fields when the persisted view has none', async () => {
+		test( 'should follow the default view fields when the persisted view has none', async () => {
 			const persistedView = {
 				type: 'table',
 				sort: { field: 'name', direction: 'desc' },
@@ -289,7 +290,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should keep the persisted view fields over the default view fields', async () => {
+		test( 'should keep the persisted view fields over the default view fields', async () => {
 			const persistedView = {
 				type: 'table',
 				sort: { field: 'name', direction: 'asc' },
@@ -316,7 +317,7 @@ describe( 'usePersistentView', () => {
 	} );
 
 	describe( 'updateView', () => {
-		it( 'should persist the new view', async () => {
+		test( 'should persist the new view', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const viewToPersist: View = {
@@ -350,7 +351,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should not persist fields that match the default view', async () => {
+		test( 'should not persist fields that match the default view', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const viewToPersist: View = {
@@ -386,7 +387,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should persist fields that differ from the default view', async () => {
+		test( 'should persist fields that differ from the default view', async () => {
 			mockGetCalypsoPreferences( {} );
 
 			const viewToPersist: View = {
@@ -418,7 +419,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should sync transient properties to the current URL query params without persisting the view', async () => {
+		test( 'should sync transient properties to the current URL query params without persisting the view', async () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
@@ -459,7 +460,7 @@ describe( 'usePersistentView', () => {
 			expect( result.current.resetView ).toBeFalsy();
 		} );
 
-		it( 'should remove transient filters from the current URL query params if no longer in the view', async () => {
+		test( 'should remove transient filters from the current URL query params if no longer in the view', async () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
@@ -493,7 +494,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should remove a bare-value transient filter from the current URL query params if no longer in the view', async () => {
+		test( 'should remove a bare-value transient filter from the current URL query params if no longer in the view', async () => {
 			mockGetCalypsoPreferences( {} );
 			mockUpdateCalypsoPreferences();
 
@@ -531,7 +532,7 @@ describe( 'usePersistentView', () => {
 	} );
 
 	describe( 'resetView', () => {
-		it( 'should clear the persisted view', async () => {
+		test( 'should clear the persisted view', async () => {
 			const persistedView = {
 				type: 'grid',
 				layout: { previewSize: 120 },
@@ -565,7 +566,7 @@ describe( 'usePersistentView', () => {
 			} );
 		} );
 
-		it( 'should clear transient properties from the current URL query params', async () => {
+		test( 'should clear transient properties from the current URL query params', async () => {
 			const persistedView = {
 				type: 'grid',
 				layout: { previewSize: 120 },

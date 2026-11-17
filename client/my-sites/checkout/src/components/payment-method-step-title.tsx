@@ -26,32 +26,20 @@ const Title = styled.span< { isCardSelected: boolean } >`
 	}
 `;
 
-export default function PaymentMethodStepTitle( {
-	currency,
-	isMobileCheckoutStickySummary,
-}: {
-	currency: string | null;
-	isMobileCheckoutStickySummary: boolean;
-} ) {
+export default function PaymentMethodStepTitle( { currency }: { currency: string | null } ) {
 	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const [ paymentMethodId ] = usePaymentMethodId();
 	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
-	const title =
-		isMobileCheckoutStickySummary || ( ! isActive && isComplete )
-			? __( 'Payment method' )
-			: __( 'Pick a payment method' );
+	const title = ! isActive && isComplete ? __( 'Payment method' ) : __( 'Pick a payment method' );
 
 	return (
 		<Title isCardSelected={ paymentMethodId === 'card' }>
 			<span>{ title }</span>
 			{ ! isActive && ! isComplete && availablePaymentMethodIds.includes( 'card' ) && (
 				<span className="payment-method-step-title__logos" aria-hidden="true">
-					<CreditCardLogos
-						currency={ currency }
-						isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
-					/>
+					<CreditCardLogos currency={ currency } />
 				</span>
 			) }
 		</Title>

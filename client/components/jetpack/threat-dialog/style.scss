@@ -16,12 +16,6 @@
 	.dashboard-notice {
 		margin: 23px 0 23px;
 	}
-	.dashboard-notice.is-error {
-		color: var(--color-error);
-	}
-	.dashboard-notice.is-warning {
-		color: var(--color-warning);
-	}
 
 	.threat-dialog {
 		&__header {

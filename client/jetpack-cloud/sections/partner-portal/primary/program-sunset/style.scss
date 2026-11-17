@@ -1,0 +1,238 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.program-sunset-split {
+	display: grid;
+	grid-template-columns: 1fr;
+	min-height: 100%;
+	margin-block-end: 32px;
+	overflow: hidden;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px;
+	background: var(--color-surface);
+
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.program-sunset-hero {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding: 32px 24px;
+
+	@include break-large {
+		padding: 64px 48px;
+	}
+}
+
+.program-sunset-eyebrow {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-title {
+	margin: 0;
+	font-size: 2.25rem;
+	font-weight: 400;
+	line-height: 1.15;
+	color: var(--color-text);
+
+	@include break-large {
+		font-size: 3rem;
+	}
+}
+
+.program-sunset-intro {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.6;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-stats {
+	display: grid;
+	flex: 1;
+	grid-template-columns: 1fr;
+	grid-auto-rows: 1fr;
+	gap: 16px;
+	margin: 0;
+	list-style: none;
+}
+
+.program-sunset-stat {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 8px;
+	padding: 20px;
+	border-radius: 4px;
+	background: var(--color-neutral-0);
+}
+
+.program-sunset-stat-eyebrow {
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-stat-value {
+	font-size: 2.25rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--color-primary);
+}
+
+.program-sunset-stat-label {
+	font-size: 0.875rem;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-panel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	background: var(--color-primary);
+
+	@include break-large {
+		padding: 64px 48px;
+	}
+}
+
+.program-sunset-panel-card {
+	width: 100%;
+	max-width: 560px;
+	box-sizing: border-box;
+	padding: 32px 24px;
+	border-radius: 8px;
+	background: var(--color-surface);
+
+	@include break-large {
+		padding: 48px 40px;
+	}
+}
+
+.program-sunset-panel-title {
+	margin: 0 0 8px;
+	font-size: 1.75rem;
+	font-weight: 400;
+	line-height: 1.2;
+	color: var(--color-text);
+}
+
+.program-sunset-panel-subtitle {
+	margin: 0 0 24px;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-options {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin: 0 0 24px;
+	list-style: none;
+}
+
+.program-sunset-option {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 16px 20px;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 4px;
+}
+
+.program-sunset-option.is-highlighted {
+	border: 2px solid var(--color-primary);
+	background: var(--color-primary-0);
+}
+
+.program-sunset-option-title {
+	font-size: 1rem;
+	color: var(--color-text);
+}
+
+.program-sunset-option-description {
+	font-size: 0.875rem;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-option-action {
+	margin-block-start: 12px;
+}
+
+.program-sunset-support {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-pillars {
+	margin-block-end: 48px;
+}
+
+.program-sunset-pillars-title {
+	margin: 0 0 8px;
+	font-size: 1.75rem;
+	font-weight: 400;
+	line-height: 1.2;
+	color: var(--color-text);
+}
+
+.program-sunset-pillars-subtitle {
+	margin: 0 0 24px;
+	color: var(--color-text-subtle);
+}
+
+.program-sunset-pillars-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+
+	@include break-medium {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.program-sunset-pillar {
+	padding: 24px;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px;
+	background: var(--color-surface);
+}
+
+.program-sunset-pillar-title {
+	margin: 0 0 12px;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--color-primary);
+}
+
+.program-sunset-pillar-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	list-style: none;
+	color: var(--color-text);
+}
+
+.program-sunset-pillar-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+.program-sunset-pillar-icon {
+	flex-shrink: 0;
+	fill: var(--studio-jetpack-green-50);
+	color: var(--studio-jetpack-green-50);
+}

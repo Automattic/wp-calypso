@@ -1,11 +1,13 @@
 import { DomainSubtype, DomainStatus } from '@automattic/api-core';
+import { userPurchasesQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
-import { canEnableAutoRenew } from '../../utils/domain';
+import { canEnableAutoRenew, needsPaymentMethodToAutoRenew } from '../../utils/domain';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainExpiryField = ( {
@@ -18,6 +20,10 @@ export const DomainExpiryField = ( {
 	value: string;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
+	const { data: purchases } = useQuery( userPurchasesQuery() );
+	const purchase = purchases?.find(
+		( p ) => p.ID === parseInt( domain.subscription_id ?? '0', 10 )
+	);
 
 	// Site Overview does not show the Status column, so we use this column for error messages.
 	if (
@@ -37,8 +43,12 @@ export const DomainExpiryField = ( {
 		return <span>-</span>;
 	}
 
+	const autoRenewOnLabel = needsPaymentMethodToAutoRenew( domain, purchase )
+		? __( 'Needs payment method' )
+		: __( 'Auto-renew is on' );
+
 	const renewLabel = domain.auto_renewing
-		? __( 'Auto-renew is on' )
+		? autoRenewOnLabel
 		: canEnableAutoRenew( domain ) && (
 				<Link
 					to={ purchaseSettingsRoute.fullPath }
@@ -54,9 +64,17 @@ export const DomainExpiryField = ( {
 			);
 
 	return (
-		<VStack justify="flex-start" alignment="left" spacing={ 1 }>
-			<Text intent={ domain.expired ? 'error' : undefined }>{ value }</Text>
-			{ renewLabel && <Text variant="muted">{ renewLabel }</Text> }
+		<VStack justify="flex-start" alignment="left" spacing={ 0 }>
+			<Text intent={ domain.expired ? 'error' : undefined }>
+				{ domain.expired
+					? sprintf(
+							/* translators: %s is the date the domain expired, e.g. September 4, 2026. */
+							__( 'Expired on %s' ),
+							value
+						)
+					: value }
+			</Text>
+			{ ! domain.expired && renewLabel && <Text variant="muted">{ renewLabel }</Text> }
 		</VStack>
 	);
 };

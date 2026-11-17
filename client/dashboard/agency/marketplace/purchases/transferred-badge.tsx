@@ -14,12 +14,12 @@ import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 const BILLING_GUIDE_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/moving-existing-wordpress-com-plans-into-the-automattic-for-agencies-billing-system/';
 
-interface Props {
+interface TransferredBadgeProps {
 	billedFrom: string;
 	locale: string;
 }
 
-export default function TransferredBadge( { billedFrom, locale }: Props ) {
+export default function TransferredBadge( { billedFrom, locale }: TransferredBadgeProps ) {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
 	const [ isOpen, setIsOpen ] = useState( false );
 

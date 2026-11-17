@@ -6,6 +6,15 @@ import { siteSelection, sites } from 'calypso/my-sites/controller';
 export default function () {
 	page( '/media', siteSelection, sites, makeLayout, clientRender );
 
+	// Must stay above `/media/:domain/:mediaId`, which would otherwise match it.
+	page(
+		'/media/videopress/:domain',
+		siteSelection,
+		redirectIfDuplicatedView( 'admin.php?page=jetpack-videopress' ),
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/media/:filter(this-post|images|documents|videos|audio)?/:domain',
 		siteSelection,

@@ -18,7 +18,7 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
 import Column from '../../../sites/add-new-site/column';
 import MenuItem from '../../../sites/add-new-site/menu-item';
-import { PRESSABLE_AGENCY_URL } from '../../marketplace/hosting/lib/pressable-plans';
+import { crossoverLinkProps } from '../../crossover/store';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
 import A4ALogo from './a4a-logo';
 import DevSiteCard from './dev-site-card';
@@ -117,9 +117,8 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 					description={ __( 'Best for large-scale businesses and major eCommerce sites.' ) }
 					{ ...( ownsPressableDirectly
 						? {
-								href: PRESSABLE_AGENCY_URL,
+								...crossoverLinkProps( 'pressable', () => recordNavigation( 'pressable' ) ),
 								target: '_blank',
-								onClick: () => recordNavigation( 'pressable' ),
 							}
 						: toMenuItemProps( pressableMarketplaceProps ) ) }
 					aria-label={ __( 'Add a new production site on Pressable' ) }

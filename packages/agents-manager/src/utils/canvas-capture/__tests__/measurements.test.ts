@@ -1,15 +1,16 @@
-jest.mock( '../../block-ids', () => ( {
-	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
-} ) );
-jest.mock( '../../editor-blocks', () => ( {
-	getBlock: jest.fn(),
-	getBlockRootClientId: jest.fn(),
-	getBlocks: jest.fn(),
-} ) );
-
+import { vi } from 'vitest';
 import { getBlock, getBlockRootClientId, getBlocks } from '../../editor-blocks';
 import { describeMeasuredLayout, describeUnmoved, snapshotLayout } from '../measurements';
 import type { EditorBlock } from '../../editor-blocks';
+
+vi.mock( '../../block-ids', () => ( {
+	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
+} ) );
+vi.mock( '../../editor-blocks', () => ( {
+	getBlock: vi.fn(),
+	getBlockRootClientId: vi.fn(),
+	getBlocks: vi.fn(),
+} ) );
 
 interface Rect {
 	top: number;
@@ -80,15 +81,13 @@ function mountCanvas( roots: CanvasBlock[] ) {
 		innerBlocks: ( block.children ?? [] ).map( toEditorBlock ),
 	} );
 
-	jest
-		.mocked( getBlock )
-		.mockImplementation( ( id ) => store[ id ] && toEditorBlock( store[ id ].block ) );
-	jest
-		.mocked( getBlocks )
-		.mockImplementation(
-			( id ) => ( id && store[ id ]?.block.children?.map( toEditorBlock ) ) || []
-		);
-	jest.mocked( getBlockRootClientId ).mockImplementation( ( id ) => store[ id ]?.parent );
+	vi.mocked( getBlock ).mockImplementation(
+		( id ) => store[ id ] && toEditorBlock( store[ id ].block )
+	);
+	vi.mocked( getBlocks ).mockImplementation(
+		( id ) => ( id && store[ id ]?.block.children?.map( toEditorBlock ) ) || []
+	);
+	vi.mocked( getBlockRootClientId ).mockImplementation( ( id ) => store[ id ]?.parent );
 }
 
 const LOGO_BLOCK = { top: 25, left: 0, width: 140, height: 140 };
@@ -175,7 +174,7 @@ const rowIn = ( notes: string[], clientId: string ) =>
 
 afterEach( () => {
 	document.body.innerHTML = '';
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 } );
 
 describe( 'with a small image at the top of its logo block', () => {
@@ -351,16 +350,76 @@ describe( 'with cards of different content', () => {
 	} );
 } );
 
+describe( 'with buttons of different heights', () => {
+	// Buttons in a row, each at its own top and height, laid out at
+	// fractional pixels as the editor does.
+	const buttons = ( boxes: [ top: number, height: number ][] ): CanvasBlock => ( {
+		clientId: 'btns',
+		name: 'core/buttons',
+		rect: { top: 0, left: 0, width: 600, height: 60 },
+		children: boxes.map( ( [ top, height ], index ) => ( {
+			clientId: `b${ index }`,
+			name: 'core/button',
+			rect: { top, left: index * 200, width: 180, height },
+			style: { backgroundColor: 'rgb(151, 71, 47)' },
+		} ) ),
+	} );
+
+	const rowOf = () =>
+		describeMeasuredLayout( [ 'btns' ] ).find( ( note ) =>
+			note.startsWith( 'Row in buttons (btns)' )
+		);
+
+	it( 'reports a filled button beside a shorter link-style one as level', () => {
+		// Centres at 23 and 25.4.
+		mountCanvas( [
+			buttons( [
+				[ -1.4, 48.8 ],
+				[ 10.4, 30 ],
+			] ),
+		] );
+
+		expect( rowOf() ).toContain( 'button (b0) -1.4–47.4, button (b1) 10.4–40.4' );
+		expect( rowOf() ).toContain( 'Their visible centre lines are level (within 3px).' );
+	} );
+
+	it( 'gives every offset as a number when the row is not level', () => {
+		// Each within the tolerance of the first, but 4px apart from each other.
+		mountCanvas( [
+			buttons( [
+				[ 10, 40 ],
+				[ 8, 40 ],
+				[ 12, 40 ],
+			] ),
+		] );
+
+		expect( rowOf() ).toContain(
+			"not level. Against button (b0)'s: button (b1)'s is 2px above it; button (b2)'s is 2px below it."
+		);
+	} );
+
+	// Rounding the offsets first let up to 3.4px pass, more readily upward
+	// than downward, and depending on which button came first.
+	it.each( [
+		[ 'below', [ 10, 13.2 ] ],
+		[ 'above', [ 13.2, 10 ] ],
+	] )( 'reports a 3.2px offset as not level, whichever way it goes (%s)', ( direction, tops ) => {
+		mountCanvas( [ buttons( tops.map( ( top ) => [ top, 40 ] ) ) ] );
+
+		expect( rowOf() ).toContain( `button (b1)'s is 3.2px ${ direction } it.` );
+	} );
+} );
+
 it( 'gives nothing when the canvas is not mounted', () => {
 	expect( describeMeasuredLayout( EDITED ) ).toEqual( [] );
 } );
 
 it( 'gives nothing rather than throwing when the editor cannot be read', () => {
 	mountCanvas( [ header( { image: CAPPED_IMAGE } ) ] );
-	jest.mocked( getBlocks ).mockImplementation( () => {
+	vi.mocked( getBlocks ).mockImplementation( () => {
 		throw new Error( 'No store' );
 	} );
-	jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 	expect( describeMeasuredLayout( EDITED ) ).toEqual( [] );
 } );

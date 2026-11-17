@@ -1,6 +1,8 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
+import { ThemedIllustration } from '../../components/themed-illustration';
+import illustrationDarkUrl from './performance-callout-illustration-dark.svg';
 import illustrationUrl from './performance-callout-illustration.svg';
 
 export function getBackendCalloutProps() {
@@ -9,7 +11,7 @@ export function getBackendCalloutProps() {
 		upsellId: 'site-performance-backend',
 		upsellIcon: chartBar,
 		upsellTitle: __( 'Dive deep into your site performance' ),
-		upsellImage: illustrationUrl,
+		upsellImage: <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />,
 		upsellDescription: __(
 			'Get request-level tracing, top slow endpoints, and plugin bottleneck detection. Available on Business and Commerce plans.'
 		),

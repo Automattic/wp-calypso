@@ -32,7 +32,7 @@ type ToggleField = {
 	[ K in keyof LeadMatchingFormData ]: LeadMatchingFormData[ K ] extends boolean ? K : never;
 }[ keyof LeadMatchingFormData ];
 
-interface Props {
+interface LeadMatchingSectionFieldsProps {
 	section: Exclude< LeadMatchingSection, 'availability' >;
 	formData: LeadMatchingFormData;
 	onChange: ( fields: Partial< LeadMatchingFormData > ) => void;
@@ -76,7 +76,11 @@ function SelectField( {
  * The questions of one lead matching section, in the order and wording of
  * the full lead matching form.
  */
-export default function LeadMatchingSectionFields( { section, formData, onChange }: Props ) {
+export default function LeadMatchingSectionFields( {
+	section,
+	formData,
+	onChange,
+}: LeadMatchingSectionFieldsProps ) {
 	const selectAllThatApply = __( 'Select all that apply.' );
 
 	const tokens = (

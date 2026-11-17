@@ -37,6 +37,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
@@ -49,6 +50,7 @@ import {
 	info,
 	check,
 } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -117,7 +119,6 @@ import {
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
-import { BillingPurchaseInfoPopover } from '../dataviews';
 import { MovePurchaseActionItem } from '../move-purchase/move-purchase-action-item';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -925,10 +926,12 @@ function WPComResourceMeters( {
 
 function getFields( {
 	isMutationPending,
+	pendingAutoRenew,
 	user,
 	purchase,
 }: {
 	isMutationPending?: boolean;
+	pendingAutoRenew?: boolean;
 	user: User;
 	purchase: Purchase;
 } ): Field< Purchase >[] {
@@ -953,18 +956,40 @@ function getFields( {
 				const locale = useLocale();
 				const navigate = useNavigate();
 				const { getValue } = field;
-				const helpText = ( () => {
+				const help = ( () => {
 					if (
 						purchase.is_auto_renew_enabled &&
-						Boolean( purchase.renew_date ) &&
+						purchase.renew_date &&
 						isRenewingBeforeExpiration( purchase )
 					) {
-						// translators: %(date)s is a formatted date string
-						return sprintf( __( 'You will be billed on %(date)s' ), {
-							date: formatDate( new Date( purchase.renew_date ?? '' ), locale, {
-								dateStyle: 'long',
-							} ),
+						const renewDate = formatDate( new Date( purchase.renew_date ), locale, {
+							dateStyle: 'long',
 						} );
+						const isRenewingEarly =
+							Boolean( purchase.expiry_date ) &&
+							! purchase.is_hundred_year_domain &&
+							purchase.renew_date !== purchase.expiry_date;
+						if ( ! isRenewingEarly ) {
+							// translators: %(date)s is a formatted date string
+							return sprintf( __( 'You will be billed on %(date)s' ), { date: renewDate } );
+						}
+						return createInterpolateElement(
+							/* translators: <renewDate/> and <expiryDate/> are formatted dates, e.g. "January 5, 2026". inlineSupportLink is a web link. */
+							__(
+								'You will be billed on <renewDate/>. Your subscription is paid through <expiryDate/>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+							),
+							{
+								renewDate: <span>{ renewDate }</span>,
+								expiryDate: (
+									<span>
+										{ formatDate( new Date( purchase.expiry_date ), locale, {
+											dateStyle: 'long',
+										} ) }
+									</span>
+								),
+								inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+							}
+						);
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
 						const date = formatDate( new Date( purchase.expiry_date ), locale, {
@@ -985,48 +1010,10 @@ function getFields( {
 					}
 					return undefined;
 				} )();
-				const help = ( () => {
-					if ( ! helpText ) {
-						return helpText;
-					}
-					if (
-						purchase.expiry_date &&
-						purchase.renew_date &&
-						! purchase.is_hundred_year_domain &&
-						purchase.is_auto_renew_enabled &&
-						purchase.renew_date !== purchase.expiry_date &&
-						( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
-					) {
-						return (
-							<HStack spacing={ 1 } expanded={ false }>
-								<span>{ helpText }</span>
-								<BillingPurchaseInfoPopover>
-									{ createInterpolateElement(
-										/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
-										__(
-											'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
-										),
-										{
-											expireDate: (
-												<span>
-													{ formatDate( new Date( purchase.expiry_date ), locale, {
-														dateStyle: 'long',
-													} ) }
-												</span>
-											),
-											inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
-										}
-									) }
-								</BillingPurchaseInfoPopover>
-							</HStack>
-						);
-					}
-					return helpText;
-				} )();
 				if (
 					! purchase.is_rechargeable &&
 					! purchase.is_iap_purchase &&
-					( purchase.is_auto_renew_enabled || isAutoRenewToggleDisabled( purchase, user ) )
+					isAutoRenewToggleDisabled( purchase, user )
 				) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;
@@ -1034,7 +1021,7 @@ function getFields( {
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
-								title={ __( 'Enable auto-renew' ) }
+								title={ field.label }
 								description={ __( 'Auto-renew needs a payment method.' ) }
 								actions={
 									<Button
@@ -1054,22 +1041,45 @@ function getFields( {
 						</div>
 					);
 				}
+				const showNoPaymentMethodNotice =
+					purchase.is_auto_renew_enabled &&
+					! purchase.is_rechargeable &&
+					! purchase.is_iap_purchase;
 				return (
-					<ToggleControl
-						__nextHasNoMarginBottom
-						className="purchase-settings__toggle-control"
-						label={
-							! purchase.is_auto_renew_enabled &&
-							isExpiredAndInGracePeriod( purchase ) &&
-							purchase.is_jetpack_plan_or_product
-								? __( 'Re-activate subscription' )
-								: field.label
-						}
-						checked={ getValue( { item: purchase } ) }
-						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
-						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
-						help={ help }
-					/>
+					<VStack spacing={ 3 }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={
+								! purchase.is_auto_renew_enabled &&
+								isExpiredAndInGracePeriod( purchase ) &&
+								purchase.is_jetpack_plan_or_product
+									? __( 'Re-activate subscription' )
+									: field.label
+							}
+							checked={ pendingAutoRenew ?? getValue( { item: purchase } ) }
+							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
+							onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
+							help={ help }
+						/>
+						{ showNoPaymentMethodNotice && (
+							<HStack justify="space-between" alignment="center" spacing={ 3 }>
+								<span>{ __( 'Will not auto-renew because there is no payment method' ) }</span>
+								<Button
+									variant="secondary"
+									size="compact"
+									__next40pxDefaultSize
+									onClick={ () =>
+										navigate( {
+											to: changePaymentMethodRoute.fullPath,
+											params: { purchaseId: purchase.ID },
+										} )
+									}
+								>
+									{ __( 'Add payment method' ) }
+								</Button>
+							</HStack>
+						) }
+					</VStack>
 				);
 			},
 		},
@@ -1101,7 +1111,9 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		mutate: setAutoRenew,
 		error,
 		isPending: isMutationPending,
+		variables: pendingAutoRenew,
 	} = useMutation( userPurchaseSetAutoRenewQuery() );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
@@ -1117,7 +1129,14 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	const fields = getFields( { isMutationPending, user, purchase } );
+	// Only the toggle moves ahead of the refetch. The help text and payment method below it wait
+	// for the updated purchase, so the card doesn't show a state the server hasn't confirmed yet.
+	const fields = getFields( {
+		isMutationPending,
+		pendingAutoRenew: isMutationPending ? pendingAutoRenew?.autoRenew : undefined,
+		user,
+		purchase,
+	} );
 	if ( fields.length === 0 && ! error ) {
 		return null;
 	}
@@ -1138,7 +1157,18 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 								} );
 								return;
 							}
-							setAutoRenew( { purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled } );
+							setAutoRenew(
+								{ purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled },
+								{
+									onSuccess: ( _data, { autoRenew } ) =>
+										createSuccessNotice(
+											autoRenew
+												? __( 'Auto-renew has been enabled.' )
+												: __( 'Auto-renew has been disabled.' ),
+											{ type: 'snackbar' }
+										),
+								}
+							);
 						}
 					} }
 				/>

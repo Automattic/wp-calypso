@@ -12,7 +12,7 @@ The authorize page (`authorize.jsx`) chooses its visual treatment from the `from
 
 - `from=jetpack-connector` — the Connectors card, the first entry point on the unified flow (`isUnifiedFlow()` in [`entry-points.ts`](./entry-points.ts); the `renderContent()` unified branch). Plugin-aware via `connection-content/`. The unified flow is the only one that supports secondary connections (see signal table below).
 - Standard entry-point names (`^[a-z][a-z0-9]*(_[a-z0-9]+)+$`, at most 64 characters, e.g. `jetpack_premium_analytics_onboarding`) — the unified flow, like `jetpack-connector`. After approving, they go straight back to `redirect_after_auth`: no plans page, no `from` appended. Legacy values all contain a hyphen, so they never match.
-- `from=jetpack-onboarding` — unified flow (no plugin-aware cards), shares wrapper with the connector branch via `isUnifiedConnectionFlow()`.
+- `from=jetpack-onboarding` — My Jetpack's onboarding takeover, on the unified flow. Matched exactly, so variants and typos don't inherit it. After approving, it returns to `redirect_after_auth` with `from=jetpack-onboarding` appended, which starts My Jetpack's onboarding tour. New onboarding screens, such as the setup wizard, should use a standard name instead.
 - `from=my-jetpack`, `from=connect-after-checkout` — legacy My Jetpack connect/reconnect surfaces.
 - `from=woocommerce-core-profiler`, `from=woocommerce-onboarding`, `from=woocommerce-services-auto-authorize`, `from=woocommerce-setup-wizard`, plus any `wooDnaConfig().isWooDnaFlow()` match — Woo JPC / Woo DNA flows.
 - `from=sso` — Jetpack SSO authorize handshake.

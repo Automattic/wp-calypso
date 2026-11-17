@@ -18,6 +18,8 @@ import PageLayout from '../../components/page-layout';
 import { usePlugin } from '../plugin/use-plugin';
 import { PluginSites } from './components/plugin-sites';
 import { PluginSwitcher } from './components/plugin-switcher';
+import { PluginsEmptyState } from './components/plugins-empty-state';
+import { usePluginsEmptyReason } from './hooks/use-plugins-empty-reason';
 import { useSitesById } from './hooks/use-sites-by-id';
 import { mapApiPluginsToDataViewPlugins } from './utils';
 import type { PluginListRow } from './types';
@@ -58,15 +60,18 @@ export default function PluginsList() {
 			enableGlobalSearch: true,
 		} ) );
 	}, [] );
-	const { data: plugins, paginationInfo } = useMemo(
-		() =>
-			filterSortAndPaginate(
-				mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
-				view,
-				fields
-			),
-		[ fields, sitesById, sitesPlugins, view ]
+	const allPlugins = useMemo(
+		() => mapApiPluginsToDataViewPlugins( sitesById, sitesPlugins ),
+		[ sitesById, sitesPlugins ]
 	);
+	const { data: plugins, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( allPlugins, view, fields ),
+		[ allPlugins, fields, view ]
+	);
+	const emptyReason = usePluginsEmptyReason();
+	// A direct plugin link can still be installed from its "Available on" tab, as long as there is a site to install it on.
+	const showEmptyState =
+		emptyReason === 'no-sites' || ( emptyReason === 'no-plugins' && ! pluginSlug );
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 
@@ -136,6 +141,23 @@ export default function PluginsList() {
 	const { isLoading: isPluginLoading } = usePlugin( selectedPluginSlug, {
 		enabled: ! isSmallViewport,
 	} );
+
+	if ( showEmptyState ) {
+		return (
+			<PageLayout
+				size="large"
+				header={
+					<PageHeader
+						title={ __( 'Manage plugins' ) }
+						description={ __( 'Install, activate, and manage plugins across your sites.' ) }
+					/>
+				}
+			>
+				<PluginsEmptyState reason={ emptyReason } />
+				<PerformanceTrackerStop />
+			</PageLayout>
+		);
+	}
 
 	if ( isSmallViewport ) {
 		return (

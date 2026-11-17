@@ -2,26 +2,27 @@
  * @jest-environment jsdom
  */
 import { select, subscribe } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { isEditorPage } from '../../../utils/is-editor-page';
 import { showTemplate, showTemplateCallback } from '../callback';
 import type { ShowTemplateIO } from '../callback';
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn( () => undefined ),
-	dispatch: jest.fn( () => undefined ),
-	subscribe: jest.fn( () => () => {} ),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn( () => undefined ),
+	dispatch: vi.fn( () => undefined ),
+	subscribe: vi.fn( () => () => {} ),
 } ) );
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '../../../utils/is-editor-page', () => ( {
-	isEditorPage: jest.fn( () => true ),
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '../../../utils/is-editor-page', () => ( {
+	isEditorPage: vi.fn( () => true ),
 } ) );
 
 type IOOverrides = Partial< ShowTemplateIO > & {
 	renderingModes?: Record< string, Record< string, string > >;
 };
 
-const setRenderingMode = jest.fn();
-const setRenderingModes = jest.fn();
+const setRenderingMode = vi.fn();
+const setRenderingModes = vi.fn();
 
 /**
  * A page in `post-only` on a themed site — the case the ability exists for.
@@ -43,7 +44,7 @@ function makeIO( overrides: IOOverrides = {} ): ShowTemplateIO {
 	};
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'showTemplate', () => {
 	it( 'turns the template on and persists the choice for this theme and post type', async () => {
@@ -137,7 +138,7 @@ describe( 'showTemplate', () => {
 
 describe( 'showTemplateCallback', () => {
 	it( 'refuses off an editor page without touching the editor', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		( isEditorPage as Mock ).mockReturnValue( false );
 
 		const result = await showTemplateCallback();
 
@@ -147,7 +148,7 @@ describe( 'showTemplateCallback', () => {
 	} );
 
 	it( 'refuses when the editor store is unavailable', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+		( isEditorPage as Mock ).mockReturnValue( true );
 
 		const result = await showTemplateCallback();
 
@@ -159,46 +160,76 @@ describe( 'showTemplateCallback', () => {
 	 * The part block mounts before the entity behind it arrives, so for a beat it
 	 * sits in the tree with nothing under it. The structure the agent reads is
 	 * built from those children, so a part reported at that moment is a part it
-	 * cannot see.
+	 * cannot see. A part saved empty never gets children, so its entity
+	 * resolving is what settles it.
 	 */
-	it( 'waits for a part to have blocks of its own, not just to exist', async () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
+	describe( 'waits for a part to load, not just to exist', () => {
+		const part = {
+			blocks: [] as string[],
+			resolved: false,
+			record: undefined as { content?: string } | undefined,
+		};
+		let listeners: ( () => void )[] = [];
 
-		let partBlocks: string[] = [];
-		const listeners: ( () => void )[] = [];
+		beforeEach( () => {
+			( isEditorPage as Mock ).mockReturnValue( true );
+			Object.assign( part, { blocks: [], resolved: false, record: undefined } );
+			listeners = [];
 
-		( select as jest.Mock ).mockImplementation( ( store ) => {
-			if ( store === 'core/block-editor' ) {
+			( select as Mock ).mockImplementation( ( store ) => {
+				if ( store === 'core/block-editor' ) {
+					return {
+						getBlocksByName: () => [ 'header-part' ],
+						getBlocks: () => part.blocks,
+						getBlock: () => ( { attributes: { slug: 'header', theme: 'assembler' } } ),
+					};
+				}
+				if ( store === 'core/editor' ) {
+					return {
+						getRenderingMode: () => 'post-only',
+						getCurrentPostType: () => 'page',
+						getCurrentTemplateId: () => 'assembler//home',
+					};
+				}
 				return {
-					getBlocksByName: () => [ 'header-part' ],
-					getBlocks: () => partBlocks,
+					getCurrentTheme: () => ( { stylesheet: 'assembler' } ),
+					hasFinishedResolution: () => part.resolved,
+					getEditedEntityRecord: () => part.record,
 				};
-			}
-			if ( store === 'core/editor' ) {
-				return {
-					getRenderingMode: () => 'post-only',
-					getCurrentPostType: () => 'page',
-					getCurrentTemplateId: () => 'assembler//home',
-				};
-			}
-			return { getCurrentTheme: () => ( { stylesheet: 'assembler' } ) };
-		} );
-		( subscribe as jest.Mock ).mockImplementation( ( listener ) => {
-			listeners.push( listener );
-			return () => {};
+			} );
+			( subscribe as Mock ).mockImplementation( ( listener ) => {
+				listeners.push( listener );
+				return () => {};
+			} );
 		} );
 
-		const pending = showTemplateCallback();
-		await Promise.resolve();
+		it.each( [
+			{
+				case: 'its saved blocks reach the tree',
+				load: () =>
+					Object.assign( part, {
+						resolved: true,
+						record: { content: '<!-- wp:site-title /-->' },
+						blocks: [ 'site-title' ],
+					} ),
+			},
+			{
+				case: 'its entity resolves empty',
+				load: () => Object.assign( part, { resolved: true, record: { content: '' } } ),
+			},
+		] )( 'resolves once $case', async ( { load } ) => {
+			const pending = showTemplateCallback();
+			await Promise.resolve();
 
-		// The node is there and the naive check would have returned by now.
-		expect( listeners.length ).toBeGreaterThan( 0 );
+			// The node is there and the naive check would have returned by now.
+			expect( listeners.length ).toBeGreaterThan( 0 );
 
-		partBlocks = [ 'site-title' ];
-		listeners.forEach( ( listener ) => listener() );
+			load();
+			listeners.forEach( ( listener ) => listener() );
 
-		const result = await pending;
+			const result = await pending;
 
-		expect( result.result.details ).toMatchObject( { templatePartsInView: true } );
+			expect( result.result.details ).toMatchObject( { templatePartsInView: true } );
+		} );
 	} );
 } );

@@ -1,7 +1,9 @@
 import * as renderer from '@automattic/ai-ui-renderer';
-import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
-import { render, screen, waitFor } from '@testing-library/react';
+import { BASIC_CATALOG_ID, CHARTS_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
+import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import * as tracks from '../../utils/tracks';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
@@ -11,11 +13,12 @@ import {
 } from '../catalogs';
 import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 
-jest.mock( '../../components/style-pickers', () => ( {
-	ButtonPicker: jest.fn( () => null ),
-	ColorPicker: jest.fn( () => null ),
-	FontPicker: jest.fn( () => null ),
+vi.mock( '../../components/style-pickers', () => ( {
+	ButtonPicker: vi.fn( () => null ),
+	ColorPicker: vi.fn( () => null ),
+	FontPicker: vi.fn( () => null ),
 } ) );
+vi.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: vi.fn() } ) );
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
 
@@ -29,25 +32,26 @@ function createCatalog(
 	};
 }
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
 afterAll( () => {
 	// The real Tracks module was spied on; let later suites install their own mocks.
-	jest.resetModules();
+	vi.resetModules();
 } );
 
-it( 'builds the Basic catalog, Agents Manager’s and each provider’s', () => {
+it( 'builds the Basic catalog, the charts catalog, Agents Manager’s and each provider’s', () => {
 	const catalogs = createInteractiveUiCatalogs( renderer, [ createCatalog( WOO_CATALOG_ID ) ] );
 
 	expect( catalogs.map( ( { id } ) => id ) ).toEqual( [
 		BASIC_CATALOG_ID,
+		CHARTS_CATALOG_ID,
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
 } );
 
 it( 'records the shared response event when a provider’s component renders', async () => {
-	const recordBigSkyTracksEvent = jest
+	const recordBigSkyTracksEvent = vi
 		.spyOn( tracks, 'recordBigSkyTracksEvent' )
 		.mockImplementation( () => undefined );
 	const catalogs = createInteractiveUiCatalogs( renderer, [
@@ -55,8 +59,8 @@ it( 'records the shared response event when a provider’s component renders', a
 	] );
 	const runtime = renderer.createInteractiveUiRuntime( {
 		catalogs,
-		onAction: jest.fn(),
-		onError: jest.fn(),
+		onAction: vi.fn(),
+		onError: vi.fn(),
 	} );
 
 	runtime.processMessages(
@@ -92,11 +96,11 @@ it( 'records the shared response event when a provider’s component renders', a
 } );
 
 it( 'renders the style pickers with the props their abilities send', async () => {
-	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
-	const onError = jest.fn();
+	vi.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = vi.fn();
 	const runtime = renderer.createInteractiveUiRuntime( {
 		catalogs: createInteractiveUiCatalogs( renderer ),
-		onAction: jest.fn(),
+		onAction: vi.fn(),
 		onError,
 	} );
 	const variations = [ { title: 'Bold', settings: { color: { palette: { theme: [] } } } } ];
@@ -134,23 +138,60 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 
 	await waitFor( () => expect( ButtonPicker ).toHaveBeenCalled() );
 
-	expect( jest.mocked( ColorPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+	expect( vi.mocked( ColorPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 		variations,
 		surfaceId: 'pickers',
 	} );
-	expect( jest.mocked( FontPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+	expect( vi.mocked( FontPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 		themeVariations: variations,
 		dynamicVariations: variations,
 	} );
-	expect( jest.mocked( ButtonPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+	expect( vi.mocked( ButtonPicker ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 		buttonVariations: variations,
 		maxButtonsToShow: 6,
 	} );
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
+it( 'renders the Help Center button the support hand-off sends', async () => {
+	vi.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = vi.fn();
+	const runtime = renderer.createInteractiveUiRuntime( {
+		catalogs: createInteractiveUiCatalogs( renderer ),
+		onAction: vi.fn(),
+		onError,
+	} );
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'help-center',
+					catalogId: AGENTS_MANAGER_CATALOG_ID,
+					components: [
+						{
+							id: 'root',
+							component: 'AgentsManagerOpenHelpCenterButton',
+							message: 'Summary for support.',
+						},
+					],
+				},
+			},
+		],
+		'message'
+	);
+
+	render( <renderer.InteractiveUiSurface surface={ runtime.getSurface( 'help-center' )! } /> );
+
+	fireEvent.click( await screen.findByRole( 'button', { name: 'Get help' } ) );
+
+	expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary for support.' );
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
 it( 'skips a catalog that fails to build, and keeps the others', () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 	const catalogs = createInteractiveUiCatalogs( renderer, [
 		createCatalog( 'urn:broken:v1', {} ),
@@ -159,6 +200,7 @@ it( 'skips a catalog that fails to build, and keeps the others', () => {
 
 	expect( catalogs.map( ( { id } ) => id ) ).toEqual( [
 		BASIC_CATALOG_ID,
+		CHARTS_CATALOG_ID,
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
@@ -169,7 +211,7 @@ it( 'skips a catalog that fails to build, and keeps the others', () => {
 } );
 
 it( 'keeps only valid provider catalogs, the first with each ID', () => {
-	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	const first = createCatalog( WOO_CATALOG_ID );
 
 	const catalogs = filterInteractiveUiCatalogs( [
@@ -177,12 +219,13 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 		createCatalog( WOO_CATALOG_ID ),
 		createCatalog( AGENTS_MANAGER_CATALOG_ID ),
 		createCatalog( BASIC_CATALOG_ID ),
+		createCatalog( CHARTS_CATALOG_ID ),
 		createCatalog( 'urn:broken:v1', {} ),
 		{} as InteractiveUiCatalogDefinition,
 	] );
 
 	expect( catalogs ).toEqual( [ first ] );
-	expect( consoleError ).toHaveBeenCalledTimes( 5 );
+	expect( consoleError ).toHaveBeenCalledTimes( 6 );
 	expect( consoleError ).toHaveBeenCalledWith(
 		'[AgentsManager] Skipped an interactive UI catalog:',
 		new Error( 'The interactive UI component WooAiProductCard has no implementation.' )
@@ -219,8 +262,14 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities, list
 
 	expect( getInteractiveUiCapabilities( [ wooCatalog ] ) ).toEqual( {
 		'v1.0': {
-			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
+			supportedCatalogIds: [
+				BASIC_CATALOG_ID,
+				CHARTS_CATALOG_ID,
+				AGENTS_MANAGER_CATALOG_ID,
+				WOO_CATALOG_ID,
+			],
 			inlineCatalogs: [
+				expect.objectContaining( { catalogId: CHARTS_CATALOG_ID } ),
 				{
 					$id: WOO_CATALOG_ID,
 					catalogId: WOO_CATALOG_ID,

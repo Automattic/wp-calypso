@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "./mixins/dark-theme" as ui-mixins;
 @import "@automattic/typography/styles/variables";
 @import "@automattic/typography/styles/fonts";
 @import "calypso/assets/stylesheets/shared/typography";
@@ -276,8 +277,21 @@
 		border-color: var(--color-neutral-10);
 	}
 
-	.wp-block-table table {
+	.wp-block-table table,
+	table.wp-block-table {
 		border-collapse: collapse;
+	}
+
+	.wp-block-table table.has-fixed-layout,
+	table.wp-block-table.has-fixed-layout {
+		table-layout: fixed;
+		width: 100%;
+
+		td,
+		th {
+			word-break: normal;
+			overflow-wrap: anywhere;
+		}
 	}
 
 	.wp-block-table td,
@@ -290,6 +304,28 @@
 	.wp-block-table th {
 		font-weight: bold;
 		background: var(--color-neutral-0);
+	}
+
+	.wp-block-table.is-style-stripes tbody tr:nth-child(odd) {
+		background-color: var(--color-neutral-0);
+
+		@include ui-mixins.when-dark-theme {
+			background-color: var(--wp-components-color-gray-200);
+		}
+	}
+
+	.wp-block-table.is-style-stripes td,
+	.wp-block-table.is-style-stripes th {
+		border-style: none;
+	}
+
+	.wp-block-table.is-style-stripes thead {
+		border-block-end: 1px solid var(--color-neutral-10);
+	}
+
+	.wp-block-table.is-style-stripes table,
+	table.wp-block-table.is-style-stripes {
+		border-block-end: 1px solid var(--color-neutral-5);
 	}
 
 	.wp-block-button__link,

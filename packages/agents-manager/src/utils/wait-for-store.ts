@@ -4,10 +4,11 @@ import { subscribe } from '@wordpress/data';
  * Resolves once `isReady()` holds, or false if `timeoutMs` passes first.
  *
  * The editor settles asynchronously with no promise to await, so waiting on
- * the store's own change beats polling on a fixed interval.
+ * the store's own change beats polling on a fixed interval. A state read from
+ * several stores needs each of them named, or a change to one goes unheard.
  */
 export function waitForStore(
-	storeName: string,
+	storeName: string | string[],
 	isReady: () => boolean,
 	timeoutMs: number
 ): Promise< boolean > {
@@ -40,12 +41,17 @@ export function waitForStore(
 			resolve( result );
 		};
 
-		pending.timer = setTimeout( () => finish( false ), timeoutMs );
-		pending.unsubscribe = subscribe( () => {
+		const listener = () => {
 			if ( ready() ) {
 				finish( true );
 			}
-		}, storeName );
+		};
+		const unsubscribes = ( Array.isArray( storeName ) ? storeName : [ storeName ] ).map( ( name ) =>
+			subscribe( listener, name )
+		);
+
+		pending.timer = setTimeout( () => finish( false ), timeoutMs );
+		pending.unsubscribe = () => unsubscribes.forEach( ( unsubscribe ) => unsubscribe() );
 
 		// A change that landed while the listener was attaching fires nothing.
 		if ( ready() ) {

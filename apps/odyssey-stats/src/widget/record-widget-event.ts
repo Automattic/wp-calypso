@@ -1,5 +1,5 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { DateRangeId } from '../lib/date-ranges';
+import type { DateRange, DateRangeId } from '../lib/date-ranges';
 import type { ExploreMoreDestination } from '../lib/get-explore-more-url';
 import type { MouseEvent } from 'react';
 
@@ -17,6 +17,7 @@ interface WidgetEvents {
 	referrer_clicked: undefined;
 	anti_spam_insights_clicked: undefined;
 	more_stats_clicked: { range: DateRangeId };
+	chart_bucket_clicked: { range: DateRangeId; unit: DateRange[ 'unit' ] };
 	explore_more_clicked: { destination: ExploreMoreDestination };
 }
 
@@ -38,6 +39,32 @@ export default function recordWidgetEvent< Name extends WidgetEventName >(
 	...args: WidgetEventArgs< Name >
 ) {
 	recordTracksEvent( `jetpack_odyssey_stats_widget_${ name }`, args[ 0 ] );
+}
+
+/**
+ * Records the event, then opens a URL in place of the dashboard a beat later.
+ * @param href The URL to open.
+ * @param name The action, verb last.
+ * @param args The event's properties, for the events that have them.
+ */
+export function recordWidgetEventThenOpen< Name extends WidgetEventName >(
+	href: string,
+	name: Name,
+	...args: WidgetEventArgs< Name >
+) {
+	// Nothing on screen changes while the page waits, so a second click is likely; it
+	// would otherwise count twice.
+	if ( isFollowingLink ) {
+		return;
+	}
+	isFollowingLink = true;
+	recordWidgetEvent( name, ...args );
+
+	setTimeout( () => {
+		window.location.href = href;
+		// A link that only changes the hash leaves the page in place.
+		isFollowingLink = false;
+	}, TRACKS_FLUSH_DELAY );
 }
 
 /**
@@ -64,19 +91,6 @@ export function recordWidgetEventThenFollow< Name extends WidgetEventName >(
 		}
 
 		event.preventDefault();
-		// Nothing on screen changes while the page waits, so a second click is likely; it
-		// would otherwise count twice.
-		if ( isFollowingLink ) {
-			return;
-		}
-		isFollowingLink = true;
-		recordWidgetEvent( name, ...args );
-
-		const { href } = event.currentTarget;
-		setTimeout( () => {
-			window.location.href = href;
-			// A link that only changes the hash leaves the page in place.
-			isFollowingLink = false;
-		}, TRACKS_FLUSH_DELAY );
+		recordWidgetEventThenOpen( event.currentTarget.href, name, ...args );
 	};
 }

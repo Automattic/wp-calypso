@@ -1,7 +1,9 @@
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
+	addMissingReadSavedKeys,
 	getReadSavedKeyId,
 	readSavedKeysQuery,
 	saveReadPostMutation,
@@ -91,6 +93,33 @@ describe( 'getReadSavedKeyId', () => {
 	it( 'ignores date_saved', () => {
 		expect( getReadSavedKeyId( entry( POST_KEY ) ) ).toBe( getReadSavedKeyId( POST_KEY ) );
 	} );
+
+	it( 'identifies a save that only has a URL by its URL', () => {
+		expect( getReadSavedKeyId( { url: 'https://example.com/a' } ) ).toBe(
+			'url-https://example.com/a'
+		);
+	} );
+
+	it( 'matches a URL the way the API stores it', () => {
+		expect(
+			getReadSavedKeyId( {
+				url: 'HTTPS://Example.com:443/a/?utm_source=x&page=2&fbclid=y#section',
+			} )
+		).toBe( getReadSavedKeyId( { url: 'https://example.com/a?page=2' } ) );
+		expect( getReadSavedKeyId( { url: 'https://example.com/' } ) ).toBe(
+			'url-https://example.com/'
+		);
+		expect( getReadSavedKeyId( { url: 'not a url' } ) ).toBe( 'url-not a url' );
+	} );
+
+	it( 'identifies an entry that has IDs and a URL by its IDs', () => {
+		const url = 'https://example.com/a';
+
+		expect( getReadSavedKeyId( { ...entry( POST_KEY ), id: 1, url } ) ).toBe( 'blog-100-post-1' );
+		expect( getReadSavedKeyId( { ...entry( FEED_ITEM_KEY ), id: 2, url } ) ).toBe(
+			'feed-item-9000'
+		);
+	} );
 } );
 
 describe( 'readSavedKeysQuery', () => {
@@ -130,6 +159,19 @@ describe( 'saveReadPostMutation', () => {
 		expect( request.isDone() ).toBe( true );
 		expect( idsDuringRequest ).toEqual( [ 'blog-100-post-1', 'feed-item-9000' ] );
 		expect( getKeys( client )?.total ).toBe( 2 );
+	} );
+
+	it( 'posts a URL key as url', async () => {
+		const client = newClient();
+		const key = { url: 'https://example.com/a' };
+		const request = nock( BASE )
+			.post( '/wpcom/v2/read/saved/new', { url: key.url, source: SOURCE } )
+			.reply( 200, { saved: true, key, total: 1 } );
+		const result = renderMutation( client, saveReadPostMutation );
+
+		await act( () => result.current.mutateAsync( params( key ) ) );
+
+		expect( request.isDone() ).toBe( true );
 	} );
 
 	it( 'posts a feed item key as feed_item_id', async () => {
@@ -172,7 +214,7 @@ describe( 'saveReadPostMutation', () => {
 
 	it( 'still sends the request when cancelling the keys query fails', async () => {
 		const client = newClient();
-		jest.spyOn( client, 'cancelQueries' ).mockRejectedValueOnce( new Error( 'cancel failed' ) );
+		vi.spyOn( client, 'cancelQueries' ).mockRejectedValueOnce( new Error( 'cancel failed' ) );
 		const request = nock( BASE )
 			.post( '/wpcom/v2/read/saved/new' )
 			.reply( 200, { saved: true, key: POST_KEY, total: 1 } );
@@ -247,6 +289,25 @@ describe( 'unsaveReadPostMutation', () => {
 
 		expect( getSavedQueriesInvalidated( client ) ).toEqual( { keys: true, stream: true } );
 	} );
+
+	it( 'invalidates the saved stream in every sort order, and no other stream', async () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+		const streamQueryKey = ( streamKey: string ) =>
+			getStreamInfiniteQueryKey( { streamKey, feedId: null, localeSlug: null, startDate: null } );
+		for ( const streamKey of [ 'saved:oldest', 'following' ] ) {
+			client.setQueryData( streamQueryKey( streamKey ), { pages: [], pageParams: [] } );
+		}
+		nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete' )
+			.reply( 200, { saved: false, key: POST_KEY, total: 0 } );
+		const result = renderMutation( client, unsaveReadPostMutation );
+
+		await act( () => result.current.mutateAsync( params() ) );
+
+		expect( client.getQueryState( streamQueryKey( 'saved:oldest' ) )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( streamQueryKey( 'following' ) )?.isInvalidated ).toBe( false );
+	} );
 } );
 
 describe( 'overlapping saves and unsaves', () => {
@@ -274,7 +335,7 @@ describe( 'overlapping saves and unsaves', () => {
 	it( 'only invalidates after the last of several concurrent writes settles', async () => {
 		const client = newClient();
 		setKeys( client, [] );
-		const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
+		const invalidateQueries = vi.spyOn( client, 'invalidateQueries' );
 		const first = start( client, saveReadPostMutation, POST_KEY );
 		const second = start( client, saveReadPostMutation, OTHER_KEY );
 		await flush();
@@ -359,5 +420,58 @@ describe( 'overlapping saves and unsaves', () => {
 
 		save.resolve();
 		await save.done;
+	} );
+
+	it( 'does not add stream saves while a write is in flight', async () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+		const unsave = start( client, unsaveReadPostMutation, POST_KEY );
+		await flush();
+
+		addMissingReadSavedKeys( client, [ { keys: [ POST_KEY ], date_saved: '' } ] );
+
+		expect( getKeyIds( client ) ).toEqual( [] );
+		unsave.resolve();
+		await unsave.done;
+	} );
+} );
+
+describe( 'addMissingReadSavedKeys', () => {
+	const URL_KEY = { url: 'https://example.com/recipes/tailgating' };
+
+	it( 'adds saves the keys are missing ahead of the others', () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+
+		addMissingReadSavedKeys( client, [
+			{ keys: [ URL_KEY ], date_saved: '2026-11-01T00:00:00+00:00' },
+			{ keys: [ POST_KEY ], date_saved: '2026-10-01T00:00:00+00:00' },
+		] );
+
+		expect( getKeys( client ) ).toEqual( {
+			keys: [ entry( URL_KEY, '2026-11-01T00:00:00+00:00' ), entry( POST_KEY ) ],
+			total: 2,
+		} );
+	} );
+
+	it( 'skips a save stored under another of its keys or under a different form of its URL', () => {
+		const client = newClient();
+		setKeys( client, [ entry( FEED_ITEM_KEY ), entry( URL_KEY ) ] );
+
+		addMissingReadSavedKeys( client, [
+			{ keys: [ POST_KEY, FEED_ITEM_KEY ], date_saved: '' },
+			{ keys: [ { url: `${ URL_KEY.url }/?utm_source=chrome` } ], date_saved: '' },
+			{ keys: [], date_saved: '' },
+		] );
+
+		expect( getKeys( client )?.total ).toBe( 2 );
+	} );
+
+	it( 'leaves the keys query alone until it has loaded', () => {
+		const client = newClient();
+
+		addMissingReadSavedKeys( client, [ { keys: [ POST_KEY ], date_saved: '' } ] );
+
+		expect( getKeys( client ) ).toBeUndefined();
 	} );
 } );

@@ -65,10 +65,15 @@ describe( 'getVisibleMessages', () => {
 } );
 
 describe( 'getLatestTurnStartIndex', () => {
-	const message = ( role: Message[ 'role' ], startsTurn?: boolean ): Message => ( {
+	const message = (
+		role: Message[ 'role' ],
+		startsTurn?: boolean,
+		isUiOnly?: boolean
+	): Message => ( {
 		...buildMessage( [ { type: 'text', text: role } ] ),
 		role,
 		startsTurn,
+		isUiOnly,
 	} );
 
 	it( 'starts the latest turn after the user’s latest message', () => {
@@ -80,6 +85,17 @@ describe( 'getLatestTurnStartIndex', () => {
 				message( 'agent' ),
 			] )
 		).toBe( 3 );
+	} );
+
+	it( 'skips a UI-only user message, which no turn answers', () => {
+		expect(
+			getLatestTurnStartIndex( [
+				message( 'user' ),
+				message( 'agent' ),
+				message( 'user', undefined, true ),
+				message( 'agent' ),
+			] )
+		).toBe( 1 );
 	} );
 
 	it( 'starts it at a later message that starts a turn', () => {

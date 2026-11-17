@@ -184,7 +184,7 @@ describe( 'RecommendedFeedItem', () => {
 		} );
 	} );
 
-	describe( 'onFollowToggle', () => {
+	describe( 'onFollowSuccess', () => {
 		const mockedReaderFollowButton = jest.mocked( ReaderFollowButton );
 		const mockedSuccessNotice = jest.mocked( successNotice );
 
@@ -193,17 +193,23 @@ describe( 'RecommendedFeedItem', () => {
 			mockedSuccessNotice.mockClear();
 		} );
 
-		function getOnFollowToggle() {
-			const [ { onFollowToggle } ] = mockedReaderFollowButton.mock.calls.map(
+		function getOnFollowSuccess() {
+			const [ { onFollowSuccess } ] = mockedReaderFollowButton.mock.calls.map(
 				( [ props ] ) => props
 			);
-			return onFollowToggle;
+			return onFollowSuccess;
 		}
+
+		test( 'does not show a notice on click', () => {
+			renderComponent();
+
+			expect( mockedReaderFollowButton.mock.calls[ 0 ][ 0 ].onFollowToggle ).toBeUndefined();
+		} );
 
 		test( 'shows subscribed notice when followed', () => {
 			renderComponent();
 
-			getOnFollowToggle()?.( true );
+			getOnFollowSuccess()?.( true );
 
 			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
 				'Success! You are now subscribed to Test Blog.',
@@ -211,10 +217,24 @@ describe( 'RecommendedFeedItem', () => {
 			);
 		} );
 
+		test( 'decodes HTML entities in the site name', () => {
+			renderComponent( {
+				...defaultProps,
+				site: { ...defaultFeed, name: 'Maya&#039;s Food Blog' },
+			} );
+
+			getOnFollowSuccess()?.( true );
+
+			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
+				"Success! You are now subscribed to Maya's Food Blog.",
+				{ duration: 2000 }
+			);
+		} );
+
 		test( 'shows unsubscribed notice when unfollowed', () => {
 			renderComponent();
 
-			getOnFollowToggle()?.( false );
+			getOnFollowSuccess()?.( false );
 
 			expect( mockedSuccessNotice ).toHaveBeenCalledWith(
 				'Success! You are now unsubscribed from "Test Blog".',

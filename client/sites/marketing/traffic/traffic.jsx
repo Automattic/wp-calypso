@@ -24,10 +24,10 @@ import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-v
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
+import isJetpackSeoPageAvailable from 'calypso/state/selectors/is-jetpack-seo-page-available';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -45,15 +45,6 @@ const loadVisibilityNotice = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
-
-// Temporary: detects the new Jetpack › SEO page from the site's admin menu, which lists it
-// only once the page is live there. The page covers SEO, Sitemaps and Site verification, so
-// once a rollback is unlikely, remove this check and the legacy cards it hides.
-export const isJetpackSeoPageAvailable = ( state, siteId ) => {
-	const menu = getAdminMenu( state, siteId ) ?? [];
-
-	return menu.some( ( item ) => item.children?.some( ( child ) => child.slug === 'jetpack-seo' ) );
-};
 
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
 	return isBlazeEnabled( state, siteId ) || isSiteComingSoon( state, siteId );

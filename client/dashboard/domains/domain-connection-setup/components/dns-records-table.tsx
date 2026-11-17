@@ -138,7 +138,7 @@ const nameServerRecordData = (
 	};
 };
 
-interface DnsRecordVerificationProps {
+interface DnsRecordsTableProps {
 	domainName: string;
 	domainConnectionStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
@@ -148,7 +148,7 @@ export default function DnsRecordsTable( {
 	domainName,
 	domainConnectionStatus,
 	domainConnectionSetupInfo,
-}: DnsRecordVerificationProps ) {
+}: DnsRecordsTableProps ) {
 	const isSuggestedMode = domainConnectionStatus.mode === DomainConnectionSetupMode.SUGGESTED;
 	const isSubdomain = domainConnectionSetupInfo.is_subdomain;
 

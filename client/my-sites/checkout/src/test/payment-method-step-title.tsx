@@ -40,21 +40,19 @@ function ToggleCardAvailability() {
 
 function renderPaymentStep( {
 	currency = 'USD',
-	isMobileCheckoutStickySummary = false,
 	methodId = 'card',
 	selectedMethodId = methodId,
 	isContactComplete = false,
 	isPaymentComplete = false,
 }: {
 	currency?: string;
-	isMobileCheckoutStickySummary?: boolean;
 	methodId?: string;
 	selectedMethodId?: string;
 	isContactComplete?: boolean;
 	isPaymentComplete?: boolean;
 } = {} ) {
 	const store = createCheckoutStepGroupStore();
-	const logoProps = { currency, isMobileCheckoutStickySummary };
+	const logoProps = { currency };
 	const method: PaymentMethod = {
 		id: methodId,
 		paymentProcessorId: methodId,
@@ -111,28 +109,21 @@ function getPaymentHeading() {
 
 describe( 'PaymentMethodStepTitle', () => {
 	it.each( [
-		[ 'USD', false, null, null ],
-		[ 'EUR', false, 'cb-logo', null ],
-		[ 'JPY', false, 'jcb-logo', null ],
-		[ 'USD', true, null, null ],
-		[ 'EUR', true, null, '+1' ],
-		[ 'JPY', true, null, '+1' ],
-	] )(
-		'shows the accepted brands for %s with compact mode %s',
-		( currency, compact, extraBrand, overflow ) => {
-			renderPaymentStep( { currency, isMobileCheckoutStickySummary: compact } );
-			const heading = getPaymentHeading();
-			const logos = within( heading );
-			expect( logos.getByTestId( 'visa-logo' ) ).toBeInTheDocument();
-			expect( logos.getByTestId( 'mastercard-logo' ) ).toBeInTheDocument();
-			expect( logos.getByTestId( 'amex-logo' ) ).toBeInTheDocument();
-			expect( logos.queryByTestId( 'cb-logo' ) !== null ).toBe( extraBrand === 'cb-logo' );
-			expect( logos.queryByTestId( 'jcb-logo' ) !== null ).toBe( extraBrand === 'jcb-logo' );
-			expect( logos.queryByText( '+1' ) !== null ).toBe( overflow === '+1' );
-			expect( heading ).toHaveTextContent( compact ? 'Payment method' : 'Pick a payment method' );
-			expect( heading.querySelector( '[aria-hidden="true"] .credit-card__logos' ) ).toBeVisible();
-		}
-	);
+		[ 'USD', null ],
+		[ 'EUR', 'cb-logo' ],
+		[ 'JPY', 'jcb-logo' ],
+	] )( 'shows the accepted brands for %s', ( currency, extraBrand ) => {
+		renderPaymentStep( { currency } );
+		const heading = getPaymentHeading();
+		const logos = within( heading );
+		expect( logos.getByTestId( 'visa-logo' ) ).toBeInTheDocument();
+		expect( logos.getByTestId( 'mastercard-logo' ) ).toBeInTheDocument();
+		expect( logos.getByTestId( 'amex-logo' ) ).toBeInTheDocument();
+		expect( logos.queryByTestId( 'cb-logo' ) !== null ).toBe( extraBrand === 'cb-logo' );
+		expect( logos.queryByTestId( 'jcb-logo' ) !== null ).toBe( extraBrand === 'jcb-logo' );
+		expect( heading ).toHaveTextContent( 'Pick a payment method' );
+		expect( heading.querySelector( '[aria-hidden="true"] .credit-card__logos' ) ).toBeVisible();
+	} );
 
 	it.each( [ 'paypal', 'free-purchase' ] )(
 		'does not advertise cards for a %s-only checkout',

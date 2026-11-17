@@ -1,12 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
-import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
-import {
-	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
-	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
-	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-} from './constants';
+import type { CSSProperties, ReactNode } from 'react';
 
 export interface FeaturedEventCta {
 	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
@@ -23,6 +16,22 @@ export interface FeaturedEventCta {
 	legacyTrackEventName?: string;
 }
 
+/** What the card passes an action CTA, so its button matches the link CTAs beside it. */
+export interface FeaturedEventCtaButtonProps {
+	size: 'compact';
+	variant: 'primary' | 'secondary';
+	style?: CSSProperties;
+	/** Records the CTA click. */
+	onClick: () => void;
+}
+
+/** A CTA that acts in place, such as opening a dialog, instead of linking somewhere. */
+export interface FeaturedEventActionCta {
+	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
+	id: string;
+	render: ( buttonProps: FeaturedEventCtaButtonProps ) => ReactNode;
+}
+
 export interface FeaturedEvent {
 	/** Used as the `event_id` tracks property, so keep it stable per event. */
 	id: string;
@@ -33,162 +42,30 @@ export interface FeaturedEvent {
 	logo?: string;
 	logoAlt?: string;
 	/** Uppercase eyebrow above the title: a date for events, a label for announcements. */
-	when: string;
+	when?: string;
 	title: string;
-	subtitle: string;
-	/** One entry per paragraph. */
+	subtitle?: string;
+	/** One entry per paragraph. Supports `<strong>` tags. */
 	description: string[];
-	ctas: FeaturedEventCta[];
-	/** ISO date the card stops showing itself, typically the day after the event. */
-	endsAt: string;
+	ctas: ( FeaturedEventCta | FeaturedEventActionCta )[];
+	/** ISO expiry for dated events; omitted for announcements without an expiry. */
+	endsAt?: string;
 }
 
-/**
- * The event promoted on the agency overview, curated by hand.
- *
- * Replace the whole object when the next event comes round — the card hides
- * itself once `endsAt` passes rather than advertising a past event. The
- * legacy list lives in client/a8c-for-agencies/sections/overview/body/events.
- */
-export const FEATURED_EVENT: FeaturedEvent | null = {
-	id: 'a4a-bfcm-webinar-2026',
-	logo: A4ALogo,
-	logoAlt: __( 'Automattic for Agencies' ),
-	when: __( 'Upcoming webinar' ),
-	title: __( 'Building a repeatable Black Friday playbook' ),
-	subtitle: __( 'Support your clients during peak season' ),
+export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): FeaturedEvent => ( {
+	id: 'a4a-lead-matching-contact-options',
+	title: __( 'Add your phone number and booking link for newly matched leads' ),
 	description: [
 		__(
-			'Join us September 29th at 11 AM ET (4 PM BST) for a live panel with experts from Woo, Pressable, and Automattic. Learn how to make peak-season readiness a process you run every year, instead of one you rebuild from scratch. Includes product demos & a fireside chat.'
+			'You can now add your agency’s phone number and booking link so new leads you’re matched with can contact you right away.'
 		),
 	],
 	ctas: [
 		{
-			id: 'rsvp',
-			label: __( 'RSVP now' ),
-			url: 'https://automattic.registration.goldcast.io/webinar/f6c62e86-e9b6-48f3-a9c6-961e4fcf67be',
-			variant: 'primary',
-			isExternal: true,
+			id: 'update-details',
+			label: __( 'Update your details' ),
+			url: leadMatchingHref,
+			variant: 'secondary',
 		},
 	],
-	// Hidden once the webinar starts (11 AM ET), not at midnight UTC, which
-	// would drop it the evening before for US agencies.
-	endsAt: '2026-09-29T15:00:00Z',
-};
-
-/**
- * The Q3 2026 Pressable promos, shown to eligible agencies alongside the
- * featured event. Which one an agency sees is decided by the shells through
- * the eligibility props on AgencyOverviewContent: the introductory offer
- * targets agencies without a Pressable plan through A4A, the expansion offer
- * agencies with one that missed the introductory offer.
- */
-export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): FeaturedEvent => ( {
-	id: 'a4a-pressable-promo-offer-2026-q3',
-	logo: PressableLogo,
-	logoAlt: __( 'Pressable' ),
-	when: __( 'Limited time offer · Until September 30, 2026' ),
-	title: __( 'Get up to 6 months of free Pressable hosting on new plans!' ),
-	subtitle: __( 'Automattic for Agencies & Pressable' ),
-	description: [
-		__(
-			'Enjoy up to 6 months free on Pressable Signature and Premium Plans with Automattic for Agencies. Choose annual billing for 6 months free or monthly billing for 3 months free, while still earning revenue share and reseller incentives.'
-		),
-	],
-	ctas: [
-		{
-			id: 'view-promo-details',
-			label: __( 'View promo details' ),
-			url: pressableHostingHref,
-			variant: 'primary',
-			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
-		},
-		{
-			id: 'see-full-terms',
-			label: __( 'See full terms' ),
-			url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-			isExternal: true,
-			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
-		},
-	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-} );
-
-export const getPressableExpansionOfferEvent = (
-	pressableHostingHref: string
-): FeaturedEvent => ( {
-	id: 'a4a-pressable-expansion-offer-2026-q3',
-	logo: PressableLogo,
-	logoAlt: __( 'Pressable' ),
-	when: __( 'Limited time offer · Until September 30, 2026' ),
-	title: __( 'Upgrade your Pressable plan and get up to 6 months of the upgrade free' ),
-	subtitle: __( 'Automattic for Agencies & Pressable' ),
-	description: [
-		__(
-			'Move up a Pressable plan tier and we’ll cover part of the increase: 6 months’ worth on annual upgrades, 3 months’ worth on monthly.'
-		),
-		__(
-			'For example, an annual upgrade from $10,000 to $13,250/yr is a $3,250 increase, so you’d save $1,625. The discount is calculated on that increase. Migrating 50+ sites? You may qualify for a custom incentive, up to $25,000.'
-		),
-	],
-	ctas: [
-		{
-			id: 'view-promo-details',
-			label: __( 'View promo details' ),
-			url: PRESSABLE_EXPANSION_OFFER_TERMS_URL,
-			variant: 'primary',
-			isExternal: true,
-			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_view_promo_details_click',
-		},
-		{
-			id: 'see-pressable-plans',
-			label: __( 'See Pressable plans' ),
-			url: pressableHostingHref,
-			legacyTrackEventName:
-				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
-		},
-	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-} );
-
-/**
- * The MCP launch announcement, shown to every agency below the Pressable promos.
- *
- * Takes the AI & MCP href because the two shells mount that screen at different
- * paths (/resources-and-tools/ai-mcp in classic A4A, /agency/ai in the
- * dashboard), so it arrives through AgencyOverviewLinks rather than a constant.
- */
-export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {
-	id: 'a4a-ai-mcp-announcement',
-	logo: A4ALogo,
-	logoAlt: __( 'Automattic for Agencies' ),
-	when: __( 'New · AI and MCP' ),
-	title: __( 'Bring Automattic for Agencies into your AI tools' ),
-	subtitle: __( 'Automattic for Agencies MCP' ),
-	description: [
-		__(
-			'Get answers about your agency without hunting through the dashboard. Ask about your tier, commissions, billing, or site health from Claude, ChatGPT, Cursor, or whatever AI tool your team already uses, and the answer comes back from your live account in seconds.'
-		),
-		__(
-			'Schedule a weekly digest to Slack, or build a custom dashboard your whole team can use. Our MCP is free and connects in minutes.'
-		),
-	],
-	ctas: [
-		{
-			id: 'enable-mcp',
-			label: __( 'Enable MCP' ),
-			url: aiMcpHref,
-			variant: 'primary',
-		},
-		{
-			id: 'see-how-it-works',
-			label: __( 'See how it works' ),
-			url: AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
-			isExternal: true,
-		},
-	],
-	endsAt: '2026-10-08',
 } );

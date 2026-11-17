@@ -14,7 +14,7 @@ const transition = {
 	opacity: { duration: 0.15 },
 };
 
-export interface ScreenProps {
+export interface SidebarNavigatorScreenProps {
 	path: string;
 	children: React.ReactNode;
 }
@@ -25,7 +25,7 @@ export interface ScreenProps {
  *
  * Must be a direct child of `SidebarNavigator`.
  */
-export default function SidebarNavigatorScreen( { path, children }: ScreenProps ) {
+export default function SidebarNavigatorScreen( { path, children }: SidebarNavigatorScreenProps ) {
 	const { activePath, isBack } = useSidebarNavigator();
 	const prefersReducedMotion = useReducedMotion();
 	const wrapperRef = useRef< HTMLDivElement >( null );

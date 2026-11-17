@@ -1,0 +1,88 @@
+@use '@wordpress/base-styles/animations' as *;
+@use '../../styles/variables' as *;
+
+.agents-manager-chat-image {
+	display: block;
+	// Fills the message, up to 400px wide in a large chat.
+	max-width: min( 100%, 400px );
+	padding: 0;
+	border: 0;
+	border-radius: var( --radius-sm );
+	background: none;
+	// A hairline, so a white screenshot stands out.
+	outline: $border-width solid var( --color-input-border );
+	outline-offset: -$border-width;
+	cursor: zoom-in;
+
+	img {
+		display: block;
+		border-radius: inherit;
+	}
+
+	&:focus-visible {
+		outline: $border-width-focus-fallback solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: $border-width-focus-fallback;
+	}
+}
+
+// Stops the page scrolling behind the lightbox, without shifting it.
+html:has( .agents-manager-chat-image__lightbox[open] ) {
+	overflow: hidden;
+	scrollbar-gutter: stable;
+}
+
+.agents-manager-chat-image__lightbox {
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: zoom-out;
+
+	&,
+	&::backdrop {
+		@include animation__fade-in;
+	}
+
+	&::backdrop {
+		background: rgba( $black, 0.8 );
+	}
+
+	// The whole image fits the screen, and is never enlarged.
+	img {
+		display: block;
+		max-width: 90vw;
+		// `dvh` keeps it clear of mobile toolbars.
+		max-height: 90dvh;
+		border-radius: $radius-large;
+	}
+}
+
+.agents-manager-chat-image__close {
+	position: fixed;
+	inset-block-start: $grid-unit-20;
+	inset-inline-end: $grid-unit-20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: $grid-unit-50;
+	height: $grid-unit-50;
+	padding: 0;
+	border: 0;
+	border-radius: $radius-full;
+	// Dark, so it shows over a light image too.
+	background: rgba( $black, 0.6 );
+	color: $white;
+	cursor: pointer;
+
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		background: $black;
+	}
+
+	&:focus-visible {
+		outline: $border-width-focus-fallback solid $white;
+		outline-offset: $border-width-focus-fallback;
+	}
+}

@@ -15,17 +15,17 @@
 
 	tr.dataviews-view-table__row {
 
-		.components-checkbox-control__input {
+		.dataviews-selection-checkbox {
 			opacity: 0;
+			border-color: var( --color-neutral-5 );
 		}
-		.components-checkbox-control__input:checked,
-		.components-checkbox-control__input:indeterminate {
+		.dataviews-selection-checkbox:is( [data-checked], [data-indeterminate] ) {
 			opacity: 1;
 		}
 
 		&:hover {
 			.site-set-favorite__favorite-icon,
-			.components-checkbox-control__input {
+			.dataviews-selection-checkbox {
 				opacity: 1;
 			}
 		}
@@ -46,16 +46,6 @@
 
 		.dataviews-view-table__cell-content-wrapper {
 			font-size: rem( 13px );
-		}
-
-		.dataviews-view-table__checkbox-column,
-		.components-checkbox-control__input {
-			label.components-checkbox-control__label {
-				display: none;
-			}
-			&[type='checkbox'] {
-				border-color: var( --color-neutral-5 );
-			}
 		}
 
 		.site-sort__clickable {

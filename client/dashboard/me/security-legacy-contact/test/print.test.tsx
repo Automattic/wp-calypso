@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { queryClient } from '@automattic/api-queries';
 import { screen } from '@testing-library/react';
 import nock from 'nock';

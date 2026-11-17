@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { useShoppingCart } from '../../products/use-shopping-cart';
 import ReferralCheckout from '../index';
@@ -13,7 +14,7 @@ const AGENCY_ID = 123;
 const DEV_SITE_ID = 55;
 
 let mockSearch: { referral_blog_id?: number } = {};
-jest.mock( '../../../../app/router/agency', () => ( {
+vi.mock( '../../../../app/router/agency', () => ( {
 	marketplaceReferralCheckoutRoute: { useSearch: () => mockSearch },
 } ) );
 
@@ -30,6 +31,23 @@ const products = [
 				currency: 'USD',
 				monthly_price: 4.95,
 				yearly_price: 47.4,
+			},
+		],
+	},
+];
+
+const storageProducts = [
+	{
+		name: 'Jetpack VaultPress Backup Add-on Storage',
+		slug: 'jetpack-backup-storage',
+		products: [
+			{
+				name: 'Jetpack VaultPress Backup Add-on Storage (10GB)',
+				slug: 'jetpack-backup-addon-storage-10gb-monthly',
+				product_id: 2117,
+				currency: 'USD',
+				monthly_price: 1,
+				yearly_price: 12,
 			},
 		],
 	},
@@ -71,7 +89,10 @@ const freeProducts = [
 function mockApi( {
 	agency = {},
 	catalog = products,
-}: { agency?: Record< string, unknown >; catalog?: typeof products | typeof freeProducts } = {} ) {
+}: {
+	agency?: Record< string, unknown >;
+	catalog?: typeof products | typeof storageProducts | typeof freeProducts;
+} = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
@@ -122,6 +143,14 @@ describe( '<ReferralCheckout>', () => {
 		expect( screen.getByText( 'Total your client will pay' ) ).toBeVisible();
 		expect( screen.getByText( 'Your estimated commission' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Send to client' } ) ).toBeDisabled();
+	} );
+
+	test( 'names a backup storage add-on, not just its size', async () => {
+		fillCart( 'jetpack-backup-addon-storage-10gb-monthly' );
+		mockApi( { catalog: storageProducts } );
+		render( <ReferralCheckout /> );
+
+		expect( await screen.findByText( 'VaultPress Backup Add-on Storage 10GB' ) ).toBeVisible();
 	} );
 
 	test( 'rejects an invalid email without sending', async () => {

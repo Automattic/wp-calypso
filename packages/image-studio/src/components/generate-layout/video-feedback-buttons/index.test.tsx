@@ -1,13 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { VideoFeedbackButtons } from './index';
 
-const mockTrack = jest.fn();
+const mockTrack = vi.fn();
 
-jest.mock( '../../../utils/tracking', () => ( {
+vi.mock( '../../../utils/tracking', () => ( {
 	trackImageStudioImageFeedback: ( ...args: unknown[] ) => mockTrack( ...args ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
@@ -19,7 +20,7 @@ interface MessageActionAction {
 	pressed?: boolean;
 }
 
-jest.mock( '@automattic/agenttic-ui', () => ( {
+vi.mock( '@automattic/agenttic-ui', () => ( {
 	MessageActions: ( { message }: { message: { actions: MessageActionAction[] } } ) => (
 		<div data-testid="message-actions">
 			{ message.actions.map( ( action ) => (
@@ -39,26 +40,22 @@ jest.mock( '@automattic/agenttic-ui', () => ( {
 	ThumbsDownIcon: () => <span>down-icon</span>,
 } ) );
 
-jest.mock(
-	'@automattic/agents-manager',
-	() => ( {
-		FeedbackInput: ( {
-			onSubmit,
-			onCancel,
-		}: {
-			onSubmit: ( text: string ) => Promise< void >;
-			onCancel: () => void;
-		} ) => (
-			<div data-testid="feedback-input">
-				<button onClick={ () => onSubmit( 'bad clip' ) }>submit</button>
-				<button onClick={ onCancel }>cancel</button>
-			</div>
-		),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agents-manager', () => ( {
+	FeedbackInput: ( {
+		onSubmit,
+		onCancel,
+	}: {
+		onSubmit: ( text: string ) => Promise< void >;
+		onCancel: () => void;
+	} ) => (
+		<div data-testid="feedback-input">
+			<button onClick={ () => onSubmit( 'bad clip' ) }>submit</button>
+			<button onClick={ onCancel }>cancel</button>
+		</div>
+	),
+} ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Popover: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="popover">{ children }</div>
 	),
@@ -66,7 +63,7 @@ jest.mock( '@wordpress/components', () => ( {
 
 describe( '<VideoFeedbackButtons />', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders thumbs up + down', () => {
@@ -76,7 +73,7 @@ describe( '<VideoFeedbackButtons />', () => {
 	} );
 
 	it( 'invokes onFeedback("up") and tracks on thumbs up', () => {
-		const onFeedback = jest.fn();
+		const onFeedback = vi.fn();
 		render(
 			<VideoFeedbackButtons videoUrl="https://example.com/v.mp4" onFeedback={ onFeedback } />
 		);
@@ -91,7 +88,7 @@ describe( '<VideoFeedbackButtons />', () => {
 		render(
 			<VideoFeedbackButtons
 				videoUrl="https://example.com/v.mp4"
-				onSubmitFeedbackText={ jest.fn().mockResolvedValue( undefined ) }
+				onSubmitFeedbackText={ vi.fn().mockResolvedValue( undefined ) }
 			/>
 		);
 		expect( screen.queryByTestId( 'feedback-input' ) ).not.toBeInTheDocument();
@@ -132,7 +129,7 @@ describe( '<VideoFeedbackButtons />', () => {
 	} );
 
 	it( 'submits free-text feedback through onSubmitFeedbackText', async () => {
-		const onSubmitFeedbackText = jest.fn().mockResolvedValue( undefined );
+		const onSubmitFeedbackText = vi.fn().mockResolvedValue( undefined );
 		render(
 			<VideoFeedbackButtons
 				videoUrl="https://example.com/v.mp4"

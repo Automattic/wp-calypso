@@ -285,16 +285,38 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://example.com/home' } );
 	} );
 
-	it( 'returns a simple absolute url if it matches the `fromSiteSlug` and there is no `siteSlug` and there is also a receipt', () => {
+	it( 'returns a simple absolute url if it matches the `fromSiteSlug` and there is no `siteSlug` and the receipt has loaded', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
 			redirectTo: 'https://example.com/wp-admin/pamin.php?page=jetpack&connect_url_redirect',
 			receiptId: 12345,
 			fromSiteSlug: 'example.com',
+			receipt: { id: 12345, items: [] },
 		} );
 		expect( actual ).toEqual( {
 			url: 'https://example.com/wp-admin/pamin.php?page=jetpack&connect_url_redirect',
 		} );
+	} );
+
+	it( 'returns a generic no-site url for an absolute url matching only the `fromSiteSlug` if the receipt has not loaded', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo: 'https://evil.example.com/',
+			receiptId: 1,
+			fromSiteSlug: 'evil.example.com',
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/1' } );
+	} );
+
+	it( 'returns a simple absolute url if it matches the `fromSiteSlug` and the transaction succeeded', () => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			orderId: 1234,
+			transaction: { processingStatus: SUCCESS, receiptId: 12345 },
+			redirectTo: 'https://example.com/wp-admin/admin.php?page=jetpack',
+			fromSiteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( { url: 'https://example.com/wp-admin/admin.php?page=jetpack' } );
 	} );
 
 	it( 'returns a receipt interpolated absolute url if it is allowed and there is also a receipt', () => {

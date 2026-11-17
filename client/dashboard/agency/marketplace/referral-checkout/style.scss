@@ -1,15 +1,5 @@
 @import '@wordpress/base-styles/mixins';
 
-.referral-checkout {
-	min-height: 100vh;
-	background: var( --color-surface );
-}
-
-.referral-checkout__top-bar {
-	padding-block: 16px;
-	padding-inline: 24px;
-}
-
 .referral-checkout__body {
 	display: grid;
 	grid-template-columns: minmax( 0, 1fr );

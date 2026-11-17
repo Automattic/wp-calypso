@@ -13,7 +13,12 @@ export async function initializeWordPressPlayground(
 	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void,
 	onPlaygroundClientLoaded?: () => void,
 	onBootProgress?: ( progress: PlaygroundBootProgress ) => void
-): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
+): Promise< {
+	blueprint: Blueprint | null;
+	client: PlaygroundClient;
+	// True when no saved Playground was requested, so a blank one was created.
+	isNewPlayground: boolean;
+} > {
 	let isWordPressInstalled = false;
 	let needsUrlUpdate = false;
 
@@ -105,7 +110,7 @@ export async function initializeWordPressPlayground(
 			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
 		}
 
-		return { blueprint, client };
+		return { blueprint, client, isNewPlayground: needsUrlUpdate };
 	} catch ( error ) {
 		// Don't persist a freshly generated ID in the URL: nothing was written to OPFS,
 		// so a retry would otherwise try to restore a playground that never existed.

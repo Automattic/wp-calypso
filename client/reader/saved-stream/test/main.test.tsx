@@ -90,10 +90,18 @@ function savedPost( id: number ) {
 
 // The stream's first page and the poll for new posts hit the same path, told
 // apart by the page size they ask for.
-function mockSavedEndpoint( posts: ReturnType< typeof savedPost >[], number = INITIAL_FETCH ) {
+function mockSavedEndpoint(
+	posts: ReturnType< typeof savedPost >[],
+	number = INITIAL_FETCH,
+	order?: string,
+	orderBy = 'date'
+) {
 	return nock( BASE )
 		.get( SAVED_PATH )
-		.query( ( query ) => query.number === String( number ) )
+		.query(
+			( query ) =>
+				query.number === String( number ) && query.order === order && query.orderBy === orderBy
+		)
 		.reply( 200, { posts, number: posts.length, found: posts.length, date_range: {} } );
 }
 
@@ -112,8 +120,11 @@ function renderSavedStream() {
 			<Provider store={ store }>{ children }</Provider>
 		</QueryClientProvider>
 	);
-	render( <SavedPostsStream streamKey="saved" trackScrollPage={ jest.fn() } />, { wrapper } );
-	return { wrapper };
+	const { unmount } = render(
+		<SavedPostsStream streamKey="saved" trackScrollPage={ jest.fn() } />,
+		{ wrapper }
+	);
+	return { wrapper, unmount };
 }
 
 const originalScrollTo = window.scrollTo;
@@ -126,7 +137,10 @@ afterAll( () => {
 	Object.defineProperty( window, 'scrollTo', { writable: true, value: originalScrollTo } );
 } );
 
-afterEach( () => nock.cleanAll() );
+afterEach( () => {
+	nock.cleanAll();
+	window.localStorage.clear();
+} );
 
 describe( 'SavedPostsStream', () => {
 	it( 'renders the saved posts under the Saved header', async () => {
@@ -137,6 +151,93 @@ describe( 'SavedPostsStream', () => {
 		await waitFor( () => expect( screen.getByTestId( 'post-2' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'post-1' ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Saved' } ) ).toBeVisible();
+	} );
+
+	it( 'lists the oldest save first when sorted that way', async () => {
+		const user = userEvent.setup();
+		mockSavedEndpoint( [ savedPost( 2 ), savedPost( 1 ) ] );
+		renderSavedStream();
+		await waitFor( () => expect( screen.getByTestId( 'post-2' ) ).toBeVisible() );
+
+		const oldestFirst = mockSavedEndpoint(
+			[ savedPost( 1 ), savedPost( 3 ) ],
+			INITIAL_FETCH,
+			'ASC'
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Sort: Recently saved' } ) );
+		await user.click( screen.getByRole( 'menuitemradio', { name: 'Oldest saved' } ) );
+
+		await waitFor( () => expect( screen.getByTestId( 'post-3' ) ).toBeVisible() );
+		expect( oldestFirst.isDone() ).toBe( true );
+		expect( screen.queryByTestId( 'post-2' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Sort: Oldest saved' } ) ).toBeVisible();
+	} );
+
+	it( 'lists the most recently published post first when sorted that way', async () => {
+		const user = userEvent.setup();
+		mockSavedEndpoint( [ savedPost( 2 ), savedPost( 1 ) ] );
+		renderSavedStream();
+		await waitFor( () => expect( screen.getByTestId( 'post-2' ) ).toBeVisible() );
+
+		const byPublishDate = mockSavedEndpoint(
+			[ savedPost( 3 ), savedPost( 1 ) ],
+			INITIAL_FETCH,
+			undefined,
+			'date_published'
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Sort: Recently saved' } ) );
+		await user.click( screen.getByRole( 'menuitemradio', { name: 'Recently published' } ) );
+
+		await waitFor( () => expect( screen.getByTestId( 'post-3' ) ).toBeVisible() );
+		expect( byPublishDate.isDone() ).toBe( true );
+		expect( screen.queryByTestId( 'post-2' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Sort: Recently published' } ) ).toBeVisible();
+	} );
+
+	it( 'keeps the chosen sort the next time Saved opens', async () => {
+		const user = userEvent.setup();
+		mockSavedEndpoint( [ savedPost( 2 ), savedPost( 1 ) ] );
+		const { unmount } = renderSavedStream();
+		await waitFor( () => expect( screen.getByTestId( 'post-2' ) ).toBeVisible() );
+		mockSavedEndpoint( [ savedPost( 1 ), savedPost( 2 ) ], INITIAL_FETCH, 'ASC' );
+		await user.click( screen.getByRole( 'button', { name: 'Sort: Recently saved' } ) );
+		await user.click( screen.getByRole( 'menuitemradio', { name: 'Oldest saved' } ) );
+		await waitFor( () => expect( screen.getByTestId( 'post-1' ) ).toBeVisible() );
+		unmount();
+
+		const oldestFirst = mockSavedEndpoint( [ savedPost( 1 ) ], INITIAL_FETCH, 'ASC' );
+		renderSavedStream();
+
+		await waitFor( () => expect( screen.getByTestId( 'post-1' ) ).toBeVisible() );
+		expect( oldestFirst.isDone() ).toBe( true );
+		expect( screen.getByRole( 'button', { name: 'Sort: Oldest saved' } ) ).toBeVisible();
+	} );
+
+	it( 'opens on the oldest published post when that sort was kept', async () => {
+		window.localStorage.setItem( 'reader_saved_sort', 'saved:oldest-published' );
+		const oldestPublished = mockSavedEndpoint(
+			[ savedPost( 1 ) ],
+			INITIAL_FETCH,
+			'ASC',
+			'date_published'
+		);
+
+		renderSavedStream();
+
+		await waitFor( () => expect( screen.getByTestId( 'post-1' ) ).toBeVisible() );
+		expect( oldestPublished.isDone() ).toBe( true );
+		expect( screen.getByRole( 'button', { name: 'Sort: Oldest published' } ) ).toBeVisible();
+	} );
+
+	it( 'ignores a stored sort it does not recognise', async () => {
+		window.localStorage.setItem( 'reader_saved_sort', 'saved:bogus' );
+		const newestFirst = mockSavedEndpoint( [ savedPost( 2 ) ] );
+
+		renderSavedStream();
+
+		await waitFor( () => expect( screen.getByTestId( 'post-2' ) ).toBeVisible() );
+		expect( newestFirst.isDone() ).toBe( true );
+		expect( screen.getByRole( 'button', { name: 'Sort: Recently saved' } ) ).toBeVisible();
 	} );
 
 	it( 'shows the empty state when nothing is saved', async () => {

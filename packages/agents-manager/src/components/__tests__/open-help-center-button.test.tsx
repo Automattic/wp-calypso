@@ -1,15 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: jest.fn() } ) );
-jest.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
-
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OpenHelpCenterButton from '../open-help-center-button';
 
-beforeEach( () => jest.clearAllMocks() );
+vi.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: vi.fn() } ) );
+vi.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
+
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'OpenHelpCenterButton', () => {
 	it( 'records when it is shown, and opens the support chat with the message on click', () => {
@@ -36,5 +37,18 @@ describe( 'OpenHelpCenterButton', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Get help' } ) );
 
 		expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary.' );
+	} );
+
+	it( 'stays focusable but opens nothing while its surface is disabled', () => {
+		render( <OpenHelpCenterButton message="Summary." disabled /> );
+
+		const button = screen.getByRole( 'button', { name: 'Get help' } );
+		fireEvent.click( button );
+
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_open_help_center_button_click'
+		);
+		expect( openHelpCenterChat ).not.toHaveBeenCalled();
 	} );
 } );

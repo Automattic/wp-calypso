@@ -1,0 +1,164 @@
+@use 'sass:math';
+
+@function reference-size( $pixels ) {
+	@return calc( var( --site-redesign-card-width, 360px ) * #{math.div( $pixels, 763 )} );
+}
+
+.card.site-redesign-card {
+	display: block;
+	position: relative;
+	color: var( --color-text );
+	min-inline-size: 0;
+	background: transparent;
+	padding: 0;
+	margin: 0;
+	box-shadow: none;
+
+	&:focus-within .site-redesign-card__image,
+	&:hover .site-redesign-card__image {
+		border-color: var( --color-text );
+	}
+}
+.site-redesign-card__image {
+	position: relative;
+	aspect-ratio: 763 / 574;
+	box-sizing: border-box;
+	border: 1px solid var( --color-border-subtle );
+	background: var( --studio-gray-0 );
+}
+.site-redesign-card__skeleton {
+	position: absolute;
+	inset: 0;
+	> div {
+		position: absolute;
+		border-radius: 2px;
+		background: var( --studio-gray-5 );
+	}
+	.site-redesign-card__logo,
+	.site-redesign-card__nav-button,
+	.site-redesign-card__action {
+		background: var( --studio-gray-10 );
+	}
+	.site-redesign-card__hero-image {
+		background: color-mix( in srgb, var( --studio-gray-5 ) 70%, var( --studio-gray-0 ) );
+	}
+	.site-redesign-card__column-first,
+	.site-redesign-card__column-second,
+	.site-redesign-card__column-third {
+		background: color-mix( in srgb, var( --studio-gray-5 ) 40%, var( --studio-gray-0 ) );
+	}
+}
+
+// Coordinates are scaled from the supplied 763 × 574 thumbnail.
+@mixin skeleton-rectangle( $x, $y, $width, $height ) {
+	inset-inline-start: math.percentage( math.div( $x, 763 ) );
+	inset-block-start: math.percentage( math.div( $y, 574 ) );
+	inline-size: math.percentage( math.div( $width, 763 ) );
+	block-size: math.percentage( math.div( $height, 574 ) );
+}
+.site-redesign-card__logo {
+	@include skeleton-rectangle( 55, 52, 104, 16 );
+}
+.site-redesign-card__nav-first {
+	@include skeleton-rectangle( 440, 55, 49, 9 );
+}
+.site-redesign-card__nav-second {
+	@include skeleton-rectangle( 506, 55, 49, 9 );
+}
+.site-redesign-card__nav-third {
+	@include skeleton-rectangle( 572, 55, 49, 9 );
+}
+.site-redesign-card__nav-button {
+	@include skeleton-rectangle( 636, 46, 72, 25 );
+}
+.site-redesign-card__hero-image {
+	@include skeleton-rectangle( 401, 130, 307, 230 );
+}
+.site-redesign-card__heading-first {
+	@include skeleton-rectangle( 55, 149, 283, 29 );
+}
+.site-redesign-card__heading-second {
+	@include skeleton-rectangle( 55, 194, 214, 29 );
+}
+.site-redesign-card__line-first {
+	@include skeleton-rectangle( 55, 250, 283, 9 );
+}
+.site-redesign-card__line-second {
+	@include skeleton-rectangle( 55, 275, 214, 9 );
+}
+.site-redesign-card__action {
+	@include skeleton-rectangle( 55, 312, 104, 29 );
+}
+.site-redesign-card__column-first {
+	@include skeleton-rectangle( 55, 379, 196, 147 );
+}
+.site-redesign-card__column-second {
+	@include skeleton-rectangle( 284, 379, 196, 147 );
+}
+.site-redesign-card__column-third {
+	@include skeleton-rectangle( 512, 379, 196, 147 );
+}
+
+.site-redesign-card .components-button.site-redesign-card__badge {
+	@include skeleton-rectangle( 87, 240, 589, 94 );
+	position: absolute;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: reference-size( 25.33 );
+	padding: 0 reference-size( 30.52 );
+	border-radius: 4px;
+	color: var( --color-surface );
+	background: var( --color-text );
+	font-size: max( 14px, reference-size( 32 ) );
+	font-weight: 400;
+	line-height: 1;
+	white-space: nowrap;
+	box-shadow: 0 reference-size( 20 ) reference-size( 35 )
+		color-mix( in srgb, var( --studio-gray-100 ) 20%, transparent );
+	text-decoration: none;
+
+	&:hover {
+		color: var( --color-surface );
+		background: var( --color-text-subtle );
+	}
+	svg {
+		inline-size: reference-size( 44.4 );
+		block-size: reference-size( 44.4 );
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+.site-redesign-card__details {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 8px;
+	align-items: center;
+	margin-block-start: reference-size( 39 );
+	font-size: max( 16px, reference-size( 36 ) );
+	color: var( --color-text );
+	line-height: 1.3;
+}
+.site-redesign-card .site-redesign-card__title {
+	&,
+	&:visited,
+	&:hover,
+	&:focus,
+	&:active {
+		color: inherit;
+	}
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+	&:focus-visible::after {
+		outline: 2px solid var( --color-primary );
+		outline-offset: 4px;
+	}
+}
+.themes-list > .card.site-redesign-card {
+	margin: 0 16px 32px;
+}

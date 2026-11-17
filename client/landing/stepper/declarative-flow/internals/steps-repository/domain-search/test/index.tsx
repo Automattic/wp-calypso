@@ -1,8 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { DOMAIN_FLOW, LAUNCH_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { DomainAvailabilityStatus } from '@automattic/api-core';
+import {
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
+	DOMAIN_FLOW,
+	LAUNCH_SITE_FLOW,
+	ONBOARDING_FLOW,
+} from '@automattic/onboarding';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../../hooks/use-site';
 import { renderStep } from '../../test/helpers';
 import DomainSearchStep from '../index';
@@ -10,19 +18,39 @@ import type { ReactNode } from 'react';
 
 jest.mock( '../../../../../hooks/use-site', () => ( { useSite: jest.fn() } ) );
 jest.mock( 'calypso/state/dashboard/selectors', () => ( { hasDashboardOptIn: () => false } ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+jest.mock( '../results-experiment', () => ( {
+	useDomainSearchResultsExperiment: () => ( { isLoading: false, variation: 'control' } ),
+} ) );
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: ( {
 		isFirstDomainFreeForFirstYear,
 		slots,
+		events,
 	}: {
 		isFirstDomainFreeForFirstYear: boolean;
 		slots: { BeforeResults: () => ReactNode; BeforeFullCartItems: () => ReactNode };
+		events: {
+			onSearchNoticeSkipClick?: ( domainName: string, status: DomainAvailabilityStatus ) => void;
+		};
 	} ) => (
 		<div>
 			{ isFirstDomainFreeForFirstYear && <span>first year free pricing</span> }
 			<slots.BeforeResults />
 			<slots.BeforeFullCartItems />
+			{ events.onSearchNoticeSkipClick && (
+				<button
+					onClick={ () =>
+						events.onSearchNoticeSkipClick?.(
+							'taken.com',
+							'mapped_domain' as DomainAvailabilityStatus
+						)
+					}
+				>
+					notice skip
+				</button>
+			) }
 		</div>
 	),
 } ) );
@@ -135,4 +163,33 @@ describe( 'DomainSearchStep back button', () => {
 			'/home/example.wordpress.com'
 		);
 	} );
+} );
+
+describe( 'DomainSearchStep notice skip link', () => {
+	beforeEach( () => {
+		jest.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
+		jest.mocked( recordTracksEvent ).mockClear();
+	} );
+
+	it( 'records a Tracks event when the notice skip link is clicked in the onboarding flow', async () => {
+		renderDomainSearch( ONBOARDING_FLOW );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'notice skip' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_domain_search_notice_skip_click', {
+			section: 'signup',
+			flow_name: ONBOARDING_FLOW,
+			domain: 'taken.com',
+			availability_status: DomainAvailabilityStatus.MAPPED,
+		} );
+	} );
+
+	it.each( [ AI_SITE_BUILDER_ONBOARDING_FLOW, DOMAIN_FLOW, LAUNCH_SITE_FLOW ] )(
+		'does not offer the notice skip link in the %s flow',
+		( flow ) => {
+			renderDomainSearch( flow );
+
+			expect( screen.queryByRole( 'button', { name: 'notice skip' } ) ).not.toBeInTheDocument();
+		}
+	);
 } );

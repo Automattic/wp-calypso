@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text } from '../../../components/text';
 import type { TermPricing } from '../use-term-pricing';
 
-interface Props {
+interface ReferralEmailPreviewModalProps {
 	agencyId: number;
 	productIds: number[];
 	greetingLine: string;
@@ -45,7 +45,7 @@ export default function ReferralEmailPreviewModal( {
 	logoUrl,
 	term,
 	onClose,
-}: Props ) {
+}: ReferralEmailPreviewModalProps ) {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ height, setHeight ] = useState( 900 );
 
