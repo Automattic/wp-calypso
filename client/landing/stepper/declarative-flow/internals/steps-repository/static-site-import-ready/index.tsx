@@ -7,7 +7,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSourceHost } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
-import SitePreview from '../../components/site-preview';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
@@ -78,11 +77,13 @@ const StaticSiteImportReadyStep: StepType< {
 			<DocumentHead title={ __( 'Your site is on WordPress.com' ) } />
 			<div className="static-site-import-ready-step">
 				{ /* Only the share link gets past Coming Soon, so the preview waits for it. */ }
-				<SitePreview
-					siteSlug={ shareUrl ? ( siteSlug ?? null ) : null }
-					url={ shareUrl }
-					isInteractive
-				/>
+				{ shareUrl && (
+					<iframe
+						className="static-site-import-ready-step__site"
+						src={ shareUrl }
+						title={ __( 'Your site on WordPress.com' ) }
+					/>
+				) }
 			</div>
 			{ view === 'welcome' && (
 				<Modal

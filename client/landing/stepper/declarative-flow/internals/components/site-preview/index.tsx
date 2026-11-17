@@ -13,18 +13,12 @@ interface Props {
 	siteSlug: string | null;
 	defaultDevice?: Device;
 	showDeviceSwitcher?: boolean;
-	/** A link to show in place of the site's own address, such as a share link that gets past Coming Soon. */
-	url?: string;
-	/** Let the visitor click around the site rather than only look at it. */
-	isInteractive?: boolean;
 }
 
 const SitePreview = ( {
 	siteSlug = '',
 	defaultDevice = DEVICE_TYPES.COMPUTER,
 	showDeviceSwitcher = false,
-	url,
-	isInteractive = false,
 }: Props ) => {
 	const translate = useTranslate();
 	const site = useSite();
@@ -44,16 +38,6 @@ const SitePreview = ( {
 		useSitePreviewShareCode();
 
 	const formatPreviewUrl = () => {
-		if ( url ) {
-			return addQueryArgs( url, {
-				iframe: true,
-				theme_preview: true,
-				hide_banners: true,
-				preview: true,
-				...( ! isInteractive && { do_preview_no_interactions: true } ),
-			} );
-		}
-
 		if ( ! previewUrl || isPreviewLinksLoading || isCreatingSitePreviewLinks ) {
 			return null;
 		}
@@ -75,7 +59,7 @@ const SitePreview = ( {
 		<div className="site-preview__wrapper">
 			<WebPreview
 				className="site-preview__web-preview"
-				disableTabbing={ ! isInteractive }
+				disableTabbing
 				showDeviceSwitcher={ showDeviceSwitcher }
 				showPreview
 				showSEO

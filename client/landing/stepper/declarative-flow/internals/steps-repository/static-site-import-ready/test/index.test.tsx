@@ -11,17 +11,6 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StaticSiteImportReadyStep from '..';
 import { mockStepProps } from '../../test/helpers';
 
-// The preview itself is an iframe onto the site, which a test can't load.
-jest.mock( '../../../components/site-preview', () => ( {
-	__esModule: true,
-	default: ( { url, siteSlug }: { url?: string; siteSlug: string | null } ) => (
-		<iframe
-			title="Site preview"
-			src={ url ?? ( siteSlug ? `https://${ siteSlug }` : undefined ) }
-		/>
-	),
-} ) );
-
 const SHARE_URL = 'https://preview.wpcomstaging.com/?share=abc';
 
 const render = () => {
@@ -75,7 +64,7 @@ describe( 'StaticSiteImportReadyStep', () => {
 		expect(
 			await screen.findByRole( 'link', { name: /preview\.wpcomstaging\.com/ } )
 		).toHaveAttribute( 'href', SHARE_URL );
-		expect( screen.getByTitle( 'Site preview' ) ).toHaveAttribute( 'src', SHARE_URL );
+		expect( screen.getByTitle( 'Your site on WordPress.com' ) ).toHaveAttribute( 'src', SHARE_URL );
 	} );
 
 	it( 'moves the welcome to a card in the corner to look around', async () => {
@@ -136,6 +125,6 @@ describe( 'StaticSiteImportReadyStep', () => {
 		expect(
 			await screen.findByRole( 'dialog', { name: 'Your site is on WordPress.com' } )
 		).toBeVisible();
-		expect( screen.getByTitle( 'Site preview' ) ).not.toHaveAttribute( 'src' );
+		expect( screen.queryByTitle( 'Your site on WordPress.com' ) ).not.toBeInTheDocument();
 	} );
 } );
