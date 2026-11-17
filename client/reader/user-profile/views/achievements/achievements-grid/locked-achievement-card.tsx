@@ -2,9 +2,15 @@ import AchievementCard from './achievement-card';
 import SecretAchievementCard from './secret-achievement-card';
 import type { LockedAchievementEntry } from '@automattic/api-core';
 
-export default function LockedAchievementCard( { entry }: { entry: LockedAchievementEntry } ) {
+export default function LockedAchievementCard( {
+	entry,
+	index,
+}: {
+	entry: LockedAchievementEntry;
+	index: number;
+} ) {
 	if ( entry.is_redacted ) {
-		return <SecretAchievementCard achievementId={ entry.achievement_id } locked />;
+		return <SecretAchievementCard index={ index } locked />;
 	}
 
 	return (

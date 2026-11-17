@@ -3,8 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import AchievementCard from './achievement-card';
 
 interface SecretAchievementCardProps {
-	/** Picks the card's description, so each secret keeps the same one. */
-	achievementId: number;
+	/** The card's position in its grid, so any ten cards in a row show different descriptions. */
+	index: number;
 	/** Render the locked variant — faded card. Omit for unlocked masked secrets. */
 	locked?: boolean;
 	/** Profile owner's unlock date. Present only for masked secrets in the earned list. */
@@ -12,7 +12,7 @@ interface SecretAchievementCardProps {
 }
 
 export default function SecretAchievementCard( {
-	achievementId,
+	index,
 	locked,
 	unlockedDate,
 }: SecretAchievementCardProps ) {
@@ -30,7 +30,7 @@ export default function SecretAchievementCard( {
 		translate( 'Mystery achievement. Keep going — it’ll reveal itself.' ),
 		translate( 'Hidden in plain sight. Keep at it to unlock the details.' ),
 	];
-	const description = descriptions[ achievementId % descriptions.length ];
+	const description = descriptions[ index % descriptions.length ];
 	const caption = unlockedDate
 		? translate( 'Unlocked: {{timeSince/}}', {
 				components: { timeSince: <TimeSince date={ unlockedDate } /> },
