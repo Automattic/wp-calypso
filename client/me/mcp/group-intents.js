@@ -14,6 +14,17 @@ export function groupIntentKey( category, groupName ) {
 }
 
 /**
+ * Whether a tool can only be turned on by its own switch. Bulk enables (MCP
+ * access, a Read or Write page, a group) skip it; bulk disables still turn it
+ * off. Any truthy value counts, so an unexpected encoding fails closed.
+ * @param {import('@automattic/api-core').McpAbility} tool
+ * @returns {boolean}
+ */
+export function requiresOptIn( tool ) {
+	return Boolean( tool?.requires_opt_in );
+}
+
+/**
  * A group/read/write intent only sets the *default* for abilities with no
  * explicit per-op override — an explicit override from an earlier individual
  * toggle always wins (see SettingsHelper::is_ability_enabled() on the
@@ -27,11 +38,30 @@ export function groupIntentKey( category, groupName ) {
 export function getOverridesToMatch( scopedTools, enabled ) {
 	const overrides = {};
 	scopedTools.forEach( ( [ toolId, tool ] ) => {
-		if ( tool.enabled !== enabled && ! ( enabled && tool.requires_opt_in === true ) ) {
+		if ( tool.enabled !== enabled && ! ( enabled && requiresOptIn( tool ) ) ) {
 			overrides[ toolId ] = enabled;
 		}
 	} );
 	return Object.keys( overrides ).length > 0 ? overrides : undefined;
+}
+
+/**
+ * Site-level settings store an explicit value per tool, and an explicit site
+ * value wins over every account-level grant. So a site page's "Enable all"
+ * writes the new value for each tool in scope, except that it never enables
+ * an opt-in tool: that stays with the tool's own switch.
+ * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
+ * @param {boolean} enabled
+ * @returns {Record<string, boolean>}
+ */
+export function getSiteBulkOverrides( scopedTools, enabled ) {
+	const overrides = {};
+	scopedTools.forEach( ( [ toolId, tool ] ) => {
+		if ( ! ( enabled && requiresOptIn( tool ) ) ) {
+			overrides[ toolId ] = enabled;
+		}
+	} );
+	return overrides;
 }
 
 /**
@@ -41,6 +71,6 @@ export function getOverridesToMatch( scopedTools, enabled ) {
 export function isBulkEnabled( scopedTools ) {
 	return (
 		scopedTools.some( ( [ , tool ] ) => tool.enabled ) &&
-		scopedTools.every( ( [ , tool ] ) => tool.enabled || tool.requires_opt_in === true )
+		scopedTools.every( ( [ , tool ] ) => tool.enabled || requiresOptIn( tool ) )
 	);
 }

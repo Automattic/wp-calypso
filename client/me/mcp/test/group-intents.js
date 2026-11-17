@@ -1,4 +1,10 @@
-import { getOverridesToMatch, groupIntentKey, isBulkEnabled } from '../group-intents';
+import {
+	getOverridesToMatch,
+	getSiteBulkOverrides,
+	groupIntentKey,
+	isBulkEnabled,
+	requiresOptIn,
+} from '../group-intents';
 
 describe( 'client/me/mcp/group-intents', () => {
 	describe( 'groupIntentKey', () => {
@@ -75,6 +81,49 @@ describe( 'client/me/mcp/group-intents', () => {
 				isBulkEnabled( [ [ 'wpcom/sensitive-read', { enabled: false, requires_opt_in: true } ] ] )
 			).toBe( false );
 			expect( isBulkEnabled( [] ) ).toBe( false );
+		} );
+
+		it( 'treats any truthy opt-in value as opt-in', () => {
+			expect(
+				isBulkEnabled( [
+					[ 'wpcom/posts-list', { enabled: true } ],
+					[ 'wpcom/sensitive-read', { enabled: false, requires_opt_in: 1 } ],
+				] )
+			).toBe( true );
+		} );
+	} );
+
+	describe( 'requiresOptIn', () => {
+		it( 'fails closed on truthy values and open only on missing or falsy ones', () => {
+			expect( requiresOptIn( { requires_opt_in: true } ) ).toBe( true );
+			expect( requiresOptIn( { requires_opt_in: 1 } ) ).toBe( true );
+			expect( requiresOptIn( { requires_opt_in: '1' } ) ).toBe( true );
+			expect( requiresOptIn( { requires_opt_in: false } ) ).toBe( false );
+			expect( requiresOptIn( {} ) ).toBe( false );
+			expect( requiresOptIn( undefined ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getSiteBulkOverrides', () => {
+		const tools = [
+			[ 'wpcom/posts-list', { enabled: true } ],
+			[ 'wpcom/posts-create', { enabled: false } ],
+			[ 'wpcom/sensitive-read', { enabled: false, requires_opt_in: true } ],
+		];
+
+		it( 'writes every ordinary tool but never enables an opt-in tool', () => {
+			expect( getSiteBulkOverrides( tools, true ) ).toEqual( {
+				'wpcom/posts-list': true,
+				'wpcom/posts-create': true,
+			} );
+		} );
+
+		it( 'disables opt-in tools along with ordinary tools', () => {
+			expect( getSiteBulkOverrides( tools, false ) ).toEqual( {
+				'wpcom/posts-list': false,
+				'wpcom/posts-create': false,
+				'wpcom/sensitive-read': false,
+			} );
 		} );
 	} );
 } );
