@@ -33,7 +33,7 @@ function getGlotPressFunction( properties ) {
 function buildPHPString( properties, textdomain ) {
 	const wpFunc = getGlotPressFunction( properties );
 	const response = [];
-	const closing = textdomain ? ', "' + textdomain.replace( /"/g, '\\"' ) + '" ),' : ' ),';
+	const closing = textdomain ? ', "' + textdomain.replace( /(\\|")/g, '\\$1' ) + '" ),' : ' ),';
 	const stringFromFunc = {
 		__: '__( ' + properties.single + closing,
 		_x: '_x( ' + [ properties.single, properties.context ].join( ', ' ) + closing,

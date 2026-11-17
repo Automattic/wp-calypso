@@ -805,7 +805,11 @@ export const test = base.extend<
 			const activationLink = links.find( ( link: string ) =>
 				link.includes( 'activate' )
 			) as string;
-			await page.goto( activationLink );
+			// Activation lands on My Home, which can move on to wp-admin after it loads. In the
+			// test's page, that late redirect would abort whatever the test opens first.
+			const activationPage = await page.context().newPage();
+			await activationPage.goto( activationLink );
+			await activationPage.close();
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
 			// Fresh accounts have no recovery method set up, so the dashboard's
 			// account-recovery interstitial would mount over every route and block

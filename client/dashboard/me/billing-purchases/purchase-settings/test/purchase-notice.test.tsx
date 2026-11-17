@@ -131,9 +131,33 @@ describe( '<PurchaseNotice />', () => {
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
+	test( 'shows the free month notice after a free month is added', async () => {
+		setSearch( '?free_month=true' );
+		render( <PurchaseNotice purchase={ makePurchase() } /> );
+
+		expect(
+			await screen.findByText( 'Your free month is added to your account! Enjoy!' )
+		).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+	} );
+
+	test( 'hides the free month notice when it is dismissed', async () => {
+		const user = userEvent.setup();
+		setSearch( '?free_month=true' );
+		render( <PurchaseNotice purchase={ makePurchase() } /> );
+
+		await screen.findByText( 'Your free month is added to your account! Enjoy!' );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		expect(
+			screen.queryByText( 'Your free month is added to your account! Enjoy!' )
+		).not.toBeInTheDocument();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+	} );
+
 	test( 'removes the notice params it shows and keeps the rest', async () => {
 		setSearch(
-			'?cancelled=true&intent=auto-renew&downgraded=true&plan_changed=true&delayed_downgrade_scheduled=true&upgraded=true&keep=1'
+			'?cancelled=true&intent=auto-renew&downgraded=true&free_month=true&plan_changed=true&delayed_downgrade_scheduled=true&upgraded=true&keep=1'
 		);
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 

@@ -4,7 +4,7 @@ import {
 	clearStepPersistedState,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
-import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, select, useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -291,7 +291,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 				// WordPress.com refuses to launch a preview site nobody has bought: buying its plan at
 				// checkout launches it, so with a plan in the cart the flow goes on to checkout. Without
-				// one, such as Free picked, the refusal stands.
+				// one, such as Free picked, the refusal stands, and the plans are offered again.
 				await launchSite( siteId ).catch( ( error ) => {
 					const isBuyingPlan =
 						stepSlugs.includes( STEPS.UNIFIED_PLANS.slug ) && !! getPlanCartItem();
@@ -453,6 +453,21 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.processingResult === ProcessingResult.FAILURE ) {
+						// A preview nobody has bought launches only with a paid plan, so offer those.
+						const { error } = ( select( SITE_STORE ) as SiteSelect ).getSiteSetupError() ?? {};
+
+						if (
+							error === 'preview_site_unpaid' &&
+							stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
+						) {
+							return navigate(
+								addQueryArgs( STEPS.UNIFIED_PLANS.slug, {
+									...getQueryArgs( window.location.href ),
+									hide_free_plan: 1,
+								} ) as typeof currentStepSlug
+							);
+						}
+
 						return navigate( STEPS.ERROR.slug );
 					}
 

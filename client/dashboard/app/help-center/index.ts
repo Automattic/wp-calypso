@@ -31,8 +31,8 @@ export function useHelpCenter() {
 		}
 
 		setIsLoading( true );
-		loadingPromiseRef.current = import( '@automattic/data-stores' ).then(
-			( { HelpCenter: HelpCenterStore } ) => {
+		loadingPromiseRef.current = import( '@automattic/data-stores/help-center' ).then(
+			( HelpCenterStore ) => {
 				HelpCenterStore.register();
 				setIsLoading( false );
 				loadingPromiseRef.current = undefined;
