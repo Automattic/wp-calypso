@@ -484,7 +484,8 @@ class PostComment extends PureComponent {
 		const isNew = highlightedCommentIds.includes( commentId );
 		const canCollapse = this.canCollapse();
 		const { isCollapsed } = this.state;
-		const collapsedCount = canCollapse ? this.getAllChildrenIds( commentId ).length : 0;
+		const collapsedCount =
+			canCollapse && isCollapsed ? this.getAllChildrenIds( commentId ).length : 0;
 
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
