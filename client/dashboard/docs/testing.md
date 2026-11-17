@@ -99,6 +99,7 @@ nock( 'https://public-api.wordpress.com' )
 
 - Avoid `nock.delay()` — it leaves open handles that keep the test run from exiting.
 - Use `scope.isDone()` to assert the request was actually made.
+- Before asserting that asynchronous UI is absent, wait for the relevant query result or data-dependent UI to settle. `scope.isDone()` only proves the request matched; React may still show its initial state. To test that something disappears, first observe it, trigger the change, then wait for it to clear.
 - Use `.query( true )` when you don't care about specific query string values.
 - To test a refetch, wait until the screen shows data from the first response, then replace the mock and call `invalidateQueries()`. While a query has no data, TanStack Query keeps the fetch that is in flight instead of sending a second request.
 

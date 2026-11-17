@@ -15,6 +15,10 @@ yarn typecheck-packages
 yarn eslint packages/api-queries/src/<file>
 ```
 
+## Preference cache
+
+Use `userPreferenceQuery( key )` and `userPreferenceMutation( key )` for individual preferences. They read and update the full preferences cache from `rawUserPreferencesQuery()`. A scalar query under another key creates an independent cache that these preference mutations do not update.
+
 ## Adding a query: `meta.persist`
 
 Queries are persisted to `localStorage` by default. Set `meta: { persist: false }` in the query factory when the response carries sensitive data, for example:
