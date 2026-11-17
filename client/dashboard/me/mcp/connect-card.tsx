@@ -111,7 +111,7 @@ function AccessOffNotice( {
 	onTurnOn: () => void;
 	isTurningOn: boolean;
 } ) {
-	if ( ! isSite && addedSiteCount > 0 ) {
+	if ( addedSiteCount > 0 ) {
 		return (
 			<Notice
 				variant="info"
@@ -249,7 +249,6 @@ export default function McpConnectCard( {
 	const trackAgentClick = ( agent: ConnectAgent ) => {
 		recordTracksEvent( 'calypso_dashboard_mcp_connect_click', {
 			...tracksAudienceProps,
-			source: isSite ? 'site' : 'account',
 			agent: agent.key,
 			action: agent.href ? 'open' : 'copy',
 		} );
@@ -311,7 +310,6 @@ export default function McpConnectCard( {
 							if ( await copyText( 'helper', HELPER_PROMPT ) ) {
 								recordTracksEvent( 'calypso_dashboard_mcp_connect_helper_copy', {
 									...tracksAudienceProps,
-									source: isSite ? 'site' : 'account',
 								} );
 							}
 						} }
