@@ -168,17 +168,6 @@ export const alreadyWpcomPath = buildPathHelper<
 	typeof STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug
 >( STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug );
 
-export const instructionsPath = buildPathHelper<
-	{
-		queryParams: {
-			siteId?: number | string;
-			siteSlug?: string;
-			from?: string | null;
-		};
-	},
-	typeof STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
->( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
-
 export const otherPlatformDetectedImportPath = buildPathHelper<
 	{
 		queryParams: {

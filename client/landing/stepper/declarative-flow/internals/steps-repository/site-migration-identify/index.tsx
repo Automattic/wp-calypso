@@ -16,7 +16,7 @@ import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
-import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
+import { useSitePreviewMShotImageHandler } from '../components/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -305,7 +305,7 @@ const SiteMigrationIdentify: StepType< {
 			}
 		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
-			// early in the flow to avoid long loading times in the migration instructions step.
+			// early in the flow to avoid long loading times in the site check step.
 			// Because mShots API can often take a long time to generate screenshots.
 			if ( data?.from ) {
 				createScreenshots( data?.from );

@@ -218,11 +218,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	SITE_MIGRATION_INSTRUCTIONS: {
-		slug: 'site-migration-instructions',
-		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
-	},
-
 	SITE_MIGRATION_CREDENTIALS: {
 		slug: 'site-migration-credentials',
 		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),

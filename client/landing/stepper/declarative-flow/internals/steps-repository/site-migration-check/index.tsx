@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
-import { SitePreview } from '../site-migration-instructions/site-preview';
-import { mShotConfigs } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
+import { SitePreview } from '../components/site-preview';
+import { mShotConfigs } from '../components/site-preview/hooks/use-site-preview-mshot-image-handler';
 import successIcon from './success.svg';
 import type { Step as StepType } from '../../types';
 

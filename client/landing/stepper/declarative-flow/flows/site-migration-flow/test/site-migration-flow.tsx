@@ -590,6 +590,29 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
+			'starts a removed instructions URL with suffix "%s" over at identify, preserving context',
+			( suffix ) => {
+				const replaceState = jest
+					.spyOn( window.history, 'replaceState' )
+					.mockImplementation( () => {} );
+				const search = '?siteSlug=example.wordpress.com&siteId=123&ref=hosting-migration-overview';
+				Object.assign( window.location, {
+					pathname: `/setup/site-migration/site-migration-instructions${ suffix }`,
+					search,
+					hash: '#migration',
+				} );
+
+				expect( siteMigrationFlow.initialize() ).not.toBe( false );
+				expect( replaceState ).toHaveBeenCalledWith(
+					null,
+					'',
+					`/setup/site-migration/site-migration-identify${ suffix }${ search }#migration`
+				);
+				expect( window.location.replace ).not.toHaveBeenCalled();
+			}
+		);
+
+		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
 			'redirects the legacy choice URL with suffix "%s" while preserving context',
 			( suffix ) => {
 				const search =
@@ -2449,12 +2472,12 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_INSTRUCTIONS when step "myself" is selected', () => {
+			it( 'starts "myself" over at SITE_MIGRATION_IDENTIFY when the source is unknown, even if an upgrade is required', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					dependencies: {
 						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF,
-						destination: 'migrate',
+						destination: 'upgrade',
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
@@ -2463,12 +2486,14 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					step: STEPS.SITE_MIGRATION_IDENTIFY,
 					query: {
 						siteSlug: 'example.wordpress.com',
+						siteId: 123,
 					},
 				} );
 				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );
 
 			it( 'redirects from SITE_MIGRATION_HOW_TO_MIGRATE (do it for me) page to SITE_MIGRATION_CREDENTIALS step', () => {
@@ -2528,17 +2553,20 @@ describe( 'Site Migration Flow', () => {
 					expect( goToCheckout ).not.toHaveBeenCalled();
 				} );
 
-				it( 'keeps legacy behavior without a detected WordPress source', () => {
+				it( 'starts over at identify without a detected WordPress source', () => {
 					const result = runNavigation( {
 						from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 						dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF, destination: 'migrate' },
 						query: { ...context, platform: undefined },
 					} );
-					expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_INSTRUCTIONS } );
+					expect( result ).toMatchDestination( {
+						step: STEPS.SITE_MIGRATION_IDENTIFY,
+						query: { siteId: 123, siteSlug: 'example.wordpress.com', from: context.from },
+					} );
 					expect( window.location.assign ).not.toHaveBeenCalled();
 				} );
 
-				it( 'keeps legacy resume behavior without a source address', () => {
+				it( 'starts over at identify without a source address', () => {
 					const query = { ...context };
 					delete query.from;
 					const result = runNavigation( {
@@ -2546,7 +2574,10 @@ describe( 'Site Migration Flow', () => {
 						dependencies: { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF, destination: 'migrate' },
 						query,
 					} );
-					expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_INSTRUCTIONS } );
+					expect( result ).toMatchDestination( {
+						step: STEPS.SITE_MIGRATION_IDENTIFY,
+						query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+					} );
 					expect( window.location.assign ).not.toHaveBeenCalled();
 				} );
 
@@ -2578,7 +2609,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( goToCheckout ).toHaveBeenCalledWith( {
-					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123`,
+					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123`,
 					flowName: 'site-migration',
 					from: 'https://site-to-be-migrated.com',
 					siteSlug: 'example.wordpress.com',
@@ -2587,33 +2618,10 @@ describe( 'Site Migration Flow', () => {
 					historyBack: true,
 				} );
 			} );
-		} );
 
-		describe( 'SITE_MIGRATION_INSTRUCTIONS', () => {
-			it( 'redirects to site overview when the migration has started', () => {
-				runNavigation( {
-					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-					},
-				} );
-
-				expect( window.location.assign ).toMatchURL( {
-					path: '/overview/example.wordpress.com',
-					query: {
-						ref: 'site-migration',
-					},
-				} );
-			} );
-
-			it( 'redirects to SITE_MIGRATION_CREDENTIALS step when the user decides to ask for an assisted migration', () => {
+			it( 'starts a DIY migration over at identify after the upgrade', () => {
 				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-					dependencies: {
-						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
-					},
+					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
@@ -2622,7 +2630,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_CREDENTIALS,
+					step: STEPS.SITE_MIGRATION_IDENTIFY,
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,

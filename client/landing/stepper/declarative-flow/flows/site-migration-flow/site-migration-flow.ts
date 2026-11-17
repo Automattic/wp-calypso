@@ -60,7 +60,6 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_CHECK,
 	STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 	STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-	STEPS.SITE_MIGRATION_INSTRUCTIONS,
 	STEPS.ERROR,
 	STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 	STEPS.SITE_MIGRATION_CREDENTIALS,
@@ -95,6 +94,19 @@ function initialize() {
 			null,
 			'',
 			pathname.replace( /\/sitePicker(?=\/|$)/, `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }` ) +
+				search +
+				hash
+		);
+	}
+	// The migration key instructions step was removed; start leftover links over at identify.
+	if ( matchPath( '/setup/:flow/site-migration-instructions/:lang?', pathname ) ) {
+		window.history.replaceState(
+			null,
+			'',
+			pathname.replace(
+				/\/site-migration-instructions(?=\/|$)/,
+				`/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
+			) +
 				search +
 				hash
 		);
@@ -1063,13 +1075,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return navigate( paths.identifyPath( { from: fromQueryParam, how: '' } ) );
 					}
 
-					if (
-						platformQueryParam === 'wordpress' &&
-						providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF &&
-						fromQueryParam &&
-						hasSite( siteId, siteSlug )
-					) {
-						return showWordpressDestination( siteId, siteSlug, fromQueryParam );
+					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) {
+						if (
+							platformQueryParam === 'wordpress' &&
+							fromQueryParam &&
+							hasSite( siteId, siteSlug )
+						) {
+							return showWordpressDestination( siteId, siteSlug, fromQueryParam );
+						}
+						return navigate( paths.identifyPath( { siteId, siteSlug, from: fromQueryParam } ) );
 					}
 
 					// Take the user to the upgrade plan step.
@@ -1085,16 +1099,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
-					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
-					}
-
-					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
+					return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
+						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_IDENTIFY.slug;
 						if ( urlQueryParams.get( 'ssh' ) === 'true' ) {
 							// Redirect to verification first to obtain transferId before share-access
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug;
@@ -1137,7 +1147,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 
-					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
+					return navigate( paths.identifyPath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_SSH_VERIFICATION.slug: {
@@ -1162,14 +1172,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 							host: hostQueryParam,
 						} )
 					);
-				}
-
-				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					// User decided to ask for an assisted migration - try to collect credentials.
-					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
-					}
-					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {

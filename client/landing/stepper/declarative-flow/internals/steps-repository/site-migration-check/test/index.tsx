@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import SiteMigrationCheck from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( '../../site-migration-instructions/site-preview', () => ( {
+jest.mock( '../../components/site-preview', () => ( {
 	SitePreview: ( {
 		url,
 		label,
