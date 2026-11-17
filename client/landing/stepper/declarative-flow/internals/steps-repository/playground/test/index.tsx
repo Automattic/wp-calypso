@@ -269,18 +269,18 @@ describe( 'Playground', () => {
 			expect( querySaveModal() ).toBeVisible();
 			expect(
 				screen.getByText(
-					'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
+					'Your store will be saved to WordPress.com with a Commerce plan. Build and launch on your own timeline.'
 				)
 			).toBeVisible();
 			expect( querySaveModal() ).toHaveAccessibleDescription(
-				'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
+				'Your store will be saved to WordPress.com with a Commerce plan. Build and launch on your own timeline.'
 			);
 			expect( screen.getByRole( 'heading', { name: 'When you save, you unlock:' } ) ).toBeVisible();
 			const benefits = screen.getAllByRole( 'listitem' );
 			expect( benefits.map( ( benefit ) => benefit.textContent ) ).toEqual( [
-				'Your store, everywhereAccess it anytime from your account',
-				'Time to explore14-day free trial. No credit card needed',
-				'Only pay when you’re readyLaunch on your own timeline',
+				'Your store, everywhereAccess it anytime from your account to continue building',
+				'Everything for selling onlineBuilt-in payments, shipping, and inventory management',
+				'Professional hosting & supportSecurity, updates, and expert help included',
 			] );
 			expect( getContinueButton() ).toBeEnabled();
 			expect( submit ).not.toHaveBeenCalled();
