@@ -38,6 +38,7 @@ describe( 'getBlackboxSessionId', () => {
 	test.each( [
 		[ 'login-key', 'login' ],
 		[ 'signup-key', 'signup' ],
+		[ 'login-key', 'password_reset' ],
 	] )(
 		'passes collect flow through configureBlackbox before flush (%s, %s)',
 		async ( apiKey, flow ) => {

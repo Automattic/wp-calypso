@@ -69,7 +69,7 @@ const myFlow: FlowV2< typeof initialize > = {
 	initialize,
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< typeof initialize >();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const createSite = useCreateSite();
 
@@ -362,10 +362,10 @@ function initialize() {
 
 ## State management
 
-Use `useFlowState()` inside `useStepNavigation`. Requires `__experimentalUseSessions: true`.
+Use `useFlowState< typeof initialize >()` inside `useStepNavigation`. Requires `__experimentalUseSessions: true`.
 
 ```ts
-const { get, set } = useFlowState();
+const { get, set } = useFlowState< typeof initialize >();
 set( 'domains', providedDependencies ); // persist submitted data by step slug
 const domains = get( 'domains' ); // retrieve it later
 ```

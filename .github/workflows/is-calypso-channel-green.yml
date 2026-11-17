@@ -79,18 +79,50 @@ jobs:
         if: steps.bypass.outputs.bypass == 'true'
         run: echo "Skipping the red-channel gate."
 
-      - name: Check channel status
+      - name: Is the Calypso Slack channel green? (a failure here is not caused by this PR)
         if: steps.bypass.outputs.bypass != 'true'
+        env:
+          EVENT_NAME: ${{ github.event_name }}
         run: |
+          # The annotation is what people and agents see first on the checks
+          # page, and the job summary is what they see when they open the run,
+          # so both say that the gate failed and the change did not.
+          report_failure() {
+            local title="$1" reason="$2" retry_when="$3" next
+            if [ "$EVENT_NAME" = "merge_group" ]; then
+              next="Add the pull request to the merge queue again ${retry_when}. To merge anyway, add the \"Ignore Red Slack\" label to every pull request in the group first."
+            else
+              next="Re-run this check ${retry_when}. To merge anyway, add the \"Ignore Red Slack\" label, which re-runs this check and passes it."
+            fi
+            echo "::error title=${title}::${reason} There is nothing to fix in the code. ${next}"
+            {
+              echo "### ${title}"
+              echo
+              echo "${reason} **There is nothing to fix in the code.**"
+              echo
+              echo "${next}"
+              echo
+              echo 'Reverts (a title starting with `Revert `) skip this gate automatically.'
+            } >> "$GITHUB_STEP_SUMMARY"
+          }
+
           STATUS=$(curl -s https://public-api.wordpress.com/wpcom/v2/calypso-slack-channel-status --header "Authorization: ${{ secrets.CALYPSO_CHANNEL_STATUS_API_SECRET }}" | xargs)
           if [ "$STATUS" = "GREEN" ]; then
             echo "Calypso Slack channel is green."
             exit 0
           elif [ "$STATUS" = "RED" ]; then
             echo "Calypso Slack channel is red."
+            report_failure \
+              "Not a problem with this change: the Calypso Slack channel is red" \
+              "Merging to trunk is paused for every pull request while the Calypso Slack channel is red, and this check fails until then." \
+              "once the channel is green"
             exit 1
           else
             echo "Calypso Slack channel status is unknown."
+            report_failure \
+              "Not a problem with this change: the Calypso Slack channel status is unknown" \
+              "The channel status service did not answer GREEN or RED, so this check cannot tell whether merging is paused and fails to be safe." \
+              "in a few minutes"
             exit 1
           fi
         shell: bash

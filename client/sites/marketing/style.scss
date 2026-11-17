@@ -34,7 +34,7 @@
 
 	&.twitter {
 		.sharing-service__logo {
-			color: var(--color-twitter);
+			color: var(--color-x);
 		}
 	}
 
@@ -240,7 +240,7 @@
 
 @include sharing-service( "bluesky", var( --color-bluesky ) );
 @include sharing-service( "facebook", var( --color-facebook ) );
-@include sharing-service( "twitter", var( --color-twitter ) );
+@include sharing-service( "twitter", var( --color-x ) );
 @include sharing-service( "google_plus", var( --color-google-plus ) );
 @include sharing-service( "threads", var( --color-threads ) );
 @include sharing-service( "tumblr", var( --color-tumblr ) );
@@ -908,7 +908,7 @@
 
 @include sharing-button-service( "bluesky", var( --color-bluesky ) );
 @include sharing-button-service( "facebook", var( --color-facebook ) );
-@include sharing-button-service( "twitter", var( --color-twitter ) );
+@include sharing-button-service( "twitter", var( --color-x ) );
 @include sharing-button-service( "press-this", var( --color-wordpress-com ) );
 @include sharing-button-service( "google-plus-1", var( --color-google-plus ) );
 @include sharing-button-service( "instagram-basic-display", var( --color-instagram ) );
