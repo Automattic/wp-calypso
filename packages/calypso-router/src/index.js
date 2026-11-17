@@ -187,15 +187,6 @@ function tokensToFunction( tokens ) {
 }
 
 /**
- * Escape a regular expression string.
- * @param {string} str
- * @returns {string}
- */
-function escapeString( str ) {
-	return str.replace( /([.+*?=^!:${}()[\]|/\\])/g, '\\$1' );
-}
-
-/**
  * Escape the capturing group by escaping special characters and meaning.
  * @param {string} group
  * @returns {string}
@@ -308,9 +299,9 @@ function tokensToRegExp( tokens, options ) {
 	// Iterate over the tokens and create our regexp string.
 	for ( const token of tokens ) {
 		if ( typeof token === 'string' ) {
-			route += escapeString( token );
+			route += escapeRegExp( token );
 		} else {
-			const prefix = escapeString( token.prefix );
+			const prefix = escapeRegExp( token.prefix );
 			let capture = token.pattern;
 
 			if ( token.repeat ) {
