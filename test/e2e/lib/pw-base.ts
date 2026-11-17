@@ -806,6 +806,9 @@ export const test = base.extend<
 				link.includes( 'activate' )
 			) as string;
 			await page.goto( activationLink );
+			// Activation lands on My Home, which new sites no longer get: once it has loaded
+			// the site it moves on to wp-admin, aborting whatever the test opens first.
+			await page.waitForURL( ( url ) => ! url.pathname.startsWith( '/home/' ) );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
 			// Fresh accounts have no recovery method set up, so the dashboard's
 			// account-recovery interstitial would mount over every route and block
