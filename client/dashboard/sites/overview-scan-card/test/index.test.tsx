@@ -4,19 +4,13 @@
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ScanCard from '../index';
 import type { Site, SiteScan, Threat } from '@automattic/api-core';
 
 const mockSiteId = 123;
-
-const mockFetchSiteScan = vi.fn();
-
-vi.mock( '@automattic/api-core', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
-	fetchSiteScan: ( ...args: unknown[] ) => mockFetchSiteScan( ...args ),
-} ) );
 
 const mockSite: Site = {
 	ID: mockSiteId,
@@ -28,18 +22,11 @@ const mockSite: Site = {
 	is_wpcom_atomic: true,
 } as Site;
 
-vi.mock( '@wordpress/i18n', async () => ( {
-	...( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) ),
-	__: ( text: string ) => text,
-	_n: ( singular: string, plural: string, count: number ) => ( count === 1 ? singular : plural ),
-	sprintf: ( format: string, ...args: unknown[] ) => {
-		let result = format;
-		args.forEach( ( arg ) => {
-			result = result.replace( /%[sd]/, String( arg ) );
-		} );
-		return result;
-	},
-} ) );
+function mockSiteScan( scan: SiteScan ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ mockSiteId }/scan` )
+		.reply( 200, scan );
+}
 
 vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
@@ -48,7 +35,7 @@ vi.mock( '../../../app/locale', () => ( {
 
 describe( 'ScanCard', () => {
 	test( 'shows "No risks found" when there are no threats', async () => {
-		mockFetchSiteScan.mockResolvedValue( {
+		mockSiteScan( {
 			state: 'idle',
 			threats: [],
 			has_cloud: true,
@@ -90,7 +77,7 @@ describe( 'ScanCard', () => {
 			},
 		};
 
-		mockFetchSiteScan.mockResolvedValue( {
+		mockSiteScan( {
 			state: 'idle',
 			threats: [ fixableThreat ],
 			has_cloud: true,
@@ -128,7 +115,7 @@ describe( 'ScanCard', () => {
 			// No fixable property means it cannot be auto-fixed
 		};
 
-		mockFetchSiteScan.mockResolvedValue( {
+		mockSiteScan( {
 			state: 'idle',
 			threats: [ nonFixableThreat ],
 			has_cloud: true,
@@ -182,7 +169,7 @@ describe( 'ScanCard', () => {
 			// No fixable property
 		};
 
-		mockFetchSiteScan.mockResolvedValue( {
+		mockSiteScan( {
 			state: 'idle',
 			threats: [ fixableThreat, nonFixableThreat ],
 			has_cloud: true,
