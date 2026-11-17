@@ -105,7 +105,15 @@ const defaultAddOns: AddOnMeta[] = [
 	},
 ];
 
-const pluginAddOns: PluginAddOnMeta[] = [
+export const getAddOnsList = (): AddOnMeta[] => {
+	return defaultAddOns;
+};
+
+/**
+ * The add-ons that the site's plan includes as plugins to install. They have no store product.
+ * The list is built on each call, so that the names and descriptions use the current locale.
+ */
+export const getPluginAddOnsList = (): PluginAddOnMeta[] => [
 	{
 		addOnSlug: ADD_ON_WOOCOMMERCE_BOOKINGS,
 		pluginSlug: 'woocommerce-bookings',
@@ -127,17 +135,6 @@ const pluginAddOns: PluginAddOnMeta[] = [
 		),
 	},
 ];
-
-export const getAddOnsList = (): AddOnMeta[] => {
-	return defaultAddOns;
-};
-
-/**
- * The add-ons that the site's plan includes as plugins to install. They have no store product.
- */
-export const getPluginAddOnsList = (): PluginAddOnMeta[] => {
-	return pluginAddOns;
-};
 
 export const getAddOn = ( addOnSlug: AddOnSlug ): AddOnMeta | undefined => {
 	return getAddOnsList().find( ( addOn ) => addOn.addOnSlug === addOnSlug );
