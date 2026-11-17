@@ -1,8 +1,10 @@
 import { receiptQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import { ExternalLink } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
@@ -16,7 +18,11 @@ import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
 } from 'calypso/dashboard/app/checkout-success-flash';
-import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import {
+	RENEWAL_SUCCESS_FLASH_ID,
+	RENEWAL_SUCCESS_PURCHASE_PARAM,
+} from 'calypso/dashboard/app/renewal-success-flash-message';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -150,20 +156,50 @@ function isDashboardUrl( url: string ): boolean {
 }
 
 /**
+ * The classic purchase page only bounces to its Dashboard counterpart (see
+ * `client/me/purchases/index.js`) with a full page load, which would cut short
+ * any notice shown on it. Renewals without a `redirect_to` land there, so send
+ * them straight to the Dashboard page, where the renewal notice can show.
+ */
+function redirectClassicPurchasePageToDashboard( url: string ): string {
+	const match = url.match( /^\/me\/purchases\/[^/?#]+\/(\d+)(?=[?#]|$)/ );
+	if ( ! match ) {
+		return url;
+	}
+	return dashboardLink( `/me/billing/purchases/${ match[ 1 ] }` );
+}
+
+/**
  * Tags a successful redirect so the destination can show a success toast on
  * arrival. The Dashboard (a separate SPA) can't rely on the classic notice
- * mechanisms, so it gets its own `flash` param for `<CheckoutSuccessFlashMessage>`.
- * Classic My Home reads `notice`. Both name a newly bought plan.
+ * mechanisms, so it gets its own `flash` param: `<RenewalSuccessFlashMessage>`
+ * for a renewal, which names the renewed purchase so the Dashboard can look up
+ * its new expiry date, and `<CheckoutSuccessFlashMessage>` otherwise. Classic
+ * My Home reads `notice`. Both name a newly bought plan.
  */
 function addSuccessNoticeParams(
 	url: string,
-	{ purchasedPlanSlug, isRenewal }: { purchasedPlanSlug?: string; isRenewal: boolean }
+	{
+		purchasedPlanSlug,
+		isRenewal,
+		renewedPurchaseId,
+	}: { purchasedPlanSlug?: string; isRenewal: boolean; renewedPurchaseId?: number }
 ): string {
 	const planArgs = purchasedPlanSlug ? { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } : {};
 
 	if ( isDashboardUrl( url ) ) {
-		// Drop a plan slug left over from an earlier checkout started on the same page.
-		const cleanUrl = removeQueryArgs( url, CHECKOUT_SUCCESS_PLAN_PARAM );
+		// Drop params left over from an earlier checkout started on the same page.
+		const cleanUrl = removeQueryArgs(
+			url,
+			CHECKOUT_SUCCESS_PLAN_PARAM,
+			RENEWAL_SUCCESS_PURCHASE_PARAM
+		);
+		if ( isRenewal && renewedPurchaseId ) {
+			return addQueryArgs( cleanUrl, {
+				flash: RENEWAL_SUCCESS_FLASH_ID,
+				[ RENEWAL_SUCCESS_PURCHASE_PARAM ]: renewedPurchaseId,
+			} );
+		}
 		return addQueryArgs( cleanUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID, ...planArgs } );
 	}
 
@@ -349,7 +385,7 @@ function useRedirectOnTransactionSuccess( {
 			return redirectTo;
 		} )();
 
-		const redirectInstructions = getRedirectFromPendingPage( {
+		const pendingRedirect = getRedirectFromPendingPage( {
 			isLoadingOrder,
 			transaction,
 			orderId,
@@ -362,9 +398,13 @@ function useRedirectOnTransactionSuccess( {
 			receipt,
 		} );
 
-		if ( ! redirectInstructions ) {
+		if ( ! pendingRedirect ) {
 			return;
 		}
+		const redirectInstructions = {
+			...pendingRedirect,
+			url: redirectClassicPurchasePageToDashboard( pendingRedirect.url ),
+		};
 
 		// For unified checkout, wait for the current user to be re-fetched
 		// (triggered by the useEffect above) before proceeding. This ensures
@@ -411,7 +451,11 @@ function useRedirectOnTransactionSuccess( {
 			: redirectInstructions.url;
 
 		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
-			finalUrl = addSuccessNoticeParams( finalUrl, { purchasedPlanSlug, isRenewal } );
+			finalUrl = addSuccessNoticeParams( finalUrl, {
+				purchasedPlanSlug,
+				isRenewal,
+				renewedPurchaseId: resolvedPurchaseId,
+			} );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
@@ -498,7 +542,9 @@ function triggerPostRedirectNotices( {
 		return;
 	}
 
-	if ( isRenewal ) {
+	// The Dashboard never renders Calypso notices; it shows its own renewal
+	// notice from the params `addSuccessNoticeParams` adds to the URL.
+	if ( isRenewal && ! isDashboardUrl( redirectInstructions.url ) ) {
 		displayRenewalSuccessNotice( {
 			productName,
 			translate,
@@ -520,11 +566,27 @@ function displayRenewalSuccessNotice( {
 	// show renewal success notice
 	reduxDispatch(
 		successNotice(
-			translate( 'Success! You renewed %(productName)s.', {
-				args: {
-					productName,
-				},
-			} ),
+			translate(
+				'Success! You renewed %(productName)s. We will attempt to automatically renew it in the future. {{a}}Learn more about renewals{{/a}}',
+				{
+					args: {
+						productName,
+					},
+					components: {
+						a: (
+							<ExternalLink
+								href={ localizeUrl(
+									'https://wordpress.com/support/manage-purchases/automatic-renewal/'
+								) }
+								localizeUrl={ false }
+								icon
+							/>
+						),
+					},
+					comment:
+						'Toast shown after a manual subscription renewal. %(productName)s is the renewed product. {{a}}…{{/a}} wraps the "Learn more about renewals" link text.',
+				}
+			),
 			{ displayOnNextPage: true }
 		)
 	);

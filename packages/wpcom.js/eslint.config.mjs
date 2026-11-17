@@ -1,4 +1,4 @@
-import calypso, { browserGlobals, nodeConfig } from '@automattic/calypso-eslint-config';
+import calypso, { browserGlobals } from '@automattic/calypso-eslint-config';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig( [
@@ -12,17 +12,6 @@ export default defineConfig( [
 					definedTypes: [ 'WPCOM' ],
 				},
 			],
-		},
-	},
-	{ ...nodeConfig, files: [ 'examples/server/**', 'examples/node/**' ] },
-	{
-		files: [ 'examples/**/package.json' ],
-		rules: {
-			'@automattic/json/require-repository-directory': 'off',
-			'@automattic/json/require-license': 'off',
-			'@automattic/json/valid-values-name-scope': 'off',
-			'@automattic/json/description-format': 'off',
-			'@automattic/json/valid-values-author': 'off',
 		},
 	},
 	{

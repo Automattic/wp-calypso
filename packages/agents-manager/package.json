@@ -94,7 +94,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"resize-observer-polyfill": "^1.5.1",
-		"smooch": "^5.7.17",
+		"smooch": "^5.7.20",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0"

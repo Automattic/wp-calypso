@@ -1,4 +1,5 @@
 import React, { useMemo, type JSX } from 'react';
+import { stripHTML } from 'calypso/lib/formatting';
 import LinkPreview from './link-preview';
 
 interface ContentProcessorProps {
@@ -66,7 +67,7 @@ export function detectUrls( content: string ): string | null {
 			! linkText.trim().startsWith( '#' )
 		) {
 			// Check if link text looks like a URL (strip HTML tags first)
-			const linkTextTrimmed = linkText.replace( /<[^>]*>/g, '' ).trim();
+			const linkTextTrimmed = stripHTML( linkText ).trim();
 			if ( linkTextTrimmed.match( /^https?:\/\// ) ) {
 				return url;
 			}

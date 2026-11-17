@@ -18,7 +18,7 @@ Logged-out users log in first; the steps are then worked out for their site.
 
 ## Preview sites
 
-A preview site nobody has bought is launched by buying a plan: WordPress.com refuses to launch it unpaid (`preview_site_unpaid`), so the launch step takes that refusal as its cue to go on to checkout, where buying the plan launches the site. The badge on the preview links here with `hide_free_plan=1` and `checkout_source`. The flow doesn't look up whether a site is a preview; it goes by its URL and that refusal.
+A preview site nobody has bought is launched by buying a plan: WordPress.com refuses to launch it unpaid (`preview_site_unpaid`), so the launch step takes that refusal as its cue to go on to checkout, where buying the plan launches the site. With Free picked, the refusal brings back the plans step with `hide_free_plan=1`, however the user arrived. The badge on the preview links here with `hide_free_plan=1` and `checkout_source`. The flow doesn't look up whether a site is a preview; it goes by its URL and that refusal.
 
 ## Query parameters
 

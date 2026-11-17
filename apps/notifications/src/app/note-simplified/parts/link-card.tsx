@@ -6,6 +6,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { arrowUpRight } from '@wordpress/icons';
+import { recordTracksEvent } from '../../../panel/helpers/stats';
 import type { ReactNode } from 'react';
 
 export default function LinkCard( {
@@ -25,6 +26,7 @@ export default function LinkCard( {
 			target="_blank"
 			rel="noreferrer"
 			size="small"
+			onClick={ () => recordTracksEvent( 'calypso_notification_context_card_click' ) }
 		>
 			<CardBody className="wpnc-simplified__card-body" size="none">
 				<VStack spacing={ 3 }>
