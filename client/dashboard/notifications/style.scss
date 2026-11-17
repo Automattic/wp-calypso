@@ -8,7 +8,7 @@ $pane-height: calc(
 		)
 );
 
-.dashboard-notifications {
+.dashboard-notifications-inbox {
 	height: $pane-height;
 	overflow: hidden;
 
@@ -17,25 +17,25 @@ $pane-height: calc(
 	}
 }
 
-.dashboard-notifications__panes {
+.dashboard-notifications-inbox__panes {
 	display: grid;
 	grid-template-columns: minmax( 360px, 480px ) minmax( 0, 1fr );
 	height: 100%;
 }
 
-.dashboard-notifications__list,
-.dashboard-notifications__detail {
+.dashboard-notifications-inbox__list,
+.dashboard-notifications-inbox__detail {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 	min-height: 0;
 }
 
-.dashboard-notifications__panes .dashboard-notifications__list {
+.dashboard-notifications-inbox__panes .dashboard-notifications-inbox__list {
 	border-inline-end: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 }
 
-.dashboard-notifications__detail {
+.dashboard-notifications-inbox__detail {
 	overflow-y: auto;
 
 	.components-card__body {
@@ -51,19 +51,15 @@ $pane-height: calc(
 	}
 }
 
-.dashboard-notifications__tabs,
-.dashboard-notifications__tab-panel {
+.dashboard-notifications-inbox__tabs,
+.dashboard-notifications-inbox__tab-panel {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	min-height: 0;
 }
 
-.dashboard-notifications__tab-list {
+.dashboard-notifications-inbox__tab-list {
 	padding: $grid-unit-10 $grid-unit-20 0;
-}
-
-.dashboard-notifications__list-actions {
-	padding: $grid-unit-15 $grid-unit-20;
 	border-block-end: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
 }

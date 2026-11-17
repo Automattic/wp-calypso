@@ -7,13 +7,12 @@ import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
-import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
-import { getClient, initClient } from './client';
+import { getClient, initClient, showNotes } from './client';
 import { AppProvider } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
@@ -157,13 +156,8 @@ const NotificationApp = ( {
 		setIsReady( true );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
-		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
-		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
-		return () => {
-			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
-			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
-		};
+		return showNotes();
 	}, [ wpcom, isViewSettingsEnabled ] );
 
 	useEffect( () => {

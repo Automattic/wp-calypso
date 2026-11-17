@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 import { store, init as initState } from '../../panel/state';
-import { subscribeUnseenCount } from '../client';
+import getIsPanelOpen from '../../panel/state/selectors/get-is-panel-open';
+import { getClient, initClient, showNotes, subscribeUnseenCount } from '../client';
 
 vi.mock( '../../panel/rest-client', () => ( {
 	default: vi.fn( function () {
@@ -58,5 +59,45 @@ describe( 'subscribeUnseenCount', () => {
 
 		unsubscribe();
 		unsubscribeWithCallback();
+	} );
+} );
+
+describe( 'showNotes', () => {
+	beforeEach( () => {
+		initState();
+		initClient( {} );
+		vi.mocked( getClient().setVisibility ).mockClear();
+	} );
+
+	it( 'marks the notes as showing until it is undone', () => {
+		const hideNotes = showNotes();
+
+		expect( getIsPanelOpen( store.getState() ) ).toBe( true );
+		expect( getClient().setVisibility ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { isShowing: true } )
+		);
+
+		hideNotes();
+
+		expect( getIsPanelOpen( store.getState() ) ).toBe( false );
+		expect( getClient().setVisibility ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { isShowing: false } )
+		);
+	} );
+
+	it( 'keeps the notes showing when one surface goes away after another has appeared', () => {
+		const hidePanel = showNotes();
+		const hideInbox = showNotes();
+
+		hidePanel();
+
+		expect( getIsPanelOpen( store.getState() ) ).toBe( true );
+		expect( getClient().setVisibility ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { isShowing: true } )
+		);
+
+		hideInbox();
+
+		expect( getIsPanelOpen( store.getState() ) ).toBe( false );
 	} );
 } );

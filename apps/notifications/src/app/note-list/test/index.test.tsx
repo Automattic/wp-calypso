@@ -154,6 +154,56 @@ describe( 'NoteList loading state', () => {
 		expect( screen.getByText( 'Unread two' ) ).toBeVisible();
 	} );
 
+	it( 'keeps the open note in the Unread view after it is read', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [ makeNote( 800, 'Unread one' ), makeNote( 801, 'Unread two' ) ] )
+		);
+		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 801, 800 ] ) );
+		store.dispatch( actions.notes.readNote( 800 ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'unread' as FilterName, {}, '800' );
+
+		expect( screen.getByText( 'Unread one' ) ).toBeVisible();
+		expect( screen.getByText( 'Unread two' ) ).toBeVisible();
+	} );
+
+	it( 'keeps the open note in its place once the server no longer lists it as unread', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [
+				makeNote( 801, 'Oldest' ),
+				makeNote( 802, 'Open note' ),
+				makeNote( 803, 'Newest' ),
+			] )
+		);
+		store.dispatch( actions.notes.readNote( 802 ) );
+		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 803, 801 ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'unread' as FilterName, {}, '802' );
+
+		expect(
+			screen.getAllByText( /^(Oldest|Open note|Newest)$/ ).map( ( row ) => row.textContent )
+		).toEqual( [ 'Newest', 'Open note', 'Oldest' ] );
+	} );
+
+	it( 'drops a read note from the Unread view once another note is open', () => {
+		const store = initStore();
+		store.dispatch(
+			actions.notes.addNotes( [ makeNote( 800, 'Unread one' ), makeNote( 801, 'Unread two' ) ] )
+		);
+		store.dispatch( actions.notes.setFilteredNoteIds( 'unread', [ 801, 800 ] ) );
+		store.dispatch( actions.notes.readNote( 800 ) );
+		store.dispatch( actions.ui.loadedNotes() );
+
+		renderTab( store, 'unread' as FilterName, {}, '801' );
+
+		expect( screen.queryByText( 'Unread one' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Unread two' ) ).toBeVisible();
+	} );
+
 	it( 'excludes a trashed note from the Unread view', () => {
 		const store = initStore();
 		store.dispatch(
