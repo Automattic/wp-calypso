@@ -1,3 +1,7 @@
+## Unreleased
+
+- Read the `_ut`, `_ui` and `_tkl` URL parameters with `URLSearchParams`, so a malformed percent-escape no longer throws.
+
 ## 1.1.4
 
 - Update CCPA state list to include Florida, Kentucky, Maryland, Minnesota, Nebraska, New Hampshire, and Rhode Island.

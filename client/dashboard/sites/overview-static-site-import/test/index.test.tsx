@@ -1,9 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { renderHook, screen, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useState } from 'react';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import {
@@ -223,16 +224,100 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( /^Finding your pages$/ );
 	} );
 
-	test( 'moves the checklist forward when the session moves on', () => {
-		const moving = ( state: string ) =>
-			( { status: 'moving', session: session( state ) } ) as StaticSiteImportState;
-		const { rerender } = render(
-			<StaticSiteImportProgress siteImport={ moving( 'capturing' ) } search={ search } />
-		);
+	test( 'moves the checklist forward when the session moves on', async () => {
+		function Moving() {
+			const [ state, setState ] = useState( 'capturing' );
+			const siteImport = { status: 'moving', session: session( state ) } as StaticSiteImportState;
+			return (
+				<>
+					<button onClick={ () => setState( 'building' ) }>Move on</button>
+					<StaticSiteImportProgress siteImport={ siteImport } search={ search } />
+				</>
+			);
+		}
+		render( <Moving /> );
 
-		rerender( <StaticSiteImportProgress siteImport={ moving( 'building' ) } search={ search } /> );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Move on' } ) );
 
 		expect( screen.getAllByRole( 'listitem' )[ 2 ] ).toHaveAttribute( 'aria-current', 'step' );
+	} );
+
+	test.each( [
+		[ { current_page: '/about-us/' }, 'Copied /about-us/' ],
+		[ { current_page: '/caf%C3%A9/' }, 'Copied /café/' ],
+		[ { current_page: '/' }, 'Copied your home page' ],
+		[ { current_page: '/contact/', capture_stage: 'media' }, 'Saving your images' ],
+		[ { capture_stage: 'finalizing' }, 'Saving your pages' ],
+	] )( 'says what the copy is doing: %o', ( progress, activity ) => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 4, pages_total: 12, ...progress },
+		} );
+
+		expect( within( current ).getByRole( 'status' ) ).toHaveTextContent( activity );
+	} );
+
+	test( 'says how long each finished step took', () => {
+		currentStepOf( 'building', {
+			progress: { phase: 'building', step_seconds: { inspecting: 12, capturing: 130 } },
+		} );
+
+		const [ found, copied ] = screen.getAllByRole( 'listitem' );
+		expect( found ).toHaveTextContent( '12s' );
+		expect( copied ).toHaveTextContent( '2m 10s' );
+	} );
+
+	test( 'keeps time on the step the move is on', () => {
+		const current = currentStepOf( 'building', {
+			progress: { phase: 'building', phase_started_at: Math.floor( Date.now() / 1000 ) - 65 },
+		} );
+
+		expect( current ).toHaveTextContent( /1m 0[56]s/ );
+	} );
+
+	test( 'fills the bar with the pages copied so far', () => {
+		currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 6, pages_total: 12 },
+		} );
+
+		expect( screen.getByRole( 'progressbar', { name: 'Move progress' } ) ).toHaveAttribute(
+			'aria-valuenow',
+			'25'
+		);
+	} );
+
+	test( 'shows what the move has copied and built', () => {
+		currentStepOf( 'queued', {
+			progress: { pages_total: 12, captured: { files: 214, bytes: 3 * 1024 * 1024 } },
+			preview_summary: { blocks: 412 },
+		} );
+
+		for ( const [ term, value ] of [
+			[ 'Pages', '12' ],
+			[ 'Files saved', '214' ],
+			[ 'Copied', '3 MB' ],
+			[ 'Blocks built', '412' ],
+		] ) {
+			expect( screen.getByText( term ) ).toBeVisible();
+			expect( screen.getByText( value ) ).toBeVisible();
+		}
+	} );
+
+	test( 'names what inspection found on the old site', () => {
+		currentStepOf( 'capturing', {
+			assessment: { measured: true, capabilities: { forms: 2, commerce: 1, booking: 0 } },
+		} );
+
+		expect( screen.getByText( 'Forms' ) ).toBeVisible();
+		expect( screen.getByText( 'Store' ) ).toBeVisible();
+		expect( screen.queryByText( 'Bookings' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the old site’s home page once capture has a picture of it', () => {
+		currentStepOf( 'building', { preview_image_url: 'https://example.com/preview.png' } );
+
+		expect(
+			screen.getByRole( 'img', { name: 'The home page of busybearscleaning.com' } )
+		).toHaveAttribute( 'src', 'https://example.com/preview.png' );
 	} );
 
 	test( 'offers to connect the kept domain and preview the site once it is ready', async () => {

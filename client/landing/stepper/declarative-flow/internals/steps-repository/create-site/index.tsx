@@ -4,8 +4,13 @@ import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products'
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
+	DIRECT_TO_CART_FLOW,
 	EDUCATION_FLOW,
 	ENTREPRENEUR_FLOW,
+	NEWSLETTER_FLOW,
+	ONBOARDING_FLOW,
+	WRITE_NEW_SITE_FLOW,
+	WRITE_ON_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	SITE_MIGRATION_FLOW,
 	STUDENT_FLOW,
@@ -53,7 +58,7 @@ import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useFlowState } from '../../state-manager/store';
+import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
@@ -69,6 +74,18 @@ import './styles.scss';
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
+
+// Flows whose new sites get the wp-admin AI Launchpad (Site Setup). The rest of the flows that
+// use this step bring in an existing site or have a setup of their own.
+const AI_LAUNCHPAD_FLOWS = [
+	ONBOARDING_FLOW,
+	NEWSLETTER_FLOW,
+	EDUCATION_FLOW,
+	STUDENT_FLOW,
+	DIRECT_TO_CART_FLOW,
+	WRITE_ON_FLOW,
+	WRITE_NEW_SITE_FLOW,
+];
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
@@ -229,7 +246,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const flowState = useFlowState();
+	const flowState = useFlowState< AnyFlowInitialize >();
 	const queryClient = useQueryClient();
 	const urlQueryParams = useQuery();
 
@@ -403,7 +420,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// landing. A reblog's site is launched at creation, so the launchpad's launch task could
 		// never complete.
 		const aiLaunchpadEnabled =
-			isOnboardingFlow( flow ) &&
+			AI_LAUNCHPAD_FLOWS.includes( flow ) &&
 			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
 			! urlQueryParams.get( 'blog_post' ) &&

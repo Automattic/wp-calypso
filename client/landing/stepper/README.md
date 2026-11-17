@@ -139,7 +139,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	 */
 	useStepNavigation( currentStepSlug, navigate ) {
 		// This hook should be enough to manage and persist all the state your flows needs.
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< typeof initialize >();
 
 		// This function handles the submission event of every step in the flow.
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
@@ -434,6 +434,10 @@ flows keep working unchanged:
   succeeds, for a run whose completion was already recorded elsewhere (e.g. the legacy
   `site-selected` signup flow handing its purchase to onboarding's post-checkout steps). See
   [`steps-repository/processing-step/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/processing-step/index.tsx).
+- The `post-checkout-onboarding` (`post-checkout`) step exposes `enableAiLaunchpad`, which turns
+  on the AI Launchpad (Site Setup) for a site created by checkout, once any Atomic transfer is
+  done. Optional, off by default. See
+  [`steps-repository/post-checkout/post-checkout-onboarding.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/post-checkout/post-checkout-onboarding.tsx).
 
 #### Renaming steps
 
@@ -452,8 +456,8 @@ There shouldn't be any state that is untyped in Stepper.
 ```ts
 const flow = {
 	useStepNavigation() {
-		const { set } = useFlowState();
-		// The `useFlowState` will infer the types of `plans` from the types of the steps whose slug is `plans`. It will use the `submits:` part of the step types.
+		const { set } = useFlowState< typeof initialize >();
+		// `useFlowState` infers the type of `plans` from the `submits:` type of the flow step whose slug is `plans`. Keys outside the flow steps hold `unknown`.
 		set( 'plans', data );
 	},
 };
