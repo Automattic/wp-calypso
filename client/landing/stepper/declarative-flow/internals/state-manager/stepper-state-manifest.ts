@@ -7,6 +7,7 @@ type CreatedSite = Awaited< ReturnType< typeof createSite > >;
  * The manifest of the state of all available state fields in Stepper. Feel free to type and add all the fields you need.
  */
 export type StepperMiscellaneousFields = Partial< {
+	migrationSourceUrl: string;
 	flow: {
 		entryPoint: string;
 	};

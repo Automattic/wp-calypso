@@ -1,24 +1,99 @@
-// Rewrites the Dashboard's Jest tests for Vitest: `jest.*` calls and types become Vitest's,
-// `jest.requireActual()` becomes `await vi.importActual()` (making its mock factory async), and
+// Rewrites Jest tests for Vitest: `jest.*` calls and types become Vitest's,
+// `jest.requireActual()` becomes `await vi.importActual()` (making its function async), and
 // `@jest-environment` and `@jest-environment-options` comments become their `@vitest-` forms. Safe
 // to re-run on converted files.
 //
-//   node test/dashboard/jest-to-vitest-codemod.mjs [files…]
+//   node test/client/jest-to-vitest-codemod.mjs [files…]
 //
-// With no files, it converts every Dashboard test file and `client/dashboard/test-utils.tsx`.
-// It prints the files and lines that need a hand fix.
+// With no files, it converts the client test files that `test/client/vitest-directories.js` moves
+// to Vitest, and the helpers next to them. It prints the files and lines that need a hand fix.
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import ts from 'typescript';
 
 const root = path.resolve( import.meta.dirname, '../..' );
+const client = path.join( root, 'client' );
+const { eslintFiles, eslintIgnores } = createRequire( import.meta.url )(
+	'./vitest-directories.js'
+);
 const args = process.argv.slice( 2 );
 const files = args.length
 	? args
-	: [
-			...fs.globSync( 'client/dashboard/**/test/*.test.{js,jsx,ts,tsx}', { cwd: root } ),
-			'client/dashboard/test-utils.tsx',
-		].map( ( file ) => path.join( root, file ) );
+	: fs
+			.globSync( eslintFiles, { cwd: client, exclude: eslintIgnores } )
+			.map( ( file ) => path.join( client, file ) );
+
+const SOURCE_EXTENSIONS = [
+	'',
+	'.js',
+	'.jsx',
+	'.ts',
+	'.tsx',
+	'/index.js',
+	'/index.jsx',
+	'/index.ts',
+	'/index.tsx',
+];
+
+// The file a bare specifier loads, preferring workspace packages' `calypso:src` source.
+function resolvePackage( specifier, fromFile ) {
+	const parts = specifier.split( '/' );
+	const name = parts.slice( 0, specifier.startsWith( '@' ) ? 2 : 1 ).join( '/' );
+	const subpath = specifier.slice( name.length );
+	for ( let dir = path.dirname( fromFile ); ; dir = path.dirname( dir ) ) {
+		const pkgDir = path.join( dir, 'node_modules', name );
+		const manifest = path.join( pkgDir, 'package.json' );
+		if ( fs.existsSync( manifest ) ) {
+			const pkg = JSON.parse( fs.readFileSync( manifest, 'utf8' ) );
+			let entry = pkg.exports?.[ '.' + subpath ] ?? ( subpath ? undefined : pkg.exports );
+			while ( entry && typeof entry === 'object' ) {
+				entry = entry[ 'calypso:src' ] ?? entry.import ?? entry.default ?? entry.require;
+			}
+			entry ??= subpath ? '.' + subpath : ( pkg.module ?? pkg.main ?? 'index.js' );
+			return path.join( pkgDir, entry );
+		}
+		if ( dir === path.dirname( dir ) ) {
+			return null;
+		}
+	}
+}
+
+// Whether the mocked module has a default export a consumer could import. Modules it can't find
+// count as having one.
+const defaultExportCache = new Map();
+function hasDefaultExport( specifier, fromFile ) {
+	let base;
+	if ( specifier.startsWith( '.' ) ) {
+		base = path.resolve( path.dirname( fromFile ), specifier );
+	} else if ( specifier.startsWith( 'calypso/' ) ) {
+		base = path.join( client, specifier.slice( 'calypso/'.length ) );
+	} else {
+		base = resolvePackage( specifier, path.resolve( fromFile ) );
+	}
+	const file =
+		base &&
+		SOURCE_EXTENSIONS.map( ( ext ) => base + ext ).find( ( f ) =>
+			fs.statSync( f, { throwIfNoEntry: false } )?.isFile()
+		);
+	if ( ! file ) {
+		return true;
+	}
+	if ( ! defaultExportCache.has( file ) ) {
+		const code = fs.readFileSync( file, 'utf8' );
+		defaultExportCache.set(
+			file,
+			/\bexport\s+default\b|\bexport\s*\{[^}]*(\bas\s+default\b|\bdefault\s*[,}])|\bexports\.default\b|\bdefault:\s*\(\)\s*=>/.test(
+				code
+			) ||
+				// CommonJS without the `__esModule` marker: Babel imports `module.exports` as the default.
+				( /\b(module\.)?exports\b/.test( code ) &&
+					! /^\s*(import|export)\b/m.test( code ) &&
+					! code.includes( '__esModule' ) )
+		);
+	}
+	return defaultExportCache.get( file );
+}
 
 const TYPE_RENAMES = {
 	Mock: 'Mock',
@@ -69,13 +144,44 @@ for ( const file of files ) {
 		node.expression.name.text === 'mock';
 	const isMockFactory = ( fn ) =>
 		fn && fn.parent && isMockCall( fn.parent ) && fn.parent.arguments[ 1 ] === fn;
+	const isTestCallback = ( fn ) =>
+		ts.isCallExpression( fn.parent ) &&
+		/^(it|test|beforeEach|afterEach|beforeAll|afterAll)$/.test(
+			fn.parent.expression.getText( sf ).split( '.' )[ 0 ]
+		);
 	const unwrap = ( e ) => ( ts.isParenthesizedExpression( e ) ? unwrap( e.expression ) : e );
+	const isDynamicImport = ( e ) =>
+		ts.isCallExpression( e ) && e.expression.kind === ts.SyntaxKind.ImportKeyword;
 	// `jest.requireActual()` already returns an object of exports.
 	const isRequireActual = ( e ) =>
 		ts.isCallExpression( e ) &&
 		ts.isPropertyAccessExpression( e.expression ) &&
 		isJest( e.expression.expression ) &&
 		e.expression.name.text === 'requireActual';
+
+	// Without `__esModule`, Babel's interop gives Jest's default import the whole object of
+	// exports, where Vitest has no default export. Only `jest.mock()` factories are wrapped, so
+	// re-runs leave converted files alone.
+	const addInteropDefault = ( call, e ) => {
+		const keys = e.properties.map( ( p ) => p.name?.getText( sf ) );
+		const [ specifier ] = call.arguments;
+		if (
+			! isJest( call.expression.expression ) ||
+			! ts.isStringLiteralLike( specifier ) ||
+			! hasDefaultExport( specifier.text, file ) ||
+			keys.includes( 'default' ) ||
+			keys.includes( '__esModule' ) ||
+			e.properties.some( ts.isSpreadAssignment )
+		) {
+			return;
+		}
+		edits.push( {
+			start: e.getStart( sf ),
+			end: e.getStart( sf ),
+			text: '( ( m ) => ( { ...m, default: m } ) )( ',
+		} );
+		edits.push( { start: e.end, end: e.end, text: ' )' } );
+	};
 
 	// Jest lets a factory return the module itself (e.g. a function, read through the default
 	// import); Vitest needs an object of exports.
@@ -87,7 +193,11 @@ for ( const file of files ) {
 		if ( ts.isBlock( factory.body ) ) {
 			for ( const r of factory.body.statements.filter( ts.isReturnStatement ) ) {
 				const e = r.expression && unwrap( r.expression );
-				if ( ! e || ts.isObjectLiteralExpression( e ) || isRequireActual( e ) ) {
+				if ( e && ts.isObjectLiteralExpression( e ) ) {
+					addInteropDefault( call, e );
+					continue;
+				}
+				if ( ! e || isRequireActual( e ) || isDynamicImport( e ) ) {
 					continue;
 				}
 				// `Object.assign( fn, { default: fn, … } )`: copy its exports onto a plain object.
@@ -117,9 +227,23 @@ for ( const file of files ) {
 			}
 			return;
 		}
+		const body = unwrap( factory.body );
+		// `() => require( './mock' )` loads the mock module with its exports.
+		if ( ts.isCallExpression( body ) && body.expression.getText( sf ) === 'require' ) {
+			edits.push( {
+				start: body.expression.getStart( sf ),
+				end: body.expression.end,
+				text: 'import',
+			} );
+			return;
+		}
+		if ( ts.isObjectLiteralExpression( body ) ) {
+			addInteropDefault( call, body );
+			return;
+		}
 		if (
-			ts.isObjectLiteralExpression( unwrap( factory.body ) ) ||
 			ts.isAwaitExpression( unwrap( factory.body ) ) ||
+			isDynamicImport( unwrap( factory.body ) ) ||
 			isRequireActual( unwrap( factory.body ) )
 		) {
 			return;
@@ -211,8 +335,8 @@ for ( const file of files ) {
 			if ( name === 'requireActual' && ts.isCallExpression( node.parent ) ) {
 				const call = node.parent;
 				const fn = enclosingFunction( call );
-				if ( fn && ! isMockFactory( fn ) && ! isAsync( fn ) ) {
-					flag( call, 'requireActual inside a non-factory function' );
+				if ( fn && ! isMockFactory( fn ) && ! isTestCallback( fn ) && ! isAsync( fn ) ) {
+					flag( call, 'requireActual inside a function that is neither a factory nor a test' );
 				} else {
 					if ( fn && ! isAsync( fn ) && ! madeAsync.has( fn ) ) {
 						madeAsync.add( fn );
@@ -238,6 +362,20 @@ for ( const file of files ) {
 						text: ts.isAsExpression( call.parent ) ? ' ) as unknown' : ' )',
 					} );
 				}
+			} else if (
+				name === 'setTimeout' &&
+				ts.isCallExpression( node.parent ) &&
+				node.parent.arguments.length === 1
+			) {
+				const [ timeout ] = node.parent.arguments;
+				edits.push( { start: node.getStart( sf ), end: node.end, text: 'vi.setConfig' } );
+				edits.push( {
+					start: timeout.getStart( sf ),
+					end: timeout.getStart( sf ),
+					text: '{ testTimeout: ',
+				} );
+				edits.push( { start: timeout.end, end: timeout.end, text: ' }' } );
+				vitestImports.add( 'vi' );
 			} else {
 				edits.push( {
 					start: node.expression.getStart( sf ),
