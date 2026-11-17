@@ -37,4 +37,20 @@ describe( 'useVisitsQuery', () => {
 			stat_fields: 'views,visitors',
 		} );
 	} );
+
+	it( 'asks for nothing while disabled', () => {
+		wpcom.req.get.mockClear();
+		renderHook(
+			() =>
+				useVisitsQuery(
+					123,
+					{ unit: 'week', startDate: '2026-07-09', endDate: '2026-10-06' },
+					undefined,
+					false
+				),
+			{ wrapper }
+		);
+
+		expect( wpcom.req.get ).not.toHaveBeenCalled();
+	} );
 } );

@@ -24,6 +24,8 @@ interface MiniChartProps {
 	statsBaseUrl: string;
 	range: ResolvedDateRange;
 	gmtOffset: number;
+	/** Whether to wait, loading, before asking for the range. */
+	isHeld?: boolean;
 }
 
 interface VisitRecord {
@@ -39,6 +41,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	statsBaseUrl,
 	range,
 	gmtOffset,
+	isHeld = false,
 } ) => {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
@@ -79,7 +82,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
-	const { status, data } = useVisitsQuery( siteId, range );
+	// A held query stays pending too, so the chart shows its placeholder until it is let go.
+	const { status, data } = useVisitsQuery( siteId, range, undefined, ! isHeld );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];

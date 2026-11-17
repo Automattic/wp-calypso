@@ -23,18 +23,18 @@ vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 	default: () => 'https://example.com/wp-admin/',
 } ) );
 vi.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => ( { default: () => null } ) );
-const mockGates = vi.hoisted( () => ( { locked: [] } ) );
+const mockGates = vi.hoisted( () => ( { locked: [], isLoading: false } ) );
 vi.mock( '../use-stats-gates', async ( importOriginal ) => ( {
 	...( await importOriginal() ),
 	default: () => ( {
-		isLoading: false,
-		isGated: ( statType ) => mockGates.locked.includes( statType ),
+		isLoading: mockGates.isLoading,
+		isGated: ( statType ) => ! mockGates.isLoading && mockGates.locked.includes( statType ),
 	} ),
 } ) );
 const mockStatsLink = vi.fn( ( url ) => url );
 vi.mock( '../use-stats-link', () => ( { default: () => mockStatsLink } ) );
 vi.mock( '../mini-chart', () => ( {
-	default: ( { range } ) => <p>{ `Chart of ${ range.id }` }</p>,
+	default: ( { range, isHeld } ) => <p>{ `Chart of ${ range.id }${ isHeld ? ', held' : '' }` }</p>,
 } ) );
 vi.mock( '../highlights', () => ( { default: () => null } ) );
 vi.mock( '../modules', () => ( { default: () => null } ) );
@@ -61,6 +61,7 @@ describe( 'Stats widget', () => {
 		vi.clearAllMocks();
 		localStorage.clear();
 		mockGates.locked = [];
+		mockGates.isLoading = false;
 	} );
 
 	it( 'opens on the range last chosen on this site', async () => {
@@ -170,6 +171,25 @@ describe( 'Stats widget', () => {
 				'href',
 				'https://example.com/stats/stats/day/123'
 			);
+		} );
+	} );
+
+	describe( 'while the plan is still loading', () => {
+		beforeEach( () => {
+			mockGates.isLoading = true;
+		} );
+
+		it( 'holds the chart for a remembered range a plan could lock', async () => {
+			localStorage.setItem( STORAGE_KEY, 'last_90_days' );
+			await renderWidget();
+
+			expect( screen.getByText( 'Chart of last_90_days, held' ) ).toBeInTheDocument();
+		} );
+
+		it( 'asks for the last 7 days straight away, since no plan locks them', async () => {
+			await renderWidget();
+
+			expect( screen.getByText( 'Chart of last_7_days' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

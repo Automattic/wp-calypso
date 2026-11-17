@@ -99,6 +99,8 @@ export function init() {
 			// A range chosen before the site lost it is kept, for when the site has it again.
 			const shownRangeId = isRangeLocked( rangeId ) ? DEFAULT_DATE_RANGE_ID : rangeId;
 			const range = resolveDateRange( shownRangeId, gmtOffset );
+			// Until the plan is known, only the default range, which no plan locks, is asked for.
+			const isChartHeld = gates.isLoading && shownRangeId !== DEFAULT_DATE_RANGE_ID;
 
 			const onRangeChange = ( nextRangeId: DateRangeId ) => {
 				if ( nextRangeId !== shownRangeId ) {
@@ -134,6 +136,7 @@ export function init() {
 								statsBaseUrl={ statsBaseUrl }
 								range={ range }
 								gmtOffset={ gmtOffset }
+								isHeld={ isChartHeld }
 							/>
 						</WidgetSection>
 						<Highlights

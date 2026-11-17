@@ -21,11 +21,13 @@ function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
  * @param siteId The site.
  * @param range  The range's bucket, and its first and last day.
  * @param fields The stats to count.
+ * @param enabled Whether to ask at all: false until the site's plan is known to include the range.
  */
 export default function useVisitsQuery(
 	siteId: number,
 	range: Pick< ResolvedDateRange, 'unit' | 'startDate' | 'endDate' >,
-	fields = [ 'views', 'visitors' ]
+	fields = [ 'views', 'visitors' ],
+	enabled = true
 ) {
 	const { unit, startDate, endDate } = range;
 	return useQuery( {
@@ -39,6 +41,7 @@ export default function useVisitsQuery(
 				stat_fields: fields.join( ',' ),
 			} ),
 		select: parseChartData,
+		enabled,
 		staleTime: 5 * 60 * 1000,
 	} );
 }
