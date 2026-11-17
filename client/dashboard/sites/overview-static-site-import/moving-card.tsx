@@ -311,10 +311,13 @@ function RollingLine( { text, className }: { text: string; className?: string } 
  */
 function SiteSnapshot( {
 	sourceHost,
+	destinationHost,
 	session,
 	step,
 }: {
 	sourceHost: string;
+	/** Shown in the address bar once the copy is being built there, when given. */
+	destinationHost?: string;
 	session?: StaticSiteImportSession;
 	step: number;
 } ) {
@@ -350,7 +353,7 @@ function SiteSnapshot( {
 				<span className="static-site-import-snapshot__dots" />
 				<span className="static-site-import-snapshot__address">
 					<span className="static-site-import-snapshot__host">
-						{ sourceHost || __( 'Your site' ) }
+						{ ( step >= 2 && destinationHost ) || sourceHost || __( 'Your site' ) }
 					</span>
 					<RollingLine text={ path === '/' ? '' : path } />
 				</span>
@@ -553,7 +556,13 @@ function MoveFacts( { session, locale }: { session?: StaticSiteImportSession; lo
 	);
 }
 
-function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
+function MovingChecklist( {
+	session,
+	lastLabel = __( 'Moving it onto your site' ),
+}: {
+	session?: StaticSiteImportSession;
+	lastLabel?: string;
+} ) {
 	const progress = session?.progress;
 	const current = getCurrentStep( session );
 	const delivery = progress?.delivery;
@@ -600,7 +609,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 			seconds: undefined,
 		},
 		{
-			label: __( 'Moving it onto your site' ),
+			label: lastLabel,
 			activity: current === 3 ? getDeliveryActivity( delivery ) : '',
 			count:
 				current === 3 && delivery?.stage === 'process_files' && delivery.files?.total
@@ -664,6 +673,72 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
+function MoveProgressBar( { session }: { session?: StaticSiteImportSession } ) {
+	const overall = useHighWater( getOverallProgress( session ) );
+	return (
+		<Progress.Root
+			className="static-site-import-moving__progress"
+			aria-label={ __( 'Move progress' ) }
+			value={ overall }
+		>
+			<Progress.Track>
+				<Progress.Indicator />
+			</Progress.Track>
+		</Progress.Root>
+	);
+}
+
+/** The move's overall progress and its steps, for a page of its own while a preview is built. */
+export function StaticSiteImportPreviewSteps( { siteImport }: { siteImport: StaticSiteImport } ) {
+	return (
+		<VStack spacing={ 8 } className="static-site-import-preview-steps">
+			<MoveProgressBar session={ siteImport.session } />
+			<MovingChecklist
+				session={ siteImport.session }
+				lastLabel={ __( 'Getting your preview ready' ) }
+			/>
+		</VStack>
+	);
+}
+
+/** A window onto the site as it's copied, then onto the copy as it's built. */
+export function StaticSiteImportPreviewWindow( {
+	siteImport,
+	search,
+}: {
+	siteImport: StaticSiteImport;
+	search: StaticSiteImportSearch;
+} ) {
+	const sourceHost = getSourceHost( search.from );
+	const session = siteImport.session;
+	const step = getCurrentStep( session );
+	const destinationHost = getSourceHost( session?.site_url );
+	let caption: string = sourceHost
+		? sprintf(
+				/* translators: %s: the domain of the site being copied, e.g. example.com. */
+				__( 'Copying from %s' ),
+				sourceHost
+			)
+		: __( 'Copying your site' );
+	if ( step === 2 ) {
+		caption = __( 'Building your copy on WordPress.com' );
+	} else if ( step === 3 ) {
+		caption = __( 'Your copy on WordPress.com' );
+	}
+
+	return (
+		<VStack spacing={ 2 } className="static-site-import-preview-window">
+			<Text className="static-site-import-preview-window__caption">{ caption }</Text>
+			<SiteSnapshot
+				sourceHost={ sourceHost }
+				destinationHost={ destinationHost }
+				session={ session }
+				step={ step }
+			/>
+		</VStack>
+	);
+}
+
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -681,7 +756,6 @@ export function StaticSiteImportProgress( {
 	const sourceHost = getSourceHost( search.from );
 	const session = siteImport.session;
 	const step = getCurrentStep( session );
-	const overall = useHighWater( getOverallProgress( session ) );
 
 	return (
 		<Card>
@@ -724,15 +798,7 @@ export function StaticSiteImportProgress( {
 									)
 								: __( 'You can close this page. We’ll email you when it’s done.' ) }
 						</Notice>
-						<Progress.Root
-							className="static-site-import-moving__progress"
-							aria-label={ __( 'Move progress' ) }
-							value={ overall }
-						>
-							<Progress.Track>
-								<Progress.Indicator />
-							</Progress.Track>
-						</Progress.Root>
+						<MoveProgressBar session={ session } />
 						<MovingChecklist session={ session } />
 					</VStack>
 				</div>

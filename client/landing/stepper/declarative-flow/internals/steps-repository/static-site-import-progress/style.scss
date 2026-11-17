@@ -1,8 +1,164 @@
-// The progress card comes from the dashboard, which defines these on its root.
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// The steps and window come from the dashboard, which defines these on its root.
 .static-site-import-progress-step {
 	--dashboard__text-color: var( --color-text );
 	--dashboard__text-muted-color: var( --color-text-subtle );
 	--dashboard__foreground-color-success: var( --color-success );
 	--dashboard__foreground-color-warning: var( --color-warning );
 	--dashboard__foreground-color-error: var( --color-error );
+}
+
+// The steps on the left; on wide screens, the window onto the site fills a dark panel on the right.
+.static-site-import-progress-step__split {
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+
+	@include break-large {
+		// The panel is pinned to the window, so the steps keep to the left half.
+		width: calc( 50% - 24px );
+		margin-inline-end: auto;
+		padding-block-start: 96px;
+	}
+}
+
+.static-site-import-progress-step__main {
+	width: 100%;
+	max-width: 432px;
+	margin-inline: auto;
+}
+
+.static-site-import-progress-step__panel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px 16px;
+	border-radius: 16px;
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	background-color: var( --studio-gray-100 );
+
+	// The dots, and a brighter copy of them that a band of light sweeps across like a wave.
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-image: radial-gradient(
+			color-mix( in srgb, var( --studio-white ) 14%, transparent ) 1px,
+			transparent 1px
+		);
+		background-size: 20px 20px;
+	}
+
+	&::after {
+		background-image: radial-gradient(
+			color-mix( in srgb, var( --studio-white ) 28%, transparent ) 1.2px,
+			transparent 1.2px
+		);
+		-webkit-mask-image: linear-gradient(
+			115deg,
+			transparent 35%,
+			var( --studio-white ) 50%,
+			transparent 65%
+		);
+		mask-image: linear-gradient(
+			115deg,
+			transparent 35%,
+			var( --studio-white ) 50%,
+			transparent 65%
+		);
+		-webkit-mask-size: 300% 300%;
+		mask-size: 300% 300%;
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-position: 100% 100%;
+		mask-position: 100% 100%;
+		opacity: 0;
+	}
+
+	@include break-large {
+		position: fixed;
+		inset-block: 24px;
+		inset-inline-end: 24px;
+		width: calc( 50% - 36px );
+		box-sizing: border-box;
+	}
+}
+
+.static-site-import-preview-window {
+	width: 100%;
+	max-width: 640px;
+}
+
+.static-site-import-progress-step__panel .static-site-import-preview-window__caption {
+	color: var( --studio-gray-5 );
+}
+
+.static-site-import-progress-step__panel .static-site-import-snapshot__viewport {
+	aspect-ratio: 2 / 1;
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.static-site-import-progress-step__panel::after {
+		opacity: 1;
+		animation: static-site-import-progress-step__wave 5s ease-in-out infinite;
+	}
+}
+
+@keyframes static-site-import-progress-step__wave {
+	from {
+		-webkit-mask-position: 100% 100%;
+		mask-position: 100% 100%;
+	}
+
+	to {
+		-webkit-mask-position: 0% 0%;
+		mask-position: 0% 0%;
+	}
+}
+
+// Every step keeps room for its activity line, so the markers stay evenly spaced.
+.static-site-import-progress-step .static-site-import-steps__item:not( :last-child ) {
+	min-height: 58px;
+}
+
+.static-site-import-progress-step__email {
+	margin: 0;
+	padding-block-start: 24px;
+	border-block-start: 1px solid var( --color-border-subtle );
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+
+	strong {
+		color: var( --color-text );
+	}
+}
+
+// While the copy is built, a frosted curtain with a blue edge comes down over the site and reveals it.
+@media ( prefers-reduced-motion: no-preference ) {
+	.static-site-import-progress-step__panel
+		.static-site-import-snapshot.is-building
+		.static-site-import-snapshot__scan {
+		opacity: 1;
+		background: color-mix( in srgb, var( --color-surface ) 20%, transparent );
+		-webkit-backdrop-filter: blur( 2px );
+		backdrop-filter: blur( 2px );
+		border-block-start: 1px solid var( --wp-admin-theme-color );
+		animation: static-site-import-progress-step__curtain 12s ease-in-out forwards;
+	}
+}
+
+@keyframes static-site-import-progress-step__curtain {
+	from {
+		transform: translateY( 0 );
+	}
+
+	to {
+		transform: translateY( calc( 100% + 24px ) );
+	}
 }

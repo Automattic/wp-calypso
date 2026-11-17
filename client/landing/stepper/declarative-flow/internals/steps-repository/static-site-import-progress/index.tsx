@@ -1,11 +1,18 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { __experimentalVStack as VStack } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { StaticSiteImportProgress } from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
-import { useStaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
-import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import {
+	StaticSiteImportPreviewSteps,
+	StaticSiteImportPreviewWindow,
+} from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
+import {
+	getSourceHost,
+	useStaticSiteImport,
+} from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
@@ -36,7 +43,6 @@ const StaticSiteImportProgressStep: StepType< {
 	platform,
 } ) {
 	const { __ } = useI18n();
-	const locale = getIntlLocale( useLocale() );
 	const email = useSelector( getCurrentUserEmail );
 	// The preview was built for this move, which already names it as the destination.
 	const siteImport = useStaticSiteImport( siteId ?? 0, importSessionId, { approve: false } );
@@ -89,22 +95,54 @@ const StaticSiteImportProgressStep: StepType< {
 		hasWaitedForPreviewUrl,
 	] );
 
+	const sourceHost = getSourceHost( from );
+	const search = { importSessionId, from, platform };
+
 	return (
 		<>
-			<DocumentHead title={ __( 'We’re moving your site' ) } />
-			<Step.WideLayout
-				className="static-site-import-progress-step"
-				topBar={ <Step.TopBar /> }
-				heading={ <Step.Heading text={ __( 'We’re bringing your site to WordPress.com' ) } /> }
-			>
-				{ siteImport && (
-					<StaticSiteImportProgress
-						siteImport={ siteImport }
-						search={ { importSessionId, from, platform } }
-						locale={ locale }
-						email={ email || undefined }
-					/>
-				) }
+			<DocumentHead title={ __( 'Copying your site' ) } />
+			<Step.WideLayout className="static-site-import-progress-step" topBar={ <Step.TopBar /> }>
+				<div className="static-site-import-progress-step__split">
+					<VStack spacing={ 8 } className="static-site-import-progress-step__main">
+						<Step.Heading
+							align="left"
+							text={ __( 'Copying your site' ) }
+							subText={
+								sourceHost
+									? sprintf(
+											/* translators: %s: the domain of the site being copied, e.g. example.com. */
+											__(
+												'We’re copying %s into a private preview on WordPress.com. Your original site stays as it is.'
+											),
+											sourceHost
+										)
+									: __(
+											'We’re copying your site into a private preview on WordPress.com. Your original site stays as it is.'
+										)
+							}
+						/>
+						{ siteImport && <StaticSiteImportPreviewSteps siteImport={ siteImport } /> }
+						<p className="static-site-import-progress-step__email">
+							{ email
+								? createInterpolateElement(
+										sprintf(
+											/* translators: %s: the email address the ready email goes to, e.g. name@example.com. */
+											__(
+												'You can close this page. We’ll email you at <strong>%s</strong> when it’s done.'
+											),
+											email
+										),
+										{ strong: <strong /> }
+									)
+								: __( 'You can close this page. We’ll email you when it’s done.' ) }
+						</p>
+					</VStack>
+					<aside className="static-site-import-progress-step__panel">
+						{ siteImport && (
+							<StaticSiteImportPreviewWindow siteImport={ siteImport } search={ search } />
+						) }
+					</aside>
+				</div>
 			</Step.WideLayout>
 		</>
 	);

@@ -1,0 +1,104 @@
+// The preview fills the page behind the modal.
+.static-site-import-ready-step {
+	position: fixed;
+	inset: 0;
+	display: flex;
+
+	.site-preview__wrapper {
+		margin: 0;
+	}
+
+	.site-preview__wrapper .web-preview__inner {
+		height: 100%;
+	}
+}
+
+.static-site-import-ready-step__modal {
+	p {
+		margin-block: 0 24px;
+	}
+}
+
+.static-site-import-ready-step__addresses {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 8px 32px;
+	margin: 0 0 32px;
+
+	dt {
+		color: var( --color-text-subtle );
+	}
+
+	dd {
+		margin: 0;
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+
+	a svg {
+		margin-inline-start: 4px;
+		vertical-align: middle;
+		fill: currentColor;
+	}
+}
+
+// After looking around, the welcome settles into the corner, out of the way of the site.
+.static-site-import-ready-step__card,
+.static-site-import-ready-step__pill {
+	position: fixed;
+	inset-block-end: 24px;
+	inset-inline-end: 24px;
+	z-index: 1;
+	box-sizing: border-box;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background: var( --color-surface );
+	box-shadow: 0 8px 24px color-mix( in srgb, var( --color-text ) 16%, transparent );
+}
+
+.static-site-import-ready-step__card {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	width: min( 360px, calc( 100vw - 48px ) );
+	padding: 16px;
+
+	h2 {
+		flex: 1;
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 1.2;
+	}
+
+	p {
+		margin: 0;
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+	}
+
+	.static-site-import-ready-step__addresses {
+		margin: 0;
+		font-size: 0.875rem;
+	}
+
+	> .components-button.is-primary {
+		justify-content: center;
+	}
+}
+
+.static-site-import-ready-step__logo {
+	flex: none;
+	fill: currentColor;
+}
+
+.static-site-import-ready-step__pill {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 6px 6px 8px;
+
+	.static-site-import-ready-step__expand {
+		color: var( --color-text );
+	}
+}

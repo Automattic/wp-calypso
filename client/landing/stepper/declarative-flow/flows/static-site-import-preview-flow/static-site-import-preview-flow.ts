@@ -1,3 +1,4 @@
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import {
 	SITE_MIGRATION_FLOW,
@@ -12,8 +13,9 @@ import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps'
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, addSchemeIfMissing } from 'calypso/lib/url';
 import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import type {
@@ -27,8 +29,13 @@ const ALL_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
 	STEPS.STATIC_SITE_IMPORT_READING,
 	STEPS.STATIC_SITE_IMPORT_PROGRESS,
+	STEPS.STATIC_SITE_IMPORT_READY,
 	STEPS.ERROR,
 ];
+
+/** A source as the reading step names it, so the same site typed two ways still matches. */
+const normalizeSource = ( source = '' ) =>
+	source.trim() ? addSchemeIfMissing( source.trim(), 'https' ).replace( /\/+$/, '' ) : '';
 
 /** A source named on the flow's URL. */
 const getSource = ( query: URLSearchParams ) => query.get( 'from' )?.trim() || '';
@@ -57,6 +64,7 @@ function initialize() {
 		return stepsWithRequiredLogin( [
 			STEPS.STATIC_SITE_IMPORT_READING,
 			STEPS.STATIC_SITE_IMPORT_PROGRESS,
+			STEPS.STATIC_SITE_IMPORT_READY,
 			STEPS.ERROR,
 		] );
 	}
@@ -77,12 +85,24 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
 				buildPreview: true,
 				sourceUrl: from || undefined,
+				// Going back to this step picks up the move it started, rather than copying the site again.
+				startedImport:
+					started?.action === 'continue' &&
+					started.previewSiteId &&
+					normalizeSource( started.sourceUrl ) === normalizeSource( from )
+						? started
+						: undefined,
 			},
 			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
 				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
 				importSessionId: started?.action === 'continue' ? started.importSessionId : undefined,
 				from,
 				platform,
+			},
+			[ STEPS.STATIC_SITE_IMPORT_READY.slug ]: {
+				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
+				siteSlug: started?.action === 'continue' ? started.previewSiteSlug : undefined,
+				from,
 			},
 		};
 	},
@@ -209,12 +229,29 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
-					// A finished preview opens at its share link, which gets past Coming Soon.
-					if ( providedDependencies.action === 'finished' && providedDependencies.previewUrl ) {
-						return window.location.replace( providedDependencies.previewUrl );
+					if ( providedDependencies.action === 'finished' ) {
+						return navigate( STEPS.STATIC_SITE_IMPORT_READY.slug );
 					}
 					// The preview's Overview shows how a move ended, and what can be done next.
 					return goToPreviewOverview();
+				}
+
+				case STEPS.STATIC_SITE_IMPORT_READY.slug: {
+					const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
+					if ( started?.action !== 'continue' || ! started.previewSiteSlug ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+					// Paying, leaving or paying later all come back to the preview's Overview.
+					const overview = dashboardLink( `/sites/${ started.previewSiteSlug }` );
+					return goToCheckout( {
+						flowName: STATIC_SITE_IMPORT_PREVIEW_FLOW,
+						stepName: STEPS.STATIC_SITE_IMPORT_READY.slug,
+						siteSlug: started.previewSiteSlug,
+						plan: PLAN_PERSONAL,
+						destination: overview,
+						cancelDestination: overview,
+						extraQueryParams: { checkoutBackUrl: overview, pay_later: '1' },
+					} );
 				}
 			}
 		};
