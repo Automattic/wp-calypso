@@ -38,6 +38,17 @@
 		outline-offset: 2px;
 	}
 
+	// A card with artwork: its own gray surface instead of the divider, inset
+	// to the menu items' highlight (16px screen padding + 2px focus-ring padding).
+	&.is-card {
+		margin-block-end: $grid-unit-20 + 2px;
+		margin-inline: $grid-unit-20 + 2px;
+		padding: $grid-unit-20;
+		border: 0;
+		border-radius: $radius-large;
+		background-color: var( --dashboard-header__border-color );
+	}
+
 	&.is-tone-dark {
 		--a4a-sidebar-promo-icon-color: var( --a4a-sidebar-promo-icon-color-on-dark, currentColor );
 		--a4a-sidebar-promo-icon-background: var(
@@ -62,4 +73,9 @@
 		inline-size: 20px;
 		block-size: 20px;
 	}
+}
+
+.a4a-sidebar-promo-card__media {
+	display: block;
+	margin-block-end: $grid-unit-20;
 }

@@ -31,8 +31,8 @@ function WindowsPlatform( appWindow ) {
 
 	window.on( 'close', this.onClosed.bind( this ) );
 
-	app.on( 'before-quit', function () {
-		log.info( "Responding to app event 'before-quit', destroying tray" );
+	app.on( 'will-quit', function () {
+		log.info( "Responding to app event 'will-quit', destroying tray" );
 		if ( tray ) {
 			tray.destroy();
 		}

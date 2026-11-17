@@ -31,13 +31,6 @@ vi.mock( '@wordpress/data', () => ( {
 	dispatch: vi.fn(),
 } ) );
 
-vi.mock( '@wordpress/i18n', () => ( {
-	__: ( text: string ) => text,
-	_x: ( text: string ) => text,
-	isRTL: () => false,
-	sprintf: ( text: string ) => text,
-} ) );
-
 vi.mock( '@tanstack/react-router', async () => ( {
 	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
 		'@tanstack/react-router'
