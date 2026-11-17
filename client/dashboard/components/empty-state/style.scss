@@ -2,6 +2,11 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+// A compact card is as tall as a title with a two-line description, so cards
+// with a shorter description keep the same height.
+$compact-line-height: 20px;
+$compact-text-block-height: $compact-line-height + $grid-unit-05 + 2 * $compact-line-height;
+
 .dashboard-empty-state {
 	width: 100%;
 }
@@ -24,16 +29,25 @@
 }
 
 .dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__wrapper-content {
-	padding-block: $grid-unit-10;
+	box-sizing: border-box;
+	justify-content: center;
+	min-height: calc(#{$compact-text-block-height} + 2 * #{$grid-unit-30});
+	padding-block: $grid-unit-30;
 
 	@include break-medium {
-		padding-block: $grid-unit-20;
+		min-height: calc(#{$compact-text-block-height} + 2 * #{$grid-unit-40});
+		padding-block: $grid-unit-40;
 	}
 }
 
 // Inside a table, the toolbar already adds space above the empty state.
 .dashboard-empty-state__wrapper.is-compact.is-borderless .dashboard-empty-state__wrapper-content {
-	padding-block-start: 0;
+	min-height: 0;
+	padding-block-start: $grid-unit-15;
+
+	@include break-medium {
+		padding-block-start: $grid-unit-20;
+	}
 }
 
 .dashboard-empty-state__wrapper-content {
@@ -52,7 +66,7 @@
 // own title is regular UI text and the parts sit closer together.
 .dashboard-empty-state__wrapper.is-compact .dashboard-empty-state__title.dashboard-empty-state__title {
 	font-size: $font-size-large;
-	line-height: 20px;
+	line-height: $compact-line-height;
 	text-wrap: balance;
 }
 
