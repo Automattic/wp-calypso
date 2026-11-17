@@ -429,7 +429,7 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			expect( domainButton ).toHaveAttribute(
 				'href',
-				expect.stringMatching( /^\/domains\/add\/[^/]+.wpcomstaging.com/ )
+				expect.stringMatching( /^\/domains\/add\/[^/]+\.wpcomstaging\.com/ )
 			);
 		} );
 
@@ -456,7 +456,7 @@ describe( '<SiteVisibilitySettings>', () => {
 
 			expect( domainButton ).toHaveAttribute(
 				'href',
-				expect.stringMatching( /^\/domains\/manage\/[^/]+.wpcomstaging.com/ )
+				expect.stringMatching( /^\/domains\/manage\/[^/]+\.wpcomstaging\.com/ )
 			);
 		} );
 

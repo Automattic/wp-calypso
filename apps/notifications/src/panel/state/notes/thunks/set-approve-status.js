@@ -1,3 +1,4 @@
+import { reportError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { approveNote } from '../actions';
@@ -7,10 +8,13 @@ const setApproveStatus =
 	( noteId, siteId, commentId, isApproved, type, restClient ) => ( dispatch ) => {
 		const comment = wpcom().site( siteId ).comment( commentId );
 
-		comment.update( { status: isApproved ? 'approved' : 'unapproved' }, () =>
+		comment.update( { status: isApproved ? 'approved' : 'unapproved' }, ( error ) => {
+			if ( error ) {
+				reportError( 'approve', error );
+			}
 			// getNote() updates the redux store with a fresh object from the API
-			restClient.getNote( noteId )
-		);
+			restClient.getNote( noteId );
+		} );
 
 		dispatch( approveNote( noteId, isApproved ) );
 		bumpStat( isApproved ? 'unapprove-comment' : 'approve-comment' );
