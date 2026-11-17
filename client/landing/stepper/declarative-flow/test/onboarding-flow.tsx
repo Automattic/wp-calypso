@@ -206,7 +206,7 @@ describe( 'Onboarding Flow', () => {
 
 					const checkoutUrl = new URL( window.location.replace.mock.calls[ 0 ][ 0 ], 'http://x' );
 					expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe(
-						'/setup/site-setup/importerPlayground?siteSlug=test-site.wordpress.com&siteId=123&playground=abc'
+						'/setup/site-setup/importerPlayground?siteSlug=test-site.wordpress.com&siteId=123&playground=abc&intent=woocommerce'
 					);
 				} finally {
 					window.location.href = href;

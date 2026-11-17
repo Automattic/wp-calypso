@@ -21,12 +21,12 @@ import { useIsPluginBundleEligible } from '../../../hooks/use-is-plugin-bundle-e
 import { useSiteData } from '../../../hooks/use-site-data';
 import { useCanUserManageOptions } from '../../../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../stores';
+import { isPlaygroundStoreRun } from '../../../utils/playground-woo-intent';
 import { shouldRedirectToSiteMigration } from '../../helpers';
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
 import { redirect } from '../../internals/steps-repository/import/util';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import {
 	type AssertConditionResult,
@@ -348,13 +348,12 @@ const siteSetupFlow: Flow = {
 
 				case 'importerPlayground': {
 					// The step waits for the import, so the site is ready here.
-					if ( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1' ) {
-						sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
+					if ( isPlaygroundStoreRun( urlQueryParams ) ) {
 						// A store lands in wp-admin. Leaving without exitFlow keeps the Sell intent the
-						// Commerce site was created with.
-						return window.location.assign( adminUrl ?? `/home/${ siteId ?? siteSlug }` );
+						// Commerce site was created with. Replaced, so Back can't import the store again.
+						return window.location.replace( adminUrl || `/home/${ siteId || siteSlug }` );
 					}
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
+					return exitFlow( `/home/${ siteId || siteSlug }` );
 				}
 
 				case 'trialAcknowledge': {

@@ -3,7 +3,6 @@
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import redirectPathIfNecessary, { isRemovedFlow } from '../flow-redirect-handler';
 
@@ -215,16 +214,17 @@ describe( 'flow redirect handler', () => {
 		} );
 
 		// A Playground store now buys Commerce through onboarding, so an old link to its trial
-		// path, or the store's session flag, buys Commerce too.
-		it( 'redirects the old Playground publish path', () => {
-			window.sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+		// path, or a trial path left before its site was created, buys Commerce too.
+		it.each( [ '/setup/entrepreneur', `/setup/entrepreneur/${ STEPS.SITE_CREATION_STEP.slug }` ] )(
+			'redirects the old Playground publish path at %s',
+			( pathname ) => {
+				redirectPathIfNecessary( pathname, '?from=playground-publish' );
 
-			redirectPathIfNecessary( '/setup/entrepreneur', '?from=playground-publish' );
-
-			expect( replace ).toHaveBeenCalledWith(
-				'/setup/new-hosted-site?from=playground-publish&plan=ecommerce-bundle'
-			);
-		} );
+				expect( replace ).toHaveBeenCalledWith(
+					'/setup/new-hosted-site?from=playground-publish&plan=ecommerce-bundle'
+				);
+			}
+		);
 
 		it( 'does not redirect while the feature flag is off', () => {
 			mockIsEnabled.mockReturnValue( false );
@@ -239,4 +239,36 @@ describe( 'flow redirect handler', () => {
 			expect( isRemovedFlow( 'entrepreneur' ) ).toBe( false );
 		} );
 	} );
+
+	// A store whose trial started before onboarding took the store path over is still importing.
+	describe.each( [ true, false ] )(
+		'old Playground store imports, with the redirect flag %s',
+		( flagEnabled ) => {
+			beforeEach( () => {
+				mockIsEnabled.mockReturnValue( flagEnabled );
+			} );
+
+			it( 'finish on the site-setup importer as a store', () => {
+				redirectPathIfNecessary(
+					`/setup/entrepreneur/${ STEPS.IMPORTER_PLAYGROUND.slug }`,
+					'?siteSlug=example.wordpress.com&playground=abc&siteId=123'
+				);
+
+				expect( replace ).toHaveBeenCalledWith(
+					'/setup/site-setup/importerPlayground?siteSlug=example.wordpress.com&playground=abc&siteId=123&intent=woocommerce'
+				);
+			} );
+
+			it( 'keep the locale', () => {
+				redirectPathIfNecessary(
+					`/setup/entrepreneur/${ STEPS.IMPORTER_PLAYGROUND.slug }/es`,
+					'?siteSlug=example.wordpress.com&playground=abc'
+				);
+
+				expect( replace ).toHaveBeenCalledWith(
+					'/setup/site-setup/importerPlayground/es?siteSlug=example.wordpress.com&playground=abc&intent=woocommerce'
+				);
+			} );
+		}
+	);
 } );

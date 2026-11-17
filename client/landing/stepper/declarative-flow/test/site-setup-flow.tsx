@@ -7,7 +7,6 @@ import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { useFlowState } from '../internals/state-manager/store';
 import { STEPS } from '../internals/steps';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../internals/steps-repository/playground/lib/constants';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
@@ -21,7 +20,7 @@ jest.mock( '../internals/state-manager/store', () => ( { useFlowState: jest.fn()
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), pathname: '' },
+			value: { assign: jest.fn(), replace: jest.fn(), pathname: '' },
 		} );
 	} );
 
@@ -196,34 +195,39 @@ describe( 'Site Setup Flow', () => {
 	} );
 
 	describe( 'when the Playground import finishes', () => {
-		const finishImport = () => {
+		const finishImport = (
+			search = 'siteSlug=example.wordpress.com&siteId=123&playground=abc'
+		) => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.IMPORTER_PLAYGROUND.slug,
-				currentURL: `/setup/site-setup/${ STEPS.IMPORTER_PLAYGROUND.slug }?siteSlug=example.wordpress.com&siteId=123`,
+				currentURL: `/setup/site-setup/${ STEPS.IMPORTER_PLAYGROUND.slug }?${ search }`,
 				dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
 			} );
 		};
 
-		beforeEach( () => {
-			sessionStorage.clear();
+		// Going through exitFlow would replace the Sell intent the Commerce site was created with,
+		// and Back onto the importer would import the store again.
+		it( 'replaces the page with the store', () => {
+			finishImport( 'siteSlug=example.wordpress.com&siteId=123&playground=abc&intent=woocommerce' );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/123' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
 		} );
 
-		// Going through exitFlow would replace the Sell intent the Commerce site was created with.
-		it( 'leaves a store straight away and clears its session flag', () => {
-			sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+		// Without a site ID in the URL or the site loaded, the ID is 0.
+		it( 'falls back to the site slug for a store without a site ID', () => {
+			finishImport( 'siteSlug=example.wordpress.com&playground=abc&intent=woocommerce' );
 
-			finishImport();
-
-			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
-			expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBeNull();
-			expect( clearSignupDestinationCookie ).not.toHaveBeenCalled();
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.wordpress.com' );
 		} );
 
 		it( 'exits the flow for any other Playground site', () => {
 			finishImport();
 
+			expect( window.location.replace ).not.toHaveBeenCalled();
 			expect( window.location.assign ).not.toHaveBeenCalled();
 			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
 			expect( getFlowLocation().path ).toContain( 'processing' );

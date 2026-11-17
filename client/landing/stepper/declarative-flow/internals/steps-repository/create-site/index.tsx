@@ -37,6 +37,7 @@ import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { isPlaygroundStoreRun } from 'calypso/landing/stepper/utils/playground-woo-intent';
 import {
 	getWowFunnelArgs,
 	getWowFunnelFromWfm,
@@ -59,7 +60,6 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 	getEarlyCreatedSiteId,
@@ -413,15 +413,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
-		const isPlaygroundPublish =
-			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
-
 		// Playground, blueprint and import runs bring in an existing site, so they keep the regular
 		// landing. A reblog's site is launched at creation, so the launchpad's launch task could
 		// never complete.
 		const aiLaunchpadEnabled =
 			AI_LAUNCHPAD_FLOWS.includes( flow ) &&
-			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
 			! urlQueryParams.get( 'blog_post' ) &&
 			! isImport &&
@@ -473,7 +469,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						gardenName,
 						gardenPartnerName,
 						urlQueryParams.get( 'spec_id' ),
-						isPlaygroundPublish ? 'playground-publish' : undefined,
+						isPlaygroundStoreRun( urlQueryParams ) ? 'playground-publish' : undefined,
 						undefined, // provisionTarget
 						aiLaunchpadEnabled
 					);

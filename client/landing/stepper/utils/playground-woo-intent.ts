@@ -12,8 +12,9 @@ export const isPlaygroundWooIntent = (
 ) => flowName === ONBOARDING_FLOW && stepName === 'playground' && intent === 'woocommerce';
 
 /**
- * Whether this onboarding run saves a store from the WooCommerce Playground. Read from the URL
- * on every step, because the Playground step's query rides along to checkout.
+ * Whether this run saves a store from the WooCommerce Playground. Read from the URL on every
+ * step, because the Playground step's query rides along to checkout and on to the importer,
+ * so a run continued in another tab or after signing in stays a store.
  */
 export const isPlaygroundStoreRun = ( query: URLSearchParams ) =>
 	!! query.get( 'playground' ) && query.get( 'intent' ) === 'woocommerce';

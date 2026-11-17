@@ -7,9 +7,9 @@ import { useSearchParams } from 'react-router-dom';
 import ProgressScreen from 'calypso/blocks/importer/components/progress-screen';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { isPlaygroundStoreRun } from 'calypso/landing/stepper/utils/playground-woo-intent';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../lib/constants';
 import { useImportBlueprint } from '../../lib/import-blueprint';
 import {
 	importPlaygroundSite,
@@ -53,6 +53,7 @@ export const PlaygroundSetupStep: Step< {
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { siteId, siteSlug } = useSiteData();
 	const [ query ] = useSearchParams();
+	const isStore = isPlaygroundStoreRun( query );
 	const { mutateAsync: importBlueprint } = useImportBlueprint();
 
 	const [ progress, setProgress ] = useState< PlaygroundImportProgress | null >( null );
@@ -105,10 +106,7 @@ export const PlaygroundSetupStep: Step< {
 
 		// A store saved from the WooCommerce Playground exports a sandbox
 		// that carries sandbox-only plugins.
-		const isPublishFlow = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
-		const eventPrefix = isPublishFlow
-			? 'calypso_playground_woo_import'
-			: 'calypso_playground_import';
+		const eventPrefix = isStore ? 'calypso_playground_woo_import' : 'calypso_playground_import';
 
 		// The saved Playground can be gone from this browser, in which case the
 		// iframe boots a blank site and there is nothing to import.
@@ -127,7 +125,7 @@ export const PlaygroundSetupStep: Step< {
 
 		recordTracksEvent( `${ eventPrefix }_started`, { site_id: siteId } );
 		try {
-			if ( isPublishFlow ) {
+			if ( isStore ) {
 				await removeSandboxPlugins( client );
 			}
 			await importPlaygroundSite( playgroundSlug, siteId, setProgress );
@@ -236,8 +234,6 @@ export const PlaygroundSetupStep: Step< {
 		}
 
 		if ( progress?.phase === 'packing' ) {
-			const isStore = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
-
 			return renderProgress(
 				isStore ? __( 'Packing up your store' ) : __( 'Packing up your site' )
 			);

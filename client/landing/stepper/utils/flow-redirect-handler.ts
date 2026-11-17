@@ -51,6 +51,17 @@ const ENTREPRENEUR_POST_SITE_CREATION_STEPS = [
 	'error',
 ];
 
+// A WooCommerce Playground store that started its trial before onboarding took the store path
+// over was imported on this step. The site-setup flow runs the same importer.
+const ENTREPRENEUR_PLAYGROUND_IMPORT_REDIRECT: RedirectRule = {
+	flow: ENTREPRENEUR_FLOW,
+	to: '/setup/site-setup/importerPlayground:lang?',
+	query: { intent: 'woocommerce' },
+	keepAnyLocale: true,
+	shouldRedirect: ( searchParams, pathname ) => pathname.split( '/' )[ 3 ] === 'importerPlayground',
+	replace: true,
+};
+
 // The Commerce free trial is closed, so new visitors buy the plan instead (DOTPM-571).
 const ENTREPRENEUR_REDIRECT: RedirectRule = {
 	flow: ENTREPRENEUR_FLOW,
@@ -103,6 +114,7 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 const FLOW_REDIRECTS = [
 	AI_SITE_BUILDER_REDIRECT,
 	WRITE_REDIRECT,
+	ENTREPRENEUR_PLAYGROUND_IMPORT_REDIRECT,
 	ENTREPRENEUR_REDIRECT,
 	...REMOVED_TAILORED_FLOWS,
 ];

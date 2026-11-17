@@ -7,7 +7,6 @@ import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domai
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../../internals/steps-repository/playground/lib/constants';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
@@ -575,22 +574,10 @@ describe( 'onboarding flow plan preselection', () => {
 		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
 	} );
 
-	// A stale flag would create an unrelated site as a Playground store.
-	it( 'clears a Playground store flag left by an earlier run', () => {
-		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
-
-		enterFlowAt( '', null );
-
-		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBeNull();
-	} );
-
 	// The login fallback re-enters a store run at the flow's root.
-	it( 'keeps the flag and seeds Commerce when a Playground store run re-enters', () => {
-		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
-
+	it( 'seeds Commerce when a Playground store run re-enters', () => {
 		enterFlowAt( '?intent=woocommerce&playground=abc', null );
 
-		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBe( '1' );
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
 	} );
 } );
@@ -640,22 +627,27 @@ describe( 'onboarding flow tracks event props', () => {
 	} );
 
 	// The Playground adds its ID to the URL once it boots; a change here records a second start.
-	it( 'keeps the props when the Playground adds its ID to a store run', () => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'intent=woocommerce' ) );
+	it.each( [ '', '&plan=personal-bundle' ] )(
+		'keeps the props when the Playground adds its ID to a store run (%s)',
+		( extraQuery ) => {
+			( useQuery as jest.Mock ).mockReturnValue(
+				new URLSearchParams( `intent=woocommerce${ extraQuery }` )
+			);
 
-		const { result, rerender } = renderHook( () =>
-			onboarding.useTracksEventProps?.call( onboarding )
-		);
-		const first = result.current;
+			const { result, rerender } = renderHook( () =>
+				onboarding.useTracksEventProps?.call( onboarding )
+			);
+			const first = result.current;
 
-		( useQuery as jest.Mock ).mockReturnValue(
-			new URLSearchParams( 'intent=woocommerce&playground=abc' )
-		);
-		rerender();
+			( useQuery as jest.Mock ).mockReturnValue(
+				new URLSearchParams( `intent=woocommerce${ extraQuery }&playground=abc` )
+			);
+			rerender();
 
-		expect( result.current ).toBe( first );
-		expect( first?.eventsProperties ).toEqual( {} );
-	} );
+			expect( result.current ).toBe( first );
+			expect( first?.eventsProperties ).toEqual( {} );
+		}
+	);
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {
@@ -745,7 +737,7 @@ describe( 'onboarding flow playground navigation', () => {
 	} );
 
 	// The domain step's progress counts the plans step only while the cart lacks the plan.
-	it( 'sends a store to the domains step with Commerce in the cart and the run marked', () => {
+	it( 'sends a store to the domains step with Commerce in the cart', () => {
 		const navigate = submitPlayground( '?intent=woocommerce&playground=abc' );
 
 		expect( navigate ).toHaveBeenCalledWith(
@@ -753,27 +745,23 @@ describe( 'onboarding flow playground navigation', () => {
 		);
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
 		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
-		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBe( '1' );
 	} );
 
-	it( 'goes to the domains step without marking the run when the WooCommerce intent is missing', () => {
-		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
-
+	it( 'goes to the domains step without Commerce when the WooCommerce intent is missing', () => {
 		const navigate = submitPlayground( '?playground=abc' );
 
 		expect( navigate ).toHaveBeenCalledWith(
 			'domains?back_to=%2Fsetup%2Fonboarding%2Fplayground%3Fplayground%3Dabc'
 		);
-		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBeNull();
+		expect( mockSetPlanCartItem ).not.toHaveBeenCalled();
 	} );
 
-	// The import needs a plan that runs Woo. The flag covers a run continued in another tab.
+	// The import needs a plan that runs Woo. Seeded again for a run continued in another tab.
 	it( 'puts Commerce in the cart for a store and skips the plans step', () => {
 		const navigate = submitDomains( '?intent=woocommerce&playground=abc' );
 
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( { product_slug: 'ecommerce-bundle' } );
 		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
-		expect( sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) ).toBe( '1' );
 		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( 'onboarding' );
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );

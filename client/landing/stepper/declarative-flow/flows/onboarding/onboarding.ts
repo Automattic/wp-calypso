@@ -98,7 +98,6 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
 	ProcessingResult,
@@ -397,9 +396,10 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useTracksEventProps() {
 		const query = useQuery();
-		// A Playground store's plan isn't reported: the Playground adds its ID to the URL after
-		// it boots, which would change these props and record a second signup start.
-		const preselectedPlan = isPlaygroundStoreRun( query ) ? null : getPreselectedPlan( query );
+		// A WooCommerce Playground run's plan isn't reported: the Playground adds its ID to the URL
+		// after it boots, which turns the run into a store and would record a second signup start.
+		const preselectedPlan =
+			query.get( 'intent' ) === 'woocommerce' ? null : getPreselectedPlan( query );
 		// Reported raw, as the legacy flows reported their declared query dependencies. The
 		// coupon stands alone too: WordCamp coupon links name no plan.
 		const couponParam = query.get( 'coupon' );
@@ -473,8 +473,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		const playgroundId = queryParams.get( 'playground' );
 		const isPlaygroundStore = isPlaygroundStoreRun( queryParams );
-		const playgroundStoreQueryArgs =
-			isPlaygroundStore && playgroundId ? { playground: playgroundId, intent: 'woocommerce' } : {};
+		const playgroundStoreQueryArgs = isPlaygroundStore ? { intent: 'woocommerce' } : {};
 		const buildDest = queryParams.get( 'build_dest' );
 		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
 			blueprint,
@@ -637,10 +636,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		/**
 		 * A Playground store buys Commerce, which the import needs. Its run starts on the Playground
 		 * step, so the entry reset doesn't seed the cart, and the cart can still hold an earlier
-		 * run's items. Site creation and the importer read the session flag after checkout.
+		 * run's items.
 		 */
-		const startPlaygroundStoreRun = () => {
-			sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+		const seedPlaygroundStoreCart = () => {
 			setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
 			setProductCartItems( [] );
 		};
@@ -651,9 +649,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * applies when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
-			// Set again here: a run continued in another tab starts without the session flag.
+			// Seeded again here: a run continued in another tab starts with that tab's cart.
 			if ( isPlaygroundStore ) {
-				startPlaygroundStoreRun();
+				seedPlaygroundStoreCart();
 				setSignupCompleteFlowName( flowName );
 
 				return navigate( 'create-site', undefined, false );
@@ -941,6 +939,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											siteSlug,
 											siteId: providedDependencies.siteId,
 											playground: playgroundId,
+											...playgroundStoreQueryArgs,
 										} )
 									: addQueryArgs(
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
@@ -958,7 +957,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								...( playgroundId ? { playground: playgroundId } : {} ),
 								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
-								// Without these, the domain step loses the store's plan and its import.
+								// Without it, the domain step loses the store's plan and its import.
 								...playgroundStoreQueryArgs,
 							};
 
@@ -1047,9 +1046,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'playground':
 				case 'blueprint': {
 					if ( isPlaygroundStore ) {
-						startPlaygroundStoreRun();
-					} else {
-						sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
+						seedPlaygroundStoreCart();
 					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
@@ -1123,12 +1120,6 @@ const onboarding: FlowV2< typeof initialize > = {
 
 				// Must follow the reset above, not precede it.
 				const query = getCurrentQueryParams();
-
-				// Only a Playground store run may carry the flag, or a later run in this tab would create
-				// its site as one. Keyed on the URL: the login fallback re-enters a store run here.
-				if ( ! isPlaygroundStoreRun( query ) ) {
-					sessionStorage.removeItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH );
-				}
 				const preselectedPlan = getPreselectedPlan( query );
 				const storageAddOn = getPreselectedStorageAddOn( query );
 

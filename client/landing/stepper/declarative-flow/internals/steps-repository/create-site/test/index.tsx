@@ -29,6 +29,7 @@ const registeredMove = {
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
 const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
+const getSignupRefArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -3 );
 
 jest.mock( '@automattic/calypso-products', () => ( {
 	isEcommerce: () => false,
@@ -137,9 +138,6 @@ jest.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
 	shouldUseStepContainerV2: () => true,
 } ) );
 jest.mock( '../../../state-manager/store', () => ( { useFlowState: jest.fn() } ) );
-jest.mock( '../../playground/lib/constants', () => ( {
-	SESSION_KEY_FROM_PLAYGROUND_PUBLISH: 'from-playground-publish',
-} ) );
 jest.mock( '../early-provisioning', () => ( {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC: 'wpcom-atomic',
 	getEarlyCreatedSiteId: () => null,
@@ -166,7 +164,6 @@ describe( 'create-site', () => {
 		mockIsSimplifiedOnboarding = false;
 		mockDomainCartItems = [];
 		mockPlanCartItem = null;
-		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
 			get: ( key: string ) => flowStateStore[ key ],
@@ -423,11 +420,30 @@ describe( 'create-site', () => {
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 
-		it( 'does not enable it for a playground-publish run', async () => {
-			sessionStorage.setItem( 'from-playground-publish', '1' );
+		it( 'does not enable it for a WooCommerce Playground store', async () => {
+			mockQueryParams = new URLSearchParams( 'playground=some-playground&intent=woocommerce' );
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
+	} );
+
+	describe( 'Playground store signup ref', () => {
+		it( 'marks a site created for a WooCommerce Playground store', async () => {
+			mockQueryParams = new URLSearchParams( 'playground=some-playground&intent=woocommerce' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( getSignupRefArg() ).toBe( 'playground-publish' );
+		} );
+
+		it.each( [ '', 'playground=some-playground', 'intent=woocommerce' ] )(
+			'leaves any other site unmarked (%s)',
+			async ( search ) => {
+				mockQueryParams = new URLSearchParams( search );
+				await runStep();
+				await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+				expect( getSignupRefArg() ).toBeUndefined();
+			}
+		);
 	} );
 } );
