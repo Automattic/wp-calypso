@@ -45,7 +45,7 @@ const isWordPressSourceError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
 
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
-	function StaticSiteImportReading( { navigation } ) {
+	function StaticSiteImportReading( { navigation, flow } ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
@@ -59,7 +59,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		// The flow records itself for this tab before sending the user to checkout, where
 		// they already chose this destination.
 		const [ isCheckoutReturn ] = useState(
-			() => siteId > 0 && getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW
+			() => siteId > 0 && getSignupCompleteFlowName() === flow
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
@@ -83,14 +83,14 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			if ( isNewSite ) {
 				recordSignupComplete(
 					{
-						flow: STATIC_SITE_IMPORT_FLOW,
+						flow,
 						siteId,
 						isNewUser: Boolean( getSignupIsNewUserAndClear( userId ) ),
 						hasCartItems: true,
 						planProductSlug: site?.plan?.product_slug,
 						domainProductSlug: undefined,
 						intent: STATIC_SITE_IMPORT_FLOW,
-						startingPoint: STATIC_SITE_IMPORT_FLOW,
+						startingPoint: flow,
 						signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 						framework: 'stepper',
 						theme: undefined,
