@@ -345,14 +345,17 @@ describe( 'onboarding flow domains navigation', () => {
 	const submitDomains = (
 		search: string,
 		cartPlan?: string,
-		domainItem?: Record< string, unknown >
+		domainItem?: Record< string, unknown >,
+		storeHoldsBlueprint = true
 	) => {
 		const query = new URLSearchParams( search );
 		( useQuery as jest.Mock ).mockReturnValue( query );
 		( useSelect as jest.Mock ).mockReturnValue( {
 			...( cartPlan ? { planCartItem: { product_slug: cartPlan } } : {} ),
 			// The blueprint step stores the slug it verified; the flow reads it from the store.
-			...( query.get( 'blueprint' ) ? { blueprint: query.get( 'blueprint' ) } : {} ),
+			...( storeHoldsBlueprint && query.get( 'blueprint' )
+				? { blueprint: query.get( 'blueprint' ) }
+				: {} ),
 		} );
 
 		const navigate = jest.fn();
@@ -404,6 +407,21 @@ describe( 'onboarding flow domains navigation', () => {
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( null );
 		expect( mockSetProductCartItems ).toHaveBeenCalledWith( [] );
+	} );
+
+	// Creating an account on the way logs the visitor in with a full page load, which empties
+	// the in-memory store. The URL still names the blueprint, and the run must stay a blueprint
+	// run: it used to fall back to the plans grid and a site with no blueprint on it.
+	it( 'skips the plans step on a Simple blueprint build when only the URL names the blueprint', () => {
+		const navigate = submitDomains(
+			'blueprint=zoom&build_dest=simple',
+			undefined,
+			undefined,
+			false
+		);
+
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
+		expect( mockSetPlanCartItem ).toHaveBeenCalledWith( null );
 	} );
 
 	// A connected-domain move needs a paid plan, so the free-plan shortcut must not take it

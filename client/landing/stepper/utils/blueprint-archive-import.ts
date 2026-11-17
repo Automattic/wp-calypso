@@ -46,6 +46,18 @@ export function getStandaloneBlueprintSimpleSlug(
 }
 
 /**
+ * The blueprint the URL names, shape-checked the way the blueprint step checks it before it
+ * stores it (`getBlueprintArchiveIdentifier`, which lives with the Playground client and is not
+ * imported here to keep that code out of the flow's bundle). For reading the blueprint when the
+ * onboard store no longer holds it, which is the case after the full page load that logs a
+ * newly created account in.
+ */
+export function getBlueprintFromQuery( query: URLSearchParams ): string | null {
+	const raw = query.get( 'blueprint' )?.trim() ?? '';
+	return /^[a-z0-9-]+$/i.test( raw ) ? raw : null;
+}
+
+/**
  * Entry-URL parameters an embedding page may hand to the site-spec widget as spec meta, which
  * wpcom stamps into the stored spec verbatim (see `Spec_Meta` on the wpcom side: only allow-listed
  * keys are kept, and each is sanitised there). Carried from the CTA through to the site-spec URL,
