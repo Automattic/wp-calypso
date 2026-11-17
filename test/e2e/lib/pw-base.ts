@@ -365,9 +365,6 @@ export const test = base.extend<
 		 */
 		pageImportContent: ImportContentPage;
 		/**
-		 * Page object representing the Import Plans page.
-		 */
-		/**
 		 * Page object representing the Import Content from Medium page.
 		 */
 		pageImportContentFromMedium: ImportContentFromMediumPage;
@@ -383,15 +380,6 @@ export const test = base.extend<
 		 * Page object representing the Import Content from WordPress page.
 		 */
 		pageImportContentFromWordPress: ImportContentFromWordPressPage;
-		/**
-		 * Page object representing the Import Content from Another Platform or File page.
-		 */
-		/**
-		 * Page object representing the Let's Find Your Site page for importing content.
-		 */
-		/**
-		 * Page object representing the Let Us Migrate Your Site page for importing content.
-		 */
 		/**
 		 * Playwright `Page` representing an incognito browser context with no signed in state.
 		 */
