@@ -166,7 +166,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SECRET_EXPIRED:
-				noticeValues.text = translate( 'Connection expired. Refresh the page and try again.' );
+				noticeValues.text = translate( 'Connection expired. Click “Try again” to continue.' );
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;
