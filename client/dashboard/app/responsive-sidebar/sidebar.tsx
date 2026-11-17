@@ -75,7 +75,7 @@ function PrimaryMenuSidebar() {
 			{ supports.agencyClient && <AgencyClientSidebar /> }
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
-					{ __( 'Sites' ) }
+					{ __( 'Site List' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.domains && (
