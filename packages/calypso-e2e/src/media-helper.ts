@@ -74,3 +74,30 @@ export function xmpIncludes( bytes: Buffer, text: string ): boolean {
 	const packets = bytes.toString( 'latin1' ).match( /<x:xmpmeta[\s\S]*?<\/x:xmpmeta>/g ) ?? [];
 	return packets.some( ( packet ) => packet.includes( text ) );
 }
+
+/**
+ * Returns the URL of each candidate in an image's `srcset`, read the way a browser reads it,
+ * so a comma inside a URL stays part of that URL.
+ *
+ * @param {string} srcset Value of the `srcset` attribute.
+ * @returns {string[]} The candidates' URLs, in order.
+ */
+export function parseSrcset( srcset: string ): string[] {
+	const urls: string[] = [];
+	let rest = srcset;
+	for (;;) {
+		rest = rest.replace( /^[\s,]+/, '' );
+		const url = /^\S+/.exec( rest )?.[ 0 ];
+		if ( ! url ) {
+			return urls;
+		}
+		rest = rest.slice( url.length );
+		if ( url.endsWith( ',' ) ) {
+			// A URL that ends in a comma has no descriptor after it.
+			urls.push( url.replace( /,+$/, '' ) );
+		} else {
+			urls.push( url );
+			rest = rest.replace( /^[^,]*/, '' );
+		}
+	}
+}

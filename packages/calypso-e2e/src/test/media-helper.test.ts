@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { xmpIncludes } from '../media-helper';
+import { parseSrcset, xmpIncludes } from '../media-helper';
 
 const MARKER = 'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia';
 const packet = ( content: string ) =>
@@ -36,5 +36,43 @@ describe( 'xmpIncludes', () => {
 
 	test( 'returns false for an unterminated packet', () => {
 		expect( xmpIncludes( image( `<x:xmpmeta>${ MARKER }` ), MARKER ) ).toBe( false );
+	} );
+} );
+
+describe( 'parseSrcset', () => {
+	test( 'returns the URL of each candidate', () => {
+		expect( parseSrcset( 'small.webp 320w, large.webp 640w' ) ).toEqual( [
+			'small.webp',
+			'large.webp',
+		] );
+	} );
+
+	test( 'reads candidates with no space after the comma', () => {
+		expect( parseSrcset( 'small.webp 320w,large.webp 640w' ) ).toEqual( [
+			'small.webp',
+			'large.webp',
+		] );
+	} );
+
+	test( 'keeps a comma that is part of a URL', () => {
+		expect( parseSrcset( 'a.png?resize=150,150 150w, a.png?resize=300,300 300w' ) ).toEqual( [
+			'a.png?resize=150,150',
+			'a.png?resize=300,300',
+		] );
+	} );
+
+	test( 'reads candidates that have no descriptor', () => {
+		expect( parseSrcset( 'small.webp, large.webp' ) ).toEqual( [ 'small.webp', 'large.webp' ] );
+	} );
+
+	test( 'ignores surrounding whitespace and stray commas', () => {
+		expect( parseSrcset( '\n\tsmall.webp 1x ,\n\tlarge.webp 2x,\n' ) ).toEqual( [
+			'small.webp',
+			'large.webp',
+		] );
+	} );
+
+	test( 'returns nothing for an empty srcset', () => {
+		expect( parseSrcset( '' ) ).toEqual( [] );
 	} );
 } );

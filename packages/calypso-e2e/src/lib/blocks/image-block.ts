@@ -1,5 +1,6 @@
 import { Page, ElementHandle } from 'playwright';
 import { EditorComponent } from '../..';
+import { parseSrcset } from '../../media-helper';
 
 type Sources = 'Media Library' | 'Google Photos' | 'Pexels';
 
@@ -133,11 +134,7 @@ export class ImageBlock {
 		const image = page.locator( selectors.image( filename ) );
 		const src = await image.getAttribute( 'src' );
 		const srcset = ( await image.getAttribute( 'srcset' ) ) ?? '';
-		// Candidates are split on a comma followed by a space, because a URL may hold a comma.
-		const candidates = srcset
-			.split( /,\s+/ )
-			.map( ( candidate ) => candidate.trim().split( /\s+/ )[ 0 ] );
-		const urls = [ src, ...candidates ].filter( ( url ): url is string => !! url );
+		const urls = [ src, ...parseSrcset( srcset ) ].filter( ( url ): url is string => !! url );
 
 		return [ ...new Set( urls.map( ( url ) => new URL( url, page.url() ).href ) ) ];
 	}
