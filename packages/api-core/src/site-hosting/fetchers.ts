@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DataCenterOption, WordPressTrackVersions } from './types';
+import type { DataCenterOption, WordPressPrerelease, WordPressTrackVersions } from './types';
 
 export async function fetchWordPressVersion( siteId: number ): Promise< string > {
 	return wpcom.req.get( {
@@ -11,6 +11,13 @@ export async function fetchWordPressVersion( siteId: number ): Promise< string >
 export async function fetchPendingWordPressVersion( siteId: number ): Promise< string | null > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/wp-version/pending`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchWordPressPrerelease( siteId: number ): Promise< WordPressPrerelease > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/hosting/wp-version/prerelease`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

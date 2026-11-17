@@ -1,6 +1,7 @@
 import {
 	fetchWordPressVersion,
 	fetchPendingWordPressVersion,
+	fetchWordPressPrerelease,
 	fetchWordPressTrackVersions,
 	fetchWpOrgCoreVersion,
 	updateWordPressVersion,
@@ -18,6 +19,12 @@ export const sitePendingWordPressVersionQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'wp-version', 'pending' ],
 		queryFn: () => fetchPendingWordPressVersion( siteId ),
+	} );
+
+export const siteWordPressPrereleaseQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'wp-version', 'prerelease' ],
+		queryFn: () => fetchWordPressPrerelease( siteId ),
 	} );
 
 // WP Cloud's tracks can lag behind wordpress.org's releases, so ask the site what they serve.

@@ -55,13 +55,26 @@ function mockTrackVersions() {
 		.reply( 200, { data: { latest: '6.8.1', beta: '7.0-RC2' } } );
 }
 
-function mockApi( versionTag: string = 'latest', mockedSite: Site = site ) {
+function mockApi(
+	versionTag: string = 'latest',
+	mockedSite: Site = site,
+	prerelease: { status: number; body?: nock.Body } = {
+		status: 200,
+		body: { version: '7.0', auto_enrolled: false },
+	}
+) {
 	mockSite( mockedSite );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version` )
 		.query( true )
 		.reply( 200, JSON.stringify( versionTag ), { 'Content-Type': 'application/json' } );
+
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/prerelease` )
+		.query( true )
+		.reply( prerelease.status, prerelease.body );
 
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -150,6 +163,43 @@ describe( '<WordPressSettings>', () => {
 		expect( await screen.findByText( 'Your site is running WordPress 7.0-RC2' ) ).toBeVisible();
 		expect( screen.getByRole( 'combobox', { name: 'WordPress version' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'restore your backup' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the early access notice for a site auto-enrolled in the beta', async () => {
+		mockApi( 'beta', premiumSite, {
+			status: 200,
+			body: { version: '7.0', auto_enrolled: true },
+		} );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect(
+			await screen.findByText( 'Your site got early access to WordPress 7.0' )
+		).toBeVisible();
+		expect( screen.getByRole( 'combobox', { name: 'WordPress version' } ) ).toHaveDisplayValue(
+			'Beta (7.0-RC2)'
+		);
+		expect(
+			screen.queryByText( 'Your site is running WordPress 7.0-RC2' )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'restore your backup' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the generic beta notice when the early access status fails to load', async () => {
+		mockApi( 'beta', premiumSite, { status: 500 } );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByText( 'Your site is running WordPress 7.0-RC2' ) ).toBeVisible();
+		expect(
+			screen.queryByText( 'Your site got early access to WordPress 7.0' )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the beta notice with the backup restore link on a Business+ plan', async () => {

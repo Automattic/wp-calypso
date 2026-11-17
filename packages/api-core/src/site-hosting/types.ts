@@ -4,3 +4,8 @@ export interface WordPressTrackVersions {
 	latest: string | null;
 	beta: string | null;
 }
+
+export interface WordPressPrerelease {
+	version: string;
+	auto_enrolled: boolean;
+}

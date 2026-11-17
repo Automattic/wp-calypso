@@ -1,6 +1,7 @@
 import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
+	siteWordPressPrereleaseQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
 } from '@automattic/api-queries';
@@ -17,6 +18,7 @@ import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BetaProgramNotice } from './beta-program-notice';
+import { EarlyAccessNotice } from './early-access-notice';
 import { LatestVersionNotice } from './latest-version-notice';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
@@ -35,6 +37,8 @@ function VersionManagement( { site }: { site: Site } ) {
 	const betaVersion = trackVersions?.beta ?? '';
 	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
 
+	const { data: prerelease } = useQuery( siteWordPressPrereleaseQuery( site.ID ) );
+
 	let notice;
 	if ( versionsMatch ) {
 		notice = null;
@@ -47,6 +51,8 @@ function VersionManagement( { site }: { site: Site } ) {
 		);
 	} else if ( switchedToLatest ) {
 		notice = <LatestVersionNotice wpVersion={ latestVersion } />;
+	} else if ( currentVersion === 'beta' && prerelease?.auto_enrolled ) {
+		notice = <EarlyAccessNotice site={ site } wpVersion={ prerelease.version } />;
 	} else if ( switchedToBeta || currentVersion === 'beta' ) {
 		notice = <BetaProgramNotice site={ site } wpVersion={ betaVersion } />;
 	}

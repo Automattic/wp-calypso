@@ -43,6 +43,7 @@ import {
 	siteSftpUsersQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
+	siteWordPressPrereleaseQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
 	referralsQuery,
@@ -2028,7 +2029,11 @@ const agencySiteSettingsWordPressRoute = createRoute( {
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
 			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
-			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				// Settles even if the request fails, so the page then shows the generic beta notice.
+				queryClient.prefetchQuery( siteWordPressPrereleaseQuery( site.ID ) ),
+			] );
 		}
 	},
 } ).lazy( () =>
