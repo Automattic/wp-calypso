@@ -100,8 +100,8 @@ export default function Notifications( {
 		window.open( href, '_blank', 'noopener' );
 	};
 
-	/**
 	const trackAndOpen = ( name: string ) => ( store: unknown, action: LinkAction ) => {
+		const { siteId, postId, commentId } = action;
 		recordTracksEvent( name, { site_id: siteId, post_id: postId, comment_id: commentId } );
 		openInNewTab( store, action );
 	};
