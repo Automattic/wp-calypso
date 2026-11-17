@@ -107,6 +107,22 @@ export function addCalypsoEnvQueryArg( url ) {
 }
 
 /**
+ * The site URL that re-issues the authorize secret and sends the user back with the same query.
+ * @param {string} site Site URL.
+ * @param {Object} args
+ * @param {?string} args.from The entry point's `from`.
+ * @param {?string} args.redirectAfterAuth Where to send the user after connecting.
+ * @param {?string} args.skipPricing `skip_pricing` from the authorize URL.
+ * @returns {string} The URL.
+ */
+export function getRetryAuthUrl( site, { from, redirectAfterAuth, skipPricing } = {} ) {
+	return addQueryArgs(
+		{ from, redirect_after_auth: redirectAfterAuth, skip_pricing: skipPricing || undefined },
+		addCalypsoEnvQueryArg( site + REMOTE_PATH_AUTH )
+	);
+}
+
+/**
  * Sanitize a user-supplied URL so we can use it for network requests.
  * @param {string} inputUrl User-supplied URL
  * @returns {string} Sanitized URL

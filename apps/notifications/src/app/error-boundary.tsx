@@ -2,7 +2,7 @@ import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { logError } from '../panel/helpers/log-error';
+import { reportError } from '../panel/helpers/log-error';
 
 interface Props {
 	children: ReactNode;
@@ -20,7 +20,7 @@ export default class ErrorBoundary extends Component< Props, State > {
 	}
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
-		logError( error, { componentStack: errorInfo.componentStack } );
+		reportError( 'render', error, { componentStack: errorInfo.componentStack } );
 		// A Notice.List can't announce this: React remounts the boundary's subtree on an error, so
 		// the notice would be initial content, which the list reads in silently.
 		speak(

@@ -18,7 +18,7 @@ These rules win over the style of the file you're editing.
 
 ## Setup
 
-- Put the test file under the `test/` subdirectory, with the same name as the file it tests but with the `.test.tsx` extension (`.test.ts` without JSX).
+- Put the test file directly in the `test/` subdirectory, with the same name as the file it tests but with the `.test.tsx` extension (`.test.ts` without JSX). Vitest skips any other test file, and lint reports it.
 - Use the component name (surrounded by `<>`) as the top-level `describe()` block. For a hook or a utility, use its name as is.
 - Use `test()` instead of `it()` for test cases.
 - Use the custom `render()` function from @client/dashboard/test-utils.tsx — it wraps components with all required providers (QueryClient, Router, Auth, Analytics).
@@ -44,11 +44,15 @@ A hook or a utility has no screen, so its behavior is what its callers get:
 ## Mocking
 
 - Mock data at the network boundary: use `nock` to intercept REST API calls to `https://public-api.wordpress.com`.
-- DO NOT mock `@tanstack/react-query` or `@automattic/api-queries`.
-- DO NOT mock the dashboard's own components, hooks, or router to make a test pass. Render the real ones.
+- DO NOT mock `@tanstack/react-query`, `@automattic/api-queries` or `@automattic/api-core`.
+- DO NOT mock `@wordpress/i18n`. In tests, `__()` and the other functions already return the strings they're given.
+- DO NOT mock `@tanstack/react-router` or the dashboard's `app/router/*` modules. Build the real route tree as `client/dashboard/docs/testing.md` explains.
+- Lint reports a mock of any module above. The files that mocked the router before that rule are listed in `client/dashboard/eslint.config.mjs`; never add to that list.
+- DO NOT mock the dashboard's own components or hooks to make a test pass. Render the real ones.
 - Mock a module only for what a test can't run or control any other way:
   - a service that reaches outside the app, e.g. analytics, error and log reporting, surveys.
   - a switch the code reads from the environment, e.g. a feature flag from `@automattic/calypso-config`.
+  - `@wordpress/data`, to stub the snackbars and notices a component creates. Moving these tests to the real notices store is separate work.
 
 ## Test data
 
