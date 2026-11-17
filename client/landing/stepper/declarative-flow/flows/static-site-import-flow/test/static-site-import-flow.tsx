@@ -103,6 +103,18 @@ describe( 'Static site import flow', () => {
 			);
 		} );
 
+		it.each( [ 'https://wordpress.com/log-in/', 'https://wordpress.com/home/example.com/' ] )(
+			'sends a WordPress.com page (%s) to the migration flow instead of offering a plan',
+			( from ) => {
+				window.location.search = `?from=${ encodeURIComponent( from ) }&platform=unknown`;
+
+				expect( staticSiteImportFlow.initialize() ).toBe( false );
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					`${ identifyPath }?from=${ encodeURIComponent( from ) }&platform=unknown`
+				);
+			}
+		);
+
 		it( 'sends every source there when the flag is off', () => {
 			config.disable( 'migration/non-wordpress-source' );
 			window.location.search = '?from=example.com&platform=unknown';
