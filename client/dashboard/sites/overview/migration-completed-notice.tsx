@@ -1,12 +1,10 @@
 import { domainsQuery, userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { domainOverviewRoute } from '../../app/router/domains';
 import { getCurrentDashboard } from '../../app/routing';
 import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
@@ -57,7 +55,6 @@ export function useShouldShowMigrationCompletedNotice( site: Site ) {
 
 export function MigrationCompletedNotice( { site }: { site: Site } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const router = useRouter();
 	const { mutate: updateDismissed } = useMutation(
 		userPreferenceMutation( `site-migration-completed-notice-dismissed-${ site.ID }` )
 	);
@@ -85,20 +82,19 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 
 	const isSourceDomainPrimary = getPrimaryDomain( site ) === sourceDomain;
 
+	const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+
 	let connectDomainUrl;
 	if ( isSourceDomainOnSite && isDashboardBackport() ) {
-		connectDomainUrl = `/domains/manage/${ sourceDomain }/edit/${ site.slug }`;
-	} else if ( isSourceDomainOnSite && domainOverviewRoute.fullPath ) {
-		connectDomainUrl = router.buildLocation( {
-			to: domainOverviewRoute.fullPath,
-			params: { domainName: sourceDomain },
-		} ).href;
+		connectDomainUrl = `/domains/mapping/${ site.slug }/setup/${ sourceDomain }`;
+	} else if ( isSourceDomainOnSite && domainConnectionSetupUrl ) {
+		connectDomainUrl = domainConnectionSetupUrl.replace( '%s', sourceDomain );
 	} else {
 		connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
 			initialQuery: sourceDomain,
 			step: 'transfer-or-connect',
 			siteSlug: site.slug,
-			domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
+			domainConnectionSetupUrl,
 			dashboard: getCurrentDashboard(),
 			back_to: redirectToDashboardLink(),
 		} );

@@ -27,7 +27,7 @@ import { OptionCard } from './option-card';
 
 import './style.scss';
 
-function DomainTransferOrConnect( {
+export function DomainTransferOrConnect( {
 	availability,
 	cart,
 	currencyCode,
