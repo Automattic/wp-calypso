@@ -20,7 +20,7 @@ export const BLUEPRINT_BUILD_DEST_SIMPLE = 'simple';
  * names none of its own; on a Simple site unless it names a `build_dest` too (the link's own
  * `blueprint` and `build_dest` win). The entry link's spec meta is carried along either way.
  */
-export const ZOOM_BLUEPRINT_SLUG = 'zoom-test';
+export const ZOOM_BLUEPRINT_SLUG = 'cards';
 
 // Reuse the flow that already hosts the AI site-spec step.
 const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
