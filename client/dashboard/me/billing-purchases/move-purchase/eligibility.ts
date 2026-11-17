@@ -54,10 +54,11 @@ export function canSiteReceivePurchase( purchase: Purchase, site: Site ): boolea
 		return false;
 	}
 
-	// Domains can move to and from Atomic sites, but a plan can only move to a
-	// Simple site without a plan of its own.
+	// A plan can only move to a site without a plan of its own. That is a
+	// Simple site, or a preview site, which is held on Atomic until a plan
+	// reaches it. The preview tells a preview apart from other Atomic sites.
 	if ( isDotcomPlan( purchase ) ) {
-		return ! site.is_wpcom_atomic && Boolean( site.plan?.is_free );
+		return Boolean( site.plan?.is_free );
 	}
 
 	return true;
