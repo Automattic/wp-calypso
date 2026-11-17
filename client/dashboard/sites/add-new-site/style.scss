@@ -34,3 +34,24 @@
 	border-radius: $radius-medium;
 	padding: $grid-unit-20;
 }
+
+// The Black Friday card keeps the same 16px on every side around its artwork.
+.offer-card--bf2026 .components-card__body {
+	padding: $grid-unit-20;
+}
+
+// Its link reads as bold text, as designed, not as a blue link, and sits on its
+// own text line instead of a 32px button box.
+.offer-card--bf2026 .components-button.is-link {
+	height: auto;
+	min-height: 0;
+	line-height: 20px;
+	color: var( --dashboard__text-color );
+	font-weight: 600;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: underline;
+	}
+}

@@ -225,7 +225,11 @@ describe( 'StaticSiteImportReading', () => {
 						blogId: 456,
 						siteSlug: 'preview.wpcomstaging.com',
 					} ),
-				expected: { ...continueWithSession, previewSiteSlug: 'preview.wpcomstaging.com' },
+				expected: {
+					...continueWithSession,
+					previewSiteId: 456,
+					previewSiteSlug: 'preview.wpcomstaging.com',
+				},
 			},
 			{
 				name: 'reports a preview the server would not build',

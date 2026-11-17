@@ -12,7 +12,9 @@ import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
+import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import TwoStepRequiredNotice, { useSiteRequiresTwoStep } from '../../app/two-step-required-notice';
 import Divider from '../../components/divider';
@@ -193,7 +195,9 @@ function SiteOverview( {
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
 	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
-	const siteImport = useStaticSiteImport( site, importSearch.importSessionId );
+	const siteImport = useStaticSiteImport( site.ID, importSearch.importSessionId );
+	const locale = useIntlLocale();
+	const { user } = useAuth();
 	useOpenPreviewWhenReady( siteImport );
 	const { migration: migrationCompletedSearch }: MigrationCompletedSearch = useSearch( {
 		strict: false,
@@ -273,7 +277,12 @@ function SiteOverview( {
 			}
 		>
 			{ siteImport?.status === 'moving' && (
-				<StaticSiteImportProgress siteImport={ siteImport } search={ importSearch } />
+				<StaticSiteImportProgress
+					siteImport={ siteImport }
+					search={ importSearch }
+					locale={ locale }
+					email={ user.email }
+				/>
 			) }
 			{ showImportFailed && <StaticSiteImportFailed site={ site } search={ importSearch } /> }
 			{ siteImport?.status !== 'moving' && ! showImportFailed && (
