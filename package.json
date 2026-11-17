@@ -427,7 +427,8 @@
 		"@wordpress/worker-threads": "2.1.0",
 		"nwsapi": "2.2.28",
 		"marked@npm:^18.0.3": "18.1.1",
-		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch"
+		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch",
+		"d3-scale": "4.0.2"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {

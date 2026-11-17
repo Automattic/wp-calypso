@@ -1,8 +1,8 @@
 import { Tooltip } from '@automattic/components';
-import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from '@visx/vendor/d3-scale';
 import { throttle } from '@wordpress/compose';
 import { extent as d3Extent } from 'd3-array';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
+import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import PropTypes from 'prop-types';
