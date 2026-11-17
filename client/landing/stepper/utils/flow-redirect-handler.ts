@@ -10,7 +10,6 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	WRITE_FLOW,
 } from '@automattic/onboarding';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type RedirectRule = {
@@ -49,7 +48,6 @@ const ENTREPRENEUR_POST_SITE_CREATION_STEPS = [
 	'processing',
 	'waitForAtomic',
 	'waitForPluginInstall',
-	'importerPlayground',
 	'error',
 ];
 
@@ -64,14 +62,9 @@ const ENTREPRENEUR_REDIRECT: RedirectRule = {
 			return false;
 		}
 
-		// The Woo Playground A/B test still creates trials until it ends (DOTPM-565). The session
-		// flag covers the login round trip, which can drop the query string.
-		const isPlaygroundPublish =
-			searchParams.get( 'from' ) === 'playground-publish' ||
-			window.sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 		const step = pathname.split( '/' )[ 3 ] ?? '';
 
-		return ! isPlaygroundPublish && ! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( step );
+		return ! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( step );
 	},
 	replace: true,
 };

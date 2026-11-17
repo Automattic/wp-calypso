@@ -196,7 +196,6 @@ describe( 'flow redirect handler', () => {
 			STEPS.PROCESSING.slug,
 			STEPS.WAIT_FOR_ATOMIC.slug,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL.slug,
-			STEPS.IMPORTER_PLAYGROUND.slug,
 			STEPS.ERROR.slug,
 		] )( 'lets a trial already being set up finish on the %s step', ( step ) => {
 			const didRedirect = redirectPathIfNecessary( `/setup/entrepreneur/${ step }`, '?siteId=123' );
@@ -215,23 +214,16 @@ describe( 'flow redirect handler', () => {
 			expect( replace ).not.toHaveBeenCalled();
 		} );
 
-		it( 'leaves the Woo Playground test path on the trial', () => {
-			const didRedirect = redirectPathIfNecessary(
-				'/setup/entrepreneur',
-				'?from=playground-publish'
-			);
-
-			expect( didRedirect ).toBe( false );
-			expect( replace ).not.toHaveBeenCalled();
-		} );
-
-		it( 'leaves the Playground path on the trial after the login round trip drops the query', () => {
+		// A Playground store now buys Commerce through onboarding, so an old link to its trial
+		// path, or the store's session flag, buys Commerce too.
+		it( 'redirects the old Playground publish path', () => {
 			window.sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
 
-			const didRedirect = redirectPathIfNecessary( '/setup/entrepreneur/create-site', '' );
+			redirectPathIfNecessary( '/setup/entrepreneur', '?from=playground-publish' );
 
-			expect( didRedirect ).toBe( false );
-			expect( replace ).not.toHaveBeenCalled();
+			expect( replace ).toHaveBeenCalledWith(
+				'/setup/new-hosted-site?from=playground-publish&plan=ecommerce-bundle'
+			);
 		} );
 
 		it( 'does not redirect while the feature flag is off', () => {
