@@ -108,7 +108,7 @@ export const useDomainRow = (
 	const isManageableDomain = ! domain.wpcom_domain;
 	const shouldDisplayPrimaryDomainLabel = ! isAllSitesView && isPrimaryDomain;
 
-	const placeholderWidth = Math.min( 100, 40 + domain.domain.length * 3 );
+	const placeholderWidth = 40 + ( ( domain.domain.length * 7 ) % 61 );
 
 	const userCanAddSiteToDomain = currentDomainData?.currentUserCanCreateSiteFromDomainOnly ?? false;
 
