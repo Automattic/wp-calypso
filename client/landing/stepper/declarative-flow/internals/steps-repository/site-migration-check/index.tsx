@@ -18,6 +18,7 @@ import './style.scss';
 
 export type CopySiteEligibility = 'eligible' | 'ineligible' | 'loading';
 
+// The size the address step has already asked mShots to capture the source at, so it's ready sooner.
 const PREVIEW_OPTIONS = mShotConfigs.desktop;
 
 const SiteMigrationCheck: StepType< {
