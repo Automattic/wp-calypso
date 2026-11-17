@@ -139,7 +139,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	 */
 	useStepNavigation( currentStepSlug, navigate ) {
 		// This hook should be enough to manage and persist all the state your flows needs.
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< typeof initialize >();
 
 		// This function handles the submission event of every step in the flow.
 		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
@@ -456,8 +456,8 @@ There shouldn't be any state that is untyped in Stepper.
 ```ts
 const flow = {
 	useStepNavigation() {
-		const { set } = useFlowState();
-		// The `useFlowState` will infer the types of `plans` from the types of the steps whose slug is `plans`. It will use the `submits:` part of the step types.
+		const { set } = useFlowState< typeof initialize >();
+		// `useFlowState` infers the type of `plans` from the `submits:` type of the flow step whose slug is `plans`. Keys outside the flow steps hold `unknown`.
 		set( 'plans', data );
 	},
 };

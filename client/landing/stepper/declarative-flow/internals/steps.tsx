@@ -296,6 +296,14 @@ export const STEPS = {
 			),
 	},
 
+	STATIC_SITE_IMPORT_PROGRESS: {
+		slug: 'static-site-import-progress',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import-progress' */ './steps-repository/static-site-import-progress'
+			),
+	},
+
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),

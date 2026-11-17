@@ -1,9 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { renderHook, screen, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useState } from 'react';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import {
@@ -43,13 +44,13 @@ const session = ( state: string, extra = {} ) => ( {
 const mockApi = () => nock( 'https://public-api.wordpress.com' );
 
 function StaticSiteImport() {
-	const siteImport = useStaticSiteImport( site, search.importSessionId );
+	const siteImport = useStaticSiteImport( site.ID, search.importSessionId );
 	if ( ! siteImport ) {
 		return null;
 	}
 	// Mirrors the site Overview: a failed move (unless refused) replaces the progress card.
 	if ( siteImport.status === 'moving' ) {
-		return <StaticSiteImportProgress siteImport={ siteImport } search={ search } />;
+		return <StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" />;
 	}
 	if ( siteImport.status === 'failed' && ! siteImport.isRefused ) {
 		return <StaticSiteImportFailed site={ site } search={ search } />;
@@ -96,6 +97,28 @@ describe( 'StaticSiteImportCard', () => {
 		expect( approve.isDone() ).toBe( false );
 	} );
 
+	test( 'leaves the destination alone when asked not to approve', async () => {
+		const sessionRequest = mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'capturing' ) );
+		const approve = mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 409, { code: 'static_site_import_session_not_ready', message: 'Not ready.' } );
+
+		function MoveStatus() {
+			const siteImport = useStaticSiteImport( site.ID, search.importSessionId, {
+				approve: false,
+			} );
+			return <p>{ siteImport?.session?.state }</p>;
+		}
+		render( <MoveStatus /> );
+
+		expect( await screen.findByText( 'capturing' ) ).toBeVisible();
+		expect( sessionRequest.isDone() ).toBe( true );
+		expect( approve.isDone() ).toBe( false );
+	} );
+
 	test( 'keeps moving while another approval holds the delivery', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
@@ -120,7 +143,7 @@ describe( 'StaticSiteImportCard', () => {
 			status: 'moving',
 			session: session( state, extra ) as StaticSiteImportSession,
 		} as StaticSiteImportState;
-		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } /> );
+		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" /> );
 		const current = screen
 			.getAllByRole( 'listitem' )
 			.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
@@ -223,16 +246,194 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( /^Finding your pages$/ );
 	} );
 
-	test( 'moves the checklist forward when the session moves on', () => {
-		const moving = ( state: string ) =>
-			( { status: 'moving', session: session( state ) } ) as StaticSiteImportState;
-		const { rerender } = render(
-			<StaticSiteImportProgress siteImport={ moving( 'capturing' ) } search={ search } />
-		);
+	test( 'moves the checklist forward when the session moves on', async () => {
+		function Moving() {
+			const [ state, setState ] = useState( 'capturing' );
+			const siteImport = { status: 'moving', session: session( state ) } as StaticSiteImportState;
+			return (
+				<>
+					<button onClick={ () => setState( 'building' ) }>Move on</button>
+					<StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" />
+				</>
+			);
+		}
+		render( <Moving /> );
 
-		rerender( <StaticSiteImportProgress siteImport={ moving( 'building' ) } search={ search } /> );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Move on' } ) );
 
 		expect( screen.getAllByRole( 'listitem' )[ 2 ] ).toHaveAttribute( 'aria-current', 'step' );
+	} );
+
+	test.each( [
+		[ { current_page: '/about-us/' }, 'Copied /about-us/' ],
+		[ { current_page: '/caf%C3%A9/' }, 'Copied /café/' ],
+		[ { current_page: '/' }, 'Copied your home page' ],
+		[ { current_page: '/contact/', capture_stage: 'media' }, 'Saving your images' ],
+		[ { capture_stage: 'finalizing' }, 'Saving your pages' ],
+	] )( 'says what the copy is doing: %o', ( progress, activity ) => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 4, pages_total: 12, ...progress },
+		} );
+
+		expect( within( current ).getByRole( 'status' ) ).toHaveTextContent( activity );
+	} );
+
+	test( 'says how long each finished step took', () => {
+		currentStepOf( 'building', {
+			progress: { phase: 'building', step_seconds: { inspecting: 12, capturing: 130 } },
+		} );
+
+		const [ found, copied ] = screen.getAllByRole( 'listitem' );
+		expect( found ).toHaveTextContent( '12s' );
+		expect( copied ).toHaveTextContent( '2m 10s' );
+	} );
+
+	test( 'keeps time on the step the move is on', () => {
+		const current = currentStepOf( 'building', {
+			progress: { phase: 'building', phase_started_at: Math.floor( Date.now() / 1000 ) - 65 },
+		} );
+
+		expect( current ).toHaveTextContent( /1m 0[56]s/ );
+	} );
+
+	test( 'shows what the restore onto the site is doing', () => {
+		const current = currentStepOf( 'queued', {
+			progress: {
+				delivery: {
+					stage: 'process_files',
+					step: 5,
+					total_steps: 9,
+					stage_started_at: Math.floor( Date.now() / 1000 ) - 20,
+					restore_started_at: Math.floor( Date.now() / 1000 ) - 65,
+					files: { done: 1204, total: 3800 },
+				},
+			},
+		} );
+
+		expect( current ).toHaveTextContent( 'Moving it onto your site' );
+		expect( current ).toHaveTextContent( 'Copying your files' );
+		expect( current ).toHaveTextContent( '1,204 of 3,800' );
+		expect( current ).toHaveTextContent( /1m 0[56]s/ );
+	} );
+
+	test.each( [
+		[ 'convert_to_atomic', 'Setting up your site’s hosting' ],
+		[ 'recreate_database', 'Setting up your content' ],
+		[ 'verify_site_integrity', 'Checking everything works' ],
+	] )( 'names the %s restore step', ( stage, activity ) => {
+		const current = currentStepOf( 'queued', {
+			progress: {
+				delivery: { stage, step: 1, total_steps: 9, stage_started_at: 1 },
+			},
+		} );
+
+		expect( current ).toHaveTextContent( activity );
+	} );
+
+	test( 'fills the bar with the pages copied so far', () => {
+		currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 6, pages_total: 12 },
+		} );
+
+		expect( screen.getByRole( 'progressbar', { name: 'Move progress' } ) ).toHaveAttribute(
+			'aria-valuenow',
+			'25'
+		);
+	} );
+
+	test( 'shows what the move has copied and built', () => {
+		currentStepOf( 'queued', {
+			progress: { pages_total: 12, captured: { files: 214, bytes: 3 * 1024 * 1024 } },
+			preview_summary: { blocks: 412 },
+		} );
+
+		for ( const [ term, value ] of [
+			[ 'Pages', '12' ],
+			[ 'Files saved', '214' ],
+			[ 'Copied', '3 MB' ],
+			[ 'Blocks built', '412' ],
+		] ) {
+			expect( screen.getByText( term ) ).toBeVisible();
+			expect( screen.getByText( value ) ).toBeVisible();
+		}
+	} );
+
+	test( 'names what inspection found on the old site', () => {
+		currentStepOf( 'capturing', {
+			assessment: { measured: true, capabilities: { forms: 2, commerce: 1, booking: 0 } },
+		} );
+
+		expect( screen.getByText( 'Forms' ) ).toBeVisible();
+		expect( screen.getByText( 'Store' ) ).toBeVisible();
+		expect( screen.queryByText( 'Bookings' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'names the address the ready email goes to', () => {
+		const siteImport = {
+			status: 'moving',
+			session: session( 'capturing' ) as StaticSiteImportSession,
+		} as StaticSiteImportState;
+		render(
+			<StaticSiteImportProgress
+				siteImport={ siteImport }
+				search={ search }
+				locale="en"
+				email="owner@example.com"
+			/>
+		);
+
+		expect( screen.getByText( /We’ll email you at/ ) ).toHaveTextContent(
+			'You can close this page. We’ll email you at owner@example.com when it’s done.'
+		);
+		expect( screen.getByText( 'owner@example.com' ).tagName ).toBe( 'STRONG' );
+	} );
+
+	test( 'shows what inspection learned before capture has a total', () => {
+		currentStepOf( 'capturing', {
+			progress: { phase: 'inspecting' },
+			assessment: {
+				measured: true,
+				routes: 27,
+				observed_band: 'moderate',
+				factors: [ { code: 'images', value: 6 } ],
+			},
+			connectable_domain: 'busybears.co',
+		} );
+
+		for ( const [ term, value ] of [
+			[ 'Pages', '27' ],
+			[ 'Images seen', '6' ],
+			[ 'Complexity', 'Moderate' ],
+			[ 'Your domain', 'busybears.co' ],
+		] ) {
+			expect( screen.getByText( term ) ).toBeVisible();
+			expect( screen.getByText( value ) ).toBeVisible();
+		}
+	} );
+
+	test( 'shows what the build’s checks found', () => {
+		currentStepOf( 'queued', {
+			preview_summary: {
+				pages: 6,
+				content_loss: 0,
+				images_missing_source: 2,
+				unresolved_internal_links: 0,
+			},
+		} );
+
+		expect( screen.getByText( 'Pages built' ) ).toBeVisible();
+		expect( screen.getByText( 'Checked after the build' ) ).toBeVisible();
+		expect( screen.getByText( 'No content lost' ) ).toBeVisible();
+		expect( screen.getByText( '2 images are missing' ) ).toBeVisible();
+		expect( screen.getByText( 'No broken links' ) ).toBeVisible();
+	} );
+
+	test( 'shows the old site’s home page once capture has a picture of it', () => {
+		currentStepOf( 'building', { preview_image_url: 'https://example.com/preview.png' } );
+
+		expect(
+			screen.getByRole( 'img', { name: 'The home page of busybearscleaning.com' } )
+		).toHaveAttribute( 'src', 'https://example.com/preview.png' );
 	} );
 
 	test( 'offers to connect the kept domain and preview the site once it is ready', async () => {

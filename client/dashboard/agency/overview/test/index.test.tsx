@@ -152,3 +152,29 @@ test( 'hides cached preferences after a failed native refetch', async () => {
 	} );
 	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
 } );
+
+test( 'links VIP Pro and Premier partners to the enterprise hosting referral', async () => {
+	const referLink = () =>
+		screen.queryByRole( 'link', { name: 'Refer your client to VIP hosting' } );
+	const agency = { ...makeAgency(), user: { capabilities: [] } } as Agency;
+	renderOverview( agency );
+	await screen.findByRole( 'button', { name: 'Contact sales & support' } );
+	expect( referLink() ).not.toBeInTheDocument();
+
+	const setTier = ( id: string ) => {
+		act( () =>
+			queryClient.setQueryData( activeAgencyQuery().queryKey, {
+				...agency,
+				tier: { id },
+			} as Agency )
+		);
+	};
+	setTier( 'vip-pro-agency-partner' );
+	expect(
+		await screen.findByRole( 'link', { name: 'Refer your client to VIP hosting' } )
+	).toHaveAttribute( 'href', '/hosting/refer-enterprise-hosting' );
+	setTier( 'premier-partner' );
+	expect( referLink() ).toBeVisible();
+	setTier( 'agency-partner' );
+	await waitFor( () => expect( referLink() ).not.toBeInTheDocument() );
+} );
