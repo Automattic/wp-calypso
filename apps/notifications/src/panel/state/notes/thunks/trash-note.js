@@ -14,7 +14,7 @@ const trashNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 		try {
 			await wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment ).del();
 		} catch ( error ) {
-			reportError( 'trash', error, { note_type: note.type } );
+			reportError( 'trash', error );
 			throw error;
 		}
 	} else {

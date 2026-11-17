@@ -114,7 +114,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						retryCountRef.current = 0;
 						replyInputRef.current?.focus();
 						debug( 'Failed to submit comment reply: %s', error.message );
-						reportError( 'reply', error, { note_type: note.type } );
+						reportError( 'reply', error );
 					}
 					return;
 				}

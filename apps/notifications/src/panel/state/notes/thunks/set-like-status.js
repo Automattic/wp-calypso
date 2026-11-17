@@ -21,7 +21,7 @@ const setLikeStatus =
 				await wpcom().req.del( `/sites/${ siteId }/${ entityPath }/likes/mine/delete` );
 			}
 		} catch ( error ) {
-			reportError( isLiked ? 'like' : 'unlike', error, { note_type: type } );
+			reportError( 'like', error );
 		}
 
 		// getNote() updates the redux store with a fresh object from the API

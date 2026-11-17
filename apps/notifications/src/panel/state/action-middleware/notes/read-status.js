@@ -43,9 +43,7 @@ export const markAsRead = ( { getState }, { noteId } ) => {
 
 	markReadStatus( noteId, true, ( error, data ) => {
 		if ( error || ! data.success ) {
-			reportError( 'read', error ?? new Error( 'Marking the note as read was unsuccessful' ), {
-				note_type: note.type,
-			} );
+			reportError( 'read', error ?? data );
 			try {
 				return localStorage.removeItem( `note_read_status_${ noteId }` );
 			} catch ( e ) {}

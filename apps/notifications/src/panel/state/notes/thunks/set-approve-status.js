@@ -10,7 +10,7 @@ const setApproveStatus =
 
 		comment.update( { status: isApproved ? 'approved' : 'unapproved' }, ( error ) => {
 			if ( error ) {
-				reportError( isApproved ? 'approve' : 'unapprove', error, { note_type: type } );
+				reportError( 'approve', error );
 			}
 			// getNote() updates the redux store with a fresh object from the API
 			restClient.getNote( noteId );

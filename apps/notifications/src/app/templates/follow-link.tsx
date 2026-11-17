@@ -45,7 +45,7 @@ export const FollowLink = ( {
 			safeSetIsRequestRunning( false );
 			if ( error ) {
 				safeSetIsFollowing( previousState );
-				reportError( previousState ? 'unfollow' : 'follow', error, { note_type: noteType } );
+				reportError( 'follow', error );
 				return;
 			}
 			safeSetIsFollowing( data.is_following );

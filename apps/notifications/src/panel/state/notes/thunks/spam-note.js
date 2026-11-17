@@ -19,7 +19,7 @@ const spamNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 
 			await comment.update( commentData );
 		} catch ( error ) {
-			reportError( 'spam', error, { note_type: note.type } );
+			reportError( 'spam', error );
 			throw error;
 		}
 	} else {
