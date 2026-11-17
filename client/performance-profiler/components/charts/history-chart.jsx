@@ -1,11 +1,11 @@
-import { useResizeObserver } from '@wordpress/compose';
-import { extent as d3Extent, max as d3Max } from 'd3-array';
-import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import {
 	scaleLinear as d3ScaleLinear,
 	scaleTime as d3TimeScale,
 	scaleThreshold as d3ScaleThreshold,
-} from 'd3-scale';
+} from '@visx/vendor/d3-scale';
+import { useResizeObserver } from '@wordpress/compose';
+import { extent as d3Extent, max as d3Max } from 'd3-array';
+import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
 import { select as d3Select, event as d3Event } from 'd3-selection';
 import { line as d3Line, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { timeFormat as d3TimeFormat } from 'd3-time-format';
