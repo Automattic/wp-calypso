@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { setTimeout as realSetTimeout } from 'timers';
-import config from '@automattic/calypso-config';
 import { act, configure, getConfig, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -58,7 +57,6 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
 const getInput = () => screen.getByLabelText( /Site address/ );
-const originalIsEnabled = config.isEnabled;
 
 describe( 'SiteMigrationIdentify', () => {
 	let user: ReturnType< typeof userEvent.setup >;
@@ -86,11 +84,6 @@ describe( 'SiteMigrationIdentify', () => {
 		mockFlowState.set( 'flow', { entryPoint: 'goals' } );
 		jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
 		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation(
-				( flag ) => flag !== 'migration/reprint-flow' && originalIsEnabled( flag )
-			);
 	} );
 	afterEach( () => {
 		nock.cleanAll();
@@ -118,7 +111,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await user.type( getInput(), 'https://example.com' );
 
-		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		await waitFor( () => {
 			expect( submit ).toHaveBeenCalledWith(
@@ -139,9 +132,9 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await user.clear( getInput() );
 		await user.type( getInput(), 'https://example.com' );
-		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
-		expect( screen.getByRole( 'heading', { name: 'Scanning your site' } ) ).toBeVisible();
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Checking your site' );
 
 		act( () => window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) ) );
 		expect( getInput() ).toBeVisible();
@@ -160,7 +153,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await user.type( getInput(), 'https://example.com' );
 
-		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
@@ -182,24 +175,6 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 	} );
 
-	it( 'shows an error when the api analyzer returns error', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		mockApi()
-			.get( '/wpcom/v2/imports/analyze-url' )
-			.query( { site_url: 'https://example.com' } )
-			.reply( 500, new Error( 'Internal Server Error' ) );
-
-		await user.type( getInput(), 'https://example.com' );
-
-		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
-
-		await waitFor( () =>
-			expect( screen.getByText( /Please enter a valid website / ) ).toBeVisible()
-		);
-	} );
-
 	it( 'sets the input value to the site url when the "from" param is set', () => {
 		const submit = jest.fn();
 		render(
@@ -211,19 +186,9 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it.each( [
-		{ enteredUrl: 'example.com', isReprintFlow: false },
-		{ enteredUrl: 'https://example.com/blog/?tag=test#section', isReprintFlow: false },
-		{ enteredUrl: 'example.com', isReprintFlow: true },
-		{ enteredUrl: 'https://example.com/blog/?tag=test#section', isReprintFlow: true },
-	] )(
-		'restores $enteredUrl after a redirect with Reprint enabled: $isReprintFlow',
-		async ( { enteredUrl, isReprintFlow } ) => {
-			jest
-				.mocked( config.isEnabled )
-				.mockImplementation( ( flag ) =>
-					flag === 'migration/reprint-flow' ? isReprintFlow : originalIsEnabled( flag )
-				);
+	it.each( [ 'example.com', 'https://example.com/blog/?tag=test#section' ] )(
+		'restores %s after a redirect',
+		async ( enteredUrl ) => {
 			const submit = jest.fn();
 			const resolvedUrl = 'https://redirected.example.com';
 			const { unmount } = render( { navigation: { submit } } );
@@ -237,7 +202,7 @@ describe( 'SiteMigrationIdentify', () => {
 				.reply( 200, { hosting_provider: { slug: 'unknown' } } );
 
 			await user.type( getInput(), enteredUrl );
-			await user.click( screen.getByRole( 'button', { name: /Check my site|Continue/ } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 			await waitFor( () =>
 				expect( submit ).toHaveBeenCalledWith(
 					expect.objectContaining( { from: resolvedUrl, platform: 'wordpress', host: 'unknown' } )
@@ -269,7 +234,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 		await user.clear( getInput() );
 		await user.type( getInput(), 'https://example.com' );
-		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 
 		unmount();
@@ -290,28 +255,20 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://existent-site.com' } )
 			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
 
-		await user.click( screen.getByRole( 'button', { name: /Check my site/ } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
 		);
 	} );
 
-	it.each( [ false, true ] )(
-		'shows the source placeholder without a hosting pitch (reprint: %s)',
-		( enabled ) => {
-			jest
-				.spyOn( config, 'isEnabled' )
-				.mockImplementation( ( flag ) =>
-					flag === 'migration/reprint-flow' ? enabled : originalIsEnabled( flag )
-				);
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
+	it( 'shows the source placeholder without a hosting pitch', () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
 
-			expect( getInput() ).toHaveAttribute( 'placeholder', 'your-existing-site.com' );
-			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( /Blazing fast speeds/ ) ).not.toBeInTheDocument();
-		}
-	);
+		expect( getInput() ).toHaveAttribute( 'placeholder', 'your-existing-site.com' );
+		expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Blazing fast speeds/ ) ).not.toBeInTheDocument();
+	} );
 
 	it( 'links the logo to the homepage as its way out, without a Back button', () => {
 		render(
@@ -332,7 +289,7 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.queryByRole( 'button', { name: 'Change address' } ) ).not.toBeInTheDocument();
 	} );
 
-	describe( 'with migration/reprint-flow enabled', () => {
+	describe( 'checking the source', () => {
 		const mockAnalysis = ( body: object, status = 200, url = 'https://example.com' ) =>
 			mockApi()
 				.get( '/wpcom/v2/imports/analyze-url' )
@@ -346,14 +303,6 @@ describe( 'SiteMigrationIdentify', () => {
 			await user.type( getInput(), url );
 			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		};
-
-		beforeEach( () => {
-			jest
-				.spyOn( config, 'isEnabled' )
-				.mockImplementation(
-					( flag ) => flag === 'migration/reprint-flow' || originalIsEnabled( flag )
-				);
-		} );
 
 		it( 'rejects known destination addresses and lets the user correct the source', async () => {
 			const submit = jest.fn();
@@ -965,15 +914,8 @@ describe( 'SiteMigrationIdentify', () => {
 		} );
 	} );
 
-	it.each( [
-		{ enabled: false, platform: 'wordpress' },
-		{ enabled: true, platform: 'squarespace' },
-	] )( 'keeps legacy HTTP continuation for %j', async ( { enabled, platform } ) => {
-		jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( ( flag ) =>
-				flag === 'migration/reprint-flow' ? enabled : originalIsEnabled( flag )
-			);
+	it( 'keeps HTTP continuation for a blocked non-WordPress source', async () => {
+		const platform = 'squarespace';
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		mockApi()
@@ -989,9 +931,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.get( '/wpcom/v2/site-profiler/hosting-provider/example.com' )
 			.reply( 200, { hosting_provider: { slug: 'bluehost' } } );
 		await user.type( getInput(), 'http://example.com' );
-		await user.click(
-			screen.getByRole( 'button', { name: enabled ? 'Continue' : 'Check my site' } )
-		);
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith(
 				expect.objectContaining( { from: 'http://example.com/', platform } )

@@ -2,7 +2,6 @@
  * @vitest-environment jsdom
  */
 import { queryClient } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { createRouter } from '@tanstack/react-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -92,7 +91,6 @@ function Harness( { site }: { site: Site } ) {
 }
 
 beforeEach( () => {
-	config.enable( 'migration/reprint-flow' );
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.2/all-domains' )
@@ -103,7 +101,6 @@ afterEach( () => {
 	nock.cleanAll();
 	mockDomainsResponse = [ 200, { domains: [] } ];
 	mockIsBackport = false;
-	config.disable( 'migration/reprint-flow' );
 	queryClient.clear();
 	window._sva = undefined;
 	window.localStorage.clear();

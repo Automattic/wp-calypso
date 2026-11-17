@@ -6,7 +6,6 @@ import {
 	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationStatusQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -97,11 +96,8 @@ const configurePath = '/wpcom/v2/sites/42/wordpress-migration/configure';
 const runPath = '/wpcom/v2/sites/42/wordpress-migration/run';
 
 describe( 'WordPressMigration', () => {
-	// The site only reads as locked by its own state while the flow is switched on.
-	beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 	afterEach( () => {
 		vi.useRealTimers();
-		config.disable( 'migration/reprint-flow' );
 		queryClient.clear();
 		// After clearing: going back to the default focus state refetches every query it finds, and a refetch still in
 		// flight would take the next test's mocked replies.

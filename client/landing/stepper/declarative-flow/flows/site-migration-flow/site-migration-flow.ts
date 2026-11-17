@@ -79,29 +79,12 @@ const BASE_STEPS = [
 
 function initialize() {
 	const { pathname, search, hash } = window.location;
-	if (
-		! config.isEnabled( 'migration/reprint-flow' ) &&
-		( matchPath( '/setup/:flow/site-migration-check/:lang?', pathname ) ||
-			matchPath( '/setup/:flow/importList/:lang?', pathname ) ||
-			matchPath( '/setup/:flow/plans/:lang?', pathname ) )
-	) {
-		window.location.replace(
-			pathname.replace(
-				/\/(site-migration-check|importList|plans)(?=\/|$)/,
-				`/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
-			) +
-				search +
-				hash
-		);
-		return false as const;
-	}
 	// Landing pages (e.g. /move) analyze the URL themselves and deep link WordPress sources to the
 	// site picker; send them through the site checks and plans instead. The router hasn't mounted
 	// yet, so rewriting the URL in place avoids a second page load. Remove once landing pages link
 	// to identify directly (see README).
 	const query = new URLSearchParams( search );
 	if (
-		config.isEnabled( 'migration/reprint-flow' ) &&
 		matchPath( '/setup/:flow/sitePicker/:lang?', pathname ) &&
 		query.get( 'start' ) === 'true' &&
 		query.get( 'platform' ) === 'wordpress' &&
@@ -131,14 +114,7 @@ function initialize() {
 	return [
 		STEPS.SITE_MIGRATION_IDENTIFY,
 		...stepsWithRequiredLogin(
-			BASE_STEPS.filter(
-				( step ) =>
-					step.slug !== STEPS.SITE_MIGRATION_IDENTIFY.slug &&
-					( ( step.slug !== STEPS.SITE_MIGRATION_CHECK.slug &&
-						step.slug !== STEPS.IMPORT_LIST.slug &&
-						step.slug !== STEPS.UNIFIED_PLANS.slug ) ||
-						config.isEnabled( 'migration/reprint-flow' ) )
-			)
+			BASE_STEPS.filter( ( step ) => step.slug !== STEPS.SITE_MIGRATION_IDENTIFY.slug )
 		),
 	];
 }
@@ -222,7 +198,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const handoff = flowState.get( 'migrationHandoff' );
 		const { hostname, protocol } = getUrlParts( query.get( 'from' ) || '' );
 		const checkSourceEligibility =
-			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'isWpcom' ) === 'true' &&
 			query.get( 'platform' ) === 'wordpress' &&
 			!! hostname &&
@@ -241,25 +216,20 @@ const siteMigration: FlowV2< typeof initialize > = {
 			copySiteEligibility = 'eligible';
 		}
 		const hasDestination =
-			config.isEnabled( 'migration/reprint-flow' ) &&
-			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
-			!! ( siteId || siteSlug );
+			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME && !! ( siteId || siteSlug );
 		const destinationSiteUrls = getSiteAddresses( siteSlug, site );
 		return {
 			importList: {
-				allowAutomaticDetection: config.isEnabled( 'migration/reprint-flow' ),
+				allowAutomaticDetection: true,
 			},
 			'site-migration-identify': {
 				destinationSiteUrls,
 				// A landing page hands over an address the user already submitted, so check it once on arrival.
 				checkOnArrival:
-					config.isEnabled( 'migration/reprint-flow' ) &&
-					query.get( 'start' ) === 'true' &&
-					! flowState.get( 'migrationArrivalChecked' ),
+					query.get( 'start' ) === 'true' && ! flowState.get( 'migrationArrivalChecked' ),
 			},
 			sitePicker: {
 				skipConfirmation:
-					config.isEnabled( 'migration/reprint-flow' ) &&
 					query.get( 'platform' ) === 'wordpress' &&
 					!! query.get( 'from' ) &&
 					query.get( 'isWpcom' ) !== 'true' &&
@@ -268,7 +238,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 			},
 			error: {
 				showRetry:
-					config.isEnabled( 'migration/reprint-flow' ) &&
 					handoff?.from === query.get( 'from' ) &&
 					handoff?.siteId === Number( query.get( 'siteId' ) ) &&
 					handoff?.siteSlug === query.get( 'siteSlug' ) &&
@@ -338,18 +307,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const siteCanInstallPlugins = canInstallPlugins( site );
 		const isReprintSource =
-			config.isEnabled( 'migration/reprint-flow' ) &&
 			actionQueryParam !== 'import' &&
 			platformQueryParam === 'wordpress' &&
 			!! fromQueryParam &&
 			urlQueryParams.get( 'isWpcom' ) !== 'true' &&
 			urlQueryParams.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME;
 		const isManualImport =
-			config.isEnabled( 'migration/reprint-flow' ) &&
-			( actionQueryParam === 'import' ||
-				( ! fromQueryParam &&
-					platformQueryParam !== 'unknown' &&
-					platformQueryParam !== 'wordpress' ) );
+			actionQueryParam === 'import' ||
+			( ! fromQueryParam &&
+				platformQueryParam !== 'unknown' &&
+				platformQueryParam !== 'wordpress' );
 		const handoff = get( 'migrationHandoff' );
 		const savedHandoff =
 			isReprintSource &&
@@ -542,7 +509,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					const { hostname, protocol } = getUrlParts( from || '' );
 					if (
 						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
-						config.isEnabled( 'migration/reprint-flow' ) &&
 						urlQueryParams.get( 'isWpcom' ) === 'true' &&
 						platform === 'wordpress' &&
 						hostname &&
@@ -593,7 +559,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if (
 						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
 						( action === 'back' ||
-							! config.isEnabled( 'migration/reprint-flow' ) ||
 							! from ||
 							platform !== 'wordpress' ||
 							isWpcom ||
@@ -602,10 +567,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return replace( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
 					const hasDestinationSite = hasSite( siteId, siteSlug );
-					if (
-						config.isEnabled( 'migration/reprint-flow' ) &&
-						action === 'skip_platform_identification'
-					) {
+					if ( action === 'skip_platform_identification' ) {
 						if ( from || urlQueryParams.get( 'manualPlatform' ) === 'wordpress' ) {
 							replace( paths.identifyPath( { from: from || '' } ) );
 						}
@@ -640,7 +602,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					if (
 						slug === STEPS.SITE_MIGRATION_IDENTIFY.slug &&
-						config.isEnabled( 'migration/reprint-flow' ) &&
 						action === 'continue' &&
 						platform === 'wordpress' &&
 						from
@@ -731,9 +692,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.IMPORT_LIST.slug: {
-					if ( ! config.isEnabled( 'migration/reprint-flow' ) ) {
-						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
-					}
 					const from = fromQueryParam || '';
 					if ( providedDependencies.action === 'use_automatic_detection' ) {
 						return replace(
@@ -1017,9 +975,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( actionQueryParam === 'migrate' ) {
 						if (
 							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
-							! (
-								config.isEnabled( 'migration/reprint-flow' ) && platformQueryParam === 'wordpress'
-							)
+							platformQueryParam !== 'wordpress'
 						) {
 							return replace(
 								paths.upgradePlanPath( {
@@ -1101,7 +1057,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 					if (
-						config.isEnabled( 'migration/reprint-flow' ) &&
 						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 						providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF
 					) {
@@ -1109,7 +1064,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if (
-						config.isEnabled( 'migration/reprint-flow' ) &&
 						platformQueryParam === 'wordpress' &&
 						providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF &&
 						fromQueryParam &&
@@ -1459,7 +1413,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 		let goBack;
 		if (
-			config.isEnabled( 'migration/reprint-flow' ) &&
 			window.history.length > 1 &&
 			( currentStep === STEPS.SITE_MIGRATION_IDENTIFY.slug ||
 				currentStep === STEPS.IMPORT_LIST.slug ||
