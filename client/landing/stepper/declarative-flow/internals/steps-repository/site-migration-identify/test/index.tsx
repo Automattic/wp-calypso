@@ -22,14 +22,6 @@ jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/sto
 	} ) ),
 } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug' );
-jest.mock(
-	'../../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler',
-	() => ( {
-		useSitePreviewMShotImageHandler: () => ( {
-			createScreenshots: jest.fn(),
-		} ),
-	} )
-);
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
