@@ -8,6 +8,8 @@ import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import AgencyOnboardingTour from '../';
+// Loaded lazily by the tour; importing it here keeps its first load out of each `findBy` timeout.
+import '../onboarding-tour-modal';
 import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 

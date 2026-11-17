@@ -62,10 +62,20 @@ export interface StaticSiteImportPreviewSummary {
 
 export interface StaticSiteImportProgress {
 	phase?: 'installing' | 'inspecting' | 'capturing' | 'comparing' | 'building' | 'exporting';
+	/** When the server first saw the current phase, in Unix seconds. */
+	phase_started_at?: number;
 	/** Capture is still discovering the source's pages. */
 	finding_pages?: boolean;
+	/** The path of the page capture saved last, percent-encoded, e.g. `/about-us/`. */
+	current_page?: string;
+	/** Every page is captured, and capture is saving the site's images, then its files. */
+	capture_stage?: 'media' | 'finalizing';
 	/** The inspection before capture: `pages_found` is how many pages it saw, before capture settles on a total. */
 	source?: { complexity?: string; pages_found?: number; issues?: number };
+	/** What capture saved, once it finishes. */
+	captured?: { files?: number; bytes?: number };
+	/** How long each finished step took, in seconds. */
+	step_seconds?: Partial< Record< 'inspecting' | 'capturing' | 'comparing', number > >;
 	/**
 	 * The importer's build step while the site is built, e.g. `compile_pages`, and its pages done of
 	 * the total. Absent before the importer starts and on servers that don't report it.
@@ -84,6 +94,10 @@ export interface StaticSiteImportSession {
 	source_digest: string;
 	/** PHP serialises an empty summary as `[]`. */
 	preview_summary: StaticSiteImportPreviewSummary | [];
+	/** What inspection found on the source before capture, or null until it has run. */
+	assessment?: StaticSiteImportInspection | null;
+	/** A short-lived link to a screenshot of the source's home page, once capture has taken it. */
+	preview_image_url?: string;
 	/** Empty until approval binds a destination. */
 	site_url: string;
 	/**

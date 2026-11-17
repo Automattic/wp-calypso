@@ -38,6 +38,17 @@ Tests can be run in 3 different modes:
 
 They are executed on every push on continuous integration (TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
+The client tests are moving from Jest to Vitest one directory at a time. The directories listed in `test/client/vitest-directories.js` run on Vitest, and `yarn run test-client` skips them:
+
+```bash
+> # run the client tests that have moved to Vitest; arguments are Vitest's, for example a path
+> yarn run test-client:vitest [ path ]
+> # watch them
+> yarn run test-client:vitest:watch [ path ]
+```
+
+To move a directory, add it to that list, run `node test/client/jest-to-vitest-codemod.mjs` to rewrite its tests for Vitest, and fix what it reports. A test that can't move yet stays on Jest through the list's `onJest`. Tests in the listed directories can't use the `jest` global: import `vi` from `vitest` instead.
+
 Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
 
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
