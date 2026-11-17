@@ -83,6 +83,13 @@
 /* Card */
 @mixin dashboard-dark-theme-card {
 	@include color-scheme-dark-theme-card;
+
+	// The card border above is a box-shadow, which outranks the single-class rule
+	// that `isBorderless` relies on. Borderless cards would otherwise gain a border
+	// in dark mode only, and nested ones would read as cramped, stacked panels.
+	.components-surface.components-card.dashboard-card-borderless {
+		box-shadow: none;
+	}
 }
 
 /* MCP connect card */
