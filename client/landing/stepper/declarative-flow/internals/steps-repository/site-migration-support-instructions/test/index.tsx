@@ -15,10 +15,9 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-const render = () =>
+const render = ( extraQuery = '' ) =>
 	renderStep( <SiteMigrationSupportInstructions { ...mockStepProps() } />, {
-		initialEntry:
-			'/site-migration-support-instructions?siteSlug=example.wordpress.com&from=example.com',
+		initialEntry: `/site-migration-support-instructions?siteSlug=example.wordpress.com&from=example.com${ extraQuery }`,
 		initialState: { currentUser: { id: 1, user: { ID: 1, email: 'customer@example.com' } } },
 	} );
 
@@ -58,6 +57,19 @@ describe( 'SiteMigrationSupportInstructions', () => {
 		await waitFor( () => expect( wp.req.post ).toHaveBeenCalledTimes( 1 ) );
 		// Let the rejected request settle, so a notice would have rendered by now.
 		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
+		expect( screen.getByText( 'We’ll take it from here!' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not send the migration request again after the survey', async () => {
+		jest.mocked( wp.req.post ).mockResolvedValue( { success: true } );
+
+		// The survey only moves on once its answers are on the customer's ticket.
+		render( '&preventTicketCreation=true' );
+
+		// Let the page's effects run, so a request would have gone out by now.
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
+		expect( wp.req.post ).not.toHaveBeenCalled();
 		expect( screen.getByText( 'We’ll take it from here!' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 	} );

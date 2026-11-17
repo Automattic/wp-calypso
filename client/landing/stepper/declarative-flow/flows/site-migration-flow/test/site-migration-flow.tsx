@@ -3091,6 +3091,8 @@ describe( 'Site Migration Flow', () => {
 						from: 'oldsite.com',
 					},
 				} );
+				// The page still sends the request on this way in.
+				expect( destination.query.get( 'preventTicketCreation' ) ).toBeNull();
 			} );
 		} );
 
@@ -3340,11 +3342,13 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
+				// The survey's answers are already on the customer's ticket, so the next step doesn't send the request again.
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
+						preventTicketCreation: true,
 					},
 				} );
 			} );

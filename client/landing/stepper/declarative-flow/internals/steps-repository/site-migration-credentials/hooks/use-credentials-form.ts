@@ -190,6 +190,7 @@ export const useCredentialsForm = (
 						locale,
 						blog_url: siteSlug,
 						from_url: from,
+						context: 'site_is_on_wpcom',
 					} );
 				} else if ( isNotWordPress( siteInfoResult ) ) {
 					if ( ! siteSlug ) {
