@@ -67,22 +67,18 @@ export default function Notifications( {
 	}, [] );
 	useSubscriberAlerts( onNotificationCount, isViewSettingsEnabled );
 
-	const wasOpenRef = useRef( false );
-	useEffect( () => {
-		if ( isOpen && ! wasOpenRef.current ) {
-			recordTracksEvent( 'calypso_notification_open', {
-				unread_notifications: unseenCountRef.current,
-			} );
-		}
-		wasOpenRef.current = isOpen;
-	}, [ isOpen, recordTracksEvent ] );
-
-	const handleToggle = ( willOpen: boolean ) => {
-		if ( willOpen ) {
-			setShowHelpCenter( false, undefined, true );
-		}
-		setIsOpen( willOpen );
-	};
+	const handleToggle = useCallback(
+		( willOpen: boolean ) => {
+			if ( willOpen ) {
+				setShowHelpCenter( false, undefined, true );
+				recordTracksEvent( 'calypso_notification_open', {
+					unread_notifications: unseenCountRef.current,
+				} );
+			}
+			setIsOpen( willOpen );
+		},
+		[ setShowHelpCenter, recordTracksEvent ]
+	);
 
 	// Close notifications when help center opens.
 	useEffect( () => {
@@ -144,14 +140,10 @@ export default function Notifications( {
 		CLOSE_PANEL: [ handleClose ],
 	};
 
-	const handleOmnibarToggle = useCallback( () => {
-		setIsOpen( ( prev ) => {
-			if ( ! prev ) {
-				setShowHelpCenter( false, undefined, true );
-			}
-			return ! prev;
-		} );
-	}, [ setShowHelpCenter ] );
+	const handleOmnibarToggle = useCallback(
+		() => handleToggle( ! isOpen ),
+		[ handleToggle, isOpen ]
+	);
 
 	useOmnibarEvent( 'notifications', handleOmnibarToggle );
 
