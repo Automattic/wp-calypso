@@ -13,17 +13,15 @@ import type { Site } from '@automattic/api-core';
 interface BetaProgramNoticeProps {
 	site: Site;
 	wpVersion: string;
-	actions?: React.ReactNode;
 }
 
-export function BetaProgramNotice( { site, wpVersion, actions }: BetaProgramNoticeProps ) {
+export function BetaProgramNotice( { site, wpVersion }: BetaProgramNoticeProps ) {
 	const backupUrl = getBackupUrl( site );
 	const { setShowHelpCenter } = useHelpCenter();
 
 	return (
 		<Notice
 			variant="info"
-			actions={ actions }
 			title={ sprintf(
 				/* translators: %s is the WordPress version string e.g. "6.8 beta" */
 				__( 'Your site is running WordPress %s' ),

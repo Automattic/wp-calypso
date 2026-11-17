@@ -29,6 +29,17 @@ const site = {
 	},
 } as Site;
 
+const premiumSite = {
+	...site,
+	is_wpcom_staging_site: false,
+	plan: {
+		product_slug: 'value_bundle',
+		product_name_short: 'Premium',
+		is_free: false,
+		features: { active: [ 'atomic', 'backups' ] },
+	},
+} as unknown as Site;
+
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
@@ -107,11 +118,56 @@ describe( '<WordPressSettings>', () => {
 		} );
 	} );
 
-	test( 'renders activation callout when a Simple site has the plan feature but is not Atomic', async () => {
+	test( 'renders and saves the form for an Atomic site on a Personal or Premium plan', async () => {
+		const user = userEvent.setup();
+
+		mockApi( 'latest', premiumSite );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'WordPress version' } );
+		await user.selectOptions( versionSelect, 'Beta (7.0-RC2)' );
+		const scope = mockWordPressVersionSaved( 'beta' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'renders the beta notice without the backup restore link on a Personal or Premium plan', async () => {
+		mockApi( 'beta', premiumSite );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByText( 'Your site is running WordPress 7.0-RC2' ) ).toBeVisible();
+		expect( screen.getByRole( 'combobox', { name: 'WordPress version' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'restore your backup' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the beta notice with the backup restore link on a Business+ plan', async () => {
+		mockApi( 'beta', { ...site, is_wpcom_staging_site: false } as Site );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByText( 'Your site is running WordPress 7.0-RC2' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'restore your backup' } ) ).toBeVisible();
+	} );
+
+	test( 'renders activation callout when a Simple site has a paid plan', async () => {
 		mockSite( {
-			...site,
+			...premiumSite,
 			is_wpcom_atomic: false,
-			is_wpcom_staging_site: false,
 		} as Site );
 
 		render( <WordPressSettings siteSlug={ site.slug } /> );
@@ -121,15 +177,15 @@ describe( '<WordPressSettings>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders upsell when the site does not have the plan feature', async () => {
+	test( 'renders upsell when the site is on a free plan', async () => {
 		mockSite( {
 			...site,
 			is_wpcom_atomic: false,
 			is_wpcom_staging_site: false,
 			plan: {
-				product_slug: 'personal-bundle',
-				product_name_short: 'Personal',
-				is_free: false,
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				is_free: true,
 				features: { active: [] },
 			},
 		} as unknown as Site );
@@ -138,70 +194,8 @@ describe( '<WordPressSettings>', () => {
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
+		expect( screen.getByText( 'Available on WordPress.com paid plans.' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders opt-out button for an Atomic site auto-enrolled on beta without self-serve backups', async () => {
-		const user = userEvent.setup();
-
-		const autoEnrolledSite = {
-			...site,
-			is_wpcom_staging_site: false,
-			plan: {
-				product_slug: 'value_bundle',
-				product_name_short: 'Premium',
-				is_free: false,
-				features: { active: [ 'atomic' ] },
-			},
-		} as unknown as Site;
-
-		mockApi( 'beta', autoEnrolledSite );
-		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		mockTrackVersions();
-
-		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		expect(
-			await screen.findByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
-		).toBeVisible();
-		expect(
-			screen.queryByRole( 'combobox', { name: 'WordPress version' } )
-		).not.toBeInTheDocument();
-
-		const scope = mockWordPressVersionSaved( 'latest' );
-		await user.click(
-			screen.getByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
-		);
-
-		await waitFor( () => {
-			expect( scope.isDone() ).toBe( true );
-		} );
-
-		// After a successful opt-out, the rolled-back notice replaces the opt-out card.
-		expect( await screen.findByText( 'WordPress version updated' ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
-		).not.toBeInTheDocument();
-	} );
-
-	test( 'renders the upsell (not opt-out) for an Atomic site without self-serve backups when on latest', async () => {
-		mockSite( {
-			...site,
-			is_wpcom_staging_site: false,
-			plan: {
-				product_slug: 'value_bundle',
-				product_name_short: 'Premium',
-				is_free: false,
-				features: { active: [ 'atomic' ] },
-			},
-		} as unknown as Site );
-
-		render( <WordPressSettings siteSlug={ site.slug } /> );
-		await screen.findByRole( 'heading', { name: 'WordPress' } );
-
-		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /Opt out/ } ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'with beta program disabled', () => {

@@ -4,7 +4,7 @@ import { Icon } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canOptOutOfWordPressBeta, canSwitchWordPressVersion } from '../features';
+import { canSwitchWordPressVersion } from '../features';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -17,9 +17,7 @@ export default function WordPressSettingsSummary( {
 } ) {
 	const { data: versionTag } = useQuery( {
 		...siteWordPressVersionQuery( site.ID ),
-		// Also fetch for sites that may be auto-enrolled in the beta program but
-		// can't switch versions themselves, so the Beta badge still shows.
-		enabled: canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ),
+		enabled: canSwitchWordPressVersion( site ),
 	} );
 
 	const wpVersion = getFormattedWordPressVersion( site, versionTag );
