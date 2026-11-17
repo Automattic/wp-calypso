@@ -170,7 +170,11 @@ export default function AgencyOverviewContent( {
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
-				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
+				<HelpfulLinksCard
+					links={ links.helpful }
+					recordTracksEvent={ recordTracksEvent }
+					shouldUseRouterLink={ shouldUseRouterLink }
+				/>
 			</VStack>
 		</Grid>
 	);

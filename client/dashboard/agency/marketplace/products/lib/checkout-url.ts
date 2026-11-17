@@ -1,5 +1,5 @@
 import { a4aLink } from '../../../../utils/link';
-import { WPCOM_CREATOR_PLAN_SLUG } from '../../lib/wpcom-hosting';
+import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../../lib/wpcom-hosting';
 import {
 	AGENCY_CHECKOUT_PATH,
 	MARKETPLACE_PURCHASES_ROUTE,
@@ -27,18 +27,19 @@ export interface CheckoutLine {
 
 /**
  * Where the checkout sends the agency after paying: Purchases, filtered to the
- * WordPress.com licenses waiting for a site when the cart held a WordPress.com
- * plan. Built by hand because `URLSearchParams` would percent-encode the colon
- * the pending page looks for.
+ * WordPress.com licenses waiting for a site when the cart held only WordPress.com
+ * plans. A cart that mixed in other products stays unfiltered, so those licenses
+ * show too. Built by hand because `URLSearchParams` would percent-encode the
+ * colon the pending page looks for.
  */
 export function getCheckoutReturnUrl( {
-	hasWpcomHostingPlan,
+	isWpcomHostingOnly,
 	cart = 'regular',
 }: {
-	hasWpcomHostingPlan: boolean;
+	isWpcomHostingOnly: boolean;
 	cart?: MarketplaceType;
 } ): string {
-	const filter = hasWpcomHostingPlan ? 'status=unassigned&search=WordPress.com&' : '';
+	const filter = isWpcomHostingOnly ? 'status=unassigned&search=WordPress.com&' : '';
 	const cartParam = cart === 'referral' ? `${ CHECKOUT_CART_PARAM }=referral&` : '';
 	return `${ window.location.origin }${ MARKETPLACE_PURCHASES_ROUTE }?${ filter }${ cartParam }${ RECEIPT_ID_PARAM }=${ RECEIPT_ID_PLACEHOLDER }`;
 }
@@ -66,12 +67,11 @@ function getCurrentPageUrl(): string {
  */
 export function getCheckoutUrl(
 	lines: CheckoutLine[],
-	{
-		term,
-		hasWpcomHostingPlan = false,
-		cart = 'regular',
-	}: { term: TermPricing; hasWpcomHostingPlan?: boolean; cart?: MarketplaceType }
+	{ term, cart = 'regular' }: { term: TermPricing; cart?: MarketplaceType }
 ): string {
+	const isWpcomHostingOnly =
+		lines.length > 0 &&
+		lines.every( ( { product } ) => product.family_slug === WPCOM_HOSTING_FAMILY_SLUG );
 	const search = new URLSearchParams( {
 		products: lines
 			.map( ( { product, quantity, siteDomain } ) =>
@@ -81,7 +81,7 @@ export function getCheckoutUrl(
 			)
 			.join( ',' ),
 		term,
-		redirect_to: getCheckoutReturnUrl( { hasWpcomHostingPlan, cart } ),
+		redirect_to: getCheckoutReturnUrl( { isWpcomHostingOnly, cart } ),
 		cancel_to: getCurrentPageUrl(),
 	} );
 	return `${ window.location.origin }${ AGENCY_CHECKOUT_PATH }?${ search }`;

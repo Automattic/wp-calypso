@@ -4,19 +4,13 @@
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import BackupCard from '../index';
-import type { Site, ActivityLogsData } from '@automattic/api-core';
+import type { Site, SiteActivityLog } from '@automattic/api-core';
 
 const mockSiteId = 123;
-
-const mockFetchSiteActivityLog = vi.fn();
-
-vi.mock( '@automattic/api-core', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
-	fetchSiteActivityLog: ( ...args: unknown[] ) => mockFetchSiteActivityLog( ...args ),
-} ) );
 
 const mockSite: Site = {
 	ID: mockSiteId,
@@ -28,10 +22,23 @@ const mockSite: Site = {
 	is_wpcom_atomic: true,
 } as Site;
 
-vi.mock( '@wordpress/i18n', async () => ( {
-	...( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) ),
-	__: ( text: string ) => text,
-} ) );
+// The card asks for the latest backup, failed or not, and for the latest successful one.
+function mockBackups( {
+	latest,
+	lastSuccessful = latest,
+}: {
+	latest: Partial< SiteActivityLog >[];
+	lastSuccessful?: Partial< SiteActivityLog >[];
+} ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
+		.query( ( query ) => !! query[ 'name[]' ]?.includes( 'rewind__backup_error' ) )
+		.reply( 200, { current: { orderedItems: latest } } );
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
+		.query( ( query ) => ! query[ 'name[]' ]?.includes( 'rewind__backup_error' ) )
+		.reply( 200, { current: { orderedItems: lastSuccessful } } );
+}
 
 vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
@@ -40,13 +47,7 @@ vi.mock( '../../../app/locale', () => ( {
 
 describe( 'BackupCard', () => {
 	test( 'shows "No backups yet" when there are no backups', async () => {
-		mockFetchSiteActivityLog.mockResolvedValue( {
-			activityLogs: [],
-			totalItems: 0,
-			pages: 0,
-			itemsPerPage: 0,
-			totalPages: 0,
-		} as ActivityLogsData );
+		mockBackups( { latest: [] } );
 
 		render( <BackupCard site={ mockSite } /> );
 
@@ -59,21 +60,16 @@ describe( 'BackupCard', () => {
 	test( 'shows successful backup information', async () => {
 		const twoHoursAgo = new Date( Date.now() - 2 * 60 * 60 * 1000 ).toISOString();
 
-		mockFetchSiteActivityLog.mockResolvedValue( {
-			activityLogs: [
+		mockBackups( {
+			latest: [
 				{
-					id: '1',
 					activity_id: '1',
 					name: 'rewind__backup_complete_full',
 					published: twoHoursAgo,
 					status: 'success',
 				},
 			],
-			totalItems: 1,
-			pages: 1,
-			itemsPerPage: 1,
-			totalPages: 1,
-		} as ActivityLogsData );
+		} );
 
 		render( <BackupCard site={ mockSite } /> );
 
@@ -84,37 +80,24 @@ describe( 'BackupCard', () => {
 	} );
 
 	test( 'shows failed backup with last successful backup time', async () => {
-		mockFetchSiteActivityLog
-			.mockResolvedValueOnce( {
-				activityLogs: [
-					{
-						id: '2',
-						activity_id: '2',
-						name: 'rewind__backup_error',
-						published: new Date().toISOString(),
-						status: 'error',
-					},
-				],
-				totalItems: 1,
-				pages: 1,
-				itemsPerPage: 1,
-				totalPages: 1,
-			} as ActivityLogsData )
-			.mockResolvedValueOnce( {
-				activityLogs: [
-					{
-						id: '1',
-						activity_id: '1',
-						name: 'rewind__backup_complete_full',
-						published: new Date( Date.now() - 3 * 24 * 60 * 60 * 1000 ).toISOString(), // 3 days ago
-						status: 'success',
-					},
-				],
-				totalItems: 1,
-				pages: 1,
-				itemsPerPage: 1,
-				totalPages: 1,
-			} as ActivityLogsData );
+		mockBackups( {
+			latest: [
+				{
+					activity_id: '2',
+					name: 'rewind__backup_error',
+					published: new Date().toISOString(),
+					status: 'error',
+				},
+			],
+			lastSuccessful: [
+				{
+					activity_id: '1',
+					name: 'rewind__backup_complete_full',
+					published: new Date( Date.now() - 3 * 24 * 60 * 60 * 1000 ).toISOString(), // 3 days ago
+					status: 'success',
+				},
+			],
+		} );
 
 		render( <BackupCard site={ mockSite } /> );
 
@@ -125,29 +108,17 @@ describe( 'BackupCard', () => {
 	} );
 
 	test( 'shows "No successful backups found" when backup failed and no successful backup exists', async () => {
-		mockFetchSiteActivityLog
-			.mockResolvedValueOnce( {
-				activityLogs: [
-					{
-						id: '2',
-						activity_id: '2',
-						name: 'rewind__backup_error',
-						published: new Date().toISOString(),
-						status: 'error',
-					},
-				],
-				totalItems: 1,
-				pages: 1,
-				itemsPerPage: 1,
-				totalPages: 1,
-			} as ActivityLogsData )
-			.mockResolvedValueOnce( {
-				activityLogs: [],
-				totalItems: 0,
-				pages: 0,
-				itemsPerPage: 0,
-				totalPages: 0,
-			} as ActivityLogsData );
+		mockBackups( {
+			latest: [
+				{
+					activity_id: '2',
+					name: 'rewind__backup_error',
+					published: new Date().toISOString(),
+					status: 'error',
+				},
+			],
+			lastSuccessful: [],
+		} );
 
 		render( <BackupCard site={ mockSite } /> );
 

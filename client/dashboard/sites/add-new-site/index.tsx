@@ -8,9 +8,11 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { isBlackFriday2026Active } from 'calypso/lib/promotions/black-friday-2026';
 import { useAnalytics } from '../../app/analytics';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
+import BlackFridayOfferCard from './black-friday-offer-card';
 import Column from './column';
 import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
@@ -81,7 +83,11 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				/>
 			</Column>
 
-			<OfferCard layout="stacked" onClick={ offerClick } />
+			{ isBlackFriday2026Active() ? (
+				<BlackFridayOfferCard onClick={ offerClick } />
+			) : (
+				<OfferCard layout="stacked" onClick={ offerClick } />
+			) }
 		</Wrapper>
 	);
 }
