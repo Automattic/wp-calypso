@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/launchpad';
 import { QueryClient } from '@tanstack/react-query';
@@ -251,6 +252,29 @@ describe( 'maybeRedirect', () => {
 		expect( window.location.replace ).toHaveBeenCalledWith(
 			'https://example.wordpress.com/wp-admin/index.php?celebrate-launch=true'
 		);
+	} );
+
+	it.each( [
+		[ 'no-guidance', { wpcom_ai_launchpad_no_guidance: true } ],
+		[ 'active AI Launchpad', { wpcom_ai_launchpad_enabled: true } ],
+	] )( 'keeps %s sites on My Home with legacyHome=1', async ( _, options ) => {
+		window.location.href = 'https://wordpress.com/home/test.wordpress.com?legacyHome=1';
+		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
+		getAiLaunchpadStatus.mockReturnValueOnce(
+			options.wpcom_ai_launchpad_enabled ? 'active' : null
+		);
+		getSelectedSite.mockReturnValueOnce( {
+			ID: 1,
+			launch_status: 'unlaunched',
+			capabilities: { manage_options: true },
+			options,
+		} );
+		const next = jest.fn();
+
+		await maybeRedirect( buildSiteContext(), next );
+
+		expect( window.location.replace ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
 	} );
 
 	it( 'sends sites with enabled+dismissed to the wp-admin dashboard', async () => {

@@ -92,7 +92,7 @@ export async function maybeRedirect( context, next ) {
 		return;
 	}
 
-	const { verified, courseSlug, from, celebrateLaunch } = getQueryArgs() || {};
+	const { verified, courseSlug, from, celebrateLaunch, legacyHome } = getQueryArgs() || {};
 
 	// The courseSlug is to display pages with onboarding videos for learning,
 	// so we should not redirect the page to launchpad.
@@ -117,8 +117,10 @@ export async function maybeRedirect( context, next ) {
 	// The AI Launchpad replaces My Home: while it's active, setup happens on its
 	// wp-admin page; once completed, the wp-admin dashboard takes over (My Home
 	// stays hidden from the sidebar for these sites).
+	// `?legacyHome=1` keeps these sites on My Home, for working on what older sites still see.
+	const skipWpAdminRedirect = legacyHome === '1';
 	const aiLaunchpadStatus = site && getAiLaunchpadStatus( site );
-	if ( aiLaunchpadStatus ) {
+	if ( aiLaunchpadStatus && ! skipWpAdminRedirect ) {
 		const redirectUrl =
 			aiLaunchpadStatus === 'active'
 				? getSiteAdminUrl( state, siteId, 'admin.php?page=site-setup-wp-admin' )
@@ -132,8 +134,8 @@ export async function maybeRedirect( context, next ) {
 	// My Home only goes with the legacy launchpad. Everyone else on AI Launchpad and no-guidance
 	// sites, including users who can't open Site Setup, lands on the plain wp-admin dashboard.
 	if (
-		site?.options?.wpcom_ai_launchpad_enabled ||
-		site?.options?.wpcom_ai_launchpad_no_guidance
+		! skipWpAdminRedirect &&
+		( site?.options?.wpcom_ai_launchpad_enabled || site?.options?.wpcom_ai_launchpad_no_guidance )
 	) {
 		const redirectUrl = getAdminDashboardUrl( state, siteId, celebrateLaunch );
 		if ( redirectUrl ) {
