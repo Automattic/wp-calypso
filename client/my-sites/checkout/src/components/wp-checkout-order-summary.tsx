@@ -142,7 +142,12 @@ function TaxNotCalculatedLineItem() {
 	return (
 		<CheckoutSummaryLineItem className="wp-checkout-order-summary__tax-not-calculated">
 			<span>{ _x( 'Tax', "Shortened form of 'Sales Tax', not a country-specific tax name" ) }</span>
-			<PendingTaxAmount>{ __( 'To be calculated' ) }</PendingTaxAmount>
+			<PendingTaxAmount>
+				{
+					/* translators: Shown in place of the tax amount in the checkout order summary until the billing location is known and tax can be calculated. */
+					__( 'To be calculated' )
+				}
+			</PendingTaxAmount>
 		</CheckoutSummaryLineItem>
 	);
 }
