@@ -12,7 +12,7 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
-import { getBundlePrimaryDomain, isFqdnQuery } from '../helpers';
+import { getBundlePrimaryDomain } from '../helpers';
 import { useInlineBundles } from '../hooks/use-inline-bundles';
 import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
@@ -153,16 +153,11 @@ export const ResultsPage = () => {
 	// inline rows and the regular-list inline rows share a single hook instance,
 	// and thus one set of bundle requests.
 	const { getInlineBundle } = useInlineBundles();
-	const isFqdn = isFqdnQuery( query );
 
-	// A bundle whose primary is the queried FQDN always shows its card. Any
-	// other bundle is keyed on the featured row (DOMAINS-2238): the backend
-	// anchors it on the first trigger-TLD suggestion in its list, for a bare
-	// term or for an FQDN query that has no bundle of its own, and the card
-	// renders only when that primary is the Recommended or Best alternative
-	// card, so an anchor the client filtered out or reordered is ignored. The
-	// .com is not always Recommended: a .blog often leads the list with the
-	// .com as Best alternative.
+	// The bundle card shows only when its primary domain is one of the featured
+	// cards: the exact match, Recommended or Best alternative (DOMAINS-2238).
+	// The backend can build the bundle for any suggestion in its list, so a
+	// primary the client filtered out or moved down is ignored.
 	const recommendedFqdn = featuredSuggestions
 		.find( ( { reason } ) => reason === 'recommended' )
 		?.suggestion.toLowerCase();
@@ -171,14 +166,13 @@ export const ResultsPage = () => {
 		bundleSuggestion && bundleSuggestion.domains.length > 0
 			? getBundlePrimaryDomain( bundleSuggestion ).domain.toLowerCase()
 			: undefined;
-	const bundleMatchesFeatured =
-		bundlePrimaryFqdn !== undefined && featuredFqdns.includes( bundlePrimaryFqdn );
-	const isQueriedFqdnBundle = isFqdn && bundlePrimaryFqdn === query.trim().toLowerCase();
 	// A failed add keeps the card mounted (with an error notice) rather than
 	// hiding it, so the user sees the failure instead of the offer silently
 	// vanishing. See bundleErrorMessage above.
 	const visibleBundleSuggestion =
-		isQueriedFqdnBundle || bundleMatchesFeatured ? bundleSuggestion : undefined;
+		bundlePrimaryFqdn !== undefined && featuredFqdns.includes( bundlePrimaryFqdn )
+			? bundleSuggestion
+			: undefined;
 
 	// While the wrapped request is in flight and there is a Recommended card
 	// (so no exact-match card), the right slot shows a placeholder instead of
@@ -187,14 +181,15 @@ export const ResultsPage = () => {
 	const showBundleSlotPlaceholder =
 		config.showBundleSuggestions && isLoadingBundleSuggestion && recommendedFqdn !== undefined;
 
-	// The bundle card (or its placeholder) takes the Best alternative slot unless
-	// the bundle is for the queried FQDN. The displaced suggestion is still
+	// The bundle card (or its placeholder) takes the Best alternative slot when
+	// there is a Recommended card. Next to an exact-match card, it is added
+	// beside it instead. The displaced suggestion is still
 	// purchasable on its own, so once the card is visible it leads the regular list instead of
 	// leaving the page — when a .blog is Recommended, the displaced card is the
 	// .com itself. While the placeholder shows it is withheld, so it does not
 	// jump from the list back into the featured row if no bundle arrives.
 	const bundleTakesRightSlot =
-		! isQueriedFqdnBundle && ( !! visibleBundleSuggestion || showBundleSlotPlaceholder );
+		recommendedFqdn !== undefined && ( !! visibleBundleSuggestion || showBundleSlotPlaceholder );
 	const displacedSuggestion = bundleTakesRightSlot
 		? featuredSuggestions.find( ( { reason } ) => reason === 'best-alternative' )?.suggestion
 		: undefined;

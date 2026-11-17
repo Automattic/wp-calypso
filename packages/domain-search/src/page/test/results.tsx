@@ -36,6 +36,17 @@ const buildBundleSuggestion = ( sld: string ): BundleSuggestion => ( {
 	catalogue_version: 'mock',
 } );
 
+// The exact-match card for a searched FQDN needs its availability. The bundle
+// card shows only next to a featured card for its primary domain.
+const mockAvailableFqdn = ( domainName: string ) =>
+	mockGetAvailabilityQuery( {
+		params: { domainName },
+		availability: buildAvailability( {
+			domain_name: domainName,
+			status: DomainAvailabilityStatus.AVAILABLE,
+		} ),
+	} );
+
 // The restyled bundle card renders each member domain as its SLD plus a separate
 // `.tld` span, so a full member domain is no longer a single text node. Match on
 // the member line's combined text, scoped to the members element so ancestor
@@ -1036,6 +1047,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-add.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-add' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-add.com' );
 
 			render(
 				<TestDomainSearch
@@ -1087,6 +1099,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-error.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-error' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-error.com' );
 
 			// Scoped to the render container because the error Notice also announces
 			// the message through the a11y-speak live region on document.body.
@@ -1124,6 +1137,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-fallback.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fallback' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-fallback.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1163,6 +1177,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-permanent.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-permanent' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-permanent.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1215,6 +1230,8 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-late-stale.com' },
 				bundleSuggestion: staleBundle,
 			} );
+			mockAvailableFqdn( 'test-bundle-late-stale.com' );
+			mockAvailableFqdn( 'test-bundle-late-fresh.com' );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-late-fresh.com' },
@@ -1287,6 +1304,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-retry.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-retry' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-retry.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1326,6 +1344,8 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-stale.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-stale' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-stale.com' );
+			mockAvailableFqdn( 'test-bundle-fresh.com' );
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-fresh.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fresh.com' } ) ],
@@ -1388,6 +1408,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-pending.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-pending' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-pending.com' );
 
 			render(
 				<TestDomainSearch
@@ -1473,6 +1494,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-added.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-added' ),
 			} );
+			mockAvailableFqdn( 'bundle-added.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1506,6 +1528,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-partial.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-partial' ),
 			} );
+			mockAvailableFqdn( 'bundle-partial.com' );
 
 			render(
 				<TestDomainSearch
@@ -2030,6 +2053,60 @@ describe( 'ResultsPage', () => {
 			expect( await screen.findByText( 'Best alternative' ) ).toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
 		} );
+
+		it( 'shows a placeholder in the right slot, then best-alternative when no bundle arrives', async () => {
+			mockTakenTulipsDotCom();
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: null,
+				delayMs: 300,
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'gettulips.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.getAllByLabelText( 'Loading featured domain suggestion' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+
+			expect( await screen.findByTitle( 'tulips.net' ) ).toHaveTextContent( 'Best alternative' );
+			expect(
+				screen.queryByLabelText( 'Loading featured domain suggestion' )
+			).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'hides the card for the searched FQDN when it is not shown as the exact match', async () => {
+			// Without an availability result, tulips.com is not shown as the exact match.
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'tulips.com' },
+				availability: new Error( 'Availability check failed' ),
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'tulips.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'gettulips.com' } ),
+					buildSuggestion( { domain_name: 'tulips.net' } ),
+				],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: buildBundleSuggestion( 'tulips' ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'tulips.net' ) ).toHaveTextContent( 'Best alternative' );
+			expect( screen.getByTitle( 'gettulips.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'tracking', () => {
@@ -2105,6 +2182,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-shown.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-shown' ),
 			} );
+			mockAvailableFqdn( 'bundle-shown.com' );
 
 			render(
 				<TestDomainSearch
@@ -2160,6 +2238,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-card-shown.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-card-shown' ),
 			} );
+			mockAvailableFqdn( 'bundle-card-shown.com' );
 
 			render(
 				<TestDomainSearch
@@ -2241,6 +2320,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-accept.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-accept' ),
 			} );
+			mockAvailableFqdn( 'bundle-accept.com' );
 
 			render(
 				<TestDomainSearch
@@ -2284,6 +2364,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-reject.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-reject' ),
 			} );
+			mockAvailableFqdn( 'bundle-reject.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -2319,6 +2400,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-no-handler.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-no-handler' ),
 			} );
+			mockAvailableFqdn( 'bundle-no-handler.com' );
 
 			render(
 				<TestDomainSearch
