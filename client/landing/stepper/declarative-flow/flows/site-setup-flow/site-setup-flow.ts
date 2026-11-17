@@ -3,7 +3,10 @@ import { Onboard } from '@automattic/data-stores';
 import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
+import {
+	useFlowState,
+	type AnyFlowInitialize,
+} from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -223,7 +226,7 @@ const siteSetupFlow: Flow = {
 		} );
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
-		const { get } = useFlowState();
+		const { get } = useFlowState< AnyFlowInitialize >();
 		const entryPoint = get( 'flow' )?.entryPoint;
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -517,7 +520,7 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSideEffect() {
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< AnyFlowInitialize >();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
 

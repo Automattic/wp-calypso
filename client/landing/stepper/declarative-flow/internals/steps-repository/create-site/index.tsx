@@ -58,7 +58,7 @@ import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useFlowState } from '../../state-manager/store';
+import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
@@ -246,7 +246,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const flowState = useFlowState();
+	const flowState = useFlowState< AnyFlowInitialize >();
 	const queryClient = useQueryClient();
 	const urlQueryParams = useQuery();
 

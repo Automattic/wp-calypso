@@ -10,4 +10,3 @@ npm-debug.log
 /build
 /webapp/webapp-bundle*
 /webapp/tests/testing-bundle*
-/examples/media-editor/built/

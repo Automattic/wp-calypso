@@ -23,7 +23,7 @@ export default function DomainContactDetailsSettingsSummary( {
 	const badges: SummaryButtonBadgeProps[] = [
 		domain.private_domain
 			? { text: __( 'Privacy protection on' ), intent: 'stable' }
-			: { text: __( 'Privacy protection off' ), intent: 'draft' },
+			: { text: __( 'Privacy protection off' ), intent: 'none' },
 	];
 
 	// `current_user_can_manage` is always false in a support session. The link is still shown so
